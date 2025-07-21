@@ -7,8 +7,8 @@ import { t } from '@lingui/core/macro';
 import { IconX, IconReload } from 'twenty-ui/display';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
-import { agentChatCurrentContextState } from '@/ai/states/agentChatCurrentContextState';
+import { isAgentChatCurrentContextActiveState } from '@/ai/states/isAgentChatCurrentContextActiveState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 
 const StyledRightIconContainer = styled.div`
   display: flex;
@@ -32,7 +32,8 @@ export const AgentChatMultipleRecordPreview = ({
   records: ObjectRecord[];
   totalCount: number;
 }) => {
-  const [isActive, setIsActive] = useRecoilState(agentChatCurrentContextState);
+  const [isAgentChatCurrentContextActive, setIsAgentChatCurrentContextActive] =
+    useRecoilComponentStateV2(isAgentChatCurrentContextActiveState);
 
   const theme = useTheme();
 
@@ -56,29 +57,29 @@ export const AgentChatMultipleRecordPreview = ({
     withIconBackground: false,
   };
 
-  const toggleContext = () => {
-    setIsActive(!isActive);
+  const toggleIsAgentChatCurrentContextActive = () => {
+    setIsAgentChatCurrentContextActive(!isAgentChatCurrentContextActive);
   };
 
   return (
-    <StyledChipWrapper isActive={isActive}>
+    <StyledChipWrapper isActive={isAgentChatCurrentContextActive}>
       <MultipleAvatarChip
         Icons={recordSelectionContextChip.Icons}
-        text={isActive ? recordSelectionContextChip.text : t`Context`}
+        text={isAgentChatCurrentContextActive ? recordSelectionContextChip.text : t`Context`}
         maxWidth={180}
         rightComponent={
           <StyledRightIconContainer>
-            {isActive ? (
+            {isAgentChatCurrentContextActive ? (
               <IconX
                 size={theme.icon.size.sm}
                 color={theme.font.color.secondary}
-                onClick={toggleContext}
+                onClick={toggleIsAgentChatCurrentContextActive}
               />
             ) : (
               <IconReload
                 size={theme.icon.size.sm}
                 color={theme.font.color.secondary}
-                onClick={toggleContext}
+                onClick={toggleIsAgentChatCurrentContextActive}
               />
             )}
           </StyledRightIconContainer>

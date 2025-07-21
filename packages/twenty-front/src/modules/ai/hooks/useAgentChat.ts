@@ -31,6 +31,7 @@ import {
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useGetObjectMetadataItemById } from '@/object-metadata/hooks/useGetObjectMetadataItemById';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isAgentChatCurrentContextActiveState } from '@/ai/states/isAgentChatCurrentContextActiveState';
 
 type OptimisticMessage = AgentChatMessage & {
   isPending: boolean;
@@ -42,6 +43,10 @@ export const useAgentChat = (agentId: string, records?: ObjectRecord[]) => {
 
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemIdComponentState,
+  );
+
+  const isAgentChatCurrentContextActive = useRecoilComponentValueV2(
+    isAgentChatCurrentContextActiveState,
   );
 
   const { getObjectMetadataItemById } = useGetObjectMetadataItemById();
@@ -148,7 +153,11 @@ export const useAgentChat = (agentId: string, records?: ObjectRecord[]) => {
 
     const recordIdsByObjectMetadataNameSingular = [];
 
-    if (isDefined(records) && contextStoreCurrentObjectMetadataItemId) {
+    if (
+      isAgentChatCurrentContextActive === true &&
+      isDefined(records) &&
+      isDefined(contextStoreCurrentObjectMetadataItemId)
+    ) {
       recordIdsByObjectMetadataNameSingular.push({
         objectMetadataNameSingular: getObjectMetadataItemById(
           contextStoreCurrentObjectMetadataItemId,

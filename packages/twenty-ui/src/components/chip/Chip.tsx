@@ -125,6 +125,14 @@ const StyledContainer = withTheme(styled.div<
       : 'var(--chip-horizontal-padding)'};
 `);
 
+const renderRightComponent = (rightComponent: (() => ReactNode) | ReactNode | null) => {
+  if (!rightComponent) {
+    return null;
+  }
+  
+  return typeof rightComponent === 'function' ? rightComponent() : rightComponent;
+};
+
 export const Chip = ({
   size = ChipSize.Small,
   label,
@@ -155,11 +163,7 @@ export const Chip = ({
       ) : (
         <StyledDiv>Untitled</StyledDiv>
       )}
-      {rightComponent
-        ? typeof rightComponent === 'function'
-          ? rightComponent()
-          : rightComponent
-        : null}
+      {renderRightComponent(rightComponent)}
     </StyledContainer>
   );
 };

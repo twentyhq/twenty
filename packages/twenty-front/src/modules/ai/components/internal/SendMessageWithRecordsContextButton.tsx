@@ -1,6 +1,3 @@
-import { Button } from 'twenty-ui/input';
-import { t } from '@lingui/core/macro';
-import { useAgentChat } from '@/ai/hooks/useAgentChat';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 

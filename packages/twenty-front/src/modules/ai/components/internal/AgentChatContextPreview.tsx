@@ -31,10 +31,6 @@ export const AgentChatContextPreview = ({ agentId }: { agentId: string }) => {
     useRecoilComponentStateV2(agentChatSelectedFilesComponentState, agentId);
   const [agentChatUploadedFiles, setAgentChatUploadedFiles] =
     useRecoilComponentStateV2(agentChatUploadedFilesComponentState, agentId);
-  const agentChatContext = useRecoilComponentValueV2(
-    agentChatObjectMetadataAndRecordContextState,
-    agentId,
-  );
 
   const { enqueueErrorSnackBar } = useSnackBar();
 
@@ -56,10 +52,6 @@ export const AgentChatContextPreview = ({ agentId }: { agentId: string }) => {
       });
     }
   };
-
-  const hasCurrentRecordsContext = agentChatContext.some(
-    (context) => context.type === 'currentRecords',
-  );
 
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemIdComponentState,

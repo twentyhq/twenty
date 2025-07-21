@@ -10,7 +10,7 @@ const StyledIconsContainer = styled.div`
   display: flex;
 `;
 
-const StyledChipContainer = styled.div<{ clickable?: boolean }>`
+const StyledChipContainer = styled.div`
   display: inline-flex;
   font-size: ${({ theme }) => theme.font.size.sm};
 `;
@@ -44,10 +44,9 @@ export const MultipleAvatarChip = ({
     </StyledIconsContainer>
   );
 
-  const handleClick = onClick ? () => onClick() : undefined;
 
   return (
-    <StyledChipContainer onClick={handleClick} data-testid={testId}>
+    <StyledChipContainer onClick={onClick} data-testid={testId}>
       <Chip
         label={text || ''}
         isLabelHidden={!isNonEmptyString(text) && forceEmptyText}
