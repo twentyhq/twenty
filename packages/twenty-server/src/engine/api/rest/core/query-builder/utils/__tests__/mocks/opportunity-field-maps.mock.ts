@@ -288,7 +288,6 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS =
         type: FieldMetadataType.RELATION,
         name: 'pointOfContact',
         label: 'Point of Contact',
-        defaultValue: null,
         description: 'The point of contact for this opportunity',
         icon: 'IconUser',
         settings: {
@@ -312,7 +311,6 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS =
         type: FieldMetadataType.RELATION,
         name: 'company',
         label: 'Company',
-        defaultValue: null,
         description: 'The company this opportunity is associated with',
         icon: 'IconBuildingSkyscraper',
         settings: {
@@ -336,7 +334,6 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS =
         type: FieldMetadataType.RELATION,
         name: 'favorites',
         label: 'Favorites',
-        defaultValue: null,
         description: 'Users who favorited this opportunity',
         icon: 'IconStar',
         settings: {
@@ -359,7 +356,6 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS =
         type: FieldMetadataType.RELATION,
         name: 'taskTargets',
         label: 'Task Targets',
-        defaultValue: null,
         description: 'Tasks targeting this opportunity',
         icon: 'IconCheckbox',
         settings: {
@@ -382,7 +378,6 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS =
         type: FieldMetadataType.RELATION,
         name: 'noteTargets',
         label: 'Note Targets',
-        defaultValue: null,
         description: 'Notes targeting this opportunity',
         icon: 'IconNotes',
         settings: {
@@ -405,7 +400,6 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS =
         type: FieldMetadataType.RELATION,
         name: 'attachments',
         label: 'Attachments',
-        defaultValue: null,
         description: 'Attachments for this opportunity',
         icon: 'IconPaperclip',
         settings: {
@@ -428,7 +422,6 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS =
         type: FieldMetadataType.RELATION,
         name: 'timelineActivities',
         label: 'Timeline Activities',
-        defaultValue: null,
         description: 'Timeline activities for this opportunity',
         icon: 'IconTimeline',
         settings: {

@@ -19,6 +19,7 @@ import {
   TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { createForeignKeyDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class RemoteTableRelationsService {
@@ -175,7 +176,14 @@ export class RemoteTableRelationsService {
         isNullable: true,
         isSystem: true,
         defaultValue: undefined,
-        settings: { ...objectPrimaryKeyFieldSettings, isForeignKey: true },
+        ...(isDefined(objectPrimaryKeyFieldSettings)
+          ? {
+              settings: {
+                ...objectPrimaryKeyFieldSettings,
+                isForeignKey: true,
+              },
+            }
+          : {}),
       },
     );
 
@@ -215,7 +223,14 @@ export class RemoteTableRelationsService {
         isNullable: true,
         isSystem: true,
         defaultValue: undefined,
-        settings: { ...objectPrimaryKeyFieldSettings, isForeignKey: true },
+        ...(isDefined(objectPrimaryKeyFieldSettings)
+          ? {
+              settings: {
+                ...objectPrimaryKeyFieldSettings,
+                isForeignKey: true,
+              },
+            }
+          : {}),
       },
     );
 
@@ -255,7 +270,14 @@ export class RemoteTableRelationsService {
         isNullable: true,
         isSystem: true,
         defaultValue: undefined,
-        settings: { ...objectPrimaryKeyFieldSettings, isForeignKey: true },
+        ...(isDefined(objectPrimaryKeyFieldSettings)
+          ? {
+              settings: {
+                ...objectPrimaryKeyFieldSettings,
+                isForeignKey: true,
+              },
+            }
+          : {}),
       },
     );
 

@@ -24,7 +24,7 @@ import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permis
 
 type IsRelationType<Ttype, T extends FieldMetadataType = FieldMetadataType> =
   IsExactly<T, FieldMetadataType> extends true
-    ? null | Ttype
+    ? null | Ttype // unknown ?
     : T extends FieldMetadataType.RELATION
       ? Ttype
       : T extends FieldMetadataType.MORPH_RELATION
@@ -84,7 +84,7 @@ export class FieldMetadataEntity<
   label: string;
 
   @Column({ nullable: true, type: 'jsonb' })
-  defaultValue: FieldMetadataDefaultValue<T> | null;
+  defaultValue: FieldMetadataDefaultValue<T>;
 
   @Column({ nullable: true, type: 'text' })
   description: string | null;
@@ -96,10 +96,10 @@ export class FieldMetadataEntity<
   standardOverrides: FieldStandardOverridesDTO | null;
 
   @Column('jsonb', { nullable: true })
-  options: FieldMetadataOptions<T> | null;
+  options: FieldMetadataOptions<T>;
 
   @Column('jsonb', { nullable: true })
-  settings: FieldMetadataSettings<T> | null;
+  settings: FieldMetadataSettings<T>;
 
   @Column({ default: false })
   isCustom: boolean;

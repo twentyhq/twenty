@@ -1,7 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataDefaultSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import {
   fieldCurrencyMock,
@@ -11,6 +9,8 @@ import {
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { mapFieldMetadataToGraphqlQuery } from 'src/engine/api/rest/core/query-builder/utils/map-field-metadata-to-graphql-query.utils';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -128,12 +128,12 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
           createdAt: new Date(),
           updatedAt: new Date(),
           settings:
-            fieldMetadataType === FieldMetadataType.RELATION ||
-            fieldMetadataType === FieldMetadataType.MORPH_RELATION
+            (fieldMetadataType === FieldMetadataType.RELATION ||
+            fieldMetadataType === FieldMetadataType.MORPH_RELATION)
               ? ({
                   relationType: RelationType.MANY_TO_ONE,
-                } as FieldMetadataDefaultSettings)
-              : undefined,
+                } as FieldMetadataRelationSettings)
+              : null,
         });
 
         expect(
