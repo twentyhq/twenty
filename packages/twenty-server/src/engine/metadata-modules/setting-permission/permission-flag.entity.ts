@@ -10,12 +10,15 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
 @Entity('settingPermission')
-@Unique('IDX_SETTING_PERMISSION_SETTING_ROLE_ID_UNIQUE', ['setting', 'roleId'])
-export class SettingPermissionEntity {
+@Unique('IDX_SETTING_PERMISSION_SETTING_ROLE_ID_UNIQUE', [
+  'permissionFlag',
+  'roleId',
+])
+export class PermissionFlagEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -29,7 +32,7 @@ export class SettingPermissionEntity {
   role: Relation<RoleEntity>;
 
   @Column({ nullable: false, type: 'varchar' })
-  setting: SettingPermissionType;
+  permissionFlag: PermissionFlagType;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
