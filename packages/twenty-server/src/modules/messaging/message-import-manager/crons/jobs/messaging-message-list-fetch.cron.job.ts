@@ -52,8 +52,9 @@ export class MessagingMessageListFetchCronJob {
           activeWorkspace.id,
         );
 
+        // TODO: deprecate looking for FULL_MESSAGE_LIST_FETCH_PENDING as we introduce MESSAGE_LIST_FETCH_PENDING
         const messageChannels = await mainDataSource.query(
-          `SELECT * FROM ${schemaName}."messageChannel" WHERE "isSyncEnabled" = true AND "syncStage" IN ('${MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING}')`,
+          `SELECT * FROM ${schemaName}."messageChannel" WHERE "isSyncEnabled" = true AND "syncStage" IN ('${MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING}', '${MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING}')`,
         );
 
         for (const messageChannel of messageChannels) {
