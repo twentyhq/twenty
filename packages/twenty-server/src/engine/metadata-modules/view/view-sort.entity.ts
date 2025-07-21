@@ -23,8 +23,7 @@ import { View } from 'src/engine/metadata-modules/view/view.entity';
 registerEnumType(ViewSortDirection, { name: 'ViewSortDirection' });
 
 @Entity({ name: 'viewSort', schema: 'core' })
-@Index('IDX_VIEW_SORT_WORKSPACE_ID', ['workspaceId'])
-@Index('IDX_VIEW_SORT_VIEW_ID', ['viewId'])
+@Index('IDX_VIEW_SORT_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
 @Unique('IDX_VIEW_SORT_FIELD_METADATA_ID_VIEW_ID_UNIQUE', [
   'fieldMetadataId',
   'viewId',

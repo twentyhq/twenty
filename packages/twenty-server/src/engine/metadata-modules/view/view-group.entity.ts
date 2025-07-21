@@ -17,8 +17,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { View } from 'src/engine/metadata-modules/view/view.entity';
 
 @Entity({ name: 'viewGroup', schema: 'core' })
-@Index('IDX_VIEW_GROUP_WORKSPACE_ID', ['workspaceId'])
-@Index('IDX_VIEW_GROUP_VIEW_ID', ['viewId'])
+@Index('IDX_VIEW_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
 export class ViewGroup {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')

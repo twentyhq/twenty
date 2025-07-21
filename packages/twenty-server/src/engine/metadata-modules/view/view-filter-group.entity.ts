@@ -24,8 +24,7 @@ registerEnumType(ViewFilterGroupLogicalOperator, {
 });
 
 @Entity({ name: 'viewFilterGroup', schema: 'core' })
-@Index('IDX_VIEW_FILTER_GROUP_WORKSPACE_ID', ['workspaceId'])
-@Index('IDX_VIEW_FILTER_GROUP_VIEW_ID', ['viewId'])
+@Index('IDX_VIEW_FILTER_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
 export class ViewFilterGroup {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')

@@ -28,17 +28,16 @@ import { ViewSort } from 'src/engine/metadata-modules/view/view-sort.entity';
 registerEnumType(ViewOpenRecordIn, { name: 'ViewOpenRecordIn' });
 
 @Entity({ name: 'view', schema: 'core' })
-@Index('IDX_VIEW_WORKSPACE_ID', ['workspaceId'])
-@Index('IDX_VIEW_OBJECT_METADATA_ID_WORKSPACE_ID', [
-  'objectMetadataId',
+@Index('IDX_VIEW_WORKSPACE_ID_OBJECT_METADATA_ID', [
   'workspaceId',
+  'objectMetadataId',
 ])
 export class View {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false, type: 'text' })
+  @Column({ nullable: false, type: 'text', default: '' })
   name: string;
 
   @Column({ nullable: false, type: 'uuid' })

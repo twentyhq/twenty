@@ -17,8 +17,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { View } from 'src/engine/metadata-modules/view/view.entity';
 
 @Entity({ name: 'viewFilter', schema: 'core' })
-@Index('IDX_VIEW_FILTER_WORKSPACE_ID', ['workspaceId'])
-@Index('IDX_VIEW_FILTER_VIEW_ID', ['viewId'])
+@Index('IDX_VIEW_FILTER_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
 @Index('IDX_VIEW_FILTER_FIELD_METADATA_ID', ['fieldMetadataId'])
 export class ViewFilter {
   @IDField(() => UUIDScalarType)
