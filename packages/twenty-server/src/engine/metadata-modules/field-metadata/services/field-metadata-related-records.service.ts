@@ -57,8 +57,8 @@ export class FieldMetadataRelatedRecordsService {
     );
 
     const { created, updated, deleted } = this.getOptionsDifferences(
-      oldFieldMetadata.options,
-      newFieldMetadata.options,
+      oldFieldMetadata.options ?? [],
+      newFieldMetadata.options ?? [],
     );
 
     const viewGroupRepository =
@@ -175,9 +175,15 @@ export class FieldMetadataRelatedRecordsService {
         }
 
         const viewFilterOptions = viewFilterValue
-          .map((value) =>
-            oldFieldMetadata.options.find((option) => option.value === value),
-          )
+          .map((value) => {
+            if (!isDefined(oldFieldMetadata.options)) {
+              return undefined;
+            }
+
+            return oldFieldMetadata.options.find(
+              (option) => option.value === value,
+            );
+          })
           .filter(isDefined);
 
         const afterDeleteViewFilterOptions = viewFilterOptions.filter(
@@ -247,8 +253,12 @@ export class FieldMetadataRelatedRecordsService {
   }
 
   public getOptionsDifferences(
-    oldOptions: (FieldMetadataDefaultOption | FieldMetadataComplexOption)[],
-    newOptions: (FieldMetadataDefaultOption | FieldMetadataComplexOption)[],
+    rawOldOptions:
+      | (FieldMetadataDefaultOption | FieldMetadataComplexOption)[]
+      | null,
+    rawNewOptions:
+      | (FieldMetadataDefaultOption | FieldMetadataComplexOption)[]
+      | null,
     compareLabel = false,
   ): GetOptionsDifferences {
     const differences: Differences<
@@ -258,6 +268,9 @@ export class FieldMetadataRelatedRecordsService {
       updated: [],
       deleted: [],
     };
+
+    const oldOptions = rawOldOptions ?? [];
+    const newOptions = rawNewOptions ?? [];
 
     const oldOptionsMap = new Map(oldOptions.map((opt) => [opt.id, opt]));
 

@@ -1,12 +1,13 @@
 import { GraphQLResolveInfo } from 'graphql';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 export interface WorkspaceQueryBuilderOptions {
   objectMetadataItem: ObjectMetadataInterface;
   info: GraphQLResolveInfo;
-  fieldMetadataCollection: FieldMetadataInterface[];
+  fieldMetadataCollection: FieldMetadataEntity[];
   objectMetadataCollection: ObjectMetadataInterface[];
   withSoftDeleted?: boolean;
 }

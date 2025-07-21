@@ -6,11 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
@@ -163,7 +162,7 @@ export class FieldMetadataMorphRelationService {
   async findCachedFieldMetadataMorphRelation(
     fieldMetadataItems: Array<
       Pick<
-        FieldMetadataInterface,
+        FieldMetadataEntity,
         | 'id'
         | 'type'
         | 'objectMetadataId'
@@ -187,7 +186,7 @@ export class FieldMetadataMorphRelationService {
       );
 
     const fieldMetadataItemsAndMorphSiblings: Pick<
-      FieldMetadataInterface,
+      FieldMetadataEntity,
       | 'id'
       | 'type'
       | 'objectMetadataId'
