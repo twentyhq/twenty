@@ -93,13 +93,13 @@ export class FieldMetadataEntity<
   icon: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  standardOverrides?: FieldStandardOverridesDTO | null;
+  standardOverrides: FieldStandardOverridesDTO | null;
 
   @Column('jsonb', { nullable: true })
   options: FieldMetadataOptions<T> | null;
 
   @Column('jsonb', { nullable: true })
-  settings?: FieldMetadataSettings<T> | null;
+  settings: FieldMetadataSettings<T> | null;
 
   @Column({ default: false })
   isCustom: boolean;
