@@ -108,7 +108,7 @@ const getTypeFactoryOptions = <T extends FieldMetadataType>(
 ) => {
   return isInputTypeDefinitionKind(kind)
     ? {
-        nullable: fieldMetadata.isNullable,
+        nullable: fieldMetadata.isNullable ?? undefined,
         defaultValue: fieldMetadata.defaultValue,
         isArray:
           kind !== InputTypeDefinitionKind.Filter &&
@@ -117,7 +117,7 @@ const getTypeFactoryOptions = <T extends FieldMetadataType>(
         isIdField: fieldMetadata.name === 'id',
       }
     : {
-        nullable: fieldMetadata.isNullable,
+        nullable: fieldMetadata.isNullable ?? undefined,
         isArray: fieldMetadata.type === FieldMetadataType.MULTI_SELECT,
         settings: fieldMetadata.settings,
         // Scalar type is already defined in the entity itself.

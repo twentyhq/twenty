@@ -67,7 +67,7 @@ export class EntitySchemaColumnFactory {
         entitySchemaColumnMap[joinColumnName] = {
           name: joinColumnName,
           type: 'uuid',
-          nullable: fieldMetadata.isNullable,
+          nullable: fieldMetadata.isNullable ?? false,
         };
 
         continue;
@@ -92,7 +92,7 @@ export class EntitySchemaColumnFactory {
         type: columnType as ColumnType,
         // TODO: We should double check that
         primary: key === 'id',
-        nullable: fieldMetadata.isNullable,
+        nullable: fieldMetadata.isNullable ?? false,
         createDate: key === 'createdAt',
         updateDate: key === 'updatedAt',
         deleteDate: key === 'deletedAt',

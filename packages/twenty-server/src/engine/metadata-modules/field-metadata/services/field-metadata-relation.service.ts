@@ -91,6 +91,7 @@ export class FieldMetadataRelationService {
       label: relationCreationPayload.targetFieldLabel,
       icon: relationCreationPayload.targetFieldIcon,
       workspaceId: fieldMetadataInput.workspaceId,
+      defaultValue: fieldMetadataInput.defaultValue,
     });
 
     const targetFieldMetadataToCreateWithRelation =
