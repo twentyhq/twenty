@@ -1,7 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataDefaultSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import {
@@ -11,54 +10,59 @@ import {
   objectMetadataItemMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { mapFieldMetadataToGraphqlQuery } from 'src/engine/api/rest/core/query-builder/utils/map-field-metadata-to-graphql-query.utils';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
 
 describe('mapFieldMetadataToGraphqlQuery', () => {
-  const typedFieldNumberMock: FieldMetadataInterface = {
-    id: 'field-number-id',
+  const typedFieldNumberMock = getMockFieldMetadataEntity({
+    workspaceId: '20202020-0000-0000-0000-000000000000',
+    objectMetadataId: '20202020-0000-0000-0000-000000000001',
+    id: '20202020-0000-0000-0000-000000000002',
     name: fieldNumberMock.name,
     type: fieldNumberMock.type,
     label: 'Field Number',
-    objectMetadataId: 'object-metadata-id',
     isNullable: fieldNumberMock.isNullable,
     defaultValue: fieldNumberMock.defaultValue,
     isLabelSyncedWithName: true,
     createdAt: new Date(),
     updatedAt: new Date(),
-  };
+  });
 
-  const typedFieldTextMock: FieldMetadataInterface = {
-    id: 'field-text-id',
+  const typedFieldTextMock = getMockFieldMetadataEntity({
+    workspaceId: '20202020-0000-0000-0000-000000000000',
+    objectMetadataId: '20202020-0000-0000-0000-000000000001',
+    id: '20202020-0000-0000-0000-000000000003',
     name: fieldTextMock.name,
     type: fieldTextMock.type,
     label: 'Field Text',
-    objectMetadataId: 'object-metadata-id',
     isNullable: fieldTextMock.isNullable,
     defaultValue: fieldTextMock.defaultValue,
     isLabelSyncedWithName: true,
     createdAt: new Date(),
     updatedAt: new Date(),
-  };
+  });
 
-  const typedFieldCurrencyMock: FieldMetadataInterface = {
-    id: 'field-currency-id',
+  const typedFieldCurrencyMock = getMockFieldMetadataEntity({
+    workspaceId: '20202020-0000-0000-0000-000000000000',
+    objectMetadataId: '20202020-0000-0000-0000-000000000001',
+    id: '20202020-0000-0000-0000-000000000004',
     name: fieldCurrencyMock.name,
     type: fieldCurrencyMock.type,
     label: 'Field Currency',
-    objectMetadataId: 'object-metadata-id',
     isNullable: fieldCurrencyMock.isNullable,
     defaultValue: fieldCurrencyMock.defaultValue,
     isLabelSyncedWithName: true,
     createdAt: new Date(),
     updatedAt: new Date(),
-  };
+  });
 
   const fieldsById: FieldMetadataMap = {
-    'field-number-id': typedFieldNumberMock,
-    'field-text-id': typedFieldTextMock,
-    'field-currency-id': typedFieldCurrencyMock,
+    'field-number-id': typedFieldNumberMock as FieldMetadataEntity,
+    'field-text-id': typedFieldTextMock as FieldMetadataEntity,
+    'field-currency-id': typedFieldCurrencyMock as FieldMetadataEntity,
   };
 
   const typedObjectMetadataItem: ObjectMetadataItemWithFieldMaps = {
@@ -86,19 +90,19 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
     expect(
       mapFieldMetadataToGraphqlQuery(
         objectMetadataMapsMock,
-        typedFieldNumberMock,
+        typedFieldNumberMock as FieldMetadataEntity,
       ),
     ).toEqual('fieldNumber');
     expect(
       mapFieldMetadataToGraphqlQuery(
         objectMetadataMapsMock,
-        typedFieldTextMock,
+        typedFieldTextMock as FieldMetadataEntity,
       ),
     ).toEqual('fieldText');
     expect(
       mapFieldMetadataToGraphqlQuery(
         objectMetadataMapsMock,
-        typedFieldCurrencyMock,
+        typedFieldCurrencyMock as FieldMetadataEntity,
       ),
     ).toEqual(`
       fieldCurrency
@@ -112,29 +116,25 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
   describe('should handle all field metadata types', () => {
     Object.values(FieldMetadataType).forEach((fieldMetadataType) => {
       it(`with field type ${fieldMetadataType}`, () => {
-        const field: FieldMetadataInterface = {
-          id: 'test-field-id',
+        const field = getMockFieldMetadataEntity({
+          workspaceId: '20202020-0000-0000-0000-000000000000',
+          objectMetadataId: '20202020-0000-0000-0000-000000000001',
+          id: '20202020-0000-0000-0000-000000000005',
           type: fieldMetadataType,
           name: 'toObjectMetadataName',
           label: 'Test Field',
-          objectMetadataId: 'object-metadata-id',
           isNullable: true,
           isLabelSyncedWithName: true,
           createdAt: new Date(),
           updatedAt: new Date(),
-        };
-
-        if (fieldMetadataType === FieldMetadataType.RELATION) {
-          field.settings = {
-            relationType: RelationType.MANY_TO_ONE,
-          } as FieldMetadataDefaultSettings;
-        }
-
-        if (fieldMetadataType === FieldMetadataType.MORPH_RELATION) {
-          field.settings = {
-            relationType: RelationType.MANY_TO_ONE,
-          } as FieldMetadataDefaultSettings;
-        }
+          settings:
+            fieldMetadataType === FieldMetadataType.RELATION ||
+            fieldMetadataType === FieldMetadataType.MORPH_RELATION
+              ? ({
+                  relationType: RelationType.MANY_TO_ONE,
+                } as FieldMetadataDefaultSettings)
+              : undefined,
+        });
 
         expect(
           mapFieldMetadataToGraphqlQuery(objectMetadataMapsMock, field),

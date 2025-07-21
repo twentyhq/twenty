@@ -39,6 +39,7 @@ import {
 import { BeforeUpdateOneField } from 'src/engine/metadata-modules/field-metadata/hooks/before-update-one-field.hook';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
+import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-fieldMetadata-dto.util';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { isMorphRelationFieldMetadataType } from 'src/engine/utils/is-morph-relation-field-metadata-type.util';
@@ -152,7 +153,7 @@ export class FieldMetadataResolver {
         workspaceId: workspace.id,
       });
 
-      if (!fieldMetadata.settings) {
+      if (!isDefined(fieldMetadata.settings)) {
         throw new FieldMetadataException(
           'Relation settings are required',
           FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
@@ -163,8 +164,10 @@ export class FieldMetadataResolver {
         type: fieldMetadata.settings.relationType,
         sourceObjectMetadata,
         targetObjectMetadata,
-        sourceFieldMetadata,
-        targetFieldMetadata,
+        sourceFieldMetadata:
+          fromFieldMetadataEntityToFieldMetadataDto(sourceFieldMetadata),
+        targetFieldMetadata:
+          fromFieldMetadataEntityToFieldMetadataDto(targetFieldMetadata),
       };
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(error);
@@ -198,12 +201,16 @@ export class FieldMetadataResolver {
         );
       }
 
-      return morphRelations.map((morphRelation) => ({
+      return morphRelations.map<RelationDTO>((morphRelation) => ({
         type: settings.relationType,
         sourceObjectMetadata: morphRelation.sourceObjectMetadata,
         targetObjectMetadata: morphRelation.targetObjectMetadata,
-        sourceFieldMetadata: morphRelation.sourceFieldMetadata,
-        targetFieldMetadata: morphRelation.targetFieldMetadata,
+        sourceFieldMetadata: fromFieldMetadataEntityToFieldMetadataDto(
+          morphRelation.sourceFieldMetadata,
+        ),
+        targetFieldMetadata: fromFieldMetadataEntityToFieldMetadataDto(
+          morphRelation.targetFieldMetadata,
+        ),
       }));
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(error);

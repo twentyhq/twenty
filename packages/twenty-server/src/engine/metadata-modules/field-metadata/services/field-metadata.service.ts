@@ -39,6 +39,7 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { isSelectOrMultiSelectFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/is-select-or-multi-select-field-metadata.util';
 import { prepareCustomFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/utils/prepare-custom-field-metadata-for-options.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -190,8 +191,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       const fieldMetadataForUpdate = {
         ...updatableFieldInput,
-        defaultValue: defaultValueForUpdate,
         ...optionsForUpdate,
+        defaultValue: defaultValueForUpdate,
       };
 
       await this.fieldMetadataValidationService.validateFieldMetadata({
@@ -379,7 +380,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
               name: isManyToOneRelation
                 ? computeObjectTargetTable(fieldMetadata.object)
                 : computeObjectTargetTable(
-                    fieldMetadata.relationTargetObjectMetadata,
+                    fieldMetadata.relationTargetObjectMetadata as ObjectMetadataEntity,
                   ),
               action: WorkspaceMigrationTableActionType.ALTER,
               columns: [

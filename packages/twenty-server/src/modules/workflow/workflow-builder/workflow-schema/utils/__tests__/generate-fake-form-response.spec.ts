@@ -56,44 +56,80 @@ describe('generateFakeFormResponse', () => {
       objectMetadataMaps: mockObjectMetadataMaps,
     });
 
-    expect(result).toEqual({
-      name: {
-        isLeaf: true,
-        label: 'Name',
-        type: FieldMetadataType.TEXT,
-        value: 'My text',
-        icon: undefined,
-      },
-      age: {
-        isLeaf: true,
-        label: 'Age',
-        type: FieldMetadataType.NUMBER,
-        value: 20,
-        icon: undefined,
-      },
-      company: {
-        isLeaf: false,
-        label: 'Company',
-        value: {
-          _outputSchemaType: 'RECORD',
-          fields: {},
-          object: {
-            isLeaf: true,
-            label: 'Company',
-            fieldIdName: 'id',
-            icon: 'test-company-icon',
-            nameSingular: 'company',
-            value: 'A company',
+    expect(result).toMatchInlineSnapshot(`
+{
+  "age": {
+    "icon": undefined,
+    "isLeaf": true,
+    "label": "Age",
+    "type": "NUMBER",
+    "value": 20,
+  },
+  "company": {
+    "isLeaf": false,
+    "label": "Company",
+    "value": {
+      "_outputSchemaType": "RECORD",
+      "fields": {
+        "domainName": {
+          "icon": "test-field-icon",
+          "isLeaf": false,
+          "label": "Domain Name",
+          "type": "LINKS",
+          "value": {
+            "primaryLinkLabel": {
+              "isLeaf": true,
+              "label": "Primary Link Label",
+              "type": "TEXT",
+              "value": "My text",
+            },
+            "primaryLinkUrl": {
+              "isLeaf": true,
+              "label": "Primary Link Url",
+              "type": "TEXT",
+              "value": "My text",
+            },
+            "secondaryLinks": {
+              "isLeaf": true,
+              "label": "Secondary Links",
+              "type": "RAW_JSON",
+              "value": null,
+            },
           },
         },
+        "name": {
+          "icon": "test-field-icon",
+          "isLeaf": true,
+          "label": "Name",
+          "type": "TEXT",
+          "value": "My text",
+        },
       },
-      date: {
-        isLeaf: true,
-        label: 'Date',
-        type: FieldMetadataType.DATE,
-        value: 'mm/dd/yyyy',
-        icon: undefined,
+      "object": {
+        "fieldIdName": "id",
+        "icon": "test-company-icon",
+        "isLeaf": true,
+        "label": "Company",
+        "nameSingular": "company",
+        "value": "A company",
       },
-    });
+    },
+  },
+  "date": {
+    "icon": undefined,
+    "isLeaf": true,
+    "label": "Date",
+    "type": "DATE",
+    "value": "mm/dd/yyyy",
+  },
+  "name": {
+    "icon": undefined,
+    "isLeaf": true,
+    "label": "Name",
+    "type": "TEXT",
+    "value": "My text",
+  },
+}
+`);
   });
 });
