@@ -10,7 +10,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
@@ -29,7 +28,7 @@ import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permi
   'namePlural',
   'workspaceId',
 ])
-export class ObjectMetadataEntity implements ObjectMetadataInterface {
+export class ObjectMetadataEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -52,14 +51,15 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   labelPlural: string;
 
   @Column({ nullable: true, type: 'text' })
-  description: string;
+  description: string | null;
 
   @Column({ nullable: true })
-  icon: string;
+  icon: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  standardOverrides?: ObjectStandardOverridesDTO;
+  standardOverrides: ObjectStandardOverridesDTO | null; 
 
+  // Is this a foreign key targetTableNameId ?
   @Column({ nullable: false })
   targetTableName: string;
 
@@ -82,16 +82,16 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   isSearchable: boolean;
 
   @Column({ type: 'jsonb', nullable: true })
-  duplicateCriteria?: WorkspaceEntityDuplicateCriteria[];
+  duplicateCriteria: WorkspaceEntityDuplicateCriteria[] | null;
 
   @Column({ nullable: true })
-  shortcut: string;
+  shortcut: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
-  labelIdentifierFieldMetadataId?: string | null;
+  labelIdentifierFieldMetadataId: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
-  imageIdentifierFieldMetadataId?: string | null;
+  imageIdentifierFieldMetadataId: string | null;
 
   @Column({ default: false })
   isLabelSyncedWithName: boolean;
