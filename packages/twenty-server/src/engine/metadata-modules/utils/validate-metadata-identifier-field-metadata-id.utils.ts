@@ -3,8 +3,6 @@ import {
   isLabelIdentifierFieldMetadataTypes,
 } from 'twenty-shared/utils';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   ObjectMetadataException,
@@ -14,14 +12,14 @@ import {
 type Validator = {
   validator: (args: {
     fieldMetadataId: string;
-    matchingFieldMetadata?: FieldMetadataEntity | FieldMetadataInterface;
+    matchingFieldMetadata?: FieldMetadataEntity;
   }) => boolean;
   label: string;
 };
 
 type ValidateMetadataIdentifierFieldMetadataIdOrThrowArgs = {
   fieldMetadataId: string;
-  fieldMetadataItems: FieldMetadataEntity[] | FieldMetadataInterface[];
+  fieldMetadataItems: FieldMetadataEntity[];
   validators: Validator[];
 };
 const validatorRunner = ({
@@ -46,7 +44,7 @@ const validatorRunner = ({
 type ValidateMetadataIdentifierFieldMetadataIdsArgs = {
   labelIdentifierFieldMetadataId: string | undefined;
   imageIdentifierFieldMetadataId: string | undefined;
-  fieldMetadataItems: FieldMetadataEntity[] | FieldMetadataInterface[];
+  fieldMetadataItems: FieldMetadataEntity[];
 };
 export const validateMetadataIdentifierFieldMetadataIds = ({
   imageIdentifierFieldMetadataId,

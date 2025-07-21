@@ -8,7 +8,6 @@ import {
 } from 'graphql';
 import { getUniqueConstraintsFields } from 'twenty-shared/utils';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import {
@@ -17,6 +16,7 @@ import {
 } from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { pascalCase } from 'src/utils/pascal-case';
 
@@ -63,7 +63,7 @@ export class RelationConnectInputTypeDefinitionFactory {
     objectMetadata: ObjectMetadataInterface,
   ): Record<string, GraphQLInputFieldConfig> {
     const uniqueConstraints = getUniqueConstraintsFields<
-      FieldMetadataInterface,
+      FieldMetadataEntity,
       ObjectMetadataInterface
     >(objectMetadata);
 
@@ -140,7 +140,7 @@ export class RelationConnectInputTypeDefinitionFactory {
     };
   }
 
-  private formatConstraints(constraints: FieldMetadataInterface[][]) {
+  private formatConstraints(constraints: FieldMetadataEntity[][]) {
     return constraints
       .map((constraint) => constraint.map((field) => field.name).join(' and '))
       .join(' or ');
