@@ -73,7 +73,7 @@ const EmailInputWithContext = ({
       focusId: instanceId,
       component: {
         type: FocusComponentType.OPENED_FIELD_INPUT,
-        instanceId,
+        instanceId: instanceId,
       },
     });
   }, [pushFocusItemToFocusStack, instanceId]);
@@ -81,7 +81,11 @@ const EmailInputWithContext = ({
   return (
     <I18nProvider i18n={i18n}>
       <SnackBarComponentInstanceContextProvider snackBarComponentInstanceId="snack-bar-manager">
-        <RecordFieldComponentInstanceContext.Provider value={{ instanceId }}>
+        <RecordFieldComponentInstanceContext.Provider
+          value={{
+            instanceId: instanceId,
+          }}
+        >
           <FieldContext.Provider
             value={{
               fieldDefinition: {
