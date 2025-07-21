@@ -15,9 +15,7 @@ export const orderWorkflowRunState = (value: JsonValue) => {
           workflowRunError: parsedValue.data.workflowRunError,
         }
       : {}),
-    ...{
-      stepInfos: parsedValue.data.stepInfos,
-    },
+    stepInfos: parsedValue.data.stepInfos,
     flow: parsedValue.data.flow,
   };
 
