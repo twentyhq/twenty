@@ -195,7 +195,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     update: StandardObjectUpdate;
     overrideKey: 'labelSingular' | 'labelPlural' | 'description' | 'icon';
     newValue: string;
-    originalValue: string;
+    originalValue: string | null;
     locale?: keyof typeof APP_LOCALES | undefined;
   }): boolean {
     if (locale && locale !== SOURCE_LOCALE) {
@@ -224,7 +224,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     update: StandardObjectUpdate,
     overrideKey: 'labelSingular' | 'labelPlural' | 'description' | 'icon',
     newValue: string,
-    originalValue: string,
+    originalValue: string | null,
     locale: keyof typeof APP_LOCALES,
   ): boolean {
     const messageId = generateMessageId(originalValue ?? '');
@@ -254,7 +254,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     update: StandardObjectUpdate,
     overrideKey: 'labelSingular' | 'labelPlural' | 'description' | 'icon',
     newValue: string,
-    originalValue: string,
+    originalValue: string | null,
   ): boolean {
     if (newValue !== originalValue) {
       return false;
