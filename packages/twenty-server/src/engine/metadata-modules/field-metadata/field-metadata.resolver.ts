@@ -39,7 +39,8 @@ import {
 import { BeforeUpdateOneField } from 'src/engine/metadata-modules/field-metadata/hooks/before-update-one-field.hook';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
-import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-fieldMetadata-dto.util';
+import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
+import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-object-metadata-entity-to-object-metadata-dto.util';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { isMorphRelationFieldMetadataType } from 'src/engine/utils/is-morph-relation-field-metadata-type.util';
@@ -162,8 +163,10 @@ export class FieldMetadataResolver {
 
       return {
         type: fieldMetadata.settings.relationType,
-        sourceObjectMetadata,
-        targetObjectMetadata,
+        sourceObjectMetadata:
+          fromObjectMetadataEntityToObjectMetadataDto(sourceObjectMetadata),
+        targetObjectMetadata:
+          fromObjectMetadataEntityToObjectMetadataDto(targetObjectMetadata),
         sourceFieldMetadata:
           fromFieldMetadataEntityToFieldMetadataDto(sourceFieldMetadata),
         targetFieldMetadata:
@@ -203,8 +206,12 @@ export class FieldMetadataResolver {
 
       return morphRelations.map<RelationDTO>((morphRelation) => ({
         type: settings.relationType,
-        sourceObjectMetadata: morphRelation.sourceObjectMetadata,
-        targetObjectMetadata: morphRelation.targetObjectMetadata,
+        sourceObjectMetadata: fromObjectMetadataEntityToObjectMetadataDto(
+          morphRelation.sourceObjectMetadata,
+        ),
+        targetObjectMetadata: fromObjectMetadataEntityToObjectMetadataDto(
+          morphRelation.targetObjectMetadata,
+        ),
         sourceFieldMetadata: fromFieldMetadataEntityToFieldMetadataDto(
           morphRelation.sourceFieldMetadata,
         ),

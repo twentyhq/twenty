@@ -1,12 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { DatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trigger/automated-trigger/listeners/database-event-trigger.listener';
 import { WorkflowTriggerJob } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
+import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
+import { getMockObjectMetadataItemWithFieldsMaps } from 'src/utils/__test__/get-object-metadata-item-with-fields-maps.mock';
 
 describe('DatabaseEventTriggerListener', () => {
   let listener: DatabaseEventTriggerListener;
@@ -54,27 +55,28 @@ describe('DatabaseEventTriggerListener', () => {
                   },
                 },
               },
-              objectMetadataItemWithFieldsMaps: {
-                id: 'test-object-metadata',
-                workspaceId: 'test-workspace',
-                nameSingular: 'testObject',
-                namePlural: 'testObjects',
-                labelSingular: 'Test Object',
-                labelPlural: 'Test Objects',
-                description: 'Test object for testing',
-                fieldIdByJoinColumnName: {},
-                fieldsById: {},
-                fieldIdByName: {},
-                indexMetadatas: [],
-                targetTableName: 'test_objects',
-                isSystem: false,
-                isCustom: false,
-                isActive: true,
-                isRemote: false,
-                isAuditLogged: true,
-                isSearchable: true,
-                icon: 'Icon123',
-              } satisfies ObjectMetadataItemWithFieldMaps,
+              objectMetadataItemWithFieldsMaps:
+                getMockObjectMetadataItemWithFieldsMaps({
+                  id: 'test-object-metadata',
+                  workspaceId: 'test-workspace',
+                  nameSingular: 'testObject',
+                  namePlural: 'testObjects',
+                  labelSingular: 'Test Object',
+                  labelPlural: 'Test Objects',
+                  description: 'Test object for testing',
+                  indexMetadatas: [],
+                  targetTableName: 'test_objects',
+                  isSystem: false,
+                  isCustom: false,
+                  isActive: true,
+                  isRemote: false,
+                  isAuditLogged: true,
+                  isSearchable: true,
+                  icon: 'Icon123',
+                  fieldIdByJoinColumnName: {},
+                  fieldsById: {},
+                  fieldIdByName: {},
+                }),
             }),
           },
         },
@@ -97,7 +99,7 @@ describe('DatabaseEventTriggerListener', () => {
       events: [
         {
           recordId: 'test-record',
-          objectMetadata: {
+          objectMetadata: getMockObjectMetadataEntity({
             id: 'test-object-metadata',
             workspaceId,
             nameSingular: 'testObject',
@@ -117,7 +119,7 @@ describe('DatabaseEventTriggerListener', () => {
             fields: [],
             indexMetadatas: [],
             icon: 'Icon123',
-          },
+          }),
           properties: {
             updatedFields: ['field1', 'field2'],
             before: { field1: 'old', field2: 'old' },

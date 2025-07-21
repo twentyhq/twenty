@@ -4,7 +4,7 @@ import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
 
 describe('setIgnoreColumn', () => {
   it('should return a column with type "ignored"', () => {
-    const column: SpreadsheetColumn = {
+    const column: SpreadsheetColumn<'John'> = {
       index: 0,
       header: 'Name',
       type: SpreadsheetColumnType.matched,

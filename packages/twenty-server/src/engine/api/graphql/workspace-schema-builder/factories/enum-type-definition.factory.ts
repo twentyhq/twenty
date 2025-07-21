@@ -4,13 +4,13 @@ import { GraphQLEnumType } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { transformEnumValue } from 'src/engine/utils/transform-enum-value';
 import { pascalCase } from 'src/utils/pascal-case';
@@ -50,7 +50,7 @@ export class EnumTypeDefinitionFactory {
 
   private generateEnum(
     objectName: string,
-    fieldMetadata: FieldMetadataInterface,
+    fieldMetadata: FieldMetadataEntity,
     options: WorkspaceBuildSchemaOptions,
   ): GraphQLEnumType {
     // FixMe: It's a hack until Typescript get fixed on union types for reduce function

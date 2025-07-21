@@ -6,7 +6,7 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export const generateObjectMetadataMaps = (
   objectMetadataCollection: ObjectMetadataInterface[],
@@ -21,10 +21,7 @@ export const generateObjectMetadataMaps = (
 
     for (const fieldMetadata of objectMetadata.fields) {
       if (
-        isFieldMetadataInterfaceOfType(
-          fieldMetadata,
-          FieldMetadataType.RELATION,
-        )
+        isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION)
       ) {
         if (fieldMetadata.settings?.joinColumnName) {
           fieldIdByJoinColumnNameMap[fieldMetadata.settings.joinColumnName] =

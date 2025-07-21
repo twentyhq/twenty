@@ -1,14 +1,13 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-
 import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 export const buildUpdatableStandardFieldInput = (
   fieldMetadataInput: UpdateFieldInput,
   existingFieldMetadata: Pick<
-    FieldMetadataInterface,
+    FieldMetadataEntity,
     'type' | 'isNullable' | 'defaultValue' | 'options'
   >,
 ) => {

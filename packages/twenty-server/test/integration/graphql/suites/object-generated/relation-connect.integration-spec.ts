@@ -29,11 +29,11 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       data: [
         {
           id: TEST_COMPANY_1_ID,
-          domainName: { primaryLinkUrl: 'https://company1.com' },
+          domainName: { primaryLinkUrl: 'company1.com' },
         },
         {
           id: TEST_COMPANY_2_ID,
-          domainName: { primaryLinkUrl: 'https://company2.com' },
+          domainName: { primaryLinkUrl: 'company2.com' },
         },
       ],
     });
@@ -58,7 +58,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
         id: TEST_PERSON_1_ID,
         company: {
           connect: {
-            where: { domainName: { primaryLinkUrl: 'https://company1.com' } },
+            where: { domainName: { primaryLinkUrl: 'company1.com' } },
           },
         },
       },
@@ -81,7 +81,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
           id: TEST_PERSON_1_ID,
           company: {
             connect: {
-              where: { domainName: { primaryLinkUrl: 'https://company1.com' } },
+              where: { domainName: { primaryLinkUrl: 'company1.com' } },
             },
           },
         },
@@ -89,7 +89,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
           id: TEST_PERSON_2_ID,
           company: {
             connect: {
-              where: { domainName: { primaryLinkUrl: 'https://company2.com' } },
+              where: { domainName: { primaryLinkUrl: 'company2.com' } },
             },
           },
         },
@@ -152,7 +152,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toBe(
-      'Expected 1 record to connect to company, but found 0 with conditions: [["domainNamePrimaryLinkUrl","not-existing-company"]].',
+      'Expected 1 record to connect to company, but found 0.',
     );
     expect(response.body.errors[0].extensions.code).toBe(
       ErrorCode.BAD_USER_INPUT,
