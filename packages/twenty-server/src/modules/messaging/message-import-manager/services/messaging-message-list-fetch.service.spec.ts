@@ -14,8 +14,8 @@ import { MessagingGetMessageListService } from 'src/modules/messaging/message-im
 import { MessageImportExceptionHandlerService } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service';
 
-describe('MessagingFullMessageListFetchService', () => {
-  let messagingFullMessageListFetchService: MessagingMessageListFetchService;
+describe('MessagingMessageListFetchService', () => {
+  let messagingMessageListFetchService: MessagingMessageListFetchService;
   let messagingGetMessageListService: MessagingGetMessageListService;
   let messageChannelSyncStatusService: MessageChannelSyncStatusService;
   let twentyORMManager: TwentyORMManager;
@@ -162,7 +162,7 @@ describe('MessagingFullMessageListFetchService', () => {
       ],
     }).compile();
 
-    messagingFullMessageListFetchService =
+    messagingMessageListFetchService =
       module.get<MessagingMessageListFetchService>(
         MessagingMessageListFetchService,
       );
@@ -180,7 +180,7 @@ describe('MessagingFullMessageListFetchService', () => {
   });
 
   it('should process Microsoft message list fetch correctly', async () => {
-    await messagingFullMessageListFetchService.processMessageListFetch(
+    await messagingMessageListFetchService.processMessageListFetch(
       mockMicrosoftMessageChannel,
       workspaceId,
     );
@@ -209,7 +209,7 @@ describe('MessagingFullMessageListFetchService', () => {
   });
 
   it('should process Google message list fetch correctly', async () => {
-    await messagingFullMessageListFetchService.processMessageListFetch(
+    await messagingMessageListFetchService.processMessageListFetch(
       mockGoogleMessageChannel,
       workspaceId,
     );

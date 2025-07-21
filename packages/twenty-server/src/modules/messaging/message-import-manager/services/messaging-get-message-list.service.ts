@@ -37,7 +37,7 @@ export class MessagingGetMessageListService {
       case ConnectedAccountProvider.GOOGLE:
         return [
           {
-            ...(await this.gmailGetMessageListService.getPartialMessageList(
+            ...(await this.gmailGetMessageListService.getMessageList(
               messageChannel.connectedAccount,
               messageChannel.syncCursor,
             )),
@@ -45,16 +45,15 @@ export class MessagingGetMessageListService {
           },
         ];
       case ConnectedAccountProvider.MICROSOFT:
-        return this.microsoftGetMessageListService.getPartialMessageListForFolders(
+        return this.microsoftGetMessageListService.getMessageListForFolders(
           messageChannel.connectedAccount,
           messageChannel,
         );
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV: {
-        const messageList =
-          await this.imapGetMessageListService.getPartialMessageList(
-            messageChannel.connectedAccount,
-            messageChannel.syncCursor,
-          );
+        const messageList = await this.imapGetMessageListService.getMessageList(
+          messageChannel.connectedAccount,
+          messageChannel.syncCursor,
+        );
 
         return [
           {

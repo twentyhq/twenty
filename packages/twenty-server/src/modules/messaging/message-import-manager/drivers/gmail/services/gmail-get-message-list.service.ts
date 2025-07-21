@@ -14,10 +14,7 @@ import { GmailGetHistoryService } from 'src/modules/messaging/message-import-man
 import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
 import { computeGmailCategoryExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-excude-search-filter.util';
 import { computeGmailCategoryLabelId } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-label-id.util';
-import {
-  GetFullMessageListResponse,
-  GetPartialMessageListResponse,
-} from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
+import { GetMessageListResponse } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import { assertNotNull } from 'src/utils/assert';
 
 @Injectable()
@@ -28,12 +25,12 @@ export class GmailGetMessageListService {
     private readonly gmailHandleErrorService: GmailHandleErrorService,
   ) {}
 
-  public async getFullMessageList(
+  private async _getMessageListWithoutCursor(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
       'provider' | 'refreshToken' | 'id' | 'handle'
     >,
-  ): Promise<GetFullMessageListResponse> {
+  ): Promise<GetMessageListResponse> {
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(connectedAccount);
 
@@ -81,6 +78,8 @@ export class GmailGetMessageListService {
       return {
         messageExternalIds,
         nextSyncCursor: '',
+        previousSyncCursor: '',
+        messageExternalIdsToDelete: [],
       };
     }
 
@@ -106,16 +105,21 @@ export class GmailGetMessageListService {
       );
     }
 
-    return { messageExternalIds, nextSyncCursor };
+    return {
+      messageExternalIds,
+      nextSyncCursor,
+      previousSyncCursor: '',
+      messageExternalIdsToDelete: [],
+    };
   }
 
-  public async getPartialMessageList(
+  public async getMessageList(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
       'provider' | 'refreshToken' | 'id'
     >,
     syncCursor: string,
-  ): Promise<GetPartialMessageListResponse> {
+  ): Promise<GetMessageListResponse> {
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(connectedAccount);
 

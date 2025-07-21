@@ -20,11 +20,10 @@ import { MicrosoftHandleErrorService } from 'src/modules/messaging/message-impor
 import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/folders';
 import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
 import {
-  GetFullMessageListForFoldersResponse,
-  GetFullMessageListResponse,
-  GetPartialMessageListForFoldersResponse,
-  GetPartialMessageListResponse,
+  GetMessageListForFoldersResponse,
+  GetMessageListResponse,
 } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
+
 // Microsoft API limit is 999 messages per request on this endpoint
 const MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT = 999;
 
@@ -36,99 +35,14 @@ export class MicrosoftGetMessageListService {
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
-  public async getFullMessageListForFolders(
-    connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'refreshToken' | 'id'
-    >,
-    folders: Pick<MessageFolderWorkspaceEntity, 'id' | 'name'>[],
-  ): Promise<GetFullMessageListForFoldersResponse[]> {
-    const result: GetFullMessageListForFoldersResponse[] = [];
-
-    for (const folder of folders) {
-      const response = await this.getFullMessageList(
-        connectedAccount,
-        folder.name as MessageFolderName,
-      );
-
-      result.push({
-        ...response,
-        folderId: folder.id,
-      });
-    }
-
-    return result;
-  }
-
-  public async getFullMessageList(
-    connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'refreshToken' | 'id'
-    >,
-    folderName: MessageFolderName,
-  ): Promise<GetFullMessageListResponse> {
-    const messageExternalIds: string[] = [];
-
-    const microsoftClient =
-      await this.microsoftClientProvider.getMicrosoftClient(connectedAccount);
-
-    const response: PageCollection = await microsoftClient
-      .api(`/me/mailfolders/${folderName}/messages/delta?$select=id`)
-      .version('beta')
-      .headers({
-        Prefer: `odata.maxpagesize=${MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT}, IdType="ImmutableId"`,
-      })
-      .get()
-      .catch((error) => {
-        if (isAccessTokenRefreshingError(error?.body)) {
-          throw new MessageImportDriverException(
-            error.message,
-            MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
-          );
-        }
-        this.microsoftHandleErrorService.handleMicrosoftGetMessageListError(
-          error,
-        );
-      });
-
-    const callback: PageIteratorCallback = (data) => {
-      messageExternalIds.push(data.id);
-
-      return true;
-    };
-
-    const pageIterator = new PageIterator(microsoftClient, response, callback, {
-      headers: {
-        Prefer: `odata.maxpagesize=${MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT}, IdType="ImmutableId"`,
-      },
-    });
-
-    await pageIterator.iterate().catch((error) => {
-      if (isAccessTokenRefreshingError(error?.body)) {
-        throw new MessageImportDriverException(
-          error.message,
-          MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
-        );
-      }
-      this.microsoftHandleErrorService.handleMicrosoftGetMessageListError(
-        error,
-      );
-    });
-
-    return {
-      messageExternalIds: messageExternalIds,
-      nextSyncCursor: pageIterator.getDeltaLink() || '',
-    };
-  }
-
-  public async getPartialMessageListForFolders(
+  public async getMessageListForFolders(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
       'provider' | 'refreshToken' | 'id'
     >,
     messageChannel: MessageChannelWorkspaceEntity,
-  ): Promise<GetPartialMessageListForFoldersResponse[]> {
-    const result: GetPartialMessageListForFoldersResponse[] = [];
+  ): Promise<GetMessageListForFoldersResponse[]> {
+    const result: GetMessageListForFoldersResponse[] = [];
 
     if (messageChannel.messageFolders.length === 0) {
       // permanent solution:
@@ -158,7 +72,7 @@ export class MicrosoftGetMessageListService {
         syncCursor: messageChannel.syncCursor,
       });
 
-      const response = await this.getPartialMessageList(
+      const response = await this.getMessageList(
         connectedAccount,
         messageChannel.syncCursor,
       );
@@ -174,7 +88,7 @@ export class MicrosoftGetMessageListService {
     }
 
     for (const folder of messageChannel.messageFolders) {
-      const response = await this.getPartialMessageList(
+      const response = await this.getMessageList(
         connectedAccount,
         folder.syncCursor,
       );
@@ -188,13 +102,13 @@ export class MicrosoftGetMessageListService {
     return result;
   }
 
-  public async getPartialMessageList(
+  public async getMessageList(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
       'provider' | 'refreshToken' | 'id'
     >,
     syncCursor: string,
-  ): Promise<GetPartialMessageListResponse> {
+  ): Promise<GetMessageListResponse> {
     // important: otherwise tries to get the full message list
     if (!syncCursor) {
       throw new MessageImportDriverException(

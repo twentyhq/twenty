@@ -44,7 +44,7 @@ xdescribe('Microsoft dev tests : get message list service', () => {
   });
 
   it('Should fetch and return message list successfully', async () => {
-    const result = await service.getFullMessageList(
+    const result = await service.getMessageList(
       mockConnectedAccount,
       MessageFolderName.INBOX,
     );
@@ -60,7 +60,7 @@ xdescribe('Microsoft dev tests : get message list service', () => {
     };
 
     await expect(
-      service.getFullMessageList(
+      service.getMessageList(
         mockConnectedAccountUnvalid,
         MessageFolderName.INBOX,
       ),
@@ -69,7 +69,7 @@ xdescribe('Microsoft dev tests : get message list service', () => {
 
   // if you need to run this test, you need to manually update the syncCursor to a valid one
   xit('Should fetch and return partial message list successfully', async () => {
-    const result = await service.getPartialMessageList(
+    const result = await service.getMessageList(
       mockConnectedAccount,
       syncCursor,
     );
@@ -79,7 +79,7 @@ xdescribe('Microsoft dev tests : get message list service', () => {
 
   it('Should fail partial message if syncCursor is invalid', async () => {
     await expect(
-      service.getPartialMessageList(mockConnectedAccount, 'invalid-syncCursor'),
+      service.getMessageList(mockConnectedAccount, 'invalid-syncCursor'),
     ).rejects.toThrowError(
       /Resource not found for the segment|Badly formed content/g,
     );
@@ -87,83 +87,12 @@ xdescribe('Microsoft dev tests : get message list service', () => {
 
   it('Should fail partial message if syncCursor is missing', async () => {
     await expect(
-      service.getPartialMessageList(mockConnectedAccount, ''),
+      service.getMessageList(mockConnectedAccount, ''),
     ).rejects.toThrowError(/Missing SyncCursor/g);
   });
 });
 
-xdescribe('Microsoft dev tests : get full message list service for folders', () => {
-  let service: MicrosoftGetMessageListService;
-
-  const inboxFolder = new MessageFolderWorkspaceEntity();
-
-  inboxFolder.id = 'inbox-folder-id';
-  inboxFolder.name = MessageFolderName.INBOX;
-  inboxFolder.syncCursor = 'inbox-sync-cursor';
-  inboxFolder.messageChannelId = 'message-channel-1';
-
-  const sentFolder = new MessageFolderWorkspaceEntity();
-
-  sentFolder.id = 'sent-folder-id';
-  sentFolder.name = MessageFolderName.SENT_ITEMS;
-  sentFolder.syncCursor = 'sent-sync-cursor';
-  sentFolder.messageChannelId = 'message-channel-1';
-
-  const otherFolder = new MessageFolderWorkspaceEntity();
-
-  otherFolder.id = 'other-folder-id';
-  otherFolder.name = 'other';
-  otherFolder.syncCursor = 'other-sync-cursor';
-  otherFolder.messageChannelId = 'message-channel-2';
-
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [TwentyConfigModule.forRoot()],
-      providers: [
-        MicrosoftGetMessageListService,
-        MicrosoftClientProvider,
-        MicrosoftHandleErrorService,
-        MicrosoftOAuth2ClientManagerService,
-        ConfigService,
-      ],
-    }).compile();
-
-    service = module.get<MicrosoftGetMessageListService>(
-      MicrosoftGetMessageListService,
-    );
-  });
-
-  it('Should return empty array', async () => {
-    const result = await service.getFullMessageListForFolders(
-      mockConnectedAccount,
-      [],
-    );
-
-    expect(result.length).toBe(0);
-  });
-
-  it('Should return an array of one item', async () => {
-    const result = await service.getFullMessageListForFolders(
-      mockConnectedAccount,
-      [inboxFolder],
-    );
-
-    expect(result.length).toBe(1);
-    expect(result[0].folderId).toBe(inboxFolder.id);
-    expect(result[0].messageExternalIds.length).toBeGreaterThan(0);
-  });
-
-  it('Should return an array of two items', async () => {
-    const result = await service.getFullMessageListForFolders(
-      mockConnectedAccount,
-      [inboxFolder, sentFolder],
-    );
-
-    expect(result.length).toBe(2);
-  });
-});
-
-xdescribe('Microsoft dev tests : get partial message list service for folders', () => {
+xdescribe('Microsoft dev tests : get message list service for folders', () => {
   let service: MicrosoftGetMessageListService;
 
   const inboxFolder = new MessageFolderWorkspaceEntity();
@@ -234,7 +163,7 @@ xdescribe('Microsoft dev tests : get partial message list service for folders', 
   });
 
   it('Should return empty array', async () => {
-    const result = await service.getPartialMessageListForFolders(
+    const result = await service.getMessageListForFolders(
       mockConnectedAccount,
       messageChannelNoFolders,
     );
@@ -243,7 +172,7 @@ xdescribe('Microsoft dev tests : get partial message list service for folders', 
   });
 
   it('Should return an array of one items', async () => {
-    const result = await service.getPartialMessageListForFolders(
+    const result = await service.getMessageListForFolders(
       mockConnectedAccount,
       messageChannelMicrosoftOneFolder,
     );
@@ -254,7 +183,7 @@ xdescribe('Microsoft dev tests : get partial message list service for folders', 
   });
 
   it('Should return an array of two items', async () => {
-    const result = await service.getPartialMessageListForFolders(
+    const result = await service.getMessageListForFolders(
       mockConnectedAccount,
       messageChannelMicrosoft,
     );

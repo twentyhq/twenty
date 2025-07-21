@@ -74,7 +74,7 @@ describe('GmailGetMessageListService', () => {
         mockGmailClient,
       );
 
-      const result = await service.getFullMessageList(mockConnectedAccount);
+      const result = await service.getMessageList(mockConnectedAccount, '');
 
       expect(result.messageExternalIds).toHaveLength(0);
       expect(mockGmailClient.users.messages.list).toHaveBeenCalledTimes(1);
@@ -121,7 +121,7 @@ describe('GmailGetMessageListService', () => {
         mockGmailClient,
       );
 
-      const result = await service.getFullMessageList(mockConnectedAccount);
+      const result = await service.getMessageList(mockConnectedAccount, '');
 
       expect(result.messageExternalIds).toHaveLength(5);
     });
@@ -168,7 +168,7 @@ describe('GmailGetMessageListService', () => {
         mockGmailClient,
       );
 
-      const result = await service.getFullMessageList(mockConnectedAccount);
+      const result = await service.getMessageList(mockConnectedAccount, '');
 
       expect(result.messageExternalIds).toHaveLength(3);
       expect(mockGmailClient.users.messages.list).toHaveBeenCalledTimes(2);
@@ -196,7 +196,7 @@ describe('GmailGetMessageListService', () => {
         mockGmailClient,
       );
 
-      const result = await service.getFullMessageList(mockConnectedAccount);
+      const result = await service.getMessageList(mockConnectedAccount, '');
 
       expect(result.messageExternalIds).toHaveLength(0);
       expect(mockGmailClient.users.messages.list).toHaveBeenCalledTimes(1);
