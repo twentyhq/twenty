@@ -4,7 +4,7 @@ import { WorkflowDiagramCanvasReadonlyEffect } from '@/workflow/workflow-diagram
 import { WorkflowDiagramDefaultEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramDefaultEdge';
 import { WorkflowDiagramEmptyTrigger } from '@/workflow/workflow-diagram/components/WorkflowDiagramEmptyTrigger';
 import { WorkflowDiagramStepNodeReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeReadonly';
-import { WorkflowDiagramSuccessEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramSuccessEdge';
+import { WorkflowDiagramV1EdgeReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramV1EdgeReadonly';
 import { WorkflowVisualizerDiagramContextProvider } from '@/workflow/workflow-diagram/contexts/WorkflowVisualizerDiagramContext';
 import { useOpenWorkflowViewFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowViewFilterInCommandMenu';
 import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps';
@@ -36,7 +36,7 @@ export const WorkflowDiagramCanvasReadonly = ({
           }}
           edgeTypes={{
             default: WorkflowDiagramDefaultEdge,
-            success: WorkflowDiagramSuccessEdge,
+            v1: WorkflowDiagramV1EdgeReadonly,
           }}
           tagContainerTestId="workflow-visualizer-status"
           tagColor={tagProps.color}

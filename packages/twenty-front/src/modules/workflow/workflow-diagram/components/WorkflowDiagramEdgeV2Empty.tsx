@@ -19,14 +19,7 @@ export const WorkflowDiagramEdgeV2Empty = ({
   parentStepId,
   nextStepId,
 }: WorkflowDiagramEdgeV2EmptyProps) => {
-  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
-    workflowVisualizerWorkflowIdComponentState,
-  );
-  const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
-  assertWorkflowWithCurrentVersionIsDefined(workflow);
-
-  const { createStep } = useCreateStep({ workflow });
-  const { startNodeCreation } = useStartNodeCreation();
+  
 
   return (
     <WorkflowDiagramEdgeV2EmptyContent

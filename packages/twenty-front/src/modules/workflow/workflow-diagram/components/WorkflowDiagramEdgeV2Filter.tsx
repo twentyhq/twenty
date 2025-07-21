@@ -31,13 +31,7 @@ export const WorkflowDiagramEdgeV2Filter = ({
   name,
   runStatus,
 }: WorkflowDiagramEdgeV2FilterProps) => {
-  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
-    workflowVisualizerWorkflowIdComponentState,
-  );
-  const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
-
-  const { deleteStep } = useDeleteStep({ workflow });
-  const { startNodeCreation } = useStartNodeCreation();
+  
 
   return (
     <WorkflowDiagramEdgeV2FilterContent

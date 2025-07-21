@@ -9,17 +9,26 @@ const EMPTY_DIAGRAM: WorkflowDiagram = {
   edges: [],
 };
 
-export const getWorkflowVersionDiagram = (
-  workflowVersion: WorkflowVersion | undefined,
-): WorkflowDiagram => {
+export const getWorkflowVersionDiagram = ({
+  workflowVersion,
+  isWorkflowFilteringEnabled,
+  isEditable,
+}: {
+  workflowVersion: WorkflowVersion | undefined;
+  isWorkflowFilteringEnabled: boolean;
+  isEditable: boolean;
+}): WorkflowDiagram => {
   if (!isDefined(workflowVersion)) {
     return EMPTY_DIAGRAM;
   }
 
-  return transformFilterNodesAsEdges(
-    generateWorkflowDiagram({
+  return transformFilterNodesAsEdges({
+    diagram: generateWorkflowDiagram({
       trigger: workflowVersion.trigger ?? undefined,
       steps: workflowVersion.steps ?? [],
+      isWorkflowFilteringEnabled,
+      isEditable,
     }),
-  );
+    isEditable,
+  });
 };

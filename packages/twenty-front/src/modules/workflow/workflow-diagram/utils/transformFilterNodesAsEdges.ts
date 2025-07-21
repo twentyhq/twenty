@@ -1,13 +1,17 @@
 import {
   WorkflowDiagram,
   WorkflowDiagramEdge,
+  WorkflowDiagramEdgeType,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { isDefined } from 'twenty-shared/utils';
 
 export const transformFilterNodesAsEdges = ({
-  nodes,
-  edges,
-}: WorkflowDiagram): WorkflowDiagram => {
+  diagram: { nodes, edges },
+  isEditable,
+}: {
+  diagram: WorkflowDiagram;
+  isEditable: boolean;
+}): WorkflowDiagram => {
   const filterNodes = nodes.filter(
     (node) =>
       node.data.nodeType === 'action' &&
@@ -39,8 +43,13 @@ export const transformFilterNodesAsEdges = ({
         throw new Error('Expected the filter node to be of action type');
       }
 
+      const newEdgeType: WorkflowDiagramEdgeType = isEditable
+        ? 'filter-editable'
+        : 'filter-readonly';
+
       const newEdge: WorkflowDiagramEdge = {
         ...incomingEdge,
+        type: newEdgeType,
         id: `${incomingEdge.source}-${outgoingEdge.target}-filter-${filterNode.id}`,
         target: outgoingEdge.target,
         data: {
@@ -50,7 +59,6 @@ export const transformFilterNodesAsEdges = ({
           filterSettings: {},
           name: filterNode.data.name,
           runStatus: filterNode.data.runStatus,
-          isEdgeEditable: false,
         },
       };
 

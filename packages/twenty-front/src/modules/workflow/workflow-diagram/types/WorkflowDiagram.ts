@@ -69,12 +69,10 @@ export type WorkflowDiagramFilterEdgeData = {
   filterSettings: FilterSettings;
   name: string;
   runStatus?: WorkflowRunStepStatus;
-  isEdgeEditable: boolean;
 };
 
 export type WorkflowDiagramDefaultEdgeData = {
   edgeType: 'default';
-  isEdgeEditable: boolean;
 };
 
 export type WorkflowDiagramEdgeData =
@@ -86,4 +84,14 @@ export type WorkflowDiagramNodeType =
   | 'empty-trigger'
   | 'create-step';
 
-export type WorkflowDiagramEdgeType = 'default' | 'success';
+export type WorkflowDiagramEdgeType =
+  | 'blank'
+  | 'v1-editable'
+  | 'v1-readonly'
+  | 'v1-run'
+  | 'empty-filter-editable'
+  | 'empty-filter-readonly'
+  | 'empty-filter-run'
+  | 'filter-editable'
+  | 'filter-readonly'
+  | 'filter-run';

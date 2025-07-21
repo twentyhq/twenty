@@ -6,6 +6,7 @@ import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workf
 import {
   WorkflowDiagram,
   WorkflowDiagramEdge,
+  WorkflowDiagramEdgeType,
   WorkflowDiagramNode,
   WorkflowDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -70,9 +71,13 @@ const groupStepsByLevel = (steps: WorkflowStep[]): WorkflowStep[][] => {
 export const generateWorkflowDiagram = ({
   trigger,
   steps,
+  isWorkflowFilteringEnabled,
+  isEditable,
 }: {
   trigger: WorkflowTrigger | undefined;
   steps: Array<WorkflowStep>;
+  isWorkflowFilteringEnabled: boolean;
+  isEditable: boolean;
 }): WorkflowDiagram => {
   const nodes: Array<WorkflowDiagramNode> = [];
 
@@ -110,8 +115,16 @@ export const generateWorkflowDiagram = ({
   }
 
   for (const firstLevelStep of stepsGroupedByLevel[0] || []) {
+    let edgeType: WorkflowDiagramEdgeType;
+    if (isWorkflowFilteringEnabled) {
+      edgeType = isEditable ? 'empty-filter-editable' : 'empty-filter-readonly';
+    } else {
+      edgeType = isEditable ? 'v1-editable' : 'v1-readonly';
+    }
+
     edges.push({
       ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
+      type: edgeType,
       id: v4(),
       source: TRIGGER_STEP_ID,
       target: firstLevelStep.id,
@@ -120,8 +133,18 @@ export const generateWorkflowDiagram = ({
 
   for (const step of steps) {
     step.nextStepIds?.forEach((child) => {
+      let edgeType: WorkflowDiagramEdgeType;
+      if (isWorkflowFilteringEnabled) {
+        edgeType = isEditable
+          ? 'empty-filter-editable'
+          : 'empty-filter-readonly';
+      } else {
+        edgeType = isEditable ? 'v1-editable' : 'v1-readonly';
+      }
+
       edges.push({
         ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
+        type: edgeType,
         id: v4(),
         source: step.id,
         target: child,
