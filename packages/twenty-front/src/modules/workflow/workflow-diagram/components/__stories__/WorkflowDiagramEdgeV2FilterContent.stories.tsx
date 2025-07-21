@@ -1,3 +1,4 @@
+import { WorkflowVisualizerDiagramContextProvider } from '@/workflow/workflow-diagram/contexts/WorkflowVisualizerDiagramContext';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
@@ -8,6 +9,8 @@ import {
 } from 'twenty-ui/testing';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { WorkflowDiagramEdgeV2FilterContent } from '../WorkflowDiagramEdgeV2FilterContent';
+
+const openFilterInCommandMenu = fn();
 
 const meta: Meta<typeof WorkflowDiagramEdgeV2FilterContent> = {
   title: 'Modules/Workflow/WorkflowDiagramEdgeV2FilterContent',
@@ -25,7 +28,13 @@ const meta: Meta<typeof WorkflowDiagramEdgeV2FilterContent> = {
             instanceId: workflowVisualizerComponentInstanceId,
           }}
         >
-          <Story />
+          <WorkflowVisualizerDiagramContextProvider
+            value={{
+              openFilterInCommandMenu,
+            }}
+          >
+            <Story />
+          </WorkflowVisualizerDiagramContextProvider>
         </WorkflowVisualizerComponentInstanceContext.Provider>
       );
     },
