@@ -6,6 +6,7 @@ import { capitalize } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { baseSchema } from 'src/engine/core-modules/open-api/utils/base-schema.utils';
 import {
   computeMetadataSchemaComponents,
@@ -36,9 +37,13 @@ import {
   getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { getServerUrl } from 'src/utils/get-server-url';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
+import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
+import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
+import { getServerUrl } from 'src/utils/get-server-url';
 
 @Injectable()
 export class OpenApiService {
@@ -46,6 +51,7 @@ export class OpenApiService {
     private readonly accessTokenService: AccessTokenService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly objectMetadataService: ObjectMetadataService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async generateCoreSchema(request: Request): Promise<OpenAPIV3_1.Document> {
@@ -57,11 +63,13 @@ export class OpenApiService {
     const schema = baseSchema('core', baseUrl);
 
     let objectMetadataItems;
+    let workspace;
 
     try {
-      const { workspace } =
+      const authResult =
         await this.accessTokenService.validateTokenByRequest(request);
 
+      workspace = authResult.workspace;
       workspaceValidator.assertIsDefinedOrThrow(workspace);
 
       objectMetadataItems =
@@ -77,7 +85,34 @@ export class OpenApiService {
     if (!objectMetadataItems.length) {
       return schema;
     }
-    schema.paths = objectMetadataItems.reduce((paths, item) => {
+
+    const workspaceFeatureFlagsMap =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspace.id);
+
+    const filteredObjectMetadataItems = objectMetadataItems.filter((item) => {
+      const workspaceEntity = standardObjectMetadataDefinitions.find(
+        (entity: typeof BaseWorkspaceEntity) => {
+          const entityMetadata = metadataArgsStorage.filterEntities(entity);
+
+          return entityMetadata?.standardId === item.standardId;
+        },
+      );
+
+      if (!workspaceEntity) {
+        return true;
+      }
+
+      const entityMetadata =
+        metadataArgsStorage.filterEntities(workspaceEntity);
+
+      return !isGatedAndNotEnabled(
+        entityMetadata?.gate,
+        workspaceFeatureFlagsMap,
+        'workspaceApi',
+      );
+    });
+
+    schema.paths = filteredObjectMetadataItems.reduce((paths, item) => {
       paths[`/${item.namePlural}`] = computeManyResultPath(item);
       paths[`/batch/${item.namePlural}`] = computeBatchPath(item);
       paths[`/${item.namePlural}/{id}`] = computeSingleResultPath(item);
@@ -87,7 +122,7 @@ export class OpenApiService {
       return paths;
     }, schema.paths as OpenAPIV3_1.PathsObject);
 
-    schema.webhooks = objectMetadataItems.reduce(
+    schema.webhooks = filteredObjectMetadataItems.reduce(
       (paths, item) => {
         paths[
           this.createWebhookEventName(
@@ -116,17 +151,13 @@ export class OpenApiService {
       >,
     );
 
-    schema.tags = computeSchemaTags(objectMetadataItems);
-
     schema.components = {
-      ...schema.components, // components.securitySchemes is defined in base Schema
-      schemas: computeSchemaComponents(objectMetadataItems),
-      parameters: computeParameterComponents(),
-      responses: {
-        '400': get400ErrorResponses(),
-        '401': get401ErrorResponses(),
-      },
+      ...schema.components,
+      ...computeSchemaComponents(filteredObjectMetadataItems),
+      ...computeParameterComponents(),
     };
+
+    schema.tags = computeSchemaTags(filteredObjectMetadataItems);
 
     return schema;
   }
