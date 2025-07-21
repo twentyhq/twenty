@@ -47,13 +47,13 @@ export class View {
   @Column({ nullable: false, default: 'table' })
   type: string;
 
-  @Column({ nullable: true, type: 'text' })
+  @Column({ nullable: true, type: 'text', default: 'INDEX' })
   key: string;
 
   @Column({ nullable: false, type: 'text' })
   icon: string;
 
-  @Column({ nullable: false, type: 'uuid' })
+  @Column({ nullable: false, type: 'text' })
   kanbanFieldMetadataId: string;
 
   @Column({ nullable: false, type: 'int', default: 0 })
@@ -92,7 +92,6 @@ export class View {
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt?: Date | null;
 
-  // Relations
   @ManyToOne(() => Workspace, {
     onDelete: 'CASCADE',
   })

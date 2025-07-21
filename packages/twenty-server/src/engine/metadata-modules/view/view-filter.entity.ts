@@ -34,6 +34,15 @@ export class ViewFilter {
   @Column({ nullable: false, type: 'text' })
   value: string;
 
+  @Column({ nullable: true, type: 'uuid' })
+  viewFilterGroupId?: string | null;
+
+  @Column({ nullable: true, type: 'int' })
+  positionInViewFilterGroup?: number | null;
+
+  @Column({ nullable: true, type: 'text', default: null })
+  subFieldName?: string | null;
+
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;
 
@@ -49,7 +58,6 @@ export class ViewFilter {
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt?: Date | null;
 
-  // Relations
   @ManyToOne(() => Workspace, {
     onDelete: 'CASCADE',
   })

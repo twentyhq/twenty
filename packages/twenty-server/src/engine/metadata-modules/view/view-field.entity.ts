@@ -64,7 +64,6 @@ export class ViewField {
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt?: Date | null;
 
-  // Relations
   @ManyToOne(() => Workspace, {
     onDelete: 'CASCADE',
   })

@@ -50,7 +50,6 @@ export class ViewSort {
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt?: Date | null;
 
-  // Relations
   @ManyToOne(() => Workspace, {
     onDelete: 'CASCADE',
   })
