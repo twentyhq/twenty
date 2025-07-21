@@ -9,15 +9,12 @@ import { useHandleWorkflowRunDiagramCanvasInit } from '@/workflow/workflow-diagr
 import { useOpenWorkflowRunFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowRunFilterInCommandMenu';
 import { getWorkflowRunStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps';
 import { ReactFlowProvider } from '@xyflow/react';
-import { useIcons } from 'twenty-ui/display';
 
 export const WorkflowRunDiagramCanvas = ({
   workflowRunStatus,
 }: {
   workflowRunStatus: WorkflowRunStatus;
 }) => {
-  const { getIcon } = useIcons();
-
   const tagProps = getWorkflowRunStatusTagProps({
     workflowRunStatus,
   });

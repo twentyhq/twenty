@@ -39,6 +39,35 @@ it('returns the expected name for a MANUAL trigger with a defined objectType', (
   ).toBe('Manual trigger for Company');
 });
 
+it('returns the expected name for a CRON trigger', () => {
+  expect(
+    getTriggerStepName({
+      type: 'CRON',
+      name: '',
+      settings: {
+        type: 'DAYS',
+        schedule: { day: 1, hour: 0, minute: 0 },
+        outputSchema: {},
+      },
+    }),
+  ).toBe('On a schedule');
+});
+
+it('returns the expected name for a WEBHOOK trigger', () => {
+  expect(
+    getTriggerStepName({
+      type: 'WEBHOOK',
+      name: '',
+      settings: {
+        httpMethod: 'POST',
+        outputSchema: {},
+        expectedBody: {},
+        authentication: 'API_KEY',
+      },
+    }),
+  ).toBe('Webhook');
+});
+
 it('throws when an unknown trigger type is provided', () => {
   expect(() => {
     getTriggerStepName({

@@ -1,7 +1,4 @@
-import {
-  WorkflowDatabaseEventTrigger,
-  WorkflowTrigger,
-} from '@/workflow/types/Workflow';
+import { WorkflowTrigger } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
 import { capitalize, isDefined } from 'twenty-shared/utils';
@@ -9,7 +6,7 @@ import { capitalize, isDefined } from 'twenty-shared/utils';
 export const getTriggerStepName = (trigger: WorkflowTrigger): string => {
   switch (trigger.type) {
     case 'DATABASE_EVENT':
-      return getDatabaseEventTriggerStepName(trigger);
+      return getTriggerDefaultLabel(trigger);
     case 'CRON':
       return 'On a schedule';
     case 'WEBHOOK':
@@ -23,12 +20,4 @@ export const getTriggerStepName = (trigger: WorkflowTrigger): string => {
   }
 
   return assertUnreachable(trigger);
-};
-
-const getDatabaseEventTriggerStepName = (
-  trigger: WorkflowDatabaseEventTrigger,
-): string => {
-  const defaultLabel = getTriggerDefaultLabel(trigger);
-
-  return defaultLabel ?? '';
 };
