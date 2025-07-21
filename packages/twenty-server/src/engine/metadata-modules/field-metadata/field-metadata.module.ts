@@ -112,6 +112,7 @@ import { FieldMetadataService } from './services/field-metadata.service';
   exports: [
     FieldMetadataService,
     FieldMetadataRelationService,
+    FieldMetadataMorphRelationService,
     FieldMetadataRelatedRecordsService,
     FieldMetadataEnumValidationService,
     FieldMetadataValidationService,

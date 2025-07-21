@@ -5,9 +5,10 @@ exports[`Field metadata morph relation creation should fail relation MANY_TO_ONE
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "userFriendlyMessage": "An error occurred.",
+      "subCode": "Name not available",
+      "userFriendlyMessage": "This name is not available as it is already used by another field",
     },
-    "message": "Name "collisionfieldlabel" is not available",
+    "message": "Name "collisionfieldlabel" is not available as it is already used by another field",
     "name": "UserInputError",
   },
 ]
@@ -18,6 +19,7 @@ exports[`Field metadata morph relation creation should fail relation MANY_TO_ONE
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "Invalid label",
       "userFriendlyMessage": "An error occurred.",
     },
     "message": "Invalid label: "   "",
@@ -31,6 +33,7 @@ exports[`Field metadata morph relation creation should fail relation MANY_TO_ONE
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "Exceeds max length",
       "userFriendlyMessage": "An error occurred.",
     },
     "message": "Name is too long: it exceeds the 63 characters limit.",
@@ -44,6 +47,7 @@ exports[`Field metadata morph relation creation should fail relation MANY_TO_ONE
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "Input too short",
       "userFriendlyMessage": "An error occurred.",
     },
     "message": "Input is too short: """,
@@ -98,9 +102,10 @@ exports[`Field metadata morph relation creation should fail relation ONE_TO_MANY
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "userFriendlyMessage": "An error occurred.",
+      "subCode": "Name not available",
+      "userFriendlyMessage": "This name is not available as it is already used by another field",
     },
-    "message": "Name "collisionfieldlabel" is not available",
+    "message": "Name "collisionfieldlabel" is not available as it is already used by another field",
     "name": "UserInputError",
   },
 ]
@@ -111,6 +116,7 @@ exports[`Field metadata morph relation creation should fail relation ONE_TO_MANY
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "Invalid label",
       "userFriendlyMessage": "An error occurred.",
     },
     "message": "Invalid label: "   "",
@@ -124,6 +130,7 @@ exports[`Field metadata morph relation creation should fail relation ONE_TO_MANY
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "Exceeds max length",
       "userFriendlyMessage": "An error occurred.",
     },
     "message": "Name is too long: it exceeds the 63 characters limit.",
@@ -137,6 +144,7 @@ exports[`Field metadata morph relation creation should fail relation ONE_TO_MANY
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "Input too short",
       "userFriendlyMessage": "An error occurred.",
     },
     "message": "Input is too short: """,

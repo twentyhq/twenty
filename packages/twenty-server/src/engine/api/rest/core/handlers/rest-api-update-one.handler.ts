@@ -10,7 +10,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
-import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 
 @Injectable()
 export class RestApiUpdateOneHandler extends RestApiBaseHandler {
@@ -36,16 +35,6 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
     const updatedRecord = await repository.save({
       ...recordToUpdate,
       ...overriddenBody,
-    });
-
-    this.apiEventEmitterService.emitUpdateEvents({
-      existingRecords: [recordToUpdate],
-      records: [updatedRecord],
-      updatedFields: Object.keys(request.body),
-      authContext: this.getAuthContextFromRequest(request),
-      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-        objectMetadata.objectMetadataMapItem,
-      ),
     });
 
     const records = await this.getRecord({

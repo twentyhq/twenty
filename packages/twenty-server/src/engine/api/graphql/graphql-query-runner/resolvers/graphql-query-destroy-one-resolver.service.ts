@@ -16,8 +16,6 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
-import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
 export class GraphqlQueryDestroyOneResolverService extends GraphqlQueryBaseResolverService<
@@ -42,38 +40,25 @@ export class GraphqlQueryDestroyOneResolverService extends GraphqlQueryBaseResol
       objectMetadataItemWithFieldMaps,
     });
 
-    const nonFormattedDeletedObjectRecords = await queryBuilder
+    const deletedObjectRecords = await queryBuilder
       .delete()
       .where({ id: executionArgs.args.id })
       .returning(columnsToReturn)
       .execute();
 
-    if (!nonFormattedDeletedObjectRecords.affected) {
+    if (!deletedObjectRecords.affected) {
       throw new GraphqlQueryRunnerException(
         'Record not found',
         GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND,
       );
     }
 
-    const deletedRecords = formatResult<ObjectRecord[]>(
-      nonFormattedDeletedObjectRecords.raw,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
-
-    this.apiEventEmitterService.emitDestroyEvents({
-      records: structuredClone(deletedRecords),
-      authContext,
-      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-        objectMetadataItemWithFieldMaps,
-      ),
-    });
-
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: deletedRecords,
+        parentObjectRecords:
+          deletedObjectRecords.generatedMaps as ObjectRecord[],
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
@@ -88,7 +73,7 @@ export class GraphqlQueryDestroyOneResolverService extends GraphqlQueryBaseResol
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
     return typeORMObjectRecordsParser.processRecord({
-      objectRecord: deletedRecords[0],
+      objectRecord: deletedObjectRecords.generatedMaps[0] as ObjectRecord,
       objectName: objectMetadataItemWithFieldMaps.nameSingular,
       take: 1,
       totalCount: 1,

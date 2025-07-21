@@ -4,6 +4,9 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
+
 export const createRelationBetweenObjects = async <
   T extends FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION,
 >({
@@ -41,22 +44,35 @@ export const createRelationBetweenObjects = async <
     },
   };
 
-  const {
-    data: { createOneField: createdFieldPerson },
-  } = await createOneFieldMetadata<typeof type>({
+  const { data } = await createOneFieldMetadata<typeof type>({
     input: createFieldInput,
     gqlFields: `
             id
             name
             label
             isLabelSyncedWithName
+            settings
             relation {
               type
+              sourceObjectMetadata {
+                id
+                nameSingular
+                namePlural
+              }
+              targetObjectMetadata {
+                id
+                nameSingular
+                namePlural
+              }
+              sourceFieldMetadata {
+                id
+                name
+              }
               targetFieldMetadata {
                 id
+                name
               }
             }
-            settings
             object {
               id
               nameSingular
@@ -65,5 +81,7 @@ export const createRelationBetweenObjects = async <
     expectToFail: false,
   });
 
-  return createdFieldPerson;
+  return data.createOneField as unknown as FieldMetadataDTO<T> & {
+    relation: RelationDTO;
+  };
 };

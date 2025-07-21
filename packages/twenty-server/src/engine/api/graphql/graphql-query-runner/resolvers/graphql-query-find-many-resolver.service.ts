@@ -29,7 +29,6 @@ import {
   getPaginationInfo,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
 export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolverService<
@@ -127,18 +126,12 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       objectMetadataItemWithFieldMaps,
     });
 
-    const nonFormattedObjectRecords = await queryBuilder
+    const objectRecords = (await queryBuilder
       .setFindOptions({
         select: columnsToSelect,
       })
       .take(limit + 1)
-      .getMany();
-
-    const objectRecords = formatResult<ObjectRecord[]>(
-      nonFormattedObjectRecords,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
+      .getMany()) as ObjectRecord[];
 
     const { hasNextPage, hasPreviousPage } = getPaginationInfo(
       objectRecords,

@@ -13,7 +13,6 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
 import { GetVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/get-variables.factory';
@@ -40,6 +39,7 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getFieldMetadataIdToColumnNamesMap } from 'src/engine/twenty-orm/utils/get-field-metadata-id-to-column-names-map.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export interface PageInfo {
   hasNextPage?: boolean;
@@ -84,8 +84,6 @@ export abstract class RestApiBaseHandler {
   protected readonly depthInputFactory: DepthInputFactory;
   @Inject()
   protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService;
-  @Inject()
-  protected readonly apiEventEmitterService: ApiEventEmitterService;
   @Inject()
   protected readonly createdByFromAuthContextService: CreatedByFromAuthContextService;
   @Inject()
@@ -206,7 +204,7 @@ export abstract class RestApiBaseHandler {
 
     Object.values(objectMetadata.objectMetadataMapItem.fieldsById).forEach(
       (field) => {
-        if (field.type === FieldMetadataType.RELATION) {
+        if (isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION)) {
           if (
             depth === MAX_DEPTH &&
             isDefined(field.relationTargetObjectMetadataId)

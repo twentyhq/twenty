@@ -175,4 +175,10 @@ export class LocalDriver implements StorageDriver {
 
     return existsSync(filePath);
   }
+
+  async checkFolderExists(folderPath: string): Promise<boolean> {
+    const folderFullPath = join(this.options.storagePath, folderPath);
+
+    return existsSync(folderFullPath);
+  }
 }

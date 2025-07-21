@@ -1,7 +1,6 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 
-import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { RestApiCoreController } from 'src/engine/api/rest/core/controllers/rest-api-core.controller';
 import { RestApiCreateManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-create-many.handler';
 import { RestApiCreateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-create-one.handler';
@@ -48,7 +47,6 @@ const restApiCoreResolvers = [
   providers: [
     RestApiService,
     RestApiCoreService,
-    ApiEventEmitterService,
     ...coreQueryBuilderFactories,
     ...restApiCoreResolvers,
   ],

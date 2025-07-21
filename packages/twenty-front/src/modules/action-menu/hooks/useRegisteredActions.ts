@@ -1,4 +1,5 @@
 import { useRecordAgnosticActions } from '@/action-menu/actions/record-agnostic-actions/hooks/useRecordAgnosticActions';
+import { useRelatedRecordActions } from '@/action-menu/actions/record-agnostic-actions/hooks/useRelatedRecordActions';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import { getActionConfig } from '@/action-menu/actions/utils/getActionConfig';
@@ -7,11 +8,14 @@ import { contextStoreCurrentViewTypeComponentState } from '@/context-store/state
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
 
 export const useRegisteredActions = (
   shouldBeRegisteredParams: ShouldBeRegisteredFunctionParams,
 ) => {
   const { objectMetadataItem } = shouldBeRegisteredParams;
+
+  const { getIcon } = useIcons();
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
@@ -30,10 +34,17 @@ export const useRegisteredActions = (
     objectMetadataItem,
   });
 
+  const relatedRecordActionConfig = useRelatedRecordActions({
+    sourceObjectMetadataItem: objectMetadataItem,
+    getIcon,
+    startPosition: Object.keys(recordActionConfig).length + 1,
+  });
+
   const recordAgnosticActionConfig = useRecordAgnosticActions();
 
   const actionsConfig = {
     ...recordActionConfig,
+    ...relatedRecordActionConfig,
     ...recordAgnosticActionConfig,
   };
 
