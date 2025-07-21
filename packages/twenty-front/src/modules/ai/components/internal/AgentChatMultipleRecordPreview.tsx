@@ -3,6 +3,25 @@ import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/C
 import { getSelectedRecordsContextText } from '@/command-menu/utils/getRecordContextText';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { MultipleAvatarChip } from 'twenty-ui/components';
+import { t } from '@lingui/core/macro';
+import { IconX, IconReload } from 'twenty-ui/display';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
+import { agentChatCurrentContextState } from '@/ai/states/agentChatCurrentContextState';
+
+const StyledRightIconContainer = styled.div`
+  display: flex;
+  border-left: 1px solid ${({ theme }) => theme.border.color.light};
+
+  svg {
+    cursor: pointer;
+  }
+`;
+
+const StyledChipWrapper = styled.div<{ isActive: boolean }>`
+  opacity: ${({ isActive }) => (isActive ? 1 : 0.7)};
+`;
 
 export const AgentChatMultipleRecordPreview = ({
   objectMetadataItem,
@@ -13,6 +32,10 @@ export const AgentChatMultipleRecordPreview = ({
   records: ObjectRecord[];
   totalCount: number;
 }) => {
+  const [isActive, setIsActive] = useRecoilState(agentChatCurrentContextState);
+
+  const theme = useTheme();
+
   const Avatars = records.map((record) => (
     // @todo move this components to be less specific. (Outside of CommandMenu
     <CommandMenuContextRecordChipAvatars
@@ -33,11 +56,34 @@ export const AgentChatMultipleRecordPreview = ({
     withIconBackground: false,
   };
 
+  const toggleContext = () => {
+    setIsActive(!isActive);
+  };
+
   return (
-    <MultipleAvatarChip
-      Icons={recordSelectionContextChip.Icons}
-      text={recordSelectionContextChip.text}
-      maxWidth={180}
-    />
+    <StyledChipWrapper isActive={isActive}>
+      <MultipleAvatarChip
+        Icons={recordSelectionContextChip.Icons}
+        text={isActive ? recordSelectionContextChip.text : t`Context`}
+        maxWidth={180}
+        rightComponent={
+          <StyledRightIconContainer>
+            {isActive ? (
+              <IconX
+                size={theme.icon.size.sm}
+                color={theme.font.color.secondary}
+                onClick={toggleContext}
+              />
+            ) : (
+              <IconReload
+                size={theme.icon.size.sm}
+                color={theme.font.color.secondary}
+                onClick={toggleContext}
+              />
+            )}
+          </StyledRightIconContainer>
+        }
+      />
+    </StyledChipWrapper>
   );
 };

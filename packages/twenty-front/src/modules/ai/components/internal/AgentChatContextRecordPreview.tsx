@@ -20,21 +20,21 @@ export const AgentChatContextRecordPreview = () => {
 
   return (
     <>
-      {records.length < 3 ? (
-        records.map((record) => (
-          <RecordChip
-            key={record.id}
-            objectNameSingular={objectMetadataItem.nameSingular}
-            record={record}
-          />
-        ))
-      ) : (
+      {/*{records.length < 3 ? (*/}
+      {/*  records.map((record) => (*/}
+      {/*    <RecordChip*/}
+      {/*      key={record.id}*/}
+      {/*      objectNameSingular={objectMetadataItem.nameSingular}*/}
+      {/*      record={record}*/}
+      {/*    />*/}
+      {/*  ))*/}
+      {/*) : (*/}
         <AgentChatMultipleRecordPreview
           objectMetadataItem={objectMetadataItem}
           records={records}
           totalCount={totalCount ?? 0}
         />
-      )}
+      {/*)}*/}
     </>
   );
 };

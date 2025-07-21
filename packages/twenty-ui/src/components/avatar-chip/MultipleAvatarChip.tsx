@@ -23,6 +23,7 @@ export type MultipleAvatarChipProps = {
   maxWidth?: number;
   forceEmptyText?: boolean;
   variant?: ChipVariant;
+  rightComponent?: React.ReactNode;
 };
 
 export const MultipleAvatarChip = ({
@@ -31,6 +32,7 @@ export const MultipleAvatarChip = ({
   onClick,
   testId,
   maxWidth,
+  rightComponent,
   variant = ChipVariant.Static,
   forceEmptyText = false,
 }: MultipleAvatarChipProps) => {
@@ -51,6 +53,7 @@ export const MultipleAvatarChip = ({
         isLabelHidden={!isNonEmptyString(text) && forceEmptyText}
         variant={variant}
         leftComponent={leftComponent}
+        rightComponent={rightComponent}
         clickable={isDefined(onClick)}
         maxWidth={maxWidth}
       />

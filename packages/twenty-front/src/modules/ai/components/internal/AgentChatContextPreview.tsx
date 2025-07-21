@@ -88,10 +88,9 @@ export const AgentChatContextPreview = ({ agentId }: { agentId: string }) => {
             isUploading={false}
           />
         ))}
-        {hasCurrentRecordsContext &&
-          contextStoreCurrentObjectMetadataItemId && (
-            <AgentChatContextRecordPreview />
-          )}
+        {contextStoreCurrentObjectMetadataItemId && (
+          <AgentChatContextRecordPreview />
+        )}
       </StyledPreviewsContainer>
     </StyledContainer>
   );
