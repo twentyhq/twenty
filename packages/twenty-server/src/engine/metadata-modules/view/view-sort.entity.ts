@@ -37,7 +37,12 @@ export class ViewSort {
   @Column({ nullable: false, type: 'uuid' })
   fieldMetadataId: string;
 
-  @Column({ nullable: false, default: ViewSortDirection.ASC })
+  @Column({
+    nullable: false,
+    type: 'enum',
+    enum: ViewSortDirection,
+    default: ViewSortDirection.ASC,
+  })
   direction: ViewSortDirection;
 
   @Column({ nullable: false, type: 'uuid' })

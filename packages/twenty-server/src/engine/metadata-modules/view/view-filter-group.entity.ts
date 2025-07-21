@@ -34,7 +34,12 @@ export class ViewFilterGroup {
   @Column({ nullable: true, type: 'uuid' })
   parentViewFilterGroupId?: string | null;
 
-  @Column({ nullable: false, default: ViewFilterGroupLogicalOperator.NOT })
+  @Column({
+    type: 'enum',
+    enum: ViewFilterGroupLogicalOperator,
+    nullable: false,
+    default: ViewFilterGroupLogicalOperator.NOT,
+  })
   logicalOperator: ViewFilterGroupLogicalOperator;
 
   @Column({ nullable: true, type: 'int' })
