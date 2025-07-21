@@ -1,16 +1,18 @@
 import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  UseFilters,
-  UseGuards,
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Patch,
+    Post,
+    UseFilters,
+    UseGuards,
 } from '@nestjs/common';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
+import { CreateWebhookDTO } from 'src/engine/core-modules/webhook/dtos/create-webhook.dto';
+import { UpdateWebhookDTO } from 'src/engine/core-modules/webhook/dtos/update-webhook.dto';
 import { Webhook } from 'src/engine/core-modules/webhook/webhook.entity';
 import { WebhookService } from 'src/engine/core-modules/webhook/webhook.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -39,13 +41,7 @@ export class WebhookRestController {
 
   @Post()
   async create(
-    @Body()
-    createWebhookDto: {
-      targetUrl: string;
-      operations?: string[];
-      description?: string;
-      secret: string;
-    },
+    @Body() createWebhookDto: CreateWebhookDTO,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<Webhook> {
     return this.webhookService.create({
@@ -60,13 +56,7 @@ export class WebhookRestController {
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body()
-    updateWebhookDto: Partial<{
-      targetUrl: string;
-      operations: string[];
-      description: string;
-      secret: string;
-    }>,
+    @Body() updateWebhookDto: UpdateWebhookDTO,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<Webhook | null> {
     return this.webhookService.update(id, workspace.id, updateWebhookDto);

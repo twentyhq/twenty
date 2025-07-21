@@ -1,18 +1,20 @@
 import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  UseFilters,
-  UseGuards,
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Patch,
+    Post,
+    UseFilters,
+    UseGuards,
 } from '@nestjs/common';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/api-key.service';
+import { CreateApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/create-api-key.dto';
+import { UpdateApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/update-api-key.dto';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
@@ -39,8 +41,7 @@ export class ApiKeyRestController {
 
   @Post()
   async create(
-    @Body()
-    createApiKeyDto: { name: string; expiresAt: string; revokedAt?: string },
+    @Body() createApiKeyDto: CreateApiKeyDTO,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ApiKey> {
     return this.apiKeyService.create({
@@ -56,12 +57,7 @@ export class ApiKeyRestController {
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body()
-    updateApiKeyDto: Partial<{
-      name: string;
-      expiresAt: string;
-      revokedAt: string;
-    }>,
+    @Body() updateApiKeyDto: UpdateApiKeyDTO,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ApiKey | null> {
     const updateData: Partial<ApiKey> = {};
@@ -73,18 +69,10 @@ export class ApiKeyRestController {
     if (updateApiKeyDto.revokedAt !== undefined) {
       updateData.revokedAt = updateApiKeyDto.revokedAt
         ? new Date(updateApiKeyDto.revokedAt)
-        : null;
+        : undefined;
     }
 
     return this.apiKeyService.update(id, workspace.id, updateData);
-  }
-
-  @Post(':id/revoke')
-  async revoke(
-    @Param('id') id: string,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<ApiKey | null> {
-    return this.apiKeyService.revoke(id, workspace.id);
   }
 
   @Delete(':id')
