@@ -1,6 +1,5 @@
 import { capitalize } from 'twenty-shared/utils';
 
-
 import { GraphqlQuerySelectedFieldsAggregateParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-aggregate.parser';
 import { GraphqlQuerySelectedFieldsRelationParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-relation.parser';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';

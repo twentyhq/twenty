@@ -1,6 +1,6 @@
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 export type UniqueFieldCondition = [field: string, value: string];
 

@@ -6,17 +6,17 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { WorkspaceColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-factory.interface';
 import { WorkspaceColumnActionOptions } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-options.interface';
 
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
-    WorkspaceMigrationColumnAction,
-    WorkspaceMigrationColumnActionType,
-    WorkspaceMigrationColumnAlter,
-    WorkspaceMigrationColumnCreate,
+  WorkspaceMigrationColumnAction,
+  WorkspaceMigrationColumnActionType,
+  WorkspaceMigrationColumnAlter,
+  WorkspaceMigrationColumnCreate,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import {
-    WorkspaceMigrationException,
-    WorkspaceMigrationExceptionCode,
+  WorkspaceMigrationException,
+  WorkspaceMigrationExceptionCode,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
-import { FieldMetadataEntity } from '../../field-metadata/field-metadata.entity';
 
 export class ColumnActionAbstractFactory<T extends FieldMetadataType>
   implements WorkspaceColumnActionFactory<T>

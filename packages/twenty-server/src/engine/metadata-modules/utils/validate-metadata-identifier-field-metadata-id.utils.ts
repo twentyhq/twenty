@@ -1,13 +1,12 @@
 import {
-    isDefined,
-    isLabelIdentifierFieldMetadataTypes,
+  isDefined,
+  isLabelIdentifierFieldMetadataTypes,
 } from 'twenty-shared/utils';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-
 import {
-    ObjectMetadataException,
-    ObjectMetadataExceptionCode,
+  ObjectMetadataException,
+  ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 
 type Validator = {

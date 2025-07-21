@@ -1,4 +1,3 @@
-
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
@@ -7,10 +6,7 @@ import {
 
 type CheckCanDeactivateFieldOptions = {
   labelIdentifierFieldMetadataId: string;
-  existingFieldMetadata: Pick<
-    FieldMetadataEntity,
-    'id' | 'isSystem' | 'name'
-  >;
+  existingFieldMetadata: Pick<FieldMetadataEntity, 'id' | 'isSystem' | 'name'>;
 };
 
 export const checkCanDeactivateFieldOrThrow = ({

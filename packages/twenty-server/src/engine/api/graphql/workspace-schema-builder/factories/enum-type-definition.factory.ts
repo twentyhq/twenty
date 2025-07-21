@@ -7,8 +7,8 @@ import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-sc
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import {
-    FieldMetadataComplexOption,
-    FieldMetadataDefaultOption,
+  FieldMetadataComplexOption,
+  FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';

@@ -1,4 +1,3 @@
-
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,

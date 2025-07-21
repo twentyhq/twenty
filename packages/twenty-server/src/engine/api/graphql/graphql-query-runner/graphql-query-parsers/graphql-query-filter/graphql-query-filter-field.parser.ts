@@ -1,7 +1,6 @@
 import { capitalize } from 'twenty-shared/utils';
 import { WhereExpressionBuilder } from 'typeorm';
 
-
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,

@@ -6,8 +6,8 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
-
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+
 import { ObjectTypeDefinitionKind } from './object-type-definition.factory';
 
 @Injectable()

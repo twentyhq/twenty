@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-    GraphQLInputFieldConfig,
-    GraphQLInputObjectType,
-    GraphQLInputType,
-    GraphQLString,
+  GraphQLInputFieldConfig,
+  GraphQLInputObjectType,
+  GraphQLInputType,
+  GraphQLString,
 } from 'graphql';
 import { getUniqueConstraintsFields } from 'twenty-shared/utils';
 
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import {
-    InputTypeDefinition,
-    InputTypeDefinitionKind,
+  InputTypeDefinition,
+  InputTypeDefinitionKind,
 } from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';

@@ -1,7 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from 'typeorm/metadata/types/RelationTypes';
 
-
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import {

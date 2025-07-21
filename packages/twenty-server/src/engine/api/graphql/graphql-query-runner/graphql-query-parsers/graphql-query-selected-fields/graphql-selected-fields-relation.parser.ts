@@ -1,4 +1,3 @@
-
 import {
   GraphqlQuerySelectedFieldsParser,
   GraphqlQuerySelectedFieldsResult,
