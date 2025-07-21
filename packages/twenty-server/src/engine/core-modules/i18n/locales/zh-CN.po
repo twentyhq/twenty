@@ -747,8 +747,8 @@ msgstr "联系人的 X/Twitter 账户"
 #. js-lingui-id: M73whl
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Context"
-msgstr "上下文"
+#~ msgid "Context"
+#~ msgstr "上下文"
 
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -1424,8 +1424,8 @@ msgstr ""
 
 #. js-lingui-id: HgJ9jQ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Json object to provide output of the workflow run"
-msgstr "提供工作流程运行输出的 Json 对象"
+#~ msgid "Json object to provide output of the workflow run"
+#~ msgstr "提供工作流程运行输出的 Json 对象"
 
 #. js-lingui-id: AQuLwi
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -2038,8 +2038,8 @@ msgstr "用于计算 Webhook 负载 HMAC 签名的可选密钥。此密钥在 Tw
 
 #. js-lingui-id: gh06VD
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Output"
-msgstr "输出"
+#~ msgid "Output"
+#~ msgstr "输出"
 
 #. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
