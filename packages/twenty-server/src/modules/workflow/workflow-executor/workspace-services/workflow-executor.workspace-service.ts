@@ -62,9 +62,10 @@ export class WorkflowExecutorWorkspaceService {
       workspaceId,
     });
 
-    const { stepToExecute, steps, stepInfos } = workflowRunInfo;
+    const { stepToExecute, steps, stepInfos, workflowRunStatus } =
+      workflowRunInfo;
 
-    if (!canExecuteStep({ stepId, steps, stepInfos })) {
+    if (!canExecuteStep({ stepId, steps, stepInfos, workflowRunStatus })) {
       return;
     }
 
@@ -234,6 +235,7 @@ export class WorkflowExecutorWorkspaceService {
       stepToExecute,
       steps,
       stepInfos: workflowRun.state.stepInfos,
+      workflowRunStatus: workflowRun.status,
     };
   }
 
