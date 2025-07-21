@@ -12,14 +12,14 @@ import {
 type Validator = {
   validator: (args: {
     fieldMetadataId: string;
-    matchingFieldMetadata?: FieldMetadataEntity | FieldMetadataEntity;
+    matchingFieldMetadata?: FieldMetadataEntity;
   }) => boolean;
   label: string;
 };
 
 type ValidateMetadataIdentifierFieldMetadataIdOrThrowArgs = {
   fieldMetadataId: string;
-  fieldMetadataItems: FieldMetadataEntity[] | FieldMetadataEntity[];
+  fieldMetadataItems: FieldMetadataEntity[];
   validators: Validator[];
 };
 const validatorRunner = ({
@@ -44,7 +44,7 @@ const validatorRunner = ({
 type ValidateMetadataIdentifierFieldMetadataIdsArgs = {
   labelIdentifierFieldMetadataId: string | undefined;
   imageIdentifierFieldMetadataId: string | undefined;
-  fieldMetadataItems: FieldMetadataEntity[] | FieldMetadataEntity[];
+  fieldMetadataItems: FieldMetadataEntity[];
 };
 export const validateMetadataIdentifierFieldMetadataIds = ({
   imageIdentifierFieldMetadataId,
