@@ -65,7 +65,11 @@ export const AgentChatMultipleRecordPreview = ({
     <StyledChipWrapper isActive={isAgentChatCurrentContextActive}>
       <MultipleAvatarChip
         Icons={recordSelectionContextChip.Icons}
-        text={isAgentChatCurrentContextActive ? recordSelectionContextChip.text : t`Context`}
+        text={
+          isAgentChatCurrentContextActive
+            ? recordSelectionContextChip.text
+            : t`Context`
+        }
         maxWidth={180}
         rightComponent={
           <StyledRightIconContainer>
