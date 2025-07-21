@@ -1,9 +1,16 @@
 import { faker } from '@faker-js/faker';
+
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/Object-metadata/Object-metadata.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 
-export type GetMockObjectMetadataEntityOverride = Partial<ObjectMetadataEntity> &
-  Required<Pick<ObjectMetadataEntity, 'nameSingular' | 'namePlural' | 'id' | 'workspaceId'>>;
+export type GetMockObjectMetadataEntityOverride =
+  Partial<ObjectMetadataEntity> &
+    Required<
+      Pick<
+        ObjectMetadataEntity,
+        'nameSingular' | 'namePlural' | 'id' | 'workspaceId'
+      >
+    >;
 
 export const getMockObjectdMetadataEntity = (
   overrides: GetMockObjectMetadataEntityOverride,

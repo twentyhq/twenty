@@ -10,7 +10,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-
 import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -57,7 +56,7 @@ export class ObjectMetadataEntity {
   icon: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  standardOverrides: ObjectStandardOverridesDTO | null; 
+  standardOverrides: ObjectStandardOverridesDTO | null;
 
   // Is this a foreign key targetTableNameId ?
   @Column({ nullable: false })

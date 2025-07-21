@@ -23,7 +23,7 @@ export const getMockObjectMetadataItemWithFielsMaps = ({
   indexMetadatas,
   ...objectMetadataOverrides
 }: GetMockObjectMetadataItemWithFielsMapsOverride): ObjectMetadataItemWithFieldMaps => {
-  const { fields, ...objectMetadata } = getMockObjectdMetadataEntity(
+  const { fields: _fields, ...objectMetadata } = getMockObjectdMetadataEntity(
     objectMetadataOverrides,
   );
 
