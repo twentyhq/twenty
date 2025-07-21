@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { DeleteManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/delete-many-resolver.factory';
 import { DestroyManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-many-resolver.factory';
 import { DestroyOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-one-resolver.factory';
+import { MergeManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/merge-many-resolver.factory';
 import { RestoreManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-many-resolver.factory';
 import { RestoreOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-one-resolver.factory';
 import { UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-many-resolver.factory';
@@ -53,6 +54,7 @@ export class WorkspaceResolverFactory {
     private readonly restoreOneResolverFactory: RestoreOneResolverFactory,
     private readonly restoreManyResolverFactory: RestoreManyResolverFactory,
     private readonly destroyManyResolverFactory: DestroyManyResolverFactory,
+    private readonly mergeManyResolverFactory: MergeManyResolverFactory,
     private readonly workspaceResolverBuilderService: WorkspaceResolverBuilderService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
@@ -75,6 +77,7 @@ export class WorkspaceResolverFactory {
       ['findDuplicates', this.findDuplicatesResolverFactory],
       ['findMany', this.findManyResolverFactory],
       ['findOne', this.findOneResolverFactory],
+      ['mergeMany', this.mergeManyResolverFactory],
       ['restoreMany', this.restoreManyResolverFactory],
       ['restoreOne', this.restoreOneResolverFactory],
       ['updateMany', this.updateManyResolverFactory],
@@ -168,12 +171,19 @@ export class WorkspaceResolverFactory {
           throw new Error(`Unknown mutation resolver type: ${methodName}`);
         }
 
-        // @ts-expect-error legacy noImplicitAny
-        resolvers.Mutation[resolverName] = resolverFactory.create({
-          authContext,
-          objectMetadataMaps,
-          objectMetadataItemWithFieldMaps: objectMetadata,
-        });
+        if (
+          this.workspaceResolverBuilderService.shouldBuildResolver(
+            objectMetadata,
+            methodName,
+          )
+        ) {
+          // @ts-expect-error legacy noImplicitAny
+          resolvers.Mutation[resolverName] = resolverFactory.create({
+            authContext,
+            objectMetadataMaps,
+            objectMetadataItemWithFieldMaps: objectMetadata,
+          });
+        }
       }
     }
 

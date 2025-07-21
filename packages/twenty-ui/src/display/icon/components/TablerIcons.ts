@@ -11,6 +11,7 @@ export {
   IconArrowBackUp,
   IconArrowDown,
   IconArrowLeft,
+  IconArrowMerge,
   IconArrowRight,
   IconArrowsDiagonal,
   IconArrowsVertical,
@@ -266,6 +267,7 @@ export {
   IconSettings,
   IconSettings2,
   IconSettingsAutomation,
+  IconSitemap,
   IconSlash,
   IconSortAZ,
   IconSortDescending,
@@ -274,6 +276,15 @@ export {
   IconSql,
   IconSquare,
   IconSquareKey,
+  IconSquareNumber1,
+  IconSquareNumber2,
+  IconSquareNumber3,
+  IconSquareNumber4,
+  IconSquareNumber5,
+  IconSquareNumber6,
+  IconSquareNumber7,
+  IconSquareNumber8,
+  IconSquareNumber9,
   IconSquareRoundedCheck,
   IconSquareRoundedX,
   IconStatusChange,
@@ -313,8 +324,7 @@ export {
   IconWand,
   IconWebhook,
   IconWorld,
-  IconX,
-  IconSitemap,
+  IconX
 } from '@tabler/icons-react';
 
 export type { IconProps as TablerIconsProps } from '@tabler/icons-react';

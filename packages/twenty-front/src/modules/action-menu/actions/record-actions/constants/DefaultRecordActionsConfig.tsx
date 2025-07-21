@@ -1,4 +1,5 @@
 import { ActionLink } from '@/action-menu/actions/components/ActionLink';
+import { ActionOpenSidePanelPage } from '@/action-menu/actions/components/ActionOpenSidePanelPage';
 import { DeleteMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction';
 import { DestroyMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction';
 import { ExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/ExportMultipleRecordsAction';
@@ -23,6 +24,7 @@ import { ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { BACKEND_BATCH_REQUEST_MAX_COUNT } from '@/object-record/constants/BackendBatchRequestMaxCount';
@@ -30,8 +32,10 @@ import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+
 import { isDefined } from 'twenty-shared/utils';
 import {
+  IconArrowMerge,
   IconBuildingSkyscraper,
   IconCheckbox,
   IconChevronDown,
@@ -167,6 +171,28 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isDefined(selectedRecord) && !selectedRecord.isRemote,
     availableOn: [ActionViewType.SHOW_PAGE],
     component: <ExportSingleRecordAction />,
+  },
+  [MultipleRecordsActionKeys.MERGE]: {
+    type: ActionType.Standard,
+    scope: ActionScope.RecordSelection,
+    key: MultipleRecordsActionKeys.MERGE,
+    label: msg`Merge records`,
+    shortLabel: msg`Merge`,
+    position: 5,
+    Icon: IconArrowMerge,
+    accent: 'default',
+    isPinned: false,
+    shouldBeRegistered: ({ objectMetadataItem }) =>
+      objectMetadataItem?.nameSingular === CoreObjectNameSingular.Company,
+    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
+    component: (
+      <ActionOpenSidePanelPage
+        page={CommandMenuPages.MergeRecords}
+        pageTitle={msg`Merge records`}
+        pageIcon={IconArrowMerge}
+      />
+    ),
+    hotKeys: ['M'],
   },
   [MultipleRecordsActionKeys.EXPORT]: {
     type: ActionType.Standard,
