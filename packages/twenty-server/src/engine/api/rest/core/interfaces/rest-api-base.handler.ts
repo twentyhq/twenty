@@ -24,6 +24,7 @@ import {
 } from 'src/engine/api/rest/input-factories/depth-input.factory';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -80,6 +81,8 @@ export abstract class RestApiBaseHandler {
   protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService;
   @Inject()
   protected readonly createdByFromAuthContextService: CreatedByFromAuthContextService;
+  @Inject()
+  protected readonly apiKeyRoleService: ApiKeyRoleService;
 
   protected abstract handle(
     request: Request,
@@ -119,13 +122,26 @@ export abstract class RestApiBaseHandler {
       );
     }
 
-    const shouldBypassPermissionChecks = isDefined(apiKey);
+    const shouldBypassPermissionChecks = false;
 
-    const roleId =
-      await this.workspacePermissionsCacheService.getRoleIdFromUserWorkspaceId({
-        workspaceId: workspace.id,
-        userWorkspaceId,
-      });
+    let roleId: string | undefined = undefined;
+
+    if (isDefined(apiKey)) {
+      const apiKeyRoleId = await this.apiKeyRoleService.getRoleIdForApiKey(
+        apiKey.id,
+        workspace.id,
+      );
+
+      roleId = apiKeyRoleId ?? undefined;
+    } else if (isDefined(userWorkspaceId)) {
+      roleId =
+        await this.workspacePermissionsCacheService.getRoleIdFromUserWorkspaceId(
+          {
+            workspaceId: workspace.id,
+            userWorkspaceId,
+          },
+        );
+    }
 
     const repository = workspaceDataSource.getRepository<ObjectRecord>(
       objectMetadataNameSingular,
