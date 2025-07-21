@@ -24,6 +24,7 @@ const StyledChipWrapper = styled.div<{ isActive: boolean }>`
 `;
 
 export const AgentChatMultipleRecordPreview = ({
+  agentId,
   objectMetadataItem,
   records,
   totalCount,
@@ -31,9 +32,10 @@ export const AgentChatMultipleRecordPreview = ({
   objectMetadataItem: ObjectMetadataItem;
   records: ObjectRecord[];
   totalCount: number;
+  agentId: string
 }) => {
   const [isAgentChatCurrentContextActive, setIsAgentChatCurrentContextActive] =
-    useRecoilComponentStateV2(isAgentChatCurrentContextActiveState);
+    useRecoilComponentStateV2(isAgentChatCurrentContextActiveState, agentId);
 
   const theme = useTheme();
 

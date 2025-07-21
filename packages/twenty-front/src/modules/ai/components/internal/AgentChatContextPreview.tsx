@@ -81,7 +81,7 @@ export const AgentChatContextPreview = ({ agentId }: { agentId: string }) => {
           />
         ))}
         {contextStoreCurrentObjectMetadataItemId && (
-          <AgentChatContextRecordPreview />
+          <AgentChatContextRecordPreview agentId={agentId} />
         )}
       </StyledPreviewsContainer>
     </StyledContainer>

@@ -5,7 +5,11 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 
-export const AgentChatContextRecordPreview = () => {
+export const AgentChatContextRecordPreview = ({
+  agentId,
+}: {
+  agentId: string;
+}) => {
   const { records, totalCount } = useFindManyRecordsSelectedInContextStore({
     limit: 3,
   });
@@ -29,11 +33,14 @@ export const AgentChatContextRecordPreview = () => {
       {/*    />*/}
       {/*  ))*/}
       {/*) : (*/}
+      {totalCount !== 0 && (
         <AgentChatMultipleRecordPreview
+          agentId={agentId}
           objectMetadataItem={objectMetadataItem}
           records={records}
           totalCount={totalCount ?? 0}
         />
+      )}
       {/*)}*/}
     </>
   );

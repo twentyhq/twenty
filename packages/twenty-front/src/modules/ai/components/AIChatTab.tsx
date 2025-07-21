@@ -74,7 +74,6 @@ export const AIChatTab = ({
   const {
     messages,
     isLoading,
-    handleSendMessage,
     input,
     handleInputChange,
     agentStreamingMessage,

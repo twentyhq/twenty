@@ -40,6 +40,7 @@ type OptimisticMessage = AgentChatMessage & {
 export const useAgentChat = (agentId: string, records?: ObjectRecord[]) => {
   const apolloClient = useApolloClient();
   const { enqueueErrorSnackBar } = useSnackBar();
+  const { getObjectMetadataItemById } = useGetObjectMetadataItemById();
 
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -47,9 +48,8 @@ export const useAgentChat = (agentId: string, records?: ObjectRecord[]) => {
 
   const isAgentChatCurrentContextActive = useRecoilComponentValueV2(
     isAgentChatCurrentContextActiveState,
+    agentId
   );
-
-  const { getObjectMetadataItemById } = useGetObjectMetadataItemById();
 
   const agentChatSelectedFiles = useRecoilComponentValueV2(
     agentChatSelectedFilesComponentState,
