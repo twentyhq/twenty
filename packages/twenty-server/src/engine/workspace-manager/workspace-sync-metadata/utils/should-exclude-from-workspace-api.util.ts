@@ -1,7 +1,6 @@
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
-
-import { isGatedAndNotEnabled } from './is-gate-and-not-enabled.util';
+import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
 
 export const shouldExcludeFromWorkspaceApi = (
   objectMetadataItem: { standardId?: string | null | undefined },
