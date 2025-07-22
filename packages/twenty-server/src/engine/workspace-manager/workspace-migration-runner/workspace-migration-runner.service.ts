@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { QueryRunner, Table, TableColumn } from 'typeorm';
+import { QueryRunner, TableColumn } from 'typeorm';
 
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import {
@@ -17,6 +17,7 @@ import {
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationColumnService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-column.service';
+import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-enum.service';
 import { PostgresQueryRunner } from 'src/engine/workspace-manager/workspace-migration-runner/types/postgres-query-runner.type';
 import { tableDefaultColumns } from 'src/engine/workspace-manager/workspace-migration-runner/utils/table-default-column.util';
 
@@ -30,6 +31,7 @@ export class WorkspaceMigrationRunnerService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationColumnService: WorkspaceMigrationColumnService,
+    private readonly workspaceMigrationEnumService: WorkspaceMigrationEnumService,
   ) {}
 
   public async executeMigrationFromPendingMigrationsWithinTransaction(
@@ -158,7 +160,7 @@ export class WorkspaceMigrationRunnerService {
         break;
       }
       case WorkspaceMigrationTableActionType.DROP:
-        await queryRunner.dropTable(`${schemaName}.${tableMigration.name}`);
+        await this.dropTable(queryRunner, schemaName, tableMigration.name);
         break;
       case 'create_foreign_table':
         await this.createForeignTable(
@@ -211,7 +213,7 @@ export class WorkspaceMigrationRunnerService {
           await this.createIndex(queryRunner, schemaName, tableName, index);
           break;
         case WorkspaceMigrationIndexActionType.DROP:
-          await this.dropIndex(queryRunner, schemaName, tableName, index.name);
+          await this.dropIndex(queryRunner, schemaName, index.name);
           break;
         default:
           throw new Error(`Migration index action not supported`);
@@ -253,16 +255,17 @@ export class WorkspaceMigrationRunnerService {
   private async dropIndex(
     queryRunner: QueryRunner,
     schemaName: string,
-    tableName: string,
     indexName: string,
   ) {
     try {
-      await queryRunner.dropIndex(`${schemaName}.${tableName}`, indexName);
+      await queryRunner.query(
+        `DROP INDEX IF EXISTS "${schemaName}"."${indexName}"`,
+      );
     } catch (error) {
       // Ignore error if index does not exist
       if (
         error.message ===
-        `Supplied index ${indexName} was not found in table ${schemaName}.${tableName}`
+        `Supplied index ${indexName} was not found in schema ${schemaName}`
       ) {
         return;
       }
@@ -293,13 +296,42 @@ export class WorkspaceMigrationRunnerService {
       }
     }
 
-    await queryRunner.createTable(
-      new Table({
-        name: tableName,
-        schema: schemaName,
-        columns: tableColumns.length > 0 ? tableColumns : tableDefaultColumns(),
-      }),
-      true,
+    const enumColumns = tableColumns.filter(
+      (column) => column.type === 'enum' || column.type === 'simple-enum',
+    );
+
+    await Promise.all(
+      enumColumns.map((column) =>
+        this.workspaceMigrationEnumService.createEnum(
+          queryRunner,
+          schemaName,
+          column.enumName ?? '',
+          column.enum ?? [],
+        ),
+      ),
+    );
+
+    const columnDefs = (
+      tableColumns.length > 0 ? tableColumns : tableDefaultColumns()
+    )
+      .map((col) => {
+        const parts = [
+          `"${col.name}"`,
+          col.enumName ? `"${schemaName}"."${col.enumName}"` : col.type,
+          col.isArray ? '[]' : '',
+        ];
+
+        if (col.isPrimary) parts.push('PRIMARY KEY');
+        if (!col.isNullable) parts.push('NOT NULL');
+        if (col.default !== undefined && col.default !== null)
+          parts.push(`DEFAULT ${col.default}`);
+
+        return parts.join(' ');
+      })
+      .join(', ');
+
+    await queryRunner.query(
+      `CREATE TABLE IF NOT EXISTS "${schemaName}"."${tableName}" (${columnDefs})`,
     );
 
     if (columns && columns.length > 0) {
@@ -318,15 +350,35 @@ export class WorkspaceMigrationRunnerService {
     }
   }
 
+  private async dropTable(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+  ) {
+    await queryRunner.query(
+      `DROP TABLE IF EXISTS "${schemaName}"."${tableName}"`,
+    );
+
+    const enumTypes = await queryRunner.query(
+      `SELECT typname FROM pg_type WHERE typname ~ $1 AND typnamespace = (SELECT oid FROM pg_namespace WHERE nspname = $2)`,
+      [`^${tableName}_[^_]+_enum$`, schemaName],
+    );
+
+    for (const enumType of enumTypes) {
+      await queryRunner.query(
+        `DROP TYPE IF EXISTS "${schemaName}"."${enumType.typname}"`,
+      );
+    }
+  }
+
   private async renameTable(
     queryRunner: QueryRunner,
     schemaName: string,
     oldTableName: string,
     newTableName: string,
   ) {
-    await queryRunner.renameTable(
-      `${schemaName}.${oldTableName}`,
-      newTableName,
+    await queryRunner.query(
+      `ALTER TABLE "${schemaName}"."${oldTableName}" RENAME TO "${newTableName}"`,
     );
   }
 

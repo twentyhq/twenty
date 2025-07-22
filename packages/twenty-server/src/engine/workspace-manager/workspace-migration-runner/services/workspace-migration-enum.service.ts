@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
-import { QueryRunner, TableColumn } from 'typeorm';
+import { QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
@@ -77,18 +77,21 @@ export class WorkspaceMigrationEnumService {
       tempEnumTypeName,
     );
 
-    await queryRunner.addColumn(
-      `${schemaName}.${tableName}`,
-      new TableColumn({
-        name: columnDefinition.columnName,
-        type: columnDefinition.columnType,
-        default: columnDefinition.defaultValue,
-        enum: enumValues,
-        enumName: newEnumTypeName,
-        isArray: columnDefinition.isArray,
-        isNullable: columnDefinition.isNullable,
-        isUnique: columnDefinition.isUnique,
-      }),
+    // Create the new enum type
+    await this.createEnum(queryRunner, schemaName, newEnumTypeName, enumValues);
+
+    const parts = [`"${columnDefinition.columnName}"`];
+
+    parts.push(
+      columnDefinition.isArray ? `${newEnumTypeName}[]` : newEnumTypeName,
+    );
+    if (!columnDefinition.isNullable) parts.push('NOT NULL');
+    if (isDefined(columnDefinition.defaultValue)) {
+      parts.push(`DEFAULT ${columnDefinition.defaultValue}`);
+    }
+    if (columnDefinition.isUnique) parts.push('UNIQUE');
+    await queryRunner.query(
+      `ALTER TABLE "${schemaName}"."${tableName}" ADD COLUMN ${parts.join(' ')}`,
     );
 
     await this.migrateEnumValues(
@@ -255,5 +258,20 @@ export class WorkspaceMigrationEnumService {
         : result.udt_name;
 
     return enumTypeName;
+  }
+
+  async createEnum(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    enumTypeName: string,
+    enumValues: string[],
+  ) {
+    const valuesList = enumValues
+      .map((v) => `'${v.replace(/'/g, "''")}'`)
+      .join(', ');
+
+    await queryRunner.query(
+      `CREATE TYPE "${schemaName}"."${enumTypeName}" AS ENUM (${valuesList})`,
+    );
   }
 }

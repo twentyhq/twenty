@@ -211,8 +211,13 @@ export class WorkspaceMigrationColumnService {
     if (dropColumns.length === 0) return;
 
     const columnNames = dropColumns.map((column) => column.columnName);
+    const dropClauses = columnNames
+      .map((name) => `DROP COLUMN "${name}"`)
+      .join(', ');
 
-    await queryRunner.dropColumns(`${schemaName}.${tableName}`, columnNames);
+    await queryRunner.query(
+      `ALTER TABLE "${schemaName}"."${tableName}" ${dropClauses}`,
+    );
   }
 
   public async alterColumn(
@@ -253,39 +258,45 @@ export class WorkspaceMigrationColumnService {
       return;
     }
 
-    await queryRunner.changeColumn(
-      `${schemaName}.${tableName}`,
-      new TableColumn({
-        name: migrationColumn.currentColumnDefinition.columnName,
-        type: migrationColumn.currentColumnDefinition.columnType,
-        default: migrationColumn.currentColumnDefinition.defaultValue,
-        enum: migrationColumn.currentColumnDefinition.enum?.filter(
-          (value): value is string => typeof value === 'string',
-        ),
-        isArray: migrationColumn.currentColumnDefinition.isArray,
-        isNullable: migrationColumn.currentColumnDefinition.isNullable,
-        /* For now unique constraints are created at a higher level
-        as we need to handle soft-delete and a bug on empty strings
-        */
-        // isUnique: migrationColumn.currentColumnDefinition.isUnique,
-      }),
-      new TableColumn({
-        name: migrationColumn.alteredColumnDefinition.columnName,
-        type: migrationColumn.alteredColumnDefinition.columnType,
-        default: migrationColumn.alteredColumnDefinition.defaultValue,
-        enum: migrationColumn.currentColumnDefinition.enum?.filter(
-          (value): value is string => typeof value === 'string',
-        ),
-        isArray: migrationColumn.alteredColumnDefinition.isArray,
-        isNullable: migrationColumn.alteredColumnDefinition.isNullable,
-        asExpression: migrationColumn.alteredColumnDefinition.asExpression,
-        generatedType: migrationColumn.alteredColumnDefinition.generatedType,
-        /* For now unique constraints are created at a higher level
-        as we need to handle soft-delete and a bug on empty strings
-        */
-        // isUnique: migrationColumn.alteredColumnDefinition.isUnique,
-      }),
-    );
+    const current = migrationColumn.currentColumnDefinition;
+    const altered = migrationColumn.alteredColumnDefinition;
+    const alterStmts: string[] = [];
+
+    if (current.columnName !== altered.columnName) {
+      alterStmts.push(
+        `RENAME COLUMN "${current.columnName}" TO "${altered.columnName}"`,
+      );
+    }
+
+    if (current.columnType !== altered.columnType) {
+      alterStmts.push(
+        `ALTER COLUMN "${altered.columnName}" TYPE ${altered.columnType}`,
+      );
+    }
+
+    if (current.defaultValue !== altered.defaultValue) {
+      if (!isDefined(altered.defaultValue)) {
+        alterStmts.push(`ALTER COLUMN "${altered.columnName}" DROP DEFAULT`);
+      } else {
+        alterStmts.push(
+          `ALTER COLUMN "${altered.columnName}" SET DEFAULT ${altered.defaultValue}`,
+        );
+      }
+    }
+
+    if (current.isNullable !== altered.isNullable) {
+      if (altered.isNullable) {
+        alterStmts.push(`ALTER COLUMN "${altered.columnName}" DROP NOT NULL`);
+      } else {
+        alterStmts.push(`ALTER COLUMN "${altered.columnName}" SET NOT NULL`);
+      }
+    }
+
+    if (alterStmts.length > 0) {
+      await queryRunner.query(
+        `ALTER TABLE "${schemaName}"."${tableName}" ${alterStmts.join(', ')}`,
+      );
+    }
   }
 
   private async createForeignKey(
@@ -334,9 +345,8 @@ export class WorkspaceMigrationColumnService {
       );
     }
 
-    await queryRunner.dropForeignKey(
-      `${schemaName}.${tableName}`,
-      foreignKeyName,
+    await queryRunner.query(
+      `ALTER TABLE "${schemaName}"."${tableName}" DROP CONSTRAINT "${foreignKeyName}"`,
     );
   }
 
