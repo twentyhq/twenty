@@ -68,9 +68,6 @@ export class FieldMetadataRelationService {
     objectMetadata: ObjectMetadataItemWithFieldMaps;
     fieldMetadataRepository: Repository<FieldMetadataEntity>;
   }): Promise<FieldMetadataEntity[]> {
-    const createdFieldMetadataItem =
-      await fieldMetadataRepository.save(fieldMetadataInput);
-
     const relationCreationPayload = fieldMetadataInput.relationCreationPayload;
 
     if (!isDefined(relationCreationPayload)) {
@@ -79,36 +76,28 @@ export class FieldMetadataRelationService {
         FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
       );
     }
-    const targetFieldMetadataName = computeMetadataNameFromLabel(
-      relationCreationPayload.targetFieldLabel,
-    );
+    const sourceFieldMetadataToCreate =
+      prepareCustomFieldMetadataForCreation(fieldMetadataInput);
 
     const targetFieldMetadataToCreate = prepareCustomFieldMetadataForCreation({
       objectMetadataId: relationCreationPayload.targetObjectMetadataId,
-      type: fieldMetadataInput.type,
-      name: targetFieldMetadataName,
+      type: sourceFieldMetadataToCreate.type,
+      name: computeMetadataNameFromLabel(
+        relationCreationPayload.targetFieldLabel,
+      ),
       label: relationCreationPayload.targetFieldLabel,
       icon: relationCreationPayload.targetFieldIcon,
-      workspaceId: fieldMetadataInput.workspaceId,
-      defaultValue: fieldMetadataInput.defaultValue,
+      workspaceId: sourceFieldMetadataToCreate.workspaceId,
+      defaultValue: sourceFieldMetadataToCreate.defaultValue,
     });
-
-    const sourceRelationFieldMetadataEntityProperties =
-      this.computeCustomRelationFieldMetadataForCreation({
-        fieldMetadataInput,
-        relationCreationPayload: fieldMetadataInput.relationCreationPayload,
-        joinColumnName: computeRelationFieldJoinColumnName({
-          name: fieldMetadataInput.name,
-        }),
-      });
 
     const targetRelationFieldMetadataEntityProperties =
       this.computeCustomRelationFieldMetadataForCreation({
         fieldMetadataInput: targetFieldMetadataToCreate,
         relationCreationPayload: {
           targetObjectMetadataId: objectMetadata.id,
-          targetFieldLabel: fieldMetadataInput.label,
-          targetFieldIcon: fieldMetadataInput.icon ?? 'Icon123',
+          targetFieldLabel: sourceFieldMetadataToCreate.label,
+          targetFieldIcon: sourceFieldMetadataToCreate.icon ?? 'Icon123',
           type:
             relationCreationPayload.type === RelationType.ONE_TO_MANY
               ? RelationType.MANY_TO_ONE
@@ -119,19 +108,39 @@ export class FieldMetadataRelationService {
         }),
       });
 
-    const targetFieldMetadata = await fieldMetadataRepository.save({
+    const sourceRelationFieldMetadataEntityProperties =
+      this.computeCustomRelationFieldMetadataForCreation({
+        fieldMetadataInput: sourceFieldMetadataToCreate,
+        relationCreationPayload,
+        joinColumnName: computeRelationFieldJoinColumnName({
+          name: fieldMetadataInput.name,
+        }),
+      });
+
+    const createdFieldMetadataItem = await fieldMetadataRepository.save({
+      ...sourceFieldMetadataToCreate,
+      ...sourceRelationFieldMetadataEntityProperties,
+    });
+
+    const sourceTargetFieldMetadata = await fieldMetadataRepository.save({
       ...targetFieldMetadataToCreate,
       ...targetRelationFieldMetadataEntityProperties,
       relationTargetFieldMetadataId: createdFieldMetadataItem.id,
     });
 
-    const createdFieldMetadataItemUpdated = await fieldMetadataRepository.save({
-      ...createdFieldMetadataItem,
-      ...sourceRelationFieldMetadataEntityProperties,
-      relationTargetFieldMetadataId: targetFieldMetadata.id,
-    });
-
-    return [createdFieldMetadataItemUpdated, targetFieldMetadata];
+    await fieldMetadataRepository.update(
+      { id: createdFieldMetadataItem.id },
+      {
+        relationTargetFieldMetadataId: sourceTargetFieldMetadata.id,
+      },
+    );
+    return [
+      {
+        ...sourceTargetFieldMetadata,
+        relationTargetFieldMetadataId: sourceTargetFieldMetadata.id,
+      },
+      sourceTargetFieldMetadata,
+    ];
   }
 
   async validateFieldMetadataRelationSpecifics<
@@ -348,7 +357,7 @@ export class FieldMetadataRelationService {
     return {
       icon: fieldMetadataInput.icon ?? defaultIcon,
       relationTargetObjectMetadataId:
-        relationCreationPayload?.targetObjectMetadataId,
+        relationCreationPayload.targetObjectMetadataId,
       settings: {
         ...fieldMetadataInput.settings,
         ...(isOneToMany
