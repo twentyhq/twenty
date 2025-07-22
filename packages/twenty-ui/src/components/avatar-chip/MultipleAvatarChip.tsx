@@ -49,6 +49,7 @@ export const MultipleAvatarChip = ({
     <StyledChipContainer onClick={onClick} data-testid={testId}>
       <Chip
         label={text || ''}
+        forceEmptyText={forceEmptyText}
         isLabelHidden={!isNonEmptyString(text) && forceEmptyText}
         variant={variant}
         leftComponent={leftComponent}
