@@ -7,17 +7,13 @@ export const shouldExcludeFromWorkspaceApi = (
   standardObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[],
   workspaceFeatureFlagsMap: Record<string, boolean>,
 ): boolean => {
-  const workspaceEntity = standardObjectMetadataDefinitions.find((entity) => {
-    const entityMetadata = metadataArgsStorage.filterEntities(entity);
+  const entityMetadata = standardObjectMetadataDefinitions
+    .map((entity) => metadataArgsStorage.filterEntities(entity))
+    .find((meta) => meta?.standardId === objectMetadataItem.standardId);
 
-    return entityMetadata?.standardId === objectMetadataItem.standardId;
-  });
-
-  if (!workspaceEntity) {
+  if (!entityMetadata) {
     return false; // Don't exclude non-workspace entities
   }
-
-  const entityMetadata = metadataArgsStorage.filterEntities(workspaceEntity);
 
   return isGatedAndNotEnabled(
     entityMetadata?.gate,
