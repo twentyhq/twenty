@@ -2,9 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { WorkspaceColumnActionOptions } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-options.interface';
 
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
 import { ColumnActionAbstractFactory } from 'src/engine/metadata-modules/workspace-migration/factories/column-action-abstract.factory';
@@ -36,7 +36,7 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
   protected readonly logger = new Logger(BasicColumnActionFactory.name);
 
   protected handleCreateAction(
-    fieldMetadata: FieldMetadataInterface<BasicFieldMetadataType>,
+    fieldMetadata: FieldMetadataEntity<BasicFieldMetadataType>,
     options?: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnCreate[] {
     const columnName = computeColumnName(fieldMetadata);
@@ -57,8 +57,8 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
   }
 
   protected handleAlterAction(
-    currentFieldMetadata: FieldMetadataInterface<BasicFieldMetadataType>,
-    alteredFieldMetadata: FieldMetadataInterface<BasicFieldMetadataType>,
+    currentFieldMetadata: FieldMetadataEntity<BasicFieldMetadataType>,
+    alteredFieldMetadata: FieldMetadataEntity<BasicFieldMetadataType>,
     options?: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnAlter[] {
     const currentColumnName = computeColumnName(currentFieldMetadata);

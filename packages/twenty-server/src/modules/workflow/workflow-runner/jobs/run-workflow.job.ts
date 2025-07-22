@@ -103,12 +103,9 @@ export class RunWorkflowJob {
       triggerType: workflowVersion.trigger.type,
     });
 
-    const triggerPayload = workflowRun.context?.trigger ?? {};
-
     await this.workflowRunWorkspaceService.startWorkflowRun({
       workflowRunId,
       workspaceId,
-      payload: triggerPayload,
     });
 
     await this.throttleExecution(workflowVersion.workflowId);

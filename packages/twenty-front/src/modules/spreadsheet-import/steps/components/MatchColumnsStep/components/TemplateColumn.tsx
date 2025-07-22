@@ -6,7 +6,7 @@ import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpre
 import { suggestedFieldsByColumnHeaderState } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/states/suggestedFieldsByColumnHeaderState';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
-import { spreadsheetImportBuildFieldOptions } from '@/spreadsheet-import/utils/spreadsheetImportBuildFieldOptions';
+import { spreadsheetBuildFieldOptions } from '@/spreadsheet-import/utils/spreadsheetBuildFieldOptions';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { IconForbid } from 'twenty-ui/display';
@@ -25,18 +25,18 @@ const StyledErrorMessage = styled.span`
   margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
-type TemplateColumnProps = {
-  columns: SpreadsheetColumns;
+type TemplateColumnProps<T extends string> = {
+  columns: SpreadsheetColumns<string>;
   columnIndex: number;
-  onChange: (val: string, index: number) => void;
+  onChange: (val: T, index: number) => void;
 };
 
-export const TemplateColumn = ({
+export const TemplateColumn = <T extends string>({
   columns,
   columnIndex,
   onChange,
-}: TemplateColumnProps) => {
-  const { spreadsheetImportFields: fields } = useSpreadsheetImportInternal();
+}: TemplateColumnProps<T>) => {
+  const { fields } = useSpreadsheetImportInternal<T>();
   const suggestedFieldsByColumnHeader = useRecoilValue(
     suggestedFieldsByColumnHeaderState,
   );
@@ -46,8 +46,8 @@ export const TemplateColumn = ({
 
   const { t } = useLingui();
 
-  const fieldOptions = spreadsheetImportBuildFieldOptions(fields, columns);
-  const suggestedFieldOptions = spreadsheetImportBuildFieldOptions(
+  const fieldOptions = spreadsheetBuildFieldOptions(fields, columns);
+  const suggestedFieldOptions = spreadsheetBuildFieldOptions(
     suggestedFieldsByColumnHeader[column.header] ?? [],
     columns,
   );
@@ -74,7 +74,7 @@ export const TemplateColumn = ({
       <MatchColumnToFieldSelect
         placeholder={t`Select column...`}
         value={isIgnored ? ignoreValue : selectValue}
-        onChange={(value) => onChange(value?.value as string, column.index)}
+        onChange={(value) => onChange(value?.value as T, column.index)}
         options={selectOptions}
         suggestedOptions={suggestedFieldOptions}
         columnIndex={column.index.toString()}

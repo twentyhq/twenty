@@ -4,7 +4,7 @@ import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
 
 describe('setSubColumn', () => {
   it('should return a matchedSelectColumn with updated matchedOptions', () => {
-    const oldColumn: SpreadsheetColumn = {
+    const oldColumn: SpreadsheetColumn<'John' | ''> = {
       index: 0,
       header: 'Name',
       type: SpreadsheetColumnType.matchedSelect,
@@ -32,7 +32,7 @@ describe('setSubColumn', () => {
   });
 
   it('should return a matchedSelectOptionsColumn with updated matchedOptions', () => {
-    const oldColumn: SpreadsheetColumn = {
+    const oldColumn: SpreadsheetColumn<'John' | 'Jane'> = {
       index: 0,
       header: 'Name',
       type: SpreadsheetColumnType.matchedSelectOptions,

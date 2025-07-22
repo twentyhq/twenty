@@ -747,8 +747,8 @@ msgstr "Conta X/Twitter do Contacto"
 #. js-lingui-id: M73whl
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Context"
-msgstr "Contexto"
+#~ msgid "Context"
+#~ msgstr "Contexto"
 
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -1424,8 +1424,8 @@ msgstr ""
 
 #. js-lingui-id: HgJ9jQ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Json object to provide output of the workflow run"
-msgstr "Objeto JSON para fornecer o resultado da execução do workflow"
+#~ msgid "Json object to provide output of the workflow run"
+#~ msgstr "Objeto JSON para fornecer o resultado da execução do workflow"
 
 #. js-lingui-id: AQuLwi
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -2038,8 +2038,8 @@ msgstr "Segredo opcional usado para calcular a assinatura HMAC para cargas de we
 
 #. js-lingui-id: gh06VD
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Output"
-msgstr "Saída"
+#~ msgid "Output"
+#~ msgstr "Saída"
 
 #. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts

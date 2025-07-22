@@ -10,6 +10,6 @@ export const isWorkflowRunJsonField = ({
 }) => {
   return (
     objectMetadataNameSingular === CoreObjectNameSingular.WorkflowRun &&
-    (fieldName === 'output' || fieldName === 'context')
+    fieldName === 'state'
   );
 };
