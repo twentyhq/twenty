@@ -12,8 +12,8 @@ import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -107,11 +107,9 @@ export const createAgentToolTestModule =
           useValue: { sendMessage: jest.fn() },
         },
         {
-          provide: UserRoleService,
+          provide: PermissionsService,
           useValue: {
-            getRoleIdForUserWorkspace: jest.fn(),
-            getRolesByUserWorkspaces: jest.fn(),
-            assignRoleToUserWorkspace: jest.fn(),
+            hasToolPermission: jest.fn(),
           },
         },
       ],
