@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
@@ -12,6 +13,7 @@ import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metada
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
 
 export interface AgentToolTestContext {
   module: TestingModule;
@@ -73,6 +75,10 @@ export const createAgentToolTestModule =
           provide: ToolService,
           useClass: ToolService,
         },
+        {
+          provide: ToolAdapterService,
+          useClass: ToolAdapterService,
+        },
       ],
     }).compile();
 
@@ -125,7 +131,7 @@ export const createAgentToolTestModule =
       isEditable: true,
     } as RoleEntity;
 
-    const testObjectMetadata = {
+    const testObjectMetadata = getMockObjectMetadataEntity({
       id: 'test-object-id',
       standardId: null,
       dataSourceId: 'test-data-source-id',
@@ -153,7 +159,7 @@ export const createAgentToolTestModule =
       dataSource: {} as any,
       objectPermissions: [],
       fieldPermissions: [],
-    };
+    });
 
     return {
       module,

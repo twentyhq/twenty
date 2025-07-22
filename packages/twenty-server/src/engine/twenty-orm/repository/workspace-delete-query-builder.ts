@@ -61,7 +61,7 @@ export class WorkspaceDeleteQueryBuilder<
     ) as this;
   }
 
-  override async execute(): Promise<DeleteResult> {
+  override async execute(): Promise<DeleteResult & { generatedMaps: T[] }> {
     validateQueryIsPermittedOrThrow({
       expressionMap: this.expressionMap,
       objectRecordsPermissions: this.objectRecordsPermissions,

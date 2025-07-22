@@ -277,6 +277,8 @@ export class WorkspaceEntityManager extends EntityManager {
     partialEntity: QueryDeepPartialEntity<Entity>,
     permissionOptions?: PermissionOptions,
   ): Promise<UpdateResult> {
+    const metadata = this.connection.getMetadata(target);
+
     if (
       criteria === undefined ||
       criteria === null ||
@@ -296,23 +298,23 @@ export class WorkspaceEntityManager extends EntityManager {
       Array.isArray(criteria)
     ) {
       return this.createQueryBuilder(
-        undefined,
-        undefined,
+        target,
+        metadata.name,
         undefined,
         permissionOptions,
       )
-        .update(target)
+        .update()
         .set(partialEntity)
         .whereInIds(criteria)
         .execute();
     } else {
       return this.createQueryBuilder(
-        undefined,
-        undefined,
+        target,
+        metadata.name,
         undefined,
         permissionOptions,
       )
-        .update(target)
+        .update()
         .set(partialEntity)
         .where(criteria)
         .execute();

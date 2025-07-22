@@ -1,5 +1,6 @@
 import { Injectable, ValidationError } from '@nestjs/common';
 
+import { t } from '@lingui/core/macro';
 import { plainToInstance } from 'class-transformer';
 import { IsEnum, IsString, IsUUID, validateOrReject } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -7,7 +8,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
@@ -17,6 +17,7 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
@@ -26,9 +27,8 @@ import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
-import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
 
 export class RelationCreationPayloadValidation {
   @IsUUID()
@@ -49,7 +49,7 @@ type ValidateFieldMetadataArgs<T extends UpdateFieldInput | CreateFieldInput> =
     fieldMetadataType: FieldMetadataType;
     fieldMetadataInput: T;
     objectMetadata: ObjectMetadataItemWithFieldMaps;
-    existingFieldMetadata?: FieldMetadataInterface;
+    existingFieldMetadata?: FieldMetadataEntity;
     objectMetadataMaps: ObjectMetadataMaps;
   };
 
@@ -90,10 +90,11 @@ export class FieldMetadataRelationService {
       label: relationCreationPayload.targetFieldLabel,
       icon: relationCreationPayload.targetFieldIcon,
       workspaceId: fieldMetadataInput.workspaceId,
+      defaultValue: fieldMetadataInput.defaultValue,
     });
 
     const targetFieldMetadataToCreateWithRelation =
-      await this.addCustomRelationFieldMetadataForCreation({
+      this.computeCustomRelationFieldMetadataForCreation({
         fieldMetadataInput: targetFieldMetadataToCreate,
         relationCreationPayload: {
           targetObjectMetadataId: objectMetadata.id,
@@ -134,9 +135,13 @@ export class FieldMetadataRelationService {
     fieldMetadataInput,
     fieldMetadataType,
     objectMetadataMaps,
+    objectMetadata,
   }: Pick<
     ValidateFieldMetadataArgs<T>,
-    'fieldMetadataInput' | 'fieldMetadataType' | 'objectMetadataMaps'
+    | 'fieldMetadataInput'
+    | 'fieldMetadataType'
+    | 'objectMetadataMaps'
+    | 'objectMetadata'
   >): Promise<T> {
     // TODO: clean typings, we should try to validate both update and create inputs in the same function
     const isRelation =
@@ -150,6 +155,11 @@ export class FieldMetadataRelationService {
           .relationCreationPayload,
       )
     ) {
+      validateFieldNameAvailabilityOrThrow(
+        `${fieldMetadataInput.name}Id`,
+        objectMetadata,
+      );
+
       const relationCreationPayload = (
         fieldMetadataInput as unknown as CreateFieldInput
       ).relationCreationPayload;
@@ -180,6 +190,24 @@ export class FieldMetadataRelationService {
           computedMetadataNameFromLabel,
           objectMetadataTarget,
         );
+
+        validateFieldNameAvailabilityOrThrow(
+          `${computedMetadataNameFromLabel}Id`,
+          objectMetadataTarget,
+        );
+
+        if (
+          computedMetadataNameFromLabel === fieldMetadataInput.name &&
+          objectMetadata.id === objectMetadataTarget.id
+        ) {
+          throw new FieldMetadataException(
+            `Name "${computedMetadataNameFromLabel}" cannot be the same on both side of the relation`,
+            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+            {
+              userFriendlyMessage: t`Name "${computedMetadataNameFromLabel}" cannot be the same on both side of the relation`,
+            },
+          );
+        }
       }
     }
 
@@ -214,7 +242,7 @@ export class FieldMetadataRelationService {
   async findCachedFieldMetadataRelation(
     fieldMetadataItems: Array<
       Pick<
-        FieldMetadataInterface,
+        FieldMetadataEntity,
         | 'id'
         | 'type'
         | 'objectMetadataId'
@@ -285,7 +313,7 @@ export class FieldMetadataRelationService {
     });
   }
 
-  addCustomRelationFieldMetadataForCreation({
+  computeCustomRelationFieldMetadataForCreation({
     fieldMetadataInput,
     relationCreationPayload,
     joinColumnName,
@@ -295,11 +323,11 @@ export class FieldMetadataRelationService {
     joinColumnName: string;
   }) {
     const isRelation =
-      isFieldMetadataInterfaceOfType(
+      isFieldMetadataEntityOfType(
         fieldMetadataInput,
         FieldMetadataType.RELATION,
       ) ||
-      isFieldMetadataInterfaceOfType(
+      isFieldMetadataEntityOfType(
         fieldMetadataInput,
         FieldMetadataType.MORPH_RELATION,
       );

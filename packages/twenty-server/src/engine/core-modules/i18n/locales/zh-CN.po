@@ -503,8 +503,8 @@ msgstr "正文"
 #. js-lingui-id: Nl8eMw
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
-msgid "Body (deprecated)"
-msgstr "正文（已弃用）"
+#~ msgid "Body (deprecated)"
+#~ msgstr "正文（已弃用）"
 
 #. js-lingui-id: 8mVqF7
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -747,8 +747,8 @@ msgstr "联系人的 X/Twitter 账户"
 #. js-lingui-id: M73whl
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Context"
-msgstr "上下文"
+#~ msgid "Context"
+#~ msgstr "上下文"
 
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -1314,6 +1314,11 @@ msgstr ""
 msgid "Invalid calling code {callingCode}"
 msgstr ""
 
+#. js-lingui-id: tG/2Q/
+#: src/engine/core-modules/captcha/captcha.guard.ts
+msgid "Invalid Captcha, please try another device"
+msgstr ""
+
 #. js-lingui-id: 1PtrY0
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid country code {countryCode}"
@@ -1419,8 +1424,8 @@ msgstr ""
 
 #. js-lingui-id: HgJ9jQ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Json object to provide output of the workflow run"
-msgstr "提供工作流程运行输出的 Json 对象"
+#~ msgid "Json object to provide output of the workflow run"
+#~ msgstr "提供工作流程运行输出的 Json 对象"
 
 #. js-lingui-id: AQuLwi
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -1510,8 +1515,8 @@ msgstr "关联对象元数据 ID"
 
 #. js-lingui-id: PV1Nm7
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Linked Opportunities"
-msgstr "关联机会"
+#~ msgid "Linked Opportunities"
+#~ msgstr "关联机会"
 
 #. js-lingui-id: 6YiMr4
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1727,6 +1732,11 @@ msgstr ""
 msgid "Name"
 msgstr "名称"
 
+#. js-lingui-id: aD053i
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service.ts
+msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
+msgstr ""
+
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
 msgid "Name is not available, it may be duplicating another field's name."
@@ -1797,7 +1807,6 @@ msgid "Note attachments"
 msgstr "备注附件"
 
 #. js-lingui-id: Q1Rz+6
-#: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note body"
 msgstr "备注正文"
@@ -1930,6 +1939,7 @@ msgid "Operations"
 msgstr "操作"
 
 #. js-lingui-id: 4MyDFl
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Opportunities"
@@ -2028,8 +2038,8 @@ msgstr "用于计算 Webhook 负载 HMAC 签名的可选密钥。此密钥在 Tw
 
 #. js-lingui-id: gh06VD
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Output"
-msgstr "输出"
+#~ msgid "Output"
+#~ msgstr "输出"
 
 #. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
@@ -2379,7 +2389,6 @@ msgstr "任务附件"
 
 #. js-lingui-id: X8fs74
 #: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task body"
 msgstr "任务内容"
 
@@ -2584,9 +2593,13 @@ msgstr "工作流版本名称"
 msgid "The workflow version status"
 msgstr "工作流版本状态"
 
+#. js-lingui-id: NbABJb
+#: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
+msgid "This name is not available as it is already used by another field"
+msgstr ""
+
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
-#: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
 msgid "This name is not available."
 msgstr ""
 

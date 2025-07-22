@@ -1,12 +1,11 @@
 import omit from 'lodash.omit';
 
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
-
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export const getObjectMetadataFromObjectMetadataItemWithFieldMaps = (
   objectMetadataMapItem: ObjectMetadataItemWithFieldMaps,
-): ObjectMetadataInterface => {
+): ObjectMetadataEntity => {
   return {
     ...omit(objectMetadataMapItem, [
       'fieldsById',

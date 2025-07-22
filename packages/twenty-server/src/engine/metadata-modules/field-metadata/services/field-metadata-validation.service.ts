@@ -15,10 +15,10 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
@@ -34,7 +34,7 @@ type ValidateFieldMetadataArgs = {
   fieldMetadataType: FieldMetadataType;
   fieldMetadataInput: CreateFieldInput | UpdateFieldInput;
   objectMetadata: ObjectMetadataItemWithFieldMaps;
-  existingFieldMetadata?: FieldMetadataInterface;
+  existingFieldMetadata?: FieldMetadataEntity;
 };
 
 enum ValueType {
