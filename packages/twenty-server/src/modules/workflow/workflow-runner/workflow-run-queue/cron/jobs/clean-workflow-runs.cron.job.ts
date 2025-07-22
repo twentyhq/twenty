@@ -74,6 +74,10 @@ export class CleanWorkflowRunsJob {
       for (const workflowRunToDelete of workflowRunsToDelete) {
         await workflowRunRepository.delete(workflowRunToDelete.id);
       }
+
+      this.logger.log(
+        `Deleted ${workflowRunsToDelete.length} workflow runs for workspace ${activeWorkspace.id} (schema ${schemaName})`,
+      );
     }
   }
 }
