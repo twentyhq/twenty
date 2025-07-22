@@ -38,7 +38,7 @@ export const CreateNewViewNoSelectionRecord = () => {
     setViewPickerMode('create-empty');
     openDropdown({
       dropdownComponentInstanceIdFromProps: VIEW_PICKER_DROPDOWN_ID,
-   });
+    });
   };
 
   return <Action onClick={handleAddViewButtonClick} />;
