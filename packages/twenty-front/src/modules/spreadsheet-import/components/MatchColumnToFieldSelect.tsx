@@ -3,11 +3,10 @@ import { ReadonlyDeep } from 'type-fest';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
+import { getSubFieldOptionKey } from '@/object-record/spreadsheet-import/utils/getSubFieldOptionKey';
 import { MatchColumnSelectFieldSelectDropdownContent } from '@/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent';
 import { MatchColumnSelectSubFieldSelectDropdownContent } from '@/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent';
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
-import { SpreadsheetImportFieldOption } from '@/spreadsheet-import/types/SpreadsheetImportFieldOption';
-import { hasNestedFields } from '@/spreadsheet-import/utils/spreadsheetImportHasNestedFields';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import styled from '@emotion/styled';
@@ -20,7 +19,7 @@ interface MatchColumnToFieldSelectProps {
   columnIndex: string;
   onChange: (value: ReadonlyDeep<SelectOption> | null) => void;
   value?: ReadonlyDeep<SelectOption>;
-  options: readonly Readonly<SpreadsheetImportFieldOption>[];
+  options: readonly ReadonlyDeep<SelectOption>[];
   suggestedOptions: readonly ReadonlyDeep<SelectOption>[];
   placeholder?: string;
 }
@@ -71,7 +70,12 @@ export const MatchColumnToFieldSelect = ({
     }
 
     const correspondingOption = options.find((option) => {
-      return option.value === subFieldNameSelected;
+      const optionKey = getSubFieldOptionKey(
+        selectedFieldMetadataItem,
+        subFieldNameSelected,
+      );
+
+      return option.value === optionKey;
     });
 
     if (isDefined(correspondingOption)) {
@@ -108,9 +112,9 @@ export const MatchColumnToFieldSelect = ({
     closeDropdown(dropdownId);
   };
 
-  const shouldShowNestedField =
+  const shouldShowSubField =
     isDefined(selectedFieldMetadataItem) &&
-    hasNestedFields(selectedFieldMetadataItem);
+    isCompositeFieldType(selectedFieldMetadataItem.type);
 
   return (
     <Dropdown
@@ -125,7 +129,7 @@ export const MatchColumnToFieldSelect = ({
         />
       }
       dropdownComponents={
-        shouldShowNestedField ? (
+        shouldShowSubField ? (
           <MatchColumnSelectSubFieldSelectDropdownContent
             fieldMetadataItem={selectedFieldMetadataItem}
             onSubFieldSelect={handleSubFieldSelect}

@@ -1,13 +1,12 @@
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 export const getTargetObjectMetadataOrThrow = (
-  fieldMetadata: FieldMetadataInterface,
+  fieldMetadata: FieldMetadataEntity,
   objectMetadataMaps: ObjectMetadataMaps,
 ) => {
   if (!fieldMetadata.relationTargetObjectMetadataId) {

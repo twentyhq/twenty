@@ -4,4 +4,5 @@ export enum MessageNetworkExceptionCode {
   ECONNABORTED = 'ECONNABORTED',
   ETIMEDOUT = 'ETIMEDOUT',
   ERR_NETWORK = 'ERR_NETWORK',
+  EHOSTUNREACH = 'EHOSTUNREACH',
 }

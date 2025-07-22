@@ -94,6 +94,7 @@ export const ViewPickerContentEffect = () => {
       viewPickerKanbanFieldMetadataId === ''
     ) {
       setViewPickerKanbanFieldMetadataId(
+        // TODO: replace with viewGroups.fieldMetadataId
         referenceView.kanbanFieldMetadataId !== ''
           ? referenceView.kanbanFieldMetadataId
           : availableFieldsForKanban[0].id,

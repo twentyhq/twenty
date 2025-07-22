@@ -64,7 +64,7 @@ export type MatchColumnsStepProps = {
   onError: (message: string) => void;
 };
 
-export const MatchColumnsStep = ({
+export const MatchColumnsStep = <T extends string>({
   data,
   headerValues,
   onBack,
@@ -76,7 +76,7 @@ export const MatchColumnsStep = ({
 }: MatchColumnsStepProps) => {
   const { enqueueDialog } = useDialogManager();
   const dataExample = data.slice(0, 2);
-  const { spreadsheetImportFields: fields } = useSpreadsheetImportInternal();
+  const { fields } = useSpreadsheetImportInternal<T>();
   const [isLoading, setIsLoading] = useState(false);
   const [columns, setColumns] = useRecoilState(
     initialComputedColumnsSelector(headerValues),
@@ -90,7 +90,7 @@ export const MatchColumnsStep = ({
     (columnIndex: number) => {
       setColumns(
         columns.map((column, index) =>
-          columnIndex === index ? setIgnoreColumn(column) : column,
+          columnIndex === index ? setIgnoreColumn<string>(column) : column,
         ),
       );
     },
@@ -109,7 +109,7 @@ export const MatchColumnsStep = ({
   );
 
   const onChange = useCallback(
-    (value: string, columnIndex: number) => {
+    (value: T, columnIndex: number) => {
       if (value === DO_NOT_IMPORT_OPTION_KEY) {
         if (columns[columnIndex].type === SpreadsheetColumnType.ignored) {
           onRevertIgnore(columnIndex);
@@ -119,12 +119,12 @@ export const MatchColumnsStep = ({
       } else {
         const field = fields.find(
           (field) => field.key === value,
-        ) as unknown as SpreadsheetImportField;
+        ) as unknown as SpreadsheetImportField<T>;
         const existingFieldIndex = columns.findIndex(
           (column) => 'value' in column && column.value === field.key,
         );
         setColumns(
-          columns.map<SpreadsheetColumn>((column, index) => {
+          columns.map<SpreadsheetColumn<string>>((column, index) => {
             if (columnIndex === index) {
               return setColumn(column, field, data);
             } else if (index === existingFieldIndex) {
@@ -141,9 +141,9 @@ export const MatchColumnsStep = ({
 
   const handleContinue = useCallback(
     async (
-      values: ImportedStructuredRow[],
+      values: ImportedStructuredRow<string>[],
       rawData: ImportedRow[],
-      columns: SpreadsheetColumns,
+      columns: SpreadsheetColumns<string>,
     ) => {
       try {
         const data = await matchColumnsStepHook(values, rawData, columns);

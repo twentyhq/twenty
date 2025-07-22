@@ -1,7 +1,7 @@
 import { defaultSpreadsheetImportProps } from '@/spreadsheet-import/provider/components/SpreadsheetImport';
 import {
-  SpreadsheetImportDialogOptions,
-  SpreadsheetImportFields
+    SpreadsheetImportDialogOptions,
+    SpreadsheetImportFields
 } from '@/spreadsheet-import/types';
 import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -16,6 +16,7 @@ const fields = [
     fieldType: {
       type: 'input',
     },
+    example: 'Stephanie',
     fieldValidationDefinitions: [
       {
         rule: 'required',
@@ -23,8 +24,6 @@ const fields = [
       },
     ],
     fieldMetadataType: FieldMetadataType.TEXT,
-    fieldMetadataItemId: '1',
-    isNestedField: false,
   },
   {
     Icon: null,
@@ -34,6 +33,7 @@ const fields = [
     fieldType: {
       type: 'input',
     },
+    example: 'McDonald',
     fieldValidationDefinitions: [
       {
         rule: 'unique',
@@ -42,9 +42,6 @@ const fields = [
       },
     ],
     description: 'Family / Last name',
-    fieldMetadataType: FieldMetadataType.TEXT,
-    fieldMetadataItemId: '2',
-    isNestedField: false,
   },
   {
     Icon: null,
@@ -54,6 +51,7 @@ const fields = [
     fieldType: {
       type: 'input',
     },
+    example: '23',
     fieldValidationDefinitions: [
       {
         rule: 'regex',
@@ -62,14 +60,12 @@ const fields = [
         level: 'warning',
       },
     ],
-    fieldMetadataType: FieldMetadataType.TEXT,
-    fieldMetadataItemId: '3',
-    isNestedField: false,
   },
   {
     Icon: null,
     label: 'Team',
     key: 'team',
+    alternateMatches: ['department'],
     fieldType: {
       type: 'select',
       options: [
@@ -77,31 +73,28 @@ const fields = [
         { label: 'Team Two', value: 'two' },
       ],
     },
+    example: 'Team one',
     fieldValidationDefinitions: [
       {
         rule: 'required',
         errorMessage: 'Team is required',
       },
     ],
-    fieldMetadataType: FieldMetadataType.TEXT,
-    fieldMetadataItemId: '4',
-    isNestedField: false,
   },
   {
     Icon: null,
     label: 'Is manager',
     key: 'is_manager',
+    alternateMatches: ['manages'],
     fieldType: {
       type: 'checkbox',
       booleanMatches: {},
     },
-    fieldMetadataType: FieldMetadataType.TEXT,
-    fieldMetadataItemId: '5',
-    isNestedField: false,
+    example: 'true',
   },
-] as SpreadsheetImportFields;
+] as SpreadsheetImportFields<string>;
 
-export const importedColums: SpreadsheetColumns = [
+export const importedColums: SpreadsheetColumns<string> = [
   {
     header: 'Name',
     index: 0,
@@ -128,13 +121,13 @@ export const importedColums: SpreadsheetColumns = [
   },
 ];
 
-const mockComponentBehaviourForTypes = (
-  props: SpreadsheetImportDialogOptions,
+const mockComponentBehaviourForTypes = <T extends string>(
+  props: SpreadsheetImportDialogOptions<T>,
 ) => props;
 
 export const mockRsiValues = mockComponentBehaviourForTypes({
   ...defaultSpreadsheetImportProps,
-  spreadsheetImportFields: fields,
+  fields: fields,
   onSubmit: async () => {
     return;
   },

@@ -14,7 +14,7 @@ type TimelineActivity = Omit<ObjectRecordNonDestructiveEvent, 'properties'> & {
   objectName?: string;
   linkedRecordCachedName?: string;
   linkedRecordId?: string;
-  linkedObjectMetadataId?: string;
+  linkedObjectMetadataId?: string | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   properties: Record<string, any>; // more relaxed conditions than for internal events
 };
@@ -50,17 +50,28 @@ export class TimelineActivityService {
     if (!timelineActivities || timelineActivities.length === 0) return;
 
     for (const timelineActivity of timelineActivities) {
-      await this.timelineActivityRepository.upsertOne(
-        timelineActivity.name,
-        timelineActivity.properties,
-        timelineActivity.objectName ?? event.objectMetadata.nameSingular,
-        timelineActivity.recordId,
+      const {
+        name,
+        properties,
+        recordId,
+        linkedObjectMetadataId,
+        linkedRecordCachedName,
+        linkedRecordId,
+        objectName,
+        workspaceMemberId,
+      } = timelineActivity;
+
+      await this.timelineActivityRepository.upsertOne({
+        linkedObjectMetadataId: linkedObjectMetadataId ?? null,
+        name,
+        objectName: objectName ?? event.objectMetadata.nameSingular,
+        properties,
+        recordId,
         workspaceId,
-        timelineActivity.workspaceMemberId,
-        timelineActivity.linkedRecordCachedName,
-        timelineActivity.linkedRecordId,
-        timelineActivity.linkedObjectMetadataId,
-      );
+        linkedRecordCachedName,
+        linkedRecordId,
+        workspaceMemberId,
+      });
     }
   }
 

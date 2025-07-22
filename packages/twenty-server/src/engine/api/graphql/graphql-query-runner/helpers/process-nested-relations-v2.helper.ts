@@ -4,6 +4,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import {
@@ -20,7 +21,7 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 @Injectable()
 export class ProcessNestedRelationsV2Helper {
@@ -118,7 +119,7 @@ export class ProcessNestedRelationsV2Helper {
       parentObjectMetadataItem.fieldsById[sourceFieldMetadataId];
 
     if (
-      !isFieldMetadataInterfaceOfType(
+      !isFieldMetadataEntityOfType(
         sourceFieldMetadata,
         FieldMetadataType.RELATION,
       )
@@ -135,7 +136,7 @@ export class ProcessNestedRelationsV2Helper {
     }
 
     const relationType = sourceFieldMetadata.settings?.relationType;
-    const { targetRelationName, targetObjectMetadata } =
+    const { targetRelationName, targetObjectMetadata, targetRelation } =
       this.getTargetObjectMetadata({
         objectMetadataMaps,
         parentObjectMetadataItem,
@@ -170,12 +171,21 @@ export class ProcessNestedRelationsV2Helper {
           : `${sourceFieldName}Id`,
     });
 
+    const fieldMetadataTargetRelationColumnName =
+      targetRelation &&
+      isFieldMetadataEntityOfType(
+        targetRelation,
+        FieldMetadataType.MORPH_RELATION,
+      )
+        ? `${(targetRelation?.settings as FieldMetadataRelationSettings)?.joinColumnName}`
+        : `${targetRelationName}Id`;
+
     const { relationResults, relationAggregatedFieldsResult } =
       await this.findRelations({
         referenceQueryBuilder: targetObjectQueryBuilder,
         column:
           relationType === RelationType.ONE_TO_MANY
-            ? `"${targetRelationName}Id"`
+            ? `"${fieldMetadataTargetRelationColumnName}"`
             : 'id',
         ids: relationIds,
         limit: limit * parentObjectRecords.length,
@@ -191,7 +201,7 @@ export class ProcessNestedRelationsV2Helper {
       sourceFieldName,
       joinField:
         relationType === RelationType.ONE_TO_MANY
-          ? `${targetRelationName}Id`
+          ? `${fieldMetadataTargetRelationColumnName}`
           : 'id',
       relationType,
     });
@@ -259,12 +269,17 @@ export class ProcessNestedRelationsV2Helper {
       );
     }
 
+    const targetRelation =
+      objectMetadataMaps.byId[
+        targetFieldMetadata.relationTargetObjectMetadataId
+      ]?.fieldsById[targetFieldMetadata.relationTargetFieldMetadataId];
+
     const targetRelationName =
       objectMetadataMaps.byId[
         targetFieldMetadata.relationTargetObjectMetadataId
       ]?.fieldsById[targetFieldMetadata.relationTargetFieldMetadataId]?.name;
 
-    return { targetRelationName, targetObjectMetadata };
+    return { targetRelationName, targetObjectMetadata, targetRelation };
   }
 
   private getUniqueIds({

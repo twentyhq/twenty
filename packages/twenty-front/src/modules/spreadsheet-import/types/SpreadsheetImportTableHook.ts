@@ -1,11 +1,11 @@
 import { ImportedStructuredRow } from './SpreadsheetImportImportedStructuredRow';
 import { SpreadsheetImportInfo } from './SpreadsheetImportInfo';
 
-export type SpreadsheetImportTableHook = (
-  table: ImportedStructuredRow[],
+export type SpreadsheetImportTableHook<T extends string> = (
+  table: ImportedStructuredRow<T>[],
   addError: (
     rowIndex: number,
-    fieldKey: string,
+    fieldKey: T,
     error: SpreadsheetImportInfo,
   ) => void,
-) => ImportedStructuredRow[];
+) => ImportedStructuredRow<T>[];

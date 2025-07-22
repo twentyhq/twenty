@@ -8,11 +8,11 @@ import { SpreadsheetImportRowHook } from '@/spreadsheet-import/types/Spreadsheet
 import { SpreadsheetImportTableHook } from '@/spreadsheet-import/types/SpreadsheetImportTableHook';
 import { SpreadsheetImportStep } from '../steps/types/SpreadsheetImportStep';
 
-export type SpreadsheetImportDialogOptions = {
+export type SpreadsheetImportDialogOptions<FieldNames extends string> = {
   // callback when RSI is closed before final submit
   onClose: () => void;
   // Field description for requested data
-  spreadsheetImportFields: SpreadsheetImportFields;
+  fields: SpreadsheetImportFields<FieldNames>;
   // Runs after file upload step, receives and returns raw sheet data
   uploadStepHook?: (importedRows: ImportedRow[]) => Promise<ImportedRow[]>;
   // Runs after header selection step, receives and returns raw sheet data
@@ -22,17 +22,17 @@ export type SpreadsheetImportDialogOptions = {
   ) => Promise<{ headerRow: ImportedRow; importedRows: ImportedRow[] }>;
   // Runs once before validation step, used for data mutations and if you want to change how columns were matched
   matchColumnsStepHook?: (
-    importedStructuredRows: ImportedStructuredRow[],
+    importedStructuredRows: ImportedStructuredRow<FieldNames>[],
     importedRows: ImportedRow[],
-    columns: SpreadsheetColumns,
-  ) => Promise<ImportedStructuredRow[]>;
+    columns: SpreadsheetColumns<FieldNames>,
+  ) => Promise<ImportedStructuredRow<FieldNames>[]>;
   // Runs after column matching and on entry change
-  rowHook?: SpreadsheetImportRowHook;
+  rowHook?: SpreadsheetImportRowHook<FieldNames>;
   // Runs after column matching and on entry change
-  tableHook?: SpreadsheetImportTableHook;
+  tableHook?: SpreadsheetImportTableHook<FieldNames>;
   // Function called after user finishes the flow
   onSubmit: (
-    validationResult: SpreadsheetImportImportValidationResult,
+    validationResult: SpreadsheetImportImportValidationResult<FieldNames>,
     file: File,
   ) => Promise<void>;
   // Function called when user aborts the importing flow
@@ -59,6 +59,5 @@ export type SpreadsheetImportDialogOptions = {
   rtl?: boolean;
   // Allow header selection
   selectHeader?: boolean;
-  // Available field for import
   availableFieldMetadataItems: FieldMetadataItem[];
 };

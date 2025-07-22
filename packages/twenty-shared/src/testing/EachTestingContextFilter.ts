@@ -6,6 +6,7 @@ export const eachTestingContextFilter = <T>(
   const onlyTestsCases = testCases.filter((testCase) => testCase.only === true);
 
   if (process.env.CI && onlyTestsCases.length > 0) {
+    // eslint-disable-next-line no-console
     console.warn(
       'Should never push tests cases with an only to true, only to use in dev env\n returning the whole test suite anyway',
     );
