@@ -3,8 +3,10 @@ import { Module } from '@nestjs/common';
 import { CronRegisterAllCommand } from 'src/database/commands/cron-register-all.command';
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
+import { MigrateViewsToCoreCommand } from 'src/database/commands/views-migration/migrate-views-to-core.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
@@ -37,9 +39,11 @@ import { DataSeedWorkspaceCommand } from './data-seed-dev-workspace.command';
     DataSourceModule,
     WorkspaceCacheStorageModule,
     ApiKeyModule,
+    FeatureFlagModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,
+    MigrateViewsToCoreCommand,
     ConfirmationQuestion,
     CronRegisterAllCommand,
   ],
