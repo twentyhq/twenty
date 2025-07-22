@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
+import { WorkflowRunStepInfo } from 'twenty-shared/src/workflow/types/WorkflowRunStateStepInfos';
 
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -13,7 +14,6 @@ import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/compos
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
-  StepOutput,
   WorkflowRunState,
   WorkflowRunStatus,
   WorkflowRunWorkspaceEntity,
@@ -205,16 +205,16 @@ export class WorkflowRunWorkspaceService {
   }
 
   @WithLock('workflowRunId')
-  async updateWorkflowRunStepStatus({
+  async updateWorkflowRunStepInfo({
+    stepId,
+    stepInfo,
     workflowRunId,
     workspaceId,
-    stepId,
-    stepStatus,
   }: {
-    workflowRunId: string;
     stepId: string;
+    stepInfo: WorkflowRunStepInfo;
+    workflowRunId: string;
     workspaceId: string;
-    stepStatus: StepStatus;
   }) {
     const workflowRunToUpdate = await this.getWorkflowRunOrFail({
       workflowRunId,
@@ -227,43 +227,10 @@ export class WorkflowRunWorkspaceService {
         stepInfos: {
           ...workflowRunToUpdate.state?.stepInfos,
           [stepId]: {
-            ...(workflowRunToUpdate.state?.stepInfos?.[stepId] || {}),
-            status: stepStatus,
-          },
-        },
-      },
-    };
-
-    await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
-  }
-
-  @WithLock('workflowRunId')
-  async saveWorkflowRunState({
-    workflowRunId,
-    stepOutput,
-    workspaceId,
-    stepStatus,
-  }: {
-    workflowRunId: string;
-    stepOutput: StepOutput;
-    workspaceId: string;
-    stepStatus: StepStatus;
-  }) {
-    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
-      workflowRunId,
-      workspaceId,
-    });
-
-    const partialUpdate = {
-      state: {
-        ...workflowRunToUpdate.state,
-        stepInfos: {
-          ...workflowRunToUpdate.state?.stepInfos,
-          [stepOutput.id]: {
-            ...(workflowRunToUpdate.state?.stepInfos[stepOutput.id] || {}),
-            result: stepOutput.output?.result,
-            error: stepOutput.output?.error,
-            status: stepStatus,
+            ...(workflowRunToUpdate.state?.stepInfos[stepId] || {}),
+            result: stepInfo?.result,
+            error: stepInfo?.error,
+            status: stepInfo.status,
           },
         },
       },
