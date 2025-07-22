@@ -23,7 +23,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @Controller('rest/webhooks')
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
 @UseFilters(RestApiExceptionFilter)
-export class WebhookRestController {
+export class WebhookController {
   constructor(private readonly webhookService: WebhookService) {}
 
   @Get()

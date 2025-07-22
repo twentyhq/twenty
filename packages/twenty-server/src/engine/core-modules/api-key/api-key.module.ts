@@ -8,7 +8,7 @@ import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
-import { ApiKeyRestController } from './controllers/api-key-rest.controller';
+import { ApiKeyController } from './controllers/api-key.controller';
 
 @Module({
   imports: [
@@ -18,7 +18,7 @@ import { ApiKeyRestController } from './controllers/api-key-rest.controller';
     WorkspaceCacheStorageModule,
   ],
   providers: [ApiKeyService, ApiKeyResolver],
-  controllers: [ApiKeyRestController],
+  controllers: [ApiKeyController],
   exports: [ApiKeyService, TypeOrmModule],
 })
 export class ApiKeyModule {}

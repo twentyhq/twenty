@@ -7,7 +7,7 @@ import { WebhookResolver } from 'src/engine/core-modules/webhook/webhook.resolve
 import { WebhookService } from 'src/engine/core-modules/webhook/webhook.service';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
-import { WebhookRestController } from './controllers/webhook-rest.controller';
+import { WebhookController } from './controllers/webhook.controller';
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { WebhookRestController } from './controllers/webhook-rest.controller';
     WorkspaceCacheStorageModule,
   ],
   providers: [WebhookService, WebhookResolver],
-  controllers: [WebhookRestController],
+  controllers: [WebhookController],
   exports: [WebhookService, TypeOrmModule],
 })
 export class WebhookModule {}
