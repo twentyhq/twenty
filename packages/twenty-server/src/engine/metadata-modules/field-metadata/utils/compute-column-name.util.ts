@@ -23,7 +23,7 @@ export function computeColumnName(
 ): string;
 export function computeColumnName<T extends FieldMetadataType>(
   fieldMetadata: FieldMetadataInterface<T>,
-  ioptions?: ComputeColumnNameOptions,
+  options?: ComputeColumnNameOptions,
 ): string;
 // TODO: If we need to implement custom name logic for columns, we can do it here
 export function computeColumnName<T extends FieldMetadataType>(

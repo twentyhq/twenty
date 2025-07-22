@@ -257,10 +257,15 @@ export class WorkspacePermissionsCacheService {
             );
 
             for (const fieldPermission of fieldPermissions) {
-              restrictedFields[fieldPermission.fieldMetadataId] = {
-                canRead: fieldPermission.canReadFieldValue,
-                canUpdate: fieldPermission.canUpdateFieldValue,
-              };
+              if (
+                isDefined(fieldPermission.canReadFieldValue) ||
+                isDefined(fieldPermission.canUpdateFieldValue)
+              ) {
+                restrictedFields[fieldPermission.fieldMetadataId] = {
+                  canRead: fieldPermission.canReadFieldValue,
+                  canUpdate: fieldPermission.canUpdateFieldValue,
+                };
+              }
             }
           }
         }
