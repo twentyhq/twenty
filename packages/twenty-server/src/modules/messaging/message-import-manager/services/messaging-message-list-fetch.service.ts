@@ -6,7 +6,6 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -17,15 +16,14 @@ import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
 } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
-
 @Injectable()
-export class MessagingPartialMessageListFetchService {
+export class MessagingMessageListFetchService {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
-    private readonly messagingGetMessageListService: MessagingGetMessageListService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly twentyORMManager: TwentyORMManager,
+    private readonly messagingGetMessageListService: MessagingGetMessageListService,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
     private readonly messagingMessageCleanerService: MessagingMessageCleanerService,
     private readonly messagingCursorService: MessagingCursorService,
@@ -33,59 +31,64 @@ export class MessagingPartialMessageListFetchService {
 
   public async processMessageListFetch(
     messageChannel: MessageChannelWorkspaceEntity,
-    connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
-  ): Promise<void> {
+  ) {
     try {
       await this.messageChannelSyncStatusService.markAsMessagesListFetchOngoing(
         [messageChannel.id],
       );
 
-      const messageChannelRepository =
-        await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
-          'messageChannel',
-        );
-
-      await messageChannelRepository.update(
-        {
-          id: messageChannel.id,
-        },
-        {
-          throttleFailureCount: 0,
-        },
-      );
-
-      const partialMessageLists =
-        await this.messagingGetMessageListService.getPartialMessageLists(
+      const messageLists =
+        await this.messagingGetMessageListService.getMessageLists(
           messageChannel,
         );
 
-      for (const partialMessageList of partialMessageLists) {
-        const {
-          messageExternalIds,
-          messageExternalIdsToDelete,
-          previousSyncCursor,
-          nextSyncCursor,
-          folderId,
-        } = partialMessageList;
+      const isEmptyMailbox = messageLists.some(
+        (messageList) => messageList.messageExternalIds.length === 0,
+      );
 
-        const isPartialImportFinished = this.isPartialImportFinished(
-          previousSyncCursor,
-          nextSyncCursor,
+      if (isEmptyMailbox) {
+        await this.messageChannelSyncStatusService.resetAndScheduleMessageListFetch(
+          [messageChannel.id],
+          workspaceId,
         );
 
-        if (isPartialImportFinished) {
-          continue;
-        }
+        return;
+      }
 
-        await this.cacheStorage.setAdd(
-          `messages-to-import:${workspaceId}:${messageChannel.id}`,
-          messageExternalIds,
-        );
+      for (const messageList of messageLists) {
+        const { messageExternalIds, nextSyncCursor, folderId } = messageList;
 
         const messageChannelMessageAssociationRepository =
           await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
             'messageChannelMessageAssociation',
+          );
+
+        const existingMessageChannelMessageAssociations =
+          await messageChannelMessageAssociationRepository.find({
+            where: {
+              messageChannelId: messageChannel.id,
+            },
+          });
+
+        const existingMessageChannelMessageAssociationsExternalIds =
+          existingMessageChannelMessageAssociations.map(
+            (messageChannelMessageAssociation) =>
+              messageChannelMessageAssociation.messageExternalId,
+          );
+
+        const messageExternalIdsToImport = messageExternalIds.filter(
+          (messageExternalId) =>
+            !existingMessageChannelMessageAssociationsExternalIds.includes(
+              messageExternalId,
+            ),
+        );
+
+        const messageExternalIdsToDelete =
+          existingMessageChannelMessageAssociationsExternalIds.filter(
+            (existingMessageCMAExternalId) =>
+              existingMessageCMAExternalId &&
+              !messageExternalIds.includes(existingMessageCMAExternalId),
           );
 
         if (messageExternalIdsToDelete.length) {
@@ -99,27 +102,18 @@ export class MessagingPartialMessageListFetchService {
           );
         }
 
+        if (messageExternalIdsToImport.length) {
+          await this.cacheStorage.setAdd(
+            `messages-to-import:${workspaceId}:${messageChannel.id}`,
+            messageExternalIdsToImport,
+          );
+        }
+
         await this.messagingCursorService.updateCursor(
           messageChannel,
           nextSyncCursor,
           folderId,
         );
-      }
-
-      const isPartialImportFinishedForAllFolders = partialMessageLists.every(
-        (partialMessageList) =>
-          this.isPartialImportFinished(
-            partialMessageList.previousSyncCursor,
-            partialMessageList.nextSyncCursor,
-          ),
-      );
-
-      if (isPartialImportFinishedForAllFolders) {
-        await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
-          [messageChannel.id],
-        );
-
-        return;
       }
 
       await this.messageChannelSyncStatusService.scheduleMessagesImport([
@@ -128,17 +122,10 @@ export class MessagingPartialMessageListFetchService {
     } catch (error) {
       await this.messageImportErrorHandlerService.handleDriverException(
         error,
-        MessageImportSyncStep.PARTIAL_MESSAGE_LIST_FETCH,
+        MessageImportSyncStep.FULL_MESSAGE_LIST_FETCH,
         messageChannel,
         workspaceId,
       );
     }
-  }
-
-  private isPartialImportFinished(
-    previousSyncCursor: string,
-    nextSyncCursor: string,
-  ): boolean {
-    return previousSyncCursor === nextSyncCursor;
   }
 }

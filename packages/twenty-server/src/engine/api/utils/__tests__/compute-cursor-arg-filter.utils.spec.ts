@@ -5,71 +5,72 @@ import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder
 import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
+import { getMockObjectMetadataItemWithFieldsMaps } from 'src/utils/__test__/get-object-metadata-item-with-fields-maps.mock';
 
 describe('computeCursorArgFilter', () => {
-  const objectMetadataItemWithFieldMaps = {
-    id: 'object-id',
-    workspaceId: 'workspace-id',
-    nameSingular: 'person',
-    namePlural: 'people',
-    isCustom: false,
-    isRemote: false,
-    labelSingular: 'Person',
-    labelPlural: 'People',
-    targetTableName: 'person',
-    indexMetadatas: [],
-    isSystem: false,
-    isActive: true,
-    isAuditLogged: false,
-    isSearchable: false,
-    fieldIdByJoinColumnName: {},
-    icon: 'Icon123',
-    fieldIdByName: {
-      name: 'name-id',
-      age: 'age-id',
-      fullName: 'fullname-id',
-    },
-    fieldsById: {
-      'name-id': getMockFieldMetadataEntity({
-        workspaceId: 'workspace-id',
-        objectMetadataId: 'object-id',
-        id: 'name-id',
-        type: FieldMetadataType.TEXT,
-        name: 'name',
-        label: 'Name',
-        isLabelSyncedWithName: true,
-        isNullable: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }) as FieldMetadataEntity,
-      'age-id': getMockFieldMetadataEntity({
-        workspaceId: 'workspace-id',
-        objectMetadataId: 'object-id',
-        id: 'age-id',
-        type: FieldMetadataType.NUMBER,
-        name: 'age',
-        label: 'Age',
-        isLabelSyncedWithName: true,
-        isNullable: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }) as FieldMetadataEntity,
-      'fullname-id': getMockFieldMetadataEntity({
-        workspaceId: 'workspace-id',
-        objectMetadataId: 'object-id',
-        id: 'fullname-id',
-        type: FieldMetadataType.FULL_NAME,
-        name: 'fullName',
-        label: 'Full Name',
-        isLabelSyncedWithName: true,
-        isNullable: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }) as FieldMetadataEntity,
-    },
-  } satisfies ObjectMetadataItemWithFieldMaps;
+  const objectMetadataItemWithFieldMaps =
+    getMockObjectMetadataItemWithFieldsMaps({
+      id: 'object-id',
+      workspaceId: 'workspace-id',
+      nameSingular: 'person',
+      namePlural: 'people',
+      isCustom: false,
+      isRemote: false,
+      labelSingular: 'Person',
+      labelPlural: 'People',
+      targetTableName: 'person',
+      indexMetadatas: [],
+      isSystem: false,
+      isActive: true,
+      isAuditLogged: false,
+      isSearchable: false,
+      fieldIdByJoinColumnName: {},
+      icon: 'Icon123',
+      fieldIdByName: {
+        name: 'name-id',
+        age: 'age-id',
+        fullName: 'fullname-id',
+      },
+      fieldsById: {
+        'name-id': getMockFieldMetadataEntity({
+          workspaceId: 'workspace-id',
+          objectMetadataId: 'object-id',
+          id: 'name-id',
+          type: FieldMetadataType.TEXT,
+          name: 'name',
+          label: 'Name',
+          isLabelSyncedWithName: true,
+          isNullable: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }) as FieldMetadataEntity,
+        'age-id': getMockFieldMetadataEntity({
+          workspaceId: 'workspace-id',
+          objectMetadataId: 'object-id',
+          id: 'age-id',
+          type: FieldMetadataType.NUMBER,
+          name: 'age',
+          label: 'Age',
+          isLabelSyncedWithName: true,
+          isNullable: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }) as FieldMetadataEntity,
+        'fullname-id': getMockFieldMetadataEntity({
+          workspaceId: 'workspace-id',
+          objectMetadataId: 'object-id',
+          id: 'fullname-id',
+          type: FieldMetadataType.FULL_NAME,
+          name: 'fullName',
+          label: 'Full Name',
+          isLabelSyncedWithName: true,
+          isNullable: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }) as FieldMetadataEntity,
+      },
+    });
 
   describe('basic cursor filtering', () => {
     it('should return empty array when cursor is empty', () => {

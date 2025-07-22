@@ -92,7 +92,7 @@ export const AIChatTab = ({
       {isDraggingFile && (
         <DropZone
           setIsDraggingFile={setIsDraggingFile}
-          onUploadFile={(files) => uploadFiles([files])}
+          onUploadFiles={uploadFiles}
         />
       )}
       {!isDraggingFile && (

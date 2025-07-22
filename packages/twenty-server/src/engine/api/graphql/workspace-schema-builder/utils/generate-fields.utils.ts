@@ -7,8 +7,7 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { InputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
@@ -16,6 +15,7 @@ import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schem
 import { formatRelationConnectInputTarget } from 'src/engine/api/graphql/workspace-schema-builder/factories/relation-connect-input-type-definition.factory';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 type TypeFactory<T extends InputTypeDefinitionKind | ObjectTypeDefinitionKind> =
@@ -48,7 +48,7 @@ export const generateFields = <
   options,
   typeFactory,
 }: {
-  objectMetadata: ObjectMetadataInterface;
+  objectMetadata: ObjectMetadataEntity;
   kind: T;
   options: WorkspaceBuildSchemaOptions;
   typeFactory: TypeFactory<T>;
