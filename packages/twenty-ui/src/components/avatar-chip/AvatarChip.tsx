@@ -1,46 +1,113 @@
-import { AvatarChipsLeftComponent } from '@ui/components/avatar-chip/internal/AvatarChipLeftComponent';
-import { AvatarChipsCommonProps } from '@ui/components/avatar-chip/types/AvatarChipsCommonProps.type';
-import { Chip, ChipVariant } from '@ui/components/chip/Chip';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { Avatar } from '@ui/display/avatar/components/Avatar';
+import { AvatarType } from '@ui/display/avatar/types/AvatarType';
+import { IconComponent } from '@ui/display/icon/types/IconComponent';
+import { Nullable } from '@ui/utilities';
+import { isDefined } from 'twenty-shared/utils';
 
-export type AvatarChipProps = AvatarChipsCommonProps;
+const StyledIconWithBackgroundContainer = styled.div<{
+  backgroundColor: string;
+}>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background-color: ${({ backgroundColor }) => backgroundColor};
+`;
+
+const StyledAvatarChipWrapper = styled.div<{
+  isClickable: boolean;
+  divider: AvatarChipProps['divider'];
+  theme: any;
+}>`
+  ${({ divider, theme }) => {
+    const borderStyle = (side: 'left' | 'right') =>
+      `border-${side}: 1px solid ${theme.border.color.light};`;
+    return divider ? borderStyle(divider) : '';
+  }}
+
+  cursor: ${({ isClickable }) => (isClickable ? 'pointer' : 'inherit')};
+  display: flex;
+`;
+
+export type AvatarChipProps = {
+  placeholder?: string;
+  avatarUrl?: string;
+  avatarType?: Nullable<AvatarType>;
+  Icon?: IconComponent;
+  IconColor?: string;
+  IconBackgroundColor?: string;
+  isIconInverted?: boolean;
+  placeholderColorSeed?: string;
+  divider?: 'right' | 'left';
+  onClick?: () => void;
+};
 
 export const AvatarChip = ({
-  name,
-  LeftIcon,
-  LeftIconColor,
-  LeftIconBackgroundColor,
-  rightComponent,
-  leftComponent,
+  Icon,
+  placeholderColorSeed,
   avatarType,
   avatarUrl,
-  className,
-  isIconInverted,
-  maxWidth,
-  placeholderColorSeed,
-  size,
-  variant = ChipVariant.Transparent,
-}: AvatarChipProps) => (
-  <Chip
-    label={name}
-    variant={variant}
-    size={size}
-    leftComponent={
-      leftComponent ?? (
-        <AvatarChipsLeftComponent
-          name={name}
-          LeftIcon={LeftIcon}
-          LeftIconColor={LeftIconColor}
-          LeftIconBackgroundColor={LeftIconBackgroundColor}
-          avatarType={avatarType}
-          avatarUrl={avatarUrl}
-          isIconInverted={isIconInverted}
-          placeholderColorSeed={placeholderColorSeed}
-        />
-      )
-    }
-    rightComponent={rightComponent}
-    clickable={false}
-    className={className}
-    maxWidth={maxWidth}
-  />
-);
+  placeholder,
+  isIconInverted = false,
+  IconColor,
+  IconBackgroundColor,
+  onClick,
+  divider,
+}: AvatarChipProps) => {
+  const theme = useTheme();
+  if (!isDefined(Icon)) {
+    return (
+      <Avatar
+        avatarUrl={avatarUrl}
+        placeholderColorSeed={placeholderColorSeed}
+        placeholder={placeholder}
+        size="sm"
+        type={avatarType}
+        onClick={onClick}
+      />
+    );
+  }
+
+  const isClickable = isDefined(onClick);
+
+  if (isIconInverted || isDefined(IconBackgroundColor)) {
+    return (
+      <StyledAvatarChipWrapper
+        isClickable={isClickable}
+        divider={divider}
+        theme={theme}
+      >
+        <StyledIconWithBackgroundContainer
+          backgroundColor={
+            IconBackgroundColor ?? theme.background.invertedSecondary
+          }
+          onClick={onClick}
+        >
+          <Icon
+            color={theme.font.color.inverted}
+            size={theme.icon.size.sm}
+            stroke={theme.icon.stroke.sm}
+          />
+        </StyledIconWithBackgroundContainer>
+      </StyledAvatarChipWrapper>
+    );
+  }
+
+  return (
+    <StyledAvatarChipWrapper
+      isClickable={isClickable}
+      divider={divider}
+      theme={theme}
+    >
+      <Icon
+        size={theme.icon.size.sm}
+        stroke={theme.icon.stroke.sm}
+        color={IconColor || 'currentColor'}
+      />
+    </StyledAvatarChipWrapper>
+  );
+};

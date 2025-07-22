@@ -1,5 +1,4 @@
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { agentChatObjectMetadataAndRecordContextState } from '@/ai/states/agentChatObjectMetadataAndRecordContextState';
 import { agentChatUploadedFilesComponentState } from '@/ai/states/agentChatUploadedFilesComponentState';
 import styled from '@emotion/styled';
 import { AgentChatFilePreview } from './AgentChatFilePreview';

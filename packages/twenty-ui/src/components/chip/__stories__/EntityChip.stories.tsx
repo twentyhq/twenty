@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { AvatarChip } from '@ui/components/avatar-chip/AvatarChip';
+import { AvatarIconChip } from '@ui/components/avatar-chip/AvatarIconChip';
 
 import {
   ComponentDecorator,
@@ -7,9 +7,9 @@ import {
   RouterDecorator,
 } from '@ui/testing';
 
-const meta: Meta<typeof AvatarChip> = {
+const meta: Meta<typeof AvatarIconChip> = {
   title: 'UI/Display/Chip/AvatarChip',
-  component: AvatarChip,
+  component: AvatarIconChip,
   decorators: [RouterDecorator, ComponentDecorator, RecoilRootDecorator],
   args: {
     name: 'Entity name',
@@ -18,7 +18,7 @@ const meta: Meta<typeof AvatarChip> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof AvatarChip>;
+type Story = StoryObj<typeof AvatarIconChip>;
 
 export const Default: Story = {};
 

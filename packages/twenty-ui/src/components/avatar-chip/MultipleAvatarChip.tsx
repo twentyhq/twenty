@@ -44,7 +44,6 @@ export const MultipleAvatarChip = ({
     </StyledIconsContainer>
   );
 
-
   return (
     <StyledChipContainer onClick={onClick} data-testid={testId}>
       <Chip

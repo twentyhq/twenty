@@ -48,7 +48,7 @@ export const useAgentChat = (agentId: string, records?: ObjectRecord[]) => {
 
   const isAgentChatCurrentContextActive = useRecoilComponentValueV2(
     isAgentChatCurrentContextActiveState,
-    agentId
+    agentId,
   );
 
   const agentChatSelectedFiles = useRecoilComponentValueV2(

@@ -3,17 +3,9 @@ import { IconMapping, useFileTypeColors } from '@/file/utils/fileIconMappings';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { File as FileDocument } from '~/generated-metadata/graphql';
-import { AvatarChip, ChipVariant } from 'twenty-ui/components';
+import { Chip, ChipVariant, AvatarChip } from 'twenty-ui/components';
 import { IconX } from 'twenty-ui/display';
-
-const StyledRemoveIconContainer = styled.div`
-  display: flex;
-  border-left: 1px solid ${({ theme }) => theme.border.color.light};
-
-  svg {
-    cursor: pointer;
-  }
-`;
+import { Loader } from 'twenty-ui/feedback';
 
 export const AgentChatFilePreview = ({
   file,
@@ -28,20 +20,27 @@ export const AgentChatFilePreview = ({
   const iconColors = useFileTypeColors();
 
   return (
-    <AvatarChip
-      name={file.name}
-      LeftIcon={IconMapping[getFileType(file.name)]}
-      LeftIconBackgroundColor={iconColors[getFileType(file.name)]}
+    <Chip
+      label={file.name}
       variant={ChipVariant.Static}
+      leftComponent={
+        isUploading ? (
+          <Loader color="yellow" />
+        ) : (
+          <AvatarChip
+            Icon={IconMapping[getFileType(file.name)]}
+            IconBackgroundColor={iconColors[getFileType(file.name)]}
+          />
+        )
+      }
       rightComponent={
         onRemove ? (
-          <StyledRemoveIconContainer>
-            <IconX
-              size={theme.icon.size.sm}
-              color={theme.font.color.secondary}
-              onClick={onRemove}
-            />
-          </StyledRemoveIconContainer>
+          <AvatarChip
+            Icon={IconX}
+            IconColor={theme.font.color.secondary}
+            onClick={onRemove}
+            divider={'left'}
+          />
         ) : undefined
       }
     />

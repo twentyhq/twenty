@@ -67,6 +67,7 @@ export class AgentStreamingService {
         await this.agentExecutionService.streamChatResponse({
           workspace,
           agentId: thread.agent.id,
+          userWorkspaceId,
           userMessage,
           messages: thread.messages,
           fileIds,
