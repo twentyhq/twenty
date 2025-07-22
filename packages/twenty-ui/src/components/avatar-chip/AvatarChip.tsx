@@ -1,10 +1,15 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Avatar } from '@ui/display/avatar/components/Avatar';
-import { AvatarType } from '@ui/display/avatar/types/AvatarType';
-import { IconComponent } from '@ui/display/icon/types/IconComponent';
-import { Nullable } from '@ui/utilities';
 import { isDefined } from 'twenty-shared/utils';
+import { AvatarChipCommonProps } from '@ui/components/avatar-chip/types/AvatarChipCommonPropsType';
+
+type AvatarChipProps = AvatarChipCommonProps & {
+  IconBackgroundColor?: string;
+  isIconInverted?: boolean;
+  divider?: 'right' | 'left';
+  onClick?: () => void;
+};
 
 const StyledIconWithBackgroundContainer = styled.div<{
   backgroundColor: string;
@@ -32,19 +37,6 @@ const StyledAvatarChipWrapper = styled.div<{
   cursor: ${({ isClickable }) => (isClickable ? 'pointer' : 'inherit')};
   display: flex;
 `;
-
-export type AvatarChipProps = {
-  placeholder?: string;
-  avatarUrl?: string;
-  avatarType?: Nullable<AvatarType>;
-  Icon?: IconComponent;
-  IconColor?: string;
-  IconBackgroundColor?: string;
-  isIconInverted?: boolean;
-  placeholderColorSeed?: string;
-  divider?: 'right' | 'left';
-  onClick?: () => void;
-};
 
 export const AvatarChip = ({
   Icon,
