@@ -48,7 +48,6 @@ export class CleanWorkflowRunsJob {
         activeWorkspace.id,
       );
 
-      // Using raw query to avoid storing repository in cache
       const workflowRunsToDelete = await mainDataSource.query(
         `
           WITH ranked_runs AS (
