@@ -5,7 +5,13 @@ import { t } from '@lingui/core/macro';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource, FindOneOptions, In, Repository } from 'typeorm';
+import {
+  DataSource,
+  FindOneOptions,
+  In,
+  QueryRunner,
+  Repository,
+} from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -36,7 +42,7 @@ import { createMigrationActions } from 'src/engine/metadata-modules/field-metada
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isFieldMetadataTypeMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-morph-relation.util';
-import { isFieldMetadataTypeRelationOrMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-relation-or-morph-relation.util';
+import { areFieldMetadatasTypeRelationOrMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-relation-or-morph-relation.util';
 import { isFieldMetadataTypeRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-relation.util';
 import { isSelectOrMultiSelectFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/is-select-or-multi-select-field-metadata.util';
 import { prepareCustomFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/utils/prepare-custom-field-metadata-for-options.util';
@@ -61,6 +67,14 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { ViewService } from 'src/modules/view/services/view.service';
+
+type GenerateMigrationArgs = {
+  fieldMetadata: FieldMetadataEntity<
+    FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+  >;
+  workspaceId: string;
+  queryRunner: QueryRunner;
+};
 
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {
@@ -356,9 +370,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       }
 
       if (isFieldMetadataTypeRelation(fieldMetadata)) {
-        const isManyToOneRelation =
-          fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE;
-
         const fieldMetadataIdsToDelete: string[] = [];
         const isRelationTargetMorphRelation = isFieldMetadataTypeMorphRelation(
           fieldMetadata.relationTargetFieldMetadata,
@@ -380,46 +391,35 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
               morphRelation.relationTargetFieldMetadataId,
             );
           });
+
+          await fieldMetadataRepository.delete({
+            id: In(fieldMetadataIdsToDelete),
+          });
+
+          for (const morphRelation of morphRelationsWithSameName) {
+            await this.generateDeleteRelationMigration({
+              fieldMetadata: morphRelation,
+              workspaceId,
+              queryRunner,
+            });
+          }
         } else {
           fieldMetadataIdsToDelete.push(
             fieldMetadata.id,
             fieldMetadata.relationTargetFieldMetadataId,
           );
+
+          await fieldMetadataRepository.delete({
+            id: In(fieldMetadataIdsToDelete),
+          });
+
+          await this.generateDeleteRelationMigration({
+            fieldMetadata,
+            workspaceId,
+            queryRunner,
+          });
         }
-
-        await fieldMetadataRepository.delete({
-          id: In(fieldMetadataIdsToDelete),
-        });
-
-        // TODO @guillim: implement custom migration part
-        console.log('TODO: implement custom migration part');
-
-        await this.workspaceMigrationService.createCustomMigration(
-          generateMigrationName(`delete-${fieldMetadata.name}`),
-          workspaceId,
-          [
-            {
-              name: isManyToOneRelation
-                ? computeObjectTargetTable(fieldMetadata.object)
-                : computeObjectTargetTable(
-                    fieldMetadata.relationTargetObjectMetadata as ObjectMetadataEntity,
-                  ),
-              action: WorkspaceMigrationTableActionType.ALTER,
-              columns: [
-                {
-                  action: WorkspaceMigrationColumnActionType.DROP,
-                  columnName: isManyToOneRelation
-                    ? `${(fieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>).settings?.joinColumnName}`
-                    : `${(fieldMetadata.relationTargetFieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>).settings?.joinColumnName}`,
-                } satisfies WorkspaceMigrationColumnDrop,
-              ],
-            } satisfies WorkspaceMigrationTableAction,
-          ],
-          queryRunner,
-        );
       } else if (isFieldMetadataTypeMorphRelation(fieldMetadata)) {
-        // we should delete all morph relations sharing the same name and the same source object metadata id
-        // and then delete all the related relations
         const fieldMetadataIdsToDelete: string[] = [];
 
         const morphRelationsWithSameName =
@@ -441,7 +441,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           id: In(fieldMetadataIdsToDelete),
         });
 
-        // TODO @guillim: implement custom migration part
+        for (const morphRelation of morphRelationsWithSameName) {
+          await this.generateDeleteRelationMigration({
+            fieldMetadata: morphRelation,
+            workspaceId,
+            queryRunner,
+          });
+        }
       } else if (isCompositeFieldMetadataType(fieldMetadata.type)) {
         await fieldMetadataRepository.delete(fieldMetadata.id);
         const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
@@ -780,10 +786,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         objectMetadataId,
         workspaceId,
       },
-      relations: ['relationTargetFieldMetadata'],
+      relations: ['object', 'relationTargetFieldMetadata'],
     });
 
-    if (!isFieldMetadataTypeRelationOrMorphRelation(fieldMetadatas)) {
+    if (!areFieldMetadatasTypeRelationOrMorphRelation(fieldMetadatas)) {
       throw new FieldMetadataException(
         'At least one field metadata is not a relation or morph relation',
         FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
@@ -791,5 +797,89 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     return fieldMetadatas;
+  }
+
+  private async generateDeleteRelationMigration({
+    fieldMetadata,
+    workspaceId,
+    queryRunner,
+  }: GenerateMigrationArgs) {
+    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
+      await this.generateDeleteOneToManyRelationMigration({
+        fieldMetadata,
+        workspaceId,
+        queryRunner,
+      });
+    } else {
+      await this.generateDeleteManyToOneRelationMigration({
+        fieldMetadata,
+        workspaceId,
+        queryRunner,
+      });
+    }
+  }
+
+  private async generateDeleteManyToOneRelationMigration({
+    fieldMetadata,
+    workspaceId,
+    queryRunner,
+  }: GenerateMigrationArgs) {
+    if (fieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE) {
+      throw new FieldMetadataException(
+        'Field metadata is not a many to one relation',
+        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(`delete-${fieldMetadata.name}`),
+      workspaceId,
+      [
+        {
+          name: computeObjectTargetTable(fieldMetadata.object),
+          action: WorkspaceMigrationTableActionType.ALTER,
+          columns: [
+            {
+              action: WorkspaceMigrationColumnActionType.DROP,
+              columnName: `${fieldMetadata.settings?.joinColumnName}`,
+            } satisfies WorkspaceMigrationColumnDrop,
+          ],
+        } satisfies WorkspaceMigrationTableAction,
+      ],
+      queryRunner,
+    );
+  }
+
+  private async generateDeleteOneToManyRelationMigration({
+    fieldMetadata,
+    workspaceId,
+    queryRunner,
+  }: GenerateMigrationArgs) {
+    if (fieldMetadata.settings?.relationType !== RelationType.ONE_TO_MANY) {
+      throw new FieldMetadataException(
+        'Field metadata is not a one to many relation',
+        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(`delete-${fieldMetadata.name}`),
+      workspaceId,
+      [
+        {
+          name: computeObjectTargetTable(
+            fieldMetadata.relationTargetObjectMetadata as ObjectMetadataEntity,
+          ),
+          action: WorkspaceMigrationTableActionType.ALTER,
+          columns: [
+            {
+              action: WorkspaceMigrationColumnActionType.DROP,
+              columnName: `${(fieldMetadata.relationTargetFieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>).settings?.joinColumnName}`,
+            } satisfies WorkspaceMigrationColumnDrop,
+          ],
+        } satisfies WorkspaceMigrationTableAction,
+      ],
+      queryRunner,
+    );
   }
 }
