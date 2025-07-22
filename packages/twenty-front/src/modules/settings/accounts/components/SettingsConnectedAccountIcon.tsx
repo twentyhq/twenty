@@ -27,8 +27,6 @@ const ImapSmtpCaldavIcon = (
 
   if (hasImap && hasSmtp && hasCaldav) {
     IconToShow = IconAt;
-  } else if (hasImap && hasCaldav) {
-    IconToShow = IconAt;
   } else if (hasImap && hasSmtp) {
     IconToShow = IconMail;
   } else if (hasImap) {
