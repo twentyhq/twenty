@@ -568,7 +568,7 @@ describe('roles permissions', () => {
         roleId: string;
       }) => `
       mutation UpsertSettingPermissions {
-          upsertSettingPermissions(upsertSettingPermissionsInput: {roleId: "${roleId}", settingPermissionKeys: [${PermissionFlagType.DATA_MODEL}]}) {
+          upsertSettingPermissions(upsertSettingPermissionsInput: {roleId: "${roleId}", permissionFlagKeys: [${PermissionFlagType.DATA_MODEL}]}) {
               id
               roleId
               flag

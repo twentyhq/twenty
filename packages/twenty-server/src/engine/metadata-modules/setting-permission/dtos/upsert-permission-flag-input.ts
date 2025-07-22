@@ -14,5 +14,5 @@ export class UpsertPermissionFlagsInput {
   @IsArray()
   @IsEnum(PermissionFlagType, { each: true })
   @Field(() => [PermissionFlagType])
-  settingPermissionKeys: PermissionFlagType[];
+  permissionFlagKeys: PermissionFlagType[];
 }

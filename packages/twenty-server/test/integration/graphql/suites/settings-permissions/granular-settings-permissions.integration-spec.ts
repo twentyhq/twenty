@@ -73,7 +73,7 @@ describe('Granular settings permissions', () => {
         mutation UpsertSettingPermissions {
           upsertSettingPermissions(upsertSettingPermissionsInput: {
             roleId: "${customRoleId}"
-            settingPermissionKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}, ${PermissionFlagType.WORKFLOWS}]
+            permissionFlagKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}, ${PermissionFlagType.WORKFLOWS}]
           }) {
             id
             flag
@@ -394,7 +394,7 @@ describe('Granular settings permissions', () => {
           mutation UpsertSettingPermissions {
             upsertSettingPermissions(upsertSettingPermissionsInput: {
               roleId: "${customRoleId}"
-              settingPermissionKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}, ${PermissionFlagType.SECURITY}]
+              permissionFlagKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}, ${PermissionFlagType.SECURITY}]
             }) {
               id
               flag
@@ -451,7 +451,7 @@ describe('Granular settings permissions', () => {
           mutation UpsertSettingPermissions {
             upsertSettingPermissions(upsertSettingPermissionsInput: {
               roleId: "${customRoleId}"
-              settingPermissionKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}]
+              permissionFlagKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}]
             }) {
               id
               flag

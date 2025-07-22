@@ -166,7 +166,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
             variables: {
               upsertSettingPermissionsInput: {
                 roleId: data.createOneRole.id,
-                settingPermissionKeys:
+                permissionFlagKeys:
                   settingsDraftRole.permissionFlags?.map(
                     (permissionFlag) => permissionFlag.flag,
                   ) ?? [],
@@ -219,7 +219,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
             variables: {
               upsertSettingPermissionsInput: {
                 roleId: roleId,
-                settingPermissionKeys:
+                permissionFlagKeys:
                   settingsDraftRole.permissionFlags?.map(
                     (permissionFlag) => permissionFlag.flag,
                   ) ?? [],

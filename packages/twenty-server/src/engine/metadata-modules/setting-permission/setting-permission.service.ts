@@ -37,7 +37,7 @@ export class SettingPermissionService {
       workspaceId,
     });
 
-    const invalidSettings = input.settingPermissionKeys.filter(
+    const invalidSettings = input.permissionFlagKeys.filter(
       (setting) => !Object.values(PermissionFlagType).includes(setting),
     );
 
@@ -64,9 +64,9 @@ export class SettingPermissionService {
         },
       );
       const existingSettings = new Set(existingPermissions.map((p) => p.flag));
-      const inputSettings = new Set(input.settingPermissionKeys);
+      const inputSettings = new Set(input.permissionFlagKeys);
 
-      const settingsToAdd = input.settingPermissionKeys.filter(
+      const settingsToAdd = input.permissionFlagKeys.filter(
         (setting) => !existingSettings.has(setting),
       );
       const permissionsToRemove = existingPermissions.filter(
