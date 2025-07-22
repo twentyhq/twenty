@@ -107,7 +107,7 @@ const StyledRecordBoardCardStackCard = styled.div<{ offset: number }>`
   left: 0;
   right: 0;
   height: 100%;
-  background-color: ${({ theme }) => theme.background.secondary};
+  background-color: ${({ theme }) => theme.color.blueAccent15};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   z-index: ${({ offset }) => -offset};
