@@ -1,16 +1,16 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { CommandMenuContextChip } from '../CommandMenuContextChip';
-import { ComponentDecorator } from 'twenty-ui/testing';
-import { IconBuildingSkyscraper, IconUser } from 'twenty-ui/display';
+import { ComponentDecorator } from '@ui/testing';
+import { IconBuildingSkyscraper, IconUser } from '@ui/display';
+import { MultipleAvatarChip } from '@ui/components';
 
-const meta: Meta<typeof CommandMenuContextChip> = {
-  title: 'Modules/CommandMenu/CommandMenuContextChip',
-  component: CommandMenuContextChip,
+const meta: Meta<typeof MultipleAvatarChip> = {
+  title: 'UI/Components/MultipleAvatarChip',
+  component: MultipleAvatarChip,
   decorators: [ComponentDecorator],
 };
 
 export default meta;
-type Story = StoryObj<typeof CommandMenuContextChip>;
+type Story = StoryObj<typeof MultipleAvatarChip>;
 
 export const SingleIcon: Story = {
   args: {
