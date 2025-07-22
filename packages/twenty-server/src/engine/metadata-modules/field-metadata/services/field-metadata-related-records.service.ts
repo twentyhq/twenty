@@ -149,8 +149,6 @@ export class FieldMetadataRelatedRecordsService {
       alsoCompareLabel,
     );
 
-    // Should it trigger delete on only a default update ?
-    // TO DEBUG
     if (
       updatedFieldMetadataOptions.length === 0 &&
       deletedFieldMetadataOptions.length === 0
