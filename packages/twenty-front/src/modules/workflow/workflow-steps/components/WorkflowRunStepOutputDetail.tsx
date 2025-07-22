@@ -35,6 +35,8 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
 
   const stepInfo = workflowRun.state.stepInfos[stepId];
 
+  const { status: _, ...stepInfoWithoutStatus } = stepInfo ?? {};
+
   const stepDefinition = getStepDefinitionOrThrow({
     stepId,
     trigger: workflowRun.state.flow.trigger,
@@ -84,7 +86,7 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
 
       <WorkflowRunStepJsonContainer>
         <JsonTree
-          value={stepInfo ?? t`No output available`}
+          value={stepInfoWithoutStatus ?? t`No output available`}
           shouldExpandNodeInitially={isTwoFirstDepths}
           emptyArrayLabel={t`Empty Array`}
           emptyObjectLabel={t`Empty Object`}

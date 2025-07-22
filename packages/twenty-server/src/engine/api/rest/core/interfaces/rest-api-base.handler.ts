@@ -2,7 +2,8 @@ import { BadRequestException, Inject } from '@nestjs/common';
 
 import { Request } from 'express';
 import chunk from 'lodash.chunk';
-import { FieldMetadataType } from 'twenty-shared/types';
+import isEmpty from 'lodash.isempty';
+import { FieldMetadataType, RestrictedFields } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { In, ObjectLiteral } from 'typeorm';
 
@@ -25,6 +26,9 @@ import {
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -34,6 +38,7 @@ import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/format-result.util';
+import { getFieldMetadataIdToColumnNamesMap } from 'src/engine/twenty-orm/utils/get-field-metadata-id-to-column-names-map.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export interface PageInfo {
@@ -81,6 +86,8 @@ export abstract class RestApiBaseHandler {
   protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService;
   @Inject()
   protected readonly createdByFromAuthContextService: CreatedByFromAuthContextService;
+  @Inject()
+  protected readonly featureFlagService: FeatureFlagService;
 
   protected abstract handle(
     request: Request,
@@ -134,11 +141,48 @@ export abstract class RestApiBaseHandler {
       roleId,
     );
 
+    let restrictedFields: RestrictedFields = {};
+
+    if (
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED,
+        workspace.id,
+      )
+    ) {
+      if (roleId) {
+        const objectMetadataPermissions =
+          await this.workspacePermissionsCacheService.getObjectRecordPermissionsForRoles(
+            {
+              workspaceId: workspace.id,
+              roleIds: roleId ? [roleId] : undefined,
+            },
+          );
+
+        if (
+          !isDefined(
+            objectMetadataPermissions?.[roleId]?.[
+              objectMetadata.objectMetadataMapItem.id
+            ]?.restrictedFields,
+          )
+        ) {
+          throw new InternalServerError(
+            'Fields permissions not found for role',
+          );
+        }
+
+        restrictedFields =
+          objectMetadataPermissions[roleId][
+            objectMetadata.objectMetadataMapItem.id
+          ].restrictedFields;
+      }
+    }
+
     return {
       objectMetadata,
       repository,
       workspaceDataSource,
       objectMetadataItemWithFieldsMaps,
+      restrictedFields,
     };
   }
 
@@ -201,6 +245,7 @@ export abstract class RestApiBaseHandler {
     repository,
     objectMetadata,
     depth,
+    restrictedFields,
   }: {
     recordIds: string[];
     repository: WorkspaceRepository<ObjectLiteral>;
@@ -209,6 +254,7 @@ export abstract class RestApiBaseHandler {
       objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
     };
     depth: Depth | undefined;
+    restrictedFields: RestrictedFields;
   }) {
     const relations = this.getRelations({
       objectMetadata,
@@ -217,7 +263,17 @@ export abstract class RestApiBaseHandler {
 
     const relationsChunk = chunk(relations, 50);
 
+    let selectOptions = undefined;
+
+    if (!isEmpty(restrictedFields)) {
+      selectOptions = this.getSelectOptionsFromRestrictedFields({
+        restrictedFields,
+        objectMetadata,
+      });
+    }
+
     const recordsWithoutRelations = await repository.find({
+      ...(selectOptions && { select: selectOptions }),
       where: { id: In(recordIds) },
     });
 
@@ -227,6 +283,7 @@ export abstract class RestApiBaseHandler {
 
     for (const relationChunk of relationsChunk) {
       const records = await repository.find({
+        ...(selectOptions && { select: selectOptions }),
         where: { id: In(recordIds) },
         relations: relationChunk,
       });
@@ -252,6 +309,36 @@ export abstract class RestApiBaseHandler {
       workspaceMemberId: request.workspaceMemberId,
       userWorkspaceId: request.userWorkspaceId,
     };
+  }
+
+  public getSelectOptionsFromRestrictedFields({
+    restrictedFields,
+    objectMetadata,
+  }: {
+    restrictedFields: RestrictedFields;
+    objectMetadata: { objectMetadataMapItem: ObjectMetadataItemWithFieldMaps };
+  }) {
+    const restrictedFieldsIds = Object.entries(restrictedFields)
+      .filter(([_, value]) => value.canRead === false)
+      .map(([key]) => key);
+
+    const fieldMetadataIdToColumnNamesMap = getFieldMetadataIdToColumnNamesMap(
+      objectMetadata.objectMetadataMapItem,
+    );
+
+    const restrictedFieldsColumnNames: string[] = restrictedFieldsIds
+      .map((fieldId) => fieldMetadataIdToColumnNamesMap.get(fieldId))
+      .filter(isDefined)
+      .flat();
+
+    const allColumnNames = [...fieldMetadataIdToColumnNamesMap.values()].flat();
+
+    return Object.fromEntries(
+      allColumnNames.map((columnName) => [
+        columnName,
+        !restrictedFieldsColumnNames.includes(columnName),
+      ]),
+    );
   }
 
   public formatResult<T>({
@@ -303,6 +390,7 @@ export abstract class RestApiBaseHandler {
     objectMetadata,
     objectMetadataItemWithFieldsMaps,
     extraFilters,
+    restrictedFields,
   }: {
     request: Request;
     recordId?: string;
@@ -313,6 +401,7 @@ export abstract class RestApiBaseHandler {
     };
     objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
     extraFilters?: Partial<ObjectRecordFilter>;
+    restrictedFields: RestrictedFields;
   }) {
     const objectMetadataNameSingular =
       objectMetadata.objectMetadataMapItem.nameSingular;
@@ -373,6 +462,7 @@ export abstract class RestApiBaseHandler {
       repository,
       objectMetadata,
       depth: this.depthInputFactory.create(request),
+      restrictedFields,
     });
 
     const hasMoreRecords = records.length < totalCount;

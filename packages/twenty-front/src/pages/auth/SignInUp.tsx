@@ -89,7 +89,8 @@ export const SignInUp = () => {
 
   const title = useMemo(() => {
     if (isDefined(workspaceInviteHash)) {
-      return `Join ${workspaceFromInviteHash?.displayName ?? ''} team`;
+      const workspaceName = workspaceFromInviteHash?.displayName ?? '';
+      return t`Join ${workspaceName} team`;
     }
 
     if (signInUpStep === SignInUpStep.WorkspaceSelection) {

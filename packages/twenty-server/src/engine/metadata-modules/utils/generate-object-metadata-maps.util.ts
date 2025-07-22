@@ -1,15 +1,14 @@
 import omit from 'lodash.omit';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
-
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export const generateObjectMetadataMaps = (
-  objectMetadataCollection: ObjectMetadataInterface[],
+  objectMetadataCollection: ObjectMetadataEntity[],
 ): ObjectMetadataMaps => {
   const objectMetadataMaps: ObjectMetadataMaps = {
     byId: {},
