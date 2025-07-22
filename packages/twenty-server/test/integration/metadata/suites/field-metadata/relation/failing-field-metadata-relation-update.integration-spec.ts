@@ -54,7 +54,7 @@ describe('Field metadata relation update should fail', () => {
       }),
     });
 
-    const { data, errors } = await createOneFieldMetadata({
+    const { data } = await createOneFieldMetadata({
       input: {
         objectMetadataId: employeeObjectId,
         name: 'employer',
@@ -69,7 +69,6 @@ describe('Field metadata relation update should fail', () => {
         },
       },
     });
-    console.log(errors);
 
     globalTestContext.employeeObjectId = employeeObjectId;
     globalTestContext.enterpriseObjectId = enterpriseObjectId;

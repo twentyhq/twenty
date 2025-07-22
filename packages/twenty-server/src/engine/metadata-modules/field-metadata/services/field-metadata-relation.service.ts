@@ -134,6 +134,7 @@ export class FieldMetadataRelationService {
         relationTargetFieldMetadataId: sourceTargetFieldMetadata.id,
       },
     );
+
     return [
       {
         ...sourceTargetFieldMetadata,
