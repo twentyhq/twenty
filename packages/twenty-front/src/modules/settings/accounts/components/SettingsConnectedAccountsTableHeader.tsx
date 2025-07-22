@@ -1,19 +1,23 @@
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
+
+const StyledTableHeader = styled(TableHeader)`
+  padding-right: ${({ theme }) => theme.spacing(14)};
+`;
 
 export const SettingsConnectedAccountsTableHeader = () => {
   return (
     <Table>
-      <TableRow gridAutoColumns="332px 1fr 1fr">
-        <TableHeader>
+      <TableRow gridAutoColumns="332px 1fr">
+        <StyledTableHeader>
           <Trans>Account</Trans>
-        </TableHeader>
-        <TableHeader align={'right'}>
+        </StyledTableHeader>
+        <StyledTableHeader align={'right'}>
           <Trans>Status</Trans>
-        </TableHeader>
-        <TableHeader></TableHeader>
+        </StyledTableHeader>
       </TableRow>
     </Table>
   );
