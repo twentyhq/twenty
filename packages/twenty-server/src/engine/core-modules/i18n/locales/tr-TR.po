@@ -747,8 +747,8 @@ msgstr "Kişinin X/Twitter hesabı"
 #. js-lingui-id: M73whl
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Context"
-msgstr "Bağlam"
+#~ msgid "Context"
+#~ msgstr "Bağlam"
 
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -1424,8 +1424,8 @@ msgstr ""
 
 #. js-lingui-id: HgJ9jQ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Json object to provide output of the workflow run"
-msgstr "Çalışma akışı çalıştırmasının çıktısını sağlamak için Json nesnesi"
+#~ msgid "Json object to provide output of the workflow run"
+#~ msgstr "Çalışma akışı çalıştırmasının çıktısını sağlamak için Json nesnesi"
 
 #. js-lingui-id: AQuLwi
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -2038,8 +2038,8 @@ msgstr "Webhook yükleri için HMAC imzasını hesaplamakta kullanılan isteğe 
 
 #. js-lingui-id: gh06VD
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Output"
-msgstr "Çıktı"
+#~ msgid "Output"
+#~ msgstr "Çıktı"
 
 #. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts

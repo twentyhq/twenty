@@ -10,12 +10,12 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/stan
 import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
-import { MessagingFullMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-full-message-list-fetch.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import { MessageImportExceptionHandlerService } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
+import { MessagingMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service';
 
-describe('MessagingFullMessageListFetchService', () => {
-  let messagingFullMessageListFetchService: MessagingFullMessageListFetchService;
+describe('MessagingMessageListFetchService', () => {
+  let messagingMessageListFetchService: MessagingMessageListFetchService;
   let messagingGetMessageListService: MessagingGetMessageListService;
   let messageChannelSyncStatusService: MessageChannelSyncStatusService;
   let twentyORMManager: TwentyORMManager;
@@ -72,7 +72,7 @@ describe('MessagingFullMessageListFetchService', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        MessagingFullMessageListFetchService,
+        MessagingMessageListFetchService,
         {
           provide: CacheStorageNamespace.ModuleMessaging,
           useValue: {
@@ -82,12 +82,11 @@ describe('MessagingFullMessageListFetchService', () => {
         {
           provide: MessagingGetMessageListService,
           useValue: {
-            getFullMessageLists: jest
+            getMessageLists: jest
               .fn()
-              .mockImplementation((messageChannel) => {
+              .mockImplementation(({ connectedAccount }) => {
                 if (
-                  messageChannel.connectedAccount.provider ===
-                  ConnectedAccountProvider.GOOGLE
+                  connectedAccount.provider === ConnectedAccountProvider.GOOGLE
                 ) {
                   return [
                     {
@@ -162,9 +161,9 @@ describe('MessagingFullMessageListFetchService', () => {
       ],
     }).compile();
 
-    messagingFullMessageListFetchService =
-      module.get<MessagingFullMessageListFetchService>(
-        MessagingFullMessageListFetchService,
+    messagingMessageListFetchService =
+      module.get<MessagingMessageListFetchService>(
+        MessagingMessageListFetchService,
       );
     messagingGetMessageListService = module.get<MessagingGetMessageListService>(
       MessagingGetMessageListService,
@@ -180,7 +179,7 @@ describe('MessagingFullMessageListFetchService', () => {
   });
 
   it('should process Microsoft message list fetch correctly', async () => {
-    await messagingFullMessageListFetchService.processMessageListFetch(
+    await messagingMessageListFetchService.processMessageListFetch(
       mockMicrosoftMessageChannel,
       workspaceId,
     );
@@ -189,9 +188,9 @@ describe('MessagingFullMessageListFetchService', () => {
       messageChannelSyncStatusService.markAsMessagesListFetchOngoing,
     ).toHaveBeenCalledWith([mockMicrosoftMessageChannel.id]);
 
-    expect(
-      messagingGetMessageListService.getFullMessageLists,
-    ).toHaveBeenCalledWith(mockMicrosoftMessageChannel);
+    expect(messagingGetMessageListService.getMessageLists).toHaveBeenCalledWith(
+      mockMicrosoftMessageChannel,
+    );
 
     expect(twentyORMManager.getRepository).toHaveBeenCalledWith(
       'messageChannelMessageAssociation',
@@ -209,7 +208,7 @@ describe('MessagingFullMessageListFetchService', () => {
   });
 
   it('should process Google message list fetch correctly', async () => {
-    await messagingFullMessageListFetchService.processMessageListFetch(
+    await messagingMessageListFetchService.processMessageListFetch(
       mockGoogleMessageChannel,
       workspaceId,
     );
@@ -218,9 +217,9 @@ describe('MessagingFullMessageListFetchService', () => {
       messageChannelSyncStatusService.markAsMessagesListFetchOngoing,
     ).toHaveBeenCalledWith([mockGoogleMessageChannel.id]);
 
-    expect(
-      messagingGetMessageListService.getFullMessageLists,
-    ).toHaveBeenCalledWith(mockGoogleMessageChannel);
+    expect(messagingGetMessageListService.getMessageLists).toHaveBeenCalledWith(
+      mockGoogleMessageChannel,
+    );
 
     expect(twentyORMManager.getRepository).toHaveBeenCalledWith(
       'messageChannelMessageAssociation',

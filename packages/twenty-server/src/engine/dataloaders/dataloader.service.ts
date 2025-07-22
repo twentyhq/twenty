@@ -4,9 +4,9 @@ import DataLoader from 'dataloader';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 import { IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { filterMorphRelationDuplicateFieldsDTO } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
@@ -17,7 +17,6 @@ import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-m
 import { resolveFieldMetadataStandardOverride } from 'src/engine/metadata-modules/field-metadata/utils/resolve-field-metadata-standard-override.util';
 import { IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 
 export type RelationMetadataLoaderPayload = {
@@ -52,18 +51,18 @@ export type MorphRelationLoaderPayload = {
 
 export type FieldMetadataLoaderPayload = {
   workspaceId: string;
-  objectMetadata: Pick<ObjectMetadataInterface, 'id'>;
+  objectMetadata: Pick<ObjectMetadataEntity, 'id'>;
   locale?: keyof typeof APP_LOCALES;
 };
 
 export type IndexMetadataLoaderPayload = {
   workspaceId: string;
-  objectMetadata: Pick<ObjectMetadataInterface, 'id'>;
+  objectMetadata: Pick<ObjectMetadataEntity, 'id'>;
 };
 
 export type IndexFieldMetadataLoaderPayload = {
   workspaceId: string;
-  objectMetadata: Pick<ObjectMetadataInterface, 'id'>;
+  objectMetadata: Pick<ObjectMetadataEntity, 'id'>;
   indexMetadata: Pick<IndexMetadataInterface, 'id'>;
 };
 
