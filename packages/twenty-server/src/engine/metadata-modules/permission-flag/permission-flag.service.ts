@@ -37,13 +37,13 @@ export class PermissionFlagService {
       workspaceId,
     });
 
-    const invalidSettings = input.permissionFlagKeys.filter(
-      (setting) => !Object.values(PermissionFlagType).includes(setting),
+    const invalidFlags = input.permissionFlagKeys.filter(
+      (flag) => !Object.values(PermissionFlagType).includes(flag),
     );
 
-    if (invalidSettings.length > 0) {
+    if (invalidFlags.length > 0) {
       throw new PermissionsException(
-        `${PermissionsExceptionMessage.INVALID_SETTING}: ${invalidSettings.join(', ')}`,
+        `${PermissionsExceptionMessage.INVALID_SETTING}: ${invalidFlags.join(', ')}`,
         PermissionsExceptionCode.INVALID_SETTING,
       );
     }
