@@ -266,7 +266,7 @@ export abstract class RestApiBaseHandler {
     let selectOptions = undefined;
 
     if (!isEmpty(restrictedFields)) {
-      selectOptions = RestApiBaseHandler.getSelectOptionsFromRestrictedFields({
+      selectOptions = this.getSelectOptionsFromRestrictedFields({
         restrictedFields,
         objectMetadata,
       });
@@ -311,7 +311,7 @@ export abstract class RestApiBaseHandler {
     };
   }
 
-  public static getSelectOptionsFromRestrictedFields({
+  public getSelectOptionsFromRestrictedFields({
     restrictedFields,
     objectMetadata,
   }: {
