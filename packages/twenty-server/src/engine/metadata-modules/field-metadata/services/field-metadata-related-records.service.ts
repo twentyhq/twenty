@@ -67,6 +67,10 @@ export class FieldMetadataRelatedRecordsService {
         'viewGroup',
       );
 
+    if ([created, deleted, updated].every((array) => array.length === 0)) {
+      return;
+    }
+
     for (const view of views) {
       if (view.viewGroups.length === 0) {
         continue;
@@ -145,6 +149,8 @@ export class FieldMetadataRelatedRecordsService {
       alsoCompareLabel,
     );
 
+    // Should it trigger delete on only a default update ?
+    // TO DEBUG
     if (
       updatedFieldMetadataOptions.length === 0 &&
       deletedFieldMetadataOptions.length === 0
