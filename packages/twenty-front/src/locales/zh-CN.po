@@ -1654,6 +1654,12 @@ msgstr ""
 msgid "Create view"
 msgstr "创建视图"
 
+#. js-lingui-id: 3D0MXY
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Create View"
+msgstr ""
+
 #. js-lingui-id: dkAPxi
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 msgid "Create Webhook"
