@@ -315,8 +315,8 @@ export class WorkspacePermissionsCacheService {
     const hasWorkflowsPermissionFromRole = role.canUpdateAllSettings;
     const hasWorkflowsPermissionsFromSettingPermissions = isDefined(
       role.permissionFlags.find(
-        (settingPermission) =>
-          settingPermission.flag === PermissionFlagType.WORKFLOWS,
+        (permissionFlag) =>
+          permissionFlag.flag === PermissionFlagType.WORKFLOWS,
       ),
     );
 
