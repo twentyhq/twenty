@@ -33,14 +33,16 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
   const allSettingsPermissionsEnabled = settingsPermissionsConfig.every(
     (permission) =>
       settingsDraftRole.settingPermissions?.some(
-        (settingPermission) => settingPermission.setting === permission.key,
+        (settingPermission) =>
+          settingPermission.permissionFlag === permission.key,
       ),
   );
 
   const someSettingsPermissionsEnabled = settingsPermissionsConfig.some(
     (permission) =>
       settingsDraftRole.settingPermissions?.some(
-        (settingPermission) => settingPermission.setting === permission.key,
+        (settingPermission) =>
+          settingPermission.permissionFlag === permission.key,
       ),
   );
 
