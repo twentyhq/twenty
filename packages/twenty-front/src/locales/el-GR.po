@@ -1479,8 +1479,8 @@ msgstr ""
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigCopyableText.tsx
-msgid "Copied to clipboard!"
-msgstr "Αντιγράφηκε στο πρόχειρο!"
+#~ msgid "Copied to clipboard!"
+#~ msgstr "Αντιγράφηκε στο πρόχειρο!"
 
 #. js-lingui-id: CcGOj+
 #: src/modules/command-menu/components/CommandMenu.tsx
