@@ -27,6 +27,11 @@ import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/s
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
@@ -127,13 +132,20 @@ export abstract class RestApiBaseHandler {
     let roleId: string | undefined = undefined;
 
     if (isDefined(apiKey)) {
-      const apiKeyRoleId = await this.apiKeyRoleService.getRoleIdForApiKey(
+      roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
         apiKey.id,
         workspace.id,
       );
 
-      roleId = apiKeyRoleId ?? undefined;
-    } else if (isDefined(userWorkspaceId)) {
+      if (!roleId) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.API_KEY_ROLE_NOT_FOUND,
+          PermissionsExceptionCode.API_KEY_ROLE_NOT_FOUND,
+        );
+      }
+    }
+
+    if (!roleId && isDefined(userWorkspaceId)) {
       roleId =
         await this.workspacePermissionsCacheService.getRoleIdFromUserWorkspaceId(
           {
@@ -141,6 +153,20 @@ export abstract class RestApiBaseHandler {
             userWorkspaceId,
           },
         );
+
+      if (!roleId) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+          PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+        );
+      }
+    }
+
+    if (!roleId) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.NO_AUTHENTICATION_CONTEXT,
+        PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
+      );
     }
 
     const repository = workspaceDataSource.getRepository<ObjectRecord>(

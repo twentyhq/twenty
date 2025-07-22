@@ -109,7 +109,7 @@ export type ApiKey = {
   id: Scalars['UUID'];
   name: Scalars['String'];
   revokedAt?: Maybe<Scalars['DateTime']>;
-  role?: Maybe<Role>;
+  role: Role;
   updatedAt: Scalars['DateTime'];
   workspace: Workspace;
   workspaceId: Scalars['String'];
@@ -471,7 +471,7 @@ export type CreateApiKeyDto = {
   expiresAt: Scalars['String'];
   name: Scalars['String'];
   revokedAt?: InputMaybe<Scalars['String']>;
-  roleId?: InputMaybe<Scalars['String']>;
+  roleId: Scalars['String'];
 };
 
 export type CreateAppTokenInput = {
@@ -1145,7 +1145,6 @@ export type Mutation = {
   impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
   removeRoleFromAgent: Scalars['Boolean'];
-  removeRoleFromApiKey: Scalars['Boolean'];
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
@@ -1452,11 +1451,6 @@ export type MutationPublishServerlessFunctionArgs = {
 
 export type MutationRemoveRoleFromAgentArgs = {
   agentId: Scalars['UUID'];
-};
-
-
-export type MutationRemoveRoleFromApiKeyArgs = {
-  apiKeyId: Scalars['String'];
 };
 
 
@@ -3473,7 +3467,7 @@ export type GetSystemHealthStatusQueryVariables = Exact<{ [key: string]: never; 
 
 export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealthStatus: { __typename?: 'SystemHealth', services: Array<{ __typename?: 'SystemHealthService', id: HealthIndicatorId, label: string, status: AdminPanelHealthServiceStatus }> } };
 
-export type ApiKeyFragmentFragment = { __typename?: 'ApiKey', id: any, name: string, expiresAt: string, revokedAt?: string | null, role?: { __typename?: 'Role', id: string, label: string, icon?: string | null } | null };
+export type ApiKeyFragmentFragment = { __typename?: 'ApiKey', id: any, name: string, expiresAt: string, revokedAt?: string | null, role: { __typename?: 'Role', id: string, label: string, icon?: string | null } };
 
 export type WebhookFragmentFragment = { __typename?: 'Webhook', id: any, targetUrl: string, operations: Array<string>, description?: string | null, secret: string };
 
@@ -3490,7 +3484,7 @@ export type CreateApiKeyMutationVariables = Exact<{
 }>;
 
 
-export type CreateApiKeyMutation = { __typename?: 'Mutation', createApiKey: { __typename?: 'ApiKey', id: any, name: string, expiresAt: string, revokedAt?: string | null, role?: { __typename?: 'Role', id: string, label: string, icon?: string | null } | null } };
+export type CreateApiKeyMutation = { __typename?: 'Mutation', createApiKey: { __typename?: 'ApiKey', id: any, name: string, expiresAt: string, revokedAt?: string | null, role: { __typename?: 'Role', id: string, label: string, icon?: string | null } } };
 
 export type CreateWebhookMutationVariables = Exact<{
   input: CreateWebhookDto;
@@ -3506,13 +3500,6 @@ export type DeleteWebhookMutationVariables = Exact<{
 
 export type DeleteWebhookMutation = { __typename?: 'Mutation', deleteWebhook: boolean };
 
-export type RemoveRoleFromApiKeyMutationVariables = Exact<{
-  apiKeyId: Scalars['String'];
-}>;
-
-
-export type RemoveRoleFromApiKeyMutation = { __typename?: 'Mutation', removeRoleFromApiKey: boolean };
-
 export type RevokeApiKeyMutationVariables = Exact<{
   input: RevokeApiKeyDto;
 }>;
@@ -3525,7 +3512,7 @@ export type UpdateApiKeyMutationVariables = Exact<{
 }>;
 
 
-export type UpdateApiKeyMutation = { __typename?: 'Mutation', updateApiKey?: { __typename?: 'ApiKey', id: any, name: string, expiresAt: string, revokedAt?: string | null, role?: { __typename?: 'Role', id: string, label: string, icon?: string | null } | null } | null };
+export type UpdateApiKeyMutation = { __typename?: 'Mutation', updateApiKey?: { __typename?: 'ApiKey', id: any, name: string, expiresAt: string, revokedAt?: string | null, role: { __typename?: 'Role', id: string, label: string, icon?: string | null } } | null };
 
 export type UpdateWebhookMutationVariables = Exact<{
   input: UpdateWebhookDto;
@@ -3539,12 +3526,12 @@ export type GetApiKeyQueryVariables = Exact<{
 }>;
 
 
-export type GetApiKeyQuery = { __typename?: 'Query', apiKey?: { __typename?: 'ApiKey', createdAt: string, id: any, name: string, expiresAt: string, revokedAt?: string | null, role?: { __typename?: 'Role', id: string, label: string, icon?: string | null } | null } | null };
+export type GetApiKeyQuery = { __typename?: 'Query', apiKey?: { __typename?: 'ApiKey', createdAt: string, id: any, name: string, expiresAt: string, revokedAt?: string | null, role: { __typename?: 'Role', id: string, label: string, icon?: string | null } } | null };
 
 export type GetApiKeysQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetApiKeysQuery = { __typename?: 'Query', apiKeys: Array<{ __typename?: 'ApiKey', id: any, name: string, expiresAt: string, revokedAt?: string | null, role?: { __typename?: 'Role', id: string, label: string, icon?: string | null } | null }> };
+export type GetApiKeysQuery = { __typename?: 'Query', apiKeys: Array<{ __typename?: 'ApiKey', id: any, name: string, expiresAt: string, revokedAt?: string | null, role: { __typename?: 'Role', id: string, label: string, icon?: string | null } }> };
 
 export type GetWebhookQueryVariables = Exact<{
   input: GetWebhookDto;
@@ -6967,37 +6954,6 @@ export function useDeleteWebhookMutation(baseOptions?: Apollo.MutationHookOption
 export type DeleteWebhookMutationHookResult = ReturnType<typeof useDeleteWebhookMutation>;
 export type DeleteWebhookMutationResult = Apollo.MutationResult<DeleteWebhookMutation>;
 export type DeleteWebhookMutationOptions = Apollo.BaseMutationOptions<DeleteWebhookMutation, DeleteWebhookMutationVariables>;
-export const RemoveRoleFromApiKeyDocument = gql`
-    mutation RemoveRoleFromApiKey($apiKeyId: String!) {
-  removeRoleFromApiKey(apiKeyId: $apiKeyId)
-}
-    `;
-export type RemoveRoleFromApiKeyMutationFn = Apollo.MutationFunction<RemoveRoleFromApiKeyMutation, RemoveRoleFromApiKeyMutationVariables>;
-
-/**
- * __useRemoveRoleFromApiKeyMutation__
- *
- * To run a mutation, you first call `useRemoveRoleFromApiKeyMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRemoveRoleFromApiKeyMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [removeRoleFromApiKeyMutation, { data, loading, error }] = useRemoveRoleFromApiKeyMutation({
- *   variables: {
- *      apiKeyId: // value for 'apiKeyId'
- *   },
- * });
- */
-export function useRemoveRoleFromApiKeyMutation(baseOptions?: Apollo.MutationHookOptions<RemoveRoleFromApiKeyMutation, RemoveRoleFromApiKeyMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RemoveRoleFromApiKeyMutation, RemoveRoleFromApiKeyMutationVariables>(RemoveRoleFromApiKeyDocument, options);
-      }
-export type RemoveRoleFromApiKeyMutationHookResult = ReturnType<typeof useRemoveRoleFromApiKeyMutation>;
-export type RemoveRoleFromApiKeyMutationResult = Apollo.MutationResult<RemoveRoleFromApiKeyMutation>;
-export type RemoveRoleFromApiKeyMutationOptions = Apollo.BaseMutationOptions<RemoveRoleFromApiKeyMutation, RemoveRoleFromApiKeyMutationVariables>;
 export const RevokeApiKeyDocument = gql`
     mutation RevokeApiKey($input: RevokeApiKeyDTO!) {
   revokeApiKey(input: $input) {

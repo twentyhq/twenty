@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { ApiKeyNameInput } from '@/settings/developers/components/ApiKeyNameInput';
 import { SettingsDevelopersRoleSelector } from '@/settings/developers/components/SettingsDevelopersRoleSelector';
@@ -27,7 +28,7 @@ import {
   useCreateApiKeyMutation,
   useGenerateApiKeyTokenMutation,
   useGetApiKeyQuery,
-  useRemoveRoleFromApiKeyMutation,
+  useGetRolesQuery,
   useRevokeApiKeyMutation,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -72,12 +73,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const [createApiKey] = useCreateApiKeyMutation();
   const [revokeApiKey] = useRevokeApiKeyMutation();
-
-  // Add the new mutations
   const [assignRoleToApiKey] = useAssignRoleToApiKeyMutation();
-  const [removeRoleFromApiKey] = useRemoveRoleFromApiKeyMutation();
 
-  const { data: apiKeyData } = useGetApiKeyQuery({
+  const { data: apiKeyData, loading: apiKeyLoading } = useGetApiKeyQuery({
     variables: {
       input: {
         id: apiKeyId,
@@ -86,41 +84,33 @@ export const SettingsDevelopersApiKeyDetail = () => {
     onCompleted: (data) => {
       if (isDefined(data?.apiKey)) {
         setApiKeyName(data.apiKey.name);
-        setSelectedRoleId(data.apiKey.role?.id || null);
+        setSelectedRoleId(data.apiKey.role.id);
       }
     },
   });
 
+  const { loading: rolesLoading } = useGetRolesQuery();
+
   const apiKey = apiKeyData?.apiKey;
   const [apiKeyName, setApiKeyName] = useState('');
-  const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
+  const [selectedRoleId, setSelectedRoleId] = useState<string | undefined>(
+    undefined,
+  );
 
-  // Handler for role changes
-  const handleRoleChange = async (roleId: string | null) => {
-    if (!apiKey?.id) return;
+  const handleRoleChange = async (roleId: string) => {
+    if (!apiKey?.id || !isNonEmptyString(roleId)) return;
 
     setIsLoading(true);
     try {
-      if (isDefined(roleId)) {
-        await assignRoleToApiKey({
-          variables: {
-            apiKeyId: apiKey.id,
-            roleId,
-          },
-        });
-        enqueueSuccessSnackBar({
-          message: t`Role assigned successfully`,
-        });
-      } else {
-        await removeRoleFromApiKey({
-          variables: {
-            apiKeyId: apiKey.id,
-          },
-        });
-        enqueueSuccessSnackBar({
-          message: t`Role removed successfully`,
-        });
-      }
+      await assignRoleToApiKey({
+        variables: {
+          apiKeyId: apiKey.id,
+          roleId,
+        },
+      });
+      enqueueSuccessSnackBar({
+        message: t`Role updated successfully`,
+      });
       setSelectedRoleId(roleId);
     } catch (error) {
       enqueueErrorSnackBar({
@@ -156,11 +146,19 @@ export const SettingsDevelopersApiKeyDetail = () => {
     name: string,
     newExpiresAt: string | null,
   ) => {
+    if (!selectedRoleId) {
+      enqueueErrorSnackBar({
+        message: t`Please select a role for the API key`,
+      });
+      return;
+    }
+
     const { data: newApiKeyData } = await createApiKey({
       variables: {
         input: {
           name: name,
           expiresAt: newExpiresAt ?? '',
+          roleId: selectedRoleId,
         },
       },
     });
@@ -211,6 +209,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
   };
 
   const confirmationValue = t`yes`;
+
+  if (apiKeyLoading || rolesLoading) {
+    return <SettingsSkeletonLoader />;
+  }
 
   return (
     <>
@@ -275,7 +277,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               <SettingsDevelopersRoleSelector
                 value={selectedRoleId}
                 onChange={handleRoleChange}
-                allowEmpty
+                allowEmpty={false}
                 disabled={isLoading}
               />
             </Section>

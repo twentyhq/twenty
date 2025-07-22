@@ -24,7 +24,6 @@ import { DeduplicateIndexedFieldsCommand } from 'src/database/commands/upgrade-v
 import { AddEnqueuedStatusToWorkflowRunCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-add-enqueued-status-to-workflow-run.command';
 import { FixSchemaArrayTypeCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-schema-array-type.command';
 import { FixUpdateStandardFieldsIsLabelSyncedWithName } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-update-standard-field-is-label-synced-with-name.command';
-import { MigrateApiKeysWebhooksToCoreCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-api-keys-webhooks-to-core.command';
 import { MigrateWorkflowRunStatesCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-workflow-run-state.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -144,7 +143,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     // 1.1 Commands
     protected readonly fixSchemaArrayTypeCommand: FixSchemaArrayTypeCommand,
     protected readonly fixUpdateStandardFieldsIsLabelSyncedWithNameCommand: FixUpdateStandardFieldsIsLabelSyncedWithName,
-    protected readonly migrateApiKeysWebhooksToCoreCommand: MigrateApiKeysWebhooksToCoreCommand,
     protected readonly migrateWorkflowRunStatesCommand: MigrateWorkflowRunStatesCommand,
     protected readonly addEnqueuedStatusToWorkflowRunCommand: AddEnqueuedStatusToWorkflowRunCommand,
 
@@ -195,7 +193,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       beforeSyncMetadata: [
         this.fixUpdateStandardFieldsIsLabelSyncedWithNameCommand,
         this.fixSchemaArrayTypeCommand,
-        this.migrateApiKeysWebhooksToCoreCommand,
         this.addEnqueuedStatusToWorkflowRunCommand,
       ],
       afterSyncMetadata: [this.migrateWorkflowRunStatesCommand],

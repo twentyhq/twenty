@@ -89,6 +89,7 @@ describe('ApiKeyService', () => {
         name: 'New API Key',
         expiresAt: new Date('2025-12-31'),
         workspaceId: mockWorkspaceId,
+        roleId: 'mock-role-id',
       };
 
       mockApiKeyRepository.create.mockReturnValue(mockApiKey);

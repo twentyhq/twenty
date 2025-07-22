@@ -24,8 +24,8 @@ export class CreateApiKeyDTO {
   @IsDateString()
   revokedAt?: string;
 
-  @Field({ nullable: true })
-  @IsOptional()
+  @Field()
+  @IsNotEmpty()
   @IsUUID()
-  roleId?: string;
+  roleId: string;
 }

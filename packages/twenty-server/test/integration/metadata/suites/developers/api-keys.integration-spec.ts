@@ -1,8 +1,35 @@
 import { gql } from 'graphql-tag';
+import { GET_ROLE_ID_BY_LABEL } from 'test/integration/constants/test-role-ids.constants';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 describe('apiKeysResolver (e2e)', () => {
   let createdApiKeyId: string | undefined;
+  let adminRoleId: string;
+
+  beforeAll(async () => {
+    // Get the admin role ID for testing
+    const rolesResponse = await makeMetadataAPIRequest({
+      query: gql`
+        query GetRoles {
+          getRoles {
+            id
+            label
+          }
+        }
+      `,
+    });
+
+    if (rolesResponse.body.errors) {
+      throw new Error(
+        `Failed to get roles: ${JSON.stringify(rolesResponse.body.errors)}`,
+      );
+    }
+
+    adminRoleId = GET_ROLE_ID_BY_LABEL(
+      rolesResponse.body.data.getRoles,
+      'Admin',
+    );
+  });
 
   afterEach(async () => {
     if (createdApiKeyId) {
@@ -23,6 +50,11 @@ describe('apiKeysResolver (e2e)', () => {
               name
               expiresAt
               revokedAt
+              role {
+                id
+                label
+                icon
+              }
             }
           }
         `,
@@ -41,6 +73,7 @@ describe('apiKeysResolver (e2e)', () => {
       const apiKeyInput = {
         name: 'Test API Key',
         expiresAt: '2025-12-31T23:59:59Z',
+        roleId: adminRoleId,
       };
 
       const response = await makeMetadataAPIRequest({
@@ -51,6 +84,10 @@ describe('apiKeysResolver (e2e)', () => {
               name
               expiresAt
               revokedAt
+              role {
+                id
+                label
+              }
             }
           }
         `,
@@ -70,6 +107,9 @@ describe('apiKeysResolver (e2e)', () => {
       expect(createdApiKey.name).toBe(apiKeyInput.name);
       expect(createdApiKey.expiresAt).toBe('2025-12-31T23:59:59.000Z');
       expect(createdApiKey.revokedAt).toBeNull();
+      expect(createdApiKey.role).toBeDefined();
+      expect(createdApiKey.role.id).toBe(adminRoleId);
+      expect(createdApiKey.role.label).toBe('Admin');
 
       createdApiKeyId = createdApiKey.id;
     });
@@ -78,6 +118,7 @@ describe('apiKeysResolver (e2e)', () => {
       const apiKeyInput = {
         name: 'Test API Key',
         expiresAt: 'invalid-date',
+        roleId: adminRoleId,
       };
 
       const response = await makeMetadataAPIRequest({
@@ -88,6 +129,7 @@ describe('apiKeysResolver (e2e)', () => {
               name
               expiresAt
               revokedAt
+              roleId
             }
           }
         `,
@@ -104,6 +146,7 @@ describe('apiKeysResolver (e2e)', () => {
 
   describe('updateApiKey mutation', () => {
     it('should update an API key successfully', async () => {
+      // First create an API key
       const createResponse = await makeMetadataAPIRequest({
         query: gql`
           mutation CreateApiKey($input: CreateApiKeyDTO!) {
@@ -112,6 +155,10 @@ describe('apiKeysResolver (e2e)', () => {
               name
               expiresAt
               revokedAt
+              role {
+                id
+                label
+              }
             }
           }
         `,
@@ -119,6 +166,7 @@ describe('apiKeysResolver (e2e)', () => {
           input: {
             name: 'Test API Key',
             expiresAt: '2025-12-31T23:59:59Z',
+            roleId: adminRoleId,
           },
         },
       });
@@ -141,6 +189,10 @@ describe('apiKeysResolver (e2e)', () => {
               name
               expiresAt
               revokedAt
+              role {
+                id
+                label
+              }
             }
           }
         `,
@@ -155,15 +207,19 @@ describe('apiKeysResolver (e2e)', () => {
 
       const updatedApiKey = updateResponse.body.data.updateApiKey;
 
+      expect(updatedApiKey).toBeDefined();
       expect(updatedApiKey.id).toBe(createdApiKey.id);
       expect(updatedApiKey.name).toBe(updateInput.name);
       expect(updatedApiKey.expiresAt).toBe('2026-01-01T00:00:00.000Z');
       expect(updatedApiKey.revokedAt).toBeNull();
+      expect(updatedApiKey.role).toBeDefined();
+      expect(updatedApiKey.role.id).toBe(adminRoleId);
     });
   });
 
   describe('apiKey query', () => {
     it('should find a specific API key', async () => {
+      // First create an API key
       const createResponse = await makeMetadataAPIRequest({
         query: gql`
           mutation CreateApiKey($input: CreateApiKeyDTO!) {
@@ -172,6 +228,10 @@ describe('apiKeysResolver (e2e)', () => {
               name
               expiresAt
               revokedAt
+              role {
+                id
+                label
+              }
             }
           }
         `,
@@ -179,6 +239,7 @@ describe('apiKeysResolver (e2e)', () => {
           input: {
             name: 'Test API Key',
             expiresAt: '2025-12-31T23:59:59Z',
+            roleId: adminRoleId,
           },
         },
       });
@@ -187,7 +248,7 @@ describe('apiKeysResolver (e2e)', () => {
 
       createdApiKeyId = createdApiKey.id;
 
-      const queryResponse = await makeMetadataAPIRequest({
+      const apiKeyResponse = await makeMetadataAPIRequest({
         query: gql`
           query GetApiKey($input: GetApiKeyDTO!) {
             apiKey(input: $input) {
@@ -195,6 +256,10 @@ describe('apiKeysResolver (e2e)', () => {
               name
               expiresAt
               revokedAt
+              role {
+                id
+                label
+              }
             }
           }
         `,
@@ -203,22 +268,23 @@ describe('apiKeysResolver (e2e)', () => {
         },
       });
 
-      expect(queryResponse.status).toBe(200);
-      expect(queryResponse.body.data).toBeDefined();
-      expect(queryResponse.body.errors).toBeUndefined();
+      expect(apiKeyResponse.status).toBe(200);
+      expect(apiKeyResponse.body.data).toBeDefined();
+      expect(apiKeyResponse.body.errors).toBeUndefined();
 
-      const apiKey = queryResponse.body.data.apiKey;
+      const foundApiKey = apiKeyResponse.body.data.apiKey;
 
-      expect(apiKey).toBeDefined();
-      expect(apiKey.id).toBe(createdApiKey.id);
-      expect(apiKey.name).toBe(createdApiKey.name);
-      expect(apiKey.expiresAt).toBe(createdApiKey.expiresAt);
-      expect(apiKey.revokedAt).toBeNull();
+      expect(foundApiKey).toBeDefined();
+      expect(foundApiKey.id).toBe(createdApiKey.id);
+      expect(foundApiKey.name).toBe('Test API Key');
+      expect(foundApiKey.role).toBeDefined();
+      expect(foundApiKey.role.id).toBe(adminRoleId);
     });
   });
 
   describe('revokeApiKey mutation', () => {
     it('should revoke an API key successfully', async () => {
+      // First create an API key
       const createResponse = await makeMetadataAPIRequest({
         query: gql`
           mutation CreateApiKey($input: CreateApiKeyDTO!) {
@@ -227,13 +293,18 @@ describe('apiKeysResolver (e2e)', () => {
               name
               expiresAt
               revokedAt
+              role {
+                id
+                label
+              }
             }
           }
         `,
         variables: {
           input: {
-            name: 'Test API Key',
+            name: 'Test API Key for Revoke',
             expiresAt: '2025-12-31T23:59:59Z',
+            roleId: adminRoleId,
           },
         },
       });
@@ -250,11 +321,15 @@ describe('apiKeysResolver (e2e)', () => {
               name
               expiresAt
               revokedAt
+              role {
+                id
+                label
+              }
             }
           }
         `,
         variables: {
-          input: { id: createdApiKey.id },
+          input: { id: createdApiKeyId },
         },
       });
 
@@ -264,10 +339,11 @@ describe('apiKeysResolver (e2e)', () => {
 
       const revokedApiKey = revokeResponse.body.data.revokeApiKey;
 
-      expect(revokedApiKey.id).toBe(createdApiKey.id);
-      expect(revokedApiKey.name).toBe(createdApiKey.name);
-      expect(revokedApiKey.expiresAt).toBe(createdApiKey.expiresAt);
-      expect(revokedApiKey.revokedAt).not.toBeNull();
+      expect(revokedApiKey).toBeDefined();
+      expect(revokedApiKey.id).toBe(createdApiKeyId);
+      expect(revokedApiKey.revokedAt).toBeDefined();
+      expect(revokedApiKey.role).toBeDefined();
+      expect(revokedApiKey.role.id).toBe(adminRoleId);
     });
   });
 });

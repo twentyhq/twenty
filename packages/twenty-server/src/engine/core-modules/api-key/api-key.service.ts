@@ -6,8 +6,8 @@ import { IsNull, Repository } from 'typeorm';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
-  ApiKeyException,
-  ApiKeyExceptionCode,
+    ApiKeyException,
+    ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/api-key.exception';
 import { ApiKeyToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -26,19 +26,18 @@ export class ApiKeyService {
   ) {}
 
   async create(
-    apiKeyData: Partial<ApiKey> & { roleId?: string },
+    apiKeyData: Partial<ApiKey> & { roleId: string },
   ): Promise<ApiKey> {
     const { roleId, ...apiKeyFields } = apiKeyData;
     const apiKey = this.apiKeyRepository.create(apiKeyFields);
     const savedApiKey = await this.apiKeyRepository.save(apiKey);
 
-    if (roleId) {
-      await this.assignRoleToApiKey(
-        savedApiKey.id,
-        roleId,
-        savedApiKey.workspaceId,
-      );
-    }
+    // Always assign role (now required)
+    await this.assignRoleToApiKey(
+      savedApiKey.id,
+      roleId,
+      savedApiKey.workspaceId,
+    );
 
     return savedApiKey;
   }

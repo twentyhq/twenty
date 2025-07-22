@@ -7,8 +7,8 @@ import { Repository } from 'typeorm';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import {
-  AuthException,
-  AuthExceptionCode,
+    AuthException,
+    AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
@@ -17,9 +17,9 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
 import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
+    PermissionsException,
+    PermissionsExceptionCode,
+    PermissionsExceptionMessage,
 } from './permissions.exception';
 
 @Injectable()
@@ -143,12 +143,10 @@ export class PermissionsService {
         workspaceId,
       );
 
-      if (roleId) {
-        role = await this.roleRepository.findOne({
-          where: { id: roleId, workspaceId },
-          relations: ['settingPermissions'],
-        });
-      }
+      role = await this.roleRepository.findOne({
+        where: { id: roleId, workspaceId },
+        relations: ['settingPermissions'],
+      });
     } else if (userWorkspaceId) {
       const [roleOfUserWorkspace] = await this.userRoleService
         .getRolesByUserWorkspaces({

@@ -19,26 +19,53 @@ describe('datamodel permissions', () => {
     let testFieldId = '';
 
     beforeAll(async () => {
-      const { data } = await createOneObjectMetadata({
+      const uniqueName = `testObjA`;
+
+      const { data, errors } = await createOneObjectMetadata({
         input: {
-          nameSingular: 'listing',
-          namePlural: 'listings',
-          labelSingular: 'Listing',
-          labelPlural: 'Listings',
+          nameSingular: uniqueName,
+          namePlural: `${uniqueName}s`,
+          labelSingular: 'Test Object',
+          labelPlural: 'Test Objects',
           icon: 'IconBuildingSkyscraper',
         },
       });
 
+      if (errors) {
+        throw new Error(
+          `Failed to create object metadata: ${JSON.stringify(errors)}`,
+        );
+      }
+
+      if (!data?.createOneObject) {
+        throw new Error(
+          'createOneObject returned null - check GraphQL response',
+        );
+      }
+
       listingObjectId = data.createOneObject.id;
 
-      const { data: createdFieldData } = await createOneFieldMetadata({
-        input: {
-          name: 'house',
-          type: FieldMetadataType.TEXT,
-          label: 'House',
-          objectMetadataId: listingObjectId,
-        },
-      });
+      const { data: createdFieldData, errors: fieldErrors } =
+        await createOneFieldMetadata({
+          input: {
+            name: 'house',
+            type: FieldMetadataType.TEXT,
+            label: 'House',
+            objectMetadataId: listingObjectId,
+          },
+        });
+
+      if (fieldErrors) {
+        throw new Error(
+          `Failed to create field metadata: ${JSON.stringify(fieldErrors)}`,
+        );
+      }
+
+      if (!createdFieldData?.createOneField) {
+        throw new Error(
+          'createOneField returned null - check GraphQL response',
+        );
+      }
 
       testFieldId = createdFieldData.createOneField.id;
     });
@@ -171,12 +198,14 @@ describe('datamodel permissions', () => {
       let listingObjectId = '';
 
       beforeAll(async () => {
+        const uniqueName = `testObjB`;
+
         const { data } = await createOneObjectMetadata({
           input: {
-            labelPlural: 'Listings',
-            labelSingular: 'Listing',
-            namePlural: 'listings',
-            nameSingular: 'listing',
+            labelPlural: 'Test Objects',
+            labelSingular: 'Test Object',
+            namePlural: `${uniqueName}s`,
+            nameSingular: uniqueName,
             icon: 'IconBuildingSkyscraper',
           },
         });

@@ -4,8 +4,8 @@ import { useIcons } from 'twenty-ui/display';
 import { useGetRolesQuery } from '~/generated-metadata/graphql';
 
 type SettingsDevelopersRoleSelectorProps = {
-  value?: string | null;
-  onChange: (roleId: string | null) => void;
+  value?: string | null | undefined;
+  onChange: (roleId: string) => void;
   allowEmpty?: boolean;
   disabled?: boolean;
   label?: string;
@@ -20,7 +20,7 @@ export const SettingsDevelopersRoleSelector = ({
   label,
   description,
 }: SettingsDevelopersRoleSelectorProps) => {
-  const { data: rolesData } = useGetRolesQuery();
+  const { data: rolesData, loading: rolesLoading } = useGetRolesQuery();
   const { getIcon } = useIcons();
 
   const roles = rolesData?.getRoles ?? [];
@@ -38,16 +38,22 @@ export const SettingsDevelopersRoleSelector = ({
       }
     : undefined;
 
+  const selectValue = allowEmpty
+    ? value || ''
+    : value && value.trim()
+      ? value
+      : undefined;
+
   return (
     <Select
       dropdownId="role-selector"
       options={options}
-      value={value || ''}
+      value={selectValue}
       onChange={(selectedValue) => {
-        onChange(selectedValue === '' ? null : selectedValue);
+        onChange(selectedValue);
       }}
       emptyOption={emptyOption}
-      disabled={disabled}
+      disabled={disabled || rolesLoading}
       label={label}
       description={description}
       withSearchInput

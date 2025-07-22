@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, Not, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
@@ -30,52 +30,28 @@ export class ApiKeyRoleService {
   ) {}
 
   public async assignRoleToApiKey({
-    workspaceId,
     apiKeyId,
     roleId,
+    workspaceId,
   }: {
-    workspaceId: string;
     apiKeyId: string;
     roleId: string;
-  }): Promise<void> {
-    const validationResult = await this.validateAssignRoleInput({
-      apiKeyId,
-      workspaceId,
-      roleId,
-    });
-
-    if (validationResult?.roleToAssignIsSameAsCurrentRole) {
-      return;
-    }
-
-    const newRoleTarget = await this.roleTargetsRepository.save({
-      roleId,
-      apiKeyId,
-      workspaceId,
-    });
-
-    await this.roleTargetsRepository.delete({
-      apiKeyId,
-      workspaceId,
-      id: Not(newRoleTarget.id),
-    });
-
-    await this.workspacePermissionsCacheService.recomputeApiKeyRoleMapCache({
-      workspaceId,
-    });
-  }
-
-  public async removeRoleFromApiKey({
-    workspaceId,
-    apiKeyId,
-  }: {
     workspaceId: string;
-    apiKeyId: string;
   }): Promise<void> {
+    // Remove existing role assignment if any
     await this.roleTargetsRepository.delete({
       apiKeyId,
       workspaceId,
     });
+
+    // Create new role assignment
+    const roleTarget = this.roleTargetsRepository.create({
+      apiKeyId,
+      roleId,
+      workspaceId,
+    });
+
+    await this.roleTargetsRepository.save(roleTarget);
 
     await this.workspacePermissionsCacheService.recomputeApiKeyRoleMapCache({
       workspaceId,
@@ -85,56 +61,22 @@ export class ApiKeyRoleService {
   async getRoleIdForApiKey(
     apiKeyId: string,
     workspaceId: string,
-  ): Promise<string | null> {
-    console.log(`🔍 [${new Date().toISOString()}] getRoleIdForApiKey called:`);
-    console.log(`📋 apiKeyId: ${apiKeyId}`);
-    console.log(`🏢 workspaceId: ${workspaceId}`);
-
+  ): Promise<string> {
     const apiKeyRoleMap =
       await this.workspacePermissionsCacheService.getApiKeyRoleMapFromCache({
         workspaceId,
       });
 
-    console.log(`🗂️ apiKeyRoleMap.data:`, apiKeyRoleMap.data);
+    const roleId = apiKeyRoleMap.data[apiKeyId];
 
-    const explicitRoleId = apiKeyRoleMap.data[apiKeyId];
-
-    console.log(`🎯 explicitRoleId: ${explicitRoleId || 'NULL'}`);
-
-    if (explicitRoleId) {
-      console.log(`✅ Returning explicit role: ${explicitRoleId}`);
-
-      return explicitRoleId;
+    if (!roleId) {
+      throw new ApiKeyException(
+        `API key ${apiKeyId} has no role assigned`,
+        ApiKeyExceptionCode.API_KEY_NOT_FOUND,
+      );
     }
 
-    // Fallback to workspace default role if no explicit role assigned
-    const workspace = await this.workspaceRepository.findOne({
-      where: { id: workspaceId },
-    });
-
-    const defaultRoleId = workspace?.defaultRoleId;
-
-    console.log(`📋 workspace.defaultRoleId: ${defaultRoleId || 'NULL'}`);
-
-    console.log(`⚠️ Returning fallback role: ${defaultRoleId || 'NULL'}`);
-
-    // Let's also check if there should be an explicit role in the database
-    const directCheck = await this.roleTargetsRepository.findOne({
-      where: { apiKeyId, workspaceId },
-      relations: ['role'],
-    });
-
-    console.log(
-      `🔎 Direct DB check result:`,
-      directCheck
-        ? {
-            roleId: directCheck.roleId,
-            roleName: directCheck.role?.label,
-          }
-        : 'NULL',
-    );
-
-    return defaultRoleId || null;
+    return roleId;
   }
 
   async getRoleForApiKey(
@@ -146,21 +88,7 @@ export class ApiKeyRoleService {
       relations: ['role'],
     });
 
-    if (roleTarget?.role) {
-      return roleTarget.role;
-    }
-
-    const workspace = await this.workspaceRepository.findOne({
-      where: { id: workspaceId },
-    });
-
-    if (!workspace?.defaultRoleId) {
-      return null;
-    }
-
-    return await this.roleRepository.findOne({
-      where: { id: workspace.defaultRoleId, workspaceId },
-    });
+    return roleTarget?.role || null;
   }
 
   async recomputeCache(workspaceId: string): Promise<void> {
@@ -240,30 +168,6 @@ export class ApiKeyRoleService {
           roleTarget.apiKeyId,
           fromRoleEntityToRoleDto(roleTarget.role),
         );
-      }
-    }
-
-    const apiKeysWithoutRoles = apiKeyIds.filter(
-      (apiKeyId) => !rolesMap.has(apiKeyId),
-    );
-
-    if (apiKeysWithoutRoles.length > 0) {
-      const workspace = await this.workspaceRepository.findOne({
-        where: { id: workspaceId },
-      });
-
-      if (workspace?.defaultRoleId) {
-        const defaultRole = await this.roleRepository.findOne({
-          where: { id: workspace.defaultRoleId, workspaceId },
-        });
-
-        if (defaultRole) {
-          const defaultRoleDto = fromRoleEntityToRoleDto(defaultRole);
-
-          for (const apiKeyId of apiKeysWithoutRoles) {
-            rolesMap.set(apiKeyId, defaultRoleDto);
-          }
-        }
       }
     }
 

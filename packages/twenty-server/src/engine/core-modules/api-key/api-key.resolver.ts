@@ -1,11 +1,11 @@
 import { UseGuards } from '@nestjs/common';
 import {
-    Args,
-    Mutation,
-    Parent,
-    Query,
-    ResolveField,
-    Resolver,
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
 } from '@nestjs/graphql';
 
 import { CreateApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/create-api-key.dto';
@@ -113,34 +113,22 @@ export class ApiKeyResolver {
     }
   }
 
-  @Mutation(() => Boolean)
-  async removeRoleFromApiKey(
-    @AuthWorkspace() workspace: Workspace,
-    @Args('apiKeyId') apiKeyId: string,
-  ): Promise<boolean> {
-    try {
-      await this.apiKeyRoleService.removeRoleFromApiKey({
-        apiKeyId,
-        workspaceId: workspace.id,
-      });
-
-      return true;
-    } catch (error) {
-      apiKeyGraphqlApiExceptionHandler(error);
-      throw error;
-    }
-  }
-
-  @ResolveField(() => RoleDTO, { nullable: true })
+  @ResolveField(() => RoleDTO)
   async role(
     @Parent() apiKey: ApiKey,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<RoleDTO | null> {
+  ): Promise<RoleDTO> {
     const rolesMap = await this.apiKeyRoleService.getRolesByApiKeys({
       apiKeyIds: [apiKey.id],
       workspaceId: workspace.id,
     });
 
-    return rolesMap.get(apiKey.id) || null;
+    const role = rolesMap.get(apiKey.id);
+
+    if (!role) {
+      throw new Error(`API key ${apiKey.id} has no role assigned`);
+    }
+
+    return role;
   }
 }

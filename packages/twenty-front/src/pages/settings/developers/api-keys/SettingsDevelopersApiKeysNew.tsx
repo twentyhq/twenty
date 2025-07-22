@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsDevelopersRoleSelector } from '@/settings/developers/components/SettingsDevelopersRoleSelector';
 import { EXPIRATION_DATES } from '@/settings/developers/constants/ExpirationDates';
 import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyTokenFamilyState';
@@ -19,6 +20,7 @@ import { Section } from 'twenty-ui/layout';
 import {
   useCreateApiKeyMutation,
   useGenerateApiKeyTokenMutation,
+  useGetRolesQuery,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -27,14 +29,15 @@ export const SettingsDevelopersApiKeysNew = () => {
   const { t } = useLingui();
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const navigateSettings = useNavigateSettings();
+  const { loading: rolesLoading } = useGetRolesQuery();
   const [formValues, setFormValues] = useState<{
     name: string;
     expirationDate: number | null;
-    roleId: string | null;
+    roleId: string;
   }>({
     expirationDate: EXPIRATION_DATES[5].value,
     name: '',
-    roleId: null,
+    roleId: '',
   });
 
   const [createApiKey] = useCreateApiKeyMutation();
@@ -85,7 +88,12 @@ export const SettingsDevelopersApiKeysNew = () => {
       });
     }
   };
-  const canSave = !!formValues.name && createApiKey;
+  const canSave = !!formValues.name && !!formValues.roleId && createApiKey;
+
+  if (rolesLoading) {
+    return <SettingsSkeletonLoader />;
+  }
+
   return (
     <SubMenuTopBarContainer
       title={t`New key`}
@@ -144,7 +152,7 @@ export const SettingsDevelopersApiKeysNew = () => {
                 roleId,
               }));
             }}
-            allowEmpty
+            allowEmpty={false}
           />
         </Section>
         <Section>

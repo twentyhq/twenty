@@ -2,23 +2,23 @@ import { Entity } from '@microsoft/microsoft-graph-types';
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  DeleteResult,
-  EntityManager,
-  EntityTarget,
-  FindManyOptions,
-  FindOneOptions,
-  FindOptionsWhere,
-  In,
-  InsertResult,
-  ObjectId,
-  ObjectLiteral,
-  QueryRunner,
-  RemoveOptions,
-  Repository,
-  SaveOptions,
-  SelectQueryBuilder,
-  TypeORMError,
-  UpdateResult,
+    DeleteResult,
+    EntityManager,
+    EntityTarget,
+    FindManyOptions,
+    FindOneOptions,
+    FindOptionsWhere,
+    In,
+    InsertResult,
+    ObjectId,
+    ObjectLiteral,
+    QueryRunner,
+    RemoveOptions,
+    Repository,
+    SaveOptions,
+    SelectQueryBuilder,
+    TypeORMError,
+    UpdateResult,
 } from 'typeorm';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { PickKeysByType } from 'typeorm/common/PickKeysByType';
@@ -36,19 +36,19 @@ import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/works
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
-  PermissionsException,
-  PermissionsExceptionCode,
+    PermissionsException,
+    PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { QueryDeepPartialEntityWithRelationConnect } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
 import { RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 import {
-  TwentyORMException,
-  TwentyORMExceptionCode,
+    TwentyORMException,
+    TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import {
-  OperationType,
-  validateOperationIsPermittedOrThrow,
+    OperationType,
+    validateOperationIsPermittedOrThrow,
 } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
