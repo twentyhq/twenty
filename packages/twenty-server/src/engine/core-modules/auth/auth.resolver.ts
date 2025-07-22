@@ -67,8 +67,7 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-
-import { TwoFactorAuthenticationExceptionFilter } from '../two-factor-authentication/two-factor-authentication-exception.filter';
+import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { LoginToken } from './dto/login-token.entity';
@@ -515,7 +514,7 @@ export class AuthResolver {
         workspaceId,
       });
 
-    await this.twoFactorAuthenticationService.is2FARequired(
+    await this.twoFactorAuthenticationService.validateTwoFactorAuthenticationRequirement(
       workspace,
       currentUserWorkspace.twoFactorAuthenticationMethods,
     );

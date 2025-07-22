@@ -14,7 +14,7 @@ import { Button } from 'twenty-ui/input';
 import { useDeleteTwoFactorAuthenticationMethodMutation } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '../hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
-import { useCurrentWorkspaceTwoFactorAuthenticationPolicy } from '../hooks/useWorkspaceTwoFactorAuthenticatonPolicy';
+import { useCurrentWorkspaceTwoFactorAuthenticationPolicy } from '../hooks/useWorkspaceTwoFactorAuthenticationPolicy';
 
 const DELETE_TWO_FACTOR_AUTHENTICATION_MODAL_ID =
   'delete-two-factor-authentication-modal';
@@ -66,7 +66,7 @@ export const DeleteTwoFactorAuthentication = () => {
     });
 
     enqueueSuccessSnackBar({
-      message: t`2FA Method has been deleted successfuly.`,
+      message: t`2FA Method has been deleted successfully.`,
       options: {
         dedupeKey: '2fa-dedupe-key',
       },

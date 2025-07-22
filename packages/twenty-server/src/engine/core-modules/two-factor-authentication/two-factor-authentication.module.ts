@@ -18,7 +18,6 @@ import { TwoFactorAuthenticationMethod } from './entities/two-factor-authenticat
 
 @Module({
   imports: [
-    KeyWrappingModule,
     UserWorkspaceModule,
     DomainManagerModule,
     MetricsModule,

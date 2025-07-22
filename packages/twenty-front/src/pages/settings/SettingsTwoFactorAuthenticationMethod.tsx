@@ -8,7 +8,7 @@ import { qrCodeState } from '@/auth/states/qrCode';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteTwoFactorAuthentication } from '@/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod';
-import { TwoFactorAuthenticationSetupEffectForSettings } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationSetupEffectForSettings';
+import { TwoFactorAuthenticationSetupForSettingsEffect } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationSetupForSettingsEffect';
 import {
   TwoFactorAuthenticationVerificationForSettings,
   useTwoFactorVerificationForSettings,
@@ -132,7 +132,7 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
             </Section>
           ) : (
             <Section>
-              <TwoFactorAuthenticationSetupEffectForSettings />
+              <TwoFactorAuthenticationSetupForSettingsEffect />
 
               <H2Title title={t`1. Scan the QR code`} />
               <StyledInstructions>

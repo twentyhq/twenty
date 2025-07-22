@@ -16,7 +16,7 @@ const assertIsDefinedOrThrow = (
     | undefined
     | null,
   exceptionToThrow: CustomException = new TwoFactorAuthenticationException(
-    'User not found',
+    '2FA method not found',
     TwoFactorAuthenticationExceptionCode.TWO_FACTOR_AUTHENTICATION_METHOD_NOT_FOUND,
   ),
 ): asserts twoFactorAuthenticationMethod is TwoFactorAuthenticationMethod => {

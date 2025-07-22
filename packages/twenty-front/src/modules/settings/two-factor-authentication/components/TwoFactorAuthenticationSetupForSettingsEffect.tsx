@@ -13,7 +13,7 @@ const INITIATE_OTP_PROVISIONING_FOR_AUTHENTICATED_USER = gql`
   }
 `;
 
-export const TwoFactorAuthenticationSetupEffectForSettingsEffect = () => {
+export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const qrCode = useRecoilValue(qrCodeState);
   const setQrCodeState = useSetRecoilState(qrCodeState);

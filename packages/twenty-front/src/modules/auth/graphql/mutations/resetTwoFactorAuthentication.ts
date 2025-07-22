@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-export const RESET_TWO_FACTOR_AUTHENTICATION = gql`
+export const DELETE_TWO_FACTOR_AUTHENTICATION_METHOD = gql`
   mutation deleteTwoFactorAuthenticationMethod(
     $twoFactorAuthenticationMethodId: UUID!
   ) {

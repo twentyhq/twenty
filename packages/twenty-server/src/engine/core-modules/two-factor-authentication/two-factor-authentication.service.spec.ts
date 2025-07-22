@@ -119,14 +119,14 @@ describe('TwoFactorAuthenticationService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('is2FARequired', () => {
+  describe('validateTwoFactorAuthenticationRequirement', () => {
     it('should do nothing if workspace does not enforce 2FA', async () => {
       const mockWorkspace = {
         isTwoFactorAuthenticationEnforced: false,
       } as unknown as Workspace;
 
       await expect(
-        service.is2FARequired(mockWorkspace),
+        service.validateTwoFactorAuthenticationRequirement(mockWorkspace),
       ).resolves.toBeUndefined();
     });
 
@@ -139,9 +139,9 @@ describe('TwoFactorAuthenticationService', () => {
         AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED,
       );
 
-      await expect(service.is2FARequired(mockWorkspace)).rejects.toThrow(
-        expectedError,
-      );
+      await expect(
+        service.validateTwoFactorAuthenticationRequirement(mockWorkspace),
+      ).rejects.toThrow(expectedError);
     });
 
     it('should throw VERIFICATION_REQUIRED if 2FA is set up', async () => {
@@ -157,7 +157,10 @@ describe('TwoFactorAuthenticationService', () => {
       );
 
       await expect(
-        service.is2FARequired(mockWorkspace, mockProvider),
+        service.validateTwoFactorAuthenticationRequirement(
+          mockWorkspace,
+          mockProvider,
+        ),
       ).rejects.toThrow(expectedError);
     });
   });

@@ -1,24 +1,24 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { authenticator } from 'otplib';
 import { TOTP, TOTPOptions } from '@otplib/core';
-import { SafeParseReturnType } from 'zod';
-import { isDefined } from 'twenty-shared/utils';
 import { createDigest } from '@otplib/plugin-crypto';
+import { authenticator } from 'otplib';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { SafeParseReturnType } from 'zod';
 
 import { OTPAuthenticationStrategyInterface } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/interfaces/otp.strategy.interface';
 
+import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 import {
   TwoFactorAuthenticationException,
   TwoFactorAuthenticationExceptionCode,
 } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception';
-import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 
 import {
+  TOTP_STRATEGY_CONFIG_SCHEMA,
   TotpContext,
   TOTPStrategyConfig,
-  TOTP_STRATEGY_CONFIG_SCHEMA,
 } from './constants/totp.strategy.constants';
 
 @Injectable()

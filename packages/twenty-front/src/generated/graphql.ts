@@ -2418,8 +2418,8 @@ export type TransientToken = {
   transientToken: AuthToken;
 };
 
-export type TwoFactorAuthenticatonMethodDto = {
-  __typename?: 'TwoFactorAuthenticatonMethodDTO';
+export type TwoFactorAuthenticationMethodDto = {
+  __typename?: 'TwoFactorAuthenticationMethodDTO';
   status: Scalars['String'];
   strategy: Scalars['String'];
   twoFactorAuthenticationMethodId: Scalars['UUID'];
@@ -2660,7 +2660,7 @@ export type UserWorkspace = {
   /** @deprecated Use objectPermissions instead */
   objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
   settingsPermissions?: Maybe<Array<SettingPermissionType>>;
-  twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticatonMethodDto>>;
+  twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticationMethodDto>>;
   updatedAt: Scalars['DateTime'];
   user: User;
   userId: Scalars['String'];

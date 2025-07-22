@@ -88,7 +88,7 @@ export class TwoFactorAuthenticationResolver {
 
     if (!isDefined(uri)) {
       throw new AuthException(
-        'OTP Auth URL missing ',
+        'OTP Auth URL missing',
         AuthExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }
@@ -111,7 +111,7 @@ export class TwoFactorAuthenticationResolver {
 
     if (!isDefined(uri)) {
       throw new AuthException(
-        'OTP Auth URL missing ',
+        'OTP Auth URL missing',
         AuthExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }

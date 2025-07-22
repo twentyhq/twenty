@@ -1,8 +1,10 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { useInitiateOtpProvisioningMutation } from '~/generated-metadata/graphql';
-import { TwoFactorAuthenticatonMethodDto } from '~/generated/graphql';
+import {
+  TwoFactorAuthenticationMethodDto,
+  useInitiateOtpProvisioningMutation,
+} from '~/generated-metadata/graphql';
 
 export const useCurrentUserWorkspaceTwoFactorAuthentication = () => {
   const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
@@ -10,9 +12,9 @@ export const useCurrentUserWorkspaceTwoFactorAuthentication = () => {
     useInitiateOtpProvisioningMutation();
 
   const currentUserWorkspaceTwoFactorAuthenticationMethods = useMemo(() => {
-    const methods: Record<string, TwoFactorAuthenticatonMethodDto> = {};
+    const methods: Record<string, TwoFactorAuthenticationMethodDto> = {};
 
-    (currentUserWorkspace?.twoFactorAuthenticationMethodSummary ?? []).map(
+    (currentUserWorkspace?.twoFactorAuthenticationMethodSummary ?? []).forEach(
       (method) => (methods[method.strategy] = method),
     );
 

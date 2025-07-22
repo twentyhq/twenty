@@ -35,7 +35,15 @@ export class TwoFactorAuthenticationService {
     private readonly keyWrappingService: KeyWrappingService,
   ) {}
 
-  async is2FARequired(
+  /**
+   * Validates two-factor authentication requirements for a workspace.
+   *
+   * @throws {AuthException} with TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED if 2FA is set up and needs verification
+   * @throws {AuthException} with TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED if 2FA is enforced but not set up
+   * @param targetWorkspace - The workspace to check 2FA requirements for
+   * @param userTwoFactorAuthenticationMethods - Optional array of user's 2FA methods
+   */
+  async validateTwoFactorAuthenticationRequirement(
     targetWorkspace: Workspace,
     userTwoFactorAuthenticationMethods?: TwoFactorAuthenticationMethod[],
   ) {
