@@ -9,10 +9,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { normalizeCheckboxValue } from './normalizeCheckboxValue';
 
-export const normalizeTableData = (
-  columns: SpreadsheetColumns,
+export const normalizeTableData = <T extends string>(
+  columns: SpreadsheetColumns<T>,
   data: ImportedRow[],
-  fields: SpreadsheetImportFields,
+  fields: SpreadsheetImportFields<T>,
 ) =>
   data.map((row) =>
     columns.reduce((acc, column, index) => {
@@ -101,5 +101,5 @@ export const normalizeTableData = (
         default:
           return acc;
       }
-    }, {} as ImportedStructuredRow),
+    }, {} as ImportedStructuredRow<T>),
   );

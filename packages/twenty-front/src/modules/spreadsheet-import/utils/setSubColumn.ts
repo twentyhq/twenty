@@ -5,13 +5,15 @@ import {
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
 
-export const setSubColumn = (
+export const setSubColumn = <T>(
   oldColumn:
-    | SpreadsheetMatchedSelectColumn
-    | SpreadsheetMatchedSelectOptionsColumn,
+    | SpreadsheetMatchedSelectColumn<T>
+    | SpreadsheetMatchedSelectOptionsColumn<T>,
   entry: string,
   value: string,
-): SpreadsheetMatchedSelectColumn | SpreadsheetMatchedSelectOptionsColumn => {
+):
+  | SpreadsheetMatchedSelectColumn<T>
+  | SpreadsheetMatchedSelectOptionsColumn<T> => {
   const shouldUnselectValue =
     oldColumn.matchedOptions.find((option) => option.entry === entry)?.value ===
     value;
@@ -26,13 +28,13 @@ export const setSubColumn = (
   if (allMatched) {
     return {
       ...oldColumn,
-      matchedOptions: options as SpreadsheetMatchedOptions[],
+      matchedOptions: options as SpreadsheetMatchedOptions<T>[],
       type: SpreadsheetColumnType.matchedSelectOptions,
     };
   } else {
     return {
       ...oldColumn,
-      matchedOptions: options as SpreadsheetMatchedOptions[],
+      matchedOptions: options as SpreadsheetMatchedOptions<T>[],
       type: SpreadsheetColumnType.matchedSelect,
     };
   }

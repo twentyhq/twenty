@@ -1,4 +1,4 @@
-export type SpreadsheetMatchedOptions = {
+export type SpreadsheetMatchedOptions<T> = {
   entry: string;
-  value?: string;
+  value?: T;
 };

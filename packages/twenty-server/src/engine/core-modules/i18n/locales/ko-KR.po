@@ -747,8 +747,8 @@ msgstr "연락처의 X/트위터 계정"
 #. js-lingui-id: M73whl
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Context"
-msgstr "컨텍스트"
+#~ msgid "Context"
+#~ msgstr "컨텍스트"
 
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -1424,8 +1424,8 @@ msgstr ""
 
 #. js-lingui-id: HgJ9jQ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Json object to provide output of the workflow run"
-msgstr "워크플로우 실행 출력을 제공하는 Json 객체"
+#~ msgid "Json object to provide output of the workflow run"
+#~ msgstr "워크플로우 실행 출력을 제공하는 Json 객체"
 
 #. js-lingui-id: AQuLwi
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -2038,8 +2038,8 @@ msgstr "웹훅 페이로드의 HMAC 서명을 계산하는 데 사용되는 선�
 
 #. js-lingui-id: gh06VD
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Output"
-msgstr "출력"
+#~ msgid "Output"
+#~ msgstr "출력"
 
 #. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
