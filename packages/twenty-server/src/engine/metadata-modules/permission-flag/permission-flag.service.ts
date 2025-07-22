@@ -17,7 +17,7 @@ import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/wo
 export class PermissionFlagService {
   constructor(
     @InjectRepository(PermissionFlagEntity, 'core')
-    private readonly settingPermissionRepository: Repository<PermissionFlagEntity>,
+    private readonly permissionFlagRepository: Repository<PermissionFlagEntity>,
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
     @InjectDataSource('core')
