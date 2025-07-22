@@ -2,7 +2,7 @@ import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/comp
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
 import { CREATE_STEP_NODE_WIDTH } from '@/workflow/workflow-diagram/constants/CreateStepNodeWidth';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
-import { useWorkflowVisualizerDiagramContextOrThrow } from '@/workflow/workflow-diagram/contexts/WorkflowVisualizerDiagramContext';
+import { useOpenWorkflowViewFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowViewFilterInCommandMenu';
 import {
   WorkflowDiagramEdge,
   WorkflowDiagramEdgeData,
@@ -57,14 +57,13 @@ export const WorkflowDiagramFilterEdgeReadonly = ({
     targetY,
   });
 
-  const { openFilterInCommandMenu } =
-    useWorkflowVisualizerDiagramContextOrThrow();
+  const { openWorkflowViewFilterInCommandMenu } =
+    useOpenWorkflowViewFilterInCommandMenu();
 
   const handleFilterButtonClick = () => {
-    openFilterInCommandMenu({
+    openWorkflowViewFilterInCommandMenu({
       stepId: data.stepId,
       stepName: data.name,
-      stepExecutionStatus: data.runStatus,
     });
   };
 

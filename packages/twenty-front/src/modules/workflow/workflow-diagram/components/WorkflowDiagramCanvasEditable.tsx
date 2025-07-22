@@ -8,8 +8,6 @@ import { WorkflowDiagramEmptyTrigger } from '@/workflow/workflow-diagram/compone
 import { WorkflowDiagramFilterEdgeEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable';
 import { WorkflowDiagramStepNodeEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeEditable';
 import { WorkflowDiagramV1EdgeEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramV1EdgeEditable';
-import { WorkflowVisualizerDiagramContextProvider } from '@/workflow/workflow-diagram/contexts/WorkflowVisualizerDiagramContext';
-import { useOpenWorkflowEditFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowEditFilterInCommandMenu';
 import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps';
 import { ReactFlowProvider } from '@xyflow/react';
 
@@ -22,35 +20,26 @@ export const WorkflowDiagramCanvasEditable = ({
     workflowVersionStatus: versionStatus,
   });
 
-  const { openWorkflowEditFilterInCommandMenu } =
-    useOpenWorkflowEditFilterInCommandMenu();
-
   return (
-    <WorkflowVisualizerDiagramContextProvider
-      value={{
-        openFilterInCommandMenu: openWorkflowEditFilterInCommandMenu,
-      }}
-    >
-      <ReactFlowProvider>
-        <WorkflowDiagramCanvasBase
-          nodeTypes={{
-            default: WorkflowDiagramStepNodeEditable,
-            'create-step': WorkflowDiagramCreateStepNode,
-            'empty-trigger': WorkflowDiagramEmptyTrigger,
-          }}
-          edgeTypes={{
-            blank: WorkflowDiagramBlankEdge,
-            'v1-editable': WorkflowDiagramV1EdgeEditable,
-            'empty-filter-editable': WorkflowDiagramDefaultEdgeEditable,
-            'filter-editable': WorkflowDiagramFilterEdgeEditable,
-          }}
-          tagContainerTestId="workflow-visualizer-status"
-          tagColor={tagProps.color}
-          tagText={tagProps.text}
-        />
+    <ReactFlowProvider>
+      <WorkflowDiagramCanvasBase
+        nodeTypes={{
+          default: WorkflowDiagramStepNodeEditable,
+          'create-step': WorkflowDiagramCreateStepNode,
+          'empty-trigger': WorkflowDiagramEmptyTrigger,
+        }}
+        edgeTypes={{
+          blank: WorkflowDiagramBlankEdge,
+          'v1-editable': WorkflowDiagramV1EdgeEditable,
+          'empty-filter-editable': WorkflowDiagramDefaultEdgeEditable,
+          'filter-editable': WorkflowDiagramFilterEdgeEditable,
+        }}
+        tagContainerTestId="workflow-visualizer-status"
+        tagColor={tagProps.color}
+        tagText={tagProps.text}
+      />
 
-        <WorkflowDiagramCanvasEditableEffect />
-      </ReactFlowProvider>
-    </WorkflowVisualizerDiagramContextProvider>
+      <WorkflowDiagramCanvasEditableEffect />
+    </ReactFlowProvider>
   );
 };

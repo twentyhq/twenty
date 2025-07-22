@@ -13,7 +13,7 @@ import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/comp
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
 import { CREATE_STEP_NODE_WIDTH } from '@/workflow/workflow-diagram/constants/CreateStepNodeWidth';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
-import { useWorkflowVisualizerDiagramContextOrThrow } from '@/workflow/workflow-diagram/contexts/WorkflowVisualizerDiagramContext';
+import { useOpenWorkflowEditFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowEditFilterInCommandMenu';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
 import {
@@ -117,8 +117,8 @@ export const WorkflowDiagramFilterEdgeEditable = ({
     dropdownId,
   );
 
-  const { openFilterInCommandMenu } =
-    useWorkflowVisualizerDiagramContextOrThrow();
+  const { openWorkflowEditFilterInCommandMenu } =
+    useOpenWorkflowEditFilterInCommandMenu();
 
   const handleMouseEnter = () => {
     setHovered(true);
@@ -129,10 +129,9 @@ export const WorkflowDiagramFilterEdgeEditable = ({
   };
 
   const handleFilterButtonClick = () => {
-    openFilterInCommandMenu({
+    openWorkflowEditFilterInCommandMenu({
       stepId: data.stepId,
       stepName: data.name,
-      stepExecutionStatus: data.runStatus,
     });
   };
 
