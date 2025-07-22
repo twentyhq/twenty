@@ -14,12 +14,13 @@ describe('GmailGetMessageListService', () => {
 
   const mockConnectedAccount: Pick<
     ConnectedAccountWorkspaceEntity,
-    'provider' | 'refreshToken' | 'id' | 'handle'
+    'provider' | 'refreshToken' | 'id' | 'handle' | 'connectionParameters'
   > = {
     id: 'connected-account-id',
     provider: ConnectedAccountProvider.GOOGLE,
     refreshToken: 'refresh-token',
     handle: 'test@gmail.com',
+    connectionParameters: {},
   };
 
   beforeEach(async () => {
@@ -55,7 +56,7 @@ describe('GmailGetMessageListService', () => {
     gmailClientProvider = module.get<GmailClientProvider>(GmailClientProvider);
   });
 
-  describe('getFullMessageList', () => {
+  describe('getMessageList', () => {
     it('should return 0 messageExternalIds when gmail returns 0 messages', async () => {
       const mockGmailClient = {
         users: {
@@ -74,9 +75,13 @@ describe('GmailGetMessageListService', () => {
         mockGmailClient,
       );
 
-      const result = await service.getFullMessageList(mockConnectedAccount);
+      const result = await service.getMessageLists({
+        messageChannel: { syncCursor: '', id: 'my-id' },
+        connectedAccount: mockConnectedAccount,
+        messageFolders: [],
+      });
 
-      expect(result.messageExternalIds).toHaveLength(0);
+      expect(result[0].messageExternalIds).toHaveLength(0);
       expect(mockGmailClient.users.messages.list).toHaveBeenCalledTimes(1);
     });
 
@@ -121,9 +126,13 @@ describe('GmailGetMessageListService', () => {
         mockGmailClient,
       );
 
-      const result = await service.getFullMessageList(mockConnectedAccount);
+      const result = await service.getMessageLists({
+        messageChannel: { syncCursor: '', id: 'my-id' },
+        connectedAccount: mockConnectedAccount,
+        messageFolders: [],
+      });
 
-      expect(result.messageExternalIds).toHaveLength(5);
+      expect(result[0].messageExternalIds).toHaveLength(5);
     });
 
     it('should return 3 messageExternalIds when gmail provides a nextpagetoken with 2 messages, then 1', async () => {
@@ -168,9 +177,13 @@ describe('GmailGetMessageListService', () => {
         mockGmailClient,
       );
 
-      const result = await service.getFullMessageList(mockConnectedAccount);
+      const result = await service.getMessageLists({
+        messageChannel: { syncCursor: '', id: 'my-id' },
+        connectedAccount: mockConnectedAccount,
+        messageFolders: [],
+      });
 
-      expect(result.messageExternalIds).toHaveLength(3);
+      expect(result[0].messageExternalIds).toHaveLength(3);
       expect(mockGmailClient.users.messages.list).toHaveBeenCalledTimes(2);
     });
     it('should go through while loop once when gmail provides a nextpagetoken but 0 messages - should never happen IRL', async () => {
@@ -196,9 +209,13 @@ describe('GmailGetMessageListService', () => {
         mockGmailClient,
       );
 
-      const result = await service.getFullMessageList(mockConnectedAccount);
+      const result = await service.getMessageLists({
+        messageChannel: { syncCursor: '', id: 'my-id' },
+        connectedAccount: mockConnectedAccount,
+        messageFolders: [],
+      });
 
-      expect(result.messageExternalIds).toHaveLength(0);
+      expect(result[0].messageExternalIds).toHaveLength(0);
       expect(mockGmailClient.users.messages.list).toHaveBeenCalledTimes(1);
     });
   });
