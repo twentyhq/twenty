@@ -1,38 +1,31 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { FieldActorForInputValue } from '@/object-record/record-field/types/FieldMetadata';
-import { getCompositeSubFieldKey } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetCompositeSubFieldKey';
-import {
-  ImportedStructuredRow,
-  SpreadsheetImportFields,
-} from '@/spreadsheet-import/types';
+import { getSubFieldOptionKey } from '@/object-record/spreadsheet-import/utils/getSubFieldOptionKey';
+import { ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { CountryCode, parsePhoneNumberWithError } from 'libphonenumber-js';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
-import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { castToString } from '~/utils/castToString';
 import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
 import { isEmptyObject } from '~/utils/isEmptyObject';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 type BuildRecordFromImportedStructuredRowArgs = {
-  importedStructuredRow: ImportedStructuredRow;
-  fieldMetadataItems: FieldMetadataItem[];
-  spreadsheetImportFields: SpreadsheetImportFields;
+  importedStructuredRow: ImportedStructuredRow<any>;
+  fields: FieldMetadataItem[];
 };
 
 const buildCompositeFieldRecord = (
   field: FieldMetadataItem,
-  importedStructuredRow: ImportedStructuredRow,
+  importedStructuredRow: ImportedStructuredRow<any>,
   compositeFieldConfig: Record<string, ((value: any) => any) | undefined>,
 ): Record<string, any> | undefined => {
   const compositeFieldRecord = Object.entries(compositeFieldConfig).reduce(
     (acc, [compositeFieldKey, transform]) => {
       const value =
-        importedStructuredRow[
-          getCompositeSubFieldKey(field, compositeFieldKey)
-        ];
+        importedStructuredRow[getSubFieldOptionKey(field, compositeFieldKey)];
 
       return isDefined(value)
         ? { ...acc, [compositeFieldKey]: transform?.(value) || value }
@@ -44,59 +37,9 @@ const buildCompositeFieldRecord = (
   return isEmptyObject(compositeFieldRecord) ? undefined : compositeFieldRecord;
 };
 
-const buildRelationConnectFieldRecord = (
-  fieldMetadataItem: FieldMetadataItem,
-  importedStructuredRow: ImportedStructuredRow,
-  spreadsheetImportFields: SpreadsheetImportFields,
-) => {
-  if (fieldMetadataItem.relation?.type !== RelationType.MANY_TO_ONE)
-    return undefined;
-
-  const relationConnectFields = spreadsheetImportFields.filter(
-    (field) =>
-      field.fieldMetadataItemId === fieldMetadataItem.id &&
-      isDefined(importedStructuredRow[field.key]) &&
-      isNonEmptyString(importedStructuredRow[field.key]),
-  );
-
-  if (relationConnectFields.length === 0) return undefined;
-
-  const relationConnectFieldValue = relationConnectFields.reduce(
-    (acc, field) => {
-      const uniqueFieldMetadataItem = field.uniqueFieldMetadataItem;
-      if (!isDefined(uniqueFieldMetadataItem)) return acc;
-
-      if (
-        isCompositeFieldType(uniqueFieldMetadataItem.type) &&
-        isDefined(field.compositeSubFieldKey)
-      ) {
-        return {
-          ...acc,
-          [uniqueFieldMetadataItem.name]: {
-            ...(isDefined(acc?.[uniqueFieldMetadataItem.name])
-              ? acc[uniqueFieldMetadataItem.name]
-              : {}),
-            [field.compositeSubFieldKey]: importedStructuredRow[field.key],
-          },
-        };
-      }
-      return {
-        ...acc,
-        [uniqueFieldMetadataItem.name]: importedStructuredRow[field.key],
-      };
-    },
-    {} as Record<string, any>,
-  );
-
-  return isEmptyObject(relationConnectFieldValue)
-    ? undefined
-    : { connect: { where: relationConnectFieldValue } };
-};
-
 export const buildRecordFromImportedStructuredRow = ({
-  fieldMetadataItems,
+  fields,
   importedStructuredRow,
-  spreadsheetImportFields,
 }: BuildRecordFromImportedStructuredRowArgs) => {
   const stringArrayJSONSchema = z
     .preprocess((value) => {
@@ -202,7 +145,7 @@ export const buildRecordFromImportedStructuredRow = ({
     },
   };
 
-  for (const field of fieldMetadataItems) {
+  for (const field of fields) {
     const importedFieldValue = importedStructuredRow[field.name];
 
     switch (field.type) {
@@ -235,12 +178,12 @@ export const buildRecordFromImportedStructuredRow = ({
 
         const primaryPhoneNumber =
           importedStructuredRow[
-            getCompositeSubFieldKey(field, 'primaryPhoneNumber')
+            getSubFieldOptionKey(field, 'primaryPhoneNumber')
           ];
 
         const primaryPhoneCallingCode =
           importedStructuredRow[
-            getCompositeSubFieldKey(field, 'primaryPhoneCallingCode')
+            getSubFieldOptionKey(field, 'primaryPhoneCallingCode')
           ];
 
         const hasUserProvidedPrimaryPhoneNumberWithoutCallingCode =
@@ -252,7 +195,7 @@ export const buildRecordFromImportedStructuredRow = ({
         if (hasUserProvidedPrimaryPhoneNumberWithoutCallingCode) {
           const primaryPhoneCountryCode =
             importedStructuredRow[
-              getCompositeSubFieldKey(field, 'primaryPhoneCountryCode')
+              getSubFieldOptionKey(field, 'primaryPhoneCountryCode')
             ];
 
           const hasUserProvidedPrimaryPhoneCountryCode =
@@ -294,14 +237,22 @@ export const buildRecordFromImportedStructuredRow = ({
       case FieldMetadataType.NUMERIC:
         recordToBuild[field.name] = Number(importedFieldValue);
         break;
-      case FieldMetadataType.RELATION: {
-        recordToBuild[field.name] = buildRelationConnectFieldRecord(
-          field,
-          importedStructuredRow,
-          spreadsheetImportFields,
-        );
+      case FieldMetadataType.UUID:
+        if (
+          isDefined(importedFieldValue) &&
+          isNonEmptyString(importedFieldValue)
+        ) {
+          recordToBuild[field.name] = importedFieldValue;
+        }
         break;
-      }
+      case FieldMetadataType.RELATION:
+        if (
+          isDefined(importedFieldValue) &&
+          isNonEmptyString(importedFieldValue)
+        )
+          recordToBuild[field.name + 'Id'] = importedFieldValue;
+
+        break;
       case FieldMetadataType.ACTOR:
         recordToBuild[field.name] = {
           source: 'IMPORT',
@@ -324,30 +275,11 @@ export const buildRecordFromImportedStructuredRow = ({
         }
         break;
       }
-      case FieldMetadataType.UUID:
-      case FieldMetadataType.DATE:
-      case FieldMetadataType.DATE_TIME:
-        if (
-          isDefined(importedFieldValue) &&
-          isNonEmptyString(importedFieldValue)
-        ) {
-          recordToBuild[field.name] = importedFieldValue;
-        }
-        break;
-      case FieldMetadataType.SELECT:
-      case FieldMetadataType.RATING:
-      case FieldMetadataType.TEXT:
+      default:
         if (isDefined(importedFieldValue)) {
           recordToBuild[field.name] = importedFieldValue;
         }
         break;
-      case FieldMetadataType.MORPH_RELATION:
-      case FieldMetadataType.POSITION:
-      case FieldMetadataType.RICH_TEXT:
-      case FieldMetadataType.TS_VECTOR:
-        break;
-      default:
-        assertUnreachable(field.type);
     }
   }
 

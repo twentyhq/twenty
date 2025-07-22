@@ -7,7 +7,7 @@ import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetCol
 import { findUnmatchedRequiredFields } from '@/spreadsheet-import/utils/findUnmatchedRequiredFields';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-const nameField: SpreadsheetImportField = {
+const nameField: SpreadsheetImportField<'Name'> = {
   key: 'Name',
   label: 'Name',
   Icon: null,
@@ -15,11 +15,9 @@ const nameField: SpreadsheetImportField = {
     type: 'input',
   },
   fieldMetadataType: FieldMetadataType.TEXT,
-  fieldMetadataItemId: '1',
-  isNestedField: false,
 };
 
-const ageField: SpreadsheetImportField = {
+const ageField: SpreadsheetImportField<'Age'> = {
   key: 'Age',
   label: 'Age',
   Icon: null,
@@ -27,37 +25,37 @@ const ageField: SpreadsheetImportField = {
     type: 'input',
   },
   fieldMetadataType: FieldMetadataType.NUMBER,
-  fieldMetadataItemId: '2',
-  isNestedField: false,
 };
 
 const validations: SpreadsheetImportFieldValidationDefinition[] = [
   { rule: 'required' },
 ];
-const nameFieldWithValidations: SpreadsheetImportField = {
+const nameFieldWithValidations: SpreadsheetImportField<'Name'> = {
   ...nameField,
   fieldValidationDefinitions: validations,
 };
-const ageFieldWithValidations: SpreadsheetImportField = {
+const ageFieldWithValidations: SpreadsheetImportField<'Age'> = {
   ...ageField,
   fieldValidationDefinitions: validations,
 };
 
-const nameColumn: SpreadsheetColumn = {
+type ColumnValues = 'Name' | 'Age';
+
+const nameColumn: SpreadsheetColumn<ColumnValues> = {
   type: SpreadsheetColumnType.matched,
   index: 0,
   header: '',
   value: 'Name',
 };
 
-const ageColumn: SpreadsheetColumn = {
+const ageColumn: SpreadsheetColumn<ColumnValues> = {
   type: SpreadsheetColumnType.matched,
   index: 0,
   header: '',
   value: 'Age',
 };
 
-const extraColumn: SpreadsheetColumn = {
+const extraColumn: SpreadsheetColumn<ColumnValues> = {
   type: SpreadsheetColumnType.matched,
   index: 0,
   header: '',

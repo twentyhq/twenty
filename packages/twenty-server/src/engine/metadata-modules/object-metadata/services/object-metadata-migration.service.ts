@@ -22,7 +22,7 @@ import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { RELATION_MIGRATION_PRIORITY_PREFIX } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 
 @Injectable()
@@ -244,8 +244,8 @@ export class ObjectMetadataMigrationService {
   ) {
     const relationFields = objectMetadata.fields.filter(
       (field) =>
-        isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) ||
-        isFieldMetadataInterfaceOfType(field, FieldMetadataType.MORPH_RELATION),
+        isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) ||
+        isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION),
     ) as FieldMetadataEntity<
       FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
     >[];

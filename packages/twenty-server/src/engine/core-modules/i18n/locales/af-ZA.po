@@ -747,8 +747,8 @@ msgstr "Kontak se X/Twitter-rekening"
 #. js-lingui-id: M73whl
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Context"
-msgstr "Konteks"
+#~ msgid "Context"
+#~ msgstr "Konteks"
 
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -1424,8 +1424,8 @@ msgstr ""
 
 #. js-lingui-id: HgJ9jQ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Json object to provide output of the workflow run"
-msgstr "Json voorwerp om resultate van die werkstroom uitvoer te verskaf"
+#~ msgid "Json object to provide output of the workflow run"
+#~ msgstr "Json voorwerp om resultate van die werkstroom uitvoer te verskaf"
 
 #. js-lingui-id: AQuLwi
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -2038,8 +2038,8 @@ msgstr "Opsionele geheim gebruik om die HMAC handtekening vir webhook vragte te 
 
 #. js-lingui-id: gh06VD
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Output"
-msgstr "Uitset"
+#~ msgid "Output"
+#~ msgstr "Uitset"
 
 #. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts

@@ -132,6 +132,7 @@ export const SettingsObjectFieldItemTableRow = ({
 
     const deletedViewIds = prefetchViews
       .map((view) => {
+        // TODO: replace with viewGroups.fieldMetadataId
         if (view.kanbanFieldMetadataId === activeFieldMetadatItem.id) {
           deleteViewFromCache(view);
           return view.id;

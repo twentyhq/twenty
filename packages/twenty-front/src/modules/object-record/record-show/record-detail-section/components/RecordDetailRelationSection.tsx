@@ -89,7 +89,7 @@ export const RecordDetailRelationSection = ({
         },
       },
     },
-    view: indexViewId,
+    viewId: indexViewId,
   };
 
   const filterLinkHref = getAppPath(
