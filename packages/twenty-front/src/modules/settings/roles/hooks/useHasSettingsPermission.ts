@@ -5,17 +5,17 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { PermissionFlagType } from '~/generated/graphql';
 
 export const useHasSettingsPermission = (
-  settingsPermission?: PermissionFlagType,
+  permissionFlag?: PermissionFlagType,
 ) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
 
-  if (!settingsPermission) {
+  if (!permissionFlag) {
     return true;
   }
 
   if (
-    settingsPermission === PermissionFlagType.WORKSPACE &&
+    permissionFlag === PermissionFlagType.WORKSPACE &&
     currentWorkspace?.activationStatus ===
       WorkspaceActivationStatus.PENDING_CREATION
   ) {
@@ -28,5 +28,5 @@ export const useHasSettingsPermission = (
     return false;
   }
 
-  return currentUserWorkspaceSetting.includes(settingsPermission);
+  return currentUserWorkspaceSetting.includes(permissionFlag);
 };
