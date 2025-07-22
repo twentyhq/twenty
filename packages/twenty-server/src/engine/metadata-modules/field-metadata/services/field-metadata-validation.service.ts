@@ -73,7 +73,7 @@ export class FieldMetadataValidationService {
     settings,
   }: {
     fieldType: FieldMetadataType;
-    settings: NonNullable<FieldMetadataSettings<T>>;
+    settings: FieldMetadataSettings<T>;
   }) {
     switch (fieldType) {
       case FieldMetadataType.NUMBER:

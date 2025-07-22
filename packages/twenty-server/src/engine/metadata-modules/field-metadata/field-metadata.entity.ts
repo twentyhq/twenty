@@ -24,7 +24,7 @@ import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permis
 
 type IsRelationType<Ttype, T extends FieldMetadataType = FieldMetadataType> =
   IsExactly<T, FieldMetadataType> extends true
-    ? null | Ttype // unknown ?
+    ? null | Ttype // Could be improved to be | unknown
     : T extends FieldMetadataType.RELATION
       ? Ttype
       : T extends FieldMetadataType.MORPH_RELATION
