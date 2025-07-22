@@ -5,15 +5,14 @@ import { JSDOM } from 'jsdom';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import { SendEmailToolParametersZodSchema } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool.schema';
-import { SendEmailInput } from 'src/engine/core-modules/tool/tools/send-email-tool/types/send-email-input.type';
-import { ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
-import { ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import {
   SendEmailToolException,
   SendEmailToolExceptionCode,
 } from 'src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception';
+import { SendEmailToolParametersZodSchema } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool.schema';
+import { SendEmailInput } from 'src/engine/core-modules/tool/tools/send-email-tool/types/send-email-input.type';
+import { ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -63,11 +62,10 @@ export class SendEmailTool implements Tool {
     return connectedAccount;
   }
 
-  async execute(parameters: ToolInput): Promise<ToolOutput> {
+  async execute(parameters: SendEmailInput): Promise<ToolOutput> {
     const { workspaceId } = this.scopedWorkspaceContextFactory.create();
 
-    const { email, subject, body, connectedAccountId } =
-      parameters.input as SendEmailInput;
+    const { email, subject, body, connectedAccountId } = parameters;
 
     try {
       const emailSchema = z.string().trim().email('Invalid email');
