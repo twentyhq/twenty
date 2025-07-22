@@ -106,9 +106,10 @@ export const FormDateTimeFieldInput = ({
         },
   );
 
-  const draftValueAsDate = isDefined(draftValue.value)
-    ? new Date(draftValue.value)
-    : null;
+  const draftValueAsDate =
+    isDefined(draftValue.value) && draftValue.value !== ''
+      ? new Date(draftValue.value)
+      : null;
 
   const [pickerDate, setPickerDate] =
     useState<Nullable<Date>>(draftValueAsDate);

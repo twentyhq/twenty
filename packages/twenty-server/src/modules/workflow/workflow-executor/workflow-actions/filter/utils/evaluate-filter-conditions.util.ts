@@ -67,17 +67,43 @@ function evaluateFilter(filter: ResolvedFilter): boolean {
     case ViewFilterOperand.IsNotNull:
       return leftValue !== null && leftValue !== undefined;
 
-    case ViewFilterOperand.IsRelative:
     case ViewFilterOperand.IsInPast:
+      if (typeof leftValue === 'string') {
+        return Date.now() - new Date(leftValue).getTime() > 0;
+      }
+
+      return false;
+
     case ViewFilterOperand.IsInFuture:
+      if (typeof leftValue === 'string') {
+        return Date.now() - new Date(leftValue).getTime() < 0;
+      }
+
+      return false;
+
     case ViewFilterOperand.IsToday:
+      if (typeof leftValue === 'string') {
+        return new Date(leftValue).toDateString() === new Date().toDateString();
+      }
+
+      return false;
+
     case ViewFilterOperand.IsBefore:
+      if (typeof leftValue === 'string' && typeof rightValue === 'string') {
+        return new Date(leftValue).getTime() < new Date(rightValue).getTime();
+      }
+
+      return false;
+
     case ViewFilterOperand.IsAfter:
-      // Date/time operands - for now, return false as placeholder
-      // These would need proper date logic implementation
+      if (typeof leftValue === 'string' && typeof rightValue === 'string') {
+        return new Date(leftValue).getTime() > new Date(rightValue).getTime();
+      }
+
       return false;
 
     case ViewFilterOperand.VectorSearch:
+    case ViewFilterOperand.IsRelative:
       return false;
 
     default:
