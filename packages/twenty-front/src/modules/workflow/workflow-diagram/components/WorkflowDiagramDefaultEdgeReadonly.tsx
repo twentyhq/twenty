@@ -28,5 +28,4 @@ export const WorkflowDiagramDefaultEdgeReadonly = ({
       style={{ stroke: theme.border.color.strong }}
     />
   );
-  );
 };

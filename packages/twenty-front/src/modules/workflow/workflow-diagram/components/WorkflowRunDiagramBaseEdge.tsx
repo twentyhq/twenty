@@ -56,7 +56,6 @@ export const WorkflowRunDiagramBaseEdge = ({
       path={edgePath}
       style={{
         stroke: getStrokeColor({
-          getStrokeColor({
           theme,
           edgeExecutionStatus,
         }),
