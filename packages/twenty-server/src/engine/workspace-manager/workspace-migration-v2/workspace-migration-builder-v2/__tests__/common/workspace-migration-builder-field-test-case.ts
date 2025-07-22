@@ -111,7 +111,6 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
           type: FieldMetadataType.RELATION,
           settings: {
             relationType: RelationType.MANY_TO_ONE,
-            isForeignKey: true,
             joinColumnName: 'column-name',
             onDelete: undefined,
           },
