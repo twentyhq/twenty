@@ -4,7 +4,6 @@ import { SettingsConnectedAccountsTableHeader } from '@/settings/accounts/compon
 import { SettingsConnectedAccountsTableRow } from '@/settings/components/SettingsConnectedAccountsTableRow';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Table } from '@/ui/layout/table/components/Table';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
 import styled from '@emotion/styled';
 
 import { useLingui } from '@lingui/react/macro';
@@ -17,10 +16,6 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 const StyledTableRows = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledNoItems = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
 const StyledAddAccountSection = styled(Section)`
