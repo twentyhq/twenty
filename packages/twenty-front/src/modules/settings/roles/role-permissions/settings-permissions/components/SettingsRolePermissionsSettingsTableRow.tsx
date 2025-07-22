@@ -44,26 +44,29 @@ type SettingsRolePermissionsSettingsTableRowProps = {
   roleId: string;
   permission: SettingsRolePermissionsSettingPermission;
   isEditable: boolean;
+  isToolPermission?: boolean;
 };
 
 export const SettingsRolePermissionsSettingsTableRow = ({
   roleId,
   permission,
   isEditable,
+  isToolPermission,
 }: SettingsRolePermissionsSettingsTableRowProps) => {
   const theme = useTheme();
   const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
     settingsDraftRoleFamilyState(roleId),
   );
-  const canUpdateAllSettings = settingsDraftRole.canUpdateAllSettings;
 
-  const isSettingPermissionEnabled =
+  const isPermissionEnabled =
     settingsDraftRole.permissionFlags?.some(
       (permissionFlag) => permissionFlag.flag === permission.key,
     ) ?? false;
 
-  const isChecked = isSettingPermissionEnabled || canUpdateAllSettings;
-  const isDisabled = !isEditable || canUpdateAllSettings;
+  const isAllSettingsOverride =
+    !isToolPermission && settingsDraftRole.canUpdateAllSettings;
+  const isChecked = isPermissionEnabled || isAllSettingsOverride;
+  const isDisabled = !isEditable || isAllSettingsOverride;
 
   const handleChange = (value: boolean) => {
     const currentPermissions = settingsDraftRole.permissionFlags ?? [];

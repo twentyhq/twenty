@@ -53,6 +53,7 @@ export const SettingsRolePermissionsToolSection = ({
               roleId={roleId}
               permission={permission}
               isEditable={isEditable}
+              isToolPermission
             />
           ))}
         </StyledTableRows>
