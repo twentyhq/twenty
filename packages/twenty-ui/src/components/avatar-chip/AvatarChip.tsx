@@ -80,12 +80,12 @@ export const AvatarChip = ({
         isClickable={isClickable}
         divider={divider}
         theme={theme}
+        onClick={onClick}
       >
         <StyledIconWithBackgroundContainer
           backgroundColor={
             IconBackgroundColor ?? theme.background.invertedSecondary
           }
-          onClick={onClick}
         >
           <Icon
             color={theme.font.color.inverted}
@@ -102,6 +102,7 @@ export const AvatarChip = ({
       isClickable={isClickable}
       divider={divider}
       theme={theme}
+      onClick={onClick}
     >
       <Icon
         size={theme.icon.size.sm}
