@@ -56,6 +56,7 @@ export class WorkflowActionAdapter implements WorkflowAction {
   ): ToolType | null {
     const mapping: Partial<Record<WorkflowActionType, ToolType>> = {
       [WorkflowActionType.HTTP_REQUEST]: ToolType.HTTP_REQUEST,
+      [WorkflowActionType.SEND_EMAIL]: ToolType.SEND_EMAIL,
     };
 
     return mapping[actionType] || null;

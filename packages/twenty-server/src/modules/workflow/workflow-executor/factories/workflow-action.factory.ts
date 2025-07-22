@@ -38,7 +38,7 @@ export class WorkflowActionFactory {
       case WorkflowActionType.CODE:
         return this.codeWorkflowAction;
       case WorkflowActionType.SEND_EMAIL:
-        return this.sendEmailWorkflowAction;
+        return this.workflowActionAdapter;
       case WorkflowActionType.CREATE_RECORD:
         return this.createRecordWorkflowAction;
       case WorkflowActionType.UPDATE_RECORD:
