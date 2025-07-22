@@ -6,29 +6,30 @@ import { getFieldMetadataIdToColumnNamesMap } from 'src/engine/twenty-orm/utils/
 describe('getFieldMetadataIdToColumnNamesMap', () => {
   const createMockObjectMetadataItemWithFieldMaps = (
     fieldsById: Record<string, any>,
-  ): ObjectMetadataItemWithFieldMaps => ({
-    id: 'test-object-id',
-    nameSingular: 'test',
-    namePlural: 'tests',
-    labelSingular: 'Test',
-    labelPlural: 'Tests',
-    description: 'Test object',
-    icon: 'IconTest',
-    targetTableName: 'test',
-    isCustom: false,
-    isRemote: false,
-    isActive: true,
-    isSystem: false,
-    isAuditLogged: false,
-    isSearchable: false,
-    labelIdentifierFieldMetadataId: '',
-    imageIdentifierFieldMetadataId: '',
-    workspaceId: 'test-workspace-id',
-    indexMetadatas: [],
-    fieldsById,
-    fieldIdByName: {},
-    fieldIdByJoinColumnName: {},
-  });
+  ): ObjectMetadataItemWithFieldMaps =>
+    ({
+      id: 'test-object-id',
+      nameSingular: 'test',
+      namePlural: 'tests',
+      labelSingular: 'Test',
+      labelPlural: 'Tests',
+      description: 'Test object',
+      icon: 'IconTest',
+      targetTableName: 'test',
+      isCustom: false,
+      isRemote: false,
+      isActive: true,
+      isSystem: false,
+      isAuditLogged: false,
+      isSearchable: false,
+      labelIdentifierFieldMetadataId: '',
+      imageIdentifierFieldMetadataId: '',
+      workspaceId: 'test-workspace-id',
+      indexMetadatas: [],
+      fieldsById,
+      fieldIdByName: {},
+      fieldIdByJoinColumnName: {},
+    }) as unknown as ObjectMetadataItemWithFieldMaps;
 
   const createMockFieldMetadata = (
     id: string,
