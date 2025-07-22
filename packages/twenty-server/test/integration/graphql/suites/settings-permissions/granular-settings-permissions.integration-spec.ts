@@ -76,7 +76,7 @@ describe('Granular settings permissions', () => {
             settingPermissionKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}, ${PermissionFlagType.WORKFLOWS}]
           }) {
             id
-            setting
+            flag
             roleId
           }
         }
@@ -358,7 +358,7 @@ describe('Granular settings permissions', () => {
               label
               canUpdateAllSettings
               settingPermissions {
-                setting
+                flag
               }
             }
           }
@@ -397,7 +397,7 @@ describe('Granular settings permissions', () => {
               settingPermissionKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}, ${PermissionFlagType.SECURITY}]
             }) {
               id
-              setting
+              flag
               roleId
             }
           }
@@ -422,7 +422,7 @@ describe('Granular settings permissions', () => {
             getRoles {
               id
               settingPermissions {
-                setting
+                flag
               }
             }
           }
@@ -454,7 +454,7 @@ describe('Granular settings permissions', () => {
               settingPermissionKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}]
             }) {
               id
-              setting
+              flag
               roleId
             }
           }
@@ -477,7 +477,7 @@ describe('Granular settings permissions', () => {
             getRoles {
               id
               settingPermissions {
-                setting
+                flag
               }
             }
           }
