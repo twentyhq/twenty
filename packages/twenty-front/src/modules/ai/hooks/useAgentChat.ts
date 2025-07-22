@@ -8,10 +8,10 @@ import { currentAIChatThreadComponentState } from '@/ai/states/currentAIChatThre
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { STREAM_CHAT_QUERY } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/api/agent-chat-apollo.api';
-import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
-import { agentChatSelectedFilesComponentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatSelectedFilesComponentState';
-import { agentChatUploadedFilesComponentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatUploadedFilesComponentState';
+import { STREAM_CHAT_QUERY } from '@/ai/rest-api/agent-chat-apollo.api';
+import { AgentChatMessageRole } from '@/ai/constants/agent-chat-message-role';
+import { agentChatSelectedFilesComponentState } from '@/ai/states/agentChatSelectedFilesComponentState';
+import { agentChatUploadedFilesComponentState } from '@/ai/states/agentChatUploadedFilesComponentState';
 import { useApolloClient } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -24,17 +24,40 @@ import { agentChatInputState } from '../states/agentChatInputState';
 import { agentChatMessagesComponentState } from '../states/agentChatMessagesComponentState';
 import { agentStreamingMessageState } from '../states/agentStreamingMessageState';
 import { parseAgentStreamingChunk } from '../utils/parseAgentStreamingChunk';
+import {
+  agentChatObjectMetadataAndRecordContextState,
+  AIChatObjectMetadataAndRecordContext,
+} from '@/ai/states/agentChatObjectMetadataAndRecordContextState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { useGetObjectMetadataItemById } from '@/object-metadata/hooks/useGetObjectMetadataItemById';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isAgentChatCurrentContextActiveState } from '@/ai/states/isAgentChatCurrentContextActiveState';
 
 type OptimisticMessage = AgentChatMessage & {
   isPending: boolean;
 };
 
-export const useAgentChat = (agentId: string) => {
+export const useAgentChat = (agentId: string, records?: ObjectRecord[]) => {
   const apolloClient = useApolloClient();
   const { enqueueErrorSnackBar } = useSnackBar();
+  const { getObjectMetadataItemById } = useGetObjectMetadataItemById();
+
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+  );
+
+  const isAgentChatCurrentContextActive = useRecoilComponentValueV2(
+    isAgentChatCurrentContextActiveState,
+    agentId,
+  );
 
   const agentChatSelectedFiles = useRecoilComponentValueV2(
     agentChatSelectedFilesComponentState,
+    agentId,
+  );
+
+  const [agentChatContext, setAgentChatContext] = useRecoilComponentStateV2(
+    agentChatObjectMetadataAndRecordContextState,
     agentId,
   );
 
@@ -128,6 +151,21 @@ export const useAgentChat = (agentId: string) => {
 
     setIsStreaming(true);
 
+    const recordIdsByObjectMetadataNameSingular = [];
+
+    if (
+      isAgentChatCurrentContextActive === true &&
+      isDefined(records) &&
+      isDefined(contextStoreCurrentObjectMetadataItemId)
+    ) {
+      recordIdsByObjectMetadataNameSingular.push({
+        objectMetadataNameSingular: getObjectMetadataItemById(
+          contextStoreCurrentObjectMetadataItemId,
+        ).nameSingular,
+        recordIds: records.map(({ id }) => id),
+      });
+    }
+
     await apolloClient.query({
       query: STREAM_CHAT_QUERY,
       variables: {
@@ -135,6 +173,8 @@ export const useAgentChat = (agentId: string) => {
           threadId: currentThreadId,
           userMessage: content,
           fileIds: agentChatUploadedFiles.map((file) => file.id),
+          recordIdsByObjectMetadataNameSingular:
+            recordIdsByObjectMetadataNameSingular,
         },
       },
       context: {
@@ -200,6 +240,12 @@ export const useAgentChat = (agentId: string) => {
     await sendChatMessage(content);
   };
 
+  const handleSetContext = async (
+    items: Array<AIChatObjectMetadataAndRecordContext>,
+  ) => {
+    setAgentChatContext(items);
+  };
+
   useHotkeysOnFocusedElement({
     keys: [Key.Enter],
     callback: (event: KeyboardEvent) => {
@@ -219,6 +265,8 @@ export const useAgentChat = (agentId: string) => {
     handleInputChange: (value: string) => setAgentChatInput(value),
     messages: agentChatMessages,
     input: agentChatInput,
+    context: agentChatContext,
+    handleSetContext,
     handleSendMessage,
     isLoading,
     agentStreamingMessage,
