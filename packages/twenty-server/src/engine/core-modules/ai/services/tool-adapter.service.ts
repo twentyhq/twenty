@@ -5,7 +5,7 @@ import { ToolSet } from 'ai';
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
 import { ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 @Injectable()

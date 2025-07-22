@@ -4,7 +4,7 @@ import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
 @Injectable()
 export class ToolRegistryService {

@@ -1,4 +1,4 @@
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
 export const OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS = {
   apiKey: PermissionFlagType.API_KEYS_AND_WEBHOOKS,
