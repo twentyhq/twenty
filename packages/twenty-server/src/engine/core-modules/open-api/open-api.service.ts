@@ -135,7 +135,7 @@ export class OpenApiService {
     );
 
     schema.components = {
-      ...schema.components,
+      ...schema.components, // components.securitySchemes is defined in base Schema
       schemas: computeSchemaComponents(filteredObjectMetadataItems),
       parameters: computeParameterComponents(),
       responses: {
