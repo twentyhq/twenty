@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { ObjectLiteral } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -14,7 +15,6 @@ import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/t
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { CustomEventName } from 'src/engine/workspace-event-emitter/types/custom-event-name.type';
-import { isDefined } from 'twenty-shared/utils';
 
 type ActionEventMap<T> = {
   [DatabaseEventAction.CREATED]: ObjectRecordCreateEvent<T>;
