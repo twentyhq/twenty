@@ -72,8 +72,7 @@ export class ToolAdapterService {
       const permissionFlags = role.permissionFlags ?? [];
 
       return permissionFlags.some(
-        (settingPermission) =>
-          settingPermission.flag === flag,
+        (settingPermission) => settingPermission.flag === flag,
       );
     } catch (error) {
       return false;

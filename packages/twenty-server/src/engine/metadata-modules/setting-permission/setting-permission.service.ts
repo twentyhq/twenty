@@ -63,9 +63,7 @@ export class SettingPermissionService {
           },
         },
       );
-      const existingSettings = new Set(
-        existingPermissions.map((p) => p.flag),
-      );
+      const existingSettings = new Set(existingPermissions.map((p) => p.flag));
       const inputSettings = new Set(input.settingPermissionKeys);
 
       const settingsToAdd = input.settingPermissionKeys.filter(
