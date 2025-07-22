@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
-import { AgentChatFilePreview } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatFilePreview';
-import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
+import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
+import { AgentChatMessageRole } from '@/ai/constants/agent-chat-message-role';
 
 import { AgentChatMessage } from '~/generated/graphql';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
