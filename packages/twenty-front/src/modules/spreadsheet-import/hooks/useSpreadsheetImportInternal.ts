@@ -5,10 +5,10 @@ import { RsiContext } from '@/spreadsheet-import/components/ReactSpreadsheetImpo
 import { defaultSpreadsheetImportProps } from '@/spreadsheet-import/provider/components/SpreadsheetImport';
 import { SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 
-export const useSpreadsheetImportInternal = () =>
+export const useSpreadsheetImportInternal = <T extends string>() =>
   useContext<
     SetRequired<
-      SpreadsheetImportDialogOptions,
+      SpreadsheetImportDialogOptions<T>,
       keyof typeof defaultSpreadsheetImportProps
     >
   >(RsiContext);

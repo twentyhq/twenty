@@ -51,16 +51,16 @@ export class ObjectMetadataDTO {
   labelPlural: string;
 
   @Field({ nullable: true })
-  description: string;
+  description?: string;
 
   @Field({ nullable: true })
-  icon: string;
+  icon?: string;
 
   @Field(() => ObjectStandardOverridesDTO, { nullable: true })
   standardOverrides?: ObjectStandardOverridesDTO;
 
   @Field({ nullable: true })
-  shortcut: string;
+  shortcut?: string;
 
   @FilterableField()
   isCustom: boolean;

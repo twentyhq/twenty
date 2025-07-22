@@ -13,6 +13,7 @@ export { FieldMetadataType } from './FieldMetadataType';
 export type { IsExactly } from './IsExactly';
 export type { ObjectRecordsPermissions } from './ObjectRecordsPermissions';
 export type { ObjectRecordsPermissionsByRoleId } from './ObjectRecordsPermissionsByRoleId';
+export type { RestrictedFields } from './RestrictedFields';
 export type { StepFilterGroup, StepFilter } from './StepFilters';
 export { StepLogicalOperator } from './StepFilters';
 export { ViewFilterOperand } from './ViewFilterOperand';

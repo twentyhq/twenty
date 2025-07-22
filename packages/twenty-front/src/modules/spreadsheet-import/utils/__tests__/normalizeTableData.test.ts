@@ -6,7 +6,7 @@ import { normalizeTableData } from '@/spreadsheet-import/utils/normalizeTableDat
 import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('normalizeTableData', () => {
-  const columns: SpreadsheetColumn[] = [
+  const columns: SpreadsheetColumn<string>[] = [
     {
       index: 0,
       header: 'Name',
@@ -27,7 +27,7 @@ describe('normalizeTableData', () => {
     },
   ];
 
-  const fields = [
+  const fields: SpreadsheetImportField<string>[] = [
     {
       key: 'name',
       label: 'Name',
@@ -51,7 +51,7 @@ describe('normalizeTableData', () => {
       fieldMetadataType: FieldMetadataType.BOOLEAN,
       Icon: null,
     },
-  ] as SpreadsheetImportField[];
+  ];
 
   const rawData = [
     ['John', '30', 'Yes'],
@@ -70,7 +70,7 @@ describe('normalizeTableData', () => {
   });
 
   it('should normalize matchedCheckbox values and handle booleanMatches', () => {
-    const columns: SpreadsheetColumn[] = [
+    const columns: SpreadsheetColumn<string>[] = [
       {
         index: 0,
         header: 'Active',
@@ -79,7 +79,7 @@ describe('normalizeTableData', () => {
       },
     ];
 
-    const fields = [
+    const fields: SpreadsheetImportField<string>[] = [
       {
         key: 'active',
         label: 'Active',
@@ -89,10 +89,8 @@ describe('normalizeTableData', () => {
         },
         fieldMetadataType: FieldMetadataType.BOOLEAN,
         Icon: null,
-        fieldMetadataItemId: '1',
-        isNestedField: false,
       },
-    ] as SpreadsheetImportField[];
+    ];
 
     const rawData = [['Yes'], ['No'], ['OtherValue']];
 
@@ -102,7 +100,7 @@ describe('normalizeTableData', () => {
   });
 
   it('should map matchedSelect and matchedSelectOptions values correctly', () => {
-    const columns: SpreadsheetColumn[] = [
+    const columns: SpreadsheetColumn<string>[] = [
       {
         index: 0,
         header: 'Number',
@@ -115,7 +113,7 @@ describe('normalizeTableData', () => {
       },
     ];
 
-    const fields = [
+    const fields: SpreadsheetImportField<string>[] = [
       {
         key: 'number',
         label: 'Number',
@@ -129,7 +127,7 @@ describe('normalizeTableData', () => {
         fieldMetadataType: FieldMetadataType.SELECT,
         Icon: null,
       },
-    ] as SpreadsheetImportField[];
+    ];
 
     const rawData = [['One'], ['Two'], ['OtherValue']];
 
@@ -143,7 +141,7 @@ describe('normalizeTableData', () => {
   });
 
   it('should handle empty and ignored columns', () => {
-    const columns: SpreadsheetColumn[] = [
+    const columns: SpreadsheetColumn<string>[] = [
       { index: 0, header: 'Empty', type: SpreadsheetColumnType.empty },
       { index: 1, header: 'Ignored', type: SpreadsheetColumnType.ignored },
     ];
@@ -156,7 +154,7 @@ describe('normalizeTableData', () => {
   });
 
   it('should handle unrecognized column types and return empty object', () => {
-    const columns: SpreadsheetColumns = [
+    const columns: SpreadsheetColumns<string> = [
       {
         index: 0,
         header: 'Unrecognized',

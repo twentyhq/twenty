@@ -3571,6 +3571,11 @@ msgstr ""
 msgid "john.doe@example.com"
 msgstr ""
 
+#. js-lingui-id: fSPjtl
+#: src/pages/auth/SignInUp.tsx
+msgid "Join {workspaceName} team"
+msgstr ""
+
 #. js-lingui-id: VIK/N0
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
 #~ msgid "JSON keys cannot contain spaces"

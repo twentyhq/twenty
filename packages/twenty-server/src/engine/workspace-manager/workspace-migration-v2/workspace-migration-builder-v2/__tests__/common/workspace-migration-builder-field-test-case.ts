@@ -104,20 +104,19 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
     context: {
       input: () => {
         const objectMetadataId = faker.string.uuid();
-        const updatedFieldMetadata =
-          getFlatFieldMetadataMock<FieldMetadataType.RELATION>({
-            uniqueIdentifier: 'field-metadata-unique-identifier-1',
-            objectMetadataId,
-            type: FieldMetadataType.RELATION,
-            settings: {
-              relationType: RelationType.MANY_TO_ONE,
-              isForeignKey: true,
-              joinColumnName: 'column-name',
-              onDelete: undefined,
-            },
-            relationTargetFieldMetadataId: faker.string.uuid(),
-            relationTargetObjectMetadataId: faker.string.uuid(),
-          });
+        const updatedFieldMetadata = getFlatFieldMetadataMock({
+          uniqueIdentifier: 'field-metadata-unique-identifier-1',
+          objectMetadataId,
+          type: FieldMetadataType.RELATION,
+          settings: {
+            relationType: RelationType.MANY_TO_ONE,
+            isForeignKey: true,
+            joinColumnName: 'column-name',
+            onDelete: undefined,
+          },
+          relationTargetFieldMetadataId: faker.string.uuid(),
+          relationTargetObjectMetadataId: faker.string.uuid(),
+        });
         const flatObjectMetadata = getFlatObjectMetadataMock({
           uniqueIdentifier: 'object-metadata-unique-identifier-1',
           isLabelSyncedWithName: true,
@@ -130,7 +129,7 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
             {
               ...flatObjectMetadata,
               flatFieldMetadatas: [
-                {
+                getFlatFieldMetadataMock({
                   ...updatedFieldMetadata,
                   settings: {
                     relationType: RelationType.ONE_TO_MANY,
@@ -140,7 +139,7 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
                   },
                   relationTargetFieldMetadataId: faker.string.uuid(),
                   relationTargetObjectMetadataId: faker.string.uuid(),
-                },
+                }),
               ],
             },
           ],

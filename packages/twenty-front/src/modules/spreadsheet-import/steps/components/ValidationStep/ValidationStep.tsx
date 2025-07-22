@@ -1,6 +1,5 @@
 import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
-import { useHideStepBar } from '@/spreadsheet-import/hooks/useHideStepBar';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
@@ -92,36 +91,30 @@ const StyledNoRowsWithErrorsContainer = styled.div`
   margin: auto 0;
 `;
 
-type ValidationStepProps = {
-  initialData: ImportedStructuredRow[];
-  importedColumns: SpreadsheetColumns;
+type ValidationStepProps<T extends string> = {
+  initialData: ImportedStructuredRow<T>[];
+  importedColumns: SpreadsheetColumns<string>;
   file: File;
   onBack: () => void;
   setCurrentStepState: Dispatch<SetStateAction<SpreadsheetImportStep>>;
 };
 
-export const ValidationStep = ({
+export const ValidationStep = <T extends string>({
   initialData,
   importedColumns,
   file,
   setCurrentStepState,
   onBack,
-}: ValidationStepProps) => {
-  const hideStepBar = useHideStepBar();
+}: ValidationStepProps<T>) => {
   const { enqueueDialog } = useDialogManager();
-  const {
-    spreadsheetImportFields: fields,
-    onClose,
-    onSubmit,
-    rowHook,
-    tableHook,
-  } = useSpreadsheetImportInternal();
+  const { fields, onClose, onSubmit, rowHook, tableHook } =
+    useSpreadsheetImportInternal<T>();
 
   const [data, setData] = useState<
-    (ImportedStructuredRow & ImportedStructuredRowMetadata)[]
+    (ImportedStructuredRow<T> & ImportedStructuredRowMetadata)[]
   >(
     useMemo(
-      () => addErrorsAndRunHooks(initialData, fields, rowHook, tableHook),
+      () => addErrorsAndRunHooks<T>(initialData, fields, rowHook, tableHook),
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [],
     ),
@@ -133,7 +126,7 @@ export const ValidationStep = ({
 
   const updateData = useCallback(
     (rows: typeof data) => {
-      setData(addErrorsAndRunHooks(rows, fields, rowHook, tableHook));
+      setData(addErrorsAndRunHooks<T>(rows, fields, rowHook, tableHook));
     },
     [setData, rowHook, tableHook, fields],
   );
@@ -212,7 +205,8 @@ export const ValidationStep = ({
   }, [data, filterByErrors]);
 
   const rowKeyGetter = useCallback(
-    (row: ImportedStructuredRow & ImportedStructuredRowMetadata) => row.__index,
+    (row: ImportedStructuredRow<T> & ImportedStructuredRowMetadata) =>
+      row.__index,
     [],
   );
 
@@ -224,29 +218,28 @@ export const ValidationStep = ({
           for (const key in __errors) {
             if (__errors[key].level === 'error') {
               acc.invalidStructuredRows.push(
-                values as unknown as ImportedStructuredRow,
+                values as unknown as ImportedStructuredRow<T>,
               );
               return acc;
             }
           }
         }
         acc.validStructuredRows.push(
-          values as unknown as ImportedStructuredRow,
+          values as unknown as ImportedStructuredRow<T>,
         );
         return acc;
       },
       {
-        validStructuredRows: [] as ImportedStructuredRow[],
-        invalidStructuredRows: [] as ImportedStructuredRow[],
+        validStructuredRows: [] as ImportedStructuredRow<T>[],
+        invalidStructuredRows: [] as ImportedStructuredRow<T>[],
         allStructuredRows: data,
-      } satisfies SpreadsheetImportImportValidationResult,
+      } satisfies SpreadsheetImportImportValidationResult<T>,
     );
 
     setCurrentStepState({
       type: SpreadsheetImportStepType.importData,
       recordsToImportCount: calculatedData.validStructuredRows.length,
     });
-    hideStepBar();
 
     await onSubmit(calculatedData, file);
     onClose();
