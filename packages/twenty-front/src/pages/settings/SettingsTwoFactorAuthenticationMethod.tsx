@@ -85,14 +85,14 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
 
     const secret = extractSecretFromOtpUri(qrCode);
     if (secret !== null) {
-        await navigator.clipboard.writeText(secret);
-        enqueueSuccessSnackBar({
-          message: t`Setup key copied to clipboard`,
-          options: {
-            icon: <IconCopy size={theme.icon.size.md} />,
-            duration: 2000,
-          },
-        });
+      await navigator.clipboard.writeText(secret);
+      enqueueSuccessSnackBar({
+        message: t`Setup key copied to clipboard`,
+        options: {
+          icon: <IconCopy size={theme.icon.size.md} />,
+          duration: 2000,
+        },
+      });
     }
   };
 
