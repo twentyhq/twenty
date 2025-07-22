@@ -111,7 +111,6 @@ export class PermissionsService {
         [PermissionFlagType.SECURITY]: false,
         [PermissionFlagType.WORKFLOWS]: false,
         [PermissionFlagType.SEND_EMAIL_TOOL]: false,
-        [PermissionFlagType.HTTP_TOOL]: false,
       },
       objectPermissions: {},
     }) as const satisfies UserWorkspacePermissions;
