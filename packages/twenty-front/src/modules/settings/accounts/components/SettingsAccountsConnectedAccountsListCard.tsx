@@ -66,7 +66,7 @@ export const SettingsAccountsConnectedAccountsListCard = ({
           title={t`Add account`}
           variant="secondary"
           size="small"
-          onClick={() => navigateSettings(SettingsPath.AccountsEmails)}
+          onClick={() => navigateSettings(SettingsPath.NewAccount)}
         />
       </StyledAddAccountSection>
     </Section>
