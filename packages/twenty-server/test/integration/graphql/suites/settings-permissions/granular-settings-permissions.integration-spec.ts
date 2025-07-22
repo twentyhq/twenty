@@ -370,8 +370,6 @@ describe('Granular settings permissions', () => {
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
         .send(getRoleQuery);
 
-      console.log({ response });
-
       const customRole = response.body.data.getRoles.find(
         (role: any) => role.id === customRoleId,
       );
