@@ -164,6 +164,8 @@ export class WorkspaceEntityManager extends EntityManager {
       options?.objectRecordsPermissions ?? {},
       this.internalContext,
       options?.shouldBypassPermissionChecks ?? false,
+      undefined,
+      this.getFeatureFlagMap(),
     );
   }
 
@@ -375,6 +377,8 @@ export class WorkspaceEntityManager extends EntityManager {
       objectRecordsPermissions:
         permissionOptions?.objectRecordsPermissions ?? {},
       objectMetadataMaps: this.internalContext.objectMetadataMaps,
+      selectedFields: [], // TODO
+      allFieldsSelected: false, // TODO
     });
   }
 
