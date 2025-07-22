@@ -80,11 +80,11 @@ export class SettingPermissionService {
       }
 
       if (settingsToAdd.length > 0) {
-        const newPermissions = settingsToAdd.map((setting) =>
+        const newPermissions = settingsToAdd.map((flag) =>
           queryRunner.manager.create(PermissionFlagEntity, {
             workspaceId,
             roleId: input.roleId,
-            setting,
+            flag,
           }),
         );
 
