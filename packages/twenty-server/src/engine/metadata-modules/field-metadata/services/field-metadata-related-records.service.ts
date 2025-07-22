@@ -67,20 +67,18 @@ export class FieldMetadataRelatedRecordsService {
         'viewGroup',
       );
 
-    if ([created, deleted, updated].every((array) => array.length === 0)) {
-      return;
-    }
-
     for (const view of views) {
       if (view.viewGroups.length === 0) {
         continue;
       }
       const valuesToDelete = deleted.map((option) => option.value);
 
-      await viewGroupRepository.delete({
-        fieldMetadataId: newFieldMetadata.id,
-        fieldValue: In(valuesToDelete),
-      });
+      if (valuesToDelete.length > 0) {
+        await viewGroupRepository.delete({
+          fieldMetadataId: newFieldMetadata.id,
+          fieldValue: In(valuesToDelete),
+        });
+      }
       const maxPosition = this.getMaxPosition(view.viewGroups);
 
       const viewGroupsToCreate = created.map((option, index) =>
@@ -93,7 +91,9 @@ export class FieldMetadataRelatedRecordsService {
         }),
       );
 
-      await viewGroupRepository.insert(viewGroupsToCreate);
+      if (viewGroupsToCreate.length > 0) {
+        await viewGroupRepository.insert(viewGroupsToCreate);
+      }
 
       for (const { old: oldOption, new: newOption } of updated) {
         const existingViewGroup = view.viewGroups.find(
