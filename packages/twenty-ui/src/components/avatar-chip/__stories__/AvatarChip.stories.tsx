@@ -2,7 +2,6 @@ import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from '@ui/testing';
 import { IconBuildingSkyscraper, IconUser } from '@ui/display';
 import { AvatarChip } from '../AvatarChip';
-import { AvatarType } from '@ui/display/avatar/types/AvatarType';
 
 const meta: Meta<typeof AvatarChip> = {
   title: 'UI/Components/AvatarChip',
@@ -25,7 +24,6 @@ export const WithAvatar: Story = {
     avatarUrl: 'https://i.pravatar.cc/300',
     placeholder: 'JD',
     placeholderColorSeed: 'John Doe',
-    avatarType: AvatarType.Person,
   },
 };
 
