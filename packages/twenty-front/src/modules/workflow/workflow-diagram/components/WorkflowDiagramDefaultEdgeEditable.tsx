@@ -1,21 +1,34 @@
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { assertWorkflowWithCurrentVersionIsDefined } from '@/workflow/utils/assertWorkflowWithCurrentVersionIsDefined';
-import { WorkflowDiagramEdgeV2EmptyContent } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2EmptyContent';
+import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
+import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
 import { CREATE_STEP_NODE_WIDTH } from '@/workflow/workflow-diagram/constants/CreateStepNodeWidth';
+import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
+import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import {
   BaseEdge,
   EdgeLabelRenderer,
   EdgeProps,
   getStraightPath,
 } from '@xyflow/react';
+import { useState } from 'react';
+import { IconFilter, IconPlus } from 'twenty-ui/display';
+import { IconButtonGroup } from 'twenty-ui/input';
 
 type WorkflowDiagramDefaultEdgeEditableProps = EdgeProps<WorkflowDiagramEdge>;
+
+const StyledIconButtonGroup = styled(IconButtonGroup)`
+  pointer-events: all;
+`;
 
 export const WorkflowDiagramDefaultEdgeEditable = ({
   source,
@@ -43,6 +56,43 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
   const { createStep } = useCreateStep({ workflow });
   const { startNodeCreation } = useStartNodeCreation();
 
+  const [hovered, setHovered] = useState(false);
+
+  const workflowInsertStepIds = useRecoilComponentValueV2(
+    workflowInsertStepIdsComponentState,
+  );
+
+  const isSelected =
+    workflowInsertStepIds.nextStepId === target &&
+    workflowInsertStepIds.parentStepId === source;
+
+  const handleCreateFilter = async () => {
+    await createStep({
+      newStepType: 'FILTER',
+      parentStepId: source,
+      nextStepId: target,
+    });
+
+    setHovered(false);
+  };
+
+  const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
+    workflowSelectedNodeComponentState,
+  );
+
+  const handleFilterButtonClick = () => {
+    setWorkflowSelectedNode(source);
+
+    handleCreateFilter();
+  };
+
+  const handleNodeButtonClick = () => {
+    startNodeCreation({
+      parentStepId: source,
+      nextStepId: target,
+    });
+  };
+
   return (
     <>
       <BaseEdge
@@ -53,25 +103,31 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
       />
 
       <EdgeLabelRenderer>
-        <WorkflowDiagramEdgeV2EmptyContent
+        <WorkflowDiagramEdgeV2Container
+          data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
           labelX={labelX}
           labelY={labelY}
-          parentStepId={source}
-          nextStepId={target}
-          onCreateFilter={() => {
-            return createStep({
-              newStepType: 'FILTER',
-              parentStepId: source,
-              nextStepId: target,
-            });
-          }}
-          onCreateNode={() => {
-            startNodeCreation({
-              parentStepId: source,
-              nextStepId: target,
-            });
-          }}
-        />
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+        >
+          <WorkflowDiagramEdgeV2VisibilityContainer
+            shouldDisplay={isSelected || hovered}
+          >
+            <StyledIconButtonGroup
+              className="nodrag nopan"
+              iconButtons={[
+                {
+                  Icon: IconFilter,
+                  onClick: handleFilterButtonClick,
+                },
+                {
+                  Icon: IconPlus,
+                  onClick: handleNodeButtonClick,
+                },
+              ]}
+            />
+          </WorkflowDiagramEdgeV2VisibilityContainer>
+        </WorkflowDiagramEdgeV2Container>
       </EdgeLabelRenderer>
     </>
   );
