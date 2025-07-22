@@ -48,16 +48,12 @@ export const SettingsAccountsConnectedAccountsListCard = ({
       <Table>
         <SettingsConnectedAccountsTableHeader />
         <StyledTableRows>
-          {accounts.length === 0 ? (
-            <StyledNoItems>{t`No accounts connected`}</StyledNoItems>
-          ) : (
-            accounts.map((account) => (
-              <SettingsConnectedAccountsTableRow
-                key={account.id}
-                account={account}
-              />
-            ))
-          )}
+          {accounts.map((account) => (
+            <SettingsConnectedAccountsTableRow
+              key={account.id}
+              account={account}
+            />
+          ))}
         </StyledTableRows>
       </Table>
       <StyledAddAccountSection>
