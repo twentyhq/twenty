@@ -203,7 +203,7 @@ describe('FileStorageDriverFactory', () => {
         });
 
       expect(() => factory['createDriver']()).toThrow(
-        'S3 bucket name is required',
+        'Storage bucket name must be configured',
       );
     });
 

@@ -40,7 +40,7 @@ export class S3Driver implements StorageDriver {
     const { bucketName, region, endpoint, ...s3Options } = options;
 
     if (!bucketName || bucketName.trim() === '') {
-      throw new Error('S3 bucket name is required');
+      throw new Error('Storage bucket name must be configured');
     }
 
     // For MinIO and other S3-compatible services, region might not be required
