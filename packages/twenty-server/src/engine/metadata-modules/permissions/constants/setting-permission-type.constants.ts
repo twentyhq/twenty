@@ -11,5 +11,4 @@ export enum PermissionFlagType {
 
   // Tool permissions
   SEND_EMAIL_TOOL = 'SEND_EMAIL_TOOL',
-  HTTP_TOOL = 'HTTP_TOOL',
 }
