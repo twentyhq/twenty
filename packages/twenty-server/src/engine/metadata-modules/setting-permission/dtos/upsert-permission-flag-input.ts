@@ -5,7 +5,7 @@ import { IsArray, IsEnum, IsNotEmpty, IsUUID } from 'class-validator';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 
 @InputType()
-export class UpsertSettingPermissionsInput {
+export class UpsertPermissionFlagsInput {
   @IsUUID()
   @IsNotEmpty()
   @Field()

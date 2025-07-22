@@ -10,7 +10,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { UpsertSettingPermissionsInput } from 'src/engine/metadata-modules/setting-permission/dtos/upsert-setting-permission-input';
+import { UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/setting-permission/dtos/upsert-permission-flag-input';
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/setting-permission/permission-flag.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
@@ -30,7 +30,7 @@ export class SettingPermissionService {
     input,
   }: {
     workspaceId: string;
-    input: UpsertSettingPermissionsInput;
+    input: UpsertPermissionFlagsInput;
   }): Promise<PermissionFlagEntity[]> {
     await this.validateRoleIsEditableOrThrow({
       roleId: input.roleId,
