@@ -90,9 +90,9 @@ const selectFieldMetadataItem: FieldMetadataItem = {
     },
     {
       color: 'red',
-      id: '1',
+      id: '2',
       label: 'red',
-      position: 1,
+      position: 2,
       value: 'RED',
     },
   ],
@@ -113,9 +113,9 @@ const multiSelectFieldMetadataItem: FieldMetadataItem = {
     },
     {
       color: 'red',
-      id: '1',
+      id: '2',
       label: 'red',
-      position: 1,
+      position: 2,
       value: 'RED',
     },
   ],
@@ -571,7 +571,7 @@ describe('computeAnyFieldFilter', () => {
       expect(result.recordGqlOperationFilter).toHaveProperty('or');
       expect(Array.isArray(result.recordGqlOperationFilter.or)).toBe(true);
       expect(
-        (result.recordGqlOperationFilter.or as any[])?.['length'],
+        (result.recordGqlOperationFilter.or as any[])?.length,
       ).toBeGreaterThan(0);
     });
 

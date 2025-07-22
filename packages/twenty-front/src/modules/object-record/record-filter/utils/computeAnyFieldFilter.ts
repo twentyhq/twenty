@@ -57,7 +57,7 @@ export const computeAnyFieldFilter = ({
           }),
           operand: RecordFilterOperand.Contains,
           type: 'LINKS',
-        });
+        } satisfies RecordFilter);
         break;
       }
       case FieldMetadataType.FULL_NAME: {
@@ -68,7 +68,7 @@ export const computeAnyFieldFilter = ({
           }),
           operand: RecordFilterOperand.Contains,
           type: 'FULL_NAME',
-        });
+        } satisfies RecordFilter);
         break;
       }
       case FieldMetadataType.ARRAY: {
@@ -79,7 +79,7 @@ export const computeAnyFieldFilter = ({
           }),
           operand: RecordFilterOperand.Contains,
           type: 'ARRAY',
-        });
+        } satisfies RecordFilter);
         break;
       }
       case FieldMetadataType.EMAILS: {
@@ -90,7 +90,7 @@ export const computeAnyFieldFilter = ({
           }),
           operand: RecordFilterOperand.Contains,
           type: 'EMAILS',
-        });
+        } satisfies RecordFilter);
         break;
       }
       case FieldMetadataType.PHONES: {
@@ -101,7 +101,7 @@ export const computeAnyFieldFilter = ({
           }),
           operand: RecordFilterOperand.Contains,
           type: 'PHONES',
-        });
+        } satisfies RecordFilter);
         break;
       }
       case FieldMetadataType.NUMBER: {
@@ -113,7 +113,7 @@ export const computeAnyFieldFilter = ({
             }),
             operand: RecordFilterOperand.Is,
             type: 'NUMBER',
-          });
+          } satisfies RecordFilter);
         }
         break;
       }
@@ -127,7 +127,7 @@ export const computeAnyFieldFilter = ({
             operand: RecordFilterOperand.Is,
             type: 'CURRENCY',
             subFieldName: 'amountMicros',
-          });
+          } satisfies RecordFilter);
         }
 
         if (isNonEmptyString(filterValue)) {
@@ -150,7 +150,7 @@ export const computeAnyFieldFilter = ({
               operand: RecordFilterOperand.Is,
               type: 'CURRENCY',
               subFieldName: 'currencyCode',
-            });
+            } satisfies RecordFilter);
           }
         }
         break;
@@ -177,7 +177,7 @@ export const computeAnyFieldFilter = ({
               }),
               operand: RecordFilterOperand.Is,
               type: 'SELECT',
-            });
+            } satisfies RecordFilter);
           }
         }
         break;
@@ -204,7 +204,7 @@ export const computeAnyFieldFilter = ({
               }),
               operand: RecordFilterOperand.Contains,
               type: 'MULTI_SELECT',
-            });
+            } satisfies RecordFilter);
           }
         }
         break;
