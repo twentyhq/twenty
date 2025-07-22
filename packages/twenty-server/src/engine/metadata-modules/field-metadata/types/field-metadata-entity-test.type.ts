@@ -11,6 +11,7 @@ import {
   FieldMetadataTextSettings,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
+import { FieldMetadataComplexOption, FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataDefaultValueForAnyType,
@@ -331,6 +332,40 @@ type DefaultValueAssertions = [
     HasAllProperties<
       AbstractFieldMetadata,
       { defaultValue: FieldMetadataDefaultValueForAnyType | null }
+    >
+  >,
+];
+
+// eslint-disable-next-line unused-imports/no-unused-vars, @typescript-eslint/no-unused-vars
+type OptionsAssertions = [
+Expect<HasAllProperties<RatingFieldMetadata, {options: FieldMetadataDefaultOption[] }>>,
+Expect<HasAllProperties<SelectFieldMetadata, {options: FieldMetadataComplexOption[] }>>,
+Expect<HasAllProperties<MultiSelectFieldMetadata, {options: FieldMetadataComplexOption[] }>>,
+
+  Expect<HasAllProperties<UUIDFieldMetadata, {options: never }>>,
+  Expect<HasAllProperties<TextFieldMetadata, {options: never }>>,
+  Expect<HasAllProperties<NumberFieldMetadata, {options: never }>>,
+  Expect<HasAllProperties<BooleanFieldMetadata, {options: never }>>,
+  Expect<HasAllProperties<DateFieldMetadata, {options: never }>>,
+  Expect<HasAllProperties<DateTimeFieldMetadata, {options: never }>>,
+  Expect<HasAllProperties<CurrencyFieldMetadata, {options: never }>>,
+  Expect<HasAllProperties<FullNameFieldMetadata, {options: never }>>,
+  Expect<HasAllProperties<PositionFieldMetadata, {options: never }>>,
+  Expect<HasAllProperties<RawJsonFieldMetadata, {options: never }>>,
+  Expect<HasAllProperties<RichTextFieldMetadata, {options: never }>>,
+  Expect<HasAllProperties<ActorFieldMetadata, {options: never }>>,
+  Expect<HasAllProperties<ArrayFieldMetadata, {options: never }>>,
+  Expect<HasAllProperties<PhonesFieldMetadata, {options: never }>>,
+  Expect<HasAllProperties<EmailsFieldMetadata, {options: never }>>,
+  Expect<HasAllProperties<LinksFieldMetadata, {options: never }>>,
+
+  Expect<HasAllProperties<RelationFieldMetadata, {options: never}>>,
+  Expect<HasAllProperties<MorphRelationFieldMetadata, {options: never}>>,
+
+  Expect<
+    HasAllProperties<
+      AbstractFieldMetadata,
+      {options: null | (FieldMetadataDefaultOption[] | FieldMetadataComplexOption[])}
     >
   >,
 ];
