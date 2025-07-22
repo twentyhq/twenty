@@ -356,14 +356,20 @@ export class WorkspaceEntityManager extends EntityManager {
       .execute();
   }
 
-  validatePermissions<Entity extends ObjectLiteral>(
-    target: EntityTarget<Entity> | Entity,
-    operationType: OperationType,
+  validatePermissions<Entity extends ObjectLiteral>({
+    target,
+    operationType,
+    permissionOptions,
+    selectedFields,
+  }: {
+    target: EntityTarget<Entity> | Entity;
+    operationType: OperationType;
     permissionOptions?: {
       shouldBypassPermissionChecks?: boolean;
       objectRecordsPermissions?: ObjectRecordsPermissions;
-    },
-  ): void {
+    };
+    selectedFields: string[];
+  }): void {
     if (permissionOptions?.shouldBypassPermissionChecks === true) {
       return;
     }
@@ -379,8 +385,8 @@ export class WorkspaceEntityManager extends EntityManager {
       objectRecordsPermissions:
         permissionOptions?.objectRecordsPermissions ?? {},
       objectMetadataMaps: this.internalContext.objectMetadataMaps,
-      selectedFields: [], // TODO
-      allFieldsSelected: false, // TODO
+      selectedFields,
+      allFieldsSelected: false,
     });
   }
 
@@ -862,7 +868,12 @@ export class WorkspaceEntityManager extends EntityManager {
     entityClass: EntityTarget<Entity>,
     permissionOptions?: PermissionOptions,
   ): Promise<void> {
-    this.validatePermissions(entityClass, 'delete', permissionOptions);
+    this.validatePermissions({
+      target: entityClass,
+      operationType: 'delete',
+      permissionOptions,
+      selectedFields: [],
+    });
 
     return super.clear(entityClass);
   }
@@ -1033,11 +1044,12 @@ export class WorkspaceEntityManager extends EntityManager {
         ? maybeOptionsOrMaybePermissionOptions
         : permissionOptions;
 
-    this.validatePermissions(
-      targetOrEntity,
-      'update',
-      permissionOptionsFromArgs,
-    );
+    this.validatePermissions({
+      target: targetOrEntity,
+      operationType: 'update',
+      permissionOptions: permissionOptionsFromArgs,
+      selectedFields: [], // TODO
+    });
 
     let target =
       arguments.length > 1 &&
@@ -1174,11 +1186,12 @@ export class WorkspaceEntityManager extends EntityManager {
         ? (maybeOptionsOrMaybePermissionOptions as PermissionOptions)
         : permissionOptions;
 
-    this.validatePermissions(
-      targetOrEntity,
-      'delete',
-      permissionOptionsFromArgs,
-    );
+    this.validatePermissions({
+      target: targetOrEntity,
+      operationType: 'delete',
+      permissionOptions: permissionOptionsFromArgs,
+      selectedFields: [], // TODO
+    });
 
     const target =
       arguments.length > 1 &&
@@ -1285,11 +1298,12 @@ export class WorkspaceEntityManager extends EntityManager {
         ? (maybeOptionsOrMaybePermissionOptions as PermissionOptions)
         : permissionOptions;
 
-    this.validatePermissions(
-      targetOrEntityOrEntities,
-      'soft-delete',
-      permissionOptionsFromArgs,
-    );
+    this.validatePermissions({
+      target: targetOrEntityOrEntities,
+      operationType: 'soft-delete',
+      permissionOptions: permissionOptionsFromArgs,
+      selectedFields: [], // TODO
+    });
 
     let target =
       arguments.length > 1 &&
@@ -1391,11 +1405,12 @@ export class WorkspaceEntityManager extends EntityManager {
         ? (maybeOptionsOrMaybePermissionOptions as PermissionOptions)
         : permissionOptions;
 
-    this.validatePermissions(
-      targetOrEntityOrEntities,
-      'restore',
-      permissionOptionsFromArgs,
-    );
+    this.validatePermissions({
+      target: targetOrEntityOrEntities,
+      operationType: 'restore',
+      permissionOptions: permissionOptionsFromArgs,
+      selectedFields: [], // TODO
+    });
 
     let target =
       arguments.length > 1 &&
