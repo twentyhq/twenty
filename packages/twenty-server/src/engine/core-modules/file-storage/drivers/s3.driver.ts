@@ -39,11 +39,15 @@ export class S3Driver implements StorageDriver {
   constructor(options: S3DriverOptions) {
     const { bucketName, region, endpoint, ...s3Options } = options;
 
-    if (!bucketName || !region) {
-      return;
+    if (!bucketName || bucketName.trim() === '') {
+      throw new Error('S3 bucket name is required');
     }
 
-    this.s3Client = new S3({ ...s3Options, region, endpoint });
+    // For MinIO and other S3-compatible services, region might not be required
+    // Use 'us-east-1' as default if region is not provided
+    const s3Region = region && region.trim() !== '' ? region : 'us-east-1';
+
+    this.s3Client = new S3({ ...s3Options, region: s3Region, endpoint });
     this.bucketName = bucketName;
   }
 

@@ -66,9 +66,9 @@ export class FileStorageDriverFactory extends DriverFactoryBase<StorageDriver> {
           endpoint: endpoint,
           credentials: accessKeyId
             ? { accessKeyId, secretAccessKey }
-            : fromNodeProviderChain({ clientConfig: { region } }),
+            : fromNodeProviderChain({ clientConfig: { region: region || 'us-east-1' } }),
           forcePathStyle: true,
-          region: region ?? '',
+          region: region, // Let S3Driver handle undefined/empty region
         });
       }
 
