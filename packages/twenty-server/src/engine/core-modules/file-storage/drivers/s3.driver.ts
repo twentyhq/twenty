@@ -29,7 +29,7 @@ import {
 export interface S3DriverOptions extends S3ClientConfig {
   bucketName: string;
   endpoint?: string;
-  region: string;
+  region?: string;
 }
 
 export class S3Driver implements StorageDriver {
