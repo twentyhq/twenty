@@ -980,7 +980,7 @@ msgid "Book your onboarding"
 msgstr ""
 
 #. js-lingui-id: bOwPjT
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
+#: src/modules/ai/constants/output-field-type-options.ts
 msgid "Boolean"
 msgstr ""
 
@@ -1439,6 +1439,7 @@ msgstr "Contient"
 
 #. js-lingui-id: M73whl
 #: src/modules/command-menu/components/CommandMenu.tsx
+#: src/modules/ai/components/internal/AgentChatContextRecordPreview.tsx
 msgid "Context"
 msgstr "Contexte"
 
@@ -1811,11 +1812,11 @@ msgid "Database configuration is currently disabled."
 msgstr ""
 
 #. js-lingui-id: mYGY3B
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx
+#: src/modules/ai/constants/output-field-type-options.ts
 msgid "Date"
 msgstr "Date"
 
@@ -2443,7 +2444,7 @@ msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "Profitez d'un essai gratuit de {withCreditCardTrialPeriodDuration} jours"
 
 #. js-lingui-id: 20wg2g
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/ai/components/AIChatTab.tsx
 msgid "Enter a question..."
 msgstr ""
 
@@ -2780,7 +2781,7 @@ msgstr ""
 #~ msgstr ""
 
 #. js-lingui-id: XMjWWv
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatSelectedFilesPreview.tsx
+#: src/modules/ai/components/internal/AgentChatContextPreview.tsx
 msgid "Failed to remove file"
 msgstr ""
 
@@ -4429,8 +4430,8 @@ msgid "Notes"
 msgstr ""
 
 #. js-lingui-id: HptUxX
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
+#: src/modules/ai/constants/output-field-type-options.ts
 msgid "Number"
 msgstr "Nombre"
 
@@ -5429,7 +5430,7 @@ msgid "Select your preferred language"
 msgstr "Sélectionnez votre langue préférée"
 
 #. js-lingui-id: JlFcis
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/ai/components/internal/SendMessageButton.tsx
 msgid "Send"
 msgstr ""
 
@@ -5943,7 +5944,7 @@ msgid "Test Workflow"
 msgstr "Tester le workflow"
 
 #. js-lingui-id: xeiujy
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
+#: src/modules/ai/constants/output-field-type-options.ts
 msgid "Text"
 msgstr "Texte"
 
@@ -6508,7 +6509,7 @@ msgstr "Voir les détails de facturation"
 #~ msgstr "Voir les détails d'exécution"
 
 #. js-lingui-id: ecVcAx
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/ai/components/AIChatTab.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "View Previous AI Chats"
