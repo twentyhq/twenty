@@ -69,7 +69,7 @@ export class ToolAdapterService {
         return true;
       }
 
-      const settingPermissions = role.settingPermissions ?? [];
+      const settingPermissions = role.permissionFlags ?? [];
 
       return settingPermissions.some(
         (settingPermission) =>

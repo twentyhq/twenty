@@ -13,7 +13,7 @@ import {
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
-@Entity('settingPermission')
+@Entity('permissionFlag')
 @Unique('IDX_SETTING_PERMISSION_SETTING_ROLE_ID_UNIQUE', [
   'permissionFlag',
   'roleId',
@@ -25,7 +25,7 @@ export class PermissionFlagEntity {
   @Column({ nullable: false, type: 'uuid' })
   roleId: string;
 
-  @ManyToOne(() => RoleEntity, (role) => role.settingPermissions, {
+  @ManyToOne(() => RoleEntity, (role) => role.permissionFlags, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'roleId' })
