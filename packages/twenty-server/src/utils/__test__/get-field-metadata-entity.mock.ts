@@ -38,9 +38,9 @@ export const getMockFieldMetadataEntity = <
     name: 'defaultFieldMetadataName',
     label: 'Default field metadata entity label',
     description: 'Default field metadata entity description',
-    defaultValue: null, // TODO
-    options: null, // TODO
-    settings: null, // TODO
+    defaultValue: null,
+    options: null,
+    settings: null,
     createdAt: new Date(),
     updatedAt: new Date(),
     isActive: true,

@@ -251,7 +251,6 @@ export class FieldMetadataEnumValidationService {
   ) {
     switch (fieldType) {
       case FieldMetadataType.SELECT:
-        // Would use zod here or plain instance
         this.validateSelectDefaultValue(options, defaultValue);
         break;
       case FieldMetadataType.MULTI_SELECT:
