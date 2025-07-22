@@ -23,7 +23,6 @@ export const IconMapping: { [key in AttachmentType]: IconComponent } = {
   Other: IconFile,
 };
 
-// Function to generate color mappings based on theme
 const getIconColors = (theme: any): { [key in AttachmentType]: string } => ({
   Archive: theme.color.gray,
   Audio: theme.color.pink,

@@ -9,7 +9,7 @@ export const IsAgentChatCurrentContextActiveInstanceContext =
 
 export const isAgentChatCurrentContextActiveState =
   createComponentStateV2<boolean>({
-    defaultValue: false,
+    defaultValue: true,
     key: 'isAgentChatCurrentContextActiveState',
     componentInstanceContext: IsAgentChatCurrentContextActiveInstanceContext,
   });

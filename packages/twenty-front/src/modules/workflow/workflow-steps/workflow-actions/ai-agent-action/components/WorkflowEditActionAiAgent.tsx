@@ -23,10 +23,10 @@ import {
   WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID,
   WorkflowAiAgentTabId,
 } from '../constants/workflow-ai-agent-tabs';
-import { useAgentRoleAssignment } from '../../../../../ai/hooks/useAgentRoleAssignment';
-import { useAgentUpdateFormState } from '../../../../../ai/hooks/useAgentUpdateFormState';
-import { useAiAgentOutputSchema } from '../../../../../ai/hooks/useAiAgentOutputSchema';
-import { useAiModelOptions } from '../../../../../ai/hooks/useAiModelOptions';
+import { useAgentRoleAssignment } from '@/ai/hooks/useAgentRoleAssignment';
+import { useAgentUpdateFormState } from '@/ai/hooks/useAgentUpdateFormState';
+import { useAiAgentOutputSchema } from '@/ai/hooks/useAiAgentOutputSchema';
+import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { WorkflowOutputSchemaBuilder } from './WorkflowOutputSchemaBuilder';
 
 const StyledErrorMessage = styled.div`
