@@ -4,8 +4,8 @@ import { Relation } from 'typeorm';
 
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
+import { PermissionFlagDTO } from 'src/engine/metadata-modules/permission-flag/dtos/permission-flag.dto';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
-import { PermissionFlagDTO } from 'src/engine/metadata-modules/setting-permission/dtos/permission-flag.dto';
 
 @ObjectType('Role')
 export class RoleDTO {

@@ -28,6 +28,9 @@ import { UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-
 import { UpsertObjectPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permissions.input';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
+import { PermissionFlagDTO } from 'src/engine/metadata-modules/permission-flag/dtos/permission-flag.dto';
+import { UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/permission-flag/dtos/upsert-permission-flag-input';
+import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
@@ -39,9 +42,6 @@ import { CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-ro
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { PermissionFlagDTO } from 'src/engine/metadata-modules/setting-permission/dtos/permission-flag.dto';
-import { UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/setting-permission/dtos/upsert-permission-flag-input';
-import { PermissionFlagService } from 'src/engine/metadata-modules/setting-permission/permission-flag.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
