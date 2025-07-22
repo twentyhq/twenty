@@ -70,7 +70,7 @@ export class RoleEntity {
 
   @OneToMany(
     () => PermissionFlagEntity,
-    (settingPermission: PermissionFlagEntity) => settingPermission.role,
+    (permissionFlag: PermissionFlagEntity) => permissionFlag.role,
   )
   permissionFlags: Relation<PermissionFlagEntity[]>;
 
