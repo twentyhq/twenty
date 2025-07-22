@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { AiModule } from 'src/engine/core-modules/ai/ai.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
@@ -25,6 +26,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     FilterActionModule,
     AiAgentActionModule,
     FeatureFlagModule,
+    AiModule,
   ],
   providers: [
     WorkflowExecutorWorkspaceService,
