@@ -11,7 +11,7 @@ import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/varia
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 @Injectable()
-export class WorkflowActionAdapter implements WorkflowAction {
+export class ToolExecutorWorkflowAction implements WorkflowAction {
   constructor(private readonly toolRegistry: ToolRegistryService) {}
 
   async execute({
