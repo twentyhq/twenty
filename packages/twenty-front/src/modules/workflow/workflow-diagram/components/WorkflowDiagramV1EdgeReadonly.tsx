@@ -21,13 +21,12 @@ export const WorkflowDiagramV1EdgeReadonly = ({
   });
 
   return (
-    <>
-      <BaseEdge
-        markerStart={markerStart}
-        markerEnd={markerEnd}
-        path={edgePath}
-        style={{ stroke: theme.border.color.strong }}
-      />
-    </>
+    <BaseEdge
+      markerStart={markerStart}
+      markerEnd={markerEnd}
+      path={edgePath}
+      style={{ stroke: theme.border.color.strong }}
+    />
+  );
   );
 };
