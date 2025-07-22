@@ -561,14 +561,14 @@ describe('roles permissions', () => {
       });
     });
 
-    describe('upsertSettingPermissions', () => {
+    describe('upsertPermissionFlags', () => {
       const upsertSettingPermissionsMutation = ({
         roleId,
       }: {
         roleId: string;
       }) => `
-      mutation UpsertSettingPermissions {
-          upsertSettingPermissions(upsertSettingPermissionsInput: {roleId: "${roleId}", permissionFlagKeys: [${PermissionFlagType.DATA_MODEL}]}) {
+      mutation UpsertPermissionFlags {
+          upsertPermissionFlags(upsertPermissionFlagsInput: {roleId: "${roleId}", permissionFlagKeys: [${PermissionFlagType.DATA_MODEL}]}) {
               id
               roleId
               flag
@@ -625,7 +625,7 @@ describe('roles permissions', () => {
           .expect((res) => {
             expect(res.body.data).toBeDefined();
             expect(res.body.errors).toBeUndefined();
-            expect(res.body.data.upsertSettingPermissions).toEqual(
+            expect(res.body.data.upsertPermissionFlags).toEqual(
               expect.arrayContaining([
                 expect.objectContaining({
                   roleId: createdEditableRoleId,

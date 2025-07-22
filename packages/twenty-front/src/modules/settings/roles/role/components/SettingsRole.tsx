@@ -28,7 +28,7 @@ import {
   useCreateOneRoleMutation,
   useUpdateOneRoleMutation,
   useUpsertObjectPermissionsMutation,
-  useUpsertSettingPermissionsMutation,
+  useUpsertPermissionFlagsMutation,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getDirtyFields } from '~/utils/getDirtyFields';
@@ -61,7 +61,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   const [createRole] = useCreateOneRoleMutation();
   const [updateRole] = useUpdateOneRoleMutation();
-  const [upsertSettingPermissions] = useUpsertSettingPermissionsMutation();
+  const [upsertPermissionFlags] = useUpsertPermissionFlagsMutation();
   const [upsertObjectPermissions] = useUpsertObjectPermissionsMutation();
 
   const [isSaving, setIsSaving] = useState(false);
@@ -162,9 +162,9 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
         }
 
         if (isDefined(dirtyFields.permissionFlags)) {
-          await upsertSettingPermissions({
+          await upsertPermissionFlags({
             variables: {
-              upsertSettingPermissionsInput: {
+              upsertPermissionFlagsInput: {
                 roleId: data.createOneRole.id,
                 permissionFlagKeys:
                   settingsDraftRole.permissionFlags?.map(
@@ -215,9 +215,9 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
         });
       } else {
         if (isDefined(dirtyFields.permissionFlags)) {
-          await upsertSettingPermissions({
+          await upsertPermissionFlags({
             variables: {
-              upsertSettingPermissionsInput: {
+              upsertPermissionFlagsInput: {
                 roleId: roleId,
                 permissionFlagKeys:
                   settingsDraftRole.permissionFlags?.map(

@@ -25,7 +25,7 @@ export class SettingPermissionService {
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
-  public async upsertSettingPermissions({
+  public async upsertPermissionFlags({
     workspaceId,
     input,
   }: {

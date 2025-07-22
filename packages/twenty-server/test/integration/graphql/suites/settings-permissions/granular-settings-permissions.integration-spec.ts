@@ -70,8 +70,8 @@ describe('Granular settings permissions', () => {
     // Assign specific setting permissions to the custom role
     const upsertSettingPermissionsQuery = {
       query: `
-        mutation UpsertSettingPermissions {
-          upsertSettingPermissions(upsertSettingPermissionsInput: {
+        mutation UpsertPermissionFlags {
+          upsertPermissionFlags(upsertPermissionFlagsInput: {
             roleId: "${customRoleId}"
             permissionFlagKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}, ${PermissionFlagType.WORKFLOWS}]
           }) {
@@ -391,8 +391,8 @@ describe('Granular settings permissions', () => {
       // Add SECURITY permission to the custom role
       const upsertSecurityPermissionQuery = {
         query: `
-          mutation UpsertSettingPermissions {
-            upsertSettingPermissions(upsertSettingPermissionsInput: {
+          mutation UpsertPermissionFlags {
+            upsertPermissionFlags(upsertPermissionFlagsInput: {
               roleId: "${customRoleId}"
               permissionFlagKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}, ${PermissionFlagType.SECURITY}]
             }) {
@@ -411,7 +411,7 @@ describe('Granular settings permissions', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.upsertSettingPermissions).toHaveLength(3);
+      expect(response.body.data.upsertPermissionFlags).toHaveLength(3);
 
       // Verify the user now has access to security operations
       // Note: This would require a specific security operation to test
@@ -448,8 +448,8 @@ describe('Granular settings permissions', () => {
       // Remove SECURITY permission, keep only DATA_MODEL and WORKSPACE
       const upsertReducedPermissionsQuery = {
         query: `
-          mutation UpsertSettingPermissions {
-            upsertSettingPermissions(upsertSettingPermissionsInput: {
+          mutation UpsertPermissionFlags {
+            upsertPermissionFlags(upsertPermissionFlagsInput: {
               roleId: "${customRoleId}"
               permissionFlagKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}]
             }) {
@@ -468,7 +468,7 @@ describe('Granular settings permissions', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.upsertSettingPermissions).toHaveLength(2);
+      expect(response.body.data.upsertPermissionFlags).toHaveLength(2);
 
       // Verify SECURITY permission was removed
       const getRoleQuery = {

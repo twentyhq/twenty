@@ -172,14 +172,14 @@ export class RoleResolver {
   }
 
   @Mutation(() => [PermissionFlagDTO])
-  async upsertSettingPermissions(
+  async upsertPermissionFlags(
     @AuthWorkspace() workspace: Workspace,
-    @Args('upsertSettingPermissionsInput')
-    upsertSettingPermissionsInput: UpsertPermissionFlagsInput,
+    @Args('upsertPermissionFlagsInput')
+    upsertPermissionFlagsInput: UpsertPermissionFlagsInput,
   ): Promise<PermissionFlagDTO[]> {
-    return this.settingPermissionService.upsertSettingPermissions({
+    return this.settingPermissionService.upsertPermissionFlags({
       workspaceId: workspace.id,
-      input: upsertSettingPermissionsInput,
+      input: upsertPermissionFlagsInput,
     });
   }
 
