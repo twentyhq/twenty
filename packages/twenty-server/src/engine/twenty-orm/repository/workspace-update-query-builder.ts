@@ -100,14 +100,16 @@ export class WorkspaceUpdateQueryBuilder<
       this.internalContext.objectMetadataMaps,
     );
 
-    await this.internalContext.eventEmitterService.emitMutationEvent({
-      action: DatabaseEventAction.UPDATED,
-      objectMetadataItem: objectMetadata,
-      workspaceId: this.internalContext.workspaceId,
-      entities: formattedAfter,
-      beforeEntities: formattedBefore,
-      authContext: this.authContext,
-    });
+    if (formattedAfter.length > 0) {
+      await this.internalContext.eventEmitterService.emitMutationEvent({
+        action: DatabaseEventAction.UPDATED,
+        objectMetadataItem: objectMetadata,
+        workspaceId: this.internalContext.workspaceId,
+        entities: formattedAfter,
+        beforeEntities: formattedBefore,
+        authContext: this.authContext,
+      });
+    }
 
     return {
       raw: result.raw,

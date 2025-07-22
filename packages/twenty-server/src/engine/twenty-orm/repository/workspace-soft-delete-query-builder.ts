@@ -79,13 +79,15 @@ export class WorkspaceSoftDeleteQueryBuilder<
       this.internalContext.objectMetadataMaps,
     );
 
-    await this.internalContext.eventEmitterService.emitMutationEvent({
-      action: DatabaseEventAction.DELETED,
-      objectMetadataItem: objectMetadata,
-      workspaceId: this.internalContext.workspaceId,
-      entities: formattedAfter,
-      authContext: this.authContext,
-    });
+    if (formattedAfter.length > 0) {
+      await this.internalContext.eventEmitterService.emitMutationEvent({
+        action: DatabaseEventAction.DELETED,
+        objectMetadataItem: objectMetadata,
+        workspaceId: this.internalContext.workspaceId,
+        entities: formattedAfter,
+        authContext: this.authContext,
+      });
+    }
 
     return {
       raw: after.raw,

@@ -96,13 +96,15 @@ export class WorkspaceInsertQueryBuilder<
       this.internalContext.objectMetadataMaps,
     );
 
-    await this.internalContext.eventEmitterService.emitMutationEvent({
-      action: DatabaseEventAction.CREATED,
-      objectMetadataItem: objectMetadata,
-      workspaceId: this.internalContext.workspaceId,
-      entities: formattedResult,
-      authContext: this.authContext,
-    });
+    if (formattedResult.length > 0) {
+      await this.internalContext.eventEmitterService.emitMutationEvent({
+        action: DatabaseEventAction.CREATED,
+        objectMetadataItem: objectMetadata,
+        workspaceId: this.internalContext.workspaceId,
+        entities: formattedResult,
+        authContext: this.authContext,
+      });
+    }
 
     return {
       raw: result.raw,
