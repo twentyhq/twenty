@@ -62,6 +62,26 @@ export class SendEmailTool implements Tool {
     return connectedAccount;
   }
 
+  private async getOrThrowFirstConnectedAccountId(
+    workspaceId: string,
+  ): Promise<string> {
+    const connectedAccountRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
+        workspaceId,
+        'connectedAccount',
+      );
+    const allAccounts = await connectedAccountRepository.find();
+
+    if (!allAccounts || allAccounts.length === 0) {
+      throw new SendEmailToolException(
+        'No connected accounts found for this workspace',
+        SendEmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
+      );
+    }
+
+    return allAccounts[0].id;
+  }
+
   async execute(parameters: SendEmailInput): Promise<ToolOutput> {
     const { workspaceId } = this.scopedWorkspaceContextFactory.create();
 
@@ -87,20 +107,8 @@ export class SendEmailTool implements Tool {
       }
 
       if (!connectedAccountId) {
-        const connectedAccountRepository =
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
-            workspaceId,
-            'connectedAccount',
-          );
-        const allAccounts = await connectedAccountRepository.find();
-
-        if (!allAccounts || allAccounts.length === 0) {
-          throw new SendEmailToolException(
-            'No connected accounts found for this workspace',
-            SendEmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
-          );
-        }
-        connectedAccountId = allAccounts[0].id;
+        connectedAccountId =
+          await this.getOrThrowFirstConnectedAccountId(workspaceId);
       }
 
       const connectedAccount = await this.getConnectedAccount(
