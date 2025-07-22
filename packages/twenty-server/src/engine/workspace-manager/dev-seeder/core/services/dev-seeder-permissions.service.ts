@@ -68,8 +68,9 @@ export class DevSeederPermissionsService {
           },
         );
       } catch (error) {
-        // Log but don't fail - API key might not exist in some environments
-        console.warn(`Could not assign role to test API key: ${error.message}`);
+        this.logger.error(
+          `Could not assign role to test API key: ${error.message}`,
+        );
       }
     }
 

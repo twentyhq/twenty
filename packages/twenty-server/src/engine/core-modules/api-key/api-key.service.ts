@@ -6,8 +6,8 @@ import { IsNull, Repository } from 'typeorm';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
-    ApiKeyException,
-    ApiKeyExceptionCode,
+  ApiKeyException,
+  ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/api-key.exception';
 import { ApiKeyToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';

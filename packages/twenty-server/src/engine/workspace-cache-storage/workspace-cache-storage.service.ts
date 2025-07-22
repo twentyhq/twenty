@@ -12,12 +12,12 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import {
-    WorkspaceMetadataCacheException,
-    WorkspaceMetadataCacheExceptionCode,
+  WorkspaceMetadataCacheException,
+  WorkspaceMetadataCacheExceptionCode,
 } from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
 import {
-    WorkspaceMetadataVersionException,
-    WorkspaceMetadataVersionExceptionCode,
+  WorkspaceMetadataVersionException,
+  WorkspaceMetadataVersionExceptionCode,
 } from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
 
 export enum WorkspaceCacheKeys {

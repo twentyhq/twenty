@@ -1,19 +1,19 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import {
-    DeepPartial,
-    DeleteResult,
-    EntityTarget,
-    FindManyOptions,
-    FindOneOptions,
-    FindOptionsWhere,
-    InsertResult,
-    ObjectId,
-    ObjectLiteral,
-    QueryRunner,
-    RemoveOptions,
-    Repository,
-    SaveOptions,
-    UpdateResult,
+  DeepPartial,
+  DeleteResult,
+  EntityTarget,
+  FindManyOptions,
+  FindOneOptions,
+  FindOptionsWhere,
+  InsertResult,
+  ObjectId,
+  ObjectLiteral,
+  QueryRunner,
+  RemoveOptions,
+  Repository,
+  SaveOptions,
+  UpdateResult,
 } from 'typeorm';
 import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -24,8 +24,8 @@ import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/works
 
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
-    PermissionsException,
-    PermissionsExceptionCode,
+  PermissionsException,
+  PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { QueryDeepPartialEntityWithRelationConnect } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';

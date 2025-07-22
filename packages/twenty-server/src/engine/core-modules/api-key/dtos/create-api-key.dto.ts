@@ -1,11 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import {
-    IsDateString,
-    IsNotEmpty,
-    IsOptional,
-    IsString,
-    IsUUID,
+  IsDateString,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
 } from 'class-validator';
 
 @InputType()

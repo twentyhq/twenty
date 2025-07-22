@@ -4,8 +4,8 @@ import { Command } from 'nest-commander';
 import { In, Repository } from 'typeorm';
 
 import {
-    ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-    RunOnWorkspaceArgs,
+  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
+  RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
