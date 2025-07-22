@@ -7,8 +7,6 @@ import {
   GraphQLString,
 } from 'graphql';
 
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
-
 import {
   InputTypeDefinition,
   InputTypeDefinitionKind,
@@ -18,6 +16,7 @@ import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-meta
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { getUniqueConstraintsFields } from 'src/engine/metadata-modules/index-metadata/utils/getUniqueConstraintsFields.util';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { pascalCase } from 'src/utils/pascal-case';
 
 export const formatRelationConnectInputTarget = (objectMetadataId: string) =>
@@ -27,9 +26,7 @@ export const formatRelationConnectInputTarget = (objectMetadataId: string) =>
 export class RelationConnectInputTypeDefinitionFactory {
   constructor(private readonly typeMapperService: TypeMapperService) {}
 
-  public create(
-    objectMetadata: ObjectMetadataInterface,
-  ): InputTypeDefinition[] {
+  public create(objectMetadata: ObjectMetadataEntity): InputTypeDefinition[] {
     const fields = this.generateRelationConnectInputType(objectMetadata);
     const target = formatRelationConnectInputTarget(objectMetadata.id);
 
@@ -43,7 +40,7 @@ export class RelationConnectInputTypeDefinitionFactory {
   }
 
   private generateRelationConnectInputType(
-    objectMetadata: ObjectMetadataInterface,
+    objectMetadata: ObjectMetadataEntity,
   ): GraphQLInputObjectType {
     return new GraphQLInputObjectType({
       name: `${pascalCase(objectMetadata.nameSingular)}RelationInput`,
@@ -60,11 +57,11 @@ export class RelationConnectInputTypeDefinitionFactory {
   }
 
   private generateRelationWhereInputType(
-    objectMetadata: ObjectMetadataInterface,
+    objectMetadata: ObjectMetadataEntity,
   ): Record<string, GraphQLInputFieldConfig> {
     const uniqueConstraints = getUniqueConstraintsFields<
       FieldMetadataEntity,
-      ObjectMetadataInterface
+      ObjectMetadataEntity
     >(objectMetadata);
 
     const fields: Record<

@@ -747,8 +747,8 @@ msgstr "Kontaktens X/Twitter-konto"
 #. js-lingui-id: M73whl
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Context"
-msgstr "Kontekst"
+#~ msgid "Context"
+#~ msgstr "Kontekst"
 
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -1424,8 +1424,8 @@ msgstr ""
 
 #. js-lingui-id: HgJ9jQ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Json object to provide output of the workflow run"
-msgstr "JSON-objekt for \\\\.u00e5 gi utfall av arbeidsflyt-kj\\u00f8ring"
+#~ msgid "Json object to provide output of the workflow run"
+#~ msgstr "JSON-objekt for \\\\.u00e5 gi utfall av arbeidsflyt-kj\\u00f8ring"
 
 #. js-lingui-id: AQuLwi
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -2038,8 +2038,8 @@ msgstr "Valgfri hemmelighet brukt for å beregne HMAC-signatur for webhookdata. 
 
 #. js-lingui-id: gh06VD
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Output"
-msgstr "Utdata"
+#~ msgid "Output"
+#~ msgstr "Utdata"
 
 #. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts

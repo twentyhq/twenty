@@ -1649,6 +1649,12 @@ msgstr "Create Select..."
 msgid "Create view"
 msgstr "Create view"
 
+#. js-lingui-id: 3D0MXY
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Create View"
+msgstr "Create View"
+
 #. js-lingui-id: dkAPxi
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 msgid "Create Webhook"
@@ -3573,6 +3579,11 @@ msgstr "john.doe"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "john.doe@example.com"
 msgstr "john.doe@example.com"
+
+#. js-lingui-id: fSPjtl
+#: src/pages/auth/SignInUp.tsx
+msgid "Join {workspaceName} team"
+msgstr "Join {workspaceName} team"
 
 #. js-lingui-id: VIK/N0
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
