@@ -213,7 +213,10 @@ export class AdminPanelService {
         .filter((version) => version !== undefined);
 
       if (versions.length === 0) {
-        return { currentVersion: normalizedCurrentVersion, latestVersion: 'latest' };
+        return {
+          currentVersion: normalizedCurrentVersion,
+          latestVersion: 'latest',
+        };
       }
 
       // @ts-expect-error legacy noImplicitAny
@@ -222,7 +225,10 @@ export class AdminPanelService {
 
       return { currentVersion: normalizedCurrentVersion, latestVersion };
     } catch (error) {
-      return { currentVersion: normalizedCurrentVersion, latestVersion: 'latest' };
+      return {
+        currentVersion: normalizedCurrentVersion,
+        latestVersion: 'latest',
+      };
     }
   }
 }
