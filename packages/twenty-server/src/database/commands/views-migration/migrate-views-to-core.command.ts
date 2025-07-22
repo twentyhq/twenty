@@ -105,7 +105,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         } catch (error) {
           if (queryRunner.isTransactionActive) {
             await queryRunner.rollbackTransaction();
-            this.logger.warn(
+            this.logger.error(
               `Transaction rolled back for workspace ${workspaceId} due to error: ${error.message}`,
             );
           }
