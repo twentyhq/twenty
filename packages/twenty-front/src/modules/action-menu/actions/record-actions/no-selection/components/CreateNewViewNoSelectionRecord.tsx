@@ -12,11 +12,11 @@ import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPicke
 export const CreateNewViewNoSelectionRecord = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
   const { openDropdown } = useOpenDropdown();
-  
+
   const currentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
   );
-  
+
   if (!currentViewId) {
     throw new Error('Current view ID is not defined');
   }
@@ -36,7 +36,9 @@ export const CreateNewViewNoSelectionRecord = () => {
   const handleAddViewButtonClick = () => {
     setViewPickerReferenceViewId(currentViewId);
     setViewPickerMode('create-empty');
-    openDropdown({ dropdownComponentInstanceIdFromProps: VIEW_PICKER_DROPDOWN_ID });
+    openDropdown({
+      dropdownComponentInstanceIdFromProps: VIEW_PICKER_DROPDOWN_ID,
+   });
   };
 
   return <Action onClick={handleAddViewButtonClick} />;

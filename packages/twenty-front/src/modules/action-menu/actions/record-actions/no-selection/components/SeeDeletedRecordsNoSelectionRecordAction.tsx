@@ -21,7 +21,6 @@ export const SeeDeletedRecordsNoSelectionRecordAction = () => {
   );
 
   const { handleToggleTrashColumnFilter, toggleSoftDeleteFilterState } =
-    
     useHandleToggleTrashColumnFilter({
       objectNameSingular: objectMetadataItem.nameSingular,
       viewBarId: recordIndexId,

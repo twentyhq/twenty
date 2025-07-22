@@ -31,7 +31,6 @@ import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { IconLayoutGrid } from '@tabler/icons-react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconBuildingSkyscraper,
@@ -43,13 +42,13 @@ import {
   IconFileImport,
   IconHeart,
   IconHeartOff,
+  IconLayout,
   IconPlus,
   IconRefresh,
   IconRotate2,
   IconSettings,
   IconSettingsAutomation,
   IconTargetArrow,
-  IconLayout,
   IconTrash,
   IconTrashX,
   IconUser,
@@ -279,10 +278,10 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     component: <SeeDeletedRecordsNoSelectionRecordAction />,
   },
-  [NoSelectionRecordActionKeys.CREATE_VIEW]: {
+  [NoSelectionRecordActionKeys.CREATE_NEW_VIEW]: {
     type: ActionType.Standard,
     scope: ActionScope.Object,
-    key: NoSelectionRecordActionKeys.CREATE_VIEW,
+    key: NoSelectionRecordActionKeys.CREATE_NEW_VIEW,
     label: msg`Create View`,
     shortLabel: msg`Create View`,
     position: 11,
