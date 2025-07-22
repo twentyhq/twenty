@@ -44,6 +44,8 @@ const coreObjectNames = [
 
 const reservedKeywords = [
   ...coreObjectNames,
+  'plan',
+  'plans',
   'event',
   'events',
   'field',
