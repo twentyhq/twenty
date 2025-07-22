@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/setting-permission/permission-flag.entity';
-import { SettingPermissionService } from 'src/engine/metadata-modules/setting-permission/setting-permission.service';
+import { PermissionFlagService } from 'src/engine/metadata-modules/setting-permission/permission-flag.service';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 
 @Module({
@@ -12,7 +12,7 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
     WorkspacePermissionsCacheModule,
   ],
 
-  providers: [SettingPermissionService],
-  exports: [SettingPermissionService],
+  providers: [PermissionFlagService],
+  exports: [PermissionFlagService],
 })
-export class SettingPermissionModule {}
+export class PermissionFlagModule {}

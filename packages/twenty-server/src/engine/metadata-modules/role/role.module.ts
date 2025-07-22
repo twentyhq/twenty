@@ -12,7 +12,7 @@ import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleResolver } from 'src/engine/metadata-modules/role/role.resolver';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { SettingPermissionModule } from 'src/engine/metadata-modules/setting-permission/setting-permission.module';
+import { PermissionFlagModule } from 'src/engine/metadata-modules/setting-permission/permission-flag.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 
@@ -25,7 +25,7 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
     PermissionsModule,
     UserWorkspaceModule,
     ObjectPermissionModule,
-    SettingPermissionModule,
+    PermissionFlagModule,
     WorkspacePermissionsCacheModule,
     FileModule,
   ],

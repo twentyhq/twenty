@@ -14,7 +14,7 @@ import { UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/setting-
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/setting-permission/permission-flag.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
-export class SettingPermissionService {
+export class PermissionFlagService {
   constructor(
     @InjectRepository(PermissionFlagEntity, 'core')
     private readonly settingPermissionRepository: Repository<PermissionFlagEntity>,

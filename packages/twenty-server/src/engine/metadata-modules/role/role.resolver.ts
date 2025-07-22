@@ -41,7 +41,7 @@ import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-ro
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { PermissionFlagDTO } from 'src/engine/metadata-modules/setting-permission/dtos/permission-flag.dto';
 import { UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/setting-permission/dtos/upsert-permission-flag-input';
-import { SettingPermissionService } from 'src/engine/metadata-modules/setting-permission/setting-permission.service';
+import { PermissionFlagService } from 'src/engine/metadata-modules/setting-permission/permission-flag.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -61,7 +61,7 @@ export class RoleResolver {
     private readonly roleService: RoleService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly objectPermissionService: ObjectPermissionService,
-    private readonly settingPermissionService: SettingPermissionService,
+    private readonly settingPermissionService: PermissionFlagService,
     private readonly agentRoleService: AgentRoleService,
     private readonly fieldPermissionService: FieldPermissionService,
   ) {}
