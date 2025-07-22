@@ -173,20 +173,20 @@ export class PermissionsService {
     flag: PermissionFlagType,
   ): Promise<boolean> {
     try {
-      const role = await this.roleRepository.findOne({
-        where: { id: roleId, workspaceId },
-        relations: ['permissionFlags'],
-      });
+      const { data: rolesPermissions } =
+        await this.workspacePermissionsCacheService.getRolesPermissionsFromCache(
+          {
+            workspaceId,
+          },
+        );
 
-      if (!role) {
+      const rolePermissions = rolesPermissions[roleId];
+
+      if (!rolePermissions) {
         return false;
       }
 
-      const permissionFlags = role.permissionFlags ?? [];
-
-      return permissionFlags.some(
-        (permissionFlag) => permissionFlag.flag === flag,
-      );
+      return Boolean(rolePermissions[flag]);
     } catch (error) {
       return false;
     }
