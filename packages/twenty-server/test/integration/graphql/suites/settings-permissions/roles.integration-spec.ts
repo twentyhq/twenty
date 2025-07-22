@@ -571,7 +571,7 @@ describe('roles permissions', () => {
           upsertSettingPermissions(upsertSettingPermissionsInput: {roleId: "${roleId}", settingPermissionKeys: [${PermissionFlagType.DATA_MODEL}]}) {
               id
               roleId
-              setting
+              flag
           }
       }
     `;
@@ -629,7 +629,7 @@ describe('roles permissions', () => {
               expect.arrayContaining([
                 expect.objectContaining({
                   roleId: createdEditableRoleId,
-                  setting: PermissionFlagType.DATA_MODEL,
+                  flag: PermissionFlagType.DATA_MODEL,
                 }),
               ]),
             );
