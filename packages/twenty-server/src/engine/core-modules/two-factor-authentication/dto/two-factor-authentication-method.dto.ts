@@ -1,8 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
 @ObjectType('TwoFactorAuthenticatonMethodDTO')
 export class TwoFactorAuthenticationMethodSummaryDto {
-  @Field({ nullable: false })
+  @Field(() => UUIDScalarType, { nullable: false })
   twoFactorAuthenticationMethodId: string;
 
   @Field({ nullable: false })

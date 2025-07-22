@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -617,6 +617,12 @@ export type DeleteSsoOutput = {
   identityProviderId: Scalars['String'];
 };
 
+export type DeleteTwoFactorAuthenticationMethodOutput = {
+  __typename?: 'DeleteTwoFactorAuthenticationMethodOutput';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean'];
+};
+
 export type DeleteWebhookDto = {
   id: Scalars['String'];
 };
@@ -1085,6 +1091,7 @@ export type Mutation = {
   deleteOneRole: Scalars['String'];
   deleteOneServerlessFunction: ServerlessFunction;
   deleteSSOIdentityProvider: DeleteSsoOutput;
+  deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
   deleteWebhook: Scalars['Boolean'];
   deleteWorkflowVersionStep: WorkflowAction;
@@ -1110,7 +1117,6 @@ export type Mutation = {
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
-  deleteTwoFactorAuthenticationMethod: ResetTwoFactorAuthenticationMethodOutput;
   revokeApiKey?: Maybe<ApiKey>;
   runWorkflowVersion: WorkflowRun;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
@@ -1149,6 +1155,7 @@ export type Mutation = {
   upsertSettingPermissions: Array<SettingPermission>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
+  verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
 };
 
 
@@ -1307,6 +1314,11 @@ export type MutationDeleteSsoIdentityProviderArgs = {
 };
 
 
+export type MutationDeleteTwoFactorAuthenticationMethodArgs = {
+  twoFactorAuthenticationMethodId: Scalars['UUID'];
+};
+
+
 export type MutationDeleteWebhookArgs = {
   input: DeleteWebhookDto;
 };
@@ -1414,11 +1426,6 @@ export type MutationResendEmailVerificationTokenArgs = {
 
 export type MutationResendWorkspaceInvitationArgs = {
   appTokenId: Scalars['String'];
-};
-
-
-export type MutationResetTwoFactorAuthenticationMethodArgs = {
-  twoFactorAuthenticationMethodId: Scalars['String'];
 };
 
 
@@ -1608,6 +1615,11 @@ export type MutationUserLookupAdminPanelArgs = {
 
 export type MutationValidateApprovedAccessDomainArgs = {
   input: ValidateApprovedAccessDomainInput;
+};
+
+
+export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs = {
+  otp: Scalars['String'];
 };
 
 export type Object = {
@@ -2077,12 +2089,6 @@ export type ResendEmailVerificationTokenOutput = {
   success: Scalars['Boolean'];
 };
 
-export type ResetTwoFactorAuthenticationMethodOutput = {
-  __typename?: 'ResetTwoFactorAuthenticationMethodOutput';
-  /** Boolean that confirms query was dispatched */
-  success: Scalars['Boolean'];
-};
-
 export type RevokeApiKeyDto = {
   id: Scalars['String'];
 };
@@ -2416,7 +2422,7 @@ export type TwoFactorAuthenticatonMethodDto = {
   __typename?: 'TwoFactorAuthenticatonMethodDTO';
   status: Scalars['String'];
   strategy: Scalars['String'];
-  twoFactorAuthenticationMethodId: Scalars['String'];
+  twoFactorAuthenticationMethodId: Scalars['UUID'];
 };
 
 export type UuidFilter = {
@@ -2671,6 +2677,11 @@ export type ValidatePasswordResetToken = {
   __typename?: 'ValidatePasswordResetToken';
   email: Scalars['String'];
   id: Scalars['String'];
+};
+
+export type VerifyTwoFactorAuthenticationMethodOutput = {
+  __typename?: 'VerifyTwoFactorAuthenticationMethodOutput';
+  success: Scalars['Boolean'];
 };
 
 export type VersionInfo = {

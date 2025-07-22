@@ -11,11 +11,11 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { KeyWrappingService } from 'src/engine/core-modules/encryption/keys/wrapping/key-wrapping.service';
 import { TwoFactorAuthenticationMethod } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
+import { TOTP_DEFAULT_CONFIGURATION } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/constants/totp.strategy.constants';
+import { TotpStrategy } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/totp.strategy';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { TOTP_DEFAULT_CONFIGURATION } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/constants/totp.strategy.constants';
-import { TotpStrategy } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/totp.strategy';
 
 import {
   TwoFactorAuthenticationException,
@@ -87,7 +87,10 @@ export class TwoFactorAuthenticationService {
 
     const { uri, context } = new TotpStrategy(
       TOTP_DEFAULT_CONFIGURATION,
-    ).initiate(userEmail, userWorkspace.workspace.displayName || '');
+    ).initiate(
+      userEmail,
+      `Twenty${userWorkspace.workspace.displayName ? ` - ${userWorkspace.workspace.displayName}` : ''}`,
+    );
 
     const { wrappedKey } = await this.keyWrappingService.wrapKey(
       Buffer.from(context.secret),
@@ -146,12 +149,11 @@ export class TwoFactorAuthenticationService {
       secret: unwrappedKey,
     };
 
-    const isValid = new TotpStrategy(TOTP_DEFAULT_CONFIGURATION).validate(
-      token,
-      otpContext,
-    );
+    const validationResult = new TotpStrategy(
+      TOTP_DEFAULT_CONFIGURATION,
+    ).validate(token, otpContext);
 
-    if (!isValid) {
+    if (!validationResult.isValid) {
       throw new TwoFactorAuthenticationException(
         'Invalid OTP',
         TwoFactorAuthenticationExceptionCode.INVALID_OTP,

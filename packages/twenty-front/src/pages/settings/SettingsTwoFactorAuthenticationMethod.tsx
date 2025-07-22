@@ -22,6 +22,7 @@ import { useTheme } from '@emotion/react';
 import { H2Title, IconCopy } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
+import { undefined } from 'zod';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledQRCodeContainer = styled.div`
@@ -84,7 +85,6 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
 
     const secret = extractSecretFromOtpUri(qrCode);
     if (secret !== null) {
-      try {
         await navigator.clipboard.writeText(secret);
         enqueueSuccessSnackBar({
           message: t`Setup key copied to clipboard`,
@@ -93,10 +93,6 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
             duration: 2000,
           },
         });
-      } catch (error) {
-        // Fallback for browsers that don't support clipboard API
-        // Error handling without console logging
-      }
     }
   };
 

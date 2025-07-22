@@ -11,7 +11,7 @@ import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { useResetTwoFactorAuthenticationMethodMutation } from '~/generated-metadata/graphql';
+import { useDeleteTwoFactorAuthenticationMethodMutation } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '../hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
 import { useCurrentWorkspaceTwoFactorAuthenticationPolicy } from '../hooks/useWorkspaceTwoFactorAuthenticatonPolicy';
@@ -25,7 +25,7 @@ export const DeleteTwoFactorAuthentication = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const { signOut, loadCurrentUser } = useAuth();
   const [deleteTwoFactorAuthenticationMethod] =
-    useResetTwoFactorAuthenticationMethodMutation();
+    useDeleteTwoFactorAuthenticationMethodMutation();
   const currentUser = useRecoilValue(currentUserState);
   const userEmail = currentUser?.email;
   const navigate = useNavigateSettings();

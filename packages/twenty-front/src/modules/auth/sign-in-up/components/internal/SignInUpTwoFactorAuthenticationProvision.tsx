@@ -65,7 +65,7 @@ const StyledCopySetupKeyLink = styled.button`
   }
 `;
 
-export const SignInUpTwoFactorAuthenticationProvisioning = () => {
+export const SignInUpTwoFactorAuthenticationProvision = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const { enqueueSuccessSnackBar } = useSnackBar();
@@ -81,7 +81,6 @@ export const SignInUpTwoFactorAuthenticationProvisioning = () => {
 
     const secret = extractSecretFromOtpUri(qrCode);
     if (secret !== null) {
-      try {
         await navigator.clipboard.writeText(secret);
         enqueueSuccessSnackBar({
           message: t`Setup key copied to clipboard`,
@@ -90,10 +89,6 @@ export const SignInUpTwoFactorAuthenticationProvisioning = () => {
             duration: 2000,
           },
         });
-      } catch (error) {
-        // Fallback for browsers that don't support clipboard API
-        // Error handling without console logging
-      }
     }
   };
 

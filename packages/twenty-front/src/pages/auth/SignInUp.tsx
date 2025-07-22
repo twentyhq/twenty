@@ -23,6 +23,7 @@ import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/consta
 import { useMemo } from 'react';
 
 import { SignInUpGlobalScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpGlobalScopeFormEffect';
+import { SignInUpTOTPVerification } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
@@ -30,8 +31,6 @@ import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { PublicWorkspaceDataOutput } from '~/generated/graphql';
-import { SignInUpTwoFactorAuthenticationProvisioning } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision';
-import { SignInUpTOTPVerification } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification';
 
 const StandardContent = ({
   workspacePublicData,
@@ -140,7 +139,7 @@ export const SignInUp = () => {
     }
 
     if (signInUpStep === SignInUpStep.TwoFactorAuthenticationProvision) {
-      return <SignInUpTwoFactorAuthenticationProvisioning />;
+      return <SignInUpTwoFactorAuthenticationProvision />;
     }
 
     if (signInUpStep === SignInUpStep.TwoFactorAuthenticationVerification) {

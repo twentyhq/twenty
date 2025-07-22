@@ -204,7 +204,7 @@ describe('TwoFactorAuthenticationService', () => {
 
       expect(totpStrategyMocks.initiate).toHaveBeenCalledWith(
         mockUser.email,
-        workspace.name,
+        `Twenty - ${workspace.name}`,
       );
 
       expect(repository.save).toHaveBeenCalledWith(
@@ -255,7 +255,10 @@ describe('TwoFactorAuthenticationService', () => {
         unwrappedKey: rawSecret,
       });
 
-      totpStrategyMocks.validate.mockReturnValue(true);
+      totpStrategyMocks.validate.mockReturnValue({
+        isValid: true,
+        context: { status: mock2FAMethod.status, secret: rawSecret },
+      });
 
       await service.validateStrategy(
         mockUser.id,
@@ -278,7 +281,10 @@ describe('TwoFactorAuthenticationService', () => {
 
     it('should throw if the token is invalid', async () => {
       repository.findOne.mockResolvedValue(mock2FAMethod);
-      totpStrategyMocks.validate.mockReturnValue(false);
+      totpStrategyMocks.validate.mockReturnValue({
+        isValid: false,
+        context: mock2FAMethod,
+      });
       const expectedError = new TwoFactorAuthenticationException(
         'Invalid OTP',
         TwoFactorAuthenticationExceptionCode.INVALID_OTP,
@@ -331,7 +337,10 @@ describe('TwoFactorAuthenticationService', () => {
         unwrappedKey: rawSecret,
       });
 
-      totpStrategyMocks.validate.mockReturnValue(true);
+      totpStrategyMocks.validate.mockReturnValue({
+        isValid: true,
+        context: { status: mock2FAMethod.status, secret: rawSecret },
+      });
 
       const result =
         await service.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
@@ -355,7 +364,10 @@ describe('TwoFactorAuthenticationService', () => {
 
     it('should throw if the token is invalid', async () => {
       repository.findOne.mockResolvedValue(mock2FAMethod);
-      totpStrategyMocks.validate.mockReturnValue(false);
+      totpStrategyMocks.validate.mockReturnValue({
+        isValid: false,
+        context: mock2FAMethod,
+      });
       const expectedError = new TwoFactorAuthenticationException(
         'Invalid OTP',
         TwoFactorAuthenticationExceptionCode.INVALID_OTP,
