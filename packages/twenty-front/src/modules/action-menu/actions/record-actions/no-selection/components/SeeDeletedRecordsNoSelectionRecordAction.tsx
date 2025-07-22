@@ -11,6 +11,7 @@ export const SeeDeletedRecordsNoSelectionRecordAction = () => {
   const currentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
   );
+
   if (!currentViewId) {
     throw new Error('Current view ID is not defined');
   }
