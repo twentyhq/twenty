@@ -10,6 +10,7 @@ import {
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import styled from '@emotion/styled';
 import { EdgeLabelRenderer, EdgeProps, getStraightPath } from '@xyflow/react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
 
@@ -52,6 +53,10 @@ export const WorkflowDiagramFilterEdgeRun = ({
     useOpenWorkflowRunFilterInCommandMenu();
 
   const handleFilterButtonClick = () => {
+    if (!isDefined(data.runStatus)) {
+      throw new Error('Run status must be set on edge data for workflow runs');
+    }
+
     openWorkflowRunFilterInCommandMenu({
       stepId: data.stepId,
       stepName: data.name,

@@ -36,7 +36,7 @@ export const useOpenWorkflowRunFilterInCommandMenu = () => {
   }: {
     stepId: string;
     stepName: string;
-    stepExecutionStatus?: StepStatus;
+    stepExecutionStatus: StepStatus;
   }) => {
     if (!isDefined(workflowVisualizerWorkflowId)) {
       throw new Error('Workflow ID is required');
@@ -44,12 +44,6 @@ export const useOpenWorkflowRunFilterInCommandMenu = () => {
 
     if (!isDefined(workflowVisualizerWorkflowRunId)) {
       throw new Error('Workflow run ID is required');
-    }
-
-    if (!isDefined(stepExecutionStatus)) {
-      throw new Error(
-        'Step execution status is required when opening filter in command menu',
-      );
     }
 
     setWorkflowSelectedNode(stepId);
