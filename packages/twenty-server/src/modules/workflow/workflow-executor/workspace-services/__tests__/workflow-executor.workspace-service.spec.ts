@@ -181,11 +181,11 @@ describe('WorkflowExecutorWorkspaceService', () => {
       });
 
       expect(
-        workflowRunWorkspaceService.saveWorkflowRunState,
+        workflowRunWorkspaceService.updateWorkflowRunStepInfo,
       ).toHaveBeenCalledTimes(2);
 
       expect(
-        workflowRunWorkspaceService.saveWorkflowRunState,
+        workflowRunWorkspaceService.updateWorkflowRunStepInfo,
       ).toHaveBeenCalledWith({
         workflowRunId: mockWorkflowRunId,
         stepOutput: {
@@ -229,11 +229,11 @@ describe('WorkflowExecutorWorkspaceService', () => {
       });
 
       expect(
-        workflowRunWorkspaceService.saveWorkflowRunState,
+        workflowRunWorkspaceService.updateWorkflowRunStepInfo,
       ).toHaveBeenCalledTimes(1);
 
       expect(
-        workflowRunWorkspaceService.saveWorkflowRunState,
+        workflowRunWorkspaceService.updateWorkflowRunStepInfo,
       ).toHaveBeenCalledWith({
         workflowRunId: mockWorkflowRunId,
         stepOutput: {
@@ -274,11 +274,11 @@ describe('WorkflowExecutorWorkspaceService', () => {
       });
 
       expect(
-        workflowRunWorkspaceService.saveWorkflowRunState,
+        workflowRunWorkspaceService.updateWorkflowRunStepInfo,
       ).toHaveBeenCalledTimes(1);
 
       expect(
-        workflowRunWorkspaceService.saveWorkflowRunState,
+        workflowRunWorkspaceService.updateWorkflowRunStepInfo,
       ).toHaveBeenCalledWith({
         workflowRunId: mockWorkflowRunId,
         stepOutput: {
@@ -351,11 +351,11 @@ describe('WorkflowExecutorWorkspaceService', () => {
       });
 
       expect(
-        workflowRunWorkspaceService.saveWorkflowRunState,
+        workflowRunWorkspaceService.updateWorkflowRunStepInfo,
       ).toHaveBeenCalledTimes(2);
 
       expect(
-        workflowRunWorkspaceService.saveWorkflowRunState,
+        workflowRunWorkspaceService.updateWorkflowRunStepInfo,
       ).toHaveBeenCalledWith({
         workflowRunId: mockWorkflowRunId,
         stepOutput: {
@@ -430,7 +430,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
       expect(workflowActionFactory.get).toHaveBeenCalledTimes(0);
 
       expect(
-        workflowRunWorkspaceService.saveWorkflowRunState,
+        workflowRunWorkspaceService.updateWorkflowRunStepInfo,
       ).toHaveBeenCalledTimes(1);
 
       expect(workflowRunWorkspaceService.endWorkflowRun).toHaveBeenCalledTimes(
@@ -438,7 +438,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
       );
 
       expect(
-        workflowRunWorkspaceService.saveWorkflowRunState,
+        workflowRunWorkspaceService.updateWorkflowRunStepInfo,
       ).toHaveBeenCalledWith({
         workflowRunId: mockWorkflowRunId,
         workspaceId: 'workspace-id',

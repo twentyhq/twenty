@@ -21,7 +21,6 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { StepOutput } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -329,18 +328,14 @@ export class WorkflowVersionStepWorkspaceService {
       response,
     });
 
-    const newStepOutput: StepOutput = {
-      id: stepId,
-      output: {
+    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
+      stepId,
+      stepInfo: {
+        status: StepStatus.SUCCESS,
         result: enrichedResponse,
       },
-    };
-
-    await this.workflowRunWorkspaceService.saveWorkflowRunState({
       workspaceId,
       workflowRunId,
-      stepOutput: newStepOutput,
-      stepStatus: StepStatus.SUCCESS,
     });
 
     await this.workflowRunnerWorkspaceService.resume({

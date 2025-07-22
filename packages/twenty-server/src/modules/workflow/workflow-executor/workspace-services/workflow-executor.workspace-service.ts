@@ -2,18 +2,15 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { getWorkflowRunContext, StepStatus } from 'twenty-shared/workflow';
+import { WorkflowRunStepInfo } from 'twenty-shared/src/workflow/types/WorkflowRunStateStepInfos';
 
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
-import { BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE } from 'src/engine/core-modules/billing/constants/billing-workflow-execution-error-message.constant';
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import {
-  StepOutput,
-  WorkflowRunStatus,
-} from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import {
@@ -24,6 +21,7 @@ import { canExecuteStep } from 'src/modules/workflow/workflow-executor/utils/can
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { workflowShouldKeepRunning } from 'src/modules/workflow/workflow-executor/utils/workflow-should-keep-running.util';
 import { workflowShouldFail } from 'src/modules/workflow/workflow-executor/utils/workflow-should-fail.util';
+import { BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE } from 'src/engine/core-modules/billing/constants/billing-workflow-execution-error-message.constant';
 
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
@@ -63,107 +61,121 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId,
     workspaceId,
   }: WorkflowBranchExecutorInput) {
-    const workflowRunInfo = await this.getWorkflowRunInfoOrEndWorkflowRun({
-      stepId,
-      workflowRunId,
-      workspaceId,
-    });
-
-    const { stepToExecute, steps, stepInfos, workflowRunStatus } =
-      workflowRunInfo;
-
-    if (!canExecuteStep({ stepId, steps, stepInfos, workflowRunStatus })) {
-      return;
-    }
-
-    const checkCanBillWorkflowNodeExecution =
-      await this.checkCanBillWorkflowNodeExecutionOrEndWorkflowRun({
-        stepIdToExecute: stepToExecute.id,
+    const workflowRun =
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
         workflowRunId,
         workspaceId,
       });
 
-    if (!checkCanBillWorkflowNodeExecution) {
+    const stepInfos = workflowRun.state.stepInfos;
+
+    const steps = workflowRun.state.flow.steps;
+
+    const stepToExecute = steps.find((step) => step.id === stepId);
+
+    if (!stepToExecute) {
+      await this.workflowRunWorkspaceService.endWorkflowRun({
+        workflowRunId,
+        workspaceId,
+        status: WorkflowRunStatus.FAILED,
+        error: 'Step not found',
+      });
+
       return;
     }
 
-    const workflowAction = this.workflowActionFactory.get(stepToExecute.type);
+    if (
+      !canExecuteStep({
+        stepId,
+        steps,
+        stepInfos,
+        workflowRunStatus: workflowRun.status,
+      })
+    ) {
+      return;
+    }
 
     let actionOutput: WorkflowActionOutput;
 
-    await this.workflowRunWorkspaceService.updateWorkflowRunStepStatus({
-      workflowRunId,
-      stepId: stepToExecute.id,
-      workspaceId,
-      stepStatus: StepStatus.RUNNING,
-    });
+    if (await this.canBillWorkflowNodeExecution(workspaceId)) {
+      const workflowAction = this.workflowActionFactory.get(stepToExecute.type);
 
-    try {
-      actionOutput = await workflowAction.execute({
-        currentStepId: stepId,
-        steps,
-        context: getWorkflowRunContext(stepInfos),
+      await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
+        stepId,
+        stepInfo: {
+          status: StepStatus.RUNNING,
+        },
+        workflowRunId,
+        workspaceId,
       });
-    } catch (error) {
+
+      try {
+        actionOutput = await workflowAction.execute({
+          currentStepId: stepId,
+          steps,
+          context: getWorkflowRunContext(stepInfos),
+        });
+      } catch (error) {
+        actionOutput = {
+          error: error.message ?? 'Execution result error, no data or error',
+        };
+      }
+    } else {
       actionOutput = {
-        error: error.message ?? 'Execution result error, no data or error',
+        error: BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE,
       };
     }
-
-    if (!actionOutput.error) {
-      this.sendWorkflowNodeRunEvent(workspaceId);
-    }
-
-    const stepOutput: StepOutput = {
-      id: stepToExecute.id,
-      output: actionOutput,
-    };
 
     const isPendingEvent = actionOutput.pendingEvent;
 
     const isSuccess = isDefined(actionOutput.result);
 
-    const shouldEndWorkflowRun = actionOutput.shouldEndWorkflowRun;
+    const isError = isDefined(actionOutput.error);
 
-    if (isPendingEvent) {
-      await this.workflowRunWorkspaceService.saveWorkflowRunState({
-        workflowRunId,
-        stepOutput,
-        workspaceId,
-        stepStatus: StepStatus.PENDING,
-      });
-    } else if (shouldEndWorkflowRun) {
-      await this.workflowRunWorkspaceService.saveWorkflowRunState({
-        workflowRunId,
-        stepOutput,
-        workspaceId,
-        stepStatus: StepStatus.STOPPED,
-      });
-    } else if (isSuccess) {
-      await this.workflowRunWorkspaceService.saveWorkflowRunState({
-        workflowRunId,
-        stepOutput,
-        workspaceId,
-        stepStatus: StepStatus.SUCCESS,
-      });
-    } else {
-      await this.workflowRunWorkspaceService.saveWorkflowRunState({
-        workflowRunId,
-        stepOutput,
-        workspaceId,
-        stepStatus: StepStatus.FAILED,
-      });
+    const isStopped = actionOutput.shouldEndWorkflowRun;
+
+    if (!isError) {
+      this.sendWorkflowNodeRunEvent(workspaceId);
     }
 
-    const shouldExecuteNextStepIds =
-      isSuccess &&
-      !shouldEndWorkflowRun &&
-      isDefined(stepToExecute.nextStepIds) &&
-      stepToExecute.nextStepIds.length > 0;
+    let stepInfo: WorkflowRunStepInfo;
 
-    if (shouldExecuteNextStepIds) {
+    if (isPendingEvent) {
+      stepInfo = {
+        status: StepStatus.PENDING,
+      };
+    } else if (isStopped) {
+      stepInfo = {
+        status: StepStatus.STOPPED,
+        result: actionOutput?.result,
+      };
+    } else if (isSuccess) {
+      stepInfo = {
+        status: StepStatus.SUCCESS,
+        result: actionOutput?.result,
+      };
+    } else {
+      stepInfo = {
+        status: StepStatus.FAILED,
+        error: actionOutput?.error,
+      };
+    }
+
+    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
+      stepId,
+      stepInfo,
+      workflowRunId,
+      workspaceId,
+    });
+
+    if (
+      isSuccess &&
+      !isStopped &&
+      isDefined(stepToExecute.nextStepIds) &&
+      stepToExecute.nextStepIds.length > 0
+    ) {
       await this.executeFromSteps({
-        stepIds: stepToExecute.nextStepIds as string[], // checked defined in shouldExecuteNextStepIds
+        stepIds: stepToExecute.nextStepIds,
         workflowRunId,
         workspaceId,
         shouldComputeWorkflowRunStatus: false,
@@ -210,54 +222,6 @@ export class WorkflowExecutorWorkspaceService {
     });
   }
 
-  private async getWorkflowRunInfoOrEndWorkflowRun({
-    stepId,
-    workflowRunId,
-    workspaceId,
-  }: {
-    stepId: string;
-    workflowRunId: string;
-    workspaceId: string;
-  }) {
-    const workflowRun = await this.workflowRunWorkspaceService.getWorkflowRun({
-      workflowRunId,
-      workspaceId,
-    });
-
-    if (!isDefined(workflowRun)) {
-      await this.workflowRunWorkspaceService.endWorkflowRun({
-        workflowRunId,
-        workspaceId,
-        status: WorkflowRunStatus.FAILED,
-        error: `WorkflowRun ${workflowRunId} not found`,
-      });
-
-      throw new Error(`WorkflowRun ${workflowRunId} not found`);
-    }
-
-    const steps = workflowRun.state.flow.steps;
-
-    const stepToExecute = steps.find((step) => step.id === stepId);
-
-    if (!stepToExecute) {
-      await this.workflowRunWorkspaceService.endWorkflowRun({
-        workflowRunId,
-        workspaceId,
-        status: WorkflowRunStatus.FAILED,
-        error: 'Step not found',
-      });
-
-      throw new Error(`Step ${stepId} not found`);
-    }
-
-    return {
-      stepToExecute,
-      steps,
-      stepInfos: workflowRun.state.stepInfos,
-      workflowRunStatus: workflowRun.status,
-    };
-  }
-
   private sendWorkflowNodeRunEvent(workspaceId: string) {
     this.workspaceEventEmitter.emitCustomBatchEvent<BillingUsageEvent>(
       BILLING_FEATURE_USED,
@@ -271,45 +235,13 @@ export class WorkflowExecutorWorkspaceService {
     );
   }
 
-  private async checkCanBillWorkflowNodeExecutionOrEndWorkflowRun({
-    stepIdToExecute,
-    workflowRunId,
-    workspaceId,
-  }: {
-    stepIdToExecute: string;
-    workflowRunId: string;
-    workspaceId: string;
-  }) {
-    const canBillWorkflowNodeExecution =
+  private async canBillWorkflowNodeExecution(workspaceId: string) {
+    return (
       !this.billingService.isBillingEnabled() ||
       (await this.billingService.canBillMeteredProduct(
         workspaceId,
         BillingProductKey.WORKFLOW_NODE_EXECUTION,
-      ));
-
-    if (!canBillWorkflowNodeExecution) {
-      const billingOutput = {
-        error: BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE,
-      };
-
-      await this.workflowRunWorkspaceService.saveWorkflowRunState({
-        workspaceId,
-        workflowRunId,
-        stepOutput: {
-          id: stepIdToExecute,
-          output: billingOutput,
-        },
-        stepStatus: StepStatus.FAILED,
-      });
-
-      await this.workflowRunWorkspaceService.endWorkflowRun({
-        workflowRunId,
-        workspaceId,
-        status: WorkflowRunStatus.FAILED,
-        error: BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE,
-      });
-    }
-
-    return canBillWorkflowNodeExecution;
+      ))
+    );
   }
 }
