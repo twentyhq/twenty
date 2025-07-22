@@ -207,7 +207,7 @@ export class StandardFieldFactory {
       relationTargetObjectMetadata: null,
       relationTargetObjectMetadataId: null,
       settings: null, // accurate ? looks weird for this to be undefined even for standard fields ?
-      standardOverrides: null
+      standardOverrides: null,
     });
 
     return fieldMetadataCollection;

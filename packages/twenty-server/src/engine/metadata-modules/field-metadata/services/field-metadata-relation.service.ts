@@ -63,7 +63,8 @@ export class FieldMetadataRelationService {
     objectMetadata,
     fieldMetadataRepository,
   }: {
-    fieldMetadataInput: CreateFieldInput & Required<Pick<CreateFieldInput, 'relationCreationPayload'>>;
+    fieldMetadataInput: CreateFieldInput &
+      Required<Pick<CreateFieldInput, 'relationCreationPayload'>>;
     objectMetadata: ObjectMetadataItemWithFieldMaps;
     fieldMetadataRepository: Repository<FieldMetadataEntity>;
   }): Promise<FieldMetadataEntity[]> {
