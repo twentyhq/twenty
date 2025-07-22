@@ -76,7 +76,7 @@ export class RestApiMetadataService {
     );
 
     return {
-      body: request.body?.params?.arguments,
+      body: request.body,
       baseUrl: baseUrl,
       path: request.url,
       headers: request.headers,
