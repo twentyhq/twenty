@@ -1,6 +1,7 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { computeAnyFieldFilter } from '@/object-record/record-filter/utils/computeAnyFieldFilter';
+import { filterSelectOptionsOfFieldMetadataItem } from '@/object-record/record-filter/utils/filterSelectOptionsOfFieldMetadataItem';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const baseFieldMetadataItem: FieldMetadataItem = {
@@ -490,18 +491,15 @@ describe('computeAnyFieldFilter', () => {
         },
       });
 
-      const expectedOptions =
-        selectFieldMetadataItem.options
-          ?.filter(
-            (option) =>
-              option.label.includes(filterValue) ||
-              option.value.includes(filterValue),
-          )
-          .map((option) => option.value) ?? [];
+      const { foundCorrespondingSelectOptions: expectedOptions } =
+        filterSelectOptionsOfFieldMetadataItem({
+          fieldMetadataItem: multiSelectFieldMetadataItem,
+          filterValue,
+        });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
         [selectFieldMetadataItem.name]: {
-          in: expectedOptions,
+          in: expectedOptions?.map((option) => option.value),
         },
       });
     });
@@ -533,18 +531,15 @@ describe('computeAnyFieldFilter', () => {
         },
       });
 
-      const expectedOptions =
-        multiSelectFieldMetadataItem.options
-          ?.filter(
-            (option) =>
-              option.label.includes(filterValue) ||
-              option.value.includes(filterValue),
-          )
-          .map((option) => option.value) ?? [];
+      const { foundCorrespondingSelectOptions: expectedOptions } =
+        filterSelectOptionsOfFieldMetadataItem({
+          fieldMetadataItem: multiSelectFieldMetadataItem,
+          filterValue,
+        });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
         [multiSelectFieldMetadataItem.name]: {
-          containsAny: expectedOptions,
+          containsAny: expectedOptions?.map((option) => option.value),
         },
       });
     });
