@@ -1,6 +1,7 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class TwoFactorAuthenticationException extends CustomException {
+  declare code: TwoFactorAuthenticationExceptionCode;
   constructor(message: string, code: TwoFactorAuthenticationExceptionCode) {
     super(message, code);
   }

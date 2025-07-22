@@ -145,7 +145,6 @@ export const Slot = (props: SlotProps) => {
   );
 };
 
-// Hook to manage the verification form state and handlers
 export const useTwoFactorVerificationForSettings = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const navigate = useNavigateSettings();

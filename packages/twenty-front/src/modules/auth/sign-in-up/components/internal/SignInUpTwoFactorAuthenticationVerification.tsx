@@ -26,7 +26,6 @@ const StyledMainContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
   margin-top: ${({ theme }) => theme.spacing(4)};
   text-align: center;
-  space-y: 5px;
 `;
 
 const StyledForm = styled.form`
@@ -189,19 +188,24 @@ export const SignInUpTOTPVerification = () => {
   const { form } = useTwoFactorAuthenticationForm();
 
   const submitOTP = async (values: OTPFormValues) => {
-    const captchaToken = await readCaptchaToken();
+    try {
+      const captchaToken = await readCaptchaToken();
 
-    if (!loginToken) {
+      if (!loginToken) {
+        return navigate(AppPath.SignInUp);
+      }
+
+      await getAuthTokensFromOTP(values.otp, loginToken, captchaToken);
+    } catch (error) {
+      form.setValue('otp', '');
+
       enqueueErrorSnackBar({
-        message: t`Invalid email verification link.`,
+        message: t`Invalid verification code. Please try again.`,
         options: {
-          dedupeKey: 'email-verification-link-dedupe-key',
+          dedupeKey: 'invalid-otp-dedupe-key',
         },
       });
-      return navigate(AppPath.SignInUp);
     }
-
-    await getAuthTokensFromOTP(values.otp, loginToken, captchaToken);
   };
 
   const handleBack = () => {
@@ -211,7 +215,7 @@ export const SignInUpTOTPVerification = () => {
   return (
     <StyledForm onSubmit={form.handleSubmit(submitOTP)}>
       <StyledTextContainer>
-        <Trans>Copy paste the code below</Trans>
+        <Trans>Paste the code below</Trans>
       </StyledTextContainer>
       <StyledMainContentContainer>
         {/* // eslint-disable-next-line react/jsx-props-no-spreading */}

@@ -8,7 +8,7 @@ import { qrCodeState } from '@/auth/states/qrCode';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteTwoFactorAuthentication } from '@/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod';
-import { TwoFactorAuthenticationSetupEffectForSettingsEffect } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationSetupEffectForSettings';
+import { TwoFactorAuthenticationSetupEffectForSettings } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationSetupEffectForSettings';
 import {
   TwoFactorAuthenticationVerificationForSettings,
   useTwoFactorVerificationForSettings,
@@ -22,7 +22,6 @@ import { useTheme } from '@emotion/react';
 import { H2Title, IconCopy } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
-import { undefined } from 'zod';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledQRCodeContainer = styled.div`
@@ -74,10 +73,8 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
     currentUserWorkspaceTwoFactorAuthenticationMethods['TOTP']?.status ===
     'VERIFIED';
 
-  // Use the hook for verification form state when needed
   const verificationForm = useTwoFactorVerificationForSettings();
 
-  // Determine if we should show action buttons (when in verification step and 2FA is not set up)
   const shouldShowActionButtons = !has2FAMethod;
 
   const handleCopySetupKey = async () => {
@@ -135,7 +132,7 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
             </Section>
           ) : (
             <Section>
-              <TwoFactorAuthenticationSetupEffectForSettingsEffect />
+              <TwoFactorAuthenticationSetupEffectForSettings />
 
               <H2Title title={t`1. Scan the QR code`} />
               <StyledInstructions>

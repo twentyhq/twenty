@@ -75,6 +75,7 @@ export const DeleteTwoFactorAuthentication = () => {
     if (isTwoFactorAuthenticationEnforced === true) {
       await signOut();
     } else {
+      navigate(SettingsPath.ProfilePage);
       await loadCurrentUser();
     }
   };

@@ -697,30 +697,26 @@ export const useAuth = () => {
 
   const handleGetAuthTokensFromOTP = useCallback(
     async (otp: string, loginToken: string, captchaToken?: string) => {
-      try {
-        const getAuthTokensFromOtpResult = await getAuthTokensFromOtp({
-          variables: {
-            captchaToken,
-            origin,
-            otp,
-            loginToken,
-          },
-        });
+      const getAuthTokensFromOtpResult = await getAuthTokensFromOtp({
+        variables: {
+          captchaToken,
+          origin,
+          otp,
+          loginToken,
+        },
+      });
 
-        if (isDefined(getAuthTokensFromOtpResult.errors)) {
-          throw getAuthTokensFromOtpResult.errors;
-        }
-
-        if (!getAuthTokensFromOtpResult.data?.getAuthTokensFromOTP) {
-          throw new Error('No getAuthTokensFromLoginToken result');
-        }
-
-        await handleLoadWorkspaceAfterAuthentication(
-          getAuthTokensFromOtpResult.data.getAuthTokensFromOTP.tokens,
-        );
-      } catch (error) {
-        return 'aaaah';
+      if (isDefined(getAuthTokensFromOtpResult.errors)) {
+        throw getAuthTokensFromOtpResult.errors;
       }
+
+      if (!getAuthTokensFromOtpResult.data?.getAuthTokensFromOTP) {
+        throw new Error('No getAuthTokensFromLoginToken result');
+      }
+
+      await handleLoadWorkspaceAfterAuthentication(
+        getAuthTokensFromOtpResult.data.getAuthTokensFromOTP.tokens,
+      );
     },
     [getAuthTokensFromOtp, origin, handleLoadWorkspaceAfterAuthentication],
   );

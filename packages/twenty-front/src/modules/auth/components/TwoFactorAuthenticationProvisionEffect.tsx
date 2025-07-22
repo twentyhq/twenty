@@ -17,11 +17,16 @@ export const TwoFactorAuthenticationSetupEffect = () => {
   const navigate = useNavigateApp();
   const { origin } = useOrigin();
   const loginToken = useRecoilValue(loginTokenState);
+  const qrCode = useRecoilValue(qrCodeState);
   const setQrCodeState = useSetRecoilState(qrCodeState);
 
   const { t } = useLingui();
 
   useEffect(() => {
+    if (qrCode) {
+      return;
+    }
+
     const handleTwoFactorAuthenticationProvisioningInitiation = async () => {
       try {
         if (!loginToken) {

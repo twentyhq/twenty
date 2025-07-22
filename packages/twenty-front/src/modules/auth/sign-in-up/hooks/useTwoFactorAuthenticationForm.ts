@@ -16,5 +16,5 @@ export const useTwoFactorAuthenticationForm = () => {
     resolver: zodResolver(otpValidationSchema),
   });
 
-  return { form: form };
+  return { form };
 };
