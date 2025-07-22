@@ -75,7 +75,16 @@ export class FieldMetadataMorphRelationService {
         );
       }
 
-      const relationFieldMetadataForCreate =
+      await this.fieldMetadataRelationService.validateFieldMetadataRelationSpecifics(
+        {
+          fieldMetadataInput: fieldMetadataForCreate,
+          fieldMetadataType: fieldMetadataForCreate.type,
+          objectMetadataMaps,
+          objectMetadata,
+        },
+      );
+
+      const relationFieldMetadataEntityProperties =
         this.fieldMetadataRelationService.computeCustomRelationFieldMetadataForCreation(
           {
             fieldMetadataInput: fieldMetadataForCreate,
@@ -88,17 +97,14 @@ export class FieldMetadataMorphRelationService {
           },
         );
 
-      await this.fieldMetadataRelationService.validateFieldMetadataRelationSpecifics(
-        {
-          fieldMetadataInput: relationFieldMetadataForCreate, // TODO relou
-          fieldMetadataType: relationFieldMetadataForCreate.type,
-          objectMetadataMaps,
-          objectMetadata,
-        },
-      );
-
       const createdFieldMetadataItem = await fieldMetadataRepository.save(
-        omit(relationFieldMetadataForCreate, 'id'),
+        omit(
+          {
+            ...fieldMetadataForCreate,
+            ...relationFieldMetadataEntityProperties,
+          },
+          'id',
+        ),
       );
 
       const targetFieldMetadataName = computeMetadataNameFromLabel(

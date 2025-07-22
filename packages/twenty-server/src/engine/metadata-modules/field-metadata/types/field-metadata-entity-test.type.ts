@@ -5,7 +5,7 @@ import { Relation as TypeOrmRelation } from 'typeorm';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
-type DefinedRelationRecord = {
+export type DefinedRelationRecord = {
   relationTargetFieldMetadataId: string;
   relationTargetFieldMetadata: TypeOrmRelation<FieldMetadataEntity>;
   relationTargetObjectMetadataId: string;

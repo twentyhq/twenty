@@ -6,7 +6,6 @@ import { IsEnum, IsString, IsUUID, validateOrReject } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -64,7 +63,7 @@ export class FieldMetadataRelationService {
     objectMetadata,
     fieldMetadataRepository,
   }: {
-    fieldMetadataInput: CreateFieldInput;
+    fieldMetadataInput: CreateFieldInput & Required<Pick<CreateFieldInput, 'relationCreationPayload'>>;
     objectMetadata: ObjectMetadataItemWithFieldMaps;
     fieldMetadataRepository: Repository<FieldMetadataEntity>;
   }): Promise<FieldMetadataEntity[]> {
@@ -93,7 +92,16 @@ export class FieldMetadataRelationService {
       defaultValue: fieldMetadataInput.defaultValue,
     });
 
-    const targetFieldMetadataToCreateWithRelation =
+    const sourceRelationFieldMetadataEntityProperties =
+      this.computeCustomRelationFieldMetadataForCreation({
+        fieldMetadataInput,
+        relationCreationPayload: fieldMetadataInput.relationCreationPayload,
+        joinColumnName: computeRelationFieldJoinColumnName({
+          name: fieldMetadataInput.name,
+        }),
+      });
+
+    const targetRelationFieldMetadataEntityProperties =
       this.computeCustomRelationFieldMetadataForCreation({
         fieldMetadataInput: targetFieldMetadataToCreate,
         relationCreationPayload: {
@@ -110,19 +118,15 @@ export class FieldMetadataRelationService {
         }),
       });
 
-    // todo better type
-    const targetFieldMetadataToCreateWithRelationWithId = {
-      id: v4(),
-      ...targetFieldMetadataToCreateWithRelation,
-    };
-
     const targetFieldMetadata = await fieldMetadataRepository.save({
-      ...targetFieldMetadataToCreateWithRelationWithId,
+      ...targetFieldMetadataToCreate,
+      ...targetRelationFieldMetadataEntityProperties,
       relationTargetFieldMetadataId: createdFieldMetadataItem.id,
     });
 
     const createdFieldMetadataItemUpdated = await fieldMetadataRepository.save({
       ...createdFieldMetadataItem,
+      ...sourceRelationFieldMetadataEntityProperties,
       relationTargetFieldMetadataId: targetFieldMetadata.id,
     });
 
@@ -142,7 +146,7 @@ export class FieldMetadataRelationService {
     | 'fieldMetadataType'
     | 'objectMetadataMaps'
     | 'objectMetadata'
-  >): Promise<T> {
+  >): Promise<void> {
     // TODO: clean typings, we should try to validate both update and create inputs in the same function
     const isRelation =
       fieldMetadataType === FieldMetadataType.RELATION ||
@@ -210,8 +214,6 @@ export class FieldMetadataRelationService {
         }
       }
     }
-
-    return fieldMetadataInput;
   }
 
   private async validateRelationCreationPayloadOrThrow(
@@ -319,7 +321,9 @@ export class FieldMetadataRelationService {
     joinColumnName,
   }: {
     fieldMetadataInput: CreateFieldInput;
-    relationCreationPayload: CreateFieldInput['relationCreationPayload'];
+    relationCreationPayload: NonNullable<
+      CreateFieldInput['relationCreationPayload']
+    >;
     joinColumnName: string;
   }) {
     const isRelation =
@@ -341,9 +345,7 @@ export class FieldMetadataRelationService {
     const defaultIcon = 'IconRelationOneToMany';
 
     return {
-      ...fieldMetadataInput,
       icon: fieldMetadataInput.icon ?? defaultIcon,
-      relationCreationPayload,
       relationTargetObjectMetadataId:
         relationCreationPayload?.targetObjectMetadataId,
       settings: {
