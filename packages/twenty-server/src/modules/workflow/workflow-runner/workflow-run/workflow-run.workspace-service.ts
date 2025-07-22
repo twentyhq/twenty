@@ -92,12 +92,6 @@ export class WorkflowRunWorkspaceService {
       );
     }
 
-    const workflowRunCount = await workflowRunRepository.count({
-      where: {
-        workflowId: workflow.id,
-      },
-    });
-
     const position = await this.recordPositionService.buildRecordPosition({
       value: 'first',
       objectMetadata: {
@@ -108,6 +102,19 @@ export class WorkflowRunWorkspaceService {
     });
 
     const initState = this.getInitState(workflowVersion, triggerPayload);
+
+    const lastWorkflowRun = await workflowRunRepository.findOne({
+      where: {
+        workflowId: workflow.id,
+      },
+      order: { createdAt: 'desc' },
+    });
+
+    const workflowRunCountMatch = lastWorkflowRun?.name.match(/#(\d+)/);
+
+    const workflowRunCount = workflowRunCountMatch
+      ? parseInt(workflowRunCountMatch[1], 10)
+      : 0;
 
     const workflowRun = workflowRunRepository.create({
       id: workflowRunId ?? v4(),
