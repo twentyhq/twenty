@@ -227,7 +227,7 @@ export class ObjectMetadataFieldRelationService {
       id: targetFieldMetadataToUpdate.id,
       ...targetFieldMetadataUpdateData,
       settings: {
-        ...(targetFieldMetadataToUpdate.settings),
+        ...targetFieldMetadataToUpdate.settings,
         ...(isTargetFieldMetadataManyToOneRelation
           ? {
               joinColumnName: `${sourceObjectMetadata.nameSingular}Id`,
@@ -259,7 +259,7 @@ export class ObjectMetadataFieldRelationService {
       id: sourceFieldMetadataToUpdate.id,
       ...sourceFieldMetadataUpdateData,
       settings: {
-        ...(sourceFieldMetadataToUpdate.settings),
+        ...sourceFieldMetadataToUpdate.settings,
         ...(isSourceFieldMetadataManyToOneRelation
           ? {
               joinColumnName: `${targetObjectMetadata.nameSingular}Id`,
