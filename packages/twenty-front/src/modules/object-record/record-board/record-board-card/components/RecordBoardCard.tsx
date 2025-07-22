@@ -101,7 +101,7 @@ const StyledCardContainer = styled.div<{ isPrimaryMultiDrag?: boolean }>`
   `}
 `;
 
-const StyledDummyCard = styled.div<{ offset: number }>`
+const StyledRecordBoardCardStackCard = styled.div<{ offset: number }>`
   position: absolute;
   top: ${({ offset }) => (offset === 1 ? 2 : (offset - 1) * 4 + 2)}px;
   left: 0;
@@ -235,7 +235,7 @@ export const RecordBoardCard = () => {
             Array.from({
               length: Math.min(5, multiDragState.originalSelection.length - 1),
             }).map((_, index) => (
-              <StyledDummyCard key={index} offset={index + 1} />
+              <StyledRecordBoardCardStackCard key={index} offset={index + 1} />
             ))}
 
           <StyledBoardCard
