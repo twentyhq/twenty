@@ -16,7 +16,7 @@ describe('workflowShouldFail', () => {
     expect(workflowShouldFail({ steps, stepInfos })).toBeTruthy();
   });
 
-  it('should false if no failed step exists', () => {
+  it('should return false if no failed step exists', () => {
     const steps = [
       {
         id: 'step-1',

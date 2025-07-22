@@ -10,7 +10,7 @@ export const workflowShouldFail = ({
   steps: WorkflowAction[];
 }) => {
   const failedSteps = steps.filter(
-    (step) => stepInfos[step.id].status === StepStatus.FAILED,
+    (step) => stepInfos[step.id]?.status === StepStatus.FAILED,
   );
 
   return failedSteps.length > 0;

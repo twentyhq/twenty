@@ -13,16 +13,16 @@ export const workflowShouldKeepRunning = ({
 }) => {
   const runningOrPendingStepExists = steps.some((step) =>
     [StepStatus.PENDING, StepStatus.RUNNING].includes(
-      stepInfos[step.id].status,
+      stepInfos[step.id]?.status,
     ),
   );
 
   const successStepWithNotStartedExecutableChildren = steps.some(
     (step) =>
-      stepInfos[step.id].status === StepStatus.SUCCESS &&
-      (step.nextStepIds || []).some(
+      stepInfos[step.id]?.status === StepStatus.SUCCESS &&
+      (step.nextStepIds ?? []).some(
         (nextStepId) =>
-          stepInfos[nextStepId].status === StepStatus.NOT_STARTED &&
+          stepInfos[nextStepId]?.status === StepStatus.NOT_STARTED &&
           canExecuteStep({
             stepId: nextStepId,
             steps,
