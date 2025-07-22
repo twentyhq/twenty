@@ -1,8 +1,8 @@
-import { CommandMenuContextChip } from '@/command-menu/components/CommandMenuContextChip';
 import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/CommandMenuContextRecordChipAvatars';
 import { getSelectedRecordsContextText } from '@/command-menu/utils/getRecordContextText';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { MultipleAvatarChip } from 'twenty-ui/components';
 
 export const CommandMenuContextRecordsChip = ({
   objectMetadataItemId,
@@ -34,7 +34,7 @@ export const CommandMenuContextRecordsChip = ({
   ));
 
   return (
-    <CommandMenuContextChip
+    <MultipleAvatarChip
       text={getSelectedRecordsContextText(
         objectMetadataItem,
         records,
