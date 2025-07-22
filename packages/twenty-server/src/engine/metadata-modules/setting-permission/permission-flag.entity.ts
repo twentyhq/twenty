@@ -13,11 +13,8 @@ import {
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
-@Entity('permissionFlag')
-@Unique('IDX_SETTING_PERMISSION_SETTING_ROLE_ID_UNIQUE', [
-  'permissionFlag',
-  'roleId',
-])
+@Entity('flag')
+@Unique('IDX_SETTING_PERMISSION_SETTING_ROLE_ID_UNIQUE', ['flag', 'roleId'])
 export class PermissionFlagEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -32,7 +29,7 @@ export class PermissionFlagEntity {
   role: Relation<RoleEntity>;
 
   @Column({ nullable: false, type: 'varchar' })
-  permissionFlag: PermissionFlagType;
+  flag: PermissionFlagType;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;

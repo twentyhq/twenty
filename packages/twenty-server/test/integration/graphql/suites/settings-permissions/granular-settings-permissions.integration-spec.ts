@@ -377,12 +377,12 @@ describe('Granular settings permissions', () => {
       expect(customRole).toBeDefined();
       expect(customRole.canUpdateAllSettings).toBe(false);
       expect(customRole.settingPermissions).toHaveLength(3);
-      expect(
-        customRole.settingPermissions.map((p: any) => p.permissionFlag),
-      ).toContain(PermissionFlagType.DATA_MODEL);
-      expect(
-        customRole.settingPermissions.map((p: any) => p.permissionFlag),
-      ).toContain(PermissionFlagType.WORKSPACE);
+      expect(customRole.settingPermissions.map((p: any) => p.flag)).toContain(
+        PermissionFlagType.DATA_MODEL,
+      );
+      expect(customRole.settingPermissions.map((p: any) => p.flag)).toContain(
+        PermissionFlagType.WORKSPACE,
+      );
     });
   });
 
@@ -439,9 +439,9 @@ describe('Granular settings permissions', () => {
       );
 
       expect(updatedRole.settingPermissions).toHaveLength(3);
-      expect(
-        updatedRole.settingPermissions.map((p: any) => p.permissionFlag),
-      ).toContain(PermissionFlagType.SECURITY);
+      expect(updatedRole.settingPermissions.map((p: any) => p.flag)).toContain(
+        PermissionFlagType.SECURITY,
+      );
     });
 
     it('should allow removing setting permissions from existing role', async () => {
@@ -495,7 +495,7 @@ describe('Granular settings permissions', () => {
 
       expect(updatedRole.settingPermissions).toHaveLength(2);
       expect(
-        updatedRole.settingPermissions.map((p: any) => p.permissionFlag),
+        updatedRole.settingPermissions.map((p: any) => p.flag),
       ).not.toContain(PermissionFlagType.SECURITY);
     });
   });

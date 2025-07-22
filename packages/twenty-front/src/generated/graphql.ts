@@ -1746,8 +1746,8 @@ export type PageInfo = {
 
 export type PermissionFlag = {
   __typename?: 'PermissionFlag';
+  flag: PermissionFlagType;
   id: Scalars['String'];
-  permissionFlag: PermissionFlagType;
   roleId: Scalars['String'];
 };
 

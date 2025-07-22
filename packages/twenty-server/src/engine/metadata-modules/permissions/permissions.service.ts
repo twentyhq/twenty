@@ -61,7 +61,7 @@ export class PermissionsService {
         [feature]:
           hasPermissionOnSettingFeature ||
           permissionFlags.some(
-            (settingPermission) => settingPermission.permissionFlag === feature,
+            (settingPermission) => settingPermission.flag === feature,
           ),
       }),
       defaultSettingsPermissions,
@@ -158,7 +158,7 @@ export class PermissionsService {
     const permissionFlags = roleOfUserWorkspace.permissionFlags ?? [];
 
     return permissionFlags.some(
-      (settingPermission) => settingPermission.permissionFlag === setting,
+      (settingPermission) => settingPermission.flag === setting,
     );
   }
 }

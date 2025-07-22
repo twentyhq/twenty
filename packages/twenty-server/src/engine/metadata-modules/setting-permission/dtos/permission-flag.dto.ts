@@ -11,5 +11,5 @@ export class PermissionFlagDTO {
   roleId: string;
 
   @Field({ nullable: false })
-  permissionFlag: PermissionFlagType;
+  flag: PermissionFlagType;
 }

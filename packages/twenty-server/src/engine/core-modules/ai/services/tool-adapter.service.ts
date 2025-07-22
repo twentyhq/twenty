@@ -21,13 +21,13 @@ export class ToolAdapterService {
     for (const toolType of this.toolRegistry.getAllToolTypes()) {
       const tool = this.toolRegistry.getTool(toolType);
 
-      if (!tool.permissionFlag) {
+      if (!tool.flag) {
         tools[toolType.toLowerCase()] = this.createToolSet(tool);
       } else if (roleId && workspaceId) {
         const hasPermission = await this.checkToolPermission(
           roleId,
           workspaceId,
-          tool.permissionFlag as PermissionFlagType,
+          tool.flag as PermissionFlagType,
         );
 
         if (hasPermission) {
@@ -51,7 +51,7 @@ export class ToolAdapterService {
   private async checkToolPermission(
     roleId: string,
     workspaceId: string,
-    permissionFlag: PermissionFlagType,
+    flag: PermissionFlagType,
   ): Promise<boolean> {
     try {
       const [role] = await this.userRoleService
@@ -73,7 +73,7 @@ export class ToolAdapterService {
 
       return permissionFlags.some(
         (settingPermission) =>
-          settingPermission.permissionFlag === permissionFlag,
+          settingPermission.flag === flag,
       );
     } catch (error) {
       return false;

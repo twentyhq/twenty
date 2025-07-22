@@ -19,7 +19,7 @@ export class ToolRegistryService {
           description: this.sendEmailTool.description,
           parameters: this.sendEmailTool.parameters,
           execute: this.sendEmailTool.execute.bind(this.sendEmailTool),
-          permissionFlag: PermissionFlagType.SEND_EMAIL_TOOL,
+          flag: PermissionFlagType.SEND_EMAIL_TOOL,
         }),
       ],
     ]);

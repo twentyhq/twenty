@@ -168,7 +168,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
                 roleId: data.createOneRole.id,
                 settingPermissionKeys:
                   settingsDraftRole.permissionFlags?.map(
-                    (settingPermission) => settingPermission.permissionFlag,
+                    (settingPermission) => settingPermission.flag,
                   ) ?? [],
               },
             },
@@ -221,7 +221,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
                 roleId: roleId,
                 settingPermissionKeys:
                   settingsDraftRole.permissionFlags?.map(
-                    (settingPermission) => settingPermission.permissionFlag,
+                    (settingPermission) => settingPermission.flag,
                   ) ?? [],
               },
             },

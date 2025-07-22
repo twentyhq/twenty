@@ -64,7 +64,7 @@ export class SettingPermissionService {
         },
       );
       const existingSettings = new Set(
-        existingPermissions.map((p) => p.permissionFlag),
+        existingPermissions.map((p) => p.flag),
       );
       const inputSettings = new Set(input.settingPermissionKeys);
 
@@ -72,7 +72,7 @@ export class SettingPermissionService {
         (setting) => !existingSettings.has(setting),
       );
       const permissionsToRemove = existingPermissions.filter(
-        (permission) => !inputSettings.has(permission.permissionFlag),
+        (permission) => !inputSettings.has(permission.flag),
       );
 
       if (permissionsToRemove.length > 0) {
@@ -97,7 +97,7 @@ export class SettingPermissionService {
 
       return queryRunner.manager.find(PermissionFlagEntity, {
         where: { roleId: input.roleId, workspaceId },
-        order: { permissionFlag: 'ASC' },
+        order: { flag: 'ASC' },
       });
     } catch (error) {
       await queryRunner.rollbackTransaction();
