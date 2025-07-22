@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import {
   AuthException,
@@ -14,6 +16,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
@@ -22,6 +25,8 @@ export class PermissionsService {
   constructor(
     private readonly userRoleService: UserRoleService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    @InjectRepository(RoleEntity, 'core')
+    private readonly roleRepository: Repository<RoleEntity>,
   ) {}
 
   public async getUserWorkspacePermissions({
@@ -160,5 +165,30 @@ export class PermissionsService {
     return permissionFlags.some(
       (permissionFlag) => permissionFlag.flag === setting,
     );
+  }
+
+  public async hasToolPermission(
+    roleId: string,
+    workspaceId: string,
+    flag: PermissionFlagType,
+  ): Promise<boolean> {
+    try {
+      const role = await this.roleRepository.findOne({
+        where: { id: roleId, workspaceId },
+        relations: ['permissionFlags'],
+      });
+
+      if (!role) {
+        return false;
+      }
+
+      const permissionFlags = role.permissionFlags ?? [];
+
+      return permissionFlags.some(
+        (permissionFlag) => permissionFlag.flag === flag,
+      );
+    } catch (error) {
+      return false;
+    }
   }
 }

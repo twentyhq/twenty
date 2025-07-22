@@ -6,13 +6,13 @@ import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-
 import { ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
-import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 @Injectable()
 export class ToolAdapterService {
   constructor(
     private readonly toolRegistry: ToolRegistryService,
-    private readonly roleService: RoleService,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   async getTools(roleId?: string, workspaceId?: string): Promise<ToolSet> {
@@ -24,7 +24,7 @@ export class ToolAdapterService {
       if (!tool.flag) {
         tools[toolType.toLowerCase()] = this.createToolSet(tool);
       } else if (roleId && workspaceId) {
-        const hasPermission = await this.checkToolPermission(
+        const hasPermission = await this.permissionsService.hasToolPermission(
           roleId,
           workspaceId,
           tool.flag as PermissionFlagType,
@@ -46,31 +46,5 @@ export class ToolAdapterService {
       execute: async (parameters: { input: ToolInput }) =>
         tool.execute(parameters.input),
     };
-  }
-
-  private async checkToolPermission(
-    roleId: string,
-    workspaceId: string,
-    flag: PermissionFlagType,
-  ): Promise<boolean> {
-    try {
-      const role = await this.roleService.getRoleById(roleId, workspaceId);
-
-      if (!role) {
-        return false;
-      }
-
-      if (role.canUpdateAllSettings === true) {
-        return true;
-      }
-
-      const permissionFlags = role.permissionFlags ?? [];
-
-      return permissionFlags.some(
-        (permissionFlag) => permissionFlag.flag === flag,
-      );
-    } catch (error) {
-      return false;
-    }
   }
 }

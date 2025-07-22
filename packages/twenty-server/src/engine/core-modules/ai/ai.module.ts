@@ -14,8 +14,8 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
@@ -34,7 +34,7 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
     UserRoleModule,
     TwentyORMModule,
     MessagingModule,
-    RoleModule,
+    PermissionsModule,
   ],
   controllers: [AiController, McpController],
   providers: [
