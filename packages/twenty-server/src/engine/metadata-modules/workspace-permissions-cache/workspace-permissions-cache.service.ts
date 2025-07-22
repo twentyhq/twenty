@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   ObjectRecordsPermissions,
   ObjectRecordsPermissionsByRoleId,
+  RestrictedFields,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
@@ -203,10 +204,7 @@ export class WorkspacePermissionsCacheService {
         let canUpdate = role.canUpdateAllObjectRecords;
         let canSoftDelete = role.canSoftDeleteAllObjectRecords;
         let canDestroy = role.canDestroyAllObjectRecords;
-        const restrictedFields: Record<
-          string,
-          { canRead?: boolean | null; canUpdate?: boolean | null }
-        > = {};
+        const restrictedFields: RestrictedFields = {};
 
         if (
           standardId &&
