@@ -51,7 +51,7 @@ export class PermissionsService {
       hasPermissionOnSettingFeature = true;
     }
 
-    const settingPermissions = roleOfUserWorkspace.permissionFlags ?? [];
+    const permissionFlags = roleOfUserWorkspace.permissionFlags ?? [];
 
     const defaultSettingsPermissions =
       this.getDefaultUserWorkspacePermissions().settingsPermissions;
@@ -60,7 +60,7 @@ export class PermissionsService {
         ...acc,
         [feature]:
           hasPermissionOnSettingFeature ||
-          settingPermissions.some(
+          permissionFlags.some(
             (settingPermission) => settingPermission.permissionFlag === feature,
           ),
       }),
@@ -155,9 +155,9 @@ export class PermissionsService {
       return true;
     }
 
-    const settingPermissions = roleOfUserWorkspace.permissionFlags ?? [];
+    const permissionFlags = roleOfUserWorkspace.permissionFlags ?? [];
 
-    return settingPermissions.some(
+    return permissionFlags.some(
       (settingPermission) => settingPermission.permissionFlag === setting,
     );
   }

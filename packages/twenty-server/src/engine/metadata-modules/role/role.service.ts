@@ -40,7 +40,7 @@ export class RoleService {
       where: {
         workspaceId,
       },
-      relations: ['roleTargets', 'settingPermissions', 'objectPermissions'],
+      relations: ['roleTargets', 'permissionFlags', 'objectPermissions'],
     });
   }
 
@@ -53,7 +53,7 @@ export class RoleService {
         id,
         workspaceId,
       },
-      relations: ['roleTargets', 'settingPermissions'],
+      relations: ['roleTargets', 'permissionFlags'],
     });
   }
 

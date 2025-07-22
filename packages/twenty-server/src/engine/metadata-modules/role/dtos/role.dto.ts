@@ -46,7 +46,7 @@ export class RoleDTO {
   canDestroyAllObjectRecords: boolean;
 
   @Field(() => [PermissionFlagDTO], { nullable: true })
-  settingPermissions?: PermissionFlagDTO[];
+  permissionFlags?: PermissionFlagDTO[];
 
   @Field(() => [ObjectPermissionDTO], { nullable: true })
   objectPermissions?: ObjectPermissionDTO[];

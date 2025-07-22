@@ -161,13 +161,13 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
           return;
         }
 
-        if (isDefined(dirtyFields.settingPermissions)) {
+        if (isDefined(dirtyFields.permissionFlags)) {
           await upsertSettingPermissions({
             variables: {
               upsertSettingPermissionsInput: {
                 roleId: data.createOneRole.id,
                 settingPermissionKeys:
-                  settingsDraftRole.settingPermissions?.map(
+                  settingsDraftRole.permissionFlags?.map(
                     (settingPermission) => settingPermission.permissionFlag,
                   ) ?? [],
               },
@@ -214,13 +214,13 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
           roleId: data.createOneRole.id,
         });
       } else {
-        if (isDefined(dirtyFields.settingPermissions)) {
+        if (isDefined(dirtyFields.permissionFlags)) {
           await upsertSettingPermissions({
             variables: {
               upsertSettingPermissionsInput: {
                 roleId: roleId,
                 settingPermissionKeys:
-                  settingsDraftRole.settingPermissions?.map(
+                  settingsDraftRole.permissionFlags?.map(
                     (settingPermission) => settingPermission.permissionFlag,
                   ) ?? [],
               },

@@ -58,24 +58,25 @@ export const SettingsRolePermissionsSettingsTableRow = ({
   const canUpdateAllSettings = settingsDraftRole.canUpdateAllSettings;
 
   const isSettingPermissionEnabled =
-    settingsDraftRole.settingPermissions?.some(
-      (settingPermission) => settingPermission.setting === permission.key,
+    settingsDraftRole.permissionFlags?.some(
+      (settingPermission) =>
+        settingPermission.permissionFlag === permission.key,
     ) ?? false;
 
   const isChecked = isSettingPermissionEnabled || canUpdateAllSettings;
   const isDisabled = !isEditable || canUpdateAllSettings;
 
   const handleChange = (value: boolean) => {
-    const currentPermissions = settingsDraftRole.settingPermissions ?? [];
+    const currentPermissions = settingsDraftRole.permissionFlags ?? [];
 
     if (value === true) {
       setSettingsDraftRole({
         ...settingsDraftRole,
-        settingPermissions: [
+        permissionFlags: [
           ...currentPermissions,
           {
             id: v4(),
-            setting: permission.key,
+            permissionFlag: permission.key,
             roleId,
           },
         ],
@@ -83,8 +84,8 @@ export const SettingsRolePermissionsSettingsTableRow = ({
     } else {
       setSettingsDraftRole({
         ...settingsDraftRole,
-        settingPermissions: currentPermissions.filter(
-          (p) => p.setting !== permission.key,
+        permissionFlags: currentPermissions.filter(
+          (p) => p.permissionFlag !== permission.key,
         ),
       });
     }

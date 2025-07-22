@@ -2083,7 +2083,7 @@ export type Role = {
   isEditable: Scalars['Boolean'];
   label: Scalars['String'];
   objectPermissions?: Maybe<Array<ObjectPermission>>;
-  settingPermissions?: Maybe<Array<PermissionFlag>>;
+  permissionFlags?: Maybe<Array<PermissionFlag>>;
   workspaceMembers: Array<WorkspaceMember>;
 };
 

@@ -2237,7 +2237,7 @@ export type Role = {
   isEditable: Scalars['Boolean'];
   label: Scalars['String'];
   objectPermissions?: Maybe<Array<ObjectPermission>>;
-  settingPermissions?: Maybe<Array<PermissionFlag>>;
+  permissionFlags?: Maybe<Array<PermissionFlag>>;
   workspaceMembers: Array<WorkspaceMember>;
 };
 
@@ -3588,7 +3588,7 @@ export type UpsertSettingPermissionsMutation = { __typename?: 'Mutation', upsert
 export type GetRolesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }>, settingPermissions?: Array<{ __typename?: 'PermissionFlag', id: string, permissionFlag: PermissionFlagType, roleId: string }> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }> | null }> };
+export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }>, permissionFlags?: Array<{ __typename?: 'PermissionFlag', id: string, permissionFlag: PermissionFlagType, roleId: string }> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }> | null }> };
 
 export type CreateApprovedAccessDomainMutationVariables = Exact<{
   input: CreateApprovedAccessDomainInput;
@@ -7388,7 +7388,7 @@ export const GetRolesDocument = gql`
     workspaceMembers {
       ...WorkspaceMemberQueryFragment
     }
-    settingPermissions {
+    permissionFlags {
       ...SettingPermissionFragment
     }
     objectPermissions {

@@ -32,7 +32,7 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
   );
   const allSettingsPermissionsEnabled = settingsPermissionsConfig.every(
     (permission) =>
-      settingsDraftRole.settingPermissions?.some(
+      settingsDraftRole.permissionFlags?.some(
         (settingPermission) =>
           settingPermission.permissionFlag === permission.key,
       ),
@@ -40,7 +40,7 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
 
   const someSettingsPermissionsEnabled = settingsPermissionsConfig.some(
     (permission) =>
-      settingsDraftRole.settingPermissions?.some(
+      settingsDraftRole.permissionFlags?.some(
         (settingPermission) =>
           settingPermission.permissionFlag === permission.key,
       ),
@@ -63,10 +63,10 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
 
             setSettingsDraftRole({
               ...settingsDraftRole,
-              settingPermissions: newValue
+              permissionFlags: newValue
                 ? settingsPermissionsConfig.map((permission) => ({
                     id: v4(),
-                    setting: permission.key,
+                    permissionFlag: permission.key,
                     roleId,
                   }))
                 : [],

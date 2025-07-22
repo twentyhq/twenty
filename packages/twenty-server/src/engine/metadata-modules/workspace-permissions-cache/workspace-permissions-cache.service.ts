@@ -183,7 +183,7 @@ export class WorkspacePermissionsCacheService {
       },
       relations: [
         'objectPermissions',
-        'settingPermissions',
+        'permissionFlags',
         ...(isFieldPermissionsEnabled ? ['fieldPermissions'] : []),
       ],
     });

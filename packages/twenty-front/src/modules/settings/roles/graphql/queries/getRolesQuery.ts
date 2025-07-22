@@ -15,7 +15,7 @@ export const GET_ROLES = gql`
       workspaceMembers {
         ...WorkspaceMemberQueryFragment
       }
-      settingPermissions {
+      permissionFlags {
         ...SettingPermissionFragment
       }
       objectPermissions {
