@@ -5,6 +5,7 @@ import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchS
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
+import { isCommandMenuPersistentState } from '@/command-menu/states/isCommandMenuPersistentState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { emitSidePanelOpenEvent } from '@/ui/layout/right-drawer/utils/emitSidePanelOpenEvent';
@@ -27,6 +28,15 @@ export const useCommandMenu = () => {
         const isCommandMenuOpened = snapshot
           .getLoadable(isCommandMenuOpenedState)
           .getValue();
+
+        const isCommandMenuPersistent = snapshot
+          .getLoadable(isCommandMenuPersistentState)
+          .getValue();
+
+        // Don't close if in persistent mode
+        if (isCommandMenuPersistent) {
+          return;
+        }
 
         if (isCommandMenuOpened) {
           set(isCommandMenuOpenedState, false);
@@ -59,7 +69,16 @@ export const useCommandMenu = () => {
           .getLoadable(isCommandMenuOpenedState)
           .getValue();
 
+        const isCommandMenuPersistent = snapshot
+          .getLoadable(isCommandMenuPersistentState)
+          .getValue();
+
         set(commandMenuSearchState, '');
+
+        // Don't toggle if in persistent mode
+        if (isCommandMenuPersistent) {
+          return;
+        }
 
         if (isCommandMenuOpened) {
           closeCommandMenu();
@@ -70,10 +89,52 @@ export const useCommandMenu = () => {
     [closeCommandMenu, openCommandMenu],
   );
 
+  const toggleCommandMenuPersistent = useRecoilCallback(
+    ({ snapshot, set }) =>
+      () => {
+        const isCommandMenuPersistent = snapshot
+          .getLoadable(isCommandMenuPersistentState)
+          .getValue();
+
+        const newPersistentState = !isCommandMenuPersistent;
+        set(isCommandMenuPersistentState, newPersistentState);
+
+        // If enabling persistent mode, ensure command menu is open
+        if (newPersistentState) {
+          set(isCommandMenuOpenedState, true);
+          openCommandMenu();
+        }
+      },
+    [openCommandMenu],
+  );
+
+  const enableCommandMenuPersistent = useRecoilCallback(
+    ({ set }) =>
+      () => {
+        set(isCommandMenuPersistentState, true);
+        set(isCommandMenuOpenedState, true);
+        openCommandMenu();
+      },
+    [openCommandMenu],
+  );
+
+  const disableCommandMenuPersistent = useRecoilCallback(
+    ({ set }) =>
+      () => {
+        set(isCommandMenuPersistentState, false);
+        // Optionally close the menu when disabling persistent mode
+        // set(isCommandMenuOpenedState, false);
+      },
+    [],
+  );
+
   return {
     openCommandMenu,
     closeCommandMenu,
     navigateCommandMenu,
     toggleCommandMenu,
+    toggleCommandMenuPersistent,
+    enableCommandMenuPersistent,
+    disableCommandMenuPersistent,
   };
 };

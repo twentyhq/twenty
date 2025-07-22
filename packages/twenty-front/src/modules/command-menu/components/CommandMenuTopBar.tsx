@@ -10,6 +10,7 @@ import { useCommandMenuContextChips } from '@/command-menu/hooks/useCommandMenuC
 import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { isCommandMenuPersistentState } from '@/command-menu/states/isCommandMenuPersistentState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -21,7 +22,7 @@ import { useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, IconX } from 'twenty-ui/display';
+import { IconChevronLeft, IconLayoutSidebarRight, IconLayoutSidebarRightCollapse, IconX } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
 
@@ -70,6 +71,11 @@ const StyledContentContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledButtonContainer = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
 const StyledCloseButtonWrapper = styled.div<{ isVisible: boolean }>`
   visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')};
 `;
@@ -88,7 +94,7 @@ export const CommandMenuTopBar = () => {
 
   const isMobile = useIsMobile();
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeCommandMenu, toggleCommandMenuPersistent } = useCommandMenu();
 
   const { goBackFromCommandMenu } = useCommandMenuHistory();
 
@@ -98,6 +104,8 @@ export const CommandMenuTopBar = () => {
   );
 
   const commandMenuPage = useRecoilValue(commandMenuPageState);
+
+  const isCommandMenuPersistent = useRecoilValue(isCommandMenuPersistentState);
 
   const theme = useTheme();
 
@@ -154,18 +162,33 @@ export const CommandMenuTopBar = () => {
         )}
       </StyledContentContainer>
       {!isMobile && (
-        <StyledCloseButtonWrapper isVisible={isButtonVisible}>
+        <StyledButtonContainer>
           <Button
-            Icon={IconX}
-            dataTestId="page-header-close-command-menu-button"
+            Icon={isCommandMenuPersistent ? IconLayoutSidebarRightCollapse : IconLayoutSidebarRight}
+            dataTestId="command-menu-persistent-toggle-button"
             size={'small'}
             variant="secondary"
             accent="default"
-            hotkeys={[getOsControlSymbol(), 'K']}
-            ariaLabel="Close command menu"
-            onClick={closeCommandMenu}
+            ariaLabel={
+              isCommandMenuPersistent
+                ? 'Disable persistent mode'
+                : 'Enable persistent mode'
+            }
+            onClick={toggleCommandMenuPersistent}
           />
-        </StyledCloseButtonWrapper>
+          <StyledCloseButtonWrapper isVisible={isButtonVisible && !isCommandMenuPersistent}>
+            <Button
+              Icon={IconX}
+              dataTestId="page-header-close-command-menu-button"
+              size={'small'}
+              variant="secondary"
+              accent="default"
+              hotkeys={[getOsControlSymbol(), 'K']}
+              ariaLabel="Close command menu"
+              onClick={closeCommandMenu}
+            />
+          </StyledCloseButtonWrapper>
+        </StyledButtonContainer>
       )}
     </StyledInputContainer>
   );

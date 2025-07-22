@@ -1,5 +1,7 @@
 import { AuthModal } from '@/auth/components/AuthModal';
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isCommandMenuPersistentState } from '@/command-menu/states/isCommandMenuPersistentState';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
 import { AppPageErrorFallback } from '@/error-handler/components/AppPageErrorFallback';
@@ -18,6 +20,8 @@ import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { THEME_COMMON } from 'twenty-ui/theme';
 import { useScreenSize } from 'twenty-ui/utilities';
 
 const StyledLayout = styled.div`
@@ -50,10 +54,18 @@ const StyledAppNavigationDrawerMock = styled(SignInAppNavigationDrawerMock)`
   flex-shrink: 0;
 `;
 
-const StyledMainContainer = styled.div`
+const StyledMainContainer = styled.div<{ 
+  hasCommandMenuPersistent: boolean;
+}>`
   display: flex;
-  flex: 0 1 100%;
+  flex: ${({ hasCommandMenuPersistent }) => 
+    hasCommandMenuPersistent ? '1' : '0 1 100%'};
   overflow: hidden;
+`;
+
+const StyledCommandMenuContainer = styled.div`
+  width: ${THEME_COMMON.rightDrawerWidth};
+  flex-shrink: 0;
 `;
 
 export const DefaultLayout = () => {
@@ -63,6 +75,18 @@ export const DefaultLayout = () => {
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
+  const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
+  const isCommandMenuPersistent = useRecoilValue(isCommandMenuPersistentState);
+
+  const shouldShowPersistentCommandMenu = 
+    !showAuthModal && 
+    !isMobile && 
+    isCommandMenuPersistent && 
+    isCommandMenuOpened;
+
+  const shouldShowOverlayCommandMenu = 
+    !showAuthModal && 
+    (!isCommandMenuPersistent || isMobile);
 
   return (
     <>
@@ -82,7 +106,8 @@ export const DefaultLayout = () => {
                   ? (windowsWidth -
                       (OBJECT_SETTINGS_WIDTH +
                         NAV_DRAWER_WIDTHS.menu.desktop.expanded +
-                        76)) /
+                        76 +
+                        (shouldShowPersistentCommandMenu ? parseInt(THEME_COMMON.rightDrawerWidth) : 0))) /
                     2
                   : 0,
             }}
@@ -90,12 +115,6 @@ export const DefaultLayout = () => {
               duration: theme.animation.duration.normal,
             }}
           >
-            {!showAuthModal && (
-              <>
-                <CommandMenuRouter />
-                <KeyboardShortcutMenu />
-              </>
-            )}
             {showAuthModal ? (
               <StyledAppNavigationDrawerMock />
             ) : useShowFullScreen ? null : (
@@ -103,7 +122,7 @@ export const DefaultLayout = () => {
             )}
             {showAuthModal ? (
               <>
-                <StyledMainContainer>
+                <StyledMainContainer hasCommandMenuPersistent={false}>
                   <SignInBackgroundMockPage />
                 </StyledMainContainer>
                 <AnimatePresence mode="wait">
@@ -115,11 +134,24 @@ export const DefaultLayout = () => {
                 </AnimatePresence>
               </>
             ) : (
-              <StyledMainContainer>
-                <AppErrorBoundary FallbackComponent={AppPageErrorFallback}>
-                  <Outlet />
-                </AppErrorBoundary>
-              </StyledMainContainer>
+              <>
+                <StyledMainContainer hasCommandMenuPersistent={shouldShowPersistentCommandMenu}>
+                  <AppErrorBoundary FallbackComponent={AppPageErrorFallback}>
+                    <Outlet />
+                  </AppErrorBoundary>
+                </StyledMainContainer>
+                {shouldShowPersistentCommandMenu && (
+                  <StyledCommandMenuContainer>
+                    <CommandMenuRouter />
+                  </StyledCommandMenuContainer>
+                )}
+              </>
+            )}
+            {shouldShowOverlayCommandMenu && (
+              <CommandMenuRouter />
+            )}
+            {!showAuthModal && (
+              <KeyboardShortcutMenu />
             )}
           </StyledPageContainer>
           {isMobile && !showAuthModal && <MobileNavigationBar />}
