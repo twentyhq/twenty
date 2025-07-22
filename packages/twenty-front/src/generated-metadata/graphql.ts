@@ -3538,9 +3538,9 @@ export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', upda
 
 export type ObjectPermissionFragmentFragment = { __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null };
 
-export type RoleFragmentFragment = { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean };
+export type PermissionFlagFragmentFragment = { __typename?: 'PermissionFlag', id: string, flag: PermissionFlagType, roleId: string };
 
-export type SettingPermissionFragmentFragment = { __typename?: 'PermissionFlag', id: string, flag: PermissionFlagType, roleId: string };
+export type RoleFragmentFragment = { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean };
 
 export type CreateOneRoleMutationVariables = Exact<{
   createRoleInput: CreateRoleInput;
@@ -3969,8 +3969,8 @@ export const WebhookFragmentFragmentDoc = gql`
   secret
 }
     `;
-export const SettingPermissionFragmentFragmentDoc = gql`
-    fragment SettingPermissionFragment on PermissionFlag {
+export const PermissionFlagFragmentFragmentDoc = gql`
+    fragment PermissionFlagFragment on PermissionFlag {
   id
   flag
   roleId
@@ -7351,10 +7351,10 @@ export const UpsertSettingPermissionsDocument = gql`
   upsertSettingPermissions(
     upsertSettingPermissionsInput: $upsertSettingPermissionsInput
   ) {
-    ...SettingPermissionFragment
+    ...PermissionFlagFragment
   }
 }
-    ${SettingPermissionFragmentFragmentDoc}`;
+    ${PermissionFlagFragmentFragmentDoc}`;
 export type UpsertSettingPermissionsMutationFn = Apollo.MutationFunction<UpsertSettingPermissionsMutation, UpsertSettingPermissionsMutationVariables>;
 
 /**
@@ -7389,7 +7389,7 @@ export const GetRolesDocument = gql`
       ...WorkspaceMemberQueryFragment
     }
     permissionFlags {
-      ...SettingPermissionFragment
+      ...PermissionFlagFragment
     }
     objectPermissions {
       ...ObjectPermissionFragment
@@ -7398,7 +7398,7 @@ export const GetRolesDocument = gql`
 }
     ${RoleFragmentFragmentDoc}
 ${WorkspaceMemberQueryFragmentFragmentDoc}
-${SettingPermissionFragmentFragmentDoc}
+${PermissionFlagFragmentFragmentDoc}
 ${ObjectPermissionFragmentFragmentDoc}`;
 
 /**

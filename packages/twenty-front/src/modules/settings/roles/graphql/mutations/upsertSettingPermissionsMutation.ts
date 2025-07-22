@@ -1,15 +1,15 @@
-import { SETTING_PERMISSION_FRAGMENT } from '@/settings/roles/graphql/fragments/settingPermissionFragment';
+import { PERMISSION_FLAG_FRAGMENT } from '@/settings/roles/graphql/fragments/permissionFlagFragment';
 import { gql } from '@apollo/client';
 
 export const UPSERT_SETTING_PERMISSIONS = gql`
-  ${SETTING_PERMISSION_FRAGMENT}
+  ${PERMISSION_FLAG_FRAGMENT}
   mutation UpsertSettingPermissions(
     $upsertSettingPermissionsInput: UpsertPermissionFlagsInput!
   ) {
     upsertSettingPermissions(
       upsertSettingPermissionsInput: $upsertSettingPermissionsInput
     ) {
-      ...SettingPermissionFragment
+      ...PermissionFlagFragment
     }
   }
 `;
