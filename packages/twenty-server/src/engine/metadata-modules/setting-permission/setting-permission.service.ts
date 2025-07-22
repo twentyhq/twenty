@@ -66,7 +66,7 @@ export class SettingPermissionService {
       const existingSettings = new Set(existingPermissions.map((p) => p.flag));
       const inputSettings = new Set(input.permissionFlagKeys);
 
-      const settingsToAdd = input.permissionFlagKeys.filter(
+      const flagsToAdd = input.permissionFlagKeys.filter(
         (setting) => !existingSettings.has(setting),
       );
       const permissionsToRemove = existingPermissions.filter(
@@ -79,8 +79,8 @@ export class SettingPermissionService {
         });
       }
 
-      if (settingsToAdd.length > 0) {
-        const newPermissions = settingsToAdd.map((flag) =>
+      if (flagsToAdd.length > 0) {
+        const newPermissions = flagsToAdd.map((flag) =>
           queryRunner.manager.create(PermissionFlagEntity, {
             workspaceId,
             roleId: input.roleId,
