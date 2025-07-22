@@ -6,13 +6,13 @@ import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-
 import { ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 
 @Injectable()
 export class ToolAdapterService {
   constructor(
     private readonly toolRegistry: ToolRegistryService,
-    private readonly userRoleService: UserRoleService,
+    private readonly roleService: RoleService,
   ) {}
 
   async getTools(roleId?: string, workspaceId?: string): Promise<ToolSet> {
@@ -54,12 +54,7 @@ export class ToolAdapterService {
     flag: PermissionFlagType,
   ): Promise<boolean> {
     try {
-      const [role] = await this.userRoleService
-        .getRolesByUserWorkspaces({
-          userWorkspaceIds: [roleId],
-          workspaceId,
-        })
-        .then((roles) => roles?.get(roleId) ?? []);
+      const role = await this.roleService.getRoleById(roleId, workspaceId);
 
       if (!role) {
         return false;
