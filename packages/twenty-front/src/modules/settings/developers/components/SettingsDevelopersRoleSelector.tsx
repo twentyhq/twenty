@@ -25,11 +25,19 @@ export const SettingsDevelopersRoleSelector = ({
 
   const roles = rolesData?.getRoles ?? [];
 
-  const options = roles.map((role) => ({
-    label: role.label,
-    value: role.id,
-    Icon: getIcon(role.icon) ?? undefined,
-  }));
+  const options =
+    roles.length > 0
+      ? roles.map((role) => ({
+          label: role.label,
+          value: role.id,
+          Icon: getIcon(role.icon) ?? undefined,
+        }))
+      : [
+          {
+            label: t`Loading roles...`,
+            value: '',
+          },
+        ];
 
   const emptyOption = allowEmpty
     ? {
@@ -50,7 +58,10 @@ export const SettingsDevelopersRoleSelector = ({
       options={options}
       value={selectValue}
       onChange={(selectedValue) => {
-        onChange(selectedValue);
+        // Don't call onChange when loading
+        if (roles.length > 0) {
+          onChange(selectedValue);
+        }
       }}
       emptyOption={emptyOption}
       disabled={disabled || rolesLoading}

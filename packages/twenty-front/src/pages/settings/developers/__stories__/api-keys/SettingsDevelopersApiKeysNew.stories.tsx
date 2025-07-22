@@ -29,13 +29,23 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     await canvas.findByText('New Key');
     await canvas.findByText('Name');
+    await canvas.findByText('Role');
     await canvas.findByText('Expiration Date');
 
-    const input = await canvas.findByPlaceholderText(
+    const nameInput = await canvas.findByPlaceholderText(
       'E.g. backoffice integration',
     );
 
-    await userEvent.type(input, 'Test');
+    await userEvent.type(nameInput, 'Test');
+
+    const roleSelector = await canvas.findByText('Admin');
+    await userEvent.click(roleSelector);
+
+    await canvas.findByText('Admin');
+    await canvas.findByText('Guest');
+
+    const guestOption = await canvas.findByText('Guest');
+    await userEvent.click(guestOption);
 
     const saveButton = await canvas.findByText('Save');
 
