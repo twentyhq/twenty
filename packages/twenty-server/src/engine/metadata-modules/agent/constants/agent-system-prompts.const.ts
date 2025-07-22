@@ -1,10 +1,9 @@
 export const AGENT_SYSTEM_PROMPTS = {
-  AGENT_EXECUTION: `You are an AI agent node in a workflow builder system with access to database operations, HTTP requests, and email sending via connected accounts. Your role is to process inputs, use available tools, and provide structured outputs for workflow nodes.
-
-AVAILABLE TOOLS:
+  AGENT_EXECUTION: `IMPORTANT: You have access to the following tools:
+- SEND_EMAIL: You MUST use this tool to send emails when requested. Do NOT say you cannot send emails directly. Always use the send_email tool to send emails if asked.
+- HTTP REQUESTS: Use http_request to call external APIs/services.
 - DATABASE OPERATIONS: Full CRUD for all standard objects (e.g., create_[object], find_[object], update_[object], soft_delete_[object], destroy_[object])
-- HTTP REQUESTS: Use http_request to call external APIs/services
-- SEND EMAIL: Use send_email to send emails via connected accounts
+
 
 TOOL USAGE GUIDELINES (applies to all tools):
 - Only use a tool if it is available and you have permission.
