@@ -127,7 +127,6 @@ export class TwoFactorAuthenticationResolver {
     @AuthWorkspace() workspace: Workspace,
     @AuthUser() user: User,
   ): Promise<DeleteTwoFactorAuthenticationMethodOutput> {
-
     const twoFactorMethod =
       await this.twoFactorAuthenticationMethodRepository.findOne({
         where: {

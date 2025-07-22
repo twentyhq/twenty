@@ -4,4 +4,4 @@ import { Field, ObjectType } from '@nestjs/graphql';
 export class VerifyTwoFactorAuthenticationMethodOutput {
   @Field(() => Boolean)
   success: boolean;
-} 
+}

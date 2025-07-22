@@ -14,6 +14,8 @@ import { TwoFactorAuthenticationMethod } from 'src/engine/core-modules/two-facto
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { TOTP_DEFAULT_CONFIGURATION } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/constants/totp.strategy.constants';
+import { TotpStrategy } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/totp.strategy';
 
 import {
   TwoFactorAuthenticationException,
@@ -21,8 +23,6 @@ import {
 } from './two-factor-authentication.exception';
 import { twoFactorAuthenticationMethodsValidator } from './two-factor-authentication.validation';
 
-import { TOTP_DEFAULT_CONFIGURATION } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/constants/totp.strategy.constants';
-import { TotpStrategy } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/totp.strategy';
 import { OTPStatus } from './strategies/otp/otp.constants';
 
 @Injectable()
@@ -85,10 +85,9 @@ export class TwoFactorAuthenticationService {
       );
     }
 
-    const { uri, context } = new TotpStrategy(TOTP_DEFAULT_CONFIGURATION).initiate(
-      userEmail,
-      userWorkspace.workspace.displayName || '',
-    );
+    const { uri, context } = new TotpStrategy(
+      TOTP_DEFAULT_CONFIGURATION,
+    ).initiate(userEmail, userWorkspace.workspace.displayName || '');
 
     const { wrappedKey } = await this.keyWrappingService.wrapKey(
       Buffer.from(context.secret),
@@ -179,5 +178,4 @@ export class TwoFactorAuthenticationService {
 
     return { success: true };
   }
-
 }

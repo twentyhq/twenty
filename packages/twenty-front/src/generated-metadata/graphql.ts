@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -1155,7 +1155,7 @@ export type Mutation = {
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
-  resetTwoFactorAuthenticationMethod: ResetTwoFactorAuthenticationMethodOutput;
+  deleteTwoFactorAuthenticationMethod: ResetTwoFactorAuthenticationMethodOutput;
   revokeApiKey?: Maybe<ApiKey>;
   runWorkflowVersion: WorkflowRun;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
@@ -3190,7 +3190,7 @@ export type ResetTwoFactorAuthenticationMethodMutationVariables = Exact<{
 }>;
 
 
-export type ResetTwoFactorAuthenticationMethodMutation = { __typename?: 'Mutation', resetTwoFactorAuthenticationMethod: { __typename?: 'ResetTwoFactorAuthenticationMethodOutput', success: boolean } };
+export type ResetTwoFactorAuthenticationMethodMutation = { __typename?: 'Mutation', deleteTwoFactorAuthenticationMethod: { __typename?: 'ResetTwoFactorAuthenticationMethodOutput', success: boolean } };
 
 export type SignInMutationVariables = Exact<{
   email: Scalars['String'];
@@ -5004,8 +5004,8 @@ export type ResendEmailVerificationTokenMutationHookResult = ReturnType<typeof u
 export type ResendEmailVerificationTokenMutationResult = Apollo.MutationResult<ResendEmailVerificationTokenMutation>;
 export type ResendEmailVerificationTokenMutationOptions = Apollo.BaseMutationOptions<ResendEmailVerificationTokenMutation, ResendEmailVerificationTokenMutationVariables>;
 export const ResetTwoFactorAuthenticationMethodDocument = gql`
-    mutation resetTwoFactorAuthenticationMethod($twoFactorAuthenticationMethodId: String!) {
-  resetTwoFactorAuthenticationMethod(
+    mutation deleteTwoFactorAuthenticationMethod($twoFactorAuthenticationMethodId: String!) {
+  deleteTwoFactorAuthenticationMethod(
     twoFactorAuthenticationMethodId: $twoFactorAuthenticationMethodId
   ) {
     success
@@ -5025,7 +5025,7 @@ export type ResetTwoFactorAuthenticationMethodMutationFn = Apollo.MutationFuncti
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [resetTwoFactorAuthenticationMethodMutation, { data, loading, error }] = useResetTwoFactorAuthenticationMethodMutation({
+ * const [deleteTwoFactorAuthenticationMethodMutation, { data, loading, error }] = useResetTwoFactorAuthenticationMethodMutation({
  *   variables: {
  *      twoFactorAuthenticationMethodId: // value for 'twoFactorAuthenticationMethodId'
  *   },
