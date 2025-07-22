@@ -1,4 +1,5 @@
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
+import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { createMorphRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-morph-relation-between-objects.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -7,7 +8,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-describe('createOne FieldMetadataService morph relation fields', () => {
+describe('deleteOne FieldMetadataService morph relation fields', () => {
   let createdObjectMetadataPersonId = '';
   let createdObjectMetadataOpportunityId = '';
   let createdObjectMetadataCompanyId = '';
@@ -89,7 +90,7 @@ describe('createOne FieldMetadataService morph relation fields', () => {
 
   const eachTestingContextArray: EachTestingContextArray = [
     {
-      title: 'should create a MORPH_RELATION field type MANY_TO_ONE',
+      title: 'should delete a MORPH_RELATION field type MANY_TO_ONE',
       context: ({
         objectMetadataId,
         firstTargetObjectMetadataId,
@@ -103,7 +104,7 @@ describe('createOne FieldMetadataService morph relation fields', () => {
       }),
     },
     {
-      title: 'should create a MORPH_RELATION field type ONE_TO_MANY',
+      title: 'should delete a MORPH_RELATION field type ONE_TO_MANY',
       context: ({
         objectMetadataId,
         firstTargetObjectMetadataId,
@@ -118,15 +119,46 @@ describe('createOne FieldMetadataService morph relation fields', () => {
     },
   ];
 
+  const eachTestingContextForRelationWithMorphRelationTargetArray: EachTestingContextArray =
+    [
+      {
+        title:
+          'should delete a ONE_TO_MANY RELATION that has a MORPH_RELATION field as target',
+        context: ({
+          objectMetadataId,
+          firstTargetObjectMetadataId,
+          secondTargetObjectMetadataId,
+        }) => ({
+          relationType: RelationType.MANY_TO_ONE,
+          objectMetadataId,
+          firstTargetObjectMetadataId,
+          secondTargetObjectMetadataId,
+          type: FieldMetadataType.MORPH_RELATION,
+        }),
+      },
+      {
+        title:
+          'should delete a MANY_TO_ONE RELATION that has a MORPH_RELATION field as target',
+        context: ({
+          objectMetadataId,
+          firstTargetObjectMetadataId,
+          secondTargetObjectMetadataId,
+        }) => ({
+          relationType: RelationType.ONE_TO_MANY,
+          objectMetadataId,
+          firstTargetObjectMetadataId,
+          secondTargetObjectMetadataId,
+          type: FieldMetadataType.MORPH_RELATION,
+        }),
+      },
+    ];
+
   it.each(eachTestingContextArray)('$title', async ({ context }) => {
-    const contextPayload =
-      typeof context === 'function'
-        ? context({
-            objectMetadataId: createdObjectMetadataOpportunityId,
-            firstTargetObjectMetadataId: createdObjectMetadataPersonId,
-            secondTargetObjectMetadataId: createdObjectMetadataCompanyId,
-          })
-        : context;
+    const contextPayload = context({
+      objectMetadataId: createdObjectMetadataOpportunityId,
+      firstTargetObjectMetadataId: createdObjectMetadataPersonId,
+      secondTargetObjectMetadataId: createdObjectMetadataCompanyId,
+    });
 
     const createdField = await createMorphRelationBetweenObjects({
       objectMetadataId: contextPayload.objectMetadataId,
@@ -136,28 +168,69 @@ describe('createOne FieldMetadataService morph relation fields', () => {
       relationType: contextPayload.relationType,
     });
 
-    expect(createdField.id).toBeDefined();
-    expect(createdField.name).toBe('owner');
-    expect(createdField.morphRelations[0].targetObjectMetadata.id).toBe(
-      contextPayload.firstTargetObjectMetadataId,
-    );
-    expect(createdField.morphRelations[1].targetObjectMetadata.id).toBe(
-      contextPayload.secondTargetObjectMetadataId,
-    );
+    const deactivatedField = await updateOneFieldMetadata({
+      input: {
+        idToUpdate: createdField.id,
+        updatePayload: { isActive: false },
+      },
+      gqlFields: `
+            id
+            isActive
+        `,
+    });
 
-    const isManyToOne =
-      contextPayload.relationType === RelationType.MANY_TO_ONE;
+    expect(deactivatedField.data.updateOneField.id).toBe(createdField.id);
 
-    if (isManyToOne) {
-      expect(createdField.settings?.joinColumnName).toBe(
-        'ownerPersonForMorphRelationId',
-      );
-    } else {
-      expect(createdField.settings?.joinColumnName).toBeUndefined();
-    }
-
-    await deleteOneFieldMetadata({
+    const { errors } = await deleteOneFieldMetadata({
       input: { idToDelete: createdField.id },
-    }).catch();
+      expectToFail: false,
+    });
+
+    expect(errors).toBeUndefined();
   });
+
+  it.each(eachTestingContextForRelationWithMorphRelationTargetArray)(
+    '$title',
+    async ({ context }) => {
+      const contextPayload = context({
+        objectMetadataId: createdObjectMetadataOpportunityId,
+        firstTargetObjectMetadataId: createdObjectMetadataPersonId,
+        secondTargetObjectMetadataId: createdObjectMetadataCompanyId,
+      });
+
+      const createdField = await createMorphRelationBetweenObjects({
+        objectMetadataId: contextPayload.objectMetadataId,
+        firstTargetObjectMetadataId: contextPayload.firstTargetObjectMetadataId,
+        secondTargetObjectMetadataId:
+          contextPayload.secondTargetObjectMetadataId,
+        type: contextPayload.type,
+        relationType: contextPayload.relationType,
+      });
+
+      const targetRelationField =
+        createdField.morphRelations[0].targetFieldMetadata;
+
+      const deactivatedTargetRelationField = await updateOneFieldMetadata({
+        input: {
+          idToUpdate: targetRelationField.id,
+          updatePayload: { isActive: false },
+        },
+        gqlFields: `
+            id
+            isActive
+        `,
+      });
+
+      expect(deactivatedTargetRelationField.data.updateOneField.id).toBe(
+        targetRelationField.id,
+      );
+
+      const { errors } = await deleteOneFieldMetadata({
+        input: { idToDelete: targetRelationField.id },
+        expectToFail: false,
+      });
+
+      expect(errors).toBeUndefined();
+    },
+  );
 });

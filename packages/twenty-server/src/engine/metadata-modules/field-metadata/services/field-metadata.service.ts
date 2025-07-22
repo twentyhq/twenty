@@ -786,7 +786,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         objectMetadataId,
         workspaceId,
       },
-      relations: ['object', 'relationTargetFieldMetadata'],
+      relations: [
+        'object',
+        'relationTargetFieldMetadata',
+        'relationTargetObjectMetadata',
+      ],
     });
 
     if (!areFieldMetadatasTypeRelationOrMorphRelation(fieldMetadatas)) {
