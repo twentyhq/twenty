@@ -5,8 +5,8 @@ import { In, Not, Repository } from 'typeorm';
 
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
-    ApiKeyException,
-    ApiKeyExceptionCode,
+  ApiKeyException,
+  ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/api-key.exception';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
@@ -86,12 +86,55 @@ export class ApiKeyRoleService {
     apiKeyId: string,
     workspaceId: string,
   ): Promise<string | null> {
+    console.log(`🔍 [${new Date().toISOString()}] getRoleIdForApiKey called:`);
+    console.log(`📋 apiKeyId: ${apiKeyId}`);
+    console.log(`🏢 workspaceId: ${workspaceId}`);
+
     const apiKeyRoleMap =
       await this.workspacePermissionsCacheService.getApiKeyRoleMapFromCache({
         workspaceId,
       });
 
-    return apiKeyRoleMap.data[apiKeyId] || null;
+    console.log(`🗂️ apiKeyRoleMap.data:`, apiKeyRoleMap.data);
+
+    const explicitRoleId = apiKeyRoleMap.data[apiKeyId];
+
+    console.log(`🎯 explicitRoleId: ${explicitRoleId || 'NULL'}`);
+
+    if (explicitRoleId) {
+      console.log(`✅ Returning explicit role: ${explicitRoleId}`);
+
+      return explicitRoleId;
+    }
+
+    // Fallback to workspace default role if no explicit role assigned
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+    });
+
+    const defaultRoleId = workspace?.defaultRoleId;
+
+    console.log(`📋 workspace.defaultRoleId: ${defaultRoleId || 'NULL'}`);
+
+    console.log(`⚠️ Returning fallback role: ${defaultRoleId || 'NULL'}`);
+
+    // Let's also check if there should be an explicit role in the database
+    const directCheck = await this.roleTargetsRepository.findOne({
+      where: { apiKeyId, workspaceId },
+      relations: ['role'],
+    });
+
+    console.log(
+      `🔎 Direct DB check result:`,
+      directCheck
+        ? {
+            roleId: directCheck.roleId,
+            roleName: directCheck.role?.label,
+          }
+        : 'NULL',
+    );
+
+    return defaultRoleId || null;
   }
 
   async getRoleForApiKey(

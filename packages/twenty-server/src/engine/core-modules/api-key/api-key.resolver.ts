@@ -1,11 +1,11 @@
 import { UseGuards } from '@nestjs/common';
 import {
-  Args,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
+    Args,
+    Mutation,
+    Parent,
+    Query,
+    ResolveField,
+    Resolver,
 } from '@nestjs/graphql';
 
 import { CreateApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/create-api-key.dto';
@@ -32,7 +32,7 @@ export class ApiKeyResolver {
 
   @Query(() => [ApiKey])
   async apiKeys(@AuthWorkspace() workspace: Workspace): Promise<ApiKey[]> {
-    return this.apiKeyService.findActiveByWorkspaceId(workspace.id);
+    return this.apiKeyService.findByWorkspaceId(workspace.id);
   }
 
   @Query(() => ApiKey, { nullable: true })
@@ -91,6 +91,44 @@ export class ApiKeyResolver {
     @Args('input') input: RevokeApiKeyDTO,
   ): Promise<ApiKey | null> {
     return this.apiKeyService.revoke(input.id, workspace.id);
+  }
+
+  @Mutation(() => Boolean)
+  async assignRoleToApiKey(
+    @AuthWorkspace() workspace: Workspace,
+    @Args('apiKeyId') apiKeyId: string,
+    @Args('roleId') roleId: string,
+  ): Promise<boolean> {
+    try {
+      await this.apiKeyRoleService.assignRoleToApiKey({
+        apiKeyId,
+        roleId,
+        workspaceId: workspace.id,
+      });
+
+      return true;
+    } catch (error) {
+      apiKeyGraphqlApiExceptionHandler(error);
+      throw error;
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async removeRoleFromApiKey(
+    @AuthWorkspace() workspace: Workspace,
+    @Args('apiKeyId') apiKeyId: string,
+  ): Promise<boolean> {
+    try {
+      await this.apiKeyRoleService.removeRoleFromApiKey({
+        apiKeyId,
+        workspaceId: workspace.id,
+      });
+
+      return true;
+    } catch (error) {
+      apiKeyGraphqlApiExceptionHandler(error);
+      throw error;
+    }
   }
 
   @ResolveField(() => RoleDTO, { nullable: true })

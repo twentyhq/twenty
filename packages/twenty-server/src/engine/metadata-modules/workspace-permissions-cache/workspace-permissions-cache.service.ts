@@ -301,6 +301,7 @@ export class WorkspacePermissionsCacheService {
     const roleTargetsMap = await this.roleTargetsRepository.find({
       where: {
         workspaceId,
+        userWorkspaceId: Not(IsNull()),
       },
     });
 

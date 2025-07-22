@@ -4,11 +4,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
+import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import {
   SEED_APPLE_WORKSPACE_ID,
@@ -22,17 +24,54 @@ export class DevSeederPermissionsService {
   constructor(
     private readonly roleService: RoleService,
     private readonly userRoleService: UserRoleService,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
     private readonly objectPermissionService: ObjectPermissionService,
     @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly typeORMService: TypeORMService,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
   public async initPermissions(workspaceId: string) {
     const adminRole = await this.roleService.createAdminRole({
       workspaceId,
     });
+
+    // Assign admin role to test API key (for integration tests)
+    const testApiKeyId = '20202020-f401-4d8a-a731-64d007c27bad';
+    const dataSource = this.typeORMService.getMainDataSource();
+
+    if (dataSource) {
+      try {
+        await dataSource
+          .createQueryBuilder()
+          .insert()
+          .into('core.roleTargets', ['roleId', 'apiKeyId', 'workspaceId'])
+          .orIgnore()
+          .values([
+            {
+              roleId: adminRole.id,
+              apiKeyId: testApiKeyId,
+              workspaceId: workspaceId,
+            },
+          ])
+          .execute();
+
+        // CRITICAL: Recompute caches after direct SQL insertion
+        await this.workspacePermissionsCacheService.recomputeApiKeyRoleMapCache(
+          {
+            workspaceId,
+          },
+        );
+        await this.workspacePermissionsCacheService.recomputeUserWorkspaceRoleMapCache(
+          {
+            workspaceId,
+          },
+        );
+      } catch (error) {
+        // Log but don't fail - API key might not exist in some environments
+        console.warn(`Could not assign role to test API key: ${error.message}`);
+      }
+    }
 
     let adminUserWorkspaceId: string | undefined;
     let memberUserWorkspaceIds: string[] = [];
@@ -85,10 +124,13 @@ export class DevSeederPermissionsService {
       workspaceId,
     });
 
-    await this.workspaceRepository.update(workspaceId, {
-      defaultRoleId: memberRole.id,
-      activationStatus: WorkspaceActivationStatus.ACTIVE,
-    });
+    await this.typeORMService
+      .getMainDataSource()
+      ?.getRepository(Workspace)
+      .update(workspaceId, {
+        defaultRoleId: memberRole.id,
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      });
 
     if (memberUserWorkspaceIds) {
       for (const memberUserWorkspaceId of memberUserWorkspaceIds) {

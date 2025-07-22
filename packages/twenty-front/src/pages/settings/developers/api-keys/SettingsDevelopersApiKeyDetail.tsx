@@ -23,9 +23,11 @@ import { H2Title, IconRepeat, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
+  useAssignRoleToApiKeyMutation,
   useCreateApiKeyMutation,
   useGenerateApiKeyTokenMutation,
   useGetApiKeyQuery,
+  useRemoveRoleFromApiKeyMutation,
   useRevokeApiKeyMutation,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -50,7 +52,7 @@ const REGENERATE_API_KEY_MODAL_ID = 'regenerate-api-key-modal';
 
 export const SettingsDevelopersApiKeyDetail = () => {
   const { t } = useLingui();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const { openModal } = useModal();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -70,6 +72,11 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const [createApiKey] = useCreateApiKeyMutation();
   const [revokeApiKey] = useRevokeApiKeyMutation();
+
+  // Add the new mutations
+  const [assignRoleToApiKey] = useAssignRoleToApiKeyMutation();
+  const [removeRoleFromApiKey] = useRemoveRoleFromApiKeyMutation();
+
   const { data: apiKeyData } = useGetApiKeyQuery({
     variables: {
       input: {
@@ -87,6 +94,42 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const apiKey = apiKeyData?.apiKey;
   const [apiKeyName, setApiKeyName] = useState('');
   const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
+
+  // Handler for role changes
+  const handleRoleChange = async (roleId: string | null) => {
+    if (!apiKey?.id) return;
+
+    setIsLoading(true);
+    try {
+      if (isDefined(roleId)) {
+        await assignRoleToApiKey({
+          variables: {
+            apiKeyId: apiKey.id,
+            roleId,
+          },
+        });
+        enqueueSuccessSnackBar({
+          message: t`Role assigned successfully`,
+        });
+      } else {
+        await removeRoleFromApiKey({
+          variables: {
+            apiKeyId: apiKey.id,
+          },
+        });
+        enqueueSuccessSnackBar({
+          message: t`Role removed successfully`,
+        });
+      }
+      setSelectedRoleId(roleId);
+    } catch (error) {
+      enqueueErrorSnackBar({
+        message: t`Error updating role`,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const deleteIntegration = async (redirect = true) => {
     setIsLoading(true);
@@ -231,7 +274,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               />
               <SettingsDevelopersRoleSelector
                 value={selectedRoleId}
-                onChange={setSelectedRoleId}
+                onChange={handleRoleChange}
                 allowEmpty
                 disabled={isLoading}
               />

@@ -24,6 +24,7 @@ import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-r
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
@@ -72,6 +73,8 @@ export abstract class GraphqlQueryBaseResolverService<
   protected readonly permissionsService: PermissionsService;
   @Inject()
   protected readonly userRoleService: UserRoleService;
+  @Inject()
+  protected readonly apiKeyRoleService: ApiKeyRoleService;
 
   public async execute(
     args: Input,
@@ -113,13 +116,29 @@ export abstract class GraphqlQueryBaseResolverService<
         ResolverArgsType[capitalize(operationName)],
       )) as Input;
 
-      const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
-        userWorkspaceId: authContext.userWorkspaceId,
-        workspaceId: workspace.id,
-      });
+      let roleId: string | undefined;
+      let shouldBypassPermissionChecks = false;
 
       const executedByApiKey = isDefined(authContext.apiKey);
-      const shouldBypassPermissionChecks = executedByApiKey;
+
+      if (executedByApiKey && authContext.apiKey) {
+        // API key request - get the API key's role
+        const apiKeyRoleId = await this.apiKeyRoleService.getRoleIdForApiKey(
+          authContext.apiKey.id,
+          workspace.id,
+        );
+
+        roleId = apiKeyRoleId ?? undefined;
+
+        // Only bypass permissions if no role can be determined (backwards compatibility)
+        shouldBypassPermissionChecks = !isDefined(roleId);
+      } else if (authContext.userWorkspaceId) {
+        // Regular user request - get their role
+        roleId = await this.userRoleService.getRoleIdForUserWorkspace({
+          userWorkspaceId: authContext.userWorkspaceId,
+          workspaceId: workspace.id,
+        });
+      }
 
       const repository = workspaceDataSource.getRepository(
         objectMetadataItemWithFieldMaps.nameSingular,
