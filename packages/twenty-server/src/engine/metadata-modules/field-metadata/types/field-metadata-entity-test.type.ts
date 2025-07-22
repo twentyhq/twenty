@@ -12,9 +12,13 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import {
+  FieldMetadataDefaultValueForAnyType,
+  FieldMetadataDefaultValueForType,
+} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
-export type DefinedRelationRecord = {
+type DefinedRelationRecord = {
   relationTargetFieldMetadataId: string;
   relationTargetFieldMetadata: TypeOrmRelation<FieldMetadataEntity>;
   relationTargetObjectMetadataId: string;
@@ -167,6 +171,166 @@ type SettingsAssertions = [
     HasAllProperties<
       AbstractFieldMetadata,
       { settings: AllFieldMetadataSettings | null }
+    >
+  >,
+];
+
+// eslint-disable-next-line unused-imports/no-unused-vars, @typescript-eslint/no-unused-vars
+type DefaultValueAssertions = [
+  Expect<
+    HasAllProperties<
+      UUIDFieldMetadata,
+      { defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.UUID> }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      TextFieldMetadata,
+      { defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.TEXT> }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      NumberFieldMetadata,
+      {
+        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.NUMBER>;
+      }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      BooleanFieldMetadata,
+      {
+        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.BOOLEAN>;
+      }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      DateFieldMetadata,
+      { defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.DATE> }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      DateTimeFieldMetadata,
+      {
+        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.DATE_TIME>;
+      }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      CurrencyFieldMetadata,
+      {
+        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.CURRENCY>;
+      }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      FullNameFieldMetadata,
+      {
+        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.FULL_NAME>;
+      }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      RatingFieldMetadata,
+      {
+        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.RATING>;
+      }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      SelectFieldMetadata,
+      {
+        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.SELECT>;
+      }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      MultiSelectFieldMetadata,
+      {
+        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.MULTI_SELECT>;
+      }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      PositionFieldMetadata,
+      {
+        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.POSITION>;
+      }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      RawJsonFieldMetadata,
+      {
+        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.RAW_JSON>;
+      }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      RichTextFieldMetadata,
+      {
+        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.RICH_TEXT>;
+      }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      ActorFieldMetadata,
+      {
+        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.ACTOR>;
+      }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      ArrayFieldMetadata,
+      {
+        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.ARRAY>;
+      }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      PhonesFieldMetadata,
+      {
+        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.PHONES>;
+      }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      EmailsFieldMetadata,
+      {
+        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.EMAILS>;
+      }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      LinksFieldMetadata,
+      {
+        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.LINKS>;
+      }
+    >
+  >,
+
+  Expect<HasAllProperties<RelationFieldMetadata, { defaultValue: never }>>,
+  Expect<HasAllProperties<MorphRelationFieldMetadata, { defaultValue: never }>>,
+
+  Expect<
+    HasAllProperties<
+      AbstractFieldMetadata,
+      { defaultValue: FieldMetadataDefaultValueForAnyType | null }
     >
   >,
 ];
