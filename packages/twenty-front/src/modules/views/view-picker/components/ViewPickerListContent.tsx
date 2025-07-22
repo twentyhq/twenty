@@ -60,6 +60,7 @@ export const ViewPickerListContent = () => {
 
   const handleAddViewButtonClick = () => {
     if (isDefined(currentView?.id)) {
+      console.log(currentView.id)
       setViewPickerReferenceViewId(currentView.id);
       setViewPickerMode('create-empty');
     }
