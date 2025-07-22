@@ -136,8 +136,12 @@ export class OpenApiService {
 
     schema.components = {
       ...schema.components,
-      ...computeSchemaComponents(filteredObjectMetadataItems),
-      ...computeParameterComponents(),
+      schemas: computeSchemaComponents(filteredObjectMetadataItems),
+      parameters: computeParameterComponents(),
+      responses: {
+        '400': get400ErrorResponses(),
+        '401': get401ErrorResponses(),
+      },
     };
 
     schema.tags = computeSchemaTags(filteredObjectMetadataItems);
