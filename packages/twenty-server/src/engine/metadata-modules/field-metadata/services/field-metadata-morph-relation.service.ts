@@ -64,9 +64,9 @@ export class FieldMetadataMorphRelationService {
 
     const fieldsCreated: FieldMetadataEntity[] = [];
 
-    for (const relationCreationPayload of morphRelationsCreationPayload) {
+    for (const relation of morphRelationsCreationPayload) {
       const targetObjectMetadata =
-        objectMetadataMaps.byId[relationCreationPayload.targetObjectMetadataId];
+        objectMetadataMaps.byId[relation.targetObjectMetadataId];
 
       if (!isDefined(targetObjectMetadata)) {
         throw new FieldMetadataException(
@@ -75,23 +75,11 @@ export class FieldMetadataMorphRelationService {
         );
       }
 
-      await this.fieldMetadataRelationService.validateFieldMetadataRelationSpecifics(
-        {
-          fieldMetadataInput: {
-            ...fieldMetadataForCreate,
-            relationCreationPayload: relationCreationPayload,
-          },
-          fieldMetadataType: fieldMetadataForCreate.type,
-          objectMetadataMaps,
-          objectMetadata,
-        },
-      );
-
-      const relationFieldMetadataEntityProperties =
+      const relationFieldMetadataForCreate =
         this.fieldMetadataRelationService.computeCustomRelationFieldMetadataForCreation(
           {
             fieldMetadataInput: fieldMetadataForCreate,
-            relationCreationPayload: relationCreationPayload,
+            relationCreationPayload: relation,
             joinColumnName: computeMorphRelationFieldJoinColumnName({
               name: fieldMetadataForCreate.name,
               targetObjectMetadataNameSingular:
@@ -100,27 +88,30 @@ export class FieldMetadataMorphRelationService {
           },
         );
 
+      await this.fieldMetadataRelationService.validateFieldMetadataRelationSpecifics(
+        {
+          fieldMetadataInput: relationFieldMetadataForCreate,
+          fieldMetadataType: relationFieldMetadataForCreate.type,
+          objectMetadataMaps,
+          objectMetadata,
+        },
+      );
+
       const createdFieldMetadataItem = await fieldMetadataRepository.save(
-        omit(
-          {
-            ...fieldMetadataForCreate,
-            ...relationFieldMetadataEntityProperties,
-          },
-          'id',
-        ),
+        omit(relationFieldMetadataForCreate, 'id'),
       );
 
       const targetFieldMetadataName = computeMetadataNameFromLabel(
-        relationCreationPayload.targetFieldLabel,
+        relation.targetFieldLabel,
       );
 
       const targetFieldMetadataToCreate = prepareCustomFieldMetadataForCreation(
         {
-          objectMetadataId: relationCreationPayload.targetObjectMetadataId,
+          objectMetadataId: relation.targetObjectMetadataId,
           type: FieldMetadataType.RELATION,
           name: targetFieldMetadataName,
-          label: relationCreationPayload.targetFieldLabel,
-          icon: relationCreationPayload.targetFieldIcon,
+          label: relation.targetFieldLabel,
+          icon: relation.targetFieldIcon,
           workspaceId: fieldMetadataForCreate.workspaceId,
           settings: fieldMetadataForCreate.settings,
         },
@@ -135,7 +126,7 @@ export class FieldMetadataMorphRelationService {
               targetFieldLabel: fieldMetadataForCreate.label,
               targetFieldIcon: fieldMetadataForCreate.icon ?? 'Icon123',
               type:
-                relationCreationPayload.type === RelationType.ONE_TO_MANY
+                relation.type === RelationType.ONE_TO_MANY
                   ? RelationType.MANY_TO_ONE
                   : RelationType.ONE_TO_MANY,
             },

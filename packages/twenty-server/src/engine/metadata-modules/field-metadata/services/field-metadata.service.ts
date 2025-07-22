@@ -31,6 +31,7 @@ import {
   computeColumnName,
   computeCompositeColumnName,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
 import { createMigrationActions } from 'src/engine/metadata-modules/field-metadata/utils/create-migration-actions.util';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -669,29 +670,29 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     if (fieldMetadataInput.type === FieldMetadataType.RELATION) {
+      const relationFieldMetadataForCreate =
+        this.fieldMetadataRelationService.computeCustomRelationFieldMetadataForCreation(
+          {
+            fieldMetadataInput: fieldMetadataForCreate,
+            relationCreationPayload: fieldMetadataInput.relationCreationPayload,
+            joinColumnName: computeRelationFieldJoinColumnName({
+              name: fieldMetadataForCreate.name,
+            }),
+          },
+        );
+
       await this.fieldMetadataRelationService.validateFieldMetadataRelationSpecifics(
         {
-          fieldMetadataInput: fieldMetadataInput,
+          fieldMetadataInput: relationFieldMetadataForCreate,
           fieldMetadataType: fieldMetadataForCreate.type,
           objectMetadataMaps,
           objectMetadata,
         },
       );
 
-      // TODO refactor duplicated with validateFieldMetadataRelationSpecifics validation
-      if (!isDefined(fieldMetadataInput.relationCreationPayload)) {
-        throw new FieldMetadataException(
-          `Relation creation payload is invalid: ${fieldMetadataInput.relationCreationPayload}`,
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        );
-      }
-
       return await this.fieldMetadataRelationService.createRelationFieldMetadataItems(
         {
-          fieldMetadataInput: {
-            ...fieldMetadataInput,
-            relationCreationPayload: fieldMetadataInput.relationCreationPayload,
-          },
+          fieldMetadataInput: relationFieldMetadataForCreate,
           objectMetadata,
           fieldMetadataRepository,
         },
