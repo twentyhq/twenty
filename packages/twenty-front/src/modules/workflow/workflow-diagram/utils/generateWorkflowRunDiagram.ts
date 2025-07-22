@@ -41,7 +41,7 @@ export const generateWorkflowRunDiagram = ({
   const workflowDiagram = generateWorkflowDiagram({
     trigger,
     steps,
-    defaultEdgeType: 'empty-filter-readonly',
+    defaultEdgeType: 'v1-readonly',
   });
 
   const workflowRunDiagramNodes: WorkflowRunDiagramNode[] =
@@ -101,11 +101,21 @@ export const generateWorkflowRunDiagram = ({
     };
   });
 
+  if (!isWorkflowFilteringEnabled) {
+    return {
+      diagram: {
+        nodes: workflowRunDiagramNodes,
+        edges: workflowRunDiagramEdges,
+      },
+      stepToOpenByDefault,
+    };
+  }
+
   return {
     diagram: transformFilterNodesAsEdges({
       nodes: workflowRunDiagramNodes,
       edges: workflowRunDiagramEdges,
-      context: 'run',
+      defaultFilterEdgeType: 'filter-run',
     }),
     stepToOpenByDefault,
   };

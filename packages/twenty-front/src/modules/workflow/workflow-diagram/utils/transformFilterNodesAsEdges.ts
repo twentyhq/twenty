@@ -11,11 +11,11 @@ export const transformFilterNodesAsEdges = <
 >({
   nodes,
   edges,
-  context,
+  defaultFilterEdgeType,
 }: {
   nodes: T[];
   edges: U[];
-  context: 'editable' | 'readonly' | 'run';
+  defaultFilterEdgeType: WorkflowDiagramEdgeType;
 }): { nodes: T[]; edges: U[] } => {
   const filterNodes = nodes.filter(
     (node) =>
@@ -48,18 +48,9 @@ export const transformFilterNodesAsEdges = <
         throw new Error('Expected the filter node to be of action type');
       }
 
-      let newEdgeType: WorkflowDiagramEdgeType;
-      if (context === 'editable') {
-        newEdgeType = 'filter-editable';
-      } else if (context === 'readonly') {
-        newEdgeType = 'filter-readonly';
-      } else {
-        newEdgeType = 'filter-run';
-      }
-
       const newEdge: U = {
         ...incomingEdge,
-        type: newEdgeType,
+        type: defaultFilterEdgeType,
         id: `${incomingEdge.source}-${outgoingEdge.target}-filter-${filterNode.id}`,
         target: outgoingEdge.target,
         data: {

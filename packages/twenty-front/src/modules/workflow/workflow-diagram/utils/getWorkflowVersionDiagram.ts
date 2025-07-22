@@ -51,6 +51,6 @@ export const getWorkflowVersionDiagram = ({
   return transformFilterNodesAsEdges({
     nodes: diagram.nodes,
     edges: diagram.edges,
-    context: isEditable ? 'editable' : 'readonly',
+    defaultFilterEdgeType: isEditable ? 'filter-editable' : 'filter-readonly',
   });
 };
