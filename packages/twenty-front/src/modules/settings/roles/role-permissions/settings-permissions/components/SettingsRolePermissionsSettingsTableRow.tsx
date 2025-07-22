@@ -59,8 +59,7 @@ export const SettingsRolePermissionsSettingsTableRow = ({
 
   const isSettingPermissionEnabled =
     settingsDraftRole.permissionFlags?.some(
-      (settingPermission) =>
-        settingPermission.flag === permission.key,
+      (settingPermission) => settingPermission.flag === permission.key,
     ) ?? false;
 
   const isChecked = isSettingPermissionEnabled || canUpdateAllSettings;

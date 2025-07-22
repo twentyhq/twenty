@@ -126,8 +126,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.Billing,
           Icon: IconCurrencyDollar,
           isHidden:
-            !isBillingEnabled ||
-            !permissionMap[PermissionFlagType.WORKSPACE],
+            !isBillingEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
           label: t`Data model`,
