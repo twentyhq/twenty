@@ -18,11 +18,10 @@ export class RestApiDeleteOneHandler extends RestApiBaseHandler {
     const { objectMetadata, repository, restrictedFields } =
       await this.getRepositoryAndMetadataOrFail(request);
 
-    const selectOptions =
-      RestApiBaseHandler.getSelectOptionsFromRestrictedFields({
-        restrictedFields,
-        objectMetadata,
-      });
+    const selectOptions = this.getSelectOptionsFromRestrictedFields({
+      restrictedFields,
+      objectMetadata,
+    });
 
     const recordToDelete = await repository.findOneOrFail({
       where: { id: recordId },
