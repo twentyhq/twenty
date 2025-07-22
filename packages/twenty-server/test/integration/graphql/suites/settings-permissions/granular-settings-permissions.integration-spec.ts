@@ -357,7 +357,7 @@ describe('Granular settings permissions', () => {
               id
               label
               canUpdateAllSettings
-              settingPermissions {
+              permissionFlags {
                 flag
               }
             }
@@ -370,17 +370,19 @@ describe('Granular settings permissions', () => {
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
         .send(getRoleQuery);
 
+      console.log({ response });
+
       const customRole = response.body.data.getRoles.find(
         (role: any) => role.id === customRoleId,
       );
 
       expect(customRole).toBeDefined();
       expect(customRole.canUpdateAllSettings).toBe(false);
-      expect(customRole.settingPermissions).toHaveLength(3);
-      expect(customRole.settingPermissions.map((p: any) => p.flag)).toContain(
+      expect(customRole.permissionFlags).toHaveLength(3);
+      expect(customRole.permissionFlags.map((p: any) => p.flag)).toContain(
         PermissionFlagType.DATA_MODEL,
       );
-      expect(customRole.settingPermissions.map((p: any) => p.flag)).toContain(
+      expect(customRole.permissionFlags.map((p: any) => p.flag)).toContain(
         PermissionFlagType.WORKSPACE,
       );
     });
@@ -421,7 +423,7 @@ describe('Granular settings permissions', () => {
           query GetRole {
             getRoles {
               id
-              settingPermissions {
+              permissionFlags {
                 flag
               }
             }
@@ -438,8 +440,8 @@ describe('Granular settings permissions', () => {
         (role: any) => role.id === customRoleId,
       );
 
-      expect(updatedRole.settingPermissions).toHaveLength(3);
-      expect(updatedRole.settingPermissions.map((p: any) => p.flag)).toContain(
+      expect(updatedRole.permissionFlags).toHaveLength(3);
+      expect(updatedRole.permissionFlags.map((p: any) => p.flag)).toContain(
         PermissionFlagType.SECURITY,
       );
     });
@@ -476,7 +478,7 @@ describe('Granular settings permissions', () => {
           query GetRole {
             getRoles {
               id
-              settingPermissions {
+              permissionFlags {
                 flag
               }
             }
@@ -493,10 +495,10 @@ describe('Granular settings permissions', () => {
         (role: any) => role.id === customRoleId,
       );
 
-      expect(updatedRole.settingPermissions).toHaveLength(2);
-      expect(
-        updatedRole.settingPermissions.map((p: any) => p.flag),
-      ).not.toContain(PermissionFlagType.SECURITY);
+      expect(updatedRole.permissionFlags).toHaveLength(2);
+      expect(updatedRole.permissionFlags.map((p: any) => p.flag)).not.toContain(
+        PermissionFlagType.SECURITY,
+      );
     });
   });
 });
