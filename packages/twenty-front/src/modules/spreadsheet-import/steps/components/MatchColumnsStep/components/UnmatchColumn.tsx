@@ -11,9 +11,9 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
-const getExpandableContainerTitle = (
-  fields: SpreadsheetImportFields,
-  column: SpreadsheetColumn,
+const getExpandableContainerTitle = <T extends string>(
+  fields: SpreadsheetImportFields<T>,
+  column: SpreadsheetColumn<T>,
 ) => {
   const fieldLabel = fields.find(
     (field) => 'value' in column && field.key === column.value,
@@ -25,10 +25,10 @@ const getExpandableContainerTitle = (
   } Unmatched)`;
 };
 
-type UnmatchColumnProps = {
-  columns: SpreadsheetColumns;
+type UnmatchColumnProps<T extends string> = {
+  columns: SpreadsheetColumns<T>;
   columnIndex: number;
-  onSubChange: (val: string, index: number, option: string) => void;
+  onSubChange: (val: T, index: number, option: string) => void;
 };
 
 const StyledContainer = styled.div`
@@ -44,12 +44,12 @@ const StyledContentWrapper = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
-export const UnmatchColumn = ({
+export const UnmatchColumn = <T extends string>({
   columns,
   columnIndex,
   onSubChange,
-}: UnmatchColumnProps) => {
-  const { spreadsheetImportFields: fields } = useSpreadsheetImportInternal();
+}: UnmatchColumnProps<T>) => {
+  const { fields } = useSpreadsheetImportInternal<T>();
   const [isExpanded, setIsExpanded] = useState(false);
   const column = columns[columnIndex];
   const isSelect = 'matchedOptions' in column;

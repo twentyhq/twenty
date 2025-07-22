@@ -7,15 +7,15 @@ import {
 } from 'graphql';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { RelationTypeV2Factory } from 'src/engine/api/graphql/workspace-schema-builder/factories/relation-type-v2.factory';
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
 import { getResolverArgs } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-resolver-args.util';
 import { objectContainsRelationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/object-contains-relation-field';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 import { ArgsFactory } from './args.factory';
 
@@ -44,7 +44,7 @@ export class ExtendObjectTypeDefinitionV2Factory {
   ) {}
 
   public create(
-    objectMetadata: ObjectMetadataInterface,
+    objectMetadata: ObjectMetadataEntity,
     options: WorkspaceBuildSchemaOptions,
   ): ObjectTypeDefinition {
     const kind = ObjectTypeDefinitionKind.Plain;
@@ -101,23 +101,21 @@ export class ExtendObjectTypeDefinitionV2Factory {
   }
 
   private generateFields(
-    objectMetadata: ObjectMetadataInterface,
+    objectMetadata: ObjectMetadataEntity,
     options: WorkspaceBuildSchemaOptions,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): GraphQLFieldConfigMap<any, any> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const fields: GraphQLFieldConfigMap<any, any> = {};
 
     for (const fieldMetadata of objectMetadata.fields) {
       // Ignore non-relation fields as they are already defined
       const isRelation =
-        isFieldMetadataInterfaceOfType(
+        isFieldMetadataEntityOfType(
           fieldMetadata,
           FieldMetadataType.RELATION,
         ) ||
-        isFieldMetadataInterfaceOfType(
+        isFieldMetadataEntityOfType(
           fieldMetadata,
           FieldMetadataType.MORPH_RELATION,
         );

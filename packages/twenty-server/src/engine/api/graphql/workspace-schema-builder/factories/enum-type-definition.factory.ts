@@ -3,15 +3,15 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLEnumType } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
 import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { transformEnumValue } from 'src/engine/utils/transform-enum-value';
 import { pascalCase } from 'src/utils/pascal-case';
 
@@ -25,7 +25,7 @@ export class EnumTypeDefinitionFactory {
   private readonly logger = new Logger(EnumTypeDefinitionFactory.name);
 
   public create(
-    objectMetadata: ObjectMetadataInterface,
+    objectMetadata: ObjectMetadataEntity,
     options: WorkspaceBuildSchemaOptions,
   ): EnumTypeDefinition[] {
     const enumTypeDefinitions: EnumTypeDefinition[] = [];
@@ -50,7 +50,7 @@ export class EnumTypeDefinitionFactory {
 
   private generateEnum(
     objectName: string,
-    fieldMetadata: FieldMetadataInterface,
+    fieldMetadata: FieldMetadataEntity,
     options: WorkspaceBuildSchemaOptions,
   ): GraphQLEnumType {
     // FixMe: It's a hack until Typescript get fixed on union types for reduce function

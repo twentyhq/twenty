@@ -2,9 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
 import { ColumnActionAbstractFactory } from 'src/engine/metadata-modules/workspace-migration/factories/column-action-abstract.factory';
@@ -34,7 +33,7 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
   protected readonly logger = new Logger(CompositeColumnActionFactory.name);
 
   protected handleCreateAction(
-    fieldMetadata: FieldMetadataInterface<CompositeFieldMetadataType>,
+    fieldMetadata: FieldMetadataEntity<CompositeFieldMetadataType>,
   ): WorkspaceMigrationColumnCreate[] {
     const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
 
@@ -83,8 +82,8 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
   }
 
   protected handleAlterAction(
-    currentFieldMetadata: FieldMetadataInterface<CompositeFieldMetadataType>,
-    alteredFieldMetadata: FieldMetadataInterface<CompositeFieldMetadataType>,
+    currentFieldMetadata: FieldMetadataEntity<CompositeFieldMetadataType>,
+    alteredFieldMetadata: FieldMetadataEntity<CompositeFieldMetadataType>,
   ): WorkspaceMigrationColumnAlter[] {
     const currentCompositeType = compositeTypeDefinitions.get(
       currentFieldMetadata.type,
