@@ -36,14 +36,6 @@ export const MultipleAvatarChip = ({
   variant = ChipVariant.Static,
   forceEmptyText = false,
 }: MultipleAvatarChipProps) => {
-  const leftComponent = (
-    <StyledIconsContainer>
-      {Icons.map((Icon, index) => (
-        <Fragment key={index}>{Icon}</Fragment>
-      ))}
-    </StyledIconsContainer>
-  );
-
   return (
     <StyledChipContainer onClick={onClick} data-testid={testId}>
       <Chip
@@ -51,7 +43,13 @@ export const MultipleAvatarChip = ({
         forceEmptyText={forceEmptyText}
         isLabelHidden={!isNonEmptyString(text) && forceEmptyText}
         variant={variant}
-        leftComponent={leftComponent}
+        leftComponent={
+          <StyledIconsContainer>
+            {Icons.map((Icon, index) => (
+              <Fragment key={index}>{Icon}</Fragment>
+            ))}
+          </StyledIconsContainer>
+        }
         rightComponent={rightComponent}
         clickable={isDefined(onClick)}
         maxWidth={maxWidth}

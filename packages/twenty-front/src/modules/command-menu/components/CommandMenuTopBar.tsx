@@ -1,3 +1,4 @@
+import { CommandMenuContextChip } from '@/command-menu/components/CommandMenuContextChip';
 import { CommandMenuContextChipGroups } from '@/command-menu/components/CommandMenuContextChipGroups';
 import { CommandMenuContextChipGroupsWithRecordSelection } from '@/command-menu/components/CommandMenuContextChipGroupsWithRecordSelection';
 import { CommandMenuTopBarInputFocusEffect } from '@/command-menu/components/CommandMenuTopBarInputFocusEffect';
@@ -21,7 +22,6 @@ import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconX } from 'twenty-ui/display';
-import { MultipleAvatarChip } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/input';
 import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
 
@@ -122,7 +122,7 @@ export const CommandMenuTopBar = () => {
                 duration: backButtonAnimationDuration,
               }}
             >
-              <MultipleAvatarChip
+              <CommandMenuContextChip
                 Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
                 onClick={goBackFromCommandMenu}
                 testId="command-menu-go-back-button"

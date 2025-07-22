@@ -6,14 +6,14 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui/navigation';
 import {
-  MultipleAvatarChip,
-  MultipleAvatarChipProps,
-} from 'twenty-ui/components';
+  CommandMenuContextChip,
+  CommandMenuContextChipProps,
+} from './CommandMenuContextChip';
 
 export const CommandMenuContextChipGroups = ({
   contextChips,
 }: {
-  contextChips: MultipleAvatarChipProps[];
+  contextChips: CommandMenuContextChipProps[];
 }) => {
   const { closeDropdown } = useCloseDropdown();
 
@@ -25,9 +25,9 @@ export const CommandMenuContextChipGroups = ({
     return (
       <>
         {contextChips.map((chip, index) => (
-          <MultipleAvatarChip
+          <CommandMenuContextChip
             key={index}
-            maxWidth={180}
+            maxWidth={'180px'}
             Icons={chip.Icons}
             text={chip.text}
             onClick={chip.onClick}
@@ -46,7 +46,7 @@ export const CommandMenuContextChipGroups = ({
       {firstChips.length > 0 && (
         <Dropdown
           clickableComponent={
-            <MultipleAvatarChip
+            <CommandMenuContextChip
               Icons={firstThreeChips.map((chip) => chip.Icons?.[0])}
               onClick={() => {}}
               text={`${firstChips.length}`}
@@ -77,11 +77,11 @@ export const CommandMenuContextChipGroups = ({
       )}
 
       {isDefined(lastChip) && (
-        <MultipleAvatarChip
+        <CommandMenuContextChip
           Icons={lastChip.Icons}
           text={lastChip.text}
           onClick={lastChip.onClick}
-          maxWidth={180}
+          maxWidth={'180px'}
         />
       )}
     </>
