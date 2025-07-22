@@ -191,6 +191,7 @@ export const WorkflowRunVisualizerEffect = ({
     [
       flowState,
       getIcon,
+      isWorkflowFilteringEnabled,
       openWorkflowRunViewStepInCommandMenu,
       workflowDiagramState,
       workflowDiagramStatusState,

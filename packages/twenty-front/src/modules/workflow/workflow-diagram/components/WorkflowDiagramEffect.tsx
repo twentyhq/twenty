@@ -87,7 +87,11 @@ export const WorkflowDiagramEffect = ({
         set(workflowDiagramState, mergedWorkflowDiagram);
       };
     },
-    [workflowLastCreatedStepIdState, workflowDiagramState],
+    [
+      workflowDiagramState,
+      isWorkflowFilteringEnabled,
+      workflowLastCreatedStepIdState,
+    ],
   );
 
   const currentVersion = workflowWithCurrentVersion?.currentVersion;
