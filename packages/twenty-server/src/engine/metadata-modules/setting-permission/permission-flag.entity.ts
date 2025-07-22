@@ -14,7 +14,7 @@ import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/cons
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
 @Entity('permissionFlag')
-@Unique('IDX_SETTING_PERMISSION_SETTING_ROLE_ID_UNIQUE', ['flag', 'roleId'])
+@Unique('IDX_PERMISSION_FLAG_FLAG_ROLE_ID_UNIQUE', ['flag', 'roleId'])
 export class PermissionFlagEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
