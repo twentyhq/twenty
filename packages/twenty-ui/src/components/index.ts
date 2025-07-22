@@ -7,10 +7,10 @@
  *                              |___/
  */
 
+export type { AvatarChipProps } from './avatar-chip/AvatarChip';
 export { AvatarChip } from './avatar-chip/AvatarChip';
 export type { MultipleAvatarChipProps } from './avatar-chip/MultipleAvatarChip';
 export { MultipleAvatarChip } from './avatar-chip/MultipleAvatarChip';
-export type { AvatarChipCommonProps } from './avatar-chip/types/AvatarChipCommonPropsType';
 export type { ChipProps } from './chip/Chip';
 export { ChipSize, ChipAccent, ChipVariant, Chip } from './chip/Chip';
 export { LINK_CHIP_CLICK_OUTSIDE_ID } from './chip/constants/LinkChipClickOutsideId';
