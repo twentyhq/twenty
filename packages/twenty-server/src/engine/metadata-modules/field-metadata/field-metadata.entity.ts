@@ -53,7 +53,8 @@ type IsRelationType<Ttype, T extends FieldMetadataType = FieldMetadataType> =
 // TODO add some documentation about this entity
 export class FieldMetadataEntity<
   T extends FieldMetadataType = FieldMetadataType,
-> {
+> implements Required<FieldMetadataEntity>
+{
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
