@@ -19,8 +19,8 @@ import { UpdatePasswordViaResetTokenInput } from 'src/engine/core-modules/auth/d
 import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
 import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.input';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
 // import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
+import { ApiKeyService } from 'src/engine/core-modules/api-key/api-key.service';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
@@ -51,6 +51,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { TwoFactorAuthenticationVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-verification.input';
+import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -67,7 +68,6 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { LoginToken } from './dto/login-token.entity';

@@ -32,7 +32,6 @@ export class ApiKeyService {
     const apiKey = this.apiKeyRepository.create(apiKeyFields);
     const savedApiKey = await this.apiKeyRepository.save(apiKey);
 
-    // Always assign role (now required)
     await this.assignRoleToApiKey(
       savedApiKey.id,
       roleId,

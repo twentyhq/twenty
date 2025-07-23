@@ -3,12 +3,14 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { IsNull } from 'typeorm';
 
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import {
   ApiKeyException,
   ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/api-key.exception';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 
 import { ApiKey } from './api-key.entity';
 import { ApiKeyService } from './api-key.service';
@@ -16,7 +18,9 @@ import { ApiKeyService } from './api-key.service';
 describe('ApiKeyService', () => {
   let service: ApiKeyService;
   let mockApiKeyRepository: any;
+  let mockRoleTargetsRepository: any;
   let mockJwtWrapperService: any;
+  let mockApiKeyRoleService: any;
 
   const mockWorkspaceId = 'workspace-123';
   const mockApiKeyId = 'api-key-456';
@@ -53,9 +57,19 @@ describe('ApiKeyService', () => {
       update: jest.fn(),
     };
 
+    mockRoleTargetsRepository = {
+      delete: jest.fn(),
+      save: jest.fn(),
+      findOne: jest.fn(),
+    };
+
     mockJwtWrapperService = {
       generateAppSecret: jest.fn(),
       sign: jest.fn(),
+    };
+
+    mockApiKeyRoleService = {
+      recomputeCache: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -68,6 +82,14 @@ describe('ApiKeyService', () => {
         {
           provide: JwtWrapperService,
           useValue: mockJwtWrapperService,
+        },
+        {
+          provide: getRepositoryToken(RoleTargetsEntity, 'core'),
+          useValue: mockRoleTargetsRepository,
+        },
+        {
+          provide: ApiKeyRoleService,
+          useValue: mockApiKeyRoleService,
         },
       ],
     }).compile();
@@ -92,13 +114,35 @@ describe('ApiKeyService', () => {
         roleId: 'mock-role-id',
       };
 
+      const expectedApiKeyFields = {
+        name: 'New API Key',
+        expiresAt: new Date('2025-12-31'),
+        workspaceId: mockWorkspaceId,
+      };
+
       mockApiKeyRepository.create.mockReturnValue(mockApiKey);
       mockApiKeyRepository.save.mockResolvedValue(mockApiKey);
+      mockRoleTargetsRepository.delete.mockResolvedValue({ affected: 0 });
+      mockRoleTargetsRepository.save.mockResolvedValue({});
+      mockApiKeyRoleService.recomputeCache.mockResolvedValue();
 
       const result = await service.create(apiKeyData);
 
-      expect(mockApiKeyRepository.create).toHaveBeenCalledWith(apiKeyData);
+      expect(mockApiKeyRepository.create).toHaveBeenCalledWith(
+        expectedApiKeyFields,
+      );
       expect(mockApiKeyRepository.save).toHaveBeenCalledWith(mockApiKey);
+      expect(mockRoleTargetsRepository.delete).toHaveBeenCalledWith({
+        apiKeyId: mockApiKey.id,
+      });
+      expect(mockRoleTargetsRepository.save).toHaveBeenCalledWith({
+        apiKeyId: mockApiKey.id,
+        roleId: 'mock-role-id',
+        workspaceId: mockWorkspaceId,
+      });
+      expect(mockApiKeyRoleService.recomputeCache).toHaveBeenCalledWith(
+        mockWorkspaceId,
+      );
       expect(result).toEqual(mockApiKey);
     });
   });
@@ -327,6 +371,30 @@ describe('ApiKeyService', () => {
         expect.any(Object),
         expect.objectContaining({
           expiresIn: '100y',
+        }),
+      );
+    });
+
+    it('should use custom expiration time if provided', async () => {
+      mockApiKeyRepository.findOne.mockResolvedValue(mockApiKey);
+      const expiresAt = new Date(Date.now() + 3600000); // 1 hour from now
+
+      await service.generateApiKeyToken(
+        mockWorkspaceId,
+        mockApiKeyId,
+        expiresAt,
+      );
+
+      expect(mockJwtWrapperService.sign).toHaveBeenCalledWith(
+        {
+          sub: mockWorkspaceId,
+          type: JwtTokenTypeEnum.API_KEY,
+          workspaceId: mockWorkspaceId,
+        },
+        expect.objectContaining({
+          secret: mockSecret,
+          expiresIn: expect.any(Number),
+          jwtid: mockApiKeyId,
         }),
       );
     });
