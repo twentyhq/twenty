@@ -44,6 +44,10 @@ export class MessagingMessageListFetchService {
         );
 
       for (const messageList of messageLists) {
+        if (messageList.messageExternalIds.length === 0) {
+          continue;
+        }
+
         const {
           messageExternalIds,
           nextSyncCursor,
