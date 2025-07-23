@@ -5,9 +5,9 @@ import { PlainObjectToDatabaseEntityTransformer } from 'typeorm/query-builder/tr
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 import { WorkspaceEntityManager } from './workspace-entity-manager';
 
@@ -109,6 +109,7 @@ describe('WorkspaceEntityManager', () => {
         IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED: false,
         IS_FIELDS_PERMISSIONS_ENABLED: false,
         IS_ANY_FIELD_SEARCH_ENABLED: false,
+        IS_CORE_VIEW_SYNCING_ENABLED: false,
         IS_TWO_FACTOR_AUTHENTICATION_ENABLED: false,
       },
       eventEmitterService: {
