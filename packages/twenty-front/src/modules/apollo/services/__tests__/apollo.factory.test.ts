@@ -63,6 +63,7 @@ const createMockOptions = (): Options<any> => ({
   isDebugMode: true,
   onError: mockOnError,
   onNetworkError: mockOnNetworkError,
+  appVersion: '1.0.0',
 });
 
 const makeRequest = async () => {
