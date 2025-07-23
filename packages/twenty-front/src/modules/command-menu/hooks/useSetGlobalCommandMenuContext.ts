@@ -3,6 +3,7 @@ import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/cons
 import { useCopyContextStoreStates } from '@/command-menu/hooks/useCopyContextStoreAndActionMenuStates';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
+import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
@@ -43,6 +44,13 @@ export const useSetGlobalCommandMenuContext = () => {
             instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
           }),
           [],
+        );
+
+        set(
+          contextStoreAnyFieldFilterValueComponentState.atomFamily({
+            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+          }),
+          '',
         );
 
         set(
