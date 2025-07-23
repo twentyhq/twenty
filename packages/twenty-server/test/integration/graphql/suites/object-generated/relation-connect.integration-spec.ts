@@ -9,12 +9,17 @@ import {
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
+import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 const PERSON_GQL_FIELDS_WITH_COMPANY = `
   id
+  city
   company {
     id
   }
@@ -71,7 +76,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     expect(response.body.data.createPerson.company.id).toBe(TEST_COMPANY_1_ID);
   });
 
-  it('should connect to other records through a MANY-TO-ONE relation - create Many', async () => {
+  it('should connect to other records through a MANY-TO-ONE relation - create Many - upsert false', async () => {
     const graphqlOperation = createManyOperationFactory({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',
@@ -108,6 +113,146 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     );
   });
 
+  it('should connect to other records through a MANY-TO-ONE relation - create Many - upsert true', async () => {
+    const createPersonToUpdateOperation = createOneOperationFactory({
+      objectMetadataSingularName: 'person',
+      gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
+      data: {
+        id: TEST_PERSON_1_ID,
+        city: 'existing-record',
+        companyId: TEST_COMPANY_1_ID,
+      },
+    });
+
+    await makeGraphqlAPIRequest(createPersonToUpdateOperation);
+
+    const graphqlOperation = createManyOperationFactory({
+      objectMetadataSingularName: 'person',
+      objectMetadataPluralName: 'people',
+      gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
+      data: [
+        {
+          id: TEST_PERSON_1_ID,
+          company: {
+            connect: {
+              where: { domainName: { primaryLinkUrl: 'company2.com' } },
+            },
+          },
+        },
+        {
+          id: TEST_PERSON_2_ID,
+          city: 'new-record',
+          company: {
+            connect: {
+              where: { domainName: { primaryLinkUrl: 'company1.com' } },
+            },
+          },
+        },
+      ],
+      upsert: true,
+    });
+
+    const response = await makeGraphqlAPIRequest(graphqlOperation);
+
+    expect(response.body.data.createPeople).toBeDefined();
+    expect(response.body.data.createPeople).toHaveLength(2);
+
+    const updatedPerson = response.body.data.createPeople.find(
+      (person: ObjectRecord) => person.id === TEST_PERSON_1_ID,
+    );
+
+    const insertedPerson = response.body.data.createPeople.find(
+      (person: ObjectRecord) => person.id === TEST_PERSON_2_ID,
+    );
+
+    expect(updatedPerson.company.id).toBe(TEST_COMPANY_2_ID);
+    expect(updatedPerson.city).toBe('existing-record');
+
+    expect(insertedPerson.company.id).toBe(TEST_COMPANY_1_ID);
+    expect(insertedPerson.city).toBe('new-record');
+  });
+
+  it('should connect to other records through a MANY-TO-ONE relation - update One', async () => {
+    const createPersonToUpdateOperation = createOneOperationFactory({
+      objectMetadataSingularName: 'person',
+      gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
+      data: {
+        id: TEST_PERSON_1_ID,
+        city: 'existing-record',
+        companyId: TEST_COMPANY_1_ID,
+      },
+    });
+
+    await makeGraphqlAPIRequest(createPersonToUpdateOperation);
+
+    const graphqlOperation = updateOneOperationFactory({
+      objectMetadataSingularName: 'person',
+      gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
+      recordId: TEST_PERSON_1_ID,
+      data: {
+        company: {
+          connect: {
+            where: { domainName: { primaryLinkUrl: 'company2.com' } },
+          },
+        },
+      },
+    });
+
+    const response = await makeGraphqlAPIRequest(graphqlOperation);
+
+    expect(response.body.data.updatePerson).toBeDefined();
+    expect(response.body.data.updatePerson.company.id).toBe(TEST_COMPANY_2_ID);
+    expect(response.body.data.updatePerson.city).toBe('existing-record');
+  });
+
+  it('should connect to other records through a MANY-TO-ONE relation - update Many', async () => {
+    const createPeopleToUpdateOperation = createManyOperationFactory({
+      objectMetadataSingularName: 'person',
+      objectMetadataPluralName: 'people',
+      gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
+      data: [
+        {
+          id: TEST_PERSON_1_ID,
+          companyId: TEST_COMPANY_1_ID,
+        },
+        {
+          id: TEST_PERSON_2_ID,
+        },
+      ],
+    });
+
+    await makeGraphqlAPIRequest(createPeopleToUpdateOperation);
+
+    const graphqlOperation = updateManyOperationFactory({
+      objectMetadataSingularName: 'person',
+      objectMetadataPluralName: 'people',
+      gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
+      filter: {
+        id: {
+          in: [TEST_PERSON_1_ID, TEST_PERSON_2_ID],
+        },
+      },
+      data: {
+        company: {
+          connect: {
+            where: { domainName: { primaryLinkUrl: 'company2.com' } },
+          },
+        },
+      },
+    });
+
+    const response = await makeGraphqlAPIRequest(graphqlOperation);
+
+    expect(response.body.data.updatePeople).toBeDefined();
+    expect(response.body.data.updatePeople).toHaveLength(2);
+
+    expect(response.body.data.updatePeople[0].company.id).toBe(
+      TEST_COMPANY_2_ID,
+    );
+    expect(response.body.data.updatePeople[1].company.id).toBe(
+      TEST_COMPANY_2_ID,
+    );
+  });
   it('should throw an error if relation id field and relation connect field are both provided', async () => {
     const graphqlOperation = createOneOperationFactory({
       objectMetadataSingularName: 'person',

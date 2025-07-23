@@ -38,6 +38,11 @@ export class RelationConnectInputTypeDefinitionFactory {
         kind: InputTypeDefinitionKind.Create,
         type: fields,
       },
+      {
+        target,
+        kind: InputTypeDefinitionKind.Update,
+        type: fields,
+      },
     ];
   }
 
