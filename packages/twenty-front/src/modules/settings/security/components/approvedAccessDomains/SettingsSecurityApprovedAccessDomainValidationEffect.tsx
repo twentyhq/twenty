@@ -3,7 +3,7 @@ import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { useValidateApprovedAccessDomainMutation } from '~/generated-metadata/graphql';
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
 
