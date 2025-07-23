@@ -35,7 +35,10 @@ export class RelationNestedQueries {
       | QueryDeepPartialEntityWithNestedRelationFields<Entity>[]
       | QueryDeepPartialEntityWithNestedRelationFields<Entity>,
     target: EntityTarget<Entity>,
-  ) {
+  ): [
+    RelationConnectQueryConfig[],
+    RelationDisconnectQueryFieldsByEntityIndex,
+  ] {
     const entitiesArray = Array.isArray(entities) ? entities : [entities];
 
     const {
@@ -49,10 +52,7 @@ export class RelationNestedQueries {
       relationConnectQueryFieldsByEntityIndex,
     );
 
-    return {
-      disconnectConfig: relationDisconnectQueryFieldsByEntityIndex,
-      connectConfig,
-    };
+    return [connectConfig, relationDisconnectQueryFieldsByEntityIndex];
   }
 
   private prepareRelationConnect<Entity extends ObjectLiteral>(
@@ -79,18 +79,24 @@ export class RelationNestedQueries {
 
   async processRelationNestedQueries<Entity extends ObjectLiteral>({
     entities,
-    relationDisconnectQueryFieldsByEntityIndex,
-    relationConnectQueryConfigs,
+    relationNestedConfig,
     queryBuilder,
   }: {
     entities:
       | QueryDeepPartialEntityWithNestedRelationFields<Entity>[]
       | QueryDeepPartialEntityWithNestedRelationFields<Entity>;
-    relationDisconnectQueryFieldsByEntityIndex: RelationDisconnectQueryFieldsByEntityIndex;
-    relationConnectQueryConfigs: Record<string, RelationConnectQueryConfig>;
+    relationNestedConfig: [
+      RelationConnectQueryConfig[],
+      RelationDisconnectQueryFieldsByEntityIndex,
+    ];
     queryBuilder: WorkspaceSelectQueryBuilder<Entity>;
   }): Promise<QueryDeepPartialEntity<Entity>[]> {
     const entitiesArray = Array.isArray(entities) ? entities : [entities];
+
+    const [
+      relationConnectQueryConfigs,
+      relationDisconnectQueryFieldsByEntityIndex,
+    ] = relationNestedConfig;
 
     const updatedEntitiesWithDisconnect = this.processRelationDisconnect({
       entities: entitiesArray,
@@ -112,7 +118,7 @@ export class RelationNestedQueries {
     queryBuilder,
   }: {
     entities: QueryDeepPartialEntityWithNestedRelationFields<Entity>[];
-    relationConnectQueryConfigs: Record<string, RelationConnectQueryConfig>;
+    relationConnectQueryConfigs: RelationConnectQueryConfig[];
     queryBuilder: WorkspaceSelectQueryBuilder<Entity>;
   }): Promise<QueryDeepPartialEntity<Entity>[]> {
     if (!isDefined(relationConnectQueryConfigs)) return entities;
@@ -131,7 +137,7 @@ export class RelationNestedQueries {
   }
 
   private async executeConnectQueries<Entity extends ObjectLiteral>(
-    relationConnectQueryConfigs: Record<string, RelationConnectQueryConfig>,
+    relationConnectQueryConfigs: RelationConnectQueryConfig[],
     queryBuilder: WorkspaceSelectQueryBuilder<Entity>,
   ): Promise<[RelationConnectQueryConfig, Record<string, unknown>[]][]> {
     const AllRecordsToConnectWithConfig: [
@@ -139,9 +145,7 @@ export class RelationNestedQueries {
       Record<string, unknown>[],
     ][] = [];
 
-    for (const connectQueryConfig of Object.values(
-      relationConnectQueryConfigs,
-    )) {
+    for (const connectQueryConfig of relationConnectQueryConfigs) {
       const { clause, parameters } = createSqlWhereTupleInClause(
         connectQueryConfig.recordToConnectConditions,
         connectQueryConfig.targetObjectName,

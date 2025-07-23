@@ -38,8 +38,10 @@ export class WorkspaceUpdateQueryBuilder<
   private authContext?: AuthContext;
   private featureFlagMap?: FeatureFlagMap;
   private relationNestedQueries: RelationNestedQueries;
-  private connectConfig: Record<string, RelationConnectQueryConfig>;
-  private disconnectConfig: RelationDisconnectQueryFieldsByEntityIndex;
+  private relationNestedConfig: [
+    RelationConnectQueryConfig[],
+    RelationDisconnectQueryFieldsByEntityIndex,
+  ];
 
   constructor(
     queryBuilder: UpdateQueryBuilder<T>,
@@ -118,8 +120,7 @@ export class WorkspaceUpdateQueryBuilder<
         entities: this.expressionMap.valuesSet as
           | QueryDeepPartialEntityWithNestedRelationFields<T>
           | QueryDeepPartialEntityWithNestedRelationFields<T>[],
-        relationDisconnectQueryFieldsByEntityIndex: this.disconnectConfig,
-        relationConnectQueryConfigs: this.connectConfig,
+        relationNestedConfig: this.relationNestedConfig,
         queryBuilder: nestedRelationQueryBuilder,
       });
 
@@ -189,14 +190,12 @@ export class WorkspaceUpdateQueryBuilder<
     const extendedValues = _values as
       | QueryDeepPartialEntityWithNestedRelationFields<T>
       | QueryDeepPartialEntityWithNestedRelationFields<T>[];
-    const { disconnectConfig, connectConfig } =
+
+    this.relationNestedConfig =
       this.relationNestedQueries.prepareNestedRelationQueries(
         extendedValues,
         mainAliasTarget,
       );
-
-    this.disconnectConfig = disconnectConfig;
-    this.connectConfig = connectConfig;
 
     const formattedUpdateSet = formatData(_values, objectMetadata);
 

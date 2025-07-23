@@ -79,7 +79,7 @@ export const computeRelationConnectQueryConfigs = (
     }
   }
 
-  return allConnectQueryConfigs;
+  return Object.values(allConnectQueryConfigs);
 };
 
 const updateConnectQueryConfigs = (

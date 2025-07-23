@@ -163,7 +163,7 @@ describe('computeRelationConnectQueryConfigs', () => {
       {},
     );
 
-    expect(result).toEqual({});
+    expect(result).toEqual([]);
   });
 
   it('should throw an error if a connect field is not a relation field', () => {
@@ -378,8 +378,8 @@ describe('computeRelationConnectQueryConfigs', () => {
       relationConnectQueryFieldsByEntityIndex,
     );
 
-    expect(result).toEqual({
-      'company-related-to-1': {
+    expect(result).toEqual([
+      {
         connectFieldName: 'company-related-to-1',
         recordToConnectConditions: [
           [['domainNamePrimaryLinkUrl', 'company.com']],
@@ -400,7 +400,7 @@ describe('computeRelationConnectQueryConfigs', () => {
           },
         ],
       },
-      'company-related-to-2': {
+      {
         connectFieldName: 'company-related-to-2',
         recordToConnectConditions: [[['id', '1']], [['id', '2']]],
         recordToConnectConditionByEntityIndex: {
@@ -418,6 +418,6 @@ describe('computeRelationConnectQueryConfigs', () => {
           },
         ],
       },
-    });
+    ]);
   });
 });
