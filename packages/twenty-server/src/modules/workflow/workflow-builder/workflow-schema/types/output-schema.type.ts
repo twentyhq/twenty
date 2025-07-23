@@ -8,7 +8,6 @@ export type Leaf = {
   description?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
-  isCompositeSubField?: boolean;
 };
 
 export type Node = {

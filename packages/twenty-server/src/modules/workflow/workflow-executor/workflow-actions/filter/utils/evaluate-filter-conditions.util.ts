@@ -16,14 +16,16 @@ function evaluateFilter(filter: ResolvedFilter): boolean {
 
   switch (filter.operand) {
     case ViewFilterOperand.Is:
-      if (String(rightValue).toLowerCase() === 'null') {
-        return leftValue === null || leftValue === undefined;
+      switch (typeof leftValue) {
+        case 'string':
+          return (
+            String(leftValue).toLowerCase() === String(rightValue).toLowerCase()
+          );
+        case 'boolean':
+          return Boolean(leftValue) === Boolean(rightValue);
+        default:
+          return leftValue === rightValue;
       }
-      if (String(rightValue).toLowerCase() === 'not null') {
-        return leftValue !== null && leftValue !== undefined;
-      }
-
-      return leftValue == rightValue;
 
     case ViewFilterOperand.IsNot:
       return leftValue != rightValue;
@@ -36,7 +38,11 @@ function evaluateFilter(filter: ResolvedFilter): boolean {
 
     case ViewFilterOperand.Contains:
       if (Array.isArray(leftValue)) {
-        return leftValue.includes(rightValue);
+        const parsedRightValue = JSON.parse(rightValue as string);
+
+        if (Array.isArray(parsedRightValue)) {
+          return parsedRightValue.every((item) => leftValue.includes(item));
+        }
       }
 
       return String(leftValue).includes(String(rightValue));

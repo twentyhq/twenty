@@ -29,7 +29,6 @@ const isFilterableFieldMetadataType = (
     FieldMetadataType.TEXT,
     FieldMetadataType.NUMBER,
     FieldMetadataType.BOOLEAN,
-    FieldMetadataType.DATE,
     FieldMetadataType.DATE_TIME,
     FieldMetadataType.DATE,
     FieldMetadataType.BOOLEAN,

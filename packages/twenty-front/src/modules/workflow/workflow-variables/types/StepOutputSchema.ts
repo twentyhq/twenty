@@ -8,7 +8,6 @@ type Leaf = {
   description?: string;
   value: any;
   fieldMetadataId?: string;
-  isCompositeSubField?: boolean;
 };
 
 type Node = {
