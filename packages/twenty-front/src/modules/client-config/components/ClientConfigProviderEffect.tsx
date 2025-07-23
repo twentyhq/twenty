@@ -220,6 +220,7 @@ export const ClientConfigProviderEffect = () => {
     setIsConfigVariablesInDbEnabled,
     setCalendarBookingPageId,
     setIsImapSmtpCaldavEnabled,
+    setAppVersion,
   ]);
 
   return <></>;
