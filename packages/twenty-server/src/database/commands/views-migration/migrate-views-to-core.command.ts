@@ -95,9 +95,9 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         try {
           await this.migrateViews(workspaceId, options.dryRun, queryRunner);
 
-          await this.enableCoreViewSyncingFeatureFlag(workspaceId);
-
           await queryRunner.commitTransaction();
+
+          await this.enableCoreViewSyncingFeatureFlag(workspaceId);
 
           this.logger.log(
             `Successfully migrated views to core schema for workspace ${workspaceId}`,
