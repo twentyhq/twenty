@@ -12,6 +12,7 @@ describe('filterOutputSchema', () => {
           fieldIdName: 'id',
           isLeaf: true,
           value: 'Fake value',
+          objectMetadataId: '123',
         },
         fields: {},
       };
@@ -35,6 +36,7 @@ describe('filterOutputSchema', () => {
         fieldIdName: 'id',
         isLeaf: true,
         value: 'Fake value',
+        objectMetadataId: '123',
       },
       fields,
     });

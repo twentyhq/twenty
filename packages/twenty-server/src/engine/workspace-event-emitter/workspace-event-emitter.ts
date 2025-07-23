@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { ObjectLiteral } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -44,7 +45,11 @@ export class WorkspaceEventEmitter {
   }) {
     const objectMetadataNameSingular = objectMetadataItem.nameSingular;
     const fields = Object.values(objectMetadataItem.fieldsById ?? {});
-    const entityArray = Array.isArray(entities) ? entities : [entities];
+    const entityArray = isDefined(entities)
+      ? Array.isArray(entities)
+        ? entities
+        : [entities]
+      : [];
     let events: (
       | ObjectRecordCreateEvent<T>
       | ObjectRecordUpdateEvent<T>

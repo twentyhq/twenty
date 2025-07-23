@@ -1,6 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
 import { getMockObjectMetadataItemWithFieldsMaps } from 'src/utils/__test__/get-object-metadata-item-with-fields-maps.mock';
 
@@ -47,7 +46,7 @@ export const mockObjectMetadataItemsWithFieldMaps = [
         isLabelSyncedWithName: true,
         createdAt: new Date(),
         updatedAt: new Date(),
-      }) as FieldMetadataEntity,
+      }),
     },
     fieldIdByName: {
       name: 'nameFieldMetadataId',
@@ -90,7 +89,7 @@ export const mockObjectMetadataItemsWithFieldMaps = [
         isLabelSyncedWithName: true,
         createdAt: new Date(),
         updatedAt: new Date(),
-      }) as FieldMetadataEntity,
+      }),
       domainNameFieldMetadataId: getMockFieldMetadataEntity({
         workspaceId,
         objectMetadataId: '20202020-c03c-45d6-a4b0-04afe1357c5c',
@@ -110,7 +109,7 @@ export const mockObjectMetadataItemsWithFieldMaps = [
         isLabelSyncedWithName: true,
         createdAt: new Date(),
         updatedAt: new Date(),
-      }) as FieldMetadataEntity,
+      }),
     },
     fieldIdByName: {
       name: 'nameFieldMetadataId',
@@ -154,7 +153,7 @@ export const mockObjectMetadataItemsWithFieldMaps = [
         isLabelSyncedWithName: true,
         createdAt: new Date(),
         updatedAt: new Date(),
-      }) as FieldMetadataEntity,
+      }),
       imageIdentifierFieldMetadataId: getMockFieldMetadataEntity({
         workspaceId,
         objectMetadataId: '20202020-3d75-4aab-bacd-ee176c5f63ca',
@@ -170,7 +169,7 @@ export const mockObjectMetadataItemsWithFieldMaps = [
         isLabelSyncedWithName: true,
         createdAt: new Date(),
         updatedAt: new Date(),
-      }) as FieldMetadataEntity,
+      }),
     },
     fieldIdByName: {
       name: 'nameFieldMetadataId',

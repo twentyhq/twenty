@@ -120,9 +120,9 @@ msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} 
 msgstr "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
 
 #. js-lingui-id: wapGcj
-#: src/modules/auth/components/VerifyEmailEffect.tsx
-#~ msgid "{message}"
-#~ msgstr "{message}"
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
+msgid "{message}"
+msgstr "{message}"
 
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions.tsx
@@ -975,7 +975,7 @@ msgid "Book your onboarding"
 msgstr "Book your onboarding"
 
 #. js-lingui-id: bOwPjT
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
+#: src/modules/ai/constants/output-field-type-options.ts
 msgid "Boolean"
 msgstr "Boolean"
 
@@ -1434,6 +1434,7 @@ msgstr "Contains"
 
 #. js-lingui-id: M73whl
 #: src/modules/command-menu/components/CommandMenu.tsx
+#: src/modules/ai/components/internal/AgentChatContextRecordPreview.tsx
 msgid "Context"
 msgstr "Context"
 
@@ -1649,6 +1650,12 @@ msgstr "Create Select..."
 msgid "Create view"
 msgstr "Create view"
 
+#. js-lingui-id: 3D0MXY
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Create View"
+msgstr "Create View"
+
 #. js-lingui-id: dkAPxi
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 msgid "Create Webhook"
@@ -1800,11 +1807,11 @@ msgid "Database configuration is currently disabled."
 msgstr "Database configuration is currently disabled."
 
 #. js-lingui-id: mYGY3B
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx
+#: src/modules/ai/constants/output-field-type-options.ts
 msgid "Date"
 msgstr "Date"
 
@@ -2432,7 +2439,7 @@ msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 
 #. js-lingui-id: 20wg2g
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/ai/components/AIChatTab.tsx
 msgid "Enter a question..."
 msgstr "Enter a question..."
 
@@ -2538,8 +2545,8 @@ msgstr "Error resending invitation"
 
 #. js-lingui-id: nB84mG
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
-msgid "Error validating approved access domain"
-msgstr "Error validating approved access domain"
+#~ msgid "Error validating approved access domain"
+#~ msgstr "Error validating approved access domain"
 
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -2769,7 +2776,7 @@ msgstr "Failed to load webhook"
 #~ msgstr "Failed to remove  override"
 
 #. js-lingui-id: XMjWWv
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatSelectedFilesPreview.tsx
+#: src/modules/ai/components/internal/AgentChatContextPreview.tsx
 msgid "Failed to remove file"
 msgstr "Failed to remove file"
 
@@ -3573,6 +3580,11 @@ msgstr "john.doe"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "john.doe@example.com"
 msgstr "john.doe@example.com"
+
+#. js-lingui-id: fSPjtl
+#: src/pages/auth/SignInUp.tsx
+msgid "Join {workspaceName} team"
+msgstr "Join {workspaceName} team"
 
 #. js-lingui-id: VIK/N0
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
@@ -4413,8 +4425,8 @@ msgid "Notes"
 msgstr "Notes"
 
 #. js-lingui-id: HptUxX
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
+#: src/modules/ai/constants/output-field-type-options.ts
 msgid "Number"
 msgstr "Number"
 
@@ -5413,7 +5425,7 @@ msgid "Select your preferred language"
 msgstr "Select your preferred language"
 
 #. js-lingui-id: JlFcis
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/ai/components/internal/SendMessageButton.tsx
 msgid "Send"
 msgstr "Send"
 
@@ -5927,7 +5939,7 @@ msgid "Test Workflow"
 msgstr "Test Workflow"
 
 #. js-lingui-id: xeiujy
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
+#: src/modules/ai/constants/output-field-type-options.ts
 msgid "Text"
 msgstr "Text"
 
@@ -6492,7 +6504,7 @@ msgstr "View billing details"
 #~ msgstr "View execution details"
 
 #. js-lingui-id: ecVcAx
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/ai/components/AIChatTab.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "View Previous AI Chats"

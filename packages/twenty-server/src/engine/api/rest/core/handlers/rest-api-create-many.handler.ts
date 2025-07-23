@@ -12,7 +12,7 @@ import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api
 @Injectable()
 export class RestApiCreateManyHandler extends RestApiBaseHandler {
   async handle(request: Request) {
-    const { objectMetadata, repository } =
+    const { objectMetadata, repository, restrictedFields } =
       await this.getRepositoryAndMetadataOrFail(request);
 
     const body = request.body;
@@ -63,6 +63,7 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
       repository,
       objectMetadata,
       depth: this.depthInputFactory.create(request),
+      restrictedFields,
     });
 
     if (records.length !== body.length) {
