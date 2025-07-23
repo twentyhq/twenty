@@ -1,7 +1,7 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { computeAnyFieldFilter } from '@/object-record/record-filter/utils/computeAnyFieldFilter';
 import { filterSelectOptionsOfFieldMetadataItem } from '@/object-record/record-filter/utils/filterSelectOptionsOfFieldMetadataItem';
+import { turnAnyFieldFilterIntoRecordGqlFilter } from '@/object-record/record-filter/utils/turnAnyFieldFilterIntoRecordGqlFilter';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const baseFieldMetadataItem: FieldMetadataItem = {
@@ -162,7 +162,7 @@ describe('computeAnyFieldFilter', () => {
     it('should generate correct filter for text field', () => {
       const filterValue = 'test';
 
-      const result = computeAnyFieldFilter({
+      const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         objectMetadataItem: {
           ...mockObjectMetadataItem,
@@ -182,7 +182,7 @@ describe('computeAnyFieldFilter', () => {
     it('should generate correct filter for address field', () => {
       const filterValue = 'New York';
 
-      const result = computeAnyFieldFilter({
+      const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         objectMetadataItem: {
           ...mockObjectMetadataItem,
@@ -243,7 +243,7 @@ describe('computeAnyFieldFilter', () => {
     it('should generate correct filter for links field', () => {
       const filterValue = 'test';
 
-      const result = computeAnyFieldFilter({
+      const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         objectMetadataItem: {
           ...mockObjectMetadataItem,
@@ -283,7 +283,7 @@ describe('computeAnyFieldFilter', () => {
     it('should generate correct filter for full name field', () => {
       const filterValue = 'test';
 
-      const result = computeAnyFieldFilter({
+      const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         objectMetadataItem: {
           ...mockObjectMetadataItem,
@@ -316,7 +316,7 @@ describe('computeAnyFieldFilter', () => {
     it('should generate correct filter for array field', () => {
       const filterValue = 'test';
 
-      const result = computeAnyFieldFilter({
+      const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         objectMetadataItem: {
           ...mockObjectMetadataItem,
@@ -336,7 +336,7 @@ describe('computeAnyFieldFilter', () => {
     it('should generate correct filter for emails field', () => {
       const filterValue = 'test';
 
-      const result = computeAnyFieldFilter({
+      const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         objectMetadataItem: {
           ...mockObjectMetadataItem,
@@ -369,7 +369,7 @@ describe('computeAnyFieldFilter', () => {
     it('should generate correct filter for phones field', () => {
       const filterValue = '123';
 
-      const result = computeAnyFieldFilter({
+      const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         objectMetadataItem: {
           ...mockObjectMetadataItem,
@@ -409,7 +409,7 @@ describe('computeAnyFieldFilter', () => {
     it('should generate correct filter for number field with numeric value', () => {
       const filterValue = '123.1';
 
-      const result = computeAnyFieldFilter({
+      const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         objectMetadataItem: {
           ...mockObjectMetadataItem,
@@ -427,7 +427,7 @@ describe('computeAnyFieldFilter', () => {
     it('should not generate filter for number field with non-numeric value', () => {
       const filterValue = 'not a number';
 
-      const result = computeAnyFieldFilter({
+      const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         objectMetadataItem: {
           ...mockObjectMetadataItem,
@@ -443,7 +443,7 @@ describe('computeAnyFieldFilter', () => {
     it('should generate correct filter for currency field with numeric value', () => {
       const filterValue = '123';
 
-      const result = computeAnyFieldFilter({
+      const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         objectMetadataItem: {
           ...mockObjectMetadataItem,
@@ -463,7 +463,7 @@ describe('computeAnyFieldFilter', () => {
     it('should generate correct filter for currency field with currency code', () => {
       const filterValue = 'USD';
 
-      const result = computeAnyFieldFilter({
+      const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         objectMetadataItem: {
           ...mockObjectMetadataItem,
@@ -483,7 +483,7 @@ describe('computeAnyFieldFilter', () => {
     it('should generate correct filter for select field with matching option', () => {
       const filterValue = 'r';
 
-      const result = computeAnyFieldFilter({
+      const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         objectMetadataItem: {
           ...mockObjectMetadataItem,
@@ -507,7 +507,7 @@ describe('computeAnyFieldFilter', () => {
     it('should not generate filter for select field with non-matching value', () => {
       const filterValue = 'not-found';
 
-      const result = computeAnyFieldFilter({
+      const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         objectMetadataItem: {
           ...mockObjectMetadataItem,
@@ -523,7 +523,7 @@ describe('computeAnyFieldFilter', () => {
     it('should generate correct filter for multi-select field with matching option', () => {
       const filterValue = 'r';
 
-      const result = computeAnyFieldFilter({
+      const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         objectMetadataItem: {
           ...mockObjectMetadataItem,
@@ -547,7 +547,7 @@ describe('computeAnyFieldFilter', () => {
     it('should not generate filter for multi-select field with non-matching value', () => {
       const filterValue = 'not-found';
 
-      const result = computeAnyFieldFilter({
+      const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         objectMetadataItem: {
           ...mockObjectMetadataItem,
@@ -563,7 +563,7 @@ describe('computeAnyFieldFilter', () => {
     it('should generate OR filter combining all matching field types', () => {
       const filterValue = 'a';
 
-      const result = computeAnyFieldFilter({
+      const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         objectMetadataItem: mockObjectMetadataItemWithAllFields,
       });
@@ -578,7 +578,7 @@ describe('computeAnyFieldFilter', () => {
     it('should handle empty filter value', () => {
       const filterValue = '';
 
-      const result = computeAnyFieldFilter({
+      const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         objectMetadataItem: mockObjectMetadataItemWithAllFields,
       });
@@ -592,7 +592,7 @@ describe('computeAnyFieldFilter', () => {
         fields: [],
       };
 
-      const result = computeAnyFieldFilter({
+      const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue: 'test',
         objectMetadataItem: emptyObjectMetadata,
       });

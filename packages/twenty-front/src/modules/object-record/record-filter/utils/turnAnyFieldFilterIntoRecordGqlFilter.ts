@@ -12,7 +12,7 @@ import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
-export const computeAnyFieldFilter = ({
+export const turnAnyFieldFilterIntoRecordGqlFilter = ({
   filterValue,
   objectMetadataItem,
 }: {

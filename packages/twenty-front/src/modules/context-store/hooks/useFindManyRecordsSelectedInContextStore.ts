@@ -1,3 +1,4 @@
+import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -36,6 +37,11 @@ export const useFindManyRecordsSelectedInContextStore = ({
     instanceId,
   );
 
+  const contextStoreAnyFieldFilterValue = useRecoilComponentValueV2(
+    contextStoreAnyFieldFilterValueComponentState,
+    instanceId,
+  );
+
   const { filterValueDependencies } = useFilterValueDependencies();
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
@@ -58,9 +64,9 @@ export const useFindManyRecordsSelectedInContextStore = ({
   const queryFilter = computeContextStoreFilters(
     contextStoreTargetedRecordsRule,
     contextStoreFilters,
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    objectMetadataItem!,
+    objectMetadataItem,
     filterValueDependencies,
+    contextStoreAnyFieldFilterValue,
   );
 
   const { records, loading, totalCount } = useFindManyRecords({

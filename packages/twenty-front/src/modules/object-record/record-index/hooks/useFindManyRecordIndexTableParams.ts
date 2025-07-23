@@ -2,15 +2,15 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
+import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { combineFilters } from '@/object-record/record-filter/utils/combineFilters';
-import { computeAnyFieldFilter } from '@/object-record/record-filter/utils/computeAnyFieldFilter';
 import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
+import { turnAnyFieldFilterIntoRecordGqlFilter } from '@/object-record/record-filter/utils/turnAnyFieldFilterIntoRecordGqlFilter';
 import { useCurrentRecordGroupDefinition } from '@/object-record/record-group/hooks/useCurrentRecordGroupDefinition';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { viewAnyFieldSearchValueComponentState } from '@/views/states/viewAnyFieldSearchValueComponentState';
 
 export const useFindManyRecordIndexTableParams = (
   objectNameSingular: string,
@@ -47,13 +47,14 @@ export const useFindManyRecordIndexTableParams = (
   });
 
   const anyFieldFilterValue = useRecoilComponentValueV2(
-    viewAnyFieldSearchValueComponentState,
+    anyFieldFilterValueComponentState,
   );
 
-  const { recordGqlOperationFilter: anyFieldFilter } = computeAnyFieldFilter({
-    objectMetadataItem,
-    filterValue: anyFieldFilterValue,
-  });
+  const { recordGqlOperationFilter: anyFieldFilter } =
+    turnAnyFieldFilterIntoRecordGqlFilter({
+      objectMetadataItem,
+      filterValue: anyFieldFilterValue,
+    });
 
   const orderBy = turnSortsIntoOrderBy(objectMetadataItem, currentRecordSorts);
 

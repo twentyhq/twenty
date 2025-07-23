@@ -15,11 +15,11 @@ import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hook
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 
+import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { combineFilters } from '@/object-record/record-filter/utils/combineFilters';
-import { computeAnyFieldFilter } from '@/object-record/record-filter/utils/computeAnyFieldFilter';
+import { turnAnyFieldFilterIntoRecordGqlFilter } from '@/object-record/record-filter/utils/turnAnyFieldFilterIntoRecordGqlFilter';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { viewAnyFieldSearchValueComponentState } from '@/views/states/viewAnyFieldSearchValueComponentState';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseLoadRecordIndexBoardProps = {
@@ -67,13 +67,14 @@ export const useLoadRecordIndexBoardColumn = ({
   });
 
   const anyFieldFilterValue = useRecoilComponentValueV2(
-    viewAnyFieldSearchValueComponentState,
+    anyFieldFilterValueComponentState,
   );
 
-  const { recordGqlOperationFilter: anyFieldFilter } = computeAnyFieldFilter({
-    objectMetadataItem,
-    filterValue: anyFieldFilterValue,
-  });
+  const { recordGqlOperationFilter: anyFieldFilter } =
+    turnAnyFieldFilterIntoRecordGqlFilter({
+      objectMetadataItem,
+      filterValue: anyFieldFilterValue,
+    });
 
   const orderBy = turnSortsIntoOrderBy(objectMetadataItem, currentRecordSorts);
 

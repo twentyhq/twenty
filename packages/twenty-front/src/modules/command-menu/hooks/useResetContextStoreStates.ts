@@ -1,3 +1,4 @@
+import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
@@ -37,6 +38,13 @@ export const useResetContextStoreStates = () => {
           instanceId,
         }),
         [],
+      );
+
+      set(
+        contextStoreAnyFieldFilterValueComponentState.atomFamily({
+          instanceId,
+        }),
+        '',
       );
 
       set(
