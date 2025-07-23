@@ -24,12 +24,14 @@ import {
   graphQLErrorCodesToFilter,
   shouldCaptureException,
 } from 'src/engine/utils/global-exception-handler.util';
+import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-minor-and-major';
 
 const DEFAULT_EVENT_ID_KEY = 'exceptionEventId';
 const SCHEMA_VERSION_HEADER = 'x-schema-version';
 const SCHEMA_MISMATCH_ERROR = 'Schema version mismatch.';
 const APP_VERSION_HEADER = 'x-app-version';
 const APP_VERSION_MISMATCH_ERROR = 'App version mismatch.';
+const APP_VERSION_MISMATCH_CODE = 'APP_VERSION_MISMATCH';
 
 type GraphQLErrorHandlerHookOptions = {
   metricsService: MetricsService;
@@ -266,16 +268,18 @@ export const useGraphQLErrorHandlerHook = <
           semver.valid(reqAppVersionStr) &&
           semver.valid(backendAppVersionStr)
         ) {
-          const reqMajor = semver.major(reqAppVersionStr);
-          const backendMajor = semver.major(backendAppVersionStr);
-
-          if (reqMajor !== backendMajor) {
+          if (
+            compareVersionMajorAndMinor(
+              reqAppVersionStr,
+              backendAppVersionStr,
+            ) !== 'equal'
+          ) {
             options.metricsService.incrementCounter({
               key: MetricsKeys.AppVersionMismatch,
             });
             throw new GraphQLError(APP_VERSION_MISMATCH_ERROR, {
               extensions: {
-                code: 'APP_VERSION_MISMATCH',
+                code: APP_VERSION_MISMATCH_CODE,
                 userFriendlyMessage: t`Your app version is out of date. Please refresh the page to continue.`,
               },
             });
