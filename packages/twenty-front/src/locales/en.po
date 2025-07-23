@@ -2326,6 +2326,11 @@ msgstr "Email cannot be empty"
 #~ msgid "Email Connections"
 #~ msgstr "Email Connections"
 
+#. js-lingui-id: UZQ5eW
+#: src/modules/object-record/record-field/meta-types/input/components/EmailsFieldInput.tsx
+msgid "Email copied to clipboard"
+msgstr "Email copied to clipboard"
+
 #. js-lingui-id: lfQsvW
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx

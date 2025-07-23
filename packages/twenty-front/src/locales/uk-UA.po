@@ -2331,6 +2331,11 @@ msgstr "Електронна пошта не може бути порожньо�
 #~ msgid "Email Connections"
 #~ msgstr ""
 
+#. js-lingui-id: UZQ5eW
+#: src/modules/object-record/record-field/meta-types/input/components/EmailsFieldInput.tsx
+msgid "Email copied to clipboard"
+msgstr ""
+
 #. js-lingui-id: lfQsvW
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
