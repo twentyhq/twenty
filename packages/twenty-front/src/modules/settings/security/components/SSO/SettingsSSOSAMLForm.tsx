@@ -181,7 +181,7 @@ export const SettingsSSOSAMLForm = () => {
             <StyledButtonCopy>
               <Button
                 Icon={IconCopy}
-                title="Copy"
+                title={t`Copy`}
                 onClick={() => {
                   copyToClipboard(acsUrl, t`ACS Url copied to clipboard`);
                 }}
