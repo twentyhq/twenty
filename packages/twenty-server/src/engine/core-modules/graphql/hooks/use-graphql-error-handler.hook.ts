@@ -7,6 +7,7 @@ import {
 import { t } from '@lingui/core/macro';
 import { GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
 import semver from 'semver';
+import { isDefined } from 'twenty-shared/utils';
 
 import { GraphQLContext } from 'src/engine/api/graphql/graphql-config/interfaces/graphql-context.interface';
 
@@ -24,7 +25,6 @@ import {
   graphQLErrorCodesToFilter,
   shouldCaptureException,
 } from 'src/engine/utils/global-exception-handler.util';
-import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-minor-and-major';
 
 const DEFAULT_EVENT_ID_KEY = 'exceptionEventId';
 const SCHEMA_VERSION_HEADER = 'x-schema-version';
@@ -269,9 +269,13 @@ export const useGraphQLErrorHandlerHook = <
           return;
         }
 
+        const frontEndMajor = semver.parse(frontEndAppVersion)?.major;
+        const backendMajor = semver.parse(backendAppVersion)?.major;
+
         if (
-          compareVersionMajorAndMinor(frontEndAppVersion, backendAppVersion) ===
-          'lower'
+          isDefined(frontEndMajor) &&
+          isDefined(backendMajor) &&
+          frontEndMajor < backendMajor
         ) {
           options.metricsService.incrementCounter({
             key: MetricsKeys.AppVersionMismatch,
