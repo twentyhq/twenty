@@ -5,7 +5,6 @@ import {
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { canExecuteStep } from 'src/modules/workflow/workflow-executor/utils/can-execute-step.util';
-import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 
 describe('canExecuteStep', () => {
   const steps = [
@@ -57,12 +56,7 @@ describe('canExecuteStep', () => {
       },
     };
 
-    const result = canExecuteStep({
-      stepInfos,
-      steps,
-      stepId: 'step-3',
-      workflowRunStatus: WorkflowRunStatus.RUNNING,
-    });
+    const result = canExecuteStep({ stepInfos, steps, stepId: 'step-3' });
 
     expect(result).toBe(true);
   });
@@ -83,7 +77,6 @@ describe('canExecuteStep', () => {
         },
         steps,
         stepId: 'step-3',
-        workflowRunStatus: WorkflowRunStatus.RUNNING,
       }),
     ).toBe(false);
 
@@ -102,7 +95,6 @@ describe('canExecuteStep', () => {
         },
         steps,
         stepId: 'step-3',
-        workflowRunStatus: WorkflowRunStatus.RUNNING,
       }),
     ).toBe(false);
 
@@ -121,7 +113,6 @@ describe('canExecuteStep', () => {
         },
         steps,
         stepId: 'step-3',
-        workflowRunStatus: WorkflowRunStatus.RUNNING,
       }),
     ).toBe(false);
   });
@@ -142,7 +133,6 @@ describe('canExecuteStep', () => {
         },
         steps,
         stepId: 'step-3',
-        workflowRunStatus: WorkflowRunStatus.RUNNING,
       }),
     ).toBe(false);
 
@@ -161,7 +151,6 @@ describe('canExecuteStep', () => {
         },
         steps,
         stepId: 'step-3',
-        workflowRunStatus: WorkflowRunStatus.RUNNING,
       }),
     ).toBe(false);
 
@@ -180,7 +169,6 @@ describe('canExecuteStep', () => {
         },
         steps,
         stepId: 'step-3',
-        workflowRunStatus: WorkflowRunStatus.RUNNING,
       }),
     ).toBe(false);
 
@@ -199,38 +187,7 @@ describe('canExecuteStep', () => {
         },
         steps,
         stepId: 'step-3',
-        workflowRunStatus: WorkflowRunStatus.RUNNING,
       }),
     ).toBe(false);
-  });
-
-  it('should return false if workflowRun is not RUNNING', () => {
-    const stepInfos = {
-      'step-1': {
-        status: StepStatus.SUCCESS,
-      },
-      'step-2': {
-        status: StepStatus.SUCCESS,
-      },
-      'step-3': {
-        status: StepStatus.NOT_STARTED,
-      },
-    };
-
-    for (const workflowRunStatus of [
-      WorkflowRunStatus.FAILED,
-      WorkflowRunStatus.ENQUEUED,
-      WorkflowRunStatus.COMPLETED,
-      WorkflowRunStatus.NOT_STARTED,
-    ]) {
-      const result = canExecuteStep({
-        stepInfos,
-        steps,
-        stepId: 'step-3',
-        workflowRunStatus,
-      });
-
-      expect(result).toBe(false);
-    }
   });
 });

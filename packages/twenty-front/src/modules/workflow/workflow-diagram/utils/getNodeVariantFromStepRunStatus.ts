@@ -6,7 +6,6 @@ export const getNodeVariantFromStepRunStatus = (
 ): WorkflowDiagramNodeVariant => {
   switch (runStatus) {
     case 'SUCCESS':
-    case 'STOPPED':
       return 'success';
     case 'FAILED':
       return 'failure';
