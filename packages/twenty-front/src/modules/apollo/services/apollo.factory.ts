@@ -58,7 +58,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
   private client: ApolloClient<TCacheShape>;
   private currentWorkspaceMember: CurrentWorkspaceMember | null = null;
   private currentWorkspace: CurrentWorkspace | null = null;
-  private appVersion;
+  private appVersion?: string;
 
   constructor(opts: Options<TCacheShape>) {
     const {
