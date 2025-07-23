@@ -1,7 +1,8 @@
+import { In } from 'typeorm';
+
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
 import { FlatFieldMetadataPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-field-metadata-comparator.util';
-
 import {
   CreateFieldAction,
   DeleteFieldAction,
@@ -10,7 +11,6 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { RunnerMethodForActionType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/runner-method-for-action-type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
-import { In } from 'typeorm';
 
 export class WorkspaceMetadataFieldActionRunnerService
   implements
@@ -26,6 +26,7 @@ export class WorkspaceMetadataFieldActionRunnerService
       );
 
     const { flatFieldMetadata } = action;
+
     await fieldMetadataRepository.delete({
       id: In([flatFieldMetadata.id]),
     });
@@ -41,6 +42,7 @@ export class WorkspaceMetadataFieldActionRunnerService
       );
 
     const { flatFieldMetadata } = action;
+
     await fieldMetadataRepository.save(flatFieldMetadata);
   };
   runUpdateFieldMetadataMigration = async ({

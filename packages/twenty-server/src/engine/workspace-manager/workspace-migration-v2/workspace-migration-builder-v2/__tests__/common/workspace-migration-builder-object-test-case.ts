@@ -84,9 +84,8 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
             isLabelSyncedWithName: true,
             id: objectMetadataId,
             flatFieldMetadatas,
-            flatIndexMetadatas: [flatIndexMetadata]
+            flatIndexMetadatas: [flatIndexMetadata],
           });
-  
 
           return {
             from: [],
@@ -97,7 +96,7 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
         expectedActionsTypeCounter: {
           createObject: 1,
           createField: 5,
-          createIndex: 1
+          createIndex: 1,
         },
       },
     },
