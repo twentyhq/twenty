@@ -19,6 +19,7 @@ import {
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   graphQLErrorCodesToFilter,
   shouldCaptureException,
@@ -37,6 +38,8 @@ type GraphQLErrorHandlerHookOptions = {
    * The exception handler service to use.
    */
   exceptionHandlerService: ExceptionHandlerService;
+
+  twentyConfigService: TwentyConfigService;
   /**
    * The key of the event id in the error's extension. `null` to disable.
    * @default exceptionEventId
@@ -233,7 +236,8 @@ export const useGraphQLErrorHandlerHook = <
         const headers = context.req.headers;
         const currentMetadataVersion = context.req.workspaceMetadataVersion;
         const requestMetadataVersion = headers[SCHEMA_VERSION_HEADER];
-        const backendAppVersion = process.env.APP_VERSION;
+        const backendAppVersion =
+          options.twentyConfigService.get('APP_VERSION');
         const requestAppVersion = headers[APP_VERSION_HEADER];
         const reqAppVersionStr = Array.isArray(requestAppVersion)
           ? requestAppVersion[0]
