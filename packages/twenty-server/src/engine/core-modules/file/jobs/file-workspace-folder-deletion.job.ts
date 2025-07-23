@@ -20,7 +20,7 @@ export class FileWorkspaceFolderDeletionJob {
     } catch (error) {
       //todo: clean up error message once issue on workspace folder deletion is fixed + in s3 driver file
       throw new Error(
-        `[${FileWorkspaceFolderDeletionJob.name}] Cannot delete workspace folder - ${workspaceId} - ${error.message}`,
+        `[${FileWorkspaceFolderDeletionJob.name}] Cannot delete workspace folder - ${workspaceId} - ${error?.message || error}`,
       );
     }
   }
