@@ -41,6 +41,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 import { AgentException, AgentExceptionCode } from './agent.exception';
 import { AgentEntity } from './agent.entity';
@@ -65,6 +66,7 @@ export class AgentExecutionService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly agentToolService: AgentToolService,
     private readonly fileService: FileService,
+    private readonly domainManagerService: DomainManagerService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly aiModelRegistryService: AiModelRegistryService,
@@ -248,7 +250,7 @@ export class AgentExecutionService {
     const contextObject = (
       await Promise.all(
         recordIdsByObjectMetadataNameSingular.map(
-          (recordsWithObjectMetadataNameSingular) => {
+          async (recordsWithObjectMetadataNameSingular) => {
             if (recordsWithObjectMetadataNameSingular.recordIds.length === 0) {
               return [];
             }
@@ -259,15 +261,24 @@ export class AgentExecutionService {
               roleId,
             );
 
-            return repository.find({
-              where: {
-                id: In(recordsWithObjectMetadataNameSingular.recordIds),
-              },
+            return (
+              await repository.find({
+                where: {
+                  id: In(recordsWithObjectMetadataNameSingular.recordIds),
+                },
+              })
+            ).map((record) => {
+              return {
+                ...record,
+                resourceUrl: `${this.domainManagerService.getFrontUrl()}object/${recordsWithObjectMetadataNameSingular.objectMetadataNameSingular}/${record.id}`,
+              };
             });
           },
         ),
       )
     ).flat(2);
+
+    console.log('>>>>>>>>>>>>>>', contextObject);
 
     return JSON.stringify(contextObject);
   }
