@@ -5,8 +5,8 @@ import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/str
 import { TotpStrategy } from './totp.strategy';
 
 import {
-    TOTPHashAlgorithms,
-    TotpContext,
+  TOTPHashAlgorithms,
+  TotpContext,
 } from './constants/totp.strategy.constants';
 
 const RESYNCH_WINDOW = 3;
