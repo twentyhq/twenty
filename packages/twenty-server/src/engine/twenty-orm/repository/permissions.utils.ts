@@ -209,27 +209,6 @@ export const validateQueryIsPermittedOrThrow = ({
   });
 };
 
-const getselectedColumnsFromExpressionMap = (
-  selects: { selection: string }[],
-) => {
-  return selects
-    ?.map((select) => {
-      const columnsFromAggregateExpression =
-        ProcessAggregateHelper.extractColumnNamesFromAggregateExpression(
-          select.selection,
-        );
-
-      if (columnsFromAggregateExpression) {
-        return columnsFromAggregateExpression;
-      }
-
-      const parts = select.selection.split('.');
-
-      return parts[parts.length - 1];
-    })
-    .flat();
-};
-
 const validateReadFieldPermissionOrThrow = ({
   restrictedFields,
   selectedColumns,
@@ -252,12 +231,12 @@ const validateReadFieldPermissionOrThrow = ({
     );
   }
 
-  for (const field of selectedColumns) {
-    const fieldMetadataId = fieldMetadataIdForColumnNameMap[field];
+  for (const column of selectedColumns) {
+    const fieldMetadataId = fieldMetadataIdForColumnNameMap[column];
 
     if (!fieldMetadataId) {
       throw new InternalServerError(
-        `Field metadata id not found for column name ${field}`,
+        `Field metadata id not found for column name ${column}`,
       );
     }
 
@@ -293,10 +272,31 @@ const getSelectedColumnsFromExpressionMap = ({
     }
     selectedColumns = [expressionMap.returning].flat();
   } else if (!allFieldsSelected) {
-    selectedColumns = getselectedColumnsFromExpressionMap(
+    selectedColumns = getSelectedColumnsFromExpressionMapSelects(
       expressionMap.selects,
     );
   }
 
   return selectedColumns;
+};
+
+const getSelectedColumnsFromExpressionMapSelects = (
+  selects: { selection: string }[],
+) => {
+  return selects
+    ?.map((select) => {
+      const columnsFromAggregateExpression =
+        ProcessAggregateHelper.extractColumnNamesFromAggregateExpression(
+          select.selection,
+        );
+
+      if (columnsFromAggregateExpression) {
+        return columnsFromAggregateExpression;
+      }
+
+      const parts = select.selection.split('.');
+
+      return parts[parts.length - 1];
+    })
+    .flat();
 };
