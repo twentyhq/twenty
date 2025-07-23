@@ -5,7 +5,6 @@ import { phoneSchema } from '@/object-record/record-field/validation-schemas/pho
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import { E164Number, parsePhoneNumber } from 'libphonenumber-js';
-import { useCallback } from 'react';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 
@@ -105,13 +104,10 @@ export const PhonesFieldInput = ({
     });
   };
 
-  const validateInput = useCallback(
-    (input: string) => ({
-      isValid: phoneSchema.safeParse(input).success,
-      errorMessage: '',
-    }),
-    [],
-  );
+  const validateInput = (input: string) => ({
+    isValid: phoneSchema.safeParse(input).success,
+    errorMessage: '',
+  });
 
   const getShowPrimaryIcon = (index: number) =>
     index === 0 && phones.length > 1;
