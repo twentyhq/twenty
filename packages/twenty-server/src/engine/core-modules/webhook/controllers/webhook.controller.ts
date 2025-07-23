@@ -21,12 +21,10 @@ import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 /**
- * @deprecated
- * @see WebhookMetadataController
- * This is a temporary controller to support the old REST API.
- * It will be removed in the future.
+ * rest/webhooks is deprecated, use rest/metadata/webhooks instead
+ * rest/webhooks will be removed in the future
  */
-@Controller('rest/webhooks')
+@Controller(['rest/webhooks', 'rest/metadata/webhooks'])
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
 @UseFilters(RestApiExceptionFilter)
 export class WebhookController {
