@@ -75,7 +75,9 @@ export class WorkflowRunnerWorkspaceService {
         status: shouldEnqueueWorkflowRun
           ? WorkflowRunStatus.ENQUEUED
           : WorkflowRunStatus.NOT_STARTED,
-        triggerPayload: payload,
+        context: {
+          trigger: payload,
+        },
       });
 
     if (shouldEnqueueWorkflowRun) {

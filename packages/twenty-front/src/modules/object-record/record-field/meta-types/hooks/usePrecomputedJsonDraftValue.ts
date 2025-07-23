@@ -1,6 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { orderWorkflowRunState } from '@/object-record/record-field/meta-types/utils/orderWorkflowRunState';
+import { orderWorkflowRunOutput } from '@/object-record/record-field/meta-types/utils/orderWorkflowRunOutput';
 import { useContext } from 'react';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 import { JsonObject, JsonValue } from 'type-fest';
@@ -19,10 +19,10 @@ export const usePrecomputedJsonDraftValue = ({
   if (
     fieldDefinition.metadata.objectMetadataNameSingular ===
       CoreObjectNameSingular.WorkflowRun &&
-    fieldDefinition.metadata.fieldName === 'state' &&
+    fieldDefinition.metadata.fieldName === 'output' &&
     isDefined(draftValue)
   ) {
-    return orderWorkflowRunState(parsedJsonValue) as JsonObject;
+    return orderWorkflowRunOutput(parsedJsonValue) as JsonObject;
   }
 
   return parsedJsonValue;
