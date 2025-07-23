@@ -175,18 +175,11 @@ export const validateQueryIsPermittedOrThrow = ({
   let selectedColumns: string[] = [];
 
   if (isFieldPermissionsEnabled) {
-    if (operationType === 'update') {
-      if (isEmpty(expressionMap.returning)) {
-        throw new InternalServerError(
-          'Returning columns are not set for update query',
-        );
-      }
-      selectedColumns = [expressionMap.returning].flat();
-    } else if (!allFieldsSelected) {
-      selectedColumns = getselectedColumnsFromExpressionMap(
-        expressionMap.selects,
-      );
-    }
+    selectedColumns = getSelectedColumnsFromExpressionMap({
+      operationType,
+      expressionMap,
+      allFieldsSelected,
+    });
   }
 
   validateOperationIsPermittedOrThrow({
@@ -259,4 +252,31 @@ const validateFieldsPermissionsOrThrow = ({
       );
     }
   }
+};
+
+const getSelectedColumnsFromExpressionMap = ({
+  operationType,
+  expressionMap,
+  allFieldsSelected,
+}: {
+  operationType: string;
+  expressionMap: QueryExpressionMap;
+  allFieldsSelected: boolean;
+}) => {
+  let selectedColumns: string[] = [];
+
+  if (operationType === 'update') {
+    if (isEmpty(expressionMap.returning)) {
+      throw new InternalServerError(
+        'Returning columns are not set for update query',
+      );
+    }
+    selectedColumns = [expressionMap.returning].flat();
+  } else if (!allFieldsSelected) {
+    selectedColumns = getselectedColumnsFromExpressionMap(
+      expressionMap.selects,
+    );
+  }
+
+  return selectedColumns;
 };
