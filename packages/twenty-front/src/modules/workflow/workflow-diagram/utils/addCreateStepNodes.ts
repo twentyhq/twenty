@@ -2,6 +2,7 @@ import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workf
 import {
   WorkflowDiagram,
   WorkflowDiagramEdge,
+  WorkflowDiagramEdgeType,
   WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { v4 } from 'uuid';
@@ -31,6 +32,7 @@ export const addCreateStepNodes = ({ nodes, edges }: WorkflowDiagram) => {
 
     updatedEdges.push({
       ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
+      type: 'blank' as WorkflowDiagramEdgeType,
       id: v4(),
       source: node.id,
       target: newCreateStepNode.id,

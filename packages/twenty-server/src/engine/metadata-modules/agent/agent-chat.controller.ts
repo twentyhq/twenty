@@ -15,6 +15,9 @@ import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.f
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
 
 import { AgentChatService } from './agent-chat.service';
 import { AgentStreamingService } from './agent-streaming.service';
@@ -58,8 +61,14 @@ export class AgentChatController {
   @Post('stream')
   async streamAgentChat(
     @Body()
-    body: { threadId: string; userMessage: string; fileIds?: string[] },
+    body: {
+      threadId: string;
+      userMessage: string;
+      fileIds?: string[];
+      recordIdsByObjectMetadataNameSingular?: RecordIdsByObjectMetadataNameSingularType;
+    },
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspace() workspace: Workspace,
     @Res() res: Response,
   ) {
     try {
@@ -67,7 +76,10 @@ export class AgentChatController {
         threadId: body.threadId,
         userMessage: body.userMessage,
         userWorkspaceId,
+        workspace,
         fileIds: body.fileIds || [],
+        recordIdsByObjectMetadataNameSingular:
+          body.recordIdsByObjectMetadataNameSingular || [],
         res,
       });
     } catch (error) {

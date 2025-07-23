@@ -9,10 +9,6 @@ export enum NumberDataType {
   BIGINT = 'bigint',
 }
 
-export type FieldMetadataDefaultSettings = {
-  isForeignKey?: boolean;
-};
-
 export enum DateDisplayFormat {
   RELATIVE = 'RELATIVE',
   USER_SETTINGS = 'USER_SETTINGS',
@@ -54,11 +50,14 @@ type FieldMetadataSettingsMapping = {
   [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings;
 };
 
+export type AllFieldMetadataSettings =
+  FieldMetadataSettingsMapping[keyof FieldMetadataSettingsMapping];
+
 export type FieldMetadataSettings<
   T extends FieldMetadataType = FieldMetadataType,
 > =
   IsExactly<T, FieldMetadataType> extends true
-    ? FieldMetadataDefaultSettings
+    ? null | AllFieldMetadataSettings // Could be improved to be | unknown
     : T extends keyof FieldMetadataSettingsMapping
-      ? FieldMetadataSettingsMapping[T] & FieldMetadataDefaultSettings
+      ? FieldMetadataSettingsMapping[T] | null
       : never;
