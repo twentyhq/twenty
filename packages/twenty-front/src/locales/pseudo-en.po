@@ -164,6 +164,11 @@ msgstr ""
 #~ msgid "1 000 workflow node executions"
 #~ msgstr ""
 
+#. js-lingui-id: 3DNcuK
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "1. Scan the QR code"
+msgstr ""
+
 #. js-lingui-id: vb5TwV
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 msgid "1. Select a field type"
@@ -206,6 +211,11 @@ msgstr ""
 msgid "2. Configure field"
 msgstr ""
 
+#. js-lingui-id: bD1Hnc
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "2. Enter the code"
+msgstr ""
+
 #. js-lingui-id: 0Tx9MD
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 msgid "2. Set {objectLabelPlural} permissions"
@@ -224,6 +234,16 @@ msgstr ""
 #. js-lingui-id: QsMprd
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "24h ({hour24Label})"
+msgstr ""
+
+#. js-lingui-id: hziCGA
+#: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
+msgid "2FA Method has been deleted successfully."
+msgstr ""
+
+#. js-lingui-id: cNBo/E
+#: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
+msgid "2FA Method Reset"
 msgstr ""
 
 #. js-lingui-id: IbMa7Z
@@ -872,6 +892,11 @@ msgstr ""
 msgid "Authentication failed"
 msgstr ""
 
+#. js-lingui-id: YZWcQL
+#: src/pages/settings/SettingsProfile.tsx
+msgid "Authenticator App"
+msgstr ""
+
 #. js-lingui-id: yIVrHZ
 #: src/pages/auth/Authorize.tsx
 msgid "Authorize"
@@ -926,6 +951,7 @@ msgstr ""
 #. js-lingui-id: iH8pgl
 #: src/pages/onboarding/BookCall.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Back"
 msgstr ""
 
@@ -1503,6 +1529,12 @@ msgstr ""
 msgid "Copy link to view"
 msgstr ""
 
+#. js-lingui-id: S+Jl8l
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
+msgid "Copy Setup Key"
+msgstr ""
+
 #. js-lingui-id: Ej5euX
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Copy this key as it will not be visible again"
@@ -1998,6 +2030,11 @@ msgstr ""
 msgid "Delete this webhook"
 msgstr ""
 
+#. js-lingui-id: jPvFKE
+#: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
+msgid "Delete Two-Factor Authentication Method"
+msgstr ""
+
 #. js-lingui-id: aRG49z
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Delete view"
@@ -2058,6 +2095,11 @@ msgstr ""
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #~ msgid "Deleted workflows"
 #~ msgstr ""
+
+#. js-lingui-id: wIAG+H
+#: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
+msgid "Deleting this method will remove it permanently from your account."
+msgstr ""
 
 #. js-lingui-id: Cko536
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -2425,9 +2467,19 @@ msgstr ""
 msgid "Endpoint URL"
 msgstr ""
 
+#. js-lingui-id: Vv4JVS
+#: src/modules/settings/security/components/Toggle2FA.tsx
+msgid "Enforce two-step verification for every user login."
+msgstr ""
+
 #. js-lingui-id: lYGfRP
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "English"
+msgstr ""
+
+#. js-lingui-id: UXZry7
+#: src/pages/settings/SettingsProfile.tsx
+msgid "Enhances security by requiring a code along with your password"
 msgstr ""
 
 #. js-lingui-id: /bfFKe
@@ -2448,6 +2500,11 @@ msgstr ""
 #. js-lingui-id: 9/30HU
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
 msgid "Enter in <0>Unicode</0> format"
+msgstr ""
+
+#. js-lingui-id: MY3Tl9
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "Enter the 6-digit verification code from your authenticator app to complete the setup."
 msgstr ""
 
 #. js-lingui-id: XJU8BD
@@ -3352,6 +3409,11 @@ msgstr ""
 msgid "Interact with your workspace data"
 msgstr ""
 
+#. js-lingui-id: ggS/0k
+#: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
+msgid "Invalid 2FA information."
+msgstr ""
+
 #. js-lingui-id: GNRDhm
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Invalid API key"
@@ -3402,6 +3464,12 @@ msgstr ""
 #. js-lingui-id: QdoUFL
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
+msgstr ""
+
+#. js-lingui-id: VEKoJx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationForSettings.tsx
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
+msgid "Invalid verification code. Please try again."
 msgstr ""
 
 #. js-lingui-id: K8XJhc
@@ -3763,6 +3831,11 @@ msgstr ""
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Log out"
+msgstr ""
+
+#. js-lingui-id: VLuNNu
+#: src/modules/auth/components/TwoFactorAuthenticationProvisionEffect.tsx
+msgid "Login token missing. Two Factor Authentication setup can not be initiated."
 msgstr ""
 
 #. js-lingui-id: nOhz3x
@@ -4618,6 +4691,11 @@ msgstr ""
 msgid "Password reset link has been sent to the email"
 msgstr ""
 
+#. js-lingui-id: cpStVq
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
+msgid "Paste the code below"
+msgstr ""
+
 #. js-lingui-id: 1wdjme
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4831,6 +4909,7 @@ msgid "Processing..."
 msgstr ""
 
 #. js-lingui-id: vERlcd
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/SettingsProfile.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -5000,6 +5079,12 @@ msgstr ""
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
 msgid "Reset"
+msgstr ""
+
+#. js-lingui-id: 1BEcEg
+#: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
+#: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
+msgid "Reset 2FA"
 msgstr ""
 
 #. js-lingui-id: KbS2K9
@@ -5547,6 +5632,17 @@ msgstr ""
 #. js-lingui-id: p8fNBm
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Settings permissions"
+msgstr ""
+
+#. js-lingui-id: i5CJAR
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
+msgid "Setup key copied to clipboard"
+msgstr ""
+
+#. js-lingui-id: NQNJjc
+#: src/pages/auth/SignInUp.tsx
+msgid "Setup your 2FA"
 msgstr ""
 
 #. js-lingui-id: Vy9kmk
@@ -6249,6 +6345,29 @@ msgstr ""
 msgid "Turkish"
 msgstr ""
 
+#. js-lingui-id: tuvLv1
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+#: src/pages/settings/SettingsProfile.tsx
+#: src/modules/settings/security/components/Toggle2FA.tsx
+msgid "Two Factor Authentication"
+msgstr ""
+
+#. js-lingui-id: MUIppF
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationSetupForSettingsEffect.tsx
+#: src/modules/auth/components/TwoFactorAuthenticationProvisionEffect.tsx
+msgid "Two factor authentication provisioning failed."
+msgstr ""
+
+#. js-lingui-id: C4pKXW
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "Two-Factor Authentication"
+msgstr ""
+
+#. js-lingui-id: cRM1ec
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationForSettings.tsx
+msgid "Two-factor authentication setup completed successfully!"
+msgstr ""
+
 #. js-lingui-id: +zy2Nq
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -6361,10 +6480,20 @@ msgstr ""
 #~ msgid "URL"
 #~ msgstr ""
 
+#. js-lingui-id: zlvvC+
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "Use an authenticator app like Google Authenticator, Authy, or Microsoft Authenticator to scan this QR code."
+msgstr ""
+
 #. js-lingui-id: 6dMpmz
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Use as draft"
+msgstr ""
+
+#. js-lingui-id: 6kLyt5
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
+msgid "Use authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator to generate one-time passwords"
 msgstr ""
 
 #. js-lingui-id: oTTQsc
@@ -6378,6 +6507,7 @@ msgid "Use our API or add your first {objectLabel} manually"
 msgstr ""
 
 #. js-lingui-id: 7PzzBU
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
@@ -6479,6 +6609,11 @@ msgstr ""
 #. js-lingui-id: 2ushgC
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Variable updated successfully."
+msgstr ""
+
+#. js-lingui-id: IoglDq
+#: src/pages/auth/SignInUp.tsx
+msgid "Verify code from the app"
 msgstr ""
 
 #. js-lingui-id: IHIWR4
