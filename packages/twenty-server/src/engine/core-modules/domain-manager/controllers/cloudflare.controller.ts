@@ -74,7 +74,7 @@ export class CloudflareController {
         customDomain: workspace.customDomain,
       };
 
-      if (!customDomainDetails && workspace) {
+      if (!customDomainDetails) {
         workspaceUpdated.customDomain = null;
       }
 
