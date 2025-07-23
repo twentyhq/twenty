@@ -1,6 +1,5 @@
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
-import { CREATE_STEP_NODE_WIDTH } from '@/workflow/workflow-diagram/constants/CreateStepNodeWidth';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useOpenWorkflowViewFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowViewFilterInCommandMenu';
 import {
@@ -13,7 +12,7 @@ import {
   BaseEdge,
   EdgeLabelRenderer,
   EdgeProps,
-  getStraightPath,
+  getBezierPath,
 } from '@xyflow/react';
 import { IconFilter } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
@@ -40,7 +39,9 @@ const StyledConfiguredFilterContainer = styled.div`
 `;
 
 export const WorkflowDiagramFilterEdgeReadonly = ({
+  sourceX,
   sourceY,
+  targetX,
   targetY,
   markerStart,
   markerEnd,
@@ -50,10 +51,10 @@ export const WorkflowDiagramFilterEdgeReadonly = ({
 
   const theme = useTheme();
 
-  const [edgePath, labelX, labelY] = getStraightPath({
-    sourceX: CREATE_STEP_NODE_WIDTH,
+  const [edgePath, labelX, labelY] = getBezierPath({
+    sourceX,
     sourceY,
-    targetX: CREATE_STEP_NODE_WIDTH,
+    targetX,
     targetY,
   });
 

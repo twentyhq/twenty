@@ -11,7 +11,6 @@ import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithC
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
-import { CREATE_STEP_NODE_WIDTH } from '@/workflow/workflow-diagram/constants/CreateStepNodeWidth';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useOpenWorkflowEditFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowEditFilterInCommandMenu';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
@@ -29,7 +28,7 @@ import {
   BaseEdge,
   EdgeLabelRenderer,
   EdgeProps,
-  getStraightPath,
+  getBezierPath,
 } from '@xyflow/react';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -67,7 +66,9 @@ export const WorkflowDiagramFilterEdgeEditable = ({
   source,
   target,
   sourceY,
+  sourceX,
   targetY,
+  targetX,
   markerStart,
   markerEnd,
   data,
@@ -76,10 +77,10 @@ export const WorkflowDiagramFilterEdgeEditable = ({
 
   const theme = useTheme();
 
-  const [edgePath, labelX, labelY] = getStraightPath({
-    sourceX: CREATE_STEP_NODE_WIDTH,
+  const [edgePath, labelX, labelY] = getBezierPath({
+    sourceX,
     sourceY,
-    targetX: CREATE_STEP_NODE_WIDTH,
+    targetX,
     targetY,
   });
 

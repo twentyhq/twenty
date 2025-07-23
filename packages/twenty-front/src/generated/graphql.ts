@@ -537,6 +537,15 @@ export type CreateWebhookDto = {
   targetUrl: Scalars['String'];
 };
 
+export type CreateWorkflowVersionEdgeInput = {
+  /** Workflow version source step ID */
+  source: Scalars['String'];
+  /** Workflow version target step ID */
+  target: Scalars['String'];
+  /** Workflow version ID */
+  workflowVersionId: Scalars['String'];
+};
+
 export type CreateWorkflowVersionStepInput = {
   /** Next step ID */
   nextStepId?: InputMaybe<Scalars['String']>;
@@ -1081,6 +1090,7 @@ export type Mutation = {
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWebhook: Webhook;
+  createWorkflowVersionEdge: WorkflowEdge;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
@@ -1262,6 +1272,11 @@ export type MutationCreateSamlIdentityProviderArgs = {
 
 export type MutationCreateWebhookArgs = {
   input: CreateWebhookDto;
+};
+
+
+export type MutationCreateWorkflowVersionEdgeArgs = {
+  input: CreateWorkflowVersionEdgeInput;
 };
 
 
@@ -2730,6 +2745,12 @@ export type WorkflowAction = {
   settings: Scalars['JSON'];
   type: Scalars['String'];
   valid: Scalars['Boolean'];
+};
+
+export type WorkflowEdge = {
+  __typename?: 'WorkflowEdge';
+  source: Scalars['String'];
+  target: Scalars['String'];
 };
 
 export type WorkflowRun = {
