@@ -43,6 +43,17 @@ const getVariableType = (key: string, outputSchema: OutputSchema): string => {
   return outputSchema[key]?.type ?? 'unknown';
 };
 
+const getFieldMetadataId = (
+  key: string,
+  outputSchema: OutputSchema,
+): string | undefined => {
+  if (isRecordOutputSchema(outputSchema)) {
+    return outputSchema.fields[key]?.fieldMetadataId;
+  }
+
+  return undefined;
+};
+
 const searchCurrentStepOutputSchema = ({
   stepOutputSchema,
   path,
@@ -120,6 +131,10 @@ const searchCurrentStepOutputSchema = ({
       isSelectedFieldInNextKey ? nextKey : selectedField,
       currentSubStep,
     ),
+    fieldMetadataId: getFieldMetadataId(
+      isSelectedFieldInNextKey ? nextKey : selectedField,
+      currentSubStep,
+    ),
   };
 };
 
@@ -160,7 +175,7 @@ export const searchVariableThroughOutputSchema = ({
     };
   }
 
-  const { variableLabel, variablePathLabel, variableType } =
+  const { variableLabel, variablePathLabel, variableType, fieldMetadataId } =
     searchCurrentStepOutputSchema({
       stepOutputSchema,
       path,
@@ -172,5 +187,6 @@ export const searchVariableThroughOutputSchema = ({
     variableLabel,
     variablePathLabel: `${variablePathLabel} > ${variableLabel}`,
     variableType,
+    fieldMetadataId,
   };
 };

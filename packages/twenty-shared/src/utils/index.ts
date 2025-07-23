@@ -28,6 +28,7 @@ export { getUrlHostnameOrThrow } from './url/getUrlHostnameOrThrow';
 export { isValidHostname } from './url/isValidHostname';
 export { isValidUrl } from './url/isValidUrl';
 export { lowercaseUrlOriginAndRemoveTrailingSlash } from './url/lowercaseUrlOriginAndRemoveTrailingSlash';
+export { uuidToBase36 } from './uuidToBase36';
 export { isDefined } from './validation/isDefined';
 export { isLabelIdentifierFieldMetadataTypes } from './validation/isLabelIdentifierFieldMetadataTypes';
 export { isValidLocale } from './validation/isValidLocale';
