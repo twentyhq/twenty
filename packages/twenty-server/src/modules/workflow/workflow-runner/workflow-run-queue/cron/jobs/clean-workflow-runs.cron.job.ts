@@ -45,9 +45,7 @@ export class CleanWorkflowRunsJob {
       await this.workspaceDataSourceService.connectToMainDataSource();
 
     for (const activeWorkspace of activeWorkspaces) {
-      const schemaName = getWorkspaceSchemaName(
-        activeWorkspace.id,
-      );
+      const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
 
       const workflowRunsToDelete = await mainDataSource.query(
         `
