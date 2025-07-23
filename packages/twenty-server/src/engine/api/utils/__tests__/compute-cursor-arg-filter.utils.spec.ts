@@ -4,7 +4,6 @@ import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder
 
 import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
 import { getMockObjectMetadataItemWithFieldsMaps } from 'src/utils/__test__/get-object-metadata-item-with-fields-maps.mock';
 
@@ -44,7 +43,7 @@ describe('computeCursorArgFilter', () => {
           isNullable: true,
           createdAt: new Date(),
           updatedAt: new Date(),
-        }) as FieldMetadataEntity,
+        }),
         'age-id': getMockFieldMetadataEntity({
           workspaceId: 'workspace-id',
           objectMetadataId: 'object-id',
@@ -56,7 +55,7 @@ describe('computeCursorArgFilter', () => {
           isNullable: true,
           createdAt: new Date(),
           updatedAt: new Date(),
-        }) as FieldMetadataEntity,
+        }),
         'fullname-id': getMockFieldMetadataEntity({
           workspaceId: 'workspace-id',
           objectMetadataId: 'object-id',
@@ -68,7 +67,7 @@ describe('computeCursorArgFilter', () => {
           isNullable: true,
           createdAt: new Date(),
           updatedAt: new Date(),
-        }) as FieldMetadataEntity,
+        }),
       },
     });
 

@@ -133,7 +133,7 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   // @Validate(IsFieldMetadataOptions)
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
-  options?: FieldMetadataOptions<T> | null;
+  options?: FieldMetadataOptions<T>;
 
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })

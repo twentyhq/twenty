@@ -77,32 +77,37 @@ export class FieldMetadataValidationService {
   }) {
     switch (fieldType) {
       case FieldMetadataType.NUMBER:
-        await this.validateSettings<FieldMetadataType.NUMBER>(
-          NumberSettingsValidation,
+        await this.validateSettings({
+          type: FieldMetadataType.NUMBER,
+          validator: NumberSettingsValidation,
           settings,
-        );
+        });
         break;
       case FieldMetadataType.TEXT:
-        await this.validateSettings<FieldMetadataType.TEXT>(
-          TextSettingsValidation,
+        await this.validateSettings({
+          type: FieldMetadataType.TEXT,
+          validator: TextSettingsValidation,
           settings,
-        );
+        });
         break;
       default:
         break;
     }
   }
 
-  private async validateSettings<Type extends FieldMetadataType>(
-    validator: ClassConstructor<
-      Type extends FieldMetadataType.NUMBER
-        ? NumberSettingsValidation
-        : Type extends FieldMetadataType.TEXT
-          ? TextSettingsValidation
-          : never
-    >,
-    settings: FieldMetadataSettings<Type>,
-  ) {
+  private async validateSettings<
+    Type extends FieldMetadataType,
+    TValidator extends ClassConstructor<object>,
+    TFieldMetadataType extends FieldMetadataType,
+  >({
+    type: _type,
+    settings,
+    validator,
+  }: {
+    validator: TValidator;
+    settings: FieldMetadataSettings<Type>;
+    type: TFieldMetadataType;
+  }) {
     try {
       const settingsInstance = plainToInstance(validator, settings);
 

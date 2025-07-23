@@ -8,15 +8,17 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 type GetMockFieldMetadataEntityOverride<
   T extends FieldMetadataType = FieldMetadataType,
 > = Partial<FieldMetadataEntity<T>> &
-  Required<Pick<FieldMetadataEntity<T>, 'workspaceId' | 'objectMetadataId'>>;
+  Required<
+    Pick<FieldMetadataEntity<T>, 'workspaceId' | 'objectMetadataId' | 'type'>
+  >;
 
+// Should be renamed to abstract
 export const getMockFieldMetadataEntity = <
   T extends FieldMetadataType = FieldMetadataType.TEXT,
 >(
   overrides: GetMockFieldMetadataEntityOverride<T>,
-): FieldMetadataEntity<T> => {
+): FieldMetadataEntity => {
   return {
-    type: FieldMetadataType.TEXT as T,
     fieldPermissions: [],
     icon: null,
     indexFieldMetadatas: {} as IndexFieldMetadataEntity,
