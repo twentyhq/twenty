@@ -7,6 +7,7 @@ import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/comp
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
 import { CREATE_STEP_NODE_WIDTH } from '@/workflow/workflow-diagram/constants/CreateStepNodeWidth';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
+import { useOpenWorkflowEditFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowEditFilterInCommandMenu';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -21,6 +22,7 @@ import {
   getStraightPath,
 } from '@xyflow/react';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconFilter, IconPlus } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
 
@@ -66,11 +68,23 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     workflowInsertStepIds.nextStepId === target &&
     workflowInsertStepIds.parentStepId === source;
 
+  const { openWorkflowEditFilterInCommandMenu } =
+    useOpenWorkflowEditFilterInCommandMenu();
+
   const handleCreateFilter = async () => {
-    await createStep({
+    const createdStep = await createStep({
       newStepType: 'FILTER',
       parentStepId: source,
       nextStepId: target,
+    });
+
+    if (!isDefined(createdStep)) {
+      return;
+    }
+
+    openWorkflowEditFilterInCommandMenu({
+      stepId: createdStep.id,
+      stepName: createdStep.name,
     });
 
     setHovered(false);
