@@ -164,7 +164,6 @@ export class WorkspaceUpdateQueryBuilder<
     };
   }
 
-  //tododo : fix all typing issues
   override set(
     _values:
       | QueryDeepPartialEntityWithNestedRelationFields<T>
