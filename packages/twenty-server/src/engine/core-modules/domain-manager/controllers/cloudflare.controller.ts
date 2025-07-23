@@ -42,58 +42,70 @@ export class CloudflareController {
   @Post(['cloudflare/custom-hostname-webhooks', 'webhooks/cloudflare'])
   @UseGuards(CloudflareSecretMatchGuard, PublicEndpointGuard)
   async customHostnameWebhooks(@Req() req: Request, @Res() res: Response) {
-    if (!req.body?.data?.data?.hostname) {
+    try {
+      if (!req.body?.data?.data?.hostname) {
+        handleException({
+          exception: new DomainManagerException(
+            'Hostname missing',
+            DomainManagerExceptionCode.INVALID_INPUT_DATA,
+          ),
+          exceptionHandlerService: this.exceptionHandlerService,
+        });
+
+        return res.status(200).send();
+      }
+
+      const workspace = await this.workspaceRepository.findOneBy({
+        customDomain: req.body.data.data.hostname,
+      });
+
+      if (!workspace) return;
+
+      const analytics = this.auditService.createContext({
+        workspaceId: workspace.id,
+      });
+
+      const customDomainDetails =
+        await this.customDomainService.getCustomDomainDetails(
+          req.body.data.data.hostname,
+        );
+
+      const workspaceUpdated: Partial<Workspace> = {
+        customDomain: workspace.customDomain,
+      };
+
+      if (!customDomainDetails && workspace) {
+        workspaceUpdated.customDomain = null;
+      }
+
+      workspaceUpdated.isCustomDomainEnabled = customDomainDetails
+        ? this.domainManagerService.isCustomDomainWorking(customDomainDetails)
+        : false;
+
+      if (
+        workspaceUpdated.isCustomDomainEnabled !==
+          workspace.isCustomDomainEnabled ||
+        workspaceUpdated.customDomain !== workspace.customDomain
+      ) {
+        await this.workspaceRepository.save({
+          ...workspace,
+          ...workspaceUpdated,
+        });
+
+        await analytics.insertWorkspaceEvent(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
+      }
+
+      return res.status(200).send();
+    } catch (err) {
       handleException({
         exception: new DomainManagerException(
-          'Hostname missing',
-          DomainManagerExceptionCode.INVALID_INPUT_DATA,
+          err.message ?? '',
+          DomainManagerExceptionCode.INTERNAL_SERVER_ERROR,
         ),
         exceptionHandlerService: this.exceptionHandlerService,
       });
-
+      
       return res.status(200).send();
     }
-
-    const workspace = await this.workspaceRepository.findOneBy({
-      customDomain: req.body.data.data.hostname,
-    });
-
-    if (!workspace) return;
-
-    const analytics = this.auditService.createContext({
-      workspaceId: workspace.id,
-    });
-
-    const customDomainDetails =
-      await this.customDomainService.getCustomDomainDetails(
-        req.body.data.data.hostname,
-      );
-
-    const workspaceUpdated: Partial<Workspace> = {
-      customDomain: workspace.customDomain,
-    };
-
-    if (!customDomainDetails && workspace) {
-      workspaceUpdated.customDomain = null;
-    }
-
-    workspaceUpdated.isCustomDomainEnabled = customDomainDetails
-      ? this.domainManagerService.isCustomDomainWorking(customDomainDetails)
-      : false;
-
-    if (
-      workspaceUpdated.isCustomDomainEnabled !==
-        workspace.isCustomDomainEnabled ||
-      workspaceUpdated.customDomain !== workspace.customDomain
-    ) {
-      await this.workspaceRepository.save({
-        ...workspace,
-        ...workspaceUpdated,
-      });
-
-      await analytics.insertWorkspaceEvent(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
-    }
-
-    return res.status(200).send();
   }
 }

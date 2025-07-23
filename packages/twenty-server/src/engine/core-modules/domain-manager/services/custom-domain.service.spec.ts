@@ -284,26 +284,4 @@ describe('CustomDomainService', () => {
       ).resolves.toBeUndefined();
     });
   });
-
-  describe('isCustomDomainWorking', () => {
-    it('should return true if all records have success status', () => {
-      const customDomainDetails = {
-        records: [{ status: 'success' }, { status: 'success' }],
-      } as any;
-
-      expect(
-        customDomainService.isCustomDomainWorking(customDomainDetails),
-      ).toBe(true);
-    });
-
-    it('should return false if any record does not have success status', () => {
-      const customDomainDetails = {
-        records: [{ status: 'success' }, { status: 'pending' }],
-      } as any;
-
-      expect(
-        customDomainService.isCustomDomainWorking(customDomainDetails),
-      ).toBe(false);
-    });
-  });
 });

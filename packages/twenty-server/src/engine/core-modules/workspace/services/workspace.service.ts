@@ -401,38 +401,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     return !existingWorkspace;
   }
 
-  async checkCustomDomainValidRecords(workspace: Workspace) {
-    if (!workspace.customDomain) return;
-
-    const customDomainDetails =
-      await this.customDomainService.getCustomDomainDetails(
-        workspace.customDomain,
-      );
-
-    if (!customDomainDetails) return;
-
-    const isCustomDomainWorking =
-      this.domainManagerService.isCustomDomainWorking(customDomainDetails);
-
-    if (workspace.isCustomDomainEnabled !== isCustomDomainWorking) {
-      workspace.isCustomDomainEnabled = isCustomDomainWorking;
-      await this.workspaceRepository.save(workspace);
-
-      const analytics = this.auditService.createContext({
-        workspaceId: workspace.id,
-      });
-
-      analytics.insertWorkspaceEvent(
-        workspace.isCustomDomainEnabled
-          ? CUSTOM_DOMAIN_ACTIVATED_EVENT
-          : CUSTOM_DOMAIN_DEACTIVATED_EVENT,
-        {},
-      );
-    }
-
-    return customDomainDetails;
-  }
-
   private async validateSecurityPermissions({
     payload,
     userWorkspaceId,

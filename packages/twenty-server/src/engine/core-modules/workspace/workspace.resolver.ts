@@ -70,7 +70,7 @@ import { Workspace } from './workspace.entity';
 import { WorkspaceService } from './services/workspace.service';
 
 const OriginHeader = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext) => {
+  (_: unknown, ctx: ExecutionContext) => {
     const request = getRequest(ctx);
 
     return request.headers['origin'];
@@ -316,14 +316,6 @@ export class WorkspaceResolver {
       workspace.isPasswordAuthEnabled &&
       this.twentyConfigService.get('AUTH_PASSWORD_ENABLED')
     );
-  }
-
-  @Mutation(() => CustomDomainValidRecords, { nullable: true })
-  @UseGuards(WorkspaceAuthGuard)
-  async checkCustomDomainValidRecords(
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<CustomDomainValidRecords | undefined> {
-    return this.workspaceService.checkCustomDomainValidRecords(workspace);
   }
 
   @Query(() => PublicWorkspaceDataOutput)
