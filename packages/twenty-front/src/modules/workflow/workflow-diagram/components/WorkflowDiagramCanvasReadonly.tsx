@@ -4,8 +4,8 @@ import { WorkflowDiagramCanvasReadonlyEffect } from '@/workflow/workflow-diagram
 import { WorkflowDiagramDefaultEdgeReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramDefaultEdgeReadonly';
 import { WorkflowDiagramEmptyTrigger } from '@/workflow/workflow-diagram/components/WorkflowDiagramEmptyTrigger';
 import { WorkflowDiagramFilterEdgeReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeReadonly';
+import { WorkflowDiagramFilteringDisabledEdgeReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramFilteringDisabledEdgeReadonly';
 import { WorkflowDiagramStepNodeReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeReadonly';
-import { WorkflowDiagramV1EdgeReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramV1EdgeReadonly';
 import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps';
 import { ReactFlowProvider } from '@xyflow/react';
 
@@ -26,9 +26,10 @@ export const WorkflowDiagramCanvasReadonly = ({
           'empty-trigger': WorkflowDiagramEmptyTrigger,
         }}
         edgeTypes={{
-          'v1-readonly': WorkflowDiagramV1EdgeReadonly,
-          'empty-filter-readonly': WorkflowDiagramDefaultEdgeReadonly,
-          'filter-readonly': WorkflowDiagramFilterEdgeReadonly,
+          'filtering-disabled--readonly':
+            WorkflowDiagramFilteringDisabledEdgeReadonly,
+          'empty-filter--readonly': WorkflowDiagramDefaultEdgeReadonly,
+          'filter--readonly': WorkflowDiagramFilterEdgeReadonly,
         }}
         tagContainerTestId="workflow-visualizer-status"
         tagColor={tagProps.color}

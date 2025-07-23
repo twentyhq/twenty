@@ -119,7 +119,7 @@ describe('generateWorkflowRunDiagram', () => {
         "selectable": false,
         "source": "trigger",
         "target": "step1",
-        "type": "empty-filter-run",
+        "type": "empty-filter--run",
       },
       {
         "data": {
@@ -133,7 +133,7 @@ describe('generateWorkflowRunDiagram', () => {
         "selectable": false,
         "source": "step1",
         "target": "step2",
-        "type": "empty-filter-run",
+        "type": "empty-filter--run",
       },
       {
         "data": {
@@ -147,7 +147,7 @@ describe('generateWorkflowRunDiagram', () => {
         "selectable": false,
         "source": "step2",
         "target": "step3",
-        "type": "empty-filter-run",
+        "type": "empty-filter--run",
       },
     ],
     "nodes": [
@@ -323,7 +323,7 @@ describe('generateWorkflowRunDiagram', () => {
         "selectable": false,
         "source": "trigger",
         "target": "step1",
-        "type": "empty-filter-run",
+        "type": "empty-filter--run",
       },
       {
         "data": {
@@ -337,7 +337,7 @@ describe('generateWorkflowRunDiagram', () => {
         "selectable": false,
         "source": "step1",
         "target": "step2",
-        "type": "empty-filter-run",
+        "type": "empty-filter--run",
       },
       {
         "data": {
@@ -351,7 +351,7 @@ describe('generateWorkflowRunDiagram', () => {
         "selectable": false,
         "source": "step2",
         "target": "step3",
-        "type": "empty-filter-run",
+        "type": "empty-filter--run",
       },
     ],
     "nodes": [
@@ -527,7 +527,7 @@ describe('generateWorkflowRunDiagram', () => {
         "selectable": false,
         "source": "trigger",
         "target": "step1",
-        "type": "empty-filter-run",
+        "type": "empty-filter--run",
       },
       {
         "data": {
@@ -541,7 +541,7 @@ describe('generateWorkflowRunDiagram', () => {
         "selectable": false,
         "source": "step1",
         "target": "step2",
-        "type": "empty-filter-run",
+        "type": "empty-filter--run",
       },
       {
         "data": {
@@ -555,7 +555,7 @@ describe('generateWorkflowRunDiagram', () => {
         "selectable": false,
         "source": "step2",
         "target": "step3",
-        "type": "empty-filter-run",
+        "type": "empty-filter--run",
       },
     ],
     "nodes": [
@@ -750,7 +750,7 @@ describe('generateWorkflowRunDiagram', () => {
         "selectable": false,
         "source": "trigger",
         "target": "step1",
-        "type": "empty-filter-run",
+        "type": "empty-filter--run",
       },
       {
         "data": {
@@ -764,7 +764,7 @@ describe('generateWorkflowRunDiagram', () => {
         "selectable": false,
         "source": "step1",
         "target": "step2",
-        "type": "empty-filter-run",
+        "type": "empty-filter--run",
       },
       {
         "data": {
@@ -778,7 +778,7 @@ describe('generateWorkflowRunDiagram', () => {
         "selectable": false,
         "source": "step2",
         "target": "step3",
-        "type": "empty-filter-run",
+        "type": "empty-filter--run",
       },
       {
         "data": {
@@ -792,7 +792,7 @@ describe('generateWorkflowRunDiagram', () => {
         "selectable": false,
         "source": "step3",
         "target": "step4",
-        "type": "empty-filter-run",
+        "type": "empty-filter--run",
       },
     ],
     "nodes": [
@@ -947,7 +947,7 @@ describe('generateWorkflowRunDiagram', () => {
         "selectable": false,
         "source": "trigger",
         "target": "step1",
-        "type": "empty-filter-run",
+        "type": "empty-filter--run",
       },
     ],
     "nodes": [

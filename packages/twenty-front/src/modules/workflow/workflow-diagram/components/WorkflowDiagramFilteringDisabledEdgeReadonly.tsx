@@ -3,14 +3,15 @@ import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowD
 import { useTheme } from '@emotion/react';
 import { BaseEdge, EdgeProps, getStraightPath } from '@xyflow/react';
 
-type WorkflowDiagramV1EdgeReadonlyProps = EdgeProps<WorkflowDiagramEdge>;
+type WorkflowDiagramFilteringDisabledEdgeReadonlyProps =
+  EdgeProps<WorkflowDiagramEdge>;
 
-export const WorkflowDiagramV1EdgeReadonly = ({
+export const WorkflowDiagramFilteringDisabledEdgeReadonly = ({
   markerStart,
   markerEnd,
   sourceY,
   targetY,
-}: WorkflowDiagramV1EdgeReadonlyProps) => {
+}: WorkflowDiagramFilteringDisabledEdgeReadonlyProps) => {
   const theme = useTheme();
 
   const [edgePath] = getStraightPath({

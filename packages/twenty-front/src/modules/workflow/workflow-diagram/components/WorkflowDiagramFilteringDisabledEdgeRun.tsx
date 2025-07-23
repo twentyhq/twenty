@@ -3,13 +3,14 @@ import { CREATE_STEP_NODE_WIDTH } from '@/workflow/workflow-diagram/constants/Cr
 import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { EdgeProps, getStraightPath } from '@xyflow/react';
 
-type WorkflowDiagramV1EdgeRunProps = EdgeProps<WorkflowDiagramEdge>;
+type WorkflowDiagramFilteringDisabledEdgeRunProps =
+  EdgeProps<WorkflowDiagramEdge>;
 
-export const WorkflowDiagramV1EdgeRun = ({
+export const WorkflowDiagramFilteringDisabledEdgeRun = ({
   sourceY,
   targetY,
   data,
-}: WorkflowDiagramV1EdgeRunProps) => {
+}: WorkflowDiagramFilteringDisabledEdgeRunProps) => {
   const [edgePath] = getStraightPath({
     sourceX: CREATE_STEP_NODE_WIDTH,
     sourceY,

@@ -35,7 +35,7 @@ describe('transformFilterNodesAsEdges', () => {
     const result = transformFilterNodesAsEdges({
       nodes: diagram.nodes,
       edges: diagram.edges,
-      defaultFilterEdgeType: 'filter-editable',
+      defaultFilterEdgeType: 'filter--editable',
     });
 
     expect(result.nodes).toEqual(diagram.nodes);
@@ -84,7 +84,7 @@ describe('transformFilterNodesAsEdges', () => {
     const result = transformFilterNodesAsEdges({
       nodes: diagram.nodes,
       edges: diagram.edges,
-      defaultFilterEdgeType: 'filter-editable',
+      defaultFilterEdgeType: 'filter--editable',
     });
 
     // Should only have nodes A and C
@@ -105,7 +105,7 @@ describe('transformFilterNodesAsEdges', () => {
     expect(result.edges).toHaveLength(1);
     expect(result.edges[0]).toEqual({
       id: 'A-C-filter-B',
-      type: 'filter-editable',
+      type: 'filter--editable',
       source: 'A',
       target: 'C',
       data: {
@@ -186,7 +186,7 @@ describe('transformFilterNodesAsEdges', () => {
     const result = transformFilterNodesAsEdges({
       nodes: diagram.nodes,
       edges: diagram.edges,
-      defaultFilterEdgeType: 'filter-editable',
+      defaultFilterEdgeType: 'filter--editable',
     });
 
     // Should only have nodes A, C, and D
@@ -203,7 +203,7 @@ describe('transformFilterNodesAsEdges', () => {
     );
     expect(edgeAC).toEqual({
       id: 'A-C-filter-B1',
-      type: 'filter-editable',
+      type: 'filter--editable',
       source: 'A',
       target: 'C',
       data: {
@@ -220,7 +220,7 @@ describe('transformFilterNodesAsEdges', () => {
     );
     expect(edgeCD).toEqual({
       id: 'C-D-filter-B2',
-      type: 'filter-editable',
+      type: 'filter--editable',
       source: 'C',
       target: 'D',
       data: {
@@ -260,7 +260,7 @@ describe('transformFilterNodesAsEdges', () => {
     const result = transformFilterNodesAsEdges({
       nodes: diagram.nodes,
       edges: diagram.edges,
-      defaultFilterEdgeType: 'filter-editable',
+      defaultFilterEdgeType: 'filter--editable',
     });
 
     // Should only have node A (filter node B is removed)
@@ -322,7 +322,7 @@ describe('transformFilterNodesAsEdges', () => {
     const result = transformFilterNodesAsEdges({
       nodes: diagram.nodes,
       edges: diagram.edges,
-      defaultFilterEdgeType: 'filter-editable',
+      defaultFilterEdgeType: 'filter--editable',
     });
 
     // Should have trigger and C nodes
@@ -347,7 +347,7 @@ describe('transformFilterNodesAsEdges', () => {
     expect(result.edges).toEqual([
       {
         id: 'trigger-C-filter-B',
-        type: 'filter-editable',
+        type: 'filter--editable',
         source: 'trigger',
         target: 'C',
         data: {

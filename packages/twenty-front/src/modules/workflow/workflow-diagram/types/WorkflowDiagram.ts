@@ -89,12 +89,12 @@ export type WorkflowDiagramNodeType =
 
 export type WorkflowDiagramEdgeType =
   | 'blank'
-  | 'v1-editable'
-  | 'v1-readonly'
-  | 'v1-run'
-  | 'empty-filter-editable'
-  | 'empty-filter-readonly'
-  | 'empty-filter-run'
-  | 'filter-editable'
-  | 'filter-readonly'
-  | 'filter-run';
+  | 'filtering-disabled--editable'
+  | 'filtering-disabled--readonly'
+  | 'filtering-disabled--run'
+  | 'empty-filter--editable'
+  | 'empty-filter--readonly'
+  | 'empty-filter--run'
+  | 'filter--editable'
+  | 'filter--readonly'
+  | 'filter--run';

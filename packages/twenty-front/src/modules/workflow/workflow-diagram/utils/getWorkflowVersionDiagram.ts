@@ -20,10 +20,12 @@ const getEdgeTypeToCreateByDefault = ({
   isEditable: boolean;
 }): WorkflowDiagramEdgeType => {
   if (isWorkflowFilteringEnabled) {
-    return isEditable ? 'empty-filter-editable' : 'empty-filter-readonly';
+    return isEditable ? 'empty-filter--editable' : 'empty-filter--readonly';
   }
 
-  return isEditable ? 'v1-editable' : 'v1-readonly';
+  return isEditable
+    ? 'filtering-disabled--editable'
+    : 'filtering-disabled--readonly';
 };
 
 export const getWorkflowVersionDiagram = ({
@@ -51,6 +53,6 @@ export const getWorkflowVersionDiagram = ({
   return transformFilterNodesAsEdges({
     nodes: diagram.nodes,
     edges: diagram.edges,
-    defaultFilterEdgeType: isEditable ? 'filter-editable' : 'filter-readonly',
+    defaultFilterEdgeType: isEditable ? 'filter--editable' : 'filter--readonly',
   });
 };

@@ -6,7 +6,7 @@ import {
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 
 export const WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION = {
-  type: 'empty-filter-readonly' satisfies WorkflowDiagramEdgeType,
+  type: 'empty-filter--readonly' satisfies WorkflowDiagramEdgeType,
   markerStart: EDGE_GRAY_CIRCLE_MARKED_ID,
   markerEnd: EDGE_ROUNDED_ARROW_MARKER_ID,
   deletable: false,

@@ -35,16 +35,17 @@ const StyledWrapper = styled.div`
   position: relative;
 `;
 
-type WorkflowDiagramV1EdgeEditableProps = EdgeProps<WorkflowDiagramEdge>;
+type WorkflowDiagramFilteringDisabledEdgeEditableProps =
+  EdgeProps<WorkflowDiagramEdge>;
 
-export const WorkflowDiagramV1EdgeEditable = ({
+export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
   markerStart,
   markerEnd,
   source,
   sourceY,
   target,
   targetY,
-}: WorkflowDiagramV1EdgeEditableProps) => {
+}: WorkflowDiagramFilteringDisabledEdgeEditableProps) => {
   const theme = useTheme();
 
   const [edgePath, , labelY] = getStraightPath({

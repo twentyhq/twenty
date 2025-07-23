@@ -155,7 +155,7 @@ describe('getWorkflowVersionDiagram', () => {
       "selectable": false,
       "source": "trigger",
       "target": "step-1",
-      "type": "empty-filter-editable",
+      "type": "empty-filter--editable",
     },
   ],
   "nodes": [

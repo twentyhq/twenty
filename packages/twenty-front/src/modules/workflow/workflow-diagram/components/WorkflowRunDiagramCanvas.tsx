@@ -2,8 +2,8 @@ import { WorkflowRunStatus } from '@/workflow/types/Workflow';
 import { WorkflowDiagramCanvasBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasBase';
 import { WorkflowDiagramDefaultEdgeRun } from '@/workflow/workflow-diagram/components/WorkflowDiagramDefaultEdgeRun';
 import { WorkflowDiagramFilterEdgeRun } from '@/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeRun';
+import { WorkflowDiagramFilteringDisabledEdgeRun } from '@/workflow/workflow-diagram/components/WorkflowDiagramFilteringDisabledEdgeRun';
 import { WorkflowDiagramStepNodeReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeReadonly';
-import { WorkflowDiagramV1EdgeRun } from '@/workflow/workflow-diagram/components/WorkflowDiagramV1EdgeRun';
 import { WorkflowRunDiagramCanvasEffect } from '@/workflow/workflow-diagram/components/WorkflowRunDiagramCanvasEffect';
 import { useHandleWorkflowRunDiagramCanvasInit } from '@/workflow/workflow-diagram/hooks/useHandleWorkflowRunDiagramCanvasInit';
 import { getWorkflowRunStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps';
@@ -28,9 +28,9 @@ export const WorkflowRunDiagramCanvas = ({
           default: WorkflowDiagramStepNodeReadonly,
         }}
         edgeTypes={{
-          'v1-run': WorkflowDiagramV1EdgeRun,
-          'empty-filter-run': WorkflowDiagramDefaultEdgeRun,
-          'filter-run': WorkflowDiagramFilterEdgeRun,
+          'filtering-disabled--run': WorkflowDiagramFilteringDisabledEdgeRun,
+          'empty-filter--run': WorkflowDiagramDefaultEdgeRun,
+          'filter--run': WorkflowDiagramFilterEdgeRun,
         }}
         tagContainerTestId="workflow-run-status"
         tagColor={tagProps.color}

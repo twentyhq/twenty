@@ -6,8 +6,8 @@ import { WorkflowDiagramCreateStepNode } from '@/workflow/workflow-diagram/compo
 import { WorkflowDiagramDefaultEdgeEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramDefaultEdgeEditable';
 import { WorkflowDiagramEmptyTrigger } from '@/workflow/workflow-diagram/components/WorkflowDiagramEmptyTrigger';
 import { WorkflowDiagramFilterEdgeEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable';
+import { WorkflowDiagramFilteringDisabledEdgeEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramFilteringDisabledEdgeEditable';
 import { WorkflowDiagramStepNodeEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeEditable';
-import { WorkflowDiagramV1EdgeEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramV1EdgeEditable';
 import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps';
 import { ReactFlowProvider } from '@xyflow/react';
 
@@ -30,9 +30,10 @@ export const WorkflowDiagramCanvasEditable = ({
         }}
         edgeTypes={{
           blank: WorkflowDiagramBlankEdge,
-          'v1-editable': WorkflowDiagramV1EdgeEditable,
-          'empty-filter-editable': WorkflowDiagramDefaultEdgeEditable,
-          'filter-editable': WorkflowDiagramFilterEdgeEditable,
+          'filtering-disabled--editable':
+            WorkflowDiagramFilteringDisabledEdgeEditable,
+          'empty-filter--editable': WorkflowDiagramDefaultEdgeEditable,
+          'filter--editable': WorkflowDiagramFilterEdgeEditable,
         }}
         tagContainerTestId="workflow-visualizer-status"
         tagColor={tagProps.color}
