@@ -52,14 +52,6 @@ export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolv
           selectedColumns,
         );
 
-    await executionArgs.repository.increment(
-      {
-        id: In(objectRecords.generatedMaps.map((record) => record.id)),
-      },
-      'position',
-      1,
-    );
-
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
     );
