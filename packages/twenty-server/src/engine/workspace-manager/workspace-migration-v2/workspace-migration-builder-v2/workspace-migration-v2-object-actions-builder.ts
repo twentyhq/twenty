@@ -5,6 +5,7 @@ import {
   UpdateObjectAction,
   WorkspaceMigrationObjectActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
+import { getWorkspaceMigrationV2FieldCreateAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-field-actions';
 import {
   getWorkspaceMigrationV2ObjectCreateAction,
   getWorkspaceMigrationV2ObjectDeleteAction,
@@ -18,7 +19,20 @@ export const buildWorkspaceMigrationV2ObjectActions = ({
   updatedObjectMetadata,
 }: CreatedDeletedUpdatedObjectMetadataInputMatrix): WorkspaceMigrationObjectActionV2[] => {
   const createdObjectActions = createdObjectMetadata.map(
-    getWorkspaceMigrationV2ObjectCreateAction,
+    (flatObjectMetadata) => {
+      const createFieldActions = flatObjectMetadata.flatFieldMetadatas.map(
+        (flatFieldMetadata) =>
+          getWorkspaceMigrationV2FieldCreateAction({
+            flatFieldMetadata,
+            flatObjectMetadata,
+          }),
+      );
+
+      return getWorkspaceMigrationV2ObjectCreateAction({
+        flatObjectMetadata,
+        createFieldActions,
+      });
+    },
   );
 
   const deletedObjectActions = deletedObjectMetadata.map(

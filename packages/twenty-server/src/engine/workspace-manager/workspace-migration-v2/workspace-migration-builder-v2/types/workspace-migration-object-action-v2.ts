@@ -1,18 +1,18 @@
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { FlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
+import { FlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import { FlatObjectMetadataPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-object-metadata-comparator.util';
+import { CreateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 
-type ObjectActionCommon = {
-  flatObjectMetadata: FlatObjectMetadata;
-};
 export type CreateObjectAction = {
   type: 'create_object';
-  // TODO strictly type
-} & ObjectActionCommon;
+  flatObjectMetadata: FlatObjectMetadataWithoutFields;
+  createFieldActions: CreateFieldAction[];
+};
 
 export type UpdateObjectAction = {
   type: 'update_object';
+  flatObjectMetadata: FlatObjectMetadataWithoutFields;
   updates: Array<
     {
       [P in FlatObjectMetadataPropertiesToCompare]: {
@@ -20,12 +20,12 @@ export type UpdateObjectAction = {
       } & FromTo<ObjectMetadataEntity[P]>;
     }[FlatObjectMetadataPropertiesToCompare]
   >;
-} & ObjectActionCommon;
+};
 
 export type DeleteObjectAction = {
   type: 'delete_object';
-  // TODO less thing to bring
-} & ObjectActionCommon;
+  flatObjectMetadata: FlatObjectMetadataWithoutFields;
+};
 
 export type WorkspaceMigrationObjectActionV2 =
   | CreateObjectAction

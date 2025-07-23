@@ -1,29 +1,20 @@
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
-import {
-  FlatObjectMetadata,
-  FlatObjectMetadataWithoutFields,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
+import { FlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import { FlatFieldMetadataPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-field-metadata-comparator.util';
 
-export type FieldAndObjectMetadataWorkspaceMigrationInput = {
+export type CreateFieldAction = {
+  type: 'create_field';
   flatFieldMetadata: FlatFieldMetadata;
   flatObjectMetadata: FlatObjectMetadataWithoutFields;
 };
 
-export type MinimalFlatFieldAndObjectMetadata = {
-  flatFieldMetadata: Pick<FlatFieldMetadata, 'id' | 'type'>;
-  flatObjectMetadata: Pick<FlatObjectMetadata, 'id'>;
-};
-export type CreateFieldAction = {
-  type: 'create_field';
-} & FieldAndObjectMetadataWorkspaceMigrationInput;
-
 export type UpdateFieldAction = {
   type: 'update_field';
-
   workspaceId: string;
+  flatFieldMetadata: FlatFieldMetadata;
+  flatObjectMetadata: FlatObjectMetadataWithoutFields;
   updates: Array<
     {
       [P in FlatFieldMetadataPropertiesToCompare]: {
@@ -31,11 +22,13 @@ export type UpdateFieldAction = {
       } & FromTo<FieldMetadataEntity[P]>;
     }[FlatFieldMetadataPropertiesToCompare]
   >;
-} & MinimalFlatFieldAndObjectMetadata;
+};
 
 export type DeleteFieldAction = {
   type: 'delete_field';
-} & MinimalFlatFieldAndObjectMetadata;
+  flatFieldMetadata: FlatFieldMetadata;
+  flatObjectMetadata: FlatObjectMetadataWithoutFields;
+};
 
 export type WorkspaceMigrationFieldActionV2 =
   | CreateFieldAction

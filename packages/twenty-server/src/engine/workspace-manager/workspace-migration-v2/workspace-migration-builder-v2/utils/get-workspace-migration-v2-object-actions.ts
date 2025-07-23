@@ -1,14 +1,20 @@
 import { FlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
+import { CreateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import {
   CreateObjectAction,
   DeleteObjectAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 
-export const getWorkspaceMigrationV2ObjectCreateAction = (
-  flatObjectMetadata: FlatObjectMetadata,
-): CreateObjectAction => ({
+export const getWorkspaceMigrationV2ObjectCreateAction = ({
+  createFieldActions,
+  flatObjectMetadata,
+}: {
+  flatObjectMetadata: FlatObjectMetadata;
+  createFieldActions: CreateFieldAction[];
+}): CreateObjectAction => ({
   type: 'create_object',
   flatObjectMetadata,
+  createFieldActions,
 });
 
 export const getWorkspaceMigrationV2ObjectDeleteAction = (

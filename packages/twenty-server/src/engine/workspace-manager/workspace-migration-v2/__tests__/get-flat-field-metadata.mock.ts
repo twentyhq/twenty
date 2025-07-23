@@ -35,9 +35,9 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     standardOverrides: null,
     updatedAt: createdAt,
     workspaceId: faker.string.uuid(),
-    relationTargetFieldMetadata: undefined as never,
+    flatRelationTargetFieldMetadata: undefined as never,
     relationTargetFieldMetadataId: undefined as never,
-    relationTargetObjectMetadata: undefined as never,
+    flatRelationTargetObjectMetadata: undefined as never,
     relationTargetObjectMetadataId: undefined as never,
     ...overrides,
   };
