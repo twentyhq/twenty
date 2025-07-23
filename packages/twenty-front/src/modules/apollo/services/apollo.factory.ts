@@ -45,6 +45,7 @@ export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   onNetworkError?: (err: Error | ServerParseError | ServerError) => void;
   onTokenPairChange?: (tokenPair: AuthTokenPair) => void;
   onUnauthenticatedError?: () => void;
+  onAppVersionMismatch?: (message: string) => void;
   currentWorkspaceMember: CurrentWorkspaceMember | null;
   currentWorkspace: CurrentWorkspace | null;
   extraLinks?: ApolloLink[];
@@ -65,6 +66,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       onNetworkError,
       onTokenPairChange,
       onUnauthenticatedError,
+      onAppVersionMismatch,
       currentWorkspaceMember,
       currentWorkspace,
       extraLinks,
@@ -163,6 +165,10 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
               }
 
               switch (graphQLError?.extensions?.code) {
+                case 'APP_VERSION_MISMATCH': {
+                  onAppVersionMismatch?.(graphQLError.message);
+                  return;
+                }
                 case 'UNAUTHENTICATED': {
                   return handleTokenRenewal(operation, forward);
                 }

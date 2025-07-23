@@ -271,6 +271,7 @@ export const useGraphQLErrorHandlerHook = <
             });
             throw new GraphQLError(APP_VERSION_MISMATCH_ERROR, {
               extensions: {
+                code: 'APP_VERSION_MISMATCH',
                 userFriendlyMessage: t`Your app version is out of date. Please refresh the page to continue.`,
               },
             });

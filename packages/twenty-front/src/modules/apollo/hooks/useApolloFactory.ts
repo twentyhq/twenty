@@ -15,6 +15,7 @@ import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { AppPath } from '@/types/AppPath';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from 'twenty-shared/utils';
 import { ApolloFactory, Options } from '../services/apollo.factory';
 
@@ -36,6 +37,8 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
 
   const setPreviousUrl = useSetRecoilState(previousUrlState);
   const location = useLocation();
+
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const apolloClient = useMemo(() => {
     apolloRef.current = new ApolloFactory({
@@ -76,6 +79,16 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
           navigate(AppPath.SignInUp);
         }
       },
+      onAppVersionMismatch: (message) => {
+        enqueueErrorSnackBar({
+          message:
+            message ||
+            'Your app version is out of date. Please refresh the page.',
+          options: {
+            dedupeKey: 'app-version-mismatch',
+          },
+        });
+      },
       extraLinks: [],
       isDebugMode: process.env.IS_DEBUG_MODE === 'true',
       // Override options
@@ -90,6 +103,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
     setCurrentWorkspaceMember,
     setCurrentWorkspace,
     setPreviousUrl,
+    enqueueErrorSnackBar,
   ]);
 
   useUpdateEffect(() => {
