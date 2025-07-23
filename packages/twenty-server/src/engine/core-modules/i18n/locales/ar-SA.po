@@ -3254,6 +3254,11 @@ msgstr ""
 msgid "You must be authenticated to perform this action."
 msgstr ""
 
+#. js-lingui-id: 8pqpv/
+#: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
+msgid "Your app version is out of date. Please refresh the page to continue."
+msgstr ""
+
 #. js-lingui-id: bTyBrW
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Your Password Has Been Successfully Changed"
