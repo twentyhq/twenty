@@ -46,7 +46,7 @@ import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
 export interface AgentExecutionResult {
-  result: object | string;
+  result: object;
   usage: {
     promptTokens: number;
     completionTokens: number;
@@ -374,7 +374,7 @@ export class AgentExecutionService {
 
       if (Object.keys(schema).length === 0) {
         return {
-          result: textResponse.text,
+          result: { response: textResponse.text },
           usage: textResponse.usage,
         };
       }
