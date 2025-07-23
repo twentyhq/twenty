@@ -303,6 +303,12 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
               lte: parseFloat(recordFilter.value),
             } as FloatFilter,
           };
+        case RecordFilterOperand.Is:
+          return {
+            [correspondingFieldMetadataItem.name]: {
+              eq: parseFloat(recordFilter.value),
+            } as FloatFilter,
+          };
         default:
           throw new Error(
             `Unknown operand ${recordFilter.operand} for ${filterType} filter`,

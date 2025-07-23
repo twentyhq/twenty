@@ -90,6 +90,7 @@ export const mockCurrentWorkspace: Workspace = {
   workspaceMembersCount: 1,
   databaseSchema: '',
   databaseUrl: '',
+  isTwoFactorAuthenticationEnforced: false,
 };
 
 export const mockedWorkspaceMemberData: WorkspaceMember = {

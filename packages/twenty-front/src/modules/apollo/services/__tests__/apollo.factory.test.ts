@@ -53,6 +53,7 @@ const mockWorkspace = {
     subdomainUrl: 'test.com',
     customUrl: 'test.com',
   },
+  isTwoFactorAuthenticationEnforced: false,
 };
 
 const createMockOptions = (): Options<any> => ({
