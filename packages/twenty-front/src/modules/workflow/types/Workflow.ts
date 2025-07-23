@@ -1,23 +1,23 @@
 import {
-  workflowAiAgentActionSchema,
-  workflowCodeActionSchema,
-  workflowCreateRecordActionSchema,
-  workflowCronTriggerSchema,
-  workflowDatabaseEventTriggerSchema,
-  workflowDeleteRecordActionSchema,
-  workflowFilterActionSchema,
-  workflowFindRecordsActionSchema,
-  workflowFormActionSchema,
-  workflowHttpRequestActionSchema,
-  workflowManualTriggerSchema,
-  workflowRunSchema,
-  workflowRunStateSchema,
-  workflowRunStatusSchema,
-  workflowRunStepStatusSchema,
-  workflowSendEmailActionSchema,
-  workflowTriggerSchema,
-  workflowUpdateRecordActionSchema,
-  workflowWebhookTriggerSchema,
+    workflowAiAgentActionSchema,
+    workflowCodeActionSchema,
+    workflowCreateRecordActionSchema,
+    workflowCronTriggerSchema,
+    workflowDatabaseEventTriggerSchema,
+    workflowDeleteRecordActionSchema,
+    workflowFilterActionSchema,
+    workflowFindRecordsActionSchema,
+    workflowFormActionSchema,
+    workflowHttpRequestActionSchema,
+    workflowManualTriggerSchema,
+    workflowRunSchema,
+    workflowRunStateSchema,
+    workflowRunStatusSchema,
+    workflowRunStepStatusSchema,
+    workflowSendEmailActionSchema,
+    workflowTriggerSchema,
+    workflowUpdateRecordActionSchema,
+    workflowWebhookTriggerSchema,
 } from '@/workflow/validation-schemas/workflowSchema';
 import { z } from 'zod';
 
@@ -70,7 +70,9 @@ export type WorkflowWebhookTrigger = z.infer<
   typeof workflowWebhookTriggerSchema
 >;
 
-export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];
+export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'] & {
+  isPinned?: boolean;
+};
 export type WorkflowManualTriggerAvailability =
   | 'EVERYWHERE'
   | 'WHEN_RECORD_SELECTED';

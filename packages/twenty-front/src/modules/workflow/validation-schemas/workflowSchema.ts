@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { z } from 'zod';
 import { StepStatus } from 'twenty-shared/workflow';
+import { z } from 'zod';
 
 // Base schemas
 export const objectRecordSchema = z.record(z.any());
@@ -236,6 +236,7 @@ export const workflowManualTriggerSchema = baseTriggerSchema.extend({
     objectType: z.string().optional(),
     outputSchema: z.object({}).passthrough(),
     icon: z.string().optional(),
+    isPinned: z.boolean().optional(),
   }),
 });
 

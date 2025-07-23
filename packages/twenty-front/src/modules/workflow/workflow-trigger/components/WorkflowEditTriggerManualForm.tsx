@@ -1,8 +1,12 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
+import { SelectControl } from '@/ui/input/components/SelectControl';
+import { Switch } from '@/ui/input/components/Switch';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import {
-  WorkflowManualTrigger,
-  WorkflowManualTriggerAvailability,
+    WorkflowManualTrigger,
+    WorkflowManualTriggerAvailability,
 } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
@@ -12,14 +16,11 @@ import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTrigg
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useLingui } from '@lingui/react/macro';
-import { IconPicker } from '@/ui/input/components/IconPicker';
-import { SelectControl } from '@/ui/input/components/SelectControl';
-import styled from '@emotion/styled';
 
 type WorkflowEditTriggerManualFormProps = {
   trigger: WorkflowManualTrigger;
@@ -108,6 +109,23 @@ export const WorkflowEditTriggerManualForm = ({
         disabled={triggerOptions.readonly}
       />
       <WorkflowStepBody>
+        <Switch
+          label={t`Pinned in Navbar`}
+          checked={!!trigger.settings.isPinned}
+          disabled={triggerOptions.readonly}
+          onChange={(checked) => {
+            if (triggerOptions.readonly === true) {
+              return;
+            }
+            triggerOptions.onTriggerUpdate({
+              ...trigger,
+              settings: {
+                ...trigger.settings,
+                isPinned: checked,
+              },
+            });
+          }}
+        />
         <Select
           dropdownId={'workflow-edit-manual-trigger-availability'}
           label={t`Available`}
@@ -120,7 +138,6 @@ export const WorkflowEditTriggerManualForm = ({
             if (triggerOptions.readonly === true) {
               return;
             }
-
             triggerOptions.onTriggerUpdate({
               ...trigger,
               settings: getManualTriggerDefaultSettings({
@@ -133,7 +150,6 @@ export const WorkflowEditTriggerManualForm = ({
           dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
-
         {manualTriggerAvailability === 'WHEN_RECORD_SELECTED' ? (
           <Select
             dropdownId={'workflow-edit-manual-trigger-object'}
@@ -147,7 +163,6 @@ export const WorkflowEditTriggerManualForm = ({
               if (triggerOptions.readonly === true) {
                 return;
               }
-
               triggerOptions.onTriggerUpdate({
                 ...trigger,
                 settings: {
@@ -193,7 +208,6 @@ export const WorkflowEditTriggerManualForm = ({
             if (triggerOptions.readonly === true) {
               return;
             }
-
             triggerOptions.onTriggerUpdate({
               ...trigger,
               settings: {
