@@ -420,7 +420,8 @@ export enum ConfigVariablesGroup {
   ServerlessConfig = 'ServerlessConfig',
   StorageConfig = 'StorageConfig',
   SupportChatConfig = 'SupportChatConfig',
-  TokensDuration = 'TokensDuration'
+  TokensDuration = 'TokensDuration',
+  TwoFactorAuthentication = 'TwoFactorAuthentication'
 }
 
 export type ConfigVariablesGroupData = {
@@ -616,6 +617,12 @@ export type DeleteSsoOutput = {
   identityProviderId: Scalars['String'];
 };
 
+export type DeleteTwoFactorAuthenticationMethodOutput = {
+  __typename?: 'DeleteTwoFactorAuthenticationMethodOutput';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean'];
+};
+
 export type DeleteWebhookDto = {
   id: Scalars['String'];
 };
@@ -705,6 +712,7 @@ export enum FeatureFlagKey {
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IS_RELATION_CONNECT_ENABLED = 'IS_RELATION_CONNECT_ENABLED',
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
+  IS_TWO_FACTOR_AUTHENTICATION_ENABLED = 'IS_TWO_FACTOR_AUTHENTICATION_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
   IS_WORKFLOW_FILTERING_ENABLED = 'IS_WORKFLOW_FILTERING_ENABLED',
   IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED = 'IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED'
@@ -1007,6 +1015,11 @@ export enum IndexType {
   GIN = 'GIN'
 }
 
+export type InitiateTwoFactorAuthenticationProvisioningOutput = {
+  __typename?: 'InitiateTwoFactorAuthenticationProvisioningOutput';
+  uri: Scalars['String'];
+};
+
 export type InvalidatePassword = {
   __typename?: 'InvalidatePassword';
   /** Boolean that confirms query was dispatched */
@@ -1079,6 +1092,7 @@ export type Mutation = {
   deleteOneRole: Scalars['String'];
   deleteOneServerlessFunction: ServerlessFunction;
   deleteSSOIdentityProvider: DeleteSsoOutput;
+  deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
   deleteWebhook: Scalars['Boolean'];
   deleteWorkflowVersionStep: WorkflowAction;
@@ -1092,10 +1106,13 @@ export type Mutation = {
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientToken;
   getAuthTokensFromLoginToken: AuthTokens;
+  getAuthTokensFromOTP: AuthTokens;
   getAuthorizationUrlForSSO: GetAuthorizationUrlForSsoOutput;
   getLoginTokenFromCredentials: LoginToken;
   getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
   impersonate: ImpersonateOutput;
+  initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
+  initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
   publishServerlessFunction: ServerlessFunction;
   removeRoleFromAgent: Scalars['Boolean'];
   renewToken: AuthTokens;
@@ -1139,6 +1156,7 @@ export type Mutation = {
   upsertSettingPermissions: Array<SettingPermission>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
+  verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
 };
 
 
@@ -1297,6 +1315,11 @@ export type MutationDeleteSsoIdentityProviderArgs = {
 };
 
 
+export type MutationDeleteTwoFactorAuthenticationMethodArgs = {
+  twoFactorAuthenticationMethodId: Scalars['UUID'];
+};
+
+
 export type MutationDeleteWebhookArgs = {
   input: DeleteWebhookDto;
 };
@@ -1340,6 +1363,14 @@ export type MutationGetAuthTokensFromLoginTokenArgs = {
 };
 
 
+export type MutationGetAuthTokensFromOtpArgs = {
+  captchaToken?: InputMaybe<Scalars['String']>;
+  loginToken: Scalars['String'];
+  origin: Scalars['String'];
+  otp: Scalars['String'];
+};
+
+
 export type MutationGetAuthorizationUrlForSsoArgs = {
   input: GetAuthorizationUrlForSsoInput;
 };
@@ -1364,6 +1395,12 @@ export type MutationGetLoginTokenFromEmailVerificationTokenArgs = {
 export type MutationImpersonateArgs = {
   userId: Scalars['String'];
   workspaceId: Scalars['String'];
+};
+
+
+export type MutationInitiateOtpProvisioningArgs = {
+  loginToken: Scalars['String'];
+  origin: Scalars['String'];
 };
 
 
@@ -1579,6 +1616,11 @@ export type MutationUserLookupAdminPanelArgs = {
 
 export type MutationValidateApprovedAccessDomainArgs = {
   input: ValidateApprovedAccessDomainInput;
+};
+
+
+export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs = {
+  otp: Scalars['String'];
 };
 
 export type Object = {
@@ -2377,6 +2419,13 @@ export type TransientToken = {
   transientToken: AuthToken;
 };
 
+export type TwoFactorAuthenticationMethodDto = {
+  __typename?: 'TwoFactorAuthenticationMethodDTO';
+  status: Scalars['String'];
+  strategy: Scalars['String'];
+  twoFactorAuthenticationMethodId: Scalars['UUID'];
+};
+
 export type UuidFilter = {
   eq?: InputMaybe<Scalars['UUID']>;
   gt?: InputMaybe<Scalars['UUID']>;
@@ -2526,6 +2575,7 @@ export type UpdateWorkspaceInput = {
   isMicrosoftAuthEnabled?: InputMaybe<Scalars['Boolean']>;
   isPasswordAuthEnabled?: InputMaybe<Scalars['Boolean']>;
   isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']>;
+  isTwoFactorAuthenticationEnforced?: InputMaybe<Scalars['Boolean']>;
   logo?: InputMaybe<Scalars['String']>;
   subdomain?: InputMaybe<Scalars['String']>;
 };
@@ -2611,6 +2661,7 @@ export type UserWorkspace = {
   /** @deprecated Use objectPermissions instead */
   objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
   settingsPermissions?: Maybe<Array<SettingPermissionType>>;
+  twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticationMethodDto>>;
   updatedAt: Scalars['DateTime'];
   user: User;
   userId: Scalars['String'];
@@ -2627,6 +2678,11 @@ export type ValidatePasswordResetToken = {
   __typename?: 'ValidatePasswordResetToken';
   email: Scalars['String'];
   id: Scalars['String'];
+};
+
+export type VerifyTwoFactorAuthenticationMethodOutput = {
+  __typename?: 'VerifyTwoFactorAuthenticationMethodOutput';
+  success: Scalars['Boolean'];
 };
 
 export type VersionInfo = {
@@ -2704,6 +2760,7 @@ export type Workspace = {
   isMicrosoftAuthEnabled: Scalars['Boolean'];
   isPasswordAuthEnabled: Scalars['Boolean'];
   isPublicInviteLinkEnabled: Scalars['Boolean'];
+  isTwoFactorAuthenticationEnforced: Scalars['Boolean'];
   logo?: Maybe<Scalars['String']>;
   metadataVersion: Scalars['Float'];
   subdomain: Scalars['String'];
