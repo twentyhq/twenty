@@ -68,30 +68,11 @@ describe('evaluateFilterConditions', () => {
         expect(result).toBe(false);
       });
 
-      it('should handle null checks', () => {
-        const filter1 = createFilter(ViewFilterOperand.Is, null, 'null');
-        const filter2 = createFilter(ViewFilterOperand.Is, undefined, 'NULL');
-        const filter3 = createFilter(ViewFilterOperand.Is, 'value', 'null');
+      it('should return true when values are equal but different types', () => {
+        const filter = createFilter(ViewFilterOperand.Is, '123', 123);
+        const result = evaluateFilterConditions({ filters: [filter] });
 
-        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
-        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
-      });
-
-      it('should handle not null checks', () => {
-        const filter1 = createFilter(ViewFilterOperand.Is, 'value', 'not null');
-        const filter2 = createFilter(ViewFilterOperand.Is, 'value', 'NOT NULL');
-        const filter3 = createFilter(ViewFilterOperand.Is, null, 'not null');
-        const filter4 = createFilter(
-          ViewFilterOperand.Is,
-          undefined,
-          'not null',
-        );
-
-        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
-        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
-        expect(evaluateFilterConditions({ filters: [filter4] })).toBe(false);
+        expect(result).toBe(true);
       });
     });
 
@@ -182,12 +163,12 @@ describe('evaluateFilterConditions', () => {
         const filter1 = createFilter(
           ViewFilterOperand.Contains,
           ['apple', 'banana', 'cherry'],
-          'apple',
+          ['apple'],
         );
         const filter2 = createFilter(
           ViewFilterOperand.Contains,
           ['apple', 'banana', 'cherry'],
-          'grape',
+          ['grape'],
         );
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
@@ -198,12 +179,12 @@ describe('evaluateFilterConditions', () => {
         const filter1 = createFilter(
           ViewFilterOperand.DoesNotContain,
           ['apple', 'banana', 'cherry'],
-          'apple',
+          ['apple'],
         );
         const filter2 = createFilter(
           ViewFilterOperand.DoesNotContain,
           ['apple', 'banana', 'cherry'],
-          'grape',
+          ['grape'],
         );
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(false);

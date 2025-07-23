@@ -8,7 +8,6 @@ import {
   fieldTextMock,
   objectMetadataItemMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
@@ -127,7 +126,7 @@ describe('FieldPermissionService', () => {
                 objectMetadataId: testObjectMetadataId,
                 workspaceId: testWorkspaceId,
                 id: '20202020-0000-0000-0000-000000000003',
-              }) as FieldMetadataEntity,
+              }),
             },
             fieldIdByJoinColumnName: {},
             fieldIdByName: {},

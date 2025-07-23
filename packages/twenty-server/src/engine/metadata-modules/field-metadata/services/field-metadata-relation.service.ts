@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
@@ -313,6 +314,7 @@ export class FieldMetadataRelationService {
     });
   }
 
+  // TODO refactor and strictly type
   computeCustomRelationFieldMetadataForCreation({
     fieldMetadataInput,
     relationCreationPayload,
@@ -332,13 +334,23 @@ export class FieldMetadataRelationService {
         FieldMetadataType.MORPH_RELATION,
       );
 
+    const defaultIcon = 'IconRelationOneToMany';
+
     const isManyToOne =
       isRelation && relationCreationPayload?.type === RelationType.MANY_TO_ONE;
 
-    const isOneToMany =
-      isRelation && relationCreationPayload?.type === RelationType.ONE_TO_MANY;
-
-    const defaultIcon = 'IconRelationOneToMany';
+    const settings = isManyToOne
+      ? {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.SET_NULL,
+          joinColumnName,
+        }
+      : {
+          ...(fieldMetadataInput.settings as FieldMetadataSettings<
+            FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+          >),
+          relationType: RelationType.ONE_TO_MANY,
+        };
 
     return {
       ...fieldMetadataInput,
@@ -346,21 +358,7 @@ export class FieldMetadataRelationService {
       relationCreationPayload,
       relationTargetObjectMetadataId:
         relationCreationPayload?.targetObjectMetadataId,
-      settings: {
-        ...fieldMetadataInput.settings,
-        ...(isOneToMany
-          ? {
-              relationType: RelationType.ONE_TO_MANY,
-            }
-          : {}),
-        ...(isManyToOne
-          ? {
-              relationType: RelationType.MANY_TO_ONE,
-              onDelete: RelationOnDeleteAction.SET_NULL,
-              joinColumnName,
-            }
-          : {}),
-      },
+      settings,
     };
   }
 }

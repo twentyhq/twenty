@@ -1,7 +1,7 @@
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
-  BaseOutputSchema,
+  FieldOutputSchema,
   RecordOutputSchema,
 } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-object-record-fields';
@@ -20,7 +20,7 @@ const generateFakeObjectRecordEventWithPrefix = ({
 
       return acc;
     },
-    {} as BaseOutputSchema,
+    {} as Record<string, FieldOutputSchema>,
   );
 
   return {
@@ -33,6 +33,7 @@ const generateFakeObjectRecordEventWithPrefix = ({
       nameSingular:
         objectMetadataInfo.objectMetadataItemWithFieldsMaps.nameSingular,
       fieldIdName: `${prefix}.id`,
+      objectMetadataId: objectMetadataInfo.objectMetadataItemWithFieldsMaps.id,
     },
     fields: prefixedRecordFields,
     _outputSchemaType: 'RECORD',
