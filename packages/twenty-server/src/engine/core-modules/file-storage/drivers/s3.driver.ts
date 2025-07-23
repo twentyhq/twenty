@@ -69,6 +69,8 @@ export class S3Driver implements StorageDriver {
 
   // @ts-expect-error legacy noImplicitAny
   private async emptyS3Directory(folderPath) {
+    console.log(`${folderPath} - emptying folder`);
+
     const listParams = {
       Bucket: this.bucketName,
       Prefix: folderPath,
@@ -76,6 +78,13 @@ export class S3Driver implements StorageDriver {
 
     const listObjectsCommand = new ListObjectsV2Command(listParams);
     const listedObjects = await this.s3Client.send(listObjectsCommand);
+
+    console.log(
+      `${folderPath} - listed objects`,
+      listedObjects.Contents,
+      listedObjects.IsTruncated,
+      listedObjects.Contents?.length,
+    );
 
     if (listedObjects.Contents?.length === 0) return;
 
@@ -92,7 +101,10 @@ export class S3Driver implements StorageDriver {
 
     await this.s3Client.send(deleteObjectCommand);
 
+    console.log(`${folderPath} - objects deleted`);
+
     if (listedObjects.IsTruncated) {
+      console.log(`${folderPath} - folder is truncated`);
       await this.emptyS3Directory(folderPath);
     }
   }
@@ -101,6 +113,9 @@ export class S3Driver implements StorageDriver {
     folderPath: string;
     filename?: string;
   }): Promise<void> {
+    console.log(
+      `${params.folderPath} - deleting file ${params.filename} from folder ${params.folderPath}`,
+    );
     if (params.filename) {
       const deleteCommand = new DeleteObjectCommand({
         Key: `${params.folderPath}/${params.filename}`,
@@ -110,6 +125,8 @@ export class S3Driver implements StorageDriver {
       await this.s3Client.send(deleteCommand);
     } else {
       await this.emptyS3Directory(params.folderPath);
+      console.log(`${params.folderPath} - folder is empty`);
+
       const deleteEmptyFolderCommand = new DeleteObjectCommand({
         Key: `${params.folderPath}`,
         Bucket: this.bucketName,
