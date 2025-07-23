@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
@@ -17,7 +17,6 @@ export class MessageParticipantListener {
   constructor(
     @InjectObjectMetadataRepository(TimelineActivityWorkspaceEntity)
     private readonly timelineActivityRepository: TimelineActivityRepository,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
@@ -35,9 +34,7 @@ export class MessageParticipantListener {
 
       // TODO: move to a job?
 
-      const dataSourceSchema = this.workspaceDataSourceService.getSchemaName(
-        batchEvent.workspaceId,
-      );
+      const dataSourceSchema = getWorkspaceSchemaName(batchEvent.workspaceId);
 
       const messageObjectMetadata =
         await this.objectMetadataRepository.findOneOrFail({

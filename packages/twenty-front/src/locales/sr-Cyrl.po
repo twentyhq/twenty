@@ -125,9 +125,9 @@ msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} 
 msgstr ""
 
 #. js-lingui-id: wapGcj
-#: src/modules/auth/components/VerifyEmailEffect.tsx
-#~ msgid "{message}"
-#~ msgstr ""
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
+msgid "{message}"
+msgstr ""
 
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions.tsx
@@ -2475,6 +2475,7 @@ msgstr "Унесите кориснички идентификатор или и
 
 #. js-lingui-id: pubQie
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterValueInput.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterValueInput.tsx
 msgid "Enter value"
 msgstr ""
 
@@ -2550,8 +2551,8 @@ msgstr "Грешка у поновном слању позивнице"
 
 #. js-lingui-id: nB84mG
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
-msgid "Error validating approved access domain"
-msgstr ""
+#~ msgid "Error validating approved access domain"
+#~ msgstr ""
 
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -4186,6 +4187,11 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #~ msgid "No AI models available"
 #~ msgstr ""
+
+#. js-lingui-id: uD8+ZY
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody.tsx
+msgid "No Available Step Outputs"
+msgstr ""
 
 #. js-lingui-id: OTe3RI
 #: src/pages/settings/workspace/SettingsDomain.tsx

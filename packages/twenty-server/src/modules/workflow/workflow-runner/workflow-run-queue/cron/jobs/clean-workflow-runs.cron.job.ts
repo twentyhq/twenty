@@ -10,6 +10,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import {
   WorkflowRunStatus,
@@ -44,9 +45,7 @@ export class CleanWorkflowRunsJob {
       await this.workspaceDataSourceService.connectToMainDataSource();
 
     for (const activeWorkspace of activeWorkspaces) {
-      const schemaName = this.workspaceDataSourceService.getSchemaName(
-        activeWorkspace.id,
-      );
+      const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
 
       const workflowRunsToDelete = await mainDataSource.query(
         `

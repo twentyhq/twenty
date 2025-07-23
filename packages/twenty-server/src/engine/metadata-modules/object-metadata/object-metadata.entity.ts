@@ -27,7 +27,7 @@ import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permi
   'namePlural',
   'workspaceId',
 ])
-export class ObjectMetadataEntity {
+export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

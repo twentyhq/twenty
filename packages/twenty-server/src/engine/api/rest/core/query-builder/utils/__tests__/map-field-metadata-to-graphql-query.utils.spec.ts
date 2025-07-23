@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataDefaultSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import { FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import {
@@ -10,7 +10,6 @@ import {
   objectMetadataItemMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { mapFieldMetadataToGraphqlQuery } from 'src/engine/api/rest/core/query-builder/utils/map-field-metadata-to-graphql-query.utils';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -60,9 +59,9 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
   });
 
   const fieldsById: FieldMetadataMap = {
-    'field-number-id': typedFieldNumberMock as FieldMetadataEntity,
-    'field-text-id': typedFieldTextMock as FieldMetadataEntity,
-    'field-currency-id': typedFieldCurrencyMock as FieldMetadataEntity,
+    'field-number-id': typedFieldNumberMock,
+    'field-text-id': typedFieldTextMock,
+    'field-currency-id': typedFieldCurrencyMock,
   };
 
   const typedObjectMetadataItem: ObjectMetadataItemWithFieldMaps = {
@@ -90,19 +89,19 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
     expect(
       mapFieldMetadataToGraphqlQuery(
         objectMetadataMapsMock,
-        typedFieldNumberMock as FieldMetadataEntity,
+        typedFieldNumberMock,
       ),
     ).toEqual('fieldNumber');
     expect(
       mapFieldMetadataToGraphqlQuery(
         objectMetadataMapsMock,
-        typedFieldTextMock as FieldMetadataEntity,
+        typedFieldTextMock,
       ),
     ).toEqual('fieldText');
     expect(
       mapFieldMetadataToGraphqlQuery(
         objectMetadataMapsMock,
-        typedFieldCurrencyMock as FieldMetadataEntity,
+        typedFieldCurrencyMock,
       ),
     ).toEqual(`
       fieldCurrency
@@ -132,8 +131,8 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
             fieldMetadataType === FieldMetadataType.MORPH_RELATION
               ? ({
                   relationType: RelationType.MANY_TO_ONE,
-                } as FieldMetadataDefaultSettings)
-              : undefined,
+                } as FieldMetadataRelationSettings)
+              : null,
         });
 
         expect(
