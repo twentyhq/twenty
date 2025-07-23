@@ -1,5 +1,5 @@
 import { WorkflowAiAgentAction } from '@/workflow/types/Workflow';
-import { OutputSchemaField } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options';
+import { OutputSchemaField } from '@/ai/constants/output-field-type-options';
 import { BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';

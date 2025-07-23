@@ -6,7 +6,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
-import { AIChatTab } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab';
+import { AIChatTab } from '@/ai/components/AIChatTab';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
@@ -23,10 +23,10 @@ import {
   WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID,
   WorkflowAiAgentTabId,
 } from '../constants/workflow-ai-agent-tabs';
-import { useAgentRoleAssignment } from '../hooks/useAgentRoleAssignment';
-import { useAgentUpdateFormState } from '../hooks/useAgentUpdateFormState';
-import { useAiAgentOutputSchema } from '../hooks/useAiAgentOutputSchema';
-import { useAiModelOptions } from '../hooks/useAiModelOptions';
+import { useAgentRoleAssignment } from '@/ai/hooks/useAgentRoleAssignment';
+import { useAgentUpdateFormState } from '@/ai/hooks/useAgentUpdateFormState';
+import { useAiAgentOutputSchema } from '@/ai/hooks/useAiAgentOutputSchema';
+import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { WorkflowOutputSchemaBuilder } from './WorkflowOutputSchemaBuilder';
 
 const StyledErrorMessage = styled.div`

@@ -7,7 +7,7 @@ import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { AgentChatFileUpload } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatFileUpload';
+import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
 
 import { AIChatEmptyState } from '@/ai/components/AIChatEmptyState';
 import { AIChatMessage } from '@/ai/components/AIChatMessage';
@@ -16,8 +16,12 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { Button } from 'twenty-ui/input';
 import { useAgentChat } from '../hooks/useAgentChat';
-import { AIChatSkeletonLoader } from './AIChatSkeletonLoader';
-import { AgentChatSelectedFilesPreview } from './AgentChatSelectedFilesPreview';
+import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
+import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { SendMessageWithRecordsContextButton } from '@/ai/components/internal/SendMessageWithRecordsContextButton';
+import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
   background: ${({ theme }) => theme.background.primary};
@@ -63,10 +67,13 @@ export const AIChatTab = ({
 }) => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+  );
+
   const {
     messages,
     isLoading,
-    handleSendMessage,
     input,
     handleInputChange,
     agentStreamingMessage,
@@ -105,7 +112,7 @@ export const AIChatTab = ({
           {isLoading && messages.length === 0 && <AIChatSkeletonLoader />}
 
           <StyledInputArea>
-            <AgentChatSelectedFilesPreview agentId={agentId} />
+            <AgentChatContextPreview agentId={agentId} />
             <TextArea
               textAreaId={`${agentId}-chat-input`}
               placeholder={t`Enter a question...`}
@@ -135,16 +142,12 @@ export const AIChatTab = ({
                   />
                 </>
               )}
-              <AgentChatFileUpload agentId={agentId} />
-              <Button
-                variant="primary"
-                accent="blue"
-                size="small"
-                hotkeys={input && !isLoading ? ['⏎'] : undefined}
-                disabled={!input || isLoading}
-                title={t`Send`}
-                onClick={handleSendMessage}
-              />
+              <AgentChatFileUploadButton agentId={agentId} />
+              {contextStoreCurrentObjectMetadataItemId ? (
+                <SendMessageWithRecordsContextButton agentId={agentId} />
+              ) : (
+                <SendMessageButton agentId={agentId} />
+              )}
             </StyledButtonsContainer>
           </StyledInputArea>
         </>
