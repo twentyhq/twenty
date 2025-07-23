@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
 import Cloudflare from 'cloudflare';
 import { CustomHostnameCreateResponse } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
@@ -10,6 +9,7 @@ import { DomainManagerException } from 'src/engine/core-modules/domain-manager/d
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 jest.mock('cloudflare');
