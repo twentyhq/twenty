@@ -24,7 +24,7 @@ export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
   );
 
   useEffect(() => {
-    if (qrCode) {
+    if (qrCode !== '') {
       return;
     }
 

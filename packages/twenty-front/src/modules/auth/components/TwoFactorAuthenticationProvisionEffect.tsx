@@ -23,7 +23,7 @@ export const TwoFactorAuthenticationSetupEffect = () => {
   const { t } = useLingui();
 
   useEffect(() => {
-    if (qrCode) {
+    if (qrCode !== '') {
       return;
     }
 
