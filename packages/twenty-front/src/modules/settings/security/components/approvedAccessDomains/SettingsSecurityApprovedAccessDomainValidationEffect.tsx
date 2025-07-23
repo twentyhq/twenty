@@ -45,10 +45,11 @@ export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
           });
         },
         onError: (error) => {
+          const message = error?.message
+            ? error.message
+            : 'Error validating approved access domain';
           enqueueErrorSnackBar({
-            message: error.message
-              ? t`${error.message}`
-              : t`Error validating approved access domain`,
+            message: t`${message}`,
             options: {
               dedupeKey: 'approved-access-domain-validation-error-dedupe-key',
             },
