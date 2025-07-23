@@ -174,6 +174,7 @@ export class WorkspaceEntityManager extends EntityManager {
     entity:
       | QueryDeepPartialEntityWithRelationConnect<Entity>
       | QueryDeepPartialEntityWithRelationConnect<Entity>[],
+    selectedColumns: string[] = [],
     permissionOptions?: PermissionOptions,
   ): Promise<InsertResult> {
     const entityArray = Array.isArray(entity) ? entity : [entity];
@@ -193,6 +194,7 @@ export class WorkspaceEntityManager extends EntityManager {
       .insert()
       .into(target)
       .values(connectedEntities)
+      .returning(selectedColumns)
       .execute();
   }
 
@@ -206,6 +208,7 @@ export class WorkspaceEntityManager extends EntityManager {
       shouldBypassPermissionChecks?: boolean;
       objectRecordsPermissions?: ObjectRecordsPermissions;
     },
+    selectedColumns: string[] = [],
   ): Promise<InsertResult> {
     const metadata = this.connection.getMetadata(target);
     let options;
@@ -259,6 +262,7 @@ export class WorkspaceEntityManager extends EntityManager {
             this.connection.driver.supportedUpsertTypes[0],
         },
       )
+      .returning(selectedColumns)
       .execute();
   }
 
@@ -276,6 +280,7 @@ export class WorkspaceEntityManager extends EntityManager {
       | unknown,
     partialEntity: QueryDeepPartialEntity<Entity>,
     permissionOptions?: PermissionOptions,
+    selectedColumns: string[] = [],
   ): Promise<UpdateResult> {
     const metadata = this.connection.getMetadata(target);
 
@@ -306,6 +311,7 @@ export class WorkspaceEntityManager extends EntityManager {
         .update()
         .set(partialEntity)
         .whereInIds(criteria)
+        .returning(selectedColumns)
         .execute();
     } else {
       return this.createQueryBuilder(
@@ -317,6 +323,7 @@ export class WorkspaceEntityManager extends EntityManager {
         .update()
         .set(partialEntity)
         .where(criteria)
+        .returning(selectedColumns)
         .execute();
     }
   }
@@ -327,6 +334,7 @@ export class WorkspaceEntityManager extends EntityManager {
     propertyPath: string,
     value: number | string,
     permissionOptions?: PermissionOptions,
+    selectedColumns: string[] = [],
   ): Promise<UpdateResult> {
     const metadata = this.connection.getMetadata(target);
     const column = metadata.findColumnWithPropertyPath(propertyPath);
@@ -353,6 +361,7 @@ export class WorkspaceEntityManager extends EntityManager {
       .update(target as QueryDeepPartialEntity<Entity>)
       .set(values)
       .where(criteria)
+      .returning(selectedColumns)
       .execute();
   }
 
@@ -925,6 +934,7 @@ export class WorkspaceEntityManager extends EntityManager {
     propertyPath: string,
     value: number | string,
     permissionOptions?: PermissionOptions,
+    selectedColumns: string[] = [],
   ): Promise<UpdateResult> {
     const metadata = this.connection.getMetadata(target);
     const column = metadata.findColumnWithPropertyPath(propertyPath);
@@ -950,6 +960,7 @@ export class WorkspaceEntityManager extends EntityManager {
       .update(target as QueryDeepPartialEntity<Entity>)
       .set(values)
       .where(criteria)
+      .returning(selectedColumns)
       .execute();
   }
 

@@ -539,6 +539,7 @@ export class WorkspaceRepository<
       | QueryDeepPartialEntityWithRelationConnect<T>
       | QueryDeepPartialEntityWithRelationConnect<T>[],
     entityManager?: WorkspaceEntityManager,
+    selectedColumns?: string[],
   ): Promise<InsertResult> {
     const manager = entityManager || this.manager;
 
@@ -547,7 +548,12 @@ export class WorkspaceRepository<
       objectRecordsPermissions: this.objectRecordsPermissions,
     };
 
-    return manager.insert(this.target, entity, permissionOptions);
+    return manager.insert(
+      this.target,
+      entity,
+      selectedColumns,
+      permissionOptions,
+    );
   }
 
   /**
@@ -566,6 +572,7 @@ export class WorkspaceRepository<
       | FindOptionsWhere<T>,
     partialEntity: QueryDeepPartialEntity<T>,
     entityManager?: WorkspaceEntityManager,
+    selectedColumns?: string[],
   ): Promise<UpdateResult> {
     const manager = entityManager || this.manager;
 
@@ -583,6 +590,7 @@ export class WorkspaceRepository<
       criteria,
       partialEntity,
       permissionOptions,
+      selectedColumns,
     );
   }
 
@@ -590,6 +598,7 @@ export class WorkspaceRepository<
     entityOrEntities: QueryDeepPartialEntity<T> | QueryDeepPartialEntity<T>[],
     conflictPathsOrOptions: string[] | UpsertOptions<T>,
     entityManager?: WorkspaceEntityManager,
+    selectedColumns: string[] = [],
   ): Promise<InsertResult> {
     const manager = entityManager || this.manager;
 
@@ -603,6 +612,7 @@ export class WorkspaceRepository<
       entityOrEntities,
       conflictPathsOrOptions,
       permissionOptions,
+      selectedColumns,
     );
 
     return {
@@ -778,6 +788,7 @@ export class WorkspaceRepository<
     propertyPath: string,
     value: number | string,
     entityManager?: WorkspaceEntityManager,
+    selectedColumns?: string[],
   ): Promise<UpdateResult> {
     const manager = entityManager || this.manager;
     const computedConditions = await this.transformOptions({
@@ -795,6 +806,7 @@ export class WorkspaceRepository<
       propertyPath,
       value,
       permissionOptions,
+      selectedColumns,
     );
   }
 
@@ -803,6 +815,7 @@ export class WorkspaceRepository<
     propertyPath: string,
     value: number | string,
     entityManager?: WorkspaceEntityManager,
+    selectedColumns?: string[],
   ): Promise<UpdateResult> {
     const manager = entityManager || this.manager;
     const computedConditions = await this.transformOptions({
@@ -820,6 +833,7 @@ export class WorkspaceRepository<
       propertyPath,
       value,
       permissionOptions,
+      selectedColumns,
     );
   }
 

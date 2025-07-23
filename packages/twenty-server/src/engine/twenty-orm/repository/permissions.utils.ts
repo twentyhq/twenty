@@ -94,7 +94,7 @@ export const validateOperationIsPermittedOrThrow = ({
       }
 
       if (isFieldPermissionsEnabled) {
-        validateFieldsPermissionsOrThrow({
+        validateReadFieldPermissionOrThrow({
           restrictedFields: permissionsForEntity.restrictedFields,
           selectedColumns,
           fieldMetadataIdForColumnNameMap,
@@ -112,7 +112,7 @@ export const validateOperationIsPermittedOrThrow = ({
       }
 
       if (isFieldPermissionsEnabled) {
-        validateFieldsPermissionsOrThrow({
+        validateReadFieldPermissionOrThrow({
           restrictedFields: permissionsForEntity.restrictedFields,
           selectedColumns,
           fieldMetadataIdForColumnNameMap,
@@ -126,6 +126,14 @@ export const validateOperationIsPermittedOrThrow = ({
           PermissionsExceptionCode.PERMISSION_DENIED,
         );
       }
+
+      if (isFieldPermissionsEnabled) {
+        validateReadFieldPermissionOrThrow({
+          restrictedFields: permissionsForEntity.restrictedFields,
+          selectedColumns,
+          fieldMetadataIdForColumnNameMap,
+        });
+      }
       break;
     case 'restore':
     case 'soft-delete':
@@ -134,6 +142,14 @@ export const validateOperationIsPermittedOrThrow = ({
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
         );
+      }
+
+      if (isFieldPermissionsEnabled) {
+        validateReadFieldPermissionOrThrow({
+          restrictedFields: permissionsForEntity.restrictedFields,
+          selectedColumns,
+          fieldMetadataIdForColumnNameMap,
+        });
       }
       break;
     default:
@@ -214,7 +230,7 @@ const getselectedColumnsFromExpressionMap = (
     .flat();
 };
 
-const validateFieldsPermissionsOrThrow = ({
+const validateReadFieldPermissionOrThrow = ({
   restrictedFields,
   selectedColumns,
   fieldMetadataIdForColumnNameMap,
@@ -265,7 +281,11 @@ const getSelectedColumnsFromExpressionMap = ({
 }) => {
   let selectedColumns: string[] = [];
 
-  if (operationType === 'update') {
+  if (
+    ['update', 'insert', 'delete', 'soft-delete', 'restore'].includes(
+      operationType,
+    )
+  ) {
     if (isEmpty(expressionMap.returning)) {
       throw new InternalServerError(
         'Returning columns are not set for update query',
