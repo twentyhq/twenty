@@ -422,7 +422,6 @@ export const useAuth = () => {
         ) {
           handleSetLoginToken(loginToken);
           setSignInUpStep(SignInUpStep.TwoFactorAuthenticationProvision);
-          throw error;
         }
 
         if (
@@ -432,7 +431,6 @@ export const useAuth = () => {
         ) {
           handleSetLoginToken(loginToken);
           setSignInUpStep(SignInUpStep.TwoFactorAuthenticationVerification);
-          throw error;
         }
       }
     },
