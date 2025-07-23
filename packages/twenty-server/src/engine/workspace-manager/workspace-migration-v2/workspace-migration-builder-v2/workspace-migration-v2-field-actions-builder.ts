@@ -34,13 +34,8 @@ export const buildWorkspaceMigrationV2FieldActions = (
 
         return {
           type: 'update_field',
-          flatFieldMetadata: {
-            id: to.id,
-            type: to.type,
-          },
-          flatObjectMetadata: {
-            id: flatObjectMetadata.id,
-          },
+          flatFieldMetadata: to,
+          flatObjectMetadata,
           workspaceId: to.workspaceId,
           updates,
         };

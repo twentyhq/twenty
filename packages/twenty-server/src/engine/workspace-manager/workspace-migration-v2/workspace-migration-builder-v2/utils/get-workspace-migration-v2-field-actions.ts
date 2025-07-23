@@ -1,5 +1,5 @@
 import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
-import { FlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
+import { FlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
 import {
   CreateFieldAction,
   DeleteFieldAction,
@@ -7,7 +7,7 @@ import {
 
 type FlatFieldMetadataAndFlatObjectMetadata = {
   flatFieldMetadata: FlatFieldMetadata;
-  flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadata: FlatObjectMetadataWithoutFields;
 };
 
 export const getWorkspaceMigrationV2FieldCreateAction = ({
