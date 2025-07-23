@@ -109,6 +109,7 @@ describe('WorkspaceEntityManager', () => {
         IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED: false,
         IS_FIELDS_PERMISSIONS_ENABLED: false,
         IS_ANY_FIELD_SEARCH_ENABLED: false,
+        IS_TWO_FACTOR_AUTHENTICATION_ENABLED: false,
       },
       eventEmitterService: {
         emitMutationEvent: jest.fn(),

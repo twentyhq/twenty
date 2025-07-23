@@ -420,7 +420,8 @@ export enum ConfigVariablesGroup {
   ServerlessConfig = 'ServerlessConfig',
   StorageConfig = 'StorageConfig',
   SupportChatConfig = 'SupportChatConfig',
-  TokensDuration = 'TokensDuration'
+  TokensDuration = 'TokensDuration',
+  TwoFactorAuthentication = 'TwoFactorAuthentication'
 }
 
 export type ConfigVariablesGroupData = {
@@ -652,6 +653,12 @@ export type DeleteSsoOutput = {
   identityProviderId: Scalars['String'];
 };
 
+export type DeleteTwoFactorAuthenticationMethodOutput = {
+  __typename?: 'DeleteTwoFactorAuthenticationMethodOutput';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean'];
+};
+
 export type DeleteWebhookDto = {
   id: Scalars['String'];
 };
@@ -740,6 +747,7 @@ export enum FeatureFlagKey {
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IS_RELATION_CONNECT_ENABLED = 'IS_RELATION_CONNECT_ENABLED',
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
+  IS_TWO_FACTOR_AUTHENTICATION_ENABLED = 'IS_TWO_FACTOR_AUTHENTICATION_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
   IS_WORKFLOW_FILTERING_ENABLED = 'IS_WORKFLOW_FILTERING_ENABLED',
   IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED = 'IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED'
@@ -1049,6 +1057,11 @@ export enum IndexType {
   GIN = 'GIN'
 }
 
+export type InitiateTwoFactorAuthenticationProvisioningOutput = {
+  __typename?: 'InitiateTwoFactorAuthenticationProvisioningOutput';
+  uri: Scalars['String'];
+};
+
 export type InvalidatePassword = {
   __typename?: 'InvalidatePassword';
   /** Boolean that confirms query was dispatched */
@@ -1123,6 +1136,7 @@ export type Mutation = {
   deleteOneRole: Scalars['String'];
   deleteOneServerlessFunction: ServerlessFunction;
   deleteSSOIdentityProvider: DeleteSsoOutput;
+  deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
   deleteWebhook: Scalars['Boolean'];
   deleteWorkflowVersionStep: WorkflowAction;
@@ -1136,10 +1150,13 @@ export type Mutation = {
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientToken;
   getAuthTokensFromLoginToken: AuthTokens;
+  getAuthTokensFromOTP: AuthTokens;
   getAuthorizationUrlForSSO: GetAuthorizationUrlForSsoOutput;
   getLoginTokenFromCredentials: LoginToken;
   getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
   impersonate: ImpersonateOutput;
+  initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
+  initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
   publishServerlessFunction: ServerlessFunction;
   removeRoleFromAgent: Scalars['Boolean'];
   renewToken: AuthTokens;
@@ -1187,6 +1204,7 @@ export type Mutation = {
   upsertSettingPermissions: Array<SettingPermission>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
+  verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
 };
 
 
@@ -1365,6 +1383,11 @@ export type MutationDeleteSsoIdentityProviderArgs = {
 };
 
 
+export type MutationDeleteTwoFactorAuthenticationMethodArgs = {
+  twoFactorAuthenticationMethodId: Scalars['UUID'];
+};
+
+
 export type MutationDeleteWebhookArgs = {
   input: DeleteWebhookDto;
 };
@@ -1408,6 +1431,14 @@ export type MutationGetAuthTokensFromLoginTokenArgs = {
 };
 
 
+export type MutationGetAuthTokensFromOtpArgs = {
+  captchaToken?: InputMaybe<Scalars['String']>;
+  loginToken: Scalars['String'];
+  origin: Scalars['String'];
+  otp: Scalars['String'];
+};
+
+
 export type MutationGetAuthorizationUrlForSsoArgs = {
   input: GetAuthorizationUrlForSsoInput;
 };
@@ -1432,6 +1463,12 @@ export type MutationGetLoginTokenFromEmailVerificationTokenArgs = {
 export type MutationImpersonateArgs = {
   userId: Scalars['String'];
   workspaceId: Scalars['String'];
+};
+
+
+export type MutationInitiateOtpProvisioningArgs = {
+  loginToken: Scalars['String'];
+  origin: Scalars['String'];
 };
 
 
@@ -1667,6 +1704,11 @@ export type MutationUserLookupAdminPanelArgs = {
 
 export type MutationValidateApprovedAccessDomainArgs = {
   input: ValidateApprovedAccessDomainInput;
+};
+
+
+export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs = {
+  otp: Scalars['String'];
 };
 
 export type Object = {
@@ -2530,6 +2572,13 @@ export type TransientToken = {
   transientToken: AuthToken;
 };
 
+export type TwoFactorAuthenticationMethodDto = {
+  __typename?: 'TwoFactorAuthenticationMethodDTO';
+  status: Scalars['String'];
+  strategy: Scalars['String'];
+  twoFactorAuthenticationMethodId: Scalars['UUID'];
+};
+
 export type UuidFilter = {
   eq?: InputMaybe<Scalars['UUID']>;
   gt?: InputMaybe<Scalars['UUID']>;
@@ -2687,6 +2736,7 @@ export type UpdateWorkspaceInput = {
   isMicrosoftAuthEnabled?: InputMaybe<Scalars['Boolean']>;
   isPasswordAuthEnabled?: InputMaybe<Scalars['Boolean']>;
   isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']>;
+  isTwoFactorAuthenticationEnforced?: InputMaybe<Scalars['Boolean']>;
   logo?: InputMaybe<Scalars['String']>;
   subdomain?: InputMaybe<Scalars['String']>;
 };
@@ -2782,6 +2832,7 @@ export type UserWorkspace = {
   /** @deprecated Use objectPermissions instead */
   objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
   settingsPermissions?: Maybe<Array<SettingPermissionType>>;
+  twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticationMethodDto>>;
   updatedAt: Scalars['DateTime'];
   user: User;
   userId: Scalars['String'];
@@ -2798,6 +2849,11 @@ export type ValidatePasswordResetToken = {
   __typename?: 'ValidatePasswordResetToken';
   email: Scalars['String'];
   id: Scalars['String'];
+};
+
+export type VerifyTwoFactorAuthenticationMethodOutput = {
+  __typename?: 'VerifyTwoFactorAuthenticationMethodOutput';
+  success: Scalars['Boolean'];
 };
 
 export type VersionInfo = {
@@ -2875,6 +2931,7 @@ export type Workspace = {
   isMicrosoftAuthEnabled: Scalars['Boolean'];
   isPasswordAuthEnabled: Scalars['Boolean'];
   isPublicInviteLinkEnabled: Scalars['Boolean'];
+  isTwoFactorAuthenticationEnforced: Scalars['Boolean'];
   logo?: Maybe<Scalars['String']>;
   metadataVersion: Scalars['Float'];
   subdomain: Scalars['String'];
@@ -3087,6 +3144,16 @@ export type GenerateTransientTokenMutationVariables = Exact<{ [key: string]: nev
 
 export type GenerateTransientTokenMutation = { __typename?: 'Mutation', generateTransientToken: { __typename?: 'TransientToken', transientToken: { __typename?: 'AuthToken', token: string } } };
 
+export type GetAuthTokensFromOtpMutationVariables = Exact<{
+  loginToken: Scalars['String'];
+  otp: Scalars['String'];
+  captchaToken?: InputMaybe<Scalars['String']>;
+  origin: Scalars['String'];
+}>;
+
+
+export type GetAuthTokensFromOtpMutation = { __typename?: 'Mutation', getAuthTokensFromOTP: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+
 export type GetAuthTokensFromLoginTokenMutationVariables = Exact<{
   loginToken: Scalars['String'];
   origin: Scalars['String'];
@@ -3130,6 +3197,19 @@ export type ImpersonateMutationVariables = Exact<{
 
 export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'ImpersonateOutput', workspace: { __typename?: 'WorkspaceUrlsAndId', id: string, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } }, loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
 
+export type InitiateOtpProvisioningMutationVariables = Exact<{
+  loginToken: Scalars['String'];
+  origin: Scalars['String'];
+}>;
+
+
+export type InitiateOtpProvisioningMutation = { __typename?: 'Mutation', initiateOTPProvisioning: { __typename?: 'InitiateTwoFactorAuthenticationProvisioningOutput', uri: string } };
+
+export type InitiateOtpProvisioningForAuthenticatedUserMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type InitiateOtpProvisioningForAuthenticatedUserMutation = { __typename?: 'Mutation', initiateOTPProvisioningForAuthenticatedUser: { __typename?: 'InitiateTwoFactorAuthenticationProvisioningOutput', uri: string } };
+
 export type RenewTokenMutationVariables = Exact<{
   appToken: Scalars['String'];
 }>;
@@ -3144,6 +3224,13 @@ export type ResendEmailVerificationTokenMutationVariables = Exact<{
 
 
 export type ResendEmailVerificationTokenMutation = { __typename?: 'Mutation', resendEmailVerificationToken: { __typename?: 'ResendEmailVerificationTokenOutput', success: boolean } };
+
+export type DeleteTwoFactorAuthenticationMethodMutationVariables = Exact<{
+  twoFactorAuthenticationMethodId: Scalars['UUID'];
+}>;
+
+
+export type DeleteTwoFactorAuthenticationMethodMutation = { __typename?: 'Mutation', deleteTwoFactorAuthenticationMethod: { __typename?: 'DeleteTwoFactorAuthenticationMethodOutput', success: boolean } };
 
 export type SignInMutationVariables = Exact<{
   email: Scalars['String'];
@@ -3740,7 +3827,14 @@ export type FindOneServerlessFunctionSourceCodeQueryVariables = Exact<{
 
 export type FindOneServerlessFunctionSourceCodeQuery = { __typename?: 'Query', getServerlessFunctionSourceCode?: any | null };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: any, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', settingsPermissions?: Array<SettingPermissionType> | null, objectRecordsPermissions?: Array<PermissionsOnAllObjectRecords> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: any, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, billingProduct?: { __typename?: 'BillingProduct', name: string, description: string, metadata: { __typename?: 'BillingProductMetadata', planKey: BillingPlanKey, priceUsageBased: BillingUsageType, productKey: BillingProductKey } } | null }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, metadata: any }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean } | null, defaultAgent?: { __typename?: 'Agent', id: any } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } };
+export type VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutationVariables = Exact<{
+  otp: Scalars['String'];
+}>;
+
+
+export type VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutation = { __typename?: 'Mutation', verifyTwoFactorAuthenticationMethodForAuthenticatedUser: { __typename?: 'VerifyTwoFactorAuthenticationMethodOutput', success: boolean } };
+
+export type UserQueryFragmentFragment = { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: any, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', settingsPermissions?: Array<SettingPermissionType> | null, objectRecordsPermissions?: Array<PermissionsOnAllObjectRecords> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: any, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, isTwoFactorAuthenticationEnforced: boolean, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: any, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, billingProduct?: { __typename?: 'BillingProduct', name: string, description: string, metadata: { __typename?: 'BillingProductMetadata', planKey: BillingPlanKey, priceUsageBased: BillingUsageType, productKey: BillingProductKey } } | null }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, metadata: any }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean } | null, defaultAgent?: { __typename?: 'Agent', id: any } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } };
 
 export type WorkspaceUrlsFragmentFragment = { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null };
 
@@ -3759,7 +3853,7 @@ export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProf
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: any, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', settingsPermissions?: Array<SettingPermissionType> | null, objectRecordsPermissions?: Array<PermissionsOnAllObjectRecords> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: any, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, billingProduct?: { __typename?: 'BillingProduct', name: string, description: string, metadata: { __typename?: 'BillingProductMetadata', planKey: BillingPlanKey, priceUsageBased: BillingUsageType, productKey: BillingProductKey } } | null }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, metadata: any }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean } | null, defaultAgent?: { __typename?: 'Agent', id: any } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: any, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', settingsPermissions?: Array<SettingPermissionType> | null, objectRecordsPermissions?: Array<PermissionsOnAllObjectRecords> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: any, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, isTwoFactorAuthenticationEnforced: boolean, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: any, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, billingProduct?: { __typename?: 'BillingProduct', name: string, description: string, metadata: { __typename?: 'BillingProductMetadata', planKey: BillingPlanKey, priceUsageBased: BillingUsageType, productKey: BillingProductKey } } | null }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, metadata: any }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean } | null, defaultAgent?: { __typename?: 'Agent', id: any } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } } };
 
 export type ActivateWorkflowVersionMutationVariables = Exact<{
   workflowVersionId: Scalars['String'];
@@ -3878,7 +3972,7 @@ export type UpdateWorkspaceMutationVariables = Exact<{
 }>;
 
 
-export type UpdateWorkspaceMutation = { __typename?: 'Mutation', updateWorkspace: { __typename?: 'Workspace', id: any, customDomain?: string | null, subdomain: string, displayName?: string | null, logo?: string | null, allowImpersonation: boolean, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean } | null } };
+export type UpdateWorkspaceMutation = { __typename?: 'Mutation', updateWorkspace: { __typename?: 'Workspace', id: any, customDomain?: string | null, subdomain: string, displayName?: string | null, logo?: string | null, allowImpersonation: boolean, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isTwoFactorAuthenticationEnforced: boolean, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean } | null } };
 
 export type UploadWorkspaceLogoMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -4101,6 +4195,11 @@ export const UserQueryFragmentFragmentDoc = gql`
     objectPermissions {
       ...ObjectPermissionFragment
     }
+    twoFactorAuthenticationMethodSummary {
+      twoFactorAuthenticationMethodId
+      status
+      strategy
+    }
   }
   currentWorkspace {
     id
@@ -4157,6 +4256,7 @@ export const UserQueryFragmentFragmentDoc = gql`
     defaultAgent {
       id
     }
+    isTwoFactorAuthenticationEnforced
   }
   availableWorkspaces {
     ...AvailableWorkspacesFragment
@@ -4681,6 +4781,49 @@ export function useGenerateTransientTokenMutation(baseOptions?: Apollo.MutationH
 export type GenerateTransientTokenMutationHookResult = ReturnType<typeof useGenerateTransientTokenMutation>;
 export type GenerateTransientTokenMutationResult = Apollo.MutationResult<GenerateTransientTokenMutation>;
 export type GenerateTransientTokenMutationOptions = Apollo.BaseMutationOptions<GenerateTransientTokenMutation, GenerateTransientTokenMutationVariables>;
+export const GetAuthTokensFromOtpDocument = gql`
+    mutation getAuthTokensFromOTP($loginToken: String!, $otp: String!, $captchaToken: String, $origin: String!) {
+  getAuthTokensFromOTP(
+    loginToken: $loginToken
+    otp: $otp
+    captchaToken: $captchaToken
+    origin: $origin
+  ) {
+    tokens {
+      ...AuthTokensFragment
+    }
+  }
+}
+    ${AuthTokensFragmentFragmentDoc}`;
+export type GetAuthTokensFromOtpMutationFn = Apollo.MutationFunction<GetAuthTokensFromOtpMutation, GetAuthTokensFromOtpMutationVariables>;
+
+/**
+ * __useGetAuthTokensFromOtpMutation__
+ *
+ * To run a mutation, you first call `useGetAuthTokensFromOtpMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetAuthTokensFromOtpMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [getAuthTokensFromOtpMutation, { data, loading, error }] = useGetAuthTokensFromOtpMutation({
+ *   variables: {
+ *      loginToken: // value for 'loginToken'
+ *      otp: // value for 'otp'
+ *      captchaToken: // value for 'captchaToken'
+ *      origin: // value for 'origin'
+ *   },
+ * });
+ */
+export function useGetAuthTokensFromOtpMutation(baseOptions?: Apollo.MutationHookOptions<GetAuthTokensFromOtpMutation, GetAuthTokensFromOtpMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GetAuthTokensFromOtpMutation, GetAuthTokensFromOtpMutationVariables>(GetAuthTokensFromOtpDocument, options);
+      }
+export type GetAuthTokensFromOtpMutationHookResult = ReturnType<typeof useGetAuthTokensFromOtpMutation>;
+export type GetAuthTokensFromOtpMutationResult = Apollo.MutationResult<GetAuthTokensFromOtpMutation>;
+export type GetAuthTokensFromOtpMutationOptions = Apollo.BaseMutationOptions<GetAuthTokensFromOtpMutation, GetAuthTokensFromOtpMutationVariables>;
 export const GetAuthTokensFromLoginTokenDocument = gql`
     mutation GetAuthTokensFromLoginToken($loginToken: String!, $origin: String!) {
   getAuthTokensFromLoginToken(loginToken: $loginToken, origin: $origin) {
@@ -4885,6 +5028,72 @@ export function useImpersonateMutation(baseOptions?: Apollo.MutationHookOptions<
 export type ImpersonateMutationHookResult = ReturnType<typeof useImpersonateMutation>;
 export type ImpersonateMutationResult = Apollo.MutationResult<ImpersonateMutation>;
 export type ImpersonateMutationOptions = Apollo.BaseMutationOptions<ImpersonateMutation, ImpersonateMutationVariables>;
+export const InitiateOtpProvisioningDocument = gql`
+    mutation initiateOTPProvisioning($loginToken: String!, $origin: String!) {
+  initiateOTPProvisioning(loginToken: $loginToken, origin: $origin) {
+    uri
+  }
+}
+    `;
+export type InitiateOtpProvisioningMutationFn = Apollo.MutationFunction<InitiateOtpProvisioningMutation, InitiateOtpProvisioningMutationVariables>;
+
+/**
+ * __useInitiateOtpProvisioningMutation__
+ *
+ * To run a mutation, you first call `useInitiateOtpProvisioningMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInitiateOtpProvisioningMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [initiateOtpProvisioningMutation, { data, loading, error }] = useInitiateOtpProvisioningMutation({
+ *   variables: {
+ *      loginToken: // value for 'loginToken'
+ *      origin: // value for 'origin'
+ *   },
+ * });
+ */
+export function useInitiateOtpProvisioningMutation(baseOptions?: Apollo.MutationHookOptions<InitiateOtpProvisioningMutation, InitiateOtpProvisioningMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<InitiateOtpProvisioningMutation, InitiateOtpProvisioningMutationVariables>(InitiateOtpProvisioningDocument, options);
+      }
+export type InitiateOtpProvisioningMutationHookResult = ReturnType<typeof useInitiateOtpProvisioningMutation>;
+export type InitiateOtpProvisioningMutationResult = Apollo.MutationResult<InitiateOtpProvisioningMutation>;
+export type InitiateOtpProvisioningMutationOptions = Apollo.BaseMutationOptions<InitiateOtpProvisioningMutation, InitiateOtpProvisioningMutationVariables>;
+export const InitiateOtpProvisioningForAuthenticatedUserDocument = gql`
+    mutation initiateOTPProvisioningForAuthenticatedUser {
+  initiateOTPProvisioningForAuthenticatedUser {
+    uri
+  }
+}
+    `;
+export type InitiateOtpProvisioningForAuthenticatedUserMutationFn = Apollo.MutationFunction<InitiateOtpProvisioningForAuthenticatedUserMutation, InitiateOtpProvisioningForAuthenticatedUserMutationVariables>;
+
+/**
+ * __useInitiateOtpProvisioningForAuthenticatedUserMutation__
+ *
+ * To run a mutation, you first call `useInitiateOtpProvisioningForAuthenticatedUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInitiateOtpProvisioningForAuthenticatedUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [initiateOtpProvisioningForAuthenticatedUserMutation, { data, loading, error }] = useInitiateOtpProvisioningForAuthenticatedUserMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useInitiateOtpProvisioningForAuthenticatedUserMutation(baseOptions?: Apollo.MutationHookOptions<InitiateOtpProvisioningForAuthenticatedUserMutation, InitiateOtpProvisioningForAuthenticatedUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<InitiateOtpProvisioningForAuthenticatedUserMutation, InitiateOtpProvisioningForAuthenticatedUserMutationVariables>(InitiateOtpProvisioningForAuthenticatedUserDocument, options);
+      }
+export type InitiateOtpProvisioningForAuthenticatedUserMutationHookResult = ReturnType<typeof useInitiateOtpProvisioningForAuthenticatedUserMutation>;
+export type InitiateOtpProvisioningForAuthenticatedUserMutationResult = Apollo.MutationResult<InitiateOtpProvisioningForAuthenticatedUserMutation>;
+export type InitiateOtpProvisioningForAuthenticatedUserMutationOptions = Apollo.BaseMutationOptions<InitiateOtpProvisioningForAuthenticatedUserMutation, InitiateOtpProvisioningForAuthenticatedUserMutationVariables>;
 export const RenewTokenDocument = gql`
     mutation RenewToken($appToken: String!) {
   renewToken(appToken: $appToken) {
@@ -4954,6 +5163,41 @@ export function useResendEmailVerificationTokenMutation(baseOptions?: Apollo.Mut
 export type ResendEmailVerificationTokenMutationHookResult = ReturnType<typeof useResendEmailVerificationTokenMutation>;
 export type ResendEmailVerificationTokenMutationResult = Apollo.MutationResult<ResendEmailVerificationTokenMutation>;
 export type ResendEmailVerificationTokenMutationOptions = Apollo.BaseMutationOptions<ResendEmailVerificationTokenMutation, ResendEmailVerificationTokenMutationVariables>;
+export const DeleteTwoFactorAuthenticationMethodDocument = gql`
+    mutation deleteTwoFactorAuthenticationMethod($twoFactorAuthenticationMethodId: UUID!) {
+  deleteTwoFactorAuthenticationMethod(
+    twoFactorAuthenticationMethodId: $twoFactorAuthenticationMethodId
+  ) {
+    success
+  }
+}
+    `;
+export type DeleteTwoFactorAuthenticationMethodMutationFn = Apollo.MutationFunction<DeleteTwoFactorAuthenticationMethodMutation, DeleteTwoFactorAuthenticationMethodMutationVariables>;
+
+/**
+ * __useDeleteTwoFactorAuthenticationMethodMutation__
+ *
+ * To run a mutation, you first call `useDeleteTwoFactorAuthenticationMethodMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteTwoFactorAuthenticationMethodMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteTwoFactorAuthenticationMethodMutation, { data, loading, error }] = useDeleteTwoFactorAuthenticationMethodMutation({
+ *   variables: {
+ *      twoFactorAuthenticationMethodId: // value for 'twoFactorAuthenticationMethodId'
+ *   },
+ * });
+ */
+export function useDeleteTwoFactorAuthenticationMethodMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTwoFactorAuthenticationMethodMutation, DeleteTwoFactorAuthenticationMethodMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteTwoFactorAuthenticationMethodMutation, DeleteTwoFactorAuthenticationMethodMutationVariables>(DeleteTwoFactorAuthenticationMethodDocument, options);
+      }
+export type DeleteTwoFactorAuthenticationMethodMutationHookResult = ReturnType<typeof useDeleteTwoFactorAuthenticationMethodMutation>;
+export type DeleteTwoFactorAuthenticationMethodMutationResult = Apollo.MutationResult<DeleteTwoFactorAuthenticationMethodMutation>;
+export type DeleteTwoFactorAuthenticationMethodMutationOptions = Apollo.BaseMutationOptions<DeleteTwoFactorAuthenticationMethodMutation, DeleteTwoFactorAuthenticationMethodMutationVariables>;
 export const SignInDocument = gql`
     mutation SignIn($email: String!, $password: String!, $captchaToken: String) {
   signIn(email: $email, password: $password, captchaToken: $captchaToken) {
@@ -8194,6 +8438,39 @@ export function useFindOneServerlessFunctionSourceCodeLazyQuery(baseOptions?: Ap
 export type FindOneServerlessFunctionSourceCodeQueryHookResult = ReturnType<typeof useFindOneServerlessFunctionSourceCodeQuery>;
 export type FindOneServerlessFunctionSourceCodeLazyQueryHookResult = ReturnType<typeof useFindOneServerlessFunctionSourceCodeLazyQuery>;
 export type FindOneServerlessFunctionSourceCodeQueryResult = Apollo.QueryResult<FindOneServerlessFunctionSourceCodeQuery, FindOneServerlessFunctionSourceCodeQueryVariables>;
+export const VerifyTwoFactorAuthenticationMethodForAuthenticatedUserDocument = gql`
+    mutation verifyTwoFactorAuthenticationMethodForAuthenticatedUser($otp: String!) {
+  verifyTwoFactorAuthenticationMethodForAuthenticatedUser(otp: $otp) {
+    success
+  }
+}
+    `;
+export type VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutationFn = Apollo.MutationFunction<VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutation, VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutationVariables>;
+
+/**
+ * __useVerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutation__
+ *
+ * To run a mutation, you first call `useVerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [verifyTwoFactorAuthenticationMethodForAuthenticatedUserMutation, { data, loading, error }] = useVerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutation({
+ *   variables: {
+ *      otp: // value for 'otp'
+ *   },
+ * });
+ */
+export function useVerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutation(baseOptions?: Apollo.MutationHookOptions<VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutation, VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutation, VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutationVariables>(VerifyTwoFactorAuthenticationMethodForAuthenticatedUserDocument, options);
+      }
+export type VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutationHookResult = ReturnType<typeof useVerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutation>;
+export type VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutationResult = Apollo.MutationResult<VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutation>;
+export type VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutationOptions = Apollo.BaseMutationOptions<VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutation, VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutationVariables>;
 export const DeleteUserAccountDocument = gql`
     mutation DeleteUserAccount {
   deleteUser {
@@ -8863,6 +9140,7 @@ export const UpdateWorkspaceDocument = gql`
     isGoogleAuthEnabled
     isMicrosoftAuthEnabled
     isPasswordAuthEnabled
+    isTwoFactorAuthenticationEnforced
     defaultRole {
       ...RoleFragment
     }
