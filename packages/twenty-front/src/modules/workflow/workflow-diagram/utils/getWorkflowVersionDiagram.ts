@@ -4,8 +4,8 @@ import {
   WorkflowDiagramEdgeType,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
-import { transformFilterNodesAsEdges } from '@/workflow/workflow-diagram/utils/transformFilterNodesAsEdges';
 import { isDefined } from 'twenty-shared/utils';
+import { transformFilterNodesAsEdges } from '@/workflow/workflow-diagram/utils/transformFilterNodesAsEdges';
 
 const EMPTY_DIAGRAM: WorkflowDiagram = {
   nodes: [],

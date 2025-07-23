@@ -18,7 +18,6 @@ import {
   WorkflowDiagramNode,
   WorkflowDiagramNodeType,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -33,6 +32,7 @@ import {
   applyEdgeChanges,
   applyNodeChanges,
   useReactFlow,
+  Connection,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
@@ -98,6 +98,7 @@ export const WorkflowDiagramCanvasBase = ({
   tagColor,
   tagText,
   onInit,
+  onConnect,
 }: {
   nodeTypes: Partial<
     Record<
@@ -126,6 +127,7 @@ export const WorkflowDiagramCanvasBase = ({
   tagColor: TagColor;
   tagText: string;
   onInit?: () => void;
+  onConnect?: (params: Connection) => void;
 }) => {
   const theme = useTheme();
 
@@ -162,9 +164,7 @@ export const WorkflowDiagramCanvasBase = ({
 
   const { nodes, edges } = useMemo(
     () =>
-      isDefined(workflowDiagram)
-        ? getOrganizedDiagram(workflowDiagram)
-        : { nodes: [], edges: [] },
+      isDefined(workflowDiagram) ? workflowDiagram : { nodes: [], edges: [] },
     [workflowDiagram],
   );
 
@@ -390,12 +390,12 @@ export const WorkflowDiagramCanvasBase = ({
         proOptions={{ hideAttribution: true }}
         multiSelectionKeyCode={null}
         nodesFocusable={false}
-        edgesFocusable={false}
-        nodesDraggable={false}
+        edgesFocusable={true}
         panOnDrag={workflowDiagramPanOnDrag}
-        nodesConnectable={false}
+        nodesConnectable={true}
         paneClickDistance={10} // Fix small unwanted user dragging does not select node
         preventScrolling={false}
+        onConnect={onConnect}
       >
         <Background color={theme.border.color.medium} size={2} />
 

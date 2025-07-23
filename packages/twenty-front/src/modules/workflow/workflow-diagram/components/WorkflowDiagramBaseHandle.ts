@@ -8,7 +8,6 @@ export const StyledHandle = styled(Handle)`
   height: ${NODE_HANDLE_HEIGHT_PX}px;
   width: ${NODE_HANDLE_WIDTH_PX}px;
   left: ${CREATE_STEP_NODE_WIDTH}px;
-  visibility: hidden;
 `;
 
 export { StyledHandle as WorkflowDiagramBaseHandle };

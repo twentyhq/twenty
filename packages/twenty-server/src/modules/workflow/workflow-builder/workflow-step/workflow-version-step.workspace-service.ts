@@ -35,6 +35,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
+import { WorkflowEdgeDTO } from 'src/engine/core-modules/workflow/dtos/workflow-edge.dto';
 
 const TRIGGER_STEP_ID = 'trigger';
 
@@ -343,6 +344,79 @@ export class WorkflowVersionStepWorkspaceService {
       workflowRunId,
       lastExecutedStepId: stepId,
     });
+  }
+
+  async createWorkflowVersionEdge({
+    source,
+    target,
+    workflowVersionId,
+    workspaceId,
+  }: {
+    source: string;
+    target: string;
+    workflowVersionId: string;
+    workspaceId: string;
+  }): Promise<WorkflowEdgeDTO> {
+    const workflowVersionRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
+        'workflowVersion',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const workflowVersion = await workflowVersionRepository.findOne({
+      where: {
+        id: workflowVersionId,
+      },
+    });
+
+    if (!isDefined(workflowVersion)) {
+      throw new WorkflowVersionStepException(
+        'WorkflowVersion not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    assertWorkflowVersionIsDraft(workflowVersion);
+
+    const existingSteps = workflowVersion.steps || [];
+
+    const sourceStep = existingSteps.find((step) => step.id === source);
+
+    if (!isDefined(sourceStep)) {
+      throw new WorkflowVersionStepException(
+        `Source step ${sourceStep} not found in workflowVersion ${workflowVersionId}`,
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    const targetStep = existingSteps.find((step) => step.id === source);
+
+    if (!isDefined(targetStep)) {
+      throw new WorkflowVersionStepException(
+        `Target step ${sourceStep} not found in workflowVersion ${workflowVersionId}`,
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    const updatedSourceStep = {
+      ...sourceStep,
+      nextStepIds: [...(sourceStep.nextStepIds ?? []), target],
+    };
+
+    const updatedSteps = existingSteps.map((step) => {
+      if (step.id === source) {
+        return updatedSourceStep;
+      }
+
+      return step;
+    });
+
+    await workflowVersionRepository.update(workflowVersion.id, {
+      steps: updatedSteps,
+    });
+
+    return { source, target };
   }
 
   private async enrichOutputSchema({
