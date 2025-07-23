@@ -1,5 +1,4 @@
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { CREATE_STEP_NODE_WIDTH } from '@/workflow/workflow-diagram/constants/CreateStepNodeWidth';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -10,7 +9,7 @@ import {
   BaseEdge,
   EdgeLabelRenderer,
   EdgeProps,
-  getStraightPath,
+  getBezierPath,
 } from '@xyflow/react';
 import { useState } from 'react';
 import { IconPlus } from 'twenty-ui/display';
@@ -48,15 +47,17 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
   markerEnd,
   source,
   sourceY,
+  sourceX,
   target,
+  targetX,
   targetY,
 }: WorkflowDiagramFilteringDisabledEdgeEditableProps) => {
   const theme = useTheme();
 
-  const [edgePath, , labelY] = getStraightPath({
-    sourceX: CREATE_STEP_NODE_WIDTH,
+  const [edgePath, , labelY] = getBezierPath({
+    sourceX,
     sourceY,
-    targetX: CREATE_STEP_NODE_WIDTH,
+    targetX,
     targetY,
   });
 
