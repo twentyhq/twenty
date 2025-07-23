@@ -105,35 +105,6 @@ export class OpenApiService {
       return paths;
     }, schema.paths as OpenAPIV3_1.PathsObject);
 
-    schema.webhooks = filteredObjectMetadataItems.reduce(
-      (paths, item) => {
-        paths[
-          this.createWebhookEventName(
-            DatabaseEventAction.CREATED,
-            item.nameSingular,
-          )
-        ] = computeWebhooks(DatabaseEventAction.CREATED, item);
-        paths[
-          this.createWebhookEventName(
-            DatabaseEventAction.UPDATED,
-            item.nameSingular,
-          )
-        ] = computeWebhooks(DatabaseEventAction.UPDATED, item);
-        paths[
-          this.createWebhookEventName(
-            DatabaseEventAction.DELETED,
-            item.nameSingular,
-          )
-        ] = computeWebhooks(DatabaseEventAction.DELETED, item);
-
-        return paths;
-      },
-      {} as Record<
-        string,
-        OpenAPIV3_1.PathItemObject | OpenAPIV3_1.ReferenceObject
-      >,
-    );
-
     schema.components = {
       ...schema.components, // components.securitySchemes is defined in base Schema
       schemas: computeSchemaComponents(filteredObjectMetadataItems),
@@ -169,6 +140,14 @@ export class OpenApiService {
       {
         nameSingular: 'field',
         namePlural: 'fields',
+      },
+      {
+        nameSingular: 'webhook',
+        namePlural: 'webhooks',
+      },
+      {
+        nameSingular: 'apikey',
+        namePlural: 'apiKeys',
       },
     ];
 
@@ -238,6 +217,68 @@ export class OpenApiService {
 
       return path;
     }, schema.paths as OpenAPIV3_1.PathsObject);
+
+    let objectMetadataItems;
+    let workspace;
+
+    try {
+      const authResult =
+        await this.accessTokenService.validateTokenByRequest(request);
+
+      workspace = authResult.workspace;
+      workspaceValidator.assertIsDefinedOrThrow(workspace);
+
+      objectMetadataItems =
+        await this.objectMetadataService.findManyWithinWorkspace(workspace.id, {
+          order: {
+            namePlural: 'ASC',
+          },
+        });
+    } catch (err) {
+      return schema;
+    }
+
+    if (objectMetadataItems?.length) {
+      const workspaceFeatureFlagsMap =
+        await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspace.id);
+
+      const filteredObjectMetadataItems = objectMetadataItems.filter((item) => {
+        return !shouldExcludeFromWorkspaceApi(
+          item,
+          standardObjectMetadataDefinitions,
+          workspaceFeatureFlagsMap,
+        );
+      });
+
+      schema.webhooks = filteredObjectMetadataItems.reduce(
+        (paths, item) => {
+          paths[
+            this.createWebhookEventName(
+              DatabaseEventAction.CREATED,
+              item.nameSingular,
+            )
+          ] = computeWebhooks(DatabaseEventAction.CREATED, item);
+          paths[
+            this.createWebhookEventName(
+              DatabaseEventAction.UPDATED,
+              item.nameSingular,
+            )
+          ] = computeWebhooks(DatabaseEventAction.UPDATED, item);
+          paths[
+            this.createWebhookEventName(
+              DatabaseEventAction.DELETED,
+              item.nameSingular,
+            )
+          ] = computeWebhooks(DatabaseEventAction.DELETED, item);
+
+          return paths;
+        },
+        {} as Record<
+          string,
+          OpenAPIV3_1.PathItemObject | OpenAPIV3_1.ReferenceObject
+        >,
+      );
+    }
 
     schema.components = {
       ...schema.components, // components.securitySchemes is defined in base Schema

@@ -20,16 +20,10 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-/**
- * @deprecated Use ApiKeyMetadataController instead
- * @see ApiKeyMetadataController
- * This is a temporary controller to support the old REST API.
- * It will be removed in the future.
- */
-@Controller('rest/apiKeys')
+@Controller('rest/metadata/apiKeys')
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
 @UseFilters(RestApiExceptionFilter)
-export class ApiKeyController {
+export class ApiKeyMetadataController {
   constructor(private readonly apiKeyService: ApiKeyService) {}
 
   @Get()

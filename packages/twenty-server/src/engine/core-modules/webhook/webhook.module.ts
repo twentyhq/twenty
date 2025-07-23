@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
+import { WebhookMetadataController } from 'src/engine/core-modules/webhook/controllers/webhook-metadata.controller';
 import { Webhook } from 'src/engine/core-modules/webhook/webhook.entity';
 import { WebhookResolver } from 'src/engine/core-modules/webhook/webhook.resolver';
 import { WebhookService } from 'src/engine/core-modules/webhook/webhook.service';
@@ -16,7 +17,7 @@ import { WebhookController } from './controllers/webhook.controller';
     WorkspaceCacheStorageModule,
   ],
   providers: [WebhookService, WebhookResolver],
-  controllers: [WebhookController],
+  controllers: [WebhookController, WebhookMetadataController],
   exports: [WebhookService, TypeOrmModule],
 })
 export class WebhookModule {}
