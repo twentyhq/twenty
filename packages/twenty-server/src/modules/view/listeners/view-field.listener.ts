@@ -68,6 +68,7 @@ export class ViewFieldListener {
         await this.viewFieldSyncService.updateCoreViewField(
           batchEvent.workspaceId,
           event.properties.after,
+          event.properties.diff,
         );
       } catch (error) {
         this.logger.error(

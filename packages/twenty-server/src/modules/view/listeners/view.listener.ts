@@ -64,6 +64,7 @@ export class ViewListener {
         await this.viewSyncService.updateCoreView(
           batchEvent.workspaceId,
           event.properties.after,
+          event.properties.diff,
         );
       } catch (error) {
         this.logger.error(

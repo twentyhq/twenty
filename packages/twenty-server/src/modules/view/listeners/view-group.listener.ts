@@ -68,6 +68,7 @@ export class ViewGroupListener {
         await this.viewGroupSyncService.updateCoreViewGroup(
           batchEvent.workspaceId,
           event.properties.after,
+          event.properties.diff,
         );
       } catch (error) {
         this.logger.error(

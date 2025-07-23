@@ -68,6 +68,7 @@ export class ViewSortListener {
         await this.viewSortSyncService.updateCoreViewSort(
           batchEvent.workspaceId,
           event.properties.after,
+          event.properties.diff,
         );
       } catch (error) {
         this.logger.error(

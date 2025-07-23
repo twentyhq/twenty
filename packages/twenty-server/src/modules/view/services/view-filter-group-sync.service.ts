@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view/enums/view-filter-group-logical-operator';
 import { ViewFilterGroup } from 'src/engine/metadata-modules/view/view-filter-group.entity';
 import { ViewFilterGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
@@ -13,6 +15,26 @@ export class ViewFilterGroupSyncService {
     @InjectRepository(ViewFilterGroup, 'core')
     private readonly coreViewFilterGroupRepository: Repository<ViewFilterGroup>,
   ) {}
+
+  private parseUpdateDataFromDiff(
+    diff: Partial<ObjectRecordDiff<ViewFilterGroupWorkspaceEntity>>,
+  ): Partial<ViewFilterGroup> {
+    const updateData: Record<string, unknown> = {};
+
+    for (const key of Object.keys(diff)) {
+      const diffValue = diff[key as keyof ViewFilterGroupWorkspaceEntity];
+
+      if (isDefined(diffValue)) {
+        if (key === 'logicalOperator') {
+          updateData[key] = diffValue.after as ViewFilterGroupLogicalOperator;
+        } else {
+          updateData[key] = diffValue.after;
+        }
+      }
+    }
+
+    return updateData as Partial<ViewFilterGroup>;
+  }
 
   public async createCoreViewFilterGroup(
     workspaceId: string,
@@ -40,24 +62,20 @@ export class ViewFilterGroupSyncService {
   public async updateCoreViewFilterGroup(
     workspaceId: string,
     workspaceViewFilterGroup: ViewFilterGroupWorkspaceEntity,
+    diff?: Partial<ObjectRecordDiff<ViewFilterGroupWorkspaceEntity>>,
   ): Promise<void> {
-    const updateData = {
-      viewId: workspaceViewFilterGroup.viewId,
-      logicalOperator:
-        workspaceViewFilterGroup.logicalOperator as ViewFilterGroupLogicalOperator,
-      parentViewFilterGroupId: workspaceViewFilterGroup.parentViewFilterGroupId,
-      positionInViewFilterGroup:
-        workspaceViewFilterGroup.positionInViewFilterGroup,
-      updatedAt: new Date(workspaceViewFilterGroup.updatedAt),
-      deletedAt: workspaceViewFilterGroup.deletedAt
-        ? new Date(workspaceViewFilterGroup.deletedAt)
-        : null,
-    };
+    if (!diff || Object.keys(diff).length === 0) {
+      return;
+    }
 
-    await this.coreViewFilterGroupRepository.update(
-      { id: workspaceViewFilterGroup.id, workspaceId },
-      updateData,
-    );
+    const updateData = this.parseUpdateDataFromDiff(diff);
+
+    if (Object.keys(updateData).length > 0) {
+      await this.coreViewFilterGroupRepository.update(
+        { id: workspaceViewFilterGroup.id, workspaceId },
+        updateData,
+      );
+    }
   }
 
   public async deleteCoreViewFilterGroup(

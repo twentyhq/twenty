@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
 import { ViewGroup } from 'src/engine/metadata-modules/view/view-group.entity';
 import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 
@@ -12,6 +14,22 @@ export class ViewGroupSyncService {
     @InjectRepository(ViewGroup, 'core')
     private readonly coreViewGroupRepository: Repository<ViewGroup>,
   ) {}
+
+  private parseUpdateDataFromDiff(
+    diff: Partial<ObjectRecordDiff<ViewGroupWorkspaceEntity>>,
+  ): Partial<ViewGroup> {
+    const updateData: Record<string, unknown> = {};
+
+    for (const key of Object.keys(diff)) {
+      const diffValue = diff[key as keyof ViewGroupWorkspaceEntity];
+
+      if (isDefined(diffValue)) {
+        updateData[key] = diffValue.after;
+      }
+    }
+
+    return updateData as Partial<ViewGroup>;
+  }
 
   public async createCoreViewGroup(
     workspaceId: string,
@@ -42,27 +60,24 @@ export class ViewGroupSyncService {
   public async updateCoreViewGroup(
     workspaceId: string,
     workspaceViewGroup: ViewGroupWorkspaceEntity,
+    diff?: Partial<ObjectRecordDiff<ViewGroupWorkspaceEntity>>,
   ): Promise<void> {
     if (!workspaceViewGroup.viewId) {
       return;
     }
 
-    const updateData = {
-      fieldMetadataId: workspaceViewGroup.fieldMetadataId,
-      viewId: workspaceViewGroup.viewId,
-      fieldValue: workspaceViewGroup.fieldValue,
-      isVisible: workspaceViewGroup.isVisible,
-      position: workspaceViewGroup.position,
-      updatedAt: new Date(workspaceViewGroup.updatedAt),
-      deletedAt: workspaceViewGroup.deletedAt
-        ? new Date(workspaceViewGroup.deletedAt)
-        : null,
-    };
+    if (!diff || Object.keys(diff).length === 0) {
+      return;
+    }
 
-    await this.coreViewGroupRepository.update(
-      { id: workspaceViewGroup.id, workspaceId },
-      updateData,
-    );
+    const updateData = this.parseUpdateDataFromDiff(diff);
+
+    if (Object.keys(updateData).length > 0) {
+      await this.coreViewGroupRepository.update(
+        { id: workspaceViewGroup.id, workspaceId },
+        updateData,
+      );
+    }
   }
 
   public async deleteCoreViewGroup(

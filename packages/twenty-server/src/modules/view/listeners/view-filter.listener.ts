@@ -68,6 +68,7 @@ export class ViewFilterListener {
         await this.viewFilterSyncService.updateCoreViewFilter(
           batchEvent.workspaceId,
           event.properties.after,
+          event.properties.diff,
         );
       } catch (error) {
         this.logger.error(
