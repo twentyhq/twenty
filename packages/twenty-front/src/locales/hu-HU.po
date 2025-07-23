@@ -691,6 +691,11 @@ msgstr "Váratlan hiba történt"
 msgid "and"
 msgstr "és"
 
+#. js-lingui-id: ggT/H4
+#: src/modules/views/components/AnyFieldSearchChip.tsx
+msgid "Any field :"
+msgstr ""
+
 #. js-lingui-id: xJR+Wq
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
@@ -5285,6 +5290,7 @@ msgid "Search an object"
 msgstr ""
 
 #. js-lingui-id: S+MGem
+#: src/modules/views/hooks/useOpenAnyFieldSearchFilterFromViewBar.ts
 #: src/modules/views/components/ViewBarFilterDropdownAnyFieldSearchInputDropdownHeader.tsx
 #: src/modules/views/components/ViewBarFilterDropdownAnyFieldSearchButtonMenuItem.tsx
 #: src/modules/views/components/AnyFieldSearchDropdownContentMenuHeader.tsx

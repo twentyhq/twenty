@@ -686,6 +686,11 @@ msgstr "An unexpected error occurred"
 msgid "and"
 msgstr "and"
 
+#. js-lingui-id: ggT/H4
+#: src/modules/views/components/AnyFieldSearchChip.tsx
+msgid "Any field :"
+msgstr "Any field :"
+
 #. js-lingui-id: xJR+Wq
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
@@ -5280,6 +5285,7 @@ msgid "Search an object"
 msgstr "Search an object"
 
 #. js-lingui-id: S+MGem
+#: src/modules/views/hooks/useOpenAnyFieldSearchFilterFromViewBar.ts
 #: src/modules/views/components/ViewBarFilterDropdownAnyFieldSearchInputDropdownHeader.tsx
 #: src/modules/views/components/ViewBarFilterDropdownAnyFieldSearchButtonMenuItem.tsx
 #: src/modules/views/components/AnyFieldSearchDropdownContentMenuHeader.tsx
