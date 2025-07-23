@@ -6993,6 +6993,11 @@ msgstr ""
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr ""
 
+#. js-lingui-id: tOPGvO
+#: src/modules/apollo/services/apollo.factory.ts
+msgid "Your app version is out of date. Please refresh the page."
+msgstr ""
+
 #. js-lingui-id: XVnj6K
 #: src/pages/settings/SettingsBilling.tsx
 #~ msgid "Your credit balance will be used to pay the monthly bills."
