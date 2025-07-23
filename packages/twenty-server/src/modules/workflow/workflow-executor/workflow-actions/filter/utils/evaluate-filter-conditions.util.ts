@@ -38,10 +38,18 @@ function evaluateFilter(filter: ResolvedFilter): boolean {
 
     case ViewFilterOperand.Contains:
       if (Array.isArray(leftValue)) {
-        const parsedRightValue = JSON.parse(rightValue as string);
+        try {
+          const parsedRightValue = Array.isArray(rightValue)
+            ? rightValue
+            : JSON.parse(rightValue as string);
 
-        if (Array.isArray(parsedRightValue)) {
-          return parsedRightValue.every((item) => leftValue.includes(item));
+          if (Array.isArray(parsedRightValue)) {
+            return parsedRightValue.every((item) => leftValue.includes(item));
+          } else {
+            return leftValue.includes(parsedRightValue);
+          }
+        } catch (error) {
+          return leftValue.includes(rightValue);
         }
       }
 
@@ -49,7 +57,19 @@ function evaluateFilter(filter: ResolvedFilter): boolean {
 
     case ViewFilterOperand.DoesNotContain:
       if (Array.isArray(leftValue)) {
-        return !leftValue.includes(rightValue);
+        try {
+          const parsedRightValue = Array.isArray(rightValue)
+            ? rightValue
+            : JSON.parse(rightValue as string);
+
+          if (Array.isArray(parsedRightValue)) {
+            return !parsedRightValue.every((item) => leftValue.includes(item));
+          } else {
+            return !leftValue.includes(parsedRightValue);
+          }
+        } catch (error) {
+          return !leftValue.includes(rightValue);
+        }
       }
 
       return !String(leftValue).includes(String(rightValue));
