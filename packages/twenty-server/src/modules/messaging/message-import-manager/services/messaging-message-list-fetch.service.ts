@@ -43,21 +43,18 @@ export class MessagingMessageListFetchService {
           messageChannel,
         );
 
-      const isEmptyMailbox = messageLists.some(
-        (messageList) => messageList.messageExternalIds.length === 0,
-      );
-
-      if (isEmptyMailbox) {
-        await this.messageChannelSyncStatusService.resetAndScheduleMessageListFetch(
-          [messageChannel.id],
-          workspaceId,
-        );
-
-        return;
-      }
-
       for (const messageList of messageLists) {
-        const { messageExternalIds, nextSyncCursor, folderId } = messageList;
+        if (messageList.messageExternalIds.length === 0) {
+          continue;
+        }
+
+        const {
+          messageExternalIds,
+          nextSyncCursor,
+          folderId,
+          messageExternalIdsToDelete,
+          previousSyncCursor,
+        } = messageList;
 
         const messageChannelMessageAssociationRepository =
           await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
@@ -84,17 +81,25 @@ export class MessagingMessageListFetchService {
             ),
         );
 
-        const messageExternalIdsToDelete =
-          existingMessageChannelMessageAssociationsExternalIds.filter(
-            (existingMessageCMAExternalId) =>
-              existingMessageCMAExternalId &&
-              !messageExternalIds.includes(existingMessageCMAExternalId),
-          );
+        const isFullSync = !previousSyncCursor;
 
-        if (messageExternalIdsToDelete.length) {
+        const additionalMessageExternalIdsToDelete = isFullSync
+          ? existingMessageChannelMessageAssociationsExternalIds.filter(
+              (existingMessageCMAExternalId) =>
+                existingMessageCMAExternalId &&
+                !messageExternalIds.includes(existingMessageCMAExternalId),
+            )
+          : [];
+
+        const allMessageExternalIdsToDelete = [
+          ...messageExternalIdsToDelete,
+          ...additionalMessageExternalIdsToDelete,
+        ];
+
+        if (allMessageExternalIdsToDelete.length) {
           await messageChannelMessageAssociationRepository.delete({
             messageChannelId: messageChannel.id,
-            messageExternalId: In(messageExternalIdsToDelete),
+            messageExternalId: In(allMessageExternalIdsToDelete),
           });
 
           await this.messagingMessageCleanerService.cleanWorkspaceThreads(

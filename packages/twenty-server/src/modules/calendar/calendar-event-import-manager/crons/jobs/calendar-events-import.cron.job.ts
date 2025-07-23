@@ -11,6 +11,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { CalendarEventListFetchJobData } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 import { CalendarEventsImportJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
@@ -47,9 +48,7 @@ export class CalendarEventsImportCronJob {
 
     for (const activeWorkspace of activeWorkspaces) {
       try {
-        const schemaName = this.workspaceDataSourceService.getSchemaName(
-          activeWorkspace.id,
-        );
+        const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
 
         const calendarChannels = await mainDataSource.query(
           `SELECT * FROM ${schemaName}."calendarChannel" WHERE "isSyncEnabled" = true AND "syncStage" = '${CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING}'`,

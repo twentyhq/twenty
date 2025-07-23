@@ -13,10 +13,11 @@ import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/state
 import { addCreateStepNodes } from '@/workflow/workflow-diagram/utils/addCreateStepNodes';
 import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
 import { mergeWorkflowDiagrams } from '@/workflow/workflow-diagram/utils/mergeWorkflowDiagrams';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { addEdgeOptions } from '@/workflow/workflow-diagram/utils/addEdgeOptions';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const WorkflowDiagramEffect = ({
   workflowWithCurrentVersion,
@@ -36,6 +37,10 @@ export const WorkflowDiagramEffect = ({
     workflowLastCreatedStepIdComponentState,
   );
 
+  const isWorkflowFilteringEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
+  );
+
   const computeAndMergeNewWorkflowDiagram = useRecoilCallback(
     ({ snapshot, set }) => {
       return (currentVersion: WorkflowVersion) => {
@@ -45,7 +50,11 @@ export const WorkflowDiagramEffect = ({
         );
 
         const nextWorkflowDiagram = addCreateStepNodes(
-          addEdgeOptions(getWorkflowVersionDiagram(currentVersion)),
+          getWorkflowVersionDiagram({
+            workflowVersion: currentVersion,
+            isWorkflowFilteringEnabled,
+            isEditable: true,
+          }),
         );
 
         let mergedWorkflowDiagram = nextWorkflowDiagram;
@@ -78,7 +87,11 @@ export const WorkflowDiagramEffect = ({
         set(workflowDiagramState, mergedWorkflowDiagram);
       };
     },
-    [workflowLastCreatedStepIdState, workflowDiagramState],
+    [
+      workflowDiagramState,
+      isWorkflowFilteringEnabled,
+      workflowLastCreatedStepIdState,
+    ],
   );
 
   const currentVersion = workflowWithCurrentVersion?.currentVersion;
