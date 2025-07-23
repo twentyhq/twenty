@@ -22,6 +22,7 @@ const mockedWorkspaceUpdateQueryBuilder = {
     execute: jest
       .fn()
       .mockResolvedValue({ affected: 1, raw: [], generatedMaps: [] }),
+    returning: jest.fn().mockReturnThis(),
   })),
   execute: jest
     .fn()
@@ -38,6 +39,7 @@ jest.mock('../repository/workspace-select-query-builder', () => ({
       .fn()
       .mockResolvedValue({ affected: 1, raw: [], generatedMaps: [] }),
     setFindOptions: jest.fn().mockReturnThis(),
+    returning: jest.fn().mockReturnThis(),
     update: jest.fn().mockReturnValue(mockedWorkspaceUpdateQueryBuilder),
     insert: jest.fn().mockReturnThis(),
   })),
@@ -269,17 +271,20 @@ describe('WorkspaceEntityManager', () => {
         { reload: false },
         mockPermissionOptions,
       );
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'update',
-        mockPermissionOptions,
-      );
+      expect(entityManager['validatePermissions']).toHaveBeenCalledWith({
+        target: 'test-entity',
+        operationType: 'update',
+        permissionOptions: mockPermissionOptions,
+        selectedColumns: [],
+      });
       expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
         entityName: 'test-entity',
         operationType: 'update',
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
         objectRecordsPermissions:
           mockPermissionOptions.objectRecordsPermissions,
+        selectedColumns: [],
+        allFieldsSelected: false,
       });
     });
   });
@@ -299,17 +304,20 @@ describe('WorkspaceEntityManager', () => {
   describe('Other Methods', () => {
     it('should call validatePermissions and validateOperationIsPermittedOrThrow for clear', async () => {
       await entityManager.clear('test-entity', mockPermissionOptions);
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'delete',
-        mockPermissionOptions,
-      );
+      expect(entityManager['validatePermissions']).toHaveBeenCalledWith({
+        target: 'test-entity',
+        operationType: 'delete',
+        permissionOptions: mockPermissionOptions,
+        selectedColumns: [],
+      });
       expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
         entityName: 'test-entity',
         operationType: 'delete',
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
         objectRecordsPermissions:
           mockPermissionOptions.objectRecordsPermissions,
+        selectedColumns: [],
+        allFieldsSelected: false,
       });
     });
   });
