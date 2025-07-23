@@ -136,6 +136,9 @@ export class FieldMetadataValidationService {
           throw new FieldMetadataException(
             error.message,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+            {
+              userFriendlyMessage: error.userFriendlyMessage,
+            },
           );
         }
 

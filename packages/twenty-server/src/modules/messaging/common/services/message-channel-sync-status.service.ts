@@ -27,7 +27,7 @@ export class MessageChannelSyncStatusService {
     private readonly metricsService: MetricsService,
   ) {}
 
-  public async scheduleFullMessageListFetch(messageChannelIds: string[]) {
+  public async scheduleMessageListFetch(messageChannelIds: string[]) {
     if (!messageChannelIds.length) {
       return;
     }
@@ -39,21 +39,6 @@ export class MessageChannelSyncStatusService {
 
     await messageChannelRepository.update(messageChannelIds, {
       syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
-    });
-  }
-
-  public async schedulePartialMessageListFetch(messageChannelIds: string[]) {
-    if (!messageChannelIds.length) {
-      return;
-    }
-
-    const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
-        'messageChannel',
-      );
-
-    await messageChannelRepository.update(messageChannelIds, {
-      syncStage: MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
     });
   }
 
@@ -72,7 +57,7 @@ export class MessageChannelSyncStatusService {
     });
   }
 
-  public async resetAndScheduleFullMessageListFetch(
+  public async resetAndScheduleMessageListFetch(
     messageChannelIds: string[],
     workspaceId: string,
   ) {
@@ -97,7 +82,7 @@ export class MessageChannelSyncStatusService {
       throttleFailureCount: 0,
     });
 
-    await this.scheduleFullMessageListFetch(messageChannelIds);
+    await this.scheduleMessageListFetch(messageChannelIds);
   }
 
   public async resetSyncStageStartedAt(messageChannelIds: string[]) {
@@ -132,7 +117,7 @@ export class MessageChannelSyncStatusService {
     });
   }
 
-  public async markAsCompletedAndSchedulePartialMessageListFetch(
+  public async markAsCompletedAndScheduleMessageListFetch(
     messageChannelIds: string[],
   ) {
     if (!messageChannelIds.length) {
@@ -146,7 +131,7 @@ export class MessageChannelSyncStatusService {
 
     await messageChannelRepository.update(messageChannelIds, {
       syncStatus: MessageChannelSyncStatus.ACTIVE,
-      syncStage: MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
+      syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
       throttleFailureCount: 0,
       syncStageStartedAt: null,
       syncedAt: new Date().toISOString(),
