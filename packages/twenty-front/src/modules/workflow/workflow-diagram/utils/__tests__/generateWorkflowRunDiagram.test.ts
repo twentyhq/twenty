@@ -1,8 +1,8 @@
 import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { StepStatus, WorkflowRunStepInfos } from 'twenty-shared/workflow';
 import { getUuidV4Mock } from '~/testing/utils/getUuidV4Mock';
 import { generateWorkflowRunDiagram } from '../generateWorkflowRunDiagram';
-import { StepStatus, WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 jest.mock('uuid', () => ({
   v4: getUuidV4Mock(),
@@ -100,6 +100,7 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
+      isWorkflowFilteringEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -107,16 +108,24 @@ describe('generateWorkflowRunDiagram', () => {
   "diagram": {
     "edges": [
       {
+        "data": {
+          "edgeExecutionStatus": "SUCCESS",
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-0",
-        "markerEnd": "workflow-edge-green-arrow-rounded",
-        "markerStart": "workflow-edge-green-circle",
+        "markerEnd": "workflow-edge-arrow-rounded",
+        "markerStart": "workflow-edge-gray-circle",
         "selectable": false,
         "source": "trigger",
         "target": "step1",
-        "type": "success",
+        "type": "empty-filter--run",
       },
       {
+        "data": {
+          "edgeExecutionStatus": "FAILED",
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-1",
         "markerEnd": "workflow-edge-arrow-rounded",
@@ -124,8 +133,13 @@ describe('generateWorkflowRunDiagram', () => {
         "selectable": false,
         "source": "step1",
         "target": "step2",
+        "type": "empty-filter--run",
       },
       {
+        "data": {
+          "edgeExecutionStatus": "NOT_STARTED",
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-2",
         "markerEnd": "workflow-edge-arrow-rounded",
@@ -133,6 +147,7 @@ describe('generateWorkflowRunDiagram', () => {
         "selectable": false,
         "source": "step2",
         "target": "step3",
+        "type": "empty-filter--run",
       },
     ],
     "nodes": [
@@ -289,6 +304,7 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
+      isWorkflowFilteringEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -296,34 +312,46 @@ describe('generateWorkflowRunDiagram', () => {
   "diagram": {
     "edges": [
       {
+        "data": {
+          "edgeExecutionStatus": "SUCCESS",
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-3",
-        "markerEnd": "workflow-edge-green-arrow-rounded",
-        "markerStart": "workflow-edge-green-circle",
+        "markerEnd": "workflow-edge-arrow-rounded",
+        "markerStart": "workflow-edge-gray-circle",
         "selectable": false,
         "source": "trigger",
         "target": "step1",
-        "type": "success",
+        "type": "empty-filter--run",
       },
       {
+        "data": {
+          "edgeExecutionStatus": "SUCCESS",
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-4",
-        "markerEnd": "workflow-edge-green-arrow-rounded",
-        "markerStart": "workflow-edge-green-circle",
+        "markerEnd": "workflow-edge-arrow-rounded",
+        "markerStart": "workflow-edge-gray-circle",
         "selectable": false,
         "source": "step1",
         "target": "step2",
-        "type": "success",
+        "type": "empty-filter--run",
       },
       {
+        "data": {
+          "edgeExecutionStatus": "SUCCESS",
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-5",
-        "markerEnd": "workflow-edge-green-arrow-rounded",
-        "markerStart": "workflow-edge-green-circle",
+        "markerEnd": "workflow-edge-arrow-rounded",
+        "markerStart": "workflow-edge-gray-circle",
         "selectable": false,
         "source": "step2",
         "target": "step3",
-        "type": "success",
+        "type": "empty-filter--run",
       },
     ],
     "nodes": [
@@ -480,6 +508,7 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
+      isWorkflowFilteringEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -487,16 +516,24 @@ describe('generateWorkflowRunDiagram', () => {
   "diagram": {
     "edges": [
       {
+        "data": {
+          "edgeExecutionStatus": "SUCCESS",
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-6",
-        "markerEnd": "workflow-edge-green-arrow-rounded",
-        "markerStart": "workflow-edge-green-circle",
+        "markerEnd": "workflow-edge-arrow-rounded",
+        "markerStart": "workflow-edge-gray-circle",
         "selectable": false,
         "source": "trigger",
         "target": "step1",
-        "type": "success",
+        "type": "empty-filter--run",
       },
       {
+        "data": {
+          "edgeExecutionStatus": "RUNNING",
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-7",
         "markerEnd": "workflow-edge-arrow-rounded",
@@ -504,8 +541,13 @@ describe('generateWorkflowRunDiagram', () => {
         "selectable": false,
         "source": "step1",
         "target": "step2",
+        "type": "empty-filter--run",
       },
       {
+        "data": {
+          "edgeExecutionStatus": "NOT_STARTED",
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-8",
         "markerEnd": "workflow-edge-arrow-rounded",
@@ -513,6 +555,7 @@ describe('generateWorkflowRunDiagram', () => {
         "selectable": false,
         "source": "step2",
         "target": "step3",
+        "type": "empty-filter--run",
       },
     ],
     "nodes": [
@@ -688,6 +731,7 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
+      isWorkflowFilteringEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -695,26 +739,38 @@ describe('generateWorkflowRunDiagram', () => {
   "diagram": {
     "edges": [
       {
+        "data": {
+          "edgeExecutionStatus": "SUCCESS",
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-9",
-        "markerEnd": "workflow-edge-green-arrow-rounded",
-        "markerStart": "workflow-edge-green-circle",
+        "markerEnd": "workflow-edge-arrow-rounded",
+        "markerStart": "workflow-edge-gray-circle",
         "selectable": false,
         "source": "trigger",
         "target": "step1",
-        "type": "success",
+        "type": "empty-filter--run",
       },
       {
+        "data": {
+          "edgeExecutionStatus": "SUCCESS",
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-10",
-        "markerEnd": "workflow-edge-green-arrow-rounded",
-        "markerStart": "workflow-edge-green-circle",
+        "markerEnd": "workflow-edge-arrow-rounded",
+        "markerStart": "workflow-edge-gray-circle",
         "selectable": false,
         "source": "step1",
         "target": "step2",
-        "type": "success",
+        "type": "empty-filter--run",
       },
       {
+        "data": {
+          "edgeExecutionStatus": "RUNNING",
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-11",
         "markerEnd": "workflow-edge-arrow-rounded",
@@ -722,8 +778,13 @@ describe('generateWorkflowRunDiagram', () => {
         "selectable": false,
         "source": "step2",
         "target": "step3",
+        "type": "empty-filter--run",
       },
       {
+        "data": {
+          "edgeExecutionStatus": "NOT_STARTED",
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-12",
         "markerEnd": "workflow-edge-arrow-rounded",
@@ -731,6 +792,7 @@ describe('generateWorkflowRunDiagram', () => {
         "selectable": false,
         "source": "step3",
         "target": "step4",
+        "type": "empty-filter--run",
       },
     ],
     "nodes": [
@@ -866,6 +928,7 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
+      isWorkflowFilteringEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -873,14 +936,18 @@ describe('generateWorkflowRunDiagram', () => {
   "diagram": {
     "edges": [
       {
+        "data": {
+          "edgeExecutionStatus": "SUCCESS",
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-13",
-        "markerEnd": "workflow-edge-green-arrow-rounded",
-        "markerStart": "workflow-edge-green-circle",
+        "markerEnd": "workflow-edge-arrow-rounded",
+        "markerStart": "workflow-edge-gray-circle",
         "selectable": false,
         "source": "trigger",
         "target": "step1",
-        "type": "success",
+        "type": "empty-filter--run",
       },
     ],
     "nodes": [

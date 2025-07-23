@@ -1,18 +1,25 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
-import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
+import { EntityTarget, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import {
+  TwentyORMException,
+  TwentyORMExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
 import { WorkspaceInsertQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-insert-query-builder';
 import { WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
 import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
+import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 
 export class WorkspaceSelectQueryBuilder<
   T extends ObjectLiteral,
@@ -20,16 +27,23 @@ export class WorkspaceSelectQueryBuilder<
   objectRecordsPermissions: ObjectRecordsPermissions;
   shouldBypassPermissionChecks: boolean;
   internalContext: WorkspaceInternalContext;
+  authContext?: AuthContext;
   constructor(
     queryBuilder: SelectQueryBuilder<T>,
     objectRecordsPermissions: ObjectRecordsPermissions,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
+    authContext?: AuthContext,
   ) {
     super(queryBuilder);
     this.objectRecordsPermissions = objectRecordsPermissions;
     this.internalContext = internalContext;
     this.shouldBypassPermissionChecks = shouldBypassPermissionChecks;
+    this.authContext = authContext;
+  }
+
+  getFindOptions() {
+    return this.findOptions;
   }
 
   override clone(): this {
@@ -40,19 +54,55 @@ export class WorkspaceSelectQueryBuilder<
       this.objectRecordsPermissions,
       this.internalContext,
       this.shouldBypassPermissionChecks,
+      this.authContext,
     ) as this;
   }
 
-  override execute(): Promise<T[]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  override async execute(): Promise<any> {
     this.validatePermissions();
 
-    return super.execute();
+    const mainAliasTarget = this.getMainAliasTarget();
+
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      mainAliasTarget,
+      this.internalContext,
+    );
+
+    const result = await super.execute();
+
+    const formattedResult = formatResult<T[]>(
+      result,
+      objectMetadata,
+      this.internalContext.objectMetadataMaps,
+    );
+
+    return {
+      raw: result,
+      generatedMaps: formattedResult,
+      identifiers: result.identifiers,
+    };
   }
 
-  override getMany(): Promise<T[]> {
+  override async getMany(): Promise<T[]> {
     this.validatePermissions();
 
-    return super.getMany();
+    const mainAliasTarget = this.getMainAliasTarget();
+
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      mainAliasTarget,
+      this.internalContext,
+    );
+
+    const result = await super.getMany();
+
+    const formattedResult = formatResult<T[]>(
+      result,
+      objectMetadata,
+      this.internalContext.objectMetadataMaps,
+    );
+
+    return formattedResult;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -69,16 +119,46 @@ export class WorkspaceSelectQueryBuilder<
     return super.getRawMany();
   }
 
-  override getOne(): Promise<T | null> {
+  override async getOne(): Promise<T | null> {
     this.validatePermissions();
 
-    return super.getOne();
+    const mainAliasTarget = this.getMainAliasTarget();
+
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      mainAliasTarget,
+      this.internalContext,
+    );
+
+    const result = await super.getOne();
+
+    const formattedResult = formatResult<T>(
+      result,
+      objectMetadata,
+      this.internalContext.objectMetadataMaps,
+    );
+
+    return formattedResult;
   }
 
-  override getOneOrFail(): Promise<T> {
+  override async getOneOrFail(): Promise<T> {
     this.validatePermissions();
 
-    return super.getOneOrFail();
+    const mainAliasTarget = this.getMainAliasTarget();
+
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      mainAliasTarget,
+      this.internalContext,
+    );
+
+    const result = await super.getOneOrFail();
+
+    const formattedResult = formatResult<T>(
+      result,
+      objectMetadata,
+      this.internalContext.objectMetadataMaps,
+    );
+
+    return formattedResult[0];
   }
 
   override getCount(): Promise<number> {
@@ -94,10 +174,25 @@ export class WorkspaceSelectQueryBuilder<
     );
   }
 
-  override getManyAndCount(): Promise<[T[], number]> {
+  override async getManyAndCount(): Promise<[T[], number]> {
     this.validatePermissions();
 
-    return super.getManyAndCount();
+    const mainAliasTarget = this.getMainAliasTarget();
+
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      mainAliasTarget,
+      this.internalContext,
+    );
+
+    const [result, count] = await super.getManyAndCount();
+
+    const formattedResult = formatResult<T[]>(
+      result,
+      objectMetadata,
+      this.internalContext.objectMetadataMaps,
+    );
+
+    return [formattedResult, count];
   }
 
   override insert(): WorkspaceInsertQueryBuilder<T> {
@@ -108,6 +203,7 @@ export class WorkspaceSelectQueryBuilder<
       this.objectRecordsPermissions,
       this.internalContext,
       this.shouldBypassPermissionChecks,
+      this.authContext,
     );
   }
 
@@ -129,6 +225,7 @@ export class WorkspaceSelectQueryBuilder<
       this.objectRecordsPermissions,
       this.internalContext,
       this.shouldBypassPermissionChecks,
+      this.authContext,
     );
   }
 
@@ -140,6 +237,7 @@ export class WorkspaceSelectQueryBuilder<
       this.objectRecordsPermissions,
       this.internalContext,
       this.shouldBypassPermissionChecks,
+      this.authContext,
     );
   }
 
@@ -151,6 +249,7 @@ export class WorkspaceSelectQueryBuilder<
       this.objectRecordsPermissions,
       this.internalContext,
       this.shouldBypassPermissionChecks,
+      this.authContext,
     );
   }
 
@@ -162,6 +261,7 @@ export class WorkspaceSelectQueryBuilder<
       this.objectRecordsPermissions,
       this.internalContext,
       this.shouldBypassPermissionChecks,
+      this.authContext,
     );
   }
 
@@ -179,5 +279,18 @@ export class WorkspaceSelectQueryBuilder<
       this.internalContext.objectMetadataMaps,
       this.shouldBypassPermissionChecks,
     );
+  }
+
+  private getMainAliasTarget(): EntityTarget<T> {
+    const mainAliasTarget = this.expressionMap.mainAlias?.target;
+
+    if (!mainAliasTarget) {
+      throw new TwentyORMException(
+        'Main alias target is missing',
+        TwentyORMExceptionCode.MISSING_MAIN_ALIAS_TARGET,
+      );
+    }
+
+    return mainAliasTarget;
   }
 }

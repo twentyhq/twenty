@@ -7,8 +7,8 @@ import {
 
 import { settings } from 'src/engine/constants/settings';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { getCompositeFieldMetadataMap } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
+import { getCompositeFieldMetadataMap } from 'src/engine/twenty-orm/utils/format-result.util';
 
 export const buildDuplicateConditions = (
   objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,

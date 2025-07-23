@@ -1,18 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   CalendarEventListFetchJob,
   CalendarEventListFetchJobData,
@@ -42,9 +38,6 @@ export class ImapSmtpCalDavAPIService {
     private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'core')
-    private readonly objectMetadataRepository: WorkspaceRepository<ObjectMetadataEntity>,
   ) {}
 
   async setupCompleteAccount(input: {
@@ -97,7 +90,6 @@ export class ImapSmtpCalDavAPIService {
       await this.upsertConnectedAccount(
         input,
         accountId,
-        existingAccount,
         connectedAccountRepository,
       );
 
@@ -116,7 +108,6 @@ export class ImapSmtpCalDavAPIService {
 
     await this.enqueueSyncJobs(
       input,
-      accountId,
       workspaceId,
       createdMessageChannel,
       createdCalendarChannel,
@@ -131,7 +122,6 @@ export class ImapSmtpCalDavAPIService {
       connectionParameters: EmailAccountConnectionParameters;
     },
     accountId: string,
-    existingAccount: ConnectedAccountWorkspaceEntity | null,
     connectedAccountRepository: WorkspaceRepository<ConnectedAccountWorkspaceEntity>,
   ) {
     const accountData = {
@@ -142,48 +132,7 @@ export class ImapSmtpCalDavAPIService {
       accountOwnerId: input.workspaceMemberId,
     };
 
-    const savedAccount = await connectedAccountRepository.save(accountData, {});
-
-    const connectedAccountMetadata =
-      await this.objectMetadataRepository.findOneOrFail({
-        where: {
-          nameSingular: 'connectedAccount',
-          workspaceId: input.workspaceId,
-        },
-      });
-
-    if (existingAccount) {
-      this.workspaceEventEmitter.emitDatabaseBatchEvent({
-        objectMetadataNameSingular: 'connectedAccount',
-        action: DatabaseEventAction.UPDATED,
-        events: [
-          {
-            recordId: savedAccount.id,
-            objectMetadata: connectedAccountMetadata,
-            properties: {
-              before: existingAccount,
-              after: savedAccount,
-            },
-          },
-        ],
-        workspaceId: input.workspaceId,
-      });
-    } else {
-      this.workspaceEventEmitter.emitDatabaseBatchEvent({
-        objectMetadataNameSingular: 'connectedAccount',
-        action: DatabaseEventAction.CREATED,
-        events: [
-          {
-            recordId: savedAccount.id,
-            objectMetadata: connectedAccountMetadata,
-            properties: {
-              after: savedAccount,
-            },
-          },
-        ],
-        workspaceId: input.workspaceId,
-      });
-    }
+    await connectedAccountRepository.save(accountData, {});
   }
 
   private async setupMessageChannels(
@@ -226,29 +175,6 @@ export class ImapSmtpCalDavAPIService {
       {},
     );
 
-    const messageChannelMetadata =
-      await this.objectMetadataRepository.findOneOrFail({
-        where: {
-          nameSingular: 'messageChannel',
-          workspaceId: input.workspaceId,
-        },
-      });
-
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: 'messageChannel',
-      action: DatabaseEventAction.CREATED,
-      events: [
-        {
-          recordId: newMessageChannel.id,
-          objectMetadata: messageChannelMetadata,
-          properties: {
-            after: newMessageChannel,
-          },
-        },
-      ],
-      workspaceId: input.workspaceId,
-    });
-
     return shouldEnableSync ? newMessageChannel : null;
   }
 
@@ -289,29 +215,6 @@ export class ImapSmtpCalDavAPIService {
         {},
       );
 
-      const calendarChannelMetadata =
-        await this.objectMetadataRepository.findOneOrFail({
-          where: {
-            nameSingular: 'calendarChannel',
-            workspaceId: input.workspaceId,
-          },
-        });
-
-      this.workspaceEventEmitter.emitDatabaseBatchEvent({
-        objectMetadataNameSingular: 'calendarChannel',
-        action: DatabaseEventAction.CREATED,
-        events: [
-          {
-            recordId: newCalendarChannel.id,
-            objectMetadata: calendarChannelMetadata,
-            properties: {
-              after: newCalendarChannel,
-            },
-          },
-        ],
-        workspaceId: input.workspaceId,
-      });
-
       return newCalendarChannel;
     }
 
@@ -322,7 +225,6 @@ export class ImapSmtpCalDavAPIService {
     input: {
       connectionParameters: EmailAccountConnectionParameters;
     },
-    accountId: string,
     workspaceId: string,
     messageChannel: MessageChannelWorkspaceEntity | null,
     calendarChannel: CalendarChannelWorkspaceEntity | null,

@@ -25,4 +25,5 @@ export interface StorageDriver {
     folderPath: string;
     filename: string;
   }): Promise<boolean>;
+  checkFolderExists(folderPath: string): Promise<boolean>;
 }

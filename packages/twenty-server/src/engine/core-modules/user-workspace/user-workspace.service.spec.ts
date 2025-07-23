@@ -6,7 +6,6 @@ import { DataSource, Repository } from 'typeorm';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
@@ -28,17 +27,14 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 describe('UserWorkspaceService', () => {
   let service: UserWorkspaceService;
   let userWorkspaceRepository: Repository<UserWorkspace>;
   let userRepository: Repository<User>;
-  let objectMetadataRepository: Repository<ObjectMetadataEntity>;
   let typeORMService: TypeORMService;
   let workspaceInvitationService: WorkspaceInvitationService;
-  let workspaceEventEmitter: WorkspaceEventEmitter;
   let approvedAccessDomainService: ApprovedAccessDomainService;
   let twentyORMGlobalManager: TwentyORMGlobalManager;
   let userRoleService: UserRoleService;
@@ -90,13 +86,6 @@ describe('UserWorkspaceService', () => {
           useValue: {
             invalidateWorkspaceInvitation: jest.fn(),
             findInvitationsByEmail: jest.fn(),
-          },
-        },
-        {
-          provide: WorkspaceEventEmitter,
-          useValue: {
-            emitCustomBatchEvent: jest.fn(),
-            emitDatabaseBatchEvent: jest.fn(),
           },
         },
         {
@@ -155,15 +144,9 @@ describe('UserWorkspaceService', () => {
       getRepositoryToken(UserWorkspace, 'core'),
     );
     userRepository = module.get(getRepositoryToken(User, 'core'));
-    objectMetadataRepository = module.get(
-      getRepositoryToken(ObjectMetadataEntity, 'core'),
-    );
     typeORMService = module.get<TypeORMService>(TypeORMService);
     workspaceInvitationService = module.get<WorkspaceInvitationService>(
       WorkspaceInvitationService,
-    );
-    workspaceEventEmitter = module.get<WorkspaceEventEmitter>(
-      WorkspaceEventEmitter,
     );
     approvedAccessDomainService = module.get<ApprovedAccessDomainService>(
       ApprovedAccessDomainService,
@@ -329,9 +312,6 @@ describe('UserWorkspaceService', () => {
           userEmail: 'test@example.com',
         },
       ];
-      const objectMetadata = {
-        nameSingular: 'workspaceMember',
-      } as ObjectMetadataEntity;
       const workspaceMemberRepository = {
         insert: jest.fn(),
         find: jest.fn().mockResolvedValue(workspaceMember),
@@ -344,13 +324,6 @@ describe('UserWorkspaceService', () => {
         .spyOn(mainDataSource, 'query')
         .mockResolvedValueOnce(undefined)
         .mockResolvedValueOnce(workspaceMember);
-      jest
-        .spyOn(objectMetadataRepository, 'findOneOrFail')
-        .mockResolvedValue(objectMetadata);
-      jest
-        .spyOn(workspaceEventEmitter, 'emitDatabaseBatchEvent')
-        .mockImplementation();
-
       jest
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
         .mockResolvedValue(workspaceMemberRepository as any);
@@ -372,28 +345,6 @@ describe('UserWorkspaceService', () => {
         locale: 'en',
         avatarUrl: 'userWorkspace-avatar-url',
       });
-      expect(objectMetadataRepository.findOneOrFail).toHaveBeenCalledWith({
-        where: {
-          nameSingular: 'workspaceMember',
-          workspaceId,
-        },
-      });
-      expect(workspaceEventEmitter.emitDatabaseBatchEvent).toHaveBeenCalledWith(
-        {
-          objectMetadataNameSingular: 'workspaceMember',
-          action: DatabaseEventAction.CREATED,
-          events: [
-            {
-              recordId: workspaceMember[0].id,
-              objectMetadata,
-              properties: {
-                after: workspaceMember[0],
-              },
-            },
-          ],
-          workspaceId,
-        },
-      );
     });
   });
 

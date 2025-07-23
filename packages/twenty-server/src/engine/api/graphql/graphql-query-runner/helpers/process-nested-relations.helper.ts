@@ -29,6 +29,7 @@ export class ProcessNestedRelationsHelper {
     workspaceDataSource,
     shouldBypassPermissionChecks,
     roleId,
+    selectedFields,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
@@ -41,6 +42,8 @@ export class ProcessNestedRelationsHelper {
     authContext: AuthContext;
     workspaceDataSource: WorkspaceDataSource;
     shouldBypassPermissionChecks: boolean;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    selectedFields: Record<string, any>;
     roleId?: string;
   }): Promise<void> {
     return this.processNestedRelationsV2Helper.processNestedRelations({
@@ -55,6 +58,7 @@ export class ProcessNestedRelationsHelper {
       workspaceDataSource,
       shouldBypassPermissionChecks,
       roleId,
+      selectedFields,
     });
   }
 }

@@ -4,12 +4,11 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
 import { In, Repository } from 'typeorm';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-
 import {
   fieldTextMock,
   objectMetadataItemMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
@@ -21,6 +20,7 @@ import {
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
 
 describe('FieldPermissionService', () => {
   let service: FieldPermissionService;
@@ -31,9 +31,9 @@ describe('FieldPermissionService', () => {
   let workspacePermissionsCacheService: jest.Mocked<WorkspacePermissionsCacheService>;
   let workspaceCacheStorageService: jest.Mocked<WorkspaceCacheStorageService>;
 
-  const testWorkspaceId = 'test-workspace-id';
-  const testRoleId = 'test-role-id';
-  const testObjectMetadataId = 'test-object-metadata-id';
+  const testWorkspaceId = '20202020-0000-0000-0000-000000000000';
+  const testRoleId = '20202020-0000-0000-0000-000000000001';
+  const testObjectMetadataId = '20202020-0000-0000-0000-000000000002';
   const testFieldMetadataId = fieldTextMock.id;
 
   const mockRole: RoleEntity = {
@@ -121,11 +121,13 @@ describe('FieldPermissionService', () => {
           [testObjectMetadataId]: {
             ...objectMetadataItemMock,
             fieldsById: {
-              [fieldTextMock.id]: {
+              [fieldTextMock.id]: getMockFieldMetadataEntity({
                 ...fieldTextMock,
                 label: 'Test Field',
                 objectMetadataId: testObjectMetadataId,
-              } as FieldMetadataInterface,
+                workspaceId: testWorkspaceId,
+                id: '20202020-0000-0000-0000-000000000003',
+              }) as FieldMetadataEntity,
             },
             fieldIdByJoinColumnName: {},
             fieldIdByName: {},
