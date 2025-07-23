@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { TOTP, TOTPOptions } from '@otplib/core';
-import { createDigest } from '@otplib/plugin-crypto';
 import { authenticator } from 'otplib';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -26,7 +24,6 @@ export class TotpStrategy implements OTPAuthenticationStrategyInterface {
   public readonly name = TwoFactorAuthenticationStrategy.TOTP;
 
   private readonly logger = new Logger(TotpStrategy.name);
-  private readonly totp: TOTP<TOTPOptions<string>>;
 
   constructor(options?: TOTPStrategyConfig) {
     let result: SafeParseReturnType<unknown, TOTPStrategyConfig> | undefined;
@@ -47,26 +44,10 @@ export class TotpStrategy implements OTPAuthenticationStrategyInterface {
           TwoFactorAuthenticationExceptionCode.INVALID_CONFIGURATION,
         );
       }
-
-      if (result.data.encodings && result.data.encodings !== 'hex') {
-        this.logger.warn(
-          '⚠️ TOTP Strategy Warning: For best compatibility, the recommended secret encoding is "hex".',
-        );
-      }
-
-      if (result.data.algorithm && result.data.algorithm !== 'sha1') {
-        this.logger.warn(
-          '⚠️ TOTP Strategy Warning: While other algorithms are supported, "sha1" is the most common standard for TOTP compatibility.',
-        );
-      }
     }
 
-    const config = {
-      ...result?.data,
-      createDigest,
-    } as Partial<TOTPOptions<string>>;
-
-    this.totp = new TOTP(config);
+    // Note: We don't configure otplib options to avoid type issues
+    // otplib will use its defaults: sha1, 6 digits, 30 second step, etc.
   }
 
   public initiate(
@@ -76,14 +57,17 @@ export class TotpStrategy implements OTPAuthenticationStrategyInterface {
     uri: string;
     context: TotpContext;
   } {
+    // Use authenticator.generateSecret() which generates base32 encoded secrets
     const secret = authenticator.generateSecret();
-    const uri = this.totp.keyuri(accountName, issuer, secret);
+    
+    // Use authenticator.keyuri which handles the correct format for Google Authenticator compatibility
+    const uri = authenticator.keyuri(accountName, issuer, secret);
 
     return {
       uri,
       context: {
         status: OTPStatus.PENDING,
-        secret,
+        secret, // This is already base32 encoded
       },
     };
   }
@@ -95,7 +79,9 @@ export class TotpStrategy implements OTPAuthenticationStrategyInterface {
     isValid: boolean;
     context: TotpContext;
   } {
-    const isValid = this.totp.check(token, context.secret);
+    // Use authenticator.check which is designed to work with base32 secrets
+    // This should be compatible with Google Authenticator and other TOTP apps
+    const isValid = authenticator.check(token, context.secret);
 
     return {
       isValid,

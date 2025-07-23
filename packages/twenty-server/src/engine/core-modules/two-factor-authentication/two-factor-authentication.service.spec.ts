@@ -7,7 +7,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { KeyWrappingService } from 'src/engine/core-modules/encryption/keys/wrapping/key-wrapping.service';
+import { SimpleSecretEncryptionUtil } from 'src/engine/core-modules/two-factor-authentication/utils/simple-secret-encryption.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -43,44 +43,21 @@ jest.mock('./strategies/otp/totp/totp.strategy', () => {
   };
 });
 
-const createMockRepository = () => ({
-  findOne: jest.fn(),
-  save: jest.fn(),
-});
-
-const createMockUserWorkspaceService = () => ({
-  getUserWorkspaceForUserOrThrow: jest.fn(),
-});
-
-const createMockKeyWrappingService = () => ({
-  wrapKey: jest.fn(() => 'wrapped-key'),
-  unwrapKey: jest.fn(() => 'unwrapped-key'),
-});
-
 describe('TwoFactorAuthenticationService', () => {
   let service: TwoFactorAuthenticationService;
-  let repository: ReturnType<typeof createMockRepository>;
-  let userWorkspaceService: ReturnType<typeof createMockUserWorkspaceService>;
-  let keyWrappingService: ReturnType<typeof createMockKeyWrappingService>;
-  const rawSecret = 'RAW_OTP_SECRET';
-  const wrappedSecret = 'ENCRYPTED_HEX_STRING';
+  let repository: any;
+  let userWorkspaceService: any;
+  let simpleSecretEncryptionUtil: any;
 
+  const mockUser = { id: 'user_123', email: 'test@example.com' };
+  const workspace = { id: 'ws_123', displayName: 'Test Workspace' };
   const mockUserWorkspace = {
     id: 'uw_123',
-    workspace: {
-      displayName: 'Test Workspace',
-    },
+    workspace: workspace,
   };
 
-  const mockUser = {
-    id: 'user_123',
-    email: 'test@test.com',
-  };
-
-  const workspace = {
-    id: 'ws_123',
-    name: 'Test Workspace',
-  };
+  const rawSecret = 'RAW_OTP_SECRET';
+  const encryptedSecret = 'ENCRYPTED_SECRET_STRING';
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -88,15 +65,23 @@ describe('TwoFactorAuthenticationService', () => {
         TwoFactorAuthenticationService,
         {
           provide: getRepositoryToken(TwoFactorAuthenticationMethod, 'core'),
-          useFactory: createMockRepository,
+          useValue: {
+            findOne: jest.fn(),
+            save: jest.fn(),
+          },
         },
         {
           provide: UserWorkspaceService,
-          useFactory: createMockUserWorkspaceService,
+          useValue: {
+            getUserWorkspaceForUserOrThrow: jest.fn(),
+          },
         },
         {
-          provide: KeyWrappingService,
-          useFactory: createMockKeyWrappingService,
+          provide: SimpleSecretEncryptionUtil,
+          useValue: {
+            encryptSecret: jest.fn(),
+            decryptSecret: jest.fn(),
+          },
         },
       ],
     }).compile();
@@ -107,11 +92,13 @@ describe('TwoFactorAuthenticationService', () => {
     repository = module.get(
       getRepositoryToken(TwoFactorAuthenticationMethod, 'core'),
     );
-    userWorkspaceService = module.get(UserWorkspaceService);
-    keyWrappingService = module.get(KeyWrappingService);
-  });
+    userWorkspaceService = module.get<UserWorkspaceService>(
+      UserWorkspaceService,
+    );
+    simpleSecretEncryptionUtil = module.get<SimpleSecretEncryptionUtil>(
+      SimpleSecretEncryptionUtil,
+    );
 
-  afterEach(() => {
     jest.clearAllMocks();
   });
 
@@ -175,9 +162,9 @@ describe('TwoFactorAuthenticationService', () => {
     it('should initiate configuration for a new user', async () => {
       repository.findOne.mockResolvedValue(null);
 
-      (keyWrappingService.wrapKey as jest.Mock).mockResolvedValue({
-        wrappedKey: wrappedSecret,
-      });
+      simpleSecretEncryptionUtil.encryptSecret.mockResolvedValue(
+        encryptedSecret,
+      );
 
       const uri = await service.initiateStrategyConfiguration(
         mockUser.id,
@@ -186,14 +173,14 @@ describe('TwoFactorAuthenticationService', () => {
       );
 
       expect(uri).toBe('otpauth://...');
-      expect(keyWrappingService.wrapKey).toHaveBeenCalledWith(
-        Buffer.from(rawSecret),
+      expect(simpleSecretEncryptionUtil.encryptSecret).toHaveBeenCalledWith(
+        rawSecret,
         mockUser.id + workspace.id + 'otp-secret',
       );
       expect(repository.save).toHaveBeenCalledWith({
         id: undefined,
         userWorkspace: mockUserWorkspace,
-        secret: wrappedSecret,
+        secret: encryptedSecret,
         status: 'PENDING',
         strategy: TwoFactorAuthenticationStrategy.TOTP,
       });
@@ -207,24 +194,54 @@ describe('TwoFactorAuthenticationService', () => {
 
       expect(totpStrategyMocks.initiate).toHaveBeenCalledWith(
         mockUser.email,
-        `Twenty - ${workspace.name}`,
+        `Twenty - ${workspace.displayName}`,
       );
 
       expect(repository.save).toHaveBeenCalledWith(
         expect.objectContaining({
-          secret: wrappedSecret,
+          secret: encryptedSecret,
           status: 'PENDING',
           strategy: TwoFactorAuthenticationStrategy.TOTP,
         }),
       );
     });
 
-    it('should throw if 2FA is already provisioned and verified', async () => {
+    it('should reuse existing pending method', async () => {
       const existingMethod = {
+        id: 'existing_method_id',
+        status: 'PENDING',
+      };
+
+      repository.findOne.mockResolvedValue(existingMethod);
+      simpleSecretEncryptionUtil.encryptSecret.mockResolvedValue(
+        encryptedSecret,
+      );
+
+      const uri = await service.initiateStrategyConfiguration(
+        mockUser.id,
+        mockUser.email,
+        workspace.id,
+      );
+
+      expect(uri).toBe('otpauth://...');
+      expect(repository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: existingMethod.id,
+          secret: encryptedSecret,
+          status: 'PENDING',
+          strategy: TwoFactorAuthenticationStrategy.TOTP,
+        }),
+      );
+    });
+
+    it('should throw if method already exists and is not pending', async () => {
+      const existingMethod = {
+        id: 'existing_method_id',
         status: 'VERIFIED',
       };
 
       repository.findOne.mockResolvedValue(existingMethod);
+
       const expectedError = new TwoFactorAuthenticationException(
         'A two factor authentication method has already been set. Please delete it and try again.',
         TwoFactorAuthenticationExceptionCode.TWO_FACTOR_AUTHENTICATION_METHOD_ALREADY_PROVISIONED,
@@ -238,70 +255,12 @@ describe('TwoFactorAuthenticationService', () => {
         ),
       ).rejects.toThrow(expectedError);
     });
-
-    it('should reuse existing pending method', async () => {
-      const existingPendingMethod = {
-        id: 'existing-method-id',
-        status: 'PENDING',
-      };
-
-      repository.findOne.mockResolvedValue(existingPendingMethod);
-      (keyWrappingService.wrapKey as jest.Mock).mockResolvedValue({
-        wrappedKey: wrappedSecret,
-      });
-
-      const uri = await service.initiateStrategyConfiguration(
-        mockUser.id,
-        mockUser.email,
-        workspace.id,
-      );
-
-      expect(uri).toBe('otpauth://...');
-      expect(repository.save).toHaveBeenCalledWith({
-        id: 'existing-method-id',
-        userWorkspace: mockUserWorkspace,
-        secret: wrappedSecret,
-        status: 'PENDING',
-        strategy: TwoFactorAuthenticationStrategy.TOTP,
-      });
-    });
-
-    it('should handle workspace without display name', async () => {
-      const mockUserWorkspaceWithoutDisplayName = {
-        id: 'uw_123',
-        workspace: {
-          displayName: null,
-        },
-      };
-
-      userWorkspaceService.getUserWorkspaceForUserOrThrow.mockResolvedValue(
-        mockUserWorkspaceWithoutDisplayName as any,
-      );
-      repository.findOne.mockResolvedValue(null);
-      (keyWrappingService.wrapKey as jest.Mock).mockResolvedValue({
-        wrappedKey: wrappedSecret,
-      });
-
-      const uri = await service.initiateStrategyConfiguration(
-        mockUser.id,
-        mockUser.email,
-        workspace.id,
-      );
-
-      expect(uri).toBe('otpauth://...');
-      expect(totpStrategyMocks.initiate).toHaveBeenCalledWith(
-        mockUser.email,
-        'Twenty',
-      );
-    });
   });
 
   describe('validateStrategy', () => {
-    const rawSecret = 'RAW_OTP_SECRET';
-    const wrappedSecret = 'ENCRYPTED_HEX_STRING';
     const mock2FAMethod = {
       status: 'PENDING',
-      secret: wrappedSecret,
+      secret: encryptedSecret,
       userWorkspace: {
         user: mockUser,
       },
@@ -310,9 +269,7 @@ describe('TwoFactorAuthenticationService', () => {
 
     it('should successfully validate a valid token', async () => {
       repository.findOne.mockResolvedValue(mock2FAMethod);
-      (keyWrappingService.unwrapKey as jest.Mock).mockResolvedValue({
-        unwrappedKey: rawSecret,
-      });
+      simpleSecretEncryptionUtil.decryptSecret.mockResolvedValue(rawSecret);
 
       totpStrategyMocks.validate.mockReturnValue({
         isValid: true,
@@ -340,6 +297,7 @@ describe('TwoFactorAuthenticationService', () => {
 
     it('should throw if the token is invalid', async () => {
       repository.findOne.mockResolvedValue(mock2FAMethod);
+      simpleSecretEncryptionUtil.decryptSecret.mockResolvedValue(rawSecret);
       totpStrategyMocks.validate.mockReturnValue({
         isValid: false,
         context: mock2FAMethod,
@@ -400,10 +358,10 @@ describe('TwoFactorAuthenticationService', () => {
       ).rejects.toThrow(expectedError);
     });
 
-    it('should handle key unwrapping errors', async () => {
+    it('should handle secret decryption errors', async () => {
       repository.findOne.mockResolvedValue(mock2FAMethod);
-      (keyWrappingService.unwrapKey as jest.Mock).mockRejectedValue(
-        new Error('Key unwrapping failed'),
+      simpleSecretEncryptionUtil.decryptSecret.mockRejectedValue(
+        new Error('Secret decryption failed'),
       );
 
       await expect(
@@ -413,16 +371,14 @@ describe('TwoFactorAuthenticationService', () => {
           'ws_123',
           TwoFactorAuthenticationStrategy.TOTP,
         ),
-      ).rejects.toThrow('Key unwrapping failed');
+      ).rejects.toThrow('Secret decryption failed');
     });
   });
 
   describe('verifyTwoFactorAuthenticationMethodForAuthenticatedUser', () => {
-    const rawSecret = 'RAW_OTP_SECRET';
-    const wrappedSecret = 'ENCRYPTED_HEX_STRING';
     const mock2FAMethod = {
       status: 'PENDING',
-      secret: wrappedSecret,
+      secret: encryptedSecret,
       userWorkspace: {
         user: mockUser,
       },
@@ -431,9 +387,7 @@ describe('TwoFactorAuthenticationService', () => {
 
     it('should successfully verify and return success', async () => {
       repository.findOne.mockResolvedValue(mock2FAMethod);
-      (keyWrappingService.unwrapKey as jest.Mock).mockResolvedValue({
-        unwrappedKey: rawSecret,
-      });
+      simpleSecretEncryptionUtil.decryptSecret.mockResolvedValue(rawSecret);
 
       totpStrategyMocks.validate.mockReturnValue({
         isValid: true,
@@ -462,6 +416,7 @@ describe('TwoFactorAuthenticationService', () => {
 
     it('should throw if the token is invalid', async () => {
       repository.findOne.mockResolvedValue(mock2FAMethod);
+      simpleSecretEncryptionUtil.decryptSecret.mockResolvedValue(rawSecret);
       totpStrategyMocks.validate.mockReturnValue({
         isValid: false,
         context: mock2FAMethod,

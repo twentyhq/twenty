@@ -19,7 +19,7 @@ export enum TOTPKeyEncodings {
 export const TOTP_DEFAULT_CONFIGURATION = {
   algorithm: TOTPHashAlgorithms.SHA1,
   digits: 6,
-  encodings: TOTPKeyEncodings.HEX,
+  encodings: TOTPKeyEncodings.HEX, // Keep as hex - this is correct for @otplib/core
   window: 3,
   step: 30,
 };

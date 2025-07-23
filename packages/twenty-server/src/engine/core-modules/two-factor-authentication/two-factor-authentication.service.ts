@@ -9,10 +9,10 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { KeyWrappingService } from 'src/engine/core-modules/encryption/keys/wrapping/key-wrapping.service';
 import { TwoFactorAuthenticationMethod } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { TOTP_DEFAULT_CONFIGURATION } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/constants/totp.strategy.constants';
 import { TotpStrategy } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/totp.strategy';
+import { SimpleSecretEncryptionUtil } from 'src/engine/core-modules/two-factor-authentication/utils/simple-secret-encryption.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -32,7 +32,7 @@ export class TwoFactorAuthenticationService {
     @InjectRepository(TwoFactorAuthenticationMethod, 'core')
     private readonly twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethod>,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly keyWrappingService: KeyWrappingService,
+    private readonly simpleSecretEncryptionUtil: SimpleSecretEncryptionUtil,
   ) {}
 
   /**
@@ -100,15 +100,16 @@ export class TwoFactorAuthenticationService {
       `Twenty${userWorkspace.workspace.displayName ? ` - ${userWorkspace.workspace.displayName}` : ''}`,
     );
 
-    const { wrappedKey } = await this.keyWrappingService.wrapKey(
-      Buffer.from(context.secret),
+    // Use simplified encryption that handles string encoding properly
+    const encryptedSecret = await this.simpleSecretEncryptionUtil.encryptSecret(
+      context.secret,
       userId + workspaceId + 'otp-secret',
     );
 
     await this.twoFactorAuthenticationMethodRepository.save({
       id: existing2FAMethod?.id,
       userWorkspace: userWorkspace,
-      secret: wrappedKey,
+      secret: encryptedSecret,
       status: context.status,
       strategy: TwoFactorAuthenticationStrategy.TOTP,
     });
@@ -147,14 +148,15 @@ export class TwoFactorAuthenticationService {
       );
     }
 
-    const { unwrappedKey } = await this.keyWrappingService.unwrapKey(
-      Buffer.from(userTwoFactorAuthenticationMethod.secret, 'hex'),
+    // Use simplified decryption that handles string encoding properly
+    const originalSecret = await this.simpleSecretEncryptionUtil.decryptSecret(
+      userTwoFactorAuthenticationMethod.secret,
       userId + workspaceId + 'otp-secret',
     );
 
     const otpContext = {
       status: userTwoFactorAuthenticationMethod.status,
-      secret: unwrappedKey,
+      secret: originalSecret, // Use the original base32 secret
     };
 
     const validationResult = new TotpStrategy(
