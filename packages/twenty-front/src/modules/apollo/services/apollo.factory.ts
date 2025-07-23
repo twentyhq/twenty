@@ -23,6 +23,7 @@ import { logDebug } from '~/utils/logDebug';
 
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { i18n } from '@lingui/core';
+import { t } from '@lingui/core/macro';
 import {
   DefinitionNode,
   DirectiveNode,
@@ -166,7 +167,10 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
 
               switch (graphQLError?.extensions?.code) {
                 case 'APP_VERSION_MISMATCH': {
-                  onAppVersionMismatch?.(graphQLError.message);
+                  onAppVersionMismatch?.(
+                    (graphQLError.extensions?.userFriendlyMessage as string) ||
+                      t`Your app version is out of date. Please refresh the page.`,
+                  );
                   return;
                 }
                 case 'UNAUTHENTICATED': {

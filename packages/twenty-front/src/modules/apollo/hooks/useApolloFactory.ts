@@ -81,9 +81,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
       },
       onAppVersionMismatch: (message) => {
         enqueueErrorSnackBar({
-          message:
-            message ||
-            'Your app version is out of date. Please refresh the page.',
+          message,
           options: {
             dedupeKey: 'app-version-mismatch',
           },
