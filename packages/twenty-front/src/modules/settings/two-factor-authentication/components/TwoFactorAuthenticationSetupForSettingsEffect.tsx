@@ -4,6 +4,7 @@ import { gql, useMutation } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 const INITIATE_OTP_PROVISIONING_FOR_AUTHENTICATED_USER = gql`
   mutation initiateOTPProvisioningForAuthenticatedUser {
@@ -24,7 +25,7 @@ export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
   );
 
   useEffect(() => {
-    if (qrCode !== '') {
+    if (isDefined(qrCode)) {
       return;
     }
 

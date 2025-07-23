@@ -7,6 +7,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const TwoFactorAuthenticationSetupEffect = () => {
@@ -23,7 +24,7 @@ export const TwoFactorAuthenticationSetupEffect = () => {
   const { t } = useLingui();
 
   useEffect(() => {
-    if (qrCode !== '') {
+    if (isDefined(qrCode)) {
       return;
     }
 
