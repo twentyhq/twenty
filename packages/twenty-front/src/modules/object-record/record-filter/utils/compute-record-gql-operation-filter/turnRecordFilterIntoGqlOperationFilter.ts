@@ -307,7 +307,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
           return {
             [correspondingFieldMetadataItem.name]: {
               eq: parseFloat(recordFilter.value),
-            },
+            } as FloatFilter,
           };
         default:
           throw new Error(

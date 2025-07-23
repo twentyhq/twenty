@@ -157,7 +157,7 @@ const mockObjectMetadataItemWithAllFields: ObjectMetadataItem = {
   ],
 };
 
-describe('computeAnyFieldFilter', () => {
+describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
   describe('TEXT field type', () => {
     it('should generate correct filter for text field', () => {
       const filterValue = 'test';
@@ -493,7 +493,7 @@ describe('computeAnyFieldFilter', () => {
 
       const { foundCorrespondingSelectOptions: expectedOptions } =
         filterSelectOptionsOfFieldMetadataItem({
-          fieldMetadataItem: multiSelectFieldMetadataItem,
+          fieldMetadataItem: selectFieldMetadataItem,
           filterValue,
         });
 
