@@ -6988,6 +6988,11 @@ msgstr "You will lose all your mappings."
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "You're about to change your workspace subdomain. This action will log out all users."
 
+#. js-lingui-id: tOPGvO
+#: src/modules/apollo/services/apollo.factory.ts
+msgid "Your app version is out of date. Please refresh the page."
+msgstr "Your app version is out of date. Please refresh the page."
+
 #. js-lingui-id: XVnj6K
 #: src/pages/settings/SettingsBilling.tsx
 #~ msgid "Your credit balance will be used to pay the monthly bills."
