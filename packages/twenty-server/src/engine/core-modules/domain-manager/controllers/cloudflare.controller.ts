@@ -104,7 +104,7 @@ export class CloudflareController {
         ),
         exceptionHandlerService: this.exceptionHandlerService,
       });
-      
+
       return res.status(200).send();
     }
   }
