@@ -118,9 +118,15 @@ export class WorkspaceUpdateQueryBuilder<
       authContext: this.authContext,
     });
 
+    const formattedResult = formatResult<T[]>(
+      result.raw,
+      objectMetadata,
+      this.internalContext.objectMetadataMaps,
+    );
+
     return {
       raw: result.raw,
-      generatedMaps: formattedAfter,
+      generatedMaps: formattedResult,
       affected: result.affected,
     };
   }

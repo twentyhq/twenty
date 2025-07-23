@@ -360,7 +360,7 @@ export class WorkspaceEntityManager extends EntityManager {
     target,
     operationType,
     permissionOptions,
-    selectedFields,
+    selectedColumns,
   }: {
     target: EntityTarget<Entity> | Entity;
     operationType: OperationType;
@@ -368,7 +368,7 @@ export class WorkspaceEntityManager extends EntityManager {
       shouldBypassPermissionChecks?: boolean;
       objectRecordsPermissions?: ObjectRecordsPermissions;
     };
-    selectedFields: string[];
+    selectedColumns: string[];
   }): void {
     if (permissionOptions?.shouldBypassPermissionChecks === true) {
       return;
@@ -385,7 +385,7 @@ export class WorkspaceEntityManager extends EntityManager {
       objectRecordsPermissions:
         permissionOptions?.objectRecordsPermissions ?? {},
       objectMetadataMaps: this.internalContext.objectMetadataMaps,
-      selectedFields,
+      selectedColumns,
       allFieldsSelected: false,
     });
   }
@@ -872,7 +872,7 @@ export class WorkspaceEntityManager extends EntityManager {
       target: entityClass,
       operationType: 'delete',
       permissionOptions,
-      selectedFields: [],
+      selectedColumns: [], // TODO
     });
 
     return super.clear(entityClass);
@@ -1048,7 +1048,7 @@ export class WorkspaceEntityManager extends EntityManager {
       target: targetOrEntity,
       operationType: 'update',
       permissionOptions: permissionOptionsFromArgs,
-      selectedFields: [], // TODO
+      selectedColumns: [], // TODO
     });
 
     let target =
@@ -1190,7 +1190,7 @@ export class WorkspaceEntityManager extends EntityManager {
       target: targetOrEntity,
       operationType: 'delete',
       permissionOptions: permissionOptionsFromArgs,
-      selectedFields: [], // TODO
+      selectedColumns: [], // TODO
     });
 
     const target =
@@ -1302,7 +1302,7 @@ export class WorkspaceEntityManager extends EntityManager {
       target: targetOrEntityOrEntities,
       operationType: 'soft-delete',
       permissionOptions: permissionOptionsFromArgs,
-      selectedFields: [], // TODO
+      selectedColumns: [], // TODO
     });
 
     let target =
@@ -1409,7 +1409,7 @@ export class WorkspaceEntityManager extends EntityManager {
       target: targetOrEntityOrEntities,
       operationType: 'restore',
       permissionOptions: permissionOptionsFromArgs,
-      selectedFields: [], // TODO
+      selectedColumns: [], // TODO
     });
 
     let target =

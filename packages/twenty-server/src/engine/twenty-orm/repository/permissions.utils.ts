@@ -1,6 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import isEmpty from 'lodash.isempty';
-import { ObjectRecordsPermissions } from 'twenty-shared/types';
+import {
+  ObjectRecordsPermissions,
+  RestrictedFields,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { QueryExpressionMap } from 'typeorm/query-builder/QueryExpressionMap';
 
@@ -37,7 +40,7 @@ export const validateOperationIsPermittedOrThrow = ({
   operationType,
   objectRecordsPermissions,
   objectMetadataMaps,
-  selectedFields,
+  selectedColumns,
   isFieldPermissionsEnabled,
   allFieldsSelected,
 }: {
@@ -45,7 +48,7 @@ export const validateOperationIsPermittedOrThrow = ({
   operationType: OperationType;
   objectRecordsPermissions: ObjectRecordsPermissions;
   objectMetadataMaps: ObjectMetadataMaps;
-  selectedFields: string[];
+  selectedColumns: string[];
   isFieldPermissionsEnabled?: boolean;
   allFieldsSelected: boolean;
 }) => {
@@ -93,7 +96,7 @@ export const validateOperationIsPermittedOrThrow = ({
       if (isFieldPermissionsEnabled) {
         validateFieldsPermissionsOrThrow({
           restrictedFields: permissionsForEntity.restrictedFields,
-          selectedFields,
+          selectedColumns,
           fieldMetadataIdForColumnNameMap,
           allFieldsSelected,
         });
@@ -106,6 +109,14 @@ export const validateOperationIsPermittedOrThrow = ({
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
         );
+      }
+
+      if (isFieldPermissionsEnabled) {
+        validateFieldsPermissionsOrThrow({
+          restrictedFields: permissionsForEntity.restrictedFields,
+          selectedColumns,
+          fieldMetadataIdForColumnNameMap,
+        });
       }
       break;
     case 'delete':
@@ -161,31 +172,39 @@ export const validateQueryIsPermittedOrThrow = ({
     (select) => select.selection === mainEntity,
   );
 
-  const selectedFields =
-    isFieldPermissionsEnabled && !allFieldsSelected
-      ? getSelectedFieldsFromExpressionMap(expressionMap.selects)
-      : [];
+  let selectedColumns: string[] = [];
 
-  // const valuesSet = this.expressionMap.valuesSet -- values to update
+  if (isFieldPermissionsEnabled) {
+    if (operationType === 'update') {
+      if (isEmpty(expressionMap.returning)) {
+        throw new InternalServerError(
+          'Returning columns are not set for update query',
+        );
+      }
+      selectedColumns = [expressionMap.returning].flat();
+    } else if (!allFieldsSelected) {
+      selectedColumns = getselectedColumnsFromExpressionMap(
+        expressionMap.selects,
+      );
+    }
+  }
 
   validateOperationIsPermittedOrThrow({
     entityName: mainEntity,
     operationType: operationType as OperationType,
     objectRecordsPermissions,
     objectMetadataMaps,
-    selectedFields,
+    selectedColumns: selectedColumns,
     isFieldPermissionsEnabled,
     allFieldsSelected,
-    // valuesSet
   });
 };
 
-const getSelectedFieldsFromExpressionMap = (
+const getselectedColumnsFromExpressionMap = (
   selects: { selection: string }[],
 ) => {
   return selects
     ?.map((select) => {
-      // If it's an aggregate expression, extract column names from it
       const columnsFromAggregateExpression =
         ProcessAggregateHelper.extractColumnNamesFromAggregateExpression(
           select.selection,
@@ -195,7 +214,6 @@ const getSelectedFieldsFromExpressionMap = (
         return columnsFromAggregateExpression;
       }
 
-      // Otherwise split by dots and take last part
       const parts = select.selection.split('.');
 
       return parts[parts.length - 1];
@@ -205,17 +223,14 @@ const getSelectedFieldsFromExpressionMap = (
 
 const validateFieldsPermissionsOrThrow = ({
   restrictedFields,
-  selectedFields,
+  selectedColumns,
   fieldMetadataIdForColumnNameMap,
   allFieldsSelected,
 }: {
-  restrictedFields: Record<
-    string,
-    { canRead?: boolean | null; canUpdate?: boolean | null }
-  >; // TODO replace with RestricedFields type
-  selectedFields: string[];
+  restrictedFields: RestrictedFields;
+  selectedColumns: string[];
   fieldMetadataIdForColumnNameMap: Record<string, string>;
-  allFieldsSelected: boolean;
+  allFieldsSelected?: boolean;
 }) => {
   if (isEmpty(restrictedFields)) {
     return;
@@ -228,7 +243,7 @@ const validateFieldsPermissionsOrThrow = ({
     );
   }
 
-  for (const field of selectedFields) {
+  for (const field of selectedColumns) {
     const fieldMetadataId = fieldMetadataIdForColumnNameMap[field];
 
     if (!fieldMetadataId) {
