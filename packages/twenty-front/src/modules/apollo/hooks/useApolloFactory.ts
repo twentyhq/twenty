@@ -1,7 +1,7 @@
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -13,6 +13,7 @@ import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { AppPath } from '@/types/AppPath';
 import { isDefined } from 'twenty-shared/utils';
 import { ApolloFactory, Options } from '../services/apollo.factory';
@@ -26,6 +27,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
+  const sentryConfig = useRecoilValue(sentryConfigState);
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
@@ -54,6 +56,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
       connectToDevTools: process.env.IS_DEBUG_MODE === 'true',
       currentWorkspaceMember: currentWorkspaceMember,
       currentWorkspace: currentWorkspace,
+      appVersion: sentryConfig?.release ?? '',
       onTokenPairChange: (tokenPair) => {
         setTokenPair(tokenPair);
       },
@@ -98,6 +101,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   useUpdateEffect(() => {
     if (isDefined(apolloRef.current)) {
       apolloRef.current.updateCurrentWorkspace(currentWorkspace);
+      apolloRef.current.updateAppVersion(sentryConfig?.release ?? '');
     }
   }, [currentWorkspace]);
 

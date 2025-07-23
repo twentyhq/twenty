@@ -49,12 +49,14 @@ export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   currentWorkspace: CurrentWorkspace | null;
   extraLinks?: ApolloLink[];
   isDebugMode?: boolean;
+  appVersion: string;
 }
 
 export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
   private client: ApolloClient<TCacheShape>;
   private currentWorkspaceMember: CurrentWorkspaceMember | null = null;
   private currentWorkspace: CurrentWorkspace | null = null;
+  private appVersion = '';
 
   constructor(opts: Options<TCacheShape>) {
     const {
@@ -67,11 +69,13 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       currentWorkspace,
       extraLinks,
       isDebugMode,
+      appVersion,
       ...options
     } = opts;
 
     this.currentWorkspaceMember = currentWorkspaceMember;
     this.currentWorkspace = currentWorkspace;
+    this.appVersion = appVersion;
 
     const buildApolloLink = (): ApolloLink => {
       const uploadLink = createUploadLink({
@@ -111,6 +115,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
             ...(this.currentWorkspace?.metadataVersion && {
               'X-Schema-Version': `${this.currentWorkspace.metadataVersion}`,
             }),
+            ...(this.appVersion && { 'X-App-Version': this.appVersion }),
           },
         };
       });
@@ -287,6 +292,10 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
 
   updateCurrentWorkspace(workspace: CurrentWorkspace | null) {
     this.currentWorkspace = workspace;
+  }
+
+  updateAppVersion(appVersion: string) {
+    this.appVersion = appVersion;
   }
 
   getClient() {
