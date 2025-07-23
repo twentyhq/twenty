@@ -113,9 +113,14 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   useUpdateEffect(() => {
     if (isDefined(apolloRef.current)) {
       apolloRef.current.updateCurrentWorkspace(currentWorkspace);
-      apolloRef.current.updateAppVersion(appVersion);
     }
   }, [currentWorkspace]);
+
+  useUpdateEffect(() => {
+    if (isDefined(apolloRef.current)) {
+      apolloRef.current.updateAppVersion(appVersion);
+    }
+  }, [appVersion]);
 
   return apolloClient;
 };
