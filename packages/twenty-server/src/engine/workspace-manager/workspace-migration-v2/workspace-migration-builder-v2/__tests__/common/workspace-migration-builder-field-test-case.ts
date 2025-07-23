@@ -12,6 +12,7 @@ const basicFlatFieldMetadatas = Array.from({ length: 5 }, (_value, index) =>
   getFlatFieldMetadataMock({
     objectMetadataId: basicObjectMetadataId,
     uniqueIdentifier: `field_${index}`,
+    type: FieldMetadataType.TEXT,
   }),
 );
 
@@ -110,7 +111,6 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
           type: FieldMetadataType.RELATION,
           settings: {
             relationType: RelationType.MANY_TO_ONE,
-            isForeignKey: true,
             joinColumnName: 'column-name',
             onDelete: undefined,
           },
@@ -129,7 +129,7 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
             {
               ...flatObjectMetadata,
               flatFieldMetadatas: [
-                getFlatFieldMetadataMock({
+                {
                   ...updatedFieldMetadata,
                   settings: {
                     relationType: RelationType.ONE_TO_MANY,
@@ -139,7 +139,7 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
                   },
                   relationTargetFieldMetadataId: faker.string.uuid(),
                   relationTargetObjectMetadataId: faker.string.uuid(),
-                }),
+                },
               ],
             },
           ],
@@ -158,6 +158,7 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
 
         const flatFieldMetadata = getFlatFieldMetadataMock({
           uniqueIdentifier: 'field-metadata-unique-identifier-1',
+          type: FieldMetadataType.TEXT,
           objectMetadataId,
         });
         const flatObjectMetadata = getFlatObjectMetadataMock({
@@ -189,6 +190,7 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
 
         const flatFieldMetadata = getFlatFieldMetadataMock({
           uniqueIdentifier: 'field-metadata-unique-identifier-1',
+          type: FieldMetadataType.TEXT,
           objectMetadataId,
         });
         const flatObjectMetadata = getFlatObjectMetadataMock({
@@ -228,6 +230,7 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
 
         const flatFieldMetadata = getFlatFieldMetadataMock({
           uniqueIdentifier: 'field-metadata-unique-identifier-1',
+          type: FieldMetadataType.TEXT,
           objectMetadataId,
         });
         const flatObjectMetadata = getFlatObjectMetadataMock({
@@ -264,6 +267,7 @@ export const WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES: WorkspaceMigrationBui
           const objectMetadataId = faker.string.uuid();
           const flatFieldMetadata = getFlatFieldMetadataMock({
             uniqueIdentifier: 'field-metadata-unique-identifier-1',
+            type: FieldMetadataType.TEXT,
             objectMetadataId,
           });
           const from = [

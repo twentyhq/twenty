@@ -55,6 +55,7 @@ describe('generateFakeField', () => {
       const result = generateFakeField({
         type: FieldMetadataType.TEXT,
         label: 'Text Field',
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       });
 
       expect(result).toEqual({
@@ -63,6 +64,7 @@ describe('generateFakeField', () => {
         icon: undefined,
         label: 'Text Field',
         value: 'Fake Text',
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       });
 
       expect(generateFakeValueSpy).toHaveBeenCalledWith(
@@ -76,6 +78,7 @@ describe('generateFakeField', () => {
         type: FieldMetadataType.TEXT,
         label: 'Text Field',
         value: 'Test value',
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       });
 
       expect(result).toEqual({
@@ -84,6 +87,7 @@ describe('generateFakeField', () => {
         icon: undefined,
         label: 'Text Field',
         value: 'Test value',
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       });
 
       expect(generateFakeValueSpy).not.toHaveBeenCalled();
@@ -96,6 +100,7 @@ describe('generateFakeField', () => {
         type: FieldMetadataType.NUMBER,
         label: 'Number Field',
         icon: 'IconNumber',
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       });
 
       expect(result).toEqual({
@@ -104,6 +109,7 @@ describe('generateFakeField', () => {
         icon: 'IconNumber',
         label: 'Number Field',
         value: 42,
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       });
     });
 
@@ -115,6 +121,7 @@ describe('generateFakeField', () => {
       const result = generateFakeField({
         type: FieldMetadataType.DATE,
         label: 'Date Field',
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       });
 
       expect(result).toEqual({
@@ -123,6 +130,7 @@ describe('generateFakeField', () => {
         icon: undefined,
         label: 'Date Field',
         value: fakeDate,
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       });
     });
   });
@@ -140,6 +148,7 @@ describe('generateFakeField', () => {
       const result = generateFakeField({
         type: FieldMetadataType.LINKS,
         label: 'Links Field',
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       });
 
       expect(result).toEqual({
@@ -161,6 +170,7 @@ describe('generateFakeField', () => {
             value: 'https://example.com',
           },
         },
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       });
 
       expect(generateFakeValueSpy).toHaveBeenCalledTimes(2);
@@ -179,6 +189,7 @@ describe('generateFakeField', () => {
         type: FieldMetadataType.CURRENCY,
         label: 'Currency Field',
         icon: 'IconCurrency',
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       });
 
       expect(result).toEqual({
@@ -200,6 +211,7 @@ describe('generateFakeField', () => {
             value: 'USD',
           },
         },
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       });
     });
   });
@@ -213,6 +225,7 @@ describe('generateFakeField', () => {
       const result = generateFakeField({
         type: unknownType,
         label: 'Unknown Field',
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       });
 
       expect(result).toEqual({
@@ -221,6 +234,7 @@ describe('generateFakeField', () => {
         icon: undefined,
         label: 'Unknown Field',
         value: 'Unknown Value',
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       });
     });
 
@@ -230,6 +244,7 @@ describe('generateFakeField', () => {
       const result = generateFakeField({
         type: FieldMetadataType.BOOLEAN,
         label: '',
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       });
 
       expect(result).toEqual({
@@ -238,6 +253,7 @@ describe('generateFakeField', () => {
         icon: undefined,
         label: '',
         value: 'Fake Boolean',
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       });
     });
   });

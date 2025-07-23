@@ -100,6 +100,42 @@ describe('getTriggerDefaultDefinition', () => {
     });
   });
 
+  it('returns a valid configuration for CRON trigger type', () => {
+    expect(
+      getTriggerDefaultDefinition({
+        defaultLabel: 'On a schedule',
+        type: 'CRON',
+        activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
+      }),
+    ).toStrictEqual({
+      type: 'CRON',
+      name: 'On a schedule',
+      settings: {
+        type: 'DAYS',
+        schedule: { day: 1, hour: 0, minute: 0 },
+        outputSchema: {},
+      },
+    });
+  });
+
+  it('returns a valid configuration for WEBHOOK trigger type', () => {
+    expect(
+      getTriggerDefaultDefinition({
+        defaultLabel: 'Webhook',
+        type: 'WEBHOOK',
+        activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
+      }),
+    ).toStrictEqual({
+      type: 'WEBHOOK',
+      name: 'Webhook',
+      settings: {
+        outputSchema: {},
+        httpMethod: 'GET',
+        authentication: null,
+      },
+    });
+  });
+
   it('throws when providing an unknown trigger type', () => {
     expect(() => {
       getTriggerDefaultDefinition({

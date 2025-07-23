@@ -21,6 +21,8 @@ export const getAuthExceptionRestStatus = (exception: AuthException) => {
     case AuthExceptionCode.EMAIL_NOT_VERIFIED:
     case AuthExceptionCode.INVALID_JWT_TOKEN_TYPE:
       return 403;
+    case AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED:
+    case AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED:
     case AuthExceptionCode.INVALID_DATA:
     case AuthExceptionCode.UNAUTHENTICATED:
     case AuthExceptionCode.USER_NOT_FOUND:

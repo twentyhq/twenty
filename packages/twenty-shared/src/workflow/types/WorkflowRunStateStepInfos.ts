@@ -2,6 +2,7 @@ export enum StepStatus {
   NOT_STARTED = 'NOT_STARTED',
   RUNNING = 'RUNNING',
   SUCCESS = 'SUCCESS',
+  STOPPED = 'STOPPED',
   FAILED = 'FAILED',
   PENDING = 'PENDING',
 }

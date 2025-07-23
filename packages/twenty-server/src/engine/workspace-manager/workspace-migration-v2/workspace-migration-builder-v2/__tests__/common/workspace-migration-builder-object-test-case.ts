@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { getFlatFieldMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-object-metadata.mock';
@@ -66,6 +67,7 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
             { length: 5 },
             (_value, index) =>
               getFlatFieldMetadataMock({
+                type: FieldMetadataType.TEXT,
                 objectMetadataId,
                 uniqueIdentifier: `field_${index}`,
               }),

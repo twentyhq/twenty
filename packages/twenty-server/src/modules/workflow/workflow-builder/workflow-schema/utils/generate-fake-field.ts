@@ -13,12 +13,14 @@ export const generateFakeField = ({
   label,
   icon,
   value,
+  fieldMetadataId,
 }: {
   type: FieldMetadataType;
   label: string;
+  fieldMetadataId?: string;
   icon?: string;
   value?: string;
-}): Leaf | Node => {
+}): (Leaf | Node) & { fieldMetadataId?: string } => {
   const compositeType = compositeTypeDefinitions.get(type);
 
   if (compositeType) {
@@ -27,6 +29,7 @@ export const generateFakeField = ({
       type: type,
       icon: icon,
       label: label,
+      fieldMetadataId,
       value: compositeType.properties.reduce((acc, property) => {
         // @ts-expect-error legacy noImplicitAny
         acc[property.name] = {
@@ -47,5 +50,6 @@ export const generateFakeField = ({
     icon: icon,
     label: label,
     value: value || generateFakeValue(type, 'FieldMetadataType'),
+    fieldMetadataId,
   };
 };

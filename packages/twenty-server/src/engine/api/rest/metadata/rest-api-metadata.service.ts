@@ -7,7 +7,10 @@ import {
   GraphqlApiType,
   RestApiService,
 } from 'src/engine/api/rest/rest-api.service';
+import { RequestContext } from 'src/engine/api/rest/types/RequestContext';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { getServerUrl } from 'src/utils/get-server-url';
 
 @Injectable()
 export class RestApiMetadataService {
@@ -15,49 +18,68 @@ export class RestApiMetadataService {
     private readonly accessTokenService: AccessTokenService,
     private readonly metadataQueryBuilderFactory: MetadataQueryBuilderFactory,
     private readonly restApiService: RestApiService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async get(request: Request) {
     await this.accessTokenService.validateTokenByRequest(request);
-    const data = await this.metadataQueryBuilderFactory.get(request);
+    const requestContext = this.getRequestContext(request);
+    const data = await this.metadataQueryBuilderFactory.get(requestContext);
 
     return await this.restApiService.call(
       GraphqlApiType.METADATA,
-      request,
+      requestContext,
       data,
     );
   }
 
   async create(request: Request) {
     await this.accessTokenService.validateTokenByRequest(request);
-    const data = await this.metadataQueryBuilderFactory.create(request);
+    const requestContext = this.getRequestContext(request);
+    const data = await this.metadataQueryBuilderFactory.create(requestContext);
 
     return await this.restApiService.call(
       GraphqlApiType.METADATA,
-      request,
+      requestContext,
       data,
     );
   }
 
   async update(request: Request) {
     await this.accessTokenService.validateTokenByRequest(request);
-    const data = await this.metadataQueryBuilderFactory.update(request);
+    const requestContext = this.getRequestContext(request);
+    const data = await this.metadataQueryBuilderFactory.update(requestContext);
 
     return await this.restApiService.call(
       GraphqlApiType.METADATA,
-      request,
+      requestContext,
       data,
     );
   }
 
   async delete(request: Request) {
     await this.accessTokenService.validateTokenByRequest(request);
-    const data = await this.metadataQueryBuilderFactory.delete(request);
+    const requestContext = this.getRequestContext(request);
+    const data = await this.metadataQueryBuilderFactory.delete(requestContext);
 
     return await this.restApiService.call(
       GraphqlApiType.METADATA,
-      request,
+      requestContext,
       data,
     );
+  }
+
+  private getRequestContext(request: Request): RequestContext {
+    const baseUrl = getServerUrl(
+      this.twentyConfigService.get('SERVER_URL'),
+      `${request.protocol}://${request.get('host')}`,
+    );
+
+    return {
+      body: request.body,
+      baseUrl: baseUrl,
+      path: request.url,
+      headers: request.headers,
+    };
   }
 }

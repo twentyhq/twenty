@@ -16,6 +16,7 @@ const mockStep = {
           label: 'Company',
           value: 'John',
           isLeaf: true,
+          objectMetadataId: '123',
         },
         fields: {
           name: { label: 'Name', value: 'Twenty', isLeaf: true },

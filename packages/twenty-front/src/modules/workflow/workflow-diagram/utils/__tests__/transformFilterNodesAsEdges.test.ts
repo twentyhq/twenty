@@ -27,13 +27,16 @@ describe('transformFilterNodesAsEdges', () => {
           target: 'C',
           data: {
             edgeType: 'default',
-            isEdgeEditable: true,
           },
         },
       ],
     };
 
-    const result = transformFilterNodesAsEdges(diagram);
+    const result = transformFilterNodesAsEdges({
+      nodes: diagram.nodes,
+      edges: diagram.edges,
+      defaultFilterEdgeType: 'filter--editable',
+    });
 
     expect(result.nodes).toEqual(diagram.nodes);
     expect(result.edges).toEqual(diagram.edges);
@@ -67,18 +70,22 @@ describe('transformFilterNodesAsEdges', () => {
           id: 'A-B',
           source: 'A',
           target: 'B',
-          data: { edgeType: 'default', isEdgeEditable: true },
+          data: { edgeType: 'default' },
         },
         {
           id: 'B-C',
           source: 'B',
           target: 'C',
-          data: { edgeType: 'default', isEdgeEditable: true },
+          data: { edgeType: 'default' },
         },
       ],
     };
 
-    const result = transformFilterNodesAsEdges(diagram);
+    const result = transformFilterNodesAsEdges({
+      nodes: diagram.nodes,
+      edges: diagram.edges,
+      defaultFilterEdgeType: 'filter--editable',
+    });
 
     // Should only have nodes A and C
     expect(result.nodes).toEqual([
@@ -98,6 +105,7 @@ describe('transformFilterNodesAsEdges', () => {
     expect(result.edges).toHaveLength(1);
     expect(result.edges[0]).toEqual({
       id: 'A-C-filter-B',
+      type: 'filter--editable',
       source: 'A',
       target: 'C',
       data: {
@@ -106,7 +114,6 @@ describe('transformFilterNodesAsEdges', () => {
         name: 'Filter B',
         runStatus: undefined,
         filterSettings: {},
-        isEdgeEditable: false,
       },
     });
   });
@@ -153,30 +160,34 @@ describe('transformFilterNodesAsEdges', () => {
           id: 'A-B1',
           source: 'A',
           target: 'B1',
-          data: { edgeType: 'default', isEdgeEditable: true },
+          data: { edgeType: 'default' },
         },
         {
           id: 'B1-C',
           source: 'B1',
           target: 'C',
-          data: { edgeType: 'default', isEdgeEditable: true },
+          data: { edgeType: 'default' },
         },
         {
           id: 'C-B2',
           source: 'C',
           target: 'B2',
-          data: { edgeType: 'default', isEdgeEditable: true },
+          data: { edgeType: 'default' },
         },
         {
           id: 'B2-D',
           source: 'B2',
           target: 'D',
-          data: { edgeType: 'default', isEdgeEditable: true },
+          data: { edgeType: 'default' },
         },
       ],
     };
 
-    const result = transformFilterNodesAsEdges(diagram);
+    const result = transformFilterNodesAsEdges({
+      nodes: diagram.nodes,
+      edges: diagram.edges,
+      defaultFilterEdgeType: 'filter--editable',
+    });
 
     // Should only have nodes A, C, and D
     expect(result.nodes).toHaveLength(3);
@@ -192,6 +203,7 @@ describe('transformFilterNodesAsEdges', () => {
     );
     expect(edgeAC).toEqual({
       id: 'A-C-filter-B1',
+      type: 'filter--editable',
       source: 'A',
       target: 'C',
       data: {
@@ -200,7 +212,6 @@ describe('transformFilterNodesAsEdges', () => {
         runStatus: undefined,
         stepId: 'B1',
         filterSettings: {},
-        isEdgeEditable: false,
       },
     });
 
@@ -209,6 +220,7 @@ describe('transformFilterNodesAsEdges', () => {
     );
     expect(edgeCD).toEqual({
       id: 'C-D-filter-B2',
+      type: 'filter--editable',
       source: 'C',
       target: 'D',
       data: {
@@ -217,7 +229,6 @@ describe('transformFilterNodesAsEdges', () => {
         runStatus: undefined,
         stepId: 'B2',
         filterSettings: {},
-        isEdgeEditable: false,
       },
     });
   });
@@ -241,12 +252,16 @@ describe('transformFilterNodesAsEdges', () => {
           id: 'A-B',
           source: 'A',
           target: 'B',
-          data: { edgeType: 'default', isEdgeEditable: true },
+          data: { edgeType: 'default' },
         },
       ],
     };
 
-    const result = transformFilterNodesAsEdges(diagram);
+    const result = transformFilterNodesAsEdges({
+      nodes: diagram.nodes,
+      edges: diagram.edges,
+      defaultFilterEdgeType: 'filter--editable',
+    });
 
     // Should only have node A (filter node B is removed)
     expect(result.nodes).toEqual([
@@ -293,18 +308,22 @@ describe('transformFilterNodesAsEdges', () => {
           id: 'trigger-B',
           source: 'trigger',
           target: 'B',
-          data: { edgeType: 'default', isEdgeEditable: true },
+          data: { edgeType: 'default' },
         },
         {
           id: 'B-C',
           source: 'B',
           target: 'C',
-          data: { edgeType: 'default', isEdgeEditable: true },
+          data: { edgeType: 'default' },
         },
       ],
     };
 
-    const result = transformFilterNodesAsEdges(diagram);
+    const result = transformFilterNodesAsEdges({
+      nodes: diagram.nodes,
+      edges: diagram.edges,
+      defaultFilterEdgeType: 'filter--editable',
+    });
 
     // Should have trigger and C nodes
     expect(result.nodes).toEqual([
@@ -328,6 +347,7 @@ describe('transformFilterNodesAsEdges', () => {
     expect(result.edges).toEqual([
       {
         id: 'trigger-C-filter-B',
+        type: 'filter--editable',
         source: 'trigger',
         target: 'C',
         data: {
@@ -336,7 +356,6 @@ describe('transformFilterNodesAsEdges', () => {
           runStatus: undefined,
           stepId: 'B',
           filterSettings: {},
-          isEdgeEditable: false,
         },
       },
     ]);
