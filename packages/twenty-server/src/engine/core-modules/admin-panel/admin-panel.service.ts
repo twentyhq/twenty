@@ -197,7 +197,6 @@ export class AdminPanelService {
 
   async getVersionInfo(): Promise<VersionInfo> {
     const currentVersion = this.twentyConfigService.get('APP_VERSION');
-    const normalizedCurrentVersion = semver.coerce(currentVersion)?.version;
 
     try {
       const response = await axios.get(
@@ -206,29 +205,21 @@ export class AdminPanelService {
 
       const versions = response.data.results
         // @ts-expect-error legacy noImplicitAny
-        .filter((tag) => tag && tag.name !== 'latest')
+        .map((tag) => tag.name)
         // @ts-expect-error legacy noImplicitAny
-        .map((tag) => semver.coerce(tag.name)?.version)
-        // @ts-expect-error legacy noImplicitAny
-        .filter((version) => version !== undefined);
+        .filter((name) => name !== 'latest' && semver.valid(name));
 
       if (versions.length === 0) {
-        return {
-          currentVersion: normalizedCurrentVersion,
-          latestVersion: 'latest',
-        };
+        return { currentVersion, latestVersion: 'latest' };
       }
 
       // @ts-expect-error legacy noImplicitAny
       versions.sort((a, b) => semver.compare(b, a));
       const latestVersion = versions[0];
 
-      return { currentVersion: normalizedCurrentVersion, latestVersion };
+      return { currentVersion, latestVersion };
     } catch (error) {
-      return {
-        currentVersion: normalizedCurrentVersion,
-        latestVersion: 'latest',
-      };
+      return { currentVersion, latestVersion: 'latest' };
     }
   }
 }
