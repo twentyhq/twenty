@@ -44,7 +44,6 @@ export class WorkspaceMigrationRunnerV2Service {
         workspaceId,
       );
 
-      // Required ? shouldn't this be implicit to a metadata increment side effect ?
       await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
         {
           workspaceId,

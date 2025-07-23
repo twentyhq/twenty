@@ -43,6 +43,7 @@ export class WorkspaceMetadataFieldActionRunnerService
 
     const { flatFieldMetadata } = action;
 
+    // We need to defer here in case we create a relation the relationTargetFieldMetadataId might not already be created here
     await fieldMetadataRepository.save(flatFieldMetadata);
   };
   runUpdateFieldMetadataMigration = async ({
