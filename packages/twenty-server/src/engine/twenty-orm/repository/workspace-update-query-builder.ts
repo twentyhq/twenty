@@ -124,9 +124,8 @@ export class WorkspaceUpdateQueryBuilder<
         queryBuilder: nestedRelationQueryBuilder,
       });
 
-    this.expressionMap.valuesSet = Array.isArray(updatedValues)
-      ? updatedValues[0]
-      : updatedValues;
+    this.expressionMap.valuesSet =
+      updatedValues.length === 1 ? updatedValues[0] : updatedValues;
 
     const formattedBefore = formatResult<T[]>(
       before,

@@ -121,7 +121,7 @@ export class RelationNestedQueries {
     relationConnectQueryConfigs: RelationConnectQueryConfig[];
     queryBuilder: WorkspaceSelectQueryBuilder<Entity>;
   }): Promise<QueryDeepPartialEntity<Entity>[]> {
-    if (!isDefined(relationConnectQueryConfigs)) return entities;
+    if (relationConnectQueryConfigs.length === 0) return entities;
 
     const recordsToConnectWithConfig = await this.executeConnectQueries(
       relationConnectQueryConfigs,
@@ -140,7 +140,7 @@ export class RelationNestedQueries {
     relationConnectQueryConfigs: RelationConnectQueryConfig[],
     queryBuilder: WorkspaceSelectQueryBuilder<Entity>,
   ): Promise<[RelationConnectQueryConfig, Record<string, unknown>[]][]> {
-    const AllRecordsToConnectWithConfig: [
+    const allRecordsToConnectWithConfig: [
       RelationConnectQueryConfig,
       Record<string, unknown>[],
     ][] = [];
@@ -163,13 +163,13 @@ export class RelationNestedQueries {
         )
         .getRawMany();
 
-      AllRecordsToConnectWithConfig.push([
+      allRecordsToConnectWithConfig.push([
         connectQueryConfig,
         recordsToConnect,
       ]);
     }
 
-    return AllRecordsToConnectWithConfig;
+    return allRecordsToConnectWithConfig;
   }
 
   private updateEntitiesWithRecordToConnectId<Entity extends ObjectLiteral>(
