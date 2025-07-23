@@ -21,7 +21,7 @@ import { WorkspaceSchemaObjectActionRunnerService } from 'src/engine/workspace-m
     TypeORMModule,
     DataSourceModule,
     WorkspaceMetadataVersionModule,
-    WorkspacePermissionsCacheModule
+    WorkspacePermissionsCacheModule,
   ],
   providers: [
     WorkspaceMetadataObjectActionRunnerService,
