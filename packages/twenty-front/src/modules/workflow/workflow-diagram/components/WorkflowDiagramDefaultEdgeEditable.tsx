@@ -1,5 +1,4 @@
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { assertWorkflowWithCurrentVersionIsDefined } from '@/workflow/utils/assertWorkflowWithCurrentVersionIsDefined';
@@ -9,7 +8,6 @@ import { CREATE_STEP_NODE_WIDTH } from '@/workflow/workflow-diagram/constants/Cr
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useOpenWorkflowEditFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowEditFilterInCommandMenu';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
-import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
@@ -90,16 +88,6 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     setHovered(false);
   };
 
-  const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
-    workflowSelectedNodeComponentState,
-  );
-
-  const handleFilterButtonClick = () => {
-    setWorkflowSelectedNode(source);
-
-    handleCreateFilter();
-  };
-
   const handleNodeButtonClick = () => {
     startNodeCreation({
       parentStepId: source,
@@ -132,7 +120,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
               iconButtons={[
                 {
                   Icon: IconFilter,
-                  onClick: handleFilterButtonClick,
+                  onClick: handleCreateFilter,
                 },
                 {
                   Icon: IconPlus,
