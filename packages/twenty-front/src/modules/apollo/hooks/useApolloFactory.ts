@@ -13,6 +13,7 @@ import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { appVersionState } from '@/client-config/states/appVersionState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -28,6 +29,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
+  const appVersion = useRecoilValue(appVersionState);
   const sentryConfig = useRecoilValue(sentryConfigState);
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
@@ -113,7 +115,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   useUpdateEffect(() => {
     if (isDefined(apolloRef.current)) {
       apolloRef.current.updateCurrentWorkspace(currentWorkspace);
-      apolloRef.current.updateAppVersion(sentryConfig?.release ?? '');
+      apolloRef.current.updateAppVersion(appVersion);
     }
   }, [currentWorkspace]);
 
