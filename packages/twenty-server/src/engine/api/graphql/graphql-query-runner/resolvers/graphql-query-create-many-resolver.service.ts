@@ -320,6 +320,8 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       await repository.update(
         recordId,
         partialRecordToUpdateWithoutCreatedByUpdate,
+        undefined,
+        columnsToReturn,
       );
 
       result.identifiers.push({ id: recordId });
