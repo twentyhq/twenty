@@ -238,6 +238,62 @@ describe('TwoFactorAuthenticationService', () => {
         ),
       ).rejects.toThrow(expectedError);
     });
+
+    it('should reuse existing pending method', async () => {
+      const existingPendingMethod = {
+        id: 'existing-method-id',
+        status: 'PENDING',
+      };
+
+      repository.findOne.mockResolvedValue(existingPendingMethod);
+      (keyWrappingService.wrapKey as jest.Mock).mockResolvedValue({
+        wrappedKey: wrappedSecret,
+      });
+
+      const uri = await service.initiateStrategyConfiguration(
+        mockUser.id,
+        mockUser.email,
+        workspace.id,
+      );
+
+      expect(uri).toBe('otpauth://...');
+      expect(repository.save).toHaveBeenCalledWith({
+        id: 'existing-method-id',
+        userWorkspace: mockUserWorkspace,
+        secret: wrappedSecret,
+        status: 'PENDING',
+        strategy: TwoFactorAuthenticationStrategy.TOTP,
+      });
+    });
+
+    it('should handle workspace without display name', async () => {
+      const mockUserWorkspaceWithoutDisplayName = {
+        id: 'uw_123',
+        workspace: {
+          displayName: null,
+        },
+      };
+
+      userWorkspaceService.getUserWorkspaceForUserOrThrow.mockResolvedValue(
+        mockUserWorkspaceWithoutDisplayName as any,
+      );
+      repository.findOne.mockResolvedValue(null);
+      (keyWrappingService.wrapKey as jest.Mock).mockResolvedValue({
+        wrappedKey: wrappedSecret,
+      });
+
+      const uri = await service.initiateStrategyConfiguration(
+        mockUser.id,
+        mockUser.email,
+        workspace.id,
+      );
+
+      expect(uri).toBe('otpauth://...');
+      expect(totpStrategyMocks.initiate).toHaveBeenCalledWith(
+        mockUser.email,
+        'Twenty',
+      );
+    });
   });
 
   describe('validateStrategy', () => {
@@ -306,8 +362,31 @@ describe('TwoFactorAuthenticationService', () => {
     it('should throw if the 2FA method is not found', async () => {
       repository.findOne.mockResolvedValue(null);
 
-      const expectedError2 = new TwoFactorAuthenticationException(
+      const expectedError = new TwoFactorAuthenticationException(
         'Two Factor Authentication Method not found.',
+        TwoFactorAuthenticationExceptionCode.INVALID_CONFIGURATION,
+      );
+
+      await expect(
+        service.validateStrategy(
+          'user_123',
+          '123456',
+          'ws_123',
+          TwoFactorAuthenticationStrategy.TOTP,
+        ),
+      ).rejects.toThrow(expectedError);
+    });
+
+    it('should throw if the 2FA method secret is missing', async () => {
+      const methodWithoutSecret = {
+        ...mock2FAMethod,
+        secret: null,
+      };
+
+      repository.findOne.mockResolvedValue(methodWithoutSecret);
+
+      const expectedError = new TwoFactorAuthenticationException(
+        'Malformed Two Factor Authentication Method object',
         TwoFactorAuthenticationExceptionCode.MALFORMED_DATABASE_OBJECT,
       );
 
@@ -318,7 +397,23 @@ describe('TwoFactorAuthenticationService', () => {
           'ws_123',
           TwoFactorAuthenticationStrategy.TOTP,
         ),
-      ).rejects.toThrow(expectedError2);
+      ).rejects.toThrow(expectedError);
+    });
+
+    it('should handle key unwrapping errors', async () => {
+      repository.findOne.mockResolvedValue(mock2FAMethod);
+      (keyWrappingService.unwrapKey as jest.Mock).mockRejectedValue(
+        new Error('Key unwrapping failed'),
+      );
+
+      await expect(
+        service.validateStrategy(
+          'user_123',
+          '123456',
+          'ws_123',
+          TwoFactorAuthenticationStrategy.TOTP,
+        ),
+      ).rejects.toThrow('Key unwrapping failed');
     });
   });
 

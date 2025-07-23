@@ -421,6 +421,7 @@ export const useAuth = () => {
             'TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED'
         ) {
           handleSetLoginToken(loginToken);
+          navigate(AppPath.SignInUp);
           setSignInUpStep(SignInUpStep.TwoFactorAuthenticationProvision);
         }
 
@@ -430,6 +431,7 @@ export const useAuth = () => {
             'TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED'
         ) {
           handleSetLoginToken(loginToken);
+          navigate(AppPath.SignInUp);
           setSignInUpStep(SignInUpStep.TwoFactorAuthenticationVerification);
         }
       }
