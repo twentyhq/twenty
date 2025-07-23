@@ -48,7 +48,7 @@ export const FormBooleanFieldInput = ({
         }
       : {
           type: 'static',
-          value: Boolean(defaultValue) ?? false,
+          value: Boolean(defaultValue),
         },
   );
 

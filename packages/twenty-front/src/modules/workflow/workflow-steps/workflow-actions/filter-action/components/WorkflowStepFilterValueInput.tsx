@@ -11,7 +11,7 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
 import { searchVariableThroughOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchema';
 import { useLingui } from '@lingui/react/macro';
-import { isObject } from '@sniptt/guards';
+import { isObject, isString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { FieldMetadataType, StepFilter } from 'twenty-shared/src/types';
@@ -31,9 +31,7 @@ const isFilterableFieldMetadataType = (
     FieldMetadataType.BOOLEAN,
     FieldMetadataType.DATE_TIME,
     FieldMetadataType.DATE,
-    FieldMetadataType.BOOLEAN,
     FieldMetadataType.NUMERIC,
-    FieldMetadataType.NUMBER,
     FieldMetadataType.SELECT,
     FieldMetadataType.MULTI_SELECT,
     FieldMetadataType.RAW_JSON,
@@ -69,12 +67,11 @@ export const WorkflowStepFilterValueInput = ({
   });
 
   const handleValueChange = (value: JsonValue) => {
-    const valueToUpsert =
-      typeof value === 'string'
-        ? value
-        : Array.isArray(value) || isObject(value)
-          ? JSON.stringify(value)
-          : String(value);
+    const valueToUpsert = isString(value)
+      ? value
+      : Array.isArray(value) || isObject(value)
+        ? JSON.stringify(value)
+        : String(value);
 
     upsertStepFilterSettings({
       stepFilterToUpsert: {

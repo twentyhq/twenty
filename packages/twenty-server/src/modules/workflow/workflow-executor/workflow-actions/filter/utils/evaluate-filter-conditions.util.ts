@@ -28,7 +28,7 @@ function evaluateFilter(filter: ResolvedFilter): boolean {
       }
 
     case ViewFilterOperand.IsNot:
-      return leftValue != rightValue;
+      return String(leftValue) !== String(rightValue);
 
     case ViewFilterOperand.GreaterThanOrEqual:
       return Number(leftValue) >= Number(rightValue);
