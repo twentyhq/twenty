@@ -104,12 +104,13 @@ export class ImapGetMessagesService {
 
     const direction = computeMessageDirection(fromHandle, connectedAccount);
     const text = sanitizeString(textWithoutReplyQuotations);
+    const subject = sanitizeString(parsed.subject || '');
 
     return {
       externalId: messageId,
       messageThreadExternalId: threadId || messageId,
       headerMessageId: parsed.messageId || messageId,
-      subject: parsed.subject || '',
+      subject: subject,
       text: text,
       receivedAt: parsed.date || new Date(),
       direction: direction,
@@ -199,9 +200,11 @@ export class ImapGetMessagesService {
     if (addressObject && 'value' in addressObject) {
       for (const addr of addressObject.value) {
         if (addr.address) {
+          const name = sanitizeString(addr.name);
+
           addresses.push({
             address: addr.address,
-            name: addr.name || '',
+            name: name,
           });
         }
       }
