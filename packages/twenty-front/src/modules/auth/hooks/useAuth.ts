@@ -442,6 +442,7 @@ export const useAuth = () => {
       origin,
       handleLoadWorkspaceAfterAuthentication,
       setSignInUpStep,
+      navigate,
     ],
   );
 

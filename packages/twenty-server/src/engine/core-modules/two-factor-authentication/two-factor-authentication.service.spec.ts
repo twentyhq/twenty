@@ -92,9 +92,8 @@ describe('TwoFactorAuthenticationService', () => {
     repository = module.get(
       getRepositoryToken(TwoFactorAuthenticationMethod, 'core'),
     );
-    userWorkspaceService = module.get<UserWorkspaceService>(
-      UserWorkspaceService,
-    );
+    userWorkspaceService =
+      module.get<UserWorkspaceService>(UserWorkspaceService);
     simpleSecretEncryptionUtil = module.get<SimpleSecretEncryptionUtil>(
       SimpleSecretEncryptionUtil,
     );

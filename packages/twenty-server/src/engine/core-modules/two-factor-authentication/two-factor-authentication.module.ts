@@ -12,8 +12,8 @@ import { UserModule } from 'src/engine/core-modules/user/user.module';
 
 import { TwoFactorAuthenticationResolver } from './two-factor-authentication.resolver';
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
-import { SimpleSecretEncryptionUtil } from './utils/simple-secret-encryption.util';
 
+import { SimpleSecretEncryptionUtil } from './utils/simple-secret-encryption.util';
 import { TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
 
 @Module({
@@ -30,7 +30,7 @@ import { TwoFactorAuthenticationMethod } from './entities/two-factor-authenticat
     UserModule,
   ],
   providers: [
-    TwoFactorAuthenticationService, 
+    TwoFactorAuthenticationService,
     TwoFactorAuthenticationResolver,
     SimpleSecretEncryptionUtil,
   ],

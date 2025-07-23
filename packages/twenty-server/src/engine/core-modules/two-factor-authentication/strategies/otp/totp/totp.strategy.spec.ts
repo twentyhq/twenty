@@ -2,8 +2,12 @@ import { authenticator, totp } from 'otplib';
 
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 
-import { TOTPHashAlgorithms, TotpContext } from './constants/totp.strategy.constants';
 import { TotpStrategy } from './totp.strategy';
+
+import {
+  TOTPHashAlgorithms,
+  TotpContext,
+} from './constants/totp.strategy.constants';
 
 const RESYNCH_WINDOW = 3;
 
@@ -49,6 +53,7 @@ describe('TOTPStrategy Configuration', () => {
       // Since we simplified the implementation to use otplib defaults,
       // we can't directly access internal configuration
       const strategy = new TotpStrategy({ window: 10 });
+
       expect(strategy).toBeDefined();
     });
 
@@ -56,6 +61,7 @@ describe('TOTPStrategy Configuration', () => {
       // Since we simplified the implementation to use otplib defaults,
       // we can't directly access internal configuration
       const strategy = new TotpStrategy();
+
       expect(strategy).toBeDefined();
     });
   });
@@ -99,7 +105,7 @@ describe('TOTPStrategy Configuration', () => {
       // Use the initiate method to generate a proper secret
       const initResult = strategy.initiate('test@example.com', 'TestApp');
       const token = totp.generate(initResult.context.secret);
-      
+
       const result = strategy.validate(token, initResult.context);
 
       expect(result.isValid).toBe(true);
@@ -141,6 +147,7 @@ describe('TOTPStrategy Configuration', () => {
       // The authenticator.check method doesn't throw for invalid secrets,
       // it just returns false
       const result = strategy.validate('123456', invalidContext);
+
       expect(result.isValid).toBe(false);
     });
 
@@ -153,6 +160,7 @@ describe('TOTPStrategy Configuration', () => {
       // The authenticator.check method doesn't throw for empty secrets,
       // it just returns false
       const result = strategy.validate('123456', invalidContext);
+
       expect(result.isValid).toBe(false);
     });
 
@@ -160,7 +168,7 @@ describe('TOTPStrategy Configuration', () => {
       // Use the initiate method to generate a proper secret
       const initResult = strategy.initiate('test@example.com', 'TestApp');
       const token = totp.generate(initResult.context.secret);
-      
+
       const result = strategy.validate(token, initResult.context);
 
       expect(result.context).toBe(initResult.context);

@@ -1,7 +1,7 @@
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 
-import { TwoFactorAuthenticationMethod } from '../entities/two-factor-authentication-method.entity';
-import { OTPStatus } from '../strategies/otp/otp.constants';
+import { TwoFactorAuthenticationMethod } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
+import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 
 import { buildTwoFactorAuthenticationMethodSummary } from './two-factor-authentication-method.presenter';
 

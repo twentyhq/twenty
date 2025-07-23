@@ -73,7 +73,7 @@ describe('TwoFactorAuthenticationVerificationInput', () => {
     });
 
     it('should fail validation with undefined OTP', async () => {
-      const { otp, ...dataWithoutOtp } = validData;
+      const { otp: _otp, ...dataWithoutOtp } = validData;
       const input = plainToClass(
         TwoFactorAuthenticationVerificationInput,
         dataWithoutOtp,
@@ -128,7 +128,7 @@ describe('TwoFactorAuthenticationVerificationInput', () => {
     });
 
     it('should fail validation with undefined loginToken', async () => {
-      const { loginToken, ...dataWithoutLoginToken } = validData;
+      const { loginToken: _loginToken, ...dataWithoutLoginToken } = validData;
       const input = plainToClass(
         TwoFactorAuthenticationVerificationInput,
         dataWithoutLoginToken,
@@ -166,7 +166,7 @@ describe('TwoFactorAuthenticationVerificationInput', () => {
     });
 
     it('should pass validation with undefined captchaToken', async () => {
-      const { captchaToken, ...dataWithoutCaptcha } = validData;
+      const { captchaToken: _captchaToken, ...dataWithoutCaptcha } = validData;
       const input = plainToClass(
         TwoFactorAuthenticationVerificationInput,
         dataWithoutCaptcha,

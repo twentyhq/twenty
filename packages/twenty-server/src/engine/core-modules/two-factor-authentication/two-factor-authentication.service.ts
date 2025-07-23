@@ -100,7 +100,6 @@ export class TwoFactorAuthenticationService {
       `Twenty${userWorkspace.workspace.displayName ? ` - ${userWorkspace.workspace.displayName}` : ''}`,
     );
 
-    // Use simplified encryption that handles string encoding properly
     const encryptedSecret = await this.simpleSecretEncryptionUtil.encryptSecret(
       context.secret,
       userId + workspaceId + 'otp-secret',
@@ -148,7 +147,6 @@ export class TwoFactorAuthenticationService {
       );
     }
 
-    // Use simplified decryption that handles string encoding properly
     const originalSecret = await this.simpleSecretEncryptionUtil.decryptSecret(
       userTwoFactorAuthenticationMethod.secret,
       userId + workspaceId + 'otp-secret',
@@ -156,7 +154,7 @@ export class TwoFactorAuthenticationService {
 
     const otpContext = {
       status: userTwoFactorAuthenticationMethod.status,
-      secret: originalSecret, // Use the original base32 secret
+      secret: originalSecret,
     };
 
     const validationResult = new TotpStrategy(

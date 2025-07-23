@@ -46,7 +46,6 @@ export class TotpStrategy implements OTPAuthenticationStrategyInterface {
       }
     }
 
-    // Note: We don't configure otplib options to avoid type issues
     // otplib will use its defaults: sha1, 6 digits, 30 second step, etc.
   }
 
@@ -57,17 +56,14 @@ export class TotpStrategy implements OTPAuthenticationStrategyInterface {
     uri: string;
     context: TotpContext;
   } {
-    // Use authenticator.generateSecret() which generates base32 encoded secrets
     const secret = authenticator.generateSecret();
-    
-    // Use authenticator.keyuri which handles the correct format for Google Authenticator compatibility
     const uri = authenticator.keyuri(accountName, issuer, secret);
 
     return {
       uri,
       context: {
         status: OTPStatus.PENDING,
-        secret, // This is already base32 encoded
+        secret,
       },
     };
   }
@@ -79,8 +75,6 @@ export class TotpStrategy implements OTPAuthenticationStrategyInterface {
     isValid: boolean;
     context: TotpContext;
   } {
-    // Use authenticator.check which is designed to work with base32 secrets
-    // This should be compatible with Google Authenticator and other TOTP apps
     const isValid = authenticator.check(token, context.secret);
 
     return {

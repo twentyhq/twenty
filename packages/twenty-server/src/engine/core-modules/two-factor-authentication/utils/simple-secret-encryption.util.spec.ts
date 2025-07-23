@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
@@ -53,7 +54,7 @@ describe('SimpleSecretEncryptionUtil', () => {
       const encrypted2 = await util.encryptSecret(testSecret, testPurpose);
 
       expect(encrypted1).not.toBe(encrypted2); // Different IVs should produce different results
-      
+
       const decrypted1 = await util.decryptSecret(encrypted1, testPurpose);
       const decrypted2 = await util.decryptSecret(encrypted2, testPurpose);
 
@@ -72,7 +73,7 @@ describe('SimpleSecretEncryptionUtil', () => {
 
     it('should handle special characters in secrets', async () => {
       const specialSecret = 'SECRET-WITH_SPECIAL@CHARS#123!';
-      
+
       const encrypted = await util.encryptSecret(specialSecret, testPurpose);
       const decrypted = await util.decryptSecret(encrypted, testPurpose);
 
@@ -81,7 +82,7 @@ describe('SimpleSecretEncryptionUtil', () => {
 
     it('should fail to decrypt with wrong purpose', async () => {
       const encrypted = await util.encryptSecret(testSecret, testPurpose);
-      
+
       await expect(
         util.decryptSecret(encrypted, 'wrong-purpose'),
       ).rejects.toThrow();
@@ -95,11 +96,11 @@ describe('SimpleSecretEncryptionUtil', () => {
 
     it('should handle empty secrets', async () => {
       const emptySecret = '';
-      
+
       const encrypted = await util.encryptSecret(emptySecret, testPurpose);
       const decrypted = await util.decryptSecret(encrypted, testPurpose);
 
       expect(decrypted).toBe(emptySecret);
     });
   });
-}); 
+});
