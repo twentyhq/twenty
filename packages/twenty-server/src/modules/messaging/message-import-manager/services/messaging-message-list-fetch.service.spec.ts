@@ -97,6 +97,8 @@ describe('MessagingMessageListFetchService', () => {
                       ],
                       nextSyncCursor: 'new-google-history-id',
                       folderId: undefined,
+                      messageExternalIdsToDelete: [],
+                      previousSyncCursor: 'google-sync-cursor',
                     },
                   ];
                 } else {
@@ -109,6 +111,8 @@ describe('MessagingMessageListFetchService', () => {
                       ],
                       nextSyncCursor: 'new-sync-cursor',
                       folderId: 'inbox-folder-id',
+                      messageExternalIdsToDelete: [],
+                      previousSyncCursor: 'inbox-sync-cursor',
                     },
                   ];
                 }
