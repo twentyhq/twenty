@@ -261,27 +261,27 @@ export const useGraphQLErrorHandlerHook = <
         }
 
         if (
-          frontEndAppVersion &&
-          backendAppVersion &&
-          semver.valid(frontEndAppVersion) &&
-          semver.valid(backendAppVersion)
+          !frontEndAppVersion ||
+          !backendAppVersion ||
+          !semver.valid(frontEndAppVersion) ||
+          !semver.valid(backendAppVersion)
         ) {
-          if (
-            compareVersionMajorAndMinor(
-              frontEndAppVersion,
-              backendAppVersion,
-            ) !== 'equal'
-          ) {
-            options.metricsService.incrementCounter({
-              key: MetricsKeys.AppVersionMismatch,
-            });
-            throw new GraphQLError(APP_VERSION_MISMATCH_ERROR, {
-              extensions: {
-                code: APP_VERSION_MISMATCH_CODE,
-                userFriendlyMessage: t`Your app version is out of date. Please refresh the page to continue.`,
-              },
-            });
-          }
+          return;
+        }
+
+        if (
+          compareVersionMajorAndMinor(frontEndAppVersion, backendAppVersion) ===
+          'lower'
+        ) {
+          options.metricsService.incrementCounter({
+            key: MetricsKeys.AppVersionMismatch,
+          });
+          throw new GraphQLError(APP_VERSION_MISMATCH_ERROR, {
+            extensions: {
+              code: APP_VERSION_MISMATCH_CODE,
+              userFriendlyMessage: t`Your app version is out of date. Please refresh the page to continue.`,
+            },
+          });
         }
       }
     },
