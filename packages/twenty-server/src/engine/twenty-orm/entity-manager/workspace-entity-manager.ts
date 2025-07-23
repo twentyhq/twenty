@@ -164,6 +164,8 @@ export class WorkspaceEntityManager extends EntityManager {
       options?.objectRecordsPermissions ?? {},
       this.internalContext,
       options?.shouldBypassPermissionChecks ?? false,
+      undefined,
+      this.getFeatureFlagMap(),
     );
   }
 
@@ -172,6 +174,7 @@ export class WorkspaceEntityManager extends EntityManager {
     entity:
       | QueryDeepPartialEntityWithRelationConnect<Entity>
       | QueryDeepPartialEntityWithRelationConnect<Entity>[],
+    selectedColumns: string[] = [],
     permissionOptions?: PermissionOptions,
   ): Promise<InsertResult> {
     const entityArray = Array.isArray(entity) ? entity : [entity];
@@ -191,6 +194,7 @@ export class WorkspaceEntityManager extends EntityManager {
       .insert()
       .into(target)
       .values(connectedEntities)
+      .returning(selectedColumns)
       .execute();
   }
 
@@ -204,6 +208,7 @@ export class WorkspaceEntityManager extends EntityManager {
       shouldBypassPermissionChecks?: boolean;
       objectRecordsPermissions?: ObjectRecordsPermissions;
     },
+    selectedColumns: string[] = [],
   ): Promise<InsertResult> {
     const metadata = this.connection.getMetadata(target);
     let options;
@@ -257,6 +262,7 @@ export class WorkspaceEntityManager extends EntityManager {
             this.connection.driver.supportedUpsertTypes[0],
         },
       )
+      .returning(selectedColumns)
       .execute();
   }
 
@@ -274,6 +280,7 @@ export class WorkspaceEntityManager extends EntityManager {
       | unknown,
     partialEntity: QueryDeepPartialEntity<Entity>,
     permissionOptions?: PermissionOptions,
+    selectedColumns: string[] = [],
   ): Promise<UpdateResult> {
     const metadata = this.connection.getMetadata(target);
 
@@ -304,6 +311,7 @@ export class WorkspaceEntityManager extends EntityManager {
         .update()
         .set(partialEntity)
         .whereInIds(criteria)
+        .returning(selectedColumns)
         .execute();
     } else {
       return this.createQueryBuilder(
@@ -315,6 +323,7 @@ export class WorkspaceEntityManager extends EntityManager {
         .update()
         .set(partialEntity)
         .where(criteria)
+        .returning(selectedColumns)
         .execute();
     }
   }
@@ -325,6 +334,7 @@ export class WorkspaceEntityManager extends EntityManager {
     propertyPath: string,
     value: number | string,
     permissionOptions?: PermissionOptions,
+    selectedColumns: string[] = [],
   ): Promise<UpdateResult> {
     const metadata = this.connection.getMetadata(target);
     const column = metadata.findColumnWithPropertyPath(propertyPath);
@@ -351,17 +361,24 @@ export class WorkspaceEntityManager extends EntityManager {
       .update(target as QueryDeepPartialEntity<Entity>)
       .set(values)
       .where(criteria)
+      .returning(selectedColumns)
       .execute();
   }
 
-  validatePermissions<Entity extends ObjectLiteral>(
-    target: EntityTarget<Entity> | Entity,
-    operationType: OperationType,
+  validatePermissions<Entity extends ObjectLiteral>({
+    target,
+    operationType,
+    permissionOptions,
+    selectedColumns,
+  }: {
+    target: EntityTarget<Entity> | Entity;
+    operationType: OperationType;
     permissionOptions?: {
       shouldBypassPermissionChecks?: boolean;
       objectRecordsPermissions?: ObjectRecordsPermissions;
-    },
-  ): void {
+    };
+    selectedColumns: string[];
+  }): void {
     if (permissionOptions?.shouldBypassPermissionChecks === true) {
       return;
     }
@@ -377,6 +394,8 @@ export class WorkspaceEntityManager extends EntityManager {
       objectRecordsPermissions:
         permissionOptions?.objectRecordsPermissions ?? {},
       objectMetadataMaps: this.internalContext.objectMetadataMaps,
+      selectedColumns,
+      allFieldsSelected: false,
     });
   }
 
@@ -858,7 +877,12 @@ export class WorkspaceEntityManager extends EntityManager {
     entityClass: EntityTarget<Entity>,
     permissionOptions?: PermissionOptions,
   ): Promise<void> {
-    this.validatePermissions(entityClass, 'delete', permissionOptions);
+    this.validatePermissions({
+      target: entityClass,
+      operationType: 'delete',
+      permissionOptions,
+      selectedColumns: [], // TODO
+    });
 
     return super.clear(entityClass);
   }
@@ -910,6 +934,7 @@ export class WorkspaceEntityManager extends EntityManager {
     propertyPath: string,
     value: number | string,
     permissionOptions?: PermissionOptions,
+    selectedColumns: string[] = [],
   ): Promise<UpdateResult> {
     const metadata = this.connection.getMetadata(target);
     const column = metadata.findColumnWithPropertyPath(propertyPath);
@@ -935,6 +960,7 @@ export class WorkspaceEntityManager extends EntityManager {
       .update(target as QueryDeepPartialEntity<Entity>)
       .set(values)
       .where(criteria)
+      .returning(selectedColumns)
       .execute();
   }
 
@@ -1029,11 +1055,12 @@ export class WorkspaceEntityManager extends EntityManager {
         ? maybeOptionsOrMaybePermissionOptions
         : permissionOptions;
 
-    this.validatePermissions(
-      targetOrEntity,
-      'update',
-      permissionOptionsFromArgs,
-    );
+    this.validatePermissions({
+      target: targetOrEntity,
+      operationType: 'update',
+      permissionOptions: permissionOptionsFromArgs,
+      selectedColumns: [], // TODO
+    });
 
     let target =
       arguments.length > 1 &&
@@ -1170,11 +1197,12 @@ export class WorkspaceEntityManager extends EntityManager {
         ? (maybeOptionsOrMaybePermissionOptions as PermissionOptions)
         : permissionOptions;
 
-    this.validatePermissions(
-      targetOrEntity,
-      'delete',
-      permissionOptionsFromArgs,
-    );
+    this.validatePermissions({
+      target: targetOrEntity,
+      operationType: 'delete',
+      permissionOptions: permissionOptionsFromArgs,
+      selectedColumns: [], // TODO
+    });
 
     const target =
       arguments.length > 1 &&
@@ -1281,11 +1309,12 @@ export class WorkspaceEntityManager extends EntityManager {
         ? (maybeOptionsOrMaybePermissionOptions as PermissionOptions)
         : permissionOptions;
 
-    this.validatePermissions(
-      targetOrEntityOrEntities,
-      'soft-delete',
-      permissionOptionsFromArgs,
-    );
+    this.validatePermissions({
+      target: targetOrEntityOrEntities,
+      operationType: 'soft-delete',
+      permissionOptions: permissionOptionsFromArgs,
+      selectedColumns: [], // TODO
+    });
 
     let target =
       arguments.length > 1 &&
@@ -1387,11 +1416,12 @@ export class WorkspaceEntityManager extends EntityManager {
         ? (maybeOptionsOrMaybePermissionOptions as PermissionOptions)
         : permissionOptions;
 
-    this.validatePermissions(
-      targetOrEntityOrEntities,
-      'restore',
-      permissionOptionsFromArgs,
-    );
+    this.validatePermissions({
+      target: targetOrEntityOrEntities,
+      operationType: 'restore',
+      permissionOptions: permissionOptionsFromArgs,
+      selectedColumns: [], // TODO
+    });
 
     let target =
       arguments.length > 1 &&
