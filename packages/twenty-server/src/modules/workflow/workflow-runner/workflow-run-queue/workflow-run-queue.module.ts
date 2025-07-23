@@ -9,8 +9,6 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { CronWorkflowRunEnqueueCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/cron-workflow-run-enqueue.cron.command';
 import { WorkflowRunEnqueueJob } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/workflow-run-enqueue.cron.job';
 import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
-import { CleanWorkflowRunsJob } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/clean-workflow-runs.cron.job';
-import { CronCleanWorkflowRunsCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/cron-clean-workflow-runs.cron.command';
 
 @Module({
   imports: [
@@ -23,9 +21,7 @@ import { CronCleanWorkflowRunsCommand } from 'src/modules/workflow/workflow-runn
   providers: [
     WorkflowRunQueueWorkspaceService,
     WorkflowRunEnqueueJob,
-    CleanWorkflowRunsJob,
     CronWorkflowRunEnqueueCommand,
-    CronCleanWorkflowRunsCommand,
   ],
   exports: [WorkflowRunQueueWorkspaceService],
 })
