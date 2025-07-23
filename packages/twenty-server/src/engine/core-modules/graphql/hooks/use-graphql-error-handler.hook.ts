@@ -6,6 +6,7 @@ import {
 } from '@envelop/core';
 import { t } from '@lingui/core/macro';
 import { GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
+import semver from 'semver';
 
 import { GraphQLContext } from 'src/engine/api/graphql/graphql-config/interfaces/graphql-context.interface';
 
@@ -26,6 +27,8 @@ import {
 const DEFAULT_EVENT_ID_KEY = 'exceptionEventId';
 const SCHEMA_VERSION_HEADER = 'x-schema-version';
 const SCHEMA_MISMATCH_ERROR = 'Schema version mismatch.';
+const APP_VERSION_HEADER = 'x-app-version';
+const APP_VERSION_MISMATCH_ERROR = 'App version mismatch.';
 
 type GraphQLErrorHandlerHookOptions = {
   metricsService: MetricsService;
@@ -230,16 +233,48 @@ export const useGraphQLErrorHandlerHook = <
         const headers = context.req.headers;
         const currentMetadataVersion = context.req.workspaceMetadataVersion;
         const requestMetadataVersion = headers[SCHEMA_VERSION_HEADER];
+        const backendAppVersion = process.env.APP_VERSION;
+        const requestAppVersion = headers[APP_VERSION_HEADER];
+        const reqAppVersionStr = Array.isArray(requestAppVersion)
+          ? requestAppVersion[0]
+          : requestAppVersion;
+        const backendAppVersionStr = Array.isArray(backendAppVersion)
+          ? backendAppVersion[0]
+          : backendAppVersion;
 
         if (
           requestMetadataVersion &&
           requestMetadataVersion !== `${currentMetadataVersion}`
         ) {
+          options.metricsService.incrementCounter({
+            key: MetricsKeys.SchemaVersionMismatch,
+          });
           throw new GraphQLError(SCHEMA_MISMATCH_ERROR, {
             extensions: {
               userFriendlyMessage: t`Your workspace has been updated with a new data model. Please refresh the page.`,
             },
           });
+        }
+
+        if (
+          reqAppVersionStr &&
+          backendAppVersionStr &&
+          semver.valid(reqAppVersionStr) &&
+          semver.valid(backendAppVersionStr)
+        ) {
+          const reqMajor = semver.major(reqAppVersionStr);
+          const backendMajor = semver.major(backendAppVersionStr);
+
+          if (reqMajor !== backendMajor) {
+            options.metricsService.incrementCounter({
+              key: MetricsKeys.AppVersionMismatch,
+            });
+            throw new GraphQLError(APP_VERSION_MISMATCH_ERROR, {
+              extensions: {
+                userFriendlyMessage: t`Your app version is out of date. Please refresh the page to continue.`,
+              },
+            });
+          }
         }
       }
     },
