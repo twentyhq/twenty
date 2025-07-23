@@ -63,6 +63,10 @@ export const SettingsProfile = () => {
         </Section>
         {isTwoFactorAuthenticationEnabled && (
           <Section>
+            <H2Title
+              title={t`Two Factor Authentication`}
+              description={t`Enhances security by requiring a code along with your password`}
+            />
             <UndecoratedLink
               to={getSettingsPath(
                 SettingsPath.TwoFactorAuthenticationStrategyConfig,

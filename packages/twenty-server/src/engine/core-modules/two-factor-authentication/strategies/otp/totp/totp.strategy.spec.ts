@@ -1,12 +1,12 @@
-import { authenticator, totp } from 'otplib';
+import { authenticator } from 'otplib';
 
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 
 import { TotpStrategy } from './totp.strategy';
 
 import {
-  TOTPHashAlgorithms,
-  TotpContext,
+    TOTPHashAlgorithms,
+    TotpContext,
 } from './constants/totp.strategy.constants';
 
 const RESYNCH_WINDOW = 3;
@@ -104,7 +104,8 @@ describe('TOTPStrategy Configuration', () => {
     it('should return true for a valid token at the current counter', () => {
       // Use the initiate method to generate a proper secret
       const initResult = strategy.initiate('test@example.com', 'TestApp');
-      const token = totp.generate(initResult.context.secret);
+      // Use authenticator.generate to match what authenticator.check expects
+      const token = authenticator.generate(initResult.context.secret);
 
       const result = strategy.validate(token, initResult.context);
 
@@ -121,7 +122,8 @@ describe('TOTPStrategy Configuration', () => {
     it('should succeed if the token is valid within the window', () => {
       // Use the initiate method to generate a proper secret
       const initResult = strategy.initiate('test@example.com', 'TestApp');
-      const futureToken = totp.generate(initResult.context.secret);
+      // Use authenticator.generate to match what authenticator.check expects
+      const futureToken = authenticator.generate(initResult.context.secret);
 
       const result = strategy.validate(futureToken, initResult.context);
 
@@ -167,7 +169,8 @@ describe('TOTPStrategy Configuration', () => {
     it('should return the original context on validation success', () => {
       // Use the initiate method to generate a proper secret
       const initResult = strategy.initiate('test@example.com', 'TestApp');
-      const token = totp.generate(initResult.context.secret);
+      // Use authenticator.generate to match what authenticator.check expects
+      const token = authenticator.generate(initResult.context.secret);
 
       const result = strategy.validate(token, initResult.context);
 
