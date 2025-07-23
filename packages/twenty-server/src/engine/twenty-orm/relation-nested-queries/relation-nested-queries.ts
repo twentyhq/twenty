@@ -1,22 +1,21 @@
 import { isDefined } from 'class-validator';
 import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
-import { ObjectRecordsPermissions } from 'twenty-shared/types';
-import { EntityTarget, ObjectLiteral, QueryRunner } from 'typeorm';
+import { EntityTarget, ObjectLiteral } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { QueryDeepPartialEntityWithRelationConnect } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
+import { QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
 import { RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 import {
   RelationConnectQueryFieldsByEntityIndex,
   RelationDisconnectQueryFieldsByEntityIndex,
 } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
-import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { computeRelationConnectQueryConfigs } from 'src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util';
 import { createSqlWhereTupleInClause } from 'src/engine/twenty-orm/utils/create-sql-where-tuple-in-clause.utils';
 import { extractNestedRelationFieldsByEntityIndex } from 'src/engine/twenty-orm/utils/extract-nested-relation-fields-by-entity-index.util';
@@ -25,24 +24,16 @@ import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/g
 import { getRecordToConnectFields } from 'src/engine/twenty-orm/utils/get-record-to-connect-fields.util';
 
 export class RelationNestedQueries {
-  private readonly queryRunner?: QueryRunner;
   private readonly internalContext: WorkspaceInternalContext;
-  private readonly workspaceEntityManager: WorkspaceEntityManager;
 
-  constructor(
-    internalContext: WorkspaceInternalContext,
-    workspaceEntityManager: WorkspaceEntityManager,
-    queryRunner?: QueryRunner,
-  ) {
-    this.queryRunner = queryRunner;
+  constructor(internalContext: WorkspaceInternalContext) {
     this.internalContext = internalContext;
-    this.workspaceEntityManager = workspaceEntityManager;
   }
 
   prepareNestedRelationQueries<Entity extends ObjectLiteral>(
     entities:
-      | QueryDeepPartialEntityWithRelationConnect<Entity>[]
-      | QueryDeepPartialEntityWithRelationConnect<Entity>,
+      | QueryDeepPartialEntityWithNestedRelationFields<Entity>[]
+      | QueryDeepPartialEntityWithNestedRelationFields<Entity>,
     target: EntityTarget<Entity>,
   ) {
     const entitiesArray = Array.isArray(entities) ? entities : [entities];
@@ -65,7 +56,7 @@ export class RelationNestedQueries {
   }
 
   private prepareRelationConnect<Entity extends ObjectLiteral>(
-    entities: QueryDeepPartialEntityWithRelationConnect<Entity>[],
+    entities: QueryDeepPartialEntityWithNestedRelationFields<Entity>[],
     target: EntityTarget<Entity>,
     relationConnectQueryFieldsByEntityIndex: RelationConnectQueryFieldsByEntityIndex,
   ) {
@@ -86,18 +77,19 @@ export class RelationNestedQueries {
     return relationConnectQueryConfigs;
   }
 
-  async processRelationNestedQueries<Entity extends ObjectLiteral>(
+  async processRelationNestedQueries<Entity extends ObjectLiteral>({
+    entities,
+    relationDisconnectQueryFieldsByEntityIndex,
+    relationConnectQueryConfigs,
+    queryBuilder,
+  }: {
     entities:
-      | QueryDeepPartialEntityWithRelationConnect<Entity>[]
-      | QueryDeepPartialEntityWithRelationConnect<Entity>,
-    relationDisconnectQueryFieldsByEntityIndex: RelationDisconnectQueryFieldsByEntityIndex,
-    relationConnectQueryConfigs: Record<string, RelationConnectQueryConfig>,
-    permissionOptions?: {
-      shouldBypassPermissionChecks?: boolean;
-      objectRecordsPermissions?: ObjectRecordsPermissions;
-    },
-    queryRunner?: QueryRunner,
-  ): Promise<QueryDeepPartialEntity<Entity>[]> {
+      | QueryDeepPartialEntityWithNestedRelationFields<Entity>[]
+      | QueryDeepPartialEntityWithNestedRelationFields<Entity>;
+    relationDisconnectQueryFieldsByEntityIndex: RelationDisconnectQueryFieldsByEntityIndex;
+    relationConnectQueryConfigs: Record<string, RelationConnectQueryConfig>;
+    queryBuilder: WorkspaceSelectQueryBuilder<Entity>;
+  }): Promise<QueryDeepPartialEntity<Entity>[]> {
     const entitiesArray = Array.isArray(entities) ? entities : [entities];
 
     const updatedEntitiesWithDisconnect = this.processRelationDisconnect({
@@ -107,9 +99,8 @@ export class RelationNestedQueries {
 
     const updatedEntitiesWithConnect = await this.processRelationConnect({
       entities: updatedEntitiesWithDisconnect,
-      permissionOptions,
       relationConnectQueryConfigs,
-      queryRunner,
+      queryBuilder,
     });
 
     return updatedEntitiesWithConnect;
@@ -118,23 +109,17 @@ export class RelationNestedQueries {
   private async processRelationConnect<Entity extends ObjectLiteral>({
     entities,
     relationConnectQueryConfigs,
-    permissionOptions,
-    queryRunner,
+    queryBuilder,
   }: {
-    entities: QueryDeepPartialEntityWithRelationConnect<Entity>[];
+    entities: QueryDeepPartialEntityWithNestedRelationFields<Entity>[];
     relationConnectQueryConfigs: Record<string, RelationConnectQueryConfig>;
-    permissionOptions?: {
-      shouldBypassPermissionChecks?: boolean;
-      objectRecordsPermissions?: ObjectRecordsPermissions;
-    };
-    queryRunner?: QueryRunner;
+    queryBuilder: WorkspaceSelectQueryBuilder<Entity>;
   }): Promise<QueryDeepPartialEntity<Entity>[]> {
     if (!isDefined(relationConnectQueryConfigs)) return entities;
 
     const recordsToConnectWithConfig = await this.executeConnectQueries(
       relationConnectQueryConfigs,
-      permissionOptions,
-      queryRunner,
+      queryBuilder,
     );
 
     const updatedEntities = this.updateEntitiesWithRecordToConnectId<Entity>(
@@ -145,13 +130,9 @@ export class RelationNestedQueries {
     return updatedEntities;
   }
 
-  private async executeConnectQueries(
+  private async executeConnectQueries<Entity extends ObjectLiteral>(
     relationConnectQueryConfigs: Record<string, RelationConnectQueryConfig>,
-    permissionOptions?: {
-      shouldBypassPermissionChecks?: boolean;
-      objectRecordsPermissions?: ObjectRecordsPermissions;
-    },
-    queryRunner?: QueryRunner,
+    queryBuilder: WorkspaceSelectQueryBuilder<Entity>,
   ): Promise<[RelationConnectQueryConfig, Record<string, unknown>[]][]> {
     const AllRecordsToConnectWithConfig: [
       RelationConnectQueryConfig,
@@ -166,15 +147,16 @@ export class RelationNestedQueries {
         connectQueryConfig.targetObjectName,
       );
 
-      const recordsToConnect = await this.workspaceEntityManager
-        .createQueryBuilder(
-          connectQueryConfig.targetObjectName,
-          connectQueryConfig.targetObjectName,
-          queryRunner,
-          permissionOptions,
-        )
+      queryBuilder.expressionMap.aliases = [];
+      queryBuilder.expressionMap.mainAlias = undefined;
+
+      const recordsToConnect = await queryBuilder
         .select(getRecordToConnectFields(connectQueryConfig))
         .where(clause, parameters)
+        .from(
+          connectQueryConfig.targetObjectName,
+          connectQueryConfig.targetObjectName,
+        )
         .getRawMany();
 
       AllRecordsToConnectWithConfig.push([
@@ -187,7 +169,7 @@ export class RelationNestedQueries {
   }
 
   private updateEntitiesWithRecordToConnectId<Entity extends ObjectLiteral>(
-    entities: QueryDeepPartialEntityWithRelationConnect<Entity>[],
+    entities: QueryDeepPartialEntityWithNestedRelationFields<Entity>[],
     recordsToConnectWithConfig: [
       RelationConnectQueryConfig,
       Record<string, unknown>[],
@@ -235,9 +217,9 @@ export class RelationNestedQueries {
     entities,
     relationDisconnectQueryFieldsByEntityIndex,
   }: {
-    entities: QueryDeepPartialEntityWithRelationConnect<Entity>[];
+    entities: QueryDeepPartialEntityWithNestedRelationFields<Entity>[];
     relationDisconnectQueryFieldsByEntityIndex: RelationDisconnectQueryFieldsByEntityIndex;
-  }): QueryDeepPartialEntityWithRelationConnect<Entity>[] {
+  }): QueryDeepPartialEntityWithNestedRelationFields<Entity>[] {
     return entities.map((entity, index) => {
       const nestedRelationDisconnectFields =
         relationDisconnectQueryFieldsByEntityIndex[index];

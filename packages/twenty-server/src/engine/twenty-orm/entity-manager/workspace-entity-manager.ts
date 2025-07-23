@@ -40,8 +40,7 @@ import {
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { QueryDeepPartialEntityWithRelationConnect } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
-import { RelationNestedQueries } from 'src/engine/twenty-orm/relation-nested-queries/relation-nested-queries';
+import { QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
 import {
   OperationType,
   validateOperationIsPermittedOrThrow,
@@ -62,7 +61,6 @@ export class WorkspaceEntityManager extends EntityManager {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly repositories: Map<string, Repository<any>>;
   declare connection: WorkspaceDataSource;
-  private readonly relationNestedQueries: RelationNestedQueries;
 
   constructor(
     internalContext: WorkspaceInternalContext,
@@ -72,11 +70,6 @@ export class WorkspaceEntityManager extends EntityManager {
     super(connection, queryRunner);
     this.internalContext = internalContext;
     this.repositories = new Map();
-    this.relationNestedQueries = new RelationNestedQueries(
-      internalContext,
-      this,
-      queryRunner,
-    );
   }
 
   getFeatureFlagMap(): FeatureFlagMap {
@@ -171,23 +164,11 @@ export class WorkspaceEntityManager extends EntityManager {
   override async insert<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
     entity:
-      | QueryDeepPartialEntityWithRelationConnect<Entity>
-      | QueryDeepPartialEntityWithRelationConnect<Entity>[],
+      | QueryDeepPartialEntityWithNestedRelationFields<Entity>
+      | QueryDeepPartialEntityWithNestedRelationFields<Entity>[],
     selectedColumns: string[] = [],
     permissionOptions?: PermissionOptions,
   ): Promise<InsertResult> {
-    const { disconnectConfig, connectConfig } =
-      this.relationNestedQueries.prepareNestedRelationQueries(entity, target);
-
-    const updatedEntities =
-      await this.relationNestedQueries.processRelationNestedQueries(
-        entity,
-        disconnectConfig,
-        connectConfig,
-        permissionOptions,
-        this.queryRunner,
-      );
-
     return this.createQueryBuilder(
       undefined,
       undefined,
@@ -196,7 +177,7 @@ export class WorkspaceEntityManager extends EntityManager {
     )
       .insert()
       .into(target)
-      .values(updatedEntities)
+      .values(entity)
       .returning(selectedColumns)
       .execute();
   }
