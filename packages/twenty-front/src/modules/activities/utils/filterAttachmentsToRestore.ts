@@ -1,5 +1,5 @@
 import { Attachment } from '@/activities/files/types/Attachment';
-import { getAttachmentPath } from '@/activities/utils/getAttachmentPath';
+import { compareUrls } from '@/activities/utils/compareUrls';
 
 export const filterAttachmentsToRestore = (
   attachmentPathsToRestore: string[],
@@ -7,8 +7,8 @@ export const filterAttachmentsToRestore = (
 ) => {
   return softDeletedAttachments
     .filter((attachment) =>
-      attachmentPathsToRestore.some(
-        (path) => getAttachmentPath(attachment.fullPath) === path,
+      attachmentPathsToRestore.some((path) =>
+        compareUrls(attachment.fullPath, path),
       ),
     )
     .map((attachment) => attachment.id);

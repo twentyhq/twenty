@@ -137,12 +137,17 @@ export class FieldMetadataEnumValidationService {
     );
   }
 
-  private validateDuplicates(options: FieldMetadataOptions) {
+  private validateDuplicates(
+    options: FieldMetadataOptions<EnumFieldMetadataType>,
+  ) {
     const fieldsToCheckForDuplicates = [
       'position',
       'id',
       'value',
-    ] as const satisfies (keyof FieldMetadataOptions[number])[];
+    ] as const satisfies (keyof (
+      | FieldMetadataDefaultOption[]
+      | FieldMetadataComplexOption[]
+    )[number])[];
     const duplicatedValidators = fieldsToCheckForDuplicates.map<
       Validator<FieldMetadataDefaultOption[] | FieldMetadataComplexOption[]>
     >((field) => ({
@@ -178,7 +183,7 @@ export class FieldMetadataEnumValidationService {
   }
 
   private validateSelectDefaultValue(
-    options: FieldMetadataOptions,
+    options: FieldMetadataOptions<EnumFieldMetadataType>,
     defaultValue: unknown,
   ) {
     if (typeof defaultValue !== 'string') {
@@ -209,7 +214,7 @@ export class FieldMetadataEnumValidationService {
   }
 
   private validateMultiSelectDefaultValue(
-    options: FieldMetadataOptions,
+    options: FieldMetadataOptions<EnumFieldMetadataType>,
     defaultValue: unknown,
   ) {
     if (!Array.isArray(defaultValue)) {
@@ -241,7 +246,7 @@ export class FieldMetadataEnumValidationService {
 
   private validateFieldMetadataDefaultValue(
     fieldType: EnumFieldMetadataType,
-    options: FieldMetadataOptions,
+    options: FieldMetadataOptions<EnumFieldMetadataType>,
     defaultValue: unknown,
   ) {
     switch (fieldType) {
