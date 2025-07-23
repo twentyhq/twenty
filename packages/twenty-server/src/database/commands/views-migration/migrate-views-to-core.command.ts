@@ -1,7 +1,6 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner, Repository } from 'typeorm';
 
 import {
@@ -83,35 +82,35 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         return;
       }
 
-      if (options.dryRun) {
-        await this.migrateViews(workspaceId, options.dryRun);
+      await queryRunner.startTransaction();
 
-        this.logger.log(
-          `DRY RUN: Would enable IS_CORE_VIEW_SYNCING_ENABLED feature flag for workspace ${workspaceId}`,
+      try {
+        await this.migrateViews(
+          workspaceId,
+          options.dryRun ?? false,
+          queryRunner,
         );
-      } else {
-        await queryRunner.startTransaction();
 
-        try {
-          await this.migrateViews(workspaceId, options.dryRun, queryRunner);
-
+        if (options.dryRun) {
+          this.logger.log(
+            `DRY RUN: Would enable IS_CORE_VIEW_SYNCING_ENABLED feature flag for workspace ${workspaceId}`,
+          );
+        } else {
           await queryRunner.commitTransaction();
-
           await this.enableCoreViewSyncingFeatureFlag(workspaceId);
-
           this.logger.log(
             `Successfully migrated views to core schema for workspace ${workspaceId}`,
           );
-        } catch (error) {
-          if (queryRunner.isTransactionActive) {
-            await queryRunner.rollbackTransaction();
-            this.logger.error(
-              `Transaction rolled back for workspace ${workspaceId} due to error: ${error.message}`,
-            );
-          }
-
-          throw error;
         }
+      } catch (error) {
+        if (queryRunner.isTransactionActive) {
+          await queryRunner.rollbackTransaction();
+          this.logger.error(
+            `Transaction rolled back for workspace ${workspaceId} due to error: ${error.message}`,
+          );
+        }
+
+        throw error;
       }
     } catch (error) {
       this.logger.error(
@@ -126,8 +125,8 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
 
   private async migrateViews(
     workspaceId: string,
-    dryRun?: boolean,
-    queryRunner?: QueryRunner,
+    dryRun: boolean,
+    queryRunner: QueryRunner,
   ): Promise<void> {
     const workspaceViewRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
@@ -169,9 +168,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
       return;
     }
 
-    const viewRepository = isDefined(queryRunner)
-      ? queryRunner.manager.getRepository(View)
-      : this.coreViewRepository;
+    const viewRepository = queryRunner.manager.getRepository(View);
 
     const existingCoreViews = await viewRepository.find({
       where: { workspaceId },
@@ -243,7 +240,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
   private async migrateViewEntity(
     workspaceView: ViewWorkspaceEntity,
     workspaceId: string,
-    queryRunner?: QueryRunner,
+    queryRunner: QueryRunner,
   ): Promise<void> {
     const coreView = {
       id: workspaceView.id,
@@ -269,9 +266,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         : null,
     };
 
-    const repository = isDefined(queryRunner)
-      ? queryRunner.manager.getRepository(View)
-      : this.coreViewRepository;
+    const repository = queryRunner.manager.getRepository(View);
 
     await repository.insert(coreView);
   }
@@ -279,7 +274,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
   private async migrateViewFields(
     workspaceViewFields: ViewFieldWorkspaceEntity[],
     workspaceId: string,
-    queryRunner?: QueryRunner,
+    queryRunner: QueryRunner,
   ): Promise<void> {
     for (const field of workspaceViewFields) {
       const coreViewField = {
@@ -295,9 +290,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         deletedAt: field.deletedAt ? new Date(field.deletedAt) : null,
       };
 
-      const repository = isDefined(queryRunner)
-        ? queryRunner.manager.getRepository(ViewField)
-        : this.coreViewFieldRepository;
+      const repository = queryRunner.manager.getRepository(ViewField);
 
       await repository.insert(coreViewField);
     }
@@ -306,7 +299,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
   private async migrateViewFilters(
     workspaceViewFilters: ViewFilterWorkspaceEntity[],
     workspaceId: string,
-    queryRunner?: QueryRunner,
+    queryRunner: QueryRunner,
   ): Promise<void> {
     for (const filter of workspaceViewFilters) {
       if (!filter.viewId) {
@@ -340,9 +333,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         deletedAt: filter.deletedAt ? new Date(filter.deletedAt) : null,
       };
 
-      const repository = isDefined(queryRunner)
-        ? queryRunner.manager.getRepository(ViewFilter)
-        : this.coreViewFilterRepository;
+      const repository = queryRunner.manager.getRepository(ViewFilter);
 
       await repository.insert(coreViewFilter);
     }
@@ -351,7 +342,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
   private async migrateViewSorts(
     workspaceViewSorts: ViewSortWorkspaceEntity[],
     workspaceId: string,
-    queryRunner?: QueryRunner,
+    queryRunner: QueryRunner,
   ): Promise<void> {
     for (const sort of workspaceViewSorts) {
       if (!sort.viewId) {
@@ -374,9 +365,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         deletedAt: sort.deletedAt ? new Date(sort.deletedAt) : null,
       };
 
-      const repository = isDefined(queryRunner)
-        ? queryRunner.manager.getRepository(ViewSort)
-        : this.coreViewSortRepository;
+      const repository = queryRunner.manager.getRepository(ViewSort);
 
       await repository.insert(coreViewSort);
     }
@@ -385,7 +374,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
   private async migrateViewGroups(
     workspaceViewGroups: ViewGroupWorkspaceEntity[],
     workspaceId: string,
-    queryRunner?: QueryRunner,
+    queryRunner: QueryRunner,
   ): Promise<void> {
     for (const group of workspaceViewGroups) {
       if (!group.viewId) {
@@ -408,9 +397,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         deletedAt: group.deletedAt ? new Date(group.deletedAt) : null,
       };
 
-      const repository = isDefined(queryRunner)
-        ? queryRunner.manager.getRepository(ViewGroup)
-        : this.coreViewGroupRepository;
+      const repository = queryRunner.manager.getRepository(ViewGroup);
 
       await repository.insert(coreViewGroup);
     }
@@ -419,7 +406,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
   private async migrateViewFilterGroups(
     workspaceViewFilterGroups: ViewFilterGroupWorkspaceEntity[],
     workspaceId: string,
-    queryRunner?: QueryRunner,
+    queryRunner: QueryRunner,
   ): Promise<void> {
     for (const filterGroup of workspaceViewFilterGroups) {
       const coreViewFilterGroup = {
@@ -437,9 +424,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
           : null,
       };
 
-      const repository = isDefined(queryRunner)
-        ? queryRunner.manager.getRepository(ViewFilterGroup)
-        : this.coreViewFilterGroupRepository;
+      const repository = queryRunner.manager.getRepository(ViewFilterGroup);
 
       await repository.insert(coreViewFilterGroup);
     }
