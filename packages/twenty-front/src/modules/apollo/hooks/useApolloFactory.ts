@@ -14,7 +14,6 @@ import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { appVersionState } from '@/client-config/states/appVersionState';
-import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from 'twenty-shared/utils';
@@ -30,7 +29,6 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
     currentWorkspaceState,
   );
   const appVersion = useRecoilValue(appVersionState);
-  const sentryConfig = useRecoilValue(sentryConfigState);
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
@@ -61,7 +59,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
       connectToDevTools: process.env.IS_DEBUG_MODE === 'true',
       currentWorkspaceMember: currentWorkspaceMember,
       currentWorkspace: currentWorkspace,
-      appVersion: sentryConfig?.release ?? '',
+      appVersion,
       onTokenPairChange: (tokenPair) => {
         setTokenPair(tokenPair);
       },
