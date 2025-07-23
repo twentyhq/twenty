@@ -55,6 +55,7 @@ export class ApiKeyController {
         ? new Date(createApiKeyDto.revokedAt)
         : undefined,
       workspaceId: workspace.id,
+      roleId: createApiKeyDto.roleId,
     });
   }
 
