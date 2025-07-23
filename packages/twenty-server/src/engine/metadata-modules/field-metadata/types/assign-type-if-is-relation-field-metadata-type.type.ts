@@ -1,4 +1,4 @@
-import { FieldMetadataType, IsExactly } from "twenty-shared/types";
+import { FieldMetadataType, IsExactly } from 'twenty-shared/types';
 
 export type AssignTypeIfIsRelationFieldMetadataType<
   Ttype,

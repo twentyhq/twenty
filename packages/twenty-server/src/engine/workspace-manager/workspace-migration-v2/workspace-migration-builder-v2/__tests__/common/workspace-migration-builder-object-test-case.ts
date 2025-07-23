@@ -95,7 +95,7 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
 
         expectedActionsTypeCounter: {
           createObject: 1,
-          createField: 5,
+          createField: 0,
           createIndex: 1,
         },
       },

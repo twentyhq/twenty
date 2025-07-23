@@ -119,7 +119,10 @@ export class FieldMetadataEntity<
   isLabelSyncedWithName: boolean;
 
   @Column({ nullable: true, type: 'uuid' })
-  relationTargetFieldMetadataId: AssignTypeIfIsRelationFieldMetadataType<string, T>;
+  relationTargetFieldMetadataId: AssignTypeIfIsRelationFieldMetadataType<
+    string,
+    T
+  >;
 
   @OneToOne(
     () => FieldMetadataEntity,
@@ -128,10 +131,16 @@ export class FieldMetadataEntity<
     { nullable: true },
   )
   @JoinColumn({ name: 'relationTargetFieldMetadataId' })
-  relationTargetFieldMetadata: AssignTypeIfIsRelationFieldMetadataType<Relation<FieldMetadataEntity>, T>;
+  relationTargetFieldMetadata: AssignTypeIfIsRelationFieldMetadataType<
+    Relation<FieldMetadataEntity>,
+    T
+  >;
 
   @Column({ nullable: true, type: 'uuid' })
-  relationTargetObjectMetadataId: AssignTypeIfIsRelationFieldMetadataType<string, T>;
+  relationTargetObjectMetadataId: AssignTypeIfIsRelationFieldMetadataType<
+    string,
+    T
+  >;
 
   @ManyToOne(
     () => ObjectMetadataEntity,

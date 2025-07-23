@@ -21,7 +21,7 @@ export class WorkspaceMetadataObjectActionRunnerService
   constructor(private readonly dataSourceService: DataSourceService) {}
 
   runDeleteObjectMetadataMigration = async ({
-    action: { flatObjectMetadata },
+    action: { flatObjectMetadataWithoutFields },
     queryRunner,
   }: WorkspaceMigrationActionRunnerArgs<DeleteObjectAction>) => {
     const objectMetadataRepository =
@@ -29,11 +29,11 @@ export class WorkspaceMetadataObjectActionRunnerService
         ObjectMetadataEntity,
       );
 
-    await objectMetadataRepository.delete(flatObjectMetadata.id);
+    await objectMetadataRepository.delete(flatObjectMetadataWithoutFields.id);
   };
 
   runCreateObjectMetadataMigration = async ({
-    action: { flatObjectMetadata },
+    action: { flatObjectMetadataWithoutFields },
     queryRunner,
   }: WorkspaceMigrationActionRunnerArgs<CreateObjectAction>) => {
     const objectMetadataRepository =
@@ -42,18 +42,18 @@ export class WorkspaceMetadataObjectActionRunnerService
       );
     const lastDataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        flatObjectMetadata.workspaceId,
+        flatObjectMetadataWithoutFields.workspaceId,
       );
 
     await objectMetadataRepository.save({
-      ...flatObjectMetadata,
+      ...flatObjectMetadataWithoutFields,
       dataSourceId: lastDataSourceMetadata.id,
       targetTableName: 'DEPRECATED',
     });
   };
 
   runUpdateObjectMetadataMigration = async ({
-    action: { flatObjectMetadata, updates },
+    action: { flatObjectMetadataWithoutFields, updates },
     queryRunner,
   }: WorkspaceMigrationActionRunnerArgs<UpdateObjectAction>) => {
     const objectMetadataRepository =
@@ -71,7 +71,7 @@ export class WorkspaceMetadataObjectActionRunnerService
     }, {});
 
     await objectMetadataRepository.save({
-      ...flatObjectMetadata, // should be stricter
+      ...flatObjectMetadataWithoutFields, // could be stricter
       ...update,
     });
   };

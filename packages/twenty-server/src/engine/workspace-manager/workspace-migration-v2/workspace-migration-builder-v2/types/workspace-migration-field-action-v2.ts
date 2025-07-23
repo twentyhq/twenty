@@ -7,14 +7,14 @@ import { FlatFieldMetadataPropertiesToCompare } from 'src/engine/workspace-manag
 export type CreateFieldAction = {
   type: 'create_field';
   flatFieldMetadata: FlatFieldMetadata;
-  flatObjectMetadata: FlatObjectMetadataWithoutFields;
+  flatObjectMetadataWithoutFields: FlatObjectMetadataWithoutFields;
 };
 
 export type UpdateFieldAction = {
   type: 'update_field';
   workspaceId: string;
   flatFieldMetadata: FlatFieldMetadata;
-  flatObjectMetadata: FlatObjectMetadataWithoutFields;
+  flatObjectMetadataWithoutFields: FlatObjectMetadataWithoutFields;
   updates: Array<
     {
       [P in FlatFieldMetadataPropertiesToCompare]: {
@@ -27,7 +27,7 @@ export type UpdateFieldAction = {
 export type DeleteFieldAction = {
   type: 'delete_field';
   flatFieldMetadata: FlatFieldMetadata;
-  flatObjectMetadata: FlatObjectMetadataWithoutFields;
+  flatObjectMetadataWithoutFields: FlatObjectMetadataWithoutFields;
 };
 
 export type WorkspaceMigrationFieldActionV2 =

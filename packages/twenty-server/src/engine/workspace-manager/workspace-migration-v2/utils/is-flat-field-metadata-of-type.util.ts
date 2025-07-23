@@ -1,5 +1,6 @@
-import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
+
+import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
 
 export function isFlatFieldMetadataEntityOfType<
   Field extends FlatFieldMetadata<FieldMetadataType>,

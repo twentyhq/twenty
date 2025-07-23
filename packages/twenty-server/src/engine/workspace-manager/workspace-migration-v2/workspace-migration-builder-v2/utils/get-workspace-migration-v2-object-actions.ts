@@ -4,6 +4,7 @@ import {
   CreateObjectAction,
   DeleteObjectAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
+import { fromFlatObjectMetadataToFlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/from-flat-object-metadata-to-flat-object-metadat-without-fields.util';
 
 export const getWorkspaceMigrationV2ObjectCreateAction = ({
   createFieldActions,
@@ -13,7 +14,8 @@ export const getWorkspaceMigrationV2ObjectCreateAction = ({
   createFieldActions: CreateFieldAction[];
 }): CreateObjectAction => ({
   type: 'create_object',
-  flatObjectMetadata,
+  flatObjectMetadataWithoutFields:
+    fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(flatObjectMetadata),
   createFieldActions,
 });
 
@@ -21,5 +23,6 @@ export const getWorkspaceMigrationV2ObjectDeleteAction = (
   flatObjectMetadata: FlatObjectMetadata,
 ): DeleteObjectAction => ({
   type: 'delete_object',
-  flatObjectMetadata,
+  flatObjectMetadataWithoutFields:
+    fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(flatObjectMetadata),
 });

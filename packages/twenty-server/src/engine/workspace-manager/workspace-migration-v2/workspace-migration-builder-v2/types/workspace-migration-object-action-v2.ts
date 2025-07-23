@@ -6,13 +6,13 @@ import { CreateFieldAction } from 'src/engine/workspace-manager/workspace-migrat
 
 export type CreateObjectAction = {
   type: 'create_object';
-  flatObjectMetadata: FlatObjectMetadataWithoutFields;
+  flatObjectMetadataWithoutFields: FlatObjectMetadataWithoutFields;
   createFieldActions: CreateFieldAction[];
 };
 
 export type UpdateObjectAction = {
   type: 'update_object';
-  flatObjectMetadata: FlatObjectMetadataWithoutFields;
+  flatObjectMetadataWithoutFields: FlatObjectMetadataWithoutFields;
   updates: Array<
     {
       [P in FlatObjectMetadataPropertiesToCompare]: {
@@ -24,7 +24,7 @@ export type UpdateObjectAction = {
 
 export type DeleteObjectAction = {
   type: 'delete_object';
-  flatObjectMetadata: FlatObjectMetadataWithoutFields;
+  flatObjectMetadataWithoutFields: FlatObjectMetadataWithoutFields;
 };
 
 export type WorkspaceMigrationObjectActionV2 =

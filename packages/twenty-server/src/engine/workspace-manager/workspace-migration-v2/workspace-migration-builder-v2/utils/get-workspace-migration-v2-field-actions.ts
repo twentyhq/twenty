@@ -1,13 +1,14 @@
 import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
-import { FlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
+import { FlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
 import {
   CreateFieldAction,
   DeleteFieldAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
+import { fromFlatObjectMetadataToFlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/from-flat-object-metadata-to-flat-object-metadat-without-fields.util';
 
 type FlatFieldMetadataAndFlatObjectMetadata = {
   flatFieldMetadata: FlatFieldMetadata;
-  flatObjectMetadata: FlatObjectMetadataWithoutFields;
+  flatObjectMetadata: FlatObjectMetadata;
 };
 
 export const getWorkspaceMigrationV2FieldCreateAction = ({
@@ -16,7 +17,8 @@ export const getWorkspaceMigrationV2FieldCreateAction = ({
 }: FlatFieldMetadataAndFlatObjectMetadata): CreateFieldAction => ({
   type: 'create_field',
   flatFieldMetadata,
-  flatObjectMetadata,
+  flatObjectMetadataWithoutFields:
+    fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(flatObjectMetadata),
 });
 
 export const getWorkspaceMigrationV2FieldDeleteAction = ({
@@ -25,5 +27,6 @@ export const getWorkspaceMigrationV2FieldDeleteAction = ({
 }: FlatFieldMetadataAndFlatObjectMetadata): DeleteFieldAction => ({
   type: 'delete_field',
   flatFieldMetadata,
-  flatObjectMetadata,
+  flatObjectMetadataWithoutFields:
+    fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(flatObjectMetadata),
 });
