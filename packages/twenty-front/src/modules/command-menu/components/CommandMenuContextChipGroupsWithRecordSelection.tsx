@@ -4,14 +4,14 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { getSelectedRecordsContextText } from '@/command-menu/utils/getRecordContextText';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { CommandMenuContextChipProps } from './CommandMenuContextChip';
 import { isDefined } from 'twenty-shared/utils';
-import { MultipleAvatarChipProps } from 'twenty-ui/components';
 
 export const CommandMenuContextChipGroupsWithRecordSelection = ({
   contextChips,
   objectMetadataItemId,
 }: {
-  contextChips: MultipleAvatarChipProps[];
+  contextChips: CommandMenuContextChipProps[];
   objectMetadataItemId: string;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItemById({
