@@ -364,4 +364,150 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       ErrorCode.BAD_USER_INPUT,
     );
   });
+
+  it('should throw an error if connect and disconnect are both provided', async () => {
+    const graphqlOperation = createOneOperationFactory({
+      objectMetadataSingularName: 'person',
+      gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
+      data: {
+        id: TEST_PERSON_1_ID,
+        company: {
+          connect: {
+            where: { domainName: { primaryLinkUrl: 'company1.com' } },
+          },
+          disconnect: true,
+        },
+      },
+    });
+
+    const response = await makeGraphqlAPIRequest(graphqlOperation);
+
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].message).toBe(
+      'Exactly one key must be specified for OneOf type "CompanyRelationInput".',
+    );
+  });
+
+  it('should disconnect a record from a MANY-TO-ONE relation - update One', async () => {
+    const createPersonToUpdateOperation = createOneOperationFactory({
+      objectMetadataSingularName: 'person',
+      gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
+      data: {
+        id: TEST_PERSON_1_ID,
+        companyId: TEST_COMPANY_1_ID,
+      },
+    });
+
+    await makeGraphqlAPIRequest(createPersonToUpdateOperation);
+
+    const graphqlOperation = updateOneOperationFactory({
+      objectMetadataSingularName: 'person',
+      gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
+      recordId: TEST_PERSON_1_ID,
+      data: {
+        company: {
+          disconnect: true,
+        },
+      },
+    });
+
+    const response = await makeGraphqlAPIRequest(graphqlOperation);
+
+    expect(response.body.data.updatePerson).toBeDefined();
+    expect(response.body.data.updatePerson.company?.id).toBeUndefined();
+  });
+  it('should disconnect a record from a MANY-TO-ONE relation - update Many', async () => {
+    const createPeopleToUpdateOperation = createManyOperationFactory({
+      objectMetadataSingularName: 'person',
+      objectMetadataPluralName: 'people',
+      gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
+      data: [
+        {
+          id: TEST_PERSON_1_ID,
+          companyId: TEST_COMPANY_1_ID,
+        },
+        {
+          id: TEST_PERSON_2_ID,
+          companyId: TEST_COMPANY_2_ID,
+        },
+      ],
+    });
+
+    await makeGraphqlAPIRequest(createPeopleToUpdateOperation);
+
+    const graphqlOperation = updateManyOperationFactory({
+      objectMetadataSingularName: 'person',
+      objectMetadataPluralName: 'people',
+      gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
+      filter: {
+        id: {
+          in: [TEST_PERSON_1_ID, TEST_PERSON_2_ID],
+        },
+      },
+      data: {
+        company: {
+          disconnect: true,
+        },
+      },
+    });
+
+    const response = await makeGraphqlAPIRequest(graphqlOperation);
+
+    expect(response.body.data.updatePeople).toBeDefined();
+    expect(response.body.data.updatePeople).toHaveLength(2);
+
+    expect(response.body.data.updatePeople[0].company?.id).toBeUndefined();
+    expect(response.body.data.updatePeople[1].company?.id).toBeUndefined();
+  });
+  it('should disconnect a record from a MANY-TO-ONE relation - create Many - upsert true', async () => {
+    const createPersonToUpdateOperation = createOneOperationFactory({
+      objectMetadataSingularName: 'person',
+      gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
+      data: {
+        id: TEST_PERSON_1_ID,
+        companyId: TEST_COMPANY_1_ID,
+      },
+    });
+
+    await makeGraphqlAPIRequest(createPersonToUpdateOperation);
+
+    const graphqlOperation = createManyOperationFactory({
+      objectMetadataSingularName: 'person',
+      objectMetadataPluralName: 'people',
+      gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
+      data: [
+        {
+          id: TEST_PERSON_1_ID,
+          company: {
+            disconnect: true,
+          },
+        },
+        {
+          id: TEST_PERSON_2_ID,
+          company: {
+            connect: {
+              where: { domainName: { primaryLinkUrl: 'company2.com' } },
+            },
+          },
+        },
+      ],
+      upsert: true,
+    });
+
+    const response = await makeGraphqlAPIRequest(graphqlOperation);
+
+    expect(response.body.data.createPeople).toBeDefined();
+    expect(response.body.data.createPeople).toHaveLength(2);
+
+    const updatedPerson = response.body.data.createPeople.find(
+      (person: ObjectRecord) => person.id === TEST_PERSON_1_ID,
+    );
+
+    const insertedPerson = response.body.data.createPeople.find(
+      (person: ObjectRecord) => person.id === TEST_PERSON_2_ID,
+    );
+
+    expect(updatedPerson.company?.id).toBeUndefined();
+    expect(insertedPerson.company?.id).toBe(TEST_COMPANY_2_ID);
+  });
 });
