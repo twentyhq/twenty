@@ -240,13 +240,11 @@ export const useGraphQLErrorHandlerHook = <
         const requestMetadataVersion = headers[SCHEMA_VERSION_HEADER];
         const backendAppVersion =
           options.twentyConfigService.get('APP_VERSION');
-        const requestAppVersion = headers[APP_VERSION_HEADER];
-        const reqAppVersionStr = Array.isArray(requestAppVersion)
-          ? requestAppVersion[0]
-          : requestAppVersion;
-        const backendAppVersionStr = Array.isArray(backendAppVersion)
-          ? backendAppVersion[0]
-          : backendAppVersion;
+        const appVersionHeaderValue = headers[APP_VERSION_HEADER];
+        const frontEndAppVersion =
+          appVersionHeaderValue && Array.isArray(appVersionHeaderValue)
+            ? appVersionHeaderValue[0]
+            : appVersionHeaderValue;
 
         if (
           requestMetadataVersion &&
@@ -263,15 +261,15 @@ export const useGraphQLErrorHandlerHook = <
         }
 
         if (
-          reqAppVersionStr &&
-          backendAppVersionStr &&
-          semver.valid(reqAppVersionStr) &&
-          semver.valid(backendAppVersionStr)
+          frontEndAppVersion &&
+          backendAppVersion &&
+          semver.valid(frontEndAppVersion) &&
+          semver.valid(backendAppVersion)
         ) {
           if (
             compareVersionMajorAndMinor(
-              reqAppVersionStr,
-              backendAppVersionStr,
+              frontEndAppVersion,
+              backendAppVersion,
             ) !== 'equal'
           ) {
             options.metricsService.incrementCounter({
