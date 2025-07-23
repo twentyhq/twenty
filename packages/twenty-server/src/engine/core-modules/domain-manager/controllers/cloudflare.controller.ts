@@ -99,7 +99,7 @@ export class CloudflareController {
     } catch (err) {
       handleException({
         exception: new DomainManagerException(
-          err.message ?? '',
+          err.message ?? 'Unknown error occurred',
           DomainManagerExceptionCode.INTERNAL_SERVER_ERROR,
         ),
         exceptionHandlerService: this.exceptionHandlerService,
