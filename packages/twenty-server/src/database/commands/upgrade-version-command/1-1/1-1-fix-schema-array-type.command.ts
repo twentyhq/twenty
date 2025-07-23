@@ -14,7 +14,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { DatabaseStructureService } from 'src/engine/workspace-manager/workspace-health/services/database-structure.service';
 
 @Command({
@@ -27,7 +27,6 @@ export class FixSchemaArrayTypeCommand extends ActiveOrSuspendedWorkspacesMigrat
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly databaseStructureService: DatabaseStructureService,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly typeORMService: TypeORMService,
     @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
@@ -61,8 +60,7 @@ export class FixSchemaArrayTypeCommand extends ActiveOrSuspendedWorkspacesMigrat
       const object = field.object;
 
       const tableName = computeObjectTargetTable(object);
-      const schemaName =
-        this.workspaceDataSourceService.getSchemaName(workspaceId);
+      const schemaName = getWorkspaceSchemaName(workspaceId);
       const columns =
         await this.databaseStructureService.getWorkspaceTableColumns(
           schemaName,

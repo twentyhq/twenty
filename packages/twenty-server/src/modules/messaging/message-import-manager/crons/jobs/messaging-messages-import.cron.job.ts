@@ -11,6 +11,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { MessageChannelSyncStage } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
@@ -48,9 +49,7 @@ export class MessagingMessagesImportCronJob {
 
     for (const activeWorkspace of activeWorkspaces) {
       try {
-        const schemaName = this.workspaceDataSourceService.getSchemaName(
-          activeWorkspace.id,
-        );
+        const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
 
         const messageChannels = await mainDataSource.query(
           `SELECT * FROM ${schemaName}."messageChannel" WHERE "isSyncEnabled" = true AND "syncStage" = '${MessageChannelSyncStage.MESSAGES_IMPORT_PENDING}'`,
