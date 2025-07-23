@@ -1362,6 +1362,11 @@ msgstr "Invalid setting type provided in cron trigger"
 msgid "Invalid trigger type for enabling workflow trigger"
 msgstr "Invalid trigger type for enabling workflow trigger"
 
+#. js-lingui-id: VEKoJx
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
+msgid "Invalid verification code. Please try again."
+msgstr "Invalid verification code. Please try again."
+
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
