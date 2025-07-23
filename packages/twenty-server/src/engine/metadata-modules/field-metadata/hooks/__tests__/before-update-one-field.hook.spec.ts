@@ -110,7 +110,7 @@ describe('BeforeUpdateOneField', () => {
       isLabelSyncedWithName: true,
       createdAt: new Date(),
       updatedAt: new Date(),
-    }) as FieldMetadataEntity;
+    });
 
     jest
       .spyOn(fieldMetadataService, 'findOneWithinWorkspace')
@@ -147,7 +147,7 @@ describe('BeforeUpdateOneField', () => {
       isLabelSyncedWithName: true,
       createdAt: new Date(),
       updatedAt: new Date(),
-    }) as FieldMetadataEntity;
+    });
 
     jest
       .spyOn(fieldMetadataService, 'findOneWithinWorkspace')
@@ -182,7 +182,7 @@ describe('BeforeUpdateOneField', () => {
       isLabelSyncedWithName: true,
       createdAt: new Date(),
       updatedAt: new Date(),
-    }) as FieldMetadataEntity;
+    });
 
     jest
       .spyOn(fieldMetadataService, 'findOneWithinWorkspace')
@@ -230,7 +230,7 @@ describe('BeforeUpdateOneField', () => {
       },
       createdAt: new Date(),
       updatedAt: new Date(),
-    }) as FieldMetadataEntity;
+    });
 
     jest
       .spyOn(fieldMetadataService, 'findOneWithinWorkspace')
@@ -277,7 +277,7 @@ describe('BeforeUpdateOneField', () => {
       isLabelSyncedWithName: false,
       createdAt: new Date(),
       updatedAt: new Date(),
-    }) as FieldMetadataEntity;
+    });
 
     jest
       .spyOn(fieldMetadataService, 'findOneWithinWorkspace')

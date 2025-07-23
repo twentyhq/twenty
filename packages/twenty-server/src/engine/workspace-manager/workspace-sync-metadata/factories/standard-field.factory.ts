@@ -145,7 +145,8 @@ export class StandardFieldFactory {
         description: workspaceFieldMetadataArgs.description,
         defaultValue: workspaceFieldMetadataArgs.defaultValue ?? null,
         options: workspaceFieldMetadataArgs.options ?? null,
-        settings: workspaceFieldMetadataArgs.settings,
+        settings: workspaceFieldMetadataArgs.settings ?? null,
+        standardOverrides: null,
         workspaceId: context.workspaceId,
         isNullable: workspaceFieldMetadataArgs.isNullable,
         isUnique: workspaceFieldMetadataArgs.isUnique,
@@ -205,6 +206,8 @@ export class StandardFieldFactory {
       relationTargetFieldMetadataId: null,
       relationTargetObjectMetadata: null,
       relationTargetObjectMetadataId: null,
+      settings: null, // accurate ? looks weird for this to be undefined even for standard fields ?
+      standardOverrides: null,
     });
 
     return fieldMetadataCollection;
