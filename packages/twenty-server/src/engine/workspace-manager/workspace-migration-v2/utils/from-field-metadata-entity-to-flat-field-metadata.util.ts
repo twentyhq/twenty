@@ -7,7 +7,7 @@ import {
   FlatFieldMetadata,
   fieldMetadataRelationProperties,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
-import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/utils/from-object-metadata-entity-to-flat-field-metadata.util';
+import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/utils/from-object-metadata-entity-to-flat-object-metadata.util';
 import { fromFlatObjectMetadataToFlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/from-flat-object-metadata-to-flat-object-metadata-without-fields.util';
 
 export const fromFieldMetadataEntityToFlatFieldMetadata = <
