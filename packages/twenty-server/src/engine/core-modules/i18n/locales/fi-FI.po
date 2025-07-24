@@ -51,12 +51,12 @@ msgstr "(Järjestelmä) Näkymät"
 #. js-lingui-id: Q0ISF1
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "{fieldName} and {fieldName}Id cannot be both provided."
-msgstr ""
+msgstr "{fieldName} ja {fieldName}Id eivät voi olla molemmat mukana."
 
 #. js-lingui-id: 8haj+G
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils.ts
 msgid "{name} should be in camelCase"
-msgstr ""
+msgstr "{name} pitäisi olla camelCase-muodossa"
 
 #. js-lingui-id: kZR6+h
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -106,7 +106,7 @@ msgstr "Henkilö"
 #. js-lingui-id: Q2De+v
 #: src/engine/metadata-modules/role/role.service.ts
 msgid "A role with this label already exists."
-msgstr ""
+msgstr "Tämän niminen rooli on jo olemassa."
 
 #. js-lingui-id: mkFXEH
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -131,12 +131,12 @@ msgstr "Työnkulku"
 #. js-lingui-id: YwBCp8
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "A workflow automated trigger"
-msgstr ""
+msgstr "Työnkulun automatisoitu laukaisin"
 
 #. js-lingui-id: juBVjt
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 #~ msgid "A workflow event listener"
-#~ msgstr "Työnkulun tapahtumankuuntelija"
+#~ msgstr "A workflow event listener"
 
 #. js-lingui-id: 1+xDbI
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -234,19 +234,19 @@ msgstr "Liite"
 #. js-lingui-id: +bL++X
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #~ msgid "An audit log of actions performed in the system"
-#~ msgstr "Järjestelmässä suoritettujen toimintojen auditointiloki"
+#~ msgstr "An audit log of actions performed in the system"
 
 #. js-lingui-id: XyOToQ
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "An error occurred."
-msgstr ""
+msgstr "Tapahtui virhe."
 
 #. js-lingui-id: muVHgL
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #~ msgid "An event related to user behavior"
-#~ msgstr "Käyttäjän käyttäytymiseen liittyvä tapahtuma"
+#~ msgstr "An event related to user behavior"
 
 #. js-lingui-id: bZq8rL
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -262,7 +262,7 @@ msgstr "Toistuva vuosittainen liikevaihto: Yrityksen todellinen tai arvioitu vuo
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Any field filter value"
-msgstr ""
+msgstr "Mikä tahansa kentän suodattimen arvo"
 
 #. js-lingui-id: yRnk5W
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
@@ -292,13 +292,13 @@ msgstr "API-avaimen mitätöimispäivämäärä"
 #. js-lingui-id: DGW5iN
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approved access domain does not match email domain"
-msgstr ""
+msgstr "Hyväksytty käyttöalue ei vastaa sähköpostidomainia"
 
 #. js-lingui-id: BKvuAq
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approved access domain has already been validated"
-msgstr ""
+msgstr "Hyväksytty pääsytunnus on jo vahvistettu"
 
 #. js-lingui-id: 3EiOLz
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -409,18 +409,18 @@ msgstr "{label}-kohteeseen liitetyt liitteet"
 #. js-lingui-id: ilRCh1
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #~ msgid "Audit Log"
-#~ msgstr "Tarkastusloki"
+#~ msgstr "Audit Log"
 
 #. js-lingui-id: EPEFrH
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #~ msgid "Audit Logs"
-#~ msgstr "Tarkastuslokit"
+#~ msgstr "Audit Logs"
 
 #. js-lingui-id: RqCC/0
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #~ msgid "Audit Logs linked to the workspace member"
-#~ msgstr "Työtilan jäsenen tarkastuslokit"
+#~ msgstr "Audit Logs linked to the workspace member"
 
 #. js-lingui-id: cNBqH+
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -431,7 +431,7 @@ msgstr "Authentikointi epäonnistui kello"
 #. js-lingui-id: LB4qX/
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
-msgstr ""
+msgstr "Tunnistautuminen ei ole käytössä tällä palveluntarjoajalla."
 
 #. js-lingui-id: VbeIOx
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -446,12 +446,12 @@ msgstr "Tekijän luomat liitteet"
 #. js-lingui-id: cvSznK
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "Automated Trigger Type"
-msgstr ""
+msgstr "Automaattisen laukaisimen tyyppi"
 
 #. js-lingui-id: 2mtBXs
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Automated Triggers"
-msgstr ""
+msgstr "Automaattiset laukaisimet"
 
 #. js-lingui-id: RpExX0
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -476,12 +476,12 @@ msgstr "Hahmon URL-osoite"
 #. js-lingui-id: 20B9kW
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #~ msgid "Behavioral Event"
-#~ msgstr "Käyttäytymistapahtuma"
+#~ msgstr "Behavioral Event"
 
 #. js-lingui-id: Jeh/Q/
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #~ msgid "Behavioral Events"
-#~ msgstr "Käyttäytymistapahtumat"
+#~ msgstr "Behavioral Events"
 
 #. js-lingui-id: K1172m
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -510,7 +510,7 @@ msgstr "Sisältö"
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #~ msgid "Body (deprecated)"
-#~ msgstr "Ruumis (vanhentunut)"
+#~ msgstr "Body (deprecated)"
 
 #. js-lingui-id: 8mVqF7
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -578,37 +578,37 @@ msgstr "Kalenteritapahtumat"
 #. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Cannot activate non-draft or non-last-published version"
-msgstr ""
+msgstr "Ei voi aktivoida ei-luonnos- tai ei-viimeksi julkaistua versiota"
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
-msgstr ""
+msgstr "Ei voi luoda useita luonnosversioita samaan työnkulkuun"
 
 #. js-lingui-id: RggZr4
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
-msgstr ""
+msgstr "Ei voi luoda työnkulkuversiota muulla tilalla kuin luonnos"
 
 #. js-lingui-id: AQyr9X
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Cannot delete, please update the label identifier field first"
-msgstr ""
+msgstr "Ei voi poistaa, päivitä ensin tunnistekentän arvo"
 
 #. js-lingui-id: FrNWt0
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot disable non-active workflow version"
-msgstr ""
+msgstr "Ei voi poistaa käytöstä ei-aktiivista työnkulkuversiota"
 
 #. js-lingui-id: IDMgr/
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
-msgstr ""
+msgstr "Ei voi olla enempää kuin yksi aktiivinen työnkulkuversio"
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "Cannot update workflow version status manually"
-msgstr ""
+msgstr "Ei voi päivittää työnkulkuversion tilaa manuaalisesti"
 
 #. js-lingui-id: 4IVK41
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -672,7 +672,7 @@ msgstr "Videoneuvotteluratkaisu"
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
-msgstr ""
+msgstr "Yhteyden muodostaminen ei ole sallittua kohteelle {connectFieldName} kohteeseen {objectMetadataNameSingular}."
 
 #. js-lingui-id: PQ1Dw2
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -754,7 +754,7 @@ msgstr "Kontaktin X/Twitter-tili"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #~ msgid "Context"
-#~ msgstr "Konteksti"
+#~ msgstr "Context"
 
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -784,12 +784,12 @@ msgstr "Luontihetken aika"
 #. js-lingui-id: umhXiy
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Cron pattern '{pattern}' is invalid"
-msgstr ""
+msgstr "Cron-kaava \"{pattern}\" on virheellinen"
 
 #. js-lingui-id: Mikszu
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Custom Connection Parameters"
-msgstr ""
+msgstr "Mukautetut yhteyden määritysparametrit"
 
 #. js-lingui-id: Lhd0oQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -855,24 +855,24 @@ msgstr "Eräpäivä"
 #. js-lingui-id: BBXuRb
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Email already verified."
-msgstr ""
+msgstr "Sähköposti on jo vahvistettu."
 
 #. js-lingui-id: xw6iqb
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Email is not verified."
-msgstr ""
+msgstr "Sähköpostia ei ole vahvistettu."
 
 #. js-lingui-id: ZsZeV2
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Email is required"
-msgstr ""
+msgstr "Sähköposti vaaditaan"
 
 #. js-lingui-id: y8LSMh
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Email verification not required."
-msgstr ""
+msgstr "Sähköpostivahvistus ei vaadita."
 
 #. js-lingui-id: BXEcos
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -899,7 +899,7 @@ msgstr "Tapahtuman yritys"
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #~ msgid "Event context"
-#~ msgstr "Tapahtuman yhteys"
+#~ msgstr "Event context"
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -923,7 +923,7 @@ msgstr "Tapahtuman ID"
 #. js-lingui-id: 81maJp
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #~ msgid "Event Listeners"
-#~ msgstr "Tapahtumakuuntelijat"
+#~ msgstr "Event Listeners"
 
 #. js-lingui-id: PYs3rP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -935,7 +935,7 @@ msgstr "Tapahtuman nimi"
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #~ msgid "Event name/type"
-#~ msgstr "Tapahtuman nimi\\/tyyppi"
+#~ msgstr "Event name/type"
 
 #. js-lingui-id: vv99Wu
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1019,7 +1019,7 @@ msgstr "Suorittanut"
 #. js-lingui-id: AiFXmG
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
-msgstr ""
+msgstr "Odotettiin, että samoja rajoitekenttiä käytetään johdonmukaisesti kaikissa toiminnoissa kohteelle {connectFieldName}."
 
 #. js-lingui-id: sZg7s1
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
@@ -1206,12 +1206,12 @@ msgstr "Kentän Arvo"
 #. js-lingui-id: 3oQ73E
 #: src/modules/workflow/workflow-executor/workflow-actions/filter/utils/get-previous-step-output.util.ts
 #~ msgid "Filter action must have a previous step"
-#~ msgstr ""
+#~ msgstr "Filter action must have a previous step"
 
 #. js-lingui-id: Zllikb
 #: src/modules/workflow/workflow-executor/workflow-actions/filter/utils/get-previous-step-output.util.ts
 #~ msgid "Filter action must have only one previous step"
-#~ msgstr ""
+#~ msgstr "Filter action must have only one previous step"
 
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1226,17 +1226,17 @@ msgstr "Kansion nimi"
 #. js-lingui-id: kuN9I4
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
 msgid "Form action fields must have a defined label and type"
-msgstr ""
+msgstr "Lomakkeen toimintokentillä on oltava määritelty tunniste ja tyyppi"
 
 #. js-lingui-id: QK3OvQ
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
 msgid "Form action fields must have unique names"
-msgstr ""
+msgstr "Lomakkeen toimintokentillä on oltava ainutlaatuiset nimet"
 
 #. js-lingui-id: KYP1t5
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
 msgid "Form action must have at least one field"
-msgstr ""
+msgstr "Lomakkeen toiminnolla on oltava vähintään yksi kenttä"
 
 #. js-lingui-id: oQA+cA
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -1308,75 +1308,75 @@ msgstr "Ideaalinen asiakasprofiili: Osoittaa, onko yritys sinulle sopivin ja arv
 #. js-lingui-id: NrA0WZ
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #~ msgid "If the event is related to a particular object"
-#~ msgstr "Jos tapahtuma liittyy tiettyyn objektiin"
+#~ msgstr "If the event is related to a particular object"
 
 #. js-lingui-id: 71VJzG
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
 msgid "Input is too short: \"{name}\""
-msgstr ""
+msgstr "Syöte on liian lyhyt: \"{name}\""
 
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid calling code {callingCode}"
-msgstr ""
+msgstr "Virheellinen suuntanumero {callingCode}"
 
 #. js-lingui-id: tG/2Q/
 #: src/engine/core-modules/captcha/captcha.guard.ts
 msgid "Invalid Captcha, please try another device"
-msgstr ""
+msgstr "Virheellinen Captcha, yritä toista laitetta"
 
 #. js-lingui-id: 1PtrY0
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid country code {countryCode}"
-msgstr ""
+msgstr "Virheellinen maatunnus {countryCode}"
 
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid day value. Should be integer greater than 1"
-msgstr ""
+msgstr "Virheellinen päiväys arvo. Sen pitäisi olla suurempi kuin 1"
 
 #. js-lingui-id: MBpeQ6
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid hour value. Should be integer between 0 and 23"
-msgstr ""
+msgstr "Virheellinen tuntiarvo. Sen pitäisi olla kokonaisluku välillä 0 ja 23"
 
 #. js-lingui-id: 9xsjn9
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid hour value. Should be integer greater than 1"
-msgstr ""
+msgstr "Virheellinen tuntiarvo. Sen pitäisi olla suurempi kuin 1"
 
 #. js-lingui-id: FSunWx
 #: src/engine/metadata-modules/utils/compute-metadata-name-from-label.util.ts
 msgid "Invalid label: \"{label}\""
-msgstr ""
+msgstr "Virheellinen tunniste: \"{label}\""
 
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid minute value. Should be integer between 0 and 59"
-msgstr ""
+msgstr "Virheellinen minuuttiarvo. Sen pitäisi olla kokonaisluku välillä 0 ja 59"
 
 #. js-lingui-id: hYcFSd
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid minute value. Should be integer greater than 1"
-msgstr ""
+msgstr "Virheellinen minuuttiarvo. Sen pitäisi olla suurempi kuin 1"
 
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid setting type provided in cron trigger"
-msgstr ""
+msgstr "Virheellinen asetus tyyppi annettu cron laukaisimessa"
 
 #. js-lingui-id: sHcAMD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid trigger type for enabling workflow trigger"
-msgstr ""
+msgstr "Virheellinen laukaisutyyppi työnkulun laukaisimen käyttöön"
 
 #. js-lingui-id: VEKoJx
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
 msgid "Invalid verification code. Please try again."
-msgstr ""
+msgstr "Virheellinen vahvistuskoodi. Yritä uudelleen."
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1425,18 +1425,18 @@ msgstr "Liity tiimiisi Twentyssä"
 #. js-lingui-id: WNfJ8M
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "JSON object containing custom connection parameters"
-msgstr ""
+msgstr "JSON-objekti, joka sisältää mukautetut yhteyden määritysparametrit"
 
 #. js-lingui-id: shbh25
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #~ msgid "Json object to provide context (user, device, workspace, etc.)"
-#~ msgstr "Json-objekti tarjoamaan kontekstin (käyttäjä, laite, työtila jne.)"
+#~ msgstr "Json object to provide context (user, device, workspace, etc.)"
 
 #. js-lingui-id: HgJ9jQ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #~ msgid "Json object to provide output of the workflow run"
-#~ msgstr "Json-objekti tarjoamaan työprosessin suorituksen tuloksen"
+#~ msgstr "Json object to provide output of the workflow run"
 
 #. js-lingui-id: AQuLwi
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -1466,17 +1466,17 @@ msgstr "Avain"
 #. js-lingui-id: w8Rv8T
 #: src/engine/metadata-modules/utils/compute-metadata-name-from-label.util.ts
 msgid "Label is required"
-msgstr ""
+msgstr "Tunniste vaaditaan"
 
 #. js-lingui-id: 4EGmy6
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Label must not be empty"
-msgstr ""
+msgstr "Tunniste ei saa olla tyhjä"
 
 #. js-lingui-id: k731jp
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Label must not contain a comma"
-msgstr ""
+msgstr "Tunniste ei saa sisältää pilkkua"
 
 #. js-lingui-id: vXIe7J
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -1527,7 +1527,7 @@ msgstr "Linkitetyn objektin metadata Id"
 #. js-lingui-id: PV1Nm7
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #~ msgid "Linked Opportunities"
-#~ msgstr "Linkitetyt mahdollisuudet"
+#~ msgstr "Linked Opportunities"
 
 #. js-lingui-id: 6YiMr4
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1723,7 +1723,7 @@ msgstr "Viestipalvelun tarjoajan uudistustoken"
 #. js-lingui-id: SzCMUQ
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
-msgstr ""
+msgstr "Pakolliset kentät puuttuvat: vähintään yksi ainutlaatuinen rajoite täytyy olla täysin täytetty kohteelle \\'{connectFieldName}\\'."
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -1746,17 +1746,17 @@ msgstr "Nimi"
 #. js-lingui-id: aD053i
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service.ts
 msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
-msgstr ""
+msgstr "Nimi \"{computedMetadataNameFromLabel}\" ei voi olla sama molemmilla puolella relaatiota"
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
 msgid "Name is not available, it may be duplicating another field's name."
-msgstr ""
+msgstr "Nimi ei ole saatavilla, se saattaa olla toisen kentän nimen kopio."
 
 #. js-lingui-id: 0MobB1
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils.ts
 msgid "Name is too long: it exceeds the 63 characters limit."
-msgstr ""
+msgstr "Nimi on liian pitkä: se ylittää 63 merkkipituuden."
 
 #. js-lingui-id: EEVPOx
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -1771,37 +1771,37 @@ msgstr "Työnkulun suorituksen nimi"
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No event name provided in database event trigger"
-msgstr ""
+msgstr "Tietokanta tapahtumassa ei annettu tapahtuman nimeä"
 
 #. js-lingui-id: 9bu19u
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
 msgid "No input provided in form step"
-msgstr ""
+msgstr "Lomake vaiheessa ei annettu syötettä"
 
 #. js-lingui-id: MWAUHo
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No pattern provided in CUSTOM cron trigger"
-msgstr ""
+msgstr "Ei annettu mallia MUKAUTETULLE cron laukaisimelle"
 
 #. js-lingui-id: pOu4u/
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No schedule provided in cron trigger"
-msgstr ""
+msgstr "Ei ajankulkua annettu cron laukaisimelle"
 
 #. js-lingui-id: cLUBlS
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No setting type provided in cron trigger"
-msgstr ""
+msgstr "Ei asetustyyppiä annettu cron laukaisimelle"
 
 #. js-lingui-id: QwbSxD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No steps provided in workflow version"
-msgstr ""
+msgstr "Ei vaiheita annettu työnkulkuversiossa"
 
 #. js-lingui-id: 6dP8sB
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No trigger type provided"
-msgstr ""
+msgstr "Ei laukaisutyyppiä annettu"
 
 #. js-lingui-id: KiJn9B
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1904,18 +1904,18 @@ msgstr "Yrityksen työntekijöiden lukumäärä"
 #. js-lingui-id: ECRKYR
 #: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
 msgid "Object already exists"
-msgstr ""
+msgstr "Objekti on jo olemassa"
 
 #. js-lingui-id: hhe7Ce
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #~ msgid "Object id"
-#~ msgstr "Kohde-id"
+#~ msgstr "Object id"
 
 #. js-lingui-id: dnPgTI
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #~ msgid "Object metadata id"
-#~ msgstr "Kohdemetadatatunniste"
+#~ msgstr "Object metadata id"
 
 #. js-lingui-id: T/nPf5
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1927,7 +1927,7 @@ msgstr "Kohdemetadatatunniste"
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #~ msgid "Object name"
-#~ msgstr "Kohteen nimi"
+#~ msgstr "Object name"
 
 #. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2009,32 +2009,32 @@ msgstr "Mahdollisuuden vaihe"
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label \"{sanitizedLabel}\" is beneath 1 character"
-msgstr ""
+msgstr "Vaihtoehtoinen tunniste \"{sanitizedLabel}\" on alle 1 merkin"
 
 #. js-lingui-id: mTFS0z
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label exceeds 63 characters"
-msgstr ""
+msgstr "Vaihtoehtoinen tunniste ylittää 63 merkkiä"
 
 #. js-lingui-id: +E9N4m
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label is required"
-msgstr ""
+msgstr "Vaihtoehtoinen tunniste vaaditaan"
 
 #. js-lingui-id: nQqNzE
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
-msgstr ""
+msgstr "Vaihtoehtoarvo \"{sanitizedValue}\" on alle 1 merkin"
 
 #. js-lingui-id: 5m/1Hh
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value exceeds 63 characters"
-msgstr ""
+msgstr "Vaihtoehtoarvo ylittää 63 merkkiä"
 
 #. js-lingui-id: /wsRPd
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value is required"
-msgstr ""
+msgstr "Vaihtoehtoarvo vaaditaan"
 
 #. js-lingui-id: eLggyd
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2050,7 +2050,7 @@ msgstr "Vaihtoehtoinen salaisuus, jota käytetään HMAC-allekirjoituksen laskem
 #. js-lingui-id: gh06VD
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #~ msgid "Output"
-#~ msgstr "Tulos"
+#~ msgstr "Output"
 
 #. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
@@ -2065,7 +2065,7 @@ msgstr "Yläsuodattimien ryhmän tunniste"
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Password too weak"
-msgstr ""
+msgstr "Salasana on liian heikko"
 
 #. js-lingui-id: 1wdjme
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -2166,22 +2166,22 @@ msgstr "Todennäköisyys"
 #. js-lingui-id: dtGxRz
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Provided and inferred calling code are conflicting"
-msgstr ""
+msgstr "Annettu ja päätelty suuntanumero ovat ristiriitaisia"
 
 #. js-lingui-id: Vq/afT
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Provided and inferred country code are conflicting"
-msgstr ""
+msgstr "Annettu ja päätelty maatunnus ovat ristiriitaisia"
 
 #. js-lingui-id: HZ45ox
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Provided country code and calling code are conflicting"
-msgstr ""
+msgstr "Annettu maatunnus ja suuntanumero ovat ristiriitaisia"
 
 #. js-lingui-id: A4Ohxb
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Provided phone number is invalid {number}"
-msgstr ""
+msgstr "Annettu puhelinnumero on virheellinen {number}"
 
 #. js-lingui-id: CrfRPa
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -2197,7 +2197,7 @@ msgstr "Vastaanotettu"
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #~ msgid "Record id"
-#~ msgstr "Tietueen id"
+#~ msgstr "Record id"
 
 #. js-lingui-id: 9gXJw8
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -2224,7 +2224,7 @@ msgstr "Suhteet"
 #. js-lingui-id: pCsIQQ
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Request has expired, please try again."
-msgstr ""
+msgstr "Pyyntö on vanhentunut, yritä uudelleen."
 
 #. js-lingui-id: rnCndp
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
@@ -2268,7 +2268,7 @@ msgstr "Salaisuus"
 #. js-lingui-id: Tz0i8g
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "Settings"
-msgstr ""
+msgstr "Asetukset"
 
 #. js-lingui-id: Cj2Gtd
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
@@ -2289,12 +2289,12 @@ msgstr "Aloituspäivä"
 #. js-lingui-id: RS0o7b
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "State"
-msgstr ""
+msgstr "Tila"
 
 #. js-lingui-id: nY8GL/
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "State of the workflow run"
-msgstr ""
+msgstr "Työnkulun suorituksen tila"
 
 #. js-lingui-id: uAQUqI
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -2309,23 +2309,23 @@ msgstr "Tilat"
 #. js-lingui-id: S7DRR+
 #: src/modules/workflow/common/utils/assert-workflow-statuses-not-set.ts
 msgid "Statuses cannot be set manually."
-msgstr ""
+msgstr "Tiloja ei voi asettaa manuaalisesti."
 
 #. js-lingui-id: u+rv4L
 #: src/modules/workflow/workflow-builder/workflow-step/workflow-version-step.workspace-service.ts
 msgid "Step is not a form"
-msgstr ""
+msgstr "Vaihe ei ole lomake"
 
 #. js-lingui-id: YFMPch
 #: src/engine/metadata-modules/utils/validate-metadata-name-start-with-lowercase-letter-and-contain-digits-nor-letters.utils.ts
 msgid "String \"{name}\" is not valid: must start with lowercase letter and contain only alphanumeric letters"
-msgstr ""
+msgstr "Merkkijono \"{name}\" ei ole kelvollinen: sen on alettava pienellä kirjaimella ja sisällettävä vain alfanumeerisia kirjaimia"
 
 #. js-lingui-id: g4jxXh
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Sub field name"
-msgstr ""
+msgstr "Alikentän nimi"
 
 #. js-lingui-id: UJmAAK
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -2372,7 +2372,7 @@ msgstr "Synkronoinnin tila"
 #. js-lingui-id: 5y3Wbw
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Target object metadata not found for {connectFieldName}"
-msgstr ""
+msgstr "Kohdeobjektin metatietoja ei löydy nimelle {connectFieldName}"
 
 #. js-lingui-id: 4SHJe4
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
@@ -2562,7 +2562,7 @@ msgstr "Kansio, johon tämä suosikki kuuluu"
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
-msgstr ""
+msgstr "Työnkulun alkuperäistä versiota ei voi poistaa"
 
 #. js-lingui-id: DbWmKZ
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -2572,17 +2572,17 @@ msgstr "Mahdollisuuden nimi"
 #. js-lingui-id: 5N6QtE
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "The workflow automated trigger settings"
-msgstr ""
+msgstr "Työnkulun automatisoidun laukaisimen asetukset"
 
 #. js-lingui-id: SpKbfT
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "The workflow automated trigger type"
-msgstr ""
+msgstr "Työnkulun automatisoitu laukaisimen tyyppi"
 
 #. js-lingui-id: 7mPrpl
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 #~ msgid "The workflow event listener name"
-#~ msgstr "Työnkulun tapahtumakuuntelijan nimi"
+#~ msgstr "The workflow event listener name"
 
 #. js-lingui-id: od0omS
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -2607,13 +2607,13 @@ msgstr "Työnkulun version tila"
 #. js-lingui-id: NbABJb
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
 msgid "This name is not available as it is already used by another field"
-msgstr ""
+msgstr "Tämä nimi ei ole käytettävissä, koska sitä käyttää jo toinen kenttä"
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
 msgid "This name is not available."
-msgstr ""
+msgstr "Tämä nimi ei ole saatavilla."
 
 #. js-lingui-id: Zl0BJl
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
@@ -2719,7 +2719,7 @@ msgstr "Tyyppi"
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"
-msgstr ""
+msgstr "Cron aikataulu tyyppiä ei tueta"
 
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -2730,7 +2730,7 @@ msgstr "Päivityksen päivämäärä ja aika"
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
 msgid "User does not have access to this workspace"
-msgstr ""
+msgstr "Käyttäjällä ei ole pääsyä tähän työtilaan"
 
 #. js-lingui-id: YFciqL
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -2745,7 +2745,7 @@ msgstr "Käyttäjän tunnus"
 #. js-lingui-id: B43Kks
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "User is not part of the workspace"
-msgstr ""
+msgstr "Käyttäjä ei ole osa työtilaa"
 
 #. js-lingui-id: 4juE7s
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -3045,12 +3045,12 @@ msgstr "Työnkulku"
 #. js-lingui-id: hdtWQn
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow automated triggers linked to the workflow."
-msgstr ""
+msgstr "Työnkulun automatisoidut laukaisimet liitetty työnkulkuun."
 
 #. js-lingui-id: E03XpH
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #~ msgid "Workflow event listeners linked to the workflow."
-#~ msgstr "Työnkulun tapahtumakuuntelijat liitetty työnkulkuun."
+#~ msgstr "Workflow event listeners linked to the workflow."
 
 #. js-lingui-id: vwSkSW
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -3119,18 +3119,18 @@ msgstr "Työnkulun versio"
 #. js-lingui-id: n4/IOE
 #: src/modules/workflow/common/utils/assert-workflow-version-has-steps.ts
 msgid "Workflow version does not contain at least one step"
-msgstr ""
+msgstr "Työnkulkuversiossa ei ole vähintään yhtä vaihetta"
 
 #. js-lingui-id: k4DPlQ
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 #: src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util.ts
 msgid "Workflow version does not contain trigger"
-msgstr ""
+msgstr "Työnkulkuversiossa ei ole laukaisinta"
 
 #. js-lingui-id: bqFL4g
 #: src/modules/workflow/common/utils/assert-workflow-version-is-draft.util.ts
 msgid "Workflow version is not in draft status"
-msgstr ""
+msgstr "Työnkulkuversio ei ole luonnostilassa"
 
 #. js-lingui-id: CocTJJ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -3155,32 +3155,32 @@ msgstr "Työnkulkuun liitetyt versiot."
 #. js-lingui-id: s7p+TL
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "WorkflowAutomatedTrigger"
-msgstr ""
+msgstr "TyönkulunAutomatisoituLaukaisin"
 
 #. js-lingui-id: 96bCgZ
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "WorkflowAutomatedTrigger workflow"
-msgstr ""
+msgstr "TyönkulunAutomatisoituLaukaisimen työnkulku"
 
 #. js-lingui-id: 5z92T9
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "WorkflowAutomatedTriggers"
-msgstr ""
+msgstr "TyönkulunAutomatisoidutLaukaukset"
 
 #. js-lingui-id: ENOy6I
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 #~ msgid "WorkflowEventListener"
-#~ msgstr "TyönkulunTapahtumakuuntelija"
+#~ msgstr "WorkflowEventListener"
 
 #. js-lingui-id: HN90FO
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 #~ msgid "WorkflowEventListener workflow"
-#~ msgstr "TyönkulunTapahtumakuuntelijan työnkulku"
+#~ msgstr "WorkflowEventListener workflow"
 
 #. js-lingui-id: 3JA9se
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 #~ msgid "WorkflowEventListeners"
-#~ msgstr "TyönkulunTapahtumakuuntelijat"
+#~ msgstr "WorkflowEventListeners"
 
 #. js-lingui-id: woYYQq
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -3200,7 +3200,7 @@ msgstr "TyönkulunVersion työnkulku"
 #. js-lingui-id: rklt6M
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace is not ready to welcome new members"
-msgstr ""
+msgstr "Työtila ei ole valmis vastaanottamaan uusia jäseniä"
 
 #. js-lingui-id: CbGxon
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
@@ -3247,23 +3247,23 @@ msgstr "TyötilanJäsen"
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Wrong password"
-msgstr ""
+msgstr "Väärä salasana"
 
 #. js-lingui-id: 0gv+T2
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "You must be authenticated to perform this action."
-msgstr ""
+msgstr "Sinun pitää olla tunnistettu suorittaaksesi tämän toiminnon."
 
 #. js-lingui-id: 8pqpv/
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "Your app version is out of date. Please refresh the page to continue."
-msgstr ""
+msgstr "Sovelluksesi versio on vanhentunut. Päivitä sivu jatkaaksesi."
 
 #. js-lingui-id: bTyBrW
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -3278,4 +3278,4 @@ msgstr "Tiimin jäsen vastuussa yritystilin hallinnasta"
 #. js-lingui-id: ej/tZF
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "Your workspace has been updated with a new data model. Please refresh the page."
-msgstr ""
+msgstr "Työtilaasi on päivitetty uudella tietomallilla. Ole hyvä ja päivitä sivu."
