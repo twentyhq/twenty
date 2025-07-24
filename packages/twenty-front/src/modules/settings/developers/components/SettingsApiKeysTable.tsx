@@ -42,7 +42,10 @@ export const SettingsApiKeysTable = () => {
         <TableHeader>
           <Trans>Expiration</Trans>
         </TableHeader>
-        <TableHeader></TableHeader>
+
+        <TableHeader>
+          <Trans>Role</Trans>
+        </TableHeader>
       </StyledTableRow>
       {!!apiKeys?.length && (
         <StyledTableBody>

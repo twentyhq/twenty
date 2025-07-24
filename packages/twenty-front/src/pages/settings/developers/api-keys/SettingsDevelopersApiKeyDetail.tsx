@@ -89,7 +89,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
     },
   });
 
-  const { loading: rolesLoading } = useGetRolesQuery();
+  const { data: rolesData, loading: rolesLoading } = useGetRolesQuery();
+
+  const roles = rolesData?.getRoles ?? [];
 
   const apiKey = apiKeyData?.apiKey;
   const [apiKeyName, setApiKeyName] = useState('');
@@ -278,7 +280,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 value={selectedRoleId}
                 onChange={handleRoleChange}
                 allowEmpty={false}
-                disabled={isLoading}
+                roles={roles}
               />
             </Section>
             <Section>

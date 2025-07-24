@@ -38,7 +38,9 @@ export const SettingsApiKeysFieldItemTableRow = ({
   apiKey,
   to,
 }: {
-  apiKey: Pick<ApiKey, 'id' | 'name' | 'expiresAt' | 'revokedAt'>;
+  apiKey: Pick<ApiKey, 'id' | 'name' | 'expiresAt' | 'revokedAt'> & {
+    role: { id: string; label: string; icon?: string | null };
+  };
   to: string;
 }) => {
   const theme = useTheme();
@@ -59,6 +61,11 @@ export const SettingsApiKeysFieldItemTableRow = ({
       >
         {formattedExpiration}
       </TableCell>
+
+      <TableCell color={theme.font.color.tertiary}>
+        {apiKey.role.label}
+      </TableCell>
+
       <StyledIconTableCell>
         <StyledIconChevronRight
           size={theme.icon.size.md}

@@ -29,7 +29,8 @@ export const SettingsDevelopersApiKeysNew = () => {
   const { t } = useLingui();
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const navigateSettings = useNavigateSettings();
-  const { loading: rolesLoading } = useGetRolesQuery();
+  const { data: rolesData, loading: rolesLoading } = useGetRolesQuery();
+  const roles = rolesData?.getRoles ?? [];
   const [formValues, setFormValues] = useState<{
     name: string;
     expirationDate: number | null;
@@ -153,6 +154,7 @@ export const SettingsDevelopersApiKeysNew = () => {
               }));
             }}
             allowEmpty={false}
+            roles={roles}
           />
         </Section>
         <Section>
