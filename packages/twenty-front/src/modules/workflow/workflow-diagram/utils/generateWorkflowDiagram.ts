@@ -103,7 +103,7 @@ export const generateWorkflowDiagram = ({
           actionType: step.type,
           name: step.name,
         } satisfies WorkflowDiagramStepNodeData,
-        position: {
+        position: step.position ?? {
           x: xPos,
           y: levelYPos,
         },

@@ -64,7 +64,7 @@ export const getWorkflowDiagramTriggerNode = ({
       name: isDefined(trigger.name) ? trigger.name : triggerDefaultLabel,
       icon: triggerIcon,
     } satisfies WorkflowDiagramStepNodeData,
-    position: {
+    position: trigger.position ?? {
       x: 0,
       y: 0,
     },

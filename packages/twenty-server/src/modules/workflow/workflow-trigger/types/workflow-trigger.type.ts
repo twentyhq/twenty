@@ -17,6 +17,10 @@ type BaseTrigger = {
   type: WorkflowTriggerType;
   settings: BaseWorkflowTriggerSettings;
   nextStepIds?: string[];
+  position?: {
+    x: number;
+    y: number;
+  };
 };
 
 export type WorkflowDatabaseEventTrigger = BaseTrigger & {

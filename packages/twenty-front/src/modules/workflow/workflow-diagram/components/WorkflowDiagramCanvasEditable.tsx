@@ -14,6 +14,10 @@ import { useCreateEdge } from '@/workflow/workflow-steps/hooks/useCreateEdge';
 import { isDefined } from 'twenty-shared/utils';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
+import React from 'react';
+import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
+import { WorkflowDiagramNode } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 
 export const WorkflowDiagramCanvasEditable = ({
   workflowWithCurrentVersion,
@@ -32,6 +36,14 @@ export const WorkflowDiagramCanvasEditable = ({
     workflow: workflowWithCurrentVersion,
   });
 
+  const { updateStep } = useUpdateStep({
+    workflow: workflowWithCurrentVersion,
+  });
+
+  const { updateTrigger } = useUpdateWorkflowVersionTrigger({
+    workflow: workflowWithCurrentVersion,
+  });
+
   const onConnect = (edgeConnect: Connection) => {
     setWorkflowDiagram((diagram) => {
       if (isDefined(diagram) === false) {
@@ -46,6 +58,36 @@ export const WorkflowDiagramCanvasEditable = ({
       };
     });
     createEdge?.(edgeConnect);
+  };
+
+  const onNodeDragStop = async (
+    _: React.MouseEvent<Element>,
+    node: WorkflowDiagramNode,
+  ) => {
+    const stepToUpdate =
+      workflowWithCurrentVersion?.currentVersion?.steps?.find(
+        (step) => step.id === node.id,
+      );
+
+    if (isDefined(stepToUpdate)) {
+      updateStep?.({
+        ...stepToUpdate,
+        position: node.position,
+      });
+
+      return;
+    }
+
+    const triggerToUpdate = workflowWithCurrentVersion?.currentVersion?.trigger;
+
+    if (isDefined(triggerToUpdate)) {
+      await updateTrigger({
+        ...triggerToUpdate,
+        position: node.position,
+      });
+
+      return;
+    }
   };
 
   return (
@@ -67,6 +109,8 @@ export const WorkflowDiagramCanvasEditable = ({
         tagColor={tagProps.color}
         tagText={tagProps.text}
         onConnect={onConnect}
+        onNodeDragStop={onNodeDragStop}
+        nodesConnectable={true}
       />
 
       <WorkflowDiagramCanvasEditableEffect />
