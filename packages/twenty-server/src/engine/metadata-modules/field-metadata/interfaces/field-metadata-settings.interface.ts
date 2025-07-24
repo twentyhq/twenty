@@ -60,4 +60,4 @@ export type FieldMetadataSettings<
     ? null | AllFieldMetadataSettings // Could be improved to be | unknown
     : T extends keyof FieldMetadataSettingsMapping
       ? FieldMetadataSettingsMapping[T] | null
-      : never;
+      : never | null;
