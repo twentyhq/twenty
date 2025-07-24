@@ -26,13 +26,14 @@ import { FixSchemaArrayTypeCommand } from 'src/database/commands/upgrade-version
 import { FixUpdateStandardFieldsIsLabelSyncedWithName } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-update-standard-field-is-label-synced-with-name.command';
 import { MigrateApiKeysWebhooksToCoreCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-api-keys-webhooks-to-core.command';
 import { MigrateWorkflowRunStatesCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-workflow-run-state.command';
+import { AddEnqueuedStatusToWorkflowRunV2Command } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-enqueued-status-to-workflow-run-v2.command';
+import { AddNextStepIdsToWorkflowVersionTriggers } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-next-step-ids-to-workflow-version-triggers.command';
+import { RemoveWorkflowRunsWithoutState } from 'src/database/commands/upgrade-version-command/1-2/1-2-remove-workflow-runs-without-state.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-minor-and-major';
-import { RemoveWorkflowRunsWithoutState } from 'src/database/commands/upgrade-version-command/1-2/1-2-remove-workflow-runs-without-state.command';
-import { AddNextStepIdsToWorkflowVersionTriggers } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-next-step-ids-to-workflow-version-triggers.command';
 
 const execPromise = promisify(exec);
 
@@ -153,6 +154,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     // 1.2 Commands
     protected readonly removeWorkflowRunsWithoutState: RemoveWorkflowRunsWithoutState,
     protected readonly addNextStepIdsToWorkflowVersionTriggers: AddNextStepIdsToWorkflowVersionTriggers,
+    protected readonly addEnqueuedStatusToWorkflowRunV2Command: AddEnqueuedStatusToWorkflowRunV2Command,
 
     // 1.3 Commands
   ) {
@@ -209,6 +211,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       beforeSyncMetadata: [
         this.removeWorkflowRunsWithoutState,
         this.addNextStepIdsToWorkflowVersionTriggers,
+        this.addEnqueuedStatusToWorkflowRunV2Command,
       ],
       afterSyncMetadata: [],
     };
