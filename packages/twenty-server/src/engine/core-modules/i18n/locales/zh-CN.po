@@ -258,6 +258,12 @@ msgstr "机会"
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
 msgstr "年度经常性收入：公司的实际或估计年收入"
 
+#. js-lingui-id: 6wr+2Z
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Any field filter value"
+msgstr ""
+
 #. js-lingui-id: yRnk5W
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "API Key"

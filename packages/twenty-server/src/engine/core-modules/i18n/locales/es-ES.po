@@ -258,6 +258,12 @@ msgstr "Una oportunidad"
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
 msgstr "Ingresos recurrentes anuales: los ingresos anuales reales o estimados de la empresa"
 
+#. js-lingui-id: 6wr+2Z
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Any field filter value"
+msgstr ""
+
 #. js-lingui-id: yRnk5W
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "API Key"
