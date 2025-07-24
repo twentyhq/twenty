@@ -12,6 +12,7 @@ import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-qu
 import { CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
@@ -29,12 +30,27 @@ export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolv
 
     const { roleId } = executionArgs;
 
+    const selectedColumns = buildColumnsToReturn({
+      select: executionArgs.graphqlQuerySelectedFieldsResult.select,
+      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+      objectMetadataItemWithFieldMaps,
+    });
+
     const objectRecords: InsertResult = !executionArgs.args.upsert
-      ? await executionArgs.repository.insert(executionArgs.args.data)
-      : await executionArgs.repository.upsert(executionArgs.args.data, {
-          conflictPaths: ['id'],
-          skipUpdateIfNoValuesChanged: true,
-        });
+      ? await executionArgs.repository.insert(
+          executionArgs.args.data,
+          undefined,
+          selectedColumns,
+        )
+      : await executionArgs.repository.upsert(
+          executionArgs.args.data,
+          {
+            conflictPaths: ['id'],
+            skipUpdateIfNoValuesChanged: true,
+          },
+          undefined,
+          selectedColumns,
+        );
 
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,

@@ -28,7 +28,7 @@ import {
   useCreateOneRoleMutation,
   useUpdateOneRoleMutation,
   useUpsertObjectPermissionsMutation,
-  useUpsertSettingPermissionsMutation,
+  useUpsertPermissionFlagsMutation,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getDirtyFields } from '~/utils/getDirtyFields';
@@ -45,6 +45,7 @@ const ROLE_BASIC_KEYS: Array<keyof Role> = [
   'description',
   'icon',
   'canUpdateAllSettings',
+  'canAccessAllTools',
   'canReadAllObjectRecords',
   'canUpdateAllObjectRecords',
   'canSoftDeleteAllObjectRecords',
@@ -61,7 +62,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   const [createRole] = useCreateOneRoleMutation();
   const [updateRole] = useUpdateOneRoleMutation();
-  const [upsertSettingPermissions] = useUpsertSettingPermissionsMutation();
+  const [upsertPermissionFlags] = useUpsertPermissionFlagsMutation();
   const [upsertObjectPermissions] = useUpsertObjectPermissionsMutation();
 
   const [isSaving, setIsSaving] = useState(false);
@@ -144,6 +145,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
               description: settingsDraftRole.description,
               icon: settingsDraftRole.icon,
               canUpdateAllSettings: settingsDraftRole.canUpdateAllSettings,
+              canAccessAllTools: settingsDraftRole.canAccessAllTools,
               canReadAllObjectRecords:
                 settingsDraftRole.canReadAllObjectRecords,
               canUpdateAllObjectRecords:
@@ -161,14 +163,14 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
           return;
         }
 
-        if (isDefined(dirtyFields.settingPermissions)) {
-          await upsertSettingPermissions({
+        if (isDefined(dirtyFields.permissionFlags)) {
+          await upsertPermissionFlags({
             variables: {
-              upsertSettingPermissionsInput: {
+              upsertPermissionFlagsInput: {
                 roleId: data.createOneRole.id,
-                settingPermissionKeys:
-                  settingsDraftRole.settingPermissions?.map(
-                    (settingPermission) => settingPermission.setting,
+                permissionFlagKeys:
+                  settingsDraftRole.permissionFlags?.map(
+                    (permissionFlag) => permissionFlag.flag,
                   ) ?? [],
               },
             },
@@ -214,14 +216,14 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
           roleId: data.createOneRole.id,
         });
       } else {
-        if (isDefined(dirtyFields.settingPermissions)) {
-          await upsertSettingPermissions({
+        if (isDefined(dirtyFields.permissionFlags)) {
+          await upsertPermissionFlags({
             variables: {
-              upsertSettingPermissionsInput: {
+              upsertPermissionFlagsInput: {
                 roleId: roleId,
-                settingPermissionKeys:
-                  settingsDraftRole.settingPermissions?.map(
-                    (settingPermission) => settingPermission.setting,
+                permissionFlagKeys:
+                  settingsDraftRole.permissionFlags?.map(
+                    (permissionFlag) => permissionFlag.flag,
                   ) ?? [],
               },
             },
@@ -239,6 +241,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
                   description: settingsDraftRole.description,
                   icon: settingsDraftRole.icon,
                   canUpdateAllSettings: settingsDraftRole.canUpdateAllSettings,
+                  canAccessAllTools: settingsDraftRole.canAccessAllTools,
                   canReadAllObjectRecords:
                     settingsDraftRole.canReadAllObjectRecords,
                   canUpdateAllObjectRecords:

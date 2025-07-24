@@ -27,8 +27,10 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { AnyFieldSearchDropdownButton } from '@/views/components/AnyFieldSearchDropdownButton';
 import { ANY_FIELD_SEARCH_DROPDOWN_ID } from '@/views/constants/AnyFieldSearchDropdownId';
+import { useApplyCurrentViewAnyFieldFilterToAnyFieldFilter } from '@/views/hooks/useApplyCurrentViewAnyFieldFilterToAnyFieldFilter';
 import { useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups } from '@/views/hooks/useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups';
 import { useAreViewFilterGroupsDifferentFromRecordFilterGroups } from '@/views/hooks/useAreViewFilterGroupsDifferentFromRecordFilterGroups';
+import { useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter } from '@/views/hooks/useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter';
 import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpandedComponentState';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
@@ -144,11 +146,8 @@ export const ViewBarDetails = ({
   const { viewSortsAreDifferentFromRecordSorts } =
     useAreViewSortsDifferentFromRecordSorts();
 
-  const canResetView =
-    (viewFiltersAreDifferentFromRecordFilters ||
-      viewSortsAreDifferentFromRecordSorts ||
-      viewFilterGroupsAreDifferentFromRecordFilterGroups) &&
-    !hasFiltersQueryParams;
+  const { viewAnyFieldFilterDifferentFromCurrentAnyFieldFilter } =
+    useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter();
 
   const { checkIsSoftDeleteFilter } = useCheckIsSoftDeleteFilter();
 
@@ -170,6 +169,9 @@ export const ViewBarDetails = ({
   const { applyCurrentViewFiltersToCurrentRecordFilters } =
     useApplyCurrentViewFiltersToCurrentRecordFilters();
 
+  const { applyCurrentViewAnyFieldFilterToAnyFieldFilter } =
+    useApplyCurrentViewAnyFieldFilterToAnyFieldFilter();
+
   const { applyCurrentViewSortsToCurrentRecordSorts } =
     useApplyCurrentViewSortsToCurrentRecordSorts();
 
@@ -177,6 +179,7 @@ export const ViewBarDetails = ({
     applyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
     applyCurrentViewFiltersToCurrentRecordFilters();
     applyCurrentViewSortsToCurrentRecordSorts();
+    applyCurrentViewAnyFieldFilterToAnyFieldFilter();
     toggleSoftDeleteFilterState(false);
   };
 
@@ -187,6 +190,13 @@ export const ViewBarDetails = ({
     isDropdownOpenComponentState,
     ANY_FIELD_SEARCH_DROPDOWN_ID,
   );
+
+  const canResetView =
+    (viewFiltersAreDifferentFromRecordFilters ||
+      viewSortsAreDifferentFromRecordSorts ||
+      viewFilterGroupsAreDifferentFromRecordFilterGroups ||
+      viewAnyFieldFilterDifferentFromCurrentAnyFieldFilter) &&
+    !hasFiltersQueryParams;
 
   const shouldShowAnyFieldSearchChip =
     isNonEmptyString(anyFieldFilterValue) || isAnyFieldSearchDropdownOpen;
