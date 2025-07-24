@@ -51,7 +51,13 @@ import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sy
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
-import { CreateObjectInput } from './dtos/create-object.input';
+import { FlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
+import { mergeTwoFlatFieldObjectMetadatas } from 'src/engine/workspace-manager/workspace-migration-v2/utils/merge-two-flat-object-metadatas.util';
+import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
+import {
+  CreateObjectInput,
+  fromCreateObjectInputToFlatObjectMetadata,
+} from './dtos/create-object.input';
 
 @Injectable()
 export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEntity> {
@@ -70,6 +76,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly indexMetadataService: IndexMetadataService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly workspaceMigrationBuilderV2: WorkspaceMigrationBuilderV2Service,
   ) {
     super(objectMetadataRepository);
   }
@@ -174,6 +181,31 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           ObjectMetadataExceptionCode.MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD,
         );
       }
+
+      const createdRawFlatObjectMetadata =
+        fromCreateObjectInputToFlatObjectMetadata(objectMetadataInput);
+
+      // Validate flatObjectMetadatas
+      const createdFlatObjectMetadata = validateFlatObjectMetadataData({
+        existing: flatObjectMetadatas,
+        toValidate: FlatObjectMetadata,
+      });
+
+      // Everything validated from here
+      // We should get cache
+      const existingFlatObjectMetadatas: FlatObjectMetadata[] = [];
+      this.workspaceMigrationBuilderV2.build({
+        objectMetadataFromToInputs: {
+          from: existingFlatObjectMetadatas,
+          to: mergeTwoFlatFieldObjectMetadatas({
+            destFlatObjectMetadatas: existingFlatObjectMetadatas,
+            toMergeFlatObjectMetadatas: [createdFlatObjectMetadata],
+          }),
+        },
+        workspaceId: objectMetadataInput.workspaceId, // Where does this comes from ?
+      });
+
+      // call workspace migration runner
 
       const createdObjectMetadata = await objectMetadataRepository.save({
         ...objectMetadataInput,
