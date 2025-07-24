@@ -52,16 +52,12 @@ export const SettingsObjectMetadataItemTableRow = ({
   const Icon = getIcon(objectMetadataItem.icon);
   const objectTypeLabel = getObjectTypeLabel(objectMetadataItem);
 
-  const handleRowClick = () => {
-    setLastVisitedObject(objectMetadataItem.namePlural);
-  };
-
   return (
     <div id={`${DATA_MODEL_OBJECT_ROW_ID_PREFIX}-${objectMetadataItem.namePlural}`}>
       <StyledObjectTableRow 
         key={objectMetadataItem.namePlural} 
         to={link}
-        onClick={handleRowClick}
+        onClick={() => setLastVisitedObject(objectMetadataItem.namePlural)}
       >
         <StyledNameTableCell>
           {!!Icon && (

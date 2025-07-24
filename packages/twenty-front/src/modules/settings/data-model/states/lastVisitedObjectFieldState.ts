@@ -1,6 +1,3 @@
-import { createState } from 'twenty-ui/utilities';
+import { createLastVisitedItemState } from '@/ui/utilities/scroll/utils/createLastVisitedItemState';
 
-export const lastVisitedObjectFieldState = createState<string | null>({
-  key: 'lastVisitedObjectFieldState',
-  defaultValue: null,
-}); 
+export const lastVisitedObjectFieldState = createLastVisitedItemState('ObjectField'); 

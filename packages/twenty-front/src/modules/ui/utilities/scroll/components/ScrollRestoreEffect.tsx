@@ -12,19 +12,20 @@ export const ScrollRestoreEffect = ({
   lastVisitedItemState,
   idPrefix,
 }: ScrollRestoreEffectProps) => {
-    const [lastVisitedItem, setLastVisitedItem] = useRecoilState(lastVisitedItemState);
-    const { scrollToElement } = useScrollToElement();
-  
-    useEffect(() => {
-      if (!isNonEmptyString(lastVisitedItem)) {
-        return;
-      }
-  
-      const elementId = `${idPrefix}-${lastVisitedItem}`;
-      
-      if (scrollToElement(elementId)) {
-        setLastVisitedItem(null);
-      }
-    }, [lastVisitedItem, setLastVisitedItem, scrollToElement, idPrefix]);
+  const [lastVisitedItem, setLastVisitedItem] = useRecoilState(lastVisitedItemState);
+  const { scrollToElement } = useScrollToElement();
+
+  useEffect(() => {
+    if (!isNonEmptyString(lastVisitedItem)) {
+      return;
+    }
+
+    const elementId = `${idPrefix}-${lastVisitedItem}`;
+    
+    if (scrollToElement(elementId)) {
+      setLastVisitedItem(null);
+    }
+  }, [lastVisitedItem, setLastVisitedItem, scrollToElement, idPrefix]);
+
   return <></>;
 }; 

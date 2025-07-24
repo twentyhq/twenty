@@ -209,18 +209,6 @@ export const SettingsObjectFieldItemTableRow = ({
           : ''
         : '';
 
-  const handleRowClick = () => {
-    setLastVisitedField(fieldMetadataItem.name);
-  };
-
-  const handleNavigate = () => {
-    handleRowClick();
-    navigate(SettingsPath.ObjectFieldEdit, {
-      objectNamePlural: objectMetadataItem.namePlural,
-      fieldName: fieldMetadataItem.name,
-    });
-  };
-
   if (!isFieldTypeSupported) return null;
 
   const isRelatedObjectLinkable =
@@ -232,7 +220,13 @@ export const SettingsObjectFieldItemTableRow = ({
       <StyledObjectFieldTableRow
         onClick={
           mode === 'view'
-            ? handleNavigate
+            ? () => {
+                setLastVisitedField(fieldMetadataItem.name);
+                navigate(SettingsPath.ObjectFieldEdit, {
+                  objectNamePlural: objectMetadataItem.namePlural,
+                  fieldName: fieldMetadataItem.name,
+                });
+              }
             : undefined
         }
       >
@@ -284,9 +278,13 @@ export const SettingsObjectFieldItemTableRow = ({
               <SettingsObjectFieldActiveActionDropdown
                 isCustomField={fieldMetadataItem.isCustom === true}
                 scopeKey={fieldMetadataItem.id}
-                onEdit={() =>
-                  handleNavigate()
-                }
+                onEdit={() => {
+                  setLastVisitedField(fieldMetadataItem.name);
+                  navigate(SettingsPath.ObjectFieldEdit, {
+                    objectNamePlural: objectMetadataItem.namePlural,
+                    fieldName: fieldMetadataItem.name,
+                  });
+                }}
                 onSetAsLabelIdentifier={
                   canBeSetAsLabelIdentifier
                     ? () => handleSetLabelIdentifierField(fieldMetadataItem)
@@ -311,9 +309,13 @@ export const SettingsObjectFieldItemTableRow = ({
             <SettingsObjectFieldInactiveActionDropdown
               isCustomField={fieldMetadataItem.isCustom === true}
               scopeKey={fieldMetadataItem.id}
-              onEdit={() =>
-                handleNavigate()
-              }
+              onEdit={() => {
+                setLastVisitedField(fieldMetadataItem.name);
+                navigate(SettingsPath.ObjectFieldEdit, {
+                  objectNamePlural: objectMetadataItem.namePlural,
+                  fieldName: fieldMetadataItem.name,
+                });
+              }}
               onActivate={() =>
                 activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id)
               }

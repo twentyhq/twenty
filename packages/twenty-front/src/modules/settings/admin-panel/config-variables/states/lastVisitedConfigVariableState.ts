@@ -1,6 +1,3 @@
-import { createState } from 'twenty-ui/utilities';
+import { createLastVisitedItemState } from '@/ui/utilities/scroll/utils/createLastVisitedItemState';
 
-export const lastVisitedConfigVariableState = createState<string | null>({
-  key: 'lastVisitedConfigVariableState',
-  defaultValue: null,
-});
+export const lastVisitedConfigVariableState = createLastVisitedItemState('ConfigVariable');
