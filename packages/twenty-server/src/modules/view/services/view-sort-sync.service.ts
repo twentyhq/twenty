@@ -90,7 +90,7 @@ export class ViewSortSyncService {
 
   public async deleteCoreViewSort(
     workspaceId: string,
-    workspaceViewSort: ViewSortWorkspaceEntity,
+    workspaceViewSort: Pick<ViewSortWorkspaceEntity, 'id'>,
   ): Promise<void> {
     await this.coreViewSortRepository.softDelete({
       id: workspaceViewSort.id,
@@ -100,7 +100,7 @@ export class ViewSortSyncService {
 
   public async destroyCoreViewSort(
     workspaceId: string,
-    workspaceViewSort: ViewSortWorkspaceEntity,
+    workspaceViewSort: Pick<ViewSortWorkspaceEntity, 'id'>,
   ): Promise<void> {
     await this.coreViewSortRepository.delete({
       id: workspaceViewSort.id,
@@ -110,7 +110,7 @@ export class ViewSortSyncService {
 
   public async restoreCoreViewSort(
     workspaceId: string,
-    workspaceViewSort: ViewSortWorkspaceEntity,
+    workspaceViewSort: Pick<ViewSortWorkspaceEntity, 'id'>,
   ): Promise<void> {
     await this.coreViewSortRepository.restore({
       id: workspaceViewSort.id,

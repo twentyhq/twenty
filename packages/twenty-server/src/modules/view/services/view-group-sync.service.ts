@@ -82,7 +82,7 @@ export class ViewGroupSyncService {
 
   public async deleteCoreViewGroup(
     workspaceId: string,
-    workspaceViewGroup: ViewGroupWorkspaceEntity,
+    workspaceViewGroup: Pick<ViewGroupWorkspaceEntity, 'id'>,
   ): Promise<void> {
     await this.coreViewGroupRepository.softDelete({
       id: workspaceViewGroup.id,
@@ -92,7 +92,7 @@ export class ViewGroupSyncService {
 
   public async destroyCoreViewGroup(
     workspaceId: string,
-    workspaceViewGroup: ViewGroupWorkspaceEntity,
+    workspaceViewGroup: Pick<ViewGroupWorkspaceEntity, 'id'>,
   ): Promise<void> {
     await this.coreViewGroupRepository.delete({
       id: workspaceViewGroup.id,
@@ -102,7 +102,7 @@ export class ViewGroupSyncService {
 
   public async restoreCoreViewGroup(
     workspaceId: string,
-    workspaceViewGroup: ViewGroupWorkspaceEntity,
+    workspaceViewGroup: Pick<ViewGroupWorkspaceEntity, 'id'>,
   ): Promise<void> {
     await this.coreViewGroupRepository.restore({
       id: workspaceViewGroup.id,

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -11,11 +11,23 @@ import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/wo
 import { ViewSyncService } from 'src/modules/view/services/view-sync.service';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
-@Injectable()
-export class ViewListener {
-  private readonly logger = new Logger(ViewListener.name);
+import { BaseViewSyncListener } from './base-view-sync.listener';
 
-  constructor(private readonly viewSyncService: ViewSyncService) {}
+@Injectable()
+export class ViewListener extends BaseViewSyncListener<ViewWorkspaceEntity> {
+  constructor(viewSyncService: ViewSyncService) {
+    super(
+      {
+        create: viewSyncService.createCoreView.bind(viewSyncService),
+        update: viewSyncService.updateCoreView.bind(viewSyncService),
+        delete: viewSyncService.deleteCoreView.bind(viewSyncService),
+        destroy: viewSyncService.destroyCoreView.bind(viewSyncService),
+        restore: viewSyncService.restoreCoreView.bind(viewSyncService),
+      },
+      ViewListener.name,
+      'view',
+    );
+  }
 
   @OnDatabaseBatchEvent('view', DatabaseEventAction.CREATED)
   async handleViewCreated(
@@ -23,27 +35,7 @@ export class ViewListener {
       ObjectRecordCreateEvent<ViewWorkspaceEntity>
     >,
   ) {
-    const isEnabled = await this.viewSyncService.isFeatureFlagEnabled(
-      batchEvent.workspaceId,
-    );
-
-    if (!isEnabled) {
-      return;
-    }
-
-    for (const event of batchEvent.events) {
-      try {
-        await this.viewSyncService.createCoreView(
-          batchEvent.workspaceId,
-          event.properties.after,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to sync view ${event.properties.after.id} to core:`,
-          error,
-        );
-      }
-    }
+    return this.handleCreated(batchEvent);
   }
 
   @OnDatabaseBatchEvent('view', DatabaseEventAction.UPDATED)
@@ -52,28 +44,7 @@ export class ViewListener {
       ObjectRecordUpdateEvent<ViewWorkspaceEntity>
     >,
   ) {
-    const isEnabled = await this.viewSyncService.isFeatureFlagEnabled(
-      batchEvent.workspaceId,
-    );
-
-    if (!isEnabled) {
-      return;
-    }
-
-    for (const event of batchEvent.events) {
-      try {
-        await this.viewSyncService.updateCoreView(
-          batchEvent.workspaceId,
-          event.properties.after,
-          event.properties.diff,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to sync view ${event.properties.after.id} to core:`,
-          error,
-        );
-      }
-    }
+    return this.handleUpdated(batchEvent);
   }
 
   @OnDatabaseBatchEvent('view', DatabaseEventAction.DELETED)
@@ -82,27 +53,7 @@ export class ViewListener {
       ObjectRecordDeleteEvent<ViewWorkspaceEntity>
     >,
   ) {
-    const isEnabled = await this.viewSyncService.isFeatureFlagEnabled(
-      batchEvent.workspaceId,
-    );
-
-    if (!isEnabled) {
-      return;
-    }
-
-    for (const event of batchEvent.events) {
-      try {
-        await this.viewSyncService.deleteCoreView(
-          batchEvent.workspaceId,
-          event.properties.before,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to sync view ${event.properties.before.id} to core:`,
-          error,
-        );
-      }
-    }
+    return this.handleDeleted(batchEvent);
   }
 
   @OnDatabaseBatchEvent('view', DatabaseEventAction.DESTROYED)
@@ -111,27 +62,7 @@ export class ViewListener {
       ObjectRecordDestroyEvent<ViewWorkspaceEntity>
     >,
   ) {
-    const isEnabled = await this.viewSyncService.isFeatureFlagEnabled(
-      batchEvent.workspaceId,
-    );
-
-    if (!isEnabled) {
-      return;
-    }
-
-    for (const event of batchEvent.events) {
-      try {
-        await this.viewSyncService.destroyCoreView(
-          batchEvent.workspaceId,
-          event.properties.before,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to sync view ${event.properties.before.id} to core:`,
-          error,
-        );
-      }
-    }
+    return this.handleDestroyed(batchEvent);
   }
 
   @OnDatabaseBatchEvent('view', DatabaseEventAction.RESTORED)
@@ -140,26 +71,6 @@ export class ViewListener {
       ObjectRecordRestoreEvent<ViewWorkspaceEntity>
     >,
   ) {
-    const isEnabled = await this.viewSyncService.isFeatureFlagEnabled(
-      batchEvent.workspaceId,
-    );
-
-    if (!isEnabled) {
-      return;
-    }
-
-    for (const event of batchEvent.events) {
-      try {
-        await this.viewSyncService.restoreCoreView(
-          batchEvent.workspaceId,
-          event.properties.after,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to sync view ${event.properties.after.id} to core:`,
-          error,
-        );
-      }
-    }
+    return this.handleRestored(batchEvent);
   }
 }

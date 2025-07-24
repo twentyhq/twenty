@@ -61,7 +61,7 @@ export class ViewFilterGroupSyncService {
 
   public async updateCoreViewFilterGroup(
     workspaceId: string,
-    workspaceViewFilterGroup: ViewFilterGroupWorkspaceEntity,
+    workspaceViewFilterGroup: Pick<ViewFilterGroupWorkspaceEntity, 'id'>,
     diff?: Partial<ObjectRecordDiff<ViewFilterGroupWorkspaceEntity>>,
   ): Promise<void> {
     if (!diff || Object.keys(diff).length === 0) {
@@ -80,7 +80,7 @@ export class ViewFilterGroupSyncService {
 
   public async deleteCoreViewFilterGroup(
     workspaceId: string,
-    workspaceViewFilterGroup: ViewFilterGroupWorkspaceEntity,
+    workspaceViewFilterGroup: Pick<ViewFilterGroupWorkspaceEntity, 'id'>,
   ): Promise<void> {
     await this.coreViewFilterGroupRepository.softDelete({
       id: workspaceViewFilterGroup.id,
@@ -90,7 +90,7 @@ export class ViewFilterGroupSyncService {
 
   public async destroyCoreViewFilterGroup(
     workspaceId: string,
-    workspaceViewFilterGroup: ViewFilterGroupWorkspaceEntity,
+    workspaceViewFilterGroup: Pick<ViewFilterGroupWorkspaceEntity, 'id'>,
   ): Promise<void> {
     await this.coreViewFilterGroupRepository.delete({
       id: workspaceViewFilterGroup.id,

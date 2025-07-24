@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -9,17 +9,35 @@ import { ObjectRecordRestoreEvent } from 'src/engine/core-modules/event-emitter/
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { ViewFilterGroupSyncService } from 'src/modules/view/services/view-filter-group-sync.service';
-import { ViewSyncService } from 'src/modules/view/services/view-sync.service';
 import { ViewFilterGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
 
-@Injectable()
-export class ViewFilterGroupListener {
-  private readonly logger = new Logger(ViewFilterGroupListener.name);
+import { BaseViewSyncListener } from './base-view-sync.listener';
 
-  constructor(
-    private readonly viewFilterGroupSyncService: ViewFilterGroupSyncService,
-    private readonly viewSyncService: ViewSyncService,
-  ) {}
+@Injectable()
+export class ViewFilterGroupListener extends BaseViewSyncListener<ViewFilterGroupWorkspaceEntity> {
+  constructor(viewFilterGroupSyncService: ViewFilterGroupSyncService) {
+    super(
+      {
+        create: viewFilterGroupSyncService.createCoreViewFilterGroup.bind(
+          viewFilterGroupSyncService,
+        ),
+        update: viewFilterGroupSyncService.updateCoreViewFilterGroup.bind(
+          viewFilterGroupSyncService,
+        ),
+        delete: viewFilterGroupSyncService.deleteCoreViewFilterGroup.bind(
+          viewFilterGroupSyncService,
+        ),
+        destroy: viewFilterGroupSyncService.destroyCoreViewFilterGroup.bind(
+          viewFilterGroupSyncService,
+        ),
+        restore: viewFilterGroupSyncService.restoreCoreViewFilterGroup.bind(
+          viewFilterGroupSyncService,
+        ),
+      },
+      ViewFilterGroupListener.name,
+      'view filter group',
+    );
+  }
 
   @OnDatabaseBatchEvent('viewFilterGroup', DatabaseEventAction.CREATED)
   async handleViewFilterGroupCreated(
@@ -27,27 +45,7 @@ export class ViewFilterGroupListener {
       ObjectRecordCreateEvent<ViewFilterGroupWorkspaceEntity>
     >,
   ) {
-    const isEnabled = await this.viewSyncService.isFeatureFlagEnabled(
-      batchEvent.workspaceId,
-    );
-
-    if (!isEnabled) {
-      return;
-    }
-
-    for (const event of batchEvent.events) {
-      try {
-        await this.viewFilterGroupSyncService.createCoreViewFilterGroup(
-          batchEvent.workspaceId,
-          event.properties.after,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to sync view filter group ${event.properties.after.id} to core:`,
-          error,
-        );
-      }
-    }
+    return this.handleCreated(batchEvent);
   }
 
   @OnDatabaseBatchEvent('viewFilterGroup', DatabaseEventAction.UPDATED)
@@ -56,28 +54,7 @@ export class ViewFilterGroupListener {
       ObjectRecordUpdateEvent<ViewFilterGroupWorkspaceEntity>
     >,
   ) {
-    const isEnabled = await this.viewSyncService.isFeatureFlagEnabled(
-      batchEvent.workspaceId,
-    );
-
-    if (!isEnabled) {
-      return;
-    }
-
-    for (const event of batchEvent.events) {
-      try {
-        await this.viewFilterGroupSyncService.updateCoreViewFilterGroup(
-          batchEvent.workspaceId,
-          event.properties.after,
-          event.properties.diff,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to sync view filter group ${event.properties.after.id} to core:`,
-          error,
-        );
-      }
-    }
+    return this.handleUpdated(batchEvent);
   }
 
   @OnDatabaseBatchEvent('viewFilterGroup', DatabaseEventAction.DELETED)
@@ -86,27 +63,7 @@ export class ViewFilterGroupListener {
       ObjectRecordDeleteEvent<ViewFilterGroupWorkspaceEntity>
     >,
   ) {
-    const isEnabled = await this.viewSyncService.isFeatureFlagEnabled(
-      batchEvent.workspaceId,
-    );
-
-    if (!isEnabled) {
-      return;
-    }
-
-    for (const event of batchEvent.events) {
-      try {
-        await this.viewFilterGroupSyncService.deleteCoreViewFilterGroup(
-          batchEvent.workspaceId,
-          event.properties.before,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to sync view filter group ${event.properties.before.id} to core:`,
-          error,
-        );
-      }
-    }
+    return this.handleDeleted(batchEvent);
   }
 
   @OnDatabaseBatchEvent('viewFilterGroup', DatabaseEventAction.DESTROYED)
@@ -115,27 +72,7 @@ export class ViewFilterGroupListener {
       ObjectRecordDestroyEvent<ViewFilterGroupWorkspaceEntity>
     >,
   ) {
-    const isEnabled = await this.viewSyncService.isFeatureFlagEnabled(
-      batchEvent.workspaceId,
-    );
-
-    if (!isEnabled) {
-      return;
-    }
-
-    for (const event of batchEvent.events) {
-      try {
-        await this.viewFilterGroupSyncService.destroyCoreViewFilterGroup(
-          batchEvent.workspaceId,
-          event.properties.before,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to sync view filter group ${event.properties.before.id} to core:`,
-          error,
-        );
-      }
-    }
+    return this.handleDestroyed(batchEvent);
   }
 
   @OnDatabaseBatchEvent('viewFilterGroup', DatabaseEventAction.RESTORED)
@@ -144,26 +81,6 @@ export class ViewFilterGroupListener {
       ObjectRecordRestoreEvent<ViewFilterGroupWorkspaceEntity>
     >,
   ) {
-    const isEnabled = await this.viewSyncService.isFeatureFlagEnabled(
-      batchEvent.workspaceId,
-    );
-
-    if (!isEnabled) {
-      return;
-    }
-
-    for (const event of batchEvent.events) {
-      try {
-        await this.viewFilterGroupSyncService.restoreCoreViewFilterGroup(
-          batchEvent.workspaceId,
-          event.properties.after,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to sync view filter group ${event.properties.after.id} to core:`,
-          error,
-        );
-      }
-    }
+    return this.handleRestored(batchEvent);
   }
 }

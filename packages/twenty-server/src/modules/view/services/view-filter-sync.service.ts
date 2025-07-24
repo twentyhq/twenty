@@ -84,7 +84,7 @@ export class ViewFilterSyncService {
 
   public async deleteCoreViewFilter(
     workspaceId: string,
-    workspaceViewFilter: ViewFilterWorkspaceEntity,
+    workspaceViewFilter: Pick<ViewFilterWorkspaceEntity, 'id'>,
   ): Promise<void> {
     await this.coreViewFilterRepository.softDelete({
       id: workspaceViewFilter.id,
@@ -94,7 +94,7 @@ export class ViewFilterSyncService {
 
   public async destroyCoreViewFilter(
     workspaceId: string,
-    workspaceViewFilter: ViewFilterWorkspaceEntity,
+    workspaceViewFilter: Pick<ViewFilterWorkspaceEntity, 'id'>,
   ): Promise<void> {
     await this.coreViewFilterRepository.delete({
       id: workspaceViewFilter.id,
@@ -104,7 +104,7 @@ export class ViewFilterSyncService {
 
   public async restoreCoreViewFilter(
     workspaceId: string,
-    workspaceViewFilter: ViewFilterWorkspaceEntity,
+    workspaceViewFilter: Pick<ViewFilterWorkspaceEntity, 'id'>,
   ): Promise<void> {
     await this.coreViewFilterRepository.restore({
       id: workspaceViewFilter.id,

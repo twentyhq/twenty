@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -9,17 +9,35 @@ import { ObjectRecordRestoreEvent } from 'src/engine/core-modules/event-emitter/
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { ViewFilterSyncService } from 'src/modules/view/services/view-filter-sync.service';
-import { ViewSyncService } from 'src/modules/view/services/view-sync.service';
 import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
 
-@Injectable()
-export class ViewFilterListener {
-  private readonly logger = new Logger(ViewFilterListener.name);
+import { BaseViewSyncListener } from './base-view-sync.listener';
 
-  constructor(
-    private readonly viewFilterSyncService: ViewFilterSyncService,
-    private readonly viewSyncService: ViewSyncService,
-  ) {}
+@Injectable()
+export class ViewFilterListener extends BaseViewSyncListener<ViewFilterWorkspaceEntity> {
+  constructor(viewFilterSyncService: ViewFilterSyncService) {
+    super(
+      {
+        create: viewFilterSyncService.createCoreViewFilter.bind(
+          viewFilterSyncService,
+        ),
+        update: viewFilterSyncService.updateCoreViewFilter.bind(
+          viewFilterSyncService,
+        ),
+        delete: viewFilterSyncService.deleteCoreViewFilter.bind(
+          viewFilterSyncService,
+        ),
+        destroy: viewFilterSyncService.destroyCoreViewFilter.bind(
+          viewFilterSyncService,
+        ),
+        restore: viewFilterSyncService.restoreCoreViewFilter.bind(
+          viewFilterSyncService,
+        ),
+      },
+      ViewFilterListener.name,
+      'view filter',
+    );
+  }
 
   @OnDatabaseBatchEvent('viewFilter', DatabaseEventAction.CREATED)
   async handleViewFilterCreated(
@@ -27,27 +45,7 @@ export class ViewFilterListener {
       ObjectRecordCreateEvent<ViewFilterWorkspaceEntity>
     >,
   ) {
-    const isEnabled = await this.viewSyncService.isFeatureFlagEnabled(
-      batchEvent.workspaceId,
-    );
-
-    if (!isEnabled) {
-      return;
-    }
-
-    for (const event of batchEvent.events) {
-      try {
-        await this.viewFilterSyncService.createCoreViewFilter(
-          batchEvent.workspaceId,
-          event.properties.after,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to sync view filter ${event.properties.after.id} to core:`,
-          error,
-        );
-      }
-    }
+    return this.handleCreated(batchEvent);
   }
 
   @OnDatabaseBatchEvent('viewFilter', DatabaseEventAction.UPDATED)
@@ -56,28 +54,7 @@ export class ViewFilterListener {
       ObjectRecordUpdateEvent<ViewFilterWorkspaceEntity>
     >,
   ) {
-    const isEnabled = await this.viewSyncService.isFeatureFlagEnabled(
-      batchEvent.workspaceId,
-    );
-
-    if (!isEnabled) {
-      return;
-    }
-
-    for (const event of batchEvent.events) {
-      try {
-        await this.viewFilterSyncService.updateCoreViewFilter(
-          batchEvent.workspaceId,
-          event.properties.after,
-          event.properties.diff,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to sync view filter ${event.properties.after.id} to core:`,
-          error,
-        );
-      }
-    }
+    return this.handleUpdated(batchEvent);
   }
 
   @OnDatabaseBatchEvent('viewFilter', DatabaseEventAction.DELETED)
@@ -86,27 +63,7 @@ export class ViewFilterListener {
       ObjectRecordDeleteEvent<ViewFilterWorkspaceEntity>
     >,
   ) {
-    const isEnabled = await this.viewSyncService.isFeatureFlagEnabled(
-      batchEvent.workspaceId,
-    );
-
-    if (!isEnabled) {
-      return;
-    }
-
-    for (const event of batchEvent.events) {
-      try {
-        await this.viewFilterSyncService.deleteCoreViewFilter(
-          batchEvent.workspaceId,
-          event.properties.before,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to sync view filter ${event.properties.before.id} to core:`,
-          error,
-        );
-      }
-    }
+    return this.handleDeleted(batchEvent);
   }
 
   @OnDatabaseBatchEvent('viewFilter', DatabaseEventAction.DESTROYED)
@@ -115,27 +72,7 @@ export class ViewFilterListener {
       ObjectRecordDestroyEvent<ViewFilterWorkspaceEntity>
     >,
   ) {
-    const isEnabled = await this.viewSyncService.isFeatureFlagEnabled(
-      batchEvent.workspaceId,
-    );
-
-    if (!isEnabled) {
-      return;
-    }
-
-    for (const event of batchEvent.events) {
-      try {
-        await this.viewFilterSyncService.destroyCoreViewFilter(
-          batchEvent.workspaceId,
-          event.properties.before,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to sync view filter ${event.properties.before.id} to core:`,
-          error,
-        );
-      }
-    }
+    return this.handleDestroyed(batchEvent);
   }
 
   @OnDatabaseBatchEvent('viewFilter', DatabaseEventAction.RESTORED)
@@ -144,26 +81,6 @@ export class ViewFilterListener {
       ObjectRecordRestoreEvent<ViewFilterWorkspaceEntity>
     >,
   ) {
-    const isEnabled = await this.viewSyncService.isFeatureFlagEnabled(
-      batchEvent.workspaceId,
-    );
-
-    if (!isEnabled) {
-      return;
-    }
-
-    for (const event of batchEvent.events) {
-      try {
-        await this.viewFilterSyncService.restoreCoreViewFilter(
-          batchEvent.workspaceId,
-          event.properties.after,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to sync view filter ${event.properties.after.id} to core:`,
-          error,
-        );
-      }
-    }
+    return this.handleRestored(batchEvent);
   }
 }

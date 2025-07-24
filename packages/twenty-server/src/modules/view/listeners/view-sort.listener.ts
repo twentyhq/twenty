@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -9,17 +9,30 @@ import { ObjectRecordRestoreEvent } from 'src/engine/core-modules/event-emitter/
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { ViewSortSyncService } from 'src/modules/view/services/view-sort-sync.service';
-import { ViewSyncService } from 'src/modules/view/services/view-sync.service';
 import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 
-@Injectable()
-export class ViewSortListener {
-  private readonly logger = new Logger(ViewSortListener.name);
+import { BaseViewSyncListener } from './base-view-sync.listener';
 
-  constructor(
-    private readonly viewSortSyncService: ViewSortSyncService,
-    private readonly viewSyncService: ViewSyncService,
-  ) {}
+@Injectable()
+export class ViewSortListener extends BaseViewSyncListener<ViewSortWorkspaceEntity> {
+  constructor(viewSortSyncService: ViewSortSyncService) {
+    super(
+      {
+        create:
+          viewSortSyncService.createCoreViewSort.bind(viewSortSyncService),
+        update:
+          viewSortSyncService.updateCoreViewSort.bind(viewSortSyncService),
+        delete:
+          viewSortSyncService.deleteCoreViewSort.bind(viewSortSyncService),
+        destroy:
+          viewSortSyncService.destroyCoreViewSort.bind(viewSortSyncService),
+        restore:
+          viewSortSyncService.restoreCoreViewSort.bind(viewSortSyncService),
+      },
+      ViewSortListener.name,
+      'view sort',
+    );
+  }
 
   @OnDatabaseBatchEvent('viewSort', DatabaseEventAction.CREATED)
   async handleViewSortCreated(
@@ -27,27 +40,7 @@ export class ViewSortListener {
       ObjectRecordCreateEvent<ViewSortWorkspaceEntity>
     >,
   ) {
-    const isEnabled = await this.viewSyncService.isFeatureFlagEnabled(
-      batchEvent.workspaceId,
-    );
-
-    if (!isEnabled) {
-      return;
-    }
-
-    for (const event of batchEvent.events) {
-      try {
-        await this.viewSortSyncService.createCoreViewSort(
-          batchEvent.workspaceId,
-          event.properties.after,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to sync view sort ${event.properties.after.id} to core:`,
-          error,
-        );
-      }
-    }
+    return this.handleCreated(batchEvent);
   }
 
   @OnDatabaseBatchEvent('viewSort', DatabaseEventAction.UPDATED)
@@ -56,28 +49,7 @@ export class ViewSortListener {
       ObjectRecordUpdateEvent<ViewSortWorkspaceEntity>
     >,
   ) {
-    const isEnabled = await this.viewSyncService.isFeatureFlagEnabled(
-      batchEvent.workspaceId,
-    );
-
-    if (!isEnabled) {
-      return;
-    }
-
-    for (const event of batchEvent.events) {
-      try {
-        await this.viewSortSyncService.updateCoreViewSort(
-          batchEvent.workspaceId,
-          event.properties.after,
-          event.properties.diff,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to sync view sort ${event.properties.after.id} to core:`,
-          error,
-        );
-      }
-    }
+    return this.handleUpdated(batchEvent);
   }
 
   @OnDatabaseBatchEvent('viewSort', DatabaseEventAction.DELETED)
@@ -86,27 +58,7 @@ export class ViewSortListener {
       ObjectRecordDeleteEvent<ViewSortWorkspaceEntity>
     >,
   ) {
-    const isEnabled = await this.viewSyncService.isFeatureFlagEnabled(
-      batchEvent.workspaceId,
-    );
-
-    if (!isEnabled) {
-      return;
-    }
-
-    for (const event of batchEvent.events) {
-      try {
-        await this.viewSortSyncService.deleteCoreViewSort(
-          batchEvent.workspaceId,
-          event.properties.before,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to sync view sort ${event.properties.before.id} to core:`,
-          error,
-        );
-      }
-    }
+    return this.handleDeleted(batchEvent);
   }
 
   @OnDatabaseBatchEvent('viewSort', DatabaseEventAction.DESTROYED)
@@ -115,27 +67,7 @@ export class ViewSortListener {
       ObjectRecordDestroyEvent<ViewSortWorkspaceEntity>
     >,
   ) {
-    const isEnabled = await this.viewSyncService.isFeatureFlagEnabled(
-      batchEvent.workspaceId,
-    );
-
-    if (!isEnabled) {
-      return;
-    }
-
-    for (const event of batchEvent.events) {
-      try {
-        await this.viewSortSyncService.destroyCoreViewSort(
-          batchEvent.workspaceId,
-          event.properties.before,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to sync view sort ${event.properties.before.id} to core:`,
-          error,
-        );
-      }
-    }
+    return this.handleDestroyed(batchEvent);
   }
 
   @OnDatabaseBatchEvent('viewSort', DatabaseEventAction.RESTORED)
@@ -144,26 +76,6 @@ export class ViewSortListener {
       ObjectRecordRestoreEvent<ViewSortWorkspaceEntity>
     >,
   ) {
-    const isEnabled = await this.viewSyncService.isFeatureFlagEnabled(
-      batchEvent.workspaceId,
-    );
-
-    if (!isEnabled) {
-      return;
-    }
-
-    for (const event of batchEvent.events) {
-      try {
-        await this.viewSortSyncService.restoreCoreViewSort(
-          batchEvent.workspaceId,
-          event.properties.after,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to sync view sort ${event.properties.after.id} to core:`,
-          error,
-        );
-      }
-    }
+    return this.handleRestored(batchEvent);
   }
 }

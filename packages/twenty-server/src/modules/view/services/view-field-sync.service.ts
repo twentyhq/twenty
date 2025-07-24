@@ -55,7 +55,7 @@ export class ViewFieldSyncService {
 
   public async updateCoreViewField(
     workspaceId: string,
-    workspaceViewField: ViewFieldWorkspaceEntity,
+    workspaceViewField: Pick<ViewFieldWorkspaceEntity, 'id'>,
     diff?: Partial<ObjectRecordDiff<ViewFieldWorkspaceEntity>>,
   ): Promise<void> {
     if (!diff || Object.keys(diff).length === 0) {
@@ -74,7 +74,7 @@ export class ViewFieldSyncService {
 
   public async deleteCoreViewField(
     workspaceId: string,
-    workspaceViewField: ViewFieldWorkspaceEntity,
+    workspaceViewField: Pick<ViewFieldWorkspaceEntity, 'id'>,
   ): Promise<void> {
     await this.coreViewFieldRepository.softDelete({
       id: workspaceViewField.id,
@@ -84,7 +84,7 @@ export class ViewFieldSyncService {
 
   public async destroyCoreViewField(
     workspaceId: string,
-    workspaceViewField: ViewFieldWorkspaceEntity,
+    workspaceViewField: Pick<ViewFieldWorkspaceEntity, 'id'>,
   ): Promise<void> {
     await this.coreViewFieldRepository.delete({
       id: workspaceViewField.id,
@@ -94,7 +94,7 @@ export class ViewFieldSyncService {
 
   public async restoreCoreViewField(
     workspaceId: string,
-    workspaceViewField: ViewFieldWorkspaceEntity,
+    workspaceViewField: Pick<ViewFieldWorkspaceEntity, 'id'>,
   ): Promise<void> {
     await this.coreViewFieldRepository.restore({
       id: workspaceViewField.id,

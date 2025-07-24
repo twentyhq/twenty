@@ -41,13 +41,6 @@ export class ViewSyncService {
     return updateData as Partial<View>;
   }
 
-  public async isFeatureFlagEnabled(workspaceId: string): Promise<boolean> {
-    const featureFlags =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
-
-    return featureFlags?.IS_CORE_VIEW_SYNCING_ENABLED ?? false;
-  }
-
   public async createCoreView(
     workspaceId: string,
     workspaceView: ViewWorkspaceEntity,
