@@ -28,7 +28,7 @@ const commonFieldPropertiesToIgnore = [
   'relationTargetFieldMetadataId',
   'relationTargetObjectMetadataId',
   'relationTargetFieldMetadata',
-  'relationTargetObjectMetadata'
+  'relationTargetObjectMetadata',
 ];
 
 const fieldPropertiesToStringify = ['defaultValue'] as const;
