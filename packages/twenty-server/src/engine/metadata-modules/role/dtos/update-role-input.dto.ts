@@ -35,6 +35,11 @@ export class UpdateRolePayload {
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
+  canAccessAllTools?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
   canReadAllObjectRecords?: boolean;
 
   @IsBoolean()

@@ -265,7 +265,7 @@ msgid "A verification email has been sent to"
 msgstr "A verification email has been sent to"
 
 #. js-lingui-id: JE9zuL
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Ability to edit all settings"
 msgstr "Ability to edit all settings"
 
@@ -342,8 +342,13 @@ msgstr "ACS Url copied to clipboard"
 msgid "Action"
 msgstr "Action"
 
+#. js-lingui-id: IpQgsR
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Action Permissions"
+msgstr "Action Permissions"
+
 #. js-lingui-id: 7L01XJ
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 msgid "Actions"
@@ -452,7 +457,7 @@ msgid "Add option"
 msgstr "Add option"
 
 #. js-lingui-id: M067Bn
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Add or remove users"
 msgstr "Add or remove users"
 
@@ -584,6 +589,11 @@ msgstr "All ({relationRecordsCount})"
 #~ msgid "All Actions"
 #~ msgstr "All Actions"
 
+#. js-lingui-id: Hn61nE
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "All Actions Access"
+msgstr "All Actions Access"
+
 #. js-lingui-id: 7EZqN0
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "All emails and events linked to this account will be deleted"
@@ -643,6 +653,11 @@ msgstr "Allow logins through Google's single sign-on functionality."
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Microsoft's single sign-on functionality."
 msgstr "Allow logins through Microsoft's single sign-on functionality."
+
+#. js-lingui-id: qf7N9I
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Allow sending emails using connected accounts"
+msgstr "Allow sending emails using connected accounts"
 
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ToggleImpersonate.tsx
@@ -725,7 +740,7 @@ msgid "API keys"
 msgstr "API keys"
 
 #. js-lingui-id: vByqA1
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "API Keys & Webhooks"
 msgstr "API Keys & Webhooks"
 
@@ -1828,7 +1843,7 @@ msgid "Data model"
 msgstr "Data model"
 
 #. js-lingui-id: 4BuYDo
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Data Model"
 msgstr "Data Model"
 
@@ -1933,7 +1948,7 @@ msgid "Define the name and description of your object"
 msgstr "Define the name and description of your object"
 
 #. js-lingui-id: Ntu10D
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Define user roles and access levels"
 msgstr "Define user roles and access levels"
 
@@ -2124,7 +2139,7 @@ msgstr "Describe what you want the AI to do..."
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Description"
 msgstr "Description"
@@ -2295,7 +2310,7 @@ msgstr "Edit {objectLabel}"
 #~ msgstr "Edit billing interval"
 
 #. js-lingui-id: 6vZ75d
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Edit CRM data structure and fields"
 msgstr "Edit CRM data structure and fields"
 
@@ -3115,6 +3130,11 @@ msgstr "Granted for {grantedBy} {pluralizedGrantedObject}"
 msgid "Granted for this object"
 msgstr "Granted for this object"
 
+#. js-lingui-id: ZLzVau
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Grants permission to perform all available actions without restriction."
+msgstr "Grants permission to perform all available actions without restriction."
+
 #. js-lingui-id: gBiL6J
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "GraphQL"
@@ -3862,7 +3882,7 @@ msgid "Look up users to impersonate them."
 msgstr "Look up users to impersonate them."
 
 #. js-lingui-id: n0FHLv
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Manage API keys and webhooks"
 msgstr "Manage API keys and webhooks"
 
@@ -3883,7 +3903,7 @@ msgid "Manage Members"
 msgstr "Manage Members"
 
 #. js-lingui-id: eGGH1l
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Manage security policies"
 msgstr "Manage security policies"
 
@@ -3903,7 +3923,7 @@ msgid "Manage the members of your workspace here"
 msgstr "Manage the members of your workspace here"
 
 #. js-lingui-id: fEqDWx
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Manage workflows"
 msgstr "Manage workflows"
 
@@ -4094,7 +4114,7 @@ msgstr "must be an array of valid emails"
 #: src/modules/settings/workspace/components/NameField.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
@@ -4778,6 +4798,11 @@ msgstr "Permissions"
 msgid "Permissions · {objectLabelSingular}"
 msgstr "Permissions · {objectLabelSingular}"
 
+#. js-lingui-id: PqwPjr
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Permissions for performing automated actions."
+msgstr "Permissions for performing automated actions."
+
 #. js-lingui-id: qlqT9z
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Phone number copied to clipboard"
@@ -5186,7 +5211,7 @@ msgstr "Role name cannot be empty"
 
 #. js-lingui-id: 5dJK4M
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
@@ -5363,7 +5388,7 @@ msgstr "Secret (optional)"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Security"
 msgstr "Security"
@@ -5531,6 +5556,11 @@ msgstr "Send"
 msgid "Send an invite email to your team"
 msgstr "Send an invite email to your team"
 
+#. js-lingui-id: i/TzEU
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Send Email"
+msgstr "Send Email"
+
 #. js-lingui-id: IoAuJG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -5592,7 +5622,7 @@ msgid "Set email visibility, manage your blocklist and more."
 msgstr "Set email visibility, manage your blocklist and more."
 
 #. js-lingui-id: 6KA8xy
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Set global workspace preferences"
 msgstr "Set global workspace preferences"
 
@@ -5625,7 +5655,7 @@ msgstr "Setting up your database..."
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
@@ -5634,12 +5664,12 @@ msgid "Settings"
 msgstr "Settings"
 
 #. js-lingui-id: uXW4pg
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Settings All Access"
 msgstr "Settings All Access"
 
 #. js-lingui-id: p8fNBm
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Settings permissions"
 msgstr "Settings permissions"
 
@@ -6272,7 +6302,7 @@ msgid "Toggle all object permissions"
 msgstr "Toggle all object permissions"
 
 #. js-lingui-id: /kWolQ
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 msgid "Toggle all settings permissions"
 msgstr "Toggle all settings permissions"
 
@@ -6558,7 +6588,7 @@ msgstr "User is not logged in"
 #~ msgstr "User Name"
 
 #. js-lingui-id: Sxm8rQ
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Users"
 msgstr "Users"
 
@@ -6815,7 +6845,7 @@ msgstr "Will return one {objectType} to the next step of this workflow"
 #~ msgstr "Workflow run failed"
 
 #. js-lingui-id: woYYQq
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Workflows"
 msgstr "Workflows"
 
@@ -6842,7 +6872,7 @@ msgstr "Workflows"
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx

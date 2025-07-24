@@ -7,7 +7,7 @@ import { MutableSnapshot, RecoilRoot } from 'recoil';
 import {
   Billing,
   OnboardingStatus,
-  SettingPermissionType,
+  PermissionFlagType,
 } from '~/generated/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -60,12 +60,12 @@ jest.mock('@/settings/roles/hooks/useSettingsPermissionMap', () => ({
 describe('useSettingsNavigationItems', () => {
   it('should hide workspace settings when no permissions', () => {
     (useSettingsPermissionMap as jest.Mock).mockImplementation(() => ({
-      [SettingPermissionType.WORKSPACE]: false,
-      [SettingPermissionType.WORKSPACE_MEMBERS]: false,
-      [SettingPermissionType.DATA_MODEL]: false,
-      [SettingPermissionType.API_KEYS_AND_WEBHOOKS]: false,
-      [SettingPermissionType.ROLES]: false,
-      [SettingPermissionType.SECURITY]: false,
+      [PermissionFlagType.WORKSPACE]: false,
+      [PermissionFlagType.WORKSPACE_MEMBERS]: false,
+      [PermissionFlagType.DATA_MODEL]: false,
+      [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: false,
+      [PermissionFlagType.ROLES]: false,
+      [PermissionFlagType.SECURITY]: false,
     }));
 
     const { result } = renderHook(() => useSettingsNavigationItems(), {
@@ -81,12 +81,12 @@ describe('useSettingsNavigationItems', () => {
 
   it('should show workspace settings when has permissions', () => {
     (useSettingsPermissionMap as jest.Mock).mockImplementation(() => ({
-      [SettingPermissionType.WORKSPACE]: true,
-      [SettingPermissionType.WORKSPACE_MEMBERS]: true,
-      [SettingPermissionType.DATA_MODEL]: true,
-      [SettingPermissionType.API_KEYS_AND_WEBHOOKS]: true,
-      [SettingPermissionType.ROLES]: true,
-      [SettingPermissionType.SECURITY]: true,
+      [PermissionFlagType.WORKSPACE]: true,
+      [PermissionFlagType.WORKSPACE_MEMBERS]: true,
+      [PermissionFlagType.DATA_MODEL]: true,
+      [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: true,
+      [PermissionFlagType.ROLES]: true,
+      [PermissionFlagType.SECURITY]: true,
     }));
 
     const { result } = renderHook(() => useSettingsNavigationItems(), {
