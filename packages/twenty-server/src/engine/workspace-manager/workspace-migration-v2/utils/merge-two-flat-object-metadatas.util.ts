@@ -1,10 +1,10 @@
 import { FlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
 import { fromArrayToUniqueKeyRecord } from 'src/engine/workspace-manager/workspace-migration-v2/utils/from-array-to-unique-key-record.util';
-import { mergeTwoFlatFieldMetadatas } from 'src/engine/workspace-manager/workspace-migration-v2/utils/merge-two-flat-field-metadata.util';
+import { mergeTwoFlatFieldMetadatas } from 'src/engine/workspace-manager/workspace-migration-v2/utils/merge-two-flat-field-metadatas.util';
 import { ToMerge } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/to-merge.type';
 import { deepMerge, isDefined } from 'twenty-shared/utils';
 
-export const mergeTwoFlatFieldObjectMetadata = ({
+export const mergeTwoFlatFieldObjectMetadatas = ({
   destFlatObjectMetadatas,
   toMergeFlatObjectMetadatas,
 }: ToMerge<FlatObjectMetadata[], 'object'>): FlatObjectMetadata[] => {
