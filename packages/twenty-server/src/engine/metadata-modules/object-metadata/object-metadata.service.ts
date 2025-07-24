@@ -52,6 +52,7 @@ import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sy
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
 import { FlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
+import { fromObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/workspace-manager/workspace-migration-v2/utils/from-object-metadata-maps-to-flat-object-metadatas.util';
 import { mergeTwoFlatFieldObjectMetadatas } from 'src/engine/workspace-manager/workspace-migration-v2/utils/merge-two-flat-object-metadatas.util';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import {
@@ -187,7 +188,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
       // Validate flatObjectMetadatas
       const createdFlatObjectMetadata = validateFlatObjectMetadataData({
-        existing: flatObjectMetadatas,
+        existing:
+          // Here we assume that EVERYTHING is in cache, this is very critical, also race condition prone :thinking:
+          fromObjectMetadataMapsToFlatObjectMetadatas(objectMetadataMaps),
         toValidate: [createdRawFlatObjectMetadata],
       });
 
