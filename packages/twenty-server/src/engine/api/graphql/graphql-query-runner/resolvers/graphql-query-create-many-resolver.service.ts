@@ -17,6 +17,7 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
@@ -68,7 +69,19 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
   ): Promise<InsertResult> {
     if (!executionArgs.args.upsert) {
-      return await executionArgs.repository.insert(executionArgs.args.data);
+      const { objectMetadataItemWithFieldMaps } = executionArgs.options;
+
+      const selectedColumns = buildColumnsToReturn({
+        select: executionArgs.graphqlQuerySelectedFieldsResult.select,
+        relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+        objectMetadataItemWithFieldMaps,
+      });
+
+      return await executionArgs.repository.insert(
+        executionArgs.args.data,
+        undefined,
+        selectedColumns,
+      );
     }
 
     return this.performUpsertOperation(executionArgs);
@@ -78,12 +91,20 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
   ): Promise<InsertResult> {
     const { objectMetadataItemWithFieldMaps } = executionArgs.options;
+
+    const selectedColumns = buildColumnsToSelect({
+      select: executionArgs.graphqlQuerySelectedFieldsResult.select,
+      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+      objectMetadataItemWithFieldMaps,
+    });
+
     const conflictingFields = this.getConflictingFields(
       objectMetadataItemWithFieldMaps,
     );
     const existingRecords = await this.findExistingRecords(
       executionArgs,
       conflictingFields,
+      selectedColumns,
     );
 
     const { recordsToUpdate, recordsToInsert } = this.categorizeRecords(
@@ -98,17 +119,25 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       raw: [],
     };
 
+    const columnsToReturn = buildColumnsToReturn({
+      select: executionArgs.graphqlQuerySelectedFieldsResult.select,
+      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+      objectMetadataItemWithFieldMaps,
+    });
+
     await this.processRecordsToUpdate({
       partialRecordsToUpdate: recordsToUpdate,
       repository: executionArgs.repository,
       objectMetadataItemWithFieldMaps,
       result,
+      columnsToReturn,
     });
 
     await this.processRecordsToInsert({
       recordsToInsert,
       repository: executionArgs.repository,
       result,
+      columnsToReturn,
     });
 
     return result;
@@ -161,6 +190,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       fullPath: string;
       column: string;
     }[],
+    selectedColumns: Record<string, boolean>,
   ): Promise<Partial<ObjectRecord>[]> {
     const { objectMetadataItemWithFieldMaps } = executionArgs.options;
     const queryBuilder = executionArgs.repository.createQueryBuilder(
@@ -176,7 +206,11 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       queryBuilder.orWhere(condition);
     });
 
-    return await queryBuilder.getMany();
+    return await queryBuilder
+      .setFindOptions({
+        select: selectedColumns,
+      })
+      .getMany();
   }
 
   private getValueFromPath(
@@ -265,11 +299,13 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     repository,
     objectMetadataItemWithFieldMaps,
     result,
+    columnsToReturn,
   }: {
     partialRecordsToUpdate: Partial<ObjectRecord>[];
     repository: WorkspaceRepository<ObjectLiteral>;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
     result: InsertResult;
+    columnsToReturn: string[];
   }): Promise<void> {
     for (const partialRecordToUpdate of partialRecordsToUpdate) {
       const recordId = partialRecordToUpdate.id as string;
@@ -284,6 +320,8 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       await repository.update(
         recordId,
         partialRecordToUpdateWithoutCreatedByUpdate,
+        undefined,
+        columnsToReturn,
       );
 
       result.identifiers.push({ id: recordId });
@@ -295,13 +333,19 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     recordsToInsert,
     repository,
     result,
+    columnsToReturn,
   }: {
     recordsToInsert: Partial<ObjectRecord>[];
     repository: WorkspaceRepository<ObjectLiteral>;
     result: InsertResult;
+    columnsToReturn: string[];
   }): Promise<void> {
     if (recordsToInsert.length > 0) {
-      const insertResult = await repository.insert(recordsToInsert);
+      const insertResult = await repository.insert(
+        recordsToInsert,
+        undefined,
+        columnsToReturn,
+      );
 
       result.identifiers.push(...insertResult.identifiers);
       result.generatedMaps.push(...insertResult.generatedMaps);

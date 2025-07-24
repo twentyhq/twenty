@@ -125,9 +125,9 @@ msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} 
 msgstr ""
 
 #. js-lingui-id: wapGcj
-#: src/modules/auth/components/VerifyEmailEffect.tsx
-#~ msgid "{message}"
-#~ msgstr ""
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
+msgid "{message}"
+msgstr ""
 
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions.tsx
@@ -172,6 +172,11 @@ msgstr ""
 #~ msgid "1 000 workflow node executions"
 #~ msgstr "1 000 workflow node executions"
 
+#. js-lingui-id: 3DNcuK
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "1. Scan the QR code"
+msgstr ""
+
 #. js-lingui-id: vb5TwV
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 msgid "1. Select a field type"
@@ -214,6 +219,11 @@ msgstr "2. Configura"
 msgid "2. Configure field"
 msgstr "2. Configura il campo"
 
+#. js-lingui-id: bD1Hnc
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "2. Enter the code"
+msgstr ""
+
 #. js-lingui-id: 0Tx9MD
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 msgid "2. Set {objectLabelPlural} permissions"
@@ -234,6 +244,16 @@ msgstr ""
 msgid "24h ({hour24Label})"
 msgstr "24h ({hour24Label})"
 
+#. js-lingui-id: hziCGA
+#: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
+msgid "2FA Method has been deleted successfully."
+msgstr ""
+
+#. js-lingui-id: cNBo/E
+#: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
+msgid "2FA Method Reset"
+msgstr ""
+
 #. js-lingui-id: IbMa7Z
 #: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
 #~ msgid "993"
@@ -250,7 +270,7 @@ msgid "A verification email has been sent to"
 msgstr ""
 
 #. js-lingui-id: JE9zuL
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Ability to edit all settings"
 msgstr ""
 
@@ -327,8 +347,13 @@ msgstr ""
 msgid "Action"
 msgstr "Azione"
 
+#. js-lingui-id: IpQgsR
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Action Permissions"
+msgstr ""
+
 #. js-lingui-id: 7L01XJ
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 msgid "Actions"
@@ -437,7 +462,7 @@ msgid "Add option"
 msgstr "Aggiungi opzione"
 
 #. js-lingui-id: M067Bn
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Add or remove users"
 msgstr ""
 
@@ -569,6 +594,11 @@ msgstr "Tutti ({relationRecordsCount})"
 #~ msgid "All Actions"
 #~ msgstr "Tutte le azioni"
 
+#. js-lingui-id: Hn61nE
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "All Actions Access"
+msgstr ""
+
 #. js-lingui-id: 7EZqN0
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "All emails and events linked to this account will be deleted"
@@ -629,6 +659,11 @@ msgstr "Consenti l'accesso tramite la funzionalità single sign-on di Google."
 msgid "Allow logins through Microsoft's single sign-on functionality."
 msgstr "Consenti l'accesso tramite la funzionalità single sign-on di Microsoft."
 
+#. js-lingui-id: qf7N9I
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Allow sending emails using connected accounts"
+msgstr ""
+
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ToggleImpersonate.tsx
 msgid "Allow Support Team Access"
@@ -671,6 +706,11 @@ msgstr "Si è verificato un errore imprevisto"
 msgid "and"
 msgstr "e"
 
+#. js-lingui-id: ggT/H4
+#: src/modules/views/components/AnyFieldSearchChip.tsx
+msgid "Any field :"
+msgstr ""
+
 #. js-lingui-id: xJR+Wq
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
@@ -705,7 +745,7 @@ msgid "API keys"
 msgstr "Chiavi API"
 
 #. js-lingui-id: vByqA1
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "API Keys & Webhooks"
 msgstr ""
 
@@ -880,6 +920,11 @@ msgstr "Autenticazione"
 msgid "Authentication failed"
 msgstr "Autenticazione fallita"
 
+#. js-lingui-id: YZWcQL
+#: src/pages/settings/SettingsProfile.tsx
+msgid "Authenticator App"
+msgstr ""
+
 #. js-lingui-id: yIVrHZ
 #: src/pages/auth/Authorize.tsx
 msgid "Authorize"
@@ -934,6 +979,7 @@ msgstr "Media"
 #. js-lingui-id: iH8pgl
 #: src/pages/onboarding/BookCall.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Back"
 msgstr ""
 
@@ -980,7 +1026,7 @@ msgid "Book your onboarding"
 msgstr ""
 
 #. js-lingui-id: bOwPjT
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
+#: src/modules/ai/constants/output-field-type-options.ts
 msgid "Boolean"
 msgstr ""
 
@@ -1439,6 +1485,7 @@ msgstr "Contiene"
 
 #. js-lingui-id: M73whl
 #: src/modules/command-menu/components/CommandMenu.tsx
+#: src/modules/ai/components/internal/AgentChatContextRecordPreview.tsx
 msgid "Context"
 msgstr "Contesto"
 
@@ -1509,6 +1556,12 @@ msgstr "Copia link"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Copy link to view"
 msgstr "Copia link per visualizzare"
+
+#. js-lingui-id: S+Jl8l
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
+msgid "Copy Setup Key"
+msgstr ""
 
 #. js-lingui-id: Ej5euX
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -1795,7 +1848,7 @@ msgid "Data model"
 msgstr "Modello dati"
 
 #. js-lingui-id: 4BuYDo
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Data Model"
 msgstr ""
 
@@ -1811,11 +1864,11 @@ msgid "Database configuration is currently disabled."
 msgstr ""
 
 #. js-lingui-id: mYGY3B
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx
+#: src/modules/ai/constants/output-field-type-options.ts
 msgid "Date"
 msgstr "Data"
 
@@ -1900,7 +1953,7 @@ msgid "Define the name and description of your object"
 msgstr "Definisci il nome e la descrizione dell'oggetto"
 
 #. js-lingui-id: Ntu10D
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Define user roles and access levels"
 msgstr ""
 
@@ -2005,6 +2058,11 @@ msgstr ""
 msgid "Delete this webhook"
 msgstr ""
 
+#. js-lingui-id: jPvFKE
+#: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
+msgid "Delete Two-Factor Authentication Method"
+msgstr ""
+
 #. js-lingui-id: aRG49z
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Delete view"
@@ -2066,6 +2124,11 @@ msgstr "Record eliminati"
 #~ msgid "Deleted workflows"
 #~ msgstr "Workflow eliminati"
 
+#. js-lingui-id: wIAG+H
+#: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
+msgid "Deleting this method will remove it permanently from your account."
+msgstr ""
+
 #. js-lingui-id: Cko536
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -2081,7 +2144,7 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Description"
 msgstr "Descrizione"
@@ -2252,7 +2315,7 @@ msgstr ""
 #~ msgstr "Modifica intervallo di fatturazione"
 
 #. js-lingui-id: 6vZ75d
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Edit CRM data structure and fields"
 msgstr ""
 
@@ -2432,10 +2495,20 @@ msgstr "Oggetto vuoto"
 msgid "Endpoint URL"
 msgstr "URL endpoint"
 
+#. js-lingui-id: Vv4JVS
+#: src/modules/settings/security/components/Toggle2FA.tsx
+msgid "Enforce two-step verification for every user login."
+msgstr ""
+
 #. js-lingui-id: lYGfRP
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "English"
 msgstr "Inglese"
+
+#. js-lingui-id: UXZry7
+#: src/pages/settings/SettingsProfile.tsx
+msgid "Enhances security by requiring a code along with your password"
+msgstr ""
 
 #. js-lingui-id: /bfFKe
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -2443,7 +2516,7 @@ msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "Goditi una prova gratuita di {withCreditCardTrialPeriodDuration} giorni"
 
 #. js-lingui-id: 20wg2g
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/ai/components/AIChatTab.tsx
 msgid "Enter a question..."
 msgstr ""
 
@@ -2455,6 +2528,11 @@ msgstr ""
 #. js-lingui-id: 9/30HU
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
 msgid "Enter in <0>Unicode</0> format"
+msgstr ""
+
+#. js-lingui-id: MY3Tl9
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "Enter the 6-digit verification code from your authenticator app to complete the setup."
 msgstr ""
 
 #. js-lingui-id: XJU8BD
@@ -2473,6 +2551,7 @@ msgid "Enter user ID or email address"
 msgstr "Inserisci ID utente o indirizzo email"
 
 #. js-lingui-id: pubQie
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterValueInput.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterValueInput.tsx
 msgid "Enter value"
 msgstr ""
@@ -2549,8 +2628,8 @@ msgstr "Errore nel reinvio dell'invito"
 
 #. js-lingui-id: nB84mG
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
-msgid "Error validating approved access domain"
-msgstr ""
+#~ msgid "Error validating approved access domain"
+#~ msgstr ""
 
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -2780,7 +2859,7 @@ msgstr ""
 #~ msgstr ""
 
 #. js-lingui-id: XMjWWv
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatSelectedFilesPreview.tsx
+#: src/modules/ai/components/internal/AgentChatContextPreview.tsx
 msgid "Failed to remove file"
 msgstr ""
 
@@ -3054,6 +3133,11 @@ msgstr ""
 #. js-lingui-id: WUgtid
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
 msgid "Granted for this object"
+msgstr ""
+
+#. js-lingui-id: ZLzVau
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Grants permission to perform all available actions without restriction."
 msgstr ""
 
 #. js-lingui-id: gBiL6J
@@ -3358,6 +3442,11 @@ msgstr "Integrazioni"
 msgid "Interact with your workspace data"
 msgstr ""
 
+#. js-lingui-id: ggS/0k
+#: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
+msgid "Invalid 2FA information."
+msgstr ""
+
 #. js-lingui-id: GNRDhm
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Invalid API key"
@@ -3409,6 +3498,12 @@ msgstr "File non valido"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "Valori del modulo non validi"
+
+#. js-lingui-id: VEKoJx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationForSettings.tsx
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
+msgid "Invalid verification code. Please try again."
+msgstr ""
 
 #. js-lingui-id: K8XJhc
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
@@ -3771,6 +3866,11 @@ msgstr ""
 msgid "Log out"
 msgstr "Disconnetti"
 
+#. js-lingui-id: VLuNNu
+#: src/modules/auth/components/TwoFactorAuthenticationProvisionEffect.tsx
+msgid "Login token missing. Two Factor Authentication setup can not be initiated."
+msgstr ""
+
 #. js-lingui-id: nOhz3x
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
@@ -3787,7 +3887,7 @@ msgid "Look up users to impersonate them."
 msgstr "Cerca utenti per impersonificarli."
 
 #. js-lingui-id: n0FHLv
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Manage API keys and webhooks"
 msgstr ""
 
@@ -3808,7 +3908,7 @@ msgid "Manage Members"
 msgstr "Gestisci membri"
 
 #. js-lingui-id: eGGH1l
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Manage security policies"
 msgstr ""
 
@@ -3828,7 +3928,7 @@ msgid "Manage the members of your workspace here"
 msgstr ""
 
 #. js-lingui-id: fEqDWx
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Manage workflows"
 msgstr ""
 
@@ -4019,7 +4119,7 @@ msgstr ""
 #: src/modules/settings/workspace/components/NameField.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
@@ -4185,6 +4285,11 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #~ msgid "No AI models available"
 #~ msgstr ""
+
+#. js-lingui-id: uD8+ZY
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody.tsx
+msgid "No Available Step Outputs"
+msgstr ""
 
 #. js-lingui-id: OTe3RI
 #: src/pages/settings/workspace/SettingsDomain.tsx
@@ -4429,8 +4534,8 @@ msgid "Notes"
 msgstr ""
 
 #. js-lingui-id: HptUxX
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
+#: src/modules/ai/constants/output-field-type-options.ts
 msgid "Number"
 msgstr "Numero"
 
@@ -4619,6 +4724,11 @@ msgstr "La password è stata aggiornata"
 msgid "Password reset link has been sent to the email"
 msgstr "Il link per reimpostare la password è stato inviato all'e-mail"
 
+#. js-lingui-id: cpStVq
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
+msgid "Paste the code below"
+msgstr ""
+
 #. js-lingui-id: 1wdjme
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4691,6 +4801,11 @@ msgstr "Permessi"
 #. js-lingui-id: KiuPPj
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 msgid "Permissions · {objectLabelSingular}"
+msgstr ""
+
+#. js-lingui-id: PqwPjr
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Permissions for performing automated actions."
 msgstr ""
 
 #. js-lingui-id: qlqT9z
@@ -4832,6 +4947,7 @@ msgid "Processing..."
 msgstr ""
 
 #. js-lingui-id: vERlcd
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/SettingsProfile.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -5003,6 +5119,12 @@ msgstr ""
 msgid "Reset"
 msgstr "Reimposta"
 
+#. js-lingui-id: 1BEcEg
+#: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
+#: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
+msgid "Reset 2FA"
+msgstr ""
+
 #. js-lingui-id: KbS2K9
 #: src/pages/auth/PasswordReset.tsx
 msgid "Reset Password"
@@ -5094,7 +5216,7 @@ msgstr ""
 
 #. js-lingui-id: 5dJK4M
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
@@ -5193,6 +5315,7 @@ msgid "Search an object"
 msgstr ""
 
 #. js-lingui-id: S+MGem
+#: src/modules/views/hooks/useOpenAnyFieldSearchFilterFromViewBar.ts
 #: src/modules/views/components/ViewBarFilterDropdownAnyFieldSearchInputDropdownHeader.tsx
 #: src/modules/views/components/ViewBarFilterDropdownAnyFieldSearchButtonMenuItem.tsx
 #: src/modules/views/components/AnyFieldSearchDropdownContentMenuHeader.tsx
@@ -5270,7 +5393,7 @@ msgstr ""
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Security"
 msgstr "Sicurezza"
@@ -5429,7 +5552,7 @@ msgid "Select your preferred language"
 msgstr "Seleziona la lingua preferita"
 
 #. js-lingui-id: JlFcis
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/ai/components/internal/SendMessageButton.tsx
 msgid "Send"
 msgstr ""
 
@@ -5437,6 +5560,11 @@ msgstr ""
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Send an invite email to your team"
 msgstr "Invia un'email di invito al tuo team"
+
+#. js-lingui-id: i/TzEU
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Send Email"
+msgstr ""
 
 #. js-lingui-id: IoAuJG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -5499,7 +5627,7 @@ msgid "Set email visibility, manage your blocklist and more."
 msgstr "Imposta la visibilità dell'email, gestisci la tua blocklist e altro."
 
 #. js-lingui-id: 6KA8xy
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Set global workspace preferences"
 msgstr ""
 
@@ -5532,7 +5660,7 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
@@ -5541,14 +5669,25 @@ msgid "Settings"
 msgstr "Impostazioni"
 
 #. js-lingui-id: uXW4pg
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Settings All Access"
 msgstr ""
 
 #. js-lingui-id: p8fNBm
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Settings permissions"
 msgstr "Autorizzazioni delle impostazioni"
+
+#. js-lingui-id: i5CJAR
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
+msgid "Setup key copied to clipboard"
+msgstr ""
+
+#. js-lingui-id: NQNJjc
+#: src/pages/auth/SignInUp.tsx
+msgid "Setup your 2FA"
+msgstr ""
 
 #. js-lingui-id: Vy9kmk
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -5943,7 +6082,7 @@ msgid "Test Workflow"
 msgstr "Test Workflow"
 
 #. js-lingui-id: xeiujy
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
+#: src/modules/ai/constants/output-field-type-options.ts
 msgid "Text"
 msgstr "Testo"
 
@@ -6168,7 +6307,7 @@ msgid "Toggle all object permissions"
 msgstr ""
 
 #. js-lingui-id: /kWolQ
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 msgid "Toggle all settings permissions"
 msgstr ""
 
@@ -6249,6 +6388,29 @@ msgstr ""
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
 msgstr "Turco"
+
+#. js-lingui-id: tuvLv1
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+#: src/pages/settings/SettingsProfile.tsx
+#: src/modules/settings/security/components/Toggle2FA.tsx
+msgid "Two Factor Authentication"
+msgstr ""
+
+#. js-lingui-id: MUIppF
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationSetupForSettingsEffect.tsx
+#: src/modules/auth/components/TwoFactorAuthenticationProvisionEffect.tsx
+msgid "Two factor authentication provisioning failed."
+msgstr ""
+
+#. js-lingui-id: C4pKXW
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "Two-Factor Authentication"
+msgstr ""
+
+#. js-lingui-id: cRM1ec
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationForSettings.tsx
+msgid "Two-factor authentication setup completed successfully!"
+msgstr ""
 
 #. js-lingui-id: +zy2Nq
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
@@ -6362,11 +6524,21 @@ msgstr "Carica il file XML con le tue informazioni di connessione"
 #~ msgid "URL"
 #~ msgstr "URL"
 
+#. js-lingui-id: zlvvC+
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "Use an authenticator app like Google Authenticator, Authy, or Microsoft Authenticator to scan this QR code."
+msgstr ""
+
 #. js-lingui-id: 6dMpmz
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Use as draft"
 msgstr "Usa come bozza"
+
+#. js-lingui-id: 6kLyt5
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
+msgid "Use authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator to generate one-time passwords"
+msgstr ""
 
 #. js-lingui-id: oTTQsc
 #: src/pages/settings/workspace/SettingsDomain.tsx
@@ -6379,6 +6551,7 @@ msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Usa la nostra API o aggiungi manualmente il tuo primo {objectLabel}"
 
 #. js-lingui-id: 7PzzBU
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
@@ -6420,7 +6593,7 @@ msgstr "Utente non connesso"
 #~ msgstr "User Name"
 
 #. js-lingui-id: Sxm8rQ
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Users"
 msgstr "Users"
 
@@ -6482,6 +6655,11 @@ msgstr "Variabile non trovata"
 msgid "Variable updated successfully."
 msgstr ""
 
+#. js-lingui-id: IoglDq
+#: src/pages/auth/SignInUp.tsx
+msgid "Verify code from the app"
+msgstr ""
+
 #. js-lingui-id: IHIWR4
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Version of the application"
@@ -6508,7 +6686,7 @@ msgstr "Visualizza dettagli fatturazione"
 #~ msgstr "Visualizza i dettagli dell'esecuzione"
 
 #. js-lingui-id: ecVcAx
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/ai/components/AIChatTab.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "View Previous AI Chats"
@@ -6672,7 +6850,7 @@ msgstr ""
 #~ msgstr "Esecuzione del workflow fallita"
 
 #. js-lingui-id: woYYQq
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Workflows"
 msgstr ""
 
@@ -6699,7 +6877,7 @@ msgstr ""
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
-#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -6843,6 +7021,11 @@ msgstr ""
 #. js-lingui-id: Cl+hUj
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "You're about to change your workspace subdomain. This action will log out all users."
+msgstr ""
+
+#. js-lingui-id: tOPGvO
+#: src/modules/apollo/services/apollo.factory.ts
+msgid "Your app version is out of date. Please refresh the page."
 msgstr ""
 
 #. js-lingui-id: XVnj6K

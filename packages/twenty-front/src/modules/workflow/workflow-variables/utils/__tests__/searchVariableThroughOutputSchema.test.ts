@@ -19,6 +19,7 @@ describe('searchVariableThroughOutputSchema', () => {
               label: 'Company',
               value: 'John',
               isLeaf: true,
+              objectMetadataId: '123',
             },
             fields: {
               name: { label: 'Name', value: 'Twenty', isLeaf: true },
@@ -38,6 +39,7 @@ describe('searchVariableThroughOutputSchema', () => {
               label: 'Person',
               value: 'Jane',
               isLeaf: true,
+              objectMetadataId: '123',
             },
             fields: {
               firstName: { label: 'First Name', value: 'Jane', isLeaf: true },
@@ -270,6 +272,7 @@ describe('searchVariableThroughOutputSchema', () => {
           isLeaf: true,
           fieldIdName: 'properties.after.id',
           nameSingular: 'company',
+          objectMetadataId: '123',
         },
         _outputSchemaType: 'RECORD',
       },

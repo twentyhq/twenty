@@ -10,6 +10,7 @@ import {
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WORKFLOW_RUN_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -86,8 +87,7 @@ export class AddEnqueuedStatusToWorkflowRunCommand extends ActiveOrSuspendedWork
       );
     }
 
-    const schemaName =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
+    const schemaName = getWorkspaceSchemaName(workspaceId);
 
     const mainDataSource =
       await this.workspaceDataSourceService.connectToMainDataSource();
