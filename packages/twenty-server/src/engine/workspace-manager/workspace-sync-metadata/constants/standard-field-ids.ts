@@ -444,6 +444,7 @@ export const VIEW_STANDARD_FIELD_IDS = {
   viewFilterGroups: '20202020-0318-474a-84a1-bac895ceaa5a',
   viewSorts: '20202020-891b-45c3-9fe1-80a75b4aa043',
   favorites: '20202020-c818-4a86-8284-9ec0ef0a59a5',
+  anyFieldFilterValue: '20202020-c818-4a86-8284-9ec0ef0a59b1',
 };
 
 export const WEBHOOK_STANDARD_FIELD_IDS = {
