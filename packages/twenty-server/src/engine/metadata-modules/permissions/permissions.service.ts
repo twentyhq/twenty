@@ -10,6 +10,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -29,6 +30,10 @@ export class PermissionsService {
     private readonly roleRepository: Repository<RoleEntity>,
   ) {}
 
+  private isToolPermission(feature: string) {
+    return TOOL_PERMISSION_FLAGS.includes(feature);
+  }
+
   public async getUserWorkspacePermissions({
     userWorkspaceId,
     workspaceId,
@@ -43,8 +48,6 @@ export class PermissionsService {
       })
       .then((roles) => roles?.get(userWorkspaceId) ?? []);
 
-    let hasPermissionOnSettingFeature = false;
-
     if (!isDefined(roleOfUserWorkspace)) {
       throw new PermissionsException(
         PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
@@ -52,23 +55,25 @@ export class PermissionsService {
       );
     }
 
-    if (roleOfUserWorkspace.canUpdateAllSettings === true) {
-      hasPermissionOnSettingFeature = true;
-    }
-
     const permissionFlags = roleOfUserWorkspace.permissionFlags ?? [];
 
     const defaultSettingsPermissions =
       this.getDefaultUserWorkspacePermissions().settingsPermissions;
     const settingsPermissions = Object.keys(PermissionFlagType).reduce(
-      (acc, feature) => ({
-        ...acc,
-        [feature]:
-          hasPermissionOnSettingFeature ||
-          permissionFlags.some(
-            (permissionFlag) => permissionFlag.flag === feature,
-          ),
-      }),
+      (acc, feature) => {
+        const hasBasePermission = this.isToolPermission(feature)
+          ? roleOfUserWorkspace.canAccessAllTools
+          : roleOfUserWorkspace.canUpdateAllSettings;
+
+        return {
+          ...acc,
+          [feature]:
+            hasBasePermission ||
+            permissionFlags.some(
+              (permissionFlag) => permissionFlag.flag === feature,
+            ),
+        };
+      },
       defaultSettingsPermissions,
     );
 
