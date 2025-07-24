@@ -40,24 +40,16 @@ import {
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { QueryDeepPartialEntityWithRelationConnect } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
-import { RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
-import {
-  TwentyORMException,
-  TwentyORMExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
 import {
   OperationType,
   validateOperationIsPermittedOrThrow,
 } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { computeRelationConnectQueryConfigs } from 'src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util';
-import { createSqlWhereTupleInClause } from 'src/engine/twenty-orm/utils/create-sql-where-tuple-in-clause.utils';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
-import { getRecordToConnectFields } from 'src/engine/twenty-orm/utils/get-record-to-connect-fields.util';
 
 type PermissionOptions = {
   shouldBypassPermissionChecks?: boolean;
@@ -172,19 +164,11 @@ export class WorkspaceEntityManager extends EntityManager {
   override async insert<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
     entity:
-      | QueryDeepPartialEntityWithRelationConnect<Entity>
-      | QueryDeepPartialEntityWithRelationConnect<Entity>[],
+      | QueryDeepPartialEntityWithNestedRelationFields<Entity>
+      | QueryDeepPartialEntityWithNestedRelationFields<Entity>[],
     selectedColumns: string[] = [],
     permissionOptions?: PermissionOptions,
   ): Promise<InsertResult> {
-    const entityArray = Array.isArray(entity) ? entity : [entity];
-
-    const connectedEntities = await this.processRelationConnect<Entity>(
-      entityArray,
-      target,
-      permissionOptions,
-    );
-
     return this.createQueryBuilder(
       undefined,
       undefined,
@@ -193,7 +177,7 @@ export class WorkspaceEntityManager extends EntityManager {
     )
       .insert()
       .into(target)
-      .values(connectedEntities)
+      .values(entity)
       .returning(selectedColumns)
       .execute();
   }
@@ -1483,119 +1467,5 @@ export class WorkspaceEntityManager extends EntityManager {
       'Method not allowed.',
       PermissionsExceptionCode.RAW_SQL_NOT_ALLOWED,
     );
-  }
-
-  private async processRelationConnect<Entity extends ObjectLiteral>(
-    entities: QueryDeepPartialEntityWithRelationConnect<Entity>[],
-    target: EntityTarget<Entity>,
-    permissionOptions?: PermissionOptions,
-  ): Promise<QueryDeepPartialEntity<Entity>[]> {
-    const objectMetadata = getObjectMetadataFromEntityTarget(
-      target,
-      this.internalContext,
-    );
-
-    const objectMetadataMap = this.internalContext.objectMetadataMaps;
-
-    const relationConnectQueryConfigs = computeRelationConnectQueryConfigs(
-      entities,
-      objectMetadata,
-      objectMetadataMap,
-    );
-
-    if (!isDefined(relationConnectQueryConfigs)) return entities;
-
-    const recordsToConnectWithConfig = await this.executeConnectQueries(
-      relationConnectQueryConfigs,
-      permissionOptions,
-    );
-
-    const updatedEntities = this.updateEntitiesWithRecordToConnectId<Entity>(
-      entities,
-      recordsToConnectWithConfig,
-    );
-
-    return updatedEntities;
-  }
-
-  private async executeConnectQueries(
-    relationConnectQueryConfigs: Record<string, RelationConnectQueryConfig>,
-    permissionOptions?: PermissionOptions,
-  ): Promise<[RelationConnectQueryConfig, Record<string, unknown>[]][]> {
-    const AllRecordsToConnectWithConfig: [
-      RelationConnectQueryConfig,
-      Record<string, unknown>[],
-    ][] = [];
-
-    for (const connectQueryConfig of Object.values(
-      relationConnectQueryConfigs,
-    )) {
-      const { clause, parameters } = createSqlWhereTupleInClause(
-        connectQueryConfig.recordToConnectConditions,
-        connectQueryConfig.targetObjectName,
-      );
-
-      const recordsToConnect = await this.createQueryBuilder(
-        connectQueryConfig.targetObjectName,
-        connectQueryConfig.targetObjectName,
-        undefined,
-        permissionOptions,
-      )
-        .select(getRecordToConnectFields(connectQueryConfig))
-        .where(clause, parameters)
-        .getRawMany();
-
-      AllRecordsToConnectWithConfig.push([
-        connectQueryConfig,
-        recordsToConnect,
-      ]);
-    }
-
-    return AllRecordsToConnectWithConfig;
-  }
-
-  private updateEntitiesWithRecordToConnectId<Entity extends ObjectLiteral>(
-    entities: QueryDeepPartialEntityWithRelationConnect<Entity>[],
-    recordsToConnectWithConfig: [
-      RelationConnectQueryConfig,
-      Record<string, unknown>[],
-    ][],
-  ): QueryDeepPartialEntity<Entity>[] {
-    return entities.map((entity, index) => {
-      for (const [
-        connectQueryConfig,
-        recordsToConnect,
-      ] of recordsToConnectWithConfig) {
-        if (
-          isDefined(
-            connectQueryConfig.recordToConnectConditionByEntityIndex[index],
-          )
-        ) {
-          const recordToConnect = recordsToConnect.filter((record) =>
-            connectQueryConfig.recordToConnectConditionByEntityIndex[
-              index
-            ].every(([field, value]) => record[field] === value),
-          );
-
-          if (recordToConnect.length !== 1) {
-            const recordToConnectTotal = recordToConnect.length;
-            const connectFieldName = connectQueryConfig.connectFieldName;
-
-            throw new TwentyORMException(
-              `Expected 1 record to connect to ${connectFieldName}, but found ${recordToConnectTotal}.`,
-              TwentyORMExceptionCode.CONNECT_RECORD_NOT_FOUND,
-            );
-          }
-
-          entity = {
-            ...entity,
-            [connectQueryConfig.relationFieldName]: recordToConnect[0]['id'],
-            [connectQueryConfig.connectFieldName]: null,
-          };
-        }
-      }
-
-      return entity;
-    });
   }
 }
