@@ -30,7 +30,6 @@ import { AgentEntity } from './agent.entity';
 import { AgentResolver } from './agent.resolver';
 import { AgentService } from './agent.service';
 
-
 @Module({
   imports: [
     TypeOrmModule.forFeature(
@@ -55,7 +54,7 @@ import { AgentService } from './agent.service';
     WorkspacePermissionsCacheModule,
     WorkspaceCacheStorageModule,
     TokenModule,
-    DomainManagerModule
+    DomainManagerModule,
   ],
   controllers: [AgentChatController],
   providers: [
