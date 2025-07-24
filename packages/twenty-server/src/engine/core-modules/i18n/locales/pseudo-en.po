@@ -1362,6 +1362,11 @@ msgstr ""
 msgid "Invalid trigger type for enabling workflow trigger"
 msgstr ""
 
+#. js-lingui-id: VEKoJx
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
+msgid "Invalid verification code. Please try again."
+msgstr ""
+
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -2595,6 +2600,7 @@ msgstr ""
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
+#: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
 msgid "This name is not available."
 msgstr ""
 
@@ -3241,6 +3247,11 @@ msgstr ""
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "You must be authenticated to perform this action."
+msgstr ""
+
+#. js-lingui-id: 8pqpv/
+#: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
+msgid "Your app version is out of date. Please refresh the page to continue."
 msgstr ""
 
 #. js-lingui-id: bTyBrW
