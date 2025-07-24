@@ -3,9 +3,9 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { lastVisitedConfigVariableState } from '@/settings/admin-panel/config-variables/states/lastVisitedConfigVariableState';
 import { DATA_MODEL_OBJECT_ROW_ID_PREFIX } from '@/settings/data-model/constants/DataModelObjectRowIDPrefix';
 import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/components/SettingsDataModelObjectTypeTag';
+import { lastVisitedDataModelObjectState } from '@/settings/data-model/states/lastVisitedDataModelObjectState';
 import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -46,8 +46,8 @@ export const SettingsObjectMetadataItemTableRow = ({
   totalObjectCount,
 }: SettingsObjectMetadataItemTableRowProps) => {
   const theme = useTheme();
-  const setLastVisitedConfigVariable = useSetRecoilState(
-    lastVisitedConfigVariableState,
+  const setLastVisitedDataModelObject = useSetRecoilState(
+    lastVisitedDataModelObjectState,
   );
 
   const { getIcon } = useIcons();
@@ -59,7 +59,7 @@ export const SettingsObjectMetadataItemTableRow = ({
       key={objectMetadataItem.namePlural}
       to={link}
       onClick={() =>
-        setLastVisitedConfigVariable(objectMetadataItem.namePlural)
+        setLastVisitedDataModelObject(objectMetadataItem.namePlural)
       }
       id={`${DATA_MODEL_OBJECT_ROW_ID_PREFIX}-${objectMetadataItem.namePlural}`}
     >
