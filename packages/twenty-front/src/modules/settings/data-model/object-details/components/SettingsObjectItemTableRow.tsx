@@ -1,9 +1,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
+import { useSetRecoilState } from 'recoil';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { DATA_MODEL_OBJECT_ROW_ID_PREFIX } from '@/settings/data-model/components/DataModelObjectsScrollRestoreEffect';
 import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/components/SettingsDataModelObjectTypeTag';
+import { lastVisitedDataModelObjectState } from '@/settings/data-model/states/lastVisitedDataModelObjectState';
 import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -43,33 +46,44 @@ export const SettingsObjectMetadataItemTableRow = ({
   totalObjectCount,
 }: SettingsObjectMetadataItemTableRowProps) => {
   const theme = useTheme();
+  const setLastVisitedObject = useSetRecoilState(lastVisitedDataModelObjectState);
 
   const { getIcon } = useIcons();
   const Icon = getIcon(objectMetadataItem.icon);
   const objectTypeLabel = getObjectTypeLabel(objectMetadataItem);
 
+  const handleRowClick = () => {
+    setLastVisitedObject(objectMetadataItem.namePlural);
+  };
+
   return (
-    <StyledObjectTableRow key={objectMetadataItem.namePlural} to={link}>
-      <StyledNameTableCell>
-        {!!Icon && (
-          <Icon
-            style={{ minWidth: theme.icon.size.md }}
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
-        )}
-        <StyledNameLabel title={objectMetadataItem.labelPlural}>
-          {objectMetadataItem.labelPlural}
-        </StyledNameLabel>
-      </StyledNameTableCell>
-      <TableCell>
-        <SettingsDataModelObjectTypeTag objectTypeLabel={objectTypeLabel} />
-      </TableCell>
-      <TableCell align="right">
-        {objectMetadataItem.fields.filter((field) => !field.isSystem).length}
-      </TableCell>
-      <TableCell align="right">{totalObjectCount}</TableCell>
-      <StyledActionTableCell>{action}</StyledActionTableCell>
-    </StyledObjectTableRow>
+    <div id={`${DATA_MODEL_OBJECT_ROW_ID_PREFIX}-${objectMetadataItem.namePlural}`}>
+      <StyledObjectTableRow 
+        key={objectMetadataItem.namePlural} 
+        to={link}
+        onClick={handleRowClick}
+      >
+        <StyledNameTableCell>
+          {!!Icon && (
+            <Icon
+              style={{ minWidth: theme.icon.size.md }}
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+            />
+          )}
+          <StyledNameLabel title={objectMetadataItem.labelPlural}>
+            {objectMetadataItem.labelPlural}
+          </StyledNameLabel>
+        </StyledNameTableCell>
+        <TableCell>
+          <SettingsDataModelObjectTypeTag objectTypeLabel={objectTypeLabel} />
+        </TableCell>
+        <TableCell align="right">
+          {objectMetadataItem.fields.filter((field) => !field.isSystem).length}
+        </TableCell>
+        <TableCell align="right">{totalObjectCount}</TableCell>
+        <StyledActionTableCell>{action}</StyledActionTableCell>
+      </StyledObjectTableRow>
+    </div>
   );
 };

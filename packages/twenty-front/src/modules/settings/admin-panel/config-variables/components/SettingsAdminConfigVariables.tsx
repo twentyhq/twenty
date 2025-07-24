@@ -157,7 +157,7 @@ export const SettingsAdminConfigVariables = () => {
 
   return (
     <>
-      <ConfigVariablesScrollRestoreEffect configVariableGroups={allGroups} />
+      <ConfigVariablesScrollRestoreEffect />
       <Section>
         <H2Title title={t`Config Variables`} />
 

@@ -6,9 +6,11 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { useDeleteRecordFromCache } from '@/object-record/cache/hooks/useDeleteRecordFromCache';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
+import { OBJECT_FIELD_ROW_ID_PREFIX } from '@/settings/data-model/components/ObjectFieldsScrollRestoreEffect';
 import { SettingsObjectFieldActiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldActiveActionDropdown';
 import { SettingsObjectFieldInactiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
+import { lastVisitedObjectFieldState } from '@/settings/data-model/states/lastVisitedObjectFieldState';
 import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -17,10 +19,10 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-  isDefined,
-  isLabelIdentifierFieldMetadataTypes,
+    isDefined,
+    isLabelIdentifierFieldMetadataTypes,
 } from 'twenty-shared/utils';
 import { IconMinus, IconPlus, useIcons } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -75,6 +77,8 @@ export const SettingsObjectFieldItemTableRow = ({
   const [navigationMemorizedUrl, setNavigationMemorizedUrl] = useRecoilState(
     navigationMemorizedUrlState,
   );
+
+  const setLastVisitedField = useSetRecoilState(lastVisitedObjectFieldState);
 
   const theme = useTheme();
   const { getIcon } = useIcons();
@@ -205,6 +209,18 @@ export const SettingsObjectFieldItemTableRow = ({
           : ''
         : '';
 
+  const handleRowClick = () => {
+    setLastVisitedField(fieldMetadataItem.name);
+  };
+
+  const handleNavigate = () => {
+    handleRowClick();
+    navigate(SettingsPath.ObjectFieldEdit, {
+      objectNamePlural: objectMetadataItem.namePlural,
+      fieldName: fieldMetadataItem.name,
+    });
+  };
+
   if (!isFieldTypeSupported) return null;
 
   const isRelatedObjectLinkable =
@@ -212,114 +228,106 @@ export const SettingsObjectFieldItemTableRow = ({
     !relationObjectMetadataItem.isSystem;
 
   return (
-    <StyledObjectFieldTableRow
-      onClick={
-        mode === 'view'
-          ? () =>
-              navigate(SettingsPath.ObjectFieldEdit, {
-                objectNamePlural: objectMetadataItem.namePlural,
-                fieldName: fieldMetadataItem.name,
-              })
-          : undefined
-      }
-    >
-      <UndecoratedLink to={linkToNavigate}>
-        <StyledNameTableCell>
-          {!!Icon && (
-            <Icon
-              style={{ minWidth: theme.icon.size.md }}
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
-            />
-          )}
-          <StyledNameLabel title={fieldMetadataItem.label}>
-            {fieldMetadataItem.label}
-          </StyledNameLabel>
-        </StyledNameTableCell>
-      </UndecoratedLink>
+    <div id={`${OBJECT_FIELD_ROW_ID_PREFIX}-${fieldMetadataItem.name}`}>
+      <StyledObjectFieldTableRow
+        onClick={
+          mode === 'view'
+            ? handleNavigate
+            : undefined
+        }
+      >
+        <UndecoratedLink to={linkToNavigate}>
+          <StyledNameTableCell>
+            {!!Icon && (
+              <Icon
+                style={{ minWidth: theme.icon.size.md }}
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+              />
+            )}
+            <StyledNameLabel title={fieldMetadataItem.label}>
+              {fieldMetadataItem.label}
+            </StyledNameLabel>
+          </StyledNameTableCell>
+        </UndecoratedLink>
 
-      <TableCell>{typeLabel}</TableCell>
-      <TableCell>
-        <SettingsObjectFieldDataType
-          Icon={RelationIcon}
-          label={
-            relationType === RelationType.MANY_TO_ONE
-              ? relationObjectMetadataItem?.labelSingular
-              : relationObjectMetadataItem?.labelPlural
-          }
-          labelDetail={
-            fieldMetadataItem.settings?.type === 'percentage' ? '%' : undefined
-          }
-          to={
-            isRelatedObjectLinkable
-              ? getSettingsPath(SettingsPath.Objects, {
-                  objectNamePlural: relationObjectMetadataItem.namePlural,
-                })
-              : undefined
-          }
-          value={fieldType}
-          onClick={(e) => {
-            if (isRelatedObjectLinkable) {
-              e.stopPropagation();
+        <TableCell>{typeLabel}</TableCell>
+        <TableCell>
+          <SettingsObjectFieldDataType
+            Icon={RelationIcon}
+            label={
+              relationType === RelationType.MANY_TO_ONE
+                ? relationObjectMetadataItem?.labelSingular
+                : relationObjectMetadataItem?.labelPlural
             }
-          }}
-        />
-      </TableCell>
-      <StyledIconTableCell>
-        {status === 'active' ? (
-          mode === 'view' ? (
-            <SettingsObjectFieldActiveActionDropdown
+            labelDetail={
+              fieldMetadataItem.settings?.type === 'percentage' ? '%' : undefined
+            }
+            to={
+              isRelatedObjectLinkable
+                ? getSettingsPath(SettingsPath.Objects, {
+                    objectNamePlural: relationObjectMetadataItem.namePlural,
+                  })
+                : undefined
+            }
+            value={fieldType}
+            onClick={(e) => {
+              if (isRelatedObjectLinkable) {
+                e.stopPropagation();
+              }
+            }}
+          />
+        </TableCell>
+        <StyledIconTableCell>
+          {status === 'active' ? (
+            mode === 'view' ? (
+              <SettingsObjectFieldActiveActionDropdown
+                isCustomField={fieldMetadataItem.isCustom === true}
+                scopeKey={fieldMetadataItem.id}
+                onEdit={() =>
+                  handleNavigate()
+                }
+                onSetAsLabelIdentifier={
+                  canBeSetAsLabelIdentifier
+                    ? () => handleSetLabelIdentifierField(fieldMetadataItem)
+                    : undefined
+                }
+                onDeactivate={
+                  isLabelIdentifier
+                    ? undefined
+                    : () => handleDisableField(fieldMetadataItem)
+                }
+              />
+            ) : (
+              canToggleField && (
+                <LightIconButton
+                  Icon={IconMinus}
+                  accent="tertiary"
+                  onClick={handleToggleField}
+                />
+              )
+            )
+          ) : mode === 'view' ? (
+            <SettingsObjectFieldInactiveActionDropdown
               isCustomField={fieldMetadataItem.isCustom === true}
               scopeKey={fieldMetadataItem.id}
               onEdit={() =>
-                navigate(SettingsPath.ObjectFieldEdit, {
-                  objectNamePlural: objectMetadataItem.namePlural,
-                  fieldName: fieldMetadataItem.name,
-                })
+                handleNavigate()
               }
-              onSetAsLabelIdentifier={
-                canBeSetAsLabelIdentifier
-                  ? () => handleSetLabelIdentifierField(fieldMetadataItem)
-                  : undefined
+              onActivate={() =>
+                activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id)
               }
-              onDeactivate={
-                isLabelIdentifier
-                  ? undefined
-                  : () => handleDisableField(fieldMetadataItem)
-              }
+              onDelete={() => deleteMetadataField(fieldMetadataItem)}
             />
           ) : (
-            canToggleField && (
-              <LightIconButton
-                Icon={IconMinus}
-                accent="tertiary"
-                onClick={handleToggleField}
-              />
-            )
-          )
-        ) : mode === 'view' ? (
-          <SettingsObjectFieldInactiveActionDropdown
-            isCustomField={fieldMetadataItem.isCustom === true}
-            scopeKey={fieldMetadataItem.id}
-            onEdit={() =>
-              navigate(SettingsPath.ObjectFieldEdit, {
-                objectNamePlural: objectMetadataItem.namePlural,
-                fieldName: fieldMetadataItem.name,
-              })
-            }
-            onActivate={() =>
-              activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id)
-            }
-            onDelete={() => deleteMetadataField(fieldMetadataItem)}
-          />
-        ) : (
-          <LightIconButton
-            Icon={IconPlus}
-            accent="tertiary"
-            onClick={handleToggleField}
-          />
-        )}
-      </StyledIconTableCell>
-    </StyledObjectFieldTableRow>
+            <LightIconButton
+              Icon={IconPlus}
+              accent="tertiary"
+              onClick={handleToggleField}
+            />
+          )}
+        </StyledIconTableCell>
+      </StyledObjectFieldTableRow>
+    </div>
   );
 };
