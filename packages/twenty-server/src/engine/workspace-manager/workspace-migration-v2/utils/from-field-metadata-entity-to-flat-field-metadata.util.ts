@@ -7,14 +7,22 @@ import {
 import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/utils/from-object-metadata-entity-to-flat-field-metadata.util';
 import { fromFlatObjectMetadataToFlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/from-flat-object-metadata-to-flat-object-metadata-without-fields.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { removePropertiesFromRecord } from 'twenty-shared/utils';
+import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 
 export const fromFieldMetadataEntityToFlatFieldMetadata = <
   T extends FieldMetadataType,
 >(
   fieldMetadataEntity: FieldMetadataEntity<T>,
+  /**
+   * private depth bottleneck
+   */
+  _depth?: number,
   // This is intented to be abstract
 ): FlatFieldMetadata => {
+  if (isDefined(_depth) && _depth > 1) {
+    throw new Error('TODO prastoin entering a possible infinite loop');
+  }
+
   const fieldMetadataWithoutRelations = removePropertiesFromRecord(
     fieldMetadataEntity,
     fieldMetadataRelationProperties,
@@ -30,9 +38,11 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = <
       FieldMetadataType.MORPH_RELATION,
     )
   ) {
+    const newDepth = isDefined(_depth) ? _depth + 1 : 1;
     const flatRelationTargetFieldMetadata =
       fromFieldMetadataEntityToFlatFieldMetadata(
         fieldMetadataEntity.relationTargetFieldMetadata,
+        newDepth,
       );
     const flatObjectTargetFieldMetadata =
       fromObjectMetadataEntityToFlatObjectMetadata(
