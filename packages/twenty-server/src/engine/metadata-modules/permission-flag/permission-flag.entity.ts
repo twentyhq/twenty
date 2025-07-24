@@ -10,26 +10,26 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
-@Entity('settingPermission')
-@Unique('IDX_SETTING_PERMISSION_SETTING_ROLE_ID_UNIQUE', ['setting', 'roleId'])
-export class SettingPermissionEntity {
+@Entity('permissionFlag')
+@Unique('IDX_PERMISSION_FLAG_FLAG_ROLE_ID_UNIQUE', ['flag', 'roleId'])
+export class PermissionFlagEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ nullable: false, type: 'uuid' })
   roleId: string;
 
-  @ManyToOne(() => RoleEntity, (role) => role.settingPermissions, {
+  @ManyToOne(() => RoleEntity, (role) => role.permissionFlags, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'roleId' })
   role: Relation<RoleEntity>;
 
   @Column({ nullable: false, type: 'varchar' })
-  setting: SettingPermissionType;
+  flag: PermissionFlagType;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;

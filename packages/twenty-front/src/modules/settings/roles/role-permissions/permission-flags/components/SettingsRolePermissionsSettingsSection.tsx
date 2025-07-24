@@ -1,7 +1,7 @@
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { SettingsRolePermissionsSettingsTableHeader } from '@/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader';
-import { SettingsRolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableRow';
-import { SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/settings-permissions/types/SettingsRolePermissionsSettingPermission';
+import { SettingsRolePermissionsSettingsTableHeader } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader';
+import { SettingsRolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableRow';
+import { SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -17,7 +17,7 @@ import {
   IconUsers,
 } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
-import { SettingPermissionType } from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -48,43 +48,43 @@ export const SettingsRolePermissionsSettingsSection = ({
   const settingsPermissionsConfig: SettingsRolePermissionsSettingPermission[] =
     [
       {
-        key: SettingPermissionType.API_KEYS_AND_WEBHOOKS,
+        key: PermissionFlagType.API_KEYS_AND_WEBHOOKS,
         name: t`API Keys & Webhooks`,
         description: t`Manage API keys and webhooks`,
         Icon: IconCode,
       },
       {
-        key: SettingPermissionType.WORKSPACE,
+        key: PermissionFlagType.WORKSPACE,
         name: t`Workspace`,
         description: t`Set global workspace preferences`,
         Icon: IconSettings,
       },
       {
-        key: SettingPermissionType.WORKSPACE_MEMBERS,
+        key: PermissionFlagType.WORKSPACE_MEMBERS,
         name: t`Users`,
         description: t`Add or remove users`,
         Icon: IconUsers,
       },
       {
-        key: SettingPermissionType.ROLES,
+        key: PermissionFlagType.ROLES,
         name: t`Roles`,
         description: t`Define user roles and access levels`,
         Icon: IconLockOpen,
       },
       {
-        key: SettingPermissionType.DATA_MODEL,
+        key: PermissionFlagType.DATA_MODEL,
         name: t`Data Model`,
         description: t`Edit CRM data structure and fields`,
         Icon: IconHierarchy,
       },
       {
-        key: SettingPermissionType.SECURITY,
+        key: PermissionFlagType.SECURITY,
         name: t`Security`,
         description: t`Manage security policies`,
         Icon: IconKey,
       },
       {
-        key: SettingPermissionType.WORKFLOWS,
+        key: PermissionFlagType.WORKFLOWS,
         name: t`Workflows`,
         description: t`Manage workflows`,
         Icon: IconSettingsAutomation,

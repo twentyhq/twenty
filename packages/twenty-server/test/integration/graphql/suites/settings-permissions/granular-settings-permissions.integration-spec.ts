@@ -7,7 +7,7 @@ import { createOneObjectMetadataQueryFactory } from 'test/integration/metadata/s
 import { deleteOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata-query-factory.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -70,13 +70,13 @@ describe('Granular settings permissions', () => {
     // Assign specific setting permissions to the custom role
     const upsertSettingPermissionsQuery = {
       query: `
-        mutation UpsertSettingPermissions {
-          upsertSettingPermissions(upsertSettingPermissionsInput: {
+        mutation UpsertPermissionFlags {
+          upsertPermissionFlags(upsertPermissionFlagsInput: {
             roleId: "${customRoleId}"
-            settingPermissionKeys: [${SettingPermissionType.DATA_MODEL}, ${SettingPermissionType.WORKSPACE}, ${SettingPermissionType.WORKFLOWS}]
+            permissionFlagKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}, ${PermissionFlagType.WORKFLOWS}]
           }) {
             id
-            setting
+            flag
             roleId
           }
         }
@@ -357,8 +357,8 @@ describe('Granular settings permissions', () => {
               id
               label
               canUpdateAllSettings
-              settingPermissions {
-                setting
+              permissionFlags {
+                flag
               }
             }
           }
@@ -376,13 +376,13 @@ describe('Granular settings permissions', () => {
 
       expect(customRole).toBeDefined();
       expect(customRole.canUpdateAllSettings).toBe(false);
-      expect(customRole.settingPermissions).toHaveLength(3);
-      expect(
-        customRole.settingPermissions.map((p: any) => p.setting),
-      ).toContain(SettingPermissionType.DATA_MODEL);
-      expect(
-        customRole.settingPermissions.map((p: any) => p.setting),
-      ).toContain(SettingPermissionType.WORKSPACE);
+      expect(customRole.permissionFlags).toHaveLength(3);
+      expect(customRole.permissionFlags.map((p: any) => p.flag)).toContain(
+        PermissionFlagType.DATA_MODEL,
+      );
+      expect(customRole.permissionFlags.map((p: any) => p.flag)).toContain(
+        PermissionFlagType.WORKSPACE,
+      );
     });
   });
 
@@ -391,13 +391,13 @@ describe('Granular settings permissions', () => {
       // Add SECURITY permission to the custom role
       const upsertSecurityPermissionQuery = {
         query: `
-          mutation UpsertSettingPermissions {
-            upsertSettingPermissions(upsertSettingPermissionsInput: {
+          mutation UpsertPermissionFlags {
+            upsertPermissionFlags(upsertPermissionFlagsInput: {
               roleId: "${customRoleId}"
-              settingPermissionKeys: [${SettingPermissionType.DATA_MODEL}, ${SettingPermissionType.WORKSPACE}, ${SettingPermissionType.SECURITY}]
+              permissionFlagKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}, ${PermissionFlagType.SECURITY}]
             }) {
               id
-              setting
+              flag
               roleId
             }
           }
@@ -411,7 +411,7 @@ describe('Granular settings permissions', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.upsertSettingPermissions).toHaveLength(3);
+      expect(response.body.data.upsertPermissionFlags).toHaveLength(3);
 
       // Verify the user now has access to security operations
       // Note: This would require a specific security operation to test
@@ -421,8 +421,8 @@ describe('Granular settings permissions', () => {
           query GetRole {
             getRoles {
               id
-              settingPermissions {
-                setting
+              permissionFlags {
+                flag
               }
             }
           }
@@ -438,23 +438,23 @@ describe('Granular settings permissions', () => {
         (role: any) => role.id === customRoleId,
       );
 
-      expect(updatedRole.settingPermissions).toHaveLength(3);
-      expect(
-        updatedRole.settingPermissions.map((p: any) => p.setting),
-      ).toContain(SettingPermissionType.SECURITY);
+      expect(updatedRole.permissionFlags).toHaveLength(3);
+      expect(updatedRole.permissionFlags.map((p: any) => p.flag)).toContain(
+        PermissionFlagType.SECURITY,
+      );
     });
 
     it('should allow removing setting permissions from existing role', async () => {
       // Remove SECURITY permission, keep only DATA_MODEL and WORKSPACE
       const upsertReducedPermissionsQuery = {
         query: `
-          mutation UpsertSettingPermissions {
-            upsertSettingPermissions(upsertSettingPermissionsInput: {
+          mutation UpsertPermissionFlags {
+            upsertPermissionFlags(upsertPermissionFlagsInput: {
               roleId: "${customRoleId}"
-              settingPermissionKeys: [${SettingPermissionType.DATA_MODEL}, ${SettingPermissionType.WORKSPACE}]
+              permissionFlagKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}]
             }) {
               id
-              setting
+              flag
               roleId
             }
           }
@@ -468,7 +468,7 @@ describe('Granular settings permissions', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.upsertSettingPermissions).toHaveLength(2);
+      expect(response.body.data.upsertPermissionFlags).toHaveLength(2);
 
       // Verify SECURITY permission was removed
       const getRoleQuery = {
@@ -476,8 +476,8 @@ describe('Granular settings permissions', () => {
           query GetRole {
             getRoles {
               id
-              settingPermissions {
-                setting
+              permissionFlags {
+                flag
               }
             }
           }
@@ -493,10 +493,10 @@ describe('Granular settings permissions', () => {
         (role: any) => role.id === customRoleId,
       );
 
-      expect(updatedRole.settingPermissions).toHaveLength(2);
-      expect(
-        updatedRole.settingPermissions.map((p: any) => p.setting),
-      ).not.toContain(SettingPermissionType.SECURITY);
+      expect(updatedRole.permissionFlags).toHaveLength(2);
+      expect(updatedRole.permissionFlags.map((p: any) => p.flag)).not.toContain(
+        PermissionFlagType.SECURITY,
+      );
     });
   });
 });

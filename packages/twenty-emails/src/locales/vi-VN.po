@@ -21,237 +21,237 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Suspended Workspace"
-msgstr ""
+msgstr "Không gian làm việc bị tạm ngưng"
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 #: src/emails/password-update-notify.email.tsx
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Dear {userName},"
-msgstr ""
+msgstr "Kính gửi {userName},"
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 #: src/emails/password-update-notify.email.tsx
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Hello,"
-msgstr ""
+msgstr "Xin chào,"
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
-msgstr ""
+msgstr "Có vẻ như không gian làm việc của bạn <0>{workspaceDisplayName}</0> đã bị đình chỉ vì {daysSinceInactive} ngày."
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
-msgstr ""
+msgstr "Không gian làm việc sẽ bị ngừng hoạt động trong {remainingDays} ngày tới, và tất cả dữ liệu của nó sẽ bị xóa bỏ."
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
-msgstr ""
+msgstr "Nếu bạn muốn tiếp tục sử dụng Twenty, vui lòng cập nhật gói đăng ký của bạn trong vòng {remainingDays} ngày kế tiếp."
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Update your subscription"
-msgstr ""
+msgstr "Cập nhật gói đăng ký của bạn"
 
 #. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
-msgstr ""
+msgstr "Xác thực tên miền"
 
 #. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
-msgstr ""
+msgstr "{senderName} (<0>{senderEmail}</0>): Vui lòng xác thực tên miền này để cho phép người dùng có địa chỉ email <1>@{domain}</1> tham gia không gian làm việc của bạn mà không cần lời mời."
 
 #. js-lingui-explicit-id
 #: src/emails/test.email.tsx
 msgid "Test email"
-msgstr ""
+msgstr "Kiểm tra email"
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
 msgid "Join your team on Twenty"
-msgstr ""
+msgstr "Tham gia vào đội ngũ của bạn trên Twenty"
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
 msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr ""
+msgstr "{senderName} (<0>{senderEmail}</0>) đã mời bạn tham gia vào không gian làm việc gọi là <1>{workspaceName}</1>."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
 msgid "Accept invite"
-msgstr ""
+msgstr "Chấp nhận lời mời"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your email address"
-msgstr ""
+msgstr "Xác nhận địa chỉ email của bạn"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr ""
+msgstr "Cảm ơn bạn đã đăng ký tài khoản trên Twenty! Trước khi bắt đầu, chúng tôi cần xác nhận đây chính là bạn. Nhấn vào bên dưới để xác minh địa chỉ email của bạn."
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Verify Email"
-msgstr ""
+msgstr "Xác minh Email"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
 msgid "Password updated"
-msgstr ""
+msgstr "Mật khẩu đã được cập nhật"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
 msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr ""
+msgstr "Đây là xác nhận rằng mật khẩu cho tài khoản của bạn ({email}) đã được thay đổi thành công vào {formattedDate}."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr ""
+msgstr "Nếu bạn không khởi xướng việc thay đổi này, vui lòng liên hệ ngay với chủ sở hữu của không gian làm việc của bạn."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
 msgid "Connect to Twenty"
-msgstr ""
+msgstr "Kết nối với Twenty"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset your password 🗝"
-msgstr ""
+msgstr "Đặt lại mật khẩu của bạn 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr ""
+msgstr "Liên kết này chỉ có hiệu lực trong thời gian {duration} kế tiếp. Nếu liên kết không hoạt động, bạn có thể sử dụng liên kết xác minh đăng nhập trực tiếp:"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
-msgstr ""
+msgstr "Đặt lại"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Deleted Workspace"
-msgstr ""
+msgstr "Không gian làm việc đã bị xóa"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {daysSinceInactive} days ago."
-msgstr ""
+msgstr "Không gian làm việc của bạn <0>{workspaceDisplayName}</0> đã bị xóa bỏ vì gói đăng ký của bạn đã hết hạn từ {daysSinceInactive} ngày trước."
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "All data in this workspace has been permanently deleted."
-msgstr ""
+msgstr "Tất cả dữ liệu trong không gian làm việc này đã bị xóa vĩnh viễn."
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "If you wish to use Twenty again, you can create a new workspace."
-msgstr ""
+msgstr "Nếu bạn muốn sử dụng Twenty lại, bạn có thể tạo một không gian làm việc mới."
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Create a new workspace"
-msgstr ""
+msgstr "Tạo không gian làm việc mới"
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
 msgid "What is Twenty?"
-msgstr ""
+msgstr "Twenty là gì?"
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
 msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr ""
+msgstr "Đó là một CRM, một phần mềm giúp doanh nghiệp quản lý dữ liệu và mối quan hệ khách hàng một cách hiệu quả."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Website"
-msgstr ""
+msgstr "Trang web"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Visit Twenty's website"
-msgstr ""
+msgstr "Thăm trang web của Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Github"
-msgstr ""
+msgstr "Github"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Visit Twenty's GitHub repository"
-msgstr ""
+msgstr "Thăm kho GitHub của Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "User guide"
-msgstr ""
+msgstr "Hướng dẫn người dùng"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Read Twenty's user guide"
-msgstr ""
+msgstr "Đọc hướng dẫn người dùng của Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Developers"
-msgstr ""
+msgstr "Nhà phát triển"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Visit Twenty's developer documentation"
-msgstr ""
+msgstr "Thăm tài liệu nhà phát triển của Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Twenty.com, Public Benefit Corporation"
-msgstr ""
+msgstr "Twenty.com, Tập đoàn lợi ích công cộng"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "San Francisco / Paris"
-msgstr ""
+msgstr "San Francisco / Paris"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 #~ msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
-#~ msgstr ""
+#~ msgstr "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
 
 #. js-lingui-id: 4WPI3S
 #: src/emails/send-invite-link.email.tsx
 #~ msgid "Accept invite"
-#~ msgstr "Chấp nhận lời mời"
+#~ msgstr "Accept invite"
 
 #. js-lingui-id: Yxj+Uc
 #: src/emails/clean-suspended-workspace.email.tsx
 #~ msgid "All data in this workspace has been permanently deleted."
-#~ msgstr "Tất cả dữ liệu trong không gian làm việc này đã bị xóa vĩnh viễn."
+#~ msgstr "All data in this workspace has been permanently deleted."
 
 #. js-lingui-id: RPHFhC
 #: src/emails/send-email-verification-link.email.tsx
 #~ msgid "Confirm your email address"
-#~ msgstr "Xác nhận địa chỉ email của bạn"
+#~ msgstr "Confirm your email address"
 
 #. js-lingui-id: nvkBPN
 #: src/emails/password-update-notify.email.tsx
 #~ msgid "Connect to Twenty"
-#~ msgstr "Kết nối với Twenty"
+#~ msgstr "Connect to Twenty"
 
 #. js-lingui-id: jPQSEz
 #: src/emails/clean-suspended-workspace.email.tsx
 #~ msgid "Create a new workspace"
-#~ msgstr "Tạo không gian làm việc mới"
+#~ msgstr "Create a new workspace"
 
 #. js-lingui-id: JRzgV7
 #: src/emails/password-update-notify.email.tsx
@@ -261,72 +261,72 @@ msgstr ""
 #. js-lingui-id: Lm5BBI
 #: src/emails/password-update-notify.email.tsx
 #~ msgid "Dear {userName}"
-#~ msgstr "Kính gửi {userName}"
+#~ msgstr "Dear {userName}"
 
 #. js-lingui-id: lIdkf2
 #: src/emails/clean-suspended-workspace.email.tsx
 #~ msgid "Dear {userName},"
-#~ msgstr "Kính gửi {userName},"
+#~ msgstr "Dear {userName},"
 
 #. js-lingui-id: NTwcnq
 #: src/emails/clean-suspended-workspace.email.tsx
 #~ msgid "Deleted Workspace"
-#~ msgstr "Không gian làm việc đã bị xóa"
+#~ msgstr "Deleted Workspace"
 
 #. js-lingui-id: S3uuQj
 #: src/emails/validate-approved-access-domain.email.tsx
 #~ msgid "email addresses to join your workspace without requiring an invitation."
-#~ msgstr "địa chỉ email để tham gia không gian làm việc của bạn mà không cần yêu cầu lời mời."
+#~ msgstr "email addresses to join your workspace without requiring an invitation."
 
 #. js-lingui-id: tGme7M
 #: src/emails/send-invite-link.email.tsx
 #~ msgid "has invited you to join a workspace called "
-#~ msgstr "đã mời bạn tham gia một không gian làm việc có tên là "
+#~ msgstr "has invited you to join a workspace called "
 
 #. js-lingui-id: uzTaYi
 #: src/emails/password-update-notify.email.tsx
 #~ msgid "Hello"
-#~ msgstr "Xin chào"
+#~ msgstr "Hello"
 
 #. js-lingui-id: Xa0d85
 #: src/emails/clean-suspended-workspace.email.tsx
 #~ msgid "Hello,"
-#~ msgstr "Xin chào,"
+#~ msgstr "Hello,"
 
 #. js-lingui-id: eE1nG1
 #: src/emails/password-update-notify.email.tsx
 #~ msgid "If you did not initiate this change, please contact your workspace owner immediately."
-#~ msgstr "Nếu bạn không khởi xướng việc thay đổi này, vui lòng liên hệ ngay với chủ sở hữu của không gian làm việc của bạn."
+#~ msgstr "If you did not initiate this change, please contact your workspace owner immediately."
 
 #. js-lingui-id: Gz91L8
 #: src/emails/warn-suspended-workspace.email.tsx
 #~ msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
-#~ msgstr "Nếu bạn muốn tiếp tục sử dụng Twenty, vui lòng cập nhật gói đăng ký của bạn trong vòng {remainingDays} ngày kế tiếp."
+#~ msgstr "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
 
 #. js-lingui-id: 0weyko
 #: src/emails/clean-suspended-workspace.email.tsx
 #~ msgid "If you wish to use Twenty again, you can create a new workspace."
-#~ msgstr "Nếu bạn muốn sử dụng Twenty lại, bạn có thể tạo một không gian làm việc mới."
+#~ msgstr "If you wish to use Twenty again, you can create a new workspace."
 
 #. js-lingui-id: 7JuhZQ
 #: src/emails/warn-suspended-workspace.email.tsx
 #~ msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
-#~ msgstr "Có vẻ như không gian làm việc của bạn <0>{workspaceDisplayName}</0> đã bị đình chỉ vì {daysSinceInactive} ngày."
+#~ msgstr "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
 
 #. js-lingui-id: PviVyk
 #: src/emails/send-invite-link.email.tsx
 #~ msgid "Join your team on Twenty"
-#~ msgstr "Tham gia vào đội ngũ của bạn trên Twenty"
+#~ msgstr "Join your team on Twenty"
 
 #. js-lingui-id: ogtYkT
 #: src/emails/password-update-notify.email.tsx
 #~ msgid "Password updated"
-#~ msgstr "Mật khẩu đã được cập nhật"
+#~ msgstr "Password updated"
 
 #. js-lingui-id: Yucjaa
 #: src/emails/validate-approved-access-domain.email.tsx
 #~ msgid "Please validate this domain to allow users with"
-#~ msgstr "Vui lòng xác nhận miền này để cho phép người dùng sử dụng"
+#~ msgstr "Please validate this domain to allow users with"
 
 #. js-lingui-id: u3Ns4p
 #: src/emails/validate-approved-access-domain.email.tsx
@@ -336,32 +336,32 @@ msgstr ""
 #. js-lingui-id: OfhWJH
 #: src/emails/password-reset-link.email.tsx
 #~ msgid "Reset"
-#~ msgstr "Đặt lại"
+#~ msgstr "Reset"
 
 #. js-lingui-id: RE5NiU
 #: src/emails/password-reset-link.email.tsx
 #~ msgid "Reset your password 🗝"
-#~ msgstr "Đặt lại mật khẩu của bạn 🗝"
+#~ msgstr "Reset your password 🗝"
 
 #. js-lingui-id: UBadaJ
 #: src/emails/warn-suspended-workspace.email.tsx
 #~ msgid "Suspended Workspace "
-#~ msgstr "Không gian làm việc bị tạm ngưng "
+#~ msgstr "Suspended Workspace "
 
 #. js-lingui-id: 7yDt8q
 #: src/emails/send-email-verification-link.email.tsx
 #~ msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
-#~ msgstr "Cảm ơn bạn đã đăng ký tài khoản trên Twenty! Trước khi chúng ta bắt đầu, chúng ta chỉ cần xác nhận đây có phải là bạn không. Nhấp vào phía trên để xác minh địa chỉ email của bạn."
+#~ msgstr "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
 
 #. js-lingui-id: igorB1
 #: src/emails/warn-suspended-workspace.email.tsx
 #~ msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
-#~ msgstr "Không gian làm việc sẽ bị ngừng hoạt động trong {remainingDays} ngày tới, và tất cả dữ liệu của nó sẽ bị xóa bỏ."
+#~ msgstr "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
 
 #. js-lingui-id: 7OEHy1
 #: src/emails/password-update-notify.email.tsx
 #~ msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-#~ msgstr "Đây là xác nhận rằng mật khẩu cho tài khoản của bạn ({email}) đã được thay đổi thành công vào {formattedDate}."
+#~ msgstr "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
 
 #. js-lingui-id: wSOsS+
 #: src/emails/password-update-notify.email.tsx
@@ -371,7 +371,7 @@ msgstr ""
 #. js-lingui-id: R4gMjN
 #: src/emails/password-reset-link.email.tsx
 #~ msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-#~ msgstr "Liên kết này chỉ có hiệu lực trong thời gian {duration} kế tiếp. Nếu liên kết không hoạt động, bạn có thể sử dụng liên kết xác minh đăng nhập trực tiếp:"
+#~ msgstr "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
 
 #. js-lingui-id: 2oA637
 #: src/emails/password-reset-link.email.tsx
@@ -381,23 +381,23 @@ msgstr ""
 #. js-lingui-id: H0v4yC
 #: src/emails/warn-suspended-workspace.email.tsx
 #~ msgid "Update your subscription"
-#~ msgstr "Cập nhật gói đăng ký của bạn"
+#~ msgstr "Update your subscription"
 
 #. js-lingui-id: QbiUqd
 #: src/emails/validate-approved-access-domain.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 #~ msgid "Validate domain"
-#~ msgstr "Xác thực tên miền"
+#~ msgstr "Validate domain"
 
 #. js-lingui-id: wCKkSr
 #: src/emails/send-email-verification-link.email.tsx
 #~ msgid "Verify Email"
-#~ msgstr "Xác minh Email"
+#~ msgstr "Verify Email"
 
 #. js-lingui-id: 9MqLGX
 #: src/emails/clean-suspended-workspace.email.tsx
 #~ msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {daysSinceInactive} days ago."
-#~ msgstr "Không gian làm việc của bạn <0>{workspaceDisplayName}</0> đã bị xóa bỏ vì gói đăng ký của bạn đã hết hạn từ {daysSinceInactive} ngày trước."
+#~ msgstr "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {daysSinceInactive} days ago."
 
 #. js-lingui-id: KFmFrQ
 #: src/emails/clean-suspended-workspace.email.tsx

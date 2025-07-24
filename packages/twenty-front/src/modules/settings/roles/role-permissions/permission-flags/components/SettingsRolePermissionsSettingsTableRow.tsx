@@ -1,4 +1,4 @@
-import { SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/settings-permissions/types/SettingsRolePermissionsSettingPermission';
+import { SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -44,6 +44,7 @@ type SettingsRolePermissionsSettingsTableRowProps = {
   roleId: string;
   permission: SettingsRolePermissionsSettingPermission;
   isEditable: boolean;
+  isToolPermission?: boolean;
 };
 
 export const SettingsRolePermissionsSettingsTableRow = ({
@@ -55,27 +56,35 @@ export const SettingsRolePermissionsSettingsTableRow = ({
   const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
     settingsDraftRoleFamilyState(roleId),
   );
-  const canUpdateAllSettings = settingsDraftRole.canUpdateAllSettings;
 
-  const isSettingPermissionEnabled =
-    settingsDraftRole.settingPermissions?.some(
-      (settingPermission) => settingPermission.setting === permission.key,
+  const isPermissionEnabled =
+    settingsDraftRole.permissionFlags?.some(
+      (permissionFlag) => permissionFlag.flag === permission.key,
     ) ?? false;
 
-  const isChecked = isSettingPermissionEnabled || canUpdateAllSettings;
-  const isDisabled = !isEditable || canUpdateAllSettings;
+  const isAllSettingsOverride =
+    !permission.isToolPermission &&
+    settingsDraftRole.canUpdateAllSettings === true;
+  const isAllToolsOverride =
+    permission.isToolPermission && settingsDraftRole.canAccessAllTools === true;
+  const isChecked = Boolean(
+    isPermissionEnabled || isAllSettingsOverride || isAllToolsOverride,
+  );
+  const isDisabled = Boolean(
+    !isEditable || isAllSettingsOverride || isAllToolsOverride,
+  );
 
   const handleChange = (value: boolean) => {
-    const currentPermissions = settingsDraftRole.settingPermissions ?? [];
+    const currentPermissions = settingsDraftRole.permissionFlags ?? [];
 
     if (value === true) {
       setSettingsDraftRole({
         ...settingsDraftRole,
-        settingPermissions: [
+        permissionFlags: [
           ...currentPermissions,
           {
             id: v4(),
-            setting: permission.key,
+            flag: permission.key,
             roleId,
           },
         ],
@@ -83,8 +92,8 @@ export const SettingsRolePermissionsSettingsTableRow = ({
     } else {
       setSettingsDraftRole({
         ...settingsDraftRole,
-        settingPermissions: currentPermissions.filter(
-          (p) => p.setting !== permission.key,
+        permissionFlags: currentPermissions.filter(
+          (p) => p.flag !== permission.key,
         ),
       });
     }
