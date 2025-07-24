@@ -63,15 +63,12 @@ export const SettingsRolePermissionsToolSection = ({
 
   return (
     <Section>
-      <H2Title
-        title={t`Action Permissions`}
-        description={t`Permissions for performing automated actions.`}
-      />
+      <H2Title title={t`Actions`} description={t`Actions permissions`} />
       <StyledCard rounded>
         <SettingsOptionCardContentToggle
           Icon={IconTool}
           title={t`All Actions Access`}
-          description={t`Grants permission to perform all available actions without restriction.`}
+          description={t`Grants permission to perform all available actions without restriction`}
           checked={settingsDraftRole.canAccessAllTools}
           disabled={!isEditable}
           onChange={() => {
