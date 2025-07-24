@@ -13,12 +13,6 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
-import { ViewField } from 'src/engine/metadata-modules/view/view-field.entity';
-import { ViewFilterGroup } from 'src/engine/metadata-modules/view/view-filter-group.entity';
-import { ViewFilter } from 'src/engine/metadata-modules/view/view-filter.entity';
-import { ViewGroup } from 'src/engine/metadata-modules/view/view-group.entity';
-import { ViewSort } from 'src/engine/metadata-modules/view/view-sort.entity';
-import { View } from 'src/engine/metadata-modules/view/view.entity';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-seeder.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
@@ -32,18 +26,7 @@ import { DataSeedWorkspaceCommand } from './data-seed-dev-workspace.command';
   imports: [
     UpgradeVersionCommandModule,
 
-    TypeOrmModule.forFeature(
-      [
-        Workspace,
-        View,
-        ViewField,
-        ViewFilter,
-        ViewSort,
-        ViewGroup,
-        ViewFilterGroup,
-      ],
-      'core',
-    ),
+    TypeOrmModule.forFeature([Workspace], 'core'),
 
     // Cron command dependencies
     MessagingImportManagerModule,

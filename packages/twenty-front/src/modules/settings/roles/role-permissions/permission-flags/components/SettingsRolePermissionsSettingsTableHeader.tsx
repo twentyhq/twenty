@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { Checkbox } from 'twenty-ui/input';
 
-import { SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/settings-permissions/types/SettingsRolePermissionsSettingPermission';
+import { SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useRecoilState } from 'recoil';
 import { v4 } from 'uuid';
@@ -32,15 +32,15 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
   );
   const allSettingsPermissionsEnabled = settingsPermissionsConfig.every(
     (permission) =>
-      settingsDraftRole.settingPermissions?.some(
-        (settingPermission) => settingPermission.setting === permission.key,
+      settingsDraftRole.permissionFlags?.some(
+        (permissionFlag) => permissionFlag.flag === permission.key,
       ),
   );
 
   const someSettingsPermissionsEnabled = settingsPermissionsConfig.some(
     (permission) =>
-      settingsDraftRole.settingPermissions?.some(
-        (settingPermission) => settingPermission.setting === permission.key,
+      settingsDraftRole.permissionFlags?.some(
+        (permissionFlag) => permissionFlag.flag === permission.key,
       ),
   );
 
@@ -61,10 +61,10 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
 
             setSettingsDraftRole({
               ...settingsDraftRole,
-              settingPermissions: newValue
+              permissionFlags: newValue
                 ? settingsPermissionsConfig.map((permission) => ({
                     id: v4(),
-                    setting: permission.key,
+                    flag: permission.key,
                     roleId,
                   }))
                 : [],

@@ -512,6 +512,7 @@ export type CreateOneFieldMetadataInput = {
 };
 
 export type CreateRoleInput = {
+  canAccessAllTools?: InputMaybe<Scalars['Boolean']>;
   canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
@@ -1153,7 +1154,7 @@ export type Mutation = {
   uploadWorkspaceLogo: SignedFileDto;
   upsertFieldPermissions: Array<FieldPermission>;
   upsertObjectPermissions: Array<ObjectPermission>;
-  upsertSettingPermissions: Array<SettingPermission>;
+  upsertPermissionFlags: Array<PermissionFlag>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
@@ -1604,8 +1605,8 @@ export type MutationUpsertObjectPermissionsArgs = {
 };
 
 
-export type MutationUpsertSettingPermissionsArgs = {
-  upsertSettingPermissionsInput: UpsertSettingPermissionsInput;
+export type MutationUpsertPermissionFlagsArgs = {
+  upsertPermissionFlagsInput: UpsertPermissionFlagsInput;
 };
 
 
@@ -1786,6 +1787,25 @@ export type PageInfo = {
   /** The cursor of the first returned record. */
   startCursor?: Maybe<Scalars['ConnectionCursor']>;
 };
+
+export type PermissionFlag = {
+  __typename?: 'PermissionFlag';
+  flag: PermissionFlagType;
+  id: Scalars['String'];
+  roleId: Scalars['String'];
+};
+
+export enum PermissionFlagType {
+  ADMIN_PANEL = 'ADMIN_PANEL',
+  API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
+  DATA_MODEL = 'DATA_MODEL',
+  ROLES = 'ROLES',
+  SECURITY = 'SECURITY',
+  SEND_EMAIL_TOOL = 'SEND_EMAIL_TOOL',
+  WORKFLOWS = 'WORKFLOWS',
+  WORKSPACE = 'WORKSPACE',
+  WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
+}
 
 export enum PermissionsOnAllObjectRecords {
   DESTROY_ALL_OBJECT_RECORDS = 'DESTROY_ALL_OBJECT_RECORDS',
@@ -2096,6 +2116,7 @@ export type RevokeApiKeyDto = {
 
 export type Role = {
   __typename?: 'Role';
+  canAccessAllTools: Scalars['Boolean'];
   canDestroyAllObjectRecords: Scalars['Boolean'];
   canReadAllObjectRecords: Scalars['Boolean'];
   canSoftDeleteAllObjectRecords: Scalars['Boolean'];
@@ -2107,7 +2128,7 @@ export type Role = {
   isEditable: Scalars['Boolean'];
   label: Scalars['String'];
   objectPermissions?: Maybe<Array<ObjectPermission>>;
-  settingPermissions?: Maybe<Array<SettingPermission>>;
+  permissionFlags?: Maybe<Array<PermissionFlag>>;
   workspaceMembers: Array<WorkspaceMember>;
 };
 
@@ -2226,24 +2247,6 @@ export type ServerlessFunctionIdInput = {
   /** The id of the function. */
   id: Scalars['ID'];
 };
-
-export type SettingPermission = {
-  __typename?: 'SettingPermission';
-  id: Scalars['String'];
-  roleId: Scalars['String'];
-  setting: SettingPermissionType;
-};
-
-export enum SettingPermissionType {
-  ADMIN_PANEL = 'ADMIN_PANEL',
-  API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
-  DATA_MODEL = 'DATA_MODEL',
-  ROLES = 'ROLES',
-  SECURITY = 'SECURITY',
-  WORKFLOWS = 'WORKFLOWS',
-  WORKSPACE = 'WORKSPACE',
-  WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
-}
 
 export type SetupOidcSsoInput = {
   clientID: Scalars['String'];
@@ -2524,6 +2527,7 @@ export type UpdateRoleInput = {
 };
 
 export type UpdateRolePayload = {
+  canAccessAllTools?: InputMaybe<Scalars['Boolean']>;
   canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
@@ -2590,9 +2594,9 @@ export type UpsertObjectPermissionsInput = {
   roleId: Scalars['String'];
 };
 
-export type UpsertSettingPermissionsInput = {
+export type UpsertPermissionFlagsInput = {
+  permissionFlagKeys: Array<PermissionFlagType>;
   roleId: Scalars['String'];
-  settingPermissionKeys: Array<SettingPermissionType>;
 };
 
 export type User = {
@@ -2660,7 +2664,7 @@ export type UserWorkspace = {
   objectPermissions?: Maybe<Array<ObjectPermission>>;
   /** @deprecated Use objectPermissions instead */
   objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
-  settingsPermissions?: Maybe<Array<SettingPermissionType>>;
+  settingsPermissions?: Maybe<Array<PermissionFlagType>>;
   twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticationMethodDto>>;
   updatedAt: Scalars['DateTime'];
   user: User;

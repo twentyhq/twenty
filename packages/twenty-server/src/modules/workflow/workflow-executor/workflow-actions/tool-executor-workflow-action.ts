@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { TOOLS } from 'src/engine/core-modules/tool/constants/tools.const';
 import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
+import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
 import { ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
@@ -11,7 +11,9 @@ import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/varia
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 @Injectable()
-export class WorkflowActionAdapter implements WorkflowAction {
+export class ToolExecutorWorkflowAction implements WorkflowAction {
+  constructor(private readonly toolRegistry: ToolRegistryService) {}
+
   async execute({
     currentStepId,
     steps,
@@ -31,7 +33,7 @@ export class WorkflowActionAdapter implements WorkflowAction {
       );
     }
 
-    const tool = TOOLS.get(toolType);
+    const tool = this.toolRegistry.getTool(toolType);
 
     if (!tool) {
       throw new Error(
@@ -54,6 +56,7 @@ export class WorkflowActionAdapter implements WorkflowAction {
   ): ToolType | null {
     const mapping: Partial<Record<WorkflowActionType, ToolType>> = {
       [WorkflowActionType.HTTP_REQUEST]: ToolType.HTTP_REQUEST,
+      [WorkflowActionType.SEND_EMAIL]: ToolType.SEND_EMAIL,
     };
 
     return mapping[actionType] || null;

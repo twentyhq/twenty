@@ -1,4 +1,5 @@
-export enum SettingPermissionType {
+export enum PermissionFlagType {
+  // Settings permissions
   API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
   WORKSPACE = 'WORKSPACE',
   WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS',
@@ -7,4 +8,7 @@ export enum SettingPermissionType {
   ADMIN_PANEL = 'ADMIN_PANEL',
   SECURITY = 'SECURITY',
   WORKFLOWS = 'WORKFLOWS',
+
+  // Tool permissions
+  SEND_EMAIL_TOOL = 'SEND_EMAIL_TOOL',
 }

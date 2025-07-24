@@ -1,6 +1,7 @@
 import { SettingsRolePermissionsObjectLevelSection } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection';
 import { SettingsRolePermissionsObjectsSection } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection';
-import { SettingsRolePermissionsSettingsSection } from '@/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection';
+import { SettingsRolePermissionsSettingsSection } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection';
+import { SettingsRolePermissionsToolSection } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection';
 import styled from '@emotion/styled';
 
 const StyledRolePermissionsContainer = styled.div`
@@ -29,6 +30,10 @@ export const SettingsRolePermissions = ({
         isEditable={isEditable}
       />
       <SettingsRolePermissionsSettingsSection
+        roleId={roleId}
+        isEditable={isEditable}
+      />
+      <SettingsRolePermissionsToolSection
         roleId={roleId}
         isEditable={isEditable}
       />
