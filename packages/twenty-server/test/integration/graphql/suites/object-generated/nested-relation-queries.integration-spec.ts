@@ -8,10 +8,11 @@ import {
 } from 'test/integration/constants/test-person-ids.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { performCreateManyOperation } from 'test/integration/graphql/utils/perform-create-many-operation.utils';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
-import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -26,33 +27,71 @@ const PERSON_GQL_FIELDS_WITH_COMPANY = `
 `;
 
 describe('relation connect in workspace createOne/createMany resolvers  (e2e)', () => {
-  beforeAll(async () => {
-    const graphqlOperation = createManyOperationFactory({
-      objectMetadataSingularName: 'company',
-      objectMetadataPluralName: 'companies',
-      gqlFields: `id`,
-      data: [
-        {
-          id: TEST_COMPANY_1_ID,
-          domainName: { primaryLinkUrl: 'company1.com' },
-        },
-        {
-          id: TEST_COMPANY_2_ID,
-          domainName: { primaryLinkUrl: 'company2.com' },
-        },
-      ],
-    });
+  const [company1, company2] = [
+    { id: TEST_COMPANY_1_ID, domainName: { primaryLinkUrl: 'company1.com' } },
+    { id: TEST_COMPANY_2_ID, domainName: { primaryLinkUrl: 'company2.com' } },
+  ];
 
-    await makeGraphqlAPIRequest(graphqlOperation);
+  beforeAll(async () => {
+    await makeGraphqlAPIRequest(
+      destroyManyOperationFactory({
+        objectMetadataSingularName: 'company',
+        objectMetadataPluralName: 'companies',
+        gqlFields: `id`,
+        filter: {
+          id: {
+            in: [TEST_COMPANY_1_ID, TEST_COMPANY_2_ID],
+          },
+        },
+      }),
+    );
+
+    await performCreateManyOperation('company', 'companies', `id`, [
+      company1,
+      company2,
+    ]);
   });
 
   beforeEach(async () => {
-    await deleteAllRecords('person');
+    await makeGraphqlAPIRequest(
+      destroyManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: `id`,
+        filter: {
+          id: {
+            in: [TEST_PERSON_1_ID, TEST_PERSON_2_ID],
+          },
+        },
+      }),
+    );
   });
 
   afterAll(async () => {
-    await deleteAllRecords('company');
-    await deleteAllRecords('person');
+    await makeGraphqlAPIRequest(
+      destroyManyOperationFactory({
+        objectMetadataSingularName: 'company',
+        objectMetadataPluralName: 'companies',
+        gqlFields: `id`,
+        filter: {
+          id: {
+            in: [TEST_COMPANY_1_ID, TEST_COMPANY_2_ID],
+          },
+        },
+      }),
+    );
+    await makeGraphqlAPIRequest(
+      destroyManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: `id`,
+        filter: {
+          id: {
+            in: [TEST_PERSON_1_ID, TEST_PERSON_2_ID],
+          },
+        },
+      }),
+    );
   });
 
   it('should connect to other records through a MANY-TO-ONE relation - create One', async () => {
