@@ -2,20 +2,20 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRecoilValue } from 'recoil';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { SettingPermissionType } from '~/generated/graphql';
+import { PermissionFlagType } from '~/generated/graphql';
 
 export const useHasSettingsPermission = (
-  settingsPermission?: SettingPermissionType,
+  permissionFlag?: PermissionFlagType,
 ) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
 
-  if (!settingsPermission) {
+  if (!permissionFlag) {
     return true;
   }
 
   if (
-    settingsPermission === SettingPermissionType.WORKSPACE &&
+    permissionFlag === PermissionFlagType.WORKSPACE &&
     currentWorkspace?.activationStatus ===
       WorkspaceActivationStatus.PENDING_CREATION
   ) {
@@ -28,5 +28,5 @@ export const useHasSettingsPermission = (
     return false;
   }
 
-  return currentUserWorkspaceSetting.includes(settingsPermission);
+  return currentUserWorkspaceSetting.includes(permissionFlag);
 };

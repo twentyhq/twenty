@@ -5,7 +5,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  SettingPermissionType,
+  PermissionFlagType,
   useBillingPortalSessionQuery,
 } from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -20,7 +20,7 @@ export const InformationBannerBillingSubscriptionPaused = () => {
   });
 
   const {
-    [SettingPermissionType.WORKSPACE]: hasPermissionToUpdateBillingDetails,
+    [PermissionFlagType.WORKSPACE]: hasPermissionToUpdateBillingDetails,
   } = useSettingsPermissionMap();
 
   const openBillingPortal = () => {

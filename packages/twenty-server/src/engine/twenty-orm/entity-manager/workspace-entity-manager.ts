@@ -352,17 +352,13 @@ export class WorkspaceEntityManager extends EntityManager {
       () => this.connection.driver.escape(column.databaseName) + ' + ' + value,
     );
 
-    return this.createQueryBuilder(
+    return this.update(
       target,
-      'entity',
-      undefined,
+      criteria,
+      values,
       permissionOptions,
-    )
-      .update(target as QueryDeepPartialEntity<Entity>)
-      .set(values)
-      .where(criteria)
-      .returning(selectedColumns)
-      .execute();
+      selectedColumns,
+    );
   }
 
   validatePermissions<Entity extends ObjectLiteral>({
@@ -951,17 +947,13 @@ export class WorkspaceEntityManager extends EntityManager {
       () => this.connection.driver.escape(column.databaseName) + ' - ' + value,
     );
 
-    return this.createQueryBuilder(
+    return this.update(
       target,
-      'entity',
-      undefined,
+      criteria,
+      values,
       permissionOptions,
-    )
-      .update(target as QueryDeepPartialEntity<Entity>)
-      .set(values)
-      .where(criteria)
-      .returning(selectedColumns)
-      .execute();
+      selectedColumns,
+    );
   }
 
   override async findByIds<Entity extends ObjectLiteral>(

@@ -24,7 +24,7 @@ import {
   IconEyeOff,
   IconSettings,
 } from 'twenty-ui/display';
-import { SettingPermissionType } from '~/generated/graphql';
+import { PermissionFlagType } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type UseRecordGroupActionsParams = {
@@ -91,7 +91,7 @@ export const useRecordGroupActions = ({
   ]);
 
   const hasAccessToDataModelSettings = useHasSettingsPermission(
-    SettingPermissionType.DATA_MODEL,
+    PermissionFlagType.DATA_MODEL,
   );
   const currentIndex = visibleRecordGroupIds.findIndex(
     (id) => id === recordGroupDefinition.id,

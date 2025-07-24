@@ -26,7 +26,7 @@ import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-quer
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -191,7 +191,7 @@ export abstract class GraphqlQueryBaseResolverService<
         objectMetadataItemWithFieldMaps.nameSingular,
       )
     ) {
-      const permissionRequired: SettingPermissionType =
+      const permissionRequired: PermissionFlagType =
         // @ts-expect-error legacy noImplicitAny
         OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS[
           objectMetadataItemWithFieldMaps.nameSingular
