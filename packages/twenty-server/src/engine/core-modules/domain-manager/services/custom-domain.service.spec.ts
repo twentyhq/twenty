@@ -9,6 +9,8 @@ import { DomainManagerException } from 'src/engine/core-modules/domain-manager/d
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 jest.mock('cloudflare');
 
@@ -39,6 +41,12 @@ describe('CustomDomainService', () => {
             getBaseUrl: jest.fn(),
           },
         },
+        {
+          provide: getRepositoryToken(Workspace, 'core'),
+          useValue: {
+            save: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -62,7 +70,12 @@ describe('CustomDomainService', () => {
 
     jest.spyOn(twentyConfigService, 'get').mockReturnValue(mockApiKey);
 
-    const instance = new CustomDomainService(twentyConfigService, {} as any);
+    const instance = new CustomDomainService(
+      twentyConfigService,
+      {} as any,
+      {} as any,
+      {} as any,
+    );
 
     expect(twentyConfigService.get).toHaveBeenCalledWith('CLOUDFLARE_API_KEY');
     expect(Cloudflare).toHaveBeenCalledWith({ apiToken: mockApiKey });
@@ -282,28 +295,6 @@ describe('CustomDomainService', () => {
           customDomain,
         ),
       ).resolves.toBeUndefined();
-    });
-  });
-
-  describe('isCustomDomainWorking', () => {
-    it('should return true if all records have success status', () => {
-      const customDomainDetails = {
-        records: [{ status: 'success' }, { status: 'success' }],
-      } as any;
-
-      expect(
-        customDomainService.isCustomDomainWorking(customDomainDetails),
-      ).toBe(true);
-    });
-
-    it('should return false if any record does not have success status', () => {
-      const customDomainDetails = {
-        records: [{ status: 'success' }, { status: 'pending' }],
-      } as any;
-
-      expect(
-        customDomainService.isCustomDomainWorking(customDomainDetails),
-      ).toBe(false);
     });
   });
 });

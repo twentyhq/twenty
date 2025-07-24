@@ -79,21 +79,23 @@ export const SettingsCustomDomain = () => {
             />
           )}
         />
-        <StyledButtonGroup>
-          <StyledButton
-            isLoading={isLoading}
-            Icon={IconReload}
-            title={t`Reload`}
-            variant="primary"
-            onClick={checkCustomDomainRecords}
-            type="button"
-          />
-          <StyledButton
-            Icon={IconTrash}
-            variant="primary"
-            onClick={deleteCustomDomain}
-          />
-        </StyledButtonGroup>
+        {currentWorkspace?.customDomain && (
+          <StyledButtonGroup>
+            <StyledButton
+              isLoading={isLoading}
+              Icon={IconReload}
+              title={t`Reload`}
+              variant="primary"
+              onClick={checkCustomDomainRecords}
+              type="button"
+            />
+            <StyledButton
+              Icon={IconTrash}
+              variant="primary"
+              onClick={deleteCustomDomain}
+            />
+          </StyledButtonGroup>
+        )}
       </StyledDomainFormWrapper>
       {currentWorkspace?.customDomain && (
         <StyledRecordsWrapper>
