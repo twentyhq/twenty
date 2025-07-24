@@ -1,6 +1,6 @@
 import { compareNonEmptyStrings } from '~/utils/compareNonEmptyStrings';
 
-describe('compareNonEmptyString', () => {
+describe('compareNonEmptyStrings', () => {
   it('should return true for undefined === null', () => {
     expect(compareNonEmptyStrings(undefined, null)).toBe(true);
   });

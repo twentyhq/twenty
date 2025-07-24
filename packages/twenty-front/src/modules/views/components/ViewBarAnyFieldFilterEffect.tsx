@@ -5,7 +5,6 @@ import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { useMapViewFiltersToFilters } from '@/views/hooks/useMapViewFiltersToFilters';
 import { hasInitializedAnyFieldFilterComponentFamilyState } from '@/views/states/hasInitializedAnyFieldFilterComponentFamilyState';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -36,8 +35,6 @@ export const ViewBarAnyFieldFilterEffect = () => {
     anyFieldFilterValueComponentState,
   );
 
-  const { mapViewFiltersToRecordFilters } = useMapViewFiltersToFilters();
-
   useEffect(() => {
     if (!hasInitializedAnyFieldFilter && isDefined(currentView)) {
       if (currentView.objectMetadataId !== objectMetadataItem.id) {
@@ -51,7 +48,6 @@ export const ViewBarAnyFieldFilterEffect = () => {
   }, [
     setAnyFieldFilterValue,
     currentViewId,
-    mapViewFiltersToRecordFilters,
     hasInitializedAnyFieldFilter,
     setHasInitializedAnyFieldFilter,
     currentView,
