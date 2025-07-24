@@ -3158,7 +3158,7 @@ msgstr "מגרש משחקים ל-GraphQL API"
 #. js-lingui-id: FJWI9L
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Greater than or equal"
-msgstr "תום גדול יותר או שווהF"
+msgstr "תום גדול יותר או שווה\aF"
 
 #. js-lingui-id: CZXzs4
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
