@@ -57,26 +57,26 @@ export const SettingsAdminConfigVariablesRow = ({
   };
 
   return (
-      <StyledTableRow
-        gridAutoColumns="5fr 3fr 1fr"
-        to={getSettingsPath(SettingsPath.AdminPanelConfigVariableDetails, {
-          variableName: variable.name,
-        })}
-        onClick={handleRowClick}
-        id={`${CONFIG_VARIABLE_ROW_ID_PREFIX}-${variable.name}`}
-      >
-        <StyledTruncatedCell color={theme.font.color.primary}>
-          <StyledEllipsisLabel>{variable.name}</StyledEllipsisLabel>
-        </StyledTruncatedCell>
-        <StyledTruncatedCell align="right">
-          <StyledEllipsisLabel>{displayValue}</StyledEllipsisLabel>
-        </StyledTruncatedCell>
-        <TableCell align="right">
-          <IconChevronRight
-            size={theme.icon.size.md}
-            color={theme.font.color.tertiary}
-          />
-        </TableCell>
-      </StyledTableRow>
+    <StyledTableRow
+      gridAutoColumns="5fr 3fr 1fr"
+      to={getSettingsPath(SettingsPath.AdminPanelConfigVariableDetails, {
+        variableName: variable.name,
+      })}
+      onClick={handleRowClick}
+      id={`${CONFIG_VARIABLE_ROW_ID_PREFIX}-${variable.name}`}
+    >
+      <StyledTruncatedCell color={theme.font.color.primary}>
+        <StyledEllipsisLabel>{variable.name}</StyledEllipsisLabel>
+      </StyledTruncatedCell>
+      <StyledTruncatedCell align="right">
+        <StyledEllipsisLabel>{displayValue}</StyledEllipsisLabel>
+      </StyledTruncatedCell>
+      <TableCell align="right">
+        <IconChevronRight
+          size={theme.icon.size.md}
+          color={theme.font.color.tertiary}
+        />
+      </TableCell>
+    </StyledTableRow>
   );
 };

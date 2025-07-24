@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { ObjectFieldsScrollRestoreEffect } from '@/settings/data-model/components/ObjectFieldsScrollRestoreEffect';
 import { ObjectFields } from '@/settings/data-model/object-details/components/tabs/ObjectFields';
 import { ObjectIndexes } from '@/settings/data-model/object-details/components/tabs/ObjectIndexes';
 import { ObjectSettings } from '@/settings/data-model/object-details/components/tabs/ObjectSettings';
@@ -18,7 +17,10 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { OBJECT_FIELD_ROW_ID_PREFIX } from '@/settings/data-model/constants/ObjectFieldTowIDPrefix';
+import { lastVisitedObjectFieldState } from '@/settings/data-model/states/lastVisitedObjectFieldState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { ScrollRestoreEffect } from '@/ui/utilities/scroll/components/ScrollRestoreEffect';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -139,13 +141,14 @@ export const SettingsObjectDetailPage = () => {
 
   return (
     <>
-      <ObjectFieldsScrollRestoreEffect />
+      <ScrollRestoreEffect
+        lastVisitedItemState={lastVisitedObjectFieldState}
+        idPrefix={OBJECT_FIELD_ROW_ID_PREFIX}
+      />
       <SubMenuTopBarContainer
         title={
           <StyledTitleContainer>
-            <H3Title
-              title={objectMetadataItem.labelPlural}
-            />
+            <H3Title title={objectMetadataItem.labelPlural} />
             <StyledObjectTypeTag objectTypeLabel={objectTypeLabel} />
           </StyledTitleContainer>
         }

@@ -12,7 +12,8 @@ export const ScrollRestoreEffect = ({
   lastVisitedItemState,
   idPrefix,
 }: ScrollRestoreEffectProps) => {
-  const [lastVisitedItem, setLastVisitedItem] = useRecoilState(lastVisitedItemState);
+  const [lastVisitedItem, setLastVisitedItem] =
+    useRecoilState(lastVisitedItemState);
   const { scrollToElement } = useScrollToElement();
 
   useEffect(() => {
@@ -21,11 +22,11 @@ export const ScrollRestoreEffect = ({
     }
 
     const elementId = `${idPrefix}-${lastVisitedItem}`;
-    
+
     if (scrollToElement(elementId)) {
       setLastVisitedItem(null);
     }
   }, [lastVisitedItem, setLastVisitedItem, scrollToElement, idPrefix]);
 
   return <></>;
-}; 
+};
