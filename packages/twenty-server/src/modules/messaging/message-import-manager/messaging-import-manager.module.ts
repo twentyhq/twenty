@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
@@ -54,7 +53,6 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
       [Workspace, DataSourceEntity, ObjectMetadataEntity],
       'core',
     ),
-    BillingModule,
     EmailAliasManagerModule,
     FeatureFlagModule,
     MessageParticipantManagerModule,

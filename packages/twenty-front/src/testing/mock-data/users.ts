@@ -3,7 +3,7 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
   FeatureFlagKey,
   OnboardingStatus,
-  SettingPermissionType,
+  PermissionFlagType,
   SubscriptionInterval,
   SubscriptionStatus,
   User,
@@ -125,7 +125,7 @@ export const mockedUserData: MockedUser = {
   workspaceMember: mockedWorkspaceMemberData,
   currentWorkspace: mockCurrentWorkspace,
   currentUserWorkspace: {
-    settingsPermissions: [SettingPermissionType.WORKSPACE_MEMBERS],
+    settingsPermissions: [PermissionFlagType.WORKSPACE_MEMBERS],
     objectPermissions: generatedMockObjectMetadataItems.map((item) => ({
       objectMetadataId: item.id,
       canReadObjectRecords: true,

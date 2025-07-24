@@ -1,19 +1,22 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
@@ -22,6 +25,8 @@ export class PermissionsService {
   constructor(
     private readonly userRoleService: UserRoleService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    @InjectRepository(RoleEntity, 'core')
+    private readonly roleRepository: Repository<RoleEntity>,
   ) {}
 
   public async getUserWorkspacePermissions({
@@ -51,17 +56,17 @@ export class PermissionsService {
       hasPermissionOnSettingFeature = true;
     }
 
-    const settingPermissions = roleOfUserWorkspace.settingPermissions ?? [];
+    const permissionFlags = roleOfUserWorkspace.permissionFlags ?? [];
 
     const defaultSettingsPermissions =
       this.getDefaultUserWorkspacePermissions().settingsPermissions;
-    const settingsPermissions = Object.keys(SettingPermissionType).reduce(
+    const settingsPermissions = Object.keys(PermissionFlagType).reduce(
       (acc, feature) => ({
         ...acc,
         [feature]:
           hasPermissionOnSettingFeature ||
-          settingPermissions.some(
-            (settingPermission) => settingPermission.setting === feature,
+          permissionFlags.some(
+            (permissionFlag) => permissionFlag.flag === feature,
           ),
       }),
       defaultSettingsPermissions,
@@ -102,14 +107,15 @@ export class PermissionsService {
         [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]: false,
       },
       settingsPermissions: {
-        [SettingPermissionType.API_KEYS_AND_WEBHOOKS]: false,
-        [SettingPermissionType.WORKSPACE]: false,
-        [SettingPermissionType.WORKSPACE_MEMBERS]: false,
-        [SettingPermissionType.ROLES]: false,
-        [SettingPermissionType.DATA_MODEL]: false,
-        [SettingPermissionType.ADMIN_PANEL]: false,
-        [SettingPermissionType.SECURITY]: false,
-        [SettingPermissionType.WORKFLOWS]: false,
+        [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: false,
+        [PermissionFlagType.WORKSPACE]: false,
+        [PermissionFlagType.WORKSPACE_MEMBERS]: false,
+        [PermissionFlagType.ROLES]: false,
+        [PermissionFlagType.DATA_MODEL]: false,
+        [PermissionFlagType.ADMIN_PANEL]: false,
+        [PermissionFlagType.SECURITY]: false,
+        [PermissionFlagType.WORKFLOWS]: false,
+        [PermissionFlagType.SEND_EMAIL_TOOL]: false,
       },
       objectPermissions: {},
     }) as const satisfies UserWorkspacePermissions;
@@ -122,7 +128,7 @@ export class PermissionsService {
   }: {
     userWorkspaceId?: string;
     workspaceId: string;
-    setting: SettingPermissionType;
+    setting: PermissionFlagType;
     isExecutedByApiKey: boolean;
   }): Promise<boolean> {
     if (isExecutedByApiKey) {
@@ -154,10 +160,39 @@ export class PermissionsService {
       return true;
     }
 
-    const settingPermissions = roleOfUserWorkspace.settingPermissions ?? [];
+    const permissionFlags = roleOfUserWorkspace.permissionFlags ?? [];
 
-    return settingPermissions.some(
-      (settingPermission) => settingPermission.setting === setting,
+    return permissionFlags.some(
+      (permissionFlag) => permissionFlag.flag === setting,
     );
+  }
+
+  public async hasToolPermission(
+    roleId: string,
+    workspaceId: string,
+    flag: PermissionFlagType,
+  ): Promise<boolean> {
+    try {
+      const role = await this.roleRepository.findOne({
+        where: { id: roleId, workspaceId },
+        relations: ['permissionFlags'],
+      });
+
+      if (!role) {
+        return false;
+      }
+
+      if (role.canAccessAllTools === true) {
+        return true;
+      }
+
+      const permissionFlags = role.permissionFlags ?? [];
+
+      return permissionFlags.some(
+        (permissionFlag) => permissionFlag.flag === flag,
+      );
+    } catch (error) {
+      return false;
+    }
   }
 }
