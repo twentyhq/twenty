@@ -1,4 +1,4 @@
-import { StringPropertyKeys } from '@/utils/trim-and-remove-duplicated-whitespaces-from-object-string-properties';
+import { StringPropertyKeys } from '@/utils/trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties';
 import { isDefined } from '@/utils/validation';
 
 export const fromArrayToUniqueKeyRecord = <T extends object>({

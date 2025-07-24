@@ -1,5 +1,5 @@
 import { EachTestingContext } from '@/testing/types/EachTestingContext.type';
-import { trimAndRemoveDuplicatedWhitespacesFromString } from '../trim-and-remove-duplicated-whitespaces-from-string';
+import { trimAndRemoveDuplicatedWhitespacesFromString } from '../trimAndRemoveDuplicatedWhitespacesFromString';
 
 type TrimAndRemoveWhitespacesTestCase = EachTestingContext<{
   input: string;

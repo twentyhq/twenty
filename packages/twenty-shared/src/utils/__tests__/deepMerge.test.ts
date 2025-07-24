@@ -1,4 +1,4 @@
-import { deepMerge } from './deep-merge';
+import { deepMerge } from './deepMerge';
 
 describe('deepMerge', () => {
   describe('primitive values', () => {
@@ -234,4 +234,4 @@ describe('deepMerge', () => {
       expect(deepMerge(source, target)).toEqual(expected);
     });
   });
-}); 
+});
