@@ -103,6 +103,7 @@ export class S3Driver implements StorageDriver {
 
     await this.s3Client.send(deleteObjectCommand);
 
+    // eslint-disable-next-line no-console
     console.log(`${folderPath} - objects deleted`);
 
     if (listedObjects.IsTruncated) {
