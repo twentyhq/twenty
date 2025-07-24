@@ -13,7 +13,6 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view/enums/view-filter-group-logical-operator';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
 import { ViewSortDirection } from 'src/engine/metadata-modules/view/enums/view-sort-direction';
-import { ViewFilterValue } from 'src/engine/metadata-modules/view/types/view-filter-value.type';
 import { ViewField } from 'src/engine/metadata-modules/view/view-field.entity';
 import { ViewFilterGroup } from 'src/engine/metadata-modules/view/view-filter-group.entity';
 import { ViewFilter } from 'src/engine/metadata-modules/view/view-filter.entity';
@@ -27,6 +26,7 @@ import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/vie
 import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
+import { transformWorkspaceValueToCoreValue } from 'src/modules/view/utils/view-filter-value-transformer.util';
 
 @Command({
   name: 'migrate:views-to-core',
@@ -304,7 +304,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         fieldMetadataId: filter.fieldMetadataId,
         viewId: filter.viewId,
         operand: filter.operand,
-        value: filter.value as ViewFilterValue,
+        value: transformWorkspaceValueToCoreValue(filter.value),
         viewFilterGroupId: filter.viewFilterGroupId,
         workspaceId,
         createdAt: new Date(filter.createdAt),

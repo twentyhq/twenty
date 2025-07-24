@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
 import { ViewFilter } from 'src/engine/metadata-modules/view/view-filter.entity';
 import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
+import { transformWorkspaceValueToCoreValue } from 'src/modules/view/utils/view-filter-value-transformer.util';
 
 @Injectable()
 export class ViewFilterSyncService {
@@ -24,7 +25,11 @@ export class ViewFilterSyncService {
       const diffValue = diff[key as keyof ViewFilterWorkspaceEntity];
 
       if (isDefined(diffValue)) {
-        updateData[key] = diffValue.after;
+        if (key === 'value' && typeof diffValue.after === 'string') {
+          updateData[key] = transformWorkspaceValueToCoreValue(diffValue.after);
+        } else {
+          updateData[key] = diffValue.after;
+        }
       }
     }
 
@@ -44,7 +49,7 @@ export class ViewFilterSyncService {
       fieldMetadataId: workspaceViewFilter.fieldMetadataId,
       viewId: workspaceViewFilter.viewId,
       operand: workspaceViewFilter.operand,
-      value: workspaceViewFilter.value,
+      value: transformWorkspaceValueToCoreValue(workspaceViewFilter.value),
       viewFilterGroupId: workspaceViewFilter.viewFilterGroupId,
       workspaceId,
       createdAt: new Date(workspaceViewFilter.createdAt),
