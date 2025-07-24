@@ -1,7 +1,4 @@
-export const removePropertiesFromRecord = <
-  T extends Record<string, unknown>,
-  K extends keyof T,
->(
+export const removePropertiesFromRecord = <T, K extends keyof T>(
   record: T,
   keysToRemove: K[],
 ): Omit<T, K> => {
