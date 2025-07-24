@@ -4,6 +4,7 @@ import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runne
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
+import { ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/types/object-record-destroy.event';
 import { ObjectRecordRestoreEvent } from 'src/engine/core-modules/event-emitter/types/object-record-restore.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
@@ -96,6 +97,35 @@ export class ViewGroupListener {
     for (const event of batchEvent.events) {
       try {
         await this.viewGroupSyncService.deleteCoreViewGroup(
+          batchEvent.workspaceId,
+          event.properties.before,
+        );
+      } catch (error) {
+        this.logger.error(
+          `Failed to sync view group ${event.properties.before.id} to core:`,
+          error,
+        );
+      }
+    }
+  }
+
+  @OnDatabaseBatchEvent('viewGroup', DatabaseEventAction.DESTROYED)
+  async handleViewGroupDestroyed(
+    batchEvent: WorkspaceEventBatch<
+      ObjectRecordDestroyEvent<ViewGroupWorkspaceEntity>
+    >,
+  ) {
+    const isEnabled = await this.viewSyncService.isFeatureFlagEnabled(
+      batchEvent.workspaceId,
+    );
+
+    if (!isEnabled) {
+      return;
+    }
+
+    for (const event of batchEvent.events) {
+      try {
+        await this.viewGroupSyncService.destroyCoreViewGroup(
           batchEvent.workspaceId,
           event.properties.before,
         );

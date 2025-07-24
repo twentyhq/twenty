@@ -90,6 +90,16 @@ export class ViewGroupSyncService {
     });
   }
 
+  public async destroyCoreViewGroup(
+    workspaceId: string,
+    workspaceViewGroup: ViewGroupWorkspaceEntity,
+  ): Promise<void> {
+    await this.coreViewGroupRepository.delete({
+      id: workspaceViewGroup.id,
+      workspaceId,
+    });
+  }
+
   public async restoreCoreViewGroup(
     workspaceId: string,
     workspaceViewGroup: ViewGroupWorkspaceEntity,

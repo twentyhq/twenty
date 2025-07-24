@@ -5,8 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
-import { ViewFilter } from 'src/engine/metadata-modules/view/view-filter.entity';
 import { ViewFilterValue } from 'src/engine/metadata-modules/view/types/view-filter-value.type';
+import { ViewFilter } from 'src/engine/metadata-modules/view/view-filter.entity';
 import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
 
 @Injectable()
@@ -87,6 +87,16 @@ export class ViewFilterSyncService {
     workspaceViewFilter: ViewFilterWorkspaceEntity,
   ): Promise<void> {
     await this.coreViewFilterRepository.softDelete({
+      id: workspaceViewFilter.id,
+      workspaceId,
+    });
+  }
+
+  public async destroyCoreViewFilter(
+    workspaceId: string,
+    workspaceViewFilter: ViewFilterWorkspaceEntity,
+  ): Promise<void> {
+    await this.coreViewFilterRepository.delete({
       id: workspaceViewFilter.id,
       workspaceId,
     });

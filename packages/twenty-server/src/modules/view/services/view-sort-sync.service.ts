@@ -98,6 +98,16 @@ export class ViewSortSyncService {
     });
   }
 
+  public async destroyCoreViewSort(
+    workspaceId: string,
+    workspaceViewSort: ViewSortWorkspaceEntity,
+  ): Promise<void> {
+    await this.coreViewSortRepository.delete({
+      id: workspaceViewSort.id,
+      workspaceId,
+    });
+  }
+
   public async restoreCoreViewSort(
     workspaceId: string,
     workspaceViewSort: ViewSortWorkspaceEntity,

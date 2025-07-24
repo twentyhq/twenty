@@ -108,6 +108,16 @@ export class ViewSyncService {
     });
   }
 
+  public async destroyCoreView(
+    workspaceId: string,
+    workspaceView: ViewWorkspaceEntity,
+  ): Promise<void> {
+    await this.coreViewRepository.delete({
+      id: workspaceView.id,
+      workspaceId,
+    });
+  }
+
   public async restoreCoreView(
     workspaceId: string,
     workspaceView: ViewWorkspaceEntity,

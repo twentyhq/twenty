@@ -82,6 +82,16 @@ export class ViewFieldSyncService {
     });
   }
 
+  public async destroyCoreViewField(
+    workspaceId: string,
+    workspaceViewField: ViewFieldWorkspaceEntity,
+  ): Promise<void> {
+    await this.coreViewFieldRepository.delete({
+      id: workspaceViewField.id,
+      workspaceId,
+    });
+  }
+
   public async restoreCoreViewField(
     workspaceId: string,
     workspaceViewField: ViewFieldWorkspaceEntity,

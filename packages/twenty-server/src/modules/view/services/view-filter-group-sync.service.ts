@@ -88,6 +88,16 @@ export class ViewFilterGroupSyncService {
     });
   }
 
+  public async destroyCoreViewFilterGroup(
+    workspaceId: string,
+    workspaceViewFilterGroup: ViewFilterGroupWorkspaceEntity,
+  ): Promise<void> {
+    await this.coreViewFilterGroupRepository.delete({
+      id: workspaceViewFilterGroup.id,
+      workspaceId,
+    });
+  }
+
   public async restoreCoreViewFilterGroup(
     workspaceId: string,
     workspaceViewFilterGroup: ViewFilterGroupWorkspaceEntity,
