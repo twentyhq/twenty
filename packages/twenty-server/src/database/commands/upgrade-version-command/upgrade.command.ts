@@ -32,6 +32,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-minor-and-major';
 import { RemoveWorkflowRunsWithoutState } from 'src/database/commands/upgrade-version-command/1-2/1-2-remove-workflow-runs-without-state.command';
+import { AddNextStepIdsToWorkflowVersionTriggers } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-next-step-ids-to-workflow-version-triggers.command';
 
 const execPromise = promisify(exec);
 
@@ -151,6 +152,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 1.2 Commands
     protected readonly removeWorkflowRunsWithoutState: RemoveWorkflowRunsWithoutState,
+    protected readonly addNextStepIdsToWorkflowVersionTriggers: AddNextStepIdsToWorkflowVersionTriggers,
 
     // 1.3 Commands
   ) {
@@ -204,7 +206,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_120: VersionCommands = {
-      beforeSyncMetadata: [this.removeWorkflowRunsWithoutState],
+      beforeSyncMetadata: [
+        this.removeWorkflowRunsWithoutState,
+        this.addNextStepIdsToWorkflowVersionTriggers,
+      ],
       afterSyncMetadata: [],
     };
 
