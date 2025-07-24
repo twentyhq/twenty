@@ -182,6 +182,10 @@ export class PermissionsService {
         return false;
       }
 
+      if (role.canAccessAllTools === true) {
+        return true;
+      }
+
       const permissionFlags = role.permissionFlags ?? [];
 
       return permissionFlags.some(

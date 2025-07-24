@@ -27,6 +27,9 @@ export class RoleEntity {
   canUpdateAllSettings: boolean;
 
   @Column({ nullable: false, default: false })
+  canAccessAllTools: boolean;
+
+  @Column({ nullable: false, default: false })
   canReadAllObjectRecords: boolean;
 
   @Column({ nullable: false, default: false })

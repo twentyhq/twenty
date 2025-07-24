@@ -34,6 +34,9 @@ export class RoleDTO {
   canUpdateAllSettings: boolean;
 
   @Field({ nullable: false })
+  canAccessAllTools: boolean;
+
+  @Field({ nullable: false })
   canReadAllObjectRecords: boolean;
 
   @Field({ nullable: false })

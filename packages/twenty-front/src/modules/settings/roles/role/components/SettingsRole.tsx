@@ -45,6 +45,7 @@ const ROLE_BASIC_KEYS: Array<keyof Role> = [
   'description',
   'icon',
   'canUpdateAllSettings',
+  'canAccessAllTools',
   'canReadAllObjectRecords',
   'canUpdateAllObjectRecords',
   'canSoftDeleteAllObjectRecords',
@@ -144,6 +145,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
               description: settingsDraftRole.description,
               icon: settingsDraftRole.icon,
               canUpdateAllSettings: settingsDraftRole.canUpdateAllSettings,
+              canAccessAllTools: settingsDraftRole.canAccessAllTools,
               canReadAllObjectRecords:
                 settingsDraftRole.canReadAllObjectRecords,
               canUpdateAllObjectRecords:
@@ -239,6 +241,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
                   description: settingsDraftRole.description,
                   icon: settingsDraftRole.icon,
                   canUpdateAllSettings: settingsDraftRole.canUpdateAllSettings,
+                  canAccessAllTools: settingsDraftRole.canAccessAllTools,
                   canReadAllObjectRecords:
                     settingsDraftRole.canReadAllObjectRecords,
                   canUpdateAllObjectRecords:

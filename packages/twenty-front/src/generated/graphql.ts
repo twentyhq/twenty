@@ -512,6 +512,7 @@ export type CreateOneFieldMetadataInput = {
 };
 
 export type CreateRoleInput = {
+  canAccessAllTools?: InputMaybe<Scalars['Boolean']>;
   canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
@@ -2115,6 +2116,7 @@ export type RevokeApiKeyDto = {
 
 export type Role = {
   __typename?: 'Role';
+  canAccessAllTools: Scalars['Boolean'];
   canDestroyAllObjectRecords: Scalars['Boolean'];
   canReadAllObjectRecords: Scalars['Boolean'];
   canSoftDeleteAllObjectRecords: Scalars['Boolean'];
@@ -2525,6 +2527,7 @@ export type UpdateRoleInput = {
 };
 
 export type UpdateRolePayload = {
+  canAccessAllTools?: InputMaybe<Scalars['Boolean']>;
   canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
