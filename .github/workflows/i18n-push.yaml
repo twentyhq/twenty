@@ -37,9 +37,9 @@ jobs:
 
       - name: Extract translations
         run: |
-          npx nx run twenty-server:lingui:extract
-          npx nx run twenty-emails:lingui:extract
-          npx nx run twenty-front:lingui:extract
+          npx nx run twenty-server:lingui:extract --clean
+          npx nx run twenty-emails:lingui:extract --clean
+          npx nx run twenty-front:lingui:extract --clean
 
       - name: Check and commit extracted files
         id: check_extract_changes
