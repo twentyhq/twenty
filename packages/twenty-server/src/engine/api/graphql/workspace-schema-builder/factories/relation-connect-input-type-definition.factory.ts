@@ -51,7 +51,6 @@ export class RelationConnectInputTypeDefinitionFactory {
   ): GraphQLInputObjectType {
     return new GraphQLInputObjectType({
       name: `${pascalCase(objectMetadata.nameSingular)}RelationInput`,
-      isOneOf: true,
       fields: () => ({
         [RELATION_NESTED_QUERY_KEYWORDS.CONNECT]: {
           type: new GraphQLInputObjectType({

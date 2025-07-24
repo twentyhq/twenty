@@ -384,7 +384,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toBe(
-      'Exactly one key must be specified for OneOf type "CompanyRelationInput".',
+      'Cannot have both connect and disconnect for the same field on undefined.',
     );
   });
 
