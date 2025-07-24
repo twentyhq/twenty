@@ -30,6 +30,7 @@ import { FieldMetadataMorphRelationService } from 'src/engine/metadata-modules/f
 import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-related-records.service';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
 import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service';
+import { areFieldMetadatasTypeRelationOrMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/are-field-metadatas-type-relation-or-morph-relation.util';
 import { assertDoesNotNullifyDefaultValueForNonNullableField } from 'src/engine/metadata-modules/field-metadata/utils/assert-does-not-nullify-default-value-for-non-nullable-field.util';
 import { buildUpdatableStandardFieldInput } from 'src/engine/metadata-modules/field-metadata/utils/build-updatable-standard-field-input.util';
 import { checkCanDeactivateFieldOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/check-can-deactivate-field-or-throw';
@@ -42,7 +43,6 @@ import { createMigrationActions } from 'src/engine/metadata-modules/field-metada
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isFieldMetadataTypeMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-morph-relation.util';
-import { areFieldMetadatasTypeRelationOrMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-relation-or-morph-relation.util';
 import { isFieldMetadataTypeRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-relation.util';
 import { isSelectOrMultiSelectFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/is-select-or-multi-select-field-metadata.util';
 import { prepareCustomFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/utils/prepare-custom-field-metadata-for-options.util';
