@@ -127,7 +127,7 @@ export const AIChatMessage = ({
   const theme = useTheme();
 
   const markdownRender = (text: string) => {
-    return <Markdown remarkPlugins={[remarkGfm]}>{message.content}</Markdown>;
+    return <Markdown remarkPlugins={[remarkGfm]}>{text}</Markdown>;
   };
 
   const getAssistantMessageContent = (message: AgentChatMessage) => {
