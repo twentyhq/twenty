@@ -138,11 +138,12 @@ describe('createOne FieldMetadataService morph relation fields', () => {
 
     expect(createdField.id).toBeDefined();
     expect(createdField.name).toBe('owner');
-    // expect(createdField.relation).toBeUndefined();
-    // expect(createdField.morphRelations[0].type).toBe(
-    //   contextPayload.relationType,
-    // );
-    // expect(createdField.morphRelations[0].targetFieldMetadata.id).toBeDefined();
+    expect(createdField.morphRelations[0].targetObjectMetadata.id).toBe(
+      contextPayload.firstTargetObjectMetadataId,
+    );
+    expect(createdField.morphRelations[1].targetObjectMetadata.id).toBe(
+      contextPayload.secondTargetObjectMetadataId,
+    );
 
     const isManyToOne =
       contextPayload.relationType === RelationType.MANY_TO_ONE;
@@ -154,8 +155,6 @@ describe('createOne FieldMetadataService morph relation fields', () => {
     } else {
       expect(createdField.settings?.joinColumnName).toBeUndefined();
     }
-
-    // TODO: check the morphrelation targets are created correctly (wait for Query Morph Relations)
 
     await deleteOneFieldMetadata({
       input: { idToDelete: createdField.id },

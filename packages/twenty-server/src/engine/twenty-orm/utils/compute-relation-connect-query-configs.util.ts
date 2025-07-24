@@ -16,6 +16,7 @@ import {
   RelationConnectQueryConfig,
   UniqueConstraintCondition,
 } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
+import { RelationConnectQueryFieldsByEntityIndex } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
@@ -28,19 +29,19 @@ export const computeRelationConnectQueryConfigs = (
   entities: Record<string, unknown>[],
   objectMetadata: ObjectMetadataItemWithFieldMaps,
   objectMetadataMap: ObjectMetadataMaps,
+  relationConnectQueryFieldsByEntityIndex: RelationConnectQueryFieldsByEntityIndex,
 ) => {
   const allConnectQueryConfigs: Record<string, RelationConnectQueryConfig> = {};
 
   for (const [entityIndex, entity] of entities.entries()) {
-    const connectFields = extractConnectFields(entity);
+    const nestedRelationConnectFields =
+      relationConnectQueryFieldsByEntityIndex[entityIndex];
 
-    if (connectFields.length === 0) {
-      continue;
-    }
+    if (!isDefined(nestedRelationConnectFields)) continue;
 
-    for (const connectField of connectFields) {
-      const [connectFieldName, connectObject] = Object.entries(connectField)[0];
-
+    for (const [connectFieldName, connectObject] of Object.entries(
+      nestedRelationConnectFields,
+    )) {
       const {
         recordToConnectCondition,
         uniqueConstraintFields,
@@ -78,7 +79,7 @@ export const computeRelationConnectQueryConfigs = (
     }
   }
 
-  return allConnectQueryConfigs;
+  return Object.values(allConnectQueryConfigs);
 };
 
 const updateConnectQueryConfigs = (
@@ -175,63 +176,6 @@ const computeRecordToConnectCondition = (
     uniqueConstraintFields,
     targetObjectNameSingular: targetObjectMetadata.nameSingular,
   };
-};
-
-const extractConnectFields = (
-  entity: Record<string, unknown>,
-): { [connectFieldName: string]: ConnectObject }[] => {
-  const connectFields: { [entityKey: string]: ConnectObject }[] = [];
-
-  for (const [key, value] of Object.entries(entity)) {
-    if (hasRelationConnect(value)) {
-      connectFields.push({ [key]: value });
-    }
-  }
-
-  return connectFields;
-};
-
-const hasRelationConnect = (value: unknown): value is ConnectObject => {
-  if (!isDefined(value) || typeof value !== 'object') {
-    return false;
-  }
-
-  const obj = value as Record<string, unknown>;
-
-  if (!isDefined(obj.connect) || typeof obj.connect !== 'object') {
-    return false;
-  }
-
-  const connect = obj.connect as Record<string, unknown>;
-
-  if (!isDefined(connect.where) || typeof connect.where !== 'object') {
-    return false;
-  }
-
-  const where = connect.where as Record<string, unknown>;
-
-  const whereKeys = Object.keys(where);
-
-  if (whereKeys.length === 0) {
-    return false;
-  }
-
-  return whereKeys.every((key) => {
-    const whereValue = where[key];
-
-    if (typeof whereValue === 'string') {
-      return true;
-    }
-    if (whereValue && typeof whereValue === 'object') {
-      const subObj = whereValue as Record<string, unknown>;
-
-      return Object.values(subObj).every(
-        (subValue) => typeof subValue === 'string',
-      );
-    }
-
-    return false;
-  });
 };
 
 const checkUniqueConstraintFullyPopulated = (
