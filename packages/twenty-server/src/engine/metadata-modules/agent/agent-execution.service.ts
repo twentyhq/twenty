@@ -270,15 +270,16 @@ export class AgentExecutionService {
             ).map((record) => {
               return {
                 ...record,
-                resourceUrl: `${this.domainManagerService.getFrontUrl()}object/${recordsWithObjectMetadataNameSingular.objectMetadataNameSingular}/${record.id}`,
+                resourceUrl: this.domainManagerService.buildWorkspaceURL({
+                  workspace,
+                  pathname: `object/${recordsWithObjectMetadataNameSingular.objectMetadataNameSingular}/${record.id}`,
+                }),
               };
             });
           },
         ),
       )
     ).flat(2);
-
-    console.log('>>>>>>>>>>>>>>', contextObject);
 
     return JSON.stringify(contextObject);
   }

@@ -1,6 +1,8 @@
 import { keyframes, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
@@ -124,13 +126,17 @@ export const AIChatMessage = ({
 }) => {
   const theme = useTheme();
 
+  const markdownRender = (text: string) => {
+    return <Markdown remarkPlugins={[remarkGfm]}>{message.content}</Markdown>;
+  };
+
   const getAssistantMessageContent = (message: AgentChatMessage) => {
     if (message.content !== '') {
-      return message.content;
+      return markdownRender(message.content);
     }
 
     if (agentStreamingMessage.streamingText !== '') {
-      return agentStreamingMessage.streamingText;
+      return markdownRender(agentStreamingMessage.streamingText);
     }
 
     if (agentStreamingMessage.toolCall !== '') {
