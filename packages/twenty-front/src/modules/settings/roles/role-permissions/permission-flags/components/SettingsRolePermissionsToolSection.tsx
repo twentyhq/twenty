@@ -45,6 +45,20 @@ export const SettingsRolePermissionsToolSection = ({
       Icon: IconMail,
       isToolPermission: true,
     },
+    {
+      key: PermissionFlagType.IMPORT_CSV,
+      name: t`Import CSV`,
+      description: t`Allow importing data from CSV files`,
+      Icon: IconTool,
+      isToolPermission: true,
+    },
+    {
+      key: PermissionFlagType.EXPORT_CSV,
+      name: t`Export CSV`,
+      description: t`Allow exporting data to CSV files`,
+      Icon: IconTool,
+      isToolPermission: true,
+    },
   ];
 
   return (
