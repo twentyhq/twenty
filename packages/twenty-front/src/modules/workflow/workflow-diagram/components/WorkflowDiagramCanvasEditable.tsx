@@ -18,6 +18,8 @@ import React from 'react';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { WorkflowDiagramNode } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
+import { workflowDiagramRightClickMenuState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuState';
+import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu';
 
 export const WorkflowDiagramCanvasEditable = ({
   workflowWithCurrentVersion,
@@ -30,6 +32,10 @@ export const WorkflowDiagramCanvasEditable = ({
 
   const setWorkflowDiagram = useSetRecoilComponentStateV2(
     workflowDiagramComponentState,
+  );
+
+  const setWorkflowDiagramRightClickMenu = useSetRecoilComponentStateV2(
+    workflowDiagramRightClickMenuState,
   );
 
   const { createEdge } = useCreateEdge({
@@ -90,8 +96,17 @@ export const WorkflowDiagramCanvasEditable = ({
     }
   };
 
+  const handlePaneContextMenu = ({ x, y }: { x: number; y: number }) => {
+    setWorkflowDiagramRightClickMenu({
+      x,
+      y,
+    });
+  };
+
   return (
     <ReactFlowProvider>
+      <WorkflowDiagramRightClickCommandMenu />
+
       <WorkflowDiagramCanvasBase
         nodeTypes={{
           default: WorkflowDiagramStepNodeEditable,
@@ -110,6 +125,7 @@ export const WorkflowDiagramCanvasEditable = ({
         tagText={tagProps.text}
         onConnect={onConnect}
         onNodeDragStop={onNodeDragStop}
+        handlePaneContextMenu={handlePaneContextMenu}
         nodesConnectable
         edgesDeletable
       />

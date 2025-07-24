@@ -315,6 +315,7 @@ export {
   IconRelationOneToMany,
   IconRelationOneToOne,
   IconReload,
+  IconReorder,
   IconRepeat,
   IconRestore,
   IconRobot,

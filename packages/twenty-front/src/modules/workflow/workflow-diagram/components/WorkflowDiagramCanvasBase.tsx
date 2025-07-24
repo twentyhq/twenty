@@ -101,6 +101,7 @@ export const WorkflowDiagramCanvasBase = ({
   onInit,
   onConnect,
   onNodeDragStop,
+  handlePaneContextMenu,
   nodesConnectable = false,
   edgesDeletable = false,
 }: {
@@ -135,6 +136,15 @@ export const WorkflowDiagramCanvasBase = ({
   onNodeDragStop?: OnNodeDrag<WorkflowDiagramNode>;
   nodesConnectable?: boolean;
   edgesDeletable?: boolean;
+  handlePaneContextMenu?: ({
+    x,
+    y,
+    event,
+  }: {
+    x: number;
+    y: number;
+    event: MouseEvent | React.MouseEvent<Element, MouseEvent>;
+  }) => void;
 }) => {
   const theme = useTheme();
 
@@ -383,6 +393,20 @@ export const WorkflowDiagramCanvasBase = ({
     return false;
   };
 
+  const onPaneContextMenu = (
+    event: MouseEvent | React.MouseEvent<Element, MouseEvent>,
+  ) => {
+    event.preventDefault();
+
+    const bounds = containerRef.current?.getBoundingClientRect();
+    if (!bounds) return;
+
+    const x = event.clientX - bounds.left;
+    const y = event.clientY - bounds.top;
+
+    handlePaneContextMenu?.({ x, y, event });
+  };
+
   return (
     <StyledResetReactflowStyles ref={containerRef}>
       <WorkflowDiagramCustomMarkers />
@@ -406,6 +430,7 @@ export const WorkflowDiagramCanvasBase = ({
         nodesFocusable={false}
         edgesFocusable={edgesDeletable}
         panOnDrag={workflowDiagramPanOnDrag}
+        onPaneContextMenu={onPaneContextMenu}
         nodesConnectable={nodesConnectable}
         paneClickDistance={10} // Fix small unwanted user dragging does not select node
         preventScrolling={false}
