@@ -24,6 +24,7 @@ import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
+import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 
 import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
 import { Workspace } from './workspace.entity';
@@ -55,6 +56,7 @@ import { WorkspaceService } from './services/workspace.service';
         WorkspaceCacheStorageModule,
         RoleModule,
         AgentModule,
+        DomainManagerModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,

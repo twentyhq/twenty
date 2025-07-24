@@ -18,6 +18,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
 import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-deactivated';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { CustomHostnameCreateParams } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
 
 @Injectable()
 export class CustomDomainService {
@@ -37,6 +38,22 @@ export class CustomDomainService {
     }
   }
 
+  private get sslParams(): CustomHostnameCreateParams['ssl'] {
+    return {
+      method: 'txt',
+      type: 'dv',
+      settings: {
+        http2: 'on',
+        min_tls_version: '1.2',
+        tls_1_3: 'on',
+        ciphers: ['ECDHE-RSA-AES128-GCM-SHA256', 'AES128-SHA'],
+        early_hints: 'on',
+      },
+      bundle_method: 'ubiquitous',
+      wildcard: false,
+    };
+  }
+
   async registerCustomDomain(customDomain: string) {
     domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
@@ -50,19 +67,7 @@ export class CustomDomainService {
     return await this.cloudflareClient.customHostnames.create({
       zone_id: this.twentyConfigService.get('CLOUDFLARE_ZONE_ID'),
       hostname: customDomain,
-      ssl: {
-        method: 'txt',
-        type: 'dv',
-        settings: {
-          http2: 'on',
-          min_tls_version: '1.2',
-          tls_1_3: 'on',
-          ciphers: ['ECDHE-RSA-AES128-GCM-SHA256', 'AES128-SHA'],
-          early_hints: 'on',
-        },
-        bundle_method: 'ubiquitous',
-        wildcard: false,
-      },
+      ssl: this.sslParams,
     });
   }
 
@@ -188,6 +193,17 @@ export class CustomDomainService {
     });
   }
 
+  private async refreshCustomDomain(
+    customDomainDetails: CustomDomainValidRecords,
+  ) {
+    domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
+
+    await this.cloudflareClient.customHostnames.edit(customDomainDetails.id, {
+      zone_id: this.twentyConfigService.get('CLOUDFLARE_ZONE_ID'),
+      ssl: this.sslParams,
+    });
+  }
+
   async checkCustomDomainValidRecords(workspace: Workspace) {
     if (!workspace.customDomain) return;
 
@@ -197,11 +213,14 @@ export class CustomDomainService {
 
     if (!customDomainDetails) return;
 
+    await this.refreshCustomDomain(customDomainDetails);
+
     const isCustomDomainWorking =
       this.domainManagerService.isCustomDomainWorking(customDomainDetails);
 
     if (workspace.isCustomDomainEnabled !== isCustomDomainWorking) {
       workspace.isCustomDomainEnabled = isCustomDomainWorking;
+
       await this.workspaceRepository.save(workspace);
 
       const analytics = this.auditService.createContext({

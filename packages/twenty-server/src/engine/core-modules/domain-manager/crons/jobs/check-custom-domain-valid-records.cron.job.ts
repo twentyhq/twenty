@@ -14,10 +14,6 @@ import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-moni
 export const CHECK_CUSTOM_DOMAIN_VALID_RECORDS_CRON_PATTERN = '0 * * * *';
 
 @Processor(MessageQueue.cronQueue)
-@SentryCronMonitor(
-  CheckCustomDomainValidRecordsCronJob.name,
-  CHECK_CUSTOM_DOMAIN_VALID_RECORDS_CRON_PATTERN,
-)
 export class CheckCustomDomainValidRecordsCronJob {
   constructor(
     @InjectRepository(Workspace, 'core')
@@ -26,6 +22,10 @@ export class CheckCustomDomainValidRecordsCronJob {
   ) {}
 
   @Process(CheckCustomDomainValidRecordsCronJob.name)
+  @SentryCronMonitor(
+    CheckCustomDomainValidRecordsCronJob.name,
+    CHECK_CUSTOM_DOMAIN_VALID_RECORDS_CRON_PATTERN,
+  )
   async handle(): Promise<void> {
     const workspaces = await this.workspaceRepository.find({
       where: {
