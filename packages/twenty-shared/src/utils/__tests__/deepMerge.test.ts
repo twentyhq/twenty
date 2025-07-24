@@ -1,4 +1,4 @@
-import { deepMerge } from './deep-merge';
+import { deepMerge } from "@/utils";
 
 describe('deepMerge', () => {
   describe('primitive values', () => {
