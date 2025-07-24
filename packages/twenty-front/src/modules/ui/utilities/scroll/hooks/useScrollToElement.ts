@@ -6,7 +6,6 @@ export const useScrollToElement = () => {
 
     if (element !== null) {
       element.scrollIntoView({
-        behavior: 'smooth',
         block: 'start',
       });
       return true;
