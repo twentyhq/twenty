@@ -1,9 +1,11 @@
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import {
-    FlatFieldMetadata,
-    fieldMetadataRelationProperties,
+  FlatFieldMetadata,
+  fieldMetadataRelationProperties,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
+import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/utils/from-object-metadata-entity-to-flat-field-metadata.util';
+import { fromFlatObjectMetadataToFlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/from-flat-object-metadata-to-flat-object-metadata-without-fields.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
 
@@ -32,14 +34,22 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = <
       fromFieldMetadataEntityToFlatFieldMetadata(
         fieldMetadataEntity.relationTargetFieldMetadata,
       );
-    const flatObjectTargetFieldMetadata = 
+    const flatObjectTargetFieldMetadata =
+      fromObjectMetadataEntityToFlatObjectMetadata(
+        fieldMetadataEntity.relationTargetObjectMetadata,
+      );
+    const flatRelationTargetObjectMetadata =
+      fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(
+        flatObjectTargetFieldMetadata,
+      );
+
     return {
       ...fieldMetadataWithoutRelations,
       uniqueIdentifier:
         fieldMetadataWithoutRelations.standardId ??
         fieldMetadataWithoutRelations.id,
       flatRelationTargetFieldMetadata,
-      flatRelationTargetObjectMetadata: {},
+      flatRelationTargetObjectMetadata,
     } as FlatFieldMetadata<FieldMetadataType.RELATION>;
   }
 
