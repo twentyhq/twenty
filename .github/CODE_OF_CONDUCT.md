@@ -8,8 +8,8 @@ The focus of both contributors and maintainers is on acting and interacting in w
 
 ## Twenty's Standards
 
-Examples of behavior that contributes to a positive environment for this
-community include:
+Examples of behavior that contribute to a positive environment for this
+Community includes:
 
 * Demonstrating empathy and kindness toward other people
 * Being respectful of differing opinions, viewpoints, and experiences
@@ -22,12 +22,12 @@ Examples of unacceptable behavior include:
 
 * The use of sexualized language or imagery, and sexual attention or
   advances of any kind
-* Trolling, insulting or derogatory comments, and personal or political attacks
+* Trolling, insulting, or derogatory comments, and personal or political attacks
 * Public or private harassment 
 * The use of aggressive language 
-* Publishing others' private information, such as a physical or email
+* Publishing others' private information, such as a physical or emai addressl
   address, without their explicit permission
-* Other conduct inappropriate in a professional setting.
+* Other conduct is inappropriate in a professional setting.
 
 ## Enforcement Responsibilities
 
@@ -38,14 +38,14 @@ Community leaders and maintainers of this repository have the right and responsi
 ## Scope
 
 This Code of Conduct applies within all community spaces, and also applies when
-an individual is officially representing the community in public spaces.
+An individual is officially representing the community in public spaces.
 Examples of representing this community include using an official e-mail address,
 posting via an official social media account, or acting as an appointed
 representative at an online or offline event.
 
 ## Attribution
 
-This Code of Conduct is an adaption of the [Contributor Covenant][homepage],
+This Code of Conduct is an adaptation of the [Contributor Covenant][homepage],
 version 2.0, available at
 https://www.contributor-covenant.org/version/2/0/code_of_conduct.html.
 
@@ -54,6 +54,6 @@ enforcement ladder](https://github.com/mozilla/diversity).
 
 [homepage]: https://www.contributor-covenant.org
 
-For answers to common questions about this code of conduct, see the FAQ at
+For answers to common questions about this code of conduct, please take a look at the FAQ at
 https://www.contributor-covenant.org/faq. Translations are available at
 https://www.contributor-covenant.org/translations.
