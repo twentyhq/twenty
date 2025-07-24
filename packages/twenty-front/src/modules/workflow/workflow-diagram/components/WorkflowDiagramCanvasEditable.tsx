@@ -110,7 +110,8 @@ export const WorkflowDiagramCanvasEditable = ({
         tagText={tagProps.text}
         onConnect={onConnect}
         onNodeDragStop={onNodeDragStop}
-        nodesConnectable={true}
+        nodesConnectable
+        edgesDeletable
       />
 
       <WorkflowDiagramCanvasEditableEffect />

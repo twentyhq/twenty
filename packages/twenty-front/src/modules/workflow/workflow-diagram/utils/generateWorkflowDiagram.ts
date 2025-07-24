@@ -115,6 +115,9 @@ export const generateWorkflowDiagram = ({
     edges.push({
       ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
       type: defaultEdgeType,
+      ...(defaultEdgeType.includes('editable')
+        ? { deletable: true, selectable: true }
+        : {}),
       id: v4(),
       source: TRIGGER_STEP_ID,
       target: firstLevelStep.id,
@@ -126,6 +129,9 @@ export const generateWorkflowDiagram = ({
       edges.push({
         ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
         type: defaultEdgeType,
+        ...(defaultEdgeType.includes('editable')
+          ? { deletable: true, selectable: true }
+          : {}),
         id: v4(),
         source: step.id,
         target: child,
