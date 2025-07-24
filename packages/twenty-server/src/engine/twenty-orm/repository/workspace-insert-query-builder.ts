@@ -115,7 +115,7 @@ export class WorkspaceInsertQueryBuilder<
       this.internalContext,
     );
 
-    const queryBuilder = new WorkspaceSelectQueryBuilder(
+    const nestedRelationQueryBuilder = new WorkspaceSelectQueryBuilder(
       this as unknown as WorkspaceSelectQueryBuilder<T>,
       this.objectRecordsPermissions,
       this.internalContext,
@@ -129,7 +129,7 @@ export class WorkspaceInsertQueryBuilder<
           | QueryDeepPartialEntityWithNestedRelationFields<T>
           | QueryDeepPartialEntityWithNestedRelationFields<T>[],
         relationNestedConfig: this.relationNestedConfig,
-        queryBuilder,
+        queryBuilder: nestedRelationQueryBuilder,
       });
 
     this.expressionMap.valuesSet = updatedValues;
