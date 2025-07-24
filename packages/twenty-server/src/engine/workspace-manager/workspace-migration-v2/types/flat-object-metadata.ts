@@ -4,6 +4,14 @@ import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migrat
 import { FlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-index-metadata';
 import { MetadataEntitiesRelationTarget } from 'src/engine/workspace-manager/workspace-migration-v2/types/metadata-entities-relation-targets.type';
 
+export const objectMetadataEntityRelationProperties = [
+  'fields',
+  'indexMetadatas',
+  'targetRelationFields',
+  'dataSource',
+  'objectPermissions',
+  'fieldPermissions',
+] as const satisfies ObjectMetadataRelationProperties[];
 type ObjectMetadataRelationProperties = ExtractRecordTypeOrmRelationProperties<
   ObjectMetadataEntity,
   MetadataEntitiesRelationTarget

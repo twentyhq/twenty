@@ -4,7 +4,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { AssignTypeIfIsRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-type-if-is-relation-field-metadata-type.type';
 import { FlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
 
-const fieldMetadataRelationProperties = [
+export const fieldMetadataRelationProperties = [
   'relationTargetFieldMetadata',
   'relationTargetObjectMetadata',
   'fieldPermissions',
@@ -12,7 +12,7 @@ const fieldMetadataRelationProperties = [
   'object',
 ] as const satisfies (keyof FieldMetadataEntity)[];
 
-type FieldMetadataEntityRelationProperties =
+export type FieldMetadataEntityRelationProperties =
   (typeof fieldMetadataRelationProperties)[number];
 
 export type FlatFieldMetadata<T extends FieldMetadataType = FieldMetadataType> =

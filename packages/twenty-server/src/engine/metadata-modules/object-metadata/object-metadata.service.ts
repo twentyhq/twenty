@@ -188,7 +188,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       // Validate flatObjectMetadatas
       const createdFlatObjectMetadata = validateFlatObjectMetadataData({
         existing: flatObjectMetadatas,
-        toValidate: FlatObjectMetadata,
+        toValidate: [createdRawFlatObjectMetadata],
       });
 
       // Everything validated from here
