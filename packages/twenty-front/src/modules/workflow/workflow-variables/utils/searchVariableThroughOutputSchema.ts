@@ -141,13 +141,14 @@ const searchCurrentStepOutputSchema = ({
   }
 
   const variableName = isSelectedFieldInNextKey ? nextKey : selectedField;
+  const variableLabel =
+    isFullRecord && isRecordOutputSchema(currentSubStep)
+      ? getDisplayedSubStepObjectLabel(currentSubStep)
+      : getDisplayedSubStepFieldLabel(variableName, currentSubStep);
 
   return {
-    variableLabel:
-      isFullRecord && isRecordOutputSchema(currentSubStep)
-        ? getDisplayedSubStepObjectLabel(currentSubStep)
-        : getDisplayedSubStepFieldLabel(variableName, currentSubStep),
-    variablePathLabel,
+    variableLabel,
+    variablePathLabel: `${variablePathLabel} > ${variableLabel}`,
     variableType: getVariableType(variableName, currentSubStep),
     fieldMetadataId:
       getFieldMetadataId(variableName, currentSubStep) ?? parentFieldMetadataId,
