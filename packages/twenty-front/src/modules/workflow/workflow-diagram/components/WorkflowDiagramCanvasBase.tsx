@@ -34,6 +34,7 @@ import {
   useReactFlow,
   Connection,
   OnNodeDrag,
+  OnBeforeDelete,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
@@ -102,6 +103,7 @@ export const WorkflowDiagramCanvasBase = ({
   onConnect,
   onNodeDragStop,
   nodesConnectable = false,
+  edgesDeletable = false,
 }: {
   nodeTypes: Partial<
     Record<
@@ -133,6 +135,7 @@ export const WorkflowDiagramCanvasBase = ({
   onConnect?: (params: Connection) => void;
   onNodeDragStop?: OnNodeDrag<WorkflowDiagramNode>;
   nodesConnectable?: boolean;
+  edgesDeletable?: boolean;
 }) => {
   const theme = useTheme();
 
@@ -373,6 +376,18 @@ export const WorkflowDiagramCanvasBase = ({
     ],
   );
 
+  const onBeforeDelete: OnBeforeDelete<
+    WorkflowDiagramNode,
+    WorkflowDiagramEdge
+  > = async (diagram) => {
+    if (edgesDeletable) {
+      // Removing nodes from delete events
+      diagram.nodes.length = 0;
+      return diagram;
+    }
+    return false;
+  };
+
   return (
     <StyledResetReactflowStyles ref={containerRef}>
       <WorkflowDiagramCustomMarkers />
@@ -390,14 +405,11 @@ export const WorkflowDiagramCanvasBase = ({
         onEdgesChange={handleEdgesChange}
         onConnect={onConnect}
         onNodeDragStop={onNodeDragStop}
-        onBeforeDelete={async () => {
-          // Abort all non-programmatic deletions
-          return false;
-        }}
+        onBeforeDelete={onBeforeDelete}
         proOptions={{ hideAttribution: true }}
         multiSelectionKeyCode={null}
         nodesFocusable={false}
-        edgesFocusable={false}
+        edgesFocusable={edgesDeletable}
         panOnDrag={workflowDiagramPanOnDrag}
         nodesConnectable={nodesConnectable}
         paneClickDistance={10} // Fix small unwanted user dragging does not select node
