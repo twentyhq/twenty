@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 
 import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
 import { ViewFilter } from 'src/engine/metadata-modules/view/view-filter.entity';
+import { ViewFilterValue } from 'src/engine/metadata-modules/view/types/view-filter-value.type';
 import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
 
 @Injectable()
@@ -24,16 +25,7 @@ export class ViewFilterSyncService {
       const diffValue = diff[key as keyof ViewFilterWorkspaceEntity];
 
       if (isDefined(diffValue)) {
-        if (key === 'value' && diffValue.after) {
-          // Handle JSON parsing for value field
-          try {
-            updateData[key] = JSON.parse(diffValue.after as string);
-          } catch {
-            throw new Error(`Could not parse value to JSON for view filter`);
-          }
-        } else {
-          updateData[key] = diffValue.after;
-        }
+        updateData[key] = diffValue.after;
       }
     }
 
@@ -48,22 +40,12 @@ export class ViewFilterSyncService {
       return;
     }
 
-    let parsedValue: JSON;
-
-    try {
-      parsedValue = JSON.parse(workspaceViewFilter.value);
-    } catch {
-      throw new Error(
-        `Could not parse value to JSON for view filter ${workspaceViewFilter.id}`,
-      );
-    }
-
     const coreViewFilter = {
       id: workspaceViewFilter.id,
       fieldMetadataId: workspaceViewFilter.fieldMetadataId,
       viewId: workspaceViewFilter.viewId,
       operand: workspaceViewFilter.operand,
-      value: parsedValue,
+      value: workspaceViewFilter.value as ViewFilterValue,
       displayValue: workspaceViewFilter.displayValue,
       viewFilterGroupId: workspaceViewFilter.viewFilterGroupId,
       workspaceId,

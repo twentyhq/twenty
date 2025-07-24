@@ -13,6 +13,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view/enums/view-filter-group-logical-operator';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
 import { ViewSortDirection } from 'src/engine/metadata-modules/view/enums/view-sort-direction';
+import { ViewFilterValue } from 'src/engine/metadata-modules/view/types/view-filter-value.type';
 import { ViewField } from 'src/engine/metadata-modules/view/view-field.entity';
 import { ViewFilterGroup } from 'src/engine/metadata-modules/view/view-filter-group.entity';
 import { ViewFilter } from 'src/engine/metadata-modules/view/view-filter.entity';
@@ -298,22 +299,12 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         continue;
       }
 
-      let parsedValue: JSON;
-
-      try {
-        parsedValue = JSON.parse(filter.value);
-      } catch {
-        throw new Error(
-          `Could not parse value to JSON for view filter ${filter.id} for workspace ${workspaceId}`,
-        );
-      }
-
       const coreViewFilter: Partial<ViewFilter> = {
         id: filter.id,
         fieldMetadataId: filter.fieldMetadataId,
         viewId: filter.viewId,
         operand: filter.operand,
-        value: parsedValue,
+        value: filter.value as ViewFilterValue,
         viewFilterGroupId: filter.viewFilterGroupId,
         workspaceId,
         createdAt: new Date(filter.createdAt),
