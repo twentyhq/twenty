@@ -169,7 +169,7 @@ export class PermissionsService {
       return true;
     }
 
-    const permissionFlags = roleOfUserWorkspace.permissionFlags ?? [];
+    const permissionFlags = role.permissionFlags ?? [];
 
     return permissionFlags.some(
       (permissionFlag) => permissionFlag.flag === setting,
