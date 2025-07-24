@@ -40,7 +40,7 @@ export class RoleService {
       where: {
         workspaceId,
       },
-      relations: ['roleTargets', 'settingPermissions', 'objectPermissions'],
+      relations: ['roleTargets', 'permissionFlags', 'objectPermissions'],
     });
   }
 
@@ -53,7 +53,7 @@ export class RoleService {
         id,
         workspaceId,
       },
-      relations: ['roleTargets', 'settingPermissions'],
+      relations: ['roleTargets', 'permissionFlags'],
     });
   }
 
@@ -72,6 +72,7 @@ export class RoleService {
       description: input.description,
       icon: input.icon,
       canUpdateAllSettings: input.canUpdateAllSettings,
+      canAccessAllTools: input.canAccessAllTools,
       canReadAllObjectRecords: input.canReadAllObjectRecords,
       canUpdateAllObjectRecords: input.canUpdateAllObjectRecords,
       canSoftDeleteAllObjectRecords: input.canSoftDeleteAllObjectRecords,
@@ -143,6 +144,7 @@ export class RoleService {
       description: 'Admin role',
       icon: 'IconUserCog',
       canUpdateAllSettings: true,
+      canAccessAllTools: true,
       canReadAllObjectRecords: true,
       canUpdateAllObjectRecords: true,
       canSoftDeleteAllObjectRecords: true,
@@ -209,6 +211,7 @@ export class RoleService {
       description: 'Member role',
       icon: 'IconUser',
       canUpdateAllSettings: false,
+      canAccessAllTools: false,
       canReadAllObjectRecords: true,
       canUpdateAllObjectRecords: true,
       canSoftDeleteAllObjectRecords: true,
@@ -229,6 +232,7 @@ export class RoleService {
       description: 'Guest role',
       icon: 'IconUser',
       canUpdateAllSettings: false,
+      canAccessAllTools: false,
       canReadAllObjectRecords: true,
       canUpdateAllObjectRecords: false,
       canSoftDeleteAllObjectRecords: false,
@@ -250,6 +254,7 @@ export class RoleService {
     const keysToValidate = [
       'label',
       'canUpdateAllSettings',
+      'canAccessAllTools',
       'canReadAllObjectRecords',
       'canUpdateAllObjectRecords',
       'canSoftDeleteAllObjectRecords',

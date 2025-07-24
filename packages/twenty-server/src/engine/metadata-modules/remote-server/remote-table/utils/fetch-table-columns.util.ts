@@ -1,4 +1,5 @@
 import { PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 export const fetchTableColumns = async (
@@ -6,7 +7,7 @@ export const fetchTableColumns = async (
   workspaceId: string,
   tableName: string,
 ): Promise<PostgresTableSchemaColumn[]> => {
-  const schemaName = workspaceDataSourceService.getSchemaName(workspaceId);
+  const schemaName = getWorkspaceSchemaName(workspaceId);
 
   // TODO: executeRawQuery is deprecated and will throw
   const res = await workspaceDataSourceService.executeRawQuery(

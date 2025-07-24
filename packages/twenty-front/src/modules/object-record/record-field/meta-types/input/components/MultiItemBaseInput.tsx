@@ -78,6 +78,7 @@ export type MultiItemBaseInputProps = Omit<HTMLInputProps, 'onChange'> & {
     onChange: (value: string) => void;
     autoFocus: HTMLInputProps['autoFocus'];
     placeholder: HTMLInputProps['placeholder'];
+    hasError?: boolean;
   }) => React.ReactNode;
   error?: string | null;
   hasError?: boolean;
@@ -134,6 +135,7 @@ export const MultiItemBaseInput = forwardRef<
               onChange,
               autoFocus,
               placeholder,
+              hasError,
             })
           ) : (
             <StyledInput

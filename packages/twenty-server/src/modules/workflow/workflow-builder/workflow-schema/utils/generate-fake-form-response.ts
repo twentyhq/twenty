@@ -60,7 +60,10 @@ export const generateFakeFormResponse = async ({
     }),
   );
 
-  return result.filter(isDefined).reduce((acc, curr) => {
-    return { ...acc, ...curr };
-  }, {});
+  return result.filter(isDefined).reduce(
+    (acc, curr) => {
+      return { ...acc, ...curr };
+    },
+    {} as Record<string, Leaf | Node>,
+  );
 };

@@ -16,7 +16,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-step/workflow-version-step.workspace-service';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -27,7 +27,7 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
 @UseGuards(
   WorkspaceAuthGuard,
   UserAuthGuard,
-  SettingsPermissionsGuard(SettingPermissionType.WORKFLOWS),
+  SettingsPermissionsGuard(PermissionFlagType.WORKFLOWS),
 )
 @UseFilters(
   PermissionsGraphqlApiExceptionFilter,

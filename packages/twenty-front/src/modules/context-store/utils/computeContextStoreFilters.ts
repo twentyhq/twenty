@@ -4,6 +4,7 @@ import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGq
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
 import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
+import { turnAnyFieldFilterIntoRecordGqlFilter } from '@/object-record/record-filter/utils/turnAnyFieldFilterIntoRecordGqlFilter';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 
 export const computeContextStoreFilters = (
@@ -11,11 +12,19 @@ export const computeContextStoreFilters = (
   contextStoreFilters: RecordFilter[],
   objectMetadataItem: ObjectMetadataItem,
   filterValueDependencies: RecordFilterValueDependencies,
+  anyFieldFilterValue: string,
 ) => {
   let queryFilter: RecordGqlOperationFilter | undefined;
 
+  const { recordGqlOperationFilter: recordGqlFilterForAnyFieldFilter } =
+    turnAnyFieldFilterIntoRecordGqlFilter({
+      filterValue: anyFieldFilterValue,
+      objectMetadataItem,
+    });
+
   if (contextStoreTargetedRecordsRule.mode === 'exclusion') {
     queryFilter = makeAndFilterVariables([
+      recordGqlFilterForAnyFieldFilter,
       computeRecordGqlOperationFilter({
         filterValueDependencies,
         fields: objectMetadataItem?.fields ?? [],
@@ -35,6 +44,7 @@ export const computeContextStoreFilters = (
   }
   if (contextStoreTargetedRecordsRule.mode === 'selection') {
     queryFilter = makeAndFilterVariables([
+      recordGqlFilterForAnyFieldFilter,
       contextStoreTargetedRecordsRule.selectedRecordIds.length > 0
         ? {
             id: {

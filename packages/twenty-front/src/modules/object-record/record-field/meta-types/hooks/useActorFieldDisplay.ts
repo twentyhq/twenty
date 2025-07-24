@@ -30,8 +30,8 @@ export const useActorFieldDisplay = (): ActorFieldDisplayValue | undefined => {
   }
 
   const relatedWorkspaceMember = [
-    ...currentWorkspaceDeletedMembers,
-    ...currentWorkspaceMembers,
+    ...(currentWorkspaceDeletedMembers ?? []),
+    ...(currentWorkspaceMembers ?? []),
   ].find(
     (workspaceMember) => workspaceMember.id === fieldValue.workspaceMemberId,
   );

@@ -1,5 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { AIChatTab } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab';
+import { AIChatTab } from '@/ai/components/AIChatTab';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 

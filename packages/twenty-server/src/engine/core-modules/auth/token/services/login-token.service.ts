@@ -49,11 +49,7 @@ export class LoginTokenService {
     };
   }
 
-  async verifyLoginToken(loginToken: string): Promise<{
-    sub: string;
-    workspaceId: string;
-    authProvider: AuthProviderEnum;
-  }> {
+  async verifyLoginToken(loginToken: string): Promise<LoginTokenJwtPayload> {
     await this.jwtWrapperService.verifyJwtToken(
       loginToken,
       JwtTokenTypeEnum.LOGIN,
