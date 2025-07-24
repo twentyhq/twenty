@@ -1,3 +1,6 @@
-import { createLastVisitedItemState } from '@/ui/utilities/scroll/utils/createLastVisitedItemState';
+import { createState } from 'twenty-ui/utilities';
 
-export const lastVisitedDataModelObjectState = createLastVisitedItemState('DataModelObject'); 
+export const lastVisitedDataModelObjectState = createState<string | null>({
+  key: 'lastVisitedDataModelObjectState',
+  defaultValue: null,
+}); 
