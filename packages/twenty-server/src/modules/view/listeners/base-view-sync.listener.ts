@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
@@ -23,9 +23,12 @@ type SyncOperations<T extends EntityWithId> = {
   restore: (workspaceId: string, entity: Pick<T, 'id'>) => Promise<void>;
 };
 
+@Injectable()
 export abstract class BaseViewSyncListener<T extends EntityWithId> {
-  protected readonly logger: Logger;
+  @Inject(FeatureFlagService)
   protected readonly featureFlagService: FeatureFlagService;
+
+  protected readonly logger: Logger;
 
   constructor(
     protected readonly syncOperations: SyncOperations<T>,
