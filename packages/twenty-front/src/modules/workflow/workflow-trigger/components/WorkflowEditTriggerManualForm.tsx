@@ -2,7 +2,6 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { Switch } from '@/ui/input/components/Switch';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import {
     WorkflowManualTrigger,
@@ -19,6 +18,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { Checkbox } from 'twenty-ui';
 import { useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 
@@ -109,11 +109,11 @@ export const WorkflowEditTriggerManualForm = ({
         disabled={triggerOptions.readonly}
       />
       <WorkflowStepBody>
-        <Switch
+        <Checkbox
           label={t`Pinned in Navbar`}
           checked={!!trigger.settings.isPinned}
           disabled={triggerOptions.readonly}
-          onChange={(checked) => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             if (triggerOptions.readonly === true) {
               return;
             }
@@ -121,7 +121,7 @@ export const WorkflowEditTriggerManualForm = ({
               ...trigger,
               settings: {
                 ...trigger.settings,
-                isPinned: checked,
+                isPinned: e.target.checked,
               },
             });
           }}
@@ -197,7 +197,7 @@ export const WorkflowEditTriggerManualForm = ({
                 isDisabled={triggerOptions.readonly}
                 selectedOption={{
                   Icon: getIcon(trigger.settings.icon),
-                  value: trigger.settings.icon || null,
+                  value: trigger.settings.icon || '',
                   label: '',
                 }}
               />
