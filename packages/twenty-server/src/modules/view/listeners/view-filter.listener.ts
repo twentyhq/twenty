@@ -7,9 +7,9 @@ import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/t
 import { ObjectRecordRestoreEvent } from 'src/engine/core-modules/event-emitter/types/object-record-restore.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
-import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
 import { ViewFilterSyncService } from 'src/modules/view/services/view-filter-sync.service';
 import { ViewSyncService } from 'src/modules/view/services/view-sync.service';
+import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
 
 @Injectable()
 export class ViewFilterListener {
