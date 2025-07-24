@@ -1,11 +1,11 @@
 import { v4 } from 'uuid';
+import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
 
 import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
 
 export const prepareCustomFieldMetadataOptions = (
   options: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[],

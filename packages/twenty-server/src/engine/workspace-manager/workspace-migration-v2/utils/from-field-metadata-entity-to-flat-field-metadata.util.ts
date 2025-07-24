@@ -1,3 +1,6 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
+
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import {
@@ -6,8 +9,6 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
 import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/utils/from-object-metadata-entity-to-flat-field-metadata.util';
 import { fromFlatObjectMetadataToFlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/from-flat-object-metadata-to-flat-object-metadata-without-fields.util';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 
 export const fromFieldMetadataEntityToFlatFieldMetadata = <
   T extends FieldMetadataType,

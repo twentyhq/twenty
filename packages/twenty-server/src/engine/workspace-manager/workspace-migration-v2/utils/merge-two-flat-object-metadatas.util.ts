@@ -1,11 +1,12 @@
-import { FlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
-import { mergeTwoFlatFieldMetadatas } from 'src/engine/workspace-manager/workspace-migration-v2/utils/merge-two-flat-field-metadatas.util';
-import { ToMerge } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/to-merge.type';
 import {
   deepMerge,
   fromArrayToUniqueKeyRecord,
   isDefined,
 } from 'twenty-shared/utils';
+
+import { FlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
+import { mergeTwoFlatFieldMetadatas } from 'src/engine/workspace-manager/workspace-migration-v2/utils/merge-two-flat-field-metadatas.util';
+import { ToMerge } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/to-merge.type';
 
 export const mergeTwoFlatFieldObjectMetadatas = ({
   destFlatObjectMetadatas,
@@ -23,6 +24,7 @@ export const mergeTwoFlatFieldObjectMetadatas = ({
           toMergeflatObjectMetadata.uniqueIdentifier;
         const accumulatorCurrentOccurence: FlatObjectMetadata | undefined =
           initialObjectAccumaltor[flatObjectUniqueIdentifier];
+
         if (!isDefined(accumulatorCurrentOccurence)) {
           return {
             ...acc,

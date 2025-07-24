@@ -46,19 +46,21 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
+import { fromObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/workspace-manager/workspace-migration-v2/utils/from-object-metadata-maps-to-flat-object-metadatas.util';
+import { mergeTwoFlatFieldObjectMetadatas } from 'src/engine/workspace-manager/workspace-migration-v2/utils/merge-two-flat-object-metadatas.util';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
-import { FlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
-import { fromObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/workspace-manager/workspace-migration-v2/utils/from-object-metadata-maps-to-flat-object-metadatas.util';
-import { mergeTwoFlatFieldObjectMetadatas } from 'src/engine/workspace-manager/workspace-migration-v2/utils/merge-two-flat-object-metadatas.util';
-import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import {
   CreateObjectInput,
   fromCreateObjectInputToFlatObjectMetadata,
 } from './dtos/create-object.input';
+
+// TODO prastoin create a feature flag in db
+const workspaceMigrationV2FeatureFlagIsEnabled = false;
 
 @Injectable()
 export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEntity> {
@@ -124,6 +126,39 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           objectMetadataInput.workspaceId,
         );
 
+      if (workspaceMigrationV2FeatureFlagIsEnabled) {
+        const createdRawFlatObjectMetadata =
+          fromCreateObjectInputToFlatObjectMetadata(objectMetadataInput);
+        const existingFlatObjectMetadatas =
+          fromObjectMetadataMapsToFlatObjectMetadatas(objectMetadataMaps);
+        // @ts-expect-error TODO implement validateFlatObjectMetadataData
+        const createdFlatObjectMetadata = validateFlatObjectMetadataData({
+          existing:
+            // Here we assume that EVERYTHING is in cache and up to date, this is very critical, also race condition prone :thinking:
+            fromObjectMetadataMapsToFlatObjectMetadatas(objectMetadataMaps),
+          toValidate: [createdRawFlatObjectMetadata],
+        });
+
+        // Everything validated from here
+        this.workspaceMigrationBuilderV2.build({
+          objectMetadataFromToInputs: {
+            from: existingFlatObjectMetadatas,
+            to: mergeTwoFlatFieldObjectMetadatas({
+              destFlatObjectMetadatas: existingFlatObjectMetadatas,
+              toMergeFlatObjectMetadatas: [createdFlatObjectMetadata],
+            }),
+          },
+          workspaceId: objectMetadataInput.workspaceId, // Where does this comes from ?
+        });
+
+        // call workspace migration runner
+        // this.workspaceMigrationRunner.run();
+
+        // What to return exactly ? We now won't have access to the entity directly
+        // We could still retrieve it afterwards using a find on object metadata id or return a flat now
+        return createdFlatObjectMetadata;
+      }
+
       objectMetadataInput.labelSingular = capitalize(
         objectMetadataInput.labelSingular,
       );
@@ -182,33 +217,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           ObjectMetadataExceptionCode.MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD,
         );
       }
-
-      const createdRawFlatObjectMetadata =
-        fromCreateObjectInputToFlatObjectMetadata(objectMetadataInput);
-
-      // Validate flatObjectMetadatas
-      const createdFlatObjectMetadata = validateFlatObjectMetadataData({
-        existing:
-          // Here we assume that EVERYTHING is in cache, this is very critical, also race condition prone :thinking:
-          fromObjectMetadataMapsToFlatObjectMetadatas(objectMetadataMaps),
-        toValidate: [createdRawFlatObjectMetadata],
-      });
-
-      // Everything validated from here
-      // We should get cache
-      const existingFlatObjectMetadatas: FlatObjectMetadata[] = [];
-      this.workspaceMigrationBuilderV2.build({
-        objectMetadataFromToInputs: {
-          from: existingFlatObjectMetadatas,
-          to: mergeTwoFlatFieldObjectMetadatas({
-            destFlatObjectMetadatas: existingFlatObjectMetadatas,
-            toMergeFlatObjectMetadatas: [createdFlatObjectMetadata],
-          }),
-        },
-        workspaceId: objectMetadataInput.workspaceId, // Where does this comes from ?
-      });
-
-      // call workspace migration runner
 
       const createdObjectMetadata = await objectMetadataRepository.save({
         ...objectMetadataInput,

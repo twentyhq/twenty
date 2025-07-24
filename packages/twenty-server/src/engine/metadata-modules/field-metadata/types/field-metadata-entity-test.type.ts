@@ -118,6 +118,7 @@ type RelationAssertions = [
 type NotDefinedSettings = {
   settings: never | null;
 };
+
 // eslint-disable-next-line unused-imports/no-unused-vars, @typescript-eslint/no-unused-vars
 type SettingsAssertions = [
   Expect<HasAllProperties<CurrencyFieldMetadata, NotDefinedSettings>>,
@@ -349,6 +350,7 @@ type DefaultValueAssertions = [
 type NotDefinedOptions = {
   options: never | null;
 };
+
 // eslint-disable-next-line unused-imports/no-unused-vars, @typescript-eslint/no-unused-vars
 type OptionsAssertions = [
   Expect<

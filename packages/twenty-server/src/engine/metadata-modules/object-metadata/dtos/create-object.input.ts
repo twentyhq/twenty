@@ -4,6 +4,8 @@ import { BeforeCreateOne } from '@ptc-org/nestjs-query-graphql';
 import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
@@ -11,8 +13,6 @@ import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-met
 import { BeforeCreateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-create-one-object.hook';
 import { buildDefaultFlatFieldMetadataForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-fields-for-custom-object.util';
 import { FlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
-import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 @InputType()
 @BeforeCreateOne(BeforeCreateOneObject)
@@ -112,7 +112,7 @@ export const fromCreateObjectInputToFlatObjectMetadata = (
   return {
     createdAt,
     updatedAt: createdAt,
-    dataSourceId: '', // TODO
+    dataSourceId: createObjectInput.dataSourceId, // IS it enough ?
     description: createObjectInput.description ?? null,
     duplicateCriteria: [], // IDK
     flatFieldMetadatas: Object.values(baseCustomFlatFieldMetadatas),

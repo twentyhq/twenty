@@ -7,8 +7,8 @@ export const fromObjectMetadataItemWithFieldMapsToFlatObjectMetadata = (
 ): FlatObjectMetadata => {
   const {
     fieldsById,
-    fieldIdByJoinColumnName,
-    fieldIdByName,
+    fieldIdByJoinColumnName: _fieldIdByJoinColumnName,
+    fieldIdByName: _fieldIdByName,
     indexMetadatas,
     ...rest
   } = objectMetadataItemWithFieldMaps;

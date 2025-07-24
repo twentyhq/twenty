@@ -1,6 +1,7 @@
+import { deepMerge, fromArrayToUniqueKeyRecord } from 'twenty-shared/utils';
+
 import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
 import { ToMerge } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/to-merge.type';
-import { deepMerge, fromArrayToUniqueKeyRecord } from 'twenty-shared/utils';
 
 export const mergeTwoFlatFieldMetadatas = ({
   destFlatFieldMetadatas,
