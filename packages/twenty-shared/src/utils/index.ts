@@ -8,6 +8,7 @@
  */
 
 export { assertUnreachable } from './assertUnreachable';
+export { deepMerge } from './deep-merge';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
 export { getURLSafely } from './getURLSafely';
 export { getImageAbsoluteURI } from './image/getImageAbsoluteURI';
