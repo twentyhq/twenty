@@ -7,7 +7,13 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
 
-import { H2Title, IconMail, IconTool } from 'twenty-ui/display';
+import {
+  H2Title,
+  IconFileExport,
+  IconFileImport,
+  IconMail,
+  IconTool,
+} from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
@@ -49,14 +55,14 @@ export const SettingsRolePermissionsToolSection = ({
       key: PermissionFlagType.IMPORT_CSV,
       name: t`Import CSV`,
       description: t`Allow importing data from CSV files`,
-      Icon: IconTool,
+      Icon: IconFileImport,
       isToolPermission: true,
     },
     {
       key: PermissionFlagType.EXPORT_CSV,
       name: t`Export CSV`,
       description: t`Allow exporting data to CSV files`,
-      Icon: IconTool,
+      Icon: IconFileExport,
       isToolPermission: true,
     },
   ];
