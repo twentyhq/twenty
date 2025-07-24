@@ -53,11 +53,11 @@ export const SettingsObjectMetadataItemTableRow = ({
   const objectTypeLabel = getObjectTypeLabel(objectMetadataItem);
 
   return (
-    <div id={`${DATA_MODEL_OBJECT_ROW_ID_PREFIX}-${objectMetadataItem.namePlural}`}>
       <StyledObjectTableRow 
         key={objectMetadataItem.namePlural} 
         to={link}
         onClick={() => setLastVisitedObject(objectMetadataItem.namePlural)}
+        id={`${DATA_MODEL_OBJECT_ROW_ID_PREFIX}-${objectMetadataItem.namePlural}`}
       >
         <StyledNameTableCell>
           {!!Icon && (
@@ -80,6 +80,5 @@ export const SettingsObjectMetadataItemTableRow = ({
         <TableCell align="right">{totalObjectCount}</TableCell>
         <StyledActionTableCell>{action}</StyledActionTableCell>
       </StyledObjectTableRow>
-    </div>
   );
 };

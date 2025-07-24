@@ -57,13 +57,13 @@ export const SettingsAdminConfigVariablesRow = ({
   };
 
   return (
-    <div id={`${CONFIG_VARIABLE_ROW_ID_PREFIX}-${variable.name}`}>
       <StyledTableRow
         gridAutoColumns="5fr 3fr 1fr"
         to={getSettingsPath(SettingsPath.AdminPanelConfigVariableDetails, {
           variableName: variable.name,
         })}
         onClick={handleRowClick}
+        id={`${CONFIG_VARIABLE_ROW_ID_PREFIX}-${variable.name}`}
       >
         <StyledTruncatedCell color={theme.font.color.primary}>
           <StyledEllipsisLabel>{variable.name}</StyledEllipsisLabel>
@@ -78,6 +78,5 @@ export const SettingsAdminConfigVariablesRow = ({
           />
         </TableCell>
       </StyledTableRow>
-    </div>
   );
 };

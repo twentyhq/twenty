@@ -21,8 +21,8 @@ import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-    isDefined,
-    isLabelIdentifierFieldMetadataTypes,
+  isDefined,
+  isLabelIdentifierFieldMetadataTypes,
 } from 'twenty-shared/utils';
 import { IconMinus, IconPlus, useIcons } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -216,7 +216,6 @@ export const SettingsObjectFieldItemTableRow = ({
     !relationObjectMetadataItem.isSystem;
 
   return (
-    <div id={`${OBJECT_FIELD_ROW_ID_PREFIX}-${fieldMetadataItem.name}`}>
       <StyledObjectFieldTableRow
         onClick={
           mode === 'view'
@@ -229,6 +228,7 @@ export const SettingsObjectFieldItemTableRow = ({
               }
             : undefined
         }
+        id={`${OBJECT_FIELD_ROW_ID_PREFIX}-${fieldMetadataItem.name}`}
       >
         <UndecoratedLink to={linkToNavigate}>
           <StyledNameTableCell>
@@ -330,6 +330,5 @@ export const SettingsObjectFieldItemTableRow = ({
           )}
         </StyledIconTableCell>
       </StyledObjectFieldTableRow>
-    </div>
   );
 };
