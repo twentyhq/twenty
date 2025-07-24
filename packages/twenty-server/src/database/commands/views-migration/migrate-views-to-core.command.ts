@@ -36,18 +36,6 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(View, 'core')
-    private readonly coreViewRepository: Repository<View>,
-    @InjectRepository(ViewField, 'core')
-    private readonly coreViewFieldRepository: Repository<ViewField>,
-    @InjectRepository(ViewFilter, 'core')
-    private readonly coreViewFilterRepository: Repository<ViewFilter>,
-    @InjectRepository(ViewSort, 'core')
-    private readonly coreViewSortRepository: Repository<ViewSort>,
-    @InjectRepository(ViewGroup, 'core')
-    private readonly coreViewGroupRepository: Repository<ViewGroup>,
-    @InjectRepository(ViewFilterGroup, 'core')
-    private readonly coreViewFilterGroupRepository: Repository<ViewFilterGroup>,
     private readonly featureFlagService: FeatureFlagService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectDataSource('core')
@@ -242,7 +230,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
     workspaceId: string,
     queryRunner: QueryRunner,
   ): Promise<void> {
-    const coreView = {
+    const coreView: Partial<View> = {
       id: workspaceView.id,
       name: workspaceView.name,
       objectMetadataId: workspaceView.objectMetadataId,
@@ -277,7 +265,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
     queryRunner: QueryRunner,
   ): Promise<void> {
     for (const field of workspaceViewFields) {
-      const coreViewField = {
+      const coreViewField: Partial<ViewField> = {
         id: field.id,
         fieldMetadataId: field.fieldMetadataId,
         viewId: field.viewId,
@@ -319,13 +307,12 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         );
       }
 
-      const coreViewFilter = {
+      const coreViewFilter: Partial<ViewFilter> = {
         id: filter.id,
         fieldMetadataId: filter.fieldMetadataId,
         viewId: filter.viewId,
         operand: filter.operand,
         value: parsedValue,
-        displayValue: filter.displayValue,
         viewFilterGroupId: filter.viewFilterGroupId,
         workspaceId,
         createdAt: new Date(filter.createdAt),
@@ -354,7 +341,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
 
       const direction = sort.direction.toUpperCase() as ViewSortDirection;
 
-      const coreViewSort = {
+      const coreViewSort: Partial<ViewSort> = {
         id: sort.id,
         fieldMetadataId: sort.fieldMetadataId,
         viewId: sort.viewId,
@@ -384,7 +371,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         continue;
       }
 
-      const coreViewGroup = {
+      const coreViewGroup: Partial<ViewGroup> = {
         id: group.id,
         fieldMetadataId: group.fieldMetadataId,
         viewId: group.viewId,
@@ -409,7 +396,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
     queryRunner: QueryRunner,
   ): Promise<void> {
     for (const filterGroup of workspaceViewFilterGroups) {
-      const coreViewFilterGroup = {
+      const coreViewFilterGroup: Partial<ViewFilterGroup> = {
         id: filterGroup.id,
         viewId: filterGroup.viewId,
         logicalOperator:
