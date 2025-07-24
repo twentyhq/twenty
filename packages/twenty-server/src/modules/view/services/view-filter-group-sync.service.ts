@@ -40,7 +40,7 @@ export class ViewFilterGroupSyncService {
     workspaceId: string,
     workspaceViewFilterGroup: ViewFilterGroupWorkspaceEntity,
   ): Promise<void> {
-    const coreViewFilterGroup = {
+    const coreViewFilterGroup: Partial<ViewFilterGroup> = {
       id: workspaceViewFilterGroup.id,
       viewId: workspaceViewFilterGroup.viewId,
       logicalOperator:

@@ -49,7 +49,7 @@ export class ViewSortSyncService {
     const direction =
       workspaceViewSort.direction.toUpperCase() as ViewSortDirection;
 
-    const coreViewSort = {
+    const coreViewSort: Partial<ViewSort> = {
       id: workspaceViewSort.id,
       fieldMetadataId: workspaceViewSort.fieldMetadataId,
       viewId: workspaceViewSort.viewId,

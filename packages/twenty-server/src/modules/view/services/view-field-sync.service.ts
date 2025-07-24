@@ -35,7 +35,7 @@ export class ViewFieldSyncService {
     workspaceId: string,
     workspaceViewField: ViewFieldWorkspaceEntity,
   ): Promise<void> {
-    const coreViewField = {
+    const coreViewField: Partial<ViewField> = {
       id: workspaceViewField.id,
       fieldMetadataId: workspaceViewField.fieldMetadataId,
       viewId: workspaceViewField.viewId,

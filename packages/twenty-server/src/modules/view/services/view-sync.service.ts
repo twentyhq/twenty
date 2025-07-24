@@ -45,7 +45,7 @@ export class ViewSyncService {
     workspaceId: string,
     workspaceView: ViewWorkspaceEntity,
   ): Promise<void> {
-    const coreView = {
+    const coreView: Partial<View> = {
       id: workspaceView.id,
       name: workspaceView.name,
       objectMetadataId: workspaceView.objectMetadataId,

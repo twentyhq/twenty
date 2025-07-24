@@ -39,7 +39,7 @@ export class ViewGroupSyncService {
       return;
     }
 
-    const coreViewGroup = {
+    const coreViewGroup: Partial<ViewGroup> = {
       id: workspaceViewGroup.id,
       fieldMetadataId: workspaceViewGroup.fieldMetadataId,
       viewId: workspaceViewGroup.viewId,

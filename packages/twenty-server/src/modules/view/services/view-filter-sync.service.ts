@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
-import { ViewFilterValue } from 'src/engine/metadata-modules/view/types/view-filter-value.type';
 import { ViewFilter } from 'src/engine/metadata-modules/view/view-filter.entity';
 import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
 
@@ -40,13 +39,12 @@ export class ViewFilterSyncService {
       return;
     }
 
-    const coreViewFilter = {
+    const coreViewFilter: Partial<ViewFilter> = {
       id: workspaceViewFilter.id,
       fieldMetadataId: workspaceViewFilter.fieldMetadataId,
       viewId: workspaceViewFilter.viewId,
       operand: workspaceViewFilter.operand,
-      value: workspaceViewFilter.value as ViewFilterValue,
-      displayValue: workspaceViewFilter.displayValue,
+      value: workspaceViewFilter.value,
       viewFilterGroupId: workspaceViewFilter.viewFilterGroupId,
       workspaceId,
       createdAt: new Date(workspaceViewFilter.createdAt),
