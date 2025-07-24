@@ -51,7 +51,6 @@ export const SettingsRolePermissionsSettingsTableRow = ({
   roleId,
   permission,
   isEditable,
-  isToolPermission,
 }: SettingsRolePermissionsSettingsTableRowProps) => {
   const theme = useTheme();
   const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
@@ -64,7 +63,7 @@ export const SettingsRolePermissionsSettingsTableRow = ({
     ) ?? false;
 
   const isAllSettingsOverride =
-    !isToolPermission && settingsDraftRole.canUpdateAllSettings;
+    !permission.isToolPermission && settingsDraftRole.canUpdateAllSettings;
   const isChecked = isPermissionEnabled || isAllSettingsOverride;
   const isDisabled = !isEditable || isAllSettingsOverride;
 

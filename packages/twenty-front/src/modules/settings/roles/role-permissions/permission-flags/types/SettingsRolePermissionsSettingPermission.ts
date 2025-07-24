@@ -6,4 +6,5 @@ export type SettingsRolePermissionsSettingPermission = {
   name: string;
   description: string;
   Icon: IconComponent;
+  isToolPermission?: boolean;
 };

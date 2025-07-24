@@ -31,6 +31,7 @@ export const SettingsRolePermissionsToolSection = ({
       name: t`Send Email`,
       description: t`Allow sending emails using connected accounts`,
       Icon: IconMail,
+      isToolPermission: true,
     },
   ];
 
@@ -53,7 +54,6 @@ export const SettingsRolePermissionsToolSection = ({
               roleId={roleId}
               permission={permission}
               isEditable={isEditable}
-              isToolPermission
             />
           ))}
         </StyledTableRows>
