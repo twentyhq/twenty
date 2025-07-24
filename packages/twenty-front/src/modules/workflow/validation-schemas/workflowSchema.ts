@@ -23,11 +23,13 @@ export const baseWorkflowActionSchema = z.object({
   name: z.string(),
   valid: z.boolean(),
   nextStepIds: z.array(z.string()).optional().nullable(),
+  position: z.object({ x: z.number(), y: z.number() }).optional(),
 });
 
 export const baseTriggerSchema = z.object({
   name: z.string().optional(),
   type: z.string(),
+  position: z.object({ x: z.number(), y: z.number() }).optional(),
 });
 
 // Action settings schemas

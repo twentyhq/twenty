@@ -9,6 +9,10 @@ export const CREATE_WORKFLOW_VERSION_STEP = gql`
       settings
       valid
       nextStepIds
+      position {
+        x
+        y
+      }
     }
   }
 `;

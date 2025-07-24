@@ -32,6 +32,7 @@ import {
   applyNodeChanges,
   useReactFlow,
   Connection,
+  OnNodeDrag,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
@@ -98,6 +99,8 @@ export const WorkflowDiagramCanvasBase = ({
   tagText,
   onInit,
   onConnect,
+  onNodeDragStop,
+  nodesConnectable = false,
 }: {
   nodeTypes: Partial<
     Record<
@@ -127,6 +130,8 @@ export const WorkflowDiagramCanvasBase = ({
   tagText: string;
   onInit?: () => void;
   onConnect?: (params: Connection) => void;
+  onNodeDragStop?: OnNodeDrag<WorkflowDiagramNode>;
+  nodesConnectable?: boolean;
 }) => {
   const theme = useTheme();
 
@@ -378,6 +383,8 @@ export const WorkflowDiagramCanvasBase = ({
         edges={edges}
         onNodesChange={handleNodesChanges}
         onEdgesChange={handleEdgesChange}
+        onConnect={onConnect}
+        onNodeDragStop={onNodeDragStop}
         onBeforeDelete={async () => {
           // Abort all non-programmatic deletions
           return false;
@@ -385,12 +392,11 @@ export const WorkflowDiagramCanvasBase = ({
         proOptions={{ hideAttribution: true }}
         multiSelectionKeyCode={null}
         nodesFocusable={false}
-        edgesFocusable={true}
+        edgesFocusable={false}
         panOnDrag={workflowDiagramPanOnDrag}
-        nodesConnectable={true}
+        nodesConnectable={nodesConnectable}
         paneClickDistance={10} // Fix small unwanted user dragging does not select node
         preventScrolling={false}
-        onConnect={onConnect}
       >
         <Background color={theme.border.color.medium} size={2} />
 
