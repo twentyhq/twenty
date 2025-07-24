@@ -7,7 +7,7 @@ import {
   RestrictedFields,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -304,6 +304,7 @@ export class WorkspacePermissionsCacheService {
     const roleTargetsMap = await this.roleTargetsRepository.find({
       where: {
         workspaceId,
+        userWorkspaceId: Not(IsNull()),
       },
     });
 
@@ -326,6 +327,70 @@ export class WorkspacePermissionsCacheService {
     return (
       hasWorkflowsPermissionFromRole ||
       hasWorkflowsPermissionsFromSettingPermissions
+    );
+  }
+
+  async recomputeApiKeyRoleMapCache({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<void> {
+    try {
+      const freshApiKeyRoleMap = await this.getApiKeyRoleMapFromDatabase({
+        workspaceId,
+      });
+
+      await this.workspacePermissionsCacheStorageService.setApiKeyRoleMap(
+        workspaceId,
+        freshApiKeyRoleMap,
+      );
+    } catch (error) {
+      // Flush stale apiKeyRoleMap
+      await this.workspacePermissionsCacheStorageService.removeApiKeyRoleMap(
+        workspaceId,
+      );
+    }
+  }
+
+  async getApiKeyRoleMapFromCache({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<CacheResult<undefined, Record<string, string>>> {
+    return getFromCacheWithRecompute<undefined, Record<string, string>>({
+      workspaceId,
+      getCacheData: () =>
+        this.workspacePermissionsCacheStorageService.getApiKeyRoleMap(
+          workspaceId,
+        ),
+      recomputeCache: (params) => this.recomputeApiKeyRoleMapCache(params),
+      cachedEntityName: 'API_KEY_ROLE_MAP',
+      exceptionCode: TwentyORMExceptionCode.API_KEY_ROLE_MAP_VERSION_NOT_FOUND,
+      logger: this.logger,
+    });
+  }
+
+  private async getApiKeyRoleMapFromDatabase({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<Record<string, string>> {
+    const roleTargetsMap = await this.roleTargetsRepository.find({
+      where: {
+        workspaceId,
+        apiKeyId: Not(IsNull()),
+      },
+    });
+
+    return roleTargetsMap.reduce(
+      (acc, roleTarget) => {
+        if (roleTarget.apiKeyId) {
+          acc[roleTarget.apiKeyId] = roleTarget.roleId;
+        }
+
+        return acc;
+      },
+      {} as Record<string, string>,
     );
   }
 }

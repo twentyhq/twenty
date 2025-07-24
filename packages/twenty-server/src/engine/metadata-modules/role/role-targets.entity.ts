@@ -12,15 +12,22 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
 @Entity('roleTargets')
-@Unique('IDX_ROLE_TARGETS_UNIQUE', ['userWorkspaceId', 'roleId', 'agentId'])
+@Unique('IDX_ROLE_TARGETS_UNIQUE', [
+  'userWorkspaceId',
+  'roleId',
+  'agentId',
+  'apiKeyId',
+])
 @Index('IDX_ROLE_TARGETS_WORKSPACE_ID', ['userWorkspaceId', 'workspaceId'])
 @Index('IDX_ROLE_TARGETS_AGENT_ID', ['agentId'])
+@Index('IDX_ROLE_TARGETS_API_KEY_ID', ['apiKeyId'])
 @Check(
-  'CHK_role_targets_either_agent_or_user',
-  '("agentId" IS NOT NULL AND "userWorkspaceId" IS NULL) OR ("agentId" IS NULL AND "userWorkspaceId" IS NOT NULL)',
+  'CHK_role_targets_single_entity',
+  '("agentId" IS NOT NULL AND "userWorkspaceId" IS NULL AND "apiKeyId" IS NULL) OR ("agentId" IS NULL AND "userWorkspaceId" IS NOT NULL AND "apiKeyId" IS NULL) OR ("agentId" IS NULL AND "userWorkspaceId" IS NULL AND "apiKeyId" IS NOT NULL)',
 )
 export class RoleTargetsEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -43,6 +50,13 @@ export class RoleTargetsEntity {
 
   @Column({ nullable: true, type: 'uuid' })
   agentId: string;
+
+  @Column({ nullable: true, type: 'uuid' })
+  apiKeyId: string;
+
+  @ManyToOne(() => ApiKey, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'apiKeyId' })
+  apiKey: Relation<ApiKey>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

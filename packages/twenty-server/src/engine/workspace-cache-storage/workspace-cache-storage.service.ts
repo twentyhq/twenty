@@ -34,6 +34,8 @@ export enum WorkspaceCacheKeys {
   MetadataPermissionsRolesPermissionsVersion = 'metadata:permissions:roles-permissions-version',
   MetadataPermissionsUserWorkspaceRoleMap = 'metadata:permissions:user-workspace-role-map',
   MetadataPermissionsUserWorkspaceRoleMapVersion = 'metadata:permissions:user-workspace-role-map-version',
+  MetadataPermissionsApiKeyRoleMap = 'metadata:permissions:api-key-role-map',
+  MetadataPermissionsApiKeyRoleMapVersion = 'metadata:permissions:api-key-role-map-version',
 }
 
 const TTL_ONE_WEEK = 1000 * 60 * 60 * 24 * 7;

@@ -21,10 +21,10 @@ const StyledTableBody = styled(TableBody)`
 `;
 
 const StyledTableRow = styled(TableRow)`
-  grid-template-columns: 312px auto 28px;
+  grid-template-columns: 312px 120px auto 28px;
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: 95%;
-    grid-template-columns: 20fr 2fr;
+    grid-template-columns: 12fr 8fr 2fr;
   }
 `;
 
@@ -42,7 +42,10 @@ export const SettingsApiKeysTable = () => {
         <TableHeader>
           <Trans>Expiration</Trans>
         </TableHeader>
-        <TableHeader></TableHeader>
+
+        <TableHeader>
+          <Trans>Role</Trans>
+        </TableHeader>
       </StyledTableRow>
       {!!apiKeys?.length && (
         <StyledTableBody>

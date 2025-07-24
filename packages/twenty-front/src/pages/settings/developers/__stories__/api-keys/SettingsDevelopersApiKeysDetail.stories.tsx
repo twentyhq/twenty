@@ -31,6 +31,8 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText('Zapier Integration', undefined, { timeout: 3000 });
+    await canvas.findByText('Role');
+    await canvas.findByText('Admin');
   },
 };
 
@@ -38,6 +40,7 @@ export const RegenerateApiKey: Story = {
   play: async ({ step }) => {
     const canvas = within(document.body);
     await canvas.findByText('Zapier Integration', undefined, { timeout: 3000 });
+    await canvas.findByText('Role');
 
     await userEvent.click(await canvas.findByText('Regenerate Key'));
 
@@ -66,6 +69,7 @@ export const DeleteApiKey: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
     await canvas.findByText('Zapier Integration', undefined, { timeout: 3000 });
+    await canvas.findByText('Role');
 
     await userEvent.click(await canvas.findByText('Delete'));
 

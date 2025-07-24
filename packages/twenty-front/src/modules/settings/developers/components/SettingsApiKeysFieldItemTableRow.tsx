@@ -12,10 +12,10 @@ import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { ApiKey } from '~/generated-metadata/graphql';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
-  grid-template-columns: 312px auto 28px;
+  grid-template-columns: 312px 120px auto 28px;
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: 100%;
-    grid-template-columns: 12fr 4fr;
+    grid-template-columns: 12fr 8fr 4fr;
   }
 `;
 
@@ -38,7 +38,9 @@ export const SettingsApiKeysFieldItemTableRow = ({
   apiKey,
   to,
 }: {
-  apiKey: Pick<ApiKey, 'id' | 'name' | 'expiresAt' | 'revokedAt'>;
+  apiKey: Pick<ApiKey, 'id' | 'name' | 'expiresAt' | 'revokedAt'> & {
+    role: { id: string; label: string; icon?: string | null };
+  };
   to: string;
 }) => {
   const theme = useTheme();
@@ -49,6 +51,7 @@ export const SettingsApiKeysFieldItemTableRow = ({
       <StyledNameTableCell>
         <OverflowingTextWithTooltip text={apiKey.name} />
       </StyledNameTableCell>
+
       <TableCell
         color={
           formattedExpiration === 'Expired'
@@ -58,6 +61,11 @@ export const SettingsApiKeysFieldItemTableRow = ({
       >
         {formattedExpiration}
       </TableCell>
+
+      <TableCell color={theme.font.color.tertiary}>
+        {apiKey.role.label}
+      </TableCell>
+
       <StyledIconTableCell>
         <StyledIconChevronRight
           size={theme.icon.size.md}

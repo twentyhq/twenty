@@ -3,6 +3,8 @@ import { useState } from 'react';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { SettingsDevelopersRoleSelector } from '@/settings/developers/components/SettingsDevelopersRoleSelector';
 import { EXPIRATION_DATES } from '@/settings/developers/constants/ExpirationDates';
 import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyTokenFamilyState';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -18,6 +20,7 @@ import { Section } from 'twenty-ui/layout';
 import {
   useCreateApiKeyMutation,
   useGenerateApiKeyTokenMutation,
+  useGetRolesQuery,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -26,12 +29,16 @@ export const SettingsDevelopersApiKeysNew = () => {
   const { t } = useLingui();
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const navigateSettings = useNavigateSettings();
+  const { data: rolesData, loading: rolesLoading } = useGetRolesQuery();
+  const roles = rolesData?.getRoles ?? [];
   const [formValues, setFormValues] = useState<{
     name: string;
     expirationDate: number | null;
+    roleId: string;
   }>({
     expirationDate: EXPIRATION_DATES[5].value,
     name: '',
+    roleId: '',
   });
 
   const [createApiKey] = useCreateApiKeyMutation();
@@ -54,6 +61,7 @@ export const SettingsDevelopersApiKeysNew = () => {
         input: {
           name: formValues.name,
           expiresAt,
+          roleId: formValues.roleId,
         },
       },
     });
@@ -81,7 +89,12 @@ export const SettingsDevelopersApiKeysNew = () => {
       });
     }
   };
-  const canSave = !!formValues.name && createApiKey;
+  const canSave = !!formValues.name && !!formValues.roleId && createApiKey;
+
+  if (rolesLoading) {
+    return <SettingsSkeletonLoader />;
+  }
+
   return (
     <SubMenuTopBarContainer
       title={t`New key`}
@@ -125,6 +138,23 @@ export const SettingsDevelopersApiKeysNew = () => {
               }));
             }}
             fullWidth
+          />
+        </Section>
+        <Section>
+          <H2Title
+            title={t`Role`}
+            description={t`What this API can do: Select a user role to define its permissions.`}
+          />
+          <SettingsDevelopersRoleSelector
+            value={formValues.roleId}
+            onChange={(roleId) => {
+              setFormValues((prevState) => ({
+                ...prevState,
+                roleId,
+              }));
+            }}
+            allowEmpty={false}
+            roles={roles}
           />
         </Section>
         <Section>

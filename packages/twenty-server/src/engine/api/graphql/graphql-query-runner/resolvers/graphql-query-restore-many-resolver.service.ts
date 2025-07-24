@@ -66,7 +66,7 @@ export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseReso
         authContext,
         workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
-        shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
+        shouldBypassPermissionChecks: false,
         selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }

@@ -17,6 +17,16 @@ export const permissionGraphqlApiExceptionHandler = (
         userFriendlyMessage: 'User does not have permission.',
         subCode: error.code,
       });
+    case PermissionsExceptionCode.API_KEY_ROLE_NOT_FOUND:
+      throw new ForbiddenError(error.message, {
+        userFriendlyMessage: 'API key has no role assigned.',
+        subCode: error.code,
+      });
+    case PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT:
+      throw new ForbiddenError(error.message, {
+        userFriendlyMessage: 'No valid authentication context found.',
+        subCode: error.code,
+      });
     case PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS:
       throw new ForbiddenError(error);
     case PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN:

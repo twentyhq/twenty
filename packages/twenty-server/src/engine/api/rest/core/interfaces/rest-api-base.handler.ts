@@ -25,11 +25,17 @@ import {
 } from 'src/engine/api/rest/input-factories/depth-input.factory';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
@@ -88,6 +94,8 @@ export abstract class RestApiBaseHandler {
   protected readonly createdByFromAuthContextService: CreatedByFromAuthContextService;
   @Inject()
   protected readonly featureFlagService: FeatureFlagService;
+  @Inject()
+  protected readonly apiKeyRoleService: ApiKeyRoleService;
 
   protected abstract handle(
     request: Request,
@@ -127,13 +135,47 @@ export abstract class RestApiBaseHandler {
       );
     }
 
-    const shouldBypassPermissionChecks = isDefined(apiKey);
+    const shouldBypassPermissionChecks = false;
 
-    const roleId =
-      await this.workspacePermissionsCacheService.getRoleIdFromUserWorkspaceId({
-        workspaceId: workspace.id,
-        userWorkspaceId,
-      });
+    let roleId: string | undefined = undefined;
+
+    if (isDefined(apiKey)) {
+      roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
+        apiKey.id,
+        workspace.id,
+      );
+
+      if (!roleId) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.API_KEY_ROLE_NOT_FOUND,
+          PermissionsExceptionCode.API_KEY_ROLE_NOT_FOUND,
+        );
+      }
+    }
+
+    if (!roleId && isDefined(userWorkspaceId)) {
+      roleId =
+        await this.workspacePermissionsCacheService.getRoleIdFromUserWorkspaceId(
+          {
+            workspaceId: workspace.id,
+            userWorkspaceId,
+          },
+        );
+
+      if (!roleId) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+          PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+        );
+      }
+    }
+
+    if (!roleId) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.NO_AUTHENTICATION_CONTEXT,
+        PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
+      );
+    }
 
     const repository = workspaceDataSource.getRepository<ObjectRecord>(
       objectMetadataNameSingular,

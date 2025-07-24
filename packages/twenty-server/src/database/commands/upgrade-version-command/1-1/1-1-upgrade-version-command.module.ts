@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AddEnqueuedStatusToWorkflowRunCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-add-enqueued-status-to-workflow-run.command';
 import { FixSchemaArrayTypeCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-schema-array-type.command';
 import { FixUpdateStandardFieldsIsLabelSyncedWithName } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-update-standard-field-is-label-synced-with-name.command';
-import { MigrateApiKeysWebhooksToCoreCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-api-keys-webhooks-to-core.command';
 import { MigrateWorkflowRunStatesCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-workflow-run-state.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
@@ -49,14 +48,12 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     FixUpdateStandardFieldsIsLabelSyncedWithName,
     FixSchemaArrayTypeCommand,
     MigrateWorkflowRunStatesCommand,
-    MigrateApiKeysWebhooksToCoreCommand,
     AddEnqueuedStatusToWorkflowRunCommand,
   ],
   exports: [
     FixUpdateStandardFieldsIsLabelSyncedWithName,
     FixSchemaArrayTypeCommand,
     MigrateWorkflowRunStatesCommand,
-    MigrateApiKeysWebhooksToCoreCommand,
     AddEnqueuedStatusToWorkflowRunCommand,
   ],
 })

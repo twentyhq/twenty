@@ -47,14 +47,12 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       objectMetadataItemWithFieldMaps,
     );
 
-    const shouldBypassPermissionChecks = executionArgs.isExecutedByApiKey;
-
     await this.processNestedRelationsIfNeeded(
       executionArgs,
       upsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      shouldBypassPermissionChecks,
+      false,
       roleId,
     );
 

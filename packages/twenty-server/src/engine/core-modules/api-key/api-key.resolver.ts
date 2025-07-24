@@ -1,5 +1,12 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 
 import { CreateApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/create-api-key.dto';
 import { GetApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/get-api-key.dto';
@@ -9,18 +16,23 @@ import { apiKeyGraphqlApiExceptionHandler } from 'src/engine/core-modules/api-ke
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 
+import { ApiKeyRoleService } from './api-key-role.service';
 import { ApiKey } from './api-key.entity';
 import { ApiKeyService } from './api-key.service';
 
 @Resolver(() => ApiKey)
 @UseGuards(WorkspaceAuthGuard)
 export class ApiKeyResolver {
-  constructor(private readonly apiKeyService: ApiKeyService) {}
+  constructor(
+    private readonly apiKeyService: ApiKeyService,
+    private readonly apiKeyRoleService: ApiKeyRoleService,
+  ) {}
 
   @Query(() => [ApiKey])
   async apiKeys(@AuthWorkspace() workspace: Workspace): Promise<ApiKey[]> {
-    return this.apiKeyService.findActiveByWorkspaceId(workspace.id);
+    return this.apiKeyService.findByWorkspaceId(workspace.id);
   }
 
   @Query(() => ApiKey, { nullable: true })
@@ -52,6 +64,7 @@ export class ApiKeyResolver {
       expiresAt: new Date(input.expiresAt),
       revokedAt: input.revokedAt ? new Date(input.revokedAt) : undefined,
       workspaceId: workspace.id,
+      roleId: input.roleId,
     });
   }
 
@@ -78,5 +91,44 @@ export class ApiKeyResolver {
     @Args('input') input: RevokeApiKeyDTO,
   ): Promise<ApiKey | null> {
     return this.apiKeyService.revoke(input.id, workspace.id);
+  }
+
+  @Mutation(() => Boolean)
+  async assignRoleToApiKey(
+    @AuthWorkspace() workspace: Workspace,
+    @Args('apiKeyId') apiKeyId: string,
+    @Args('roleId') roleId: string,
+  ): Promise<boolean> {
+    try {
+      await this.apiKeyRoleService.assignRoleToApiKey({
+        apiKeyId,
+        roleId,
+        workspaceId: workspace.id,
+      });
+
+      return true;
+    } catch (error) {
+      apiKeyGraphqlApiExceptionHandler(error);
+      throw error;
+    }
+  }
+
+  @ResolveField(() => RoleDTO)
+  async role(
+    @Parent() apiKey: ApiKey,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<RoleDTO> {
+    const rolesMap = await this.apiKeyRoleService.getRolesByApiKeys({
+      apiKeyIds: [apiKey.id],
+      workspaceId: workspace.id,
+    });
+
+    const role = rolesMap.get(apiKey.id);
+
+    if (!role) {
+      throw new Error(`API key ${apiKey.id} has no role assigned`);
+    }
+
+    return role;
   }
 }

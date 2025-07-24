@@ -47,6 +47,7 @@ export const SettingsPermissionsGuard = (
           setting: requiredPermission,
           workspaceId,
           isExecutedByApiKey: isDefined(ctx.getContext().req.apiKey),
+          apiKeyId: ctx.getContext().req.apiKey?.id,
         });
 
       if (hasPermission === true) {
