@@ -258,6 +258,7 @@ msgstr "Tietoa tästä työtilasta"
 #. js-lingui-id: AeXO77
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Account"
 msgstr "Tili"
 
@@ -1092,11 +1093,6 @@ msgstr "Valitse kentät, jotka identifioivat tietueesi"
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
 msgid "Choose the format used to display date value"
 msgstr "Valitse päivämäärän näyttämiseen käytetty muoto"
-
-#. js-lingui-id: KT6rEB
-#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
-msgid "Choose your provider"
-msgstr "Valitse palveluntarjoajasi"
 
 #. js-lingui-id: 9qP96p
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -3832,11 +3828,6 @@ msgstr "Ei muutoksia havaittu"
 msgid "No config variables match your current filters. Try adjusting your filters or search criteria."
 msgstr "Mikään määritysmuuttuja ei vastaa nykyisiä suodattimiasi. Yritä muuttaa suodattimia tai hakuehtoja."
 
-#. js-lingui-id: pwenQu
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-msgid "No connected account"
-msgstr "Ei yhdistettyä käyttäjätiliä"
-
 #. js-lingui-id: 4BSfjK
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "No country"
@@ -5202,6 +5193,7 @@ msgstr "Aloita keskustelu tekoälyagenttisi kanssa saadaksesi työnkulkujen näk
 #. js-lingui-id: uAQUqI
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Status"
 msgstr "Tila"
 
