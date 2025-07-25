@@ -258,6 +258,7 @@ msgstr "Sobre este espaço de trabalho"
 #. js-lingui-id: AeXO77
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Account"
 msgstr "Conta"
 
@@ -1092,11 +1093,6 @@ msgstr "Escolha os campos que irão identificar seus registros"
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
 msgid "Choose the format used to display date value"
 msgstr "Escolha o formato usado para exibir o valor da data"
-
-#. js-lingui-id: KT6rEB
-#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
-msgid "Choose your provider"
-msgstr "Escolha seu Provedor"
 
 #. js-lingui-id: 9qP96p
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -3832,11 +3828,6 @@ msgstr "Nenhuma alteração detectada"
 msgid "No config variables match your current filters. Try adjusting your filters or search criteria."
 msgstr "Nenhuma variável de configuração corresponde aos seus filtros atuais. Tente ajustar seus filtros ou critérios de busca."
 
-#. js-lingui-id: pwenQu
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-msgid "No connected account"
-msgstr "Nenhuma conta conectada"
-
 #. js-lingui-id: 4BSfjK
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "No country"
@@ -5202,6 +5193,7 @@ msgstr "Inicie uma conversa com seu agente de IA para obter insights de fluxos d
 #. js-lingui-id: uAQUqI
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Status"
 msgstr "Status"
 

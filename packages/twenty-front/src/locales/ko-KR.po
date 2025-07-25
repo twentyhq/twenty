@@ -258,6 +258,7 @@ msgstr "이 작업공간에 대해"
 #. js-lingui-id: AeXO77
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Account"
 msgstr "계정"
 
@@ -1092,11 +1093,6 @@ msgstr "레코드를 식별할 필드를 선택하세요"
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
 msgid "Choose the format used to display date value"
 msgstr "날짜 형식을 선택하세요"
-
-#. js-lingui-id: KT6rEB
-#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
-msgid "Choose your provider"
-msgstr "제공업체 선택"
 
 #. js-lingui-id: 9qP96p
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -3832,11 +3828,6 @@ msgstr "변경 사항이 감지되지 않았습니다"
 msgid "No config variables match your current filters. Try adjusting your filters or search criteria."
 msgstr "현재 필터와 일치하는 설정 변수가 없습니다. 필터 또는 검색 기준을 조정해보세요."
 
-#. js-lingui-id: pwenQu
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-msgid "No connected account"
-msgstr "연결된 계정 없음"
-
 #. js-lingui-id: 4BSfjK
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "No country"
@@ -5202,6 +5193,7 @@ msgstr "귀하의 AI 에이전트와 대화를 시작하여 워크플로 통찰�
 #. js-lingui-id: uAQUqI
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Status"
 msgstr "상태"
 
