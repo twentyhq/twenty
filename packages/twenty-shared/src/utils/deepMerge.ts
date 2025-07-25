@@ -5,6 +5,7 @@
  * - Primitive values from target override source
  * - Null values from target are preserved
  * - Undefined values from target are ignored
+ * - Date and RegExp objects are treated as primitives (replaced, not merged)
  * 
  * @param source The source object to merge from
  * @param target The target object to merge into
@@ -12,7 +13,7 @@
  */
 export const deepMerge = <T extends object>(
   source: Required<T>,
-  target: Partial<T>,
+  target: Required<T>,
 ): T => {
   // Handle null/undefined cases
   if (!source) return target as T;
@@ -40,6 +41,17 @@ export const deepMerge = <T extends object>(
     // Handle arrays - concatenate them
     if (Array.isArray(sourceValue) && Array.isArray(targetValue)) {
       output[key as keyof T] = [...sourceValue, ...targetValue] as T[keyof T];
+      return;
+    }
+
+    // Handle Date and RegExp objects - treat them as primitives
+    if (
+      targetValue instanceof Date ||
+      targetValue instanceof RegExp ||
+      sourceValue instanceof Date ||
+      sourceValue instanceof RegExp
+    ) {
+      output[key as keyof T] = targetValue as T[keyof T];
       return;
     }
 

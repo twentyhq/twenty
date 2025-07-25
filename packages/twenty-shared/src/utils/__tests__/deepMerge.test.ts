@@ -1,233 +1,283 @@
-import { deepMerge } from "@/utils";
+import { EachTestingContext } from '@/testing/types/EachTestingContext.type';
+import { deepMerge } from '@/utils';
 
-// TODO Refactor too much auto generated
+type DeepMergeTestCase<T extends object> = {
+  source: Required<T>;
+  target: Required<T>;
+  expected: T;
+};
+
 describe('deepMerge', () => {
   describe('primitive values', () => {
-    it.each<{
-      source: { value: string | number | boolean };
-      target: { value: string | number | boolean };
-      expected: { value: string | number | boolean };
-      description: string;
-    }>([
+    type PrimitiveValue = { value: string | number | boolean };
+
+    const primitiveTestCases: EachTestingContext<DeepMergeTestCase<PrimitiveValue>>[] = [
       {
-        source: { value: 'hello' },
-        target: { value: 'world' },
-        expected: { value: 'world' },
-        description: 'should override string values',
+        title: 'should override string values',
+        context: {
+          source: { value: 'hello' },
+          target: { value: 'world' },
+          expected: { value: 'world' },
+        },
       },
       {
-        source: { value: 42 },
-        target: { value: 24 },
-        expected: { value: 24 },
-        description: 'should override number values',
+        title: 'should override number values',
+        context: {
+          source: { value: 42 },
+          target: { value: 24 },
+          expected: { value: 24 },
+        },
       },
       {
-        source: { value: true },
-        target: { value: false },
-        expected: { value: false },
-        description: 'should override boolean values',
+        title: 'should override boolean values',
+        context: {
+          source: { value: true },
+          target: { value: false },
+          expected: { value: false },
+        },
       },
-    ])('$description', ({ source, target, expected }) => {
+    ];
+
+    it.each(primitiveTestCases)('$title', ({ context: { source, target, expected } }) => {
       expect(deepMerge(source, target)).toEqual(expected);
     });
   });
 
   describe('null and undefined handling', () => {
-    it.each<{
-      source: { value: string | null };
-      target: { value: string | null | undefined };
-      expected: { value?: string | null };
-      description: string;
-    }>([
+    type NullableValue = { value: string | null };
+
+    const nullTestCases: EachTestingContext<DeepMergeTestCase<NullableValue>>[] = [
       {
-        source: { value: 'hello' },
-        target: { value: null },
-        expected: { value: null },
-        description: 'should preserve null values from target',
+        title: 'should preserve null values from target',
+        context: {
+          source: { value: 'hello' },
+          target: { value: null },
+          expected: { value: null },
+        },
       },
       {
-        source: { value: 'hello' },
-        target: { value: undefined },
-        expected: { value: 'hello' },
-        description: 'should ignore undefined values from target',
+        title: 'should ignore undefined values from target',
+        context: {
+          source: { value: 'hello' },
+          target: { value: undefined as unknown as null },
+          expected: { value: 'hello' },
+        },
       },
       {
-        source: { value: null },
-        target: { value: 'world' },
-        expected: { value: 'world' },
-        description: 'should override null values from source',
+        title: 'should override null values from source',
+        context: {
+          source: { value: null },
+          target: { value: 'world' },
+          expected: { value: 'world' },
+        },
       },
-    ])('$description', ({ source, target, expected }) => {
+    ];
+
+    it.each(nullTestCases)('$title', ({ context: { source, target, expected } }) => {
       expect(deepMerge(source, target)).toEqual(expected);
     });
 
-    it('should handle mixed null and undefined values', () => {
-      type TestObj = { a: number | null; b: number };
-      const source: TestObj = { a: 1, b: 2 };
-      const target: Partial<TestObj> = { a: null, b: undefined };
-      const expected: TestObj = { a: null, b: 2 };
-      expect(deepMerge(source, target)).toEqual(expected);
-    });
+    type MixedNullValue = { a: number | null; b: number };
 
-    it.each([
-      {
-        source: null,
-        target: { value: 'world' },
-        expected: { value: 'world' },
-        description: 'should handle null source',
+    const mixedNullTestCase: EachTestingContext<DeepMergeTestCase<MixedNullValue>> = {
+      title: 'should handle mixed null and undefined values',
+      context: {
+        source: { a: 1, b: 2 },
+        target: { a: null, b: 2 },
+        expected: { a: null, b: 2 },
       },
-      {
-        source: { value: 'hello' },
-        target: null,
-        expected: { value: 'hello' },
-        description: 'should handle null target',
-      },
-    ])('$description', ({ source, target, expected }) => {
+    };
+
+    it(mixedNullTestCase.title, () => {
+      const { source, target, expected } = mixedNullTestCase.context;
       expect(deepMerge(source, target)).toEqual(expected);
     });
   });
 
   describe('array handling', () => {
-    it.each<{
-      source: { arr: Array<number | string> | null };
-      target: { arr: Array<number | string> | null };
-      expected: { arr: Array<number | string> | null };
-      description: string;
-    }>([
+    type ArrayValue = { arr: Array<string | number> | null };
+
+    const arrayTestCases: EachTestingContext<DeepMergeTestCase<ArrayValue>>[] = [
       {
-        source: { arr: [1, 2] },
-        target: { arr: [3, 4] },
-        expected: { arr: [1, 2, 3, 4] },
-        description: 'should concatenate arrays',
+        title: 'should concatenate arrays',
+        context: {
+          source: { arr: [1, 2] },
+          target: { arr: [3, 4] },
+          expected: { arr: [1, 2, 3, 4] },
+        },
       },
       {
-        source: { arr: [1, 2] },
-        target: { arr: [] },
-        expected: { arr: [1, 2] },
-        description: 'should handle empty target array',
+        title: 'should handle empty target array',
+        context: {
+          source: { arr: [1, 2] },
+          target: { arr: [] },
+          expected: { arr: [1, 2] },
+        },
       },
       {
-        source: { arr: [] },
-        target: { arr: [1, 2] },
-        expected: { arr: [1, 2] },
-        description: 'should handle empty source array',
+        title: 'should handle empty source array',
+        context: {
+          source: { arr: [] },
+          target: { arr: [1, 2] },
+          expected: { arr: [1, 2] },
+        },
       },
       {
-        source: { arr: ['a', 'b'] },
-        target: { arr: null },
-        expected: { arr: null },
-        description: 'should handle null target array',
+        title: 'should handle null target array',
+        context: {
+          source: { arr: ['a', 'b'] },
+          target: { arr: null },
+          expected: { arr: null },
+        },
       },
-    ])('$description', ({ source, target, expected }) => {
+    ];
+
+    it.each(arrayTestCases)('$title', ({ context: { source, target, expected } }) => {
       expect(deepMerge(source, target)).toEqual(expected);
     });
   });
 
   describe('nested objects', () => {
-    it('should merge nested objects', () => {
-      type NestedObj = {
-        nested: {
-          a?: number;
-          b?: number;
-          c?: number;
+    type NestedValue = {
+      nested: {
+        a: number;
+        b: number;
+        deep?: {
+          a: number;
+          b: number;
         };
-      };
-      const source: NestedObj = { nested: { a: 1, b: 2 } };
-      const target: Partial<NestedObj> = { nested: { b: 3, c: 4 } };
-      const expected: NestedObj = { nested: { a: 1, b: 3, c: 4 } };
-      expect(deepMerge(source, target)).toEqual(expected);
-    });
-
-    it('should merge deeply nested objects', () => {
-      type DeepObj = {
-        nested: {
-          deep: {
-            a?: number;
-            b?: number;
-          };
+        arr: Array<number>;
+        obj: {
+          a: number;
+          b: number;
         };
-      };
-      const source: DeepObj = { nested: { deep: { a: 1 } } };
-      const target: Partial<DeepObj> = { nested: { deep: { b: 2 } } };
-      const expected: DeepObj = { nested: { deep: { a: 1, b: 2 } } };
-      expect(deepMerge(source, target)).toEqual(expected);
-    });
+      } | null;
+    };
 
-    it('should handle null nested object in target', () => {
-      type NullableObj = {
-        nested: { a: number } | null;
-      };
-      const source: NullableObj = { nested: { a: 1 } };
-      const target: Partial<NullableObj> = { nested: null };
-      const expected: NullableObj = { nested: null };
-      expect(deepMerge(source, target)).toEqual(expected);
-    });
+    const nestedTestCases: EachTestingContext<DeepMergeTestCase<NestedValue>>[] = [
+      {
+        title: 'should merge nested objects',
+        context: {
+          source: { nested: { a: 1, b: 2, arr: [], obj: { a: 1, b: 2 } } },
+          target: { nested: { a: 1, b: 3, arr: [], obj: { a: 1, b: 2 } } },
+          expected: { nested: { a: 1, b: 3, arr: [], obj: { a: 1, b: 2 } } },
+        },
+      },
+      {
+        title: 'should merge deeply nested objects',
+        context: {
+          source: { nested: { a: 1, b: 2, deep: { a: 1, b: 2 }, arr: [], obj: { a: 1, b: 2 } } },
+          target: { nested: { a: 1, b: 2, deep: { a: 1, b: 3 }, arr: [], obj: { a: 1, b: 2 } } },
+          expected: { nested: { a: 1, b: 2, deep: { a: 1, b: 3 }, arr: [], obj: { a: 1, b: 2 } } },
+        },
+      },
+      {
+        title: 'should handle null nested object in target',
+        context: {
+          source: { nested: { a: 1, b: 2, arr: [], obj: { a: 1, b: 2 } } },
+          target: { nested: null },
+          expected: { nested: null },
+        },
+      },
+      {
+        title: 'should handle complex nested structures',
+        context: {
+          source: {
+            nested: {
+              a: 1,
+              b: 2,
+              arr: [1, 2],
+              obj: { a: 1, b: 2 },
+            },
+          },
+          target: {
+            nested: {
+              a: 1,
+              b: 2,
+              arr: [3, 4],
+              obj: { a: 1, b: 3 },
+            },
+          },
+          expected: {
+            nested: {
+              a: 1,
+              b: 2,
+              arr: [1, 2, 3, 4],
+              obj: { a: 1, b: 3 },
+            },
+          },
+        },
+      },
+    ];
 
-    it('should handle complex nested structures', () => {
-      type ComplexObj = {
-        nested: {
-          arr: number[];
-          obj: {
-            a?: number;
-            b?: number;
-          };
-        };
-      };
-      const source: ComplexObj = {
-        nested: {
-          arr: [1, 2],
-          obj: { a: 1 },
-        },
-      };
-      const target: Partial<ComplexObj> = {
-        nested: {
-          arr: [3, 4],
-          obj: { b: 2 },
-        },
-      };
-      const expected: ComplexObj = {
-        nested: {
-          arr: [1, 2, 3, 4],
-          obj: { a: 1, b: 2 },
-        },
-      };
+    it.each(nestedTestCases)('$title', ({ context: { source, target, expected } }) => {
       expect(deepMerge(source, target)).toEqual(expected);
     });
   });
 
   describe('edge cases', () => {
-    it.each<{
-      source: Record<string, any>;
-      target: Record<string, any>;
-      expected: Record<string, any>;
-      description: string;
-    }>([
+    type EdgeValue = {
+      a: number | Date | RegExp;
+      b: number | Date | RegExp;
+    };
+
+    const edgeTestCases: EachTestingContext<DeepMergeTestCase<EdgeValue>>[] = [
       {
-        source: {},
-        target: { a: 1 },
-        expected: { a: 1 },
-        description: 'should handle empty source object',
+        title: 'should handle Date objects by replacing them',
+        context: {
+          source: { a: new Date('2023-01-01'), b: new Date('2023-01-01') },
+          target: { a: new Date('2023-12-31'), b: new Date('2023-12-31') },
+          expected: { a: new Date('2023-12-31'), b: new Date('2023-12-31') },
+        },
       },
       {
-        source: { a: 1 },
-        target: {},
-        expected: { a: 1 },
-        description: 'should handle empty target object',
+        title: 'should handle RegExp objects by replacing them',
+        context: {
+          source: { a: /test1/, b: /test1/ },
+          target: { a: /test2/, b: /test2/ },
+          expected: { a: /test2/, b: /test2/ },
+        },
       },
       {
-        source: { a: new Date('2023-01-01') },
-        target: { b: new Date('2023-12-31') },
-        expected: { a: new Date('2023-01-01'), b: new Date('2023-12-31') },
-        description: 'should handle Date objects',
+        title: 'should handle mixed Date and RegExp objects',
+        context: {
+          source: { a: new Date('2023-01-01'), b: /test1/ },
+          target: { a: new Date('2023-12-31'), b: /test2/ },
+          expected: { a: new Date('2023-12-31'), b: /test2/ },
+        },
       },
-      {
-        source: { a: /test/ },
-        target: { b: /test2/ },
-        expected: { a: /test/, b: /test2/ },
-        description: 'should handle RegExp objects',
+    ];
+
+    it.each(edgeTestCases)('$title', ({ context: { source, target, expected } }) => {
+      expect(deepMerge(source, target)).toEqual(expected);
+    });
+
+    type NestedDateValue = {
+      a: { value: Date };
+      b: { value: Date };
+    };
+
+    const nestedDateTestCase: EachTestingContext<DeepMergeTestCase<NestedDateValue>> = {
+      title: 'should handle Date objects in nested structures',
+      context: {
+        source: { 
+          a: { value: new Date('2023-01-01') },
+          b: { value: new Date('2023-01-01') },
+        },
+        target: { 
+          a: { value: new Date('2023-12-31') },
+          b: { value: new Date('2023-12-31') },
+        },
+        expected: { 
+          a: { value: new Date('2023-12-31') },
+          b: { value: new Date('2023-12-31') },
+        },
       },
-    ])('$description', ({ source, target, expected }) => {
+    };
+
+    it(nestedDateTestCase.title, () => {
+      const { source, target, expected } = nestedDateTestCase.context;
       expect(deepMerge(source, target)).toEqual(expected);
     });
   });
-}); 
+});
