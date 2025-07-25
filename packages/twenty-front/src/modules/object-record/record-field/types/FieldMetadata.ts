@@ -145,6 +145,17 @@ export type FieldRelationMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
+export type FieldMorphRelationMetadata = BaseFieldMetadata & {
+  relationFieldMetadataId: string;
+  relationObjectMetadataNamePlural: string;
+  relationObjectMetadataNameSingular: string;
+  relationObjectMetadataId: string;
+  relationType?: RelationType;
+  targetFieldMetadataName?: string;
+  useEditButton?: boolean;
+  settings?: null;
+};
+
 export type FieldSelectMetadata = BaseFieldMetadata & {
   options: { label: string; color: ThemeColor; value: string }[];
   isNullable: boolean;
@@ -185,6 +196,7 @@ export type FieldMetadata =
   | FieldPhoneMetadata
   | FieldRatingMetadata
   | FieldRelationMetadata
+  | FieldMorphRelationMetadata
   | FieldRichTextMetadata
   | FieldSelectMetadata
   | FieldMultiSelectMetadata
