@@ -11,7 +11,10 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { ViewKey } from '@/views/types/ViewKey';
+import { ViewType } from '@/views/types/ViewType';
 import { useTheme } from '@emotion/react';
+import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import {
@@ -23,15 +26,27 @@ import {
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
-const DefaultViewHeader = ({ currentView }: { currentView: any }) => {
-  const theme = useTheme();
+interface CurrentView {
+  id: string;
+  name: string | null;
+  icon: string;
+  type: ViewType;
+  key: ViewKey | null;
+  viewGroups?: any[];
+}
+
+interface DefaultViewHeaderProps {
+  currentView: CurrentView;
+}
+
+const DefaultViewHeader = ({ currentView }: DefaultViewHeaderProps) => {
   const { getIcon } = useIcons();
   const MainIcon = getIcon(currentView?.icon);
 
   return (
     <DropdownMenuItemsContainer scrollable={false}>
       <MenuItem
-        text="Default View"
+        text={t`Default View`}
         LeftIcon={MainIcon}
         RightIcon={IconLock}
         disabled={true}
@@ -42,7 +57,7 @@ const DefaultViewHeader = ({ currentView }: { currentView: any }) => {
 
 export const ObjectOptionsDropdownMenuContent = () => {
   const { t } = useLingui();
-  const { recordIndexId, objectMetadataItem, onContentChange, closeDropdown } =
+  const { recordIndexId, objectMetadataItem, onContentChange } =
     useObjectOptionsDropdown();
 
   const { currentView } = useGetCurrentViewOnly();
