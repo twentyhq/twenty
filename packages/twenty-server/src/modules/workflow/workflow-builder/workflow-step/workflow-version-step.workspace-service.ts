@@ -381,40 +381,62 @@ export class WorkflowVersionStepWorkspaceService {
 
     const existingSteps = workflowVersion.steps || [];
 
-    const sourceStep = existingSteps.find((step) => step.id === source);
+    const trigger = workflowVersion.trigger;
 
-    if (!isDefined(sourceStep)) {
-      throw new WorkflowVersionStepException(
-        `Source step ${sourceStep} not found in workflowVersion ${workflowVersionId}`,
-        WorkflowVersionStepExceptionCode.NOT_FOUND,
-      );
-    }
+    const isSourceTrigger = source === 'trigger';
 
-    const targetStep = existingSteps.find((step) => step.id === source);
+    const targetStep = existingSteps.find((step) => step.id === target);
 
     if (!isDefined(targetStep)) {
       throw new WorkflowVersionStepException(
-        `Target step ${sourceStep} not found in workflowVersion ${workflowVersionId}`,
+        `Target step ${targetStep} not found in workflowVersion ${workflowVersionId}`,
         WorkflowVersionStepExceptionCode.NOT_FOUND,
       );
     }
 
-    const updatedSourceStep = {
-      ...sourceStep,
-      nextStepIds: [...(sourceStep.nextStepIds ?? []), target],
-    };
-
-    const updatedSteps = existingSteps.map((step) => {
-      if (step.id === source) {
-        return updatedSourceStep;
+    if (isSourceTrigger) {
+      if (!isDefined(trigger)) {
+        throw new WorkflowVersionStepException(
+          `Trigger not found in workflowVersion ${workflowVersionId}`,
+          WorkflowVersionStepExceptionCode.NOT_FOUND,
+        );
       }
 
-      return step;
-    });
+      const updatedTrigger = {
+        ...trigger,
+        nextStepIds: [...(trigger.nextStepIds ?? []), target],
+      };
 
-    await workflowVersionRepository.update(workflowVersion.id, {
-      steps: updatedSteps,
-    });
+      await workflowVersionRepository.update(workflowVersion.id, {
+        trigger: updatedTrigger,
+      });
+    } else {
+      const sourceStep = existingSteps.find((step) => step.id === source);
+
+      if (!isDefined(sourceStep)) {
+        throw new WorkflowVersionStepException(
+          `Source step ${sourceStep} not found in workflowVersion ${workflowVersionId}`,
+          WorkflowVersionStepExceptionCode.NOT_FOUND,
+        );
+      }
+
+      const updatedSourceStep = {
+        ...sourceStep,
+        nextStepIds: [...(sourceStep.nextStepIds ?? []), target],
+      };
+
+      const updatedSteps = existingSteps.map((step) => {
+        if (step.id === source) {
+          return updatedSourceStep;
+        }
+
+        return step;
+      });
+
+      await workflowVersionRepository.update(workflowVersion.id, {
+        steps: updatedSteps,
+      });
+    }
 
     return { source, target };
   }
@@ -454,42 +476,66 @@ export class WorkflowVersionStepWorkspaceService {
 
     const existingSteps = workflowVersion.steps || [];
 
-    const sourceStep = existingSteps.find((step) => step.id === source);
+    const trigger = workflowVersion.trigger;
 
-    if (!isDefined(sourceStep)) {
-      throw new WorkflowVersionStepException(
-        `Source step ${sourceStep} not found in workflowVersion ${workflowVersionId}`,
-        WorkflowVersionStepExceptionCode.NOT_FOUND,
-      );
-    }
+    const isSourceTrigger = source === 'trigger';
 
-    const targetStep = existingSteps.find((step) => step.id === source);
+    const targetStep = existingSteps.find((step) => step.id === target);
 
     if (!isDefined(targetStep)) {
       throw new WorkflowVersionStepException(
-        `Target step ${sourceStep} not found in workflowVersion ${workflowVersionId}`,
+        `Target step ${targetStep} not found in workflowVersion ${workflowVersionId}`,
         WorkflowVersionStepExceptionCode.NOT_FOUND,
       );
     }
 
-    const updatedSourceStep = {
-      ...sourceStep,
-      nextStepIds: sourceStep.nextStepIds?.filter(
-        (nextStepId) => nextStepId !== target,
-      ),
-    };
-
-    const updatedSteps = existingSteps.map((step) => {
-      if (step.id === source) {
-        return updatedSourceStep;
+    if (isSourceTrigger) {
+      if (!isDefined(trigger)) {
+        throw new WorkflowVersionStepException(
+          `Trigger not found in workflowVersion ${workflowVersionId}`,
+          WorkflowVersionStepExceptionCode.NOT_FOUND,
+        );
       }
 
-      return step;
-    });
+      const updatedTrigger = {
+        ...trigger,
+        nextStepIds: trigger.nextStepIds?.filter(
+          (nextStepId) => nextStepId !== target,
+        ),
+      };
 
-    await workflowVersionRepository.update(workflowVersion.id, {
-      steps: updatedSteps,
-    });
+      await workflowVersionRepository.update(workflowVersion.id, {
+        trigger: updatedTrigger,
+      });
+    } else {
+      const sourceStep = existingSteps.find((step) => step.id === source);
+
+      if (!isDefined(sourceStep)) {
+        throw new WorkflowVersionStepException(
+          `Source step ${sourceStep} not found in workflowVersion ${workflowVersionId}`,
+          WorkflowVersionStepExceptionCode.NOT_FOUND,
+        );
+      }
+
+      const updatedSourceStep = {
+        ...sourceStep,
+        nextStepIds: sourceStep.nextStepIds?.filter(
+          (nextStepId) => nextStepId !== target,
+        ),
+      };
+
+      const updatedSteps = existingSteps.map((step) => {
+        if (step.id === source) {
+          return updatedSourceStep;
+        }
+
+        return step;
+      });
+
+      await workflowVersionRepository.update(workflowVersion.id, {
+        steps: updatedSteps,
+      });
+    }
 
     return { source, target };
   }
