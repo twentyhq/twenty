@@ -17,7 +17,7 @@ export type DisconnectObject = {
   [RELATION_NESTED_QUERY_KEYWORDS.DISCONNECT]: true;
 };
 
-type EntityRelationFields<T> = {
+export type EntityRelationFields<T> = {
   [K in keyof T]: T[K] extends BaseWorkspaceEntity | null ? K : never;
 }[keyof T];
 

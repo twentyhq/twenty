@@ -1,11 +1,11 @@
 import { isDefined } from 'class-validator';
 import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
-import { EntityTarget, ObjectLiteral } from 'typeorm';
+import { EntityTarget, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
+import { QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import { RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 import {
   RelationConnectQueryFieldsByEntityIndex,
@@ -90,7 +90,9 @@ export class RelationNestedQueries {
       RelationConnectQueryConfig[],
       RelationDisconnectQueryFieldsByEntityIndex,
     ];
-    queryBuilder: WorkspaceSelectQueryBuilder<Entity>;
+    queryBuilder:
+      | WorkspaceSelectQueryBuilder<Entity>
+      | SelectQueryBuilder<Entity>;
   }): Promise<QueryDeepPartialEntity<Entity>[]> {
     const entitiesArray = Array.isArray(entities) ? entities : [entities];
 
@@ -120,7 +122,9 @@ export class RelationNestedQueries {
   }: {
     entities: QueryDeepPartialEntityWithNestedRelationFields<Entity>[];
     relationConnectQueryConfigs: RelationConnectQueryConfig[];
-    queryBuilder: WorkspaceSelectQueryBuilder<Entity>;
+    queryBuilder:
+      | WorkspaceSelectQueryBuilder<Entity>
+      | SelectQueryBuilder<Entity>;
   }): Promise<QueryDeepPartialEntity<Entity>[]> {
     if (relationConnectQueryConfigs.length === 0) return entities;
 
@@ -139,7 +143,9 @@ export class RelationNestedQueries {
 
   private async executeConnectQueries<Entity extends ObjectLiteral>(
     relationConnectQueryConfigs: RelationConnectQueryConfig[],
-    queryBuilder: WorkspaceSelectQueryBuilder<Entity>,
+    queryBuilder:
+      | WorkspaceSelectQueryBuilder<Entity>
+      | SelectQueryBuilder<Entity>,
   ): Promise<[RelationConnectQueryConfig, Record<string, unknown>[]][]> {
     const allRecordsToConnectWithConfig: [
       RelationConnectQueryConfig,
