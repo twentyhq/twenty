@@ -42,6 +42,9 @@ const shouldNotOverrideDefaultValue = (type: FieldMetadataType) => {
 };
 
 type GetWorkspaceMigrationUpdateFieldActionArgs = FromTo<FlatFieldMetadata>;
+/**
+ * This comparator handles update on colliding uniqueIdentifier flatFieldMetadata
+ */
 export const compareTwoFlatFieldMetadata = ({
   from,
   to,

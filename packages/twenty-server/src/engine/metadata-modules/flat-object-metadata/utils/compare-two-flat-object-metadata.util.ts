@@ -1,7 +1,7 @@
 import omit from 'lodash.omit';
 import diff from 'microdiff';
-import { assertUnreachable } from 'twenty-shared/utils';
 import { FromTo } from 'twenty-shared/types';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata';
 import { UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
@@ -22,6 +22,9 @@ const flatObjectMetadataPropertiesToCompare = [
 export type FlatObjectMetadataPropertiesToCompare =
   (typeof flatObjectMetadataPropertiesToCompare)[number];
 
+/**
+ * This comparator handles update on colliding uniqueIdentifier flatObjectdMetadata
+ */
 export const compareTwoFlatObjectMetadata = ({
   from,
   to,
