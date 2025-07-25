@@ -105,7 +105,7 @@ export const ObjectOptionsDropdownMenuViewName = ({
   }, [currentView.icon, setViewPickerSelectedIcon]);
 
   useEffect(() => {
-    if (currentView?.key !== 'INDEX' && inputRef.current) {
+    if (currentView?.key !== 'INDEX' && inputRef.current !==null ) {
       inputRef.current.focus();
     }
   }, [currentView?.key]);
