@@ -27,7 +27,6 @@ import {
   WorkspaceCleanerException,
   WorkspaceCleanerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-cleaner/exceptions/workspace-cleaner.exception';
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
@@ -37,7 +36,6 @@ export class CleanerWorkspaceService {
   private readonly inactiveDaysBeforeDelete: number;
   private readonly inactiveDaysBeforeWarn: number;
   private readonly maxNumberOfWorkspacesDeletedPerExecution: number;
-
   constructor(
     private readonly workspaceService: WorkspaceService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -319,32 +317,71 @@ export class CleanerWorkspaceService {
     const workspaces = await this.workspaceRepository.find({
       where: {
         id: In(workspaceIds),
+        activationStatus: WorkspaceActivationStatus.SUSPENDED,
       },
       withDeleted: true,
     });
 
-    for (const workspace of workspaces) {
-      const personRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
-          workspace.id,
-          'person',
-          {
-            shouldBypassPermissionChecks: true,
-          },
-        );
+    let deletedWorkspacesCount = 0;
 
-      await personRepository.save({
-        city: 'test',
-        company: {
-          connect: {
-            where: {
-              domainName: {
-                primaryLinkUrl: 'airslate.com',
-              },
-            },
-          },
-        },
-      });
+    for (const workspace of workspaces) {
+      try {
+        const isSoftDeletedWorkspace = isDefined(workspace.deletedAt);
+
+        if (isSoftDeletedWorkspace) {
+          const daysSinceSoftDeleted = workspace.deletedAt
+            ? differenceInDays(new Date(), workspace.deletedAt)
+            : 0;
+
+          if (
+            daysSinceSoftDeleted >
+              this.inactiveDaysBeforeDelete -
+                this.inactiveDaysBeforeSoftDelete &&
+            deletedWorkspacesCount <
+              this.maxNumberOfWorkspacesDeletedPerExecution
+          ) {
+            this.logger.log(
+              `${dryRun ? 'DRY RUN - ' : ''}Destroying workspace ${workspace.id} ${workspace.displayName}`,
+            );
+            if (!dryRun) {
+              await this.workspaceService.deleteWorkspace(workspace.id);
+            }
+            deletedWorkspacesCount++;
+          }
+          continue;
+        }
+
+        const workspaceInactivity =
+          await this.computeWorkspaceBillingInactivity(workspace);
+
+        if (workspaceInactivity > this.inactiveDaysBeforeSoftDelete) {
+          await this.informWorkspaceMembersAndSoftDeleteWorkspace(
+            workspace,
+            workspaceInactivity,
+            dryRun,
+          );
+
+          continue;
+        }
+        if (
+          workspaceInactivity > this.inactiveDaysBeforeWarn &&
+          workspaceInactivity <= this.inactiveDaysBeforeSoftDelete
+        ) {
+          await this.warnWorkspaceMembers(
+            workspace,
+            workspaceInactivity,
+            dryRun,
+          );
+        }
+      } catch (error) {
+        this.logger.error(
+          `Error while processing workspace ${workspace.id} ${workspace.displayName}: ${error}`,
+        );
+      }
+
+      await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+        workspace.id,
+      );
     }
     this.logger.log(
       `${dryRun ? 'DRY RUN - ' : ''}batchWarnOrCleanSuspendedWorkspaces done!`,
