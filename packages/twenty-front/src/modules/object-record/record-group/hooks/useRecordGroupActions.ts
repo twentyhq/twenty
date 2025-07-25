@@ -6,7 +6,7 @@ import { recordGroupFieldMetadataComponentState } from '@/object-record/record-g
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordGroupAction } from '@/object-record/record-group/types/RecordGroupActions';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useHasSettingsPermission } from '@/settings/roles/hooks/useHasSettingsPermission';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPath } from '@/types/SettingsPath';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
@@ -90,7 +90,7 @@ export const useRecordGroupActions = ({
     recordGroupFieldMetadata,
   ]);
 
-  const hasAccessToDataModelSettings = useHasSettingsPermission(
+  const hasAccessToDataModelSettings = useHasPermissionFlag(
     PermissionFlagType.DATA_MODEL,
   );
   const currentIndex = visibleRecordGroupIds.findIndex(

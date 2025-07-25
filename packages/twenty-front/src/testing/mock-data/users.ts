@@ -125,7 +125,7 @@ export const mockedUserData: MockedUser = {
   workspaceMember: mockedWorkspaceMemberData,
   currentWorkspace: mockCurrentWorkspace,
   currentUserWorkspace: {
-    settingsPermissions: [PermissionFlagType.WORKSPACE_MEMBERS],
+    permissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
     objectPermissions: generatedMockObjectMetadataItems.map((item) => ({
       objectMetadataId: item.id,
       canReadObjectRecords: true,

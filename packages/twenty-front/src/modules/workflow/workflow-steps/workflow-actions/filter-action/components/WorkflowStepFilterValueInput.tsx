@@ -3,17 +3,13 @@ import { configurableViewFilterOperands } from '@/object-record/object-filter-dr
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { useWorkflowStepContextOrThrow } from '@/workflow/states/context/WorkflowStepContext';
-import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
+import { WorkflowStepFilterValueCompositeInput } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterValueCompositeInput';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
-import { searchVariableThroughOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchema';
 import { useLingui } from '@lingui/react/macro';
 import { isObject, isString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 import { FieldMetadataType, StepFilter } from 'twenty-shared/src/types';
 import { isDefined } from 'twenty-shared/utils';
 import { JsonValue } from 'type-fest';
@@ -21,6 +17,14 @@ import { JsonValue } from 'type-fest';
 type WorkflowStepFilterValueInputProps = {
   stepFilter: StepFilter;
 };
+
+const COMPOSITE_FIELD_METADATA_TYPES = [
+  FieldMetadataType.ADDRESS,
+  FieldMetadataType.PHONES,
+  FieldMetadataType.EMAILS,
+  FieldMetadataType.LINKS,
+  FieldMetadataType.CURRENCY,
+];
 
 const isFilterableFieldMetadataType = (
   type: string,
@@ -37,6 +41,8 @@ const isFilterableFieldMetadataType = (
     FieldMetadataType.RAW_JSON,
     FieldMetadataType.RICH_TEXT_V2,
     FieldMetadataType.ARRAY,
+    FieldMetadataType.UUID,
+    ...COMPOSITE_FIELD_METADATA_TYPES,
   ].includes(type as FieldMetadataType);
 };
 
@@ -47,24 +53,6 @@ export const WorkflowStepFilterValueInput = ({
   const { readonly } = useContext(WorkflowStepFilterContext);
 
   const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
-  const { workflowVersionId } = useWorkflowStepContextOrThrow();
-
-  const stepId = extractRawVariableNamePart({
-    rawVariableName: stepFilter.stepOutputKey,
-    part: 'stepId',
-  });
-
-  const stepsOutputSchema = useRecoilValue(
-    stepsOutputSchemaFamilySelector({
-      workflowVersionId,
-      stepIds: [stepId],
-    }),
-  );
-  const { variableType, fieldMetadataId } = searchVariableThroughOutputSchema({
-    stepOutputSchema: stepsOutputSchema?.[0],
-    rawVariableName: stepFilter.stepOutputKey,
-    isFullRecord: false,
-  });
 
   const handleValueChange = (value: JsonValue) => {
     const valueToUpsert = isString(value)
@@ -92,23 +80,23 @@ export const WorkflowStepFilterValueInput = ({
     return null;
   }
 
-  if (isDefined(variableType) && isFilterableFieldMetadataType(variableType)) {
-    const selectedFieldMetadataItem = isDefined(fieldMetadataId)
-      ? getFieldMetadataItemById(fieldMetadataId)
-      : undefined;
+  const {
+    fieldMetadataId,
+    type: variableType,
+    compositeFieldSubFieldName,
+  } = stepFilter;
 
-    const field = {
-      type: variableType as FieldMetadataType,
-      label: '',
-      metadata: {
-        fieldName: selectedFieldMetadataItem?.name ?? '',
-        options: selectedFieldMetadataItem?.options ?? [],
-      } as FieldMetadata,
-    };
+  const selectedFieldMetadataItem = isDefined(fieldMetadataId)
+    ? getFieldMetadataItemById(fieldMetadataId)
+    : undefined;
 
+  if (
+    !isDefined(variableType) ||
+    !isFilterableFieldMetadataType(variableType) ||
+    !isDefined(selectedFieldMetadataItem)
+  ) {
     return (
-      <FormFieldInput
-        field={field}
+      <FormTextFieldInput
         defaultValue={stepFilter.value}
         onChange={handleValueChange}
         readonly={readonly}
@@ -118,8 +106,30 @@ export const WorkflowStepFilterValueInput = ({
     );
   }
 
+  if (
+    isDefined(compositeFieldSubFieldName) &&
+    COMPOSITE_FIELD_METADATA_TYPES.includes(variableType as FieldMetadataType)
+  ) {
+    return (
+      <WorkflowStepFilterValueCompositeInput
+        stepFilter={stepFilter}
+        onChange={handleValueChange}
+      />
+    );
+  }
+
+  const field = {
+    type: variableType as FieldMetadataType,
+    label: '',
+    metadata: {
+      fieldName: selectedFieldMetadataItem?.name ?? '',
+      options: selectedFieldMetadataItem?.options ?? [],
+    } as FieldMetadata,
+  };
+
   return (
-    <FormTextFieldInput
+    <FormFieldInput
+      field={field}
       defaultValue={stepFilter.value}
       onChange={handleValueChange}
       readonly={readonly}
