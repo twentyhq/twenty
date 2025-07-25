@@ -1,11 +1,12 @@
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatObjectMetadataWithoutFields } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
-    assertUnreachable,
-    trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
+  assertUnreachable,
+  trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -31,7 +32,7 @@ export const fromCreateObjectInputToFlatObjectMetadata = ({
   const fieldMetadataId = v4();
   const createdAt = new Date();
 
-  const commonFlatFieldMetadata: FlatFieldMetadata = {
+  const commonFlatFieldMetadata = {
     createdAt,
     description: createFieldInput.description ?? null,
     id: fieldMetadataId,
@@ -58,7 +59,7 @@ export const fromCreateObjectInputToFlatObjectMetadata = ({
     defaultValue: createFieldInput.defaultValue ?? null,
     flatRelationTargetFieldMetadata: null,
     flatRelationTargetObjectMetadata: null,
-  };
+  } as const satisfies FlatFieldMetadata;
 
   switch (createFieldInput.type) {
     case FieldMetadataType.UUID:
@@ -68,21 +69,33 @@ export const fromCreateObjectInputToFlatObjectMetadata = ({
       };
     case FieldMetadataType.RELATION:
     case FieldMetadataType.MORPH_RELATION: {
+      // Should validate relationCreationPayload here
       return {
         ...commonFlatFieldMetadata,
         type: createFieldInput.type,
         defaultValue: null,
         settings: null,
         options: null,
+        // TODO retrieve from objectMetadataMaps
         relationTargetFieldMetadataId: '',
         relationTargetObjectMetadataId: '',
-        // TODO retrieve from objectMetadataMaps
         flatRelationTargetFieldMetadata: {} as FlatFieldMetadata,
         flatRelationTargetObjectMetadata: {} as FlatObjectMetadataWithoutFields,
         ///
       } satisfies FlatFieldMetadata<
         FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
       >;
+    }
+    case FieldMetadataType.RATING: {
+      return {
+        ...commonFlatFieldMetadata,
+        type: createFieldInput.type,
+        settings: null,
+        defaultValue:
+          (createFieldInput.defaultValue as FlatFieldMetadata<FieldMetadataType.RATING>['defaultValue']) ??
+          null, // Should we leave this to the FlatFieldMetadataValidator<FieldMetadataType.RATING> :) ?s
+        options: generateRatingOptions(),
+      } satisfies FlatFieldMetadata<FieldMetadataType.RATING>;
     }
     case FieldMetadataType.TEXT:
     case FieldMetadataType.PHONES:
@@ -95,7 +108,6 @@ export const fromCreateObjectInputToFlatObjectMetadata = ({
     case FieldMetadataType.LINKS:
     case FieldMetadataType.CURRENCY:
     case FieldMetadataType.FULL_NAME:
-    case FieldMetadataType.RATING:
     case FieldMetadataType.SELECT:
     case FieldMetadataType.MULTI_SELECT:
     case FieldMetadataType.POSITION:
