@@ -1159,6 +1159,23 @@ export class ConfigVariables {
   @IsOptionalOrEmptyString()
   @IsTwentySemVer()
   APP_VERSION?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Enable or disable google map api usage',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  GOOGLE_MAP_API_ENABLED = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    isSensitive: true,
+    description: 'google map api key for places and map',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf((env) => env.GOOGLE_MAP_API_ENABLED)
+  GOOGLE_MAP_API_KEY: string;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {

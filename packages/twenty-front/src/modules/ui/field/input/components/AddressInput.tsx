@@ -2,17 +2,27 @@ import styled from '@emotion/styled';
 import { RefObject, useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
+import { PlaceAutocompleteSelect } from '@/map/components/PlaceAutocompleteSelect';
+import { SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID } from '@/map/constants/selectAutocompleteListDropDownId';
+import { useGetPlaceApiData } from '@/map/hooks/useGetPlaceApiData';
+import { placeAutocompleteResult } from '@/map/types/placeApi';
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TEXT_INPUT_CLICK_OUTSIDE_ID } from '@/ui/input/components/constants/TextInputClickOutsideId';
 import { CountrySelect } from '@/ui/input/components/internal/country/components/CountrySelect';
 import { SELECT_COUNTRY_DROPDOWN_ID } from '@/ui/input/components/internal/country/constants/SelectCountryDropdownId';
+import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { useDebouncedCallback } from 'use-debounce';
+import { v4 } from 'uuid';
 
 const StyledAddressContainer = styled.div`
   padding: 4px 8px;
@@ -77,7 +87,10 @@ export const AddressInput = ({
   const addressCityInputRef = useRef<HTMLInputElement>(null);
   const addressStateInputRef = useRef<HTMLInputElement>(null);
   const addressPostcodeInputRef = useRef<HTMLInputElement>(null);
-
+  const [placeAutocompleteData, setPlaceAutocompleteData] = useState<
+    placeAutocompleteResult[] | null
+  >([]);
+  const [tokenForPlaceApi, setTokenForPlaceApi] = useState<string | null>(null);
   const inputRefs: {
     [key in keyof FieldAddressDraftValue]?: RefObject<HTMLInputElement>;
   } = {
@@ -87,19 +100,122 @@ export const AddressInput = ({
     addressState: addressStateInputRef,
     addressPostcode: addressPostcodeInputRef,
   };
-
+  const { getPlaceAutocompleteData, getPlaceDetailsData } =
+    useGetPlaceApiData();
   const [focusPosition, setFocusPosition] =
     useState<keyof FieldAddressDraftValue>('addressStreet1');
-
+  const { closeDropdown } = useCloseDropdown();
+  const { openDropdown } = useOpenDropdown();
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const countries = useCountries();
+  const findCountryCodeByCountryName = (countryName?: string): string => {
+    if (!isDefined(countryName) || countryName === '') return '';
+
+    const foundCountry = countries.find(
+      (country) => country.countryName === countryName,
+    );
+    return foundCountry?.countryCode ?? '';
+  };
+  const findCountryNameByCountryCode = (
+    countryCode?: string,
+  ): string | null => {
+    if (!isDefined(countryCode) || countryCode === '') return '';
+
+    const foundCountry = countries.find(
+      (country) => country.countryCode === countryCode,
+    );
+
+    return foundCountry?.countryName ?? null;
+  };
 
   const getChangeHandler =
     (field: keyof FieldAddressDraftValue) => (updatedAddressPart: string) => {
       const updatedAddress = { ...value, [field]: updatedAddressPart };
       setInternalValue(updatedAddress);
       onChange?.(updatedAddress);
+      if (field === 'addressStreet1') {
+        const token = tokenForPlaceApi ?? v4();
+        if (token !== tokenForPlaceApi) {
+          setTokenForPlaceApi(token);
+        }
+        const countryCode = findCountryCodeByCountryName(
+          updatedAddress.addressCountry ?? '',
+        );
+        getAutocompletePlaceData(updatedAddressPart, token, countryCode);
+      }
     };
+  const getAutocompletePlaceData = useDebouncedCallback(
+    async (address: string, token: string, country?: string) => {
+      const placeAutocompleteData = await getPlaceAutocompleteData(
+        address,
+        token,
+        country,
+      );
 
+      const neweData = placeAutocompleteData?.map((data) => ({
+        text: data.text,
+        placeId: data.placeId,
+      }));
+      if (isDefined(neweData) && neweData?.length > 0) {
+        openDropdownOfAutocomplete();
+        setPlaceAutocompleteData(neweData);
+      } else {
+        closeDropdownOfAutocomplete();
+      }
+    },
+    300,
+  );
+  const openDropdownOfAutocomplete = () => {
+    openDropdown({
+      dropdownComponentInstanceIdFromProps:
+        SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID,
+    });
+  };
+  const closeDropdownOfAutocomplete = () => {
+    closeDropdown(SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID);
+    setPlaceAutocompleteData(null);
+  };
+  const autoFillInputsFromPlaceDetails = async (
+    placeId: string,
+    addressStreet1: string,
+    token: string,
+  ) => {
+    const placeData = await getPlaceDetailsData(placeId, token);
+
+    const countryName = findCountryNameByCountryCode(placeData?.country);
+    const updatedAddress = {
+      addressStreet1: addressStreet1
+        ? addressStreet1
+        : (internalValue.addressStreet1 ?? ''),
+      addressStreet2: internalValue.addressStreet2 ?? null,
+      addressCity: placeData?.city
+        ? placeData.city
+        : (internalValue.addressCity ?? null),
+      addressState: placeData?.state
+        ? placeData.state
+        : (internalValue.addressState ?? null),
+      addressCountry: countryName
+        ? countryName
+        : (internalValue.addressCountry ?? null),
+      addressPostcode: placeData?.postcode
+        ? placeData?.postcode
+        : (internalValue.addressPostcode ?? null),
+      addressLat: internalValue.addressLat ?? null,
+      addressLng: internalValue.addressLng ?? null,
+    };
+    setTokenForPlaceApi(null);
+    setInternalValue(updatedAddress);
+    onChange?.(updatedAddress);
+    closeDropdownOfAutocomplete();
+  };
+  const onclick = (placeId: string) => {
+    const placeAutocomplete = placeAutocompleteData?.find(
+      (place) => place.placeId === placeId,
+    );
+    const token = tokenForPlaceApi ?? '';
+    if (!isDefined(placeAutocomplete)) return;
+    autoFillInputsFromPlaceDetails(placeId, placeAutocomplete.text, token);
+  };
   const getFocusHandler = (fieldName: keyof FieldAddressDraftValue) => () => {
     setFocusPosition(fieldName);
 
@@ -127,7 +243,9 @@ export const AddressInput = ({
       inputRefs[nextFocusFieldName]?.current?.focus();
     }
   };
-
+  const handleClickOutside = () => {
+    setPlaceAutocompleteData(null);
+  };
   const handleShiftTab = () => {
     const currentFocusPosition = Object.keys(inputRefs).findIndex(
       (key) => key === focusPosition,
@@ -167,6 +285,7 @@ export const AddressInput = ({
     keys: [Key.Enter],
     callback: () => {
       onEnter(internalValue);
+      closeDropdownOfAutocomplete();
     },
     focusId: instanceId,
     dependencies: [onEnter, internalValue],
@@ -176,6 +295,7 @@ export const AddressInput = ({
     keys: [Key.Escape],
     callback: () => {
       onEscape(internalValue);
+      closeDropdownOfAutocomplete();
     },
     focusId: instanceId,
     dependencies: [onEscape, internalValue],
@@ -186,13 +306,17 @@ export const AddressInput = ({
   useListenClickOutside({
     refs: [wrapperRef],
     callback: (event) => {
-      if (activeDropdownFocusId === SELECT_COUNTRY_DROPDOWN_ID) {
+      if (
+        activeDropdownFocusId === SELECT_COUNTRY_DROPDOWN_ID ||
+        activeDropdownFocusId === SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID
+      ) {
         return;
       }
 
       event.stopImmediatePropagation();
 
       onClickOutside?.(event, internalValue);
+      setPlaceAutocompleteData(null);
     },
     enabled: isDefined(onClickOutside),
     listenerId: 'address-input',
@@ -212,7 +336,21 @@ export const AddressInput = ({
         fullWidth
         onChange={getChangeHandler('addressStreet1')}
         onFocus={getFocusHandler('addressStreet1')}
+        textClickOutsideId={
+          placeAutocompleteData && placeAutocompleteData?.length > 0
+            ? TEXT_INPUT_CLICK_OUTSIDE_ID
+            : undefined
+        }
       />
+      {placeAutocompleteData && placeAutocompleteData?.length > 0 && (
+        <PlaceAutocompleteSelect
+          list={placeAutocompleteData}
+          onChange={onclick}
+          dropdownId={SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID}
+          excludedClickOutsideIds={[TEXT_INPUT_CLICK_OUTSIDE_ID]}
+          onClickOutside={handleClickOutside}
+        />
+      )}
       <TextInputV2
         value={internalValue.addressStreet2 ?? ''}
         ref={inputRefs['addressStreet2']}
