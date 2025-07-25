@@ -6,7 +6,7 @@ import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { isRecordGqlFieldsNode } from '@/object-record/graphql/utils/isRecordGraphlFieldsNode';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ObjectPermission } from '~/generated-metadata/graphql';
+import { ObjectPermissionsWithRestrictedFields } from '~/generated/graphql';
 
 type MapObjectMetadataToGraphQLQueryArgs = {
   objectMetadataItems: ObjectMetadataItem[];
@@ -17,7 +17,11 @@ type MapObjectMetadataToGraphQLQueryArgs = {
   recordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
   isRootLevel?: boolean;
-  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
+  objectPermissionsByObjectMetadataId: Record<
+    string,
+    ObjectPermissionsWithRestrictedFields
+  >;
+  isFieldsPermissionsEnabled?: boolean;
 };
 
 export const mapObjectMetadataToGraphQLQuery = ({
@@ -27,6 +31,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
   computeReferences = false,
   isRootLevel = true,
   objectPermissionsByObjectMetadataId,
+  isFieldsPermissionsEnabled = false,
 }: MapObjectMetadataToGraphQLQueryArgs): string => {
   if (
     !isRootLevel &&
@@ -45,7 +50,18 @@ export const mapObjectMetadataToGraphQLQuery = ({
   const manyToOneRelationFields = objectMetadataItem?.fields
     .filter((field) => field.isActive)
     .filter((field) => field.type === FieldMetadataType.RELATION)
-    .filter((field) => isDefined(field.settings?.joinColumnName));
+    .filter((field) => isDefined(field.settings?.joinColumnName))
+    .filter((field) => {
+      if (isFieldsPermissionsEnabled) {
+        const objectPermission = getObjectPermissionsForObject(
+          objectPermissionsByObjectMetadataId,
+          objectMetadataItem.id,
+        );
+        return objectPermission.restrictedFields?.[field.id]?.canRead !== false;
+      } else {
+        return true;
+      }
+    });
 
   const manyToOneRelationGqlFieldWithFieldMetadata =
     manyToOneRelationFields.map((field) => ({
@@ -56,6 +72,20 @@ export const mapObjectMetadataToGraphQLQuery = ({
   const gqlFieldWithFieldMetadataThatCouldBeQueried = [
     ...objectMetadataItem.fields
       .filter((fieldMetadata) => fieldMetadata.isActive)
+      .filter((fieldMetadata) => {
+        if (isFieldsPermissionsEnabled) {
+          const objectPermission = getObjectPermissionsForObject(
+            objectPermissionsByObjectMetadataId,
+            objectMetadataItem.id,
+          );
+          return (
+            objectPermission.restrictedFields?.[fieldMetadata.id]?.canRead !==
+            false
+          );
+        } else {
+          return true;
+        }
+      })
       .map((fieldMetadata) => ({
         gqlField: fieldMetadata.name,
         fieldMetadata,
@@ -99,6 +129,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
         relationRecordGqlFields,
         computeReferences,
         objectPermissionsByObjectMetadataId,
+        isFieldsPermissionsEnabled,
       });
     })
     .filter((field) => field !== '')
