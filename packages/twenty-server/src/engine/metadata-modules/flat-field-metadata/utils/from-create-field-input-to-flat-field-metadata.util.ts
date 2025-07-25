@@ -1,5 +1,7 @@
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatObjectMetadataWithoutFields } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
     assertUnreachable,
@@ -7,9 +9,14 @@ import {
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-export const fromCreateObjectInputToFlatObjectMetadata = (
-  rawCreateFieldInput: CreateFieldInput,
-): FlatFieldMetadata => {
+type FromCreateObjectInputToFlatObjectMetadata = {
+  rawCreateFieldInput: CreateFieldInput;
+  objectMetadataMaps: ObjectMetadataMaps;
+};
+export const fromCreateObjectInputToFlatObjectMetadata = ({
+  objectMetadataMaps,
+  rawCreateFieldInput,
+}: FromCreateObjectInputToFlatObjectMetadata): FlatFieldMetadata => {
   // Handled in FlatFieldMetadata validation
   if (rawCreateFieldInput.isRemoteCreation) {
     throw new Error('Remote fields are not supported yet');
@@ -59,6 +66,24 @@ export const fromCreateObjectInputToFlatObjectMetadata = (
         ...commonFlatFieldMetadata,
         isUnique: true,
       };
+    case FieldMetadataType.RELATION:
+    case FieldMetadataType.MORPH_RELATION: {
+      return {
+        ...commonFlatFieldMetadata,
+        type: createFieldInput.type,
+        defaultValue: null,
+        settings: null,
+        options: null,
+        relationTargetFieldMetadataId: '',
+        relationTargetObjectMetadataId: '',
+        // TODO retrieve from objectMetadataMaps
+        flatRelationTargetFieldMetadata: {} as FlatFieldMetadata,
+        flatRelationTargetObjectMetadata: {} as FlatObjectMetadataWithoutFields,
+        ///
+      } satisfies FlatFieldMetadata<
+        FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+      >;
+    }
     case FieldMetadataType.TEXT:
     case FieldMetadataType.PHONES:
     case FieldMetadataType.EMAILS:
@@ -73,8 +98,6 @@ export const fromCreateObjectInputToFlatObjectMetadata = (
     case FieldMetadataType.RATING:
     case FieldMetadataType.SELECT:
     case FieldMetadataType.MULTI_SELECT:
-    case FieldMetadataType.RELATION:
-    case FieldMetadataType.MORPH_RELATION:
     case FieldMetadataType.POSITION:
     case FieldMetadataType.ADDRESS:
     case FieldMetadataType.RAW_JSON:
