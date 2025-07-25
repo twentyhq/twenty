@@ -1,16 +1,13 @@
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
-import { IconCopy } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
 import { CustomDomainValidRecords } from '~/generated/graphql';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledTable = styled(Table)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -45,23 +42,12 @@ export const SettingsCustomDomainRecords = ({
 }: {
   records: CustomDomainValidRecords['records'];
 }) => {
-  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { copyToClipboard } = useCopyToClipboard();
 
-  const theme = useTheme();
-
-  const { t } = useLingui();
-
-  const copyToClipboard = (value: string) => {
-    navigator.clipboard.writeText(value);
-    enqueueSuccessSnackBar({
-      message: t`Copied to clipboard!`,
-      options: {
-        icon: <IconCopy size={theme.icon.size.md} />,
-      },
-    });
-  };
-
-  const copyToClipboardDebounced = useDebouncedCallback(copyToClipboard, 200);
+  const copyToClipboardDebounced = useDebouncedCallback(
+    (value: string) => copyToClipboard(value),
+    200,
+  );
 
   return (
     <StyledTable>

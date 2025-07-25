@@ -3,7 +3,6 @@ import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropd
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -16,7 +15,6 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDeleteViewFromCurrentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
-import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
@@ -27,6 +25,7 @@ import {
   IconTrash,
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const ObjectOptionsDropdownMenuContent = () => {
   const { t } = useLingui();
@@ -62,9 +61,6 @@ export const ObjectOptionsDropdownMenuContent = () => {
     closeDropdown();
   };
 
-  const theme = useTheme();
-  const { enqueueSuccessSnackBar } = useSnackBar();
-
   const isDefaultView = currentView?.key === 'INDEX';
 
   const selectableItemIdArray = [
@@ -79,6 +75,8 @@ export const ObjectOptionsDropdownMenuContent = () => {
     selectedItemIdComponentState,
     OBJECT_OPTIONS_DROPDOWN_ID,
   );
+
+  const { copyToClipboard } = useCopyToClipboard();
 
   return (
     <DropdownContent>
@@ -167,28 +165,14 @@ export const ObjectOptionsDropdownMenuContent = () => {
             itemId="Copy link to view"
             onEnter={() => {
               const currentUrl = window.location.href;
-              navigator.clipboard.writeText(currentUrl);
-              enqueueSuccessSnackBar({
-                message: t`Link copied to clipboard`,
-                options: {
-                  icon: <IconCopy size={theme.icon.size.md} />,
-                  duration: 2000,
-                },
-              });
+              copyToClipboard(currentUrl, t`Link copied to clipboard`);
             }}
           >
             <MenuItem
               focused={selectedItemId === 'Copy link to view'}
               onClick={() => {
                 const currentUrl = window.location.href;
-                navigator.clipboard.writeText(currentUrl);
-                enqueueSuccessSnackBar({
-                  message: t`Link copied to clipboard`,
-                  options: {
-                    icon: <IconCopy size={theme.icon.size.md} />,
-                    duration: 2000,
-                  },
-                });
+                copyToClipboard(currentUrl, t`Link copied to clipboard`);
               }}
               LeftIcon={IconCopy}
               text={t`Copy link to view`}

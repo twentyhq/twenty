@@ -1,8 +1,6 @@
 /* @license Enterprise */
 
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -10,6 +8,7 @@ import { H2Title, IconCopy } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -36,8 +35,7 @@ const StyledButtonCopy = styled.div`
 
 export const SettingsSSOOIDCForm = () => {
   const { control } = useFormContext();
-  const { enqueueSuccessSnackBar } = useSnackBar();
-  const theme = useTheme();
+  const { copyToClipboard } = useCopyToClipboard();
   const { t } = useLingui();
 
   const authorizedUrl = window.location.origin;
@@ -66,14 +64,10 @@ export const SettingsSSOOIDCForm = () => {
                 Icon={IconCopy}
                 title={t`Copy`}
                 onClick={() => {
-                  enqueueSuccessSnackBar({
-                    message: t`Authorized URL copied to clipboard`,
-                    options: {
-                      icon: <IconCopy size={theme.icon.size.md} />,
-                      duration: 2000,
-                    },
-                  });
-                  navigator.clipboard.writeText(authorizedUrl);
+                  copyToClipboard(
+                    authorizedUrl,
+                    t`Authorized URL copied to clipboard`,
+                  );
                 }}
                 type="button"
               />
@@ -94,14 +88,10 @@ export const SettingsSSOOIDCForm = () => {
                 Icon={IconCopy}
                 title={t`Copy`}
                 onClick={() => {
-                  enqueueSuccessSnackBar({
-                    message: t`Redirect Url copied to clipboard`,
-                    options: {
-                      icon: <IconCopy size={theme.icon.size.md} />,
-                      duration: 2000,
-                    },
-                  });
-                  navigator.clipboard.writeText(redirectionUrl);
+                  copyToClipboard(
+                    redirectionUrl,
+                    t`Redirect Url copied to clipboard`,
+                  );
                 }}
                 type="button"
               />

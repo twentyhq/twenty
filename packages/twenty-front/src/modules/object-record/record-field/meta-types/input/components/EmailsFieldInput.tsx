@@ -3,6 +3,7 @@ import { EmailsFieldMenuItem } from '@/object-record/record-field/meta-types/inp
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
 import { emailSchema } from '@/object-record/record-field/validation-schemas/emailSchema';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -20,6 +21,7 @@ export const EmailsFieldInput = ({
 }: EmailsFieldInputProps) => {
   const { persistEmailsField, fieldValue } = useEmailsField();
   const { copyToClipboard } = useCopyToClipboard();
+  const { t } = useLingui();
 
   const emails = useMemo<string[]>(
     () =>
@@ -59,7 +61,7 @@ export const EmailsFieldInput = ({
   };
 
   const handleCopy = (email: string) => {
-    copyToClipboard(email);
+    copyToClipboard(email, t`Email copied to clipboard`);
   };
 
   return (
