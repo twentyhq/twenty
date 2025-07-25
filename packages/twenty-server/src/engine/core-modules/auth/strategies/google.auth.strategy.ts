@@ -78,7 +78,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 
     if (!firstVerifiedEmail) {
       throw new AuthException(
-        'No verified email found',
+        'Please verify your email address with Google',
         AuthExceptionCode.EMAIL_NOT_VERIFIED,
       );
     }
