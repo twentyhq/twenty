@@ -1,8 +1,8 @@
-import { trimAndRemoveDuplicatedWhitespacesFromString } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-string';
+import { trimAndRemoveDuplicatedWhitespacesFromString } from '@/utils/trim-and-remove-duplicated-whitespaces-from-string';
 
 type OnlyStringPropertiesKey<T> = Extract<keyof T, string>;
 
-type StringPropertyKeys<T> = {
+export type StringPropertyKeys<T> = {
   [K in OnlyStringPropertiesKey<T>]: T[K] extends string | undefined
     ? K
     : never;

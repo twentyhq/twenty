@@ -18,4 +18,4 @@ export type FieldMetadataOptions<
     ? null | (FieldMetadataDefaultOption[] | FieldMetadataComplexOption[]) // Could be improved to be | unknown
     : T extends keyof FieldMetadataOptionsMapping
       ? FieldMetadataOptionsMapping[T]
-      : never;
+      : never | null;

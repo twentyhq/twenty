@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 
+import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
-import { FlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-index-metadata';
 
 type FlatIndexMetadataOverrides = Required<
   Pick<FlatIndexMetadata, 'uniqueIdentifier' | 'objectMetadataId'>

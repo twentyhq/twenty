@@ -112,6 +112,7 @@ describe('WorkspaceEntityManager', () => {
         IS_FIELDS_PERMISSIONS_ENABLED: false,
         IS_CORE_VIEW_SYNCING_ENABLED: false,
         IS_TWO_FACTOR_AUTHENTICATION_ENABLED: false,
+        IS_WORKSPACE_MIGRATION_V2_ENABLED: false,
       },
       eventEmitterService: {
         emitMutationEvent: jest.fn(),

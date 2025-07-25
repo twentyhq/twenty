@@ -1,6 +1,5 @@
-import { EachTestingContext } from 'twenty-shared/testing';
-
-import { trimAndRemoveDuplicatedWhitespacesFromString } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-string';
+import { EachTestingContext } from '@/testing/types/EachTestingContext.type';
+import { trimAndRemoveDuplicatedWhitespacesFromString } from '../trim-and-remove-duplicated-whitespaces-from-string';
 
 type TrimAndRemoveWhitespacesTestCase = EachTestingContext<{
   input: string;

@@ -10,6 +10,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -33,6 +34,8 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
+import { WorkspaceMigrationBuilderV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.module';
+import { WorkspaceMigrationRunnerV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.module';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 import { ObjectMetadataService } from './object-metadata.service';
@@ -63,6 +66,9 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
         WorkspaceCacheStorageModule,
         WorkspaceMetadataCacheModule,
         WorkspaceDataSourceModule,
+        FeatureFlagModule,
+        WorkspaceMigrationBuilderV2Module,
+        WorkspaceMigrationRunnerV2Module,
       ],
       services: [
         ObjectMetadataService,

@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { getFlatFieldMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-field-metadata.mock';
-import { getFlatIndexMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-index-metadata.mock';
-import { getFlatObjectMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-object-metadata.mock';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getFlatIndexMetadataMock } from 'src/engine/metadata-modules/flat-index-metadata/__mocks__/get-flat-index-metadata.mock';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { WorkspaceMigrationBuilderTestCase } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/types/workspace-migration-builder-test-case.type';
 
 export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBuilderTestCase[] =

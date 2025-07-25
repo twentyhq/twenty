@@ -10,6 +10,7 @@
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export { FieldMetadataType } from './FieldMetadataType';
+export type { FromTo } from './FromToType';
 export type { IsExactly } from './IsExactly';
 export type { NullablePartial } from './NullablePartial';
 export type { ObjectRecordsPermissions } from './ObjectRecordsPermissions';
