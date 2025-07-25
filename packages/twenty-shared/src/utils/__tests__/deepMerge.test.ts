@@ -1,5 +1,6 @@
 import { deepMerge } from "@/utils";
 
+// TODO Refactor too much auto generated
 describe('deepMerge', () => {
   describe('primitive values', () => {
     it.each<{
@@ -33,8 +34,8 @@ describe('deepMerge', () => {
 
   describe('null and undefined handling', () => {
     it.each<{
-      source: { value?: string | null };
-      target: { value?: string | null | undefined };
+      source: { value: string | null };
+      target: { value: string | null | undefined };
       expected: { value?: string | null };
       description: string;
     }>([
@@ -68,12 +69,7 @@ describe('deepMerge', () => {
       expect(deepMerge(source, target)).toEqual(expected);
     });
 
-    it.each<{
-      source: any;
-      target: any;
-      expected: any;
-      description: string;
-    }>([
+    it.each([
       {
         source: null,
         target: { value: 'world' },

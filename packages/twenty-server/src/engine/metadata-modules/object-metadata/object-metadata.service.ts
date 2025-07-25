@@ -6,11 +6,11 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
-    FindManyOptions,
-    FindOneOptions,
-    In,
-    QueryRunner,
-    Repository,
+  FindManyOptions,
+  FindOneOptions,
+  In,
+  QueryRunner,
+  Repository,
 } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -20,21 +20,21 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import {
-    UpdateObjectPayload,
-    UpdateOneObjectInput,
+  UpdateObjectPayload,
+  UpdateOneObjectInput,
 } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
-    ObjectMetadataException,
-    ObjectMetadataExceptionCode,
+  ObjectMetadataException,
+  ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { ObjectMetadataFieldRelationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-field-relation.service';
 import { ObjectMetadataMigrationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-migration.service';
 import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-related-records.service';
 import { buildDefaultFieldsForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-fields-for-custom-object.util';
 import {
-    validateLowerCasedAndTrimmedStringsAreDifferentOrThrow,
-    validateObjectMetadataInputLabelsOrThrow,
-    validateObjectMetadataInputNamesOrThrow,
+  validateLowerCasedAndTrimmedStringsAreDifferentOrThrow,
+  validateObjectMetadataInputLabelsOrThrow,
+  validateObjectMetadataInputNamesOrThrow,
 } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import { SearchVectorService } from 'src/engine/metadata-modules/search-vector/search-vector.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -56,9 +56,10 @@ import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sy
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
+import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
 import {
-    CreateObjectInput,
-    fromCreateObjectInputToFlatObjectMetadata,
+  CreateObjectInput,
+  fromCreateObjectInputToFlatObjectMetadata,
 } from './dtos/create-object.input';
 
 @Injectable()
@@ -80,6 +81,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationBuilderV2: WorkspaceMigrationBuilderV2Service,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceMigrationRunnerV2Service: WorkspaceMigrationRunnerV2Service,
   ) {
     super(objectMetadataRepository);
   }
@@ -145,8 +147,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           toValidate: [createdRawFlatObjectMetadata],
         });
 
-        // Everything validated from here
-        this.workspaceMigrationBuilderV2.build({
+        const workpsaceMigration = this.workspaceMigrationBuilderV2.build({
           objectMetadataFromToInputs: {
             from: existingFlatObjectMetadatas,
             to: mergeTwoFlatFieldObjectMetadatas({
@@ -156,9 +157,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           },
           workspaceId: objectMetadataInput.workspaceId, // Where does this comes from ?
         });
-
-        // call workspace migration runner
-        // this.workspaceMigrationRunner.run();
+        await this.workspaceMigrationRunnerV2Service.run(workpsaceMigration);
 
         // What to return exactly ? We now won't have access to the entity directly
         // We could still retrieve it afterwards using a find on object metadata id or return a flat now

@@ -11,7 +11,7 @@
  * @returns A new merged object
  */
 export const deepMerge = <T extends object>(
-  source: T,
+  source: Required<T>,
   target: Partial<T>,
 ): T => {
   // Handle null/undefined cases

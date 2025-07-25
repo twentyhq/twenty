@@ -12,34 +12,34 @@ export const mergeTwoFlatFieldObjectMetadatas = ({
   destFlatObjectMetadatas,
   toMergeFlatObjectMetadatas,
 }: ToMerge<FlatObjectMetadata[], 'object'>): FlatObjectMetadata[] => {
-  const initialObjectAccumaltor = fromArrayToUniqueKeyRecord({
+  const initialObjectAccumulator = fromArrayToUniqueKeyRecord({
     array: destFlatObjectMetadatas,
     uniqueKey: 'uniqueIdentifier',
   });
 
   const mergedUniqueIdentifierFlatObjectMetadataRecord =
     toMergeFlatObjectMetadatas.reduce<Record<string, FlatObjectMetadata>>(
-      (acc, toMergeflatObjectMetadata) => {
+      (acc, toMergeFlatObjectMetadata) => {
         const flatObjectUniqueIdentifier =
-          toMergeflatObjectMetadata.uniqueIdentifier;
-        const accumulatorCurrentOccurence: FlatObjectMetadata | undefined =
-          initialObjectAccumaltor[flatObjectUniqueIdentifier];
+          toMergeFlatObjectMetadata.uniqueIdentifier;
+        const accumulatorCurrentOccurrence: FlatObjectMetadata | undefined =
+          initialObjectAccumulator[flatObjectUniqueIdentifier];
 
-        if (!isDefined(accumulatorCurrentOccurence)) {
+        if (!isDefined(accumulatorCurrentOccurrence)) {
           return {
             ...acc,
-            [flatObjectUniqueIdentifier]: toMergeflatObjectMetadata,
+            [flatObjectUniqueIdentifier]: toMergeFlatObjectMetadata,
           };
         }
 
         const {
           flatFieldMetadatas: destFlatFieldMetadatas,
           ...destFlatObjectMetadataRest
-        } = accumulatorCurrentOccurence;
+        } = accumulatorCurrentOccurrence;
         const {
           flatFieldMetadatas: toMergeFlatFieldMetadatas,
           ...toMergeFlatObjectMetadataRest
-        } = toMergeflatObjectMetadata;
+        } = toMergeFlatObjectMetadata;
         const mergedFlatObjectMetadata: FlatObjectMetadata = {
           ...deepMerge(
             destFlatObjectMetadataRest,
@@ -57,7 +57,7 @@ export const mergeTwoFlatFieldObjectMetadatas = ({
           [flatObjectUniqueIdentifier]: mergedFlatObjectMetadata,
         };
       },
-      initialObjectAccumaltor,
+      initialObjectAccumulator,
     );
 
   return Object.values(mergedUniqueIdentifierFlatObjectMetadataRecord);

@@ -18,10 +18,10 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = <
    * private depth bottleneck
    */
   _depth?: number,
-  // This is intented to be abstract
+  // This is intended to be abstract
 ): FlatFieldMetadata => {
   if (isDefined(_depth) && _depth > 1) {
-    throw new Error('TODO prastoin entering a possible infinite loop');
+    throw new Error('fromFieldMetadataEntityToFlatFieldMetadata entering a possible infinite loop');
   }
 
   const fieldMetadataWithoutRelations = removePropertiesFromRecord(

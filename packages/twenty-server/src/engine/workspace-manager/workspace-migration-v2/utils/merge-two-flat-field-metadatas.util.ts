@@ -1,4 +1,8 @@
-import { deepMerge, fromArrayToUniqueKeyRecord } from 'twenty-shared/utils';
+import {
+  deepMerge,
+  fromArrayToUniqueKeyRecord,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
 import { ToMerge } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/to-merge.type';
@@ -20,7 +24,9 @@ export const mergeTwoFlatFieldMetadatas = ({
 
       return {
         ...acc,
-        [fieldUniqueIdentifier]: deepMerge(destFieldMetadata, flatFieldToMerge),
+        [fieldUniqueIdentifier]: isDefined(destFieldMetadata)
+          ? deepMerge(destFieldMetadata, flatFieldToMerge)
+          : flatFieldToMerge,
       };
     }, initialRecordAccumulator);
 

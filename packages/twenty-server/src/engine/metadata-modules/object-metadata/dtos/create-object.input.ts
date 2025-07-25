@@ -112,11 +112,11 @@ export const fromCreateObjectInputToFlatObjectMetadata = (
   return {
     createdAt,
     updatedAt: createdAt,
-    dataSourceId: createObjectInput.dataSourceId, // IS it enough ?
+    dataSourceId: createObjectInput.dataSourceId, // TODO is it enough ?
     description: createObjectInput.description ?? null,
-    duplicateCriteria: [], // IDK
+    duplicateCriteria: [], // TODO is it enough ?
     flatFieldMetadatas: Object.values(baseCustomFlatFieldMetadatas),
-    flatIndexMetadatas: [], // IDK
+    flatIndexMetadatas: [], // TODO is it enough ?
     icon: createObjectInput.icon ?? null,
     id: objectMetadataId,
     imageIdentifierFieldMetadataId: null,

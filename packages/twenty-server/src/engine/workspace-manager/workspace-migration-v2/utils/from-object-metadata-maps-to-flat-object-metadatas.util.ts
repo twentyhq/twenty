@@ -13,7 +13,6 @@ export const fromObjectMetadataMapsToFlatObjectMetadatas = (
     const occurrence = objectMetadataMaps.byId[objectMetadataId];
 
     if (!isDefined(occurrence)) {
-      // Could throw ? quite overreacted tho
       return [];
     }
 
