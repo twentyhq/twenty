@@ -43,7 +43,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "lingui extract --overwrite"
+        "command": "lingui extract --overwrite --clean"
       }
     },
     "lingui:compile": {

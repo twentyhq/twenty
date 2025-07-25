@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
   FindManyOptions,
@@ -42,6 +43,7 @@ import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/works
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
@@ -471,9 +473,15 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
 
       const fieldMetadataIds = objectMetadata.fields.map((field) => field.id);
-      const relationMetadataIds = objectMetadata.fields
-        .map((field) => field.relationTargetFieldMetadata?.id)
-        .filter(isDefined);
+      const relationMetadataIds = objectMetadata.fields.flatMap((field) => {
+        if (
+          isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION)
+        ) {
+          return field.relationTargetFieldMetadata.id;
+        }
+
+        return [];
+      });
 
       await fieldMetadataRepository.delete({
         id: In(fieldMetadataIds.concat(relationMetadataIds)),

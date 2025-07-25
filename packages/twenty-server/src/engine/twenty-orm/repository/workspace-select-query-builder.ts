@@ -2,9 +2,11 @@ import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import { EntityTarget, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
+import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -28,18 +30,21 @@ export class WorkspaceSelectQueryBuilder<
   shouldBypassPermissionChecks: boolean;
   internalContext: WorkspaceInternalContext;
   authContext?: AuthContext;
+  featureFlagMap?: FeatureFlagMap;
   constructor(
     queryBuilder: SelectQueryBuilder<T>,
     objectRecordsPermissions: ObjectRecordsPermissions,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
     authContext?: AuthContext,
+    featureFlagMap?: FeatureFlagMap,
   ) {
     super(queryBuilder);
     this.objectRecordsPermissions = objectRecordsPermissions;
     this.internalContext = internalContext;
     this.shouldBypassPermissionChecks = shouldBypassPermissionChecks;
     this.authContext = authContext;
+    this.featureFlagMap = featureFlagMap;
   }
 
   getFindOptions() {
@@ -55,6 +60,7 @@ export class WorkspaceSelectQueryBuilder<
       this.internalContext,
       this.shouldBypassPermissionChecks,
       this.authContext,
+      this.featureFlagMap,
     ) as this;
   }
 
@@ -204,6 +210,7 @@ export class WorkspaceSelectQueryBuilder<
       this.internalContext,
       this.shouldBypassPermissionChecks,
       this.authContext,
+      this.featureFlagMap,
     );
   }
 
@@ -226,6 +233,7 @@ export class WorkspaceSelectQueryBuilder<
       this.internalContext,
       this.shouldBypassPermissionChecks,
       this.authContext,
+      this.featureFlagMap,
     );
   }
 
@@ -238,6 +246,7 @@ export class WorkspaceSelectQueryBuilder<
       this.internalContext,
       this.shouldBypassPermissionChecks,
       this.authContext,
+      this.featureFlagMap,
     );
   }
 
@@ -250,6 +259,7 @@ export class WorkspaceSelectQueryBuilder<
       this.internalContext,
       this.shouldBypassPermissionChecks,
       this.authContext,
+      this.featureFlagMap,
     );
   }
 
@@ -262,6 +272,7 @@ export class WorkspaceSelectQueryBuilder<
       this.internalContext,
       this.shouldBypassPermissionChecks,
       this.authContext,
+      this.featureFlagMap,
     );
   }
 
@@ -273,12 +284,16 @@ export class WorkspaceSelectQueryBuilder<
   }
 
   private validatePermissions(): void {
-    validateQueryIsPermittedOrThrow(
-      this.expressionMap,
-      this.objectRecordsPermissions,
-      this.internalContext.objectMetadataMaps,
-      this.shouldBypassPermissionChecks,
-    );
+    const isFieldPermissionsEnabled =
+      this.featureFlagMap?.[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
+
+    validateQueryIsPermittedOrThrow({
+      expressionMap: this.expressionMap,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+      objectMetadataMaps: this.internalContext.objectMetadataMaps,
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      isFieldPermissionsEnabled,
+    });
   }
 
   private getMainAliasTarget(): EntityTarget<T> {

@@ -6,7 +6,6 @@ import { capitalize, isDefined } from 'twenty-shared/utils';
 import { QueryRunner, Repository } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
 
-import { FieldMetadataDefaultSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -228,7 +227,7 @@ export class ObjectMetadataFieldRelationService {
       id: targetFieldMetadataToUpdate.id,
       ...targetFieldMetadataUpdateData,
       settings: {
-        ...(targetFieldMetadataToUpdate.settings as FieldMetadataDefaultSettings),
+        ...targetFieldMetadataToUpdate.settings,
         ...(isTargetFieldMetadataManyToOneRelation
           ? {
               joinColumnName: `${sourceObjectMetadata.nameSingular}Id`,
@@ -260,7 +259,7 @@ export class ObjectMetadataFieldRelationService {
       id: sourceFieldMetadataToUpdate.id,
       ...sourceFieldMetadataUpdateData,
       settings: {
-        ...(sourceFieldMetadataToUpdate.settings as FieldMetadataDefaultSettings),
+        ...sourceFieldMetadataToUpdate.settings,
         ...(isSourceFieldMetadataManyToOneRelation
           ? {
               joinColumnName: `${targetObjectMetadata.nameSingular}Id`,

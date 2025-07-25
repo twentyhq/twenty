@@ -7,6 +7,8 @@ type Leaf = {
   label?: string;
   description?: string;
   value: any;
+  fieldMetadataId?: string;
+  isCompositeSubField?: boolean;
 };
 
 type Node = {
@@ -16,6 +18,8 @@ type Node = {
   label?: string;
   value: OutputSchema;
   description?: string;
+  fieldMetadataId?: string;
+  isCompositeSubField?: boolean;
 };
 
 type Link = {
@@ -28,7 +32,11 @@ type Link = {
 export type BaseOutputSchema = Record<string, Leaf | Node>;
 
 export type RecordOutputSchema = {
-  object: { nameSingular: string; fieldIdName: string } & Leaf;
+  object: {
+    nameSingular: string;
+    fieldIdName: string;
+    objectMetadataId: string;
+  } & Leaf;
   fields: BaseOutputSchema;
   _outputSchemaType: 'RECORD';
 };

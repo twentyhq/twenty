@@ -21,7 +21,7 @@ import { CompositeInputTypeDefinitionFactory } from 'src/engine/api/graphql/work
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 // TODO: find a way to prevent conflict between handlers executing logic on object relations
 // And this factory that is also executing logic on object relations
@@ -136,10 +136,7 @@ export class QueryResultGettersFactory {
       )
       .filter(isDefined)
       .filter((fieldMetadata) =>
-        isFieldMetadataInterfaceOfType(
-          fieldMetadata,
-          FieldMetadataType.RELATION,
-        ),
+        isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION),
       );
 
     const relationFieldsProcessedMap = {} as Record<

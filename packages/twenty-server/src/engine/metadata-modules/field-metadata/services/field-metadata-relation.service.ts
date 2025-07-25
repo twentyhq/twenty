@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
@@ -28,7 +28,7 @@ import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 export class RelationCreationPayloadValidation {
@@ -50,7 +50,7 @@ type ValidateFieldMetadataArgs<T extends UpdateFieldInput | CreateFieldInput> =
     fieldMetadataType: FieldMetadataType;
     fieldMetadataInput: T;
     objectMetadata: ObjectMetadataItemWithFieldMaps;
-    existingFieldMetadata?: FieldMetadataInterface;
+    existingFieldMetadata?: FieldMetadataEntity;
     objectMetadataMaps: ObjectMetadataMaps;
   };
 
@@ -91,6 +91,7 @@ export class FieldMetadataRelationService {
       label: relationCreationPayload.targetFieldLabel,
       icon: relationCreationPayload.targetFieldIcon,
       workspaceId: fieldMetadataInput.workspaceId,
+      defaultValue: fieldMetadataInput.defaultValue,
     });
 
     const targetFieldMetadataToCreateWithRelation =
@@ -242,7 +243,7 @@ export class FieldMetadataRelationService {
   async findCachedFieldMetadataRelation(
     fieldMetadataItems: Array<
       Pick<
-        FieldMetadataInterface,
+        FieldMetadataEntity,
         | 'id'
         | 'type'
         | 'objectMetadataId'
@@ -313,6 +314,7 @@ export class FieldMetadataRelationService {
     });
   }
 
+  // TODO refactor and strictly type
   computeCustomRelationFieldMetadataForCreation({
     fieldMetadataInput,
     relationCreationPayload,
@@ -323,22 +325,32 @@ export class FieldMetadataRelationService {
     joinColumnName: string;
   }) {
     const isRelation =
-      isFieldMetadataInterfaceOfType(
+      isFieldMetadataEntityOfType(
         fieldMetadataInput,
         FieldMetadataType.RELATION,
       ) ||
-      isFieldMetadataInterfaceOfType(
+      isFieldMetadataEntityOfType(
         fieldMetadataInput,
         FieldMetadataType.MORPH_RELATION,
       );
 
+    const defaultIcon = 'IconRelationOneToMany';
+
     const isManyToOne =
       isRelation && relationCreationPayload?.type === RelationType.MANY_TO_ONE;
 
-    const isOneToMany =
-      isRelation && relationCreationPayload?.type === RelationType.ONE_TO_MANY;
-
-    const defaultIcon = 'IconRelationOneToMany';
+    const settings = isManyToOne
+      ? {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.SET_NULL,
+          joinColumnName,
+        }
+      : {
+          ...(fieldMetadataInput.settings as FieldMetadataSettings<
+            FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+          >),
+          relationType: RelationType.ONE_TO_MANY,
+        };
 
     return {
       ...fieldMetadataInput,
@@ -346,21 +358,7 @@ export class FieldMetadataRelationService {
       relationCreationPayload,
       relationTargetObjectMetadataId:
         relationCreationPayload?.targetObjectMetadataId,
-      settings: {
-        ...fieldMetadataInput.settings,
-        ...(isOneToMany
-          ? {
-              relationType: RelationType.ONE_TO_MANY,
-            }
-          : {}),
-        ...(isManyToOne
-          ? {
-              relationType: RelationType.MANY_TO_ONE,
-              onDelete: RelationOnDeleteAction.SET_NULL,
-              joinColumnName,
-            }
-          : {}),
-      },
+      settings,
     };
   }
 }

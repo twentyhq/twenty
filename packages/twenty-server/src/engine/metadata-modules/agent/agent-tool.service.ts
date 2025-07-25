@@ -26,9 +26,9 @@ export class AgentToolService {
     try {
       const agent = await this.agentService.findOneAgent(agentId, workspaceId);
 
-      const actionTools = this.toolAdapterService.getCoreTools();
-
       if (!agent.roleId) {
+        const actionTools = await this.toolAdapterService.getTools();
+
         return actionTools;
       }
 
@@ -42,6 +42,11 @@ export class AgentToolService {
       if (!role) {
         return {};
       }
+
+      const actionTools = await this.toolAdapterService.getTools(
+        role.id,
+        workspaceId,
+      );
 
       const databaseTools = await this.toolService.listTools(
         role.id,

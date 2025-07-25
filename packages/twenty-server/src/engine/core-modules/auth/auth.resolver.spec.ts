@@ -15,6 +15,8 @@ import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-u
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
+import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -113,6 +115,14 @@ describe('AuthResolver', () => {
         },
         {
           provide: SSOService,
+          useValue: {},
+        },
+        {
+          provide: TwoFactorAuthenticationService,
+          useValue: {},
+        },
+        {
+          provide: TwentyConfigService,
           useValue: {},
         },
         // {

@@ -4,6 +4,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 export const createMorphRelationBetweenObjects = async ({
@@ -51,13 +52,6 @@ export const createMorphRelationBetweenObjects = async ({
     ],
   };
 
-  // TODO: add morphRelations to the query once available
-  // morphRelations {
-  //   type
-  //   targetFieldMetadata {
-  //     id
-  //   }
-  // }
   const {
     data: { createOneField: createdFieldPerson },
   } = await createOneFieldMetadata({
@@ -72,9 +66,20 @@ export const createMorphRelationBetweenObjects = async ({
               id
               nameSingular
             }
+            morphRelations {
+              type
+              targetFieldMetadata {
+                id
+              }
+              targetObjectMetadata {
+                id
+              }
+            }
           `,
     expectToFail: false,
   });
 
-  return createdFieldPerson as FieldMetadataEntity<FieldMetadataType.MORPH_RELATION>;
+  return createdFieldPerson as FieldMetadataEntity<FieldMetadataType.MORPH_RELATION> & {
+    morphRelations: RelationDTO[];
+  };
 };

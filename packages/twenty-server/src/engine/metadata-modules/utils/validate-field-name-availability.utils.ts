@@ -59,6 +59,9 @@ export const validateFieldNameAvailabilityOrThrow = (
     throw new InvalidMetadataException(
       `Name "${name}" is not available`,
       InvalidMetadataExceptionCode.RESERVED_KEYWORD,
+      {
+        userFriendlyMessage: t`This name is not available.`,
+      },
     );
   }
 };

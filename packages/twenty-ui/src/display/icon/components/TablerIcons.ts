@@ -267,6 +267,7 @@ export {
   IconSettings,
   IconSettings2,
   IconSettingsAutomation,
+  IconShield,
   IconSitemap,
   IconSlash,
   IconSortAZ,

@@ -257,6 +257,7 @@ export const useBuildSpreadsheetImportFields = () => {
         } else {
           spreadsheetImportFields.push(
             ...buildSpreadsheetImportField(uniqueConstraintField, {
+              Icon: getIcon(fieldMetadataItem.icon),
               isNestedField: true,
               isCompositeSubField: false,
               isRelationConnectField: true,
