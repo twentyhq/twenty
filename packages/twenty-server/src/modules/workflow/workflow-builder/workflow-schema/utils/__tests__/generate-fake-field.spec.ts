@@ -158,12 +158,16 @@ describe('generateFakeField', () => {
         type: FieldMetadataType.LINKS,
         value: {
           label: {
+            fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
+            isCompositeSubField: true,
             isLeaf: true,
             type: FieldMetadataType.TEXT,
             label: 'Label',
             value: 'Fake Label',
           },
           url: {
+            fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
+            isCompositeSubField: true,
             isLeaf: true,
             type: FieldMetadataType.TEXT,
             label: 'Url',
@@ -199,12 +203,16 @@ describe('generateFakeField', () => {
         type: FieldMetadataType.CURRENCY,
         value: {
           amount: {
+            fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
+            isCompositeSubField: true,
             isLeaf: true,
             type: FieldMetadataType.NUMBER,
             label: 'Amount',
             value: 100,
           },
           currencyCode: {
+            fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
+            isCompositeSubField: true,
             isLeaf: true,
             type: FieldMetadataType.TEXT,
             label: 'Currency Code',
