@@ -170,6 +170,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isDefined(selectedRecord) && !selectedRecord.isRemote,
     availableOn: [ActionViewType.SHOW_PAGE],
     component: <ExportSingleRecordAction />,
+    requiredPermissionFlag: PermissionFlagType.EXPORT_CSV,
   },
   [MultipleRecordsActionKeys.EXPORT]: {
     type: ActionType.Standard,
