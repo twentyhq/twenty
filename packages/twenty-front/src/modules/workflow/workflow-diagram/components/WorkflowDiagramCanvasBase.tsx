@@ -101,10 +101,10 @@ export const WorkflowDiagramCanvasBase = ({
   tagText,
   onInit,
   onConnect,
+  onDeleteEdge,
   onNodeDragStop,
   handlePaneContextMenu,
   nodesConnectable = false,
-  edgesDeletable = false,
 }: {
   nodeTypes: Partial<
     Record<
@@ -134,9 +134,9 @@ export const WorkflowDiagramCanvasBase = ({
   tagText: string;
   onInit?: () => void;
   onConnect?: (params: Connection) => void;
+  onDeleteEdge?: (edge: WorkflowDiagramEdge) => void;
   onNodeDragStop?: OnNodeDrag<WorkflowDiagramNode>;
   nodesConnectable?: boolean;
-  edgesDeletable?: boolean;
   handlePaneContextMenu?: ({
     x,
     y,
@@ -390,9 +390,12 @@ export const WorkflowDiagramCanvasBase = ({
     WorkflowDiagramNode,
     WorkflowDiagramEdge
   > = async (diagram) => {
-    if (edgesDeletable) {
+    if (isDefined(onDeleteEdge)) {
       // Removing nodes from delete events
       diagram.nodes.length = 0;
+      for (const edge of diagram.edges) {
+        onDeleteEdge(edge);
+      }
       return diagram;
     }
     return false;
@@ -433,7 +436,7 @@ export const WorkflowDiagramCanvasBase = ({
         proOptions={{ hideAttribution: true }}
         multiSelectionKeyCode={null}
         nodesFocusable={false}
-        edgesFocusable={edgesDeletable}
+        edgesFocusable={isDefined(onDeleteEdge)}
         panOnDrag={workflowDiagramPanOnDrag}
         onPaneContextMenu={onPaneContextMenu}
         nodesConnectable={nodesConnectable}

@@ -5,17 +5,17 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useMutation } from '@apollo/client';
-import {
-  CreateWorkflowVersionEdgeMutation,
-  CreateWorkflowVersionEdgeMutationVariables,
-} from '~/generated-metadata/graphql';
-import { CREATE_WORKFLOW_VERSION_EDGE } from '@/workflow/graphql/mutations/createWorkflowVersionEdge';
 import { WorkflowVersionEdgeInput } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
+import { DELETE_WORKFLOW_VERSION_EDGE } from '@/workflow/graphql/mutations/deleteWorkflowVersionEdge';
+import {
+  DeleteWorkflowVersionEdgeMutation,
+  DeleteWorkflowVersionEdgeMutationVariables,
+} from '~/generated-metadata/graphql';
 
-export const useCreateWorkflowVersionEdge = () => {
+export const useDeleteWorkflowVersionEdge = () => {
   const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -31,16 +31,16 @@ export const useCreateWorkflowVersionEdge = () => {
   });
 
   const [mutate] = useMutation<
-    CreateWorkflowVersionEdgeMutation,
-    CreateWorkflowVersionEdgeMutationVariables
-  >(CREATE_WORKFLOW_VERSION_EDGE, { client: apolloCoreClient });
+    DeleteWorkflowVersionEdgeMutation,
+    DeleteWorkflowVersionEdgeMutationVariables
+  >(DELETE_WORKFLOW_VERSION_EDGE, { client: apolloCoreClient });
 
-  const createWorkflowVersionEdge = async (input: WorkflowVersionEdgeInput) => {
+  const deleteWorkflowVersionEdge = async (input: WorkflowVersionEdgeInput) => {
     const result = await mutate({ variables: { input } });
 
-    const createdEdge = result?.data?.createWorkflowVersionEdge;
+    const deletedEdge = result?.data?.deleteWorkflowVersionEdge;
 
-    if (!isDefined(createdEdge)) {
+    if (!isDefined(deletedEdge)) {
       return;
     }
 
@@ -59,7 +59,9 @@ export const useCreateWorkflowVersionEdge = () => {
         if (existingStep.id === source) {
           return {
             ...existingStep,
-            nextStepIds: [...(existingStep.nextStepIds ?? []), target],
+            nextStepIds: existingStep.nextStepIds?.filter(
+              (nextStepId) => nextStepId !== target,
+            ),
           };
         }
         return existingStep;
@@ -86,5 +88,5 @@ export const useCreateWorkflowVersionEdge = () => {
     return result;
   };
 
-  return { createWorkflowVersionEdge };
+  return { deleteWorkflowVersionEdge };
 };

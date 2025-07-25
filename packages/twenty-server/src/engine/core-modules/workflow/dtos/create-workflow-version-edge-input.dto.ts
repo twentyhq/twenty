@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
-export class CreateWorkflowVersionEdgeInput {
+export class WorkflowVersionEdgeInput {
   @Field(() => String, {
     description: 'Workflow version ID',
     nullable: false,
