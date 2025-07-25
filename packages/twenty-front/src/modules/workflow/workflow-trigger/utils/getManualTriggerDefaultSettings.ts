@@ -1,7 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
-  WorkflowManualTriggerAvailability,
-  WorkflowManualTriggerSettings,
+    WorkflowManualTriggerAvailability,
+    WorkflowManualTriggerSettings,
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
@@ -21,6 +21,7 @@ export const getManualTriggerDefaultSettings = ({
         objectType: undefined,
         outputSchema: {},
         icon: icon || COMMAND_MENU_DEFAULT_ICON,
+        isPinned: false,
       };
     }
     case 'WHEN_RECORD_SELECTED': {
@@ -28,6 +29,7 @@ export const getManualTriggerDefaultSettings = ({
         objectType: activeNonSystemObjectMetadataItems[0].nameSingular,
         outputSchema: {},
         icon: icon || COMMAND_MENU_DEFAULT_ICON,
+        isPinned: false,
       };
     }
   }

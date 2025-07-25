@@ -13,6 +13,7 @@ it('returns settings for a manual trigger that can be activated from any where',
     objectType: undefined,
     outputSchema: {},
     icon: COMMAND_MENU_DEFAULT_ICON,
+    isPinned: false,
   });
 });
 
@@ -27,6 +28,7 @@ it('returns settings for a manual trigger that can be activated from any where',
     objectType: generatedMockObjectMetadataItems[0].nameSingular,
     outputSchema: {},
     icon: 'IconTest',
+    isPinned: false,
   });
 });
 
@@ -40,6 +42,7 @@ it('returns settings for WHEN_RECORD_SELECTED with default icon when no custom i
     objectType: generatedMockObjectMetadataItems[0].nameSingular,
     outputSchema: {},
     icon: COMMAND_MENU_DEFAULT_ICON,
+    isPinned: false,
   });
 });
 
