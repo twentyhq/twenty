@@ -57,10 +57,8 @@ import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sy
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
-import {
-  CreateObjectInput,
-  fromCreateObjectInputToFlatObjectMetadata,
-} from './dtos/create-object.input';
+import { fromCreateObjectInputToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata.util';
+import { CreateObjectInput } from './dtos/create-object.input';
 
 @Injectable()
 export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEntity> {

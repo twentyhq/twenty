@@ -7,6 +7,10 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+    ObjectMetadataException,
+    ObjectMetadataExceptionCode,
+} from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { Expect } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,7 +26,7 @@ type ValidateOneFieldMetadataArgs = {
 
 type FailedFlatFieldMetadataValidation = {
   status: 'fail';
-  error: FieldMetadataException;
+  error: FieldMetadataException | ObjectMetadataException;
 };
 
 type SuccessfulFlatFieldMetadataValidation = {
@@ -39,7 +43,10 @@ type FlatFieldMetadataValidationResult =
 export class FlatFieldMetadataValidatorService {
   constructor(private readonly featureFlagService: FeatureFlagService) {}
 
-  // This should return a status but never throw directly ?
+  /**
+   * This method only validates the end data, it should never mutate anything
+   * Only returns exceptions to the caller
+   */
   async validateOneFlatFieldMetadata({
     existingFlatObjectMetadata,
     flatFieldMetadataToValidate,
@@ -66,6 +73,16 @@ export class FlatFieldMetadataValidatorService {
             ? 'Object metadata does not exist in both existing and about to be created object metadatass'
             : 'Object metadata does not exist',
           FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        ),
+      };
+    }
+
+    if (parentFlatObjectMetadata.isRemote === true) {
+      return {
+        status: 'fail',
+        error: new ObjectMetadataException(
+          'Remote objects are read-only',
+          ObjectMetadataExceptionCode.OBJECT_MUTATION_NOT_ALLOWED,
         ),
       };
     }
