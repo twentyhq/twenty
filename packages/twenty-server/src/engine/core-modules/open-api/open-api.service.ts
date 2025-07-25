@@ -192,7 +192,7 @@ export class OpenApiService {
         namePlural: 'webhooks',
       },
       {
-        nameSingular: 'apikey',
+        nameSingular: 'apiKey',
         namePlural: 'apiKeys',
       },
     ];
