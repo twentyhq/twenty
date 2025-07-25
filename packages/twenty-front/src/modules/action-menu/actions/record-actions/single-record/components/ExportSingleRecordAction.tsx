@@ -8,6 +8,7 @@ import { Action } from '@/action-menu/actions/components/Action';
 
 export const ExportSingleRecordAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+
   const contextStoreCurrentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
   );

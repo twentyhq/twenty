@@ -4,6 +4,7 @@ import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spr
 
 export const ImportRecordsNoSelectionRecordAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+
   const { openObjectRecordsSpreadsheetImportDialog } =
     useOpenObjectRecordsSpreadsheetImportDialog(
       objectMetadataItem.nameSingular,

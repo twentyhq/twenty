@@ -7,6 +7,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 
 export const ExportMultipleRecordsAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+
   const contextStoreCurrentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
   );
