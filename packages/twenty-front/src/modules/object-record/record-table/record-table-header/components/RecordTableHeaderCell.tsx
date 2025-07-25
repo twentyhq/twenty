@@ -137,7 +137,9 @@ export const RecordTableHeaderCell = ({
   >(null);
   const [resizedFieldKey, setResizedFieldKey] = useState<string | null>(null);
 
-  const { handleColumnsChange } = useTableColumns();
+  const { handleColumnsChange } = useTableColumns({
+    objectMetadataId: objectMetadataItem.id,
+  });
 
   const handleResizeHandlerStart = useCallback<PointerEventListener>(
     ({ x }) => {
