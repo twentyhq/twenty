@@ -42,9 +42,7 @@
       "runtimeArgs": [
         "nx",
         "run",
-        "twenty-server:command",
-        "my-command",
-        "--my-parameter value"
+        "twenty-server:start"
       ],
       "outputCapture": "std",
       "internalConsoleOptions": "openOnSessionStart",

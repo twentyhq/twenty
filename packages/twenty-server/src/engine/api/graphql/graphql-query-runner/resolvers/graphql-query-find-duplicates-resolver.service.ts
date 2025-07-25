@@ -67,7 +67,7 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
     if (executionArgs.args.ids) {
       objectRecords = (await existingRecordsQueryBuilder
         .where({ id: In(executionArgs.args.ids) })
-        .getMany()) as ObjectRecord[];
+        .getMany()) as ObjectRecord[]; // TODO
     } else if (executionArgs.args.data && !isEmpty(executionArgs.args.data)) {
       objectRecords = executionArgs.args.data;
     }

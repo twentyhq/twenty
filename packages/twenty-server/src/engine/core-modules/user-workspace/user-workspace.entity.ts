@@ -19,12 +19,12 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { TwoFactorAuthenticationMethodSummaryDto } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-method.dto';
+import { TwoFactorAuthenticationMethod } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
+import { ObjectPermissionsWithRestrictedFieldsDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permissions-with-restricted-fields.dto';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
-import { TwoFactorAuthenticationMethod } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
-import { TwoFactorAuthenticationMethodSummaryDto } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-method.dto';
 
 registerEnumType(SettingPermissionType, {
   name: 'SettingPermissionType',
@@ -105,8 +105,8 @@ export class UserWorkspace {
   })
   objectRecordsPermissions?: PermissionsOnAllObjectRecords[];
 
-  @Field(() => [ObjectPermissionDTO], { nullable: true })
-  objectPermissions?: ObjectPermissionDTO[];
+  @Field(() => [ObjectPermissionsWithRestrictedFieldsDTO], { nullable: true })
+  objectPermissions?: ObjectPermissionsWithRestrictedFieldsDTO[];
 
   @Field(() => [TwoFactorAuthenticationMethodSummaryDto], { nullable: true })
   twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummaryDto[];

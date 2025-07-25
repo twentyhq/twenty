@@ -1724,6 +1724,16 @@ export type ObjectPermissionInput = {
   objectMetadataId: Scalars['String'];
 };
 
+export type ObjectPermissionsWithRestrictedFields = {
+  __typename?: 'ObjectPermissionsWithRestrictedFields';
+  canDestroyObjectRecords?: Maybe<Scalars['Boolean']>;
+  canReadObjectRecords?: Maybe<Scalars['Boolean']>;
+  canSoftDeleteObjectRecords?: Maybe<Scalars['Boolean']>;
+  canUpdateObjectRecords?: Maybe<Scalars['Boolean']>;
+  objectMetadataId: Scalars['String'];
+  restrictedFields?: Maybe<Scalars['JSON']>;
+};
+
 export type ObjectRecordFilterInput = {
   and?: InputMaybe<Array<ObjectRecordFilterInput>>;
   createdAt?: InputMaybe<DateFilter>;
@@ -2657,7 +2667,7 @@ export type UserWorkspace = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['UUID'];
   locale: Scalars['String'];
-  objectPermissions?: Maybe<Array<ObjectPermission>>;
+  objectPermissions?: Maybe<Array<ObjectPermissionsWithRestrictedFields>>;
   /** @deprecated Use objectPermissions instead */
   objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
   settingsPermissions?: Maybe<Array<SettingPermissionType>>;

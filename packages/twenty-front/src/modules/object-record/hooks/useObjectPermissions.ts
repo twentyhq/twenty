@@ -2,10 +2,13 @@ import { useRecoilValue } from 'recoil';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isDefined } from 'twenty-shared/utils';
-import { ObjectPermission } from '~/generated-metadata/graphql';
+import { ObjectPermissionsWithRestrictedFields } from '~/generated/graphql';
 
 type useObjectPermissionsReturnType = {
-  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
+  objectPermissionsByObjectMetadataId: Record<
+    string,
+    ObjectPermissionsWithRestrictedFields
+  >;
 };
 
 export const useObjectPermissions = (): useObjectPermissionsReturnType => {
@@ -19,7 +22,10 @@ export const useObjectPermissions = (): useObjectPermissionsReturnType => {
   }
 
   const objectPermissionsByObjectMetadataId = objectPermissions?.reduce(
-    (acc: Record<string, ObjectPermission>, objectPermission) => {
+    (
+      acc: Record<string, ObjectPermissionsWithRestrictedFields>,
+      objectPermission,
+    ) => {
       acc[objectPermission.objectMetadataId] = objectPermission;
       return acc;
     },
