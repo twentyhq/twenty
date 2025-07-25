@@ -243,7 +243,7 @@ export class RelationNestedQueries {
       )) {
         entity = {
           ...entity,
-          [disconnectFieldName]: null,
+          [disconnectFieldName]: undefined,
           ...(disconnectObject[RELATION_NESTED_QUERY_KEYWORDS.DISCONNECT] ===
           true
             ? { [getAssociatedRelationFieldName(disconnectFieldName)]: null }

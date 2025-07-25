@@ -455,6 +455,35 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     expect(response.body.data.updatePerson).toBeDefined();
     expect(response.body.data.updatePerson.company?.id).toBeUndefined();
   });
+
+  it('should not disconnect a record from a MANY-TO-ONE relation - update One', async () => {
+    const createPersonToUpdateOperation = createOneOperationFactory({
+      objectMetadataSingularName: 'person',
+      gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
+      data: {
+        id: TEST_PERSON_1_ID,
+        companyId: TEST_COMPANY_1_ID,
+      },
+    });
+
+    await makeGraphqlAPIRequest(createPersonToUpdateOperation);
+
+    const graphqlOperation = updateOneOperationFactory({
+      objectMetadataSingularName: 'person',
+      gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
+      recordId: TEST_PERSON_1_ID,
+      data: {
+        company: {
+          disconnect: false,
+        },
+      },
+    });
+
+    const response = await makeGraphqlAPIRequest(graphqlOperation);
+
+    expect(response.body.data.updatePerson).toBeDefined();
+    expect(response.body.data.updatePerson.company?.id).toBe(TEST_COMPANY_1_ID);
+  });
   it('should disconnect a record from a MANY-TO-ONE relation - update Many', async () => {
     const createPeopleToUpdateOperation = createManyOperationFactory({
       objectMetadataSingularName: 'person',
