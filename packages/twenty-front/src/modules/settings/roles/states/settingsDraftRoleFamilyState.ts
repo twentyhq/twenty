@@ -13,9 +13,10 @@ export const settingsDraftRoleFamilyState = createFamilyState<Role, string>({
     canSoftDeleteAllObjectRecords: false,
     canUpdateAllObjectRecords: false,
     canUpdateAllSettings: false,
+    canAccessAllTools: false,
     isEditable: false,
     workspaceMembers: [],
-    settingPermissions: [],
+    permissionFlags: [],
     objectPermissions: [],
   },
 });

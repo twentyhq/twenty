@@ -141,6 +141,8 @@ export class MessageImportExceptionHandlerService {
       { id: messageChannel.id },
       'throttleFailureCount',
       1,
+      undefined,
+      ['throttleFailureCount', 'id'],
     );
 
     switch (syncStep) {

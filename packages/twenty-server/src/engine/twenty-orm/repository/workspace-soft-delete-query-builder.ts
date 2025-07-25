@@ -7,10 +7,12 @@ import {
 } from 'typeorm';
 import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBuilder';
 
+import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
@@ -29,6 +31,7 @@ export class WorkspaceSoftDeleteQueryBuilder<
   private shouldBypassPermissionChecks: boolean;
   private internalContext: WorkspaceInternalContext;
   private authContext?: AuthContext;
+  private featureFlagMap?: FeatureFlagMap;
 
   constructor(
     queryBuilder: SoftDeleteQueryBuilder<T>,
@@ -36,12 +39,14 @@ export class WorkspaceSoftDeleteQueryBuilder<
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
     authContext?: AuthContext,
+    featureFlagMap?: FeatureFlagMap,
   ) {
     super(queryBuilder);
     this.objectRecordsPermissions = objectRecordsPermissions;
     this.internalContext = internalContext;
     this.shouldBypassPermissionChecks = shouldBypassPermissionChecks;
     this.authContext = authContext;
+    this.featureFlagMap = featureFlagMap;
   }
 
   override clone(): this {
@@ -57,12 +62,14 @@ export class WorkspaceSoftDeleteQueryBuilder<
   }
 
   override async execute(): Promise<UpdateResult> {
-    validateQueryIsPermittedOrThrow(
-      this.expressionMap,
-      this.objectRecordsPermissions,
-      this.internalContext.objectMetadataMaps,
-      this.shouldBypassPermissionChecks,
-    );
+    validateQueryIsPermittedOrThrow({
+      expressionMap: this.expressionMap,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+      objectMetadataMaps: this.internalContext.objectMetadataMaps,
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      isFieldPermissionsEnabled:
+        this.featureFlagMap?.[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED],
+    });
 
     const mainAliasTarget = this.getMainAliasTarget();
 

@@ -22,14 +22,16 @@ import { useAreViewFiltersDifferentFromRecordFilters } from '@/views/hooks/useAr
 import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreViewSortsDifferentFromRecordSorts';
 
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { AnyFieldSearchDropdownButton } from '@/views/components/AnyFieldSearchDropdownButton';
 import { ANY_FIELD_SEARCH_DROPDOWN_ID } from '@/views/constants/AnyFieldSearchDropdownId';
+import { useApplyCurrentViewAnyFieldFilterToAnyFieldFilter } from '@/views/hooks/useApplyCurrentViewAnyFieldFilterToAnyFieldFilter';
 import { useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups } from '@/views/hooks/useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups';
 import { useAreViewFilterGroupsDifferentFromRecordFilterGroups } from '@/views/hooks/useAreViewFilterGroupsDifferentFromRecordFilterGroups';
+import { useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter } from '@/views/hooks/useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter';
 import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpandedComponentState';
-import { viewAnyFieldSearchValueComponentState } from '@/views/states/viewAnyFieldSearchValueComponentState';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -123,8 +125,8 @@ export const ViewBarDetails = ({
     currentRecordSortsComponentState,
   );
 
-  const viewAnyFieldSearchValue = useRecoilComponentValueV2(
-    viewAnyFieldSearchValueComponentState,
+  const anyFieldFilterValue = useRecoilComponentValueV2(
+    anyFieldFilterValueComponentState,
   );
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
@@ -144,11 +146,8 @@ export const ViewBarDetails = ({
   const { viewSortsAreDifferentFromRecordSorts } =
     useAreViewSortsDifferentFromRecordSorts();
 
-  const canResetView =
-    (viewFiltersAreDifferentFromRecordFilters ||
-      viewSortsAreDifferentFromRecordSorts ||
-      viewFilterGroupsAreDifferentFromRecordFilterGroups) &&
-    !hasFiltersQueryParams;
+  const { viewAnyFieldFilterDifferentFromCurrentAnyFieldFilter } =
+    useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter();
 
   const { checkIsSoftDeleteFilter } = useCheckIsSoftDeleteFilter();
 
@@ -170,6 +169,9 @@ export const ViewBarDetails = ({
   const { applyCurrentViewFiltersToCurrentRecordFilters } =
     useApplyCurrentViewFiltersToCurrentRecordFilters();
 
+  const { applyCurrentViewAnyFieldFilterToAnyFieldFilter } =
+    useApplyCurrentViewAnyFieldFilterToAnyFieldFilter();
+
   const { applyCurrentViewSortsToCurrentRecordSorts } =
     useApplyCurrentViewSortsToCurrentRecordSorts();
 
@@ -177,6 +179,7 @@ export const ViewBarDetails = ({
     applyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
     applyCurrentViewFiltersToCurrentRecordFilters();
     applyCurrentViewSortsToCurrentRecordSorts();
+    applyCurrentViewAnyFieldFilterToAnyFieldFilter();
     toggleSoftDeleteFilterState(false);
   };
 
@@ -188,8 +191,15 @@ export const ViewBarDetails = ({
     ANY_FIELD_SEARCH_DROPDOWN_ID,
   );
 
+  const canResetView =
+    (viewFiltersAreDifferentFromRecordFilters ||
+      viewSortsAreDifferentFromRecordSorts ||
+      viewFilterGroupsAreDifferentFromRecordFilterGroups ||
+      viewAnyFieldFilterDifferentFromCurrentAnyFieldFilter) &&
+    !hasFiltersQueryParams;
+
   const shouldShowAnyFieldSearchChip =
-    isNonEmptyString(viewAnyFieldSearchValue) || isAnyFieldSearchDropdownOpen;
+    isNonEmptyString(anyFieldFilterValue) || isAnyFieldSearchDropdownOpen;
 
   const shouldExpandViewBar =
     shouldShowAnyFieldSearchChip ||

@@ -5,7 +5,7 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 
 import { fieldTextMock } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -561,17 +561,17 @@ describe('roles permissions', () => {
       });
     });
 
-    describe('upsertSettingPermissions', () => {
+    describe('upsertPermissionFlags', () => {
       const upsertSettingPermissionsMutation = ({
         roleId,
       }: {
         roleId: string;
       }) => `
-      mutation UpsertSettingPermissions {
-          upsertSettingPermissions(upsertSettingPermissionsInput: {roleId: "${roleId}", settingPermissionKeys: [${SettingPermissionType.DATA_MODEL}]}) {
+      mutation UpsertPermissionFlags {
+          upsertPermissionFlags(upsertPermissionFlagsInput: {roleId: "${roleId}", permissionFlagKeys: [${PermissionFlagType.DATA_MODEL}]}) {
               id
               roleId
-              setting
+              flag
           }
       }
     `;
@@ -625,11 +625,11 @@ describe('roles permissions', () => {
           .expect((res) => {
             expect(res.body.data).toBeDefined();
             expect(res.body.errors).toBeUndefined();
-            expect(res.body.data.upsertSettingPermissions).toEqual(
+            expect(res.body.data.upsertPermissionFlags).toEqual(
               expect.arrayContaining([
                 expect.objectContaining({
                   roleId: createdEditableRoleId,
-                  setting: SettingPermissionType.DATA_MODEL,
+                  flag: PermissionFlagType.DATA_MODEL,
                 }),
               ]),
             );
