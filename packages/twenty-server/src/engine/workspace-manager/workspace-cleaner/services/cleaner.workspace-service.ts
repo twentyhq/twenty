@@ -9,7 +9,7 @@ import {
   CleanSuspendedWorkspaceEmail,
   WarnSuspendedWorkspaceEmail,
 } from 'twenty-emails';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, normalizeLocale } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
@@ -121,11 +121,14 @@ export class CleanerWorkspaceService {
       workspaceDisplayName: `${workspaceDisplayName}`,
       locale: workspaceMember.locale,
     };
+
+    const normalizedLocale = normalizeLocale(workspaceMember.locale || null);
+
+    i18n.activate(normalizedLocale);
+
     const emailTemplate = WarnSuspendedWorkspaceEmail(emailData);
     const html = await render(emailTemplate, { pretty: true });
     const text = await render(emailTemplate, { plainText: true });
-
-    i18n.activate(workspaceMember.locale);
 
     this.emailService.send({
       to: workspaceMember.userEmail,
