@@ -1,8 +1,8 @@
 {
-  "editor.formatOnSave": false,
+  "editor.formatOnSave": true,
   "files.eol": "auto",
   "[typescript]": {
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit",
       "source.addMissingImports": "always",
@@ -10,7 +10,7 @@
     }
   },
   "[javascript]": {
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit",
       "source.addMissingImports": "always",
@@ -18,7 +18,7 @@
     }
   },
   "[typescriptreact]": {
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit",
       "source.addMissingImports": "always",
@@ -38,9 +38,7 @@
     "md",
     "mdx"
   ],
-  "cSpell.words": [
-    "twentyhq"
-  ],
+  "cSpell.words": ["twentyhq"],
   "typescript.preferences.importModuleSpecifier": "non-relative",
   "search.exclude": {
     "**/.yarn": true
