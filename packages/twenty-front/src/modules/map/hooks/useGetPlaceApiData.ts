@@ -2,7 +2,10 @@ import {
   GET_GOOGLE_AUTOCOMPLETE_QUERY,
   GET_GOOGLE_PLACE_DETAILS_QUERY,
 } from '@/map/rest-api/google-map-appolo.api';
-import { PlaceAutocompleteResult, PlaceDetailsResult } from '@/map/types/placeApi';
+import {
+  PlaceAutocompleteResult,
+  PlaceDetailsResult,
+} from '@/map/types/placeApi';
 import { useApolloClient } from '@apollo/client';
 
 export const useGetPlaceApiData = () => {
@@ -20,7 +23,10 @@ export const useGetPlaceApiData = () => {
 
     return data?.googleAutocomplete;
   };
-  const getPlaceDetailsData = async (placeId: string, token: string) : Promise<PlaceDetailsResult|undefined>=> {
+  const getPlaceDetailsData = async (
+    placeId: string,
+    token: string,
+  ): Promise<PlaceDetailsResult | undefined> => {
     const { data } = await apolloClient.query({
       query: GET_GOOGLE_PLACE_DETAILS_QUERY,
       variables: { placeId, token },

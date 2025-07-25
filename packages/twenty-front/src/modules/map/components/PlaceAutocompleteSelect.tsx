@@ -7,7 +7,6 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import styled from '@emotion/styled';
 import { useMemo, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { TagColor } from 'twenty-ui/components';
 import { SelectOption } from 'twenty-ui/input';
 import { MenuItemSelectTag } from 'twenty-ui/navigation';
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
@@ -69,7 +68,7 @@ export const PlaceAutocompleteSelect = ({
                       <MenuItemSelectTag
                         key={option.value}
                         text={option.label}
-                        color={(option.color as TagColor) ?? 'transparent'}
+                        color={'transparent'}
                         onClick={() => onChange(option.value)}
                       />
                     </SelectableListItem>
