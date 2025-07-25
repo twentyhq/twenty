@@ -15,6 +15,7 @@ import {
   TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { formatConnectRecordNotFoundErrorMessage } from 'src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { computeRelationConnectQueryConfigs } from 'src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util';
 import { createSqlWhereTupleInClause } from 'src/engine/twenty-orm/utils/create-sql-where-tuple-in-clause.utils';
@@ -196,12 +197,19 @@ export class RelationNestedQueries {
           );
 
           if (recordToConnect.length !== 1) {
-            const recordToConnectTotal = recordToConnect.length;
-            const connectFieldName = connectQueryConfig.connectFieldName;
+            const { errorMessage, userFriendlyMessage } =
+              formatConnectRecordNotFoundErrorMessage(
+                connectQueryConfig.connectFieldName,
+                recordToConnect.length,
+                connectQueryConfig.recordToConnectConditionByEntityIndex[index],
+              );
 
             throw new TwentyORMException(
-              `Expected 1 record to connect to ${connectFieldName}, but found ${recordToConnectTotal}.`,
+              errorMessage,
               TwentyORMExceptionCode.CONNECT_RECORD_NOT_FOUND,
+              {
+                userFriendlyMessage,
+              },
             );
           }
 
