@@ -18,7 +18,6 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { fromObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-maps-to-flat-object-metadatas.util';
-import { mergeTwoFlatFieldObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/merge-two-flat-object-metadatas.util';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import {
@@ -148,12 +147,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         const workpsaceMigration = this.workspaceMigrationBuilderV2.build({
           objectMetadataFromToInputs: {
             from: existingFlatObjectMetadatas,
-            to: mergeTwoFlatFieldObjectMetadatas({
-              destFlatObjectMetadatas: existingFlatObjectMetadatas,
-              toMergeFlatObjectMetadatas: [createdFlatObjectMetadata],
-            }),
+            to: [createdFlatObjectMetadata],
           },
-          workspaceId: objectMetadataInput.workspaceId, // Where does this comes from ?
+          inferObjectMetadataDeletionFromMissingOnes: false,
+          workspaceId: objectMetadataInput.workspaceId,
         });
 
         await this.workspaceMigrationRunnerV2Service.run(workpsaceMigration);

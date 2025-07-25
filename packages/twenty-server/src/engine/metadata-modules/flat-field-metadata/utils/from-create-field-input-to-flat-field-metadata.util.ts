@@ -1,60 +1,31 @@
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import {
-  FieldMetadataComplexOption,
-  FieldMetadataDefaultOption,
-} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { FlatObjectMetadataWithoutFields } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import {
+  FlatObjectMetadata,
+  FlatObjectMetadataWithoutFields,
+} from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   assertUnreachable,
+  isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-export const prepareCustomFieldMetadataOptions = (
-  options: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[],
-): undefined | Pick<FieldMetadataEntity, 'options'> => {
-  return {
-    options: options.map((option) => ({
-      id: v4(),
-      ...trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(option, [
-        'label',
-        'value',
-        'id',
-      ]),
-    })),
-  };
-};
-
 type FromCreateObjectInputToFlatObjectMetadata = {
   rawCreateFieldInput: CreateFieldInput;
-  objectMetadataMaps: ObjectMetadataMaps;
+  existingFlatObjectMetadatas: FlatObjectMetadata[];
 };
-export const fromCreateObjectInputToFlatObjectMetadata = ({
-  objectMetadataMaps,
-  rawCreateFieldInput,
-}: FromCreateObjectInputToFlatObjectMetadata): FlatFieldMetadata => {
-  // Handled in FlatFieldMetadata validation
-  if (rawCreateFieldInput.isRemoteCreation) {
-    throw new Error('Remote fields are not supported yet');
-  }
 
-  const createFieldInput =
-    trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
-      rawCreateFieldInput,
-      ['description', 'icon', 'label', 'name', 'objectMetadataId', 'type'],
-    );
-
+const getFlatFieldMetadataFromCreateObjectInput = (
+  createFieldInput: CreateFieldInput,
+): FlatFieldMetadata => {
   const fieldMetadataId = v4();
   const createdAt = new Date();
-
   const commonFlatFieldMetadata = {
     createdAt,
     description: createFieldInput.description ?? null,
@@ -165,4 +136,46 @@ export const fromCreateObjectInputToFlatObjectMetadata = ({
       assertUnreachable(createFieldInput.type, 'Encountered an uncovered');
     }
   }
+};
+
+export const fromCreateFieldInputToFlatFieldMetadata = ({
+  existingFlatObjectMetadatas,
+  rawCreateFieldInput,
+}: FromCreateObjectInputToFlatObjectMetadata): {
+  flatFieldMetadata: FlatFieldMetadata;
+  parentFlatObjectMetadata: FlatObjectMetadata;
+}[] => {
+  // Handled in FlatFieldMetadata validation
+  if (rawCreateFieldInput.isRemoteCreation) {
+    throw new Error(
+      'TODO custom CREATE_FIELD_INPUT exception: Remote fields are not supported yet',
+    );
+  }
+
+  const createFieldInput =
+    trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
+      rawCreateFieldInput,
+      ['description', 'icon', 'label', 'name', 'objectMetadataId', 'type'],
+    );
+  const parentFlatObjectMetadata = existingFlatObjectMetadatas.find(
+    (existingFlatObjectMetadata) =>
+      existingFlatObjectMetadata.id === createFieldInput.objectMetadataId,
+  );
+
+  if (!isDefined(parentFlatObjectMetadata)) {
+    throw new Error(
+      'TODO custom CREATE_FIELD_INPUT exception: Provided object metadata id does not exist',
+    );
+  }
+
+  const flatFieldMetadata =
+    getFlatFieldMetadataFromCreateObjectInput(createFieldInput);
+
+  // TODO handle relation side effect
+  return [
+    {
+      flatFieldMetadata,
+      parentFlatObjectMetadata,
+    },
+  ];
 };

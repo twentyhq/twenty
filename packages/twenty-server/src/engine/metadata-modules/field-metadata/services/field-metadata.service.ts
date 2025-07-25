@@ -47,6 +47,10 @@ import { isFieldMetadataTypeRelation } from 'src/engine/metadata-modules/field-m
 import { isSelectOrMultiSelectFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/is-select-or-multi-select-field-metadata.util';
 import { prepareCustomFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/utils/prepare-custom-field-metadata-for-options.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
+import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
+import { fromCreateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadata.util';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { fromObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-maps-to-flat-object-metadatas.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -95,6 +99,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly fieldMetadataValidationService: FieldMetadataValidationService,
     private readonly fieldMetadataMorphRelationService: FieldMetadataMorphRelationService,
     private readonly fieldMetadataRelationService: FieldMetadataRelationService,
+    private readonly flatFieldMetadataValidatorService: FlatFieldMetadataValidatorService,
+    private readonly workspaceMigrationBuilderV2: WorkspaceMigrationBuilderV2,
   ) {
     super(fieldMetadataRepository);
   }
@@ -610,6 +616,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       const createdFieldMetadatas: FieldMetadataEntity[] = [];
       const migrationActions: WorkspaceMigrationTableAction[] = [];
 
+      const isWorkspaceMigrationV2Enabled =
+        await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+          workspaceId,
+        );
+
       for (const objectMetadataId of objectMetadataIds) {
         const objectMetadata = objectMetadataMaps.byId[objectMetadataId];
 
@@ -623,6 +635,69 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         const inputs = inputsByObjectId[objectMetadataId];
 
         for (const fieldMetadataInput of inputs) {
+          if (isWorkspaceMigrationV2Enabled) {
+            const existingFlatObjectMetadatas =
+              fromObjectMetadataMapsToFlatObjectMetadatas(objectMetadataMaps);
+            const createdFlatFieldsMetadataAndParentFlatObjectMetadata =
+              fromCreateFieldInputToFlatFieldMetadata({
+                existingFlatObjectMetadatas,
+                rawCreateFieldInput: fieldMetadataInput,
+              });
+
+            const createdFlatFieldMetadataValidationResult = await Promise.all(
+              createdFlatFieldsMetadataAndParentFlatObjectMetadata.map(
+                ({ flatFieldMetadata: flatFieldMetadataToValidate }) =>
+                  this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadata(
+                    {
+                      existingFlatObjectMetadatas,
+                      flatFieldMetadataToValidate,
+                      workspaceId,
+                    },
+                  ),
+              ),
+            );
+
+            if (
+              createdFlatFieldMetadataValidationResult.some(
+                (el) => el.status === 'fail',
+              )
+            ) {
+              throw new Error(
+                'TODO prastoin handle validation reporter formatting',
+              );
+            }
+
+            const toFlatObjectMetadatas =
+              createdFlatFieldsMetadataAndParentFlatObjectMetadata.map<FlatObjectMetadata>(
+                ({ flatFieldMetadata, parentFlatObjectMetadata }) => {
+                  return {
+                    ...parentFlatObjectMetadata,
+                    flatFieldMetadatas: [
+                      ...parentFlatObjectMetadata.flatFieldMetadatas,
+                      flatFieldMetadata,
+                    ],
+                  };
+                },
+              );
+
+            const workpsaceMigration = this.workspaceMigrationBuilderV2.build({
+              objectMetadataFromToInputs: {
+                from: existingFlatObjectMetadatas,
+                to: toFlatObjectMetadatas,
+              },
+              inferObjectMetadataDeletionFromMissingOnes: false,
+              workspaceId: objectMetadataInput.workspaceId, // Where does this comes from ?
+            });
+
+            await this.workspaceMigrationRunnerV2Service.run(
+              workpsaceMigration,
+            );
+
+            // What to return exactly ? We now won't have access to the entity directly
+            // We could still retrieve it afterwards using a find on object metadata id or return a flat now
+            return createdFlatObjectMetadata;
+          }
+
           const createdFieldMetadataItems =
             await this.validateAndCreateFieldMetadataItems(
               fieldMetadataInput,

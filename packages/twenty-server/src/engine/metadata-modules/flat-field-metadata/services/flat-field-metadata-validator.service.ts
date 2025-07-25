@@ -25,7 +25,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 // What about update ? FromTo<> ?
 type ValidateOneFieldMetadataArgs = {
-  existingFlatObjectMetadata: FlatObjectMetadata[];
+  existingFlatObjectMetadatas: FlatObjectMetadata[];
   othersFlatObjectMetadataToValidate?: FlatObjectMetadata[];
   flatFieldMetadataToValidate: FlatFieldMetadata;
   // flatFieldMetadataToValidateRelatedFlatObjectMetadata lol
@@ -42,13 +42,13 @@ export class FlatFieldMetadataValidatorService {
    * Only returns exceptions to the caller
    */
   async validateOneFlatFieldMetadata({
-    existingFlatObjectMetadata,
+    existingFlatObjectMetadatas,
     flatFieldMetadataToValidate,
     othersFlatObjectMetadataToValidate,
     workspaceId,
   }: ValidateOneFieldMetadataArgs): Promise<FlatFieldMetadataValidationResult> {
     const allFlatObjectMetadata = [
-      ...existingFlatObjectMetadata,
+      ...existingFlatObjectMetadatas,
       ...(othersFlatObjectMetadataToValidate ?? []),
     ];
     // Common TODO facto in own scope
@@ -123,6 +123,8 @@ export class FlatFieldMetadataValidatorService {
 
     /// End of common
 
+    // We should validate each default value and settings and options
+    // We should also handle relation and stuff
     switch (flatFieldMetadataToValidate.type) {
       case FieldMetadataType.RELATION:
       case FieldMetadataType.MORPH_RELATION: {

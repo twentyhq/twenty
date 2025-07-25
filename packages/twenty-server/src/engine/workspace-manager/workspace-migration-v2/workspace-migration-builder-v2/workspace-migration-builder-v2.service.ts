@@ -19,9 +19,11 @@ export class WorkspaceMigrationBuilderV2Service {
   build({
     objectMetadataFromToInputs,
     workspaceId,
+    inferObjectMetadataDeletionFromMissingOnes = true,
   }: {
     objectMetadataFromToInputs: FromTo<FlatObjectMetadata[]>;
     workspaceId: string;
+    inferObjectMetadataDeletionFromMissingOnes?: boolean;
   }): WorkspaceMigrationV2 {
     const {
       created: createdObjectMetadata,
@@ -44,14 +46,16 @@ export class WorkspaceMigrationBuilderV2Service {
       );
 
     const deletedObjectWorkspaceMigrationDeleteFieldActions =
-      deletedObjectMetadata.flatMap((flatObjectMetadata) =>
-        flatObjectMetadata.flatFieldMetadatas.map((flatFieldMetadata) =>
-          getWorkspaceMigrationV2FieldDeleteAction({
-            flatFieldMetadata,
-            flatObjectMetadata,
-          }),
-        ),
-      );
+      inferObjectMetadataDeletionFromMissingOnes
+        ? deletedObjectMetadata.flatMap((flatObjectMetadata) =>
+            flatObjectMetadata.flatFieldMetadatas.map((flatFieldMetadata) =>
+              getWorkspaceMigrationV2FieldDeleteAction({
+                flatFieldMetadata,
+                flatObjectMetadata,
+              }),
+            ),
+          )
+        : [];
 
     const updatedObjectMetadataDeletedCreatedUpdatedFieldMatrix =
       computeUpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix(
