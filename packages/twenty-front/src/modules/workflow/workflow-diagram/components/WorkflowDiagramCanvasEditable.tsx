@@ -16,10 +16,14 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import React from 'react';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
-import { WorkflowDiagramNode } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import {
+  WorkflowDiagramEdge,
+  WorkflowDiagramNode,
+} from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { workflowDiagramRightClickMenuState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuState';
 import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu';
+import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 
 export const WorkflowDiagramCanvasEditable = ({
   workflowWithCurrentVersion,
@@ -39,6 +43,10 @@ export const WorkflowDiagramCanvasEditable = ({
   );
 
   const { createEdge } = useCreateEdge({
+    workflow: workflowWithCurrentVersion,
+  });
+
+  const { deleteEdge } = useDeleteEdge({
     workflow: workflowWithCurrentVersion,
   });
 
@@ -64,6 +72,10 @@ export const WorkflowDiagramCanvasEditable = ({
       };
     });
     createEdge?.(edgeConnect);
+  };
+
+  const onDeleteEdge = (edge: WorkflowDiagramEdge) => {
+    deleteEdge(edge);
   };
 
   const onNodeDragStop = async (
@@ -127,7 +139,7 @@ export const WorkflowDiagramCanvasEditable = ({
         onNodeDragStop={onNodeDragStop}
         handlePaneContextMenu={handlePaneContextMenu}
         nodesConnectable
-        edgesDeletable
+        onDeleteEdge={onDeleteEdge}
       />
 
       <WorkflowDiagramCanvasEditableEffect />
