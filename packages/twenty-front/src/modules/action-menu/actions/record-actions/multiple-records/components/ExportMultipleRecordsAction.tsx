@@ -3,15 +3,10 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useRecordIndexExportRecords } from '@/object-record/record-index/export/hooks/useRecordIndexExportRecords';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { useHasSettingsPermission } from '@/settings/roles/hooks/useHasSettingsPermission';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const ExportMultipleRecordsAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
-  const hasExportCsvPermission = useHasSettingsPermission(
-    PermissionFlagType.EXPORT_CSV,
-  );
   const contextStoreCurrentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
   );
@@ -30,5 +25,5 @@ export const ExportMultipleRecordsAction = () => {
     filename: `${objectMetadataItem.nameSingular}.csv`,
   });
 
-  return hasExportCsvPermission ? <Action onClick={download} /> : null;
+  return <Action onClick={download} />;
 };
