@@ -74,6 +74,12 @@ export const createMorphRelationBetweenObjects = async ({
               targetObjectMetadata {
                 id
               }
+              sourceFieldMetadata {
+                id
+              }
+              sourceObjectMetadata {
+                id
+              }
             }
           `,
     expectToFail: false,
