@@ -191,14 +191,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       });
 
       if (objectMetadataInput.isLabelSyncedWithName === true) {
-        validateNameAndLabelAreSyncOrThrow(
-          objectMetadataInput.labelSingular,
-          objectMetadataInput.nameSingular,
-        );
-        validateNameAndLabelAreSyncOrThrow(
-          objectMetadataInput.labelPlural,
-          objectMetadataInput.namePlural,
-        );
+        validateNameAndLabelAreSyncOrThrow({
+          label: objectMetadataInput.labelSingular,
+          name: objectMetadataInput.nameSingular,
+        });
+        validateNameAndLabelAreSyncOrThrow({
+          label: objectMetadataInput.labelPlural,
+          name: objectMetadataInput.namePlural,
+        });
       }
 
       validatesNoOtherObjectWithSameNameExistsOrThrows({
@@ -356,14 +356,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataMaps,
       });
       if (existingObjectMetadataCombinedWithUpdateInput.isLabelSyncedWithName) {
-        validateNameAndLabelAreSyncOrThrow(
-          existingObjectMetadataCombinedWithUpdateInput.labelSingular,
-          existingObjectMetadataCombinedWithUpdateInput.nameSingular,
-        );
-        validateNameAndLabelAreSyncOrThrow(
-          existingObjectMetadataCombinedWithUpdateInput.labelPlural,
-          existingObjectMetadataCombinedWithUpdateInput.namePlural,
-        );
+        validateNameAndLabelAreSyncOrThrow({
+          label: existingObjectMetadataCombinedWithUpdateInput.labelSingular,
+          name: existingObjectMetadataCombinedWithUpdateInput.nameSingular,
+        });
+        validateNameAndLabelAreSyncOrThrow({
+          label: existingObjectMetadataCombinedWithUpdateInput.labelPlural,
+          name: existingObjectMetadataCombinedWithUpdateInput.namePlural,
+        });
       }
       if (
         isDefined(inputPayload.nameSingular) ||

@@ -89,10 +89,10 @@ export class FlatFieldMetadataValidatorService {
     }
 
     if (flatFieldMetadataToValidate.isLabelSyncedWithName) {
-      validateNameAndLabelAreSyncOrThrow(
-        fieldMetadataInput.label,
-        fieldMetadataInput.name,
-      );
+      validateNameAndLabelAreSyncOrThrow({
+        label: flatFieldMetadataToValidate.label,
+        name: flatFieldMetadataToValidate.name,
+      });
     }
 
     /// End of common
