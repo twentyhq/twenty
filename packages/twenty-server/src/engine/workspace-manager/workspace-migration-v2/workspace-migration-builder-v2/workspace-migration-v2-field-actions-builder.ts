@@ -10,9 +10,14 @@ import {
   getWorkspaceMigrationV2FieldDeleteAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-field-actions';
 
-export const buildWorkspaceMigrationV2FieldActions = (
-  objectMetadataDeletedCreatedUpdatedFields: UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix[],
-): WorkspaceMigrationFieldActionV2[] => {
+type BuildWorkspaceMigrationV2FieldActionsArgs = {
+  inferDeletionFromMissingObjectOrField: boolean;
+  objectMetadataDeletedCreatedUpdatedFields: UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix[];
+};
+export const buildWorkspaceMigrationV2FieldActions = ({
+  inferDeletionFromMissingObjectOrField,
+  objectMetadataDeletedCreatedUpdatedFields,
+}: BuildWorkspaceMigrationV2FieldActionsArgs): WorkspaceMigrationFieldActionV2[] => {
   let allUpdatedObjectMetadataFieldActions: WorkspaceMigrationFieldActionV2[] =
     [];
 
@@ -53,12 +58,14 @@ export const buildWorkspaceMigrationV2FieldActions = (
       }),
     );
 
-    const deleteFieldAction = deletedFieldMetadata.map((flatFieldMetadata) =>
-      getWorkspaceMigrationV2FieldDeleteAction({
-        flatFieldMetadata,
-        flatObjectMetadata,
-      }),
-    );
+    const deleteFieldAction = inferDeletionFromMissingObjectOrField
+      ? deletedFieldMetadata.map((flatFieldMetadata) =>
+          getWorkspaceMigrationV2FieldDeleteAction({
+            flatFieldMetadata,
+            flatObjectMetadata,
+          }),
+        )
+      : [];
 
     allUpdatedObjectMetadataFieldActions =
       allUpdatedObjectMetadataFieldActions.concat([

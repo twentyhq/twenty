@@ -696,10 +696,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     if (fieldMetadataInput.isLabelSyncedWithName === true) {
-      validateNameAndLabelAreSyncOrThrow(
-        fieldMetadataInput.label,
-        fieldMetadataInput.name,
-      );
+      validateNameAndLabelAreSyncOrThrow({
+        label: fieldMetadataInput.label,
+        name: fieldMetadataInput.name,
+      });
     }
 
     const fieldMetadataForCreate =

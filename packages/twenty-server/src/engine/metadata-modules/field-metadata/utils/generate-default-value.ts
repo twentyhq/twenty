@@ -4,6 +4,8 @@ import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-met
 
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 
+// TODO refactor to only contain null and no empty strings ?
+// TODO strictly type not maintainable as it is
 export function generateDefaultValue(
   type: FieldMetadataType,
 ): FieldMetadataDefaultValue {

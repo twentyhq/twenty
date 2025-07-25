@@ -18,7 +18,6 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { fromObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-maps-to-flat-object-metadatas.util';
-import { mergeTwoFlatFieldObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/merge-two-flat-object-metadatas.util';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import {
@@ -57,10 +56,8 @@ import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sy
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
-import {
-  CreateObjectInput,
-  fromCreateObjectInputToFlatObjectMetadata,
-} from './dtos/create-object.input';
+import { fromCreateObjectInputToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata.util';
+import { CreateObjectInput } from './dtos/create-object.input';
 
 @Injectable()
 export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEntity> {
@@ -150,12 +147,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         const workpsaceMigration = this.workspaceMigrationBuilderV2.build({
           objectMetadataFromToInputs: {
             from: existingFlatObjectMetadatas,
-            to: mergeTwoFlatFieldObjectMetadatas({
-              destFlatObjectMetadatas: existingFlatObjectMetadatas,
-              toMergeFlatObjectMetadatas: [createdFlatObjectMetadata],
-            }),
+            to: [createdFlatObjectMetadata],
           },
-          workspaceId: objectMetadataInput.workspaceId, // Where does this comes from ?
+          inferDeletionFromMissingObjectOrField: false,
+          workspaceId: objectMetadataInput.workspaceId,
         });
 
         await this.workspaceMigrationRunnerV2Service.run(workpsaceMigration);
@@ -193,14 +188,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       });
 
       if (objectMetadataInput.isLabelSyncedWithName === true) {
-        validateNameAndLabelAreSyncOrThrow(
-          objectMetadataInput.labelSingular,
-          objectMetadataInput.nameSingular,
-        );
-        validateNameAndLabelAreSyncOrThrow(
-          objectMetadataInput.labelPlural,
-          objectMetadataInput.namePlural,
-        );
+        validateNameAndLabelAreSyncOrThrow({
+          label: objectMetadataInput.labelSingular,
+          name: objectMetadataInput.nameSingular,
+        });
+        validateNameAndLabelAreSyncOrThrow({
+          label: objectMetadataInput.labelPlural,
+          name: objectMetadataInput.namePlural,
+        });
       }
 
       validatesNoOtherObjectWithSameNameExistsOrThrows({
@@ -358,14 +353,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataMaps,
       });
       if (existingObjectMetadataCombinedWithUpdateInput.isLabelSyncedWithName) {
-        validateNameAndLabelAreSyncOrThrow(
-          existingObjectMetadataCombinedWithUpdateInput.labelSingular,
-          existingObjectMetadataCombinedWithUpdateInput.nameSingular,
-        );
-        validateNameAndLabelAreSyncOrThrow(
-          existingObjectMetadataCombinedWithUpdateInput.labelPlural,
-          existingObjectMetadataCombinedWithUpdateInput.namePlural,
-        );
+        validateNameAndLabelAreSyncOrThrow({
+          label: existingObjectMetadataCombinedWithUpdateInput.labelSingular,
+          name: existingObjectMetadataCombinedWithUpdateInput.nameSingular,
+        });
+        validateNameAndLabelAreSyncOrThrow({
+          label: existingObjectMetadataCombinedWithUpdateInput.labelPlural,
+          name: existingObjectMetadataCombinedWithUpdateInput.namePlural,
+        });
       }
       if (
         isDefined(inputPayload.nameSingular) ||

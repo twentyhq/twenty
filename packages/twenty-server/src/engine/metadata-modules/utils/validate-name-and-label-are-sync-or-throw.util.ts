@@ -7,10 +7,13 @@ import {
   InvalidMetadataExceptionCode,
 } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 
-export const validateNameAndLabelAreSyncOrThrow = (
-  label: string,
-  name: string,
-) => {
+export const validateNameAndLabelAreSyncOrThrow = ({
+  label,
+  name,
+}: {
+  label: string;
+  name: string;
+}) => {
   const computedName = computeMetadataNameFromLabel(label);
 
   if (name !== computedName) {

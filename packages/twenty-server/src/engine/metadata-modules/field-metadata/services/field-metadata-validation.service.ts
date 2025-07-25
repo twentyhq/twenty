@@ -151,10 +151,10 @@ export class FieldMetadataValidationService {
       }
 
       try {
-        validateFieldNameAvailabilityOrThrow(
-          fieldMetadataInput.name,
+        validateFieldNameAvailabilityOrThrow({
+          name: fieldMetadataInput.name,
           objectMetadata,
-        );
+        });
       } catch (error) {
         if (error instanceof InvalidMetadataException) {
           throw new FieldMetadataException(
