@@ -283,6 +283,8 @@ export class OpenApiService {
       },
     };
 
+    schema.tags = computeSchemaTags(webhookAndApiKeyObjectMetadataItems);
+
     return schema;
   }
 
