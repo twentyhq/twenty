@@ -234,6 +234,7 @@ export type TextInputV2ComponentProps = Omit<
   inheritFontStyles?: boolean;
   rightAdornment?: string;
   leftAdornment?: string;
+  textClickOutsideId?: string;
 };
 
 type TextInputV2WithAutoGrowWrapperProps = TextInputV2ComponentProps;
@@ -273,6 +274,7 @@ const TextInputV2Component = forwardRef<
       autoGrow = false,
       rightAdornment,
       leftAdornment,
+      textClickOutsideId,
     },
     ref,
   ) => {
@@ -300,7 +302,11 @@ const TextInputV2Component = forwardRef<
     const instanceId = useId();
 
     return (
-      <StyledContainer className={className} fullWidth={fullWidth ?? false}>
+      <StyledContainer
+        className={className}
+        fullWidth={fullWidth ?? false}
+        data-click-outside-id={textClickOutsideId}
+      >
         {label && (
           <InputLabel htmlFor={instanceId}>
             {label + (required ? '*' : '')}
