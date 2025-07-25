@@ -99,7 +99,6 @@ export const fromCreateObjectInputToFlatObjectMetadata = ({
     case FieldMetadataType.RELATION:
     case FieldMetadataType.MORPH_RELATION: {
       // Should validate relationCreationPayload here
-
       return {
         ...commonFlatFieldMetadata,
         type: createFieldInput.type,

@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { Injectable } from '@nestjs/common';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -6,7 +5,9 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { FlatFieldMetadataValidationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-result.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-flat-field-metadata-name-availability.validator';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   ObjectMetadataException,
@@ -16,7 +17,6 @@ import {
   InvalidMetadataException,
   InvalidMetadataExceptionCode,
 } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
-import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { Expect } from 'twenty-shared/testing';
@@ -31,23 +31,6 @@ type ValidateOneFieldMetadataArgs = {
   // flatFieldMetadataToValidateRelatedFlatObjectMetadata lol
   workspaceId: string;
 };
-
-type FailedFlatFieldMetadataValidation = {
-  status: 'fail';
-  error:
-    | FieldMetadataException
-    | ObjectMetadataException
-    | InvalidMetadataException;
-};
-
-type SuccessfulFlatFieldMetadataValidation = {
-  status: 'success';
-};
-
-type FlatFieldMetadataValidationResult =
-  | FailedFlatFieldMetadataValidation
-  | SuccessfulFlatFieldMetadataValidation;
-
 // We need to infer if this is going to be an udpate or not
 
 @Injectable()
@@ -129,43 +112,18 @@ export class FlatFieldMetadataValidatorService {
       };
     }
 
-    try {
-      validateFieldNameAvailabilityOrThrow(
-        fieldMetadataInput.name,
-        objectMetadata,
-      );
-    } catch (error) {
-      if (error instanceof InvalidMetadataException) {
-        throw new FieldMetadataException(
-          `Name "${fieldMetadataInput.name}" is not available, check that it is not duplicating another field's name.`,
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          {
-            userFriendlyMessage: t`Name is not available, it may be duplicating another field's name.`,
-          },
-        );
-      }
-
-      throw error;
+    const failedNameAvailabilityValidation =
+      validateFlatFieldMetadataNameAvailability({
+        name: flatFieldMetadataToValidate.name,
+        objectMetadata: parentFlatObjectMetadata,
+      });
+    if (isDefined(failedNameAvailabilityValidation)) {
+      return failedNameAvailabilityValidation;
     }
 
     /// End of common
 
     switch (flatFieldMetadataToValidate.type) {
-      case FieldMetadataType.UUID:
-      case FieldMetadataType.TEXT:
-      case FieldMetadataType.PHONES:
-      case FieldMetadataType.EMAILS:
-      case FieldMetadataType.DATE_TIME:
-      case FieldMetadataType.DATE:
-      case FieldMetadataType.BOOLEAN:
-      case FieldMetadataType.NUMBER:
-      case FieldMetadataType.NUMERIC:
-      case FieldMetadataType.LINKS:
-      case FieldMetadataType.CURRENCY:
-      case FieldMetadataType.FULL_NAME:
-      case FieldMetadataType.RATING:
-      case FieldMetadataType.SELECT:
-      case FieldMetadataType.MULTI_SELECT:
       case FieldMetadataType.RELATION:
       case FieldMetadataType.MORPH_RELATION: {
         // Facto in dedicated service
@@ -184,8 +142,27 @@ export class FlatFieldMetadataValidatorService {
             ),
           };
         }
+
+        return {
+          status: 'success',
+        };
         ///
       }
+      case FieldMetadataType.UUID:
+      case FieldMetadataType.TEXT:
+      case FieldMetadataType.PHONES:
+      case FieldMetadataType.EMAILS:
+      case FieldMetadataType.DATE_TIME:
+      case FieldMetadataType.DATE:
+      case FieldMetadataType.BOOLEAN:
+      case FieldMetadataType.NUMBER:
+      case FieldMetadataType.NUMERIC:
+      case FieldMetadataType.LINKS:
+      case FieldMetadataType.CURRENCY:
+      case FieldMetadataType.FULL_NAME:
+      case FieldMetadataType.RATING:
+      case FieldMetadataType.SELECT:
+      case FieldMetadataType.MULTI_SELECT:
       case FieldMetadataType.POSITION:
       case FieldMetadataType.ADDRESS:
       case FieldMetadataType.RAW_JSON:
@@ -194,7 +171,9 @@ export class FlatFieldMetadataValidatorService {
       case FieldMetadataType.ACTOR:
       case FieldMetadataType.ARRAY:
       case FieldMetadataType.TS_VECTOR: {
-        break;
+        return {
+          status: 'success',
+        };
       }
       default: {
         const _staticTypeCheck: Expect<
@@ -210,9 +189,5 @@ export class FlatFieldMetadataValidatorService {
         };
       }
     }
-
-    return {
-      status: 'success',
-    };
   }
 }

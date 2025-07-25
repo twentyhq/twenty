@@ -156,10 +156,10 @@ export class FieldMetadataRelationService {
           .relationCreationPayload,
       )
     ) {
-      validateFieldNameAvailabilityOrThrow(
-        `${fieldMetadataInput.name}Id`,
+      validateFieldNameAvailabilityOrThrow({
+        name: `${fieldMetadataInput.name}Id`,
         objectMetadata,
-      );
+      });
 
       const relationCreationPayload = (
         fieldMetadataInput as unknown as CreateFieldInput
@@ -187,15 +187,15 @@ export class FieldMetadataRelationService {
           );
         }
 
-        validateFieldNameAvailabilityOrThrow(
-          computedMetadataNameFromLabel,
-          objectMetadataTarget,
-        );
+        validateFieldNameAvailabilityOrThrow({
+          name: computedMetadataNameFromLabel,
+          objectMetadata: objectMetadataTarget,
+        });
 
-        validateFieldNameAvailabilityOrThrow(
-          `${computedMetadataNameFromLabel}Id`,
-          objectMetadataTarget,
-        );
+        validateFieldNameAvailabilityOrThrow({
+          name: `${computedMetadataNameFromLabel}Id`,
+          objectMetadata: objectMetadataTarget,
+        });
 
         if (
           computedMetadataNameFromLabel === fieldMetadataInput.name &&
