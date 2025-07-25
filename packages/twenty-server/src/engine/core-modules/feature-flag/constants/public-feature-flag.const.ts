@@ -30,15 +30,6 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       imagePath: '',
     },
   },
-  {
-    key: FeatureFlagKey.IS_ANY_FIELD_SEARCH_ENABLED,
-    metadata: {
-      label: 'Any field filter',
-      description:
-        'Search multiple fields at the same time with the new "Search any field" feature on tables and kanbans',
-      imagePath: '',
-    },
-  },
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
         // {
