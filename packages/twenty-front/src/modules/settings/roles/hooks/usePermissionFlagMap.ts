@@ -3,14 +3,11 @@ import { useRecoilValue } from 'recoil';
 import { PermissionFlagType } from '~/generated/graphql';
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
 
-export const useSettingsPermissionMap = (): Record<
-  PermissionFlagType,
-  boolean
-> => {
+export const usePermissionFlagMap = (): Record<PermissionFlagType, boolean> => {
   const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
 
   const currentUserWorkspaceSettingsPermissions =
-    currentUserWorkspace?.settingsPermissions;
+    currentUserWorkspace?.permissionFlags;
 
   const initialPermissions = buildRecordFromKeysWithSameValue(
     Object.values(PermissionFlagType),
