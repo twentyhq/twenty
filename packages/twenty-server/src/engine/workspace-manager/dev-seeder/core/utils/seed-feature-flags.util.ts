@@ -56,11 +56,6 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_ANY_FIELD_SEARCH_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_ENABLED,
         workspaceId: workspaceId,
         value: true,
