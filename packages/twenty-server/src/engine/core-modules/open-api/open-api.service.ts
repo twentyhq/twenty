@@ -105,7 +105,7 @@ export class OpenApiService {
       return paths;
     }, schema.paths as OpenAPIV3_1.PathsObject);
 
-    schema.webhooks = objectMetadataItems.reduce(
+    schema.webhooks = filteredObjectMetadataItems.reduce(
       (paths, item) => {
         paths[
           this.createWebhookEventName(
