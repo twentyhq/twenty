@@ -456,6 +456,7 @@ export class ObjectMetadataFieldRelationService {
   public async updateMorphRelationsJoinColumnName({
     existingObjectMetadata,
     objectMetadataForUpdate,
+    queryRunner,
   }: {
     existingObjectMetadata: Pick<
       ObjectMetadataItemWithFieldMaps,
@@ -472,12 +473,17 @@ export class ObjectMetadataFieldRelationService {
       | 'icon'
       | 'fieldsById'
     >;
+    queryRunner?: QueryRunner;
   }): Promise<
     {
       fieldMetadata: FieldMetadataEntity<FieldMetadataType.MORPH_RELATION>;
       newJoinColumnName: string;
     }[]
   > {
+    const fieldMetadataRepository = queryRunner
+      ? queryRunner.manager.getRepository(FieldMetadataEntity)
+      : this.fieldMetadataRepository;
+
     const morphRelationFieldMetadataTargets =
       await this.findTargetMorphRelationFieldMetadatas(
         existingObjectMetadata.id,
@@ -499,7 +505,7 @@ export class ObjectMetadataFieldRelationService {
             objectMetadataForUpdate.nameSingular,
         });
 
-        await this.fieldMetadataRepository.save({
+        await fieldMetadataRepository.save({
           ...morphRelationFieldMetadata,
           settings: {
             ...morphRelationFieldMetadata.settings,

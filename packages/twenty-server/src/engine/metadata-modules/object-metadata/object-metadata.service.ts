@@ -611,6 +611,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           {
             existingObjectMetadata,
             objectMetadataForUpdate,
+            queryRunner,
           },
         );
 
