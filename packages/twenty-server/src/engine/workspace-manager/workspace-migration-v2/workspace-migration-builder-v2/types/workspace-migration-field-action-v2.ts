@@ -1,8 +1,8 @@
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
 import { FlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
-import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import { FlatFieldMetadataPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-field-metadata-comparator.util';
+import { FromTo } from 'twenty-shared/types';
 
 export type CreateFieldAction = {
   type: 'create_field';

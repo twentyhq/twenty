@@ -3,11 +3,11 @@ import {
   FlatObjectMetadata,
   FlatObjectMetadataWithoutFields,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
-import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import {
   CustomDeletedCreatedUpdatedMatrix,
   deletedCreatedUpdatedMatrixDispatcher,
 } from 'src/engine/workspace-manager/workspace-migration-v2/utils/deleted-created-updated-matrix-dispatcher.util';
+import { FromTo } from 'twenty-shared/types';
 
 export type UpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix = {
   flatObjectMetadata: FlatObjectMetadataWithoutFields;

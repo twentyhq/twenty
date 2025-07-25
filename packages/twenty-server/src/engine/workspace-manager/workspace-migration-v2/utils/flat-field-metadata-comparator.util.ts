@@ -1,10 +1,9 @@
 import diff from 'microdiff';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
-import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import { UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
