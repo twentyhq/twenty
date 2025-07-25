@@ -2,12 +2,18 @@ export type AutocompleteSanitizedResult = {
   text: string;
   placeId: string;
 };
+
+type GooglePrediction = {
+  description: string;
+  place_id: string;
+};
 export const sanitizeAutocompleteResults = (
-  autocompleteResults: any,
+  autocompleteResults: GooglePrediction[],
 ): AutocompleteSanitizedResult[] => {
   if (!Array.isArray(autocompleteResults) || autocompleteResults.length === 0)
     return [];
-  return autocompleteResults.map((result: any) => ({
+
+  return autocompleteResults.map((result) => ({
     text: result.description,
     placeId: result.place_id,
   }));

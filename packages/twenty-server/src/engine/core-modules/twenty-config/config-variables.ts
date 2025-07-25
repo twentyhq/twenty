@@ -1171,7 +1171,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
     isSensitive: true,
-    description: 'google map api key for places and map',
+    description: 'Google map api key for places and map',
     type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.GOOGLE_MAP_API_ENABLED)

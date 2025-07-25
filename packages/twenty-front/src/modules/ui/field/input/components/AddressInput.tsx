@@ -5,7 +5,7 @@ import { Key } from 'ts-key-enum';
 import { PlaceAutocompleteSelect } from '@/map/components/PlaceAutocompleteSelect';
 import { SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID } from '@/map/constants/selectAutocompleteListDropDownId';
 import { useGetPlaceApiData } from '@/map/hooks/useGetPlaceApiData';
-import { placeAutocompleteResult } from '@/map/types/placeApi';
+import { PlaceAutocompleteResult } from '@/map/types/placeApi';
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
@@ -88,7 +88,7 @@ export const AddressInput = ({
   const addressStateInputRef = useRef<HTMLInputElement>(null);
   const addressPostcodeInputRef = useRef<HTMLInputElement>(null);
   const [placeAutocompleteData, setPlaceAutocompleteData] = useState<
-    placeAutocompleteResult[] | null
+    PlaceAutocompleteResult[] | null
   >([]);
   const [tokenForPlaceApi, setTokenForPlaceApi] = useState<string | null>(null);
   const inputRefs: {
@@ -152,13 +152,13 @@ export const AddressInput = ({
         country,
       );
 
-      const neweData = placeAutocompleteData?.map((data) => ({
+      const newData = placeAutocompleteData?.map((data) => ({
         text: data.text,
         placeId: data.placeId,
       }));
-      if (isDefined(neweData) && neweData?.length > 0) {
+      if (isDefined(newData) && newData?.length > 0) {
         openDropdownOfAutocomplete();
-        setPlaceAutocompleteData(neweData);
+        setPlaceAutocompleteData(newData);
       } else {
         closeDropdownOfAutocomplete();
       }
@@ -208,7 +208,7 @@ export const AddressInput = ({
     onChange?.(updatedAddress);
     closeDropdownOfAutocomplete();
   };
-  const onclick = (placeId: string) => {
+  const handlePlaceSelection = (placeId: string) => {
     const placeAutocomplete = placeAutocompleteData?.find(
       (place) => place.placeId === placeId,
     );
@@ -345,7 +345,7 @@ export const AddressInput = ({
       {placeAutocompleteData && placeAutocompleteData?.length > 0 && (
         <PlaceAutocompleteSelect
           list={placeAutocompleteData}
-          onChange={onclick}
+          onChange={handlePlaceSelection}
           dropdownId={SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID}
           excludedClickOutsideIds={[TEXT_INPUT_CLICK_OUTSIDE_ID]}
           onClickOutside={handleClickOutside}

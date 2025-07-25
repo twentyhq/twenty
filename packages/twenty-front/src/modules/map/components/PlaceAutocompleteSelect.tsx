@@ -1,4 +1,4 @@
-import { placeAutocompleteResult } from '@/map/types/placeApi';
+import { PlaceAutocompleteResult } from '@/map/types/placeApi';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -21,7 +21,7 @@ export const PlaceAutocompleteSelect = ({
   excludedClickOutsideIds,
   onClickOutside,
 }: {
-  list: placeAutocompleteResult[];
+  list: PlaceAutocompleteResult[];
   onChange: (placeId: string) => void;
   dropdownId: string;
   excludedClickOutsideIds?: string[];

@@ -18,7 +18,7 @@ export const GET_GOOGLE_AUTOCOMPLETE_QUERY = gql`
 `;
 export const GET_GOOGLE_PLACE_DETAILS_QUERY = gql`
   query GetGooglePlaceDetails($placeId: String!, $token: String!) {
-    GooglePlaceDetails(placeId: $placeId, token: $token)
+    googlePlaceDetails(placeId: $placeId, token: $token)
       @rest(
         type: "GooglePlaceDetails"
         path: "/place-api/details?placeId={args.placeId}&token={args.token}"

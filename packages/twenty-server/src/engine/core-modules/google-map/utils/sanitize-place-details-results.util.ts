@@ -10,7 +10,7 @@ export type AddressFields = {
   country?: string;
 };
 
-export const sanitisePlaceDetailsResults = (
+export const sanitizePlaceDetailsResults = (
   AddressComponents: AddressComponent[],
 ): AddressFields => {
   if (!AddressComponents || AddressComponents.length === 0) return {};

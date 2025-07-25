@@ -1,4 +1,4 @@
-export type placeAutocompleteVariables = {
+export type PlaceAutocompleteVariables = {
   address: string;
   token: string;
   options?: {
@@ -7,11 +7,11 @@ export type placeAutocompleteVariables = {
   };
 };
 
-export type placeAutocompleteResult = {
+export type PlaceAutocompleteResult = {
   text: string;
   placeId: string;
 };
-export type placeDetailseResult = {
+export type PlaceDetailsResult = {
   state?: string;
   postcode?: string;
   city?: string;
