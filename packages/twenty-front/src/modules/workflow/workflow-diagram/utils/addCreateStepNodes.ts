@@ -39,8 +39,5 @@ export const addCreateStepNodes = ({ nodes, edges }: WorkflowDiagram) => {
     });
   }
 
-  return {
-    nodes: updatedNodes,
-    edges: updatedEdges,
-  };
+  return { nodes, edges };
 };

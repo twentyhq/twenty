@@ -30,6 +30,7 @@ export const baseTriggerSchema = z.object({
   name: z.string().optional(),
   type: z.string(),
   position: z.object({ x: z.number(), y: z.number() }).optional(),
+  nextStepIds: z.array(z.string()).optional().nullable(),
 });
 
 // Action settings schemas
