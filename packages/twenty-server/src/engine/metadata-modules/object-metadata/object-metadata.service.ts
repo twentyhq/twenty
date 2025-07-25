@@ -6,33 +6,35 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
-  FindManyOptions,
-  FindOneOptions,
-  In,
-  QueryRunner,
-  Repository,
+    FindManyOptions,
+    FindOneOptions,
+    In,
+    QueryRunner,
+    Repository,
 } from 'typeorm';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import {
-  UpdateObjectPayload,
-  UpdateOneObjectInput,
+    UpdateObjectPayload,
+    UpdateOneObjectInput,
 } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
-  ObjectMetadataException,
-  ObjectMetadataExceptionCode,
+    ObjectMetadataException,
+    ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { ObjectMetadataFieldRelationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-field-relation.service';
 import { ObjectMetadataMigrationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-migration.service';
 import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-related-records.service';
 import { buildDefaultFieldsForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-fields-for-custom-object.util';
 import {
-  validateLowerCasedAndTrimmedStringsAreDifferentOrThrow,
-  validateObjectMetadataInputLabelsOrThrow,
-  validateObjectMetadataInputNamesOrThrow,
+    validateLowerCasedAndTrimmedStringsAreDifferentOrThrow,
+    validateObjectMetadataInputLabelsOrThrow,
+    validateObjectMetadataInputNamesOrThrow,
 } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import { SearchVectorService } from 'src/engine/metadata-modules/search-vector/search-vector.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -46,21 +48,18 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { fromObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/workspace-manager/workspace-migration-v2/utils/from-object-metadata-maps-to-flat-object-metadatas.util';
+import { mergeTwoFlatFieldObjectMetadatas } from 'src/engine/workspace-manager/workspace-migration-v2/utils/merge-two-flat-object-metadatas.util';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
-import { fromObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/workspace-manager/workspace-migration-v2/utils/from-object-metadata-maps-to-flat-object-metadatas.util';
-import { mergeTwoFlatFieldObjectMetadatas } from 'src/engine/workspace-manager/workspace-migration-v2/utils/merge-two-flat-object-metadatas.util';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
 import {
-  CreateObjectInput,
-  fromCreateObjectInputToFlatObjectMetadata,
+    CreateObjectInput,
+    fromCreateObjectInputToFlatObjectMetadata,
 } from './dtos/create-object.input';
-
-// TODO prastoin create a feature flag in db
-const workspaceMigrationV2FeatureFlagIsEnabled = false;
 
 @Injectable()
 export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEntity> {
@@ -80,6 +79,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationBuilderV2: WorkspaceMigrationBuilderV2Service,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(objectMetadataRepository);
   }
@@ -126,7 +126,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           objectMetadataInput.workspaceId,
         );
 
-      if (workspaceMigrationV2FeatureFlagIsEnabled) {
+      const isWorkspaceMigrationV2Enabled =
+        await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+          objectMetadataInput.workspaceId,
+        );
+
+      if (isWorkspaceMigrationV2Enabled) {
         const createdRawFlatObjectMetadata =
           fromCreateObjectInputToFlatObjectMetadata(objectMetadataInput);
         const existingFlatObjectMetadatas =

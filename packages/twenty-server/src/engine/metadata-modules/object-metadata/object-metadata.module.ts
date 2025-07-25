@@ -3,13 +3,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { SortDirection } from '@ptc-org/nestjs-query-core';
 import {
-  NestjsQueryGraphQLModule,
-  PagingStrategies,
+    NestjsQueryGraphQLModule,
+    PagingStrategies,
 } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -63,6 +64,7 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
         WorkspaceCacheStorageModule,
         WorkspaceMetadataCacheModule,
         WorkspaceDataSourceModule,
+        FeatureFlagModule,
       ],
       services: [
         ObjectMetadataService,
