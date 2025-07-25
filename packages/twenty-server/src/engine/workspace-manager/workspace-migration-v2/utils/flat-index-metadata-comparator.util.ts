@@ -1,8 +1,8 @@
 import diff from 'microdiff';
+import { FromTo } from 'twenty-shared/types';
 
 import { FlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-index-metadata';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
-import { FromTo } from 'twenty-shared/types';
 
 const flatIndexMetadataPropertiesToCompare = [
   'flatIndexFieldMetadatas', // Comparing this as whole ? should iterate on each keys ? => TBD should only map over cols as before ?

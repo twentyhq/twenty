@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata';
 
 type FlatFieldMetadataOverrides<
   T extends FieldMetadataType = FieldMetadataType,

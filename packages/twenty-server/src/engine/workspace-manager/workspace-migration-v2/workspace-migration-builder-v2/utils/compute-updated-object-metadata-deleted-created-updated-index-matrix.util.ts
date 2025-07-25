@@ -1,13 +1,14 @@
-import { FlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-index-metadata';
+import { FromTo } from 'twenty-shared/types';
+
 import {
   FlatObjectMetadata,
   FlatObjectMetadataWithoutFields,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
+} from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata';
+import { FlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-index-metadata';
 import {
   CustomDeletedCreatedUpdatedMatrix,
   deletedCreatedUpdatedMatrixDispatcher,
 } from 'src/engine/workspace-manager/workspace-migration-v2/utils/deleted-created-updated-matrix-dispatcher.util';
-import { FromTo } from 'twenty-shared/types';
 
 export type UpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix = {
   flatObjectMetadata: FlatObjectMetadataWithoutFields;

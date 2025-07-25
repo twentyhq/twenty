@@ -2,8 +2,8 @@ import diff from 'microdiff';
 import { FieldMetadataType, FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
-import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
 import { UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
@@ -19,10 +19,6 @@ const flatFieldMetadataPropertiesToCompare = [
   'options',
   'standardOverrides',
   'settings',
-  // To reactivate once we authorize relation edition, see https://github.com/twentyhq/twenty/commit/39f6f3c4bb101272a9014e142a842d0801a3c33b
-  // 'relationTargetFieldMetadataId',
-  // 'relationTargetObjectMetadataId',
-  ///
 ] as const satisfies (keyof FlatFieldMetadata)[];
 
 export type FlatFieldMetadataPropertiesToCompare =

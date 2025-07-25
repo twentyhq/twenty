@@ -1,11 +1,11 @@
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { fromFieldMetadataEntityToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-field-metadata-entity-to-flat-field-metadata.util';
 import {
   FlatObjectMetadata,
   objectMetadataEntityRelationProperties,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
-import { fromFieldMetadataEntityToFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/utils/from-field-metadata-entity-to-flat-field-metadata.util';
+} from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 export const fromObjectMetadataEntityToFlatObjectMetadata = (
   objectMetadataEntity: ObjectMetadataEntity,
