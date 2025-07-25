@@ -2,7 +2,7 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getFilterFilterableFieldMetadataItems } from '@/object-metadata/utils/getFilterFilterableFieldMetadataItems';
-import { getRestrictedFieldMetadaIdsFromObjectPermissions } from '@/object-metadata/utils/getRestrictedFieldMetadataIdsFromObjectPermissions';
+import { getRestrictedFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getRestrictedFieldMetadataIdsFromObjectPermissions';
 import { checkIfFeatureFlagIsEnabledOnWorkspace } from '@/workspace/utils/checkIfFeatureFlagIsEnabledOnWorkspace';
 import { selectorFamily } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -40,13 +40,13 @@ export const availableFieldMetadataItemsForFilterFamilySelector =
             isJsonFilterEnabled: isJsonFeatureFlagEnabled,
           });
 
-        let restrictedFieldMetadaIds: string[] = [];
+        let restrictedFieldMetadataIds: string[] = [];
 
         if (isFieldsPermissionsEnabled) {
           const currentUserWorkspace = get(currentUserWorkspaceState);
 
-          restrictedFieldMetadaIds =
-            getRestrictedFieldMetadaIdsFromObjectPermissions({
+          restrictedFieldMetadataIds =
+            getRestrictedFieldMetadataIdsFromObjectPermissions({
               objectPermissions: currentUserWorkspace?.objectPermissions,
               objectMetadataId: objectMetadataItem.id,
             });
@@ -55,7 +55,7 @@ export const availableFieldMetadataItemsForFilterFamilySelector =
         const availableFieldMetadataItemsForFilter = objectMetadataItem.fields
           .filter(filterFilterableFieldMetadataItems)
           .filter((field) => {
-            return !restrictedFieldMetadaIds.includes(field.id);
+            return !restrictedFieldMetadataIds.includes(field.id);
           });
         return availableFieldMetadataItemsForFilter;
       },

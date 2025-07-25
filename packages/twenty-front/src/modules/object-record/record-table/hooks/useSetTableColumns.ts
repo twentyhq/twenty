@@ -38,7 +38,7 @@ export const useSetTableColumns = () => {
             (permission) => permission.objectMetadataId === objectMetadataId,
           )?.restrictedFields;
 
-          const restrictedFieldMetadaIds = Object.entries(
+          const restrictedFieldMetadataIds = Object.entries(
             restrictedFields ?? {},
           )
             .filter(
@@ -48,7 +48,7 @@ export const useSetTableColumns = () => {
             .map(([fieldMetadataId]) => fieldMetadataId);
           const nonRestrictedColumns = columns.filter(
             (column) =>
-              !restrictedFieldMetadaIds?.includes(column.fieldMetadataId),
+              !restrictedFieldMetadataIds?.includes(column.fieldMetadataId),
           );
           columnsToSet = nonRestrictedColumns;
         }

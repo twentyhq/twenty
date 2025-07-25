@@ -21,7 +21,7 @@ export const useObjectOptionsForTable = (
   );
 
   const { handleColumnVisibilityChange, handleColumnReorder } = useTableColumns(
-    { recordTableId: recordTableId, objectMetadataId },
+    { recordTableId, objectMetadataId },
   );
 
   const handleReorderColumns: OnDragEndResponder = useCallback(

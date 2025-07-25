@@ -1,3 +1,4 @@
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
@@ -47,21 +48,23 @@ export const mapObjectMetadataToGraphQLQuery = ({
     }
   }
 
+  const filterReadableFields = (field: FieldMetadataItem) => {
+    if (isFieldsPermissionsEnabled) {
+      const objectPermission = getObjectPermissionsForObject(
+        objectPermissionsByObjectMetadataId,
+        objectMetadataItem.id,
+      );
+      return objectPermission.restrictedFields?.[field.id]?.canRead !== false;
+    } else {
+      return true;
+    }
+  };
+
   const manyToOneRelationFields = objectMetadataItem?.fields
     .filter((field) => field.isActive)
     .filter((field) => field.type === FieldMetadataType.RELATION)
     .filter((field) => isDefined(field.settings?.joinColumnName))
-    .filter((field) => {
-      if (isFieldsPermissionsEnabled) {
-        const objectPermission = getObjectPermissionsForObject(
-          objectPermissionsByObjectMetadataId,
-          objectMetadataItem.id,
-        );
-        return objectPermission.restrictedFields?.[field.id]?.canRead !== false;
-      } else {
-        return true;
-      }
-    });
+    .filter(filterReadableFields);
 
   const manyToOneRelationGqlFieldWithFieldMetadata =
     manyToOneRelationFields.map((field) => ({
@@ -72,20 +75,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
   const gqlFieldWithFieldMetadataThatCouldBeQueried = [
     ...objectMetadataItem.fields
       .filter((fieldMetadata) => fieldMetadata.isActive)
-      .filter((fieldMetadata) => {
-        if (isFieldsPermissionsEnabled) {
-          const objectPermission = getObjectPermissionsForObject(
-            objectPermissionsByObjectMetadataId,
-            objectMetadataItem.id,
-          );
-          return (
-            objectPermission.restrictedFields?.[fieldMetadata.id]?.canRead !==
-            false
-          );
-        } else {
-          return true;
-        }
-      })
+      .filter(filterReadableFields)
       .map((fieldMetadata) => ({
         gqlField: fieldMetadata.name,
         fieldMetadata,
