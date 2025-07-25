@@ -97,7 +97,7 @@ export class UserWorkspace {
   twoFactorAuthenticationMethods: Relation<TwoFactorAuthenticationMethod[]>;
 
   @Field(() => [PermissionFlagType], { nullable: true })
-  settingsPermissions?: PermissionFlagType[];
+  permissionFlags?: PermissionFlagType[];
 
   @Field(() => [PermissionsOnAllObjectRecords], {
     nullable: true,

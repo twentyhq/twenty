@@ -1,3 +1,4 @@
+import { useGetFieldMetadataItemById } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { useWorkflowStepContextOrThrow } from '@/workflow/states/context/WorkflowStepContext';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
@@ -38,6 +39,8 @@ export const WorkflowStepFilterFieldSelect = ({
     }),
   );
 
+  const { getFieldMetadataItemById } = useGetFieldMetadataItemById();
+
   const handleChange = useRecoilCallback(
     ({ snapshot }) =>
       (variableName: string) => {
@@ -54,24 +57,39 @@ export const WorkflowStepFilterFieldSelect = ({
           )
           .getValue();
 
-        const { variableLabel, variableType } =
-          searchVariableThroughOutputSchema({
-            stepOutputSchema: currentStepOutputSchema?.[0],
-            rawVariableName: variableName,
-            isFullRecord: false,
-          });
+        const {
+          variableLabel,
+          variableType,
+          fieldMetadataId,
+          compositeFieldSubFieldName,
+        } = searchVariableThroughOutputSchema({
+          stepOutputSchema: currentStepOutputSchema?.[0],
+          rawVariableName: variableName,
+          isFullRecord: false,
+        });
+
+        const filterType = isDefined(fieldMetadataId)
+          ? getFieldMetadataItemById(fieldMetadataId).type
+          : variableType;
 
         upsertStepFilterSettings({
           stepFilterToUpsert: {
             ...stepFilter,
             stepOutputKey: variableName,
             displayValue: variableLabel ?? '',
-            type: variableType ?? 'unknown',
+            type: filterType ?? 'unknown',
             value: '',
+            fieldMetadataId,
+            compositeFieldSubFieldName,
           },
         });
       },
-    [upsertStepFilterSettings, stepFilter, workflowVersionId],
+    [
+      upsertStepFilterSettings,
+      stepFilter,
+      workflowVersionId,
+      getFieldMetadataItemById,
+    ],
   );
 
   if (!isDefined(stepId)) {

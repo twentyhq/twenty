@@ -25,13 +25,21 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
     context: {
       input: () => {
         const objectMetadataId = faker.string.uuid();
-
+        const targetObjectMetadataId = faker.string.uuid();
         const createdFlatRelationFieldMetadata = getFlatFieldMetadataMock({
           uniqueIdentifier: 'field-metadata-unique-identifier-1',
           objectMetadataId,
           type: FieldMetadataType.RELATION,
           relationTargetFieldMetadataId: faker.string.uuid(),
           relationTargetObjectMetadataId: faker.string.uuid(),
+          flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
+            objectMetadataId: targetObjectMetadataId,
+            type: FieldMetadataType.RELATION,
+            uniqueIdentifier: 'field-metadata-unique-identifier-2',
+          }),
+          flatRelationTargetObjectMetadata: getFlatObjectMetadataMock({
+            uniqueIdentifier: 'object-metadata-unique-identifier-2',
+          }),
         });
         const flatObjectMetadata = getFlatObjectMetadataMock({
           uniqueIdentifier: 'object-metadata-unique-identifier-1',
