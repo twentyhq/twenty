@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 import { OpenAPIV3_1 } from 'openapi-types';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
@@ -42,6 +42,7 @@ import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metada
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
 import { getServerUrl } from 'src/utils/get-server-url';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class OpenApiService {
@@ -52,6 +53,30 @@ export class OpenApiService {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
+  private async getWorkspaceFromRequest(request: Request) {
+    try {
+      const { workspace } =
+        await this.accessTokenService.validateTokenByRequest(request);
+
+      workspaceValidator.assertIsDefinedOrThrow(workspace);
+
+      return workspace;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  private async getObjectMetadataItems(workspace: Workspace) {
+    return await this.objectMetadataService.findManyWithinWorkspace(
+      workspace.id,
+      {
+        order: {
+          namePlural: 'ASC',
+        },
+      },
+    );
+  }
+
   async generateCoreSchema(request: Request): Promise<OpenAPIV3_1.Document> {
     const baseUrl = getServerUrl(
       this.twentyConfigService.get('SERVER_URL'),
@@ -60,25 +85,13 @@ export class OpenApiService {
 
     const schema = baseSchema('core', baseUrl);
 
-    let objectMetadataItems;
-    let workspace;
+    const workspace = await this.getWorkspaceFromRequest(request);
 
-    try {
-      const authResult =
-        await this.accessTokenService.validateTokenByRequest(request);
-
-      workspace = authResult.workspace;
-      workspaceValidator.assertIsDefinedOrThrow(workspace);
-
-      objectMetadataItems =
-        await this.objectMetadataService.findManyWithinWorkspace(workspace.id, {
-          order: {
-            namePlural: 'ASC',
-          },
-        });
-    } catch (err) {
+    if (!isDefined(workspace)) {
       return schema;
     }
+
+    const objectMetadataItems = await this.getObjectMetadataItems(workspace);
 
     if (!objectMetadataItems.length) {
       return schema;
@@ -105,7 +118,7 @@ export class OpenApiService {
       return paths;
     }, schema.paths as OpenAPIV3_1.PathsObject);
 
-    schema.webhooks = objectMetadataItems.reduce(
+    schema.webhooks = filteredObjectMetadataItems.reduce(
       (paths, item) => {
         paths[
           this.createWebhookEventName(
@@ -134,8 +147,6 @@ export class OpenApiService {
       >,
     );
 
-    schema.tags = computeSchemaTags(objectMetadataItems);
-
     schema.components = {
       ...schema.components, // components.securitySchemes is defined in base Schema
       schemas: computeSchemaComponents(filteredObjectMetadataItems),
@@ -161,7 +172,11 @@ export class OpenApiService {
 
     const schema = baseSchema('metadata', baseUrl);
 
-    schema.tags = [{ name: 'placeholder' }];
+    const workspace = await this.getWorkspaceFromRequest(request);
+
+    if (!isDefined(workspace)) {
+      return schema;
+    }
 
     const metadata = [
       {
@@ -177,7 +192,7 @@ export class OpenApiService {
         namePlural: 'webhooks',
       },
       {
-        nameSingular: 'apikey',
+        nameSingular: 'apiKey',
         namePlural: 'apiKeys',
       },
     ];
@@ -249,9 +264,18 @@ export class OpenApiService {
       return path;
     }, schema.paths as OpenAPIV3_1.PathsObject);
 
+    const objectMetadataItems = await this.getObjectMetadataItems(workspace);
+
+    const webhookAndApiKeyObjectMetadataItems = objectMetadataItems.filter(
+      ({ nameSingular }) => ['webhook', 'apiKey'].includes(nameSingular),
+    );
+
     schema.components = {
       ...schema.components, // components.securitySchemes is defined in base Schema
-      schemas: computeMetadataSchemaComponents(metadata),
+      schemas: {
+        ...computeMetadataSchemaComponents(metadata),
+        ...computeSchemaComponents(webhookAndApiKeyObjectMetadataItems),
+      },
       parameters: computeParameterComponents(true),
       responses: {
         '400': get400ErrorResponses(),
