@@ -53,10 +53,10 @@ import { mergeTwoFlatFieldObjectMetadatas } from 'src/engine/workspace-manager/w
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
+import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
-import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
 import {
   CreateObjectInput,
   fromCreateObjectInputToFlatObjectMetadata,
@@ -157,6 +157,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           },
           workspaceId: objectMetadataInput.workspaceId, // Where does this comes from ?
         });
+
         await this.workspaceMigrationRunnerV2Service.run(workpsaceMigration);
 
         // What to return exactly ? We now won't have access to the entity directly
