@@ -9,6 +9,7 @@ import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendInviteLinkEmail } from 'twenty-emails';
+import { normalizeLocale } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
 import {
@@ -300,13 +301,15 @@ export class WorkspaceInvitationService {
           locale: sender.locale,
         };
 
+        const normalizedLocale = normalizeLocale(sender.locale || null);
+
+        i18n.activate(normalizedLocale);
+
         const emailTemplate = SendInviteLinkEmail(emailData);
         const html = await render(emailTemplate);
         const text = await render(emailTemplate, {
           plainText: true,
         });
-
-        i18n.activate(sender.locale);
 
         await this.emailService.send({
           from: `${sender.name.firstName} ${sender.name.lastName} (via Twenty) <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,

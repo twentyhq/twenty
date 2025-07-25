@@ -10,6 +10,7 @@ import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordResetLinkEmail } from 'twenty-emails';
 import { APP_LOCALES } from 'twenty-shared/translations';
+import { normalizeLocale } from 'twenty-shared/utils';
 import { IsNull, MoreThan, Repository } from 'typeorm';
 
 import {
@@ -137,6 +138,8 @@ export class ResetPasswordService {
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
+    const normalizedLocale = normalizeLocale(locale || null);
+
     const link = this.domainManagerService.buildWorkspaceURL({
       workspace,
       pathname: `/reset-password/${resetToken.passwordResetToken}`,
@@ -153,15 +156,15 @@ export class ResetPasswordService {
           long: true,
         },
       ),
-      locale,
+      locale: normalizedLocale,
     };
+
+    i18n.activate(normalizedLocale);
 
     const emailTemplate = PasswordResetLinkEmail(emailData);
 
     const html = await render(emailTemplate, { pretty: true });
     const text = await render(emailTemplate, { plainText: true });
-
-    i18n.activate(locale);
 
     this.emailService.send({
       from: `${this.twentyConfigService.get(

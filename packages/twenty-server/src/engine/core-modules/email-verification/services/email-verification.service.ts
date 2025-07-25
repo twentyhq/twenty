@@ -8,7 +8,7 @@ import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendEmailVerificationLinkEmail } from 'twenty-emails';
 import { APP_LOCALES } from 'twenty-shared/translations';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, normalizeLocale } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -77,14 +77,16 @@ export class EmailVerificationService {
       locale,
     };
 
+    const normalizedLocale = normalizeLocale(locale || null);
+
+    i18n.activate(normalizedLocale);
+
     const emailTemplate = SendEmailVerificationLinkEmail(emailData);
 
     const html = await render(emailTemplate);
     const text = await render(emailTemplate, {
       plainText: true,
     });
-
-    i18n.activate(locale);
 
     await this.emailService.send({
       from: `${this.twentyConfigService.get(
