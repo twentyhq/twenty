@@ -17,7 +17,6 @@ export type LinksFieldGraphQLInput =
   | null
   | undefined;
 
-// TODO refactor this function handle partial composite field update
 export const transformLinksValue = (
   value: LinksFieldGraphQLInput,
 ): LinksFieldGraphQLInput => {
@@ -25,35 +24,53 @@ export const transformLinksValue = (
     return value;
   }
 
-  const primaryLinkUrlRaw = value.primaryLinkUrl as string | null;
-  const primaryLinkLabelRaw = value.primaryLinkLabel as string | null;
-  const secondaryLinksRaw = value.secondaryLinks as string | null;
+  
+  const safeValue = value as NonNullable<LinksFieldGraphQLInput>;
 
-  const secondaryLinksArray = isNonEmptyString(secondaryLinksRaw)
-    ? parseJson<LinkMetadataNullable[]>(secondaryLinksRaw)
-    : null;
+  // Handle each field individually without force casting
+  const primaryLinkUrl = isDefined(safeValue.primaryLinkUrl) 
+    ? lowercaseUrlOriginAndRemoveTrailingSlash(safeValue.primaryLinkUrl)
+    : safeValue.primaryLinkUrl;
 
-  const { primaryLinkLabel, primaryLinkUrl, secondaryLinks } = removeEmptyLinks(
-    {
-      primaryLinkUrl: primaryLinkUrlRaw,
-      primaryLinkLabel: primaryLinkLabelRaw,
-      secondaryLinks: secondaryLinksArray,
-    },
-  );
+  const primaryLinkLabel = safeValue.primaryLinkLabel ?? null;
+
+  // Handle secondaryLinks only if provided
+  let secondaryLinksArray: LinkMetadataNullable[] | null = null;
+  if (isDefined(safeValue.secondaryLinks)) {
+    if (isNonEmptyString(safeValue.secondaryLinks)) {
+      try {
+        secondaryLinksArray = parseJson<LinkMetadataNullable[]>(safeValue.secondaryLinks);
+        
+        if (secondaryLinksArray) {
+          secondaryLinksArray = secondaryLinksArray
+            .map((link: LinkMetadataNullable) => {
+              if (!isDefined(link)) return link;
+              
+              return {
+                url: isDefined(link.url)
+                  ? lowercaseUrlOriginAndRemoveTrailingSlash(link.url)
+                  : link.url,
+                label: link.label,
+              };
+            })
+            .filter(isDefined);
+        }
+      } catch {
+        secondaryLinksArray = null;
+      }
+    }
+  }
+
+  // Apply removeEmptyLinks logic to handle fallback behavior
+  const processedLinks = removeEmptyLinks({
+    primaryLinkUrl,
+    primaryLinkLabel,
+    secondaryLinks: secondaryLinksArray,
+  });
 
   return {
-    ...value,
-    primaryLinkUrl: isDefined(primaryLinkUrl)
-      ? lowercaseUrlOriginAndRemoveTrailingSlash(primaryLinkUrl)
-      : primaryLinkUrl,
-    primaryLinkLabel,
-    secondaryLinks: JSON.stringify(
-      secondaryLinks?.map((link) => ({
-        ...link,
-        url: isDefined(link.url)
-          ? lowercaseUrlOriginAndRemoveTrailingSlash(link.url)
-          : link.url,
-      })),
-    ),
+    primaryLinkUrl: processedLinks.primaryLinkUrl,
+    primaryLinkLabel: processedLinks.primaryLinkLabel,
+    secondaryLinks: JSON.stringify(processedLinks.secondaryLinks),
   };
 };
