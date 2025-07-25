@@ -34,12 +34,12 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
+import { WorkspaceMigrationBuilderV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.module';
+import { WorkspaceMigrationRunnerV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.module';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 import { ObjectMetadataService } from './object-metadata.service';
 
-import { WorkspaceMigrationBuilderV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.module';
-import { WorkspaceMigrationRunnerV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.module';
 import { CreateObjectInput } from './dtos/create-object.input';
 import { ObjectMetadataDTO } from './dtos/object-metadata.dto';
 import { UpdateObjectPayload } from './dtos/update-object.input';
@@ -68,7 +68,7 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
         WorkspaceDataSourceModule,
         FeatureFlagModule,
         WorkspaceMigrationBuilderV2Module,
-        WorkspaceMigrationRunnerV2Module
+        WorkspaceMigrationRunnerV2Module,
       ],
       services: [
         ObjectMetadataService,
