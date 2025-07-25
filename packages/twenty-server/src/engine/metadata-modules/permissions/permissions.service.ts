@@ -55,11 +55,9 @@ export class PermissionsService {
       );
     }
 
-    const permissionFlags = roleOfUserWorkspace.permissionFlags ?? [];
-
     const defaultSettingsPermissions =
-      this.getDefaultUserWorkspacePermissions().settingsPermissions;
-    const settingsPermissions = Object.keys(PermissionFlagType).reduce(
+      this.getDefaultUserWorkspacePermissions().permissionFlags;
+    const permissionFlags = Object.keys(PermissionFlagType).reduce(
       (acc, feature) => {
         const hasBasePermission = this.isToolPermission(feature)
           ? roleOfUserWorkspace.canAccessAllTools
@@ -69,7 +67,7 @@ export class PermissionsService {
           ...acc,
           [feature]:
             hasBasePermission ||
-            permissionFlags.some(
+            roleOfUserWorkspace.permissionFlags.some(
               (permissionFlag) => permissionFlag.flag === feature,
             ),
         };
@@ -97,7 +95,7 @@ export class PermissionsService {
       };
 
     return {
-      settingsPermissions,
+      permissionFlags,
       objectRecordsPermissions,
       objectPermissions,
     };
@@ -111,7 +109,7 @@ export class PermissionsService {
         [PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS]: false,
         [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]: false,
       },
-      settingsPermissions: {
+      permissionFlags: {
         [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: false,
         [PermissionFlagType.WORKSPACE]: false,
         [PermissionFlagType.WORKSPACE_MEMBERS]: false,

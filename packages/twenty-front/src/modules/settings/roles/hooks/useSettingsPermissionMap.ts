@@ -10,7 +10,7 @@ export const useSettingsPermissionMap = (): Record<
   const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
 
   const currentUserWorkspaceSettingsPermissions =
-    currentUserWorkspace?.settingsPermissions;
+    currentUserWorkspace?.permissionFlags;
 
   const initialPermissions = buildRecordFromKeysWithSameValue(
     Object.values(PermissionFlagType),

@@ -20,7 +20,7 @@ export const useHasPermissionFlag = (permissionFlag?: PermissionFlagType) => {
     return true;
   }
 
-  const currentUserWorkspaceSetting = currentUserWorkspace?.settingsPermissions;
+  const currentUserWorkspaceSetting = currentUserWorkspace?.permissionFlags;
 
   if (!currentUserWorkspaceSetting) {
     return false;
