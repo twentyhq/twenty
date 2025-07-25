@@ -239,8 +239,11 @@ export const getJsonResponse = () => {
             servers: {
               type: 'array',
               items: {
-                url: { type: 'string' },
-                description: { type: 'string' },
+                type: 'object',
+                properties: {
+                  url: { type: 'string' },
+                  description: { type: 'string' },
+                },
               },
             },
             components: {
