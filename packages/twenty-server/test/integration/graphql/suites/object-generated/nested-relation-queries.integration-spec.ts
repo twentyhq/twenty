@@ -336,7 +336,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toBe(
-      'Expected 1 record to connect to company, but found 0.',
+      'Expected 1 record to connect to company, but found 0 for domainNamePrimaryLinkUrl = not-existing-company',
     );
     expect(response.body.errors[0].extensions.code).toBe(
       ErrorCode.BAD_USER_INPUT,
