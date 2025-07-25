@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { Injectable } from '@nestjs/common';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -11,7 +12,13 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
+import {
+  InvalidMetadataException,
+  InvalidMetadataExceptionCode,
+} from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
+import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
+import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
+import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { Expect } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,7 +34,10 @@ type ValidateOneFieldMetadataArgs = {
 
 type FailedFlatFieldMetadataValidation = {
   status: 'fail';
-  error: FieldMetadataException | ObjectMetadataException;
+  error:
+    | FieldMetadataException
+    | ObjectMetadataException
+    | InvalidMetadataException;
 };
 
 type SuccessfulFlatFieldMetadataValidation = {
@@ -89,10 +99,53 @@ export class FlatFieldMetadataValidatorService {
     }
 
     if (flatFieldMetadataToValidate.isLabelSyncedWithName) {
-      validateNameAndLabelAreSyncOrThrow({
-        label: flatFieldMetadataToValidate.label,
-        name: flatFieldMetadataToValidate.name,
-      });
+      const computedName = computeMetadataNameFromLabel(
+        flatFieldMetadataToValidate.label,
+      );
+
+      if (flatFieldMetadataToValidate.name !== computedName) {
+        return {
+          status: 'fail',
+          error: new InvalidMetadataException(
+            `Name is not synced with label. Expected name: "${computedName}", got ${name}`,
+            InvalidMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL,
+          ),
+        };
+      }
+    }
+
+    try {
+      validateMetadataNameOrThrow(flatFieldMetadataToValidate.name);
+    } catch (error) {
+      return {
+        status: 'fail',
+        error: new FieldMetadataException(
+          error.message,
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          {
+            userFriendlyMessage: error.userFriendlyMessage,
+          },
+        ),
+      };
+    }
+
+    try {
+      validateFieldNameAvailabilityOrThrow(
+        fieldMetadataInput.name,
+        objectMetadata,
+      );
+    } catch (error) {
+      if (error instanceof InvalidMetadataException) {
+        throw new FieldMetadataException(
+          `Name "${fieldMetadataInput.name}" is not available, check that it is not duplicating another field's name.`,
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          {
+            userFriendlyMessage: t`Name is not available, it may be duplicating another field's name.`,
+          },
+        );
+      }
+
+      throw error;
     }
 
     /// End of common
