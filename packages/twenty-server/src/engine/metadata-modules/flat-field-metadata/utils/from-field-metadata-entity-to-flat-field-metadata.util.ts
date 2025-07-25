@@ -5,7 +5,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import {
   FlatFieldMetadata,
   fieldMetadataRelationProperties,
-} from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata';
+} from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-entity-to-flat-object-metadata.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { fromFlatObjectMetadataToFlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/from-flat-object-metadata-to-flat-object-metadata-without-fields.util';

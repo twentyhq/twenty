@@ -1,10 +1,10 @@
 import { FromTo } from 'twenty-shared/types';
 
-import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata';
+import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import {
   FlatObjectMetadata,
   FlatObjectMetadataWithoutFields,
-} from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata';
+} from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   CustomDeletedCreatedUpdatedMatrix,
   deletedCreatedUpdatedMatrixDispatcher,
