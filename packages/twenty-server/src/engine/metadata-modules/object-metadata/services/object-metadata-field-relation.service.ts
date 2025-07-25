@@ -473,16 +473,15 @@ export class ObjectMetadataFieldRelationService {
       | 'icon'
       | 'fieldsById'
     >;
-    queryRunner?: QueryRunner;
+    queryRunner: QueryRunner;
   }): Promise<
     {
       fieldMetadata: FieldMetadataEntity<FieldMetadataType.MORPH_RELATION>;
       newJoinColumnName: string;
     }[]
   > {
-    const fieldMetadataRepository = queryRunner
-      ? queryRunner.manager.getRepository(FieldMetadataEntity)
-      : this.fieldMetadataRepository;
+    const fieldMetadataRepository =
+      queryRunner.manager.getRepository(FieldMetadataEntity);
 
     const morphRelationFieldMetadataTargets =
       await this.findTargetMorphRelationFieldMetadatas(
