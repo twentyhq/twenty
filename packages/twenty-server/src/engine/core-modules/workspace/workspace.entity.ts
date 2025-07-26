@@ -161,6 +161,10 @@ export class Workspace {
   isGoogleAuthEnabled: boolean;
 
   @Field()
+  @Column({ default: false })
+  isTwoFactorAuthenticationEnforced: boolean;
+
+  @Field()
   @Column({ default: true })
   isPasswordAuthEnabled: boolean;
 

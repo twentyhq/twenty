@@ -17,6 +17,7 @@ export const parseGaxiosError = (
     case MessageNetworkExceptionCode.ECONNABORTED:
     case MessageNetworkExceptionCode.ETIMEDOUT:
     case MessageNetworkExceptionCode.ERR_NETWORK:
+    case MessageNetworkExceptionCode.EHOSTUNREACH:
       return new MessageImportDriverException(
         error.message,
         MessageImportDriverExceptionCode.TEMPORARY_ERROR,

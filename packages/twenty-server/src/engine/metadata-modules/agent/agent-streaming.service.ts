@@ -12,19 +12,17 @@ import {
   AgentException,
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/agent/agent.exception';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
 
 export type StreamAgentChatOptions = {
   threadId: string;
   userMessage: string;
   userWorkspaceId: string;
-  fileIds?: string[];
+  workspace: Workspace;
+  fileIds: string[];
+  recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType;
   res: Response;
-};
-
-export type StreamAgentChatResult = {
-  success: boolean;
-  error?: string;
-  aiResponse?: string;
 };
 
 @Injectable()
@@ -42,7 +40,9 @@ export class AgentStreamingService {
     threadId,
     userMessage,
     userWorkspaceId,
-    fileIds = [],
+    workspace,
+    fileIds,
+    recordIdsByObjectMetadataNameSingular,
     res,
   }: StreamAgentChatOptions) {
     try {
@@ -65,10 +65,13 @@ export class AgentStreamingService {
 
       const { fullStream } =
         await this.agentExecutionService.streamChatResponse({
+          workspace,
           agentId: thread.agent.id,
+          userWorkspaceId,
           userMessage,
           messages: thread.messages,
           fileIds,
+          recordIdsByObjectMetadataNameSingular,
         });
 
       let aiResponse = '';

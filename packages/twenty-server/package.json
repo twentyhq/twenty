@@ -40,6 +40,7 @@
     "cache-manager": "^5.4.0",
     "cache-manager-redis-yet": "^4.1.2",
     "class-validator": "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch",
+    "class-validator-jsonschema": "^5.0.2",
     "cloudflare": "^4.0.0",
     "connect-redis": "^7.1.1",
     "express-session": "^1.18.1",

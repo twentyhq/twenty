@@ -1,5 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { z } from 'zod';
+import { StepStatus } from 'twenty-shared/workflow';
 
 // Base schemas
 export const objectRecordSchema = z.record(z.any());
@@ -296,28 +297,26 @@ export const workflowTriggerSchema = z.discriminatedUnion('type', [
   workflowWebhookTriggerSchema,
 ]);
 
-// Step output schemas
-export const workflowExecutorOutputSchema = z.object({
+export const workflowRunStepStatusSchema = z.nativeEnum(StepStatus);
+
+export const workflowRunStateStepInfoSchema = z.object({
   result: z.any().optional(),
   error: z.any().optional(),
-  pendingEvent: z.boolean().optional(),
+  status: workflowRunStepStatusSchema,
 });
 
-export const workflowRunOutputStepsOutputSchema = z.record(
-  workflowExecutorOutputSchema,
+export const workflowRunStateStepInfosSchema = z.record(
+  workflowRunStateStepInfoSchema,
 );
 
-// Final workflow run output schema
-export const workflowRunOutputSchema = z.object({
+export const workflowRunStateSchema = z.object({
   flow: z.object({
     trigger: workflowTriggerSchema,
     steps: z.array(workflowActionSchema),
   }),
-  stepsOutput: workflowRunOutputStepsOutputSchema.optional(),
-  error: z.any().optional(),
+  stepInfos: workflowRunStateStepInfosSchema,
+  workflowRunError: z.any().optional(),
 });
-
-export const workflowRunContextSchema = z.record(z.any());
 
 export const workflowRunStatusSchema = z.enum([
   'NOT_STARTED',
@@ -333,8 +332,7 @@ export const workflowRunSchema = z
     id: z.string(),
     workflowVersionId: z.string(),
     workflowId: z.string(),
-    output: workflowRunOutputSchema.nullable(),
-    context: workflowRunContextSchema.nullable(),
+    state: workflowRunStateSchema.nullable(),
     status: workflowRunStatusSchema,
     createdAt: z.string(),
     deletedAt: z.string().nullable(),

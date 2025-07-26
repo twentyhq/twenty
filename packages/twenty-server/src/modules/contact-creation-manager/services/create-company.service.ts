@@ -1,20 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import axios, { AxiosInstance } from 'axios';
 import uniqBy from 'lodash.uniqby';
 import { TWENTY_COMPANIES_BASE_URL } from 'twenty-shared/constants';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { lowercaseUrlOriginAndRemoveTrailingSlash } from 'twenty-shared/utils';
-import { DeepPartial, ILike, Repository } from 'typeorm';
+import { DeepPartial, ILike } from 'typeorm';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { extractDomainFromLink } from 'src/modules/contact-creation-manager/utils/extract-domain-from-link.util';
 import { getCompanyNameFromDomainName } from 'src/modules/contact-creation-manager/utils/get-company-name-from-domain-name.util';
@@ -34,12 +29,7 @@ export type CompanyToCreate = {
 export class CreateCompanyService {
   private readonly httpService: AxiosInstance;
 
-  constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'core')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-  ) {
+  constructor(private readonly twentyORMGlobalManager: TwentyORMGlobalManager) {
     this.httpService = axios.create({
       baseURL: TWENTY_COMPANIES_BASE_URL,
     });
@@ -53,17 +43,6 @@ export class CreateCompanyService {
   }> {
     if (companies.length === 0) {
       return {};
-    }
-
-    const objectMetadata = await this.objectMetadataRepository.findOne({
-      where: {
-        standardId: STANDARD_OBJECT_IDS.company,
-        workspaceId,
-      },
-    });
-
-    if (!objectMetadata) {
-      throw new Error('Object metadata not found');
     }
 
     const companyRepository =
@@ -123,19 +102,6 @@ export class CreateCompanyService {
 
     // Create new companies
     const createdCompanies = await companyRepository.save(newCompaniesData);
-
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: 'company',
-      action: DatabaseEventAction.CREATED,
-      events: createdCompanies.map((createdCompany) => ({
-        recordId: createdCompany.id,
-        objectMetadata,
-        properties: {
-          after: createdCompany,
-        },
-      })),
-      workspaceId,
-    });
 
     const createdCompanyIdsMap = this.createCompanyMap(createdCompanies);
 

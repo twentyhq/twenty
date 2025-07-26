@@ -1,5 +1,5 @@
-diff --git a/node_modules/typeorm/common/PickKeysByType.d.ts b/node_modules/typeorm/common/PickKeysByType.d.ts
-index 55ad347..1a8a184 100644
+diff --git a/common/PickKeysByType.d.ts b/common/PickKeysByType.d.ts
+index 55ad347..4288c06 100644
 --- a/common/PickKeysByType.d.ts
 +++ b/common/PickKeysByType.d.ts
 @@ -1,6 +1,6 @@
@@ -12,3 +12,35 @@ index 55ad347..1a8a184 100644
 +export type PickKeysByType<T, U> = string & {
 +    [P in keyof T]: Exclude<T[P], null> extends U ? P : never;
 +}[keyof T];
+diff --git a/query-builder/result/DeleteResult.d.ts b/query-builder/result/DeleteResult.d.ts
+index 9c98830..d0578f9 100644
+--- a/query-builder/result/DeleteResult.d.ts
++++ b/query-builder/result/DeleteResult.d.ts
+@@ -13,4 +13,9 @@ export declare class DeleteResult {
+      * Not all drivers support this
+      */
+     affected?: number | null;
++    /**
++     * Generated values returned by a database.
++     * Has entity-like structure (not just column database name and values).
++     */
++    generatedMaps: ObjectLiteral[];
+ }
+diff --git a/query-builder/result/DeleteResult.js b/query-builder/result/DeleteResult.js
+index 6519c11..0bb344a 100644
+--- a/query-builder/result/DeleteResult.js
++++ b/query-builder/result/DeleteResult.js
+@@ -5,6 +5,13 @@ exports.DeleteResult = void 0;
+  * Result object returned by DeleteQueryBuilder execution.
+  */
+ class DeleteResult {
++    constructor() {
++        /**
++         * Generated values returned by a database.
++         * Has entity-like structure (not just column database name and values).
++         */
++        this.generatedMaps = [];
++    }
+     static from(queryResult) {
+         const result = new this();
+         result.raw = queryResult.records;

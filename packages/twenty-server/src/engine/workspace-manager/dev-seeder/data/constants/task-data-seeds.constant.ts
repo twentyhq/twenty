@@ -4,7 +4,8 @@ type TaskDataSeed = {
   id: string;
   position: number;
   title: string;
-  body: string | null;
+  bodyV2Blocknote: string;
+  bodyV2Markdown: string;
   status: string;
   dueAt: string | null;
   assigneeId: string;
@@ -17,7 +18,8 @@ export const TASK_DATA_SEED_COLUMNS: (keyof TaskDataSeed)[] = [
   'id',
   'position',
   'title',
-  'body',
+  'bodyV2Blocknote',
+  'bodyV2Markdown',
   'status',
   'dueAt',
   'assigneeId',
@@ -188,7 +190,20 @@ const GENERATE_TASK_SEEDS = (): TaskDataSeed[] => {
       id: TASK_DATA_SEED_IDS[`ID_${INDEX}`],
       position: INDEX,
       title: TEMPLATE.title,
-      body: TEMPLATE.body,
+      bodyV2Blocknote: JSON.stringify([
+        {
+          id: `block-${INDEX}`,
+          type: 'paragraph',
+          props: {
+            textColor: 'default',
+            backgroundColor: 'default',
+            textAlignment: 'left',
+          },
+          content: [{ type: 'text', text: TEMPLATE.body, styles: {} }],
+          children: [],
+        },
+      ]),
+      bodyV2Markdown: TEMPLATE.body,
       status: TEMPLATE.status,
       dueAt: FORMAT_DUE_DATE(TEMPLATE.daysFromNow),
       assigneeId: GET_RANDOM_ASSIGNEE(),
@@ -207,7 +222,20 @@ const GENERATE_TASK_SEEDS = (): TaskDataSeed[] => {
       id: TASK_DATA_SEED_IDS[`ID_${INDEX}`],
       position: INDEX,
       title: TEMPLATE.title,
-      body: TEMPLATE.body,
+      bodyV2Blocknote: JSON.stringify([
+        {
+          id: `block-${INDEX}`,
+          type: 'paragraph',
+          props: {
+            textColor: 'default',
+            backgroundColor: 'default',
+            textAlignment: 'left',
+          },
+          content: [{ type: 'text', text: TEMPLATE.body, styles: {} }],
+          children: [],
+        },
+      ]),
+      bodyV2Markdown: TEMPLATE.body,
       status: TEMPLATE.status,
       dueAt: FORMAT_DUE_DATE(TEMPLATE.daysFromNow),
       assigneeId: GET_RANDOM_ASSIGNEE(),

@@ -8,14 +8,14 @@ import { PerformMetadataQueryParams } from 'test/integration/metadata/types/perf
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 
 export const createOneFieldMetadata = async <T extends FieldMetadataType>({
   input,
   gqlFields,
   expectToFail = false,
 }: PerformMetadataQueryParams<CreateOneFieldFactoryInput>): CommonResponseBody<{
-  createOneField: FieldMetadataInterface<T>;
+  createOneField: FieldMetadataDTO<T>;
 }> => {
   const graphqlOperation = createOneFieldMetadataQueryFactory({
     input,

@@ -31,8 +31,8 @@ export enum MessageChannelSyncStatus {
 }
 
 export enum MessageChannelSyncStage {
-  FULL_MESSAGE_LIST_FETCH_PENDING = 'FULL_MESSAGE_LIST_FETCH_PENDING',
-  PARTIAL_MESSAGE_LIST_FETCH_PENDING = 'PARTIAL_MESSAGE_LIST_FETCH_PENDING',
+  FULL_MESSAGE_LIST_FETCH_PENDING = 'FULL_MESSAGE_LIST_FETCH_PENDING', // TODO: rename to MESSAGE_LIST_FETCH_PENDING
+  PARTIAL_MESSAGE_LIST_FETCH_PENDING = 'PARTIAL_MESSAGE_LIST_FETCH_PENDING', // TODO: to be removed, deprecated
   MESSAGE_LIST_FETCH_ONGOING = 'MESSAGE_LIST_FETCH_ONGOING',
   MESSAGES_IMPORT_PENDING = 'MESSAGES_IMPORT_PENDING',
   MESSAGES_IMPORT_ONGOING = 'MESSAGES_IMPORT_ONGOING',
@@ -291,13 +291,13 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconStatusChange',
     options: [
       {
-        value: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+        value: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING, // TODO: Rename to MESSAGE_LIST_FETCH_PENDING
         label: 'Full messages list fetch pending',
         position: 0,
         color: 'blue',
       },
       {
-        value: MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
+        value: MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING, // TODO: Deprecate
         label: 'Partial messages list fetch pending',
         position: 1,
         color: 'blue',

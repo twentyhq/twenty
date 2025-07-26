@@ -1,4 +1,5 @@
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
+import { objectFilterDropdownAnyFieldSearchIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownAnyFieldSearchIsSelectedComponentState';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
@@ -32,6 +33,12 @@ export const useResetFilterDropdown = (componentInstanceId?: string) => {
       componentInstanceId,
     );
 
+  const objectFilterDropdownAnyFieldSearchIsSelectedCallbackState =
+    useRecoilComponentCallbackStateV2(
+      objectFilterDropdownAnyFieldSearchIsSelectedComponentState,
+      componentInstanceId,
+    );
+
   const objectFilterDropdownIsSelectingCompositeFieldCallbackState =
     useRecoilComponentCallbackStateV2(
       objectFilterDropdownIsSelectingCompositeFieldComponentState,
@@ -53,6 +60,7 @@ export const useResetFilterDropdown = (componentInstanceId?: string) => {
         set(objectFilterDropdownIsSelectingCompositeFieldCallbackState, false);
         set(fieldMetadataItemIdUsedInDropdownCallbackState, null);
         set(objectFilterDropdownCurrentRecordFilterCallbackState, null);
+        set(objectFilterDropdownAnyFieldSearchIsSelectedCallbackState, false);
       },
     [
       objectFilterDropdownSearchInputCallbackState,
@@ -61,6 +69,7 @@ export const useResetFilterDropdown = (componentInstanceId?: string) => {
       objectFilterDropdownIsSelectingCompositeFieldCallbackState,
       fieldMetadataItemIdUsedInDropdownCallbackState,
       objectFilterDropdownCurrentRecordFilterCallbackState,
+      objectFilterDropdownAnyFieldSearchIsSelectedCallbackState,
     ],
   );
 

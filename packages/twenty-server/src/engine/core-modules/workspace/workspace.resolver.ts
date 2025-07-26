@@ -58,7 +58,7 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
@@ -144,7 +144,7 @@ export class WorkspaceResolver {
   @Mutation(() => SignedFileDTO)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
+    SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
   )
   async uploadWorkspaceLogo(
     @AuthWorkspace() { id }: Workspace,
@@ -190,7 +190,7 @@ export class WorkspaceResolver {
   @Mutation(() => Workspace)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
+    SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
   )
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
     return this.workspaceService.deleteWorkspace(id);

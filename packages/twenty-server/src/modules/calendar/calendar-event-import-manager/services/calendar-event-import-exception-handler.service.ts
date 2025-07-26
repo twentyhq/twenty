@@ -119,6 +119,8 @@ export class CalendarEventImportErrorHandlerService {
       },
       'throttleFailureCount',
       1,
+      undefined,
+      ['throttleFailureCount', 'id'],
     );
 
     switch (syncStep) {

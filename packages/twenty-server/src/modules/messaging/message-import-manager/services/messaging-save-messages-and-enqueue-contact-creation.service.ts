@@ -1,17 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
-
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
   CreateCompanyAndContactJob,
@@ -39,9 +33,6 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     private readonly messageService: MessagingMessageService,
     private readonly messageParticipantService: MessagingMessageParticipantService,
     private readonly twentyORMManager: TwentyORMManager,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'core')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
   async saveMessagesAndEnqueueContactCreation(
@@ -122,27 +113,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
         },
       );
 
-    const { participantsWithMessageId, createdMessages } =
-      createdMessagesWithParticipants;
-
-    const messageMetadata = await this.objectMetadataRepository.findOneOrFail({
-      where: { nameSingular: 'message', workspaceId },
-    });
-
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: 'message',
-      action: DatabaseEventAction.CREATED,
-      events: createdMessages.map((message) => {
-        return {
-          recordId: message.id ?? '',
-          objectMetadata: messageMetadata,
-          properties: {
-            after: message,
-          },
-        };
-      }),
-      workspaceId,
-    });
+    const { participantsWithMessageId } = createdMessagesWithParticipants;
 
     if (messageChannel.isContactAutoCreationEnabled) {
       const contactsToCreate = participantsWithMessageId.filter(

@@ -22,12 +22,18 @@ import { useAreViewFiltersDifferentFromRecordFilters } from '@/views/hooks/useAr
 import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreViewSortsDifferentFromRecordSorts';
 
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { AnyFieldSearchDropdownButton } from '@/views/components/AnyFieldSearchDropdownButton';
+import { ANY_FIELD_SEARCH_DROPDOWN_ID } from '@/views/constants/AnyFieldSearchDropdownId';
+import { useApplyCurrentViewAnyFieldFilterToAnyFieldFilter } from '@/views/hooks/useApplyCurrentViewAnyFieldFilterToAnyFieldFilter';
 import { useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups } from '@/views/hooks/useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups';
 import { useAreViewFilterGroupsDifferentFromRecordFilterGroups } from '@/views/hooks/useAreViewFilterGroupsDifferentFromRecordFilterGroups';
+import { useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter } from '@/views/hooks/useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter';
 import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpandedComponentState';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { LightButton } from 'twenty-ui/input';
 
@@ -119,6 +125,10 @@ export const ViewBarDetails = ({
     currentRecordSortsComponentState,
   );
 
+  const anyFieldFilterValue = useRecoilComponentValueV2(
+    anyFieldFilterValueComponentState,
+  );
+
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural: objectNamePlural,
   });
@@ -136,11 +146,8 @@ export const ViewBarDetails = ({
   const { viewSortsAreDifferentFromRecordSorts } =
     useAreViewSortsDifferentFromRecordSorts();
 
-  const canResetView =
-    (viewFiltersAreDifferentFromRecordFilters ||
-      viewSortsAreDifferentFromRecordSorts ||
-      viewFilterGroupsAreDifferentFromRecordFilterGroups) &&
-    !hasFiltersQueryParams;
+  const { viewAnyFieldFilterDifferentFromCurrentAnyFieldFilter } =
+    useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter();
 
   const { checkIsSoftDeleteFilter } = useCheckIsSoftDeleteFilter();
 
@@ -162,6 +169,9 @@ export const ViewBarDetails = ({
   const { applyCurrentViewFiltersToCurrentRecordFilters } =
     useApplyCurrentViewFiltersToCurrentRecordFilters();
 
+  const { applyCurrentViewAnyFieldFilterToAnyFieldFilter } =
+    useApplyCurrentViewAnyFieldFilterToAnyFieldFilter();
+
   const { applyCurrentViewSortsToCurrentRecordSorts } =
     useApplyCurrentViewSortsToCurrentRecordSorts();
 
@@ -169,10 +179,30 @@ export const ViewBarDetails = ({
     applyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
     applyCurrentViewFiltersToCurrentRecordFilters();
     applyCurrentViewSortsToCurrentRecordSorts();
+    applyCurrentViewAnyFieldFilterToAnyFieldFilter();
     toggleSoftDeleteFilterState(false);
   };
 
+  const shouldShowAdvancedFilterDropdownButton =
+    currentRecordFilterGroups.length > 0;
+
+  const isAnyFieldSearchDropdownOpen = useRecoilComponentValueV2(
+    isDropdownOpenComponentState,
+    ANY_FIELD_SEARCH_DROPDOWN_ID,
+  );
+
+  const canResetView =
+    (viewFiltersAreDifferentFromRecordFilters ||
+      viewSortsAreDifferentFromRecordSorts ||
+      viewFilterGroupsAreDifferentFromRecordFilterGroups ||
+      viewAnyFieldFilterDifferentFromCurrentAnyFieldFilter) &&
+    !hasFiltersQueryParams;
+
+  const shouldShowAnyFieldSearchChip =
+    isNonEmptyString(anyFieldFilterValue) || isAnyFieldSearchDropdownOpen;
+
   const shouldExpandViewBar =
+    shouldShowAnyFieldSearchChip ||
     viewFiltersAreDifferentFromRecordFilters ||
     viewSortsAreDifferentFromRecordSorts ||
     viewFilterGroupsAreDifferentFromRecordFilterGroups ||
@@ -184,9 +214,6 @@ export const ViewBarDetails = ({
   if (!shouldExpandViewBar) {
     return null;
   }
-
-  const shouldShowAdvancedFilterDropdownButton =
-    currentRecordFilterGroups.length > 0;
 
   return (
     <StyledBar>
@@ -220,6 +247,7 @@ export const ViewBarDetails = ({
                   <StyledSeperator />
                 </StyledSeperatorContainer>
               )}
+            {shouldShowAnyFieldSearchChip && <AnyFieldSearchDropdownButton />}
             {shouldShowAdvancedFilterDropdownButton && (
               <AdvancedFilterDropdownButton />
             )}

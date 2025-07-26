@@ -1,0 +1,156 @@
+---
+title: Workflows
+info: Understand the workflow feature in Twenty including how to create and delete workflows, configure triggers, add actions, run workflows, and manage workflow history.
+image: /images/user-guide/workflows/workflow.png
+sectionInfo: Learn how to connect Twenty to your other tools.
+---
+
+## Create a Workflow
+
+To create a workflow:
+
+1. Click “+ Add a Workflow” to begin
+2. Click “Untitled” and enter your workflow name on the upper left 
+3. Once you have created one workflow, you can click “+ New record” to create additional workflows
+
+## Delete a Workflow
+
+To delete a workflow, click **Delete** in the top right corner of the workflow record. Confirm the deletion in the pop-up modal.
+
+To view deleted workflows:
+
+- Use the **Filter** option, or
+- Open quick action side panel using `⌘K` and select **See deleted workflows**.
+
+You can also save this view by clicking **Save as new view** for quick access later.
+
+## Configure a Trigger
+
+Workflows always start with a single trigger. It is the condition that activates your workflow. In this step, you decide when and how the automation should start. There are several types of triggers available. In this section, you’ll learn about each trigger type and how to configure one.
+
+### Record is Created 
+
+This trigger starts the workflow when a record is created in a selected object (e.g. People, Companies, or any custom object). To configure this trigger select the record type where the workflow should listen for a new entry.
+
+### Record is Updated
+
+This trigger starts the workflow when changes are made to an existing record. To configure this trigger, select the record type and optionally select the field(s) you want to listen for changes.
+
+### Record is Deleted
+
+This trigger starts the workflow when a record is removed. To configure this trigger, select the record type you want to listen for deletions.
+
+### Launch Manually
+
+This trigger starts the workflow only when you manually launch it. There are two ways to do this, depending on whether you want the workflow to run with or without a record context:
+
+- **When record is selected**: select a record in the table, then open the side panel with `⌘K` and choose the workflow. The workflow will run using data from the selected record, which you can reference in later steps.
+- **When no record is selected**: open the side panel with `⌘K` from anywhere in the app (no record selection needed) and choose the workflow. The workflow will run without any record context.
+
+Once the workflow finishes running, reload the page to see the changes.
+
+### On a Schedule
+
+This trigger starts the workflow on a recurring basis you define (e.g. hourly, daily, weekly). To configure this trigger, select a time unit (minutes, hours, days) and enter a value or use a custom cron expression for more advanced scheduling.
+
+### Webhook
+
+This trigger starts the workflow when a `GET` or `POST` request is received from an external service. You'll receive a unique webhook URL to use as a listener.
+
+For `POST` requests, you can define an expected body to structure incoming data and use its values in later workflow steps.
+
+## Add an action
+
+Once a trigger is set, you can add action steps to define what happens next. Actions use data from the trigger and previous actions to carry out tasks in your workflow. In this section, you’ll explore the different action types and how to add them.
+
+### Create a Record
+
+This action adds a new record to a selected object. To use this action, select the object and fill out the fields. Data from the newly created record can be used in later steps of the workflow.
+
+### Updated Record
+
+This action makes changes to an existing record of a selected object. To use this action, select the object and select the specific record you want to update. Then, pick the field(s) to modify and enter the new values. Updated field data can be used in later steps of the workflow.
+
+### Delete Record
+
+This action removes a record from a selected object. To use this action, select the object and record you want to delete. 
+
+Note: Data from the deleted record remains available for use in later workflow steps.
+
+### Search records
+
+This action finds records within a selected object using filter conditions. To use this action, select the object you wish to search through and set the criteria to narrow down the search results.
+
+### Send Emails
+
+This action allows you to send an email from your workflow. To use this action:
+
+1. Add an email account in **Settings > Accounts**
+2. Enter the recipient’s address, subject, and message body to compose your email
+
+You can also reference variables from outputs of previous steps to further customize an action. Soon, you will have the capability to view attachments and format email content. 
+
+### Code 
+
+This action runs custom JavaScript within your workflow. You can use this action to handle logic that goes beyond built-in actions such as transforming data, performing calculations, or integrating with external APIs. 
+
+Any variables you create and return here can be reused in later steps of the workflow. You can also test your code directly in this step and view the output to confirm it works as expected.
+
+Note: You can manage keys and access your API Playground [here](https://app.twenty.com/settings) or navigate to Settings > API & Webhooks (under Developers).
+
+### Form 
+
+This action allows you to prompt a form during the workflow to collect input from the user. The data collected can be used in later steps. To add this action, configure the input fields by selecting the type, label, and placeholder for each. 
+
+### HTTP Request
+
+This action allows you to send a request to an external API as part of your workflow; it can be used to integrate with external services, send or receive data, or trigger third-party actions. To use this action:
+
+1. Paste the endpoint you want to call
+2. Select an HTTP method from `GET`, `POST`, `PUT`, `PATCH`, or `DELETE`
+3. Enter any required header inputs and their values 
+4. For `POST`, `PUT`, or `PATCH`  include the body input to send with the request
+5. Paste a sample response body to preview its structure and reference keys in later steps
+
+## Activate Workflows
+
+When you click **Activate**, your draft is published as a new version, and the workflow becomes **Active**. This means its triggers (such as schedule, record events, or manual launch) will now listen for events and start the workflow when conditions are met. 
+
+Activating a workflow does not immediately execute it, instead it simply makes it eligible to run when triggered. Each activation creates a new version and moves the workflow out of **Draft** mode.
+
+### Workflow Runs
+
+A **Run** is a record of a workflow execution. It happens when a workflow is triggered while active or when you manually launch it for testing. Each run contains details like status, output, author, and timestamps. You can view individual runs in the **Runs** panel or open the **Workflow Runs** view for monitoring and troubleshooting.
+
+## Testing Workflows
+
+You can test workflows before activating them. This is useful for trigger types like **Launch Manually (when no record selected)** or when testing specific action nodes (e.g., **Code**).
+
+Testing a workflow or an individual node does not activate the workflow, instead it stays in **Draft** mode and won’t respond to triggers until you activate it.
+
+## Workflows Statuses
+
+Workflows can have one of four statuses: **Draft**, **Active**, **Deactivated**, or **Archived**.
+
+- **Draft**: The workflow is being edited and has not been published yet. Only one draft version can exist at a time.
+- **Active**: The live version currently running in your app. A workflow becomes active when a draft or deactivated version is activated.
+- **Deactivated**: A workflow that was previously active but has been manually deactivated.
+- **Archived**: All past versions except the most recent draft, active, or deactivated version. You cannot directly activate an archived version; to reuse it, you must restore it as a draft first.
+
+For example, if you have versions v1, v2 (**Active**), and v3 (**Draft**), then v1 is archived. Once v3 is activated, then v2 is archived, and v3 becomes **Active**. 
+
+This status system lets you safely edit workflows in draft, publish changes when ready, and automatically keep a history of previous versions.
+
+## Workflow Version History
+
+View all previous versions of a workflow under the **Versions** field in the workflow record.
+Click on any version (e.g. v1, v2, v3) to view its details. To restore it, click on **Use as draft** on the top right. 
+
+If a draft already exists, you’ll be prompted to confirm:
+
+- **Override Draft** to replace the current draft with the selected version or, 
+- **Go to Draft** to return to the version you're currently editing. 
+
+<ArticleEditContent></ArticleEditContent>
+
+

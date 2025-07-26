@@ -98,14 +98,6 @@ export class WorkspacePermissionsCacheStorageService {
     );
   }
 
-  getUserWorkspaceRoleMapVersion(
-    workspaceId: string,
-  ): Promise<string | undefined> {
-    return this.cacheStorageService.get<string>(
-      `${WorkspaceCacheKeys.MetadataPermissionsUserWorkspaceRoleMapVersion}:${workspaceId}`,
-    );
-  }
-
   removeUserWorkspaceRoleMap(workspaceId: string) {
     return this.cacheStorageService.del(
       `${WorkspaceCacheKeys.MetadataPermissionsUserWorkspaceRoleMap}:${workspaceId}`,

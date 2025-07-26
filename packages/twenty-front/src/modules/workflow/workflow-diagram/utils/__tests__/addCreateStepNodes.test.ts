@@ -53,7 +53,11 @@ describe('addCreateStepNodes', () => {
       },
     ];
 
-    const diagramInitial = generateWorkflowDiagram({ trigger, steps });
+    const diagramInitial = generateWorkflowDiagram({
+      trigger,
+      steps,
+      defaultEdgeType: 'empty-filter--editable',
+    });
 
     expect(diagramInitial.nodes).toHaveLength(3);
     expect(diagramInitial.edges).toHaveLength(2);

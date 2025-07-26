@@ -88,7 +88,7 @@ export class MessagingMessagesImportService {
       );
 
       if (!messageIdsToFetch?.length) {
-        await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
+        await this.messageChannelSyncStatusService.markAsCompletedAndScheduleMessageListFetch(
           [messageChannel.id],
         );
 
@@ -125,7 +125,7 @@ export class MessagingMessagesImportService {
       if (
         messageIdsToFetch.length < MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE
       ) {
-        await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
+        await this.messageChannelSyncStatusService.markAsCompletedAndScheduleMessageListFetch(
           [messageChannel.id],
         );
       } else {

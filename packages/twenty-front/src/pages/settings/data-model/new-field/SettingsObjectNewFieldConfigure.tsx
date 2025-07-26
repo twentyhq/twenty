@@ -17,6 +17,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
+import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
@@ -149,14 +150,8 @@ export const SettingsObjectNewFieldConfigure = () => {
       setIsSaving(false);
     } catch (error) {
       setIsSaving(false);
-      const isDuplicateFieldNameInObject = (error as Error).message.includes(
-        'duplicate key value violates unique constraint "IndexOnNameObjectMetadataIdAndWorkspaceIdUnique"',
-      );
-
       enqueueErrorSnackBar({
-        message: isDuplicateFieldNameInObject
-          ? t`Please use different names for your source and destination fields`
-          : undefined,
+        apolloError: error instanceof ApolloError ? error : undefined,
       });
     }
   };

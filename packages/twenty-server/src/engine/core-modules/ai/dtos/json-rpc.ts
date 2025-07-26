@@ -20,7 +20,10 @@ export class JsonRpc {
 
   @IsOptional()
   @IsObject()
-  params?: Record<string, unknown>;
+  params?: {
+    name: string;
+    arguments: unknown;
+  };
 
   @IsOptional()
   @Validate(IsNumberOrString)

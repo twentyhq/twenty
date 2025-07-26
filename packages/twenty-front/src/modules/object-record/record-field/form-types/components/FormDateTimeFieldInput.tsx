@@ -19,6 +19,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { ChangeEvent, KeyboardEvent, useId, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
@@ -106,9 +107,10 @@ export const FormDateTimeFieldInput = ({
         },
   );
 
-  const draftValueAsDate = isDefined(draftValue.value)
-    ? new Date(draftValue.value)
-    : null;
+  const draftValueAsDate =
+    isDefined(draftValue.value) && isNonEmptyString(draftValue.value)
+      ? new Date(draftValue.value)
+      : null;
 
   const [pickerDate, setPickerDate] =
     useState<Nullable<Date>>(draftValueAsDate);

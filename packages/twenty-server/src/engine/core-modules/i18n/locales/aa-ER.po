@@ -48,6 +48,16 @@ msgstr "crwdns827:0crwdne827:0"
 msgid "(System) Views"
 msgstr "crwdns829:0crwdne829:0"
 
+#. js-lingui-id: Q0ISF1
+#: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
+msgid "{fieldName} and {fieldName}Id cannot be both provided."
+msgstr "crwdns6648:0{fieldName}crwdnd6648:0{fieldName}crwdne6648:0"
+
+#. js-lingui-id: 8haj+G
+#: src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils.ts
+msgid "{name} should be in camelCase"
+msgstr "crwdns6454:0{name}crwdne6454:0"
+
 #. js-lingui-id: kZR6+h
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "A company"
@@ -93,6 +103,11 @@ msgstr "crwdns845:0crwdne845:0"
 msgid "A person"
 msgstr "crwdns847:0crwdne847:0"
 
+#. js-lingui-id: Q2De+v
+#: src/engine/metadata-modules/role/role.service.ts
+msgid "A role with this label already exists."
+msgstr "crwdns6456:0crwdne6456:0"
+
 #. js-lingui-id: mkFXEH
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "A task"
@@ -113,10 +128,15 @@ msgstr "crwdns853:0crwdne853:0"
 msgid "A workflow"
 msgstr "crwdns855:0crwdne855:0"
 
+#. js-lingui-id: YwBCp8
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "A workflow automated trigger"
+msgstr "crwdns5979:0crwdne5979:0"
+
 #. js-lingui-id: juBVjt
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "A workflow event listener"
-msgstr "crwdns857:0crwdne857:0"
+#~ msgid "A workflow event listener"
+#~ msgstr "A workflow event listener"
 
 #. js-lingui-id: 1+xDbI
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -213,13 +233,20 @@ msgstr "crwdns889:0crwdne889:0"
 
 #. js-lingui-id: +bL++X
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "An audit log of actions performed in the system"
-msgstr "crwdns891:0crwdne891:0"
+#~ msgid "An audit log of actions performed in the system"
+#~ msgstr "An audit log of actions performed in the system"
+
+#. js-lingui-id: XyOToQ
+#: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
+#: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
+#: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
+msgid "An error occurred."
+msgstr "crwdns6458:0crwdne6458:0"
 
 #. js-lingui-id: muVHgL
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "An event related to user behavior"
-msgstr "crwdns893:0crwdne893:0"
+#~ msgid "An event related to user behavior"
+#~ msgstr "An event related to user behavior"
 
 #. js-lingui-id: bZq8rL
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -230,6 +257,12 @@ msgstr "crwdns895:0crwdne895:0"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
 msgstr "crwdns897:0crwdne897:0"
+
+#. js-lingui-id: 6wr+2Z
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Any field filter value"
+msgstr "crwdns6842:0crwdne6842:0"
 
 #. js-lingui-id: yRnk5W
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
@@ -255,6 +288,17 @@ msgstr "crwdns905:0crwdne905:0"
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "ApiKey revocation date"
 msgstr "crwdns907:0crwdne907:0"
+
+#. js-lingui-id: DGW5iN
+#: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
+msgid "Approved access domain does not match email domain"
+msgstr "crwdns6462:0crwdne6462:0"
+
+#. js-lingui-id: BKvuAq
+#: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
+#: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
+msgid "Approved access domain has already been validated"
+msgstr "crwdns6464:0crwdne6464:0"
 
 #. js-lingui-id: 3EiOLz
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -364,25 +408,30 @@ msgstr "crwdns947:0{label}crwdne947:0"
 
 #. js-lingui-id: ilRCh1
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Audit Log"
-msgstr "crwdns949:0crwdne949:0"
+#~ msgid "Audit Log"
+#~ msgstr "Audit Log"
 
 #. js-lingui-id: EPEFrH
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Audit Logs"
-msgstr "crwdns951:0crwdne951:0"
+#~ msgid "Audit Logs"
+#~ msgstr "Audit Logs"
 
 #. js-lingui-id: RqCC/0
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Audit Logs linked to the workspace member"
-msgstr "crwdns953:0crwdne953:0"
+#~ msgid "Audit Logs linked to the workspace member"
+#~ msgstr "Audit Logs linked to the workspace member"
 
 #. js-lingui-id: cNBqH+
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Auth failed at"
 msgstr "crwdns955:0crwdne955:0"
+
+#. js-lingui-id: LB4qX/
+#: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
+msgid "Authentication is not enabled with this provider."
+msgstr "crwdns6466:0crwdne6466:0"
 
 #. js-lingui-id: VbeIOx
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -393,6 +442,16 @@ msgstr "crwdns957:0crwdne957:0"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Authored attachments"
 msgstr "crwdns959:0crwdne959:0"
+
+#. js-lingui-id: cvSznK
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "Automated Trigger Type"
+msgstr "crwdns5981:0crwdne5981:0"
+
+#. js-lingui-id: 2mtBXs
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+msgid "Automated Triggers"
+msgstr "crwdns5983:0crwdne5983:0"
 
 #. js-lingui-id: RpExX0
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -416,13 +475,13 @@ msgstr "crwdns967:0crwdne967:0"
 
 #. js-lingui-id: 20B9kW
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "Behavioral Event"
-msgstr "crwdns969:0crwdne969:0"
+#~ msgid "Behavioral Event"
+#~ msgstr "Behavioral Event"
 
 #. js-lingui-id: Jeh/Q/
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "Behavioral Events"
-msgstr "crwdns971:0crwdne971:0"
+#~ msgid "Behavioral Events"
+#~ msgstr "Behavioral Events"
 
 #. js-lingui-id: K1172m
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -450,8 +509,8 @@ msgstr "crwdns979:0crwdne979:0"
 #. js-lingui-id: Nl8eMw
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
-msgid "Body (deprecated)"
-msgstr "crwdns4851:0crwdne4851:0"
+#~ msgid "Body (deprecated)"
+#~ msgstr "Body (deprecated)"
 
 #. js-lingui-id: 8mVqF7
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -516,6 +575,41 @@ msgstr "crwdns997:0crwdne997:0"
 msgid "Calendar events"
 msgstr "crwdns999:0crwdne999:0"
 
+#. js-lingui-id: vxbVwc
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "Cannot activate non-draft or non-last-published version"
+msgstr "crwdns6474:0crwdne6474:0"
+
+#. js-lingui-id: LIPsWu
+#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+msgid "Cannot create multiple draft versions for the same workflow"
+msgstr "crwdns6476:0crwdne6476:0"
+
+#. js-lingui-id: RggZr4
+#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+msgid "Cannot create workflow version with status other than draft"
+msgstr "crwdns6478:0crwdne6478:0"
+
+#. js-lingui-id: AQyr9X
+#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
+msgid "Cannot delete, please update the label identifier field first"
+msgstr "crwdns6480:0crwdne6480:0"
+
+#. js-lingui-id: FrNWt0
+#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
+msgid "Cannot disable non-active workflow version"
+msgstr "crwdns6482:0crwdne6482:0"
+
+#. js-lingui-id: IDMgr/
+#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
+msgid "Cannot have more than one active workflow version"
+msgstr "crwdns6484:0crwdne6484:0"
+
+#. js-lingui-id: 4DKo3U
+#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+msgid "Cannot update workflow version status manually"
+msgstr "crwdns6486:0crwdne6486:0"
+
 #. js-lingui-id: 4IVK41
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -574,6 +668,11 @@ msgstr "crwdns1017:0crwdne1017:0"
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Conference Solution"
 msgstr "crwdns1019:0crwdne1019:0"
+
+#. js-lingui-id: 1fFL4B
+#: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
+msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
+msgstr "crwdns6650:0{connectFieldName}crwdnd6650:0{objectMetadataNameSingular}crwdne6650:0"
 
 #. js-lingui-id: PQ1Dw2
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -654,8 +753,8 @@ msgstr "crwdns1047:0crwdne1047:0"
 #. js-lingui-id: M73whl
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Context"
-msgstr "crwdns1781:0crwdne1781:0"
+#~ msgid "Context"
+#~ msgstr "Context"
 
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -681,6 +780,16 @@ msgstr "crwdns1051:0crwdne1051:0"
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Creation DateTime"
 msgstr "crwdns1053:0crwdne1053:0"
+
+#. js-lingui-id: umhXiy
+#: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
+msgid "Cron pattern '{pattern}' is invalid"
+msgstr "crwdns6488:0{pattern}crwdne6488:0"
+
+#. js-lingui-id: Mikszu
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+msgid "Custom Connection Parameters"
+msgstr "crwdns6388:0crwdne6388:0"
 
 #. js-lingui-id: Lhd0oQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -743,6 +852,28 @@ msgstr "crwdns1071:0crwdne1071:0"
 msgid "Due Date"
 msgstr "crwdns1073:0crwdne1073:0"
 
+#. js-lingui-id: BBXuRb
+#: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
+msgid "Email already verified."
+msgstr "crwdns6490:0crwdne6490:0"
+
+#. js-lingui-id: xw6iqb
+#: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
+msgid "Email is not verified."
+msgstr "crwdns6492:0crwdne6492:0"
+
+#. js-lingui-id: ZsZeV2
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "Email is required"
+msgstr "crwdns6494:0crwdne6494:0"
+
+#. js-lingui-id: y8LSMh
+#: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
+msgid "Email verification not required."
+msgstr "crwdns6496:0crwdne6496:0"
+
 #. js-lingui-id: BXEcos
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Emails"
@@ -767,13 +898,11 @@ msgstr "crwdns1081:0crwdne1081:0"
 #. js-lingui-id: FJ7QI4
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Event context"
-msgstr "crwdns1083:0crwdne1083:0"
+#~ msgid "Event context"
+#~ msgstr "Event context"
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event details"
 msgstr "crwdns1085:0crwdne1085:0"
 
@@ -793,23 +922,20 @@ msgstr "crwdns1089:0crwdne1089:0"
 
 #. js-lingui-id: 81maJp
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "Event Listeners"
-msgstr "crwdns1091:0crwdne1091:0"
+#~ msgid "Event Listeners"
+#~ msgstr "Event Listeners"
 
 #. js-lingui-id: PYs3rP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event name"
 msgstr "crwdns1093:0crwdne1093:0"
 
 #. js-lingui-id: evIGwh
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Event name/type"
-msgstr "crwdns1095:0crwdne1095:0"
+#~ msgid "Event name/type"
+#~ msgstr "Event name/type"
 
 #. js-lingui-id: vv99Wu
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -854,7 +980,6 @@ msgstr "crwdns1111:0crwdne1111:0"
 
 #. js-lingui-id: LxOGsB
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event workspace member"
 msgstr "crwdns1113:0crwdne1113:0"
 
@@ -890,6 +1015,11 @@ msgstr "crwdns1123:0crwdne1123:0"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Executed by"
 msgstr "crwdns1125:0crwdne1125:0"
+
+#. js-lingui-id: AiFXmG
+#: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
+msgid "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
+msgstr "crwdns6652:0{connectFieldName}crwdne6652:0"
 
 #. js-lingui-id: sZg7s1
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
@@ -1073,6 +1203,16 @@ msgstr "crwdns1189:0crwdne1189:0"
 msgid "Field Value"
 msgstr "crwdns1191:0crwdne1191:0"
 
+#. js-lingui-id: 3oQ73E
+#: src/modules/workflow/workflow-executor/workflow-actions/filter/utils/get-previous-step-output.util.ts
+#~ msgid "Filter action must have a previous step"
+#~ msgstr "Filter action must have a previous step"
+
+#. js-lingui-id: Zllikb
+#: src/modules/workflow/workflow-executor/workflow-actions/filter/utils/get-previous-step-output.util.ts
+#~ msgid "Filter action must have only one previous step"
+#~ msgstr "Filter action must have only one previous step"
+
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Folder for Message Channel"
@@ -1082,6 +1222,21 @@ msgstr "crwdns1193:0crwdne1193:0"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Folder name"
 msgstr "crwdns1195:0crwdne1195:0"
+
+#. js-lingui-id: kuN9I4
+#: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
+msgid "Form action fields must have a defined label and type"
+msgstr "crwdns6502:0crwdne6502:0"
+
+#. js-lingui-id: QK3OvQ
+#: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
+msgid "Form action fields must have unique names"
+msgstr "crwdns6504:0crwdne6504:0"
+
+#. js-lingui-id: KYP1t5
+#: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
+msgid "Form action must have at least one field"
+msgstr "crwdns6506:0crwdne6506:0"
 
 #. js-lingui-id: oQA+cA
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -1152,8 +1307,76 @@ msgstr "crwdns1217:0crwdne1217:0"
 
 #. js-lingui-id: NrA0WZ
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "If the event is related to a particular object"
-msgstr "crwdns1219:0crwdne1219:0"
+#~ msgid "If the event is related to a particular object"
+#~ msgstr "If the event is related to a particular object"
+
+#. js-lingui-id: 71VJzG
+#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
+msgid "Input is too short: \"{name}\""
+msgstr "crwdns6508:0{name}crwdne6508:0"
+
+#. js-lingui-id: X7+bC6
+#: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
+msgid "Invalid calling code {callingCode}"
+msgstr "crwdns6510:0{callingCode}crwdne6510:0"
+
+#. js-lingui-id: tG/2Q/
+#: src/engine/core-modules/captcha/captcha.guard.ts
+msgid "Invalid Captcha, please try another device"
+msgstr "crwdns6774:0crwdne6774:0"
+
+#. js-lingui-id: 1PtrY0
+#: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
+msgid "Invalid country code {countryCode}"
+msgstr "crwdns6512:0{countryCode}crwdne6512:0"
+
+#. js-lingui-id: 4EtFrA
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "Invalid day value. Should be integer greater than 1"
+msgstr "crwdns6514:0crwdne6514:0"
+
+#. js-lingui-id: MBpeQ6
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "Invalid hour value. Should be integer between 0 and 23"
+msgstr "crwdns6516:0crwdne6516:0"
+
+#. js-lingui-id: 9xsjn9
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "Invalid hour value. Should be integer greater than 1"
+msgstr "crwdns6518:0crwdne6518:0"
+
+#. js-lingui-id: FSunWx
+#: src/engine/metadata-modules/utils/compute-metadata-name-from-label.util.ts
+msgid "Invalid label: \"{label}\""
+msgstr "crwdns6520:0{label}crwdne6520:0"
+
+#. js-lingui-id: iBBCnf
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "Invalid minute value. Should be integer between 0 and 59"
+msgstr "crwdns6522:0crwdne6522:0"
+
+#. js-lingui-id: hYcFSd
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "Invalid minute value. Should be integer greater than 1"
+msgstr "crwdns6524:0crwdne6524:0"
+
+#. js-lingui-id: ApP70c
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "Invalid setting type provided in cron trigger"
+msgstr "crwdns6526:0crwdne6526:0"
+
+#. js-lingui-id: sHcAMD
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "Invalid trigger type for enabling workflow trigger"
+msgstr "crwdns6528:0crwdne6528:0"
+
+#. js-lingui-id: VEKoJx
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
+msgid "Invalid verification code. Please try again."
+msgstr "crwdns6806:0crwdne6806:0"
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1199,16 +1422,21 @@ msgstr "crwdns1231:0crwdne1231:0"
 msgid "Join your team on Twenty"
 msgstr "crwdns4977:0crwdne4977:0"
 
+#. js-lingui-id: WNfJ8M
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+msgid "JSON object containing custom connection parameters"
+msgstr "crwdns6390:0crwdne6390:0"
+
 #. js-lingui-id: shbh25
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Json object to provide context (user, device, workspace, etc.)"
-msgstr "crwdns1233:0crwdne1233:0"
+#~ msgid "Json object to provide context (user, device, workspace, etc.)"
+#~ msgstr "Json object to provide context (user, device, workspace, etc.)"
 
 #. js-lingui-id: HgJ9jQ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Json object to provide output of the workflow run"
-msgstr "crwdns1235:0crwdne1235:0"
+#~ msgid "Json object to provide output of the workflow run"
+#~ msgstr "Json object to provide output of the workflow run"
 
 #. js-lingui-id: AQuLwi
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -1222,8 +1450,6 @@ msgstr "crwdns1239:0crwdne1239:0"
 
 #. js-lingui-id: TVc0/Q
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json value for event details"
 msgstr "crwdns1241:0crwdne1241:0"
 
@@ -1236,6 +1462,21 @@ msgstr "crwdns1243:0crwdne1243:0"
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Key"
 msgstr "crwdns1245:0crwdne1245:0"
+
+#. js-lingui-id: w8Rv8T
+#: src/engine/metadata-modules/utils/compute-metadata-name-from-label.util.ts
+msgid "Label is required"
+msgstr "crwdns6530:0crwdne6530:0"
+
+#. js-lingui-id: 4EGmy6
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+msgid "Label must not be empty"
+msgstr "crwdns6532:0crwdne6532:0"
+
+#. js-lingui-id: k731jp
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+msgid "Label must not contain a comma"
+msgstr "crwdns6534:0crwdne6534:0"
 
 #. js-lingui-id: vXIe7J
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -1285,8 +1526,8 @@ msgstr "crwdns1261:0crwdne1261:0"
 
 #. js-lingui-id: PV1Nm7
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Linked Opportunities"
-msgstr "crwdns1263:0crwdne1263:0"
+#~ msgid "Linked Opportunities"
+#~ msgstr "Linked Opportunities"
 
 #. js-lingui-id: 6YiMr4
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1479,12 +1720,16 @@ msgstr "crwdns1327:0crwdne1327:0"
 msgid "Messaging provider refresh token"
 msgstr "crwdns1329:0crwdne1329:0"
 
+#. js-lingui-id: SzCMUQ
+#: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
+msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
+msgstr "crwdns6654:0{connectFieldName}crwdne6654:0"
+
 #. js-lingui-id: 6YtxFj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -1498,6 +1743,21 @@ msgstr "crwdns1329:0crwdne1329:0"
 msgid "Name"
 msgstr "crwdns1331:0crwdne1331:0"
 
+#. js-lingui-id: aD053i
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service.ts
+msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
+msgstr "crwdns6770:0{computedMetadataNameFromLabel}crwdne6770:0"
+
+#. js-lingui-id: RGz1nY
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
+msgid "Name is not available, it may be duplicating another field's name."
+msgstr "crwdns6536:0crwdne6536:0"
+
+#. js-lingui-id: 0MobB1
+#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils.ts
+msgid "Name is too long: it exceeds the 63 characters limit."
+msgstr "crwdns6538:0crwdne6538:0"
+
 #. js-lingui-id: EEVPOx
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Name of the favorite folder"
@@ -1507,6 +1767,41 @@ msgstr "crwdns1333:0crwdne1333:0"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Name of the workflow run"
 msgstr "crwdns1335:0crwdne1335:0"
+
+#. js-lingui-id: hQQZse
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "No event name provided in database event trigger"
+msgstr "crwdns6540:0crwdne6540:0"
+
+#. js-lingui-id: 9bu19u
+#: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
+msgid "No input provided in form step"
+msgstr "crwdns6542:0crwdne6542:0"
+
+#. js-lingui-id: MWAUHo
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "No pattern provided in CUSTOM cron trigger"
+msgstr "crwdns6544:0crwdne6544:0"
+
+#. js-lingui-id: pOu4u/
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "No schedule provided in cron trigger"
+msgstr "crwdns6546:0crwdne6546:0"
+
+#. js-lingui-id: cLUBlS
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "No setting type provided in cron trigger"
+msgstr "crwdns6548:0crwdne6548:0"
+
+#. js-lingui-id: QwbSxD
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "No steps provided in workflow version"
+msgstr "crwdns6550:0crwdne6550:0"
+
+#. js-lingui-id: 6dP8sB
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "No trigger type provided"
+msgstr "crwdns6552:0crwdne6552:0"
 
 #. js-lingui-id: KiJn9B
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1523,7 +1818,6 @@ msgid "Note attachments"
 msgstr "crwdns1339:0crwdne1339:0"
 
 #. js-lingui-id: Q1Rz+6
-#: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note body"
 msgstr "crwdns1341:0crwdne1341:0"
@@ -1607,16 +1901,21 @@ msgstr "crwdns1369:0crwdne1369:0"
 msgid "Number of employees in the company"
 msgstr "crwdns1371:0crwdne1371:0"
 
+#. js-lingui-id: ECRKYR
+#: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
+msgid "Object already exists"
+msgstr "crwdns6554:0crwdne6554:0"
+
 #. js-lingui-id: hhe7Ce
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "Object id"
-msgstr "crwdns1373:0crwdne1373:0"
+#~ msgid "Object id"
+#~ msgstr "Object id"
 
 #. js-lingui-id: dnPgTI
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Object metadata id"
-msgstr "crwdns1375:0crwdne1375:0"
+#~ msgid "Object metadata id"
+#~ msgstr "Object metadata id"
 
 #. js-lingui-id: T/nPf5
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1627,8 +1926,8 @@ msgstr "crwdns1377:0crwdne1377:0"
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Object name"
-msgstr "crwdns1379:0crwdne1379:0"
+#~ msgid "Object name"
+#~ msgstr "Object name"
 
 #. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1651,6 +1950,7 @@ msgid "Operations"
 msgstr "crwdns1385:0crwdne1385:0"
 
 #. js-lingui-id: 4MyDFl
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Opportunities"
@@ -1706,6 +2006,36 @@ msgstr "crwdns1403:0crwdne1403:0"
 msgid "Opportunity stage"
 msgstr "crwdns1405:0crwdne1405:0"
 
+#. js-lingui-id: //eyK1
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+msgid "Option label \"{sanitizedLabel}\" is beneath 1 character"
+msgstr "crwdns6556:0{sanitizedLabel}crwdne6556:0"
+
+#. js-lingui-id: mTFS0z
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+msgid "Option label exceeds 63 characters"
+msgstr "crwdns6558:0crwdne6558:0"
+
+#. js-lingui-id: +E9N4m
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+msgid "Option label is required"
+msgstr "crwdns6560:0crwdne6560:0"
+
+#. js-lingui-id: nQqNzE
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
+msgstr "crwdns6562:0{sanitizedValue}crwdne6562:0"
+
+#. js-lingui-id: 5m/1Hh
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+msgid "Option value exceeds 63 characters"
+msgstr "crwdns6564:0crwdne6564:0"
+
+#. js-lingui-id: /wsRPd
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+msgid "Option value is required"
+msgstr "crwdns6566:0crwdne6566:0"
+
 #. js-lingui-id: eLggyd
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
@@ -1719,8 +2049,8 @@ msgstr "crwdns1409:0crwdne1409:0"
 
 #. js-lingui-id: gh06VD
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Output"
-msgstr "crwdns1411:0crwdne1411:0"
+#~ msgid "Output"
+#~ msgstr "Output"
 
 #. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
@@ -1731,6 +2061,11 @@ msgstr "crwdns1413:0crwdne1413:0"
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Parent View Filter Group Id"
 msgstr "crwdns1415:0crwdne1415:0"
+
+#. js-lingui-id: wT0H4O
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "Password too weak"
+msgstr "crwdns6568:0crwdne6568:0"
 
 #. js-lingui-id: 1wdjme
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1828,6 +2163,26 @@ msgstr "crwdns1441:0crwdne1441:0"
 msgid "Probability"
 msgstr "crwdns1443:0crwdne1443:0"
 
+#. js-lingui-id: dtGxRz
+#: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
+msgid "Provided and inferred calling code are conflicting"
+msgstr "crwdns6570:0crwdne6570:0"
+
+#. js-lingui-id: Vq/afT
+#: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
+msgid "Provided and inferred country code are conflicting"
+msgstr "crwdns6572:0crwdne6572:0"
+
+#. js-lingui-id: HZ45ox
+#: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
+msgid "Provided country code and calling code are conflicting"
+msgstr "crwdns6574:0crwdne6574:0"
+
+#. js-lingui-id: A4Ohxb
+#: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
+msgid "Provided phone number is invalid {number}"
+msgstr "crwdns6576:0{number}crwdne6576:0"
+
 #. js-lingui-id: CrfRPa
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "provider"
@@ -1841,8 +2196,8 @@ msgstr "crwdns1447:0crwdne1447:0"
 #. js-lingui-id: 4Tvtbu
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Record id"
-msgstr "crwdns1449:0crwdne1449:0"
+#~ msgid "Record id"
+#~ msgstr "Record id"
 
 #. js-lingui-id: 9gXJw8
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -1865,6 +2220,11 @@ msgstr "crwdns1455:0crwdne1455:0"
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Relations"
 msgstr "crwdns1457:0crwdne1457:0"
+
+#. js-lingui-id: pCsIQQ
+#: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
+msgid "Request has expired, please try again."
+msgstr "crwdns6578:0crwdne6578:0"
 
 #. js-lingui-id: rnCndp
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
@@ -1905,6 +2265,11 @@ msgstr "crwdns1469:0crwdne1469:0"
 msgid "Secret"
 msgstr "crwdns1471:0crwdne1471:0"
 
+#. js-lingui-id: Tz0i8g
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "Settings"
+msgstr "crwdns5985:0crwdne5985:0"
+
 #. js-lingui-id: Cj2Gtd
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Size"
@@ -1921,6 +2286,16 @@ msgstr "crwdns1475:0crwdne1475:0"
 msgid "Start Date"
 msgstr "crwdns1477:0crwdne1477:0"
 
+#. js-lingui-id: RS0o7b
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+msgid "State"
+msgstr "crwdns6440:0crwdne6440:0"
+
+#. js-lingui-id: nY8GL/
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+msgid "State of the workflow run"
+msgstr "crwdns6442:0crwdne6442:0"
+
 #. js-lingui-id: uAQUqI
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Status"
@@ -1930,6 +2305,27 @@ msgstr "crwdns1479:0crwdne1479:0"
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Statuses"
 msgstr "crwdns1481:0crwdne1481:0"
+
+#. js-lingui-id: S7DRR+
+#: src/modules/workflow/common/utils/assert-workflow-statuses-not-set.ts
+msgid "Statuses cannot be set manually."
+msgstr "crwdns6580:0crwdne6580:0"
+
+#. js-lingui-id: u+rv4L
+#: src/modules/workflow/workflow-builder/workflow-step/workflow-version-step.workspace-service.ts
+msgid "Step is not a form"
+msgstr "crwdns6582:0crwdne6582:0"
+
+#. js-lingui-id: YFMPch
+#: src/engine/metadata-modules/utils/validate-metadata-name-start-with-lowercase-letter-and-contain-digits-nor-letters.utils.ts
+msgid "String \"{name}\" is not valid: must start with lowercase letter and contain only alphanumeric letters"
+msgstr "crwdns6584:0{name}crwdne6584:0"
+
+#. js-lingui-id: g4jxXh
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
+msgid "Sub field name"
+msgstr "crwdns5862:0crwdne5862:0"
 
 #. js-lingui-id: UJmAAK
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -1973,6 +2369,11 @@ msgstr "crwdns1491:0crwdne1491:0"
 msgid "Sync status"
 msgstr "crwdns1493:0crwdne1493:0"
 
+#. js-lingui-id: 5y3Wbw
+#: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
+msgid "Target object metadata not found for {connectFieldName}"
+msgstr "crwdns6656:0{connectFieldName}crwdne6656:0"
+
 #. js-lingui-id: 4SHJe4
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Target Url"
@@ -1998,7 +2399,6 @@ msgid "Task attachments"
 msgstr "crwdns1501:0crwdne1501:0"
 
 #. js-lingui-id: X8fs74
-#: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task body"
 msgstr "crwdns1503:0crwdne1503:0"
@@ -2159,15 +2559,30 @@ msgstr "crwdns1559:0crwdne1559:0"
 msgid "The folder this favorite belongs to"
 msgstr "crwdns1561:0crwdne1561:0"
 
+#. js-lingui-id: EJUSll
+#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+msgid "The initial version of a workflow can not be deleted"
+msgstr "crwdns6586:0crwdne6586:0"
+
 #. js-lingui-id: DbWmKZ
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "The opportunity name"
 msgstr "crwdns1563:0crwdne1563:0"
 
+#. js-lingui-id: 5N6QtE
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "The workflow automated trigger settings"
+msgstr "crwdns5987:0crwdne5987:0"
+
+#. js-lingui-id: SpKbfT
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "The workflow automated trigger type"
+msgstr "crwdns5989:0crwdne5989:0"
+
 #. js-lingui-id: 7mPrpl
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "The workflow event listener name"
-msgstr "crwdns1565:0crwdne1565:0"
+#~ msgid "The workflow event listener name"
+#~ msgstr "The workflow event listener name"
 
 #. js-lingui-id: od0omS
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -2188,6 +2603,17 @@ msgstr "crwdns1571:0crwdne1571:0"
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "The workflow version status"
 msgstr "crwdns1573:0crwdne1573:0"
+
+#. js-lingui-id: NbABJb
+#: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
+msgid "This name is not available as it is already used by another field"
+msgstr "crwdns6772:0crwdne6772:0"
+
+#. js-lingui-id: yIUmAs
+#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
+#: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
+msgid "This name is not available."
+msgstr "crwdns6588:0crwdne6588:0"
 
 #. js-lingui-id: Zl0BJl
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
@@ -2290,11 +2716,21 @@ msgstr "crwdns1605:0crwdne1605:0"
 msgid "Type"
 msgstr "crwdns1607:0crwdne1607:0"
 
+#. js-lingui-id: EBZdX5
+#: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
+msgid "Unsupported cron schedule type"
+msgstr "crwdns6590:0crwdne6590:0"
+
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Update DateTime"
 msgstr "crwdns1609:0crwdne1609:0"
+
+#. js-lingui-id: l9dlVi
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
+msgid "User does not have access to this workspace"
+msgstr "crwdns6660:0crwdne6660:0"
 
 #. js-lingui-id: YFciqL
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -2305,6 +2741,11 @@ msgstr "crwdns1611:0crwdne1611:0"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User Id"
 msgstr "crwdns1613:0crwdne1613:0"
+
+#. js-lingui-id: B43Kks
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "User is not part of the workspace"
+msgstr "crwdns6592:0crwdne6592:0"
 
 #. js-lingui-id: 4juE7s
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -2593,7 +3034,7 @@ msgstr "crwdns4981:0crwdne4981:0"
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -2601,10 +3042,15 @@ msgstr "crwdns4981:0crwdne4981:0"
 msgid "Workflow"
 msgstr "crwdns1717:0crwdne1717:0"
 
+#. js-lingui-id: hdtWQn
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+msgid "Workflow automated triggers linked to the workflow."
+msgstr "crwdns5991:0crwdne5991:0"
+
 #. js-lingui-id: E03XpH
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "Workflow event listeners linked to the workflow."
-msgstr "crwdns1719:0crwdne1719:0"
+#~ msgid "Workflow event listeners linked to the workflow."
+#~ msgstr "Workflow event listeners linked to the workflow."
 
 #. js-lingui-id: vwSkSW
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2670,6 +3116,22 @@ msgstr "crwdns1741:0crwdne1741:0"
 msgid "Workflow Version"
 msgstr "crwdns1743:0crwdne1743:0"
 
+#. js-lingui-id: n4/IOE
+#: src/modules/workflow/common/utils/assert-workflow-version-has-steps.ts
+msgid "Workflow version does not contain at least one step"
+msgstr "crwdns6594:0crwdne6594:0"
+
+#. js-lingui-id: k4DPlQ
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+#: src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util.ts
+msgid "Workflow version does not contain trigger"
+msgstr "crwdns6596:0crwdne6596:0"
+
+#. js-lingui-id: bqFL4g
+#: src/modules/workflow/common/utils/assert-workflow-version-is-draft.util.ts
+msgid "Workflow version is not in draft status"
+msgstr "crwdns6598:0crwdne6598:0"
+
 #. js-lingui-id: CocTJJ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow version linked to the run."
@@ -2690,20 +3152,35 @@ msgstr "crwdns1749:0crwdne1749:0"
 msgid "Workflow versions linked to the workflow."
 msgstr "crwdns1751:0crwdne1751:0"
 
+#. js-lingui-id: s7p+TL
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "WorkflowAutomatedTrigger"
+msgstr "crwdns5993:0crwdne5993:0"
+
+#. js-lingui-id: 96bCgZ
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "WorkflowAutomatedTrigger workflow"
+msgstr "crwdns5995:0crwdne5995:0"
+
+#. js-lingui-id: 5z92T9
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "WorkflowAutomatedTriggers"
+msgstr "crwdns5997:0crwdne5997:0"
+
 #. js-lingui-id: ENOy6I
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "WorkflowEventListener"
-msgstr "crwdns1753:0crwdne1753:0"
+#~ msgid "WorkflowEventListener"
+#~ msgstr "WorkflowEventListener"
 
 #. js-lingui-id: HN90FO
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "WorkflowEventListener workflow"
-msgstr "crwdns1755:0crwdne1755:0"
+#~ msgid "WorkflowEventListener workflow"
+#~ msgstr "WorkflowEventListener workflow"
 
 #. js-lingui-id: 3JA9se
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "WorkflowEventListeners"
-msgstr "crwdns1757:0crwdne1757:0"
+#~ msgid "WorkflowEventListeners"
+#~ msgstr "WorkflowEventListeners"
 
 #. js-lingui-id: woYYQq
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -2720,6 +3197,11 @@ msgstr "crwdns1761:0crwdne1761:0"
 msgid "WorkflowVersion workflow"
 msgstr "crwdns1763:0crwdne1763:0"
 
+#. js-lingui-id: rklt6M
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "Workspace is not ready to welcome new members"
+msgstr "crwdns6600:0crwdne6600:0"
+
 #. js-lingui-id: CbGxon
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Workspace member"
@@ -2728,7 +3210,6 @@ msgstr "crwdns1765:0crwdne1765:0"
 #. js-lingui-id: qc38qR
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
@@ -2762,11 +3243,27 @@ msgstr "crwdns1773:0crwdne1773:0"
 msgid "WorkspaceMember"
 msgstr "crwdns1775:0crwdne1775:0"
 
+#. js-lingui-id: fV2Bu6
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Wrong password"
+msgstr "crwdns6602:0crwdne6602:0"
+
 #. js-lingui-id: 0gv+T2
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr "crwdns1777:0crwdne1777:0"
+
+#. js-lingui-id: z+7x/s
+#: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
+msgid "You must be authenticated to perform this action."
+msgstr "crwdns6604:0crwdne6604:0"
+
+#. js-lingui-id: 8pqpv/
+#: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
+msgid "Your app version is out of date. Please refresh the page to continue."
+msgstr "crwdns6838:0crwdne6838:0"
 
 #. js-lingui-id: bTyBrW
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -2777,3 +3274,8 @@ msgstr "crwdns4983:0crwdne4983:0"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "crwdns1779:0crwdne1779:0"
+
+#. js-lingui-id: ej/tZF
+#: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
+msgid "Your workspace has been updated with a new data model. Please refresh the page."
+msgstr "crwdns6606:0crwdne6606:0"

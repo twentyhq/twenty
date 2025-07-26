@@ -1,9 +1,9 @@
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 import { computeTableName } from './compute-table-name.util';
 
 export const computeObjectTargetTable = (
-  objectMetadata: Pick<ObjectMetadataInterface, 'nameSingular' | 'isCustom'>,
+  objectMetadata: Pick<ObjectMetadataEntity, 'nameSingular' | 'isCustom'>,
 ) => {
   return computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom);
 };

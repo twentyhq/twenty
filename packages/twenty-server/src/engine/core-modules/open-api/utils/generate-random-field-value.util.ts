@@ -81,11 +81,19 @@ export const generateRandomFieldValue = ({
     }
 
     case FieldMetadataType.SELECT: {
-      return isDefined(field.options[0].value) ? field.options[0].value : [];
+      if (!isDefined(field.options) || !isDefined(field.options[0].value)) {
+        return [];
+      }
+
+      return [field.options[0].value];
     }
 
     case FieldMetadataType.MULTI_SELECT: {
-      return isDefined(field.options[0].value) ? [field.options[0].value] : [];
+      if (!isDefined(field.options) || !isDefined(field.options[0].value)) {
+        return [];
+      }
+
+      return [field.options[0].value];
     }
 
     case FieldMetadataType.RELATION:

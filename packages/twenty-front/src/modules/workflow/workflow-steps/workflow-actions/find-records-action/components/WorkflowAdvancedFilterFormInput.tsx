@@ -18,7 +18,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { WorkflowAdvancedFilterValueFormCompositeFieldInput } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterValueFormCompositeFieldInput';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { isObject } from '@sniptt/guards';
+import { isObject, isString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -56,7 +56,7 @@ export const WorkflowAdvancedFilterValueFormInput = ({
     useApplyObjectFilterDropdownFilterValue();
 
   const handleChange = (newValue: JsonValue) => {
-    if (typeof newValue === 'string') {
+    if (isString(newValue)) {
       applyObjectFilterDropdownFilterValue(newValue);
     } else if (Array.isArray(newValue) || isObject(newValue)) {
       applyObjectFilterDropdownFilterValue(JSON.stringify(newValue));

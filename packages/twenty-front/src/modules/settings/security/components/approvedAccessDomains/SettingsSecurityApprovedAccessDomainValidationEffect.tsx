@@ -3,7 +3,9 @@ import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
+import { useSetRecoilState } from 'recoil';
 import { useValidateApprovedAccessDomainMutation } from '~/generated-metadata/graphql';
+import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
 
 export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
   const [validateApprovedAccessDomainMutation] =
@@ -12,6 +14,9 @@ export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
   const [searchParams] = useSearchParams();
   const approvedAccessDomainId = searchParams.get('wtdId');
   const validationToken = searchParams.get('validationToken');
+  const setApprovedAccessDomains = useSetRecoilState(
+    approvedAccessDomainsState,
+  );
 
   useEffect(() => {
     if (isDefined(validationToken) && isDefined(approvedAccessDomainId)) {
@@ -23,6 +28,15 @@ export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
           },
         },
         onCompleted: () => {
+          setApprovedAccessDomains((approvedAccessDomains) =>
+            approvedAccessDomains.map((approvedAccessDomain) => ({
+              ...approvedAccessDomain,
+              isValidated:
+                approvedAccessDomain.id === approvedAccessDomainId
+                  ? true
+                  : approvedAccessDomain.isValidated,
+            })),
+          );
           enqueueSuccessSnackBar({
             message: t`Approved access domain validated`,
             options: {
@@ -30,9 +44,12 @@ export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
             },
           });
         },
-        onError: () => {
+        onError: (error) => {
+          const message = error?.message
+            ? error.message
+            : 'Error validating approved access domain';
           enqueueErrorSnackBar({
-            message: t`Error validating approved access domain`,
+            message: t`${message}`,
             options: {
               dedupeKey: 'approved-access-domain-validation-error-dedupe-key',
             },

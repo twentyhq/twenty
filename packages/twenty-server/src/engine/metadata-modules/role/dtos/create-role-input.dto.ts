@@ -31,6 +31,11 @@ export class CreateRoleInput {
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
+  canAccessAllTools?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
   canReadAllObjectRecords?: boolean;
 
   @IsBoolean()

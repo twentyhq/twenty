@@ -86,6 +86,20 @@ export const useShouldActionBeRegisteredParams = ({
     [],
   );
 
+  const getObjectWritePermission = useRecoilCallback(
+    ({ snapshot }) =>
+      (objectMetadataNameSingular: string) => {
+        return snapshot
+          .getLoadable(
+            objectPermissionsFamilySelector({
+              objectNameSingular: objectMetadataNameSingular,
+            }),
+          )
+          .getValue().canUpdate;
+      },
+    [],
+  );
+
   return {
     objectMetadataItem,
     isFavorite,
@@ -98,5 +112,6 @@ export const useShouldActionBeRegisteredParams = ({
     numberOfSelectedRecords,
     viewType: viewType ?? undefined,
     getTargetObjectReadPermission: getObjectReadPermission,
+    getTargetObjectWritePermission: getObjectWritePermission,
   };
 };

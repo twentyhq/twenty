@@ -71,7 +71,7 @@ export class FixStandardSelectFieldsPositionCommand extends ActiveOrSuspendedWor
     let biggestPosition = -1;
 
     // Sort options by position for consistent processing
-    const sortedOptions = [...taskStatusFieldMetadata.options].sort(
+    const sortedOptions = (taskStatusFieldMetadata.options ?? []).sort(
       (a, b) => a.position - b.position,
     );
 

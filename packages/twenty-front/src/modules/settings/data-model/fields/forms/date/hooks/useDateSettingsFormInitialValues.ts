@@ -9,10 +9,11 @@ export const useDateSettingsFormInitialValues = ({
 }: {
   fieldMetadataItem?: Pick<FieldMetadataItem, 'settings'>;
 }) => {
-  const initialDisplayFormat = fieldMetadataItem?.settings
-    ?.displayFormat as FieldDateDisplayFormat;
-  const initialCustomUnicodeDateFormat = fieldMetadataItem?.settings
-    ?.customUnicodeDateFormat as string;
+  const initialDisplayFormat =
+    (fieldMetadataItem?.settings?.displayFormat as FieldDateDisplayFormat) ??
+    FieldDateDisplayFormat.USER_SETTINGS;
+  const initialCustomUnicodeDateFormat =
+    (fieldMetadataItem?.settings?.customUnicodeDateFormat as string) ?? '';
 
   const { resetField } = useFormContext<SettingsDataModelFieldDateFormValues>();
 

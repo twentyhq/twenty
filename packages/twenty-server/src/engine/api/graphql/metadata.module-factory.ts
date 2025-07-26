@@ -39,6 +39,7 @@ export const metadataModuleFactory = async (
       useGraphQLErrorHandlerHook({
         metricsService: metricsService,
         exceptionHandlerService,
+        twentyConfigService,
       }),
       useCachedMetadata({
         cacheGetter: cacheStorageService.get.bind(cacheStorageService),

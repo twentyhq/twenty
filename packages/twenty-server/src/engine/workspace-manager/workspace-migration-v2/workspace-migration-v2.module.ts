@@ -9,6 +9,6 @@ import { WorkspaceMigrationRunnerV2Module } from 'src/engine/workspace-manager/w
     WorkspaceMigrationRunnerV2Module,
   ],
   providers: [],
-  exports: [],
+  exports: [WorkspaceMigrationRunnerV2Module],
 })
 export class WorkspaceMigrationV2Module {}

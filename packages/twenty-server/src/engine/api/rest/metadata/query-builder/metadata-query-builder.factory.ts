@@ -1,7 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { Request } from 'express';
-
 import { GetMetadataVariablesFactory } from 'src/engine/api/rest/metadata/query-builder/factories/get-metadata-variables.factory';
 import { FindOneMetadataQueryFactory } from 'src/engine/api/rest/metadata/query-builder/factories/find-one-metadata-query.factory';
 import { FindManyMetadataQueryFactory } from 'src/engine/api/rest/metadata/query-builder/factories/find-many-metadata-query.factory';
@@ -9,7 +7,11 @@ import { parseMetadataPath } from 'src/engine/api/rest/metadata/query-builder/ut
 import { CreateMetadataQueryFactory } from 'src/engine/api/rest/metadata/query-builder/factories/create-metadata-query.factory';
 import { UpdateMetadataQueryFactory } from 'src/engine/api/rest/metadata/query-builder/factories/update-metadata-query.factory';
 import { DeleteMetadataQueryFactory } from 'src/engine/api/rest/metadata/query-builder/factories/delete-metadata-query.factory';
-import { MetadataQuery } from 'src/engine/api/rest/metadata/types/metadata-query.type';
+import {
+  MetadataQuery,
+  Selectors,
+} from 'src/engine/api/rest/metadata/types/metadata-query.type';
+import { RequestContext } from 'src/engine/api/rest/types/RequestContext';
 
 @Injectable()
 export class MetadataQueryBuilderFactory {
@@ -22,37 +24,53 @@ export class MetadataQueryBuilderFactory {
     private readonly getMetadataVariablesFactory: GetMetadataVariablesFactory,
   ) {}
 
-  async get(request: Request): Promise<MetadataQuery> {
-    const { id, objectNameSingular, objectNamePlural } =
-      parseMetadataPath(request);
+  async get(
+    request: RequestContext,
+    selectors?: Selectors,
+  ): Promise<MetadataQuery> {
+    const { id, objectNameSingular, objectNamePlural } = parseMetadataPath(
+      request.path,
+    );
 
     return {
       query: id
-        ? this.findOneQueryFactory.create(objectNameSingular, objectNamePlural)
-        : this.findManyQueryFactory.create(objectNamePlural),
+        ? this.findOneQueryFactory.create(
+            objectNameSingular,
+            objectNamePlural,
+            selectors,
+          )
+        : this.findManyQueryFactory.create(objectNamePlural, selectors),
       variables: this.getMetadataVariablesFactory.create(id, request),
     };
   }
 
-  async create(request: Request): Promise<MetadataQuery> {
-    const { objectNameSingular, objectNamePlural } = parseMetadataPath(request);
+  async create(
+    { path, body }: Pick<RequestContext, 'path' | 'body'>,
+    selectors?: Selectors,
+  ): Promise<MetadataQuery> {
+    const { objectNameSingular, objectNamePlural } = parseMetadataPath(path);
 
     return {
       query: this.createQueryFactory.create(
         objectNameSingular,
         objectNamePlural,
+        selectors,
       ),
       variables: {
         input: {
-          [objectNameSingular]: request.body,
+          [objectNameSingular]: body,
         },
       },
     };
   }
 
-  async update(request: Request): Promise<MetadataQuery> {
-    const { objectNameSingular, objectNamePlural, id } =
-      parseMetadataPath(request);
+  async update(
+    request: Pick<RequestContext, 'path' | 'body'>,
+    selectors?: Selectors,
+  ): Promise<MetadataQuery> {
+    const { objectNameSingular, objectNamePlural, id } = parseMetadataPath(
+      request.path,
+    );
 
     if (!id) {
       throw new BadRequestException(
@@ -64,6 +82,7 @@ export class MetadataQueryBuilderFactory {
       query: this.updateQueryFactory.create(
         objectNameSingular,
         objectNamePlural,
+        selectors,
       ),
       variables: {
         input: {
@@ -74,8 +93,10 @@ export class MetadataQueryBuilderFactory {
     };
   }
 
-  async delete(request: Request): Promise<MetadataQuery> {
-    const { objectNameSingular, id } = parseMetadataPath(request);
+  async delete(
+    request: Pick<RequestContext, 'path' | 'body'>,
+  ): Promise<MetadataQuery> {
+    const { objectNameSingular, id } = parseMetadataPath(request.path);
 
     if (!id) {
       throw new BadRequestException(

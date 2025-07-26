@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 import { In, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
@@ -175,7 +176,14 @@ export class RemoteTableRelationsService {
         isNullable: true,
         isSystem: true,
         defaultValue: undefined,
-        settings: { ...objectPrimaryKeyFieldSettings, isForeignKey: true },
+        ...(isDefined(objectPrimaryKeyFieldSettings)
+          ? {
+              settings: {
+                ...objectPrimaryKeyFieldSettings,
+                isForeignKey: true,
+              },
+            }
+          : {}),
       },
     );
 
@@ -215,7 +223,14 @@ export class RemoteTableRelationsService {
         isNullable: true,
         isSystem: true,
         defaultValue: undefined,
-        settings: { ...objectPrimaryKeyFieldSettings, isForeignKey: true },
+        ...(isDefined(objectPrimaryKeyFieldSettings)
+          ? {
+              settings: {
+                ...objectPrimaryKeyFieldSettings,
+                isForeignKey: true,
+              },
+            }
+          : {}),
       },
     );
 
@@ -255,7 +270,14 @@ export class RemoteTableRelationsService {
         isNullable: true,
         isSystem: true,
         defaultValue: undefined,
-        settings: { ...objectPrimaryKeyFieldSettings, isForeignKey: true },
+        ...(isDefined(objectPrimaryKeyFieldSettings)
+          ? {
+              settings: {
+                ...objectPrimaryKeyFieldSettings,
+                isForeignKey: true,
+              },
+            }
+          : {}),
       },
     );
 

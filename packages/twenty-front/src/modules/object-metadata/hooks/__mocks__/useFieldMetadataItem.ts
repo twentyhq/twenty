@@ -132,7 +132,7 @@ export const queries = {
         ...WorkspaceMemberQueryFragment
       }
       currentUserWorkspace {
-        settingsPermissions
+        permissionFlags
         objectRecordsPermissions
       }
       currentWorkspace {
@@ -287,7 +287,7 @@ export const responseData = {
       },
       workspaceMembers: [],
       currentUserWorkspace: {
-        settingsPermissions: ['DATA_MODEL'],
+        permissionFlags: ['DATA_MODEL'],
         objectRecordsPermissions: [
           PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS,
           PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS,

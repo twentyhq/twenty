@@ -110,6 +110,7 @@ export class McpService {
         userWorkspaceId,
         apiKey,
       );
+
       const toolSet = await this.toolService.listTools(roleId, workspace.id);
 
       if (method === 'tools/call' && params) {

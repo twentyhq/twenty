@@ -142,7 +142,7 @@ const computeSchemaComponent = ({
 
   const result: OpenAPIV3_1.SchemaObject = {
     type: 'object',
-    description: item.description,
+    description: item.description ?? undefined,
     properties: convertObjectMetadataToSchemaProperties({
       item,
       forResponse,

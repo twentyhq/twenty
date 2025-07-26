@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { Request, Response } from 'express';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
@@ -158,6 +159,11 @@ export class MiddlewareService {
     request.workspaceMemberId = data.workspaceMemberId;
     request.userWorkspaceId = data.userWorkspaceId;
     request.authProvider = data.authProvider;
+
+    request.locale =
+      data.userWorkspace?.locale ??
+      (request.headers['x-locale'] as keyof typeof APP_LOCALES) ??
+      SOURCE_LOCALE;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,37 +1,22 @@
-import { WorkflowRunOutput } from '@/workflow/types/Workflow';
-import { WorkflowDiagramRunStatus } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
-import { isNull } from '@sniptt/guards';
+import {
+  WorkflowRunState,
+  WorkflowRunStepStatus,
+} from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
+import { StepStatus } from 'twenty-shared/workflow';
 
 export const getWorkflowRunStepExecutionStatus = ({
-  workflowRunOutput,
+  workflowRunState,
   stepId,
 }: {
-  workflowRunOutput: WorkflowRunOutput | null;
+  workflowRunState: WorkflowRunState | null;
   stepId: string;
-}): WorkflowDiagramRunStatus => {
-  if (isNull(workflowRunOutput)) {
-    return 'not-executed';
+}): WorkflowRunStepStatus => {
+  const stepOutput = workflowRunState?.stepInfos?.[stepId];
+
+  if (isDefined(stepOutput)) {
+    return stepOutput.status;
   }
 
-  if (stepId === TRIGGER_STEP_ID) {
-    return 'success';
-  }
-
-  const stepOutput = workflowRunOutput.stepsOutput?.[stepId];
-
-  if (isDefined(stepOutput?.error)) {
-    return 'failure';
-  }
-
-  if (isDefined(stepOutput?.pendingEvent)) {
-    return 'running';
-  }
-
-  if (isDefined(stepOutput?.result)) {
-    return 'success';
-  }
-
-  return 'not-executed';
+  return StepStatus.NOT_STARTED;
 };

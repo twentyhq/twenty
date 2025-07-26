@@ -49,7 +49,7 @@ export const MainNavigationDrawerFixedItems = () => {
           <NavigationDrawerItem
             label={t`Ask AI`}
             Icon={IconSparkles}
-            onClick={openAskAIPage}
+            onClick={() => openAskAIPage()}
             keyboard={['@']}
             mouseUpNavigation={true}
           />

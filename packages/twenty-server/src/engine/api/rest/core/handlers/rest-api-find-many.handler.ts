@@ -7,8 +7,12 @@ import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api
 @Injectable()
 export class RestApiFindManyHandler extends RestApiBaseHandler {
   async handle(request: Request) {
-    const { repository, objectMetadata, objectMetadataItemWithFieldsMaps } =
-      await this.getRepositoryAndMetadataOrFail(request);
+    const {
+      repository,
+      objectMetadata,
+      objectMetadataItemWithFieldsMaps,
+      restrictedFields,
+    } = await this.getRepositoryAndMetadataOrFail(request);
 
     const {
       records,
@@ -22,6 +26,7 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
       repository,
       objectMetadata,
       objectMetadataItemWithFieldsMaps,
+      restrictedFields,
     });
 
     return this.formatPaginatedResult({

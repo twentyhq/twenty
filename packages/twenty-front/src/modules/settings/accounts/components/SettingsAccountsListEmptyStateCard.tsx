@@ -3,40 +3,30 @@ import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMe
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
+import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { IconAt, IconGoogle, IconMicrosoft } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { Card, CardContent, CardHeader } from 'twenty-ui/layout';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-const StyledHeader = styled(CardHeader)`
-  align-items: center;
+const StyledCardsContainer = styled.div`
   display: flex;
-  height: ${({ theme }) => theme.spacing(6)};
-`;
-
-const StyledBody = styled(CardContent)`
-  display: flex;
-  justify-content: center;
+  flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-type SettingsAccountsListEmptyStateCardProps = {
-  label?: string;
-};
-
-export const SettingsAccountsListEmptyStateCard = ({
-  label,
-}: SettingsAccountsListEmptyStateCardProps) => {
+export const SettingsAccountsListEmptyStateCard = () => {
   const { triggerApisOAuth } = useTriggerApisOAuth();
 
   const { t } = useLingui();
+  const theme = useTheme();
 
   const isGoogleMessagingEnabled = useRecoilValue(
     isGoogleMessagingEnabledState,
@@ -56,36 +46,33 @@ export const SettingsAccountsListEmptyStateCard = ({
   );
 
   return (
-    <Card>
-      <StyledHeader>{label || t`No connected account`}</StyledHeader>
-      <StyledBody>
-        {(isGoogleMessagingEnabled || isGoogleCalendarEnabled) && (
-          <Button
-            Icon={IconGoogle}
-            title={t`Connect with Google`}
-            variant="secondary"
-            onClick={() => triggerApisOAuth(ConnectedAccountProvider.GOOGLE)}
-          />
-        )}
+    <StyledCardsContainer>
+      {(isGoogleMessagingEnabled || isGoogleCalendarEnabled) && (
+        <SettingsCard
+          Icon={<IconGoogle size={theme.icon.size.md} />}
+          title={t`Connect with Google`}
+          onClick={() => triggerApisOAuth(ConnectedAccountProvider.GOOGLE)}
+        />
+      )}
 
-        {(isMicrosoftMessagingEnabled || isMicrosoftCalendarEnabled) && (
-          <Button
-            Icon={IconMicrosoft}
-            title={t`Connect with Microsoft`}
-            variant="secondary"
-            onClick={() => triggerApisOAuth(ConnectedAccountProvider.MICROSOFT)}
-          />
-        )}
+      {(isMicrosoftMessagingEnabled || isMicrosoftCalendarEnabled) && (
+        <SettingsCard
+          Icon={<IconMicrosoft size={theme.icon.size.md} />}
+          title={t`Connect with Microsoft`}
+          onClick={() => triggerApisOAuth(ConnectedAccountProvider.MICROSOFT)}
+        />
+      )}
 
-        {isImapSmtpCaldavFeatureFlagEnabled && (
-          <Button
-            Icon={IconAt}
+      {isImapSmtpCaldavFeatureFlagEnabled && (
+        <UndecoratedLink
+          to={getSettingsPath(SettingsPath.NewImapSmtpCaldavConnection)}
+        >
+          <SettingsCard
+            Icon={<IconAt size={theme.icon.size.md} />}
             title={t`Connect Email Account`}
-            variant="secondary"
-            to={getSettingsPath(SettingsPath.NewImapSmtpCaldavConnection)}
           />
-        )}
-      </StyledBody>
-    </Card>
+        </UndecoratedLink>
+      )}
+    </StyledCardsContainer>
   );
 };

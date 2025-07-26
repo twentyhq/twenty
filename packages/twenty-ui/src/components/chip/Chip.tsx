@@ -32,8 +32,9 @@ export type ChipProps = {
   variant?: ChipVariant;
   accent?: ChipAccent;
   leftComponent?: ReactNode | null;
-  rightComponent?: (() => ReactNode) | null;
+  rightComponent?: (() => ReactNode) | ReactNode | null;
   className?: string;
+  forceEmptyText?: boolean;
 };
 
 const StyledDiv = withTheme(styled.div<{ theme: Theme }>`
@@ -125,6 +126,18 @@ const StyledContainer = withTheme(styled.div<
       : 'var(--chip-horizontal-padding)'};
 `);
 
+const renderRightComponent = (
+  rightComponent: (() => ReactNode) | ReactNode | null,
+) => {
+  if (!rightComponent) {
+    return null;
+  }
+
+  return typeof rightComponent === 'function'
+    ? rightComponent()
+    : rightComponent;
+};
+
 export const Chip = ({
   size = ChipSize.Small,
   label,
@@ -137,6 +150,7 @@ export const Chip = ({
   accent = ChipAccent.TextPrimary,
   className,
   maxWidth,
+  forceEmptyText = false,
 }: ChipProps) => {
   return (
     <StyledContainer
@@ -152,10 +166,12 @@ export const Chip = ({
       {leftComponent}
       {!isLabelHidden && label && label.trim() ? (
         <OverflowingTextWithTooltip size={size} text={label} />
-      ) : (
+      ) : !forceEmptyText ? (
         <StyledDiv>Untitled</StyledDiv>
+      ) : (
+        ''
       )}
-      {rightComponent?.()}
+      {renderRightComponent(rightComponent)}
     </StyledContainer>
   );
 };

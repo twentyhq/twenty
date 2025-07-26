@@ -1,18 +1,7 @@
 import { AttachmentType } from '@/activities/files/types/Attachment';
+import { IconMapping, useFileTypeColors } from '@/file/utils/fileIconMappings';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-
-import {
-  IconComponent,
-  IconFile,
-  IconFileText,
-  IconFileZip,
-  IconHeadphones,
-  IconPhoto,
-  IconPresentation,
-  IconTable,
-  IconVideo,
-} from 'twenty-ui/display';
 
 const StyledIconContainer = styled.div<{ background: string }>`
   align-items: center;
@@ -25,35 +14,14 @@ const StyledIconContainer = styled.div<{ background: string }>`
   padding: ${({ theme }) => theme.spacing(1.25)};
 `;
 
-const IconMapping: { [key in AttachmentType]: IconComponent } = {
-  Archive: IconFileZip,
-  Audio: IconHeadphones,
-  Image: IconPhoto,
-  Presentation: IconPresentation,
-  Spreadsheet: IconTable,
-  TextDocument: IconFileText,
-  Video: IconVideo,
-  Other: IconFile,
-};
-
 export const FileIcon = ({ fileType }: { fileType: AttachmentType }) => {
   const theme = useTheme();
-
-  const IconColors: { [key in AttachmentType]: string } = {
-    Archive: theme.color.gray,
-    Audio: theme.color.pink,
-    Image: theme.color.yellow,
-    Presentation: theme.color.orange,
-    Spreadsheet: theme.color.turquoise,
-    TextDocument: theme.color.blue,
-    Video: theme.color.purple,
-    Other: theme.color.gray,
-  };
+  const iconColors = useFileTypeColors();
 
   const Icon = IconMapping[fileType];
 
   return (
-    <StyledIconContainer background={IconColors[fileType]}>
+    <StyledIconContainer background={iconColors[fileType]}>
       {Icon && <Icon size={theme.icon.size.sm} />}
     </StyledIconContainer>
   );

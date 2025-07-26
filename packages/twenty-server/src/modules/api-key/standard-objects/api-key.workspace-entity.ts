@@ -24,7 +24,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 @WorkspaceGate({
   featureFlag: 'IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED',
   excludeFromDatabase: false,
-  excludeFromGraphQL: true,
+  excludeFromWorkspaceApi: true,
 })
 export class ApiKeyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({

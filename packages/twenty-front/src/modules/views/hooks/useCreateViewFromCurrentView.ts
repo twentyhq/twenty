@@ -3,6 +3,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -39,6 +40,10 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const { createOneRecord } = useCreateOneRecord<View>({
     objectNameSingular: CoreObjectNameSingular.View,
   });
+
+  const anyFieldFilterValue = useRecoilComponentValueV2(
+    anyFieldFilterValueComponentState,
+  );
 
   const { createViewFieldRecords } = usePersistViewFieldRecords();
 
@@ -126,6 +131,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           type: type ?? sourceView.type,
           objectMetadataId: sourceView.objectMetadataId,
           openRecordIn: sourceView.openRecordIn,
+          anyFieldFilterValue: anyFieldFilterValue,
         });
 
         if (isUndefinedOrNull(newView)) {
@@ -209,6 +215,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         set(isPersistingViewFieldsState, false);
       },
     [
+      anyFieldFilterValue,
       currentViewIdCallbackState,
       createOneRecord,
       createViewFieldRecords,

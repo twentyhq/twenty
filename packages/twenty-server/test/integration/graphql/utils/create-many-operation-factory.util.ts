@@ -6,6 +6,7 @@ type CreateManyOperationFactoryParams = {
   objectMetadataPluralName: string;
   gqlFields: string;
   data?: object;
+  upsert?: boolean;
 };
 
 export const createManyOperationFactory = ({
@@ -13,15 +14,17 @@ export const createManyOperationFactory = ({
   objectMetadataPluralName,
   gqlFields,
   data = {},
+  upsert = false,
 }: CreateManyOperationFactoryParams) => ({
   query: gql`
-    mutation Create${capitalize(objectMetadataSingularName)}($data: [${capitalize(objectMetadataSingularName)}CreateInput!]!) {
-    create${capitalize(objectMetadataPluralName)}(data: $data) {
+    mutation Create${capitalize(objectMetadataSingularName)}($data: [${capitalize(objectMetadataSingularName)}CreateInput!]!, $upsert: Boolean) {
+    create${capitalize(objectMetadataPluralName)}(data: $data, upsert: $upsert) {
       ${gqlFields}
     }
   }
   `,
   variables: {
     data,
+    upsert,
   },
 });

@@ -38,7 +38,6 @@ export const FILTER_OPERANDS_MAP = {
   ],
   DATE_TIME: [
     ViewFilterOperand.Is,
-    ViewFilterOperand.IsRelative,
     ViewFilterOperand.IsInPast,
     ViewFilterOperand.IsInFuture,
     ViewFilterOperand.IsToday,
@@ -48,7 +47,6 @@ export const FILTER_OPERANDS_MAP = {
   ],
   DATE: [
     ViewFilterOperand.Is,
-    ViewFilterOperand.IsRelative,
     ViewFilterOperand.IsInPast,
     ViewFilterOperand.IsInFuture,
     ViewFilterOperand.IsToday,

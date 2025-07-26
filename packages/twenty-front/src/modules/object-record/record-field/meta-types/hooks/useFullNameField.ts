@@ -1,14 +1,16 @@
 import { useContext } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
+import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/states/recordFieldInputDraftValueComponentState';
 import { FieldFullNameValue } from '@/object-record/record-field/types/FieldMetadata';
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useFullNameField = () => {
@@ -39,10 +41,11 @@ export const useFullNameField = () => {
     persistField(newValue);
   };
 
-  const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldFullNameValue>();
+  const { setDraftValue } = useRecordFieldInput<FieldFullNameValue>();
 
-  const draftValue = useRecoilValue(getDraftValueSelector());
+  const draftValue = useRecoilComponentValueV2(
+    recordFieldInputDraftValueComponentState,
+  );
 
   return {
     fieldDefinition,

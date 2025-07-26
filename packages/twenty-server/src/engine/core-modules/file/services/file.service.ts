@@ -93,6 +93,13 @@ export class FileService {
   async deleteWorkspaceFolder(workspaceId: string) {
     const workspaceFolderPath = `workspace-${workspaceId}`;
 
+    const isWorkspaceFolderFound =
+      await this.fileStorageService.checkFolderExists(workspaceFolderPath);
+
+    if (!isWorkspaceFolderFound) {
+      return;
+    }
+
     return await this.fileStorageService.delete({
       folderPath: workspaceFolderPath,
     });

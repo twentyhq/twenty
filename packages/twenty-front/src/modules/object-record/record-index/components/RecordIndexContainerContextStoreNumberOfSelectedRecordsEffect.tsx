@@ -1,3 +1,4 @@
+import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -40,6 +41,10 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
       contextStoreFiltersComponentState,
     );
 
+    const contextStoreAnyFieldFilterValue = useRecoilComponentValueV2(
+      contextStoreAnyFieldFilterValueComponentState,
+    );
+
     const { filterValueDependencies } = useFilterValueDependencies();
 
     const { totalCount } = useFindManyRecords({
@@ -52,6 +57,7 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
         contextStoreFilters,
         objectMetadataItem,
         filterValueDependencies,
+        contextStoreAnyFieldFilterValue,
       ),
       limit: 1,
       skip: contextStoreTargetedRecordsRule.mode === 'selection',

@@ -54,7 +54,7 @@ export class BlocklistReimportMessagesJob {
         },
       });
 
-      await this.messagingChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
+      await this.messagingChannelSyncStatusService.resetAndScheduleMessageListFetch(
         messageChannels.map((messageChannel) => messageChannel.id),
         workspaceId,
       );

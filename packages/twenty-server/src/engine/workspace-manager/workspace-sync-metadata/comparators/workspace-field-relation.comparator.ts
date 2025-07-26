@@ -195,6 +195,8 @@ export class WorkspaceFieldRelationComparator {
         throw new Error(`Field ${fieldId} not found in standardObjectMetadata`);
       }
 
+      const relationFieldMetadata = propertiesMap[fieldId];
+
       if (relationTypeChange) {
         result.push({
           action: ComparatorAction.DELETE,
@@ -204,9 +206,11 @@ export class WorkspaceFieldRelationComparator {
         result.push({
           action: ComparatorAction.CREATE,
           object: {
-            ...propertiesMap[fieldId],
+            ...relationFieldMetadata,
             id: originalFieldMetadata.id,
             standardId: standardFieldMetadata.standardId ?? undefined,
+            description: relationFieldMetadata.description ?? undefined,
+            icon: relationFieldMetadata.icon ?? undefined,
           },
         });
       } else if (allOldPropertiesAreNull) {
@@ -216,6 +220,8 @@ export class WorkspaceFieldRelationComparator {
             ...propertiesMap[fieldId],
             id: originalFieldMetadata.id,
             standardId: standardFieldMetadata.standardId ?? undefined,
+            description: relationFieldMetadata.description ?? undefined,
+            icon: relationFieldMetadata.icon ?? undefined,
           },
         });
       } else if (allNewPropertiesAreNull) {
@@ -230,6 +236,8 @@ export class WorkspaceFieldRelationComparator {
             ...propertiesMap[fieldId],
             id: originalFieldMetadata.id,
             standardId: standardFieldMetadata.standardId ?? undefined,
+            description: relationFieldMetadata.description ?? undefined,
+            icon: relationFieldMetadata.icon ?? undefined,
           },
         });
       }

@@ -71,9 +71,9 @@ const formatSafeId = (columnKey: string) => {
   return camelCase(columnKey.replace('(', '').replace(')', ''));
 };
 
-export const generateColumns = <T extends string>(
-  fields: SpreadsheetImportFields<T>,
-): Column<ImportedStructuredRow<T> & ImportedStructuredRowMetadata>[] => [
+export const generateColumns = (
+  fields: SpreadsheetImportFields,
+): Column<ImportedStructuredRow & ImportedStructuredRowMetadata>[] => [
   {
     key: SELECT_COLUMN_KEY,
     name: '',
@@ -108,7 +108,7 @@ export const generateColumns = <T extends string>(
   ...fields.map(
     (
       column,
-    ): Column<ImportedStructuredRow<T> & ImportedStructuredRowMetadata> => ({
+    ): Column<ImportedStructuredRow & ImportedStructuredRowMetadata> => ({
       key: column.key,
       name: column.label,
       minWidth: 150,
@@ -132,7 +132,7 @@ export const generateColumns = <T extends string>(
       editable: column.fieldType.type !== 'checkbox',
       // Todo: remove usage of react-data-grid
       editor: ({ row, onRowChange, onClose }: any) => {
-        const columnKey = column.key as keyof (ImportedStructuredRow<T> &
+        const columnKey = column.key as keyof (ImportedStructuredRow &
           ImportedStructuredRowMetadata);
         let component;
 
@@ -166,7 +166,7 @@ export const generateColumns = <T extends string>(
       },
       // Todo: remove usage of react-data-grid
       formatter: ({ row, onRowChange }: { row: any; onRowChange: any }) => {
-        const columnKey = column.key as keyof (ImportedStructuredRow<T> &
+        const columnKey = column.key as keyof (ImportedStructuredRow &
           ImportedStructuredRowMetadata);
         let component;
 
@@ -197,7 +197,7 @@ export const generateColumns = <T extends string>(
                 id={formatSafeId(`${columnKey}-${row.__index}`)}
               >
                 {column.fieldType.options.find(
-                  (option) => option.value === row[columnKey as T],
+                  (option) => option.value === row[columnKey],
                 )?.label || null}
               </StyledDefaultContainer>
             );

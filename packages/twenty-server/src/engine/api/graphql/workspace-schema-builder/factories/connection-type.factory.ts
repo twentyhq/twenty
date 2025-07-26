@@ -2,8 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { GraphQLOutputType } from 'graphql';
 
-import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
 import { PageInfoType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/object';
 import {
@@ -11,6 +10,7 @@ import {
   TypeOptions,
 } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 import { ConnectionTypeDefinitionKind } from './connection-type-definition.factory';
 import { ObjectTypeDefinitionKind } from './object-type-definition.factory';
@@ -25,7 +25,7 @@ export class ConnectionTypeFactory {
   ) {}
 
   public create(
-    objectMetadata: ObjectMetadataInterface,
+    objectMetadata: ObjectMetadataEntity,
     kind: ConnectionTypeDefinitionKind,
     buildOptions: WorkspaceBuildSchemaOptions,
     typeOptions: TypeOptions,

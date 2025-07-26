@@ -1,6 +1,7 @@
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
+import { appVersionState } from '@/client-config/states/appVersionState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
@@ -97,6 +98,8 @@ export const ClientConfigProviderEffect = () => {
     isImapSmtpCaldavEnabledState,
   );
 
+  const setAppVersion = useSetRecoilState(appVersionState);
+
   const { data, loading, error, fetchClientConfig } = useClientConfig();
 
   useEffect(() => {
@@ -133,7 +136,7 @@ export const ClientConfigProviderEffect = () => {
       isErrored: false,
       error: undefined,
     }));
-
+    setAppVersion(data.clientConfig.appVersion);
     setAuthProviders({
       google: data?.clientConfig.authProviders.google,
       microsoft: data?.clientConfig.authProviders.microsoft,
@@ -217,6 +220,7 @@ export const ClientConfigProviderEffect = () => {
     setIsConfigVariablesInDbEnabled,
     setCalendarBookingPageId,
     setIsImapSmtpCaldavEnabled,
+    setAppVersion,
   ]);
 
   return <></>;

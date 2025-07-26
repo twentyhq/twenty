@@ -20,7 +20,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
-import { AvatarChip } from 'twenty-ui/components';
+import { Chip, AvatarChip } from 'twenty-ui/components';
 import {
   H2Title,
   IconEyeShare,
@@ -137,15 +137,19 @@ export const SettingsAdminWorkspaceContent = ({
       Icon: IconHome,
       label: t`Name`,
       value: (
-        <AvatarChip
-          name={activeWorkspace?.name ?? ''}
-          avatarUrl={
-            getImageAbsoluteURI({
-              imageUrl: isNonEmptyString(activeWorkspace?.logo)
-                ? activeWorkspace?.logo
-                : DEFAULT_WORKSPACE_LOGO,
-              baseUrl: REACT_APP_SERVER_BASE_URL,
-            }) ?? ''
+        <Chip
+          label={activeWorkspace?.name ?? ''}
+          leftComponent={
+            <AvatarChip
+              avatarUrl={
+                getImageAbsoluteURI({
+                  imageUrl: isNonEmptyString(activeWorkspace?.logo)
+                    ? activeWorkspace?.logo
+                    : DEFAULT_WORKSPACE_LOGO,
+                  baseUrl: REACT_APP_SERVER_BASE_URL,
+                }) ?? ''
+              }
+            />
           }
         />
       ),

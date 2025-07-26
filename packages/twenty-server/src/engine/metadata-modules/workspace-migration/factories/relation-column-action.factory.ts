@@ -2,10 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { WorkspaceColumnActionOptions } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-options.interface';
 
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ColumnActionAbstractFactory } from 'src/engine/metadata-modules/workspace-migration/factories/column-action-abstract.factory';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import {
@@ -23,7 +23,7 @@ export class RelationColumnActionFactory extends ColumnActionAbstractFactory<Fie
   protected readonly logger = new Logger(RelationColumnActionFactory.name);
 
   protected handleCreateAction(
-    fieldMetadata: FieldMetadataInterface<FieldMetadataType.RELATION>,
+    fieldMetadata: FieldMetadataEntity<FieldMetadataType.RELATION>,
     _options?: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnCreate[] {
     if (!fieldMetadata.settings || !fieldMetadata.settings.joinColumnName) {
@@ -46,8 +46,8 @@ export class RelationColumnActionFactory extends ColumnActionAbstractFactory<Fie
   }
 
   protected handleAlterAction(
-    currentFieldMetadata: FieldMetadataInterface<FieldMetadataType.RELATION>,
-    alteredFieldMetadata: FieldMetadataInterface<FieldMetadataType.RELATION>,
+    currentFieldMetadata: FieldMetadataEntity<FieldMetadataType.RELATION>,
+    alteredFieldMetadata: FieldMetadataEntity<FieldMetadataType.RELATION>,
     _options?: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnAlter[] {
     if (!currentFieldMetadata.settings || !alteredFieldMetadata.settings) {

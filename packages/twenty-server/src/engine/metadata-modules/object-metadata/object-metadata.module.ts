@@ -21,7 +21,7 @@ import { ObjectMetadataResolver } from 'src/engine/metadata-modules/object-metad
 import { ObjectMetadataFieldRelationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-field-relation.service';
 import { ObjectMetadataMigrationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-migration.service';
 import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-related-records.service';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RemoteTableRelationsModule } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.module';
@@ -83,9 +83,7 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
           },
           create: {
             many: { disabled: true },
-            guards: [
-              SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL),
-            ],
+            guards: [SettingsPermissionsGuard(PermissionFlagType.DATA_MODEL)],
           },
           update: { disabled: true },
           delete: { disabled: true },

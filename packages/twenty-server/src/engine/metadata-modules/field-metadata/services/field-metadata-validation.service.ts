@@ -15,10 +15,10 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
@@ -34,7 +34,7 @@ type ValidateFieldMetadataArgs = {
   fieldMetadataType: FieldMetadataType;
   fieldMetadataInput: CreateFieldInput | UpdateFieldInput;
   objectMetadata: ObjectMetadataItemWithFieldMaps;
-  existingFieldMetadata?: FieldMetadataInterface;
+  existingFieldMetadata?: FieldMetadataEntity;
 };
 
 enum ValueType {
@@ -77,32 +77,37 @@ export class FieldMetadataValidationService {
   }) {
     switch (fieldType) {
       case FieldMetadataType.NUMBER:
-        await this.validateSettings<FieldMetadataType.NUMBER>(
-          NumberSettingsValidation,
+        await this.validateSettings({
+          type: FieldMetadataType.NUMBER,
+          validator: NumberSettingsValidation,
           settings,
-        );
+        });
         break;
       case FieldMetadataType.TEXT:
-        await this.validateSettings<FieldMetadataType.TEXT>(
-          TextSettingsValidation,
+        await this.validateSettings({
+          type: FieldMetadataType.TEXT,
+          validator: TextSettingsValidation,
           settings,
-        );
+        });
         break;
       default:
         break;
     }
   }
 
-  private async validateSettings<Type extends FieldMetadataType>(
-    validator: ClassConstructor<
-      Type extends FieldMetadataType.NUMBER
-        ? NumberSettingsValidation
-        : Type extends FieldMetadataType.TEXT
-          ? TextSettingsValidation
-          : never
-    >,
-    settings: FieldMetadataSettings<Type>,
-  ) {
+  private async validateSettings<
+    Type extends FieldMetadataType,
+    TValidator extends ClassConstructor<object>,
+    TFieldMetadataType extends FieldMetadataType,
+  >({
+    type: _type,
+    settings,
+    validator,
+  }: {
+    validator: TValidator;
+    settings: FieldMetadataSettings<Type>;
+    type: TFieldMetadataType;
+  }) {
     try {
       const settingsInstance = plainToInstance(validator, settings);
 
@@ -136,6 +141,9 @@ export class FieldMetadataValidationService {
           throw new FieldMetadataException(
             error.message,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+            {
+              userFriendlyMessage: error.userFriendlyMessage,
+            },
           );
         }
 

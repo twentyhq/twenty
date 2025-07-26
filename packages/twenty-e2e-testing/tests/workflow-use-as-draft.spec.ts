@@ -23,7 +23,7 @@ test('Use an old version as draft', async ({ workflowVisualizer, page }) => {
   await expect(workflowVisualizer.workflowStatus).toHaveText('Active');
 
   await expect(workflowVisualizer.triggerNode).toContainText(
-    'Record is Created',
+    'Record is created',
   );
   await expect(workflowVisualizer.getAllStepNodes()).toContainText([
     'Create Record',
@@ -58,7 +58,7 @@ test('Use an old version as draft', async ({ workflowVisualizer, page }) => {
   await expect(workflowVisualizer.workflowStatus).toHaveText('Archived');
   await expect(workflowVisualizer.useAsDraftButton).toBeVisible();
   await expect(workflowVisualizer.triggerNode).toContainText(
-    'Record is Created',
+    'Record is created',
   );
   await expect(workflowVisualizer.getAllStepNodes()).toContainText([
     'Create Record',
@@ -72,7 +72,7 @@ test('Use an old version as draft', async ({ workflowVisualizer, page }) => {
   await expect(workflowVisualizer.workflowStatus).toHaveText('Draft');
   await expect(workflowVisualizer.useAsDraftButton).not.toBeVisible();
   await expect(workflowVisualizer.triggerNode).toContainText(
-    'Record is Created',
+    'Record is created',
   );
   await expect(workflowVisualizer.getAllStepNodes()).toContainText([
     'Create Record',
@@ -99,7 +99,7 @@ test('Use an old version as draft while having a pending draft version', async (
   await expect(workflowVisualizer.workflowStatus).toHaveText('Draft');
 
   await expect(workflowVisualizer.triggerNode).toContainText(
-    'Record is Created',
+    'Record is created',
   );
   await expect(workflowVisualizer.getAllStepNodes()).toContainText([
     'Create Record',
@@ -134,7 +134,7 @@ test('Use an old version as draft while having a pending draft version', async (
   await expect(workflowVisualizer.workflowStatus).toHaveText('Active');
   await expect(workflowVisualizer.useAsDraftButton).toBeVisible();
   await expect(workflowVisualizer.triggerNode).toContainText(
-    'Record is Created',
+    'Record is created',
   );
   await expect(workflowVisualizer.getAllStepNodes()).toContainText([
     'Create Record',
@@ -152,7 +152,7 @@ test('Use an old version as draft while having a pending draft version', async (
   await expect(workflowVisualizer.workflowStatus).toHaveText('Draft');
   await expect(workflowVisualizer.useAsDraftButton).not.toBeVisible();
   await expect(workflowVisualizer.triggerNode).toContainText(
-    'Record is Created',
+    'Record is created',
   );
   await expect(workflowVisualizer.getAllStepNodes()).toContainText([
     'Create Record',

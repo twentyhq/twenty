@@ -128,7 +128,6 @@ const mocks: MockedResponse[] = [
                       id
                       note {
                         __typename
-                        body
                         bodyV2 {
                           blocknote
                           markdown
@@ -571,7 +570,6 @@ const mocks: MockedResponse[] = [
                       task {
                         __typename
                         assigneeId
-                        body
                         bodyV2 {
                           blocknote
                           markdown

@@ -196,7 +196,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.pointOfContactForOpportunities,
     type: RelationType.ONE_TO_MANY,
-    label: msg`Linked Opportunities`,
+    label: msg`Opportunities`,
     description: msg`List of opportunities for which that person is the point of contact`,
     icon: 'IconTargetArrow',
     inverseSideTarget: () => OpportunityWorkspaceEntity,
@@ -248,6 +248,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => AttachmentWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsSystem()
   attachments: Relation<AttachmentWorkspaceEntity[]>;
 
   @WorkspaceRelation({

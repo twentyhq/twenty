@@ -21,4 +21,8 @@ export enum MetricsKeys {
   WorkflowRunFailed = 'workflow-run/failed',
   WorkflowRunFailedThrottled = 'workflow-run/failed/throttled',
   WorkflowRunFailedToEnqueue = 'workflow-run/failed/to-enqueue',
+  AIToolExecutionFailed = 'ai-tool-execution/failed',
+  AIToolExecutionSucceeded = 'ai-tool-execution/succeeded',
+  SchemaVersionMismatch = 'schema-version/mismatch',
+  AppVersionMismatch = 'app-version/mismatch',
 }

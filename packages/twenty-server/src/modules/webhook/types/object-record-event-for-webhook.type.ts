@@ -1,10 +1,9 @@
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
-
 import { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 export type ObjectRecordEventForWebhook = Omit<
   ObjectRecordEvent,
   'objectMetadata'
 > & {
-  objectMetadata: Pick<ObjectMetadataInterface, 'id' | 'nameSingular'>;
+  objectMetadata: Pick<ObjectMetadataEntity, 'id' | 'nameSingular'>;
 };

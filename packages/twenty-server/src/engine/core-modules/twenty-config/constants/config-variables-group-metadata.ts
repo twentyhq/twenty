@@ -119,4 +119,10 @@ export const CONFIG_VARIABLES_GROUP_METADATA: Record<
       'These have been set to sensible default so you probably don’t need to change them unless you have a specific use-case.',
     isHiddenOnLoad: true,
   },
+  [ConfigVariablesGroup.TwoFactorAuthentication]: {
+    position: 2000,
+    description:
+      'These have been set to sensible default so you probably don’t need to change them unless you have a specific use-case.',
+    isHiddenOnLoad: true,
+  },
 };

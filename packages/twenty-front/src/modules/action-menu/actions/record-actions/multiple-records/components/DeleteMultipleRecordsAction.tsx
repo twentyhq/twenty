@@ -1,5 +1,6 @@
 import { ActionModal } from '@/action-menu/actions/components/ActionModal';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -43,6 +44,10 @@ export const DeleteMultipleRecordsAction = () => {
     contextStoreFiltersComponentState,
   );
 
+  const contextStoreAnyFieldFilterValue = useRecoilComponentValueV2(
+    contextStoreAnyFieldFilterValueComponentState,
+  );
+
   const { filterValueDependencies } = useFilterValueDependencies();
 
   const graphqlFilter = computeContextStoreFilters(
@@ -50,6 +55,7 @@ export const DeleteMultipleRecordsAction = () => {
     contextStoreFilters,
     objectMetadataItem,
     filterValueDependencies,
+    contextStoreAnyFieldFilterValue,
   );
 
   const { fetchAllRecords: fetchAllRecordIds } = useLazyFetchAllRecords({

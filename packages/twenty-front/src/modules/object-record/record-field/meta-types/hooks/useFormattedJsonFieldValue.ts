@@ -1,6 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { orderWorkflowRunOutput } from '@/object-record/record-field/meta-types/utils/orderWorkflowRunOutput';
+import { orderWorkflowRunState } from '@/object-record/record-field/meta-types/utils/orderWorkflowRunState';
 import { FieldJsonValue } from '@/object-record/record-field/types/FieldMetadata';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -15,10 +15,10 @@ export const useFormattedJsonFieldValue = ({
   if (
     fieldDefinition.metadata.objectMetadataNameSingular ===
       CoreObjectNameSingular.WorkflowRun &&
-    fieldDefinition.metadata.fieldName === 'output' &&
+    fieldDefinition.metadata.fieldName === 'state' &&
     isDefined(fieldValue)
   ) {
-    return orderWorkflowRunOutput(fieldValue) as FieldJsonValue;
+    return orderWorkflowRunState(fieldValue) as FieldJsonValue;
   }
 
   return fieldValue;

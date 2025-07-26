@@ -17,10 +17,9 @@ import {
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { getResolverName } from 'src/engine/utils/get-resolver-name.util';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
-import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
+import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
 
 import { CreateManyResolverFactory } from './factories/create-many-resolver.factory';
 import { CreateOneResolverFactory } from './factories/create-one-resolver.factory';
@@ -100,27 +99,14 @@ export class WorkspaceResolverFactory {
     for (const objectMetadata of Object.values(objectMetadataMaps.byId).filter(
       isDefined,
     )) {
-      const workspaceEntity = standardObjectMetadataDefinitions.find(
-        (entity) => {
-          const entityMetadata = metadataArgsStorage.filterEntities(entity);
-
-          return entityMetadata?.standardId === objectMetadata.standardId;
-        },
-      );
-
-      if (workspaceEntity) {
-        const entityMetadata =
-          metadataArgsStorage.filterEntities(workspaceEntity);
-
-        if (
-          isGatedAndNotEnabled(
-            entityMetadata?.gate,
-            workspaceFeatureFlagsMap,
-            'graphql',
-          )
-        ) {
-          continue;
-        }
+      if (
+        shouldExcludeFromWorkspaceApi(
+          objectMetadata,
+          standardObjectMetadataDefinitions,
+          workspaceFeatureFlagsMap,
+        )
+      ) {
+        continue;
       }
 
       // Generate query resolvers

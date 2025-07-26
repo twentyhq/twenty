@@ -9,6 +9,7 @@ import { RecordGqlOperationSignature } from '@/object-record/graphql/types/Recor
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getCombinedFindManyRecordsQueryFilteringPart } from '@/object-record/multiple-objects/utils/getCombinedFindManyRecordsQueryFilteringPart';
+import isEmpty from 'lodash.isempty';
 import { capitalize } from 'twenty-shared/utils';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
@@ -83,6 +84,10 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
           `$limit${capitalize(objectMetadataItem.nameSingular)}: Int`,
       )
       .join(', ');
+
+  if (isEmpty(queryOperationSignatureWithObjectMetadataItemArray)) {
+    return null;
+  }
 
   return gql`
     query CombinedFindManyRecords(

@@ -1,3 +1,3 @@
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
-export type FieldMetadataMap = Record<string, FieldMetadataInterface>;
+export type FieldMetadataMap = Record<string, FieldMetadataEntity>;

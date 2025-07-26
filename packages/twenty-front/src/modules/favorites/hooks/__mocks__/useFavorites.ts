@@ -197,7 +197,6 @@ const UPDATE_ONE_FAVORITE_MUTATION = gql`
         id
         note {
           __typename
-          body
           bodyV2 {
             blocknote
             markdown
@@ -393,7 +392,6 @@ const UPDATE_ONE_FAVORITE_MUTATION = gql`
         task {
           __typename
           assigneeId
-          body
           bodyV2 {
             blocknote
             markdown
@@ -592,7 +590,6 @@ export const mocks = [
         id
         note {
           __typename
-          body
           bodyV2 {
             blocknote
             markdown
@@ -788,7 +785,6 @@ export const mocks = [
         task {
           __typename
           assigneeId
-          body
           bodyV2 {
             blocknote
             markdown

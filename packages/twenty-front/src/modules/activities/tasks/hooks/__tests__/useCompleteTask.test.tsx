@@ -74,7 +74,6 @@ const mocks: MockedResponse[] = [
                 }
               }
             }
-            body
             bodyV2 {
               blocknote
               markdown
@@ -181,7 +180,6 @@ const mocks: MockedResponse[] = [
           assignee: null,
           assigneeId: '123',
           attachments: { edges: [] },
-          body: 'Test',
           bodyV2: {
             blocknote: 'Test',
             markdown: 'Test',

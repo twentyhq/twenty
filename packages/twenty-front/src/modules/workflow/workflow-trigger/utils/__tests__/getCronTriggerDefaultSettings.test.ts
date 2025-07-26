@@ -1,6 +1,15 @@
 import { getCronTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getCronTriggerDefaultSettings';
 
 describe('getCronTriggerDefaultSettings', () => {
+  it('returns correct settings for DAYS interval', () => {
+    const result = getCronTriggerDefaultSettings('DAYS');
+    expect(result).toEqual({
+      schedule: { day: 1, hour: 0, minute: 0 },
+      type: 'DAYS',
+      outputSchema: {},
+    });
+  });
+
   it('returns correct settings for HOURS interval', () => {
     const result = getCronTriggerDefaultSettings('HOURS');
     expect(result).toEqual({

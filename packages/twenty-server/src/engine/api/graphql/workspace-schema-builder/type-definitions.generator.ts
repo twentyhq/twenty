@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { CompositeEnumTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-enum-type-definition.factory';
 import { CompositeInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-input-type-definition.factory';
@@ -11,6 +10,7 @@ import { ExtendObjectTypeDefinitionV2Factory } from 'src/engine/api/graphql/work
 import { RelationConnectInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/relation-connect-input-type-definition.factory';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 import { ConnectionTypeDefinitionFactory } from './factories/connection-type-definition.factory';
 import { EdgeTypeDefinitionFactory } from './factories/edge-type-definition.factory';
@@ -22,7 +22,7 @@ import {
   ObjectTypeDefinitionFactory,
   ObjectTypeDefinitionKind,
 } from './factories/object-type-definition.factory';
-import { WorkspaceBuildSchemaOptions } from './interfaces/workspace-build-schema-optionts.interface';
+import { WorkspaceBuildSchemaOptions } from './interfaces/workspace-build-schema-options.interface';
 import { TypeDefinitionsStorage } from './storages/type-definitions.storage';
 import { objectContainsRelationField } from './utils/object-contains-relation-field';
 
@@ -46,7 +46,7 @@ export class TypeDefinitionsGenerator {
   ) {}
 
   async generate(
-    objectMetadataCollection: ObjectMetadataInterface[],
+    objectMetadataCollection: ObjectMetadataEntity[],
     options: WorkspaceBuildSchemaOptions,
   ) {
     // Generate composite type objects first because they can be used in dynamic objects
@@ -152,7 +152,7 @@ export class TypeDefinitionsGenerator {
    */
 
   private async generateMetadataTypeDefs(
-    dynamicObjectMetadataCollection: ObjectMetadataInterface[],
+    dynamicObjectMetadataCollection: ObjectMetadataEntity[],
     options: WorkspaceBuildSchemaOptions,
   ) {
     this.logger.log(
@@ -173,7 +173,7 @@ export class TypeDefinitionsGenerator {
   }
 
   private generateObjectTypeDefs(
-    objectMetadataCollection: ObjectMetadataInterface[] | CompositeType[],
+    objectMetadataCollection: ObjectMetadataEntity[] | CompositeType[],
     options: WorkspaceBuildSchemaOptions,
   ) {
     const objectTypeDefs = objectMetadataCollection.map((objectMetadata) =>
@@ -189,7 +189,7 @@ export class TypeDefinitionsGenerator {
   }
 
   private generatePaginationTypeDefs(
-    objectMetadataCollection: ObjectMetadataInterface[],
+    objectMetadataCollection: ObjectMetadataEntity[],
     options: WorkspaceBuildSchemaOptions,
   ) {
     const edgeTypeDefs = objectMetadataCollection.map((objectMetadata) =>
@@ -207,7 +207,7 @@ export class TypeDefinitionsGenerator {
   }
 
   private async generateInputTypeDefs(
-    objectMetadataCollection: ObjectMetadataInterface[],
+    objectMetadataCollection: ObjectMetadataEntity[],
     options: WorkspaceBuildSchemaOptions,
   ) {
     const inputTypeDefs = objectMetadataCollection
@@ -253,7 +253,7 @@ export class TypeDefinitionsGenerator {
   }
 
   private generateEnumTypeDefs(
-    objectMetadataCollection: ObjectMetadataInterface[],
+    objectMetadataCollection: ObjectMetadataEntity[],
     options: WorkspaceBuildSchemaOptions,
   ) {
     const enumTypeDefs = objectMetadataCollection
@@ -266,7 +266,7 @@ export class TypeDefinitionsGenerator {
   }
 
   private async generateExtendedObjectTypeDefs(
-    objectMetadataCollection: ObjectMetadataInterface[],
+    objectMetadataCollection: ObjectMetadataEntity[],
     options: WorkspaceBuildSchemaOptions,
   ) {
     // Generate extended object type defs only for objects that contain composite fields
@@ -291,7 +291,7 @@ export class TypeDefinitionsGenerator {
   }
 
   private generateRelationConnectInputTypeDefs(
-    objectMetadataCollection: ObjectMetadataInterface[],
+    objectMetadataCollection: ObjectMetadataEntity[],
   ) {
     const relationWhereInputTypeDefs = objectMetadataCollection
       .map((objectMetadata) =>

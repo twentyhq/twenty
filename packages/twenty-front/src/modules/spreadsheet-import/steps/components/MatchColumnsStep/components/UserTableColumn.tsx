@@ -29,15 +29,15 @@ const StyledExample = styled.span`
   white-space: nowrap;
 `;
 
-type UserTableColumnProps<T extends string> = {
-  column: SpreadsheetColumn<T>;
+type UserTableColumnProps = {
+  column: SpreadsheetColumn;
   importedRow: ImportedRow;
 };
 
-export const UserTableColumn = <T extends string>({
+export const UserTableColumn = ({
   column,
   importedRow,
-}: UserTableColumnProps<T>) => {
+}: UserTableColumnProps) => {
   const { header } = column;
   const firstDefinedValue = importedRow.find(isDefined);
 

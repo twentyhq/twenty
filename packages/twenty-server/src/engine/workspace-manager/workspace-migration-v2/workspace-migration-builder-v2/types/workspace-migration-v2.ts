@@ -8,5 +8,6 @@ export type WorkspaceMigrationV2<
   // name: string;
   // description?: string;
   actions: TActions[];
+  workspaceId: string;
   // objectActions: TActions[] // could be cool ?
 };

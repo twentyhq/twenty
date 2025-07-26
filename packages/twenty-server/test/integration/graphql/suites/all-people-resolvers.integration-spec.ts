@@ -1,9 +1,9 @@
+import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import {
   TEST_PERSON_1_ID,
   TEST_PERSON_2_ID,
   TEST_PERSON_3_ID,
 } from 'test/integration/constants/test-person-ids.constants';
-import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
@@ -15,8 +15,8 @@ import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
-import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
 describe('people resolvers (integration)', () => {
   beforeAll(async () => {

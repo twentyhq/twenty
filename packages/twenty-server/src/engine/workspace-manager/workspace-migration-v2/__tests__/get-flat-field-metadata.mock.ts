@@ -6,18 +6,19 @@ import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migrat
 type FlatFieldMetadataOverrides<
   T extends FieldMetadataType = FieldMetadataType,
 > = Required<
-  Pick<FlatFieldMetadata<T>, 'uniqueIdentifier' | 'objectMetadataId'>
+  Pick<FlatFieldMetadata<T>, 'uniqueIdentifier' | 'objectMetadataId' | 'type'>
 > &
   Partial<FlatFieldMetadata<T>>;
 
-export const getFlatFieldMetadataMock = <
-  T extends FieldMetadataType = FieldMetadataType,
->(
+export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
   overrides: FlatFieldMetadataOverrides<T>,
-): FlatFieldMetadata<T> => {
+): FlatFieldMetadata => {
   const createdAt = faker.date.anytime();
 
   return {
+    defaultValue: null,
+    options: null,
+    settings: null,
     createdAt,
     description: 'default flat field metadata description',
     icon: 'icon',
@@ -28,15 +29,16 @@ export const getFlatFieldMetadataMock = <
     label: 'flat field metadata label',
     isNullable: true,
     isUnique: false,
-    relationTargetFieldMetadataId: undefined,
-    relationTargetObjectMetadataId: undefined,
-    type: FieldMetadataType.TEXT as T,
     isLabelSyncedWithName: false,
     isSystem: false,
-    standardId: undefined,
-    standardOverrides: undefined,
+    standardId: null,
+    standardOverrides: null,
     updatedAt: createdAt,
     workspaceId: faker.string.uuid(),
+    flatRelationTargetFieldMetadata: undefined as never,
+    relationTargetFieldMetadataId: undefined as never,
+    flatRelationTargetObjectMetadata: undefined as never,
+    relationTargetObjectMetadataId: undefined as never,
     ...overrides,
   };
 };

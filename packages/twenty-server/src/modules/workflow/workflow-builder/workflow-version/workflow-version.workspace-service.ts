@@ -1,14 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
@@ -28,9 +23,6 @@ export class WorkflowVersionWorkspaceService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workflowVersionStepWorkspaceService: WorkflowVersionStepWorkspaceService,
-    @InjectRepository(ObjectMetadataEntity, 'core')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly recordPositionService: RecordPositionService,
   ) {}
 
@@ -96,11 +88,6 @@ export class WorkflowVersionWorkspaceService {
         status: WorkflowVersionStatus.DRAFT,
         position,
       });
-
-      await this.emitWorkflowVersionCreationEvent({
-        workflowVersion: draftWorkflowVersion,
-        workspaceId,
-      });
     }
 
     assertWorkflowVersionIsDraft(draftWorkflowVersion);
@@ -124,42 +111,5 @@ export class WorkflowVersionWorkspaceService {
     });
 
     return draftWorkflowVersion.id;
-  }
-
-  private async emitWorkflowVersionCreationEvent({
-    workflowVersion,
-    workspaceId,
-  }: {
-    workflowVersion: WorkflowVersionWorkspaceEntity;
-    workspaceId: string;
-  }) {
-    const objectMetadata = await this.objectMetadataRepository.findOne({
-      where: {
-        nameSingular: 'workflowVersion',
-        workspaceId,
-      },
-    });
-
-    if (!objectMetadata) {
-      throw new WorkflowVersionStepException(
-        'Object metadata not found',
-        WorkflowVersionStepExceptionCode.FAILURE,
-      );
-    }
-
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: 'workflowVersion',
-      action: DatabaseEventAction.CREATED,
-      events: [
-        {
-          recordId: workflowVersion.id,
-          objectMetadata,
-          properties: {
-            after: workflowVersion,
-          },
-        },
-      ],
-      workspaceId,
-    });
   }
 }

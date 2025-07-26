@@ -21,7 +21,7 @@ export const parseFilter = (
 ): Record<string, FieldValue> => {
   const result = {};
   const match = filterQuery.match(
-    `^(${Object.values(Conjunctions).join('|')})((.+))$`,
+    `^(${Object.values(Conjunctions).join('|')})\\((.+)\\)$`,
   );
 
   if (match) {

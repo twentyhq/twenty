@@ -14,6 +14,7 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import {
   WorkflowRunStatus,
@@ -70,13 +71,11 @@ export class WorkflowRunEnqueueJob {
           continue;
         }
 
-        const schemaName = this.workspaceDataSourceService.getSchemaName(
-          activeWorkspace.id,
-        );
+        const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
 
         // Using raw query to avoid storing repository in cache
         const workflowRuns = await mainDataSource.query(
-          `SELECT * FROM ${schemaName}."workflowRun" WHERE status = '${WorkflowRunStatus.NOT_STARTED}' ORDER BY "createdAt" ASC`,
+          `SELECT id FROM ${schemaName}."workflowRun" WHERE status = '${WorkflowRunStatus.NOT_STARTED}' ORDER BY "createdAt" ASC`,
         );
 
         const workflowRunsToEnqueueCount = Math.min(

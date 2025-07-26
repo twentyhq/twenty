@@ -20,6 +20,7 @@ import { Attachment } from '@/activities/files/types/Attachment';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
 import { filterAttachmentsToRestore } from '@/activities/utils/filterAttachmentsToRestore';
+import { getActivityAttachmentIdsAndNameToUpdate } from '@/activities/utils/getActivityAttachmentIdsAndNameToUpdate';
 import { getActivityAttachmentIdsToDelete } from '@/activities/utils/getActivityAttachmentIdsToDelete';
 import { getActivityAttachmentPathsToRestore } from '@/activities/utils/getActivityAttachmentPathsToRestore';
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
@@ -27,6 +28,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { isInlineCellInEditModeScopedState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeScopedState';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
@@ -49,10 +51,6 @@ type ActivityRichTextEditorProps = {
   activityObjectNameSingular:
     | CoreObjectNameSingular.Task
     | CoreObjectNameSingular.Note;
-};
-
-type Activity = (Task | Note) & {
-  attachments: Attachment[];
 };
 
 export const ActivityRichTextEditor = ({
@@ -101,7 +99,9 @@ export const ActivityRichTextEditor = ({
         },
       },
     });
-
+  const { updateOneRecord: updateOneAttachment } = useUpdateOneRecord({
+    objectNameSingular: CoreObjectNameSingular.Attachment,
+  });
   const { upsertActivity } = useUpsertActivity({
     activityObjectNameSingular: activityObjectNameSingular,
   });
@@ -177,7 +177,7 @@ export const ActivityRichTextEditor = ({
       async (newStringifiedBody: string) => {
         const oldActivity = snapshot
           .getLoadable(recordStoreFamilyState(activityId))
-          .getValue() as Activity;
+          .getValue();
 
         set(recordStoreFamilyState(activityId), (oldActivity) => {
           return {
@@ -209,7 +209,8 @@ export const ActivityRichTextEditor = ({
 
         const attachmentIdsToDelete = getActivityAttachmentIdsToDelete(
           newStringifiedBody,
-          oldActivity.attachments,
+          oldActivity?.attachments,
+          oldActivity?.bodyV2.blocknote,
         );
 
         if (attachmentIdsToDelete.length > 0) {
@@ -220,7 +221,7 @@ export const ActivityRichTextEditor = ({
 
         const attachmentPathsToRestore = getActivityAttachmentPathsToRestore(
           newStringifiedBody,
-          oldActivity.attachments,
+          oldActivity?.attachments,
         );
 
         if (attachmentPathsToRestore.length > 0) {
@@ -236,6 +237,19 @@ export const ActivityRichTextEditor = ({
             idsToRestore: attachmentIdsToRestore,
           });
         }
+        const attachmentsToUpdate = getActivityAttachmentIdsAndNameToUpdate(
+          newStringifiedBody,
+          oldActivity?.attachments,
+        );
+        if (attachmentsToUpdate.length > 0) {
+          for (const attachmentToUpdate of attachmentsToUpdate) {
+            if (!attachmentToUpdate.id) continue;
+            await updateOneAttachment({
+              idToUpdate: attachmentToUpdate.id,
+              updateOneRecordInput: { name: attachmentToUpdate.name },
+            });
+          }
+        }
       },
     [
       activityId,
@@ -245,6 +259,7 @@ export const ActivityRichTextEditor = ({
       deleteAttachments,
       restoreAttachments,
       findSoftDeletedAttachments,
+      updateOneAttachment,
     ],
   );
 

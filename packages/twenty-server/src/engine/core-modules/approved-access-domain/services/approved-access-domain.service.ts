@@ -6,7 +6,6 @@ import crypto from 'crypto';
 import { t } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { SendApprovedAccessDomainValidation } from 'twenty-emails';
-import { APP_LOCALES } from 'twenty-shared/translations';
 import { Repository } from 'typeorm';
 
 import { ApprovedAccessDomain as ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
@@ -78,7 +77,7 @@ export class ApprovedAccessDomainService {
         lastName: sender.name.lastName,
       },
       serverUrl: this.twentyConfigService.get('SERVER_URL'),
-      locale: 'en' as keyof typeof APP_LOCALES,
+      locale: 'en',
     });
     const html = await render(emailTemplate);
     const text = await render(emailTemplate, {

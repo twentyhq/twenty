@@ -1,13 +1,13 @@
 import { OBJECT_PERMISSION_FRAGMENT } from '@/settings/roles/graphql/fragments/objectPermissionFragment';
+import { PERMISSION_FLAG_FRAGMENT } from '@/settings/roles/graphql/fragments/permissionFlagFragment';
 import { ROLE_FRAGMENT } from '@/settings/roles/graphql/fragments/roleFragment';
-import { SETTING_PERMISSION_FRAGMENT } from '@/settings/roles/graphql/fragments/settingPermissionFragment';
 import { WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/workspaceMemberQueryFragment';
 import { gql } from '@apollo/client';
 
 export const GET_ROLES = gql`
   ${WORKSPACE_MEMBER_QUERY_FRAGMENT}
   ${ROLE_FRAGMENT}
-  ${SETTING_PERMISSION_FRAGMENT}
+  ${PERMISSION_FLAG_FRAGMENT}
   ${OBJECT_PERMISSION_FRAGMENT}
   query GetRoles {
     getRoles {
@@ -15,8 +15,8 @@ export const GET_ROLES = gql`
       workspaceMembers {
         ...WorkspaceMemberQueryFragment
       }
-      settingPermissions {
-        ...SettingPermissionFragment
+      permissionFlags {
+        ...PermissionFlagFragment
       }
       objectPermissions {
         ...ObjectPermissionFragment

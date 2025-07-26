@@ -7,7 +7,7 @@ import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-meta
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export const checkFields = (
   objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps,
@@ -35,7 +35,7 @@ export const checkFields = (
         ].flat();
       }
 
-      if (isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION)) {
+      if (isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION)) {
         return field.settings?.joinColumnName;
       }
 

@@ -190,4 +190,9 @@ export class UpdateWorkspaceInput {
   @IsUUID()
   @IsOptional()
   defaultRoleId?: string;
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isTwoFactorAuthenticationEnforced?: boolean;
 }

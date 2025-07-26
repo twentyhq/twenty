@@ -2,6 +2,7 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
+import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
@@ -72,6 +73,10 @@ export const useRecordIndexLazyFetchRecords = ({
     contextStoreFiltersComponentState,
   );
 
+  const contextStoreAnyFieldFilterValue = useRecoilComponentValueV2(
+    contextStoreAnyFieldFilterValueComponentState,
+  );
+
   const { filterValueDependencies } = useFilterValueDependencies();
 
   const findManyRecordsParams = useFindManyRecordIndexTableParams(
@@ -83,6 +88,7 @@ export const useRecordIndexLazyFetchRecords = ({
     contextStoreFilters,
     objectMetadataItem,
     filterValueDependencies,
+    contextStoreAnyFieldFilterValue,
   );
 
   const finalColumns = [

@@ -1,6 +1,8 @@
+import { GmailDefaultMessageCategory } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-default-message-category.type';
+
 export const MESSAGING_GMAIL_EXCLUDED_CATEGORIES = [
-  'promotions',
-  'social',
-  'forums',
-  'updates',
+  GmailDefaultMessageCategory.promotions,
+  GmailDefaultMessageCategory.forums,
+  GmailDefaultMessageCategory.social,
+  GmailDefaultMessageCategory.updates,
 ];

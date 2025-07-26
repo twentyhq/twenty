@@ -2,8 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { ColumnActionAbstractFactory } from 'src/engine/metadata-modules/workspace-migration/factories/column-action-abstract.factory';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
@@ -13,14 +12,19 @@ import {
   WorkspaceMigrationColumnCreate,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 
-export type TsVectorFieldMetadataType = FieldMetadataType.TS_VECTOR;
+export type TsVectorFieldMetadata =
+  FieldMetadataEntity<FieldMetadataType.TS_VECTOR> & {
+    generatedType?: 'STORED' | 'VIRTUAL';
+    asExpression?: string;
+  };
 
+export type TsVectorFieldMetadataType = FieldMetadataType.TS_VECTOR;
 @Injectable()
 export class TsVectorColumnActionFactory extends ColumnActionAbstractFactory<TsVectorFieldMetadataType> {
   protected readonly logger = new Logger(TsVectorColumnActionFactory.name);
 
   handleCreateAction(
-    fieldMetadata: FieldMetadataInterface<TsVectorFieldMetadataType>,
+    fieldMetadata: TsVectorFieldMetadata,
   ): WorkspaceMigrationColumnCreate[] {
     return [
       {
@@ -37,8 +41,8 @@ export class TsVectorColumnActionFactory extends ColumnActionAbstractFactory<TsV
   }
 
   handleAlterAction(
-    currentFieldMetadata: FieldMetadataInterface<TsVectorFieldMetadataType>,
-    alteredFieldMetadata: FieldMetadataInterface<TsVectorFieldMetadataType>,
+    currentFieldMetadata: TsVectorFieldMetadata,
+    alteredFieldMetadata: TsVectorFieldMetadata,
   ): WorkspaceMigrationColumnAlter[] {
     return [
       {

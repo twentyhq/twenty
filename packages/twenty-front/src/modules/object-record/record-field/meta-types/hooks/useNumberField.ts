@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { FieldNumberValue } from '@/object-record/record-field/types/FieldMetadata';
@@ -11,6 +11,8 @@ import {
   castAsNumberOrNull,
 } from '~/utils/cast-as-number-or-null';
 
+import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/states/recordFieldInputDraftValueComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isNull } from '@sniptt/guards';
 import { FieldContext } from '../../contexts/FieldContext';
 import { usePersistField } from '../../hooks/usePersistField';
@@ -54,10 +56,11 @@ export const useNumberField = () => {
     persistField(castedValue);
   };
 
-  const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldNumberValue>();
+  const { setDraftValue } = useRecordFieldInput<FieldNumberValue>();
 
-  const draftValue = useRecoilValue(getDraftValueSelector());
+  const draftValue = useRecoilComponentValueV2(
+    recordFieldInputDraftValueComponentState,
+  );
 
   return {
     fieldDefinition,

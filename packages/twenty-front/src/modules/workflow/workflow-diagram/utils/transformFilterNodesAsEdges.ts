@@ -1,10 +1,22 @@
-import { WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import {
+  WorkflowDiagramEdge,
+  WorkflowDiagramEdgeType,
+  WorkflowDiagramNode,
+} from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { isDefined } from 'twenty-shared/utils';
 
-export const transformFilterNodesAsEdges = ({
+export const transformFilterNodesAsEdges = <
+  T extends WorkflowDiagramNode,
+  U extends WorkflowDiagramEdge,
+>({
   nodes,
   edges,
-}: WorkflowDiagram): WorkflowDiagram => {
+  defaultFilterEdgeType,
+}: {
+  nodes: T[];
+  edges: U[];
+  defaultFilterEdgeType: WorkflowDiagramEdgeType;
+}): { nodes: T[]; edges: U[] } => {
   const filterNodes = nodes.filter(
     (node) =>
       node.data.nodeType === 'action' &&
@@ -29,14 +41,26 @@ export const transformFilterNodesAsEdges = ({
     const outgoingEdge = edges.find((edge) => edge.source === filterNode.id);
 
     if (isDefined(incomingEdge) && isDefined(outgoingEdge)) {
-      const newEdge = {
+      if (
+        filterNode.data.nodeType !== 'action' ||
+        filterNode.data.actionType !== 'FILTER'
+      ) {
+        throw new Error('Expected the filter node to be of action type');
+      }
+
+      const newEdge: U = {
         ...incomingEdge,
+        type: defaultFilterEdgeType,
         id: `${incomingEdge.source}-${outgoingEdge.target}-filter-${filterNode.id}`,
         target: outgoingEdge.target,
         data: {
           ...incomingEdge.data,
+          edgeType: 'filter',
           stepId: filterNode.id,
-          filter: filterNode.data,
+          // TODO: Get the filter settings from the filter node
+          filterSettings: {},
+          name: filterNode.data.name,
+          runStatus: filterNode.data.runStatus,
         },
       };
 

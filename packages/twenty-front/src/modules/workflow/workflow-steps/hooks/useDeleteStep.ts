@@ -8,12 +8,13 @@ import {
   WorkflowVersion,
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
+import { assertWorkflowWithCurrentVersionIsDefined } from '@/workflow/utils/assertWorkflowWithCurrentVersionIsDefined';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 
 export const useDeleteStep = ({
   workflow,
 }: {
-  workflow: WorkflowWithCurrentVersion;
+  workflow: WorkflowWithCurrentVersion | undefined;
 }) => {
   const { deleteWorkflowVersionStep } = useDeleteWorkflowVersionStep();
   const { updateOneRecord: updateOneWorkflowVersion } =
@@ -26,8 +27,12 @@ export const useDeleteStep = ({
   const { closeCommandMenu } = useCommandMenu();
 
   const deleteStep = async (stepId: string) => {
+    assertWorkflowWithCurrentVersionIsDefined(workflow);
+
     closeCommandMenu();
+
     const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
+
     if (stepId === TRIGGER_STEP_ID) {
       await updateOneWorkflowVersion({
         idToUpdate: workflowVersionId,

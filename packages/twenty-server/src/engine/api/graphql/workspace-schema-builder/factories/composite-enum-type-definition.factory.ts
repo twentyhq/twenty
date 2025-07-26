@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLEnumType } from 'graphql';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
+import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 import {
   CompositeProperty,
   CompositeType,

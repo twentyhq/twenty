@@ -19,9 +19,9 @@ import styled from '@emotion/styled';
 import { Dispatch, SetStateAction, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { AvatarChipVariant } from 'twenty-ui/components';
 import { IconEye, IconEyeOff } from 'twenty-ui/display';
 import { Checkbox, CheckboxVariant, LightIconButton } from 'twenty-ui/input';
+import { ChipVariant } from 'twenty-ui/components';
 
 const StyledCompactIconContainer = styled.div`
   align-items: center;
@@ -80,7 +80,7 @@ export const RecordBoardCardHeader = ({
           <RecordChip
             objectNameSingular={objectMetadataItem.nameSingular}
             record={record}
-            variant={AvatarChipVariant.Transparent}
+            variant={ChipVariant.Transparent}
             maxWidth={150}
             onClick={() => {
               activateBoardCard({ rowIndex, columnIndex });

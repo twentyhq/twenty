@@ -110,6 +110,7 @@ export class DevSeederPermissionsService {
           'All permissions except read on Rockets and update on Pets',
         icon: 'custom',
         canUpdateAllSettings: true,
+        canAccessAllTools: true,
         canReadAllObjectRecords: true,
         canUpdateAllObjectRecords: true,
         canSoftDeleteAllObjectRecords: true,

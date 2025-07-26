@@ -34,10 +34,15 @@ export const USER_QUERY_FRAGMENT = gql`
       ...DeletedWorkspaceMemberQueryFragment
     }
     currentUserWorkspace {
-      settingsPermissions
+      permissionFlags
       objectRecordsPermissions
       objectPermissions {
         ...ObjectPermissionFragment
+      }
+      twoFactorAuthenticationMethodSummary {
+        twoFactorAuthenticationMethodId
+        status
+        strategy
       }
     }
     currentWorkspace {
@@ -95,6 +100,7 @@ export const USER_QUERY_FRAGMENT = gql`
       defaultAgent {
         id
       }
+      isTwoFactorAuthenticationEnforced
     }
     availableWorkspaces {
       ...AvailableWorkspacesFragment

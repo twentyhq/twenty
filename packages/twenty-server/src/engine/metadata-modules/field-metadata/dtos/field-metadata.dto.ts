@@ -56,6 +56,7 @@ registerEnumType(FieldMetadataType, {
 @Relation('object', () => ObjectMetadataDTO, {
   nullable: true,
 })
+// TODO refactor nullable fields to be typed as nullable and not optional
 export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @IsUUID()
   @IsNotEmpty()

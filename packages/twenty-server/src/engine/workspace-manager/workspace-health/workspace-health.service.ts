@@ -14,7 +14,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { DatabaseStructureService } from 'src/engine/workspace-manager/workspace-health/services/database-structure.service';
 import { FieldMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/field-metadata-health.service';
 import { ObjectMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/object-metadata-health.service';
@@ -31,7 +31,6 @@ export class WorkspaceHealthService {
     private readonly dataSourceService: DataSourceService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly databaseStructureService: DatabaseStructureService,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly objectMetadataHealthService: ObjectMetadataHealthService,
     private readonly fieldMetadataHealthService: FieldMetadataHealthService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
@@ -42,8 +41,7 @@ export class WorkspaceHealthService {
     workspaceId: string,
     options: WorkspaceHealthOptions = { mode: WorkspaceHealthMode.All },
   ): Promise<WorkspaceHealthIssue[]> {
-    const schemaName =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
+    const schemaName = getWorkspaceSchemaName(workspaceId);
     const issues: WorkspaceHealthIssue[] = [];
 
     const dataSourceMetadata =

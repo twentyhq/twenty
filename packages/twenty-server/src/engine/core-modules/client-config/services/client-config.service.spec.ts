@@ -100,6 +100,7 @@ describe('ClientConfigService', () => {
       const result = await service.getClientConfig();
 
       expect(result).toEqual({
+        appVersion: '1.0.0',
         billing: {
           isBillingEnabled: true,
           billingUrl: 'https://billing.example.com',

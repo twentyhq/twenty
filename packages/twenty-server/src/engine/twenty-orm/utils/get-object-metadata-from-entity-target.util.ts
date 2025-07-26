@@ -2,6 +2,7 @@ import { EntitySchema, EntityTarget, ObjectLiteral } from 'typeorm';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import {
   TwentyORMException,
@@ -12,7 +13,7 @@ import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspac
 export const getObjectMetadataFromEntityTarget = <T extends ObjectLiteral>(
   entityTarget: EntityTarget<T>,
   internalContext: WorkspaceInternalContext,
-) => {
+): ObjectMetadataItemWithFieldMaps => {
   const objectMetadataName =
     typeof entityTarget === 'string'
       ? entityTarget

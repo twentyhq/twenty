@@ -12,7 +12,10 @@ describe('notesResolver (e2e)', () => {
               node {
                 position
                 title
-                body
+                bodyV2 {
+                  markdown
+                  blocknote
+                }
                 id
                 createdAt
                 updatedAt
@@ -46,7 +49,7 @@ describe('notesResolver (e2e)', () => {
 
           expect(notes).toHaveProperty('position');
           expect(notes).toHaveProperty('title');
-          expect(notes).toHaveProperty('body');
+          expect(notes).toHaveProperty('bodyV2');
           expect(notes).toHaveProperty('id');
           expect(notes).toHaveProperty('createdAt');
           expect(notes).toHaveProperty('updatedAt');

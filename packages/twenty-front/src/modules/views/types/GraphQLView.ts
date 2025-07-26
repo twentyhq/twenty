@@ -29,4 +29,5 @@ export type GraphQLView = {
   viewGroups: ViewGroup[];
   position: number;
   icon: string;
+  anyFieldFilterValue?: string | null;
 };

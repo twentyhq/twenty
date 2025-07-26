@@ -1,5 +1,3 @@
-import { Injectable } from '@nestjs/common';
-
 import { isDefined } from 'twenty-shared/utils';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
@@ -7,9 +5,8 @@ import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builde
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 
-@Injectable()
 export class ProcessAggregateHelper {
-  public addSelectedAggregatedFieldsQueriesToQueryBuilder = ({
+  public static addSelectedAggregatedFieldsQueriesToQueryBuilder = ({
     selectedAggregatedFields,
     queryBuilder,
   }: {
@@ -109,5 +106,33 @@ export class ProcessAggregateHelper {
         }
       }
     }
+  };
+
+  public static extractColumnNamesFromAggregateExpression = (
+    selection: string,
+  ): string[] | null => {
+    // Match content between CONCAT(" and ") - handle multiple columns
+    const concatMatches = selection.match(
+      /CONCAT\("([^"]+)"(?:,"([^"]+)")*\)/g,
+    );
+
+    if (concatMatches) {
+      // Extract all column names between quotes after CONCAT
+      const columnNames = selection
+        .match(/"([^"]+)"/g)
+        ?.map((match) => match.slice(1, -1));
+
+      return columnNames || null;
+    }
+
+    // For non-CONCAT expressions, match content between double quotes
+    // Using positive lookbehind and lookahead to match content between quotes without including quotes
+    const columnMatch = selection.match(/(?<=")([^"]+)(?=")/);
+
+    if (columnMatch) {
+      return [columnMatch[0]];
+    }
+
+    return null;
   };
 }

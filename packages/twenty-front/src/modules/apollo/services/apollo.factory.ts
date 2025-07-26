@@ -23,6 +23,7 @@ import { logDebug } from '~/utils/logDebug';
 
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { i18n } from '@lingui/core';
+import { t } from '@lingui/core/macro';
 import {
   DefinitionNode,
   DirectiveNode,
@@ -45,16 +46,19 @@ export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   onNetworkError?: (err: Error | ServerParseError | ServerError) => void;
   onTokenPairChange?: (tokenPair: AuthTokenPair) => void;
   onUnauthenticatedError?: () => void;
+  onAppVersionMismatch?: (message: string) => void;
   currentWorkspaceMember: CurrentWorkspaceMember | null;
   currentWorkspace: CurrentWorkspace | null;
   extraLinks?: ApolloLink[];
   isDebugMode?: boolean;
+  appVersion?: string;
 }
 
 export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
   private client: ApolloClient<TCacheShape>;
   private currentWorkspaceMember: CurrentWorkspaceMember | null = null;
   private currentWorkspace: CurrentWorkspace | null = null;
+  private appVersion?: string;
 
   constructor(opts: Options<TCacheShape>) {
     const {
@@ -63,15 +67,18 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       onNetworkError,
       onTokenPairChange,
       onUnauthenticatedError,
+      onAppVersionMismatch,
       currentWorkspaceMember,
       currentWorkspace,
       extraLinks,
       isDebugMode,
+      appVersion,
       ...options
     } = opts;
 
     this.currentWorkspaceMember = currentWorkspaceMember;
     this.currentWorkspace = currentWorkspace;
+    this.appVersion = appVersion;
 
     const buildApolloLink = (): ApolloLink => {
       const uploadLink = createUploadLink({
@@ -111,6 +118,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
             ...(this.currentWorkspace?.metadataVersion && {
               'X-Schema-Version': `${this.currentWorkspace.metadataVersion}`,
             }),
+            ...(this.appVersion && { 'X-App-Version': this.appVersion }),
           },
         };
       });
@@ -158,6 +166,13 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
               }
 
               switch (graphQLError?.extensions?.code) {
+                case 'APP_VERSION_MISMATCH': {
+                  onAppVersionMismatch?.(
+                    (graphQLError.extensions?.userFriendlyMessage as string) ||
+                      t`Your app version is out of date. Please refresh the page.`,
+                  );
+                  return;
+                }
                 case 'UNAUTHENTICATED': {
                   return handleTokenRenewal(operation, forward);
                 }
@@ -287,6 +302,10 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
 
   updateCurrentWorkspace(workspace: CurrentWorkspace | null) {
     this.currentWorkspace = workspace;
+  }
+
+  updateAppVersion(appVersion?: string) {
+    this.appVersion = appVersion;
   }
 
   getClient() {

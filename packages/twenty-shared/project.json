@@ -24,6 +24,8 @@
         "{projectRoot}/types/dist",
         "{projectRoot}/utils/package.json",
         "{projectRoot}/utils/dist",
+        "{projectRoot}/workflow/package.json",
+        "{projectRoot}/workflow/dist",
         "{projectRoot}/workspace/package.json",
         "{projectRoot}/workspace/dist"
       ]

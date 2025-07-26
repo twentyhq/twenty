@@ -70,4 +70,10 @@ export class FileStorageService implements StorageDriver {
 
     return driver.checkFileExists(params);
   }
+
+  checkFolderExists(folderPath: string): Promise<boolean> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    return driver.checkFolderExists(folderPath);
+  }
 }

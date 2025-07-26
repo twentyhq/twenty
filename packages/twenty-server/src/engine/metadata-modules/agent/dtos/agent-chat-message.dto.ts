@@ -1,13 +1,14 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 
 @ObjectType('AgentChatMessage')
 export class AgentChatMessageDTO {
-  @Field(() => ID)
+  @Field(() => UUIDScalarType)
   id: string;
 
-  @Field(() => ID)
+  @Field(() => UUIDScalarType)
   threadId: string;
 
   @Field()
@@ -16,8 +17,8 @@ export class AgentChatMessageDTO {
   @Field()
   content: string;
 
-  @Field(() => [FileDTO], { nullable: true })
-  files?: FileDTO[];
+  @Field(() => [FileDTO])
+  files: FileDTO[];
 
   @Field()
   createdAt: Date;

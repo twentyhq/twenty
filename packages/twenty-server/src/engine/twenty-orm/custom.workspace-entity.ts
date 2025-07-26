@@ -126,6 +126,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
   attachments: AttachmentWorkspaceEntity[];
 
   @WorkspaceRelation({

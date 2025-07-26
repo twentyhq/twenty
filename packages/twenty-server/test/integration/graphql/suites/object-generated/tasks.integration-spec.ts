@@ -12,7 +12,10 @@ describe('tasksResolver (e2e)', () => {
               node {
                 position
                 title
-                body
+                bodyV2 {
+                  markdown
+                  blocknote
+                }
                 dueAt
                 status
                 id
@@ -49,7 +52,7 @@ describe('tasksResolver (e2e)', () => {
 
           expect(tasks).toHaveProperty('position');
           expect(tasks).toHaveProperty('title');
-          expect(tasks).toHaveProperty('body');
+          expect(tasks).toHaveProperty('bodyV2');
           expect(tasks).toHaveProperty('dueAt');
           expect(tasks).toHaveProperty('status');
           expect(tasks).toHaveProperty('id');

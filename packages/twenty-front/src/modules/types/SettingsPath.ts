@@ -1,5 +1,6 @@
 export enum SettingsPath {
   ProfilePage = 'profile',
+  TwoFactorAuthenticationStrategyConfig = 'profile/two-factor-authentication/:twoFactorAuthenticationStrategy',
   Experience = 'experience',
   Accounts = 'accounts',
   NewAccount = 'accounts/new',
@@ -27,6 +28,7 @@ export enum SettingsPath {
   NewApiKey = 'apis/new',
   ApiKeyDetail = 'apis/:apiKeyId',
   Integrations = 'integrations',
+  IntegrationMCP = 'integrations/mcp',
   IntegrationDatabase = 'integrations/:databaseKey',
   IntegrationDatabaseConnection = 'integrations/:databaseKey/:connectionId',
   IntegrationEditDatabaseConnection = 'integrations/:databaseKey/:connectionId/edit',

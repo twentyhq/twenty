@@ -15,6 +15,7 @@ import {
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationColumnService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-column.service';
 import { PostgresQueryRunner } from 'src/engine/workspace-manager/workspace-migration-runner/types/postgres-query-runner.type';
@@ -54,8 +55,7 @@ export class WorkspaceMigrationRunnerService {
         })),
     );
 
-    const schemaName =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
+    const schemaName = getWorkspaceSchemaName(workspaceId);
 
     await transactionQueryRunner.query(
       `SET LOCAL search_path TO ${schemaName}`,

@@ -10,7 +10,7 @@ export const SettingsNewAccountSection = () => {
         title={t`New account`}
         description={t`Connect a new account to your workspace`}
       />
-      <SettingsAccountsListEmptyStateCard label={t`Choose your provider`} />
+      <SettingsAccountsListEmptyStateCard />
     </Section>
   );
 };

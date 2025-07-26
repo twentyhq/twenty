@@ -1,18 +1,18 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 const DEFAULT_DEPTH_VALUE = 1;
 
 // TODO: Should be properly type and based on composite type definitions
 export const mapFieldMetadataToGraphqlQuery = (
   objectMetadataMaps: ObjectMetadataMaps,
-  field: FieldMetadataInterface,
+  field: FieldMetadataEntity,
   maxDepthForRelations = DEFAULT_DEPTH_VALUE,
 ): string | undefined => {
   if (maxDepthForRelations < 0) {
@@ -40,8 +40,8 @@ export const mapFieldMetadataToGraphqlQuery = (
   ].includes(fieldType);
 
   const isRelation =
-    isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) ||
-    isFieldMetadataInterfaceOfType(field, FieldMetadataType.MORPH_RELATION);
+    isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) ||
+    isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION);
 
   if (fieldIsSimpleValue) {
     return field.name;

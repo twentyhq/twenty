@@ -13,7 +13,6 @@ import {
   Not,
 } from 'typeorm';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import {
   generateBulkDeleteToolSchema,
   generateFindOneToolSchema,
@@ -25,13 +24,11 @@ import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/agent/utils
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 @Injectable()
 export class ToolService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly objectMetadataService: ObjectMetadataService,
     protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
@@ -378,13 +375,6 @@ export class ToolService {
 
       const createdRecord = await repository.save(parameters);
 
-      await this.emitDatabaseEvent({
-        objectName,
-        action: DatabaseEventAction.CREATED,
-        records: [createdRecord],
-        workspaceId,
-      });
-
       return {
         success: true,
         record: createdRecord,
@@ -449,14 +439,6 @@ export class ToolService {
         };
       }
 
-      await this.emitDatabaseEvent({
-        objectName,
-        action: DatabaseEventAction.UPDATED,
-        records: [updatedRecord],
-        workspaceId,
-        beforeRecords: [existingRecord],
-      });
-
       return {
         success: true,
         record: updatedRecord,
@@ -509,13 +491,6 @@ export class ToolService {
 
       await repository.softDelete(id);
 
-      await this.emitDatabaseEvent({
-        objectName,
-        action: DatabaseEventAction.DELETED,
-        records: [existingRecord],
-        workspaceId,
-      });
-
       return {
         success: true,
         message: `Successfully soft deleted ${objectName}`,
@@ -566,13 +541,6 @@ export class ToolService {
       }
 
       await repository.remove(existingRecord);
-
-      await this.emitDatabaseEvent({
-        objectName,
-        action: DatabaseEventAction.DESTROYED,
-        records: [existingRecord],
-        workspaceId,
-      });
 
       return {
         success: true,
@@ -635,13 +603,6 @@ export class ToolService {
       }
 
       await repository.softDelete({ id: { in: recordIds } });
-
-      await this.emitDatabaseEvent({
-        objectName,
-        action: DatabaseEventAction.DELETED,
-        records: existingRecords,
-        workspaceId,
-      });
 
       return {
         success: true,
@@ -706,13 +667,6 @@ export class ToolService {
 
       await repository.delete({ id: { in: recordIds } });
 
-      await this.emitDatabaseEvent({
-        objectName,
-        action: DatabaseEventAction.DESTROYED,
-        records: existingRecords,
-        workspaceId,
-      });
-
       return {
         success: true,
         count: existingRecords.length,
@@ -725,54 +679,5 @@ export class ToolService {
         message: `Failed to destroy many ${objectName}`,
       };
     }
-  }
-
-  private async emitDatabaseEvent({
-    objectName,
-    action,
-    records,
-    workspaceId,
-    beforeRecords,
-  }: {
-    objectName: string;
-    action: DatabaseEventAction;
-    records: Record<string, unknown>[];
-    workspaceId: string;
-    beforeRecords?: Record<string, unknown>[];
-  }) {
-    const objectMetadata =
-      await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
-        where: {
-          nameSingular: objectName,
-          isActive: true,
-        },
-        relations: ['fields'],
-      });
-
-    if (!objectMetadata) {
-      return;
-    }
-
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: objectName,
-      action,
-      events: records.map((record) => {
-        const beforeRecord = beforeRecords?.find((r) => r.id === record.id);
-
-        return {
-          recordId: record.id as string,
-          objectMetadata,
-          properties: {
-            before: beforeRecord || undefined,
-            after:
-              action === DatabaseEventAction.DELETED ||
-              action === DatabaseEventAction.DESTROYED
-                ? undefined
-                : (record as Record<string, unknown>),
-          },
-        };
-      }),
-      workspaceId,
-    });
   }
 }

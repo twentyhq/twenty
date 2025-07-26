@@ -5,9 +5,8 @@ import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constan
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isFieldMetadataDateKind } from 'twenty-shared/utils';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { getSubfieldsForAggregateOperation } from 'src/engine/twenty-orm/utils/get-subfields-for-aggregate-operation.util';
 
 export type AggregationField = {
@@ -21,7 +20,7 @@ export type AggregationField = {
 };
 
 export const getAvailableAggregationsFromObjectFields = (
-  fields: FieldMetadataInterface[],
+  fields: FieldMetadataEntity[],
 ): Record<string, AggregationField> => {
   return fields.reduce<Record<string, AggregationField>>(
     (acc, field) => {

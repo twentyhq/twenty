@@ -1,14 +1,13 @@
 import { capitalize } from 'twenty-shared/utils';
 import { WhereExpressionBuilder } from 'typeorm';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { computeWhereConditionParts } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-where-condition-parts';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
@@ -78,7 +77,7 @@ export class GraphqlQueryFilterFieldParser {
 
   private parseCompositeFieldForFilter(
     queryBuilder: WhereExpressionBuilder,
-    fieldMetadata: FieldMetadataInterface,
+    fieldMetadata: FieldMetadataEntity,
     objectNameSingular: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fieldValue: any,

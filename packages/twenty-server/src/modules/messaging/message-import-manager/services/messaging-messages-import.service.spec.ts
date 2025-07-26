@@ -66,7 +66,7 @@ describe('MessagingMessagesImportService', () => {
         provide: MessageChannelSyncStatusService,
         useValue: {
           markAsMessagesImportOngoing: jest.fn().mockResolvedValue(undefined),
-          markAsCompletedAndSchedulePartialMessageListFetch: jest
+          markAsCompletedAndScheduleMessageListFetch: jest
             .fn()
             .mockResolvedValue(undefined),
           scheduleMessagesImport: jest.fn().mockResolvedValue(undefined),
@@ -191,7 +191,7 @@ describe('MessagingMessagesImportService', () => {
 
   it('should fails if SyncStage is not MESSAGES_IMPORT_PENDING', async () => {
     mockMessageChannel.syncStage =
-      MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING;
+      MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING;
 
     expect(
       service.processMessageBatchImport(

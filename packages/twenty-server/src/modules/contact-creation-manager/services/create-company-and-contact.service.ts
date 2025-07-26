@@ -1,18 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
-import { DeepPartial, Repository } from 'typeorm';
+import { DeepPartial } from 'typeorm';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CONTACTS_CREATION_BATCH_SIZE } from 'src/modules/contact-creation-manager/constants/contacts-creation-batch-size.constant';
 import { CreateCompanyService } from 'src/modules/contact-creation-manager/services/create-company.service';
@@ -31,9 +26,6 @@ export class CreateCompanyAndContactService {
   constructor(
     private readonly createContactService: CreateContactService,
     private readonly createCompaniesService: CreateCompanyService,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'core')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
@@ -85,13 +77,9 @@ export class CreateCompanyAndContactService {
       emails: uniqueHandles,
     });
 
-    const rawAlreadyCreatedContacts = await queryBuilder
+    const alreadyCreatedContacts = await queryBuilder
       .orderBy('person.createdAt', 'ASC')
       .getMany();
-
-    const alreadyCreatedContacts = await personRepository.formatResult(
-      rawAlreadyCreatedContacts,
-    );
 
     const alreadyCreatedContactEmails: string[] =
       alreadyCreatedContacts?.reduce<string[]>((acc, { emails }) => {
@@ -190,19 +178,6 @@ export class CreateCompanyAndContactService {
       CONTACTS_CREATION_BATCH_SIZE,
     );
 
-    // TODO: Remove this when events are emitted directly inside TwentyORM
-
-    const objectMetadata = await this.objectMetadataRepository.findOne({
-      where: {
-        standardId: STANDARD_OBJECT_IDS.person,
-        workspaceId,
-      },
-    });
-
-    if (!objectMetadata) {
-      throw new Error('Object metadata not found');
-    }
-
     // In some jobs the accountOwner is not populated
     if (!connectedAccount.accountOwner) {
       const workspaceMemberRepository =
@@ -228,26 +203,12 @@ export class CreateCompanyAndContactService {
 
     for (const contactsBatch of contactsBatches) {
       try {
-        const createdPeople = await this.createCompaniesAndPeople(
+        await this.createCompaniesAndPeople(
           connectedAccount,
           contactsBatch,
           workspaceId,
           source,
         );
-
-        this.workspaceEventEmitter.emitDatabaseBatchEvent({
-          objectMetadataNameSingular: 'person',
-          action: DatabaseEventAction.CREATED,
-          events: createdPeople.map((createdPerson) => ({
-            // Fix ' as string': TypeORM typing issue... id is always returned when using save
-            recordId: createdPerson.id as string,
-            objectMetadata,
-            properties: {
-              after: createdPerson,
-            },
-          })),
-          workspaceId,
-        });
       } catch (error) {
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: {

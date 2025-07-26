@@ -15,6 +15,7 @@ export const UPDATE_WORKSPACE = gql`
       isGoogleAuthEnabled
       isMicrosoftAuthEnabled
       isPasswordAuthEnabled
+      isTwoFactorAuthenticationEnforced
       defaultRole {
         ...RoleFragment
       }

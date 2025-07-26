@@ -38,6 +38,11 @@ export const authGraphqlApiExceptionHandler = (exception: AuthException) => {
         subCode: AuthExceptionCode.EMAIL_NOT_VERIFIED,
         userFriendlyMessage: t`Email is not verified.`,
       });
+    case AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED:
+    case AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED:
+      throw new ForbiddenError(exception.message, {
+        subCode: exception.code,
+      });
     case AuthExceptionCode.UNAUTHENTICATED:
       throw new AuthenticationError(exception.message, {
         userFriendlyMessage: t`You must be authenticated to perform this action.`,

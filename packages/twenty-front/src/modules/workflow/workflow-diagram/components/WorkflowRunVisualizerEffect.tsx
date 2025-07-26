@@ -9,7 +9,7 @@ import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
-import { WorkflowRunOutput } from '@/workflow/types/Workflow';
+import { WorkflowRunState } from '@/workflow/types/Workflow';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramStatusComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusComponentState';
 import { workflowRunDiagramAutomaticallyOpenedStepsComponentState } from '@/workflow/workflow-diagram/states/workflowRunDiagramAutomaticallyOpenedStepsComponentState';
@@ -18,10 +18,12 @@ import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { selectWorkflowDiagramNode } from '@/workflow/workflow-diagram/utils/selectWorkflowDiagramNode';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext, useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const WorkflowRunVisualizerEffect = ({
   workflowRunId,
@@ -67,6 +69,10 @@ export const WorkflowRunVisualizerEffect = ({
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
+  const isWorkflowFilteringEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
+  );
+
   useEffect(() => {
     setWorkflowRunId(workflowRunId);
   }, [setWorkflowRunId, workflowRunId]);
@@ -82,15 +88,15 @@ export const WorkflowRunVisualizerEffect = ({
   const handleWorkflowRunDiagramGeneration = useRecoilCallback(
     ({ snapshot, set }) =>
       ({
-        workflowRunOutput,
+        workflowRunState,
         workflowVersionId,
         isInRightDrawer,
       }: {
-        workflowRunOutput: WorkflowRunOutput | undefined;
+        workflowRunState: WorkflowRunState | undefined;
         workflowVersionId: string | undefined;
         isInRightDrawer: boolean;
       }) => {
-        if (!(isDefined(workflowRunOutput) && isDefined(workflowVersionId))) {
+        if (!(isDefined(workflowRunState) && isDefined(workflowVersionId))) {
           set(flowState, undefined);
           set(workflowDiagramState, undefined);
 
@@ -108,15 +114,16 @@ export const WorkflowRunVisualizerEffect = ({
 
         set(flowState, {
           workflowVersionId,
-          trigger: workflowRunOutput.flow.trigger,
-          steps: workflowRunOutput.flow.steps,
+          trigger: workflowRunState.flow.trigger,
+          steps: workflowRunState.flow.steps,
         });
 
         const { diagram: baseWorkflowRunDiagram, stepToOpenByDefault } =
           generateWorkflowRunDiagram({
-            trigger: workflowRunOutput.flow.trigger,
-            steps: workflowRunOutput.flow.steps,
-            stepsOutput: workflowRunOutput.stepsOutput,
+            trigger: workflowRunState.flow.trigger,
+            steps: workflowRunState.flow.steps,
+            stepInfos: workflowRunState.stepInfos,
+            isWorkflowFilteringEnabled,
           });
 
         if (isDefined(stepToOpenByDefault)) {
@@ -184,6 +191,7 @@ export const WorkflowRunVisualizerEffect = ({
     [
       flowState,
       getIcon,
+      isWorkflowFilteringEnabled,
       openWorkflowRunViewStepInCommandMenu,
       workflowDiagramState,
       workflowDiagramStatusState,
@@ -197,14 +205,14 @@ export const WorkflowRunVisualizerEffect = ({
 
   useEffect(() => {
     handleWorkflowRunDiagramGeneration({
-      workflowRunOutput: workflowRun?.output ?? undefined,
+      workflowRunState: workflowRun?.state ?? undefined,
       workflowVersionId: workflowRun?.workflowVersionId,
       isInRightDrawer,
     });
   }, [
     handleWorkflowRunDiagramGeneration,
     isInRightDrawer,
-    workflowRun?.output,
+    workflowRun?.state,
     workflowRun?.workflowVersionId,
   ]);
 

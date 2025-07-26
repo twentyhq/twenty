@@ -58,6 +58,7 @@ export class GraphQLConfigService
       useGraphQLErrorHandlerHook({
         metricsService: this.metricsService,
         exceptionHandlerService: this.exceptionHandlerService,
+        twentyConfigService: this.twentyConfigService,
       }),
     ];
 

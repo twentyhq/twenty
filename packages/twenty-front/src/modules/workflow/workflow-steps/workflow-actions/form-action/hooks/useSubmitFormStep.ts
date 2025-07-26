@@ -25,8 +25,6 @@ export const useSubmitFormStep = () => {
         id: true,
         name: true,
         status: true,
-        output: true,
-        context: true,
         startedAt: true,
         endedAt: true,
       },

@@ -47,6 +47,7 @@ import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isF
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { JsonValue } from 'type-fest';
 
 type FormFieldInputProps = {
@@ -70,7 +71,7 @@ export const FormFieldInput = ({
   error,
   onError,
 }: FormFieldInputProps) => {
-  return isFieldNumber(field) ? (
+  return isFieldNumber(field) || field.type === FieldMetadataType.NUMERIC ? (
     <FormNumberFieldInput
       label={field.label}
       defaultValue={defaultValue as string | number | undefined}

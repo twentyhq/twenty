@@ -13,6 +13,8 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { EmailsFieldInput } from '../EmailsFieldInput';
 
 const updateRecord = fn();
@@ -113,6 +115,7 @@ const EmailInputWithContext = ({
 const meta: Meta<typeof EmailInputWithContext> = {
   title: 'UI/Input/EmailsFieldInput',
   component: EmailInputWithContext,
+  decorators: [SnackBarDecorator, I18nFrontDecorator],
 };
 
 export default meta;

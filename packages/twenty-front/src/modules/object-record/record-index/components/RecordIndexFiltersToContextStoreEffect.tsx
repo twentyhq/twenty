@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
 
+import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
@@ -73,6 +75,23 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
       setContextStoreFilters([]);
     };
   }, [recordIndexFilters, setContextStoreFilters]);
+
+  const setContextStoreAnyFieldFilterValue = useSetRecoilComponentStateV2(
+    contextStoreAnyFieldFilterValueComponentState,
+  );
+
+  const anyFieldFilterValue = useRecoilComponentValueV2(
+    anyFieldFilterValueComponentState,
+    recordIndexId,
+  );
+
+  useEffect(() => {
+    setContextStoreAnyFieldFilterValue(anyFieldFilterValue);
+
+    return () => {
+      setContextStoreAnyFieldFilterValue('');
+    };
+  }, [anyFieldFilterValue, setContextStoreAnyFieldFilterValue]);
 
   return <></>;
 };

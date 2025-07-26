@@ -4,13 +4,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   ObjectRecordsPermissions,
   ObjectRecordsPermissionsByRoleId,
+  RestrictedFields,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
@@ -183,7 +184,7 @@ export class WorkspacePermissionsCacheService {
       },
       relations: [
         'objectPermissions',
-        'settingPermissions',
+        'permissionFlags',
         ...(isFieldPermissionsEnabled ? ['fieldPermissions'] : []),
       ],
     });
@@ -203,10 +204,7 @@ export class WorkspacePermissionsCacheService {
         let canUpdate = role.canUpdateAllObjectRecords;
         let canSoftDelete = role.canSoftDeleteAllObjectRecords;
         let canDestroy = role.canDestroyAllObjectRecords;
-        const restrictedFields: Record<
-          string,
-          { canRead?: boolean | null; canUpdate?: boolean | null }
-        > = {};
+        const restrictedFields: RestrictedFields = {};
 
         if (
           standardId &&
@@ -257,10 +255,15 @@ export class WorkspacePermissionsCacheService {
             );
 
             for (const fieldPermission of fieldPermissions) {
-              restrictedFields[fieldPermission.fieldMetadataId] = {
-                canRead: fieldPermission.canReadFieldValue,
-                canUpdate: fieldPermission.canUpdateFieldValue,
-              };
+              if (
+                isDefined(fieldPermission.canReadFieldValue) ||
+                isDefined(fieldPermission.canUpdateFieldValue)
+              ) {
+                restrictedFields[fieldPermission.fieldMetadataId] = {
+                  canRead: fieldPermission.canReadFieldValue,
+                  canUpdate: fieldPermission.canUpdateFieldValue,
+                };
+              }
             }
           }
         }
@@ -314,9 +317,9 @@ export class WorkspacePermissionsCacheService {
   private hasWorkflowsPermissions(role: RoleEntity): boolean {
     const hasWorkflowsPermissionFromRole = role.canUpdateAllSettings;
     const hasWorkflowsPermissionsFromSettingPermissions = isDefined(
-      role.settingPermissions.find(
-        (settingPermission) =>
-          settingPermission.setting === SettingPermissionType.WORKFLOWS,
+      role.permissionFlags.find(
+        (permissionFlag) =>
+          permissionFlag.flag === PermissionFlagType.WORKFLOWS,
       ),
     );
 

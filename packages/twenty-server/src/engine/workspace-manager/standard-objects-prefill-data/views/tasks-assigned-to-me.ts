@@ -96,7 +96,7 @@ export const tasksAssignedToMeView = (
       {
         fieldMetadataId:
           taskObjectMetadata.fields.find(
-            (field) => field.standardId === TASK_STANDARD_FIELD_IDS.body,
+            (field) => field.standardId === TASK_STANDARD_FIELD_IDS.bodyV2,
           )?.id ?? '',
         position: 7,
         isVisible: true,

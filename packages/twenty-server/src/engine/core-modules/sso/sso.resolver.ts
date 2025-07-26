@@ -22,7 +22,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 @Resolver()
@@ -31,7 +31,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
 @UsePipes(ResolverValidationPipe)
-@UseGuards(SettingsPermissionsGuard(SettingPermissionType.SECURITY))
+@UseGuards(SettingsPermissionsGuard(PermissionFlagType.SECURITY))
 export class SSOResolver {
   constructor(private readonly sSOService: SSOService) {}
 

@@ -48,6 +48,14 @@ export const computeStandardFields = (
           defaultValue: null,
           isNullable: true,
           isLabelSyncedWithName: true,
+          isUnique: null,
+          options: null,
+          relationTargetFieldMetadata: null,
+          relationTargetFieldMetadataId: null,
+          relationTargetObjectMetadata: null,
+          relationTargetObjectMetadataId: null,
+          settings: null,
+          standardOverrides: null,
         });
       }
     } else {

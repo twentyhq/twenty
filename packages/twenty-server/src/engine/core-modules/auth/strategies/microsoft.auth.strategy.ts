@@ -9,8 +9,8 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { SocialSSOSignInUpActionType } from 'src/engine/core-modules/auth/types/signInUp.type';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type MicrosoftRequest = Omit<
   Request,
@@ -67,24 +67,22 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
     profile: any,
     done: VerifyCallback,
   ): Promise<void> {
-    const { name, emails, photos } = profile;
+    const { name, userPrincipalName, photos } = profile;
 
     const state =
       typeof request.query.state === 'string'
         ? JSON.parse(request.query.state)
         : undefined;
 
-    const email = emails?.[0]?.value ?? null;
-
-    if (!email) {
+    if (!userPrincipalName) {
       throw new AuthException(
-        'Email not found',
+        'User principal name not found',
         AuthExceptionCode.INVALID_INPUT,
       );
     }
 
     const user: MicrosoftRequest['user'] = {
-      email,
+      email: userPrincipalName,
       firstName: name.givenName,
       lastName: name.familyName,
       picture: photos?.[0]?.value,

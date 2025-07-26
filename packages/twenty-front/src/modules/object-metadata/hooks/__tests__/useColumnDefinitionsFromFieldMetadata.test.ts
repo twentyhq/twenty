@@ -47,6 +47,7 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
           metadata: {},
         },
       ],
+      isTwoFactorAuthenticationEnforced: false,
     });
   },
 });

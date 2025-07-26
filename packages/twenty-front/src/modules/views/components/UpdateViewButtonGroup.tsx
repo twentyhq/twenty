@@ -14,6 +14,7 @@ import { useAreViewFilterGroupsDifferentFromRecordFilterGroups } from '@/views/h
 import { useAreViewFiltersDifferentFromRecordFilters } from '@/views/hooks/useAreViewFiltersDifferentFromRecordFilters';
 import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreViewSortsDifferentFromRecordSorts';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter } from '@/views/hooks/useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter';
 import { useSaveCurrentViewFiltersAndSorts } from '@/views/hooks/useSaveCurrentViewFiltersAndSorts';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
@@ -84,10 +85,14 @@ export const UpdateViewButtonGroup = () => {
   const { viewSortsAreDifferentFromRecordSorts } =
     useAreViewSortsDifferentFromRecordSorts();
 
+  const { viewAnyFieldFilterDifferentFromCurrentAnyFieldFilter } =
+    useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter();
+
   const canShowButton =
     (viewFiltersAreDifferentFromRecordFilters ||
       viewSortsAreDifferentFromRecordSorts ||
-      viewFilterGroupsAreDifferentFromRecordFilterGroups) &&
+      viewFilterGroupsAreDifferentFromRecordFilterGroups ||
+      viewAnyFieldFilterDifferentFromCurrentAnyFieldFilter) &&
     !hasFiltersQueryParams;
 
   if (!canShowButton) {

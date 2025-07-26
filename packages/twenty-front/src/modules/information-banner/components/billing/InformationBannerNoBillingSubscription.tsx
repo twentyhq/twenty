@@ -1,10 +1,10 @@
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/billing/constants/BillingCheckoutSessionDefaultValue';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
-import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { SettingsPath } from '@/types/SettingsPath';
 import { t } from '@lingui/core/macro';
-import { SettingPermissionType } from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const InformationBannerNoBillingSubscription = () => {
@@ -15,8 +15,8 @@ export const InformationBannerNoBillingSubscription = () => {
     successUrlPath: getSettingsPath(SettingsPath.Billing),
   });
 
-  const { [SettingPermissionType.WORKSPACE]: hasPermissionToSubscribe } =
-    useSettingsPermissionMap();
+  const { [PermissionFlagType.WORKSPACE]: hasPermissionToSubscribe } =
+    usePermissionFlagMap();
 
   return (
     <InformationBanner

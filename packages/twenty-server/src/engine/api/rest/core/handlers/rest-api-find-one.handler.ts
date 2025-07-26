@@ -18,8 +18,12 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
       );
     }
 
-    const { repository, objectMetadata, objectMetadataItemWithFieldsMaps } =
-      await this.getRepositoryAndMetadataOrFail(request);
+    const {
+      repository,
+      objectMetadata,
+      objectMetadataItemWithFieldsMaps,
+      restrictedFields,
+    } = await this.getRepositoryAndMetadataOrFail(request);
 
     const { records } = await this.findRecords({
       request,
@@ -27,6 +31,7 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
       repository,
       objectMetadata,
       objectMetadataItemWithFieldsMaps,
+      restrictedFields,
     });
 
     const record = records?.[0];

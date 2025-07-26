@@ -16,7 +16,6 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   CalendarChannelSyncStage,
   CalendarChannelVisibility,
@@ -159,12 +158,6 @@ describe('GoogleAPIsService', () => {
           provide: AccountsToReconnectService,
           useValue: {
             removeAccountToReconnect: jest.fn(),
-          },
-        },
-        {
-          provide: WorkspaceEventEmitter,
-          useValue: {
-            emitDatabaseBatchEvent: jest.fn(),
           },
         },
         {

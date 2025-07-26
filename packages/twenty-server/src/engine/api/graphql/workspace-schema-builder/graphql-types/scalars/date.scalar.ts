@@ -15,6 +15,10 @@ export const DateScalarType = new GraphQLScalarType({
       return new Date(parseInt(ast.value, 10));
     }
 
+    if (ast.kind === Kind.STRING) {
+      return new Date(ast.value);
+    }
+
     return null;
   },
 });

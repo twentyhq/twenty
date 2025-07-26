@@ -6,6 +6,6 @@ import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager
 @Module({
   imports: [FeatureFlagModule],
   providers: [WorkspaceMigrationBuilderV2Service],
-  exports: [],
+  exports: [WorkspaceMigrationBuilderV2Service],
 })
 export class WorkspaceMigrationBuilderV2Module {}

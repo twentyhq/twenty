@@ -137,6 +137,12 @@ export const AttachmentList = ({
     await uploadAttachmentFile(file, targetableObject);
   };
 
+  const onUploadFiles = async (files: File[]) => {
+    for (const file of files) {
+      await onUploadFile(file);
+    }
+  };
+
   const handlePreview = (attachment: Attachment) => {
     if (!isAttachmentPreviewEnabled) return;
     setPreviewedAttachment(attachment);
@@ -167,7 +173,7 @@ export const AttachmentList = ({
             {isDraggingFile ? (
               <DropZone
                 setIsDraggingFile={setIsDraggingFile}
-                onUploadFile={onUploadFile}
+                onUploadFiles={onUploadFiles}
               />
             ) : (
               <ActivityList>

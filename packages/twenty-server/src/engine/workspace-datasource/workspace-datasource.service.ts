@@ -8,6 +8,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 @Injectable()
 export class WorkspaceDataSourceService {
@@ -50,7 +51,7 @@ export class WorkspaceDataSourceService {
    * @returns
    */
   public async createWorkspaceDBSchema(workspaceId: string): Promise<string> {
-    const schemaName = this.getSchemaName(workspaceId);
+    const schemaName = getWorkspaceSchemaName(workspaceId);
 
     return await this.typeormService.createSchema(schemaName);
   }
@@ -63,43 +64,9 @@ export class WorkspaceDataSourceService {
    * @returns
    */
   public async deleteWorkspaceDBSchema(workspaceId: string): Promise<void> {
-    const schemaName = this.getSchemaName(workspaceId);
+    const schemaName = getWorkspaceSchemaName(workspaceId);
 
     return await this.typeormService.deleteSchema(schemaName);
-  }
-
-  /**
-   *
-   * Get the schema name for a workspace
-   * Note: This is assuming that the workspace only has one schema but we should prefer querying the metadata table instead.
-   *
-   * @param workspaceId
-   * @returns string
-   */
-  public getSchemaName(workspaceId: string): string {
-    return `workspace_${this.uuidToBase36(workspaceId)}`;
-  }
-
-  /**
-   *
-   * Convert a uuid to base36
-   *
-   * @param uuid
-   * @returns string
-   */
-  private uuidToBase36(uuid: string): string {
-    let devId = false;
-
-    if (uuid.startsWith('twenty-')) {
-      devId = true;
-      // Clean dev uuids (twenty-)
-      uuid = uuid.replace('twenty-', '');
-    }
-    const hexString = uuid.replace(/-/g, '');
-    const base10Number = BigInt('0x' + hexString);
-    const base36String = base10Number.toString(36);
-
-    return `${devId ? 'twenty_' : ''}${base36String}`;
   }
 
   public async executeRawQuery(

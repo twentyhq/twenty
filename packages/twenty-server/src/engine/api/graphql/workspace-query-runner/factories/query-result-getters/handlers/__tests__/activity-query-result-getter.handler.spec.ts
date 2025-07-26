@@ -13,7 +13,6 @@ const baseNote = {
   },
   position: 1,
   title: 'Test',
-  body: 'Test',
   createdBy: {
     name: 'Test',
     source: FieldActorSource.MANUAL,

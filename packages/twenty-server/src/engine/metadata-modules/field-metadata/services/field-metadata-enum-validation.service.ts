@@ -7,7 +7,6 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import {
@@ -15,6 +14,7 @@ import {
   FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
@@ -36,7 +36,7 @@ type FieldMetadataUpdateCreateInput = CreateFieldInput | UpdateFieldInput;
 
 type ValidateEnumFieldMetadataArgs = {
   existingFieldMetadata?: Pick<
-    FieldMetadataInterface,
+    FieldMetadataEntity,
     'type' | 'isNullable' | 'defaultValue' | 'options'
   >;
   fieldMetadataInput: FieldMetadataUpdateCreateInput;
@@ -137,12 +137,17 @@ export class FieldMetadataEnumValidationService {
     );
   }
 
-  private validateDuplicates(options: FieldMetadataOptions) {
+  private validateDuplicates(
+    options: FieldMetadataOptions<EnumFieldMetadataType>,
+  ) {
     const fieldsToCheckForDuplicates = [
       'position',
       'id',
       'value',
-    ] as const satisfies (keyof FieldMetadataOptions[number])[];
+    ] as const satisfies (keyof (
+      | FieldMetadataDefaultOption[]
+      | FieldMetadataComplexOption[]
+    )[number])[];
     const duplicatedValidators = fieldsToCheckForDuplicates.map<
       Validator<FieldMetadataDefaultOption[] | FieldMetadataComplexOption[]>
     >((field) => ({
@@ -178,7 +183,7 @@ export class FieldMetadataEnumValidationService {
   }
 
   private validateSelectDefaultValue(
-    options: FieldMetadataOptions,
+    options: FieldMetadataOptions<EnumFieldMetadataType>,
     defaultValue: unknown,
   ) {
     if (typeof defaultValue !== 'string') {
@@ -209,7 +214,7 @@ export class FieldMetadataEnumValidationService {
   }
 
   private validateMultiSelectDefaultValue(
-    options: FieldMetadataOptions,
+    options: FieldMetadataOptions<EnumFieldMetadataType>,
     defaultValue: unknown,
   ) {
     if (!Array.isArray(defaultValue)) {
@@ -241,7 +246,7 @@ export class FieldMetadataEnumValidationService {
 
   private validateFieldMetadataDefaultValue(
     fieldType: EnumFieldMetadataType,
-    options: FieldMetadataOptions,
+    options: FieldMetadataOptions<EnumFieldMetadataType>,
     defaultValue: unknown,
   ) {
     switch (fieldType) {

@@ -26,10 +26,12 @@ describe('computeContextStoreFilters', () => {
       [],
       personObjectMetadataItem,
       mockFilterValueDependencies,
+      '',
     );
 
     expect(filters).toEqual({
       and: [
+        {},
         {
           id: {
             in: ['1', '2', '3'],
@@ -67,10 +69,12 @@ describe('computeContextStoreFilters', () => {
       contextStoreFilters,
       personObjectMetadataItem,
       mockFilterValueDependencies,
+      '',
     );
 
     expect(filters).toEqual({
       and: [
+        {},
         {
           or: [
             {

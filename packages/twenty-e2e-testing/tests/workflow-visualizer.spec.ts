@@ -127,7 +127,7 @@ test('Add a step to an active version', async ({
   const assertEndState = async () => {
     await expect(workflowVisualizer.workflowStatus).toHaveText('Active');
     await expect(workflowVisualizer.triggerNode).toContainText(
-      'Record is Created',
+      'Record is created',
     );
     await expect(workflowVisualizer.getAllStepNodes()).toContainText([
       'Create Record',
@@ -177,7 +177,7 @@ test('Replace the trigger of an active version', async ({
   await page.reload();
 
   await expect(workflowVisualizer.triggerNode).toContainText(
-    'Record is Deleted',
+    'Record is deleted',
   );
   await expect(workflowVisualizer.getAllStepNodes()).toHaveCount(1);
   await expect(workflowVisualizer.getAllStepNodes()).toContainText([

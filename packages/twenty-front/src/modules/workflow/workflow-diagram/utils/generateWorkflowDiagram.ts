@@ -6,6 +6,7 @@ import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workf
 import {
   WorkflowDiagram,
   WorkflowDiagramEdge,
+  WorkflowDiagramEdgeType,
   WorkflowDiagramNode,
   WorkflowDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -70,12 +71,13 @@ const groupStepsByLevel = (steps: WorkflowStep[]): WorkflowStep[][] => {
 export const generateWorkflowDiagram = ({
   trigger,
   steps,
+  defaultEdgeType,
 }: {
   trigger: WorkflowTrigger | undefined;
   steps: Array<WorkflowStep>;
+  defaultEdgeType: WorkflowDiagramEdgeType;
 }): WorkflowDiagram => {
   const nodes: Array<WorkflowDiagramNode> = [];
-
   const edges: Array<WorkflowDiagramEdge> = [];
 
   if (isDefined(trigger)) {
@@ -112,6 +114,7 @@ export const generateWorkflowDiagram = ({
   for (const firstLevelStep of stepsGroupedByLevel[0] || []) {
     edges.push({
       ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
+      type: defaultEdgeType,
       id: v4(),
       source: TRIGGER_STEP_ID,
       target: firstLevelStep.id,
@@ -122,6 +125,7 @@ export const generateWorkflowDiagram = ({
     step.nextStepIds?.forEach((child) => {
       edges.push({
         ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
+        type: defaultEdgeType,
         id: v4(),
         source: step.id,
         target: child,

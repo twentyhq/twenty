@@ -307,4 +307,14 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   kanbanAggregateOperationFieldMetadataId?: string | null;
+
+  @WorkspaceField({
+    standardId: VIEW_STANDARD_FIELD_IDS.anyFieldFilterValue,
+    type: FieldMetadataType.TEXT,
+    label: msg`Any field filter value`,
+    description: msg`Any field filter value`,
+    defaultValue: null,
+  })
+  @WorkspaceIsNullable()
+  anyFieldFilterValue?: string | null;
 }

@@ -1,12 +1,14 @@
-import { WorkflowActionType } from '@/workflow/types/Workflow';
-import { WorkflowDiagramRunStatus } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import {
+  WorkflowActionType,
+  WorkflowRunStepStatus,
+} from '@/workflow/types/Workflow';
 
 export const getShouldFocusNodeTab = ({
   stepExecutionStatus,
   actionType,
 }: {
-  stepExecutionStatus: WorkflowDiagramRunStatus;
+  stepExecutionStatus: WorkflowRunStepStatus;
   actionType: WorkflowActionType | undefined;
 }) => {
-  return actionType === 'FORM' && stepExecutionStatus === 'running';
+  return actionType === 'FORM' && stepExecutionStatus === 'PENDING';
 };

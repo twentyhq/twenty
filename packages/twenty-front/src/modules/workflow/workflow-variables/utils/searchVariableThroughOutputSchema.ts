@@ -8,6 +8,14 @@ import { isLinkOutputSchema } from '@/workflow/workflow-variables/utils/isLinkOu
 import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
 import { isDefined } from 'twenty-shared/utils';
 
+type VariableInfo = {
+  variableLabel: string | undefined;
+  variablePathLabel: string | undefined;
+  variableType?: string | undefined;
+  fieldMetadataId?: string | undefined;
+  compositeFieldSubFieldName?: string | undefined;
+};
+
 const getDisplayedSubStepObjectLabel = (outputSchema: OutputSchema) => {
   if (!isRecordOutputSchema(outputSchema)) {
     return;
@@ -43,6 +51,28 @@ const getVariableType = (key: string, outputSchema: OutputSchema): string => {
   return outputSchema[key]?.type ?? 'unknown';
 };
 
+const getFieldMetadataId = (
+  key: string,
+  outputSchema: OutputSchema,
+): string | undefined => {
+  if (isRecordOutputSchema(outputSchema)) {
+    return outputSchema.fields[key]?.fieldMetadataId;
+  }
+
+  return undefined;
+};
+
+const isCompositeSubField = (
+  key: string,
+  outputSchema: OutputSchema,
+): boolean => {
+  if (isBaseOutputSchema(outputSchema) && outputSchema[key]?.isLeaf) {
+    return outputSchema[key]?.isCompositeSubField ?? false;
+  }
+
+  return false;
+};
+
 const searchCurrentStepOutputSchema = ({
   stepOutputSchema,
   path,
@@ -59,6 +89,7 @@ const searchCurrentStepOutputSchema = ({
   let nextKey = path[nextKeyIndex];
   let variablePathLabel = stepOutputSchema.name;
   let isSelectedFieldInNextKey = false;
+  let parentFieldMetadataId: string | undefined;
 
   const handleFieldNotFound = () => {
     if (nextKeyIndex + 1 < path.length) {
@@ -83,6 +114,7 @@ const searchCurrentStepOutputSchema = ({
         currentSubStep = currentField.value;
         nextKey = path[nextKeyIndex + 1];
         variablePathLabel = `${variablePathLabel} > ${currentField.label}`;
+        parentFieldMetadataId = currentField.fieldMetadataId;
       } else {
         handleFieldNotFound();
       }
@@ -92,6 +124,7 @@ const searchCurrentStepOutputSchema = ({
         currentSubStep = currentField.value;
         nextKey = path[nextKeyIndex + 1];
         variablePathLabel = `${variablePathLabel} > ${currentField.label}`;
+        parentFieldMetadataId = currentField.fieldMetadataId;
       } else {
         handleFieldNotFound();
       }
@@ -107,19 +140,24 @@ const searchCurrentStepOutputSchema = ({
     };
   }
 
+  const variableName = isSelectedFieldInNextKey ? nextKey : selectedField;
+  const variableLabel =
+    isFullRecord && isRecordOutputSchema(currentSubStep)
+      ? getDisplayedSubStepObjectLabel(currentSubStep)
+      : getDisplayedSubStepFieldLabel(variableName, currentSubStep);
+
   return {
-    variableLabel:
-      isFullRecord && isRecordOutputSchema(currentSubStep)
-        ? getDisplayedSubStepObjectLabel(currentSubStep)
-        : getDisplayedSubStepFieldLabel(
-            isSelectedFieldInNextKey ? nextKey : selectedField,
-            currentSubStep,
-          ),
-    variablePathLabel,
-    variableType: getVariableType(
-      isSelectedFieldInNextKey ? nextKey : selectedField,
+    variableLabel,
+    variablePathLabel: `${variablePathLabel} > ${variableLabel}`,
+    variableType: getVariableType(variableName, currentSubStep),
+    fieldMetadataId:
+      getFieldMetadataId(variableName, currentSubStep) ?? parentFieldMetadataId,
+    compositeFieldSubFieldName: isCompositeSubField(
+      variableName,
       currentSubStep,
-    ),
+    )
+      ? variableName
+      : undefined,
   };
 };
 
@@ -131,7 +169,7 @@ export const searchVariableThroughOutputSchema = ({
   stepOutputSchema: StepOutputSchema;
   rawVariableName: string;
   isFullRecord?: boolean;
-}) => {
+}): VariableInfo => {
   if (!isDefined(stepOutputSchema)) {
     return {
       variableLabel: undefined,
@@ -160,17 +198,10 @@ export const searchVariableThroughOutputSchema = ({
     };
   }
 
-  const { variableLabel, variablePathLabel, variableType } =
-    searchCurrentStepOutputSchema({
-      stepOutputSchema,
-      path,
-      isFullRecord,
-      selectedField,
-    });
-
-  return {
-    variableLabel,
-    variablePathLabel: `${variablePathLabel} > ${variableLabel}`,
-    variableType,
-  };
+  return searchCurrentStepOutputSchema({
+    stepOutputSchema,
+    path,
+    isFullRecord,
+    selectedField,
+  });
 };

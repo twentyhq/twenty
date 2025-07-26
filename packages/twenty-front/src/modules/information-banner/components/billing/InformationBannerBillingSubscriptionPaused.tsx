@@ -1,11 +1,11 @@
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
-import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { SettingsPath } from '@/types/SettingsPath';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  SettingPermissionType,
+  PermissionFlagType,
   useBillingPortalSessionQuery,
 } from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -20,8 +20,8 @@ export const InformationBannerBillingSubscriptionPaused = () => {
   });
 
   const {
-    [SettingPermissionType.WORKSPACE]: hasPermissionToUpdateBillingDetails,
-  } = useSettingsPermissionMap();
+    [PermissionFlagType.WORKSPACE]: hasPermissionToUpdateBillingDetails,
+  } = usePermissionFlagMap();
 
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {

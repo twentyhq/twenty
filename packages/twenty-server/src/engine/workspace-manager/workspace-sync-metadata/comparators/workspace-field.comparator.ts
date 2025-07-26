@@ -25,6 +25,10 @@ const commonFieldPropertiesToIgnore = [
   'asExpression',
   'generatedType',
   'isLabelSyncedWithName',
+  'relationTargetFieldMetadataId',
+  'relationTargetObjectMetadataId',
+  'relationTargetFieldMetadata',
+  'relationTargetObjectMetadata',
 ];
 
 const fieldPropertiesToStringify = ['defaultValue'] as const;

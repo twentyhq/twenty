@@ -7,7 +7,7 @@ import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 @Injectable()
 export class I18nMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
-    const locale = req.headers['x-locale'] as keyof typeof APP_LOCALES;
+    const locale = req.locale;
 
     if (locale && Object.values(APP_LOCALES).includes(locale)) {
       i18n.activate(locale);

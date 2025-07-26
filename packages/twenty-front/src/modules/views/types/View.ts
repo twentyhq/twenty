@@ -29,5 +29,6 @@ export type View = {
   position: number;
   icon: string;
   openRecordIn: ViewOpenRecordInType;
+  anyFieldFilterValue?: string | null;
   __typename: 'View';
 };

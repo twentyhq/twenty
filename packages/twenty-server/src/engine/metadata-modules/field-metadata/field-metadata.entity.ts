@@ -18,12 +18,12 @@ import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
+import { AssignTypeIfIsRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-type-if-is-relation-field-metadata-type.type';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 
 @Entity('fieldMetadata')
-// max length of index is 63 characters
 @Index(
   'IDX_FIELD_METADATA_NAME_OBJMID_WORKSPACE_ID_EXCEPT_MORPH_UNIQUE',
   ['name', 'objectMetadataId', 'workspaceId'],
@@ -42,9 +42,11 @@ import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permis
   'objectMetadataId',
   'workspaceId',
 ])
+// TODO add some documentation about this entity
 export class FieldMetadataEntity<
   T extends FieldMetadataType = FieldMetadataType,
-> {
+> implements Required<FieldMetadataEntity>
+{
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -56,6 +58,7 @@ export class FieldMetadataEntity<
 
   @ManyToOne(() => ObjectMetadataEntity, (object) => object.fields, {
     onDelete: 'CASCADE',
+    nullable: false,
   })
   @JoinColumn({ name: 'objectMetadataId' })
   @Index('IDX_FIELD_METADATA_OBJECT_METADATA_ID', ['objectMetadataId'])
@@ -77,19 +80,19 @@ export class FieldMetadataEntity<
   defaultValue: FieldMetadataDefaultValue<T>;
 
   @Column({ nullable: true, type: 'text' })
-  description: string;
+  description: string | null;
 
-  @Column({ nullable: true })
-  icon: string;
+  @Column({ nullable: true, type: 'varchar' })
+  icon: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  standardOverrides?: FieldStandardOverridesDTO;
+  standardOverrides: FieldStandardOverridesDTO | null;
 
   @Column('jsonb', { nullable: true })
   options: FieldMetadataOptions<T>;
 
   @Column('jsonb', { nullable: true })
-  settings?: FieldMetadataSettings<T>;
+  settings: FieldMetadataSettings<T>;
 
   @Column({ default: false })
   isCustom: boolean;
@@ -100,11 +103,13 @@ export class FieldMetadataEntity<
   @Column({ default: false })
   isSystem: boolean;
 
-  @Column({ nullable: true, default: true })
-  isNullable: boolean;
+  // Is this really nullable ?
+  @Column({ nullable: true, default: true, type: 'boolean' })
+  isNullable: boolean | null;
 
-  @Column({ nullable: true, default: false })
-  isUnique: boolean;
+  // Is this really nullable ?
+  @Column({ nullable: true, default: false, type: 'boolean' })
+  isUnique: boolean | null;
 
   @Column({ nullable: false, type: 'uuid' })
   @Index('IDX_FIELD_METADATA_WORKSPACE_ID', ['workspaceId'])
@@ -114,25 +119,40 @@ export class FieldMetadataEntity<
   isLabelSyncedWithName: boolean;
 
   @Column({ nullable: true, type: 'uuid' })
-  relationTargetFieldMetadataId: string;
+  relationTargetFieldMetadataId: AssignTypeIfIsRelationFieldMetadataType<
+    string,
+    T
+  >;
+
   @OneToOne(
     () => FieldMetadataEntity,
     (fieldMetadata: FieldMetadataEntity) =>
       fieldMetadata.relationTargetFieldMetadataId,
+    { nullable: true },
   )
   @JoinColumn({ name: 'relationTargetFieldMetadataId' })
-  relationTargetFieldMetadata: Relation<FieldMetadataEntity>;
+  relationTargetFieldMetadata: AssignTypeIfIsRelationFieldMetadataType<
+    Relation<FieldMetadataEntity>,
+    T
+  >;
 
   @Column({ nullable: true, type: 'uuid' })
-  relationTargetObjectMetadataId: string;
+  relationTargetObjectMetadataId: AssignTypeIfIsRelationFieldMetadataType<
+    string,
+    T
+  >;
+
   @ManyToOne(
     () => ObjectMetadataEntity,
     (objectMetadata: ObjectMetadataEntity) =>
       objectMetadata.targetRelationFields,
-    { onDelete: 'CASCADE' },
+    { onDelete: 'CASCADE', nullable: true },
   )
   @JoinColumn({ name: 'relationTargetObjectMetadataId' })
-  relationTargetObjectMetadata: Relation<ObjectMetadataEntity>;
+  relationTargetObjectMetadata: AssignTypeIfIsRelationFieldMetadataType<
+    Relation<ObjectMetadataEntity>,
+    T
+  >;
 
   @OneToMany(
     () => IndexFieldMetadataEntity,

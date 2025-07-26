@@ -81,6 +81,7 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
             forceDarkModeState: theme.name === 'dark' ? 'dark' : 'light',
             hideClientButton: true,
             hideDarkModeToggle: true,
+            hideModels: schema === 'metadata',
             pathRouting: {
               basePath: getSettingsPath(SettingsPath.RestPlayground, {
                 schema,

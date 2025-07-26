@@ -168,12 +168,19 @@ describe.each(fieldMetadataEnumTypes)(
         expect(data.updateOneField).toBeDefined();
         const updatedOptions:
           | FieldMetadataComplexOption[]
-          | FieldMetadataDefaultOption[] = data.updateOneField.options;
+          | FieldMetadataDefaultOption[]
+          | null = data.updateOneField.options;
+
+        expect(updatedOptions).toBeDefined();
+        if (!isDefined(updatedOptions))
+          throw new Error(
+            'Should never occur, type invariant post test assertion',
+          );
 
         expect(errors).toBeUndefined();
         updatedOptions.forEach((option) => expect(option.id).toBeDefined());
 
-        const optionsToCompare = expectedOptions ?? input.options;
+        const optionsToCompare = expectedOptions ?? input.options ?? [];
 
         expect(updatedOptions.length).toBe(optionsToCompare.length);
         expect(updatedOptions).toMatchObject(optionsToCompare);

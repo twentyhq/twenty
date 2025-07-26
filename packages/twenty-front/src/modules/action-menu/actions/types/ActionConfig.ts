@@ -5,6 +5,7 @@ import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/Sh
 import { MessageDescriptor } from '@lingui/core';
 import { IconComponent } from 'twenty-ui/display';
 import { MenuItemAccent } from 'twenty-ui/navigation';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export type ActionConfig = {
   type: ActionType;
@@ -21,4 +22,5 @@ export type ActionConfig = {
   shouldBeRegistered: (params: ShouldBeRegisteredFunctionParams) => boolean;
   component: React.ReactNode;
   hotKeys?: string[];
+  requiredPermissionFlag?: PermissionFlagType;
 };

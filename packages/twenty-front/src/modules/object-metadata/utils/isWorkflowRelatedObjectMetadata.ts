@@ -1,5 +1,5 @@
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowSubObjectMetadata';
-import { CoreObjectNameSingular } from '../types/CoreObjectNameSingular';
 
 export const isWorkflowRelatedObjectMetadata = (objectNameSingular: string) => {
   return (

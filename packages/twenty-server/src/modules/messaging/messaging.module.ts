@@ -15,6 +15,6 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingMonitoringModule,
   ],
   providers: [],
-  exports: [],
+  exports: [MessagingImportManagerModule],
 })
 export class MessagingModule {}
