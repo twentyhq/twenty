@@ -28,10 +28,12 @@ import {
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
-export interface S3DriverOptions extends S3ClientConfig {
+export interface S3DriverOptions {
   bucketName: string;
   endpoint?: string;
-  region: string;
+  region?: string;
+  credentials?: S3ClientConfig['credentials'];
+  forcePathStyle?: boolean;
 }
 
 export class S3Driver implements StorageDriver {
@@ -40,13 +42,22 @@ export class S3Driver implements StorageDriver {
   private readonly logger = new Logger(S3Driver.name);
 
   constructor(options: S3DriverOptions) {
-    const { bucketName, region, endpoint, ...s3Options } = options;
+    const { bucketName, region, endpoint, credentials, forcePathStyle } = options;
 
-    if (!bucketName || !region) {
-      return;
+    if (!bucketName || bucketName.trim() === '') {
+      throw new Error('Storage bucket name must be configured');
     }
 
-    this.s3Client = new S3({ ...s3Options, region, endpoint });
+    // For MinIO and other S3-compatible services, region might not be required
+    // Use 'us-east-1' as default if region is not provided
+    const s3Region = region && region.trim() !== '' ? region : 'us-east-1';
+
+    this.s3Client = new S3({ 
+      region: s3Region, 
+      endpoint, 
+      credentials,
+      forcePathStyle 
+    });
     this.bucketName = bucketName;
   }
 
