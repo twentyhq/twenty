@@ -26,6 +26,7 @@ export enum ResolverArgsType {
   RestoreMany = 'RestoreMany',
   DestroyMany = 'DestroyMany',
   DestroyOne = 'DestroyOne',
+  MergeMany = 'MergeMany',
 }
 
 export interface FindManyResolverArgs<
@@ -99,6 +100,12 @@ export interface RestoreManyResolverArgs<Filter = any> {
   filter: Filter;
 }
 
+export interface MergeManyResolverArgs {
+  ids: string[];
+  conflictPriorityIndex: number;
+  dryRun?: boolean;
+}
+
 export interface DestroyOneResolverArgs {
   id: string;
 }
@@ -132,6 +139,7 @@ export type ResolverArgs =
   | FindDuplicatesResolverArgs
   | FindManyResolverArgs
   | FindOneResolverArgs
+  | MergeManyResolverArgs
   | RestoreManyResolverArgs
   | RestoreOneResolverArgs
   | UpdateManyResolverArgs
