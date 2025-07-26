@@ -23,7 +23,6 @@ export const useCloseDropdown = () => {
         const dropdownComponentInstanceId =
           dropdownComponentInstanceIdFromProps ??
           dropdownComponentInstanceIdFromContext;
-console.log("dropdownComponentInstanceId",dropdownComponentInstanceId);
 
         if (!isDefined(dropdownComponentInstanceId)) {
           throw new Error('Dropdown component instance ID is not defined');

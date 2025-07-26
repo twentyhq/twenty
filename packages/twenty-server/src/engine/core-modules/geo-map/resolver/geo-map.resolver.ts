@@ -1,5 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
+
 import { AutocompleteResultDto } from 'src/engine/core-modules/geo-map/dtos/autocomplete-result.dto';
 import { PlaceDetailsResultDto } from 'src/engine/core-modules/geo-map/dtos/place-details-result.dto';
 import { GeoMapService } from 'src/engine/core-modules/geo-map/services/geo-map.service';
