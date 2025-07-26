@@ -14,6 +14,7 @@ import {
   FindDuplicatesResolverArgs,
   FindManyResolverArgs,
   FindOneResolverArgs,
+  MergeManyResolverArgs,
   ResolverArgs,
   ResolverArgsType,
   UpdateManyResolverArgs,
@@ -145,6 +146,22 @@ export class QueryRunnerArgsFactory {
             ) ?? [],
           ),
         } satisfies FindDuplicatesResolverArgs;
+      case ResolverArgsType.MergeMany:
+        return {
+          ...args,
+          ids: (await Promise.all(
+            (args as MergeManyResolverArgs).ids?.map((id) =>
+              this.overrideValueByFieldMetadata(
+                'id',
+                id,
+                fieldMetadataMapByNameByName,
+              ),
+            ) ?? [],
+          )) as string[],
+          conflictPriorityIndex: (args as MergeManyResolverArgs)
+            .conflictPriorityIndex,
+          dryRun: (args as MergeManyResolverArgs).dryRun,
+        } satisfies MergeManyResolverArgs;
       default:
         return args;
     }

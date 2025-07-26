@@ -1,0 +1,1 @@
+export const BACKEND_MERGE_RECORDS_MAX_COUNT = 9;
