@@ -9,7 +9,6 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
 export const useTriggerActionMenuDropdown = ({
   recordTableId,
@@ -28,10 +27,11 @@ export const useTriggerActionMenuDropdown = ({
   const actionMenuDropdownId =
     getActionMenuDropdownIdFromActionMenuId(actionMenuInstanceId);
 
-  const recordIndexActionMenuDropdownPositionState = extractComponentState(
-    recordIndexActionMenuDropdownPositionComponentState,
-    actionMenuDropdownId,
-  );
+  const recordIndexActionMenuDropdownPositionCallbackState =
+    useRecoilComponentCallbackStateV2(
+      recordIndexActionMenuDropdownPositionComponentState,
+      actionMenuDropdownId,
+    );
 
   const { openDropdown } = useOpenDropdown();
 
@@ -42,7 +42,7 @@ export const useTriggerActionMenuDropdown = ({
       (event: React.MouseEvent, recordId: string) => {
         event.preventDefault();
 
-        set(recordIndexActionMenuDropdownPositionState, {
+        set(recordIndexActionMenuDropdownPositionCallbackState, {
           x: event.pageX,
           y: event.pageY,
         });
@@ -63,7 +63,7 @@ export const useTriggerActionMenuDropdown = ({
         });
       },
     [
-      recordIndexActionMenuDropdownPositionState,
+      recordIndexActionMenuDropdownPositionCallbackState,
       isRowSelectedFamilyState,
       closeCommandMenu,
       openDropdown,

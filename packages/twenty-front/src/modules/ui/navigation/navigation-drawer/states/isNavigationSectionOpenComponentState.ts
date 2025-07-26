@@ -1,9 +1,11 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
 import { localStorageEffect } from '~/utils/recoil-effects';
 
-export const isNavigationSectionOpenComponentState =
-  createComponentState<boolean>({
-    key: 'isNavigationSectionOpenComponentState',
-    defaultValue: true,
-    effects: [localStorageEffect()],
-  });
+export const isNavigationSectionOpenFamilytState = createFamilyState<
+  boolean,
+  string
+>({
+  key: 'isNavigationSectionOpenFamilytState',
+  defaultValue: true,
+  effects: [localStorageEffect()],
+});

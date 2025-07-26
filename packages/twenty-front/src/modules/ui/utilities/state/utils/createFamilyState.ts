@@ -1,4 +1,4 @@
-import { atomFamily, SerializableParam } from 'recoil';
+import { AtomEffect, atomFamily, SerializableParam } from 'recoil';
 
 export const createFamilyState = <
   ValueType,
@@ -6,12 +6,15 @@ export const createFamilyState = <
 >({
   key,
   defaultValue,
+  effects,
 }: {
   key: string;
   defaultValue: ValueType;
+  effects?: ReadonlyArray<AtomEffect<ValueType>>;
 }) => {
   return atomFamily<ValueType, FamilyKey>({
     key,
     default: defaultValue,
+    effects,
   });
 };

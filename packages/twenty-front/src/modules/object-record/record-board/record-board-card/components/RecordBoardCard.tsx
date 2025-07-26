@@ -21,11 +21,10 @@ import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWr
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
 import { InView, useInView } from 'react-intersection-observer';
-import { useSetRecoilState } from 'recoil';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -132,11 +131,9 @@ export const RecordBoardCard = () => {
   const actionMenuDropdownId =
     getActionMenuDropdownIdFromActionMenuId(actionMenuId);
 
-  const setActionMenuDropdownPosition = useSetRecoilState(
-    extractComponentState(
-      recordIndexActionMenuDropdownPositionComponentState,
-      actionMenuDropdownId,
-    ),
+  const setActionMenuDropdownPosition = useSetRecoilComponentStateV2(
+    recordIndexActionMenuDropdownPositionComponentState,
+    actionMenuDropdownId,
   );
 
   const { openDropdown } = useOpenDropdown();
