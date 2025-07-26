@@ -25,18 +25,15 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
+import {
+  hasRecordFieldValue,
+  RecordFieldValue,
+} from 'src/engine/api/graphql/graphql-query-runner/utils/has-value.util';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
-
-type RecordFieldValue =
-  | string
-  | number
-  | boolean
-  | null
-  | Record<string, unknown>;
 
 @Injectable()
 export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolverService<
@@ -179,7 +176,7 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       recordsToMerge.forEach((record) => {
         const fieldValue = record[fieldName];
 
-        if (this.hasValue(fieldValue)) {
+        if (hasRecordFieldValue(fieldValue)) {
           recordsWithValues.push({ value: fieldValue, recordId: record.id });
         }
       });
@@ -202,38 +199,6 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     });
 
     return mergedResult;
-  }
-
-  private hasValue(value: RecordFieldValue): boolean {
-    if (value === null || value === undefined) {
-      return false;
-    }
-
-    if (typeof value === 'string') {
-      return value.trim() !== '';
-    }
-
-    if (typeof value === 'number') {
-      return !isNaN(value);
-    }
-
-    if (typeof value === 'boolean') {
-      return true;
-    }
-
-    if (Array.isArray(value)) {
-      return value.length > 0;
-    }
-
-    if (typeof value === 'object') {
-      const objectValue = value as Record<string, unknown>;
-
-      return Object.values(objectValue).some((val) =>
-        this.hasValue(val as RecordFieldValue),
-      );
-    }
-
-    return true;
   }
 
   private shouldExcludeFieldFromMerge(
