@@ -258,6 +258,7 @@ msgstr "Giới thiệu về không gian làm việc này"
 #. js-lingui-id: AeXO77
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Account"
 msgstr "Tài khoản"
 
@@ -1092,11 +1093,6 @@ msgstr "Chọn các trường sẽ xác định bản ghi của bạn"
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
 msgid "Choose the format used to display date value"
 msgstr "Chọn định dạng dùng để hiển thị giá trị ngày"
-
-#. js-lingui-id: KT6rEB
-#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
-msgid "Choose your provider"
-msgstr "Chọn nhà cung cấp của bạn"
 
 #. js-lingui-id: 9qP96p
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -3832,11 +3828,6 @@ msgstr "Không phát hiện thay đổi"
 msgid "No config variables match your current filters. Try adjusting your filters or search criteria."
 msgstr "Không có biến cấu hình nào phù hợp với các bộ lọc hiện tại của bạn. Thử điều chỉnh các bộ lọc hoặc tiêu chí tìm kiếm của bạn."
 
-#. js-lingui-id: pwenQu
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-msgid "No connected account"
-msgstr "Không có tài khoản kết nối"
-
 #. js-lingui-id: 4BSfjK
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "No country"
@@ -5202,6 +5193,7 @@ msgstr "Bắt đầu cuộc trò chuyện với tác nhân AI của bạn để 
 #. js-lingui-id: uAQUqI
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Status"
 msgstr "Trạng thái"
 

@@ -8,6 +8,10 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import {
+  ObjectMetadataException,
+  ObjectMetadataExceptionCode,
+} from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { buildMigrationsForCustomObjectRelations } from 'src/engine/metadata-modules/object-metadata/utils/build-migrations-for-custom-object-relations.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
@@ -354,6 +358,63 @@ export class ObjectMetadataMigrationService {
               fieldMetadata,
               fieldMetadata,
             ),
+          },
+        ],
+        queryRunner,
+      );
+    }
+  }
+
+  public async updateMorphRelationMigrations({
+    workspaceId,
+    morphRelationFieldMetadataToUpdate,
+    queryRunner,
+  }: {
+    workspaceId: string;
+    morphRelationFieldMetadataToUpdate: {
+      fieldMetadata: FieldMetadataEntity<FieldMetadataType.MORPH_RELATION>;
+      newJoinColumnName: string;
+    }[];
+    queryRunner?: QueryRunner;
+  }) {
+    for (const morphRelationFieldMetadata of morphRelationFieldMetadataToUpdate) {
+      if (!morphRelationFieldMetadata.fieldMetadata.settings?.joinColumnName) {
+        throw new ObjectMetadataException(
+          `Settings for morph relation field should be defined ${morphRelationFieldMetadata.fieldMetadata.name}`,
+          ObjectMetadataExceptionCode.INVALID_ORM_OUTPUT,
+        );
+      }
+
+      await this.workspaceMigrationService.createCustomMigration(
+        generateMigrationName(
+          `rename-join-column-name-${morphRelationFieldMetadata.fieldMetadata.name}-to-${morphRelationFieldMetadata.newJoinColumnName}-in-${morphRelationFieldMetadata.fieldMetadata.object.nameSingular}`,
+        ),
+        workspaceId,
+        [
+          {
+            name: computeObjectTargetTable(
+              morphRelationFieldMetadata.fieldMetadata.object,
+            ),
+            action: WorkspaceMigrationTableActionType.ALTER,
+            columns: [
+              {
+                action: WorkspaceMigrationColumnActionType.ALTER,
+                currentColumnDefinition: {
+                  columnName:
+                    morphRelationFieldMetadata.fieldMetadata.settings
+                      ?.joinColumnName,
+                  columnType: 'uuid',
+                  isNullable: true,
+                  defaultValue: null,
+                },
+                alteredColumnDefinition: {
+                  columnName: `${morphRelationFieldMetadata.newJoinColumnName}`,
+                  columnType: 'uuid',
+                  isNullable: true,
+                  defaultValue: null,
+                },
+              },
+            ],
           },
         ],
         queryRunner,
