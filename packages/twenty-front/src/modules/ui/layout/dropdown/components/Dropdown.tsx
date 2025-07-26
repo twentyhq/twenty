@@ -59,6 +59,7 @@ export type DropdownProps = {
   onOpen?: () => void;
   excludedClickOutsideIds?: string[];
   isDropdownInModal?: boolean;
+  isFlipDisabled?: boolean;
 };
 
 export const Dropdown = ({
@@ -76,6 +77,7 @@ export const Dropdown = ({
   clickableComponentWidth = 'auto',
   excludedClickOutsideIds,
   isDropdownInModal = false,
+  isFlipDisabled = false,
 }: DropdownProps) => {
   const isDropdownOpen = useRecoilComponentValueV2(
     isDropdownOpenComponentState,
@@ -122,9 +124,11 @@ export const Dropdown = ({
     placement: dropdownPlacement,
     middleware: [
       ...offsetMiddleware,
-      flip({
-        ...boundaryOptions,
-      }),
+      isFlipDisabled
+        ? undefined
+        : flip({
+            ...boundaryOptions,
+          }),
       size({
         apply: ({ availableHeight, availableWidth }) => {
           flushSync(() => {
@@ -144,7 +148,7 @@ export const Dropdown = ({
         },
         ...boundaryOptions,
       }),
-    ],
+    ].filter(isDefined),
     whileElementsMounted: autoUpdate,
     strategy: dropdownStrategy,
   });

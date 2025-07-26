@@ -6,22 +6,24 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   AutocompleteSanitizedResult,
   sanitizeAutocompleteResults,
-} from 'src/engine/core-modules/google-map/utils/sanitize-autocomplete-results.util';
+} from 'src/engine/core-modules/geo-map/utils/sanitize-autocomplete-results.util';
 import {
   AddressFields,
   sanitizePlaceDetailsResults,
-} from 'src/engine/core-modules/google-map/utils/sanitize-place-details-results.util';
+} from 'src/engine/core-modules/geo-map/utils/sanitize-place-details-results.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
-export class GoogleApiMapService {
+export class GeoMapService {
   private apiMapKey: string | undefined;
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly httpService: HttpService,
   ) {
     if (
-      !this.twentyConfigService.get('GOOGLE_MAP_API_ENABLED') ||
+      !this.twentyConfigService.get(
+        'IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED',
+      ) ||
       !this.twentyConfigService.get('GOOGLE_MAP_API_KEY')
     ) {
       return;
@@ -33,6 +35,7 @@ export class GoogleApiMapService {
     address: string,
     token: string,
     country?: string,
+    isFieldCity?: boolean,
   ): Promise<AutocompleteSanitizedResult[] | undefined> {
     if (!isDefined(address) || address.trim().length === 0) {
       return [];
@@ -42,6 +45,9 @@ export class GoogleApiMapService {
 
       if (isDefined(country) && country !== '') {
         url += `&components=country:${country}`;
+      }
+      if (isDefined(isFieldCity) && isFieldCity === true) {
+        url += `&types=(cities)`;
       }
       const result = await this.httpService.axiosRef.get(url);
 

@@ -50,6 +50,7 @@ import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 
+import { GeoMapModule } from 'src/engine/core-modules/geo-map/geo-map-module';
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
@@ -84,6 +85,7 @@ import { FileModule } from './file/file.module';
     RoleModule,
     RedisClientModule,
     WorkspaceQueryRunnerModule,
+    GeoMapModule,
     SubscriptionsModule,
     ImapSmtpCaldavModule,
     FileStorageModule.forRoot(),

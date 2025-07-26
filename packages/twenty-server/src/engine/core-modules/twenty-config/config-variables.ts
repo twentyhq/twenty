@@ -1166,7 +1166,7 @@ export class ConfigVariables {
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  GOOGLE_MAP_API_ENABLED = true;
+  IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED = true;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
@@ -1174,7 +1174,7 @@ export class ConfigVariables {
     description: 'Google map api key for places and map',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.GOOGLE_MAP_API_ENABLED)
+  @ValidateIf((env) => env.IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED)
   GOOGLE_MAP_API_KEY: string;
 }
 

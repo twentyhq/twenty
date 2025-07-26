@@ -1,7 +1,8 @@
-import { PlaceAutocompleteResult } from '@/map/types/placeApi';
+import { PlaceAutocompleteResult } from '@/geo-map/types/placeApi';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import styled from '@emotion/styled';
@@ -19,12 +20,14 @@ export const PlaceAutocompleteSelect = ({
   dropdownId,
   excludedClickOutsideIds,
   onClickOutside,
+  dropdownOffset,
 }: {
   list: PlaceAutocompleteResult[];
   onChange: (placeId: string) => void;
   dropdownId: string;
   excludedClickOutsideIds?: string[];
   onClickOutside?: () => void;
+  dropdownOffset?: DropdownOffset;
 }) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
   const options: SelectOption<string>[] = useMemo(() => {
@@ -43,9 +46,10 @@ export const PlaceAutocompleteSelect = ({
       <Dropdown
         dropdownId={dropdownId}
         dropdownPlacement="bottom-start"
-        dropdownOffset={{ x: 5, y: 57 }}
+        dropdownOffset={dropdownOffset}
         excludedClickOutsideIds={excludedClickOutsideIds}
         onClickOutside={onClickOutside}
+        isFlipDisabled={true}
         dropdownComponents={
           <SelectableList
             selectableListInstanceId={dropdownId}

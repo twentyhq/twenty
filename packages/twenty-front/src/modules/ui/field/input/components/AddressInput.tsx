@@ -2,10 +2,10 @@ import styled from '@emotion/styled';
 import { RefObject, useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
-import { PlaceAutocompleteSelect } from '@/map/components/PlaceAutocompleteSelect';
-import { SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID } from '@/map/constants/selectAutocompleteListDropDownId';
-import { useGetPlaceApiData } from '@/map/hooks/useGetPlaceApiData';
-import { PlaceAutocompleteResult } from '@/map/types/placeApi';
+import { PlaceAutocompleteSelect } from '@/geo-map/components/PlaceAutocompleteSelect';
+import { SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID } from '@/geo-map/constants/selectAutocompleteListDropDownId';
+import { useGetPlaceApiData } from '@/geo-map/hooks/useGetPlaceApiData';
+import { PlaceAutocompleteResult } from '@/geo-map/types/placeApi';
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
@@ -91,6 +91,8 @@ export const AddressInput = ({
     PlaceAutocompleteResult[] | null
   >([]);
   const [tokenForPlaceApi, setTokenForPlaceApi] = useState<string | null>(null);
+  const [typeOfAddressForAutocomplete, setTypeOfAddressForAutocomplete] =
+    useState<string | null>(null);
   const inputRefs: {
     [key in keyof FieldAddressDraftValue]?: RefObject<HTMLInputElement>;
   } = {
@@ -133,7 +135,7 @@ export const AddressInput = ({
       const updatedAddress = { ...value, [field]: updatedAddressPart };
       setInternalValue(updatedAddress);
       onChange?.(updatedAddress);
-      if (field === 'addressStreet1') {
+      if (field === 'addressStreet1' || field === 'addressCity') {
         const token = tokenForPlaceApi ?? v4();
         if (token !== tokenForPlaceApi) {
           setTokenForPlaceApi(token);
@@ -141,15 +143,30 @@ export const AddressInput = ({
         const countryCode = findCountryCodeByCountryName(
           updatedAddress.addressCountry ?? '',
         );
-        getAutocompletePlaceData(updatedAddressPart, token, countryCode);
+        if (field !== typeOfAddressForAutocomplete) {
+          setTypeOfAddressForAutocomplete(field);
+        }
+        const isFieldCity = field === 'addressCity';
+        getAutocompletePlaceData(
+          updatedAddressPart,
+          token,
+          countryCode,
+          isFieldCity,
+        );
       }
     };
   const getAutocompletePlaceData = useDebouncedCallback(
-    async (address: string, token: string, country?: string) => {
+    async (
+      address: string,
+      token: string,
+      country?: string,
+      isFieldCity?: boolean,
+    ) => {
       const placeAutocompleteData = await getPlaceAutocompleteData(
         address,
         token,
         country,
+        isFieldCity,
       );
 
       const newData = placeAutocompleteData?.map((data) => ({
@@ -174,11 +191,12 @@ export const AddressInput = ({
   const closeDropdownOfAutocomplete = () => {
     closeDropdown(SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID);
     setPlaceAutocompleteData(null);
+    setTypeOfAddressForAutocomplete(null);
   };
   const autoFillInputsFromPlaceDetails = async (
     placeId: string,
-    addressStreet1: string,
     token: string,
+    addressStreet1?: string,
   ) => {
     const placeData = await getPlaceDetailsData(placeId, token);
 
@@ -214,7 +232,11 @@ export const AddressInput = ({
     );
     const token = tokenForPlaceApi ?? '';
     if (!isDefined(placeAutocomplete)) return;
-    autoFillInputsFromPlaceDetails(placeId, placeAutocomplete.text, token);
+    const text: string | undefined =
+      typeOfAddressForAutocomplete !== 'addressCity'
+        ? placeAutocomplete.text
+        : undefined;
+    autoFillInputsFromPlaceDetails(placeId, token, text);
   };
   const getFocusHandler = (fieldName: keyof FieldAddressDraftValue) => () => {
     setFocusPosition(fieldName);
@@ -245,6 +267,7 @@ export const AddressInput = ({
   };
   const handleClickOutside = () => {
     setPlaceAutocompleteData(null);
+    setTypeOfAddressForAutocomplete(null);
   };
   const handleShiftTab = () => {
     const currentFocusPosition = Object.keys(inputRefs).findIndex(
@@ -317,6 +340,7 @@ export const AddressInput = ({
 
       onClickOutside?.(event, internalValue);
       setPlaceAutocompleteData(null);
+      setTypeOfAddressForAutocomplete(null);
     },
     enabled: isDefined(onClickOutside),
     listenerId: 'address-input',
@@ -337,7 +361,9 @@ export const AddressInput = ({
         onChange={getChangeHandler('addressStreet1')}
         onFocus={getFocusHandler('addressStreet1')}
         textClickOutsideId={
-          placeAutocompleteData && placeAutocompleteData?.length > 0
+          placeAutocompleteData &&
+          placeAutocompleteData?.length > 0 &&
+          typeOfAddressForAutocomplete === 'addressStreet1'
             ? TEXT_INPUT_CLICK_OUTSIDE_ID
             : undefined
         }
@@ -349,6 +375,11 @@ export const AddressInput = ({
           dropdownId={SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID}
           excludedClickOutsideIds={[TEXT_INPUT_CLICK_OUTSIDE_ID]}
           onClickOutside={handleClickOutside}
+          dropdownOffset={
+            typeOfAddressForAutocomplete === 'addressCity'
+              ? { x: 5, y: 180 }
+              : { x: 5, y: 57 }
+          }
         />
       )}
       <TextInputV2
@@ -367,6 +398,13 @@ export const AddressInput = ({
           fullWidth
           onChange={getChangeHandler('addressCity')}
           onFocus={getFocusHandler('addressCity')}
+          textClickOutsideId={
+            placeAutocompleteData &&
+            placeAutocompleteData?.length > 0 &&
+            typeOfAddressForAutocomplete === 'addressCity'
+              ? TEXT_INPUT_CLICK_OUTSIDE_ID
+              : undefined
+          }
         />
         <TextInputV2
           value={internalValue.addressState ?? ''}
