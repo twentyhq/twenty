@@ -32,7 +32,7 @@ const Home = async () => {
 
   const visibleReleasesNotes = getVisibleReleases(
     releaseNotes,
-    latestGithubRelease.tagName,
+    latestGithubRelease?.tagName || 'v0.0.0',
   );
 
   const mdxReleasesContent = await getMdxReleasesContent(releaseNotes);
