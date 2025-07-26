@@ -414,8 +414,8 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       throw new Error('At least 2 record IDs are required for merge');
     }
 
-    if (ids.length > 10) {
-      throw new Error('Maximum 10 records can be merged at once');
+    if (ids.length > 9) {
+      throw new Error('Maximum 9 records can be merged at once');
     }
 
     if (conflictPriorityIndex < 0 || conflictPriorityIndex >= ids.length) {

@@ -104,7 +104,8 @@ export const MergeRecordsContainer = ({
     };
 
     fetchPreview();
-  }, [selectedRecords, mergeSettings, mergeManyRecords, upsertRecords]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedRecords, mergeSettings]);
 
   const handleMergeRecords = async () => {
     try {
