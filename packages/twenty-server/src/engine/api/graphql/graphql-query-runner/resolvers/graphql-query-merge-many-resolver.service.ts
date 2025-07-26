@@ -13,6 +13,8 @@ import {
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { MergeManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import {
   GraphqlQueryRunnerException,
@@ -24,6 +26,7 @@ import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.typ
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 type RecordFieldValue =
   | string
@@ -316,25 +319,46 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       objectMetadataMaps.byId,
     )
       .filter(isDefined)
-      .flatMap((metadata) =>
-        Object.values(metadata.fieldsById)
+      .flatMap((metadata) => {
+        const relationFields = Object.values(metadata.fieldsById)
           .filter(isDefined)
+          .filter((field) =>
+            isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION),
+          )
           .filter(
             (field) =>
-              field.type === FieldMetadataType.RELATION &&
               field.relationTargetObjectMetadataId ===
-                objectMetadataItemWithFieldMaps.id &&
-              field.isActive &&
-              !field.isSystem,
-          )
-          .map((field) => ({
-            objectMetadata: metadata,
-            fieldName: field.name,
-            fieldId: field.id,
-          })),
-      );
+                objectMetadataItemWithFieldMaps.id && field.isActive,
+          );
+
+        return relationFields
+          .filter((field) => {
+            const relationSettings =
+              field.settings as FieldMetadataRelationSettings;
+
+            return (
+              relationSettings?.relationType === RelationType.MANY_TO_ONE &&
+              relationSettings?.joinColumnName
+            );
+          })
+          .map((field) => {
+            const relationSettings =
+              field.settings as FieldMetadataRelationSettings;
+
+            return {
+              objectMetadata: metadata,
+              fieldName: field.name,
+              fieldId: field.id,
+              joinColumnName: relationSettings.joinColumnName,
+            };
+          });
+      });
 
     for (const relationField of relationFieldsPointingToCurrentObject) {
+      if (!relationField.joinColumnName) {
+        continue;
+      }
+
       try {
         const repository = executionArgs.workspaceDataSource.getRepository(
           relationField.objectMetadata.nameSingular,
@@ -342,13 +366,20 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
           executionArgs.roleId,
         );
 
-        await repository.update(
-          { [relationField.fieldName]: In(fromIds) },
-          { [relationField.fieldName]: toId },
-        );
+        const whereCondition = { [relationField.joinColumnName]: In(fromIds) };
+
+        const existingRecords = await repository.find({
+          where: whereCondition,
+        });
+
+        if (existingRecords.length > 0) {
+          await repository.update(whereCondition, {
+            [relationField.joinColumnName]: toId,
+          });
+        }
       } catch (error) {
         this.logger.warn(
-          `Failed to migrate relation field "${relationField.fieldName}" in object "${relationField.objectMetadata.nameSingular}":`,
+          `Failed to migrate relation field "${relationField.fieldName}" (${relationField.joinColumnName}) in object "${relationField.objectMetadata.nameSingular}":`,
           error.message,
         );
       }
