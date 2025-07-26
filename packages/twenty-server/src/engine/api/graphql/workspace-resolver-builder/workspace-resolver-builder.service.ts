@@ -23,7 +23,7 @@ export class WorkspaceResolverBuilderService {
       case FindDuplicatesResolverFactory.methodName:
         return isDefined(objectMetadata.duplicateCriteria);
       case MergeManyResolverFactory.methodName:
-        return objectMetadata.nameSingular === 'company';
+        return isDefined(objectMetadata.duplicateCriteria);
       default:
         return true;
     }

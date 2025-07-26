@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -22,7 +24,6 @@ import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.typ
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 type RecordFieldValue =
   | string
@@ -31,54 +32,14 @@ type RecordFieldValue =
   | null
   | Record<string, unknown>;
 
-type RelationMigrationTask = {
-  tableName: string;
-  columnName: string;
-  standardId: string;
-};
-
 @Injectable()
 export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolverService<
   MergeManyResolverArgs,
   ObjectRecord
 > {
-  private readonly RELATION_MIGRATION_TASKS: RelationMigrationTask[] = [
-    {
-      tableName: 'person',
-      columnName: 'companyId',
-      standardId: STANDARD_OBJECT_IDS.person,
-    },
-    {
-      tableName: 'opportunity',
-      columnName: 'companyId',
-      standardId: STANDARD_OBJECT_IDS.opportunity,
-    },
-    {
-      tableName: 'taskTarget',
-      columnName: 'companyId',
-      standardId: STANDARD_OBJECT_IDS.taskTarget,
-    },
-    {
-      tableName: 'noteTarget',
-      columnName: 'companyId',
-      standardId: STANDARD_OBJECT_IDS.noteTarget,
-    },
-    {
-      tableName: 'favorite',
-      columnName: 'companyId',
-      standardId: STANDARD_OBJECT_IDS.favorite,
-    },
-    {
-      tableName: 'attachment',
-      columnName: 'companyId',
-      standardId: STANDARD_OBJECT_IDS.attachment,
-    },
-    {
-      tableName: 'timelineActivity',
-      columnName: 'companyId',
-      standardId: STANDARD_OBJECT_IDS.timelineActivity,
-    },
-  ];
+  private readonly logger = new Logger(
+    GraphqlQueryMergeManyResolverService.name,
+  );
 
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<MergeManyResolverArgs>,
@@ -96,7 +57,11 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       conflictPriorityIndex,
     );
 
-    const mergedData = this.performDeepMerge(recordsToMerge, priorityRecord.id);
+    const mergedData = this.performDeepMerge(
+      recordsToMerge,
+      priorityRecord.id,
+      objectMetadataItemWithFieldMaps,
+    );
 
     if (dryRun) {
       return this.createDryRunResponse(
@@ -182,6 +147,7 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
   private performDeepMerge(
     recordsToMerge: ObjectRecord[],
     priorityRecordId: string,
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
   ): Partial<ObjectRecord> {
     const mergedResult: Partial<ObjectRecord> = {};
 
@@ -190,14 +156,10 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     recordsToMerge.forEach((record) => {
       Object.keys(record).forEach((fieldName) => {
         if (
-          ![
-            'id',
-            'createdAt',
-            'updatedAt',
-            'deletedAt',
-            'searchVector',
-            'position',
-          ].includes(fieldName)
+          !this.shouldExcludeFieldFromMerge(
+            fieldName,
+            objectMetadataItemWithFieldMaps,
+          )
         ) {
           allFieldNames.add(fieldName);
         }
@@ -268,6 +230,21 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     return true;
   }
 
+  private shouldExcludeFieldFromMerge(
+    fieldName: string,
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+  ): boolean {
+    const fieldMetadata = Object.values(
+      objectMetadataItemWithFieldMaps.fieldsById,
+    ).find((field) => field?.name === fieldName);
+
+    if (fieldMetadata?.isSystem) {
+      return true;
+    }
+
+    return false;
+  }
+
   private createDryRunResponse(
     priorityRecord: ObjectRecord,
     mergedData: Partial<ObjectRecord>,
@@ -332,27 +309,49 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     fromIds: string[],
     toId: string,
   ): Promise<void> {
-    const { objectMetadataMaps } = executionArgs.options;
+    const { objectMetadataMaps, objectMetadataItemWithFieldMaps } =
+      executionArgs.options;
 
-    for (const task of this.RELATION_MIGRATION_TASKS) {
-      const metadata = Object.values(objectMetadataMaps.byId).find(
-        (metadata) => metadata?.standardId === task.standardId,
+    const relationFieldsPointingToCurrentObject = Object.values(
+      objectMetadataMaps.byId,
+    )
+      .filter(isDefined)
+      .flatMap((metadata) =>
+        Object.values(metadata.fieldsById)
+          .filter(isDefined)
+          .filter(
+            (field) =>
+              field.type === FieldMetadataType.RELATION &&
+              field.relationTargetObjectMetadataId ===
+                objectMetadataItemWithFieldMaps.id &&
+              field.isActive &&
+              !field.isSystem,
+          )
+          .map((field) => ({
+            objectMetadata: metadata,
+            fieldName: field.name,
+            fieldId: field.id,
+          })),
       );
 
-      if (!metadata) {
-        continue;
+    for (const relationField of relationFieldsPointingToCurrentObject) {
+      try {
+        const repository = executionArgs.workspaceDataSource.getRepository(
+          relationField.objectMetadata.nameSingular,
+          executionArgs.isExecutedByApiKey,
+          executionArgs.roleId,
+        );
+
+        await repository.update(
+          { [relationField.fieldName]: In(fromIds) },
+          { [relationField.fieldName]: toId },
+        );
+      } catch (error) {
+        this.logger.warn(
+          `Failed to migrate relation field "${relationField.fieldName}" in object "${relationField.objectMetadata.nameSingular}":`,
+          error.message,
+        );
       }
-
-      const repository = executionArgs.workspaceDataSource.getRepository(
-        metadata.nameSingular,
-        executionArgs.isExecutedByApiKey,
-        executionArgs.roleId,
-      );
-
-      await repository.update(
-        { [task.columnName]: In(fromIds) },
-        { [task.columnName]: toId },
-      );
     }
   }
 
@@ -403,8 +402,10 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
   ): Promise<void> {
     assertMutationNotOnRemoteObject(options.objectMetadataItemWithFieldMaps);
 
-    if (options.objectMetadataItemWithFieldMaps.nameSingular !== 'company') {
-      throw new Error('Merge is only available for company objects');
+    if (!isDefined(options.objectMetadataItemWithFieldMaps.duplicateCriteria)) {
+      throw new Error(
+        `Merge is only available for objects with duplicate criteria. Object '${options.objectMetadataItemWithFieldMaps.nameSingular}' does not have duplicate criteria defined.`,
+      );
     }
 
     const { ids, conflictPriorityIndex } = args;

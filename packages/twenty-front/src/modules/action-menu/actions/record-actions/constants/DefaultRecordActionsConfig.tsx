@@ -187,7 +187,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     accent: 'default',
     isPinned: false,
     shouldBeRegistered: ({ objectMetadataItem }) =>
-      objectMetadataItem?.nameSingular === CoreObjectNameSingular.Company,
+      isDefined(objectMetadataItem?.duplicateCriteria),
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     component: (
       <ActionOpenSidePanelPage
