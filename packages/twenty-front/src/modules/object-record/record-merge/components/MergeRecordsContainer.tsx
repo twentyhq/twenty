@@ -47,8 +47,6 @@ const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
     isInRightDrawer ? theme.spacing(16) : 0};
 `;
 
-export type MergeTab = 'merge-preview' | 'settings' | string;
-
 type MergeRecordsContainerProps = {
   componentInstanceId: string;
   objectNameSingular: string;
@@ -168,7 +166,6 @@ export const MergeRecordsContainer = ({
         <MergeRecordTab
           objectNameSingular={objectNameSingular}
           recordId={activeTabId || ''}
-          recordIndex={recordIndex}
           isInRightDrawer={isInRightDrawer}
         />
       );

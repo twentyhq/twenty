@@ -1,4 +1,7 @@
 import { useMemo } from 'react';
+
+import { useLingui } from '@lingui/react/macro';
+
 import { IconArrowMerge, IconSettings } from 'twenty-ui/display';
 
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -13,10 +16,12 @@ export const useMergeRecordsContainerTabs = (
   selectedRecords: ObjectRecord[],
   loading: boolean,
 ): { tabs: SingleTabProps[] } => {
+  const { t } = useLingui();
+
   const tabs = useMemo(() => {
     const mergePreviewTab: SingleTabProps = {
       id: MergeRecordsTabId.MERGE_PREVIEW,
-      title: 'Merge preview',
+      title: t`Merge preview`,
       Icon: IconArrowMerge,
       hide: loading,
     };
@@ -32,13 +37,13 @@ export const useMergeRecordsContainerTabs = (
 
     const settingsTab: SingleTabProps = {
       id: MergeRecordsTabId.SETTINGS,
-      title: 'Settings',
+      title: t`Settings`,
       Icon: IconSettings,
       hide: loading,
     };
 
     return [mergePreviewTab, ...recordTabs, settingsTab];
-  }, [selectedRecords, loading]);
+  }, [t, loading, selectedRecords]);
 
   return { tabs };
 };

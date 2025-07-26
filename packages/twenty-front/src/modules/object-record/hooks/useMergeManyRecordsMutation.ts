@@ -44,7 +44,7 @@ export const useMergeManyRecordsMutation = ({
   );
 
   const mergeManyRecordsMutation = gql`
-    mutation merge${capitalizedObjectName}s($ids: [UUID!]!, $conflictPriorityIndex: Int!, $dryRun: Boolean)  {
+    mutation merge${capitalizedObjectName}s($ids: [UUID!]!, $conflictPriorityIndex: Int!, $dryRun: Boolean) {
       ${mutationResponseField}(ids: $ids, conflictPriorityIndex: $conflictPriorityIndex, dryRun: $dryRun) ${mapObjectMetadataToGraphQLQuery(
         {
           objectMetadataItems,

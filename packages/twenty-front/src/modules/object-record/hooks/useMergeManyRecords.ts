@@ -13,7 +13,7 @@ export type MergeManySettings = {
   priorityRecordIndex: number;
 };
 
-export type useMergeManyRecordsProps = {
+export type UseMergeManyRecordsProps = {
   objectNameSingular: string;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
 };
@@ -23,7 +23,7 @@ export const useMergeManyRecords = <
 >({
   objectNameSingular,
   recordGqlFields,
-}: useMergeManyRecordsProps) => {
+}: UseMergeManyRecordsProps) => {
   const apolloCoreClient = useApolloCoreClient();
   const [loading, setLoading] = useState(false);
 

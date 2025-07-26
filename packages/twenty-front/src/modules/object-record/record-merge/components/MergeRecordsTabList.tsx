@@ -16,7 +16,6 @@ const StyledTabList = styled(TabList)`
 
 type MergeRecordsTabListProps = {
   selectedRecords: ObjectRecord[];
-  loading?: boolean;
   componentInstanceId: string;
 };
 
