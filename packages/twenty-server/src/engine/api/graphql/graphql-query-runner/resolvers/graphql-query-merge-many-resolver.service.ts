@@ -292,14 +292,14 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       .returning(columnsToReturn)
       .execute();
 
-    const updatedRecord = updatedObjectRecords.generatedMaps[0] as ObjectRecord;
-
-    if (!updatedRecord) {
+    if (!updatedObjectRecords.generatedMaps.length) {
       throw new GraphqlQueryRunnerException(
         'Failed to update record',
         GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND,
       );
     }
+
+    const updatedRecord = updatedObjectRecords.generatedMaps[0] as ObjectRecord;
 
     return updatedRecord;
   }

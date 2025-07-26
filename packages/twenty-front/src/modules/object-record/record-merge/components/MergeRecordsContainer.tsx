@@ -27,7 +27,6 @@ import { AppPath } from '@/types/AppPath';
 const StyledShowPageRightContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
   justify-content: start;
   width: 100%;
   height: 100%;
@@ -105,8 +104,7 @@ export const MergeRecordsContainer = ({
     };
 
     fetchPreview();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedRecords, mergeSettings]);
+  }, [selectedRecords, mergeSettings, mergeManyRecords, upsertRecords]);
 
   const handleMergeRecords = async () => {
     try {

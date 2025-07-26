@@ -13,10 +13,7 @@ export class WorkspaceResolverBuilderService {
   constructor() {}
 
   shouldBuildResolver(
-    objectMetadata: Pick<
-      ObjectMetadataEntity,
-      'duplicateCriteria' | 'nameSingular'
-    >,
+    objectMetadata: Pick<ObjectMetadataEntity, 'duplicateCriteria'>,
     methodName: WorkspaceResolverBuilderMethodNames,
   ) {
     switch (methodName) {
