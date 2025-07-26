@@ -23,6 +23,7 @@ import { MergeRecordTab } from './MergeRecordTab';
 import { MergeSettingsTab } from './MergeSettingsTab';
 
 import { AppPath } from '@/types/AppPath';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledShowPageRightContainer = styled.div`
   display: flex;
@@ -80,6 +81,7 @@ export const MergeRecordsContainer = ({
 
   const navigate = useNavigateApp();
 
+  const { t } = useLingui();
   const { tabs } = useMergeRecordsContainerTabs(selectedRecords, loading);
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
@@ -118,9 +120,10 @@ export const MergeRecordsContainer = ({
       if (!mergedRecord) {
         throw new Error('Failed to merge records');
       }
+      const recordCount = selectedRecords.length;
 
       enqueueSuccessSnackBar({
-        message: `Successfully merged ${selectedRecords.length} records`,
+        message: t`Successfully merged ${recordCount} records`,
       });
 
       navigate(AppPath.RecordShowPage, {
@@ -129,7 +132,10 @@ export const MergeRecordsContainer = ({
       });
     } catch (error) {
       enqueueErrorSnackBar({
-        message: 'Failed to merge records. Please try again.',
+        message:
+          error instanceof Error
+            ? error.message
+            : 'Failed to merge records. Please try again.',
       });
     }
   };
