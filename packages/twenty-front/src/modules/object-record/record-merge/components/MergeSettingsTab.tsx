@@ -21,7 +21,7 @@ const StyledSection = styled(Section)<{ isInRightDrawer: boolean }>`
 `;
 
 export const MergeSettingsTab = ({
-  isInRightDrawer = false,
+  isInRightDrawer = true,
   selectedRecords,
   mergeSettings,
   onMergeSettingsChange,

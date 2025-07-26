@@ -1,6 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import {
+  MUTATION_MAX_MERGE_RECORDS,
+  QUERY_MAX_RECORDS,
+} from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
@@ -445,8 +448,10 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       throw new Error('At least 2 record IDs are required for merge');
     }
 
-    if (ids.length > 9) {
-      throw new Error('Maximum 9 records can be merged at once');
+    if (ids.length > MUTATION_MAX_MERGE_RECORDS) {
+      throw new Error(
+        `Maximum ${MUTATION_MAX_MERGE_RECORDS} records can be merged at once`,
+      );
     }
 
     if (conflictPriorityIndex < 0 || conflictPriorityIndex >= ids.length) {

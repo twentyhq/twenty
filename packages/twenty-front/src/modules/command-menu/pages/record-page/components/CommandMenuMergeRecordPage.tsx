@@ -63,7 +63,6 @@ export const CommandMenuMergeRecordPage = () => {
                   selectedRecords={selectedRecords}
                   componentInstanceId={commandMenuPageInstanceId}
                   loading={loading}
-                  isInRightDrawer={true}
                 />
               </StyledRightDrawerRecord>
             </ActionMenuComponentInstanceContext.Provider>

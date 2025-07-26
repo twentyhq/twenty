@@ -9,7 +9,7 @@ type MergeRecordTabProps = {
 };
 
 export const MergeRecordTab = ({
-  isInRightDrawer = false,
+  isInRightDrawer = true,
   objectNameSingular,
   recordId,
 }: MergeRecordTabProps) => {

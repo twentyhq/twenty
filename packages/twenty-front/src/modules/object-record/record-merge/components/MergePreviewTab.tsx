@@ -21,7 +21,7 @@ type MergePreviewTabProps = {
 };
 
 export const MergePreviewTab = ({
-  isInRightDrawer = false,
+  isInRightDrawer = true,
   objectNameSingular,
   mergedPreviewRecord,
   isGeneratingPreview = false,

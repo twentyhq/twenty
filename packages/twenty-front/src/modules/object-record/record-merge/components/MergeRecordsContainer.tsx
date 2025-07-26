@@ -39,12 +39,11 @@ const StyledTabList = styled(TabList)`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
+const StyledContentContainer = styled.div`
   flex: 1;
   overflow-y: auto;
   background: ${({ theme }) => theme.background.primary};
-  padding-bottom: ${({ theme, isInRightDrawer }) =>
-    isInRightDrawer ? theme.spacing(16) : 0};
+  padding-bottom: ${({ theme }) => theme.spacing(16)};
 `;
 
 type MergeRecordsContainerProps = {
@@ -52,7 +51,6 @@ type MergeRecordsContainerProps = {
   objectNameSingular: string;
   selectedRecords: ObjectRecord[];
   loading?: boolean;
-  isInRightDrawer?: boolean;
 };
 
 export const MergeRecordsContainer = ({
@@ -60,7 +58,6 @@ export const MergeRecordsContainer = ({
   objectNameSingular,
   selectedRecords,
   loading = false,
-  isInRightDrawer = false,
 }: MergeRecordsContainerProps) => {
   const mergeSettings = useRecoilValue(mergeSettingsState);
   const setMergeSettings = useSetRecoilState(mergeSettingsState);
@@ -140,47 +137,8 @@ export const MergeRecordsContainer = ({
     }
   };
 
-  const renderTabContent = () => {
-    if (activeTabId === MergeRecordsTabId.MERGE_PREVIEW) {
-      return (
-        <MergePreviewTab
-          objectNameSingular={objectNameSingular}
-          mergedPreviewRecord={mergePreviewRecord}
-          isGeneratingPreview={isGeneratingPreview}
-          isInRightDrawer={isInRightDrawer}
-        />
-      );
-    }
-
-    if (activeTabId === MergeRecordsTabId.SETTINGS) {
-      return (
-        <MergeSettingsTab
-          selectedRecords={selectedRecords}
-          mergeSettings={mergeSettings}
-          onMergeSettingsChange={setMergeSettings}
-          isInRightDrawer={isInRightDrawer}
-        />
-      );
-    }
-
-    const recordIndex = selectedRecords.findIndex(
-      (record) => record.id === activeTabId,
-    );
-    if (recordIndex !== -1) {
-      return (
-        <MergeRecordTab
-          objectNameSingular={objectNameSingular}
-          recordId={activeTabId || ''}
-          isInRightDrawer={isInRightDrawer}
-        />
-      );
-    }
-
-    return null;
-  };
-
   return (
-    <RightDrawerProvider value={{ isInRightDrawer }}>
+    <RightDrawerProvider value={{ isInRightDrawer: true }}>
       <ShowPageContainer>
         <StyledShowPageRightContainer>
           <TabListComponentInstanceContext.Provider
@@ -193,8 +151,27 @@ export const MergeRecordsContainer = ({
               loading={loading}
             />
           </TabListComponentInstanceContext.Provider>
-          <StyledContentContainer isInRightDrawer={isInRightDrawer}>
-            {renderTabContent()}
+          <StyledContentContainer>
+            {activeTabId === MergeRecordsTabId.MERGE_PREVIEW && (
+              <MergePreviewTab
+                objectNameSingular={objectNameSingular}
+                mergedPreviewRecord={mergePreviewRecord}
+                isGeneratingPreview={isGeneratingPreview}
+              />
+            )}
+            {activeTabId === MergeRecordsTabId.SETTINGS && (
+              <MergeSettingsTab
+                selectedRecords={selectedRecords}
+                mergeSettings={mergeSettings}
+                onMergeSettingsChange={setMergeSettings}
+              />
+            )}
+            {selectedRecords.some((record) => record.id === activeTabId) && (
+              <MergeRecordTab
+                objectNameSingular={objectNameSingular}
+                recordId={activeTabId || ''}
+              />
+            )}
           </StyledContentContainer>
           <MergeRecordsFooter
             onMerge={handleMergeRecords}
