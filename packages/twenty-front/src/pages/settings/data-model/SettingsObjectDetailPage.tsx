@@ -17,7 +17,10 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { OBJECT_FIELD_ROW_ID_PREFIX } from '@/settings/data-model/constants/ObjectFieldTowIDPrefix';
+import { lastVisitedObjectFieldState } from '@/settings/data-model/states/lastVisitedObjectFieldState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { ScrollRestoreEffect } from '@/ui/utilities/scroll/components/ScrollRestoreEffect';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -138,6 +141,10 @@ export const SettingsObjectDetailPage = () => {
 
   return (
     <>
+      <ScrollRestoreEffect
+        lastVisitedItemState={lastVisitedObjectFieldState}
+        idPrefix={OBJECT_FIELD_ROW_ID_PREFIX}
+      />
       <SubMenuTopBarContainer
         title={
           <StyledTitleContainer>

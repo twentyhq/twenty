@@ -3,12 +3,14 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { DATA_MODEL_OBJECT_ROW_ID_PREFIX } from '@/settings/data-model/constants/DataModelObjectRowIDPrefix';
 import {
   SettingsObjectMetadataItemTableRow,
   StyledObjectTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
 import { SettingsObjectCoverImage } from '@/settings/data-model/objects/components/SettingsObjectCoverImage';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
+import { lastVisitedDataModelObjectState } from '@/settings/data-model/states/lastVisitedDataModelObjectState';
 import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -18,6 +20,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
+import { ScrollRestoreEffect } from '@/ui/utilities/scroll/components/ScrollRestoreEffect';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -143,124 +146,130 @@ export const SettingsObjects = () => {
   );
 
   return (
-    <SubMenuTopBarContainer
-      title={t`Data model`}
-      actionButton={
-        <UndecoratedLink to={getSettingsPath(SettingsPath.NewObject)}>
-          <Button
-            Icon={IconPlus}
-            title={t`Add object`}
-            accent="blue"
-            size="small"
-          />
-        </UndecoratedLink>
-      }
-      links={[
-        {
-          children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
-        },
-        { children: <Trans>Objects</Trans> },
-      ]}
-    >
-      <SettingsPageContainer>
-        <>
-          <SettingsObjectCoverImage />
-          <Section>
-            <H2Title title={t`Existing objects`} />
-
-            <StyledSearchInput
-              instanceId="settings-objects-search"
-              LeftIcon={IconSearch}
-              placeholder={t`Search for an object...`}
-              value={searchTerm}
-              onChange={setSearchTerm}
+    <>
+      <ScrollRestoreEffect
+        lastVisitedItemState={lastVisitedDataModelObjectState}
+        idPrefix={DATA_MODEL_OBJECT_ROW_ID_PREFIX}
+      />
+      <SubMenuTopBarContainer
+        title={t`Data model`}
+        actionButton={
+          <UndecoratedLink to={getSettingsPath(SettingsPath.NewObject)}>
+            <Button
+              Icon={IconPlus}
+              title={t`Add object`}
+              accent="blue"
+              size="small"
             />
+          </UndecoratedLink>
+        }
+        links={[
+          {
+            children: <Trans>Workspace</Trans>,
+            href: getSettingsPath(SettingsPath.Workspace),
+          },
+          { children: <Trans>Objects</Trans> },
+        ]}
+      >
+        <SettingsPageContainer>
+          <>
+            <SettingsObjectCoverImage />
+            <Section>
+              <H2Title title={t`Existing objects`} />
 
-            <Table>
-              <StyledObjectTableRow>
-                {GET_SETTINGS_OBJECT_TABLE_METADATA.fields.map(
-                  (settingsObjectsTableMetadataField) => (
-                    <SortableTableHeader
-                      key={settingsObjectsTableMetadataField.fieldName}
-                      fieldName={settingsObjectsTableMetadataField.fieldName}
-                      label={t(settingsObjectsTableMetadataField.fieldLabel)}
-                      tableId={GET_SETTINGS_OBJECT_TABLE_METADATA.tableId}
-                      align={settingsObjectsTableMetadataField.align}
-                      initialSort={
-                        GET_SETTINGS_OBJECT_TABLE_METADATA.initialSort
-                      }
-                    />
-                  ),
+              <StyledSearchInput
+                instanceId="settings-objects-search"
+                LeftIcon={IconSearch}
+                placeholder={t`Search for an object...`}
+                value={searchTerm}
+                onChange={setSearchTerm}
+              />
+
+              <Table>
+                <StyledObjectTableRow>
+                  {GET_SETTINGS_OBJECT_TABLE_METADATA.fields.map(
+                    (settingsObjectsTableMetadataField) => (
+                      <SortableTableHeader
+                        key={settingsObjectsTableMetadataField.fieldName}
+                        fieldName={settingsObjectsTableMetadataField.fieldName}
+                        label={t(settingsObjectsTableMetadataField.fieldLabel)}
+                        tableId={GET_SETTINGS_OBJECT_TABLE_METADATA.tableId}
+                        align={settingsObjectsTableMetadataField.align}
+                        initialSort={
+                          GET_SETTINGS_OBJECT_TABLE_METADATA.initialSort
+                        }
+                      />
+                    ),
+                  )}
+                  <TableHeader></TableHeader>
+                </StyledObjectTableRow>
+                {isNonEmptyArray(sortedActiveObjectSettingsItems) && (
+                  <TableSection title={t`Active`}>
+                    {filteredActiveObjectSettingsItems.map(
+                      (objectSettingsItem) => (
+                        <SettingsObjectMetadataItemTableRow
+                          key={objectSettingsItem.objectMetadataItem.namePlural}
+                          objectMetadataItem={
+                            objectSettingsItem.objectMetadataItem
+                          }
+                          totalObjectCount={objectSettingsItem.totalObjectCount}
+                          action={
+                            <StyledIconChevronRight
+                              size={theme.icon.size.md}
+                              stroke={theme.icon.stroke.sm}
+                            />
+                          }
+                          link={getSettingsPath(SettingsPath.ObjectDetail, {
+                            objectNamePlural:
+                              objectSettingsItem.objectMetadataItem.namePlural,
+                          })}
+                        />
+                      ),
+                    )}
+                  </TableSection>
                 )}
-                <TableHeader></TableHeader>
-              </StyledObjectTableRow>
-              {isNonEmptyArray(sortedActiveObjectSettingsItems) && (
-                <TableSection title={t`Active`}>
-                  {filteredActiveObjectSettingsItems.map(
-                    (objectSettingsItem) => (
-                      <SettingsObjectMetadataItemTableRow
-                        key={objectSettingsItem.objectMetadataItem.namePlural}
-                        objectMetadataItem={
-                          objectSettingsItem.objectMetadataItem
-                        }
-                        totalObjectCount={objectSettingsItem.totalObjectCount}
-                        action={
-                          <StyledIconChevronRight
-                            size={theme.icon.size.md}
-                            stroke={theme.icon.stroke.sm}
-                          />
-                        }
-                        link={getSettingsPath(SettingsPath.ObjectDetail, {
-                          objectNamePlural:
-                            objectSettingsItem.objectMetadataItem.namePlural,
-                        })}
-                      />
-                    ),
-                  )}
-                </TableSection>
-              )}
-              {isNonEmptyArray(inactiveNonSystemObjectMetadataItems) && (
-                <TableSection title={t`Inactive`}>
-                  {filteredInactiveObjectSettingsItems.map(
-                    (objectSettingsItem) => (
-                      <SettingsObjectMetadataItemTableRow
-                        key={objectSettingsItem.objectMetadataItem.namePlural}
-                        objectMetadataItem={
-                          objectSettingsItem.objectMetadataItem
-                        }
-                        totalObjectCount={objectSettingsItem.totalObjectCount}
-                        action={
-                          <SettingsObjectInactiveMenuDropDown
-                            isCustomObject={
-                              objectSettingsItem.objectMetadataItem.isCustom
-                            }
-                            scopeKey={
-                              objectSettingsItem.objectMetadataItem.namePlural
-                            }
-                            onActivate={() =>
-                              updateOneObjectMetadataItem({
-                                idToUpdate:
+                {isNonEmptyArray(inactiveNonSystemObjectMetadataItems) && (
+                  <TableSection title={t`Inactive`}>
+                    {filteredInactiveObjectSettingsItems.map(
+                      (objectSettingsItem) => (
+                        <SettingsObjectMetadataItemTableRow
+                          key={objectSettingsItem.objectMetadataItem.namePlural}
+                          objectMetadataItem={
+                            objectSettingsItem.objectMetadataItem
+                          }
+                          totalObjectCount={objectSettingsItem.totalObjectCount}
+                          action={
+                            <SettingsObjectInactiveMenuDropDown
+                              isCustomObject={
+                                objectSettingsItem.objectMetadataItem.isCustom
+                              }
+                              scopeKey={
+                                objectSettingsItem.objectMetadataItem.namePlural
+                              }
+                              onActivate={() =>
+                                updateOneObjectMetadataItem({
+                                  idToUpdate:
+                                    objectSettingsItem.objectMetadataItem.id,
+                                  updatePayload: { isActive: true },
+                                })
+                              }
+                              onDelete={() =>
+                                deleteOneObjectMetadataItem(
                                   objectSettingsItem.objectMetadataItem.id,
-                                updatePayload: { isActive: true },
-                              })
-                            }
-                            onDelete={() =>
-                              deleteOneObjectMetadataItem(
-                                objectSettingsItem.objectMetadataItem.id,
-                              )
-                            }
-                          />
-                        }
-                      />
-                    ),
-                  )}
-                </TableSection>
-              )}
-            </Table>
-          </Section>
-        </>
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+                                )
+                              }
+                            />
+                          }
+                        />
+                      ),
+                    )}
+                  </TableSection>
+                )}
+              </Table>
+            </Section>
+          </>
+        </SettingsPageContainer>
+      </SubMenuTopBarContainer>
+    </>
   );
 };
