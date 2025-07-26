@@ -11,12 +11,12 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
 import { mergeSettingsState } from '@/object-record/record-merge/states/mergeSettingsState';
 import { MergeRecordsTabId } from '@/object-record/record-merge/types/MergeRecordsTabId';
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useMergeRecordsContainerTabs } from '../hooks/useMergeRecordsContainerTabs';
+import { MergePreviewEffect } from './MergePreviewEffect';
 import { MergePreviewTab } from './MergePreviewTab';
 import { MergeRecordsFooter } from './MergeRecordsFooter';
 import { MergeRecordTab } from './MergeRecordTab';
@@ -74,37 +74,12 @@ export const MergeRecordsContainer = ({
   const { mergeManyRecords, loading: isMerging } = useMergeManyRecords({
     objectNameSingular,
   });
-  const { upsertRecords } = useUpsertRecordsInStore();
 
   const navigate = useNavigateApp();
 
   const { t } = useLingui();
   const { tabs } = useMergeRecordsContainerTabs(selectedRecords, loading);
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-
-  useEffect(() => {
-    const fetchPreview = async () => {
-      setIsGeneratingPreview(true);
-      try {
-        const mergePreviewRecord = await mergeManyRecords({
-          recordIds: selectedRecords.map((record) => record.id),
-          mergeSettings,
-          preview: true,
-        });
-        if (!mergePreviewRecord) return;
-
-        setMergePreviewRecord(mergePreviewRecord);
-        upsertRecords([mergePreviewRecord]);
-      } catch (error) {
-        setMergePreviewRecord(null);
-      } finally {
-        setIsGeneratingPreview(false);
-      }
-    };
-
-    fetchPreview();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedRecords, mergeSettings]);
 
   const handleMergeRecords = async () => {
     try {
@@ -141,6 +116,13 @@ export const MergeRecordsContainer = ({
     <RightDrawerProvider value={{ isInRightDrawer: true }}>
       <ShowPageContainer>
         <StyledShowPageRightContainer>
+          <MergePreviewEffect
+            objectNameSingular={objectNameSingular}
+            selectedRecords={selectedRecords}
+            mergeSettings={mergeSettings}
+            onMergePreviewRecordChange={setMergePreviewRecord}
+            onIsGeneratingPreviewChange={setIsGeneratingPreview}
+          />
           <TabListComponentInstanceContext.Provider
             value={{ instanceId: componentInstanceId }}
           >
