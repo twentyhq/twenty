@@ -11,7 +11,6 @@ import { StepStatus } from 'twenty-shared/workflow';
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
-import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
@@ -62,7 +61,6 @@ export class WorkflowVersionStepWorkspaceService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
-    private readonly agentChatService: AgentChatService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
@@ -80,10 +78,12 @@ export class WorkflowVersionStepWorkspaceService {
       type: stepType,
       workspaceId,
     });
+
     const enrichedNewStep = await this.enrichOutputSchema({
       step: newStep,
       workspaceId,
     });
+
     const workflowVersionRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
         workspaceId,
@@ -108,14 +108,18 @@ export class WorkflowVersionStepWorkspaceService {
 
     const existingSteps = workflowVersion.steps || [];
 
-    const { updatedSteps, updatedInsertedStep } = insertStep({
+    const existingTrigger = workflowVersion.trigger;
+
+    const { updatedSteps, updatedInsertedStep, updatedTrigger } = insertStep({
       existingSteps,
+      existingTrigger,
       insertedStep: enrichedNewStep,
       parentStepId,
       nextStepId,
     });
 
     await workflowVersionRepository.update(workflowVersion.id, {
+      trigger: updatedTrigger,
       steps: updatedSteps,
     });
 
