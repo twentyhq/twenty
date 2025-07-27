@@ -21,14 +21,6 @@ const StyledIconButtonGroup = styled(IconButtonGroup)`
   pointer-events: all;
 `;
 
-const StyledHoverZone = styled.div`
-  position: absolute;
-  width: 48px;
-  height: 52px;
-  transform: translate(-13px, -16px);
-  background: transparent;
-`;
-
 type WorkflowDiagramFilteringDisabledEdgeEditableProps =
   EdgeProps<WorkflowDiagramEdge>;
 
@@ -88,24 +80,23 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <WorkflowDiagramEdgeV2VisibilityContainer shouldDisplay>
-            <StyledHoverZone />
-            {(hovered || isSelected) && (
-              <StyledIconButtonGroup
-                className="nodrag nopan"
-                iconButtons={[
-                  {
-                    Icon: IconPlus,
-                    onClick: () => {
-                      startNodeCreation({
-                        parentStepId: source,
-                        nextStepId: target,
-                      });
-                    },
+          <WorkflowDiagramEdgeV2VisibilityContainer
+            shouldDisplay={hovered || isSelected}
+          >
+            <StyledIconButtonGroup
+              className="nodrag nopan"
+              iconButtons={[
+                {
+                  Icon: IconPlus,
+                  onClick: () => {
+                    startNodeCreation({
+                      parentStepId: source,
+                      nextStepId: target,
+                    });
                   },
-                ]}
-              />
-            )}
+                },
+              ]}
+            />
           </WorkflowDiagramEdgeV2VisibilityContainer>
         </WorkflowDiagramEdgeV2Container>
       </EdgeLabelRenderer>
