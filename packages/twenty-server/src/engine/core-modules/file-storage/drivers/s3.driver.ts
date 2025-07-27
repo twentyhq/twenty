@@ -42,8 +42,12 @@ export class S3Driver implements StorageDriver {
   constructor(options: S3DriverOptions) {
     const { bucketName, region, endpoint, ...s3Options } = options;
 
-    if (!bucketName || !region) {
-      return;
+    if (!bucketName) {
+      throw new Error('S3Driver requires a bucketName and region');
+    }
+
+    if (!region) {
+      throw new Error('S3Driver requires a region');
     }
 
     this.s3Client = new S3({ ...s3Options, region, endpoint });
