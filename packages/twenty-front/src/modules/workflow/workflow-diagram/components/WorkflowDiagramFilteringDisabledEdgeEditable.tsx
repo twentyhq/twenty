@@ -14,16 +14,11 @@ import {
 import { useState } from 'react';
 import { IconPlus } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
+import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
+import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
 
 const StyledIconButtonGroup = styled(IconButtonGroup)`
   pointer-events: all;
-`;
-
-const StyledContainer = styled.div<{
-  labelY?: number;
-}>`
-  position: absolute;
-  transform: ${({ labelY }) => `translate(${21}px, ${(labelY || 0) - 14}px)`};
 `;
 
 const StyledHoverZone = styled.div`
@@ -32,11 +27,6 @@ const StyledHoverZone = styled.div`
   height: 52px;
   transform: translate(-13px, -16px);
   background: transparent;
-`;
-
-const StyledWrapper = styled.div`
-  pointer-events: all;
-  position: relative;
 `;
 
 type WorkflowDiagramFilteringDisabledEdgeEditableProps =
@@ -54,7 +44,7 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
 }: WorkflowDiagramFilteringDisabledEdgeEditableProps) => {
   const theme = useTheme();
 
-  const [edgePath, , labelY] = getBezierPath({
+  const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
     sourceY,
     targetX,
@@ -62,6 +52,14 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
   });
 
   const [hovered, setHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setHovered(false);
+  };
 
   const { startNodeCreation } = useStartNodeCreation();
 
@@ -83,14 +81,14 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
       />
 
       <EdgeLabelRenderer>
-        <StyledContainer
-          labelY={labelY}
+        <WorkflowDiagramEdgeV2Container
           data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
+          labelX={labelX}
+          labelY={labelY}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
-          <StyledWrapper
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-          >
+          <WorkflowDiagramEdgeV2VisibilityContainer shouldDisplay>
             <StyledHoverZone />
             {(hovered || isSelected) && (
               <StyledIconButtonGroup
@@ -108,8 +106,8 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
                 ]}
               />
             )}
-          </StyledWrapper>
-        </StyledContainer>
+          </WorkflowDiagramEdgeV2VisibilityContainer>
+        </WorkflowDiagramEdgeV2Container>
       </EdgeLabelRenderer>
     </>
   );
