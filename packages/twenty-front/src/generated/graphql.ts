@@ -1185,6 +1185,7 @@ export type Mutation = {
   trackAnalytics: Analytics;
   updateApiKey?: Maybe<ApiKey>;
   updateDatabaseConfigVariable: Scalars['Boolean'];
+  updateDraftWorkflowVersionPositions: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneAgent: Agent;
   updateOneField: Field;
@@ -1600,6 +1601,11 @@ export type MutationUpdateApiKeyArgs = {
 export type MutationUpdateDatabaseConfigVariableArgs = {
   key: Scalars['String'];
   value: Scalars['JSON'];
+};
+
+
+export type MutationUpdateDraftWorkflowVersionPositionsArgs = {
+  input: UpdateDraftWorkflowVersionPositionsInput;
 };
 
 
@@ -2621,6 +2627,13 @@ export type UpdateApiKeyDto = {
   revokedAt?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateDraftWorkflowVersionPositionsInput = {
+  /** Workflow version updated positions */
+  positions: Array<WorkflowStepPositionUpdateInput>;
+  /** Workflow version ID */
+  workflowVersionId: Scalars['String'];
+};
+
 export type UpdateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
@@ -2895,6 +2908,17 @@ export type WorkflowStepPosition = {
   __typename?: 'WorkflowStepPosition';
   x: Scalars['Float'];
   y: Scalars['Float'];
+};
+
+export type WorkflowStepPositionInput = {
+  x: Scalars['Float'];
+  y: Scalars['Float'];
+};
+
+export type WorkflowStepPositionUpdateInput = {
+  /** Step or trigger ID */
+  id: Scalars['String'];
+  position: WorkflowStepPositionInput;
 };
 
 export type WorkflowVersion = {

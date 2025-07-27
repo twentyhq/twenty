@@ -17,6 +17,7 @@ import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/
 import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-step/workflow-version-step.workspace-service';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { WorkflowStepPositionUpdateInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-update-input.dto';
 
 @Injectable()
 export class WorkflowVersionWorkspaceService {
@@ -111,5 +112,62 @@ export class WorkflowVersionWorkspaceService {
     });
 
     return draftWorkflowVersion.id;
+  }
+
+  async updateDraftWorkflowVersionPositions({
+    workflowVersionId,
+    positions,
+    workspaceId,
+  }: {
+    workflowVersionId: string;
+    positions: WorkflowStepPositionUpdateInput[];
+    workspaceId: string;
+  }) {
+    const workflowVersionRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
+        'workflowVersion',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const workflowVersion = await workflowVersionRepository.findOneOrFail({
+      where: {
+        id: workflowVersionId,
+      },
+    });
+
+    assertWorkflowVersionIsDraft(workflowVersion);
+
+    const triggerPosition = positions.find(
+      (position) => position.id === 'trigger',
+    );
+
+    const updatedTrigger =
+      isDefined(triggerPosition) && isDefined(workflowVersion.trigger)
+        ? {
+            ...workflowVersion.trigger,
+            position: triggerPosition.position,
+          }
+        : undefined;
+
+    const updatedSteps = workflowVersion.steps?.map((step) => {
+      const updatedStep = positions.find((position) => position.id === step.id);
+
+      if (updatedStep) {
+        return {
+          ...step,
+          position: updatedStep.position,
+        };
+      }
+
+      return step;
+    });
+
+    const updatePayload = {
+      ...(!isDefined(updatedTrigger) ? {} : { trigger: updatedTrigger }),
+      ...(!isDefined(updatedSteps) ? {} : { steps: updatedSteps }),
+    };
+
+    await workflowVersionRepository.update(workflowVersionId, updatePayload);
   }
 }
