@@ -576,7 +576,7 @@ export type CreateWorkflowVersionStepInput = {
   /** Next step ID */
   nextStepId?: InputMaybe<Scalars['String']>;
   /** Parent step ID */
-  parentStepId?: InputMaybe<Scalars['String']>;
+  parentStepId: Scalars['String'];
   /** New step type */
   stepType: Scalars['String'];
   /** Workflow version ID */
