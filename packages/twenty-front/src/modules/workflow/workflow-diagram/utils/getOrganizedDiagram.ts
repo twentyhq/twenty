@@ -7,15 +7,10 @@ export const getOrganizedDiagram = (
   const graph = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
   graph.setGraph({ rankdir: 'TB' });
 
-  const biggestNodeWidth = diagram.nodes.reduce(
-    (acc, node) => Math.max(acc, node.measured?.width ?? 0),
-    0,
-  );
-
   diagram.edges.forEach((edge) => graph.setEdge(edge.source, edge.target));
   diagram.nodes.forEach((node) =>
     graph.setNode(node.id, {
-      width: biggestNodeWidth,
+      width: node.measured?.width ?? 0,
       height: node.measured?.height ?? 0,
     }),
   );

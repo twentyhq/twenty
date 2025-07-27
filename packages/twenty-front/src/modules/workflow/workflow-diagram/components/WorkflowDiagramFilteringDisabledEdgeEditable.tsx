@@ -12,7 +12,7 @@ import {
   getBezierPath,
 } from '@xyflow/react';
 import { useState } from 'react';
-import { IconPlus } from 'twenty-ui/display';
+import { IconPlus, IconReorder } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
@@ -36,6 +36,10 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
 }: WorkflowDiagramFilteringDisabledEdgeEditableProps) => {
   const theme = useTheme();
 
+  const workflowInsertStepIds = useRecoilComponentValueV2(
+    workflowInsertStepIdsComponentState,
+  );
+
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
     sourceY,
@@ -54,10 +58,6 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
   };
 
   const { startNodeCreation } = useStartNodeCreation();
-
-  const workflowInsertStepIds = useRecoilComponentValueV2(
-    workflowInsertStepIdsComponentState,
-  );
 
   const isSelected =
     workflowInsertStepIds.parentStepId === source &&

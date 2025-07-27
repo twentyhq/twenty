@@ -22,7 +22,6 @@ import {
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { workflowDiagramRightClickMenuState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuState';
-import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 
 export const WorkflowDiagramCanvasEditable = ({
@@ -117,8 +116,6 @@ export const WorkflowDiagramCanvasEditable = ({
 
   return (
     <ReactFlowProvider>
-      <WorkflowDiagramRightClickCommandMenu />
-
       <WorkflowDiagramCanvasBase
         nodeTypes={{
           default: WorkflowDiagramStepNodeEditable,

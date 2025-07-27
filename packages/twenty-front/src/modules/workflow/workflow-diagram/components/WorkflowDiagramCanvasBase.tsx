@@ -37,11 +37,19 @@ import {
   OnBeforeDelete,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
 import { THEME_COMMON } from 'twenty-ui/theme';
+import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -401,19 +409,20 @@ export const WorkflowDiagramCanvasBase = ({
     return false;
   };
 
-  const onPaneContextMenu = (
-    event: MouseEvent | React.MouseEvent<Element, MouseEvent>,
-  ) => {
-    event.preventDefault();
+  const onPaneContextMenu = useCallback(
+    (event: MouseEvent | React.MouseEvent<Element, MouseEvent>) => {
+      event.preventDefault();
 
-    const bounds = containerRef.current?.getBoundingClientRect();
-    if (!bounds) return;
+      const bounds = containerRef.current?.getBoundingClientRect();
+      if (!bounds) return;
 
-    const x = event.clientX - bounds.left;
-    const y = event.clientY - bounds.top;
+      const x = event.clientX - bounds.left;
+      const y = event.clientY - bounds.top;
 
-    handlePaneContextMenu?.({ x, y, event });
-  };
+      handlePaneContextMenu?.({ x, y, event });
+    },
+    [handlePaneContextMenu],
+  );
 
   return (
     <StyledResetReactflowStyles ref={containerRef}>
@@ -447,6 +456,10 @@ export const WorkflowDiagramCanvasBase = ({
 
         {children}
       </ReactFlow>
+
+      {isDefined(handlePaneContextMenu) && (
+        <WorkflowDiagramRightClickCommandMenu />
+      )}
 
       <StyledStatusTagContainer data-testid={tagContainerTestId}>
         <Tag color={tagColor} text={tagText} />
