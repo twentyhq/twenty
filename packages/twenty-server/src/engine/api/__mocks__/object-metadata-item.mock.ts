@@ -131,7 +131,6 @@ export const fieldRelationMock = getMockFieldMetadataEntity({
   type: FieldMetadataType.RELATION,
   label: 'Field Relation',
   isNullable: true,
-  defaultValue: null,
   settings: {
     relationType: RelationType.MANY_TO_ONE,
     joinColumnName: 'fieldRelationId',

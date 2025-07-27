@@ -1,0 +1,5 @@
+export const TOOL_PERMISSION_FLAGS = [
+  'SEND_EMAIL_TOOL',
+  'IMPORT_CSV',
+  'EXPORT_CSV',
+];

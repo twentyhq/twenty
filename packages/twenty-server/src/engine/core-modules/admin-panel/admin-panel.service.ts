@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import semver from 'semver';
 import { Repository } from 'typeorm';
+import * as z from 'zod';
 
 import { ConfigVariable } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
 import { ConfigVariablesGroupData } from 'src/engine/core-modules/admin-panel/dtos/config-variables-group.dto';
@@ -199,23 +200,25 @@ export class AdminPanelService {
     const currentVersion = this.twentyConfigService.get('APP_VERSION');
 
     try {
-      const response = await axios.get(
+      const rawResponse = await axios.get<unknown>(
         'https://hub.docker.com/v2/repositories/twentycrm/twenty/tags?page_size=100',
       );
+      const response = z
+        .object({
+          data: z.object({
+            results: z.array(z.object({ name: z.string() })),
+          }),
+        })
+        .parse(rawResponse);
 
       const versions = response.data.results
-        // @ts-expect-error legacy noImplicitAny
-        .filter((tag) => tag && tag.name !== 'latest')
-        // @ts-expect-error legacy noImplicitAny
-        .map((tag) => semver.coerce(tag.name)?.version)
-        // @ts-expect-error legacy noImplicitAny
-        .filter((version) => version !== undefined);
+        .map((tag) => tag.name)
+        .filter((name) => name !== 'latest' && semver.valid(name));
 
       if (versions.length === 0) {
         return { currentVersion, latestVersion: 'latest' };
       }
 
-      // @ts-expect-error legacy noImplicitAny
       versions.sort((a, b) => semver.compare(b, a));
       const latestVersion = versions[0];
 

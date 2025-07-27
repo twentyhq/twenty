@@ -7,7 +7,6 @@ import {
   objectMetadataMapItemMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { FilterInputFactory } from 'src/engine/api/rest/input-factories/filter-input.factory';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
@@ -27,7 +26,7 @@ describe('FilterInputFactory', () => {
     isLabelSyncedWithName: true,
     createdAt: new Date(),
     updatedAt: new Date(),
-  }) as FieldMetadataEntity;
+  });
 
   const completeFieldTextMock = getMockFieldMetadataEntity({
     workspaceId,
@@ -41,7 +40,7 @@ describe('FilterInputFactory', () => {
     isLabelSyncedWithName: true,
     createdAt: new Date(),
     updatedAt: new Date(),
-  }) as FieldMetadataEntity;
+  });
 
   const completeFieldCurrencyMock = getMockFieldMetadataEntity({
     workspaceId,
@@ -55,7 +54,7 @@ describe('FilterInputFactory', () => {
     isLabelSyncedWithName: true,
     createdAt: new Date(),
     updatedAt: new Date(),
-  }) as FieldMetadataEntity;
+  });
 
   const fieldsById: FieldMetadataMap = {
     'field-number-id': completeFieldNumberMock,

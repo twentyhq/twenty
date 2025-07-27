@@ -26,6 +26,7 @@ import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { extractFolderPathAndFilename } from 'src/engine/core-modules/file/utils/extract-folderpath-and-filename.utils';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   AgentChatMessageEntity,
   AgentChatMessageRole,
@@ -33,23 +34,19 @@ import {
 import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
+import { RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
 import { convertOutputSchemaToZod } from 'src/engine/metadata-modules/agent/utils/convert-output-schema-to-zod';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
-import { AgentException, AgentExceptionCode } from './agent.exception';
 import { AgentEntity } from './agent.entity';
+import { AgentException, AgentExceptionCode } from './agent.exception';
 
 export interface AgentExecutionResult {
-  result: {
-    textResponse: string;
-    structuredOutput?: object;
-  };
+  result: object;
   usage: {
     promptTokens: number;
     completionTokens: number;
@@ -377,7 +374,7 @@ export class AgentExecutionService {
 
       if (Object.keys(schema).length === 0) {
         return {
-          result: { textResponse: textResponse.text },
+          result: { response: textResponse.text },
           usage: textResponse.usage,
         };
       }
@@ -393,10 +390,7 @@ export class AgentExecutionService {
       });
 
       return {
-        result: {
-          textResponse: textResponse.text,
-          structuredOutput: output.object,
-        },
+        result: output.object,
         usage: {
           promptTokens:
             (textResponse.usage?.promptTokens ?? 0) +

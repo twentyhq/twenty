@@ -22,6 +22,14 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
         'https://twenty.com/images/lab/is-imap-smtp-caldav-enabled.png',
     },
   },
+  {
+    key: FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_ENABLED,
+    metadata: {
+      label: 'Two Factor Authentication',
+      description: 'Enable two-factor authentication for your workspace',
+      imagePath: '',
+    },
+  },
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
         // {

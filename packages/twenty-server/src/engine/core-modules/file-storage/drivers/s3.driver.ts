@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import fs from 'fs';
 import { mkdir } from 'fs/promises';
 import { join } from 'path';
@@ -37,6 +39,7 @@ export interface S3DriverOptions {
 export class S3Driver implements StorageDriver {
   private s3Client: S3;
   private bucketName: string;
+  private readonly logger = new Logger(S3Driver.name);
 
   constructor(options: S3DriverOptions) {
     const { bucketName, region, endpoint, credentials, forcePathStyle } = options;
@@ -80,6 +83,8 @@ export class S3Driver implements StorageDriver {
 
   // @ts-expect-error legacy noImplicitAny
   private async emptyS3Directory(folderPath) {
+    this.logger.log(`${folderPath} - emptying folder`);
+
     const listParams = {
       Bucket: this.bucketName,
       Prefix: folderPath,
@@ -87,6 +92,13 @@ export class S3Driver implements StorageDriver {
 
     const listObjectsCommand = new ListObjectsV2Command(listParams);
     const listedObjects = await this.s3Client.send(listObjectsCommand);
+
+    this.logger.log(
+      `${folderPath} - listed objects`,
+      listedObjects.Contents,
+      listedObjects.IsTruncated,
+      listedObjects.Contents?.length,
+    );
 
     if (listedObjects.Contents?.length === 0) return;
 
@@ -103,7 +115,11 @@ export class S3Driver implements StorageDriver {
 
     await this.s3Client.send(deleteObjectCommand);
 
+    this.logger.log(`${folderPath} - objects deleted`);
+
     if (listedObjects.IsTruncated) {
+      this.logger.log(`${folderPath} - folder is truncated`);
+
       await this.emptyS3Directory(folderPath);
     }
   }
@@ -112,6 +128,10 @@ export class S3Driver implements StorageDriver {
     folderPath: string;
     filename?: string;
   }): Promise<void> {
+    this.logger.log(
+      `${params.folderPath} - deleting file ${params.filename} from folder ${params.folderPath}`,
+    );
+
     if (params.filename) {
       const deleteCommand = new DeleteObjectCommand({
         Key: `${params.folderPath}/${params.filename}`,
@@ -121,6 +141,9 @@ export class S3Driver implements StorageDriver {
       await this.s3Client.send(deleteCommand);
     } else {
       await this.emptyS3Directory(params.folderPath);
+
+      this.logger.log(`${params.folderPath} - folder is empty`);
+
       const deleteEmptyFolderCommand = new DeleteObjectCommand({
         Key: `${params.folderPath}`,
         Bucket: this.bucketName,

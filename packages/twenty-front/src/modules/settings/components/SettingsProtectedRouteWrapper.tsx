@@ -1,14 +1,14 @@
-import { useHasSettingsPermission } from '@/settings/roles/hooks/useHasSettingsPermission';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { ReactNode } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { FeatureFlagKey, SettingPermissionType } from '~/generated/graphql';
+import { FeatureFlagKey, PermissionFlagType } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsProtectedRouteWrapperProps = {
   children?: ReactNode;
-  settingsPermission?: SettingPermissionType;
+  settingsPermission?: PermissionFlagType;
   requiredFeatureFlag?: FeatureFlagKey;
 };
 
@@ -17,7 +17,7 @@ export const SettingsProtectedRouteWrapper = ({
   settingsPermission,
   requiredFeatureFlag,
 }: SettingsProtectedRouteWrapperProps) => {
-  const hasPermission = useHasSettingsPermission(settingsPermission);
+  const hasPermission = useHasPermissionFlag(settingsPermission);
   const requiredFeatureFlagEnabled = useIsFeatureEnabled(
     requiredFeatureFlag || null,
   );

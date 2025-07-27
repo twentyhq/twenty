@@ -59,6 +59,7 @@ describe('generateFakeFormResponse', () => {
     expect(result).toMatchInlineSnapshot(`
 {
   "age": {
+    "fieldMetadataId": undefined,
     "icon": undefined,
     "isLeaf": true,
     "label": "Age",
@@ -72,24 +73,31 @@ describe('generateFakeFormResponse', () => {
       "_outputSchemaType": "RECORD",
       "fields": {
         "domainName": {
+          "fieldMetadataId": "domainNameFieldMetadataId",
           "icon": "test-field-icon",
           "isLeaf": false,
           "label": "Domain Name",
           "type": "LINKS",
           "value": {
             "primaryLinkLabel": {
+              "fieldMetadataId": "domainNameFieldMetadataId",
+              "isCompositeSubField": true,
               "isLeaf": true,
               "label": "Primary Link Label",
               "type": "TEXT",
               "value": "My text",
             },
             "primaryLinkUrl": {
+              "fieldMetadataId": "domainNameFieldMetadataId",
+              "isCompositeSubField": true,
               "isLeaf": true,
               "label": "Primary Link Url",
               "type": "TEXT",
               "value": "My text",
             },
             "secondaryLinks": {
+              "fieldMetadataId": "domainNameFieldMetadataId",
+              "isCompositeSubField": true,
               "isLeaf": true,
               "label": "Secondary Links",
               "type": "RAW_JSON",
@@ -98,6 +106,7 @@ describe('generateFakeFormResponse', () => {
           },
         },
         "name": {
+          "fieldMetadataId": "nameFieldMetadataId",
           "icon": "test-field-icon",
           "isLeaf": true,
           "label": "Name",
@@ -111,11 +120,13 @@ describe('generateFakeFormResponse', () => {
         "isLeaf": true,
         "label": "Company",
         "nameSingular": "company",
+        "objectMetadataId": "20202020-c03c-45d6-a4b0-04afe1357c5c",
         "value": "A company",
       },
     },
   },
   "date": {
+    "fieldMetadataId": undefined,
     "icon": undefined,
     "isLeaf": true,
     "label": "Date",
@@ -123,6 +134,7 @@ describe('generateFakeFormResponse', () => {
     "value": "mm/dd/yyyy",
   },
   "name": {
+    "fieldMetadataId": undefined,
     "icon": undefined,
     "isLeaf": true,
     "label": "Name",
