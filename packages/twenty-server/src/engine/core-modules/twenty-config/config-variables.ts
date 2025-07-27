@@ -394,7 +394,8 @@ export class ConfigVariables {
   })
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S_3)
   @IsAWSRegion()
-  STORAGE_S3_REGION: AwsRegion;
+  @IsOptional()
+  STORAGE_S3_REGION: AwsRegion = 'us-east-1';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.StorageConfig,

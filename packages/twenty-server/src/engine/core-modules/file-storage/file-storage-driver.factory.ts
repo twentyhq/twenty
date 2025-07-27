@@ -68,7 +68,7 @@ export class FileStorageDriverFactory extends DriverFactoryBase<StorageDriver> {
             ? { accessKeyId, secretAccessKey }
             : fromNodeProviderChain({ clientConfig: { region } }),
           forcePathStyle: true,
-          region: region ?? '',
+          region,
         });
       }
 

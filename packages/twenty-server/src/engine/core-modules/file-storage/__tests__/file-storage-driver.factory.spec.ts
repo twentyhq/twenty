@@ -152,6 +152,34 @@ describe('FileStorageDriverFactory', () => {
       expect(driver.constructor.name).toBe('S3Driver');
     });
 
+    it('should create S3Driver for MinIO storage with default region when region is not provided', () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) => {
+          switch (key) {
+            case 'STORAGE_TYPE':
+              return StorageDriverType.S_3;
+            case 'STORAGE_S3_NAME':
+              return 'test-bucket';
+            case 'STORAGE_S3_ENDPOINT':
+              return 'https://minio.example.com';
+            case 'STORAGE_S3_REGION':
+              return undefined; // No region configured - should use default
+            case 'STORAGE_S3_ACCESS_KEY_ID':
+              return 'minio-access-key';
+            case 'STORAGE_S3_SECRET_ACCESS_KEY':
+              return 'minio-secret-key';
+            default:
+              return undefined;
+          }
+        });
+
+      const driver = factory['createDriver']();
+
+      expect(driver).toBeDefined();
+      expect(driver.constructor.name).toBe('S3Driver');
+    });
+
     it('should throw error for invalid storage driver type', () => {
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('invalid-type');
 
