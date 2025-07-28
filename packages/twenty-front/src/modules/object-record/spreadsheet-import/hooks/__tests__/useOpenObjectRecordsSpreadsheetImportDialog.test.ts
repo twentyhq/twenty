@@ -383,9 +383,13 @@ describe('useSpreadsheetCompanyImport', () => {
     expect(spreadsheetImportDialogAfterOpen.options?.onSubmit).toBeInstanceOf(
       Function,
     );
-    expect(spreadsheetImportDialogAfterOpen.options).toHaveProperty('fields');
+    expect(spreadsheetImportDialogAfterOpen.options).toHaveProperty(
+      'spreadsheetImportFields',
+    );
     expect(
-      Array.isArray(spreadsheetImportDialogAfterOpen.options?.fields),
+      Array.isArray(
+        spreadsheetImportDialogAfterOpen.options?.spreadsheetImportFields,
+      ),
     ).toBe(true);
 
     act(() => {

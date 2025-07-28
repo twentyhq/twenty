@@ -4,7 +4,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import {
@@ -175,7 +174,7 @@ export class ProcessNestedRelationsV2Helper {
         targetRelation,
         FieldMetadataType.MORPH_RELATION,
       )
-        ? `${(targetRelation?.settings as FieldMetadataRelationSettings)?.joinColumnName}`
+        ? `${targetRelation.settings?.joinColumnName}`
         : `${targetRelationName}Id`;
 
     const { relationResults, relationAggregatedFieldsResult } =

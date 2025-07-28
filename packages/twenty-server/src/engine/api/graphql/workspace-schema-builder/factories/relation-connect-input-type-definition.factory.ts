@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  GraphQLBoolean,
   GraphQLInputFieldConfig,
   GraphQLInputObjectType,
   GraphQLInputType,
   GraphQLString,
 } from 'graphql';
+import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
+import { getUniqueConstraintsFields } from 'twenty-shared/utils';
 
 import {
   InputTypeDefinition,
@@ -15,7 +18,6 @@ import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-build
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { getUniqueConstraintsFields } from 'src/engine/metadata-modules/index-metadata/utils/getUniqueConstraintsFields.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { pascalCase } from 'src/utils/pascal-case';
 
@@ -36,6 +38,11 @@ export class RelationConnectInputTypeDefinitionFactory {
         kind: InputTypeDefinitionKind.Create,
         type: fields,
       },
+      {
+        target,
+        kind: InputTypeDefinitionKind.Update,
+        type: fields,
+      },
     ];
   }
 
@@ -45,12 +52,16 @@ export class RelationConnectInputTypeDefinitionFactory {
     return new GraphQLInputObjectType({
       name: `${pascalCase(objectMetadata.nameSingular)}RelationInput`,
       fields: () => ({
-        connect: {
+        [RELATION_NESTED_QUERY_KEYWORDS.CONNECT]: {
           type: new GraphQLInputObjectType({
             name: `${pascalCase(objectMetadata.nameSingular)}ConnectInput`,
             fields: this.generateRelationWhereInputType(objectMetadata),
           }),
           description: `Connect to a ${objectMetadata.nameSingular} record`,
+        },
+        [RELATION_NESTED_QUERY_KEYWORDS.DISCONNECT]: {
+          type: GraphQLBoolean,
+          description: `Disconnect from a ${objectMetadata.nameSingular} record`,
         },
       }),
     });
@@ -127,7 +138,7 @@ export class RelationConnectInputTypeDefinitionFactory {
     });
 
     return {
-      where: {
+      [RELATION_NESTED_QUERY_KEYWORDS.CONNECT_WHERE]: {
         type: new GraphQLInputObjectType({
           name: `${pascalCase(objectMetadata.nameSingular)}WhereUniqueInput`,
           fields: () => fields,

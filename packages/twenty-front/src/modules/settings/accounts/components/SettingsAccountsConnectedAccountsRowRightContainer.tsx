@@ -9,7 +9,7 @@ import { Status } from 'twenty-ui/display';
 const StyledRowRightContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(4)};
 `;
 
 export const SettingsAccountsConnectedAccountsRowRightContainer = ({

@@ -80,18 +80,24 @@ describe('generateFakeFormResponse', () => {
           "type": "LINKS",
           "value": {
             "primaryLinkLabel": {
+              "fieldMetadataId": "domainNameFieldMetadataId",
+              "isCompositeSubField": true,
               "isLeaf": true,
               "label": "Primary Link Label",
               "type": "TEXT",
               "value": "My text",
             },
             "primaryLinkUrl": {
+              "fieldMetadataId": "domainNameFieldMetadataId",
+              "isCompositeSubField": true,
               "isLeaf": true,
               "label": "Primary Link Url",
               "type": "TEXT",
               "value": "My text",
             },
             "secondaryLinks": {
+              "fieldMetadataId": "domainNameFieldMetadataId",
+              "isCompositeSubField": true,
               "isLeaf": true,
               "label": "Secondary Links",
               "type": "RAW_JSON",

@@ -1,4 +1,4 @@
-import { useHasSettingsPermission } from '@/settings/roles/hooks/useHasSettingsPermission';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { ReactNode } from 'react';
@@ -17,7 +17,7 @@ export const SettingsProtectedRouteWrapper = ({
   settingsPermission,
   requiredFeatureFlag,
 }: SettingsProtectedRouteWrapperProps) => {
-  const hasPermission = useHasSettingsPermission(settingsPermission);
+  const hasPermission = useHasPermissionFlag(settingsPermission);
   const requiredFeatureFlagEnabled = useIsFeatureEnabled(
     requiredFeatureFlag || null,
   );
