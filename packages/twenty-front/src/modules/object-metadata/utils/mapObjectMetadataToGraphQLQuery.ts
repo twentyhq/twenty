@@ -49,15 +49,14 @@ export const mapObjectMetadataToGraphQLQuery = ({
   }
 
   const filterReadableFields = (field: FieldMetadataItem) => {
-    if (isFieldsPermissionsEnabled) {
-      const objectPermission = getObjectPermissionsForObject(
-        objectPermissionsByObjectMetadataId,
-        objectMetadataItem.id,
-      );
-      return objectPermission.restrictedFields?.[field.id]?.canRead !== false;
-    } else {
+    if (isFieldsPermissionsEnabled !== true) {
       return true;
     }
+    const objectPermission = getObjectPermissionsForObject(
+      objectPermissionsByObjectMetadataId,
+      objectMetadataItem.id,
+    );
+    return objectPermission.restrictedFields?.[field.id]?.canRead !== false;
   };
 
   const manyToOneRelationFields = objectMetadataItem?.fields

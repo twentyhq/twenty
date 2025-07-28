@@ -1,7 +1,7 @@
 import { RestrictedField } from 'twenty-shared/types';
 import { ObjectPermissionsWithRestrictedFields } from '~/generated/graphql';
 
-export const getRestrictedFieldMetadataIdsFromObjectPermissions = ({
+export const getReadRestrictedFieldMetadataIdsFromObjectPermissions = ({
   objectPermissions,
   objectMetadataId,
 }: {
