@@ -21,7 +21,7 @@ import {
   WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
-import { workflowDiagramRightClickMenuState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuState';
+import { workflowDiagramRightClickMenuPositionState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuPositionState';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 
 export const WorkflowDiagramCanvasEditable = ({
@@ -37,8 +37,8 @@ export const WorkflowDiagramCanvasEditable = ({
     workflowDiagramComponentState,
   );
 
-  const setWorkflowDiagramRightClickMenu = useSetRecoilComponentStateV2(
-    workflowDiagramRightClickMenuState,
+  const setWorkflowDiagramRightClickMenuPosition = useSetRecoilComponentStateV2(
+    workflowDiagramRightClickMenuPositionState,
   );
 
   const { createEdge } = useCreateEdge({
@@ -108,7 +108,7 @@ export const WorkflowDiagramCanvasEditable = ({
   };
 
   const handlePaneContextMenu = ({ x, y }: { x: number; y: number }) => {
-    setWorkflowDiagramRightClickMenu({
+    setWorkflowDiagramRightClickMenuPosition({
       x,
       y,
     });

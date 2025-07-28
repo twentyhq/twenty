@@ -35,6 +35,7 @@ import {
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 import { WorkflowEdgeDTO } from 'src/engine/core-modules/workflow/dtos/workflow-edge.dto';
+import { WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
 
 const TRIGGER_STEP_ID = 'trigger';
 
@@ -72,11 +73,13 @@ export class WorkflowVersionStepWorkspaceService {
     workspaceId: string;
     input: CreateWorkflowVersionStepInput;
   }): Promise<WorkflowActionDTO> {
-    const { workflowVersionId, stepType, parentStepId, nextStepId } = input;
+    const { workflowVersionId, stepType, parentStepId, nextStepId, position } =
+      input;
 
     const newStep = await this.getStepDefaultDefinition({
       type: stepType,
       workspaceId,
+      position,
     });
 
     const enrichedNewStep = await this.enrichOutputSchema({
@@ -622,11 +625,19 @@ export class WorkflowVersionStepWorkspaceService {
   private async getStepDefaultDefinition({
     type,
     workspaceId,
+    position,
   }: {
     type: WorkflowActionType;
     workspaceId: string;
+    position?: WorkflowStepPositionInput;
   }): Promise<WorkflowAction> {
     const newStepId = v4();
+
+    const baseStep = {
+      id: v4(),
+      position,
+      valid: false,
+    };
 
     switch (type) {
       case WorkflowActionType.CODE: {
@@ -647,10 +658,9 @@ export class WorkflowVersionStepWorkspaceService {
         }
 
         return {
-          id: newStepId,
+          ...baseStep,
           name: 'Code - Serverless Function',
           type: WorkflowActionType.CODE,
-          valid: false,
           settings: {
             ...BASE_STEP_DEFINITION,
             outputSchema: {
@@ -672,10 +682,9 @@ export class WorkflowVersionStepWorkspaceService {
       }
       case WorkflowActionType.SEND_EMAIL: {
         return {
-          id: newStepId,
+          ...baseStep,
           name: 'Send Email',
           type: WorkflowActionType.SEND_EMAIL,
-          valid: false,
           settings: {
             ...BASE_STEP_DEFINITION,
             input: {
@@ -694,10 +703,9 @@ export class WorkflowVersionStepWorkspaceService {
           });
 
         return {
-          id: newStepId,
+          ...baseStep,
           name: 'Create Record',
           type: WorkflowActionType.CREATE_RECORD,
-          valid: false,
           settings: {
             ...BASE_STEP_DEFINITION,
             input: {
@@ -714,10 +722,9 @@ export class WorkflowVersionStepWorkspaceService {
           });
 
         return {
-          id: newStepId,
+          ...baseStep,
           name: 'Update Record',
           type: WorkflowActionType.UPDATE_RECORD,
-          valid: false,
           settings: {
             ...BASE_STEP_DEFINITION,
             input: {
@@ -736,10 +743,9 @@ export class WorkflowVersionStepWorkspaceService {
           });
 
         return {
-          id: newStepId,
+          ...baseStep,
           name: 'Delete Record',
           type: WorkflowActionType.DELETE_RECORD,
-          valid: false,
           settings: {
             ...BASE_STEP_DEFINITION,
             input: {
@@ -756,10 +762,9 @@ export class WorkflowVersionStepWorkspaceService {
           });
 
         return {
-          id: newStepId,
+          ...baseStep,
           name: 'Search Records',
           type: WorkflowActionType.FIND_RECORDS,
-          valid: false,
           settings: {
             ...BASE_STEP_DEFINITION,
             input: {
@@ -771,10 +776,9 @@ export class WorkflowVersionStepWorkspaceService {
       }
       case WorkflowActionType.FORM: {
         return {
-          id: newStepId,
+          ...baseStep,
           name: 'Form',
           type: WorkflowActionType.FORM,
-          valid: false,
           settings: {
             ...BASE_STEP_DEFINITION,
             input: [],
@@ -783,10 +787,9 @@ export class WorkflowVersionStepWorkspaceService {
       }
       case WorkflowActionType.FILTER: {
         return {
-          id: newStepId,
+          ...baseStep,
           name: 'Filter',
           type: WorkflowActionType.FILTER,
-          valid: false,
           settings: {
             ...BASE_STEP_DEFINITION,
             input: {
@@ -798,10 +801,9 @@ export class WorkflowVersionStepWorkspaceService {
       }
       case WorkflowActionType.HTTP_REQUEST: {
         return {
-          id: newStepId,
+          ...baseStep,
           name: 'HTTP Request',
           type: WorkflowActionType.HTTP_REQUEST,
-          valid: false,
           settings: {
             ...BASE_STEP_DEFINITION,
             input: {
@@ -815,10 +817,9 @@ export class WorkflowVersionStepWorkspaceService {
       }
       case WorkflowActionType.AI_AGENT: {
         return {
-          id: newStepId,
+          ...baseStep,
           name: 'AI Agent',
           type: WorkflowActionType.AI_AGENT,
-          valid: false,
           settings: {
             ...BASE_STEP_DEFINITION,
             input: {

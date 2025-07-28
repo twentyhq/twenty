@@ -26,11 +26,13 @@ export const useStartNodeCreation = () => {
     ({
       parentStepId,
       nextStepId,
+      position,
     }: {
       parentStepId: string | undefined;
       nextStepId: string | undefined;
+      position?: { x: number; y: number };
     }) => {
-      setWorkflowInsertStepIds({ parentStepId, nextStepId });
+      setWorkflowInsertStepIds({ parentStepId, nextStepId, position });
 
       if (isDefined(workflowVisualizerWorkflowId)) {
         openStepSelectInCommandMenu(workflowVisualizerWorkflowId);
