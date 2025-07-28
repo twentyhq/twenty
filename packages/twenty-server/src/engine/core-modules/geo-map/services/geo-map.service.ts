@@ -40,7 +40,7 @@ export class GeoMapService {
     if (!isDefined(address) || address.trim().length === 0) {
       return [];
     }
-    try {
+
       let url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(address)}&sessiontoken=${token}&key=${this.apiMapKey}`;
 
       if (isDefined(country) && country !== '') {
@@ -56,16 +56,12 @@ export class GeoMapService {
       }
 
       return [];
-    } catch (error) {
-      return [];
-    }
   }
 
   public async getAddressDetails(
     placeId: string,
     token: string,
   ): Promise<AddressFields | undefined> {
-    try {
       const result = await this.httpService.axiosRef.get(
         `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&sessiontoken=${token}&fields=address_components&key=${this.apiMapKey}`,
       );
@@ -77,8 +73,5 @@ export class GeoMapService {
       }
 
       return {};
-    } catch (error) {
-      return {};
-    }
   }
 }
