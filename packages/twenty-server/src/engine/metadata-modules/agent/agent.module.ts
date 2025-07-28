@@ -22,6 +22,9 @@ import { AgentChatThreadEntity } from './agent-chat-thread.entity';
 import { AgentChatResolver } from './agent-chat.resolver';
 import { AgentChatService } from './agent-chat.service';
 import { AgentExecutionService } from './agent-execution.service';
+import { AgentHandoffExecutorService } from './agent-handoff-executor.service';
+import { AgentHandoffEntity } from './agent-handoff.entity';
+import { AgentHandoffService } from './agent-handoff.service';
 import { AgentStreamingService } from './agent-streaming.service';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 import { AgentToolService } from './agent-tool.service';
@@ -34,6 +37,7 @@ import { AgentService } from './agent.service';
     TypeOrmModule.forFeature(
       [
         AgentEntity,
+        AgentHandoffEntity,
         RoleEntity,
         RoleTargetsEntity,
         AgentChatMessageEntity,
@@ -64,6 +68,8 @@ import { AgentService } from './agent.service';
     AgentChatService,
     AgentStreamingService,
     AgentTitleGenerationService,
+    AgentHandoffExecutorService,
+    AgentHandoffService,
   ],
   exports: [
     AgentService,
@@ -76,6 +82,8 @@ import { AgentService } from './agent.service';
       [AgentEntity, AgentChatMessageEntity, AgentChatThreadEntity],
       'core',
     ),
+    AgentHandoffExecutorService,
+    AgentHandoffService,
   ],
 })
 export class AgentModule {}

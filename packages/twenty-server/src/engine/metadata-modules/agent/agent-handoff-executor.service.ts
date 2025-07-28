@@ -4,7 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { generateText } from 'ai';
 import { Repository } from 'typeorm';
 
-import { AgentExecutionService } from './agent-execution.service';
+import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
+
 import { AgentHandoffService } from './agent-handoff.service';
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
@@ -25,7 +26,7 @@ export class AgentHandoffExecutorService {
     @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
     private readonly agentHandoffService: AgentHandoffService,
-    private readonly agentExecutionService: AgentExecutionService,
+    private readonly aiModelRegistryService: AiModelRegistryService,
   ) {}
 
   async executeHandoff(handoffRequest: HandoffRequest) {
@@ -56,12 +57,22 @@ export class AgentHandoffExecutorService {
         );
       }
 
-      const aiRequestConfig =
-        await this.agentExecutionService.prepareAIRequestConfig({
-          system: targetAgent.prompt,
-          agent: targetAgent,
-          prompt: this.createHandoffPrompt(handoffRequest),
-        });
+      const registeredModel = this.aiModelRegistryService.getModel(
+        targetAgent.modelId,
+      );
+
+      if (!registeredModel) {
+        throw new AgentException(
+          `Model ${targetAgent.modelId} not found in registry`,
+          AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        );
+      }
+
+      const aiRequestConfig = {
+        system: targetAgent.prompt,
+        prompt: this.createHandoffPrompt(handoffRequest),
+        model: registeredModel.model,
+      };
 
       const textResponse = await generateText(aiRequestConfig);
 
