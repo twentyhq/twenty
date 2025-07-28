@@ -162,7 +162,12 @@ export const Dropdown = ({
         globalHotkeysConfig,
       });
     },
-    [globalHotkeysConfig, toggleDropdown, dropdownId],
+    [
+      globalHotkeysConfig,
+      toggleDropdown,
+      dropdownId,
+      disableClickForClickableComponent,
+    ],
   );
 
   return (
