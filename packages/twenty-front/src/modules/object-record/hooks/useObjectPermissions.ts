@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isDefined } from 'twenty-shared/utils';
-import { ObjectPermission } from '~/generated-metadata/graphql';
+import { ObjectPermission } from '~/generated/graphql';
 
 type useObjectPermissionsReturnType = {
   objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
