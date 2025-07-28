@@ -57,18 +57,12 @@ export type WorkflowRunDiagramStepNodeData = Exclude<
   runStatus: WorkflowRunStepStatus;
 };
 
-export type WorkflowDiagramCreateStepNodeData = {
-  nodeType: 'create-step';
-  parentNodeId: string;
-};
-
 export type WorkflowDiagramEmptyTriggerNodeData = {
   nodeType: 'empty-trigger';
 };
 
 export type WorkflowDiagramNodeData =
   | WorkflowDiagramStepNodeData
-  | WorkflowDiagramCreateStepNodeData
   | WorkflowDiagramEmptyTriggerNodeData;
 
 export type WorkflowRunDiagramNodeData = Exclude<
@@ -94,10 +88,7 @@ export type WorkflowDiagramEdgeData =
   | WorkflowDiagramFilterEdgeData
   | WorkflowDiagramDefaultEdgeData;
 
-export type WorkflowDiagramNodeType =
-  | 'default'
-  | 'empty-trigger'
-  | 'create-step';
+export type WorkflowDiagramNodeType = 'default' | 'empty-trigger';
 
 export type WorkflowDiagramEdgeType =
   | 'blank'

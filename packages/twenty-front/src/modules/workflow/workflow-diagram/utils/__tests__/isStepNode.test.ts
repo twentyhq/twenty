@@ -35,21 +35,6 @@ describe('isStepNode', () => {
     expect(result).toBe(true);
   });
 
-  it('should return false for create-step node', () => {
-    const createStepNode: WorkflowDiagramNode = {
-      id: 'create-step-1',
-      position: { x: 0, y: 200 },
-      data: {
-        nodeType: 'create-step',
-        parentNodeId: 'action-1',
-      },
-    };
-
-    const result = isStepNode(createStepNode);
-
-    expect(result).toBe(false);
-  });
-
   it('should return false for empty-trigger node', () => {
     const emptyTriggerNode: WorkflowDiagramNode = {
       id: 'empty-trigger',

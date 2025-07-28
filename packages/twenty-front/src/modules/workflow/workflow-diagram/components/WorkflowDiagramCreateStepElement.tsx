@@ -17,7 +17,7 @@ const StyledVerticalLineContainer = styled.div`
   display: flex;
   height: 56px;
   justify-content: center;
-  width: 560px;
+  width: 56px;
 `;
 
 type WorkflowDiagramCreateStepElementProps = {
