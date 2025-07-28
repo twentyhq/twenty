@@ -4,11 +4,16 @@ import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-
 type WorkflowInsertStepIdsState = {
   parentStepId: string | undefined;
   nextStepId: string | undefined;
+  position?: { x: number; y: number } | undefined;
 };
 
 export const workflowInsertStepIdsComponentState =
   createComponentStateV2<WorkflowInsertStepIdsState>({
     key: 'workflowInsertStepIdsComponentState',
-    defaultValue: { parentStepId: undefined, nextStepId: undefined },
+    defaultValue: {
+      parentStepId: undefined,
+      nextStepId: undefined,
+      position: undefined,
+    },
     componentInstanceContext: WorkflowVisualizerComponentInstanceContext,
   });

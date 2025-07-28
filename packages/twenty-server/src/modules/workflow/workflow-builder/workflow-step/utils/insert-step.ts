@@ -11,7 +11,7 @@ export const insertStep = ({
   existingSteps: WorkflowAction[];
   existingTrigger: WorkflowTrigger | null;
   insertedStep: WorkflowAction;
-  parentStepId: string;
+  parentStepId?: string;
   nextStepId?: string;
 }): {
   updatedSteps: WorkflowAction[];

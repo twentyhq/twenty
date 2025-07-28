@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { workflowDiagramRightClickMenuState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuState';
+import { workflowDiagramRightClickMenuPositionState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuPositionState';
 import { isDefined } from 'twenty-shared/utils';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useRef } from 'react';
@@ -10,7 +10,8 @@ import { useLingui } from '@lingui/react/macro';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { useTidyUp } from '@/workflow/workflow-version/hooks/useTidyUp';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
+import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useCloseRightClickMenu';
 
 const StyledContainer = styled.div<{ x: number; y: number }>`
   background: ${({ theme }) => theme.background.primary};
@@ -30,8 +31,13 @@ export const WorkflowDiagramRightClickCommandMenu = () => {
   const { t } = useLingui();
   const rightClickCommandMenuRef = useRef<HTMLDivElement>(null);
 
-  const [workflowDiagramRightClickMenu, setWorkflowDiagramRightClickMenu] =
-    useRecoilComponentStateV2(workflowDiagramRightClickMenuState);
+  const { startNodeCreation } = useStartNodeCreation();
+
+  const { closeRightClickMenu } = useCloseRightClickMenu();
+
+  const workflowDiagramRightClickMenuPosition = useRecoilComponentValueV2(
+    workflowDiagramRightClickMenuPositionState,
+  );
 
   const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
     workflowVisualizerWorkflowIdComponentState,
@@ -43,16 +49,20 @@ export const WorkflowDiagramRightClickCommandMenu = () => {
 
   const { tidyUp } = useTidyUp({ workflow: workflowWithCurrentVersion });
 
-  const closeRightClickMenu = () => {
-    setWorkflowDiagramRightClickMenu(undefined);
-  };
-
   const handleReorderWorkflowDiagram = async () => {
     await tidyUp();
     closeRightClickMenu();
   };
 
-  if (!isDefined(workflowDiagramRightClickMenu)) {
+  const addNode = () => {
+    startNodeCreation({
+      parentStepId: undefined,
+      nextStepId: undefined,
+      position: workflowDiagramRightClickMenuPosition,
+    });
+  };
+
+  if (!isDefined(workflowDiagramRightClickMenuPosition)) {
     return;
   }
 
@@ -60,14 +70,10 @@ export const WorkflowDiagramRightClickCommandMenu = () => {
     <>
       <StyledContainer
         ref={rightClickCommandMenuRef}
-        x={workflowDiagramRightClickMenu.x}
-        y={workflowDiagramRightClickMenu.y}
+        x={workflowDiagramRightClickMenuPosition.x}
+        y={workflowDiagramRightClickMenuPosition.y}
       >
-        <MenuItem
-          text={t`Add node`}
-          LeftIcon={IconPlus}
-          onClick={(e) => console.log('e', e)}
-        />
+        <MenuItem text={t`Add node`} LeftIcon={IconPlus} onClick={addNode} />
         <MenuItem
           text={t`Tidy up workflow`}
           LeftIcon={IconReorder}
