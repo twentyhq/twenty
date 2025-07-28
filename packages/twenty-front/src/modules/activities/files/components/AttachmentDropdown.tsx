@@ -16,16 +16,16 @@ type AttachmentDropdownProps = {
   onDownload: () => void;
   onDelete: () => void;
   onRename: () => void;
-  scopeKey: string;
+  attachmentId: string;
 };
 
 export const AttachmentDropdown = ({
   onDownload,
   onDelete,
   onRename,
-  scopeKey,
+  attachmentId,
 }: AttachmentDropdownProps) => {
-  const dropdownId = `${scopeKey}-settings-field-active-action-dropdown`;
+  const dropdownId = `${attachmentId}-settings-field-active-action-dropdown`;
 
   const { closeDropdown } = useCloseDropdown();
 

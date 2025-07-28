@@ -4,7 +4,6 @@ import { ReactNode, useMemo } from 'react';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { AdvancedFilterDropdownButton } from '@/views/components/AdvancedFilterDropdownButton';
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
@@ -256,9 +255,7 @@ export const ViewBarDetails = ({
                 key={recordFilter.id}
                 value={{ instanceId: recordFilter.id }}
               >
-                <DropdownScope dropdownScopeId={recordFilter.id}>
-                  <EditableFilterDropdownButton recordFilter={recordFilter} />
-                </DropdownScope>
+                <EditableFilterDropdownButton recordFilter={recordFilter} />
               </ObjectFilterDropdownComponentInstanceContext.Provider>
             ))}
           </StyledChipContainer>

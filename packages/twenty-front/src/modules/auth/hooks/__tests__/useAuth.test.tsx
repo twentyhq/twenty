@@ -2,7 +2,7 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { billingState } from '@/client-config/states/billingState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
-import { SnackBarComponentInstanceContextProvider } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarComponentInstanceContextProvider';
+
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useApolloClient } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
@@ -12,6 +12,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { renderHook } from '@testing-library/react';
 import { iconsState } from 'twenty-ui/display';
 import { SupportDriver } from '~/generated/graphql';
@@ -71,9 +72,11 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider mocks={Object.values(mocks)} addTypename={false}>
     <RecoilRoot>
       <MemoryRouter>
-        <SnackBarComponentInstanceContextProvider snackBarComponentInstanceId="test-scope-id">
+        <SnackBarComponentInstanceContext.Provider
+          value={{ instanceId: 'test-instance-id' }}
+        >
           {children}
-        </SnackBarComponentInstanceContextProvider>
+        </SnackBarComponentInstanceContext.Provider>
       </MemoryRouter>
     </RecoilRoot>
   </MockedProvider>

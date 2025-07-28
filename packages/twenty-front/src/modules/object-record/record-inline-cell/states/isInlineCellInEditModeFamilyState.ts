@@ -1,6 +1,6 @@
 import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
 
-export const isInlineCellInEditModeScopedState = createFamilyState<
+export const isInlineCellInEditModeFamilyState = createFamilyState<
   boolean,
   string
 >({

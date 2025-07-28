@@ -8,7 +8,7 @@ import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/comp
 import { SpreadSheetImportModalWrapper } from '@/spreadsheet-import/components/SpreadSheetImportModalWrapper';
 import { SelectHeaderStep } from '@/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
-import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
+import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { RecoilRoot } from 'recoil';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -40,7 +40,9 @@ const meta: Meta<typeof SelectHeaderStep> = {
 
 export default meta;
 export const Default = () => (
-  <DialogManagerScope dialogComponentInstanceId="dialog-manager">
+  <DialogComponentInstanceContext.Provider
+    value={{ instanceId: 'dialog-manager' }}
+  >
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
       <SpreadSheetImportModalWrapper
         modalId="select-header-step"
@@ -60,5 +62,5 @@ export const Default = () => (
         />
       </SpreadSheetImportModalWrapper>
     </ReactSpreadsheetImportContextProvider>
-  </DialogManagerScope>
+  </DialogComponentInstanceContext.Provider>
 );

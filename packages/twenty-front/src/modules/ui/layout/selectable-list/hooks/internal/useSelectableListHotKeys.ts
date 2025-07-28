@@ -6,7 +6,7 @@ import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/sta
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
 type Direction = 'up' | 'down' | 'left' | 'right';
 
