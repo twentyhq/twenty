@@ -163,6 +163,6 @@ export abstract class BaseViewSyncListener<T extends EntityWithId> {
     const featureFlags =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
-    return featureFlags?.IS_CORE_VIEW_SYNCING_ENABLED ?? false;
+    return featureFlags.IS_CORE_VIEW_SYNCING_ENABLED;
   }
 }
