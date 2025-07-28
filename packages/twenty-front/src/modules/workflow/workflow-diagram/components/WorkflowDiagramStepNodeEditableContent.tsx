@@ -4,6 +4,7 @@ import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/W
 import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
 import { FloatingIconButton } from 'twenty-ui/input';
 import { IconTrash } from 'twenty-ui/display';
+import { WorkflowDiagramCreateStepElement } from '@/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement';
 
 export const WorkflowDiagramStepNodeEditableContent = ({
   data,
@@ -23,13 +24,16 @@ export const WorkflowDiagramStepNodeEditableContent = ({
       nodeType={data.nodeType}
       Icon={<WorkflowDiagramStepNodeIcon data={data} />}
       RightFloatingElement={
-        selected ? (
+        selected && (
           <FloatingIconButton
             size="medium"
             Icon={IconTrash}
             onClick={onDelete}
           />
-        ) : undefined
+        )
+      }
+      BottomHoverFloatingElement={
+        !data.hasNextStepIds && <WorkflowDiagramCreateStepElement data={data} />
       }
     />
   );

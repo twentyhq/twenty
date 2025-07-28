@@ -47,6 +47,13 @@ export const generateWorkflowDiagram = ({
         nodeType: 'action',
         actionType: step.type,
         name: step.name,
+        hasNextStepIds:
+          isDefined(step.nextStepIds) && step.nextStepIds.length > 0,
+        stepId: step.id,
+        position: step.position ?? {
+          x: xPos,
+          y: levelYPos,
+        },
       } satisfies WorkflowDiagramStepNodeData,
       position: step.position ?? {
         x: xPos,
