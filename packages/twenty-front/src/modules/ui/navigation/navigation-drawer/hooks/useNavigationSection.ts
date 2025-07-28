@@ -1,12 +1,12 @@
 import { useRecoilCallback } from 'recoil';
 
-import { isNavigationSectionOpenFamilytState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenComponentState';
+import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 
 export const useNavigationSection = (scopeId: string) => {
   const closeNavigationSection = useRecoilCallback(
     ({ set }) =>
       () => {
-        set(isNavigationSectionOpenFamilytState(scopeId), false);
+        set(isNavigationSectionOpenFamilyState(scopeId), false);
       },
     [scopeId],
   );
@@ -14,7 +14,7 @@ export const useNavigationSection = (scopeId: string) => {
   const openNavigationSection = useRecoilCallback(
     ({ set }) =>
       () => {
-        set(isNavigationSectionOpenFamilytState(scopeId), true);
+        set(isNavigationSectionOpenFamilyState(scopeId), true);
       },
     [scopeId],
   );
@@ -23,7 +23,7 @@ export const useNavigationSection = (scopeId: string) => {
     ({ snapshot }) =>
       () => {
         const isNavigationSectionOpen = snapshot
-          .getLoadable(isNavigationSectionOpenFamilytState(scopeId))
+          .getLoadable(isNavigationSectionOpenFamilyState(scopeId))
           .getValue();
 
         if (isNavigationSectionOpen) {
@@ -36,7 +36,7 @@ export const useNavigationSection = (scopeId: string) => {
   );
 
   const isNavigationSectionOpenState =
-    isNavigationSectionOpenFamilytState(scopeId);
+    isNavigationSectionOpenFamilyState(scopeId);
 
   return {
     isNavigationSectionOpenState,
