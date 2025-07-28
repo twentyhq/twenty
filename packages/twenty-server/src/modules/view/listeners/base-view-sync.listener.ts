@@ -6,8 +6,13 @@ import { ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/
 import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
 import { ObjectRecordRestoreEvent } from 'src/engine/core-modules/event-emitter/types/object-record-restore.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
+import {
+  ViewException,
+  ViewExceptionCode,
+} from 'src/modules/view/views.exception';
 
 type EntityWithId = { id: string };
 
@@ -27,6 +32,9 @@ type SyncOperations<T extends EntityWithId> = {
 export abstract class BaseViewSyncListener<T extends EntityWithId> {
   @Inject(FeatureFlagService)
   protected readonly featureFlagService: FeatureFlagService;
+
+  @Inject(ExceptionHandlerService)
+  protected readonly exceptionHandlerService: ExceptionHandlerService;
 
   protected readonly logger: Logger;
 
@@ -54,9 +62,11 @@ export abstract class BaseViewSyncListener<T extends EntityWithId> {
           event.properties.after,
         );
       } catch (error) {
-        this.logger.error(
-          `Failed to sync ${this.entityTypeName} ${event.properties.after.id} to core:`,
+        this.captureException(
           error,
+          batchEvent.workspaceId,
+          'create',
+          event.properties.after.id,
         );
       }
     }
@@ -79,9 +89,11 @@ export abstract class BaseViewSyncListener<T extends EntityWithId> {
           event.properties.diff,
         );
       } catch (error) {
-        this.logger.error(
-          `Failed to sync ${this.entityTypeName} ${event.properties.after.id} to core:`,
+        this.captureException(
           error,
+          batchEvent.workspaceId,
+          'update',
+          event.properties.after.id,
         );
       }
     }
@@ -103,9 +115,11 @@ export abstract class BaseViewSyncListener<T extends EntityWithId> {
           event.properties.before,
         );
       } catch (error) {
-        this.logger.error(
-          `Failed to sync ${this.entityTypeName} ${event.properties.before.id} to core:`,
+        this.captureException(
           error,
+          batchEvent.workspaceId,
+          'delete',
+          event.properties.before.id,
         );
       }
     }
@@ -127,9 +141,11 @@ export abstract class BaseViewSyncListener<T extends EntityWithId> {
           event.properties.before,
         );
       } catch (error) {
-        this.logger.error(
-          `Failed to sync ${this.entityTypeName} ${event.properties.before.id} to core:`,
+        this.captureException(
           error,
+          batchEvent.workspaceId,
+          'destroy',
+          event.properties.before.id,
         );
       }
     }
@@ -151,9 +167,11 @@ export abstract class BaseViewSyncListener<T extends EntityWithId> {
           event.properties.after,
         );
       } catch (error) {
-        this.logger.error(
-          `Failed to sync ${this.entityTypeName} ${event.properties.after.id} to core:`,
+        this.captureException(
           error,
+          batchEvent.workspaceId,
+          'restore',
+          event.properties.after.id,
         );
       }
     }
@@ -164,5 +182,28 @@ export abstract class BaseViewSyncListener<T extends EntityWithId> {
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
     return featureFlags.IS_CORE_VIEW_SYNCING_ENABLED;
+  }
+
+  private captureException(
+    error: Error,
+    workspaceId: string,
+    operation: string,
+    entityId: string,
+  ) {
+    const viewException = new ViewException(
+      `Failed to sync ${this.entityTypeName} ${entityId} to core: ${error.message}`,
+      ViewExceptionCode.CORE_VIEW_SYNC_ERROR,
+    );
+
+    this.exceptionHandlerService.captureExceptions([viewException], {
+      workspace: {
+        id: workspaceId,
+      },
+      additionalData: {
+        entityId: entityId,
+        entityType: this.entityTypeName,
+        operation: operation,
+      },
+    });
   }
 }
