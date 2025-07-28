@@ -34,7 +34,6 @@ export const resolveObjectMetadataStandardOverride = (
 
   if (
     isDefined(objectMetadata.standardOverrides?.translations) &&
-    isDefined(safeLocale) &&
     labelKey !== 'icon'
   ) {
     const translationValue =
