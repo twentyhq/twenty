@@ -10,13 +10,13 @@ import { AgentHandoffService } from './agent-handoff.service';
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
-export interface HandoffRequest {
+export type HandoffRequest = {
   fromAgentId: string;
   toAgentId: string;
   workspaceId: string;
   reason: string;
   context?: string;
-}
+};
 
 @Injectable()
 export class AgentHandoffExecutorService {
