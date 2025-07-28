@@ -231,18 +231,6 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
       return;
     }
 
-    const viewFilterGroupRepository =
-      queryRunner.manager.getRepository(ViewFilterGroup);
-    const viewFilterRepository = queryRunner.manager.getRepository(ViewFilter);
-    const viewSortRepository = queryRunner.manager.getRepository(ViewSort);
-    const viewGroupRepository = queryRunner.manager.getRepository(ViewGroup);
-    const viewFieldRepository = queryRunner.manager.getRepository(ViewField);
-
-    await viewFilterGroupRepository.delete({ workspaceId });
-    await viewFilterRepository.delete({ workspaceId });
-    await viewSortRepository.delete({ workspaceId });
-    await viewGroupRepository.delete({ workspaceId });
-    await viewFieldRepository.delete({ workspaceId });
     await viewRepository.delete({ workspaceId });
 
     this.logger.log(
