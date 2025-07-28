@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import { Max, Min } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
@@ -39,7 +40,9 @@ export class WorkspaceMember {
   locale: string;
 
   @Field({ nullable: true })
-  isWeekStartMonday: boolean;
+  @Min(0)
+  @Max(6)
+  calendarStartDay: number;
 
   @Field({ nullable: true })
   timeZone: string;

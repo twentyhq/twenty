@@ -1,17 +1,18 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
+import { DaySelect } from '@/ui/input/components/internal/day/DaySelect';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 
 import { Trans, useLingui } from '@lingui/react/macro';
+import { isNumber } from '@tiptap/core';
 import { useRecoilState } from 'recoil';
-import { H2Title, IconCalendarEvent } from 'twenty-ui/display';
+import { H2Title } from 'twenty-ui/display';
 import { ColorSchemePicker } from 'twenty-ui/input';
-import { Card, Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/layout';
 import { DateTimeSettings } from '~/pages/settings/profile/appearance/components/DateTimeSettings';
 import { LocalePicker } from '~/pages/settings/profile/appearance/components/LocalePicker';
 import { logError } from '~/utils/logError';
@@ -25,13 +26,28 @@ export const SettingsExperience = () => {
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
+  const calendarDaysWeek = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
 
-  const updateCalendarStartDay = async () => {
+  const allowedDaysWeek = ['Sunday', 'Monday', 'Saturday'].map((day) => {
+    const foundIndexDay = calendarDaysWeek.indexOf(day);
+    return { day, index: foundIndexDay };
+  });
+
+  const updateCalendarStartDay = async (index: number | string) => {
     if (!currentWorkspaceMember?.id) {
       throw new Error('User is not logged in');
     }
+    if (!isNumber(index) || index > 6 || index < 0) return;
     const changedFields = {
-      isWeekStartMonday: !currentWorkspaceMember.isWeekStartMonday,
+      calendarStartDay: index ?? 0,
     };
 
     try {
@@ -80,17 +96,13 @@ export const SettingsExperience = () => {
           <DateTimeSettings />
         </Section>
         <Section>
-          <Card rounded>
-            <SettingsOptionCardContentToggle
-              Icon={IconCalendarEvent}
-              title={t`Start week on Monday`}
-              description={t`This will change how all calendars in your app look`}
-              checked={currentWorkspaceMember?.isWeekStartMonday ?? false}
-              onChange={updateCalendarStartDay}
-            />
-          </Card>
+          <DaySelect
+            label={t`Calendar start day`}
+            selectedDayIndex={currentWorkspaceMember?.calendarStartDay ?? 0}
+            onChange={(dayIndex) => updateCalendarStartDay(dayIndex)}
+            dayList={allowedDaysWeek}
+          />
         </Section>
-
         <Section>
           <H2Title
             title={t`Language`}

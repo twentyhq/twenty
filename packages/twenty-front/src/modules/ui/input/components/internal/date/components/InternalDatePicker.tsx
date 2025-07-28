@@ -504,7 +504,7 @@ export const DateTimePicker = ({
             disabledKeyboardNavigation
             onChange={handleDateChange as any}
             calendarStartDay={
-              currentWorkspaceMember?.isWeekStartMonday ? 1 : undefined
+              currentWorkspaceMember?.calendarStartDay ?? undefined
             }
             customInput={
               <DateTimeInput

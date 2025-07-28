@@ -144,15 +144,14 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   userEmail: string;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.isWeekStartMonday,
-    type: FieldMetadataType.BOOLEAN,
-    label: msg`Start week on Monday`,
-    defaultValue: false,
-    description: msg`Whether the user prefers to start the calendar week on Monday`,
-    icon: 'IconCalendarEvent',
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.calendarStartDay,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Start of the week`,
+    defaultValue: 0,
+    description: msg`User's preferred start day of the week`,
   })
   @WorkspaceIsSystem()
-  isWeekStartMonday: boolean;
+  calendarStartDay: number;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userId,
