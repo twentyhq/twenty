@@ -5,7 +5,11 @@ import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailab
 
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
+import { getReadRestrictedFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getReadRestrictedFieldMetadataIdsFromObjectPermissions';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useRecoilValue } from 'recoil';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { formatFieldMetadataItemAsColumnDefinition } from '../utils/formatFieldMetadataItemAsColumnDefinition';
 
 export const useColumnDefinitionsFromFieldMetadata = (
@@ -27,6 +31,24 @@ export const useColumnDefinitionsFromFieldMetadata = (
     }),
   );
 
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
+  let restrictedFieldMetadataIds: string[] = [];
+
+  const featureFlags = useFeatureFlagsMap();
+  const isFieldsPermissionsEnabled =
+    featureFlags[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
+
+  if (isFieldsPermissionsEnabled) {
+    restrictedFieldMetadataIds =
+      getReadRestrictedFieldMetadataIdsFromObjectPermissions({
+        objectPermissions: [
+          objectPermissionsByObjectMetadataId[objectMetadataItem.id],
+        ],
+        objectMetadataId: objectMetadataItem.id,
+      });
+  }
+
   const columnDefinitions: ColumnDefinition<FieldMetadata>[] =
     activeFieldMetadataItems
       .map((field, index) =>
@@ -37,6 +59,9 @@ export const useColumnDefinitionsFromFieldMetadata = (
         }),
       )
       .filter(filterAvailableTableColumns)
+      .filter((column) => {
+        return !restrictedFieldMetadataIds.includes(column.fieldMetadataId);
+      })
       .map((column) => {
         const existsInFilterDefinitions = filterableFieldMetadataItems.some(
           (fieldMetadataItem) =>

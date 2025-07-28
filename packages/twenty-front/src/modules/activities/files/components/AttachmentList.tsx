@@ -28,7 +28,7 @@ type AttachmentListProps = {
   targetableObject: ActivityTargetableObject;
   title: string;
   attachments: Attachment[];
-  button?: ReactElement | false;
+  button?: ReactElement | false | null;
 };
 
 const StyledContainer = styled.div`

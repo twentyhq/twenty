@@ -16,9 +16,10 @@ import { ColumnDefinition } from '../types/ColumnDefinition';
 
 type useRecordTableProps = {
   recordTableId?: string;
+  objectMetadataId: string;
 };
 
-export const useTableColumns = (props?: useRecordTableProps) => {
+export const useTableColumns = (props: useRecordTableProps) => {
   const { onColumnsChange } = useRecordTable({
     recordTableId: props?.recordTableId,
   });
@@ -52,11 +53,11 @@ export const useTableColumns = (props?: useRecordTableProps) => {
 
   const handleColumnsChange = useCallback(
     async (columns: ColumnDefinition<FieldMetadata>[]) => {
-      setTableColumns(columns, instanceId);
+      setTableColumns(columns, instanceId, props.objectMetadataId);
 
       await onColumnsChange?.(columns);
     },
-    [setTableColumns, instanceId, onColumnsChange],
+    [setTableColumns, instanceId, onColumnsChange, props.objectMetadataId],
   );
 
   const handleColumnVisibilityChange = useCallback(

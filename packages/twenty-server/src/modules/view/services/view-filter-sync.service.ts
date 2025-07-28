@@ -22,6 +22,10 @@ export class ViewFilterSyncService {
     const updateData: Record<string, unknown> = {};
 
     for (const key of Object.keys(diff)) {
+      if (key === 'displayValue') {
+        continue;
+      }
+
       const diffValue = diff[key as keyof ViewFilterWorkspaceEntity];
 
       if (isDefined(diffValue)) {

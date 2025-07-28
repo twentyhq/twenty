@@ -22,6 +22,10 @@ export class ViewSyncService {
     const updateData: Record<string, unknown> = {};
 
     for (const key of Object.keys(diff)) {
+      if (key === 'kanbanFieldMetadataId') {
+        continue;
+      }
+
       const diffValue = diff[key as keyof ViewWorkspaceEntity];
 
       if (isDefined(diffValue)) {

@@ -14,6 +14,7 @@ export type { IsExactly } from './IsExactly';
 export type { NullablePartial } from './NullablePartial';
 export type { ObjectRecordsPermissions } from './ObjectRecordsPermissions';
 export type { ObjectRecordsPermissionsByRoleId } from './ObjectRecordsPermissionsByRoleId';
+export type { RestrictedField } from './RestrictedField';
 export type { RestrictedFields } from './RestrictedFields';
 export type { StepFilterGroup, StepFilter } from './StepFilters';
 export { StepLogicalOperator } from './StepFilters';
