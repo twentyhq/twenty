@@ -30,12 +30,24 @@ export type WorkflowDiagramStepNodeData =
       name: string;
       icon?: string;
       runStatus?: WorkflowRunStepStatus;
+      hasNextStepIds: boolean;
+      stepId: string;
+      position: {
+        x: number;
+        y: number;
+      };
     }
   | {
       nodeType: 'action';
       actionType: WorkflowActionType;
       name: string;
       runStatus?: WorkflowRunStepStatus;
+      hasNextStepIds: boolean;
+      stepId: string;
+      position: {
+        x: number;
+        y: number;
+      };
     };
 
 export type WorkflowRunDiagramStepNodeData = Exclude<
