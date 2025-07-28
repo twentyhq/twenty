@@ -1,5 +1,4 @@
 import { gql } from 'graphql-tag';
-import { GET_ROLE_ID_BY_LABEL } from 'test/integration/constants/test-role-ids.constants';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 describe('apiKeysResolver (e2e)', () => {
@@ -25,10 +24,9 @@ describe('apiKeysResolver (e2e)', () => {
       );
     }
 
-    adminRoleId = GET_ROLE_ID_BY_LABEL(
-      rolesResponse.body.data.getRoles,
-      'Admin',
-    );
+    adminRoleId = rolesResponse.body.data.getRoles.find(
+      (r: { label: string }) => r.label === 'Admin',
+    )?.id as string;
   });
 
   afterEach(async () => {
