@@ -1,8 +1,8 @@
 import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
-    WorkspaceMemberDateFormatEnum,
-    WorkspaceMemberTimeFormatEnum,
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 
 export const mockWorkspaceMembers: WorkspaceMember[] = [

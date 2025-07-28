@@ -23,6 +23,7 @@ import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 
 const graphqlQueryResolvers = [
   GraphqlQueryCreateManyResolverService,
@@ -48,6 +49,7 @@ const graphqlQueryResolvers = [
     TypeOrmModule.forFeature([RoleTargetsEntity], 'core'),
     UserRoleModule,
     ApiKeyModule,
+    WorkspacePermissionsCacheModule,
   ],
   providers: [
     ProcessNestedRelationsHelper,

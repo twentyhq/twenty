@@ -27,7 +27,7 @@ export type Story = StoryObj<typeof SettingsDevelopersApiKeysNew>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('New Key');
+    await canvas.findByText('New key');
     await canvas.findByText('Name');
     await canvas.findByText('Role');
     await canvas.findByText('Expiration Date');
@@ -41,11 +41,8 @@ export const Default: Story = {
     const roleSelector = await canvas.findByText('Admin');
     await userEvent.click(roleSelector);
 
-    await canvas.findByText('Admin');
-    await canvas.findByText('Guest');
-
-    const guestOption = await canvas.findByText('Guest');
-    await userEvent.click(guestOption);
+    const adminOption = await canvas.findByText('Admin');
+    await userEvent.click(adminOption);
 
     const saveButton = await canvas.findByText('Save');
 
