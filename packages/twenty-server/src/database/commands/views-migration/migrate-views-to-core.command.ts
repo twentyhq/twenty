@@ -26,6 +26,7 @@ import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/vie
 import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
+import { transformViewFilterWorkspaceValueToCoreValue } from 'src/modules/view/utils/transform-view-filter-workspace-value-to-core-value';
 
 @Command({
   name: 'migrate:views-to-core',
@@ -298,22 +299,12 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         continue;
       }
 
-      let parsedValue: JSON;
-
-      try {
-        parsedValue = JSON.parse(filter.value);
-      } catch {
-        throw new Error(
-          `Could not parse value to JSON for view filter ${filter.id} for workspace ${workspaceId}`,
-        );
-      }
-
       const coreViewFilter: Partial<ViewFilter> = {
         id: filter.id,
         fieldMetadataId: filter.fieldMetadataId,
         viewId: filter.viewId,
         operand: filter.operand,
-        value: parsedValue,
+        value: transformViewFilterWorkspaceValueToCoreValue(filter.value),
         viewFilterGroupId: filter.viewFilterGroupId,
         workspaceId,
         createdAt: new Date(filter.createdAt),
