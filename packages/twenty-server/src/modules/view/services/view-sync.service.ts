@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
 import { View } from 'src/engine/metadata-modules/view/view.entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
@@ -15,7 +14,6 @@ export class ViewSyncService {
   constructor(
     @InjectRepository(View, 'core')
     private readonly coreViewRepository: Repository<View>,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   private parseUpdateDataFromDiff(
