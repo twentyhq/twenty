@@ -153,7 +153,7 @@ export abstract class GraphqlQueryBaseResolverService<
         }
       }
 
-      if (!roleId) {
+      if (!authContext.apiKey && !authContext.userWorkspaceId) {
         throw new PermissionsException(
           PermissionsExceptionMessage.NO_AUTHENTICATION_CONTEXT,
           PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,

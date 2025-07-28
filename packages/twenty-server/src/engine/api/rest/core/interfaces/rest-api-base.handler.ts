@@ -170,7 +170,7 @@ export abstract class RestApiBaseHandler {
       }
     }
 
-    if (!roleId) {
+    if (!isDefined(apiKey) && !isDefined(userWorkspaceId)) {
       throw new PermissionsException(
         PermissionsExceptionMessage.NO_AUTHENTICATION_CONTEXT,
         PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
