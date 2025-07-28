@@ -7,7 +7,6 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
 
 import {
   GraphqlQueryBaseResolverService,
@@ -89,7 +88,7 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       priorityRecord.id,
     );
 
-    await executionArgs.repository.delete({
+    await executionArgs.repository.softDelete({
       id: In(idsToDelete),
     });
 
@@ -225,7 +224,7 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     const dryRunRecord = {
       ...priorityRecord,
       ...mergedData,
-      id: uuidv4(),
+      deletedAt: new Date().toISOString(),
     } as ObjectRecord;
 
     const typeORMObjectRecordsParser =

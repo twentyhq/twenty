@@ -10,16 +10,16 @@ type MergePreviewEffectProps = {
   objectNameSingular: string;
   selectedRecords: ObjectRecord[];
   mergeSettings: MergeManySettings;
-  onMergePreviewRecordChange: (record: ObjectRecord | null) => void;
-  onIsGeneratingPreviewChange: (isGenerating: boolean) => void;
+  onPreviewChange: (record: ObjectRecord | null) => void;
+  onLoadingChange: (isLoading: boolean) => void;
 };
 
 export const MergePreviewEffect = ({
   objectNameSingular,
   selectedRecords,
   mergeSettings,
-  onMergePreviewRecordChange,
-  onIsGeneratingPreviewChange,
+  onPreviewChange,
+  onLoadingChange,
 }: MergePreviewEffectProps) => {
   const { mergeManyRecords } = useMergeManyRecords({
     objectNameSingular,
@@ -28,7 +28,7 @@ export const MergePreviewEffect = ({
 
   useEffect(() => {
     const fetchPreview = async () => {
-      onIsGeneratingPreviewChange(true);
+      onLoadingChange(true);
       try {
         const mergePreviewRecord = await mergeManyRecords({
           recordIds: selectedRecords.map((record) => record.id),
@@ -37,12 +37,12 @@ export const MergePreviewEffect = ({
         });
         if (!mergePreviewRecord) return;
 
-        onMergePreviewRecordChange(mergePreviewRecord);
+        onPreviewChange(mergePreviewRecord);
         upsertRecords([mergePreviewRecord]);
       } catch (error) {
-        onMergePreviewRecordChange(null);
+        onPreviewChange(null);
       } finally {
-        onIsGeneratingPreviewChange(false);
+        onLoadingChange(false);
       }
     };
 

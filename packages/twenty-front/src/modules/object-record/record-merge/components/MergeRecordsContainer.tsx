@@ -120,8 +120,8 @@ export const MergeRecordsContainer = ({
             objectNameSingular={objectNameSingular}
             selectedRecords={selectedRecords}
             mergeSettings={mergeSettings}
-            onMergePreviewRecordChange={setMergePreviewRecord}
-            onIsGeneratingPreviewChange={setIsGeneratingPreview}
+            onPreviewChange={setMergePreviewRecord}
+            onLoadingChange={setIsGeneratingPreview}
           />
           <TabListComponentInstanceContext.Provider
             value={{ instanceId: componentInstanceId }}
@@ -138,7 +138,8 @@ export const MergeRecordsContainer = ({
               <MergePreviewTab
                 objectNameSingular={objectNameSingular}
                 mergedPreviewRecord={mergePreviewRecord}
-                isGeneratingPreview={isGeneratingPreview}
+                onPreviewChange={isGeneratingPreview}
+                selectedRecords={selectedRecords}
               />
             )}
             {activeTabId === MergeRecordsTabId.SETTINGS && (

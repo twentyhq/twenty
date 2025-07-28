@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { useMergeRecordRelationships } from '@/object-record/record-merge/hooks/useMergeRecordRelationships';
 import { CardComponents } from '@/object-record/record-show/components/CardComponents';
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -17,16 +18,24 @@ type MergePreviewTabProps = {
   isInRightDrawer?: boolean;
   objectNameSingular: string;
   mergedPreviewRecord?: ObjectRecord | null;
-  isGeneratingPreview?: boolean;
+  onPreviewChange?: boolean;
+  selectedRecords: ObjectRecord[];
 };
 
 export const MergePreviewTab = ({
   isInRightDrawer = true,
   objectNameSingular,
   mergedPreviewRecord,
-  isGeneratingPreview = false,
+  onPreviewChange = false,
+  selectedRecords,
 }: MergePreviewTabProps) => {
-  if (isGeneratingPreview) {
+  const { isLoading: isLoadingRelationships } = useMergeRecordRelationships({
+    objectNameSingular,
+    previewRecordId: mergedPreviewRecord?.id || '',
+    selectedRecords: selectedRecords,
+  });
+
+  if (onPreviewChange || isLoadingRelationships) {
     return (
       <StyledLoadingContainer>
         Generating merge preview...
