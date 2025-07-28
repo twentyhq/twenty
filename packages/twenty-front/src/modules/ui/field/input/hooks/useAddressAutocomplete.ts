@@ -21,7 +21,8 @@ export const useAddressAutocomplete = (
   const [typeOfAddressForAutocomplete, setTypeOfAddressForAutocomplete] =
     useState<string | null>(null);
 
-  const { getPlaceAutocompleteData, getPlaceDetailsData } = useGetPlaceApiData();
+  const { getPlaceAutocompleteData, getPlaceDetailsData } =
+    useGetPlaceApiData();
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown: closeDropdownHook } = useCloseDropdown();
   const { findCountryNameByCountryCode } = useCountryUtils();
@@ -57,7 +58,7 @@ export const useAddressAutocomplete = (
         text: data.text,
         placeId: data.placeId,
       }));
-      
+
       if (isDefined(newData) && newData?.length > 0) {
         openDropdownOfAutocomplete();
         setPlaceAutocompleteData(newData);
@@ -68,32 +69,41 @@ export const useAddressAutocomplete = (
     300,
   );
 
-  const autoFillInputsFromPlaceDetails = useCallback(async (
-    placeId: string,
-    token: string,
-    addressStreet1?: string,
-    internalValue?: FieldAddressDraftValue,
-  ) => {
-    const placeData = await getPlaceDetailsData(placeId, token);
-    const countryName = findCountryNameByCountryCode(placeData?.country);
-    
-    const updatedAddress = {
-      addressStreet1: addressStreet1 || (internalValue?.addressStreet1 ?? ''),
-      addressStreet2: internalValue?.addressStreet2 ?? null,
-      addressCity: placeData?.city || (internalValue?.addressCity ?? null),
-      addressState: placeData?.state || (internalValue?.addressState ?? null),
-      addressCountry: countryName || (internalValue?.addressCountry ?? null),
-      addressPostcode: placeData?.postcode || (internalValue?.addressPostcode ?? null),
-      addressLat: internalValue?.addressLat ?? null,
-      addressLng: internalValue?.addressLng ?? null,
-    };
-    
-    setTokenForPlaceApi(null);
-    closeDropdownOfAutocomplete();
-    onChange?.(updatedAddress);
-    
-    return updatedAddress;
-  }, [getPlaceDetailsData, findCountryNameByCountryCode, closeDropdownOfAutocomplete, onChange]);
+  const autoFillInputsFromPlaceDetails = useCallback(
+    async (
+      placeId: string,
+      token: string,
+      addressStreet1?: string,
+      internalValue?: FieldAddressDraftValue,
+    ) => {
+      const placeData = await getPlaceDetailsData(placeId, token);
+      const countryName = findCountryNameByCountryCode(placeData?.country);
+
+      const updatedAddress = {
+        addressStreet1: addressStreet1 || (internalValue?.addressStreet1 ?? ''),
+        addressStreet2: internalValue?.addressStreet2 ?? null,
+        addressCity: placeData?.city || (internalValue?.addressCity ?? null),
+        addressState: placeData?.state || (internalValue?.addressState ?? null),
+        addressCountry: countryName || (internalValue?.addressCountry ?? null),
+        addressPostcode:
+          placeData?.postcode || (internalValue?.addressPostcode ?? null),
+        addressLat: internalValue?.addressLat ?? null,
+        addressLng: internalValue?.addressLng ?? null,
+      };
+
+      setTokenForPlaceApi(null);
+      closeDropdownOfAutocomplete();
+      onChange?.(updatedAddress);
+
+      return updatedAddress;
+    },
+    [
+      getPlaceDetailsData,
+      findCountryNameByCountryCode,
+      closeDropdownOfAutocomplete,
+      onChange,
+    ],
+  );
 
   return {
     placeAutocompleteData,
@@ -105,4 +115,4 @@ export const useAddressAutocomplete = (
     autoFillInputsFromPlaceDetails,
     closeDropdownOfAutocomplete,
   };
-}; 
+};

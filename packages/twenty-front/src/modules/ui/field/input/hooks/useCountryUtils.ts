@@ -5,27 +5,31 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useCountryUtils = () => {
   const countries = useCountries();
-  
-  const findCountryCodeByCountryName = useCallback((countryName?: string): string => {
-    if (!isDefined(countryName) || countryName === '') return '';
 
-    const foundCountry = countries.find(
-      (country) => country.countryName === countryName,
-    );
-    return foundCountry?.countryCode ?? '';
-  }, [countries]);
+  const findCountryCodeByCountryName = useCallback(
+    (countryName?: string): string => {
+      if (!isDefined(countryName) || countryName === '') return '';
 
-  const findCountryNameByCountryCode = useCallback((
-    countryCode?: string,
-  ): string | null => {
-    if (!isDefined(countryCode) || countryCode === '') return '';
+      const foundCountry = countries.find(
+        (country) => country.countryName === countryName,
+      );
+      return foundCountry?.countryCode ?? '';
+    },
+    [countries],
+  );
 
-    const foundCountry = countries.find(
-      (country) => country.countryCode === countryCode,
-    );
+  const findCountryNameByCountryCode = useCallback(
+    (countryCode?: string): string | null => {
+      if (!isDefined(countryCode) || countryCode === '') return '';
 
-    return foundCountry?.countryName ?? null;
-  }, [countries]);
+      const foundCountry = countries.find(
+        (country) => country.countryCode === countryCode,
+      );
+
+      return foundCountry?.countryName ?? null;
+    },
+    [countries],
+  );
 
   return { findCountryCodeByCountryName, findCountryNameByCountryCode };
-}; 
+};

@@ -74,8 +74,6 @@ export type AddressInputProps = {
   onChange?: (updatedValue: FieldAddressDraftValue) => void;
 };
 
-
-
 export const AddressInput = ({
   instanceId,
   value,
@@ -87,7 +85,7 @@ export const AddressInput = ({
   onChange,
 }: AddressInputProps) => {
   const [internalValue, setInternalValue] = useState(value);
-  
+
   const addressStreet1InputRef = useRef<HTMLInputElement>(null);
   const addressStreet2InputRef = useRef<HTMLInputElement>(null);
   const addressCityInputRef = useRef<HTMLInputElement>(null);
@@ -95,16 +93,19 @@ export const AddressInput = ({
   const addressPostcodeInputRef = useRef<HTMLInputElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const inputRefs = useMemo(() => ({
-    addressStreet1: addressStreet1InputRef,
-    addressStreet2: addressStreet2InputRef,
-    addressCity: addressCityInputRef,
-    addressState: addressStateInputRef,
-    addressPostcode: addressPostcodeInputRef,
-  }), []);
+  const inputRefs = useMemo(
+    () => ({
+      addressStreet1: addressStreet1InputRef,
+      addressStreet2: addressStreet2InputRef,
+      addressCity: addressCityInputRef,
+      addressState: addressStateInputRef,
+      addressPostcode: addressPostcodeInputRef,
+    }),
+    [],
+  );
 
   const { findCountryCodeByCountryName } = useCountryUtils();
-  
+
   const {
     placeAutocompleteData,
     tokenForPlaceApi,
@@ -116,18 +117,19 @@ export const AddressInput = ({
     closeDropdownOfAutocomplete,
   } = useAddressAutocomplete(onChange);
 
-  const {
-    getFocusHandler,
-    handleTab,
-    handleShiftTab,
-  } = useFocusManagement(inputRefs, internalValue, onTab, onShiftTab);
+  const { getFocusHandler, handleTab, handleShiftTab } = useFocusManagement(
+    inputRefs,
+    internalValue,
+    onTab,
+    onShiftTab,
+  );
 
   const getChangeHandler = useCallback(
     (field: keyof FieldAddressDraftValue) => (updatedAddressPart: string) => {
       const updatedAddress = { ...internalValue, [field]: updatedAddressPart };
       setInternalValue(updatedAddress);
       onChange?.(updatedAddress);
-      
+
       if (field === 'addressStreet1' || field === 'addressCity') {
         const token = tokenForPlaceApi ?? v4();
         if (token !== tokenForPlaceApi) {
@@ -160,26 +162,29 @@ export const AddressInput = ({
     ],
   );
 
-  const handlePlaceSelection = useCallback((placeId: string) => {
-    const placeAutocomplete = placeAutocompleteData?.find(
-      (place) => place.placeId === placeId,
-    );
-    const token = tokenForPlaceApi ?? '';
-    if (!isDefined(placeAutocomplete)) return;
-    
-    const text: string | undefined =
-      typeOfAddressForAutocomplete !== 'addressCity'
-        ? placeAutocomplete.text
-        : undefined;
-    
-    autoFillInputsFromPlaceDetails(placeId, token, text, internalValue);
-  }, [
-    placeAutocompleteData,
-    tokenForPlaceApi,
-    typeOfAddressForAutocomplete,
-    autoFillInputsFromPlaceDetails,
-    internalValue,
-  ]);
+  const handlePlaceSelection = useCallback(
+    (placeId: string) => {
+      const placeAutocomplete = placeAutocompleteData?.find(
+        (place) => place.placeId === placeId,
+      );
+      const token = tokenForPlaceApi ?? '';
+      if (!isDefined(placeAutocomplete)) return;
+
+      const text: string | undefined =
+        typeOfAddressForAutocomplete !== 'addressCity'
+          ? placeAutocomplete.text
+          : undefined;
+
+      autoFillInputsFromPlaceDetails(placeId, token, text, internalValue);
+    },
+    [
+      placeAutocompleteData,
+      tokenForPlaceApi,
+      typeOfAddressForAutocomplete,
+      autoFillInputsFromPlaceDetails,
+      internalValue,
+    ],
+  );
 
   const handleClickOutside = useCallback(() => {
     closeDropdownOfAutocomplete();
@@ -195,10 +200,13 @@ export const AddressInput = ({
     closeDropdownOfAutocomplete();
   }, [onEscape, internalValue, closeDropdownOfAutocomplete]);
 
-  const handleOutsideClick = useCallback((event: MouseEvent | TouchEvent) => {
-    onClickOutside?.(event, internalValue);
-    closeDropdownOfAutocomplete();
-  }, [onClickOutside, internalValue, closeDropdownOfAutocomplete]);
+  const handleOutsideClick = useCallback(
+    (event: MouseEvent | TouchEvent) => {
+      onClickOutside?.(event, internalValue);
+      closeDropdownOfAutocomplete();
+    },
+    [onClickOutside, internalValue, closeDropdownOfAutocomplete],
+  );
 
   useRegisterInputEvents({
     focusId: instanceId,
@@ -234,16 +242,21 @@ export const AddressInput = ({
     setInternalValue(value);
   }, [value]);
 
-  const validAutocompleteData = useMemo(() => 
-    placeAutocompleteData && placeAutocompleteData.length > 0 ? placeAutocompleteData : null
-  , [placeAutocompleteData]);
+  const validAutocompleteData = useMemo(
+    () =>
+      placeAutocompleteData && placeAutocompleteData.length > 0
+        ? placeAutocompleteData
+        : null,
+    [placeAutocompleteData],
+  );
 
   const renderInputWithAutocomplete = (
     inputElement: React.ReactNode,
-    fieldType: 'addressStreet1' | 'addressCity'
+    fieldType: 'addressStreet1' | 'addressCity',
   ) => {
-    const shouldShowDropdown = validAutocompleteData && typeOfAddressForAutocomplete === fieldType;
-    
+    const shouldShowDropdown =
+      validAutocompleteData && typeOfAddressForAutocomplete === fieldType;
+
     if (!shouldShowDropdown) {
       return inputElement;
     }
@@ -253,7 +266,10 @@ export const AddressInput = ({
         <Dropdown
           dropdownId={SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID}
           dropdownPlacement="bottom-start"
-          excludedClickOutsideIds={[TEXT_INPUT_CLICK_OUTSIDE_ID, SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID]}
+          excludedClickOutsideIds={[
+            TEXT_INPUT_CLICK_OUTSIDE_ID,
+            SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID,
+          ]}
           onClickOutside={handleClickOutside}
           clickableComponent={inputElement}
           dropdownComponents={
@@ -280,12 +296,13 @@ export const AddressInput = ({
           onChange={getChangeHandler('addressStreet1')}
           onFocus={getFocusHandler('addressStreet1')}
           textClickOutsideId={
-            validAutocompleteData && typeOfAddressForAutocomplete === 'addressStreet1'
+            validAutocompleteData &&
+            typeOfAddressForAutocomplete === 'addressStreet1'
               ? TEXT_INPUT_CLICK_OUTSIDE_ID
               : undefined
           }
         />,
-        'addressStreet1'
+        'addressStreet1',
       )}
       <TextInputV2
         value={internalValue.addressStreet2 ?? ''}
@@ -305,12 +322,13 @@ export const AddressInput = ({
             onChange={getChangeHandler('addressCity')}
             onFocus={getFocusHandler('addressCity')}
             textClickOutsideId={
-              validAutocompleteData && typeOfAddressForAutocomplete === 'addressCity'
+              validAutocompleteData &&
+              typeOfAddressForAutocomplete === 'addressCity'
                 ? TEXT_INPUT_CLICK_OUTSIDE_ID
                 : undefined
             }
           />,
-          'addressCity'
+          'addressCity',
         )}
         <TextInputV2
           value={internalValue.addressState ?? ''}

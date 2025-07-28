@@ -9,8 +9,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { SelectOption } from 'twenty-ui/input';
 import { MenuItemSelectTag } from 'twenty-ui/navigation';
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
-  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
   margin-bottom: 0px !important;
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
 export const PlaceAutocompleteSelect = ({
@@ -59,7 +59,7 @@ export const PlaceAutocompleteSelect = ({
                     text={option.label}
                     color={'transparent'}
                     onClick={() => onChange(option.value)}
-                  />                    
+                  />
                 </SelectableListItem>
               );
             })}

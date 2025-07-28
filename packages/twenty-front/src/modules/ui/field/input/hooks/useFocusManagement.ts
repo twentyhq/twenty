@@ -3,7 +3,9 @@ import { RefObject, useCallback, useState } from 'react';
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 
 export const useFocusManagement = (
-  inputRefs: { [key in keyof FieldAddressDraftValue]?: RefObject<HTMLInputElement> },
+  inputRefs: {
+    [key in keyof FieldAddressDraftValue]?: RefObject<HTMLInputElement>;
+  },
   internalValue: FieldAddressDraftValue,
   onTab?: (newAddress: FieldAddressDraftValue) => void,
   onShiftTab?: (newAddress: FieldAddressDraftValue) => void,
@@ -11,10 +13,13 @@ export const useFocusManagement = (
   const [focusPosition, setFocusPosition] =
     useState<keyof FieldAddressDraftValue>('addressStreet1');
 
-  const getFocusHandler = useCallback((fieldName: keyof FieldAddressDraftValue) => () => {
-    setFocusPosition(fieldName);
-    inputRefs[fieldName]?.current?.focus();
-  }, [inputRefs]);
+  const getFocusHandler = useCallback(
+    (fieldName: keyof FieldAddressDraftValue) => () => {
+      setFocusPosition(fieldName);
+      inputRefs[fieldName]?.current?.focus();
+    },
+    [inputRefs],
+  );
 
   const handleTab = useCallback(() => {
     const currentFocusPosition = Object.keys(inputRefs).findIndex(
@@ -61,4 +66,4 @@ export const useFocusManagement = (
     handleTab,
     handleShiftTab,
   };
-}; 
+};

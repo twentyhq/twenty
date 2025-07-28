@@ -41,37 +41,37 @@ export class GeoMapService {
       return [];
     }
 
-      let url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(address)}&sessiontoken=${token}&key=${this.apiMapKey}`;
+    let url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(address)}&sessiontoken=${token}&key=${this.apiMapKey}`;
 
-      if (isDefined(country) && country !== '') {
-        url += `&components=country:${country}`;
-      }
-      if (isDefined(isFieldCity) && isFieldCity === true) {
-        url += `&types=(cities)`;
-      }
-      const result = await this.httpService.axiosRef.get(url);
+    if (isDefined(country) && country !== '') {
+      url += `&components=country:${country}`;
+    }
+    if (isDefined(isFieldCity) && isFieldCity === true) {
+      url += `&types=(cities)`;
+    }
+    const result = await this.httpService.axiosRef.get(url);
 
-      if (result.data.status === 'OK') {
-        return sanitizeAutocompleteResults(result.data.predictions);
-      }
+    if (result.data.status === 'OK') {
+      return sanitizeAutocompleteResults(result.data.predictions);
+    }
 
-      return [];
+    return [];
   }
 
   public async getAddressDetails(
     placeId: string,
     token: string,
   ): Promise<AddressFields | undefined> {
-      const result = await this.httpService.axiosRef.get(
-        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&sessiontoken=${token}&fields=address_components&key=${this.apiMapKey}`,
+    const result = await this.httpService.axiosRef.get(
+      `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&sessiontoken=${token}&fields=address_components&key=${this.apiMapKey}`,
+    );
+
+    if (result.data.status === 'OK') {
+      return sanitizePlaceDetailsResults(
+        result.data.result?.address_components,
       );
+    }
 
-      if (result.data.status === 'OK') {
-        return sanitizePlaceDetailsResults(
-          result.data.result?.address_components,
-        );
-      }
-
-      return {};
+    return {};
   }
 }

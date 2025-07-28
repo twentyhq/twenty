@@ -123,7 +123,7 @@ export const Dropdown = ({
     middleware: [
       ...offsetMiddleware,
       flip({
-            ...boundaryOptions,
+        ...boundaryOptions,
       }),
       size({
         apply: ({ availableHeight, availableWidth }) => {
