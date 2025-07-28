@@ -723,7 +723,7 @@ export const graphqlMocks = {
       const input = variables.input;
       const newApiKey = {
         __typename: 'ApiKey',
-        id: '12345678-1234-1234-1234-123456789012',
+        id: '20202020-1234-1234-1234-123456789012',
         name: input.name,
         expiresAt: input.expiresAt,
         revokedAt: null,

@@ -19,7 +19,7 @@ const rolesMock: Role[] = [
     permissionFlags: [
       {
         __typename: 'PermissionFlag',
-        id: 'permission-flag-1',
+        id: '94257a55-3211-489c-92d3-9e68061da400',
         flag: PermissionFlagType.WORKSPACE_MEMBERS,
         roleId: '1',
       },

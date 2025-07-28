@@ -6,7 +6,6 @@ describe('apiKeysResolver (e2e)', () => {
   let adminRoleId: string;
 
   beforeAll(async () => {
-    // Get the admin role ID for testing
     const rolesResponse = await makeMetadataAPIRequest({
       query: gql`
         query GetRoles {
@@ -144,7 +143,6 @@ describe('apiKeysResolver (e2e)', () => {
 
   describe('updateApiKey mutation', () => {
     it('should update an API key successfully', async () => {
-      // First create an API key
       const createResponse = await makeMetadataAPIRequest({
         query: gql`
           mutation CreateApiKey($input: CreateApiKeyDTO!) {
@@ -217,7 +215,6 @@ describe('apiKeysResolver (e2e)', () => {
 
   describe('apiKey query', () => {
     it('should find a specific API key', async () => {
-      // First create an API key
       const createResponse = await makeMetadataAPIRequest({
         query: gql`
           mutation CreateApiKey($input: CreateApiKeyDTO!) {
@@ -282,7 +279,6 @@ describe('apiKeysResolver (e2e)', () => {
 
   describe('revokeApiKey mutation', () => {
     it('should revoke an API key successfully', async () => {
-      // First create an API key
       const createResponse = await makeMetadataAPIRequest({
         query: gql`
           mutation CreateApiKey($input: CreateApiKeyDTO!) {

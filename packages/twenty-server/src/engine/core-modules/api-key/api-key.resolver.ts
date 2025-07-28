@@ -8,6 +8,10 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
+import {
+  ApiKeyException,
+  ApiKeyExceptionCode,
+} from 'src/engine/core-modules/api-key/api-key.exception';
 import { CreateApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/create-api-key.dto';
 import { GetApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/get-api-key.dto';
 import { RevokeApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/revoke-api-key.dto';
@@ -131,7 +135,10 @@ export class ApiKeyResolver {
     const role = rolesMap.get(apiKey.id);
 
     if (!role) {
-      throw new Error(`API key ${apiKey.id} has no role assigned`);
+      throw new ApiKeyException(
+        `API key ${apiKey.id} has no role assigned`,
+        ApiKeyExceptionCode.API_KEY_NO_ROLE_ASSIGNED,
+      );
     }
 
     return role;

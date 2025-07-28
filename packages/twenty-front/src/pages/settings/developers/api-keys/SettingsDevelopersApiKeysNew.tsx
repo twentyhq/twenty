@@ -18,9 +18,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import {
-  useCreateApiKeyMutation,
-  useGenerateApiKeyTokenMutation,
-  useGetRolesQuery,
+    useCreateApiKeyMutation,
+    useGenerateApiKeyTokenMutation,
+    useGetRolesQuery,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -153,7 +153,6 @@ export const SettingsDevelopersApiKeysNew = () => {
                 roleId,
               }));
             }}
-            allowEmpty={false}
             roles={roles}
           />
         </Section>

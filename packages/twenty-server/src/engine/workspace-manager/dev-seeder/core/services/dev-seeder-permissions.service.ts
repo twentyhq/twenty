@@ -16,6 +16,7 @@ import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
+import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
 
 @Injectable()
 export class DevSeederPermissionsService {
@@ -36,8 +37,6 @@ export class DevSeederPermissionsService {
       workspaceId,
     });
 
-    // Assign admin role to test API key (for integration tests)
-    const testApiKeyId = '20202020-f401-4d8a-a731-64d007c27bad';
     const dataSource = this.typeORMService.getMainDataSource();
 
     if (dataSource) {
@@ -50,13 +49,12 @@ export class DevSeederPermissionsService {
           .values([
             {
               roleId: adminRole.id,
-              apiKeyId: testApiKeyId,
+              apiKeyId: API_KEY_DATA_SEED_IDS.ID_1,
               workspaceId: workspaceId,
             },
           ])
           .execute();
 
-        // CRITICAL: Recompute caches after direct SQL insertion
         await this.workspacePermissionsCacheService.recomputeApiKeyRoleMapCache(
           {
             workspaceId,
@@ -85,7 +83,6 @@ export class DevSeederPermissionsService {
       memberUserWorkspaceIds = [USER_WORKSPACE_DATA_SEED_IDS.JONY];
       guestUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.PHIL;
 
-      // Create guest role only in this workspace
       const guestRole = await this.roleService.createGuestRole({
         workspaceId,
       });

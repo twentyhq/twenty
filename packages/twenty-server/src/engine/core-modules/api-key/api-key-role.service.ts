@@ -38,7 +38,6 @@ export class ApiKeyRoleService {
     roleId: string;
     workspaceId: string;
   }): Promise<void> {
-
     const validationResult = await this.validateAssignRoleInput({
       apiKeyId,
       workspaceId,
@@ -80,7 +79,7 @@ export class ApiKeyRoleService {
     if (!roleId) {
       throw new ApiKeyException(
         `API key ${apiKeyId} has no role assigned`,
-        ApiKeyExceptionCode.API_KEY_NOT_FOUND,
+        ApiKeyExceptionCode.API_KEY_NO_ROLE_ASSIGNED,
       );
     }
 

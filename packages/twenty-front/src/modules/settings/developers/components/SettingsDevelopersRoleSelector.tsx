@@ -5,7 +5,6 @@ import { Role } from '~/generated-metadata/graphql';
 type SettingsDevelopersRoleSelectorProps = {
   value?: string | null | undefined;
   onChange: (roleId: string) => void;
-  allowEmpty?: boolean;
   label?: string;
   description?: string;
   roles: Role[];
@@ -14,12 +13,15 @@ type SettingsDevelopersRoleSelectorProps = {
 export const SettingsDevelopersRoleSelector = ({
   value,
   onChange,
-  allowEmpty = true,
   label,
   description,
   roles,
 }: SettingsDevelopersRoleSelectorProps) => {
   const { getIcon } = useIcons();
+
+  if (roles.length === 0) {
+    return null;
+  }
 
   const options = roles.map((role) => ({
     label: role.label,
@@ -27,22 +29,14 @@ export const SettingsDevelopersRoleSelector = ({
     Icon: getIcon(role.icon) ?? undefined,
   }));
 
-  const selectValue = allowEmpty
-    ? value || ''
-    : value && value.trim()
-      ? value
-      : undefined;
+  const selectValue = value || roles[0].id;
 
   return (
     <Select
       dropdownId="role-selector"
       options={options}
       value={selectValue}
-      onChange={(selectedValue) => {
-        if (roles.length > 0) {
-          onChange(selectedValue);
-        }
-      }}
+      onChange={onChange}
       label={label}
       description={description}
       withSearchInput

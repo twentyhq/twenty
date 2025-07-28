@@ -279,7 +279,6 @@ export const SettingsDevelopersApiKeyDetail = () => {
               <SettingsDevelopersRoleSelector
                 value={selectedRoleId}
                 onChange={handleRoleChange}
-                allowEmpty={false}
                 roles={roles}
               />
             </Section>

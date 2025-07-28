@@ -53,7 +53,6 @@ export class TwentyORMManager {
     let roleId: string | undefined;
 
     if (isDefined(userWorkspaceId)) {
-      // Get role for regular users (existing pattern)
       const roleTarget = await this.roleTargetsRepository.findOne({
         where: {
           userWorkspaceId,
@@ -63,7 +62,6 @@ export class TwentyORMManager {
 
       roleId = roleTarget?.roleId;
     } else if (isDefined(apiKeyId)) {
-      // Get role for API keys (same pattern as users)
       const roleTarget = await this.roleTargetsRepository.findOne({
         where: {
           apiKeyId,
@@ -74,12 +72,9 @@ export class TwentyORMManager {
       roleId = roleTarget?.roleId;
     }
 
-    // No permission bypassing - everyone uses role-based permissions
-    const shouldBypassPermissionChecks = false;
-
     return workspaceDataSource.getRepository<T>(
       objectMetadataName,
-      shouldBypassPermissionChecks,
+      false,
       roleId,
     );
   }
