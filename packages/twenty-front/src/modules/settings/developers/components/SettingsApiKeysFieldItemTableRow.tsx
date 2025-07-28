@@ -4,74 +4,71 @@ import styled from '@emotion/styled';
 import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import {
-  IconChevronRight,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
+import { IconChevronRight } from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { ApiKey } from '~/generated-metadata/graphql';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
-  grid-template-columns: 312px 120px auto 28px;
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: 100%;
-    grid-template-columns: 12fr 8fr 4fr;
   }
 `;
 
-const StyledNameTableCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.primary};
-  gap: ${({ theme }) => theme.spacing(2)};
+const StyledTruncatedCell = styled(TableCell)`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
 `;
 
-const StyledIconTableCell = styled(TableCell)`
-  justify-content: center;
-  padding-right: ${({ theme }) => theme.spacing(1)};
-  padding-left: 0;
+const StyledEllipsisLabel = styled.div`
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 `;
 
-const StyledIconChevronRight = styled(IconChevronRight)`
-  color: ${({ theme }) => theme.font.color.tertiary};
-`;
+type ApiKeyType = Pick<ApiKey, 'id' | 'name' | 'expiresAt' | 'revokedAt'> & {
+  role: { id: string; label: string; icon?: string | null };
+};
+
+type SettingsApiKeysFieldItemTableRowProps = {
+  apiKey: ApiKeyType;
+  to: string;
+};
 
 export const SettingsApiKeysFieldItemTableRow = ({
   apiKey,
   to,
-}: {
-  apiKey: Pick<ApiKey, 'id' | 'name' | 'expiresAt' | 'revokedAt'> & {
-    role: { id: string; label: string; icon?: string | null };
-  };
-  to: string;
-}) => {
+}: SettingsApiKeysFieldItemTableRowProps) => {
   const theme = useTheme();
   const formattedExpiration = formatExpiration(apiKey.expiresAt || null);
 
   return (
-    <StyledApisFieldTableRow to={to}>
-      <StyledNameTableCell>
-        <OverflowingTextWithTooltip text={apiKey.name} />
-      </StyledNameTableCell>
+    <StyledApisFieldTableRow gridAutoColumns="5fr 2fr 3fr 1fr" to={to}>
+      <StyledTruncatedCell color={theme.font.color.primary}>
+        <StyledEllipsisLabel>{apiKey.name}</StyledEllipsisLabel>
+      </StyledTruncatedCell>
 
-      <TableCell
+      <StyledTruncatedCell color={theme.font.color.tertiary}>
+        <StyledEllipsisLabel>{apiKey.role.label}</StyledEllipsisLabel>
+      </StyledTruncatedCell>
+
+      <StyledTruncatedCell
         color={
           formattedExpiration === 'Expired'
             ? theme.font.color.danger
             : theme.font.color.tertiary
         }
       >
-        {formattedExpiration}
-      </TableCell>
+        <StyledEllipsisLabel>{formattedExpiration}</StyledEllipsisLabel>
+      </StyledTruncatedCell>
 
-      <TableCell color={theme.font.color.tertiary}>
-        {apiKey.role.label}
-      </TableCell>
-
-      <StyledIconTableCell>
-        <StyledIconChevronRight
+      <TableCell align="right">
+        <IconChevronRight
           size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
+          color={theme.font.color.tertiary}
         />
-      </StyledIconTableCell>
+      </TableCell>
     </StyledApisFieldTableRow>
   );
 };

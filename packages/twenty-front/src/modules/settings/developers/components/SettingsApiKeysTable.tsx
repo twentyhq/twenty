@@ -6,26 +6,11 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { useGetApiKeysQuery } from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledTableBody = styled(TableBody)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    padding-top: ${({ theme }) => theme.spacing(3)};
-    display: flex;
-    justify-content: space-between;
-    scroll-behavior: smooth;
-  }
-`;
-
-const StyledTableRow = styled(TableRow)`
-  grid-template-columns: 312px 120px auto 28px;
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    width: 95%;
-    grid-template-columns: 12fr 8fr 2fr;
-  }
 `;
 
 export const SettingsApiKeysTable = () => {
@@ -35,18 +20,18 @@ export const SettingsApiKeysTable = () => {
 
   return (
     <Table>
-      <StyledTableRow>
+      <TableRow gridAutoColumns="5fr 2fr 3fr 1fr">
         <TableHeader>
           <Trans>Name</Trans>
         </TableHeader>
         <TableHeader>
-          <Trans>Expiration</Trans>
-        </TableHeader>
-
-        <TableHeader>
           <Trans>Role</Trans>
         </TableHeader>
-      </StyledTableRow>
+        <TableHeader>
+          <Trans>Expiration</Trans>
+        </TableHeader>
+        <TableHeader></TableHeader>
+      </TableRow>
       {!!apiKeys?.length && (
         <StyledTableBody>
           {apiKeys.map((apiKey) => (
