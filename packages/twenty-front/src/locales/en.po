@@ -253,6 +253,7 @@ msgstr "About this workspace"
 #. js-lingui-id: AeXO77
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Account"
 msgstr "Account"
 
@@ -281,17 +282,18 @@ msgstr "ACS Url copied to clipboard"
 msgid "Action"
 msgstr "Action"
 
-#. js-lingui-id: IpQgsR
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
-msgid "Action Permissions"
-msgstr "Action Permissions"
-
 #. js-lingui-id: 7L01XJ
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 msgid "Actions"
 msgstr "Actions"
+
+#. js-lingui-id: mQKK3r
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Actions permissions"
+msgstr "Actions permissions"
 
 #. js-lingui-id: 9MxZtA
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -552,6 +554,16 @@ msgstr "All workspaces this user is a member of"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 msgid "All your custom objects"
 msgstr "All your custom objects"
+
+#. js-lingui-id: +XmkDf
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Allow exporting data to CSV files"
+msgstr "Allow exporting data to CSV files"
+
+#. js-lingui-id: gCnKdT
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Allow importing data from CSV files"
+msgstr "Allow importing data from CSV files"
 
 #. js-lingui-id: GMx1K0
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -1076,11 +1088,6 @@ msgstr "Choose the fields that will identify your records"
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
 msgid "Choose the format used to display date value"
 msgstr "Choose the format used to display date value"
-
-#. js-lingui-id: KT6rEB
-#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
-msgid "Choose your provider"
-msgstr "Choose your provider"
 
 #. js-lingui-id: 9qP96p
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -2435,6 +2442,11 @@ msgstr "Expires in"
 msgid "Export"
 msgstr "Export"
 
+#. js-lingui-id: 2KAI4N
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Export CSV"
+msgstr "Export CSV"
+
 #. js-lingui-id: ep2rbf
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export records"
@@ -2752,10 +2764,10 @@ msgstr "Granted for {grantedBy} {pluralizedGrantedObject}"
 msgid "Granted for this object"
 msgstr "Granted for this object"
 
-#. js-lingui-id: ZLzVau
+#. js-lingui-id: fcUyLo
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
-msgid "Grants permission to perform all available actions without restriction."
-msgstr "Grants permission to perform all available actions without restriction."
+msgid "Grants permission to perform all available actions without restriction"
+msgstr "Grants permission to perform all available actions without restriction"
 
 #. js-lingui-id: gBiL6J
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2967,6 +2979,11 @@ msgstr "Impersonate"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Import"
 msgstr "Import"
+
+#. js-lingui-id: 2CeOI3
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Import CSV"
+msgstr "Import CSV"
 
 #. js-lingui-id: eECp4f
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -3806,11 +3823,6 @@ msgstr "No change detected"
 msgid "No config variables match your current filters. Try adjusting your filters or search criteria."
 msgstr "No config variables match your current filters. Try adjusting your filters or search criteria."
 
-#. js-lingui-id: pwenQu
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-msgid "No connected account"
-msgstr "No connected account"
-
 #. js-lingui-id: 4BSfjK
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "No country"
@@ -4240,11 +4252,6 @@ msgstr "Permissions"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 msgid "Permissions · {objectLabelSingular}"
 msgstr "Permissions · {objectLabelSingular}"
-
-#. js-lingui-id: PqwPjr
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
-msgid "Permissions for performing automated actions."
-msgstr "Permissions for performing automated actions."
 
 #. js-lingui-id: qlqT9z
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
@@ -5181,6 +5188,7 @@ msgstr "Start a conversation with your AI agent to get workflow insights, task a
 #. js-lingui-id: uAQUqI
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Status"
 msgstr "Status"
 

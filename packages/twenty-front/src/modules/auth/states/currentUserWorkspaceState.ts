@@ -3,7 +3,7 @@ import { UserWorkspace } from '~/generated/graphql';
 
 export type CurrentUserWorkspace = Pick<
   UserWorkspace,
-  | 'settingsPermissions'
+  | 'permissionFlags'
   | 'objectRecordsPermissions'
   | 'objectPermissions'
   | 'twoFactorAuthenticationMethodSummary'

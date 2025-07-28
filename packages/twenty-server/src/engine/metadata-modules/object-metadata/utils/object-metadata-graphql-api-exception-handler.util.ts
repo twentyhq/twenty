@@ -1,6 +1,7 @@
 import {
   ConflictError,
   ForbiddenError,
+  InternalServerError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -25,6 +26,8 @@ export const objectMetadataGraphqlApiExceptionHandler = (error: Error) => {
         throw new ForbiddenError(error);
       case ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS:
         throw new ConflictError(error);
+      case ObjectMetadataExceptionCode.INVALID_ORM_OUTPUT:
+        throw new InternalServerError(error);
       case ObjectMetadataExceptionCode.MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD:
         throw error;
       default: {

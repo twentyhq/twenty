@@ -606,6 +606,21 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         queryRunner,
       );
 
+      const morphRelationFieldMetadataToUpdate =
+        await this.objectMetadataFieldRelationService.updateMorphRelationsJoinColumnName(
+          {
+            existingObjectMetadata,
+            objectMetadataForUpdate,
+            queryRunner,
+          },
+        );
+
+      await this.objectMetadataMigrationService.updateMorphRelationMigrations({
+        workspaceId: objectMetadataForUpdate.workspaceId,
+        morphRelationFieldMetadataToUpdate: morphRelationFieldMetadataToUpdate,
+        queryRunner,
+      });
+
       await this.objectMetadataMigrationService.recomputeEnumNames(
         objectMetadataForUpdate,
         objectMetadataForUpdate.workspaceId,
