@@ -95,9 +95,7 @@ export class AgentToolService {
           });
 
           tools[toolName] = {
-            description: `Transfer conversation to ${
-              targetAgent.label || targetAgent.name
-            } for specialized assistance`,
+            description: `Transfer this request to ${targetAgent.name} when you need their specialized expertise. Use this when the user's request is outside your capabilities or when ${targetAgent.name} would be better suited to handle the request.`,
             parameters: handoffSchema,
             execute: async ({ reason, context }) => {
               const result =
