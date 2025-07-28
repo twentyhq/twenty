@@ -10,6 +10,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 export type ClientConfig = {
+  appVersion?: string;
   aiModels: Array<ClientAiModelConfig>;
   analyticsEnabled: boolean;
   api: ApiConfig;

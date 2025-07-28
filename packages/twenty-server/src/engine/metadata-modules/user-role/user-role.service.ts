@@ -105,7 +105,7 @@ export class UserRoleService {
       },
       relations: {
         role: {
-          settingPermissions: true,
+          permissionFlags: true,
         },
       },
     });

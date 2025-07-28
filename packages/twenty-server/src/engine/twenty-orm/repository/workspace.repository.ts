@@ -27,7 +27,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { QueryDeepPartialEntityWithRelationConnect } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
+import { QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
@@ -536,8 +536,8 @@ export class WorkspaceRepository<
    */
   override async insert(
     entity:
-      | QueryDeepPartialEntityWithRelationConnect<T>
-      | QueryDeepPartialEntityWithRelationConnect<T>[],
+      | QueryDeepPartialEntityWithNestedRelationFields<T>
+      | QueryDeepPartialEntityWithNestedRelationFields<T>[],
     entityManager?: WorkspaceEntityManager,
     selectedColumns?: string[],
   ): Promise<InsertResult> {

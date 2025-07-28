@@ -24,10 +24,10 @@ import { TwoFactorAuthenticationMethod } from 'src/engine/core-modules/two-facto
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectPermissionsWithRestrictedFieldsDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permissions-with-restricted-fields.dto';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
-registerEnumType(SettingPermissionType, {
-  name: 'SettingPermissionType',
+registerEnumType(PermissionFlagType, {
+  name: 'PermissionFlagType',
 });
 
 registerEnumType(PermissionsOnAllObjectRecords, {
@@ -96,8 +96,8 @@ export class UserWorkspace {
   )
   twoFactorAuthenticationMethods: Relation<TwoFactorAuthenticationMethod[]>;
 
-  @Field(() => [SettingPermissionType], { nullable: true })
-  settingsPermissions?: SettingPermissionType[];
+  @Field(() => [PermissionFlagType], { nullable: true })
+  permissionFlags?: PermissionFlagType[];
 
   @Field(() => [PermissionsOnAllObjectRecords], {
     nullable: true,

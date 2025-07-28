@@ -6,7 +6,12 @@ import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowD
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { BaseEdge, EdgeProps, getStraightPath } from '@xyflow/react';
+import {
+  BaseEdge,
+  EdgeLabelRenderer,
+  EdgeProps,
+  getStraightPath,
+} from '@xyflow/react';
 import { useState } from 'react';
 import { IconPlus } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
@@ -76,33 +81,35 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
         style={{ stroke: theme.border.color.strong }}
       />
 
-      <StyledContainer
-        labelY={labelY}
-        data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
-      >
-        <StyledWrapper
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
+      <EdgeLabelRenderer>
+        <StyledContainer
+          labelY={labelY}
+          data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
         >
-          <StyledHoverZone />
-          {(hovered || isSelected) && (
-            <StyledIconButtonGroup
-              className="nodrag nopan"
-              iconButtons={[
-                {
-                  Icon: IconPlus,
-                  onClick: () => {
-                    startNodeCreation({
-                      parentStepId: source,
-                      nextStepId: target,
-                    });
+          <StyledWrapper
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+          >
+            <StyledHoverZone />
+            {(hovered || isSelected) && (
+              <StyledIconButtonGroup
+                className="nodrag nopan"
+                iconButtons={[
+                  {
+                    Icon: IconPlus,
+                    onClick: () => {
+                      startNodeCreation({
+                        parentStepId: source,
+                        nextStepId: target,
+                      });
+                    },
                   },
-                },
-              ]}
-            />
-          )}
-        </StyledWrapper>
-      </StyledContainer>
+                ]}
+              />
+            )}
+          </StyledWrapper>
+        </StyledContainer>
+      </EdgeLabelRenderer>
     </>
   );
 };

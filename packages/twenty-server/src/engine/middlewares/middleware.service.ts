@@ -128,6 +128,10 @@ export class MiddlewareService {
 
   public async hydrateGraphqlRequest(request: Request) {
     if (!this.isTokenPresent(request)) {
+      request.locale =
+        (request.headers['x-locale'] as keyof typeof APP_LOCALES) ??
+        SOURCE_LOCALE;
+
       return;
     }
 

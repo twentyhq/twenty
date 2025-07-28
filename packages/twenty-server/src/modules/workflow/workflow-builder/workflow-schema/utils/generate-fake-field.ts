@@ -37,6 +37,8 @@ export const generateFakeField = ({
           type: property.type,
           label: camelToTitleCase(property.name),
           value: value || generateFakeValue(property.type, 'FieldMetadataType'),
+          fieldMetadataId,
+          isCompositeSubField: true,
         };
 
         return acc;
