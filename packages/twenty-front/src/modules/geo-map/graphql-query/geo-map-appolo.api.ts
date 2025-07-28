@@ -26,6 +26,10 @@ export const GET_PLACE_DETAILS_QUERY = gql`
       postcode
       city
       country
+      location {
+        lat
+        lng
+      }
     }
   }
 `;

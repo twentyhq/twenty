@@ -88,11 +88,10 @@ export const useAddressAutocomplete = (
         addressPostcode:
           placeData?.postcode || (internalValue?.addressPostcode ?? null),
         addressLat:
-          placeData?.location?.lat ?? (internalValue?.addressLat ?? null),
+          placeData?.location?.lat ?? internalValue?.addressLat ?? null,
         addressLng:
-          placeData?.location?.lng ?? (internalValue?.addressLng ?? null),
+          placeData?.location?.lng ?? internalValue?.addressLng ?? null,
       };
-console.log("placeDataplaceData",placeData);
 
       setTokenForPlaceApi(null);
       closeDropdownOfAutocomplete();

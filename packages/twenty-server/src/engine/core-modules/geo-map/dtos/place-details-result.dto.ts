@@ -1,4 +1,13 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Float, ObjectType } from '@nestjs/graphql';
+
+@ObjectType()
+export class LocationDto {
+  @Field(() => Float, { nullable: true })
+  lat?: number;
+
+  @Field(() => Float, { nullable: true })
+  lng?: number;
+}
 
 @ObjectType()
 export class PlaceDetailsResultDto {
@@ -13,4 +22,7 @@ export class PlaceDetailsResultDto {
 
   @Field({ nullable: true })
   country?: string;
+
+  @Field(() => LocationDto, { nullable: true })
+  location?: LocationDto;
 }

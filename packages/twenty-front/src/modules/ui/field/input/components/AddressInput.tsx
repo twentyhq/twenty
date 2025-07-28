@@ -216,7 +216,6 @@ export const AddressInput = ({
     onEscape: handleEscape,
     onTab: handleTab,
     onShiftTab: handleShiftTab,
-    onClickOutside: handleOutsideClick,
   });
 
   const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
@@ -270,6 +269,7 @@ export const AddressInput = ({
             TEXT_INPUT_CLICK_OUTSIDE_ID,
             SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID,
           ]}
+          disableClickForClickableComponent={true}
           onClickOutside={handleClickOutside}
           clickableComponent={inputElement}
           dropdownComponents={

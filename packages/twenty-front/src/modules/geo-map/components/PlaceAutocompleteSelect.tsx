@@ -44,7 +44,7 @@ export const PlaceAutocompleteSelect = ({
         <DropdownContent
           ref={selectContainerRef}
           selectDisabled
-          widthInPixels={350}
+          widthInPixels={345}
         >
           <DropdownMenuItemsContainer hasMaxHeight>
             {options.map((option) => {
