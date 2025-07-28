@@ -1,4 +1,5 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   EntityTarget,
   ObjectLiteral,
@@ -38,10 +39,9 @@ export class WorkspaceUpdateQueryBuilder<
   private authContext?: AuthContext;
   private featureFlagMap?: FeatureFlagMap;
   private relationNestedQueries: RelationNestedQueries;
-  private relationNestedConfig: [
-    RelationConnectQueryConfig[],
-    RelationDisconnectQueryFieldsByEntityIndex,
-  ];
+  private relationNestedConfig:
+    | [RelationConnectQueryConfig[], RelationDisconnectQueryFieldsByEntityIndex]
+    | null;
 
   constructor(
     queryBuilder: UpdateQueryBuilder<T>,
@@ -115,17 +115,19 @@ export class WorkspaceUpdateQueryBuilder<
       this.authContext,
     );
 
-    const updatedValues =
-      await this.relationNestedQueries.processRelationNestedQueries({
-        entities: this.expressionMap.valuesSet as
-          | QueryDeepPartialEntityWithNestedRelationFields<T>
-          | QueryDeepPartialEntityWithNestedRelationFields<T>[],
-        relationNestedConfig: this.relationNestedConfig,
-        queryBuilder: nestedRelationQueryBuilder,
-      });
+    if (isDefined(this.relationNestedConfig)) {
+      const updatedValues =
+        await this.relationNestedQueries.processRelationNestedQueries({
+          entities: this.expressionMap.valuesSet as
+            | QueryDeepPartialEntityWithNestedRelationFields<T>
+            | QueryDeepPartialEntityWithNestedRelationFields<T>[],
+          relationNestedConfig: this.relationNestedConfig,
+          queryBuilder: nestedRelationQueryBuilder,
+        });
 
-    this.expressionMap.valuesSet =
-      updatedValues.length === 1 ? updatedValues[0] : updatedValues;
+      this.expressionMap.valuesSet =
+        updatedValues.length === 1 ? updatedValues[0] : updatedValues;
+    }
 
     const formattedBefore = formatResult<T[]>(
       before,

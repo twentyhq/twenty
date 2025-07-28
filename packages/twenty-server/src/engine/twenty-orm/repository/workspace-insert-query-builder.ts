@@ -1,4 +1,5 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   EntityTarget,
   InsertQueryBuilder,
@@ -38,10 +39,9 @@ export class WorkspaceInsertQueryBuilder<
   private authContext?: AuthContext;
   private featureFlagMap?: FeatureFlagMap;
   private relationNestedQueries: RelationNestedQueries;
-  private relationNestedConfig: [
-    RelationConnectQueryConfig[],
-    RelationDisconnectQueryFieldsByEntityIndex,
-  ];
+  private relationNestedConfig:
+    | [RelationConnectQueryConfig[], RelationDisconnectQueryFieldsByEntityIndex]
+    | null;
 
   constructor(
     queryBuilder: InsertQueryBuilder<T>,
@@ -115,24 +115,26 @@ export class WorkspaceInsertQueryBuilder<
       this.internalContext,
     );
 
-    const nestedRelationQueryBuilder = new WorkspaceSelectQueryBuilder(
-      this as unknown as WorkspaceSelectQueryBuilder<T>,
-      this.objectRecordsPermissions,
-      this.internalContext,
-      this.shouldBypassPermissionChecks,
-      this.authContext,
-    );
+    if (isDefined(this.relationNestedConfig)) {
+      const nestedRelationQueryBuilder = new WorkspaceSelectQueryBuilder(
+        this as unknown as WorkspaceSelectQueryBuilder<T>,
+        this.objectRecordsPermissions,
+        this.internalContext,
+        this.shouldBypassPermissionChecks,
+        this.authContext,
+      );
 
-    const updatedValues =
-      await this.relationNestedQueries.processRelationNestedQueries({
-        entities: this.expressionMap.valuesSet as
-          | QueryDeepPartialEntityWithNestedRelationFields<T>
-          | QueryDeepPartialEntityWithNestedRelationFields<T>[],
-        relationNestedConfig: this.relationNestedConfig,
-        queryBuilder: nestedRelationQueryBuilder,
-      });
+      const updatedValues =
+        await this.relationNestedQueries.processRelationNestedQueries({
+          entities: this.expressionMap.valuesSet as
+            | QueryDeepPartialEntityWithNestedRelationFields<T>
+            | QueryDeepPartialEntityWithNestedRelationFields<T>[],
+          relationNestedConfig: this.relationNestedConfig,
+          queryBuilder: nestedRelationQueryBuilder,
+        });
 
-    this.expressionMap.valuesSet = updatedValues;
+      this.expressionMap.valuesSet = updatedValues;
+    }
 
     const result = await super.execute();
 

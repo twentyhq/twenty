@@ -1075,17 +1075,18 @@ export class WorkspaceEntityManager extends EntityManager {
         entityTarget,
       );
 
-    const updatedEntities =
-      await relationNestedQueries.processRelationNestedQueries({
-        entities: entityArray,
-        relationNestedConfig,
-        queryBuilder: this.createQueryBuilder(
-          undefined,
-          undefined,
-          undefined,
-          permissionOptions,
-        ),
-      });
+    const updatedEntities = isDefined(relationNestedConfig)
+      ? await relationNestedQueries.processRelationNestedQueries({
+          entities: entityArray,
+          relationNestedConfig,
+          queryBuilder: this.createQueryBuilder(
+            undefined,
+            undefined,
+            undefined,
+            permissionOptions,
+          ),
+        })
+      : entityArray;
 
     const entityIds = entityArray.map((e) => (e as { id: string }).id);
     const beforeUpdate = await this.find(

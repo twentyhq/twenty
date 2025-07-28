@@ -36,10 +36,9 @@ export class RelationNestedQueries {
       | QueryDeepPartialEntityWithNestedRelationFields<Entity>[]
       | QueryDeepPartialEntityWithNestedRelationFields<Entity>,
     target: EntityTarget<Entity>,
-  ): [
-    RelationConnectQueryConfig[],
-    RelationDisconnectQueryFieldsByEntityIndex,
-  ] {
+  ):
+    | [RelationConnectQueryConfig[], RelationDisconnectQueryFieldsByEntityIndex]
+    | null {
     const entitiesArray = Array.isArray(entities) ? entities : [entities];
 
     const {
@@ -53,7 +52,10 @@ export class RelationNestedQueries {
       relationConnectQueryFieldsByEntityIndex,
     );
 
-    return [connectConfig, relationDisconnectQueryFieldsByEntityIndex];
+    return connectConfig.length > 0 ||
+      Object.keys(relationDisconnectQueryFieldsByEntityIndex).length > 0
+      ? [connectConfig, relationDisconnectQueryFieldsByEntityIndex]
+      : null;
   }
 
   private prepareRelationConnect<Entity extends ObjectLiteral>(
