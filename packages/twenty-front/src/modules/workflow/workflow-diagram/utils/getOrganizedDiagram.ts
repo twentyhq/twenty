@@ -5,7 +5,11 @@ export const getOrganizedDiagram = (
   diagram: WorkflowDiagram,
 ): WorkflowDiagram => {
   const graph = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
-  graph.setGraph({ rankdir: 'TB' });
+  graph.setGraph({
+    ranksep: 80, // Vertical distance between 2 nodes
+    nodesep: 200, // Horizontal distance between 2 nodes
+    rankdir: 'TB',
+  });
 
   diagram.edges.forEach((edge) => graph.setEdge(edge.source, edge.target));
   diagram.nodes.forEach((node) =>
