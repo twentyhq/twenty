@@ -19,6 +19,8 @@ export const resolveObjectMetadataStandardOverride = (
   labelKey: 'labelPlural' | 'labelSingular' | 'description' | 'icon',
   locale: keyof typeof APP_LOCALES | undefined,
 ): string => {
+  const safeLocale = locale ?? SOURCE_LOCALE;
+
   if (objectMetadata.isCustom) {
     return objectMetadata[labelKey] ?? '';
   }
@@ -32,11 +34,10 @@ export const resolveObjectMetadataStandardOverride = (
 
   if (
     isDefined(objectMetadata.standardOverrides?.translations) &&
-    isDefined(locale) &&
     labelKey !== 'icon'
   ) {
     const translationValue =
-      objectMetadata.standardOverrides.translations[locale]?.[labelKey];
+      objectMetadata.standardOverrides.translations[safeLocale]?.[labelKey];
 
     if (isDefined(translationValue)) {
       return translationValue;
@@ -44,7 +45,7 @@ export const resolveObjectMetadataStandardOverride = (
   }
 
   if (
-    locale === SOURCE_LOCALE &&
+    safeLocale === SOURCE_LOCALE &&
     isNonEmptyString(objectMetadata.standardOverrides?.[labelKey])
   ) {
     return objectMetadata.standardOverrides[labelKey] ?? '';
