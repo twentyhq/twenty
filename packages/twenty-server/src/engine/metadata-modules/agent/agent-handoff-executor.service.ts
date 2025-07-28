@@ -56,13 +56,11 @@ export class AgentHandoffExecutorService {
         );
       }
 
-      const handoffPrompt = this.createHandoffPrompt(handoffRequest);
-
       const aiRequestConfig =
         await this.agentExecutionService.prepareAIRequestConfig({
           system: targetAgent.prompt,
           agent: targetAgent,
-          prompt: handoffPrompt,
+          prompt: this.createHandoffPrompt(handoffRequest),
         });
 
       const textResponse = await generateText(aiRequestConfig);
