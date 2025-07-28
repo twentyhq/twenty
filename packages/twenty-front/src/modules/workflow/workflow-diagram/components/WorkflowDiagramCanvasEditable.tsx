@@ -2,7 +2,6 @@ import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { WorkflowDiagramBlankEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramBlankEdge';
 import { WorkflowDiagramCanvasBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasBase';
 import { WorkflowDiagramCanvasEditableEffect } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect';
-import { WorkflowDiagramCreateStepNode } from '@/workflow/workflow-diagram/components/WorkflowDiagramCreateStepNode';
 import { WorkflowDiagramDefaultEdgeEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramDefaultEdgeEditable';
 import { WorkflowDiagramEmptyTrigger } from '@/workflow/workflow-diagram/components/WorkflowDiagramEmptyTrigger';
 import { WorkflowDiagramFilterEdgeEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable';
@@ -119,7 +118,6 @@ export const WorkflowDiagramCanvasEditable = ({
       <WorkflowDiagramCanvasBase
         nodeTypes={{
           default: WorkflowDiagramStepNodeEditable,
-          'create-step': WorkflowDiagramCreateStepNode,
           'empty-trigger': WorkflowDiagramEmptyTrigger,
         }}
         edgeTypes={{

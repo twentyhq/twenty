@@ -17,7 +17,6 @@ import {
   WorkflowDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
-import { isCreateStepNode } from '@/workflow/workflow-diagram/utils/isCreateStepNode';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
@@ -63,15 +62,6 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
           openWorkflowTriggerTypeInCommandMenu(workflowVisualizerWorkflowId);
           return;
         }
-
-        return;
-      }
-
-      if (isCreateStepNode(selectedNode)) {
-        startNodeCreation({
-          parentStepId: selectedNode.data.parentNodeId,
-          nextStepId: undefined,
-        });
 
         return;
       }
