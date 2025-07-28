@@ -70,6 +70,7 @@ describe('ApiKeyService', () => {
 
     mockApiKeyRoleService = {
       recomputeCache: jest.fn(),
+      assignRoleToApiKey: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -122,9 +123,7 @@ describe('ApiKeyService', () => {
 
       mockApiKeyRepository.create.mockReturnValue(mockApiKey);
       mockApiKeyRepository.save.mockResolvedValue(mockApiKey);
-      mockRoleTargetsRepository.delete.mockResolvedValue({ affected: 0 });
-      mockRoleTargetsRepository.save.mockResolvedValue({});
-      mockApiKeyRoleService.recomputeCache.mockResolvedValue();
+      mockApiKeyRoleService.assignRoleToApiKey.mockResolvedValue(undefined);
 
       const result = await service.create(apiKeyData);
 
@@ -132,17 +131,11 @@ describe('ApiKeyService', () => {
         expectedApiKeyFields,
       );
       expect(mockApiKeyRepository.save).toHaveBeenCalledWith(mockApiKey);
-      expect(mockRoleTargetsRepository.delete).toHaveBeenCalledWith({
-        apiKeyId: mockApiKey.id,
-      });
-      expect(mockRoleTargetsRepository.save).toHaveBeenCalledWith({
+      expect(mockApiKeyRoleService.assignRoleToApiKey).toHaveBeenCalledWith({
         apiKeyId: mockApiKey.id,
         roleId: 'mock-role-id',
         workspaceId: mockWorkspaceId,
       });
-      expect(mockApiKeyRoleService.recomputeCache).toHaveBeenCalledWith(
-        mockWorkspaceId,
-      );
       expect(result).toEqual(mockApiKey);
     });
   });
