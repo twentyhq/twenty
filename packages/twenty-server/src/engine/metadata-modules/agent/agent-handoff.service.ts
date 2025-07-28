@@ -99,7 +99,7 @@ export class AgentHandoffService {
     if (existingHandoff) {
       throw new AgentException(
         `Handoff from ${fromAgent.name} to ${toAgent.name} already exists`,
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AgentExceptionCode.HANDOFF_ALREADY_EXISTS,
       );
     }
 
