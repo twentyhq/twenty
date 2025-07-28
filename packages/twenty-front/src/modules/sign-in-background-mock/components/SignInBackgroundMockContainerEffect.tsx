@@ -61,6 +61,7 @@ export const SignInBackgroundMockContainerEffect = ({
         columnDefinitions: SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS,
       }),
       recordTableId,
+      objectMetadataItem.id,
     );
 
     if (contextStoreCurrentObjectMetadataItemId !== objectMetadataItem.id) {

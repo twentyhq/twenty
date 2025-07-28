@@ -3,7 +3,7 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { createRequiredContext } from '~/utils/createRequiredContext';
 
-export type RecordTableContextValue = {
+type RecordTableContextValue = {
   recordTableId: string;
   viewBarId: string;
   objectNameSingular: string;

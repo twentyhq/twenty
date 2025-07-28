@@ -64,9 +64,18 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
 
     let objectRecords: Partial<ObjectRecord>[] = [];
 
+    const columnsToSelect = buildColumnsToSelect({
+      select: executionArgs.graphqlQuerySelectedFieldsResult.select,
+      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+      objectMetadataItemWithFieldMaps,
+    });
+
     if (executionArgs.args.ids) {
       objectRecords = (await existingRecordsQueryBuilder
         .where({ id: In(executionArgs.args.ids) })
+        .setFindOptions({
+          select: columnsToSelect,
+        })
         .getMany()) as ObjectRecord[];
     } else if (executionArgs.args.data && !isEmpty(executionArgs.args.data)) {
       objectRecords = executionArgs.args.data;
@@ -91,12 +100,6 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
             hasPreviousPage: false,
           });
         }
-
-        const columnsToSelect = buildColumnsToSelect({
-          select: executionArgs.graphqlQuerySelectedFieldsResult.select,
-          relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
-          objectMetadataItemWithFieldMaps,
-        });
 
         const duplicateRecordsQueryBuilder =
           executionArgs.repository.createQueryBuilder(
