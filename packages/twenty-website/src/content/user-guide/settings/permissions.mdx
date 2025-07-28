@@ -7,14 +7,14 @@ sectionInfo: Learn how to manage permissions in Twenty.
 
 ## Share a Workspace
 
-To invite others into your workspace:
+To invite workspace members:
 
 1. Go to **Settings > Members**
 2. Either:
     - Copy and share the workspace invite link, or 
     - Enter the member's email, then click **Invite**.
 
-Invited members will appear on the members list. Use the search bar to find members.
+Invited members will appear on the workspace members list. Use the search bar to locate members.
 
 ## Create a Role
 
@@ -23,73 +23,73 @@ To create a new role:
 1. Go to **Settings > Roles**
 2. Under **All Roles**, click on **+ Create Role**
 3. Enter a role name
-4. In the default **Permissions** tab, customize role access
-5. Then, click **Save** when you have finished customizing
+4. In the default **Permissions** tab, configure permissions
+5. Click **Save** to finish
 
 ## Delete a Role
 
 To delete a role:
 
 1. Go to **Settings > Roles**
-2. Click on the role you wish to remove
-3. Go to the **Settings** tab, then click **Delete Role**
+2. Click on the role you want to remove
+3. Open the **Settings** tab, then click **Delete Role**
 4. Click **Confirm** in the modal
 
-Note: If a role is deleted, any member assigned to that role will be automatically reassigned to the default role. All except the **Admin** role can be deleted; there must always be at least one member assigned to this role at all times.
+Note: If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. All except the **Admin** role can be deleted. There must always be at least one member assigned to the **Admin** role.
 
 ## Manage Member Roles
 
-### Access Roles 
+### View Roles and Assignments
 
-To access all roles and assigned members:
+To view roles and their assigned workspace members:
 
 1. Go to **Settings > Roles**
-2. Click any role to see and edit its settings and assignments
+2. Click any role to view its details and assignments
 
-### Reassign Roles
+### Reassign a Role
 
 To reassign a role: 
 
 1. Go to **Settings > Roles**
 2. Click on the role you want to assign
-3. Go to the **Assignment** tab
-4. Click **+ Assign to member** and select the member
-5. Select the member you wish to assign the role to 
-6. Click **Confirm** when prompted with modal to remove the role that was previously assigned to the member
+3. Open the **Assignment** tab
+4. Click **+ Assign to member** 
+5. Select the workspace member
+6. Click **Confirm** in the modal to remove the previously assigned role
 
-Note: New members are assigned to the default **Member** role when they join and the permissions for this can be customized in the **Roles** page.
+Note: New members are assigned to the default role when they join. You can customize the default role and its permissions on the **Roles** page.
 
 ## Customize Permissions
 
-You can customize what each role can see or do across objects, settings, and general application actions.
+Permissions determine what each role can access or modify within your workspace, including workspace objects, settings, and actions.
 
-### Object 
+### Object Permission
 
 Control access to records and fields:
 
-- Under **All Objects**, choose permissions like **See Record**, **Edit Records**, **Delete Records**, or **Destroy Records** to apply them across all objects
-- Under **Object-Level Permissions**, add custom rules for individual objects. These settings override the default set under **All Objects**.
+- Under **All Objects**, apply permissions like **See Record**, **Edit Records**, **Delete Records**, or **Destroy Records** to all objects
+- Under **Object-Level Permissions**, configure exceptions for individual objects. These override the settings from **All Objects**
 
-To override parent permissions and apply stricter controls:
+To override parent permissions and apply stricter rules:
 
-- Click **X** next to the permission to remove the parent rule
-- Select the specific permissions you want this role to have for the selected object 
-- To undo an override, click the orange **Undo** icon (circular arrow)
+- Click **X** to remove the inherited rule
+- Select the specific permissions for the selected object 
+- Click the orange **Undo** icon (circular arrow) to revert changes
 
-When finished, click **Finish** to save your changes.
+When done, click **Finish**, then **Save** once redirected to the role page.
 
-### Settings 
+### Workspace Settings Permissions
 
-You can manage a members' access to workspace settings in two ways:
+Control access to workspace settings in two ways:
 
-- Granting full editing rights to all workspace settings by toggling **Settings All Access**, or 
-- Enable permissions for specific settings (e.g., API keys, workspace preferences, users, roles, data model, security, workflows)
+- Toggle **Settings All Access** to grant full access 
+- Or enable specific permissions (e.g., API key generation, workspace preferences, role assignment, data model configuration, security settings, and workflow management)
 
-### General
+### Workspace Action Permissions
 
-Grant or restrict access to general actions:
+Controll access to general workspace actions:
 
-- Toggle **Application All Access** to grant full application rights
-- Enable or disable permissions like **Send Email**, **Import CSV**, and **Export CSV**
+- Toggle **Application All Access** to grant full permissions
+- Or enable individual actions such as **Send Email**, **Import CSV**, and **Export CSV**
 
 <ArticleEditContent></ArticleEditContent>
