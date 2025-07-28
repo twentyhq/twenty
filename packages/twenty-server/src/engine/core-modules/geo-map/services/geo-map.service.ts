@@ -63,12 +63,13 @@ export class GeoMapService {
     token: string,
   ): Promise<AddressFields | undefined> {
     const result = await this.httpService.axiosRef.get(
-      `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&sessiontoken=${token}&fields=address_components&key=${this.apiMapKey}`,
+      `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&sessiontoken=${token}&fields=address_components%2Cgeometry&key=${this.apiMapKey}`,
     );
 
     if (result.data.status === 'OK') {
       return sanitizePlaceDetailsResults(
         result.data.result?.address_components,
+        result.data.result?.geometry?.location,
       );
     }
 

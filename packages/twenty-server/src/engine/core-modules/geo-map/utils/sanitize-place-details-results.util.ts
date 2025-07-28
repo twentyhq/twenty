@@ -8,10 +8,15 @@ export type AddressFields = {
   postcode?: string;
   city?: string;
   country?: string;
+  location?: locationFields;
 };
-
+export type locationFields = {
+  lat?: number;
+  lng?: number;
+};
 export const sanitizePlaceDetailsResults = (
   AddressComponents: AddressComponent[],
+  location?: locationFields,
 ): AddressFields => {
   if (!AddressComponents || AddressComponents.length === 0) return {};
 
@@ -67,6 +72,7 @@ export const sanitizePlaceDetailsResults = (
       }
     }
   }
+  address.location = location;
 
   return address;
 };

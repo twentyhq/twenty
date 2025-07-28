@@ -16,4 +16,8 @@ export type PlaceDetailsResult = {
   postcode?: string;
   city?: string;
   country?: string;
+  location?:{
+     lat?: number;
+     lng?: number;
+  }
 };
