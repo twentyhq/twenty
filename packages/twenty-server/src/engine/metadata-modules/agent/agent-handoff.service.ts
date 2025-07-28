@@ -33,7 +33,7 @@ export class AgentHandoffService {
       },
     });
 
-    return !!handoff;
+    return Boolean(handoff);
   }
 
   async getHandoffTargets({
