@@ -3658,9 +3658,7 @@ export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
 
 export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: { __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean } };
 
-export type ObjectPermissionFragmentFragment = { __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null };
-
-export type ObjectPermissionsWithRestrictedFieldFragmentFragment = { __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null };
+export type ObjectPermissionFragmentFragment = { __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null };
 
 export type PermissionFlagFragmentFragment = { __typename?: 'PermissionFlag', id: string, flag: PermissionFlagType, roleId: string };
 
@@ -3700,7 +3698,7 @@ export type UpsertObjectPermissionsMutationVariables = Exact<{
 }>;
 
 
-export type UpsertObjectPermissionsMutation = { __typename?: 'Mutation', upsertObjectPermissions: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }> };
+export type UpsertObjectPermissionsMutation = { __typename?: 'Mutation', upsertObjectPermissions: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> };
 
 export type UpsertPermissionFlagsMutationVariables = Exact<{
   upsertPermissionFlagsInput: UpsertPermissionFlagsInput;
@@ -3712,7 +3710,7 @@ export type UpsertPermissionFlagsMutation = { __typename?: 'Mutation', upsertPer
 export type GetRolesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }>, permissionFlags?: Array<{ __typename?: 'PermissionFlag', id: string, flag: PermissionFlagType, roleId: string }> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }> | null }> };
+export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }>, permissionFlags?: Array<{ __typename?: 'PermissionFlag', id: string, flag: PermissionFlagType, roleId: string }> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null }> };
 
 export type CreateApprovedAccessDomainMutationVariables = Exact<{
   input: CreateApprovedAccessDomainInput;
@@ -4071,15 +4069,6 @@ export const WebhookFragmentFragmentDoc = gql`
   secret
 }
     `;
-export const ObjectPermissionFragmentFragmentDoc = gql`
-    fragment ObjectPermissionFragment on ObjectPermission {
-  objectMetadataId
-  canReadObjectRecords
-  canUpdateObjectRecords
-  canSoftDeleteObjectRecords
-  canDestroyObjectRecords
-}
-    `;
 export const PermissionFlagFragmentFragmentDoc = gql`
     fragment PermissionFlagFragment on PermissionFlag {
   id
@@ -4128,8 +4117,8 @@ export const DeletedWorkspaceMemberQueryFragmentFragmentDoc = gql`
   userEmail
 }
     `;
-export const ObjectPermissionsWithRestrictedFieldFragmentFragmentDoc = gql`
-    fragment ObjectPermissionsWithRestrictedFieldFragment on ObjectPermission {
+export const ObjectPermissionFragmentFragmentDoc = gql`
+    fragment ObjectPermissionFragment on ObjectPermission {
   objectMetadataId
   canReadObjectRecords
   canUpdateObjectRecords
@@ -4213,7 +4202,7 @@ export const UserQueryFragmentFragmentDoc = gql`
     permissionFlags
     objectRecordsPermissions
     objectPermissions {
-      ...ObjectPermissionsWithRestrictedFieldFragment
+      ...ObjectPermissionFragment
     }
     twoFactorAuthenticationMethodSummary {
       twoFactorAuthenticationMethodId
@@ -4285,7 +4274,7 @@ export const UserQueryFragmentFragmentDoc = gql`
 }
     ${WorkspaceMemberQueryFragmentFragmentDoc}
 ${DeletedWorkspaceMemberQueryFragmentFragmentDoc}
-${ObjectPermissionsWithRestrictedFieldFragmentFragmentDoc}
+${ObjectPermissionFragmentFragmentDoc}
 ${WorkspaceUrlsFragmentFragmentDoc}
 ${RoleFragmentFragmentDoc}
 ${AvailableWorkspacesFragmentFragmentDoc}`;
