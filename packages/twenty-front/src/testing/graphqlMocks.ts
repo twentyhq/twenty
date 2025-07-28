@@ -692,13 +692,6 @@ export const graphqlMocks = {
         { status: 200 },
       );
     }),
-    metadataGraphql.query('GetRoles', () => {
-      return HttpResponse.json({
-        data: {
-          getRoles: getRolesMock(),
-        },
-      });
-    }),
     metadataGraphql.query('GetApiKeys', () => {
       return HttpResponse.json({
         data: {
@@ -737,8 +730,8 @@ export const graphqlMocks = {
         role: {
           __typename: 'Role',
           id: input.roleId,
-          label: input.roleId === '1' ? 'Admin' : 'Guest',
-          icon: input.roleId === '1' ? 'IconSettings' : 'IconUser',
+          label: input.roleId === '2' ? 'Guest' : 'Admin',
+          icon: input.roleId === '2' ? 'IconUser' : 'IconSettings',
         },
       };
 
@@ -759,41 +752,47 @@ export const graphqlMocks = {
       return HttpResponse.json({
         data: {
           generateApiKeyToken: {
+            __typename: 'ApiKeyToken',
             token: 'test-api-key-token-12345',
           },
         },
       });
     }),
     metadataGraphql.mutation('RevokeApiKey', ({ variables }) => {
-      const apiKeyId = variables.input?.id;
       return HttpResponse.json({
         data: {
           revokeApiKey: {
             __typename: 'ApiKey',
-            id: apiKeyId,
+            id: variables.input?.id,
+            name: 'Zapier Integration',
+            expiresAt: '2100-11-06T23:59:59.825Z',
+            revokedAt: new Date().toISOString(),
+            role: {
+              __typename: 'Role',
+              id: '1',
+              label: 'Admin',
+              icon: 'IconSettings',
+            },
           },
         },
       });
     }),
     metadataGraphql.mutation('UpdateApiKey', ({ variables }) => {
-      const input = variables.input;
-      const updatedApiKey = {
-        __typename: 'ApiKey',
-        id: input.id,
-        name: input.name,
-        expiresAt: '2100-11-06T23:59:59.825Z',
-        revokedAt: null,
-        role: {
-          __typename: 'Role',
-          id: '1',
-          label: 'Admin',
-          icon: 'IconSettings',
-        },
-      };
-
       return HttpResponse.json({
         data: {
-          updateApiKey: updatedApiKey,
+          updateApiKey: {
+            __typename: 'ApiKey',
+            id: variables.input.id,
+            name: variables.input.name || 'Updated API Key',
+            expiresAt: '2100-11-06T23:59:59.825Z',
+            revokedAt: null,
+            role: {
+              __typename: 'Role',
+              id: '1',
+              label: 'Admin',
+              icon: 'IconSettings',
+            },
+          },
         },
       });
     }),
