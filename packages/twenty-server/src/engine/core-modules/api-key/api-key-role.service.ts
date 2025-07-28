@@ -38,13 +38,21 @@ export class ApiKeyRoleService {
     roleId: string;
     workspaceId: string;
   }): Promise<void> {
-    // Remove existing role assignment if any
+
+    const validationResult = await this.validateAssignRoleInput({
+      apiKeyId,
+      workspaceId,
+      roleId,
+    });
+
+    if (validationResult?.roleToAssignIsSameAsCurrentRole) {
+      return;
+    }
     await this.roleTargetsRepository.delete({
       apiKeyId,
       workspaceId,
     });
 
-    // Create new role assignment
     const roleTarget = this.roleTargetsRepository.create({
       apiKeyId,
       roleId,
