@@ -70,15 +70,18 @@ export class MessagingMessagesImportCronJob {
           );
         }
       } catch (error) {
+        // We had issues with the workspace schema not being found, due
+        // to users deleting their workspaces in the middle of the cron job
+        // We only throw an error when the workspace is found & schema not found
         if (
           error.code === '42P01' &&
           error.message.includes('messageChannel" does not exist')
         ) {
-          const workspaceRefetched = await this.workspaceRepository.findOneBy({
+          const refetchedWorkspace = await this.workspaceRepository.findOneBy({
             id: activeWorkspace.id,
           });
 
-          if (isDefined(workspaceRefetched)) {
+          if (isDefined(refetchedWorkspace)) {
             this.exceptionHandlerService.captureExceptions([error], {
               workspace: {
                 id: activeWorkspace.id,
