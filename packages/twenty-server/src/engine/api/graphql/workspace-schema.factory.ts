@@ -21,10 +21,9 @@ import {
   WorkspaceMetadataCacheExceptionCode,
 } from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
-import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
-import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
+import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
 
 @Injectable()
 export class WorkspaceSchemaFactory {
@@ -86,27 +85,10 @@ export class WorkspaceSchemaFactory {
         indexes: objectMetadataItem.indexMetadatas,
       }))
       .filter((objectMetadata) => {
-        // Find the corresponding workspace entity for this object metadata
-        const workspaceEntity = standardObjectMetadataDefinitions.find(
-          (entity) => {
-            const entityMetadata = metadataArgsStorage.filterEntities(entity);
-
-            return entityMetadata?.standardId === objectMetadata.standardId;
-          },
-        );
-
-        if (!workspaceEntity) {
-          return true; // Include non-workspace entities (custom objects, etc.)
-        }
-
-        const entityMetadata =
-          metadataArgsStorage.filterEntities(workspaceEntity);
-
-        // Filter out entities that are GraphQL-gated and not enabled
-        return !isGatedAndNotEnabled(
-          entityMetadata?.gate,
+        return !shouldExcludeFromWorkspaceApi(
+          objectMetadata,
+          standardObjectMetadataDefinitions,
           workspaceFeatureFlagsMap,
-          'graphql',
         );
       });
 

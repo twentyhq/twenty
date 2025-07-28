@@ -12,11 +12,11 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import {
+  IconAt,
   IconCalendarEvent,
   IconDotsVertical,
   IconMail,
   IconRefresh,
-  IconSettings,
   IconTrash,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -63,7 +63,7 @@ export const SettingsAccountsRowDropdownMenu = ({
                 ConnectedAccountProvider.IMAP_SMTP_CALDAV && (
                 <MenuItem
                   text={t`Connection settings`}
-                  LeftIcon={IconSettings}
+                  LeftIcon={IconAt}
                   onClick={() => {
                     navigate(SettingsPath.EditImapSmtpCaldavConnection, {
                       connectedAccountId: account.id,

@@ -1,4 +1,4 @@
-import { FieldMetadataType, IsExactly } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
   Column,
   CreateDateColumn,
@@ -18,18 +18,10 @@ import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
+import { AssignTypeIfIsRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-type-if-is-relation-field-metadata-type.type';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
-
-type IsRelationType<Ttype, T extends FieldMetadataType = FieldMetadataType> =
-  IsExactly<T, FieldMetadataType> extends true
-    ? null | Ttype
-    : T extends FieldMetadataType.RELATION
-      ? Ttype
-      : T extends FieldMetadataType.MORPH_RELATION
-        ? Ttype
-        : never;
 
 @Entity('fieldMetadata')
 @Index(
@@ -53,7 +45,8 @@ type IsRelationType<Ttype, T extends FieldMetadataType = FieldMetadataType> =
 // TODO add some documentation about this entity
 export class FieldMetadataEntity<
   T extends FieldMetadataType = FieldMetadataType,
-> {
+> implements Required<FieldMetadataEntity>
+{
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -84,7 +77,7 @@ export class FieldMetadataEntity<
   label: string;
 
   @Column({ nullable: true, type: 'jsonb' })
-  defaultValue: FieldMetadataDefaultValue<T> | null;
+  defaultValue: FieldMetadataDefaultValue<T>;
 
   @Column({ nullable: true, type: 'text' })
   description: string | null;
@@ -93,13 +86,13 @@ export class FieldMetadataEntity<
   icon: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  standardOverrides?: FieldStandardOverridesDTO | null;
+  standardOverrides: FieldStandardOverridesDTO | null;
 
   @Column('jsonb', { nullable: true })
-  options: FieldMetadataOptions<T> | null;
+  options: FieldMetadataOptions<T>;
 
   @Column('jsonb', { nullable: true })
-  settings?: FieldMetadataSettings<T> | null;
+  settings: FieldMetadataSettings<T>;
 
   @Column({ default: false })
   isCustom: boolean;
@@ -126,7 +119,10 @@ export class FieldMetadataEntity<
   isLabelSyncedWithName: boolean;
 
   @Column({ nullable: true, type: 'uuid' })
-  relationTargetFieldMetadataId: IsRelationType<string, T>;
+  relationTargetFieldMetadataId: AssignTypeIfIsRelationFieldMetadataType<
+    string,
+    T
+  >;
 
   @OneToOne(
     () => FieldMetadataEntity,
@@ -135,10 +131,16 @@ export class FieldMetadataEntity<
     { nullable: true },
   )
   @JoinColumn({ name: 'relationTargetFieldMetadataId' })
-  relationTargetFieldMetadata: IsRelationType<Relation<FieldMetadataEntity>, T>;
+  relationTargetFieldMetadata: AssignTypeIfIsRelationFieldMetadataType<
+    Relation<FieldMetadataEntity>,
+    T
+  >;
 
   @Column({ nullable: true, type: 'uuid' })
-  relationTargetObjectMetadataId: IsRelationType<string, T>;
+  relationTargetObjectMetadataId: AssignTypeIfIsRelationFieldMetadataType<
+    string,
+    T
+  >;
 
   @ManyToOne(
     () => ObjectMetadataEntity,
@@ -147,7 +149,7 @@ export class FieldMetadataEntity<
     { onDelete: 'CASCADE', nullable: true },
   )
   @JoinColumn({ name: 'relationTargetObjectMetadataId' })
-  relationTargetObjectMetadata: IsRelationType<
+  relationTargetObjectMetadata: AssignTypeIfIsRelationFieldMetadataType<
     Relation<ObjectMetadataEntity>,
     T
   >;

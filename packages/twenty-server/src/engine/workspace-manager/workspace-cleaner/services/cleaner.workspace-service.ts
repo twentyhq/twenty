@@ -325,7 +325,11 @@ export class CleanerWorkspaceService {
 
     let deletedWorkspacesCount = 0;
 
-    for (const workspace of workspaces) {
+    for (const [index, workspace] of workspaces.entries()) {
+      this.logger.log(
+        `${dryRun ? 'DRY RUN - ' : ''}Processing workspace ${workspace.id} - ${index + 1}/${workspaces.length}`,
+      );
+
       try {
         const isSoftDeletedWorkspace = isDefined(workspace.deletedAt);
 

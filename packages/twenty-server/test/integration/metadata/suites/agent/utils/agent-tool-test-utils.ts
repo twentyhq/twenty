@@ -5,14 +5,19 @@ import { Repository } from 'typeorm';
 
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
+import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
+import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
 
 export interface AgentToolTestContext {
@@ -78,6 +83,34 @@ export const createAgentToolTestModule =
         {
           provide: ToolAdapterService,
           useClass: ToolAdapterService,
+        },
+        {
+          provide: ToolRegistryService,
+          useClass: ToolRegistryService,
+        },
+        {
+          provide: SendEmailTool,
+          useValue: {
+            description: 'mock',
+            parameters: {},
+            execute: jest.fn(),
+          },
+        },
+        {
+          provide: ScopedWorkspaceContextFactory,
+          useValue: {
+            create: jest.fn(() => ({ workspaceId: 'test-workspace-id' })),
+          },
+        },
+        {
+          provide: MessagingSendMessageService,
+          useValue: { sendMessage: jest.fn() },
+        },
+        {
+          provide: PermissionsService,
+          useValue: {
+            hasToolPermission: jest.fn(),
+          },
         },
       ],
     }).compile();

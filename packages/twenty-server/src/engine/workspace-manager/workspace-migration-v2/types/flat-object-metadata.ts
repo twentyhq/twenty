@@ -9,8 +9,9 @@ type ObjectMetadataRelationProperties = ExtractRecordTypeOrmRelationProperties<
   MetadataEntitiesRelationTarget
 >;
 
-export type FlatObjectMetadata = Partial<
-  Omit<ObjectMetadataEntity, ObjectMetadataRelationProperties>
+export type FlatObjectMetadata = Omit<
+  ObjectMetadataEntity,
+  ObjectMetadataRelationProperties
 > & {
   uniqueIdentifier: string;
   flatIndexMetadatas: FlatIndexMetadata[];
