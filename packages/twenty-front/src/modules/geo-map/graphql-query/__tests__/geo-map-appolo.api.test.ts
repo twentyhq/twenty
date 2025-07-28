@@ -136,7 +136,8 @@ describe('geo-map GraphQL queries', () => {
       expect(fields).toContain('postcode');
       expect(fields).toContain('city');
       expect(fields).toContain('country');
-      expect(fields).toHaveLength(4);
+      expect(fields).toContain('location');
+      expect(fields).toHaveLength(5);
     });
 
     it('should match the expected query string', () => {
@@ -147,6 +148,10 @@ describe('geo-map GraphQL queries', () => {
             postcode
             city
             country
+            location {
+              lat
+              lng
+            }
           }
         }
       `;
