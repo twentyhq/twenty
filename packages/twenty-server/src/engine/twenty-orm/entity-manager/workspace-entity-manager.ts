@@ -40,7 +40,9 @@ import {
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
+import { DeepPartialWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/deep-partial-entity-with-nested-relation-fields.type';
+import { QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
+import { RelationNestedQueries } from 'src/engine/twenty-orm/relation-nested-queries/relation-nested-queries';
 import {
   OperationType,
   validateOperationIsPermittedOrThrow,
@@ -976,7 +978,7 @@ export class WorkspaceEntityManager extends EntityManager {
     permissionOptions?: PermissionOptions,
   ): Promise<Entity>;
 
-  override save<Entity, T extends DeepPartial<Entity>>(
+  override save<Entity, T extends DeepPartialWithNestedRelationFields<Entity>>(
     targetOrEntity: EntityTarget<Entity>,
     entities: T[],
     options: SaveOptions & {
@@ -985,14 +987,14 @@ export class WorkspaceEntityManager extends EntityManager {
     permissionOptions?: PermissionOptions,
   ): Promise<T[]>;
 
-  override save<Entity, T extends DeepPartial<Entity>>(
+  override save<Entity, T extends DeepPartialWithNestedRelationFields<Entity>>(
     targetOrEntity: EntityTarget<Entity>,
     entities: T[],
     options?: SaveOptions,
     permissionOptions?: PermissionOptions,
   ): Promise<(T & Entity)[]>;
 
-  override save<Entity, T extends DeepPartial<Entity>>(
+  override save<Entity, T extends DeepPartialWithNestedRelationFields<Entity>>(
     targetOrEntity: EntityTarget<Entity>,
     entity: T,
     options: SaveOptions & {
@@ -1001,7 +1003,7 @@ export class WorkspaceEntityManager extends EntityManager {
     permissionOptions?: PermissionOptions,
   ): Promise<T>;
 
-  override save<Entity, T extends DeepPartial<Entity>>(
+  override save<Entity, T extends DeepPartialWithNestedRelationFields<Entity>>(
     targetOrEntity: EntityTarget<Entity>,
     entity: T,
     options?: SaveOptions,
@@ -1010,7 +1012,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
   override async save<
     Entity extends ObjectLiteral,
-    T extends DeepPartial<Entity>,
+    T extends DeepPartialWithNestedRelationFields<Entity>,
   >(
     targetOrEntity: EntityTarget<Entity> | Entity | Entity[],
     entityOrMaybeOptions:
@@ -1062,6 +1064,30 @@ export class WorkspaceEntityManager extends EntityManager {
       target ?? (isEntityArray ? entity[0]?.constructor : entity.constructor);
 
     const entityArray = isEntityArray ? entity : [entity];
+
+    const relationNestedQueries = new RelationNestedQueries(
+      this.internalContext,
+    );
+
+    const relationNestedConfig =
+      relationNestedQueries.prepareNestedRelationQueries(
+        entityArray,
+        entityTarget,
+      );
+
+    const updatedEntities = isDefined(relationNestedConfig)
+      ? await relationNestedQueries.processRelationNestedQueries({
+          entities: entityArray,
+          relationNestedConfig,
+          queryBuilder: this.createQueryBuilder(
+            undefined,
+            undefined,
+            undefined,
+            permissionOptions,
+          ),
+        })
+      : entityArray;
+
     const entityIds = entityArray.map((e) => (e as { id: string }).id);
     const beforeUpdate = await this.find(
       entityTarget,
@@ -1086,7 +1112,7 @@ export class WorkspaceEntityManager extends EntityManager {
     );
 
     const formattedEntityOrEntities = formatData(
-      entityArray,
+      updatedEntities,
       objectMetadataItem,
     );
 

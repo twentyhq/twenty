@@ -60,17 +60,6 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
     await queryRunner.connect();
 
     try {
-      const featureFlags =
-        await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
-
-      if (featureFlags?.IS_CORE_VIEW_SYNCING_ENABLED) {
-        this.logger.log(
-          `Workspace ${workspaceId} already has IS_CORE_VIEW_SYNCING_ENABLED feature flag, skipping migration`,
-        );
-
-        return;
-      }
-
       await queryRunner.startTransaction();
 
       try {
@@ -157,25 +146,9 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
       return;
     }
 
-    const viewRepository = queryRunner.manager.getRepository(View);
-
-    const existingCoreViews = await viewRepository.find({
-      where: { workspaceId },
-      select: ['id'],
-      withDeleted: true,
-    });
-
-    const existingViewIds = new Set(existingCoreViews.map((view) => view.id));
+    await this.deleteExistingCoreViewObjects(workspaceId, queryRunner, dryRun);
 
     for (const workspaceView of workspaceViews) {
-      if (existingViewIds.has(workspaceView.id)) {
-        this.logger.warn(
-          `View ${workspaceView.id} already exists in core schema for workspace ${workspaceId}, skipping`,
-        );
-
-        continue;
-      }
-
       await this.migrateViewEntity(workspaceView, workspaceId, queryRunner);
 
       if (workspaceView.viewFields?.length > 0) {
@@ -224,6 +197,45 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         `Migrated view ${workspaceView.id} (${workspaceView.name})${deletedStatus} to core schema`,
       );
     }
+  }
+
+  private async deleteExistingCoreViewObjects(
+    workspaceId: string,
+    queryRunner: QueryRunner,
+    dryRun: boolean,
+  ): Promise<void> {
+    const viewRepository = queryRunner.manager.getRepository(View);
+    const existingViews = await viewRepository.find({
+      where: { workspaceId },
+      select: ['id'],
+      withDeleted: true,
+    });
+
+    if (existingViews.length === 0) {
+      this.logger.log(
+        `No existing core view objects found for workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
+    this.logger.log(
+      `${dryRun ? 'DRY RUN: ' : ''}Deleting ${existingViews.length} existing core view objects for workspace ${workspaceId}`,
+    );
+
+    if (dryRun) {
+      this.logger.log(
+        `DRY RUN: Would delete all existing core view objects for workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
+    await viewRepository.delete({ workspaceId });
+
+    this.logger.log(
+      `Deleted all existing core view objects for workspace ${workspaceId}`,
+    );
   }
 
   private async migrateViewEntity(

@@ -24,6 +24,7 @@ import { ColumnDefinition } from '../../types/ColumnDefinition';
 
 export type RecordTableColumnHeadDropdownMenuProps = {
   column: ColumnDefinition<FieldMetadata>;
+  objectMetadataId: string;
 };
 
 const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
@@ -32,6 +33,7 @@ const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
 
 export const RecordTableColumnHeadDropdownMenu = ({
   column,
+  objectMetadataId,
 }: RecordTableColumnHeadDropdownMenuProps) => {
   const { t } = useLingui();
 
@@ -52,7 +54,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
     column.fieldMetadataId !== lastVisibleColumn?.fieldMetadataId && canMove;
 
   const { handleColumnVisibilityChange, handleMoveTableColumn } =
-    useTableColumns();
+    useTableColumns({ objectMetadataId });
 
   const dropdownId = column.fieldMetadataId + '-header';
 

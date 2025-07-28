@@ -4,7 +4,7 @@ import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
 import {
   ConnectObject,
   DisconnectObject,
-} from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
+} from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import {
   RelationConnectQueryFieldsByEntityIndex,
   RelationDisconnectQueryFieldsByEntityIndex,
