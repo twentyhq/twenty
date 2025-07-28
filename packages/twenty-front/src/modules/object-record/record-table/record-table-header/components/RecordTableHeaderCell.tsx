@@ -258,7 +258,10 @@ export const RecordTableHeaderCell = ({
       isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}
     >
       <StyledColumnHeadContainer>
-        <RecordTableColumnHeadWithDropdown column={column} />
+        <RecordTableColumnHeadWithDropdown
+          column={column}
+          objectMetadataId={objectMetadataItem.id}
+        />
         {(useIsMobile() || iconVisibility) &&
           !!column.isLabelIdentifier &&
           !isReadOnly &&

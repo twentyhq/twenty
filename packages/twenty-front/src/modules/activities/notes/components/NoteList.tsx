@@ -8,7 +8,7 @@ import { NoteCard } from './NoteCard';
 type NoteListProps = {
   title: string;
   notes: Note[];
-  button?: ReactElement | false;
+  button?: ReactElement | false | null;
 };
 
 const StyledContainer = styled.div`
