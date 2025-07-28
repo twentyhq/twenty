@@ -1,7 +1,7 @@
 import {
   ConnectObject,
   DisconnectObject,
-} from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
+} from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 
 export type RelationConnectQueryFieldsByEntityIndex = {
   [entityIndex: string]: { [key: string]: ConnectObject };
