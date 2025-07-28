@@ -1,6 +1,5 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-
-import { getUniqueConstraintsFields } from 'src/engine/metadata-modules/index-metadata/utils/getUniqueConstraintsFields.util';
+import { FieldMetadataType } from '@/types';
+import { getUniqueConstraintsFields } from '@/utils/indexMetadata/getUniqueConstraintsFields';
 
 describe('getUniqueConstraintsFields', () => {
   const mockIdField = {

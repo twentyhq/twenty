@@ -8,6 +8,7 @@ type Leaf = {
   description?: string;
   value: any;
   fieldMetadataId?: string;
+  isCompositeSubField?: boolean;
 };
 
 type Node = {
@@ -18,6 +19,7 @@ type Node = {
   value: OutputSchema;
   description?: string;
   fieldMetadataId?: string;
+  isCompositeSubField?: boolean;
 };
 
 type Link = {

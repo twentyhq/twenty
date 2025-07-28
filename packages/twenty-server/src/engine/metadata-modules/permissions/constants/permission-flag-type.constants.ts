@@ -11,4 +11,6 @@ export enum PermissionFlagType {
 
   // Tool permissions
   SEND_EMAIL_TOOL = 'SEND_EMAIL_TOOL',
+  IMPORT_CSV = 'IMPORT_CSV',
+  EXPORT_CSV = 'EXPORT_CSV',
 }

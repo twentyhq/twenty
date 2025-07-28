@@ -208,6 +208,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       .setFindOptions({
         select: selectedColumns,
       })
+      .withDeleted()
       .getMany();
   }
 
@@ -273,6 +274,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
 
         const existingRec = existingRecords.find(
           (existingRecord) =>
+            isDefined(existingRecord[field.column]) &&
             existingRecord[field.column] === requestFieldValue,
         );
 

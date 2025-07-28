@@ -53,6 +53,7 @@ import {
   IconTrashX,
   IconUser,
 } from 'twenty-ui/display';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
   | NoSelectionRecordActionKeys
@@ -169,6 +170,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isDefined(selectedRecord) && !selectedRecord.isRemote,
     availableOn: [ActionViewType.SHOW_PAGE],
     component: <ExportSingleRecordAction />,
+    requiredPermissionFlag: PermissionFlagType.EXPORT_CSV,
   },
   [MultipleRecordsActionKeys.EXPORT]: {
     type: ActionType.Standard,
@@ -183,6 +185,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     shouldBeRegistered: () => true,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     component: <ExportMultipleRecordsAction />,
+    requiredPermissionFlag: PermissionFlagType.EXPORT_CSV,
   },
   [NoSelectionRecordActionKeys.IMPORT_RECORDS]: {
     type: ActionType.Standard,
@@ -198,6 +201,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       !isSoftDeleteFilterActive,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     component: <ImportRecordsNoSelectionRecordAction />,
+    requiredPermissionFlag: PermissionFlagType.IMPORT_CSV,
   },
   [NoSelectionRecordActionKeys.EXPORT_VIEW]: {
     type: ActionType.Standard,
@@ -212,6 +216,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     shouldBeRegistered: () => true,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     component: <ExportMultipleRecordsAction />,
+    requiredPermissionFlag: PermissionFlagType.EXPORT_CSV,
   },
   [SingleRecordActionKeys.DELETE]: {
     type: ActionType.Standard,

@@ -11,6 +11,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -31,6 +32,10 @@ export class PermissionsService {
     private readonly roleRepository: Repository<RoleEntity>,
   ) {}
 
+  private isToolPermission(feature: string) {
+    return TOOL_PERMISSION_FLAGS.includes(feature);
+  }
+
   public async getUserWorkspacePermissions({
     userWorkspaceId,
     workspaceId,
@@ -45,8 +50,6 @@ export class PermissionsService {
       })
       .then((roles) => roles?.get(userWorkspaceId) ?? []);
 
-    let hasPermissionOnSettingFeature = false;
-
     if (!isDefined(roleOfUserWorkspace)) {
       throw new PermissionsException(
         PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
@@ -54,23 +57,23 @@ export class PermissionsService {
       );
     }
 
-    if (roleOfUserWorkspace.canUpdateAllSettings === true) {
-      hasPermissionOnSettingFeature = true;
-    }
-
-    const permissionFlags = roleOfUserWorkspace.permissionFlags ?? [];
-
     const defaultSettingsPermissions =
-      this.getDefaultUserWorkspacePermissions().settingsPermissions;
-    const settingsPermissions = Object.keys(PermissionFlagType).reduce(
-      (acc, feature) => ({
-        ...acc,
-        [feature]:
-          hasPermissionOnSettingFeature ||
-          permissionFlags.some(
-            (permissionFlag) => permissionFlag.flag === feature,
-          ),
-      }),
+      this.getDefaultUserWorkspacePermissions().permissionFlags;
+    const permissionFlags = Object.keys(PermissionFlagType).reduce(
+      (acc, feature) => {
+        const hasBasePermission = this.isToolPermission(feature)
+          ? roleOfUserWorkspace.canAccessAllTools
+          : roleOfUserWorkspace.canUpdateAllSettings;
+
+        return {
+          ...acc,
+          [feature]:
+            hasBasePermission ||
+            roleOfUserWorkspace.permissionFlags.some(
+              (permissionFlag) => permissionFlag.flag === feature,
+            ),
+        };
+      },
       defaultSettingsPermissions,
     );
 
@@ -94,7 +97,7 @@ export class PermissionsService {
       };
 
     return {
-      settingsPermissions,
+      permissionFlags,
       objectRecordsPermissions,
       objectPermissions,
     };
@@ -108,7 +111,7 @@ export class PermissionsService {
         [PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS]: false,
         [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]: false,
       },
-      settingsPermissions: {
+      permissionFlags: {
         [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: false,
         [PermissionFlagType.WORKSPACE]: false,
         [PermissionFlagType.WORKSPACE_MEMBERS]: false,
@@ -118,6 +121,8 @@ export class PermissionsService {
         [PermissionFlagType.SECURITY]: false,
         [PermissionFlagType.WORKFLOWS]: false,
         [PermissionFlagType.SEND_EMAIL_TOOL]: false,
+        [PermissionFlagType.IMPORT_CSV]: false,
+        [PermissionFlagType.EXPORT_CSV]: false,
       },
       objectPermissions: {},
     }) as const satisfies UserWorkspacePermissions;

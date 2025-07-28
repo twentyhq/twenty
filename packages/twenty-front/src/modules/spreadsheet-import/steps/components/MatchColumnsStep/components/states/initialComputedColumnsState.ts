@@ -5,18 +5,18 @@ import { atom, selectorFamily } from 'recoil';
 
 export const matchColumnsState = atom({
   key: 'MatchColumnsState',
-  default: [] as SpreadsheetColumns<string>,
+  default: [] as SpreadsheetColumns,
 });
 
 export const initialComputedColumnsSelector = selectorFamily<
-  SpreadsheetColumns<string>,
+  SpreadsheetColumns,
   ImportedRow
 >({
   key: 'initialComputedColumnsSelector',
   get:
     (headerValues: ImportedRow) =>
     ({ get }) => {
-      const currentState = get(matchColumnsState) as SpreadsheetColumns<string>;
+      const currentState = get(matchColumnsState) as SpreadsheetColumns;
       if (currentState.length === 0) {
         // Do not remove spread, it indexes empty array elements, otherwise map() skips over them
         const initialState = ([...headerValues] as string[]).map(
@@ -26,7 +26,7 @@ export const initialComputedColumnsSelector = selectorFamily<
             header: value ?? '',
           }),
         );
-        return initialState as SpreadsheetColumns<string>;
+        return initialState as SpreadsheetColumns;
       } else {
         return currentState;
       }
@@ -34,6 +34,6 @@ export const initialComputedColumnsSelector = selectorFamily<
   set:
     () =>
     ({ set }, newValue) => {
-      set(matchColumnsState, newValue as SpreadsheetColumns<string>);
+      set(matchColumnsState, newValue as SpreadsheetColumns);
     },
 });
