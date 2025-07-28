@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { fireEvent, userEvent, within } from '@storybook/test';
+import { expect, fireEvent, userEvent, within } from '@storybook/test';
 
 import { SettingsDevelopersApiKeyDetail } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail';
 import {
@@ -30,7 +30,12 @@ export type Story = StoryObj<typeof SettingsDevelopersApiKeyDetail>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('Zapier Integration', undefined, { timeout: 3000 });
+    const zapierElements = await canvas.findAllByText(
+      'Zapier Integration',
+      undefined,
+      { timeout: 3000 },
+    );
+    expect(zapierElements).toHaveLength(2);
     await canvas.findByText('Role');
     await canvas.findByText('Admin');
   },
@@ -39,7 +44,12 @@ export const Default: Story = {
 export const RegenerateApiKey: Story = {
   play: async ({ step }) => {
     const canvas = within(document.body);
-    await canvas.findByText('Zapier Integration', undefined, { timeout: 3000 });
+    const zapierElements = await canvas.findAllByText(
+      'Zapier Integration',
+      undefined,
+      { timeout: 3000 },
+    );
+    expect(zapierElements).toHaveLength(2);
     await canvas.findByText('Role');
 
     await userEvent.click(await canvas.findByText('Regenerate Key'));
@@ -68,7 +78,12 @@ export const RegenerateApiKey: Story = {
 export const DeleteApiKey: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('Zapier Integration', undefined, { timeout: 3000 });
+    const zapierElements = await canvas.findAllByText(
+      'Zapier Integration',
+      undefined,
+      { timeout: 3000 },
+    );
+    expect(zapierElements).toHaveLength(2);
     await canvas.findByText('Role');
 
     await userEvent.click(await canvas.findByText('Delete'));
