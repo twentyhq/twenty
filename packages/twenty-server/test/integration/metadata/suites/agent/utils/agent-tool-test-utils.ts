@@ -147,6 +147,8 @@ export const createAgentToolTestModule =
       createdAt: new Date(),
       updatedAt: new Date(),
       chatThreads: [],
+      incomingHandoffs: [],
+      outgoingHandoffs: [],
     };
 
     const testRole: RoleEntity = {
