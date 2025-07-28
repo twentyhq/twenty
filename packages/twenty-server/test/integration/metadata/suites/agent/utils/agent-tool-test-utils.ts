@@ -7,6 +7,8 @@ import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-ada
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
+import { AgentHandoffExecutorService } from 'src/engine/metadata-modules/agent/agent-handoff-executor.service';
+import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
 import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
@@ -110,6 +112,19 @@ export const createAgentToolTestModule =
           provide: PermissionsService,
           useValue: {
             hasToolPermission: jest.fn(),
+          },
+        },
+        {
+          provide: AgentHandoffService,
+          useValue: {
+            getHandoffTargets: jest.fn().mockResolvedValue([]),
+            canHandoffTo: jest.fn().mockResolvedValue(true),
+          },
+        },
+        {
+          provide: AgentHandoffExecutorService,
+          useValue: {
+            executeHandoff: jest.fn().mockResolvedValue({ success: true }),
           },
         },
       ],
