@@ -26,7 +26,7 @@ import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/vie
 import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
-import { transformWorkspaceValueToCoreValue } from 'src/modules/view/utils/view-filter-value-transformer.util';
+import { transformViewFilterWorkspaceValueToCoreValue } from 'src/modules/view/utils/transform-view-filter-workspace-value-to-core-value';
 
 @Command({
   name: 'migrate:views-to-core',
@@ -304,7 +304,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         fieldMetadataId: filter.fieldMetadataId,
         viewId: filter.viewId,
         operand: filter.operand,
-        value: transformWorkspaceValueToCoreValue(filter.value),
+        value: transformViewFilterWorkspaceValueToCoreValue(filter.value),
         viewFilterGroupId: filter.viewFilterGroupId,
         workspaceId,
         createdAt: new Date(filter.createdAt),
