@@ -4,7 +4,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { capitalize } from 'twenty-shared/utils';
-import { ObjectPermissionsWithRestrictedFields } from '~/generated/graphql';
+import { ObjectPermission } from '~/generated/graphql';
 
 export type QueryCursorDirection = 'before' | 'after';
 
@@ -22,10 +22,7 @@ export const generateFindManyRecordsQuery = ({
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
   computeReferences?: boolean;
   cursorDirection?: QueryCursorDirection;
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissionsWithRestrictedFields
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
   isFieldsPermissionsEnabled?: boolean;
 }) => gql`
 query FindMany${capitalize(

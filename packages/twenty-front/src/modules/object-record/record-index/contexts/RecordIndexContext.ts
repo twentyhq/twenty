@@ -1,5 +1,5 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { ObjectPermissionsWithRestrictedFields } from '~/generated/graphql';
+import { ObjectPermission } from '~/generated/graphql';
 import { createRequiredContext } from '~/utils/createRequiredContext';
 
 export type RecordIndexContextValue = {
@@ -8,10 +8,7 @@ export type RecordIndexContextValue = {
   objectNamePlural: string;
   objectNameSingular: string;
   objectMetadataItem: ObjectMetadataItem;
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissionsWithRestrictedFields
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
   recordIndexId: string;
 };
 

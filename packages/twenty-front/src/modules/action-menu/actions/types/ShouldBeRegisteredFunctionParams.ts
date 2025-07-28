@@ -3,11 +3,11 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
-import { ObjectPermissionsWithRestrictedFields } from '~/generated/graphql';
+import { ObjectPermission } from '~/generated/graphql';
 
 export type ShouldBeRegisteredFunctionParams = {
   objectMetadataItem?: ObjectMetadataItem;
-  objectPermissions: ObjectPermissionsWithRestrictedFields;
+  objectPermissions: ObjectPermission;
   recordFilters?: RecordFilter[];
   isShowPage?: boolean;
   isSoftDeleteFilterActive?: boolean;

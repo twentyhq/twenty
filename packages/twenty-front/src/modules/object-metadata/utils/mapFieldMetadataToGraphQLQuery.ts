@@ -1,13 +1,16 @@
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { isUndefined } from '@sniptt/guards';
-import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  ObjectPermission,
+  RelationType,
+} from '~/generated-metadata/graphql';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
 import { isDefined } from 'twenty-shared/utils';
-import { ObjectPermissionsWithRestrictedFields } from '~/generated/graphql';
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
 type MapFieldMetadataToGraphQLQueryArgs = {
@@ -19,10 +22,7 @@ type MapFieldMetadataToGraphQLQueryArgs = {
   >;
   relationRecordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissionsWithRestrictedFields
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
   isFieldsPermissionsEnabled?: boolean;
 };
 // TODO: change ObjectMetadataItems mock before refactoring with relation computed field

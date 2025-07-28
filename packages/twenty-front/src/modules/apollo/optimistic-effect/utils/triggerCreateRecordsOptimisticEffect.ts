@@ -14,7 +14,7 @@ import { encodeCursor } from '@/apollo/utils/encodeCursor';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { isDefined } from 'twenty-shared/utils';
-import { ObjectPermissionsWithRestrictedFields } from '~/generated/graphql';
+import { ObjectPermission } from '~/generated/graphql';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
 /*
@@ -29,10 +29,7 @@ type TriggerCreateRecordsOptimisticEffectArgs = {
   objectMetadataItems: ObjectMetadataItem[];
   shouldMatchRootQueryFilter?: boolean;
   checkForRecordInCache?: boolean;
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissionsWithRestrictedFields
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
 };
 export const triggerCreateRecordsOptimisticEffect = ({
   cache,
