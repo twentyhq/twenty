@@ -39,6 +39,8 @@ export const DaySelect = ({
       label={label}
       onChange={onChange}
       value={selectedDayIndex}
+      dropdownWidth={218}
+      dropdownWidthAuto
     />
   );
 };

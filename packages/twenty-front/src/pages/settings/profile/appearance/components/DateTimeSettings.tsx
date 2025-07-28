@@ -13,6 +13,10 @@ import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { getWorkspaceDateFormatFromDateFormat } from '@/localization/utils/getWorkspaceDateFormatFromDateFormat';
 import { getWorkspaceTimeFormatFromTimeFormat } from '@/localization/utils/getWorkspaceTimeFormatFromTimeFormat';
+import { DaySelect } from '@/ui/input/components/internal/day/DaySelect';
+import { t } from '@lingui/core/macro';
+import { isNumber } from '@tiptap/core';
+import { isDefined } from 'twenty-shared/utils';
 import {
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberTimeFormatEnum,
@@ -22,7 +26,6 @@ import { DateTimeSettingsTimeFormatSelect } from '~/pages/settings/profile/appea
 import { DateTimeSettingsTimeZoneSelect } from '~/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect';
 import { isEmptyObject } from '~/utils/isEmptyObject';
 import { logError } from '~/utils/logError';
-import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -39,6 +42,21 @@ export const DateTimeSettings = () => {
 
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+  });
+
+  const calendarDaysWeek = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
+
+  const allowedDaysWeek = ['Sunday', 'Monday', 'Saturday'].map((day) => {
+    const foundIndexDay = calendarDaysWeek.indexOf(day);
+    return { day, index: foundIndexDay };
   });
 
   const updateWorkspaceMember = async (changedFields: any) => {
@@ -58,6 +76,19 @@ export const DateTimeSettings = () => {
 
   if (!isDefined(currentWorkspaceMember)) return;
 
+  const handleUpdateCalendarStartDay = async (index: number | string) => {
+    if (!isNumber(index) || index > 6 || index < 0) return;
+    const changedFields = {
+      calendarStartDay: index ?? 0,
+    };
+
+    setCurrentWorkspaceMember({
+      ...currentWorkspaceMember,
+      ...changedFields,
+    });
+
+    updateWorkspaceMember(changedFields);
+  };
   const handleSettingsChange = (
     settingName: 'timeZone' | 'dateFormat' | 'timeFormat',
     value: string,
@@ -139,6 +170,12 @@ export const DateTimeSettings = () => {
         value={timeFormat}
         onChange={(value) => handleSettingsChange('timeFormat', value)}
         timeZone={timeZone}
+      />
+      <DaySelect
+        label={t`Calendar start day`}
+        selectedDayIndex={currentWorkspaceMember?.calendarStartDay ?? 0}
+        onChange={(dayIndex) => handleUpdateCalendarStartDay(dayIndex)}
+        dayList={allowedDaysWeek}
       />
     </StyledContainer>
   );
