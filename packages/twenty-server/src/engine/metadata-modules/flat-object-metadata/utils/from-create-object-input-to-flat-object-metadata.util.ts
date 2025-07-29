@@ -37,13 +37,9 @@ export const fromCreateObjectInputToFlatObjectMetadata = (
     });
 
   return {
-    createdAt,
-    updatedAt: createdAt,
-    dataSourceId: createObjectInput.dataSourceId, // TODO is it enough ?
     description: createObjectInput.description ?? null,
-    duplicateCriteria: [], // TODO is it enough ?
     flatFieldMetadatas: Object.values(baseCustomFlatFieldMetadatas),
-    flatIndexMetadatas: [], // TODO is it enough ?
+    flatIndexMetadatas: [],
     icon: createObjectInput.icon ?? null,
     id: objectMetadataId,
     imageIdentifierFieldMetadataId: null,
