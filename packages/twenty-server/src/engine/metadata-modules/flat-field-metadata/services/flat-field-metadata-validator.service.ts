@@ -45,7 +45,9 @@ export class FlatFieldMetadataValidatorService {
     flatFieldMetadataToValidate,
     othersFlatObjectMetadataToValidate,
     workspaceId,
-  }: ValidateOneFieldMetadataArgs): Promise<FailedFlatFieldMetadataValidation | undefined> {
+  }: ValidateOneFieldMetadataArgs): Promise<
+    FailedFlatFieldMetadataValidation | undefined
+  > {
     const allFlatObjectMetadata = [
       ...existingFlatObjectMetadatas,
       ...(othersFlatObjectMetadataToValidate ?? []),
@@ -140,7 +142,7 @@ export class FlatFieldMetadataValidatorService {
           };
         }
 
-        return
+        return;
       }
       case FieldMetadataType.UUID:
       case FieldMetadataType.TEXT:
@@ -165,7 +167,7 @@ export class FlatFieldMetadataValidatorService {
       case FieldMetadataType.ACTOR:
       case FieldMetadataType.ARRAY:
       case FieldMetadataType.TS_VECTOR: {
-        return 
+        return;
       }
       default: {
         const _staticTypeCheck: Expect<

@@ -51,7 +51,6 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
     );
   }
 
-  const createdAt = new Date();
   const targetRelationTargetFieldMetadataId = v4();
   const sourceRelationTargetFieldMetadataId = v4();
   const sourceFlatFieldMetadata: FlatFieldMetadata<FieldMetadataType.RELATION> =

@@ -10,7 +10,10 @@ import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { FieldMetadataException, FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import {
+  FieldMetadataException,
+  FieldMetadataExceptionCode,
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromRelationCreateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadata.util';
@@ -35,11 +38,10 @@ export const fromCreateFieldInputToFlatFieldMetadata = async ({
   FlatFieldMetadataAndParentFlatObjectMetadata[]
 > => {
   if (rawCreateFieldInput.isRemoteCreation) {
-      throw new FieldMetadataException(
-        "Remote fields aren't supported",
-        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      );
-
+    throw new FieldMetadataException(
+      "Remote fields aren't supported",
+      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+    );
   }
   const createFieldInput =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -52,17 +54,17 @@ export const fromCreateFieldInputToFlatFieldMetadata = async ({
   );
 
   if (!isDefined(parentFlatObjectMetadata)) {
-      throw new FieldMetadataException(
-        "Provided object metadata id does not exist",
-        FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-        {
-          userFriendlyMessage: "Created field metadata, parent object metadata not found",
-        },
-      );
+    throw new FieldMetadataException(
+      'Provided object metadata id does not exist',
+      FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      {
+        userFriendlyMessage:
+          'Created field metadata, parent object metadata not found',
+      },
+    );
   }
 
   const fieldMetadataId = v4();
-  const createdAt = new Date();
   const commonFlatFieldMetadata = getDefaultFlatFieldMetadata({
     createFieldInput,
     fieldMetadataId,
@@ -70,7 +72,9 @@ export const fromCreateFieldInputToFlatFieldMetadata = async ({
 
   switch (createFieldInput.type) {
     case FieldMetadataType.MORPH_RELATION: {
-      throw new UserInputError('Morth relation feature is not migrated to workspace migration v2 yet');
+      throw new UserInputError(
+        'Morth relation feature is not migrated to workspace migration v2 yet',
+      );
     }
     case FieldMetadataType.RELATION: {
       return fromRelationCreateFieldInputToFlatFieldMetadata({

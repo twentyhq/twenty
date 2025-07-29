@@ -117,13 +117,11 @@ export const buildDefaultFieldsForCustomObject = (
 ];
 
 type BuildDefaultFlatFieldMetadataForCustomObjectArgs = {
-  createdAt: Date;
   workspaceId: string;
   objectMetadataId: string;
 };
 
 export const buildDefaultFlatFieldMetadataForCustomObject = ({
-  createdAt,
   workspaceId,
   objectMetadataId,
 }: BuildDefaultFlatFieldMetadataForCustomObjectArgs) => {

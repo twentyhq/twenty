@@ -3,15 +3,21 @@ import { v4 } from 'uuid';
 
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
+import {
+  ObjectMetadataException,
+  ObjectMetadataExceptionCode,
+} from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { buildDefaultFlatFieldMetadataForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-fields-for-custom-object.util';
 
 export const fromCreateObjectInputToFlatObjectMetadata = (
   rawCreateObjectInput: CreateObjectInput,
 ): FlatObjectMetadata => {
-  // Handled in FlatObjectMetadata validation
-  // if (rawCreateObjectInput.isRemote) {
-  //   throw new Error('Remote objects are not supported yet');
-  // }
+  if (rawCreateObjectInput.isRemote) {
+    throw new ObjectMetadataException(
+      'Remote objects are not supported',
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
+  }
 
   const createObjectInput =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -28,10 +34,8 @@ export const fromCreateObjectInputToFlatObjectMetadata = (
     );
 
   const objectMetadataId = v4();
-  const createdAt = new Date();
   const baseCustomFlatFieldMetadatas =
     buildDefaultFlatFieldMetadataForCustomObject({
-      createdAt,
       objectMetadataId,
       workspaceId: createObjectInput.workspaceId,
     });

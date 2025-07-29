@@ -34,7 +34,7 @@ const getReservedCompositeFieldNames = (
 type ValidateFieldNameAvailabilityOrThrowArgs = {
   name: string;
   objectMetadata: ObjectMetadataItemWithFieldMaps;
-}
+};
 export const validateFieldNameAvailabilityOrThrow = ({
   name,
   objectMetadata,

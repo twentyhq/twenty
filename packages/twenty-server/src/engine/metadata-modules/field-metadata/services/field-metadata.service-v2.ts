@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AggregateError } from 'src/engine/core-modules/error/aggregate-error';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -17,7 +18,6 @@ import { mergeTwoFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-ob
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
-import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {
@@ -69,22 +69,22 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           rawCreateFieldInput: fieldMetadataInput,
         });
 
-      const createdFlatFieldMetadataValidationResult = (await Promise.all(
-        createdFlatFieldsMetadataAndParentFlatObjectMetadata.map(
-          ({ flatFieldMetadata: flatFieldMetadataToValidate }) =>
-            this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadata(
-              {
-                existingFlatObjectMetadatas,
-                flatFieldMetadataToValidate,
-                workspaceId,
-              },
-            ),
-        ),
-      )).filter(isDefined);
+      const createdFlatFieldMetadataValidationResult = (
+        await Promise.all(
+          createdFlatFieldsMetadataAndParentFlatObjectMetadata.map(
+            ({ flatFieldMetadata: flatFieldMetadataToValidate }) =>
+              this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadata(
+                {
+                  existingFlatObjectMetadatas,
+                  flatFieldMetadataToValidate,
+                  workspaceId,
+                },
+              ),
+          ),
+        )
+      ).filter(isDefined);
 
-      if (
-        createdFlatFieldMetadataValidationResult.length > 0
-      ) {
+      if (createdFlatFieldMetadataValidationResult.length > 0) {
         const errors = createdFlatFieldMetadataValidationResult.map(
           (validationResult) => validationResult.error,
         );

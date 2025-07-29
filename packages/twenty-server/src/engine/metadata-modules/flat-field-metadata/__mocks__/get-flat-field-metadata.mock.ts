@@ -13,7 +13,6 @@ type FlatFieldMetadataOverrides<
 export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
   overrides: FlatFieldMetadataOverrides<T>,
 ): FlatFieldMetadata => {
-
   return {
     defaultValue: null,
     options: null,
