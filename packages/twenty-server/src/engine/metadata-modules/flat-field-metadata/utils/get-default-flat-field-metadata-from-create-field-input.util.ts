@@ -4,7 +4,7 @@ import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dto
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
-type getDefaultFlatFieldMetadataArgs = {
+type GetDefaultFlatFieldMetadataArgs = {
   fieldMetadataId: string;
   createdAt: Date;
   createFieldInput: CreateFieldInput;
@@ -13,7 +13,7 @@ export const getDefaultFlatFieldMetadata = ({
   createdAt,
   createFieldInput,
   fieldMetadataId,
-}: getDefaultFlatFieldMetadataArgs) => {
+}: GetDefaultFlatFieldMetadataArgs) => {
   const { defaultValue, settings } = sanitizeObjectStringFields(
     createFieldInput,
     ['defaultValue', 'settings'],

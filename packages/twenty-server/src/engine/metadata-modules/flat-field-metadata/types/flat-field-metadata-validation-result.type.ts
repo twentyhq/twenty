@@ -9,11 +9,3 @@ export type FailedFlatFieldMetadataValidation = {
     | ObjectMetadataException
     | InvalidMetadataException;
 };
-
-type SuccessfulFlatFieldMetadataValidation = {
-  status: 'success';
-};
-
-export type FlatFieldMetadataValidationResult =
-  | FailedFlatFieldMetadataValidation
-  | SuccessfulFlatFieldMetadataValidation;

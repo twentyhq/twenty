@@ -9,7 +9,6 @@ export function generateNullable(
   }
 
   switch (type) {
-    // Why ?
     case FieldMetadataType.TEXT:
       return false;
     default:

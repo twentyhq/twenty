@@ -17,6 +17,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { fromCreateObjectInputToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata.util';
 import { fromObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-maps-to-flat-object-metadatas.util';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
@@ -53,7 +54,6 @@ import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager
 import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
 import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
-import { fromCreateObjectInputToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata.util';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -144,7 +144,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           toValidate: [createdRawFlatObjectMetadata],
         });
 
-        const workpsaceMigration = this.workspaceMigrationBuilderV2.build({
+        const workspaceMigration = this.workspaceMigrationBuilderV2.build({
           objectMetadataFromToInputs: {
             from: existingFlatObjectMetadatas,
             to: [createdFlatObjectMetadata],
@@ -153,7 +153,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           workspaceId: objectMetadataInput.workspaceId,
         });
 
-        await this.workspaceMigrationRunnerV2Service.run(workpsaceMigration);
+        await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
 
         // What to return exactly ? We now won't have access to the entity directly
         // We could still retrieve it afterwards using a find on object metadata id or return a flat now

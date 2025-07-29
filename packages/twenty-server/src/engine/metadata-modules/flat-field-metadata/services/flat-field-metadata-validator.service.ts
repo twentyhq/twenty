@@ -10,7 +10,7 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { FlatFieldMetadataValidationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-result.type';
+import { FailedFlatFieldMetadataValidation } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-result.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-flat-field-metadata-name-availability.validator';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -48,7 +48,7 @@ export class FlatFieldMetadataValidatorService {
     flatFieldMetadataToValidate,
     othersFlatObjectMetadataToValidate,
     workspaceId,
-  }: ValidateOneFieldMetadataArgs): Promise<FlatFieldMetadataValidationResult> {
+  }: ValidateOneFieldMetadataArgs): Promise<FailedFlatFieldMetadataValidation | undefined> {
     const allFlatObjectMetadata = [
       ...existingFlatObjectMetadatas,
       ...(othersFlatObjectMetadataToValidate ?? []),
@@ -66,7 +66,7 @@ export class FlatFieldMetadataValidatorService {
         status: 'fail',
         error: new FieldMetadataException(
           isDefined(othersFlatObjectMetadataToValidate)
-            ? 'Object metadata does not exist in both existing and about to be created object metadatass'
+            ? 'Object metadata does not exist in both existing and about to be created object metadatas'
             : 'Object metadata does not exist',
           FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         ),
@@ -92,7 +92,7 @@ export class FlatFieldMetadataValidatorService {
         return {
           status: 'fail',
           error: new InvalidMetadataException(
-            `Name is not synced with label. Expected name: "${computedName}", got ${name}`,
+            `Name is not synced with label. Expected name: "${computedName}", got ${flatFieldMetadataToValidate.name}`,
             InvalidMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL,
           ),
         };
@@ -123,7 +123,6 @@ export class FlatFieldMetadataValidatorService {
     if (isDefined(failedNameAvailabilityValidation)) {
       return failedNameAvailabilityValidation;
     }
-
     /// End of common
 
     // We should validate each default value and settings and options
@@ -131,7 +130,6 @@ export class FlatFieldMetadataValidatorService {
     switch (flatFieldMetadataToValidate.type) {
       case FieldMetadataType.RELATION:
       case FieldMetadataType.MORPH_RELATION: {
-        // Facto in dedicated service
         const isMorphRelationEnabled =
           await this.featureFlagService.isFeatureEnabled(
             FeatureFlagKey.IS_MORPH_RELATION_ENABLED,
@@ -142,16 +140,13 @@ export class FlatFieldMetadataValidatorService {
           return {
             status: 'fail',
             error: new FieldMetadataException(
-              'Object metadata does not exist',
-              FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+              'Morph relation feature is disabled',
+              FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
             ),
           };
         }
 
-        return {
-          status: 'success',
-        };
-        ///
+        return
       }
       case FieldMetadataType.UUID:
       case FieldMetadataType.TEXT:
@@ -176,9 +171,7 @@ export class FlatFieldMetadataValidatorService {
       case FieldMetadataType.ACTOR:
       case FieldMetadataType.ARRAY:
       case FieldMetadataType.TS_VECTOR: {
-        return {
-          status: 'success',
-        };
+        return 
       }
       default: {
         const _staticTypeCheck: Expect<
@@ -188,7 +181,7 @@ export class FlatFieldMetadataValidatorService {
         return {
           status: 'fail',
           error: new FieldMetadataException(
-            'Object metadata does not exist',
+            'Unsupported field metadata type',
             FieldMetadataExceptionCode.UNCOVERED_FIELD_METADATA_TYPE_VALIDATION,
           ),
         };

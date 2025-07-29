@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
 
+import { AggregateError } from 'src/engine/core-modules/error/aggregate-error';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
@@ -16,6 +17,7 @@ import { mergeTwoFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-ob
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {
@@ -46,7 +48,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         workspaceId,
       );
 
-    if (isWorkspaceMigrationV2Enabled) {
+    if (!isWorkspaceMigrationV2Enabled) {
       throw new Error('Should not be used at all');
     }
 
@@ -67,7 +69,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           rawCreateFieldInput: fieldMetadataInput,
         });
 
-      const createdFlatFieldMetadataValidationResult = await Promise.all(
+      const createdFlatFieldMetadataValidationResult = (await Promise.all(
         createdFlatFieldsMetadataAndParentFlatObjectMetadata.map(
           ({ flatFieldMetadata: flatFieldMetadataToValidate }) =>
             this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadata(
@@ -78,15 +80,20 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
               },
             ),
         ),
-      );
+      )).filter(isDefined);
 
       // TODO refactor in util
       if (
-        createdFlatFieldMetadataValidationResult.some(
-          (el) => el.status === 'fail',
-        )
+        createdFlatFieldMetadataValidationResult.length > 0
       ) {
-        throw new Error('TODO prastoin handle validation reporter formatting');
+        const errors = createdFlatFieldMetadataValidationResult.map(
+          (validationResult) => validationResult.error,
+        );
+
+        throw new AggregateError(
+          errors,
+          'Multiple validation errors occurred while creating field',
+        );
       }
       ///
 
@@ -109,7 +116,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       });
     }
 
-    const workpsaceMigration = this.workspaceMigrationBuilderV2.build({
+    const workspaceMigration = this.workspaceMigrationBuilderV2.build({
       objectMetadataFromToInputs: {
         from: existingFlatObjectMetadatas,
         to: flatObjectMetadatasWithNewFields,
@@ -118,7 +125,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       workspaceId,
     });
 
-    await this.workspaceMigrationRunnerV2Service.run(workpsaceMigration);
+    await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
 
     // const recomputedCache =
     //   await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(

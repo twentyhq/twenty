@@ -31,13 +31,14 @@ const getReservedCompositeFieldNames = (
   return reservedCompositeFieldsNames;
 };
 
+type ValidateFieldNameAvailabilityOrThrowArgs = {
+  name: string;
+  objectMetadata: ObjectMetadataItemWithFieldMaps;
+}
 export const validateFieldNameAvailabilityOrThrow = ({
   name,
   objectMetadata,
-}: {
-  name: string;
-  objectMetadata: ObjectMetadataItemWithFieldMaps;
-}) => {
+}: ValidateFieldNameAvailabilityOrThrowArgs) => {
   const reservedCompositeFieldsNames =
     getReservedCompositeFieldNames(objectMetadata);
 

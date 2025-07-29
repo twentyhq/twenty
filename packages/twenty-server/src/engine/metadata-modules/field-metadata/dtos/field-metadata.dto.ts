@@ -118,7 +118,6 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @Field({ nullable: true })
   isUnique?: boolean;
 
-  // THIS IS NEVER VALIDATED TODO PRASTOIN should be done in FlatFieldMetadataValidator<FieldMetadataType.T>
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   defaultValue?: FieldMetadataDefaultValue<T>;
@@ -127,7 +126,6 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
     transformEnumValue(value as FieldMetadataDefaultOption[]),
   )
 
-  // THIS IS NEVER VALIDATED TODO PRASTOIN  should be done in FlatFieldMetadataValidator<FieldMetadataType.T>
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   options?: FieldMetadataOptions<T>;

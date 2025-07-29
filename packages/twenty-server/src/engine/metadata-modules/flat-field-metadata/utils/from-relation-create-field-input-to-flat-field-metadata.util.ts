@@ -52,7 +52,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
   }
 
   const createdAt = new Date();
-  const targetRelationTargetFieldMetadaataId = v4();
+  const targetRelationTargetFieldMetadataId = v4();
   const sourceRelationTargetFieldMetadataId = v4();
   const sourceFlatFieldMetadata: FlatFieldMetadata<FieldMetadataType.RELATION> =
     {
@@ -65,7 +65,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
       defaultValue: null,
       settings: null,
       options: null,
-      relationTargetFieldMetadataId: targetRelationTargetFieldMetadaataId, // Note: this won't work until we enable deferred transaction
+      relationTargetFieldMetadataId: targetRelationTargetFieldMetadataId, // Note: this won't work until we enable deferred transaction
       relationTargetObjectMetadataId: targetParentFlatObjectMetadata.id,
       flatRelationTargetFieldMetadata: {} as FlatFieldMetadata,
       flatRelationTargetObjectMetadata: {} as FlatObjectMetadataWithoutFields,
@@ -85,7 +85,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
           type: FieldMetadataType.RELATION,
           workspaceId: createFieldInput.workspaceId,
         },
-        fieldMetadataId: targetRelationTargetFieldMetadaataId,
+        fieldMetadataId: targetRelationTargetFieldMetadataId,
       }),
       type: FieldMetadataType.RELATION,
       defaultValue: null,

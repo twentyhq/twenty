@@ -117,7 +117,6 @@ describe('trim-and-remove-duplicated-whitespaces-from-object-string-properties',
           keys,
           extract,
         );
-      console.log(result);
 
       expect(result).toEqual(expected);
     },

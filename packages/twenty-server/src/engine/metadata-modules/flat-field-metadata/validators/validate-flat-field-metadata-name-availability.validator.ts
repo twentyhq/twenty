@@ -13,9 +13,9 @@ import {
 } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 
 const getReservedCompositeFieldNames = (
-  flatObjectMetadatas: FlatObjectMetadata,
+  flatObjectMetadata: FlatObjectMetadata,
 ): string[] => {
-  return flatObjectMetadatas.flatFieldMetadatas.flatMap((flatFieldMetadata) => {
+  return flatObjectMetadata.flatFieldMetadatas.flatMap((flatFieldMetadata) => {
     if (isCompositeFieldMetadataType(flatFieldMetadata.type)) {
       const base = flatFieldMetadata.name;
       const compositeType = compositeTypeDefinitions.get(

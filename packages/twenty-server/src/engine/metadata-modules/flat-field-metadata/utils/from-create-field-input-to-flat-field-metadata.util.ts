@@ -8,6 +8,7 @@ import { v4 } from 'uuid';
 
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
+import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -15,7 +16,7 @@ import { fromRelationCreateFieldInputToFlatFieldMetadata } from 'src/engine/meta
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-export type FromCreateObjectInputToFlatObjectMetadata = {
+type FromCreateFieldInputToFlatObjectMetadata = {
   rawCreateFieldInput: CreateFieldInput;
   existingFlatObjectMetadatas: FlatObjectMetadata[];
 };
@@ -29,13 +30,13 @@ export type FlatFieldMetadataAndParentFlatObjectMetadata<
 export const fromCreateFieldInputToFlatFieldMetadata = async ({
   existingFlatObjectMetadatas,
   rawCreateFieldInput,
-}: FromCreateObjectInputToFlatObjectMetadata): Promise<
+}: FromCreateFieldInputToFlatObjectMetadata): Promise<
   FlatFieldMetadataAndParentFlatObjectMetadata[]
 > => {
   // Handled in FlatFieldMetadata validation
   if (rawCreateFieldInput.isRemoteCreation) {
-    throw new Error(
-      'TODO custom CREATE_FIELD_INPUT exception: Remote fields are not supported yet',
+    throw new UserInputError(
+      'Remote fields are not supported yet',
     );
   }
 
@@ -65,7 +66,7 @@ export const fromCreateFieldInputToFlatFieldMetadata = async ({
 
   switch (createFieldInput.type) {
     case FieldMetadataType.MORPH_RELATION: {
-      throw new Error('TODO prastoin implement');
+      throw new UserInputError('Morth relation feature is not migrated to workspace migration v2 yet');
     }
     case FieldMetadataType.RELATION: {
       return fromRelationCreateFieldInputToFlatFieldMetadata({
