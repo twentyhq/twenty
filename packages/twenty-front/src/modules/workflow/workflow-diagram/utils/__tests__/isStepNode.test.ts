@@ -11,6 +11,9 @@ describe('isStepNode', () => {
         triggerType: 'DATABASE_EVENT',
         name: 'Company Created',
         icon: 'IconPlus',
+        stepId: 'trigger',
+        hasNextStepIds: false,
+        position: { x: 0, y: 0 },
       },
     };
 
@@ -27,6 +30,9 @@ describe('isStepNode', () => {
         nodeType: 'action',
         actionType: 'CREATE_RECORD',
         name: 'Create Company',
+        stepId: 'action-1',
+        hasNextStepIds: false,
+        position: { x: 0, y: 0 },
       },
     };
 
@@ -59,6 +65,9 @@ describe('isStepNode', () => {
         triggerType: 'MANUAL',
         name: 'Manual Trigger',
         icon: 'IconClick',
+        stepId: 'trigger-with-extra',
+        hasNextStepIds: false,
+        position: { x: 0, y: 0 },
       },
     };
 
