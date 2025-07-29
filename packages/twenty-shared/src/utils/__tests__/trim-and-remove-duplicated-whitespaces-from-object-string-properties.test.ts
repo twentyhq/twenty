@@ -1,10 +1,11 @@
+import { eachTestingContextFilter } from '@/testing';
 import { EachTestingContext } from '@/testing/types/EachTestingContext.type';
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from '../trim-and-remove-duplicated-whitespaces-from-object-string-properties';
-
 type SanitizeObjectStringPropertiesTestCase = EachTestingContext<{
   input: Record<string, any>;
   keys: string[];
   expected: Record<string, any>;
+  extract?: boolean;
 }>;
 
 describe('trim-and-remove-duplicated-whitespaces-from-object-string-properties', () => {
@@ -93,14 +94,31 @@ describe('trim-and-remove-duplicated-whitespaces-from-object-string-properties',
         expected: { name: '  John   Doe  ', description: 'this is a test' },
       },
     },
+    {
+      title: 'should trim only provided keys fields and extract keys',
+      context: {
+        input: {
+          name: '  John   Doe  ',
+          description: ' this      is a test   ',
+        },
+        keys: ['description'],
+        expected: { description: 'this is a test' },
+        extract: true,
+      },
+    },
   ];
 
-  test.each(testCases)('$title', ({ context: { input, keys, expected } }) => {
-    const result = trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
-      input,
-      keys,
-    );
+  test.each(eachTestingContextFilter(testCases))(
+    '$title',
+    ({ context: { input, keys, expected, extract } }) => {
+      const result =
+        trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
+          input,
+          keys,
+          extract,
+        );
 
-    expect(result).toEqual(expected);
-  });
+      expect(result).toEqual(expected);
+    },
+  );
 });

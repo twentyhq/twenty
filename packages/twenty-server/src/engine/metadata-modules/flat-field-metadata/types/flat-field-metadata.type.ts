@@ -16,7 +16,10 @@ export type FieldMetadataEntityRelationProperties =
   (typeof fieldMetadataRelationProperties)[number];
 
 export type FlatFieldMetadata<T extends FieldMetadataType = FieldMetadataType> =
-  Omit<FieldMetadataEntity<T>, FieldMetadataEntityRelationProperties> & {
+  Omit<
+    FieldMetadataEntity<T>,
+    FieldMetadataEntityRelationProperties | 'createdAt' | 'updatedAt'
+  > & {
     uniqueIdentifier: string;
     flatRelationTargetFieldMetadata: AssignTypeIfIsRelationFieldMetadataType<
       Omit<

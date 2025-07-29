@@ -8,24 +8,36 @@ export type StringPropertyKeys<T> = {
     : never;
 }[OnlyStringPropertiesKey<T>];
 
-export const trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties = <T>(
+export const trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties = <
+  T,
+  TKeys extends StringPropertyKeys<T>[],
+  TExtract extends boolean = false,
+>(
   obj: T,
-  keys: StringPropertyKeys<T>[],
-) => {
-  return keys.reduce((acc, key) => {
-    const occurrence = acc[key];
-
-    if (
-      occurrence === undefined ||
-      typeof occurrence !== 'string' ||
-      occurrence === null
-    ) {
-      return acc;
+  keys: TKeys,
+  extractKeys?: TExtract,
+): TExtract extends true
+  ? {
+      [P in TKeys[number]]: T[P];
     }
+  : T => {
+  return keys.reduce(
+    (acc, key) => {
+      const occurrence = obj[key];
 
-    return {
-      ...acc,
-      [key]: trimAndRemoveDuplicatedWhitespacesFromString(occurrence),
-    };
-  }, obj);
+      if (
+        occurrence === undefined ||
+        typeof occurrence !== 'string' ||
+        occurrence === null
+      ) {
+        return acc;
+      }
+
+      return {
+        ...acc,
+        [key]: trimAndRemoveDuplicatedWhitespacesFromString(occurrence),
+      };
+    },
+    extractKeys ? ({} as T) : obj,
+  );
 };
