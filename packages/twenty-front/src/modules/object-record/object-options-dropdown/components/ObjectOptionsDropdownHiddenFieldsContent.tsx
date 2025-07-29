@@ -39,7 +39,7 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
   });
 
   const { handleColumnVisibilityChange, hiddenTableColumns } =
-    useObjectOptionsForTable(recordIndexId);
+    useObjectOptionsForTable(recordIndexId, objectMetadataItem.id);
 
   const { hiddenBoardFields, handleBoardFieldVisibilityChange } =
     useObjectOptionsForBoard({

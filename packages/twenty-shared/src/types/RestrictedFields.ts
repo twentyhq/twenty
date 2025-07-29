@@ -1,4 +1,3 @@
-export type RestrictedFields = Record<
-  string,
-  { canRead?: boolean | null; canUpdate?: boolean | null }
->;
+import { RestrictedField } from './RestrictedField';
+
+export type RestrictedFields = Record<string, RestrictedField>;
