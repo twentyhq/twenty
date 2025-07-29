@@ -209,7 +209,23 @@ export const validateQueryIsPermittedOrThrow = ({
     });
 
     if (operationType !== 'select') {
-      updatedColumns = Object.keys(expressionMap.valuesSet ?? {});
+      const valuesSet = expressionMap.valuesSet;
+
+      if (Array.isArray(valuesSet)) {
+        updatedColumns = valuesSet.reduce((acc, value) => {
+          const keys = Object.keys(value);
+
+          keys.forEach((key) => {
+            if (!acc.includes(key)) {
+              acc.push(key);
+            }
+          });
+
+          return acc;
+        }, []);
+      } else {
+        updatedColumns = Object.keys(valuesSet ?? {});
+      }
     }
   }
 
