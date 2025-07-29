@@ -15,7 +15,7 @@ import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/Obje
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
-import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
+import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
 import { BaseThemeProvider } from '@/ui/theme/components/BaseThemeProvider';
 import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
@@ -51,7 +51,9 @@ export const AppRouterProviders = () => {
                         <UserThemeProviderEffect />
                         <SnackBarProvider>
                           <ErrorMessageEffect />
-                          <DialogManagerScope dialogComponentInstanceId="dialog-manager">
+                          <DialogComponentInstanceContext.Provider
+                            value={{ instanceId: 'dialog-manager' }}
+                          >
                             <DialogManager>
                               <StrictMode>
                                 <PromiseRejectionEffect />
@@ -61,7 +63,7 @@ export const AppRouterProviders = () => {
                                 <Outlet />
                               </StrictMode>
                             </DialogManager>
-                          </DialogManagerScope>
+                          </DialogComponentInstanceContext.Provider>
                         </SnackBarProvider>
                         <MainContextStoreProvider />
                       </PrefetchDataProvider>

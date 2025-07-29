@@ -1,18 +1,14 @@
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useInitDraftValueV2 } from '@/object-record/record-field/hooks/useInitDraftValueV2';
-import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
-import { isInlineCellInEditModeScopedState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeScopedState';
+import { isInlineCellInEditModeFamilyState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeFamilyState';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useContext } from 'react';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { useRecoilCallback } from 'recoil';
 
 export const useRecordTitleCell = () => {
   const { goBackToPreviousDropdownFocusId } =
@@ -22,16 +18,7 @@ export const useRecordTitleCell = () => {
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const fieldContext = useContext(FieldContext);
-  const objectNameSingular =
-    fieldContext?.fieldDefinition?.metadata?.objectMetadataNameSingular;
-
-  const objectMetadataItem = useRecoilValue(
-    objectMetadataItemFamilySelector({
-      objectName: objectNameSingular ?? '',
-      objectNameType: 'singular',
-    }),
-  );
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const closeRecordTitleCell = useRecoilCallback(
     ({ set }) =>
@@ -45,7 +32,7 @@ export const useRecordTitleCell = () => {
         containerType: RecordTitleCellContainerType;
       }) => {
         set(
-          isInlineCellInEditModeScopedState(
+          isInlineCellInEditModeFamilyState(
             getRecordFieldInputInstanceId({
               recordId,
               fieldName,
@@ -71,7 +58,7 @@ export const useRecordTitleCell = () => {
   const initFieldInputDraftValue = useInitDraftValueV2();
 
   const openRecordTitleCell = useRecoilCallback(
-    ({ set, snapshot }) =>
+    ({ set }) =>
       ({
         recordId,
         fieldName,
@@ -106,30 +93,20 @@ export const useRecordTitleCell = () => {
           fieldName,
           prefix: containerType,
         });
-        set(isInlineCellInEditModeScopedState(recordTitleCellId), true);
+        set(isInlineCellInEditModeFamilyState(recordTitleCellId), true);
 
-        const recordIndexFieldDefinitions = snapshot
-          .getLoadable(recordIndexFieldDefinitionsState)
-          .getValue();
-
-        let fieldDefinition = recordIndexFieldDefinitions.find(
-          (field) => field.metadata.fieldName === fieldName,
+        const fieldDefinitions = objectMetadataItem.fields.map(
+          (fieldMetadataItem, index) =>
+            formatFieldMetadataItemAsColumnDefinition({
+              field: fieldMetadataItem,
+              objectMetadataItem,
+              position: index,
+            }),
         );
 
-        if (!fieldDefinition && isDefined(objectMetadataItem)) {
-          const fieldDefinitions = objectMetadataItem.fields.map(
-            (fieldMetadataItem, index) =>
-              formatFieldMetadataItemAsColumnDefinition({
-                field: fieldMetadataItem,
-                objectMetadataItem,
-                position: index,
-              }),
-          );
-
-          fieldDefinition = fieldDefinitions.find(
-            (field) => field.metadata.fieldName === fieldName,
-          );
-        }
+        const fieldDefinition = fieldDefinitions.find(
+          (field) => field.metadata.fieldName === fieldName,
+        );
 
         if (!fieldDefinition) {
           throw new Error(
@@ -143,7 +120,7 @@ export const useRecordTitleCell = () => {
           fieldComponentInstanceId: recordTitleCellId,
         });
       },
-    [initFieldInputDraftValue, objectMetadataItem, pushFocusItemToFocusStack],
+    [initFieldInputDraftValue, pushFocusItemToFocusStack, objectMetadataItem],
   );
 
   return {

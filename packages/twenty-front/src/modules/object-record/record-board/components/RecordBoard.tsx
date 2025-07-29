@@ -16,7 +16,6 @@ import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useR
 import { RecordBoardDeactivateBoardCardEffect } from '@/object-record/record-board/record-board-card/components/RecordBoardDeactivateBoardCardEffect';
 import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
-import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
@@ -209,51 +208,43 @@ export const RecordBoard = () => {
   // }
 
   return (
-    <RecordBoardScope
-      recordBoardScopeId={recordBoardId}
-      onColumnsChange={() => {}}
-      onFieldsChange={() => {}}
+    <RecordBoardComponentInstanceContext.Provider
+      value={{ instanceId: recordBoardId }}
     >
-      <RecordBoardComponentInstanceContext.Provider
-        value={{ instanceId: recordBoardId }}
+      <ScrollWrapper
+        componentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
       >
-        <ScrollWrapper
-          componentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
-        >
-          <RecordBoardStickyHeaderEffect />
-          <RecordBoardScrollToFocusedCardEffect />
-          <RecordBoardDeactivateBoardCardEffect />
-          <StyledContainerContainer>
-            <RecordBoardHeader />
-            <StyledBoardContentContainer>
-              <StyledContainer ref={boardRef}>
-                <DragDropContext onDragEnd={handleDragEnd}>
-                  <StyledColumnContainer>
-                    {visibleRecordGroupIds.map((recordGroupId, index) => (
-                      <RecordBoardColumn
-                        key={recordGroupId}
-                        recordBoardColumnId={recordGroupId}
-                        recordBoardColumnIndex={index}
-                      />
-                    ))}
-                  </StyledColumnContainer>
-                </DragDropContext>
+        <RecordBoardStickyHeaderEffect />
+        <RecordBoardScrollToFocusedCardEffect />
+        <RecordBoardDeactivateBoardCardEffect />
+        <StyledContainerContainer>
+          <RecordBoardHeader />
+          <StyledBoardContentContainer>
+            <StyledContainer ref={boardRef}>
+              <DragDropContext onDragEnd={handleDragEnd}>
+                <StyledColumnContainer>
+                  {visibleRecordGroupIds.map((recordGroupId, index) => (
+                    <RecordBoardColumn
+                      key={recordGroupId}
+                      recordBoardColumnId={recordGroupId}
+                      recordBoardColumnIndex={index}
+                    />
+                  ))}
+                </StyledColumnContainer>
+              </DragDropContext>
 
-                <DragSelect
-                  selectableItemsContainerRef={boardRef}
-                  onDragSelectionEnd={handleDragSelectionEnd}
-                  onDragSelectionChange={setRecordAsSelected}
-                  onDragSelectionStart={handleDragSelectionStart}
-                  scrollWrapperComponentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
-                  selectionBoundaryClass={
-                    RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS
-                  }
-                />
-              </StyledContainer>
-            </StyledBoardContentContainer>
-          </StyledContainerContainer>
-        </ScrollWrapper>
-      </RecordBoardComponentInstanceContext.Provider>
-    </RecordBoardScope>
+              <DragSelect
+                selectableItemsContainerRef={boardRef}
+                onDragSelectionEnd={handleDragSelectionEnd}
+                onDragSelectionChange={setRecordAsSelected}
+                onDragSelectionStart={handleDragSelectionStart}
+                scrollWrapperComponentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
+                selectionBoundaryClass={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}
+              />
+            </StyledContainer>
+          </StyledBoardContentContainer>
+        </StyledContainerContainer>
+      </ScrollWrapper>
+    </RecordBoardComponentInstanceContext.Provider>
   );
 };

@@ -16,6 +16,7 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useId } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/display';
@@ -60,7 +61,7 @@ type FormSingleRecordPickerValue =
 export type FormSingleRecordPickerProps = {
   label?: string;
   defaultValue?: RecordId | Variable;
-  onChange: (value: RecordId | Variable) => void;
+  onChange: (value: RecordId | Variable | null) => void;
   objectNameSingular: string;
   disabled?: boolean;
   testId?: string;
@@ -117,7 +118,16 @@ export const FormSingleRecordPicker = ({
   const handleRecordSelected = (
     selectedEntity: SingleRecordPickerRecord | null | undefined,
   ) => {
-    onChange?.(selectedEntity?.record?.id ?? '');
+    if (
+      !isDefined(selectedEntity?.record?.id) ||
+      !isNonEmptyString(selectedEntity.record?.id)
+    ) {
+      onChange(null);
+
+      return;
+    }
+
+    onChange(selectedEntity.record.id);
     closeDropdown(dropdownId);
   };
 
@@ -128,7 +138,7 @@ export const FormSingleRecordPicker = ({
   const handleUnlinkVariable = (event?: React.MouseEvent<HTMLDivElement>) => {
     // Prevents the dropdown to open when clicking on the chip
     event?.stopPropagation();
-    onChange('');
+    onChange(null);
   };
 
   const setRecordPickerSelectedId = useSetRecoilComponentStateV2(

@@ -5,6 +5,7 @@ import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { AgentChatMessageRole } from '@/ai/constants/agent-chat-message-role';
+import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 
 import { AgentChatMessage } from '~/generated/graphql';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
@@ -124,13 +125,17 @@ export const AIChatMessage = ({
 }) => {
   const theme = useTheme();
 
+  const markdownRender = (text: string) => {
+    return <LazyMarkdownRenderer text={text} />;
+  };
+
   const getAssistantMessageContent = (message: AgentChatMessage) => {
     if (message.content !== '') {
-      return message.content;
+      return markdownRender(message.content);
     }
 
     if (agentStreamingMessage.streamingText !== '') {
-      return agentStreamingMessage.streamingText;
+      return markdownRender(agentStreamingMessage.streamingText);
     }
 
     if (agentStreamingMessage.toolCall !== '') {
