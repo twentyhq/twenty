@@ -1,8 +1,13 @@
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import {
+  FieldMetadataException,
+  FieldMetadataExceptionCode,
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
+import { validateRelationCreationPayloadOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/validate-relation-creation-payload.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import {
   FlatObjectMetadata,
@@ -21,9 +26,38 @@ type FromCreateObjectInputToFlatObjectMetadata = {
   existingFlatObjectMetadatas: FlatObjectMetadata[];
 };
 
-const getFlatFieldMetadataFromCreateObjectInput = (
-  createFieldInput: CreateFieldInput,
-): FlatFieldMetadata => {
+export const fromCreateFieldInputToFlatFieldMetadata = async ({
+  existingFlatObjectMetadatas,
+  rawCreateFieldInput,
+}: FromCreateObjectInputToFlatObjectMetadata): Promise<
+  {
+    flatFieldMetadata: FlatFieldMetadata;
+    parentFlatObjectMetadata: FlatObjectMetadata;
+  }[]
+> => {
+  // Handled in FlatFieldMetadata validation
+  if (rawCreateFieldInput.isRemoteCreation) {
+    throw new Error(
+      'TODO custom CREATE_FIELD_INPUT exception: Remote fields are not supported yet',
+    );
+  }
+
+  const createFieldInput =
+    trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
+      rawCreateFieldInput,
+      ['description', 'icon', 'label', 'name', 'objectMetadataId', 'type'],
+    );
+  const parentFlatObjectMetadata = existingFlatObjectMetadatas.find(
+    (existingFlatObjectMetadata) =>
+      existingFlatObjectMetadata.id === createFieldInput.objectMetadataId,
+  );
+
+  if (!isDefined(parentFlatObjectMetadata)) {
+    throw new Error(
+      'TODO custom CREATE_FIELD_INPUT exception: Provided object metadata id does not exist',
+    );
+  }
+
   const fieldMetadataId = v4();
   const createdAt = new Date();
   const commonFlatFieldMetadata = {
@@ -56,44 +90,69 @@ const getFlatFieldMetadataFromCreateObjectInput = (
     settings: createFieldInput.settings ?? null,
     defaultValue:
       createFieldInput.defaultValue ??
-      generateDefaultValue(createFieldInput.type), // TODO improve
+      generateDefaultValue(createFieldInput.type), // TODO improve to be within each switch case
     flatRelationTargetFieldMetadata: null,
     flatRelationTargetObjectMetadata: null,
   } as const satisfies FlatFieldMetadata;
 
   switch (createFieldInput.type) {
     case FieldMetadataType.UUID:
-      return {
-        ...commonFlatFieldMetadata,
-        isUnique: true,
-      };
+      return [
+        {
+          flatFieldMetadata: {
+            ...commonFlatFieldMetadata,
+            isUnique: true,
+          },
+          parentFlatObjectMetadata,
+        },
+      ];
     case FieldMetadataType.RELATION:
     case FieldMetadataType.MORPH_RELATION: {
-      // Should validate relationCreationPayload here
-      return {
-        ...commonFlatFieldMetadata,
-        type: createFieldInput.type,
-        defaultValue: null,
-        settings: null,
-        options: null,
-        // TODO retrieve from objectMetadataMaps
-        relationTargetFieldMetadataId: '',
-        relationTargetObjectMetadataId: '',
-        flatRelationTargetFieldMetadata: {} as FlatFieldMetadata,
-        flatRelationTargetObjectMetadata: {} as FlatObjectMetadataWithoutFields,
-        ///
-      } satisfies FlatFieldMetadata<typeof createFieldInput.type>;
+      if (!isDefined(createFieldInput.relationCreationPayload)) {
+        throw new FieldMetadataException(
+          `Relation creation payload is required`,
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        );
+      }
+      await validateRelationCreationPayloadOrThrow(
+        createFieldInput.relationCreationPayload,
+      );
+
+      return [
+        {
+          flatFieldMetadata: {
+            ...commonFlatFieldMetadata,
+            type: createFieldInput.type,
+            defaultValue: null,
+            settings: null,
+            options: null,
+            // TODO retrieve from objectMetadataMaps
+            relationTargetFieldMetadataId: '',
+            relationTargetObjectMetadataId: '',
+            flatRelationTargetFieldMetadata: {} as FlatFieldMetadata,
+            flatRelationTargetObjectMetadata:
+              {} as FlatObjectMetadataWithoutFields,
+            ///
+          } satisfies FlatFieldMetadata<typeof createFieldInput.type>,
+          parentFlatObjectMetadata,
+        },
+      ];
     }
     case FieldMetadataType.RATING: {
-      return {
-        ...commonFlatFieldMetadata,
-        type: createFieldInput.type,
-        settings: null,
-        defaultValue:
-          (createFieldInput.defaultValue as FlatFieldMetadata<FieldMetadataType.RATING>['defaultValue']) ??
-          null, // Should we leave this to the FlatFieldMetadataValidator<FieldMetadataType.RATING> :) ?s
-        options: generateRatingOptions(),
-      } satisfies FlatFieldMetadata<typeof createFieldInput.type>;
+      return [
+        {
+          flatFieldMetadata: {
+            ...commonFlatFieldMetadata,
+            type: createFieldInput.type,
+            settings: null,
+            defaultValue:
+              (createFieldInput.defaultValue as FlatFieldMetadata<FieldMetadataType.RATING>['defaultValue']) ??
+              null, // will be validated by the flat field metadata validator
+            options: generateRatingOptions(),
+          } satisfies FlatFieldMetadata<typeof createFieldInput.type>,
+          parentFlatObjectMetadata,
+        },
+      ];
     }
     case FieldMetadataType.SELECT:
     case FieldMetadataType.MULTI_SELECT: {
@@ -106,10 +165,15 @@ const getFlatFieldMetadataFromCreateObjectInput = (
         ),
       }));
 
-      return {
-        ...commonFlatFieldMetadata,
-        options,
-      };
+      return [
+        {
+          flatFieldMetadata: {
+            ...commonFlatFieldMetadata,
+            options,
+          },
+          parentFlatObjectMetadata,
+        },
+      ];
     }
     case FieldMetadataType.TEXT:
     case FieldMetadataType.PHONES:
@@ -130,52 +194,15 @@ const getFlatFieldMetadataFromCreateObjectInput = (
     case FieldMetadataType.ACTOR:
     case FieldMetadataType.ARRAY:
     case FieldMetadataType.TS_VECTOR: {
-      return commonFlatFieldMetadata;
+      return [
+        {
+          flatFieldMetadata: commonFlatFieldMetadata,
+          parentFlatObjectMetadata,
+        },
+      ];
     }
     default: {
       assertUnreachable(createFieldInput.type, 'Encountered an uncovered');
     }
   }
-};
-
-export const fromCreateFieldInputToFlatFieldMetadata = ({
-  existingFlatObjectMetadatas,
-  rawCreateFieldInput,
-}: FromCreateObjectInputToFlatObjectMetadata): {
-  flatFieldMetadata: FlatFieldMetadata;
-  parentFlatObjectMetadata: FlatObjectMetadata;
-}[] => {
-  // Handled in FlatFieldMetadata validation
-  if (rawCreateFieldInput.isRemoteCreation) {
-    throw new Error(
-      'TODO custom CREATE_FIELD_INPUT exception: Remote fields are not supported yet',
-    );
-  }
-
-  const createFieldInput =
-    trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
-      rawCreateFieldInput,
-      ['description', 'icon', 'label', 'name', 'objectMetadataId', 'type'],
-    );
-  const parentFlatObjectMetadata = existingFlatObjectMetadatas.find(
-    (existingFlatObjectMetadata) =>
-      existingFlatObjectMetadata.id === createFieldInput.objectMetadataId,
-  );
-
-  if (!isDefined(parentFlatObjectMetadata)) {
-    throw new Error(
-      'TODO custom CREATE_FIELD_INPUT exception: Provided object metadata id does not exist',
-    );
-  }
-
-  const flatFieldMetadata =
-    getFlatFieldMetadataFromCreateObjectInput(createFieldInput);
-
-  // TODO handle relation side effect
-  return [
-    {
-      flatFieldMetadata,
-      parentFlatObjectMetadata,
-    },
-  ];
 };
