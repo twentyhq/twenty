@@ -57,7 +57,6 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
   const sourceFlatFieldMetadata: FlatFieldMetadata<FieldMetadataType.RELATION> =
     {
       ...getDefaultFlatFieldMetadata({
-        createdAt,
         createFieldInput,
         fieldMetadataId: sourceRelationTargetFieldMetadataId,
       }),
@@ -74,7 +73,6 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
   const targetFlatFieldMetadata: FlatFieldMetadata<FieldMetadataType.RELATION> =
     {
       ...getDefaultFlatFieldMetadata({
-        createdAt,
         createFieldInput: {
           icon: relationCreationPayload.targetFieldIcon,
           label: relationCreationPayload.targetFieldLabel,

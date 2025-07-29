@@ -6,11 +6,9 @@ import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metada
 
 type GetDefaultFlatFieldMetadataArgs = {
   fieldMetadataId: string;
-  createdAt: Date;
   createFieldInput: CreateFieldInput;
 };
 export const getDefaultFlatFieldMetadata = ({
-  createdAt,
   createFieldInput,
   fieldMetadataId,
 }: GetDefaultFlatFieldMetadataArgs) => {
@@ -20,7 +18,6 @@ export const getDefaultFlatFieldMetadata = ({
   );
 
   return {
-    createdAt, // Should be removed
     description: createFieldInput.description ?? null,
     id: fieldMetadataId,
     icon: createFieldInput.icon ?? null,
@@ -43,7 +40,6 @@ export const getDefaultFlatFieldMetadata = ({
     standardOverrides: null,
     type: createFieldInput.type,
     uniqueIdentifier: fieldMetadataId,
-    updatedAt: createdAt, // Should be removed
     workspaceId: createFieldInput.workspaceId,
     flatRelationTargetFieldMetadata: null,
     flatRelationTargetObjectMetadata: null,

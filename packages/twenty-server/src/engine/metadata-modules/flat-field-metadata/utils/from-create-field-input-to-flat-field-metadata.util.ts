@@ -64,7 +64,6 @@ export const fromCreateFieldInputToFlatFieldMetadata = async ({
   const fieldMetadataId = v4();
   const createdAt = new Date();
   const commonFlatFieldMetadata = getDefaultFlatFieldMetadata({
-    createdAt,
     createFieldInput,
     fieldMetadataId,
   });
