@@ -9,6 +9,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { ViewField } from 'src/engine/metadata-modules/view/view-field.entity';
+import { CreateViewFieldInput } from 'src/modules/view/dtos/inputs/create-view-field.input';
 import { UpdateViewFieldInput } from 'src/modules/view/dtos/inputs/update-view-field.input';
 import { ViewFieldDTO } from 'src/modules/view/dtos/view-field.dto';
 
@@ -69,5 +70,33 @@ export class ViewFieldResolver {
     }
 
     return updatedViewField;
+  }
+
+  @Mutation(() => ViewFieldDTO)
+  @UseGuards(WorkspaceAuthGuard)
+  async createCoreViewField(
+    @Args('input') input: CreateViewFieldInput,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<ViewField> {
+    const viewField = this.viewFieldRepository.create({
+      ...input,
+      workspaceId: workspace.id,
+    });
+
+    return await this.viewFieldRepository.save(viewField);
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(WorkspaceAuthGuard)
+  async deleteCoreViewField(
+    @Args('id', { type: () => String }) id: string,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<boolean> {
+    const result = await this.viewFieldRepository.delete({
+      id,
+      workspaceId: workspace.id,
+    });
+
+    return result.affected !== 0;
   }
 }
