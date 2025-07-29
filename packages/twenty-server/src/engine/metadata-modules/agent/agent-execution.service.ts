@@ -41,6 +41,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
@@ -62,6 +63,7 @@ export class AgentExecutionService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly agentToolService: AgentToolService,
     private readonly fileService: FileService,
+    private readonly domainManagerService: DomainManagerService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly aiModelRegistryService: AiModelRegistryService,
@@ -245,7 +247,7 @@ export class AgentExecutionService {
     const contextObject = (
       await Promise.all(
         recordIdsByObjectMetadataNameSingular.map(
-          (recordsWithObjectMetadataNameSingular) => {
+          async (recordsWithObjectMetadataNameSingular) => {
             if (recordsWithObjectMetadataNameSingular.recordIds.length === 0) {
               return [];
             }
@@ -256,10 +258,20 @@ export class AgentExecutionService {
               roleId,
             );
 
-            return repository.find({
-              where: {
-                id: In(recordsWithObjectMetadataNameSingular.recordIds),
-              },
+            return (
+              await repository.find({
+                where: {
+                  id: In(recordsWithObjectMetadataNameSingular.recordIds),
+                },
+              })
+            ).map((record) => {
+              return {
+                ...record,
+                resourceUrl: this.domainManagerService.buildWorkspaceURL({
+                  workspace,
+                  pathname: `object/${recordsWithObjectMetadataNameSingular.objectMetadataNameSingular}/${record.id}`,
+                }),
+              };
             });
           },
         ),
