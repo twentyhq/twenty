@@ -1,3 +1,7 @@
+import { FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
+import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/workspace-schema-builder/utils/is-field-metadata-relation-or-morph-relation.utils';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import {
@@ -39,9 +43,29 @@ export function getFieldMetadataIdToColumnNamesMap(
         ]);
       });
     } else {
-      const columnName = computeColumnName(fieldMetadata);
+      if (isFieldMetadataRelationOrMorphRelation(fieldMetadata)) {
+        const fieldMetadataSettings =
+          fieldMetadata.settings as FieldMetadataRelationSettings;
 
-      fieldMetadataToColumnNamesMap.set(fieldMetadataId, [columnName]);
+        if (fieldMetadataSettings?.relationType === RelationType.ONE_TO_MANY) {
+          continue;
+        }
+        const columnName = (
+          fieldMetadataSettings as FieldMetadataRelationSettings
+        )?.joinColumnName;
+
+        if (!columnName) {
+          throw new InternalServerError(
+            `Join column name is required for relation field metadata ${fieldMetadata.name}`,
+          );
+        }
+
+        fieldMetadataToColumnNamesMap.set(fieldMetadataId, [columnName]); // TODO test
+      } else {
+        const columnName = computeColumnName(fieldMetadata);
+
+        fieldMetadataToColumnNamesMap.set(fieldMetadataId, [columnName]);
+      }
     }
   }
 

@@ -1,12 +1,17 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/workspace-schema-builder/utils/is-field-metadata-relation-or-morph-relation.utils';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import {
   computeColumnName,
   computeCompositeColumnName,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export function getFieldMetadataIdForColumnNameMap(
@@ -21,8 +26,9 @@ export function getFieldMetadataIdForColumnNameMap(
       const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
 
       if (!compositeType) {
-        throw new InternalServerError(
+        throw new PermissionsException(
           `Composite type not found for field metadata type ${fieldMetadata.type}`,
+          PermissionsExceptionCode.COMPOSITE_TYPE_NOT_FOUND,
         );
       }
 
@@ -35,11 +41,27 @@ export function getFieldMetadataIdForColumnNameMap(
         columnNameToFieldMetadataIdMap[columnName] = fieldMetadataId;
       });
     } else {
-      const columnName = computeColumnName(fieldMetadata, {
-        isForeignKey: fieldMetadata.type === FieldMetadataType.RELATION,
-      });
+      if (isFieldMetadataRelationOrMorphRelation(fieldMetadata)) {
+        const fieldMetadataSettings =
+          fieldMetadata.settings as FieldMetadataRelationSettings;
 
-      columnNameToFieldMetadataIdMap[columnName] = fieldMetadataId;
+        if (fieldMetadataSettings?.relationType === RelationType.ONE_TO_MANY) {
+          continue;
+        }
+        const columnName = fieldMetadataSettings?.joinColumnName;
+
+        if (!columnName) {
+          throw new PermissionsException(
+            `Join column name is required for relation field metadata ${fieldMetadata.name}`,
+            PermissionsExceptionCode.JOIN_COLUMN_NAME_REQUIRED,
+          );
+        }
+        columnNameToFieldMetadataIdMap[columnName] = fieldMetadataId;
+      } else {
+        const columnName = computeColumnName(fieldMetadata);
+
+        columnNameToFieldMetadataIdMap[columnName] = fieldMetadataId;
+      }
     }
   }
 

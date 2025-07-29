@@ -350,6 +350,7 @@ export class WorkspaceEntityManager extends EntityManager {
     operationType,
     permissionOptions,
     selectedColumns,
+    updatedColumns = [],
   }: {
     target: EntityTarget<Entity> | Entity;
     operationType: OperationType;
@@ -358,6 +359,7 @@ export class WorkspaceEntityManager extends EntityManager {
       objectRecordsPermissions?: ObjectRecordsPermissions;
     };
     selectedColumns: string[];
+    updatedColumns?: string[];
   }): void {
     if (permissionOptions?.shouldBypassPermissionChecks === true) {
       return;
@@ -376,6 +378,7 @@ export class WorkspaceEntityManager extends EntityManager {
       objectMetadataMaps: this.internalContext.objectMetadataMaps,
       selectedColumns,
       allFieldsSelected: false,
+      updatedColumns,
     });
   }
 

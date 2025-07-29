@@ -43,6 +43,7 @@ export const validateOperationIsPermittedOrThrow = ({
   selectedColumns,
   isFieldPermissionsEnabled,
   allFieldsSelected,
+  updatedColumns,
 }: {
   entityName: string;
   operationType: OperationType;
@@ -51,6 +52,7 @@ export const validateOperationIsPermittedOrThrow = ({
   selectedColumns: string[];
   isFieldPermissionsEnabled?: boolean;
   allFieldsSelected: boolean;
+  updatedColumns: string[];
 }) => {
   const objectMetadataIdForEntity =
     objectMetadataMaps.idByNameSingular[entityName];
@@ -115,6 +117,14 @@ export const validateOperationIsPermittedOrThrow = ({
         validateReadFieldPermissionOrThrow({
           restrictedFields: permissionsForEntity.restrictedFields,
           selectedColumns,
+          fieldMetadataIdForColumnNameMap,
+        });
+      }
+
+      if (isFieldPermissionsEnabled && updatedColumns.length > 0) {
+        validateUpdateFieldPermissionOrThrow({
+          restrictedFields: permissionsForEntity.restrictedFields,
+          updatedColumns,
           fieldMetadataIdForColumnNameMap,
         });
       }
@@ -189,6 +199,7 @@ export const validateQueryIsPermittedOrThrow = ({
   );
 
   let selectedColumns: string[] = [];
+  let updatedColumns: string[] = [];
 
   if (isFieldPermissionsEnabled) {
     selectedColumns = getSelectedColumnsFromExpressionMap({
@@ -196,6 +207,10 @@ export const validateQueryIsPermittedOrThrow = ({
       expressionMap,
       allFieldsSelected,
     });
+
+    if (operationType !== 'select') {
+      updatedColumns = Object.keys(expressionMap.valuesSet ?? {});
+    }
   }
 
   validateOperationIsPermittedOrThrow({
@@ -203,9 +218,10 @@ export const validateQueryIsPermittedOrThrow = ({
     operationType: operationType as OperationType,
     objectRecordsPermissions,
     objectMetadataMaps,
-    selectedColumns: selectedColumns,
+    selectedColumns,
     isFieldPermissionsEnabled,
     allFieldsSelected,
+    updatedColumns,
   });
 };
 
@@ -241,6 +257,37 @@ const validateReadFieldPermissionOrThrow = ({
     }
 
     if (restrictedFields[fieldMetadataId]?.canRead === false) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+  }
+};
+
+const validateUpdateFieldPermissionOrThrow = ({
+  restrictedFields,
+  updatedColumns,
+  fieldMetadataIdForColumnNameMap,
+}: {
+  restrictedFields: RestrictedFields;
+  updatedColumns: string[];
+  fieldMetadataIdForColumnNameMap: Record<string, string>;
+}) => {
+  if (isEmpty(restrictedFields)) {
+    return;
+  }
+
+  for (const column of updatedColumns) {
+    const fieldMetadataId = fieldMetadataIdForColumnNameMap[column];
+
+    if (!fieldMetadataId) {
+      throw new InternalServerError(
+        `Field metadata id not found for column name ${column}`,
+      );
+    }
+
+    if (restrictedFields[fieldMetadataId]?.canUpdate === false) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
