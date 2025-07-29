@@ -10,4 +10,4 @@ export type AssignTypeIfIsRelationFieldMetadataType<
       ? Ttype
       : T extends FieldMetadataType.MORPH_RELATION
         ? Ttype
-        : never;
+        : never | null;

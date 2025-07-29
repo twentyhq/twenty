@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 type FlatFieldMetadataOverrides<
   T extends FieldMetadataType = FieldMetadataType,
@@ -13,13 +13,11 @@ type FlatFieldMetadataOverrides<
 export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
   overrides: FlatFieldMetadataOverrides<T>,
 ): FlatFieldMetadata => {
-  const createdAt = faker.date.anytime();
 
   return {
     defaultValue: null,
     options: null,
     settings: null,
-    createdAt,
     description: 'default flat field metadata description',
     icon: 'icon',
     id: faker.string.uuid(),
@@ -33,12 +31,11 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     isSystem: false,
     standardId: null,
     standardOverrides: null,
-    updatedAt: createdAt,
     workspaceId: faker.string.uuid(),
-    flatRelationTargetFieldMetadata: undefined as never,
-    relationTargetFieldMetadataId: undefined as never,
-    flatRelationTargetObjectMetadata: undefined as never,
-    relationTargetObjectMetadataId: undefined as never,
+    flatRelationTargetFieldMetadata: null,
+    relationTargetFieldMetadataId: null,
+    flatRelationTargetObjectMetadata: null,
+    relationTargetObjectMetadataId: null,
     ...overrides,
   };
 };
