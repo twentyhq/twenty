@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import Cloudflare from 'cloudflare';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { CustomHostnameCreateParams } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
 
 import {
   DomainManagerException,
@@ -18,7 +19,6 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
 import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-deactivated';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { CustomHostnameCreateParams } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
 
 @Injectable()
 export class CustomDomainService {
