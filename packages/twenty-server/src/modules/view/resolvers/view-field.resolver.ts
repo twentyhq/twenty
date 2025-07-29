@@ -10,8 +10,9 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { ViewField } from 'src/engine/metadata-modules/view/view-field.entity';
 import { UpdateViewFieldInput } from 'src/modules/view/dtos/inputs/update-view-field.input';
+import { ViewFieldDTO } from 'src/modules/view/dtos/view-field.dto';
 
-@Resolver(() => ViewField)
+@Resolver(() => ViewFieldDTO)
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class ViewFieldResolver {
   constructor(
@@ -19,43 +20,30 @@ export class ViewFieldResolver {
     private readonly viewFieldRepository: Repository<ViewField>,
   ) {}
 
-  @Query(() => [ViewField])
+  @Query(() => [ViewFieldDTO])
   @UseGuards(WorkspaceAuthGuard)
-  async findManyViewFields(
+  async viewFields(
+    @Args('viewId', { type: () => String }) viewId: string,
     @AuthWorkspace() workspace: Workspace,
-    @Args('viewId', { type: () => String, nullable: true })
-    viewId?: string,
   ): Promise<ViewField[]> {
-    const whereClause: { workspaceId: string; viewId?: string } = {
-      workspaceId: workspace.id,
-    };
-
-    if (viewId) {
-      whereClause.viewId = viewId;
-    }
-
-    const viewFields = await this.viewFieldRepository.find({
-      where: whereClause,
+    return this.viewFieldRepository.find({
+      where: { viewId, workspaceId: workspace.id },
       order: { position: 'ASC' },
     });
-
-    return viewFields;
   }
 
-  @Query(() => ViewField, { nullable: true })
+  @Query(() => ViewFieldDTO, { nullable: true })
   @UseGuards(WorkspaceAuthGuard)
-  async findOneViewField(
+  async viewField(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewField | null> {
-    const viewField = await this.viewFieldRepository.findOne({
+    return this.viewFieldRepository.findOne({
       where: { id, workspaceId: workspace.id },
     });
-
-    return viewField;
   }
 
-  @Mutation(() => ViewField)
+  @Mutation(() => ViewFieldDTO)
   @UseGuards(WorkspaceAuthGuard)
   async updateViewField(
     @Args('id', { type: () => String }) id: string,
