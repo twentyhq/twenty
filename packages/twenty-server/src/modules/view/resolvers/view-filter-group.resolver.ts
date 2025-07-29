@@ -23,7 +23,7 @@ export class ViewFilterGroupResolver {
 
   @Query(() => [ViewFilterGroupDTO])
   @UseGuards(WorkspaceAuthGuard)
-  async findManyViewFilterGroups(
+  async getCoreViewFilterGroups(
     @AuthWorkspace() workspace: Workspace,
     @Args('viewId', { type: () => String, nullable: true })
     viewId?: string,
@@ -46,7 +46,7 @@ export class ViewFilterGroupResolver {
 
   @Query(() => ViewFilterGroupDTO, { nullable: true })
   @UseGuards(WorkspaceAuthGuard)
-  async findOneViewFilterGroup(
+  async getCoreViewFilterGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewFilterGroupDTO | null> {
@@ -59,7 +59,7 @@ export class ViewFilterGroupResolver {
 
   @Mutation(() => ViewFilterGroupDTO)
   @UseGuards(WorkspaceAuthGuard)
-  async createViewFilterGroup(
+  async createCoreViewFilterGroup(
     @Args('input') input: CreateViewFilterGroupInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewFilterGroupDTO> {
@@ -73,7 +73,7 @@ export class ViewFilterGroupResolver {
 
   @Mutation(() => ViewFilterGroupDTO)
   @UseGuards(WorkspaceAuthGuard)
-  async updateViewFilterGroup(
+  async updateCoreViewFilterGroup(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewFilterGroupInput,
     @AuthWorkspace() workspace: Workspace,
@@ -104,7 +104,7 @@ export class ViewFilterGroupResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(WorkspaceAuthGuard)
-  async deleteViewFilterGroup(
+  async deleteCoreViewFilterGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {

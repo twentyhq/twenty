@@ -22,7 +22,7 @@ export class ViewFieldResolver {
 
   @Query(() => [ViewFieldDTO])
   @UseGuards(WorkspaceAuthGuard)
-  async viewFields(
+  async getCoreViewFields(
     @Args('viewId', { type: () => String }) viewId: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewField[]> {
@@ -34,7 +34,7 @@ export class ViewFieldResolver {
 
   @Query(() => ViewFieldDTO, { nullable: true })
   @UseGuards(WorkspaceAuthGuard)
-  async viewField(
+  async getCoreViewField(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewField | null> {
@@ -45,7 +45,7 @@ export class ViewFieldResolver {
 
   @Mutation(() => ViewFieldDTO)
   @UseGuards(WorkspaceAuthGuard)
-  async updateViewField(
+  async updateCoreViewField(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewFieldInput,
     @AuthWorkspace() workspace: Workspace,

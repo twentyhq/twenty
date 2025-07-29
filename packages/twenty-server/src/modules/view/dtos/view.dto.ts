@@ -9,7 +9,7 @@ import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-op
 registerEnumType(ViewOpenRecordIn, { name: 'ViewOpenRecordIn' });
 registerEnumType(AggregateOperations, { name: 'AggregateOperations' });
 
-@ObjectType()
+@ObjectType('CoreView')
 export class ViewDTO {
   @IDField(() => UUIDScalarType)
   id: string;
