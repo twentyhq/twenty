@@ -4,8 +4,8 @@ import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useR
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { allCardsSelectedStatusComponentSelector } from '@/object-record/record-board/states/selectors/allCardsSelectedStatusComponentSelector';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
 export const useSelectAllCards = (recordBoardId?: string) => {
   const allCardsSelectedStatusSelector = useRecoilComponentCallbackStateV2(

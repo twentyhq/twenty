@@ -30,7 +30,7 @@ import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRec
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
-import { isInlineCellInEditModeScopedState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeScopedState';
+import { isInlineCellInEditModeFamilyState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeFamilyState';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
@@ -379,7 +379,7 @@ export const ActivityRichTextEditor = ({
     ({ snapshot }) =>
       () => {
         const isRecordTitleCellOpen = snapshot
-          .getLoadable(isInlineCellInEditModeScopedState(recordTitleCellId))
+          .getLoadable(isInlineCellInEditModeFamilyState(recordTitleCellId))
           .getValue();
 
         if (isRecordTitleCellOpen) {
@@ -405,7 +405,7 @@ export const ActivityRichTextEditor = ({
     ({ snapshot }) =>
       () => {
         const isRecordTitleCellOpen = snapshot
-          .getLoadable(isInlineCellInEditModeScopedState(recordTitleCellId))
+          .getLoadable(isInlineCellInEditModeFamilyState(recordTitleCellId))
           .getValue();
 
         if (isRecordTitleCellOpen) {

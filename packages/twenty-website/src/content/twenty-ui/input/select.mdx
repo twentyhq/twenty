@@ -21,7 +21,6 @@ export const MyComponent = () => {
       <Select
         className
         disabled={false}
-        dropdownScopeId="exampleDropdown"
         label="Select an option"
         options={[
           { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
@@ -40,7 +39,6 @@ export const MyComponent = () => {
 <ArticlePropsTable options={[
   ['className', 'string', 'Optional CSS class for additional styling'],
   ['disabled', 'boolean', 'When set to `true`, disables user interaction with the component'],
-  ['dropdownScopeId', 'string', 'Required prop that uniquely identifies the dropdown scope'],
   ['label', 'string', 'The label to describe the purpose of the `Select` component'],
   ['onChange', 'function', 'The function called when the selected values change'],
   ['options', 'array', "Represents the options available for the `Selected` component. It's an array of objects where each object has a `value` (the unique identifier), `label` (the unique identifier), and an optional `Icon`"],

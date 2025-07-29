@@ -8,9 +8,11 @@ import { RecordTableColumnHeadDropdownMenu } from './RecordTableColumnHeadDropdo
 
 type RecordTableColumnHeadWithDropdownProps = {
   column: ColumnDefinition<FieldMetadata>;
+  objectMetadataId: string;
 };
 
 export const RecordTableColumnHeadWithDropdown = ({
+  objectMetadataId,
   column,
 }: RecordTableColumnHeadWithDropdownProps) => {
   const { toggleScrollXWrapper, toggleScrollYWrapper } =
@@ -32,7 +34,12 @@ export const RecordTableColumnHeadWithDropdown = ({
       onClose={handleDropdownClose}
       dropdownId={column.fieldMetadataId + '-header'}
       clickableComponent={<RecordTableColumnHead column={column} />}
-      dropdownComponents={<RecordTableColumnHeadDropdownMenu column={column} />}
+      dropdownComponents={
+        <RecordTableColumnHeadDropdownMenu
+          column={column}
+          objectMetadataId={objectMetadataId}
+        />
+      }
       dropdownOffset={{ x: -1 }}
       dropdownPlacement="bottom-start"
     />

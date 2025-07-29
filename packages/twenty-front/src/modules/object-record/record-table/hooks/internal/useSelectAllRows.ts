@@ -4,8 +4,8 @@ import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
 export const useSelectAllRows = (recordTableId?: string) => {
   const allRowsSelectedStatusSelector = useRecoilComponentCallbackStateV2(
