@@ -4,8 +4,8 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
-  Put,
   Query,
   UseFilters,
   UseGuards,
@@ -59,7 +59,7 @@ export class ViewGroupController {
     });
   }
 
-  @Put(':id')
+  @Patch(':id')
   @UseGuards(WorkspaceAuthGuard)
   async update(
     @Param('id') id: string,

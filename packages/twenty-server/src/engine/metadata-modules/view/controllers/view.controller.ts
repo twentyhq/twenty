@@ -4,8 +4,8 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
-  Put,
   Query,
   UseFilters,
   UseGuards,
@@ -62,7 +62,7 @@ export class ViewController {
     });
   }
 
-  @Put(':id')
+  @Patch(':id')
   @UseGuards(WorkspaceAuthGuard)
   async update(
     @Param('id') id: string,
