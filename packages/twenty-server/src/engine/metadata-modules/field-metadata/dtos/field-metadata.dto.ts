@@ -125,7 +125,6 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @Transform(({ value }) =>
     transformEnumValue(value as FieldMetadataDefaultOption[]),
   )
-
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   options?: FieldMetadataOptions<T>;

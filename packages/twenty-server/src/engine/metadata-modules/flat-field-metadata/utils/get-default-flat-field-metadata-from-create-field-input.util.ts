@@ -20,7 +20,7 @@ export const getDefaultFlatFieldMetadata = ({
   );
 
   return {
-    createdAt,
+    createdAt, // Should be removed
     description: createFieldInput.description ?? null,
     id: fieldMetadataId,
     icon: createFieldInput.icon ?? null,
@@ -36,14 +36,14 @@ export const getDefaultFlatFieldMetadata = ({
     isUnique: createFieldInput.isUnique ?? null,
     label: createFieldInput.label ?? null,
     name: createFieldInput.name ?? null,
-    objectMetadataId: createFieldInput.objectMetadataId, // TODO prastoin double check that CreateFieldInput validation runs correctly
+    objectMetadataId: createFieldInput.objectMetadataId,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     standardId: null,
     standardOverrides: null,
     type: createFieldInput.type,
     uniqueIdentifier: fieldMetadataId,
-    updatedAt: createdAt,
+    updatedAt: createdAt, // Should be removed
     workspaceId: createFieldInput.workspaceId,
     flatRelationTargetFieldMetadata: null,
     flatRelationTargetObjectMetadata: null,

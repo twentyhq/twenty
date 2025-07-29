@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { FailedFlatFieldMetadataValidation } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-result.type';
+import { FailedFlatFieldMetadataValidation } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   InvalidMetadataException,
@@ -49,8 +49,7 @@ export const validateFlatFieldMetadataNameAvailability = ({
     objectMetadata.flatFieldMetadatas.some(
       (field) =>
         field.name === name ||
-        // TODO check if need to look for morph here too ?
-        (field.type === FieldMetadataType.RELATION &&
+        (field.type === FieldMetadataType.RELATION && // Question: Should we also look for MORPH_RELATION field types ?
           `${field.name}Id` === name),
     )
   ) {

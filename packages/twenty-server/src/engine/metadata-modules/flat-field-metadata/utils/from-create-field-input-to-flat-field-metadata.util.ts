@@ -10,6 +10,7 @@ import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { FieldMetadataException, FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromRelationCreateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadata.util';
@@ -33,13 +34,13 @@ export const fromCreateFieldInputToFlatFieldMetadata = async ({
 }: FromCreateFieldInputToFlatObjectMetadata): Promise<
   FlatFieldMetadataAndParentFlatObjectMetadata[]
 > => {
-  // Handled in FlatFieldMetadata validation
   if (rawCreateFieldInput.isRemoteCreation) {
-    throw new UserInputError(
-      'Remote fields are not supported yet',
-    );
-  }
+      throw new FieldMetadataException(
+        "Remote fields aren't supported",
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      );
 
+  }
   const createFieldInput =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawCreateFieldInput,
@@ -51,9 +52,13 @@ export const fromCreateFieldInputToFlatFieldMetadata = async ({
   );
 
   if (!isDefined(parentFlatObjectMetadata)) {
-    throw new Error(
-      'TODO custom CREATE_FIELD_INPUT exception: Provided object metadata id does not exist',
-    );
+      throw new FieldMetadataException(
+        "Provided object metadata id does not exist",
+        FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        {
+          userFriendlyMessage: "Created field metadata, parent object metadata not found",
+        },
+      );
   }
 
   const fieldMetadataId = v4();

@@ -10,7 +10,7 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { FailedFlatFieldMetadataValidation } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-result.type';
+import { FailedFlatFieldMetadataValidation } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-flat-field-metadata-name-availability.validator';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -25,15 +25,12 @@ import {
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 
-// What about update ? FromTo<> ?
 type ValidateOneFieldMetadataArgs = {
   existingFlatObjectMetadatas: FlatObjectMetadata[];
   othersFlatObjectMetadataToValidate?: FlatObjectMetadata[];
   flatFieldMetadataToValidate: FlatFieldMetadata;
-  // flatFieldMetadataToValidateRelatedFlatObjectMetadata lol
   workspaceId: string;
 };
-// We need to infer if this is going to be an udpate or not -> I still don't know yet
 
 @Injectable()
 export class FlatFieldMetadataValidatorService {
@@ -53,12 +50,10 @@ export class FlatFieldMetadataValidatorService {
       ...existingFlatObjectMetadatas,
       ...(othersFlatObjectMetadataToValidate ?? []),
     ];
-    // Common TODO facto in own scope
     const parentFlatObjectMetadata = allFlatObjectMetadata.find(
       (existingFlatObjectMetadata) =>
-        // Should this be unique identifier ?? I'm confused :thinking:
         existingFlatObjectMetadata.id ===
-        flatFieldMetadataToValidate.objectMetadataId,
+        flatFieldMetadataToValidate.objectMetadataId, // Question: Should we comparing unique identifier here ?
     );
 
     if (!isDefined(parentFlatObjectMetadata)) {
@@ -123,7 +118,6 @@ export class FlatFieldMetadataValidatorService {
     if (isDefined(failedNameAvailabilityValidation)) {
       return failedNameAvailabilityValidation;
     }
-    /// End of common
 
     // We should validate each default value and settings and options
     // We should also handle relation and stuff

@@ -82,7 +82,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         ),
       )).filter(isDefined);
 
-      // TODO refactor in util
       if (
         createdFlatFieldMetadataValidationResult.length > 0
       ) {
@@ -95,7 +94,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           'Multiple validation errors occurred while creating field',
         );
       }
-      ///
 
       const updatedFlatObjectMetadatas =
         createdFlatFieldsMetadataAndParentFlatObjectMetadata.map<FlatObjectMetadata>(
