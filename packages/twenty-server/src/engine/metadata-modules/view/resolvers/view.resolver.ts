@@ -1,25 +1,19 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { View } from 'src/engine/metadata-modules/view/view.entity';
-import { CreateViewInput } from 'src/modules/view/dtos/inputs/create-view.input';
-import { UpdateViewInput } from 'src/modules/view/dtos/inputs/update-view.input';
-import { ViewDTO } from 'src/modules/view/dtos/view.dto';
+import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
+import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
+import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
+import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 
 @Resolver(() => ViewDTO)
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class ViewResolver {
-  constructor(
-    @InjectRepository(View, 'core')
-    private readonly viewRepository: Repository<View>,
-  ) {}
+  constructor(private readonly viewService: ViewService) {}
 
   @Query(() => [ViewDTO])
   @UseGuards(WorkspaceAuthGuard)
@@ -28,20 +22,14 @@ export class ViewResolver {
     @Args('objectMetadataId', { type: () => String, nullable: true })
     objectMetadataId?: string,
   ): Promise<ViewDTO[]> {
-    const whereClause: { workspaceId: string; objectMetadataId?: string } = {
-      workspaceId: workspace.id,
-    };
-
     if (objectMetadataId) {
-      whereClause.objectMetadataId = objectMetadataId;
+      return this.viewService.findByObjectMetadataId(
+        workspace.id,
+        objectMetadataId,
+      );
     }
 
-    const views = await this.viewRepository.find({
-      where: whereClause,
-      order: { position: 'ASC' },
-    });
-
-    return views;
+    return this.viewService.findByWorkspaceId(workspace.id);
   }
 
   @Query(() => ViewDTO, { nullable: true })
@@ -50,11 +38,7 @@ export class ViewResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewDTO | null> {
-    const view = await this.viewRepository.findOne({
-      where: { id, workspaceId: workspace.id },
-    });
-
-    return view;
+    return this.viewService.findById(id, workspace.id);
   }
 
   @Mutation(() => ViewDTO)
@@ -63,12 +47,10 @@ export class ViewResolver {
     @Args('input') input: CreateViewInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewDTO> {
-    const view = this.viewRepository.create({
+    return this.viewService.create({
       ...input,
       workspaceId: workspace.id,
     });
-
-    return await this.viewRepository.save(view);
   }
 
   @Mutation(() => ViewDTO)
@@ -78,22 +60,10 @@ export class ViewResolver {
     @Args('input') input: UpdateViewInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewDTO> {
-    const existingView = await this.viewRepository.findOne({
-      where: { id, workspaceId: workspace.id },
-    });
-
-    if (!existingView) {
-      throw new Error('View not found');
-    }
-
-    await this.viewRepository.update(id, input);
-
-    const updatedView = await this.viewRepository.findOne({
-      where: { id, workspaceId: workspace.id },
-    });
+    const updatedView = await this.viewService.update(id, workspace.id, input);
 
     if (!updatedView) {
-      throw new Error('View not found after update');
+      throw new Error('View not found');
     }
 
     return updatedView;
@@ -105,11 +75,8 @@ export class ViewResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {
-    const result = await this.viewRepository.delete({
-      id,
-      workspaceId: workspace.id,
-    });
+    const deletedView = await this.viewService.delete(id, workspace.id);
 
-    return result.affected !== 0;
+    return !!deletedView;
   }
 }

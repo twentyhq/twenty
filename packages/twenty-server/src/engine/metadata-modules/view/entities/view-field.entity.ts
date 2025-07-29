@@ -1,5 +1,3 @@
-import { registerEnumType } from '@nestjs/graphql';
-
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
@@ -15,20 +13,18 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ViewSortDirection } from 'src/engine/metadata-modules/view/enums/view-sort-direction';
-import { View } from 'src/engine/metadata-modules/view/view.entity';
+import { View } from 'src/engine/metadata-modules/view/entities/view.entity';
 
-registerEnumType(ViewSortDirection, { name: 'ViewSortDirection' });
-
-@Entity({ name: 'viewSort', schema: 'core' })
-@Index('IDX_VIEW_SORT_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
-@Unique('IDX_VIEW_SORT_FIELD_METADATA_ID_VIEW_ID_UNIQUE', [
+@Entity({ name: 'viewField', schema: 'core' })
+@Index('IDX_VIEW_FIELD_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
+@Unique('IDX_VIEW_FIELD_FIELD_METADATA_ID_VIEW_ID_UNIQUE', [
   'fieldMetadataId',
   'viewId',
 ])
-export class ViewSort {
+export class ViewField {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -36,13 +32,21 @@ export class ViewSort {
   @Column({ nullable: false, type: 'uuid' })
   fieldMetadataId: string;
 
+  @Column({ nullable: false, default: true })
+  isVisible: boolean;
+
+  @Column({ nullable: false, type: 'int', default: 0 })
+  size: number;
+
+  @Column({ nullable: false, type: 'int', default: 0 })
+  position: number;
+
   @Column({
-    nullable: false,
     type: 'enum',
-    enum: ViewSortDirection,
-    default: ViewSortDirection.ASC,
+    enum: AggregateOperations,
+    nullable: true,
   })
-  direction: ViewSortDirection;
+  aggregateOperation?: AggregateOperations | null;
 
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;
@@ -65,7 +69,7 @@ export class ViewSort {
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<Workspace>;
 
-  @ManyToOne(() => View, (view) => view.viewSorts, {
+  @ManyToOne(() => View, (view) => view.viewFields, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'viewId' })

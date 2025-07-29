@@ -1,24 +1,20 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { ViewFilterGroup } from 'src/engine/metadata-modules/view/view-filter-group.entity';
-import { CreateViewFilterGroupInput } from 'src/modules/view/dtos/inputs/create-view-filter-group.input';
-import { UpdateViewFilterGroupInput } from 'src/modules/view/dtos/inputs/update-view-filter-group.input';
-import { ViewFilterGroupDTO } from 'src/modules/view/dtos/view-filter-group.dto';
+import { CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view-filter-group.input';
+import { UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view-filter-group.input';
+import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view/dtos/view-filter-group.dto';
+import { ViewFilterGroupService } from 'src/engine/metadata-modules/view/services/view-filter-group.service';
 
 @Resolver(() => ViewFilterGroupDTO)
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class ViewFilterGroupResolver {
   constructor(
-    @InjectRepository(ViewFilterGroup, 'core')
-    private readonly viewFilterGroupRepository: Repository<ViewFilterGroup>,
+    private readonly viewFilterGroupService: ViewFilterGroupService,
   ) {}
 
   @Query(() => [ViewFilterGroupDTO])
@@ -28,20 +24,11 @@ export class ViewFilterGroupResolver {
     @Args('viewId', { type: () => String, nullable: true })
     viewId?: string,
   ): Promise<ViewFilterGroupDTO[]> {
-    const whereClause: { workspaceId: string; viewId?: string } = {
-      workspaceId: workspace.id,
-    };
-
     if (viewId) {
-      whereClause.viewId = viewId;
+      return this.viewFilterGroupService.findByViewId(workspace.id, viewId);
     }
 
-    const viewFilterGroups = await this.viewFilterGroupRepository.find({
-      where: whereClause,
-      order: { positionInViewFilterGroup: 'ASC' },
-    });
-
-    return viewFilterGroups;
+    return this.viewFilterGroupService.findByWorkspaceId(workspace.id);
   }
 
   @Query(() => ViewFilterGroupDTO, { nullable: true })
@@ -50,11 +37,7 @@ export class ViewFilterGroupResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewFilterGroupDTO | null> {
-    const viewFilterGroup = await this.viewFilterGroupRepository.findOne({
-      where: { id, workspaceId: workspace.id },
-    });
-
-    return viewFilterGroup;
+    return this.viewFilterGroupService.findById(id, workspace.id);
   }
 
   @Mutation(() => ViewFilterGroupDTO)
@@ -63,12 +46,10 @@ export class ViewFilterGroupResolver {
     @Args('input') input: CreateViewFilterGroupInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewFilterGroupDTO> {
-    const viewFilterGroup = this.viewFilterGroupRepository.create({
+    return this.viewFilterGroupService.create({
       ...input,
       workspaceId: workspace.id,
     });
-
-    return await this.viewFilterGroupRepository.save(viewFilterGroup);
   }
 
   @Mutation(() => ViewFilterGroupDTO)
@@ -78,25 +59,14 @@ export class ViewFilterGroupResolver {
     @Args('input') input: UpdateViewFilterGroupInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewFilterGroupDTO> {
-    const existingViewFilterGroup =
-      await this.viewFilterGroupRepository.findOne({
-        where: { id, workspaceId: workspace.id },
-      });
-
-    if (!existingViewFilterGroup) {
-      throw new Error('ViewFilterGroup not found');
-    }
-
-    await this.viewFilterGroupRepository.update(id, input);
-
-    const updatedViewFilterGroup = await this.viewFilterGroupRepository.findOne(
-      {
-        where: { id, workspaceId: workspace.id },
-      },
+    const updatedViewFilterGroup = await this.viewFilterGroupService.update(
+      id,
+      workspace.id,
+      input,
     );
 
     if (!updatedViewFilterGroup) {
-      throw new Error('ViewFilterGroup not found after update');
+      throw new Error('ViewFilterGroup not found');
     }
 
     return updatedViewFilterGroup;
@@ -108,11 +78,11 @@ export class ViewFilterGroupResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {
-    const result = await this.viewFilterGroupRepository.delete({
+    const deletedViewFilterGroup = await this.viewFilterGroupService.delete(
       id,
-      workspaceId: workspace.id,
-    });
+      workspace.id,
+    );
 
-    return result.affected !== 0;
+    return deletedViewFilterGroup !== null;
   }
 }

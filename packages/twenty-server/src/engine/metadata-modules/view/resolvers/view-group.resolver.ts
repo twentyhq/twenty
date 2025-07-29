@@ -1,25 +1,19 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { ViewGroup } from 'src/engine/metadata-modules/view/view-group.entity';
-import { CreateViewGroupInput } from 'src/modules/view/dtos/inputs/create-view-group.input';
-import { UpdateViewGroupInput } from 'src/modules/view/dtos/inputs/update-view-group.input';
-import { ViewGroupDTO } from 'src/modules/view/dtos/view-group.dto';
+import { CreateViewGroupInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view-group.input';
+import { UpdateViewGroupInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view-group.input';
+import { ViewGroupDTO } from 'src/engine/metadata-modules/view/dtos/view-group.dto';
+import { ViewGroupService } from 'src/engine/metadata-modules/view/services/view-group.service';
 
 @Resolver(() => ViewGroupDTO)
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class ViewGroupResolver {
-  constructor(
-    @InjectRepository(ViewGroup, 'core')
-    private readonly viewGroupRepository: Repository<ViewGroup>,
-  ) {}
+  constructor(private readonly viewGroupService: ViewGroupService) {}
 
   @Query(() => [ViewGroupDTO])
   @UseGuards(WorkspaceAuthGuard)
@@ -28,20 +22,11 @@ export class ViewGroupResolver {
     @Args('viewId', { type: () => String, nullable: true })
     viewId?: string,
   ): Promise<ViewGroupDTO[]> {
-    const whereClause: { workspaceId: string; viewId?: string } = {
-      workspaceId: workspace.id,
-    };
-
     if (viewId) {
-      whereClause.viewId = viewId;
+      return this.viewGroupService.findByViewId(workspace.id, viewId);
     }
 
-    const viewGroups = await this.viewGroupRepository.find({
-      where: whereClause,
-      order: { position: 'ASC' },
-    });
-
-    return viewGroups;
+    return this.viewGroupService.findByWorkspaceId(workspace.id);
   }
 
   @Query(() => ViewGroupDTO, { nullable: true })
@@ -50,11 +35,7 @@ export class ViewGroupResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewGroupDTO | null> {
-    const viewGroup = await this.viewGroupRepository.findOne({
-      where: { id, workspaceId: workspace.id },
-    });
-
-    return viewGroup;
+    return this.viewGroupService.findById(id, workspace.id);
   }
 
   @Mutation(() => ViewGroupDTO)
@@ -63,12 +44,10 @@ export class ViewGroupResolver {
     @Args('input') input: CreateViewGroupInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewGroupDTO> {
-    const viewGroup = this.viewGroupRepository.create({
+    return this.viewGroupService.create({
       ...input,
       workspaceId: workspace.id,
     });
-
-    return await this.viewGroupRepository.save(viewGroup);
   }
 
   @Mutation(() => ViewGroupDTO)
@@ -78,22 +57,14 @@ export class ViewGroupResolver {
     @Args('input') input: UpdateViewGroupInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewGroupDTO> {
-    const existingViewGroup = await this.viewGroupRepository.findOne({
-      where: { id, workspaceId: workspace.id },
-    });
-
-    if (!existingViewGroup) {
-      throw new Error('ViewGroup not found');
-    }
-
-    await this.viewGroupRepository.update(id, input);
-
-    const updatedViewGroup = await this.viewGroupRepository.findOne({
-      where: { id, workspaceId: workspace.id },
-    });
+    const updatedViewGroup = await this.viewGroupService.update(
+      id,
+      workspace.id,
+      input,
+    );
 
     if (!updatedViewGroup) {
-      throw new Error('ViewGroup not found after update');
+      throw new Error('ViewGroup not found');
     }
 
     return updatedViewGroup;
@@ -105,11 +76,11 @@ export class ViewGroupResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {
-    const result = await this.viewGroupRepository.delete({
+    const deletedViewGroup = await this.viewGroupService.delete(
       id,
-      workspaceId: workspace.id,
-    });
+      workspace.id,
+    );
 
-    return result.affected !== 0;
+    return deletedViewGroup !== null;
   }
 }

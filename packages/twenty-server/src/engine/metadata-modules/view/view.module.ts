@@ -20,20 +20,12 @@ import { ViewFilterResolver } from 'src/engine/metadata-modules/view/resolvers/v
 import { ViewGroupResolver } from 'src/engine/metadata-modules/view/resolvers/view-group.resolver';
 import { ViewSortResolver } from 'src/engine/metadata-modules/view/resolvers/view-sort.resolver';
 import { ViewResolver } from 'src/engine/metadata-modules/view/resolvers/view.resolver';
-import { ViewFieldListener } from 'src/modules/view/listeners/view-field.listener';
-import { ViewFilterGroupListener } from 'src/modules/view/listeners/view-filter-group.listener';
-import { ViewFilterListener } from 'src/modules/view/listeners/view-filter.listener';
-import { ViewGroupListener } from 'src/modules/view/listeners/view-group.listener';
-import { ViewSortListener } from 'src/modules/view/listeners/view-sort.listener';
-import { ViewListener } from 'src/modules/view/listeners/view.listener';
-import { ViewDeleteOnePreQueryHook } from 'src/modules/view/pre-hooks/view-delete-one.pre-query.hook';
-import { ViewFieldSyncService } from 'src/modules/view/services/view-field-sync.service';
-import { ViewFilterGroupSyncService } from 'src/modules/view/services/view-filter-group-sync.service';
-import { ViewFilterSyncService } from 'src/modules/view/services/view-filter-sync.service';
-import { ViewGroupSyncService } from 'src/modules/view/services/view-group-sync.service';
-import { ViewSortSyncService } from 'src/modules/view/services/view-sort-sync.service';
-import { ViewSyncService } from 'src/modules/view/services/view-sync.service';
-import { ViewService } from 'src/modules/view/services/view.service';
+import { ViewFieldService } from 'src/engine/metadata-modules/view/services/view-field.service';
+import { ViewFilterGroupService } from 'src/engine/metadata-modules/view/services/view-filter-group.service';
+import { ViewFilterService } from 'src/engine/metadata-modules/view/services/view-filter.service';
+import { ViewGroupService } from 'src/engine/metadata-modules/view/services/view-group.service';
+import { ViewSortService } from 'src/engine/metadata-modules/view/services/view-sort.service';
+import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 
 @Module({
   imports: [
@@ -53,19 +45,11 @@ import { ViewService } from 'src/modules/view/services/view.service';
   ],
   providers: [
     ViewService,
-    ViewDeleteOnePreQueryHook,
-    ViewSyncService,
-    ViewFieldSyncService,
-    ViewFilterSyncService,
-    ViewFilterGroupSyncService,
-    ViewGroupSyncService,
-    ViewSortSyncService,
-    ViewListener,
-    ViewFieldListener,
-    ViewFilterListener,
-    ViewFilterGroupListener,
-    ViewGroupListener,
-    ViewSortListener,
+    ViewFieldService,
+    ViewFilterService,
+    ViewFilterGroupService,
+    ViewGroupService,
+    ViewSortService,
     ViewResolver,
     ViewFieldResolver,
     ViewFilterResolver,
@@ -73,6 +57,13 @@ import { ViewService } from 'src/modules/view/services/view.service';
     ViewGroupResolver,
     ViewSortResolver,
   ],
-  exports: [ViewService],
+  exports: [
+    ViewService,
+    ViewFieldService,
+    ViewFilterService,
+    ViewFilterGroupService,
+    ViewGroupService,
+    ViewSortService,
+  ],
 })
-export class ViewModule {}
+export class CoreViewModule {}

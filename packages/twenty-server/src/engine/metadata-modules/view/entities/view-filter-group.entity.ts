@@ -16,8 +16,8 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { View } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view/enums/view-filter-group-logical-operator';
-import { View } from 'src/engine/metadata-modules/view/view.entity';
 
 registerEnumType(ViewFilterGroupLogicalOperator, {
   name: 'ViewFilterGroupLogicalOperator',

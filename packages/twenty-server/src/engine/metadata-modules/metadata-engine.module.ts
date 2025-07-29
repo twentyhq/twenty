@@ -8,6 +8,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { RemoteServerModule } from 'src/engine/metadata-modules/remote-server/remote-server.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
+import { CoreViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 
@@ -23,6 +24,7 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
     RemoteServerModule,
     RoleModule,
     PermissionsModule,
+    CoreViewModule,
   ],
   providers: [],
   exports: [

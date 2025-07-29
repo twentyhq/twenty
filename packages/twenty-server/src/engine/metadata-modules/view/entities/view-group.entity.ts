@@ -9,22 +9,16 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { View } from 'src/engine/metadata-modules/view/view.entity';
+import { View } from 'src/engine/metadata-modules/view/entities/view.entity';
 
-@Entity({ name: 'viewField', schema: 'core' })
-@Index('IDX_VIEW_FIELD_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
-@Unique('IDX_VIEW_FIELD_FIELD_METADATA_ID_VIEW_ID_UNIQUE', [
-  'fieldMetadataId',
-  'viewId',
-])
-export class ViewField {
+@Entity({ name: 'viewGroup', schema: 'core' })
+@Index('IDX_VIEW_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
+export class ViewGroup {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -35,18 +29,11 @@ export class ViewField {
   @Column({ nullable: false, default: true })
   isVisible: boolean;
 
-  @Column({ nullable: false, type: 'int', default: 0 })
-  size: number;
+  @Column({ nullable: false, type: 'text' })
+  fieldValue: string;
 
   @Column({ nullable: false, type: 'int', default: 0 })
   position: number;
-
-  @Column({
-    type: 'enum',
-    enum: AggregateOperations,
-    nullable: true,
-  })
-  aggregateOperation?: AggregateOperations | null;
 
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;
@@ -69,7 +56,7 @@ export class ViewField {
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<Workspace>;
 
-  @ManyToOne(() => View, (view) => view.viewFields, {
+  @ManyToOne(() => View, (view) => view.viewGroups, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'viewId' })

@@ -14,11 +14,13 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { View } from 'src/engine/metadata-modules/view/view.entity';
+import { View } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewFilterValue } from 'src/engine/metadata-modules/view/types/view-filter-value.type';
 
-@Entity({ name: 'viewGroup', schema: 'core' })
-@Index('IDX_VIEW_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
-export class ViewGroup {
+@Entity({ name: 'viewFilter', schema: 'core' })
+@Index('IDX_VIEW_FILTER_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
+@Index('IDX_VIEW_FILTER_FIELD_METADATA_ID', ['fieldMetadataId'])
+export class ViewFilter {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -26,14 +28,20 @@ export class ViewGroup {
   @Column({ nullable: false, type: 'uuid' })
   fieldMetadataId: string;
 
-  @Column({ nullable: false, default: true })
-  isVisible: boolean;
+  @Column({ nullable: false, default: 'Contains' })
+  operand: string;
 
-  @Column({ nullable: false, type: 'text' })
-  fieldValue: string;
+  @Column({ nullable: false, type: 'jsonb' })
+  value: ViewFilterValue;
 
-  @Column({ nullable: false, type: 'int', default: 0 })
-  position: number;
+  @Column({ nullable: true, type: 'uuid' })
+  viewFilterGroupId?: string | null;
+
+  @Column({ nullable: true, type: 'int' })
+  positionInViewFilterGroup?: number | null;
+
+  @Column({ nullable: true, type: 'text', default: null })
+  subFieldName?: string | null;
 
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;
@@ -56,7 +64,7 @@ export class ViewGroup {
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<Workspace>;
 
-  @ManyToOne(() => View, (view) => view.viewGroups, {
+  @ManyToOne(() => View, (view) => view.viewFilters, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'viewId' })
