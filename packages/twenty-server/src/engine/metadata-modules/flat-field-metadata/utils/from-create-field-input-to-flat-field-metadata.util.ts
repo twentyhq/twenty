@@ -1,10 +1,9 @@
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
-import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
-import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromRelationCreateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadata.util';
+import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
@@ -56,40 +55,11 @@ export const fromCreateFieldInputToFlatFieldMetadata = async ({
 
   const fieldMetadataId = v4();
   const createdAt = new Date();
-  const commonFlatFieldMetadata = {
+  const commonFlatFieldMetadata = getDefaultFlatFieldMetadata({
     createdAt,
-    description: createFieldInput.description ?? null,
-    id: fieldMetadataId,
-    icon: createFieldInput.icon ?? null,
-    isActive: true,
-    isCustom: true,
-    isLabelSyncedWithName: createFieldInput.isLabelSyncedWithName ?? false,
-    isNullable: generateNullable(
-      createFieldInput.type,
-      createFieldInput.isNullable,
-      createFieldInput.isRemoteCreation,
-    ),
-    isSystem: false,
-    isUnique: createFieldInput.isUnique ?? null,
-    label: createFieldInput.label ?? null,
-    name: createFieldInput.name ?? null,
-    objectMetadataId: createFieldInput.objectMetadataId, // TODO prastoin double check that CreateFieldInput validation runs correctly
-    options: null,
-    relationTargetFieldMetadataId: null,
-    relationTargetObjectMetadataId: null,
-    standardId: null,
-    standardOverrides: null,
-    type: createFieldInput.type,
-    uniqueIdentifier: fieldMetadataId,
-    updatedAt: createdAt,
-    workspaceId: createFieldInput.workspaceId,
-    settings: createFieldInput.settings ?? null,
-    defaultValue:
-      createFieldInput.defaultValue ??
-      generateDefaultValue(createFieldInput.type), // TODO improve to be within each switch case
-    flatRelationTargetFieldMetadata: null,
-    flatRelationTargetObjectMetadata: null,
-  } as const satisfies FlatFieldMetadata;
+    createFieldInput,
+    fieldMetadataId,
+  });
 
   switch (createFieldInput.type) {
     case FieldMetadataType.UUID:
@@ -102,14 +72,14 @@ export const fromCreateFieldInputToFlatFieldMetadata = async ({
           parentFlatObjectMetadata,
         },
       ];
-    case FieldMetadataType.RELATION:
     case FieldMetadataType.MORPH_RELATION: {
+      throw new Error('TODO prastoin implement');
+    }
+    case FieldMetadataType.RELATION: {
       return fromRelationCreateFieldInputToFlatFieldMetadata({
-        commonFlatFieldMetadata,
         existingFlatObjectMetadatas,
-        parentFlatObjectMetadata,
-        relationCreationPayload: createFieldInput.relationCreationPayload,
-        fieldMetadataType: createFieldInput.type,
+        sourceParentFlatObjectMetadata: parentFlatObjectMetadata,
+        createFieldInput,
       });
     }
     case FieldMetadataType.RATING: {
