@@ -45,6 +45,7 @@ const StyledBoardCard = styled.div<{
     `
     opacity: 0;
     pointer-events: none;
+    
   `}
 
   &[data-selected='true'] {
@@ -129,6 +130,11 @@ export const RecordBoardCard = () => {
     multiDragState.isDragging &&
     recordId === multiDragState.primaryDraggedRecordId &&
     multiDragState.originalSelection.length > 1;
+
+  const isSecondarySelectedItem =
+    multiDragState?.isDragging &&
+    multiDragState.originalSelection.includes(recordId) &&
+    recordId !== multiDragState.primaryDraggedRecordId;
 
   const visibleFieldDefinitions = useRecoilComponentValueV2(
     recordBoardVisibleFieldDefinitionsComponentSelector,
@@ -243,6 +249,7 @@ export const RecordBoardCard = () => {
             onMouseLeave={onMouseLeaveBoard}
             onClick={handleCardClick}
             isPrimaryMultiDrag={isPrimaryMultiDrag}
+            shouldHide={isSecondarySelectedItem}
           >
             <RecordBoardCardHeader
               isCardExpanded={isCardExpanded}

@@ -74,8 +74,6 @@ describe('processMultiDrag', () => {
       destinationRecordIds: ['record-1', 'record-2', 'record-3'],
       recordsToMove: selectedRecordIds,
       destinationIndex: 1,
-      sourceGroupId: 'group-1',
-      destinationGroupId: 'group-2',
       recordPositionData: mockRecordPositionData,
     });
   });

@@ -30,13 +30,10 @@ export const processMultiDrag = ({
   groupValue,
   selectFieldName,
 }: MultiDragContext): MultiDragResult => {
-  const sourceGroupId = result.source.droppableId;
-
   if (!result.destination) {
     throw new Error('Destination is required for drag operation');
   }
 
-  const destinationGroupId = result.destination.droppableId;
   const destinationIndex = result.destination.index;
 
   const recordsToMove = selectedRecordIds;
@@ -45,8 +42,6 @@ export const processMultiDrag = ({
     destinationRecordIds,
     recordsToMove,
     destinationIndex,
-    sourceGroupId,
-    destinationGroupId,
     recordPositionData,
   });
 

@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
 
-import { useBoardCardDragState } from '@/object-record/record-board/hooks/useBoardCardDragState';
 import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsContainer';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
@@ -41,24 +40,6 @@ export const RecordBoardColumn = ({
     recordBoardColumnId,
   );
 
-  const multiDragState = useBoardCardDragState();
-
-  const filteredRecordIds = recordIdsByGroup.filter((recordId) => {
-    if (
-      !multiDragState?.isDragging ||
-      multiDragState.originalSelection.length <= 1
-    ) {
-      return true;
-    }
-
-    const isPartOfMultiDrag =
-      multiDragState.originalSelection.includes(recordId);
-    const isPrimaryDraggedRecord =
-      recordId === multiDragState.primaryDraggedRecordId;
-
-    return !isPartOfMultiDrag || isPrimaryDraggedRecord;
-  });
-
   if (!recordGroupDefinition) {
     return null;
   }
@@ -68,7 +49,7 @@ export const RecordBoardColumn = ({
       value={{
         columnDefinition: recordGroupDefinition,
         columnId: recordBoardColumnId,
-        recordIds: filteredRecordIds,
+        recordIds: recordIdsByGroup,
         columnIndex: recordBoardColumnIndex,
       }}
     >
@@ -77,7 +58,7 @@ export const RecordBoardColumn = ({
           <StyledColumn>
             <RecordBoardColumnCardsContainer
               droppableProvided={droppableProvided}
-              recordIds={filteredRecordIds}
+              recordIds={recordIdsByGroup}
             />
           </StyledColumn>
         )}

@@ -27,13 +27,11 @@ export const processSingleDrag = ({
   selectFieldName,
 }: SingleDragContext): SingleDragResult => {
   const draggedRecordId = result.draggableId;
-  const sourceGroupId = result.source.droppableId;
 
   if (!result.destination) {
     throw new Error('Destination is required for drag operation');
   }
 
-  const destinationGroupId = result.destination.droppableId;
   const destinationIndex = result.destination.index;
 
   const recordsToMove = [draggedRecordId];
@@ -42,8 +40,6 @@ export const processSingleDrag = ({
     destinationRecordIds,
     recordsToMove,
     destinationIndex,
-    sourceGroupId,
-    destinationGroupId,
     recordPositionData,
   });
 

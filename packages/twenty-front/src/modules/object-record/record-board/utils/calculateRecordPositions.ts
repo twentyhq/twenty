@@ -10,8 +10,6 @@ type PositionCalculationContext = {
   destinationRecordIds: string[];
   recordsToMove: string[];
   destinationIndex: number;
-  sourceGroupId: string;
-  destinationGroupId: string;
   recordPositionData: RecordPositionData[];
 };
 
@@ -19,8 +17,6 @@ export const calculateRecordPositions = ({
   destinationRecordIds,
   recordsToMove,
   destinationIndex,
-  sourceGroupId,
-  destinationGroupId,
   recordPositionData,
 }: PositionCalculationContext): Record<string, number> => {
   const otherRecordIdsInDestinationColumn = destinationRecordIds.filter(
@@ -28,11 +24,11 @@ export const calculateRecordPositions = ({
   );
 
   const filteredRecordIds =
-    sourceGroupId === destinationGroupId && recordsToMove.length === 1
-      ? otherRecordIdsInDestinationColumn.filter(
+    recordsToMove.length === 1
+      ? otherRecordIdsInDestinationColumn
+      : destinationRecordIds.filter(
           (recordId) => recordId !== recordsToMove[0],
-        )
-      : otherRecordIdsInDestinationColumn;
+        );
 
   const { before: recordBeforeId, after: recordAfterId } =
     getIndexNeighboursElementsFromArray({

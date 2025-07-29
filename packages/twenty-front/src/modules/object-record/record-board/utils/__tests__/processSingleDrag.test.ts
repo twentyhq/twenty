@@ -62,8 +62,6 @@ describe('processSingleDrag', () => {
       destinationRecordIds: ['record-1', 'record-2', 'record-3'],
       recordsToMove: ['record-1'],
       destinationIndex: 1,
-      sourceGroupId: 'group-1',
-      destinationGroupId: 'group-2',
       recordPositionData: mockRecordPositionData,
     });
   });
@@ -99,8 +97,6 @@ describe('processSingleDrag', () => {
       destinationRecordIds: ['record-1', 'record-2', 'record-3'],
       recordsToMove: ['record-5'],
       destinationIndex: 1,
-      sourceGroupId: 'group-1',
-      destinationGroupId: 'group-2',
       recordPositionData: mockRecordPositionData,
     });
   });

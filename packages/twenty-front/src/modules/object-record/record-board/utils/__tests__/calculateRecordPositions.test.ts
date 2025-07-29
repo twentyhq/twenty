@@ -51,8 +51,6 @@ describe('calculateRecordPositions', () => {
       ],
       recordsToMove: ['record-1'],
       destinationIndex: 2,
-      sourceGroupId: 'group-1',
-      destinationGroupId: 'group-2',
       recordPositionData: mockRecordPositionData,
     });
 
@@ -76,8 +74,6 @@ describe('calculateRecordPositions', () => {
       destinationRecordIds: ['record-2', 'record-3', 'record-4', 'record-5'],
       recordsToMove: ['record-1', 'record-6', 'record-7'],
       destinationIndex: 1,
-      sourceGroupId: 'group-1',
-      destinationGroupId: 'group-2',
       recordPositionData: mockRecordPositionData,
     });
 
@@ -108,14 +104,12 @@ describe('calculateRecordPositions', () => {
       ],
       recordsToMove: ['record-1', 'record-3'],
       destinationIndex: 1,
-      sourceGroupId: 'group-1',
-      destinationGroupId: 'group-2',
       recordPositionData: mockRecordPositionData,
     });
 
     expect(mockGetIndexNeighboursElementsFromArray).toHaveBeenCalledWith({
       index: 1,
-      array: ['record-2', 'record-4', 'record-5'],
+      array: ['record-2', 'record-3', 'record-4', 'record-5'],
     });
   });
 
@@ -139,8 +133,6 @@ describe('calculateRecordPositions', () => {
       ],
       recordsToMove: ['record-3'],
       destinationIndex: 1,
-      sourceGroupId: 'group-1',
-      destinationGroupId: 'group-1',
       recordPositionData: mockRecordPositionData,
     });
 
@@ -164,8 +156,6 @@ describe('calculateRecordPositions', () => {
       destinationRecordIds: ['record-1', 'record-2', 'record-3'],
       recordsToMove: ['record-new'],
       destinationIndex: 0,
-      sourceGroupId: 'group-1',
-      destinationGroupId: 'group-2',
       recordPositionData: mockRecordPositionData,
     });
 
@@ -195,8 +185,6 @@ describe('calculateRecordPositions', () => {
       ],
       recordsToMove: ['record-new'],
       destinationIndex: 5,
-      sourceGroupId: 'group-1',
-      destinationGroupId: 'group-2',
       recordPositionData: mockRecordPositionData,
     });
 
@@ -232,8 +220,6 @@ describe('calculateRecordPositions', () => {
       ],
       recordsToMove: ['record-a', 'record-b'],
       destinationIndex: 1,
-      sourceGroupId: 'group-1',
-      destinationGroupId: 'group-2',
       recordPositionData: recordPositionDataWithAfter,
     });
 
@@ -263,14 +249,198 @@ describe('calculateRecordPositions', () => {
       ],
       recordsToMove: ['record-a', 'record-b'],
       destinationIndex: 5,
-      sourceGroupId: 'group-1',
-      destinationGroupId: 'group-2',
       recordPositionData: mockRecordPositionData,
     });
 
     expect(result).toEqual({
       'record-a': 5.833333333333333,
       'record-b': 6.166666666666667,
+    });
+  });
+
+  describe('Single drag scenarios', () => {
+    it('should handle single drag within same column', () => {
+      mockGetIndexNeighboursElementsFromArray.mockReturnValue({
+        before: 'record-2',
+        after: 'record-4',
+      });
+      mockGetDraggedRecordPosition.mockReturnValue(2.5);
+
+      const result = calculateRecordPositions({
+        destinationRecordIds: ['record-1', 'record-2', 'record-3', 'record-4'],
+        recordsToMove: ['record-3'],
+        destinationIndex: 2,
+        recordPositionData: mockRecordPositionData,
+      });
+
+      expect(mockGetIndexNeighboursElementsFromArray).toHaveBeenCalledWith({
+        index: 2,
+        array: ['record-1', 'record-2', 'record-4'],
+      });
+
+      expect(result).toEqual({
+        'record-3': 2.5,
+      });
+    });
+
+    it('should handle single drag to empty column', () => {
+      mockGetIndexNeighboursElementsFromArray.mockReturnValue({
+        before: undefined,
+        after: undefined,
+      });
+      mockGetDraggedRecordPosition.mockReturnValue(1);
+
+      const result = calculateRecordPositions({
+        destinationRecordIds: [],
+        recordsToMove: ['record-1'],
+        destinationIndex: 0,
+        recordPositionData: mockRecordPositionData,
+      });
+
+      expect(mockGetIndexNeighboursElementsFromArray).toHaveBeenCalledWith({
+        index: 0,
+        array: [],
+      });
+
+      expect(result).toEqual({
+        'record-1': 1,
+      });
+    });
+  });
+
+  describe('Multi-drag scenarios', () => {
+    it('should handle multi-drag with secondary records already in destination', () => {
+      mockGetIndexNeighboursElementsFromArray.mockReturnValue({
+        before: 'record-1',
+        after: 'record-4',
+      });
+      mockGetDraggedRecordPosition.mockReturnValue(2);
+
+      const result = calculateRecordPositions({
+        destinationRecordIds: ['record-1', 'record-2', 'record-3', 'record-4'],
+        recordsToMove: ['record-2', 'record-3', 'record-5'],
+        destinationIndex: 1,
+        recordPositionData: mockRecordPositionData,
+      });
+
+      expect(mockGetIndexNeighboursElementsFromArray).toHaveBeenCalledWith({
+        index: 1,
+        array: ['record-1', 'record-3', 'record-4'],
+      });
+
+      const availableSpace = 4 - 2;
+      const increment = availableSpace / (3 + 1);
+
+      expect(result).toEqual({
+        'record-2': 2 + 1 * increment,
+        'record-3': 2 + 2 * increment,
+        'record-5': 2 + 3 * increment,
+      });
+    });
+
+    it('should handle multi-drag where all records are from different columns', () => {
+      mockGetIndexNeighboursElementsFromArray.mockReturnValue({
+        before: 'record-1',
+        after: 'record-2',
+      });
+      mockGetDraggedRecordPosition.mockReturnValue(1.5);
+
+      const result = calculateRecordPositions({
+        destinationRecordIds: ['record-1', 'record-2'],
+        recordsToMove: ['record-3', 'record-4'],
+        destinationIndex: 1,
+        recordPositionData: mockRecordPositionData,
+      });
+
+      expect(mockGetIndexNeighboursElementsFromArray).toHaveBeenCalledWith({
+        index: 1,
+        array: ['record-1', 'record-2'],
+      });
+
+      const availableSpace = 2 - 1.5;
+      const increment = availableSpace / 3;
+
+      expect(result).toEqual({
+        'record-3': 1.5 + increment,
+        'record-4': 1.5 + 2 * increment,
+      });
+    });
+
+    it('should handle multi-drag to empty column', () => {
+      mockGetIndexNeighboursElementsFromArray.mockReturnValue({
+        before: undefined,
+        after: undefined,
+      });
+      mockGetDraggedRecordPosition.mockReturnValue(1);
+
+      const result = calculateRecordPositions({
+        destinationRecordIds: [],
+        recordsToMove: ['record-1', 'record-2'],
+        destinationIndex: 0,
+        recordPositionData: mockRecordPositionData,
+      });
+
+      expect(mockGetIndexNeighboursElementsFromArray).toHaveBeenCalledWith({
+        index: 0,
+        array: [],
+      });
+
+      const increment = 1 / 3;
+
+      expect(result).toEqual({
+        'record-1': 1 + increment,
+        'record-2': 1 + 2 * increment,
+      });
+    });
+  });
+
+  describe('Edge cases', () => {
+    it('should handle moving to beginning of column (index 0)', () => {
+      mockGetIndexNeighboursElementsFromArray.mockReturnValue({
+        before: undefined,
+        after: 'record-1',
+      });
+      mockGetDraggedRecordPosition.mockReturnValue(0.5);
+
+      const result = calculateRecordPositions({
+        destinationRecordIds: ['record-1', 'record-2'],
+        recordsToMove: ['record-3'],
+        destinationIndex: 0,
+        recordPositionData: mockRecordPositionData,
+      });
+
+      expect(mockGetIndexNeighboursElementsFromArray).toHaveBeenCalledWith({
+        index: 0,
+        array: ['record-1', 'record-2'],
+      });
+
+      expect(result).toEqual({
+        'record-3': 0.5,
+      });
+    });
+
+    it('should handle moving to end of column', () => {
+      mockGetIndexNeighboursElementsFromArray.mockReturnValue({
+        before: 'record-2',
+        after: undefined,
+      });
+      mockGetDraggedRecordPosition.mockReturnValue(2.5);
+
+      const result = calculateRecordPositions({
+        destinationRecordIds: ['record-1', 'record-2'],
+        recordsToMove: ['record-3'],
+        destinationIndex: 2,
+        recordPositionData: mockRecordPositionData,
+      });
+
+      expect(mockGetIndexNeighboursElementsFromArray).toHaveBeenCalledWith({
+        index: 2,
+        array: ['record-1', 'record-2'],
+      });
+
+      expect(result).toEqual({
+        'record-3': 2.5,
+      });
     });
   });
 });
