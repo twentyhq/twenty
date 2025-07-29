@@ -1,5 +1,4 @@
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
@@ -40,10 +39,8 @@ export const getDefaultFlatFieldMetadata = ({
     uniqueIdentifier: fieldMetadataId,
     updatedAt: createdAt,
     workspaceId: createFieldInput.workspaceId,
-    settings: createFieldInput.settings ?? null,
-    defaultValue:
-      createFieldInput.defaultValue ??
-      generateDefaultValue(createFieldInput.type), // TODO improve to be within each switch case
+    settings: null,
+    defaultValue: null,
     flatRelationTargetFieldMetadata: null,
     flatRelationTargetObjectMetadata: null,
   } as const satisfies FlatFieldMetadata;

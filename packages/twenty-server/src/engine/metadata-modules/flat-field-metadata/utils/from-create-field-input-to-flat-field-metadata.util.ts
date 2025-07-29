@@ -10,6 +10,7 @@ import {
   assertUnreachable,
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
+  trimAndRemoveDuplicatedWhitespacesFromString,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -22,6 +23,11 @@ export type FlatFieldMetadataAndParentFlatObjectMetadata<
 > = {
   flatFieldMetadata: FlatFieldMetadata<T>;
   parentFlatObjectMetadata: FlatObjectMetadata;
+};
+const sanitizeStringIfDefined = (str: unknown) => {
+  return isDefined(str) && typeof str === 'string'
+    ? trimAndRemoveDuplicatedWhitespacesFromString(str)
+    : null;
 };
 
 export const fromCreateFieldInputToFlatFieldMetadata = async ({
@@ -63,12 +69,19 @@ export const fromCreateFieldInputToFlatFieldMetadata = async ({
 
   switch (createFieldInput.type) {
     case FieldMetadataType.UUID:
+      const defaultValue = sanitizeStringIfDefined(
+        createFieldInput.defaultValue,
+      );
+
       return [
         {
           flatFieldMetadata: {
             ...commonFlatFieldMetadata,
+            settings: null,
+            defaultValue,
+            type: createFieldInput.type,
             isUnique: true,
-          },
+          } satisfies FlatFieldMetadata<typeof createFieldInput.type>,
           parentFlatObjectMetadata,
         },
       ];
@@ -83,15 +96,17 @@ export const fromCreateFieldInputToFlatFieldMetadata = async ({
       });
     }
     case FieldMetadataType.RATING: {
+      const defaultValue = sanitizeStringIfDefined(
+        createFieldInput.defaultValue,
+      );
+
       return [
         {
           flatFieldMetadata: {
             ...commonFlatFieldMetadata,
             type: createFieldInput.type,
             settings: null,
-            defaultValue:
-              (createFieldInput.defaultValue as FlatFieldMetadata<FieldMetadataType.RATING>['defaultValue']) ??
-              null, // will be validated by the flat field metadata validator
+            defaultValue,
             options: generateRatingOptions(),
           } satisfies FlatFieldMetadata<typeof createFieldInput.type>,
           parentFlatObjectMetadata,
@@ -100,6 +115,9 @@ export const fromCreateFieldInputToFlatFieldMetadata = async ({
     }
     case FieldMetadataType.SELECT:
     case FieldMetadataType.MULTI_SELECT: {
+      const defaultValue = sanitizeStringIfDefined(
+        createFieldInput.defaultValue,
+      );
       const options = (createFieldInput?.options ?? []).map<
         FieldMetadataOptions<typeof createFieldInput.type>[number]
       >((option) => ({
@@ -114,19 +132,42 @@ export const fromCreateFieldInputToFlatFieldMetadata = async ({
           flatFieldMetadata: {
             ...commonFlatFieldMetadata,
             options,
+            defaultValue,
           },
           parentFlatObjectMetadata,
         },
       ];
     }
-    case FieldMetadataType.TEXT:
+    case FieldMetadataType.TEXT: {
+      const defaultValue = sanitizeStringIfDefined(
+        createFieldInput.defaultValue,
+      );
+
+      return [
+        {
+          flatFieldMetadata: { ...commonFlatFieldMetadata, defaultValue },
+          parentFlatObjectMetadata,
+        },
+      ];
+    }
     case FieldMetadataType.PHONES:
     case FieldMetadataType.EMAILS:
     case FieldMetadataType.DATE_TIME:
     case FieldMetadataType.DATE:
     case FieldMetadataType.BOOLEAN:
     case FieldMetadataType.NUMBER:
-    case FieldMetadataType.NUMERIC:
+    case FieldMetadataType.NUMERIC: {
+      const defaultValue = sanitizeStringIfDefined(
+        createFieldInput.defaultValue,
+      );
+
+      return [
+        {
+          flatFieldMetadata: { ...commonFlatFieldMetadata, defaultValue },
+          parentFlatObjectMetadata,
+        },
+      ];
+    }
     case FieldMetadataType.LINKS:
     case FieldMetadataType.CURRENCY:
     case FieldMetadataType.FULL_NAME:

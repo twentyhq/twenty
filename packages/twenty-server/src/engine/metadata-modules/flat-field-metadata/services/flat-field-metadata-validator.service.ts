@@ -31,7 +31,7 @@ type ValidateOneFieldMetadataArgs = {
   // flatFieldMetadataToValidateRelatedFlatObjectMetadata lol
   workspaceId: string;
 };
-// We need to infer if this is going to be an udpate or not
+// We need to infer if this is going to be an udpate or not -> I still don't know yet
 
 @Injectable()
 export class FlatFieldMetadataValidatorService {

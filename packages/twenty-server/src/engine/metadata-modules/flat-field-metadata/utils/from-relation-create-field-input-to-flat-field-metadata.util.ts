@@ -21,7 +21,6 @@ type FromRelationCreateFieldInputToFlatFieldMetadataArgs = {
   existingFlatObjectMetadatas: FlatObjectMetadata[];
   sourceParentFlatObjectMetadata: FlatObjectMetadata;
 };
-// TODO handle morh relation
 export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
   existingFlatObjectMetadatas,
   sourceParentFlatObjectMetadata,
@@ -64,12 +63,10 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
       defaultValue: null,
       settings: null,
       options: null,
-      // TODO retrieve from objectMetadataMaps
-      relationTargetFieldMetadataId: targetRelationTargetFieldMetadaataId,
+      relationTargetFieldMetadataId: targetRelationTargetFieldMetadaataId, // Note: this won't work until we enable deferred transaction
       relationTargetObjectMetadataId: targetParentFlatObjectMetadata.id,
       flatRelationTargetFieldMetadata: {} as FlatFieldMetadata,
       flatRelationTargetObjectMetadata: {} as FlatObjectMetadataWithoutFields,
-      ///
     };
 
   const targetFlatFieldMetadata: FlatFieldMetadata<FieldMetadataType.RELATION> =
@@ -92,7 +89,6 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
       defaultValue: null,
       settings: null,
       options: null,
-      // TODO retrieve from objectMetadataMaps
       relationTargetFieldMetadataId: sourceRelationTargetFieldMetadataId,
       relationTargetObjectMetadataId: sourceParentFlatObjectMetadata.id,
       flatRelationTargetFieldMetadata: {} as FlatFieldMetadata,
