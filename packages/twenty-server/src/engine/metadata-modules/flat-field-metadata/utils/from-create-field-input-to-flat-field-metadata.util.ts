@@ -138,7 +138,10 @@ export const fromCreateFieldInputToFlatFieldMetadata = async ({
     case FieldMetadataType.TS_VECTOR: {
       return [
         {
-          flatFieldMetadata: commonFlatFieldMetadata,
+          flatFieldMetadata: {
+            ...commonFlatFieldMetadata,
+            type: createFieldInput.type,
+          },
           parentFlatObjectMetadata,
         },
       ];

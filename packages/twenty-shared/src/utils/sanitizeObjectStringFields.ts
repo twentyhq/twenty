@@ -1,30 +1,42 @@
 import { trimAndRemoveDuplicatedWhitespacesFromString } from '@/utils/trim-and-remove-duplicated-whitespaces-from-string';
-
+// TODO rename with extract meaning
 export const sanitizeObjectStringFields = <
-  T,
+  T extends object,
   TKeys extends (keyof T)[],
-  TExtract extends boolean = false,
 >(
   obj: T,
   keys: TKeys,
   maxDepth: number = 10,
-): TExtract extends true
-  ? {
-      [P in TKeys[number]]: T[P];
-    }
-  : T => {
+): {
+  [P in TKeys[number]]: T[P];
+} => {
   const processValue = (value: unknown, currentDepth: number): unknown => {
     if (value === undefined) {
       return undefined;
     }
 
-    if (
-      value !== null &&
-      typeof value === 'object' &&
-      currentDepth < maxDepth
-    ) {
-      const nestedKeys = Object.keys(value) as (keyof typeof value)[];
-      return sanitizeObjectStringFields(value, nestedKeys, maxDepth - 1);
+    if (value === null) {
+      return null;
+    }
+
+    if (currentDepth >= maxDepth) {
+      return value;
+    }
+
+    if (Array.isArray(value)) {
+      return value.map((item) => processValue(item, currentDepth));
+    }
+
+    if (typeof value === 'object') {
+      const obj = value as Record<string, unknown>;
+      const objKeys = Object.keys(obj);
+      return objKeys.reduce(
+        (acc, key) => ({
+          ...acc,
+          [key]: processValue(obj[key], currentDepth + 1),
+        }),
+        {},
+      );
     }
 
     if (typeof value === 'string') {
@@ -45,5 +57,5 @@ export const sanitizeObjectStringFields = <
       ...acc,
       [key]: value,
     };
-  }, obj);
+  }, {} as T);
 };

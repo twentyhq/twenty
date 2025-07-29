@@ -13,9 +13,9 @@ export const getDefaultFlatFieldMetadata = ({
   createFieldInput,
   fieldMetadataId,
 }: getDefaultFlatFieldMetadataArgs) => {
-  const { defaultValue, options, settings } = sanitizeObjectStringFields(
+  const { defaultValue, settings } = sanitizeObjectStringFields(
     createFieldInput,
-    ['defaultValue', 'settings', 'options'],
+    ['defaultValue', 'settings'],
   );
 
   return {
@@ -46,8 +46,8 @@ export const getDefaultFlatFieldMetadata = ({
     workspaceId: createFieldInput.workspaceId,
     flatRelationTargetFieldMetadata: null,
     flatRelationTargetObjectMetadata: null,
+    options: null,
     defaultValue: defaultValue ?? null,
-    options: options ?? null,
     settings: settings ?? null,
   } as const satisfies FlatFieldMetadata;
 };

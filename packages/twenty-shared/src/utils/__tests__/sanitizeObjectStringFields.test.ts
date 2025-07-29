@@ -1,5 +1,6 @@
 import { EachTestingContext } from '@/testing/types/EachTestingContext.type';
 import { sanitizeObjectStringFields } from '../sanitizeObjectStringFields';
+
 type TestObject = {
   name?: string;
   age?: number | null;
@@ -11,9 +12,12 @@ type TestObject = {
       email: string;
     };
   };
+  tags?: string[];
+  items?: Array<{ name: string }>;
+  mixedArray?: Array<string | number | null | { text: string }>;
 };
 
-type PrastoinTestCase = EachTestingContext<{
+type SanitizeTestCase = EachTestingContext<{
   input: {
     obj: TestObject;
     keys: (keyof TestObject)[];
@@ -21,8 +25,8 @@ type PrastoinTestCase = EachTestingContext<{
   expected: object;
 }>;
 
-describe('prastoin', () => {
-  const testCases: PrastoinTestCase[] = [
+describe('sanitizeObjectStringFields', () => {
+  const testCases: SanitizeTestCase[] = [
     {
       title: 'should handle basic string properties and trim whitespaces',
       context: {
@@ -60,10 +64,9 @@ describe('prastoin', () => {
           obj: { name: '  John  ', age: null, city: undefined },
           keys: ['name', 'age', 'city'],
         },
-        expected: { name: 'John', age: null },
+        expected: { name: 'John', age: null, city: undefined },
       },
     },
-
     {
       title: 'should handle empty object',
       context: {
@@ -92,6 +95,71 @@ describe('prastoin', () => {
           keys: ['description'],
         },
         expected: { description: 'This is a test string' },
+      },
+    },
+    {
+      title: 'should handle array of strings within object',
+      context: {
+        input: {
+          obj: { tags: ['  tag1  ', '  tag2  ', 'test   string   '] },
+          keys: ['tags'],
+        },
+        expected: { tags: ['tag1', 'tag2', 'test string'] },
+      },
+    },
+    {
+      title: 'should handle array of objects within object',
+      context: {
+        input: {
+          obj: {
+            items: [{ name: '  John   Doe  ' }, { name: '  Jane   Smith  ' }],
+          },
+          keys: ['items'],
+        },
+        expected: {
+          items: [{ name: 'John Doe' }, { name: 'Jane Smith' }],
+        },
+      },
+    },
+    {
+      title: 'should handle nested arrays within object properties',
+      context: {
+        input: {
+          obj: {
+            tags: ['  tag1  ', '  tag2  '],
+            user: {
+              name: '  John   Doe  ',
+              contact: { email: '  john@example.com  ' },
+            },
+          },
+          keys: ['tags', 'user'],
+        },
+        expected: {
+          tags: ['tag1', 'tag2'],
+          user: {
+            name: 'John Doe',
+            contact: { email: 'john@example.com' },
+          },
+        },
+      },
+    },
+    {
+      title: 'should handle mixed content array within object',
+      context: {
+        input: {
+          obj: {
+            mixedArray: [
+              '  string  ',
+              123,
+              null,
+              { text: '  nested   text  ' },
+            ],
+          },
+          keys: ['mixedArray'],
+        },
+        expected: {
+          mixedArray: ['string', 123, null, { text: 'nested text' }],
+        },
       },
     },
   ];
