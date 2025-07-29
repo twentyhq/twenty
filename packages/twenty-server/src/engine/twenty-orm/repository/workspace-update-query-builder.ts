@@ -1,4 +1,5 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   EntityTarget,
   ObjectLiteral,
@@ -13,7 +14,7 @@ import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/works
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
+import { QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import { RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 import { RelationDisconnectQueryFieldsByEntityIndex } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
 import {
@@ -38,10 +39,9 @@ export class WorkspaceUpdateQueryBuilder<
   private authContext?: AuthContext;
   private featureFlagMap?: FeatureFlagMap;
   private relationNestedQueries: RelationNestedQueries;
-  private relationNestedConfig: [
-    RelationConnectQueryConfig[],
-    RelationDisconnectQueryFieldsByEntityIndex,
-  ];
+  private relationNestedConfig:
+    | [RelationConnectQueryConfig[], RelationDisconnectQueryFieldsByEntityIndex]
+    | null;
 
   constructor(
     queryBuilder: UpdateQueryBuilder<T>,
@@ -115,17 +115,19 @@ export class WorkspaceUpdateQueryBuilder<
       this.authContext,
     );
 
-    const updatedValues =
-      await this.relationNestedQueries.processRelationNestedQueries({
-        entities: this.expressionMap.valuesSet as
-          | QueryDeepPartialEntityWithNestedRelationFields<T>
-          | QueryDeepPartialEntityWithNestedRelationFields<T>[],
-        relationNestedConfig: this.relationNestedConfig,
-        queryBuilder: nestedRelationQueryBuilder,
-      });
+    if (isDefined(this.relationNestedConfig)) {
+      const updatedValues =
+        await this.relationNestedQueries.processRelationNestedQueries({
+          entities: this.expressionMap.valuesSet as
+            | QueryDeepPartialEntityWithNestedRelationFields<T>
+            | QueryDeepPartialEntityWithNestedRelationFields<T>[],
+          relationNestedConfig: this.relationNestedConfig,
+          queryBuilder: nestedRelationQueryBuilder,
+        });
 
-    this.expressionMap.valuesSet =
-      updatedValues.length === 1 ? updatedValues[0] : updatedValues;
+      this.expressionMap.valuesSet =
+        updatedValues.length === 1 ? updatedValues[0] : updatedValues;
+    }
 
     const formattedBefore = formatResult<T[]>(
       before,

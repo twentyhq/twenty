@@ -151,20 +151,20 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
     },
     {
       label: t`Developers`,
-      isAdvanced: true,
+      isAdvanced: false,
       items: [
         {
           label: t`APIs`,
           path: SettingsPath.APIs,
           Icon: IconApi,
-          isAdvanced: true,
+          isAdvanced: false,
           isHidden: !permissionMap[PermissionFlagType.API_KEYS_AND_WEBHOOKS],
         },
         {
           label: t`Webhooks`,
           path: SettingsPath.Webhooks,
           Icon: IconWebhook,
-          isAdvanced: true,
+          isAdvanced: false,
           isHidden: !permissionMap[PermissionFlagType.API_KEYS_AND_WEBHOOKS],
         },
         {

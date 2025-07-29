@@ -3808,9 +3808,9 @@ msgstr ""
 msgid "Next Step"
 msgstr ""
 
-#. js-lingui-id: uD8+ZY
-#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody.tsx
-msgid "No Available Step Outputs"
+#. js-lingui-id: tFxVHz
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
+msgid "No available fields to select"
 msgstr ""
 
 #. js-lingui-id: OTe3RI
@@ -3841,11 +3841,6 @@ msgstr ""
 #. js-lingui-id: dihZwh
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "No data found"
-msgstr ""
-
-#. js-lingui-id: 1PwrEH
-#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
-msgid "No Field Selected"
 msgstr ""
 
 #. js-lingui-id: xlUOps
@@ -4858,6 +4853,11 @@ msgstr ""
 #. js-lingui-id: XThiR2
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "See workflows"
+msgstr ""
+
+#. js-lingui-id: bP/w4M
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
+msgid "Select a field from a previous step"
 msgstr ""
 
 #. js-lingui-id: 5S/Gqz

@@ -37,7 +37,6 @@ export class CleanerWorkspaceService {
   private readonly inactiveDaysBeforeDelete: number;
   private readonly inactiveDaysBeforeWarn: number;
   private readonly maxNumberOfWorkspacesDeletedPerExecution: number;
-
   constructor(
     private readonly workspaceService: WorkspaceService,
     private readonly twentyConfigService: TwentyConfigService,

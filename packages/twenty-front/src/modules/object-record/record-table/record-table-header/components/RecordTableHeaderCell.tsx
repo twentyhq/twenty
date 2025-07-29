@@ -137,7 +137,9 @@ export const RecordTableHeaderCell = ({
   >(null);
   const [resizedFieldKey, setResizedFieldKey] = useState<string | null>(null);
 
-  const { handleColumnsChange } = useTableColumns();
+  const { handleColumnsChange } = useTableColumns({
+    objectMetadataId: objectMetadataItem.id,
+  });
 
   const handleResizeHandlerStart = useCallback<PointerEventListener>(
     ({ x }) => {
@@ -256,7 +258,10 @@ export const RecordTableHeaderCell = ({
       isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}
     >
       <StyledColumnHeadContainer>
-        <RecordTableColumnHeadWithDropdown column={column} />
+        <RecordTableColumnHeadWithDropdown
+          column={column}
+          objectMetadataId={objectMetadataItem.id}
+        />
         {(useIsMobile() || iconVisibility) &&
           !!column.isLabelIdentifier &&
           !isReadOnly &&
