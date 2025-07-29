@@ -11,17 +11,19 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { CreateViewFilterGroupInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-filter-group.input';
 import { UpdateViewFilterGroupInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-filter-group.input';
 import { ViewFilterGroupDTO } from 'src/engine/core-modules/view/dtos/view-filter-group.dto';
 import { ViewFilterGroupService } from 'src/engine/core-modules/view/services/view-filter-group.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
-@Controller('view-filter-groups')
-@UseFilters(PermissionsGraphqlApiExceptionFilter)
+@Controller('rest/metadata/view-filter-groups')
+@UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
+@UseFilters(RestApiExceptionFilter)
 export class ViewFilterGroupController {
   constructor(
     private readonly viewFilterGroupService: ViewFilterGroupService,

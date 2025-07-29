@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { ViewFieldController } from 'src/engine/core-modules/view/controllers/view-field.controller';
 import { ViewFilterGroupController } from 'src/engine/core-modules/view/controllers/view-filter-group.controller';
 import { ViewFilterController } from 'src/engine/core-modules/view/controllers/view-filter.controller';
@@ -26,6 +26,7 @@ import { ViewFilterService } from 'src/engine/core-modules/view/services/view-fi
 import { ViewGroupService } from 'src/engine/core-modules/view/services/view-group.service';
 import { ViewSortService } from 'src/engine/core-modules/view/services/view-sort.service';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
 @Module({
   imports: [
@@ -33,7 +34,8 @@ import { ViewService } from 'src/engine/core-modules/view/services/view.service'
       [View, ViewField, ViewFilter, ViewFilterGroup, ViewGroup, ViewSort],
       'core',
     ),
-    FeatureFlagModule,
+    AuthModule,
+    WorkspaceCacheStorageModule,
   ],
   controllers: [
     ViewController,

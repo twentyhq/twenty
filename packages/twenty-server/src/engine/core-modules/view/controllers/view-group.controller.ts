@@ -11,17 +11,19 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { CreateViewGroupInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-group.input';
 import { UpdateViewGroupInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-group.input';
 import { ViewGroupDTO } from 'src/engine/core-modules/view/dtos/view-group.dto';
 import { ViewGroupService } from 'src/engine/core-modules/view/services/view-group.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
-@Controller('view-groups')
-@UseFilters(PermissionsGraphqlApiExceptionFilter)
+@Controller('rest/metadata/view-groups')
+@UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
+@UseFilters(RestApiExceptionFilter)
 export class ViewGroupController {
   constructor(private readonly viewGroupService: ViewGroupService) {}
 
