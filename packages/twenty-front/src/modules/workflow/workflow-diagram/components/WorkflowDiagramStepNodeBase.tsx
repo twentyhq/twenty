@@ -194,9 +194,9 @@ export const WorkflowDiagramStepNodeBase = ({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {nodeType !== 'trigger' ? (
+      {nodeType !== 'trigger' && (
         <WorkflowDiagramBaseHandle type="target" position={Position.Top} />
-      ) : null}
+      )}
 
       <StyledStepNodeType variant="small" nodeVariant={variant}>
         {capitalize(nodeType)}
