@@ -129,13 +129,11 @@ export const buildDefaultFlatFieldMetadataForCustomObject = ({
 }: BuildDefaultFlatFieldMetadataForCustomObjectArgs) => {
   const idField: FlatFieldMetadata<FieldMetadataType.UUID> = {
     type: FieldMetadataType.UUID,
-    createdAt,
     id: v4(),
     isLabelSyncedWithName: false, // TO CHECK
     isUnique: true, // Was false before but unsure if normal ?
     objectMetadataId,
     uniqueIdentifier: BASE_OBJECT_STANDARD_FIELD_IDS.id,
-    updatedAt: createdAt,
     workspaceId,
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.id,
     name: 'id',
@@ -159,13 +157,11 @@ export const buildDefaultFlatFieldMetadataForCustomObject = ({
 
   const nameField: FlatFieldMetadata<FieldMetadataType.TEXT> = {
     type: FieldMetadataType.TEXT,
-    createdAt,
     id: v4(),
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
     uniqueIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
-    updatedAt: createdAt,
     workspaceId,
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
     name: 'name',
@@ -189,13 +185,11 @@ export const buildDefaultFlatFieldMetadataForCustomObject = ({
 
   const createdAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
     type: FieldMetadataType.DATE_TIME,
-    createdAt,
     id: v4(),
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
     uniqueIdentifier: BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
-    updatedAt: createdAt,
     workspaceId,
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
     name: 'createdAt',
@@ -219,13 +213,11 @@ export const buildDefaultFlatFieldMetadataForCustomObject = ({
 
   const updatedAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
     type: FieldMetadataType.DATE_TIME,
-    createdAt,
     id: v4(),
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
     uniqueIdentifier: BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt,
-    updatedAt: createdAt,
     workspaceId,
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt,
     name: 'updatedAt',
@@ -249,13 +241,11 @@ export const buildDefaultFlatFieldMetadataForCustomObject = ({
 
   const deletedAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
     type: FieldMetadataType.DATE_TIME,
-    createdAt,
     id: v4(),
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
     uniqueIdentifier: BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
-    updatedAt: createdAt,
     workspaceId,
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
     name: 'deletedAt',
@@ -279,13 +269,11 @@ export const buildDefaultFlatFieldMetadataForCustomObject = ({
 
   const createdByField: FlatFieldMetadata<FieldMetadataType.ACTOR> = {
     type: FieldMetadataType.ACTOR,
-    createdAt,
     id: v4(),
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
     uniqueIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
-    updatedAt: createdAt,
     workspaceId,
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
     name: 'createdBy',
@@ -309,13 +297,11 @@ export const buildDefaultFlatFieldMetadataForCustomObject = ({
 
   const positionField: FlatFieldMetadata<FieldMetadataType.POSITION> = {
     type: FieldMetadataType.POSITION,
-    createdAt,
     id: v4(),
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
     uniqueIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.position,
-    updatedAt: createdAt,
     workspaceId,
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.position,
     name: 'position',
