@@ -7,7 +7,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 
 registerEnumType(AggregateOperations, { name: 'AggregateOperations' });
 
-@ObjectType()
+@ObjectType('CoreViewField')
 export class ViewFieldDTO {
   @IDField(() => UUIDScalarType)
   id: string;

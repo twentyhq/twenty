@@ -23,7 +23,7 @@ export class ViewResolver {
 
   @Query(() => [ViewDTO])
   @UseGuards(WorkspaceAuthGuard)
-  async findManyViews(
+  async getCoreViews(
     @AuthWorkspace() workspace: Workspace,
     @Args('objectMetadataId', { type: () => String, nullable: true })
     objectMetadataId?: string,
@@ -46,7 +46,7 @@ export class ViewResolver {
 
   @Query(() => ViewDTO, { nullable: true })
   @UseGuards(WorkspaceAuthGuard)
-  async findOneView(
+  async getCoreView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewDTO | null> {
@@ -59,7 +59,7 @@ export class ViewResolver {
 
   @Mutation(() => ViewDTO)
   @UseGuards(WorkspaceAuthGuard)
-  async createView(
+  async createCoreView(
     @Args('input') input: CreateViewInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewDTO> {
@@ -73,7 +73,7 @@ export class ViewResolver {
 
   @Mutation(() => ViewDTO)
   @UseGuards(WorkspaceAuthGuard)
-  async updateView(
+  async updateCoreView(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewInput,
     @AuthWorkspace() workspace: Workspace,
@@ -101,7 +101,7 @@ export class ViewResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(WorkspaceAuthGuard)
-  async deleteView(
+  async deleteCoreView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {

@@ -23,7 +23,7 @@ export class ViewGroupResolver {
 
   @Query(() => [ViewGroupDTO])
   @UseGuards(WorkspaceAuthGuard)
-  async findManyViewGroups(
+  async getCoreViewGroups(
     @AuthWorkspace() workspace: Workspace,
     @Args('viewId', { type: () => String, nullable: true })
     viewId?: string,
@@ -46,7 +46,7 @@ export class ViewGroupResolver {
 
   @Query(() => ViewGroupDTO, { nullable: true })
   @UseGuards(WorkspaceAuthGuard)
-  async findOneViewGroup(
+  async getCoreViewGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewGroupDTO | null> {
@@ -59,7 +59,7 @@ export class ViewGroupResolver {
 
   @Mutation(() => ViewGroupDTO)
   @UseGuards(WorkspaceAuthGuard)
-  async createViewGroup(
+  async createCoreViewGroup(
     @Args('input') input: CreateViewGroupInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewGroupDTO> {
@@ -73,7 +73,7 @@ export class ViewGroupResolver {
 
   @Mutation(() => ViewGroupDTO)
   @UseGuards(WorkspaceAuthGuard)
-  async updateViewGroup(
+  async updateCoreViewGroup(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewGroupInput,
     @AuthWorkspace() workspace: Workspace,
@@ -101,7 +101,7 @@ export class ViewGroupResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(WorkspaceAuthGuard)
-  async deleteViewGroup(
+  async deleteCoreViewGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {

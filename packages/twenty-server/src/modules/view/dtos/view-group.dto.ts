@@ -4,7 +4,7 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-@ObjectType()
+@ObjectType('CoreViewGroup')
 export class ViewGroupDTO {
   @IDField(() => UUIDScalarType)
   id: string;

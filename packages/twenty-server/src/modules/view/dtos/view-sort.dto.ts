@@ -7,7 +7,7 @@ import { ViewSortDirection } from 'src/engine/metadata-modules/view/enums/view-s
 
 registerEnumType(ViewSortDirection, { name: 'ViewSortDirection' });
 
-@ObjectType()
+@ObjectType('CoreViewSort')
 export class ViewSortDTO {
   @IDField(() => UUIDScalarType)
   id: string;

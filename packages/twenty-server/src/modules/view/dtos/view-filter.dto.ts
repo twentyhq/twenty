@@ -6,7 +6,7 @@ import { GraphQLJSONObject } from 'graphql-type-json';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ViewFilterValue } from 'src/engine/metadata-modules/view/types/view-filter-value.type';
 
-@ObjectType()
+@ObjectType('CoreViewFilter')
 export class ViewFilterDTO {
   @IDField(() => UUIDScalarType)
   id: string;
