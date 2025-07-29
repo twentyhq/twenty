@@ -1,25 +1,19 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { ViewSort } from 'src/engine/metadata-modules/view/view-sort.entity';
-import { CreateViewSortInput } from 'src/modules/view/dtos/inputs/create-view-sort.input';
-import { UpdateViewSortInput } from 'src/modules/view/dtos/inputs/update-view-sort.input';
-import { ViewSortDTO } from 'src/modules/view/dtos/view-sort.dto';
+import { CreateViewSortInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view-sort.input';
+import { UpdateViewSortInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view-sort.input';
+import { ViewSortDTO } from 'src/engine/metadata-modules/view/dtos/view-sort.dto';
+import { ViewSortService } from 'src/engine/metadata-modules/view/services/view-sort.service';
 
 @Resolver(() => ViewSortDTO)
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class ViewSortResolver {
-  constructor(
-    @InjectRepository(ViewSort, 'core')
-    private readonly viewSortRepository: Repository<ViewSort>,
-  ) {}
+  constructor(private readonly viewSortService: ViewSortService) {}
 
   @Query(() => [ViewSortDTO])
   @UseGuards(WorkspaceAuthGuard)
@@ -28,19 +22,11 @@ export class ViewSortResolver {
     @Args('viewId', { type: () => String, nullable: true })
     viewId?: string,
   ): Promise<ViewSortDTO[]> {
-    const whereClause: { workspaceId: string; viewId?: string } = {
-      workspaceId: workspace.id,
-    };
-
     if (viewId) {
-      whereClause.viewId = viewId;
+      return this.viewSortService.findByViewId(workspace.id, viewId);
     }
 
-    const viewSorts = await this.viewSortRepository.find({
-      where: whereClause,
-    });
-
-    return viewSorts;
+    return this.viewSortService.findByWorkspaceId(workspace.id);
   }
 
   @Query(() => ViewSortDTO, { nullable: true })
@@ -49,11 +35,7 @@ export class ViewSortResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewSortDTO | null> {
-    const viewSort = await this.viewSortRepository.findOne({
-      where: { id, workspaceId: workspace.id },
-    });
-
-    return viewSort;
+    return this.viewSortService.findById(id, workspace.id);
   }
 
   @Mutation(() => ViewSortDTO)
@@ -62,12 +44,10 @@ export class ViewSortResolver {
     @Args('input') input: CreateViewSortInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewSortDTO> {
-    const viewSort = this.viewSortRepository.create({
+    return this.viewSortService.create({
       ...input,
       workspaceId: workspace.id,
     });
-
-    return await this.viewSortRepository.save(viewSort);
   }
 
   @Mutation(() => ViewSortDTO)
@@ -77,22 +57,14 @@ export class ViewSortResolver {
     @Args('input') input: UpdateViewSortInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewSortDTO> {
-    const existingViewSort = await this.viewSortRepository.findOne({
-      where: { id, workspaceId: workspace.id },
-    });
-
-    if (!existingViewSort) {
-      throw new Error('ViewSort not found');
-    }
-
-    await this.viewSortRepository.update(id, input);
-
-    const updatedViewSort = await this.viewSortRepository.findOne({
-      where: { id, workspaceId: workspace.id },
-    });
+    const updatedViewSort = await this.viewSortService.update(
+      id,
+      workspace.id,
+      input,
+    );
 
     if (!updatedViewSort) {
-      throw new Error('ViewSort not found after update');
+      throw new Error('ViewSort not found');
     }
 
     return updatedViewSort;
@@ -104,11 +76,8 @@ export class ViewSortResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {
-    const result = await this.viewSortRepository.delete({
-      id,
-      workspaceId: workspace.id,
-    });
+    const deletedViewSort = await this.viewSortService.delete(id, workspace.id);
 
-    return result.affected !== 0;
+    return deletedViewSort !== null;
   }
 }

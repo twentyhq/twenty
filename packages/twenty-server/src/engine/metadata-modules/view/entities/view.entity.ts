@@ -18,12 +18,12 @@ import {
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ViewField } from 'src/engine/metadata-modules/view/entities/view-field.entity';
+import { ViewFilterGroup } from 'src/engine/metadata-modules/view/entities/view-filter-group.entity';
+import { ViewFilter } from 'src/engine/metadata-modules/view/entities/view-filter.entity';
+import { ViewGroup } from 'src/engine/metadata-modules/view/entities/view-group.entity';
+import { ViewSort } from 'src/engine/metadata-modules/view/entities/view-sort.entity';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
-import { ViewField } from 'src/engine/metadata-modules/view/view-field.entity';
-import { ViewFilterGroup } from 'src/engine/metadata-modules/view/view-filter-group.entity';
-import { ViewFilter } from 'src/engine/metadata-modules/view/view-filter.entity';
-import { ViewGroup } from 'src/engine/metadata-modules/view/view-group.entity';
-import { ViewSort } from 'src/engine/metadata-modules/view/view-sort.entity';
 
 registerEnumType(ViewOpenRecordIn, { name: 'ViewOpenRecordIn' });
 

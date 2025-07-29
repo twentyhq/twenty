@@ -1,25 +1,20 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { ViewField } from 'src/engine/metadata-modules/view/view-field.entity';
-import { CreateViewFieldInput } from 'src/modules/view/dtos/inputs/create-view-field.input';
-import { UpdateViewFieldInput } from 'src/modules/view/dtos/inputs/update-view-field.input';
-import { ViewFieldDTO } from 'src/modules/view/dtos/view-field.dto';
+import { CreateViewFieldInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view-field.input';
+import { UpdateViewFieldInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view-field.input';
+import { ViewFieldDTO } from 'src/engine/metadata-modules/view/dtos/view-field.dto';
+import { ViewField } from 'src/engine/metadata-modules/view/entities/view-field.entity';
+import { ViewFieldService } from 'src/engine/metadata-modules/view/services/view-field.service';
 
 @Resolver(() => ViewFieldDTO)
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class ViewFieldResolver {
-  constructor(
-    @InjectRepository(ViewField, 'core')
-    private readonly viewFieldRepository: Repository<ViewField>,
-  ) {}
+  constructor(private readonly viewFieldService: ViewFieldService) {}
 
   @Query(() => [ViewFieldDTO])
   @UseGuards(WorkspaceAuthGuard)
@@ -27,10 +22,7 @@ export class ViewFieldResolver {
     @Args('viewId', { type: () => String }) viewId: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewField[]> {
-    return this.viewFieldRepository.find({
-      where: { viewId, workspaceId: workspace.id },
-      order: { position: 'ASC' },
-    });
+    return this.viewFieldService.findByViewId(workspace.id, viewId);
   }
 
   @Query(() => ViewFieldDTO, { nullable: true })
@@ -39,9 +31,7 @@ export class ViewFieldResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewField | null> {
-    return this.viewFieldRepository.findOne({
-      where: { id, workspaceId: workspace.id },
-    });
+    return this.viewFieldService.findById(id, workspace.id);
   }
 
   @Mutation(() => ViewFieldDTO)
@@ -51,22 +41,14 @@ export class ViewFieldResolver {
     @Args('input') input: UpdateViewFieldInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewField> {
-    const existingViewField = await this.viewFieldRepository.findOne({
-      where: { id, workspaceId: workspace.id },
-    });
-
-    if (!existingViewField) {
-      throw new Error('ViewField not found');
-    }
-
-    await this.viewFieldRepository.update(id, input);
-
-    const updatedViewField = await this.viewFieldRepository.findOne({
-      where: { id, workspaceId: workspace.id },
-    });
+    const updatedViewField = await this.viewFieldService.update(
+      id,
+      workspace.id,
+      input,
+    );
 
     if (!updatedViewField) {
-      throw new Error('ViewField not found after update');
+      throw new Error('ViewField not found');
     }
 
     return updatedViewField;
@@ -78,12 +60,10 @@ export class ViewFieldResolver {
     @Args('input') input: CreateViewFieldInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewField> {
-    const viewField = this.viewFieldRepository.create({
+    return this.viewFieldService.create({
       ...input,
       workspaceId: workspace.id,
     });
-
-    return await this.viewFieldRepository.save(viewField);
   }
 
   @Mutation(() => Boolean)
@@ -92,11 +72,11 @@ export class ViewFieldResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {
-    const result = await this.viewFieldRepository.delete({
+    const deletedViewField = await this.viewFieldService.delete(
       id,
-      workspaceId: workspace.id,
-    });
+      workspace.id,
+    );
 
-    return result.affected !== 0;
+    return !!deletedViewField;
   }
 }

@@ -14,7 +14,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { View } from 'src/engine/metadata-modules/view/view.entity';
+import { View } from 'src/engine/metadata-modules/view/entities/view.entity';
 
 @Entity({ name: 'viewGroup', schema: 'core' })
 @Index('IDX_VIEW_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])

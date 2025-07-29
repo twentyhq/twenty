@@ -1,5 +1,3 @@
-import { registerEnumType } from '@nestjs/graphql';
-
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
@@ -16,22 +14,13 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ViewSortDirection } from 'src/engine/metadata-modules/view/enums/view-sort-direction';
-import { View } from 'src/engine/metadata-modules/view/view.entity';
+import { View } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewFilterValue } from 'src/engine/metadata-modules/view/types/view-filter-value.type';
 
-registerEnumType(ViewSortDirection, { name: 'ViewSortDirection' });
-
-@Entity({ name: 'viewSort', schema: 'core' })
-@Index('IDX_VIEW_SORT_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
-@Index(
-  'IDX_VIEW_SORT_FIELD_METADATA_ID_VIEW_ID_UNIQUE',
-  ['fieldMetadataId', 'viewId'],
-  {
-    unique: true,
-    where: '"deletedAt" IS NULL',
-  },
-)
-export class ViewSort {
+@Entity({ name: 'viewFilter', schema: 'core' })
+@Index('IDX_VIEW_FILTER_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
+@Index('IDX_VIEW_FILTER_FIELD_METADATA_ID', ['fieldMetadataId'])
+export class ViewFilter {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -39,13 +28,20 @@ export class ViewSort {
   @Column({ nullable: false, type: 'uuid' })
   fieldMetadataId: string;
 
-  @Column({
-    nullable: false,
-    type: 'enum',
-    enum: ViewSortDirection,
-    default: ViewSortDirection.ASC,
-  })
-  direction: ViewSortDirection;
+  @Column({ nullable: false, default: 'Contains' })
+  operand: string;
+
+  @Column({ nullable: false, type: 'jsonb' })
+  value: ViewFilterValue;
+
+  @Column({ nullable: true, type: 'uuid' })
+  viewFilterGroupId?: string | null;
+
+  @Column({ nullable: true, type: 'int' })
+  positionInViewFilterGroup?: number | null;
+
+  @Column({ nullable: true, type: 'text', default: null })
+  subFieldName?: string | null;
 
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;
@@ -68,7 +64,7 @@ export class ViewSort {
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<Workspace>;
 
-  @ManyToOne(() => View, (view) => view.viewSorts, {
+  @ManyToOne(() => View, (view) => view.viewFilters, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'viewId' })

@@ -1,3 +1,5 @@
+import { registerEnumType } from '@nestjs/graphql';
+
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
@@ -14,34 +16,33 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ViewFilterValue } from 'src/engine/metadata-modules/view/types/view-filter-value.type';
-import { View } from 'src/engine/metadata-modules/view/view.entity';
+import { View } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view/enums/view-filter-group-logical-operator';
 
-@Entity({ name: 'viewFilter', schema: 'core' })
-@Index('IDX_VIEW_FILTER_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
-@Index('IDX_VIEW_FILTER_FIELD_METADATA_ID', ['fieldMetadataId'])
-export class ViewFilter {
+registerEnumType(ViewFilterGroupLogicalOperator, {
+  name: 'ViewFilterGroupLogicalOperator',
+});
+
+@Entity({ name: 'viewFilterGroup', schema: 'core' })
+@Index('IDX_VIEW_FILTER_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
+export class ViewFilterGroup {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false, type: 'uuid' })
-  fieldMetadataId: string;
-
-  @Column({ nullable: false, default: 'Contains' })
-  operand: string;
-
-  @Column({ nullable: false, type: 'jsonb' })
-  value: ViewFilterValue;
-
   @Column({ nullable: true, type: 'uuid' })
-  viewFilterGroupId?: string | null;
+  parentViewFilterGroupId?: string | null;
+
+  @Column({
+    type: 'enum',
+    enum: ViewFilterGroupLogicalOperator,
+    nullable: false,
+    default: ViewFilterGroupLogicalOperator.NOT,
+  })
+  logicalOperator: ViewFilterGroupLogicalOperator;
 
   @Column({ nullable: true, type: 'int' })
   positionInViewFilterGroup?: number | null;
-
-  @Column({ nullable: true, type: 'text', default: null })
-  subFieldName?: string | null;
 
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;
@@ -64,7 +65,7 @@ export class ViewFilter {
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<Workspace>;
 
-  @ManyToOne(() => View, (view) => view.viewFilters, {
+  @ManyToOne(() => View, (view) => view.viewFilterGroups, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'viewId' })

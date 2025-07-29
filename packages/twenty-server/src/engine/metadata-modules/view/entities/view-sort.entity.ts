@@ -16,33 +16,36 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view/enums/view-filter-group-logical-operator';
-import { View } from 'src/engine/metadata-modules/view/view.entity';
+import { View } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewSortDirection } from 'src/engine/metadata-modules/view/enums/view-sort-direction';
 
-registerEnumType(ViewFilterGroupLogicalOperator, {
-  name: 'ViewFilterGroupLogicalOperator',
-});
+registerEnumType(ViewSortDirection, { name: 'ViewSortDirection' });
 
-@Entity({ name: 'viewFilterGroup', schema: 'core' })
-@Index('IDX_VIEW_FILTER_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
-export class ViewFilterGroup {
+@Entity({ name: 'viewSort', schema: 'core' })
+@Index('IDX_VIEW_SORT_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
+@Index(
+  'IDX_VIEW_SORT_FIELD_METADATA_ID_VIEW_ID_UNIQUE',
+  ['fieldMetadataId', 'viewId'],
+  {
+    unique: true,
+    where: '"deletedAt" IS NULL',
+  },
+)
+export class ViewSort {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: true, type: 'uuid' })
-  parentViewFilterGroupId?: string | null;
+  @Column({ nullable: false, type: 'uuid' })
+  fieldMetadataId: string;
 
   @Column({
-    type: 'enum',
-    enum: ViewFilterGroupLogicalOperator,
     nullable: false,
-    default: ViewFilterGroupLogicalOperator.NOT,
+    type: 'enum',
+    enum: ViewSortDirection,
+    default: ViewSortDirection.ASC,
   })
-  logicalOperator: ViewFilterGroupLogicalOperator;
-
-  @Column({ nullable: true, type: 'int' })
-  positionInViewFilterGroup?: number | null;
+  direction: ViewSortDirection;
 
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;
@@ -65,7 +68,7 @@ export class ViewFilterGroup {
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<Workspace>;
 
-  @ManyToOne(() => View, (view) => view.viewFilterGroups, {
+  @ManyToOne(() => View, (view) => view.viewSorts, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'viewId' })
