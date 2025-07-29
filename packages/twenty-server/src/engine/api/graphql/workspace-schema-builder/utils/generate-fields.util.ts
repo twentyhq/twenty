@@ -221,7 +221,6 @@ const generateRelationField = <
 
   // @ts-expect-error legacy noImplicitAny
   relationField[fieldMetadata.name] = {
-    // donc le nom est aussi utilisé comme champ
     type: type,
     description: fieldMetadata.description,
   };

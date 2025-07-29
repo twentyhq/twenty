@@ -1,12 +1,11 @@
+import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 import { FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/workspace-schema-builder/utils/is-field-metadata-relation-or-morph-relation.utils';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
-import {
-  computeColumnName,
-  computeCompositeColumnName,
-} from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import {
   PermissionsException,
@@ -14,11 +13,40 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
-export function getFieldMetadataIdForColumnNameMap(
-  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-) {
-  const columnNameToFieldMetadataIdMap: Record<string, string> = {};
+export type ColumnNameProcessor = {
+  processCompositeField: ({
+    fieldMetadataId,
+    fieldMetadata,
+    compositeType,
+  }: {
+    fieldMetadataId: string;
+    fieldMetadata: FieldMetadataEntity;
+    compositeType: CompositeType;
+  }) => void;
+  processRelationField: ({
+    fieldMetadataId,
+    fieldMetadata,
+    columnName,
+  }: {
+    fieldMetadataId: string;
+    fieldMetadata: FieldMetadataEntity;
+    columnName: string;
+  }) => void;
+  processSimpleField: ({
+    fieldMetadataId,
+    fieldMetadata,
+    columnName,
+  }: {
+    fieldMetadataId: string;
+    fieldMetadata: FieldMetadataEntity;
+    columnName: string;
+  }) => void;
+};
 
+export function processFieldMetadata(
+  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+  processor: ColumnNameProcessor,
+) {
   for (const [fieldMetadataId, fieldMetadata] of Object.entries(
     objectMetadataItemWithFieldMaps.fieldsById,
   )) {
@@ -32,13 +60,10 @@ export function getFieldMetadataIdForColumnNameMap(
         );
       }
 
-      compositeType.properties.forEach((compositeProperty) => {
-        const columnName = computeCompositeColumnName(
-          fieldMetadata.name,
-          compositeProperty,
-        );
-
-        columnNameToFieldMetadataIdMap[columnName] = fieldMetadataId;
+      processor.processCompositeField({
+        fieldMetadataId,
+        fieldMetadata,
+        compositeType,
       });
     } else {
       if (isFieldMetadataRelationOrMorphRelation(fieldMetadata)) {
@@ -56,14 +81,20 @@ export function getFieldMetadataIdForColumnNameMap(
             PermissionsExceptionCode.JOIN_COLUMN_NAME_REQUIRED,
           );
         }
-        columnNameToFieldMetadataIdMap[columnName] = fieldMetadataId;
+        processor.processRelationField({
+          fieldMetadataId,
+          fieldMetadata,
+          columnName,
+        });
       } else {
         const columnName = computeColumnName(fieldMetadata);
 
-        columnNameToFieldMetadataIdMap[columnName] = fieldMetadataId;
+        processor.processSimpleField({
+          fieldMetadataId,
+          fieldMetadata,
+          columnName,
+        });
       }
     }
   }
-
-  return columnNameToFieldMetadataIdMap;
 }

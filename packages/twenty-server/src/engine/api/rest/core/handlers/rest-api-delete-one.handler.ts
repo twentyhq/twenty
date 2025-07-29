@@ -18,7 +18,7 @@ export class RestApiDeleteOneHandler extends RestApiBaseHandler {
     const { objectMetadata, repository, restrictedFields } =
       await this.getRepositoryAndMetadataOrFail(request);
 
-    const selectOptions = this.getSelectOptionsFromRestrictedFields({
+    const selectOptions = this.getAllSelectableFields({
       restrictedFields,
       objectMetadata,
     });

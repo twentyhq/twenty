@@ -15,7 +15,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { getFieldMetadataIdForColumnNameMap } from 'src/engine/twenty-orm/utils/get-field-metadata-id-for-column-name.util';
+import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
 
 const getTargetEntityAndOperationType = (expressionMap: QueryExpressionMap) => {
   const mainEntity = expressionMap.aliases[0].metadata.name;
@@ -80,7 +80,7 @@ export const validateOperationIsPermittedOrThrow = ({
   }
 
   const fieldMetadataIdForColumnNameMap = isFieldPermissionsEnabled
-    ? getFieldMetadataIdForColumnNameMap(objectMetadata)
+    ? getColumnNameToFieldMetadataIdMap(objectMetadata)
     : {};
 
   const permissionsForEntity =
