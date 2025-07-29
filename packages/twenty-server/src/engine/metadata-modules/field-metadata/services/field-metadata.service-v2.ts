@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { AggregateError } from 'src/engine/core-modules/error/aggregate-error';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
@@ -49,7 +50,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       );
 
     if (!isWorkspaceMigrationV2Enabled) {
-      throw new Error('Should not be used at all');
+      throw new UserInputError('Workspace migration v2 is not enabled');
     }
 
     const { objectMetadataMaps } =

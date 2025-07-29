@@ -73,7 +73,7 @@ export const fromCreateFieldInputToFlatFieldMetadata = async ({
   switch (createFieldInput.type) {
     case FieldMetadataType.MORPH_RELATION: {
       throw new UserInputError(
-        'Morth relation feature is not migrated to workspace migration v2 yet',
+        'Morph relation feature is not migrated to workspace migration v2 yet',
       );
     }
     case FieldMetadataType.RELATION: {

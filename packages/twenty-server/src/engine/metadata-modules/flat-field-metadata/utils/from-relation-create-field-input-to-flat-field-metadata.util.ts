@@ -11,10 +11,7 @@ import { validateRelationCreationPayloadOrThrow } from 'src/engine/metadata-modu
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatFieldMetadataAndParentFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadata.util';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
-import {
-  FlatObjectMetadata,
-  FlatObjectMetadataWithoutFields,
-} from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 
 type FromRelationCreateFieldInputToFlatFieldMetadataArgs = {
@@ -53,21 +50,22 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
 
   const targetRelationTargetFieldMetadataId = v4();
   const sourceRelationTargetFieldMetadataId = v4();
-  const sourceFlatFieldMetadata: FlatFieldMetadata<FieldMetadataType.RELATION> =
-    {
-      ...getDefaultFlatFieldMetadata({
-        createFieldInput,
-        fieldMetadataId: sourceRelationTargetFieldMetadataId,
-      }),
-      type: FieldMetadataType.RELATION,
-      defaultValue: null,
-      settings: null,
-      options: null,
-      relationTargetFieldMetadataId: targetRelationTargetFieldMetadataId, // Note: this won't work until we enable deferred transaction
-      relationTargetObjectMetadataId: targetParentFlatObjectMetadata.id,
-      flatRelationTargetFieldMetadata: {} as FlatFieldMetadata,
-      flatRelationTargetObjectMetadata: {} as FlatObjectMetadataWithoutFields,
-    };
+  const sourceFlatFieldMetadata: Omit<
+    FlatFieldMetadata<FieldMetadataType.RELATION>,
+    'flatRelationTargetFieldMetadata'
+  > = {
+    ...getDefaultFlatFieldMetadata({
+      createFieldInput,
+      fieldMetadataId: sourceRelationTargetFieldMetadataId,
+    }),
+    type: FieldMetadataType.RELATION,
+    defaultValue: null,
+    settings: null,
+    options: null,
+    relationTargetFieldMetadataId: targetRelationTargetFieldMetadataId, // Note: this won't work until we enable deferred transaction
+    relationTargetObjectMetadataId: targetParentFlatObjectMetadata.id,
+    flatRelationTargetObjectMetadata: targetParentFlatObjectMetadata,
+  };
 
   const targetFlatFieldMetadata: FlatFieldMetadata<FieldMetadataType.RELATION> =
     {
@@ -90,13 +88,16 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
       options: null,
       relationTargetFieldMetadataId: sourceRelationTargetFieldMetadataId,
       relationTargetObjectMetadataId: sourceParentFlatObjectMetadata.id,
-      flatRelationTargetFieldMetadata: {} as FlatFieldMetadata,
-      flatRelationTargetObjectMetadata: {} as FlatObjectMetadataWithoutFields,
+      flatRelationTargetFieldMetadata: sourceFlatFieldMetadata,
+      flatRelationTargetObjectMetadata: sourceParentFlatObjectMetadata,
     };
 
   return [
     {
-      flatFieldMetadata: sourceFlatFieldMetadata,
+      flatFieldMetadata: {
+        ...sourceFlatFieldMetadata,
+        flatRelationTargetFieldMetadata: targetFlatFieldMetadata,
+      },
       parentFlatObjectMetadata: sourceParentFlatObjectMetadata,
     },
     {

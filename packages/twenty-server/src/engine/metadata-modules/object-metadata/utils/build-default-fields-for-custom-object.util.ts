@@ -128,8 +128,8 @@ export const buildDefaultFlatFieldMetadataForCustomObject = ({
   const idField: FlatFieldMetadata<FieldMetadataType.UUID> = {
     type: FieldMetadataType.UUID,
     id: v4(),
-    isLabelSyncedWithName: false, // TO CHECK
-    isUnique: true, // Was false before but unsure if normal ?
+    isLabelSyncedWithName: false,
+    isUnique: true,
     objectMetadataId,
     uniqueIdentifier: BASE_OBJECT_STANDARD_FIELD_IDS.id,
     workspaceId,

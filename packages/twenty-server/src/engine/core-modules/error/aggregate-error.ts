@@ -6,8 +6,4 @@ export class AggregateError extends Error {
     super(message);
     this.name = 'AggregateError';
   }
-
-  getErrors(): Error[] {
-    return this.errors;
-  }
 }

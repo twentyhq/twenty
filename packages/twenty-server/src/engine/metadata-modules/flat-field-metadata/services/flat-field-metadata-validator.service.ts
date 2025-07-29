@@ -124,7 +124,6 @@ export class FlatFieldMetadataValidatorService {
     // We should validate each default value and settings and options
     // We should also handle relation and stuff
     switch (flatFieldMetadataToValidate.type) {
-      case FieldMetadataType.RELATION:
       case FieldMetadataType.MORPH_RELATION: {
         const isMorphRelationEnabled =
           await this.featureFlagService.isFeatureEnabled(
@@ -144,6 +143,7 @@ export class FlatFieldMetadataValidatorService {
 
         return;
       }
+      case FieldMetadataType.RELATION:
       case FieldMetadataType.UUID:
       case FieldMetadataType.TEXT:
       case FieldMetadataType.PHONES:
