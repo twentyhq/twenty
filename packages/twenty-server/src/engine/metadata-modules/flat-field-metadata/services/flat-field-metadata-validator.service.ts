@@ -1,4 +1,9 @@
 import { Injectable } from '@nestjs/common';
+
+import { Expect } from 'twenty-shared/testing';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
@@ -19,9 +24,6 @@ import {
 } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
-import { Expect } from 'twenty-shared/testing';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 // What about update ? FromTo<> ?
 type ValidateOneFieldMetadataArgs = {
@@ -117,6 +119,7 @@ export class FlatFieldMetadataValidatorService {
         name: flatFieldMetadataToValidate.name,
         objectMetadata: parentFlatObjectMetadata,
       });
+
     if (isDefined(failedNameAvailabilityValidation)) {
       return failedNameAvailabilityValidation;
     }

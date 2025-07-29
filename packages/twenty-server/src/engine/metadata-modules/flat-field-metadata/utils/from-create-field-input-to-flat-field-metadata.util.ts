@@ -1,18 +1,19 @@
-import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
-import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { fromRelationCreateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadata.util';
-import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   assertUnreachable,
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
-  trimAndRemoveDuplicatedWhitespacesFromString,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+
+import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
+
+import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { fromRelationCreateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadata.util';
+import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export type FromCreateObjectInputToFlatObjectMetadata = {
   rawCreateFieldInput: CreateFieldInput;
@@ -23,11 +24,6 @@ export type FlatFieldMetadataAndParentFlatObjectMetadata<
 > = {
   flatFieldMetadata: FlatFieldMetadata<T>;
   parentFlatObjectMetadata: FlatObjectMetadata;
-};
-const sanitizeStringIfDefined = (str: unknown) => {
-  return isDefined(str) && typeof str === 'string'
-    ? trimAndRemoveDuplicatedWhitespacesFromString(str)
-    : null;
 };
 
 export const fromCreateFieldInputToFlatFieldMetadata = async ({

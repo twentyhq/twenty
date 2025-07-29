@@ -1,3 +1,7 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
+
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import {
   FieldMetadataException,
@@ -12,9 +16,6 @@ import {
   FlatObjectMetadataWithoutFields,
 } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 type FromRelationCreateFieldInputToFlatFieldMetadataArgs = {
   createFieldInput: CreateFieldInput;
@@ -29,6 +30,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
   FlatFieldMetadataAndParentFlatObjectMetadata[]
 > => {
   const { relationCreationPayload } = createFieldInput;
+
   if (!isDefined(relationCreationPayload)) {
     throw new FieldMetadataException(
       `Relation creation payload is required`,

@@ -1,8 +1,9 @@
-import { FlatObjectMetadata } from "src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type";
-import { CreateObjectInput } from "src/engine/metadata-modules/object-metadata/dtos/create-object.input";
-import { buildDefaultFlatFieldMetadataForCustomObject } from "src/engine/metadata-modules/object-metadata/utils/build-default-fields-for-custom-object.util";
-import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from "twenty-shared/utils";
-import { v4 } from "uuid";
+import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
+
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
+import { buildDefaultFlatFieldMetadataForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-fields-for-custom-object.util';
 
 export const fromCreateObjectInputToFlatObjectMetadata = (
   rawCreateObjectInput: CreateObjectInput,

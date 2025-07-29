@@ -1,7 +1,8 @@
+import { sanitizeObjectStringFields } from 'twenty-shared/utils';
+
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { sanitizeObjectStringFields } from 'twenty-shared/utils';
 
 type getDefaultFlatFieldMetadataArgs = {
   fieldMetadataId: string;
