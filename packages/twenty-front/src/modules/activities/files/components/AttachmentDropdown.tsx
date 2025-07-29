@@ -25,7 +25,7 @@ export const AttachmentDropdown = ({
   onRename,
   attachmentId,
 }: AttachmentDropdownProps) => {
-  const dropdownId = `${attachmentId}-settings-field-active-action-dropdown`;
+  const dropdownId = `${attachmentId}-attachment-dropdown`;
 
   const { closeDropdown } = useCloseDropdown();
 

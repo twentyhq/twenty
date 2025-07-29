@@ -45,7 +45,7 @@ describe('useSelectableList', () => {
     expect(result.current.selectableItemIds).toEqual(testArr);
   });
 
-  it('Should resetSelectItem', async () => {
+  it('Should resetSelectedItem', async () => {
     const { result } = renderHook(
       () => {
         const { resetSelectedItem } = useSelectableList(
