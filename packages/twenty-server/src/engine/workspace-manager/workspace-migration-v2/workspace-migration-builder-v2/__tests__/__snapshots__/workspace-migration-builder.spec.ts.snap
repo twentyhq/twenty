@@ -6,7 +6,6 @@ exports[`Workspace migration builder field actions test suite It should build a 
 [
   {
     "flatFieldMetadata": {
-      "createdAt": Any<ClockDate>,
       "defaultValue": null,
       "description": "default flat field metadata description",
       "flatRelationTargetFieldMetadata": null,
@@ -30,7 +29,6 @@ exports[`Workspace migration builder field actions test suite It should build a 
       "standardOverrides": null,
       "type": "TEXT",
       "uniqueIdentifier": "field-metadata-unique-identifier-1",
-      "updatedAt": Any<ClockDate>,
       "workspaceId": Any<String>,
     },
     "flatObjectMetadataWithoutFields": {
@@ -66,7 +64,6 @@ exports[`Workspace migration builder field actions test suite It should build an
 [
   {
     "flatFieldMetadata": {
-      "createdAt": Any<ClockDate>,
       "defaultValue": null,
       "description": "default flat field metadata description",
       "flatRelationTargetFieldMetadata": null,
@@ -90,7 +87,6 @@ exports[`Workspace migration builder field actions test suite It should build an
       "standardOverrides": null,
       "type": "TEXT",
       "uniqueIdentifier": "field-metadata-unique-identifier-1",
-      "updatedAt": Any<ClockDate>,
       "workspaceId": Any<String>,
     },
     "flatObjectMetadataWithoutFields": {
@@ -126,11 +122,9 @@ exports[`Workspace migration builder field actions test suite It should build an
 [
   {
     "flatFieldMetadata": {
-      "createdAt": Any<ClockDate>,
       "defaultValue": null,
       "description": "default flat field metadata description",
       "flatRelationTargetFieldMetadata": {
-        "createdAt": Any<ClockDate>,
         "defaultValue": null,
         "description": "default flat field metadata description",
         "flatRelationTargetFieldMetadata": null,
@@ -154,7 +148,6 @@ exports[`Workspace migration builder field actions test suite It should build an
         "standardOverrides": null,
         "type": "RELATION",
         "uniqueIdentifier": "field-metadata-unique-identifier-2",
-        "updatedAt": Any<ClockDate>,
         "workspaceId": Any<String>,
       },
       "flatRelationTargetObjectMetadata": {
@@ -202,7 +195,6 @@ exports[`Workspace migration builder field actions test suite It should build an
       "standardOverrides": null,
       "type": "RELATION",
       "uniqueIdentifier": "field-metadata-unique-identifier-1",
-      "updatedAt": Any<ClockDate>,
       "workspaceId": Any<String>,
     },
     "flatObjectMetadataWithoutFields": {
@@ -238,7 +230,6 @@ exports[`Workspace migration builder field actions test suite It should build an
 [
   {
     "flatFieldMetadata": {
-      "createdAt": Any<ClockDate>,
       "defaultValue": null,
       "description": "new description",
       "flatRelationTargetFieldMetadata": null,
@@ -262,7 +253,6 @@ exports[`Workspace migration builder field actions test suite It should build an
       "standardOverrides": null,
       "type": "TEXT",
       "uniqueIdentifier": "field-metadata-unique-identifier-1",
-      "updatedAt": Any<ClockDate>,
       "workspaceId": Any<String>,
     },
     "flatObjectMetadataWithoutFields": {
@@ -321,7 +311,6 @@ exports[`Workspace migration builder field actions test suite It should build an
 [
   {
     "flatFieldMetadata": {
-      "createdAt": Any<ClockDate>,
       "defaultValue": null,
       "description": "new description",
       "flatRelationTargetFieldMetadata": null,
@@ -345,7 +334,6 @@ exports[`Workspace migration builder field actions test suite It should build an
       "standardOverrides": null,
       "type": "RELATION",
       "uniqueIdentifier": "field-metadata-unique-identifier-1",
-      "updatedAt": Any<ClockDate>,
       "workspaceId": Any<String>,
     },
     "flatObjectMetadataWithoutFields": {
@@ -521,7 +509,6 @@ exports[`Workspace migration builder object actions test suite It should build a
     "createFieldActions": [
       {
         "flatFieldMetadata": {
-          "createdAt": Any<ClockDate>,
           "defaultValue": null,
           "description": "default flat field metadata description",
           "flatRelationTargetFieldMetadata": null,
@@ -545,7 +532,6 @@ exports[`Workspace migration builder object actions test suite It should build a
           "standardOverrides": null,
           "type": "TEXT",
           "uniqueIdentifier": "field_0",
-          "updatedAt": Any<ClockDate>,
           "workspaceId": Any<String>,
         },
         "flatObjectMetadataWithoutFields": {
@@ -576,7 +562,6 @@ exports[`Workspace migration builder object actions test suite It should build a
       },
       {
         "flatFieldMetadata": {
-          "createdAt": Any<ClockDate>,
           "defaultValue": null,
           "description": "default flat field metadata description",
           "flatRelationTargetFieldMetadata": null,
@@ -600,7 +585,6 @@ exports[`Workspace migration builder object actions test suite It should build a
           "standardOverrides": null,
           "type": "TEXT",
           "uniqueIdentifier": "field_1",
-          "updatedAt": Any<ClockDate>,
           "workspaceId": Any<String>,
         },
         "flatObjectMetadataWithoutFields": {
@@ -631,7 +615,6 @@ exports[`Workspace migration builder object actions test suite It should build a
       },
       {
         "flatFieldMetadata": {
-          "createdAt": Any<ClockDate>,
           "defaultValue": null,
           "description": "default flat field metadata description",
           "flatRelationTargetFieldMetadata": null,
@@ -655,7 +638,6 @@ exports[`Workspace migration builder object actions test suite It should build a
           "standardOverrides": null,
           "type": "TEXT",
           "uniqueIdentifier": "field_2",
-          "updatedAt": Any<ClockDate>,
           "workspaceId": Any<String>,
         },
         "flatObjectMetadataWithoutFields": {
@@ -686,7 +668,6 @@ exports[`Workspace migration builder object actions test suite It should build a
       },
       {
         "flatFieldMetadata": {
-          "createdAt": Any<ClockDate>,
           "defaultValue": null,
           "description": "default flat field metadata description",
           "flatRelationTargetFieldMetadata": null,
@@ -710,7 +691,6 @@ exports[`Workspace migration builder object actions test suite It should build a
           "standardOverrides": null,
           "type": "TEXT",
           "uniqueIdentifier": "field_3",
-          "updatedAt": Any<ClockDate>,
           "workspaceId": Any<String>,
         },
         "flatObjectMetadataWithoutFields": {
@@ -741,7 +721,6 @@ exports[`Workspace migration builder object actions test suite It should build a
       },
       {
         "flatFieldMetadata": {
-          "createdAt": Any<ClockDate>,
           "defaultValue": null,
           "description": "default flat field metadata description",
           "flatRelationTargetFieldMetadata": null,
@@ -765,7 +744,6 @@ exports[`Workspace migration builder object actions test suite It should build a
           "standardOverrides": null,
           "type": "TEXT",
           "uniqueIdentifier": "field_4",
-          "updatedAt": Any<ClockDate>,
           "workspaceId": Any<String>,
         },
         "flatObjectMetadataWithoutFields": {
