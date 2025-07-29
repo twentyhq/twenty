@@ -1,18 +1,11 @@
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import {
-  FieldMetadataException,
-  FieldMetadataExceptionCode,
-} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
-import { validateRelationCreationPayloadOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/validate-relation-creation-payload.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import {
-  FlatObjectMetadata,
-  FlatObjectMetadataWithoutFields,
-} from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { fromRelationCreateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadata.util';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   assertUnreachable,
@@ -21,19 +14,22 @@ import {
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-type FromCreateObjectInputToFlatObjectMetadata = {
+export type FromCreateObjectInputToFlatObjectMetadata = {
   rawCreateFieldInput: CreateFieldInput;
   existingFlatObjectMetadatas: FlatObjectMetadata[];
+};
+export type FlatFieldMetadataAndParentFlatObjectMetadata<
+  T extends FieldMetadataType = FieldMetadataType,
+> = {
+  flatFieldMetadata: FlatFieldMetadata<T>;
+  parentFlatObjectMetadata: FlatObjectMetadata;
 };
 
 export const fromCreateFieldInputToFlatFieldMetadata = async ({
   existingFlatObjectMetadatas,
   rawCreateFieldInput,
 }: FromCreateObjectInputToFlatObjectMetadata): Promise<
-  {
-    flatFieldMetadata: FlatFieldMetadata;
-    parentFlatObjectMetadata: FlatObjectMetadata;
-  }[]
+  FlatFieldMetadataAndParentFlatObjectMetadata[]
 > => {
   // Handled in FlatFieldMetadata validation
   if (rawCreateFieldInput.isRemoteCreation) {
@@ -108,35 +104,13 @@ export const fromCreateFieldInputToFlatFieldMetadata = async ({
       ];
     case FieldMetadataType.RELATION:
     case FieldMetadataType.MORPH_RELATION: {
-      if (!isDefined(createFieldInput.relationCreationPayload)) {
-        throw new FieldMetadataException(
-          `Relation creation payload is required`,
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        );
-      }
-      await validateRelationCreationPayloadOrThrow(
-        createFieldInput.relationCreationPayload,
-      );
-
-      return [
-        {
-          flatFieldMetadata: {
-            ...commonFlatFieldMetadata,
-            type: createFieldInput.type,
-            defaultValue: null,
-            settings: null,
-            options: null,
-            // TODO retrieve from objectMetadataMaps
-            relationTargetFieldMetadataId: '',
-            relationTargetObjectMetadataId: '',
-            flatRelationTargetFieldMetadata: {} as FlatFieldMetadata,
-            flatRelationTargetObjectMetadata:
-              {} as FlatObjectMetadataWithoutFields,
-            ///
-          } satisfies FlatFieldMetadata<typeof createFieldInput.type>,
-          parentFlatObjectMetadata,
-        },
-      ];
+      return fromRelationCreateFieldInputToFlatFieldMetadata({
+        commonFlatFieldMetadata,
+        existingFlatObjectMetadatas,
+        parentFlatObjectMetadata,
+        relationCreationPayload: createFieldInput.relationCreationPayload,
+        fieldMetadataType: createFieldInput.type,
+      });
     }
     case FieldMetadataType.RATING: {
       return [
