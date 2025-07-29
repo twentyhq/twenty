@@ -68,23 +68,6 @@ export const fromCreateFieldInputToFlatFieldMetadata = async ({
   });
 
   switch (createFieldInput.type) {
-    case FieldMetadataType.UUID:
-      const defaultValue = sanitizeStringIfDefined(
-        createFieldInput.defaultValue,
-      );
-
-      return [
-        {
-          flatFieldMetadata: {
-            ...commonFlatFieldMetadata,
-            settings: null,
-            defaultValue,
-            type: createFieldInput.type,
-            isUnique: true,
-          } satisfies FlatFieldMetadata<typeof createFieldInput.type>,
-          parentFlatObjectMetadata,
-        },
-      ];
     case FieldMetadataType.MORPH_RELATION: {
       throw new Error('TODO prastoin implement');
     }
@@ -96,17 +79,13 @@ export const fromCreateFieldInputToFlatFieldMetadata = async ({
       });
     }
     case FieldMetadataType.RATING: {
-      const defaultValue = sanitizeStringIfDefined(
-        createFieldInput.defaultValue,
-      );
-
       return [
         {
           flatFieldMetadata: {
             ...commonFlatFieldMetadata,
             type: createFieldInput.type,
             settings: null,
-            defaultValue,
+            defaultValue: commonFlatFieldMetadata.defaultValue as string, // Could this be improved ?
             options: generateRatingOptions(),
           } satisfies FlatFieldMetadata<typeof createFieldInput.type>,
           parentFlatObjectMetadata,
@@ -115,9 +94,6 @@ export const fromCreateFieldInputToFlatFieldMetadata = async ({
     }
     case FieldMetadataType.SELECT:
     case FieldMetadataType.MULTI_SELECT: {
-      const defaultValue = sanitizeStringIfDefined(
-        createFieldInput.defaultValue,
-      );
       const options = (createFieldInput?.options ?? []).map<
         FieldMetadataOptions<typeof createFieldInput.type>[number]
       >((option) => ({
@@ -131,43 +107,24 @@ export const fromCreateFieldInputToFlatFieldMetadata = async ({
         {
           flatFieldMetadata: {
             ...commonFlatFieldMetadata,
+            type: createFieldInput.type,
             options,
-            defaultValue,
-          },
+            defaultValue: commonFlatFieldMetadata.defaultValue as string, // Could this be improved ?
+            settings: null,
+          } satisfies FlatFieldMetadata<typeof createFieldInput.type>,
           parentFlatObjectMetadata,
         },
       ];
     }
-    case FieldMetadataType.TEXT: {
-      const defaultValue = sanitizeStringIfDefined(
-        createFieldInput.defaultValue,
-      );
-
-      return [
-        {
-          flatFieldMetadata: { ...commonFlatFieldMetadata, defaultValue },
-          parentFlatObjectMetadata,
-        },
-      ];
-    }
+    case FieldMetadataType.UUID:
+    case FieldMetadataType.TEXT:
     case FieldMetadataType.PHONES:
     case FieldMetadataType.EMAILS:
     case FieldMetadataType.DATE_TIME:
     case FieldMetadataType.DATE:
     case FieldMetadataType.BOOLEAN:
     case FieldMetadataType.NUMBER:
-    case FieldMetadataType.NUMERIC: {
-      const defaultValue = sanitizeStringIfDefined(
-        createFieldInput.defaultValue,
-      );
-
-      return [
-        {
-          flatFieldMetadata: { ...commonFlatFieldMetadata, defaultValue },
-          parentFlatObjectMetadata,
-        },
-      ];
-    }
+    case FieldMetadataType.NUMERIC:
     case FieldMetadataType.LINKS:
     case FieldMetadataType.CURRENCY:
     case FieldMetadataType.FULL_NAME:

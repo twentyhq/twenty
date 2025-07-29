@@ -1,6 +1,7 @@
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { sanitizeObjectStringFields } from 'twenty-shared/utils';
 
 type getDefaultFlatFieldMetadataArgs = {
   fieldMetadataId: string;
@@ -12,6 +13,11 @@ export const getDefaultFlatFieldMetadata = ({
   createFieldInput,
   fieldMetadataId,
 }: getDefaultFlatFieldMetadataArgs) => {
+  const { defaultValue, options, settings } = sanitizeObjectStringFields(
+    createFieldInput,
+    ['defaultValue', 'settings', 'options'],
+  );
+
   return {
     createdAt,
     description: createFieldInput.description ?? null,
@@ -30,7 +36,6 @@ export const getDefaultFlatFieldMetadata = ({
     label: createFieldInput.label ?? null,
     name: createFieldInput.name ?? null,
     objectMetadataId: createFieldInput.objectMetadataId, // TODO prastoin double check that CreateFieldInput validation runs correctly
-    options: null,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     standardId: null,
@@ -39,9 +44,10 @@ export const getDefaultFlatFieldMetadata = ({
     uniqueIdentifier: fieldMetadataId,
     updatedAt: createdAt,
     workspaceId: createFieldInput.workspaceId,
-    settings: null,
-    defaultValue: null,
     flatRelationTargetFieldMetadata: null,
     flatRelationTargetObjectMetadata: null,
+    defaultValue: defaultValue ?? null,
+    options: options ?? null,
+    settings: settings ?? null,
   } as const satisfies FlatFieldMetadata;
 };
