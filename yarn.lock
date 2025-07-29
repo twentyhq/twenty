@@ -51350,9 +51350,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-phone-number-input@patch:react-phone-number-input@npm%3A3.4.5#~/.yarn/patches/react-phone-number-input-npm-3.4.5-dc2895c306.patch":
+"react-phone-number-input@patch:react-phone-number-input@npm%3A3.4.5#./.yarn/patches/react-phone-number-input-npm-3.4.5-dc2895c306.patch::locator=twenty%40workspace%3A.":
   version: 3.4.5
-  resolution: "react-phone-number-input@patch:react-phone-number-input@npm%3A3.4.5#~/.yarn/patches/react-phone-number-input-npm-3.4.5-dc2895c306.patch::version=3.4.5&hash=4d6a74"
+  resolution: "react-phone-number-input@patch:react-phone-number-input@npm%3A3.4.5#./.yarn/patches/react-phone-number-input-npm-3.4.5-dc2895c306.patch::version=3.4.5&hash=4d6a74&locator=twenty%40workspace%3A."
   dependencies:
     classnames: "npm:^2.5.1"
     country-flag-icons: "npm:^1.5.11"
@@ -57538,7 +57538,7 @@ __metadata:
     react-imask: "npm:^7.6.0"
     react-intersection-observer: "npm:^9.15.1"
     react-loading-skeleton: "npm:^3.3.1"
-    react-phone-number-input: "patch:react-phone-number-input@npm%3A3.4.5#~/.yarn/patches/react-phone-number-input-npm-3.4.5-dc2895c306.patch"
+    react-phone-number-input: "patch:react-phone-number-input@npm%3A3.4.5#./.yarn/patches/react-phone-number-input-npm-3.4.5-dc2895c306.patch"
     react-responsive: "npm:^9.0.2"
     react-router-dom: "npm:^6.4.4"
     react-textarea-autosize: "npm:^8.4.1"
