@@ -1,5 +1,6 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
@@ -50,9 +51,7 @@ export const CommandMenuMergeRecordPage = () => {
           value={{ instanceId: `record-merge-${commandMenuPageInstanceId}` }}
         >
           <ContextStoreComponentInstanceContext.Provider
-            value={{
-              instanceId: commandMenuPageInstanceId,
-            }}
+            value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
           >
             <ActionMenuComponentInstanceContext.Provider
               value={{ instanceId: commandMenuPageInstanceId }}
