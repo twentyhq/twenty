@@ -3,14 +3,14 @@ import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/state
 import { useSetRecoilState } from 'recoil';
 
 export const useImpersonationAuth = () => {
-  const { getAuthTokensFromLoginToken } = useAuth();
+  const { getAccessTokensFromLoginToken } = useAuth();
   const setIsAppWaitingForFreshObjectMetadata = useSetRecoilState(
     isAppWaitingForFreshObjectMetadataState,
   );
 
   const executeImpersonationAuth = async (loginToken: string) => {
     setIsAppWaitingForFreshObjectMetadata(true);
-    await getAuthTokensFromLoginToken(loginToken);
+    await getAccessTokensFromLoginToken(loginToken);
     setIsAppWaitingForFreshObjectMetadata(false);
   };
 

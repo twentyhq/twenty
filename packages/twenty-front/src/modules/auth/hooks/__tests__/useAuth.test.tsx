@@ -115,10 +115,10 @@ describe('useAuth', () => {
     const { result } = renderHooks();
 
     await act(async () => {
-      await result.current.getAuthTokensFromLoginToken(token);
+      await result.current.getAccessTokensFromLoginToken(token);
     });
 
-    expect(mocks.getAuthTokensFromLoginToken.result).toHaveBeenCalled();
+    expect(mocks.getAccessTokensFromLoginToken.result).toHaveBeenCalled();
     expect(mocks.getCurrentUser.result).toHaveBeenCalled();
   });
 
@@ -130,7 +130,7 @@ describe('useAuth', () => {
     });
 
     expect(mocks.getLoginTokenFromCredentials.result).toHaveBeenCalled();
-    expect(mocks.getAuthTokensFromLoginToken.result).toHaveBeenCalled();
+    expect(mocks.getAccessTokensFromLoginToken.result).toHaveBeenCalled();
   });
 
   it('should handle google sign-in', async () => {

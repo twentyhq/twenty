@@ -79,13 +79,12 @@ export class EmailVerificationService {
 
     const emailTemplate = SendEmailVerificationLinkEmail(emailData);
 
-    const html = await render(emailTemplate);
-    const text = await render(emailTemplate, {
+    const html = render(emailTemplate);
+    const text = render(emailTemplate, {
       plainText: true,
     });
 
     i18n.activate(locale);
-
     await this.emailService.send({
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',

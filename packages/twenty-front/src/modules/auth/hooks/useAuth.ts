@@ -19,11 +19,12 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   AuthTokenPair,
   useCheckUserExistsLazyQuery,
-  useGetAuthTokensFromLoginTokenMutation,
+  useGetAccessTokensFromLoginTokenMutation,
   useGetAuthTokensFromOtpMutation,
   useGetCurrentUserLazyQuery,
   useGetLoginTokenFromCredentialsMutation,
   useGetLoginTokenFromEmailVerificationTokenMutation,
+  useGetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation,
   useSignInMutation,
   useSignUpInWorkspaceMutation,
   useSignUpMutation,
@@ -113,10 +114,12 @@ export const useAuth = () => {
   const [signIn] = useSignInMutation();
   const [signUp] = useSignUpMutation();
   const [signUpInWorkspace] = useSignUpInWorkspaceMutation();
-  const [getAuthTokensFromLoginToken] =
-    useGetAuthTokensFromLoginTokenMutation();
+  const [getAccessTokensFromLoginToken] =
+    useGetAccessTokensFromLoginTokenMutation();
   const [getLoginTokenFromEmailVerificationToken] =
     useGetLoginTokenFromEmailVerificationTokenMutation();
+  const [getWorkspaceAgnosticTokenFromEmailVerificationToken] =
+    useGetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation();
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
   const [getAuthTokensFromOtp] = useGetAuthTokensFromOtpMutation();
 
@@ -202,70 +205,6 @@ export const useAuth = () => {
         navigate(AppPath.SignInUp);
       },
     [navigate, client, goToRecoilSnapshot, setLastAuthenticateWorkspaceDomain],
-  );
-
-  const handleGetLoginTokenFromCredentials = useCallback(
-    async (email: string, password: string, captchaToken?: string) => {
-      try {
-        const getLoginTokenResult = await getLoginTokenFromCredentials({
-          variables: {
-            email,
-            password,
-            captchaToken,
-            origin,
-          },
-        });
-        if (isDefined(getLoginTokenResult.errors)) {
-          throw getLoginTokenResult.errors;
-        }
-
-        if (!getLoginTokenResult.data?.getLoginTokenFromCredentials) {
-          throw new Error('No login token');
-        }
-
-        return getLoginTokenResult.data.getLoginTokenFromCredentials;
-      } catch (error) {
-        // TODO: Get intellisense for graphql error extensions code (codegen?)
-        if (
-          error instanceof ApolloError &&
-          error.graphQLErrors[0]?.extensions?.subCode === 'EMAIL_NOT_VERIFIED'
-        ) {
-          setSearchParams({ email });
-          setSignInUpStep(SignInUpStep.EmailVerification);
-          throw error;
-        }
-        throw error;
-      }
-    },
-    [getLoginTokenFromCredentials, setSearchParams, setSignInUpStep, origin],
-  );
-
-  const handleGetLoginTokenFromEmailVerificationToken = useCallback(
-    async (
-      emailVerificationToken: string,
-      email: string,
-      captchaToken?: string,
-    ) => {
-      const loginTokenResult = await getLoginTokenFromEmailVerificationToken({
-        variables: {
-          email,
-          emailVerificationToken,
-          captchaToken,
-          origin,
-        },
-      });
-
-      if (isDefined(loginTokenResult.errors)) {
-        throw loginTokenResult.errors;
-      }
-
-      if (!loginTokenResult.data?.getLoginTokenFromEmailVerificationToken) {
-        throw new Error('No login token');
-      }
-
-      return loginTokenResult.data.getLoginTokenFromEmailVerificationToken;
-    },
-    [getLoginTokenFromEmailVerificationToken, origin],
   );
 
   const loadCurrentUser = useCallback(async () => {
@@ -373,6 +312,114 @@ export const useAuth = () => {
     [setTokenPair],
   );
 
+  const handleGetLoginTokenFromCredentials = useCallback(
+    async (email: string, password: string, captchaToken?: string) => {
+      try {
+        const getLoginTokenResult = await getLoginTokenFromCredentials({
+          variables: {
+            email,
+            password,
+            captchaToken,
+            origin,
+          },
+        });
+        if (isDefined(getLoginTokenResult.errors)) {
+          throw getLoginTokenResult.errors;
+        }
+
+        if (!getLoginTokenResult.data?.getLoginTokenFromCredentials) {
+          throw new Error('No login token');
+        }
+
+        return getLoginTokenResult.data.getLoginTokenFromCredentials;
+      } catch (error) {
+        // TODO: Get intellisense for graphql error extensions code (codegen?)
+        if (
+          error instanceof ApolloError &&
+          error.graphQLErrors[0]?.extensions?.subCode === 'EMAIL_NOT_VERIFIED'
+        ) {
+          setSearchParams({ email });
+          setSignInUpStep(SignInUpStep.EmailVerification);
+          throw error;
+        }
+        throw error;
+      }
+    },
+    [getLoginTokenFromCredentials, setSearchParams, setSignInUpStep, origin],
+  );
+
+  const handleGetLoginTokenFromEmailVerificationToken = useCallback(
+    async (
+      emailVerificationToken: string,
+      email: string,
+      captchaToken?: string,
+    ) => {
+      const loginTokenResult = await getLoginTokenFromEmailVerificationToken({
+        variables: {
+          email,
+          emailVerificationToken,
+          captchaToken,
+          origin,
+        },
+      });
+
+      if (isDefined(loginTokenResult.errors)) {
+        throw loginTokenResult.errors;
+      }
+
+      if (!loginTokenResult.data?.getLoginTokenFromEmailVerificationToken) {
+        throw new Error('No login token');
+      }
+
+      return loginTokenResult.data.getLoginTokenFromEmailVerificationToken;
+    },
+    [getLoginTokenFromEmailVerificationToken, origin],
+  );
+
+  const handleGetWorkspaceAgnosticTokenFromEmailVerificationToken = useCallback(
+    async (
+      emailVerificationToken: string,
+      email: string,
+      captchaToken?: string,
+    ) => {
+      const { data, errors } =
+        await getWorkspaceAgnosticTokenFromEmailVerificationToken({
+          variables: {
+            email,
+            emailVerificationToken,
+            captchaToken,
+          },
+        });
+
+      if (isDefined(errors)) {
+        throw errors;
+      }
+
+      if (!data?.getWorkspaceAgnosticTokenFromEmailVerificationToken) {
+        throw new Error('No workspace agnostic token in result');
+      }
+
+      handleSetAuthTokens(
+        data.getWorkspaceAgnosticTokenFromEmailVerificationToken.tokens,
+      );
+
+      const { user } = await loadCurrentUser();
+
+      if (countAvailableWorkspaces(user.availableWorkspaces) === 0) {
+        return await createWorkspace({ newTab: false });
+      }
+
+      setSignInUpStep(SignInUpStep.WorkspaceSelection);
+    },
+    [
+      createWorkspace,
+      getWorkspaceAgnosticTokenFromEmailVerificationToken,
+      handleSetAuthTokens,
+      loadCurrentUser,
+      setSignInUpStep,
+    ],
+  );
+
   const handleSetLoginToken = useCallback(
     (token: AuthToken['token']) => {
       setLoginToken(token);
@@ -396,7 +443,7 @@ export const useAuth = () => {
   const handleGetAuthTokensFromLoginToken = useCallback(
     async (loginToken: string) => {
       try {
-        const getAuthTokensResult = await getAuthTokensFromLoginToken({
+        const getAuthTokensResult = await getAccessTokensFromLoginToken({
           variables: {
             loginToken: loginToken,
             origin,
@@ -407,12 +454,12 @@ export const useAuth = () => {
           throw getAuthTokensResult.errors;
         }
 
-        if (!getAuthTokensResult.data?.getAuthTokensFromLoginToken) {
-          throw new Error('No getAuthTokensFromLoginToken result');
+        if (!getAuthTokensResult.data?.getAccessTokensFromLoginToken) {
+          throw new Error('No getAccessTokensFromLoginToken result');
         }
 
         await handleLoadWorkspaceAfterAuthentication(
-          getAuthTokensResult.data.getAuthTokensFromLoginToken.tokens,
+          getAuthTokensResult.data.getAccessTokensFromLoginToken.tokens,
         );
       } catch (error) {
         if (
@@ -438,7 +485,7 @@ export const useAuth = () => {
     },
     [
       handleSetLoginToken,
-      getAuthTokensFromLoginToken,
+      getAccessTokensFromLoginToken,
       origin,
       handleLoadWorkspaceAfterAuthentication,
       setSignInUpStep,
@@ -507,11 +554,22 @@ export const useAuth = () => {
   const handleCredentialsSignUp = useCallback(
     async (email: string, password: string, captchaToken?: string) => {
       const signUpResult = await signUp({
-        variables: { email, password, captchaToken },
+        variables: {
+          email,
+          password,
+          captchaToken,
+          locale: i18n.locale ?? 'en',
+        },
       });
 
       if (isDefined(signUpResult.errors)) {
         throw signUpResult.errors;
+      }
+
+      if (isEmailVerificationRequired) {
+        setSearchParams({ email });
+        setSignInUpStep(SignInUpStep.EmailVerification);
+        return null;
       }
 
       if (!signUpResult.data?.signUp) {
@@ -529,6 +587,8 @@ export const useAuth = () => {
       setSignInUpStep(SignInUpStep.WorkspaceSelection);
     },
     [
+      isEmailVerificationRequired,
+      setSearchParams,
       handleSetAuthTokens,
       signUp,
       loadCurrentUser,
@@ -712,7 +772,7 @@ export const useAuth = () => {
       }
 
       if (!getAuthTokensFromOtpResult.data?.getAuthTokensFromOTP) {
-        throw new Error('No getAuthTokensFromLoginToken result');
+        throw new Error('No getAccessTokensFromLoginToken result');
       }
 
       await handleLoadWorkspaceAfterAuthentication(
@@ -724,9 +784,11 @@ export const useAuth = () => {
 
   return {
     getLoginTokenFromCredentials: handleGetLoginTokenFromCredentials,
+    getWorkspaceAgnosticTokenFromEmailVerificationToken:
+      handleGetWorkspaceAgnosticTokenFromEmailVerificationToken,
     getLoginTokenFromEmailVerificationToken:
       handleGetLoginTokenFromEmailVerificationToken,
-    getAuthTokensFromLoginToken: handleGetAuthTokensFromLoginToken,
+    getAccessTokensFromLoginToken: handleGetAuthTokensFromLoginToken,
 
     loadCurrentUser,
 
