@@ -1,1 +1,1 @@
-export const NODE_HANDLE_WIDTH_PX = 4;
+export const NODE_HANDLE_WIDTH_PX = 7;

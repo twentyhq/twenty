@@ -1,4 +1,3 @@
-import { WorkflowDiagramBaseHandle } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseHandle';
 import { NODE_BORDER_WIDTH } from '@/workflow/workflow-diagram/constants/NodeBorderWidth';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -6,11 +5,12 @@ import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/Wo
 import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Position } from '@xyflow/react';
 import React, { useState } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Label, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
+import { WorkflowDiagramBaseHandle } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseHandle';
+import { Position } from '@xyflow/react';
 
 const StyledStepNodeContainer = styled.div`
   display: flex;
@@ -171,6 +171,7 @@ export const WorkflowDiagramStepNodeBase = ({
   Icon,
   RightFloatingElement,
   BottomHoverFloatingElement,
+  displayHandle = true,
 }: {
   nodeType: WorkflowDiagramStepNodeData['nodeType'];
   name: string;
@@ -178,6 +179,7 @@ export const WorkflowDiagramStepNodeBase = ({
   Icon?: React.ReactNode;
   RightFloatingElement?: React.ReactNode;
   BottomHoverFloatingElement?: React.ReactNode;
+  displayHandle?: boolean;
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -195,7 +197,11 @@ export const WorkflowDiagramStepNodeBase = ({
       onMouseLeave={handleMouseLeave}
     >
       {nodeType !== 'trigger' && (
-        <WorkflowDiagramBaseHandle type="target" position={Position.Top} />
+        <WorkflowDiagramBaseHandle
+          type="target"
+          position={Position.Top}
+          isVisible={displayHandle}
+        />
       )}
 
       <StyledStepNodeType variant="small" nodeVariant={variant}>
@@ -226,7 +232,11 @@ export const WorkflowDiagramStepNodeBase = ({
         )}
       </StyledStepNodeInnerContainer>
 
-      <WorkflowDiagramBaseHandle type="source" position={Position.Bottom} />
+      <WorkflowDiagramBaseHandle
+        type="source"
+        position={Position.Bottom}
+        isVisible={displayHandle}
+      />
     </StyledStepNodeContainer>
   );
 };

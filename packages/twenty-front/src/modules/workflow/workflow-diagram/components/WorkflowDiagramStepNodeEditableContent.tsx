@@ -5,6 +5,7 @@ import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/Wo
 import { FloatingIconButton } from 'twenty-ui/input';
 import { IconTrash } from 'twenty-ui/display';
 import { WorkflowDiagramCreateStepElement } from '@/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement';
+import React from 'react';
 
 export const WorkflowDiagramStepNodeEditableContent = ({
   data,
