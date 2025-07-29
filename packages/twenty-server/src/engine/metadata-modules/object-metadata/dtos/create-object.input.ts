@@ -9,6 +9,7 @@ import { v4 } from 'uuid';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
+import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { BeforeCreateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-create-one-object.hook';
@@ -83,7 +84,7 @@ export const fromCreateObjectInputToFlatObjectMetadata = (
   rawCreateObjectInput: CreateObjectInput,
 ): FlatObjectMetadata => {
   if (rawCreateObjectInput.isRemote) {
-    throw new Error('Remote objects are not supported yet');
+    throw new UserInputError('Remote objects are not supported yet');
   }
 
   const createObjectInput =
