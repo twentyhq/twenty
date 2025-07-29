@@ -1461,8 +1461,10 @@ export type MutationGetAuthorizationUrlForSsoArgs = {
 export type MutationGetLoginTokenFromCredentialsArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  locale?: InputMaybe<Scalars['String']>;
   origin: Scalars['String'];
   password: Scalars['String'];
+  verifyEmailNextPath?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1545,14 +1547,18 @@ export type MutationSendInvitationsArgs = {
 export type MutationSignInArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  locale?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
+  verifyEmailNextPath?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationSignUpArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  locale?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
+  verifyEmailNextPath?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -3306,6 +3312,8 @@ export type SignUpMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
   captchaToken?: InputMaybe<Scalars['String']>;
+  locale?: InputMaybe<Scalars['String']>;
+  verifyEmailNextPath?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -5348,8 +5356,14 @@ export type SignInMutationHookResult = ReturnType<typeof useSignInMutation>;
 export type SignInMutationResult = Apollo.MutationResult<SignInMutation>;
 export type SignInMutationOptions = Apollo.BaseMutationOptions<SignInMutation, SignInMutationVariables>;
 export const SignUpDocument = gql`
-    mutation SignUp($email: String!, $password: String!, $captchaToken: String) {
-  signUp(email: $email, password: $password, captchaToken: $captchaToken) {
+    mutation SignUp($email: String!, $password: String!, $captchaToken: String, $locale: String, $verifyEmailNextPath: String) {
+  signUp(
+    email: $email
+    password: $password
+    captchaToken: $captchaToken
+    locale: $locale
+    verifyEmailNextPath: $verifyEmailNextPath
+  ) {
     availableWorkspaces {
       ...AvailableWorkspacesFragment
     }
@@ -5378,6 +5392,8 @@ export type SignUpMutationFn = Apollo.MutationFunction<SignUpMutation, SignUpMut
  *      email: // value for 'email'
  *      password: // value for 'password'
  *      captchaToken: // value for 'captchaToken'
+ *      locale: // value for 'locale'
+ *      verifyEmailNextPath: // value for 'verifyEmailNextPath'
  *   },
  * });
  */

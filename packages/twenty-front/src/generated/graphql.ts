@@ -1392,8 +1392,10 @@ export type MutationGetAuthorizationUrlForSsoArgs = {
 export type MutationGetLoginTokenFromCredentialsArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  locale?: InputMaybe<Scalars['String']>;
   origin: Scalars['String'];
   password: Scalars['String'];
+  verifyEmailNextPath?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1476,14 +1478,18 @@ export type MutationSendInvitationsArgs = {
 export type MutationSignInArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  locale?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
+  verifyEmailNextPath?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationSignUpArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  locale?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
+  verifyEmailNextPath?: InputMaybe<Scalars['String']>;
 };
 
 

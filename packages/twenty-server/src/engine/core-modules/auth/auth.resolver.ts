@@ -271,7 +271,6 @@ export class AuthResolver {
     getAuthTokenFromEmailVerificationTokenInput: GetAuthTokenFromEmailVerificationTokenInput,
     @AuthProvider() authProvider: AuthProviderEnum,
   ) {
-
     const appToken =
       await this.emailVerificationTokenService.validateEmailVerificationTokenOrThrow(
         getAuthTokenFromEmailVerificationTokenInput,
