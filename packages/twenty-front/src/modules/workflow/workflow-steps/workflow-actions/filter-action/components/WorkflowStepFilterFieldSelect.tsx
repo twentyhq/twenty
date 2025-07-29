@@ -1,9 +1,12 @@
+import { useGetFieldMetadataItemById } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { SelectControl } from '@/ui/input/components/SelectControl';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useWorkflowStepContextOrThrow } from '@/workflow/states/context/WorkflowStepContext';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { WorkflowVariablesDropdown } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdown';
+import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
 import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
 import { searchVariableThroughOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchema';
 import { useLingui } from '@lingui/react/macro';
@@ -38,6 +41,14 @@ export const WorkflowStepFilterFieldSelect = ({
     }),
   );
 
+  const { getFieldMetadataItemById } = useGetFieldMetadataItemById();
+
+  const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep(
+    {},
+  );
+
+  const noAvailableVariables = availableVariablesInWorkflowStep.length === 0;
+
   const handleChange = useRecoilCallback(
     ({ snapshot }) =>
       (variableName: string) => {
@@ -54,24 +65,39 @@ export const WorkflowStepFilterFieldSelect = ({
           )
           .getValue();
 
-        const { variableLabel, variableType } =
-          searchVariableThroughOutputSchema({
-            stepOutputSchema: currentStepOutputSchema?.[0],
-            rawVariableName: variableName,
-            isFullRecord: false,
-          });
+        const {
+          variableLabel,
+          variableType,
+          fieldMetadataId,
+          compositeFieldSubFieldName,
+        } = searchVariableThroughOutputSchema({
+          stepOutputSchema: currentStepOutputSchema?.[0],
+          rawVariableName: variableName,
+          isFullRecord: false,
+        });
+
+        const filterType = isDefined(fieldMetadataId)
+          ? getFieldMetadataItemById(fieldMetadataId).type
+          : variableType;
 
         upsertStepFilterSettings({
           stepFilterToUpsert: {
             ...stepFilter,
             stepOutputKey: variableName,
             displayValue: variableLabel ?? '',
-            type: variableType ?? 'unknown',
+            type: filterType ?? 'unknown',
             value: '',
+            fieldMetadataId,
+            compositeFieldSubFieldName,
           },
         });
       },
-    [upsertStepFilterSettings, stepFilter, workflowVersionId],
+    [
+      upsertStepFilterSettings,
+      stepFilter,
+      workflowVersionId,
+      getFieldMetadataItemById,
+    ],
   );
 
   if (!isDefined(stepId)) {
@@ -85,8 +111,28 @@ export const WorkflowStepFilterFieldSelect = ({
   });
 
   const isSelectedFieldNotFound = !isDefined(variableLabel);
-  const label = isSelectedFieldNotFound ? t`No Field Selected` : variableLabel;
+  const label = isSelectedFieldNotFound
+    ? t`Select a field from a previous step`
+    : variableLabel;
   const dropdownId = `step-filter-field-${stepFilter.id}`;
+
+  if (noAvailableVariables) {
+    return (
+      <Dropdown
+        dropdownId={dropdownId}
+        clickableComponent={
+          <SelectControl
+            selectedOption={{
+              value: stepFilter.stepOutputKey,
+              label: t`No available fields to select`,
+            }}
+            isDisabled={true}
+          />
+        }
+        dropdownComponents={[]}
+      />
+    );
+  }
 
   return (
     <WorkflowVariablesDropdown
@@ -100,6 +146,7 @@ export const WorkflowStepFilterFieldSelect = ({
             label,
           }}
           isDisabled={readonly}
+          textAccent={isSelectedFieldNotFound ? 'placeholder' : 'default'}
         />
       }
     />

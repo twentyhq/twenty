@@ -88,6 +88,9 @@ export class View {
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt?: Date | null;
 
+  @Column({ nullable: true, type: 'text', default: null })
+  anyFieldFilterValue?: string | null;
+
   @ManyToOne(() => Workspace, {
     onDelete: 'CASCADE',
   })

@@ -9,17 +9,17 @@ import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { uniqueEntries } from './uniqueEntries';
 
-export const setColumn = <T extends string>(
-  oldColumn: SpreadsheetColumn<T>,
-  field?: SpreadsheetImportField<T>,
+export const setColumn = (
+  oldColumn: SpreadsheetColumn,
+  field?: SpreadsheetImportField,
   data?: MatchColumnsStepProps['data'],
-): SpreadsheetColumn<T> => {
+): SpreadsheetColumn => {
   if (field?.fieldType.type === 'select') {
     const fieldOptions = field.fieldType.options;
     const uniqueData = uniqueEntries(
       data || [],
       oldColumn.index,
-    ) as SpreadsheetMatchedOptions<T>[];
+    ) as SpreadsheetMatchedOptions[];
 
     const matchedOptions = uniqueData.map((record) => {
       const value = fieldOptions.find(
@@ -28,8 +28,8 @@ export const setColumn = <T extends string>(
           fieldOption.label === record.entry,
       )?.value;
       return value
-        ? ({ ...record, value } as SpreadsheetMatchedOptions<T>)
-        : (record as SpreadsheetMatchedOptions<T>);
+        ? ({ ...record, value } as SpreadsheetMatchedOptions)
+        : (record as SpreadsheetMatchedOptions);
     });
     const allMatched =
       matchedOptions.filter((o) => o.value).length === uniqueData?.length;
@@ -77,8 +77,8 @@ export const setColumn = <T extends string>(
           fieldOption.value === entry || fieldOption.label === entry,
       )?.value;
       return value
-        ? ({ entry, value } as SpreadsheetMatchedOptions<T>)
-        : ({ entry } as SpreadsheetMatchedOptions<T>);
+        ? ({ entry, value } as SpreadsheetMatchedOptions)
+        : ({ entry } as SpreadsheetMatchedOptions);
     });
     const areAllMatched =
       matchedOptions.filter((option) => option.value).length ===

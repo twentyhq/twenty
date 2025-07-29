@@ -10,7 +10,6 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import {
   RouterDecorator,
   getCanvasElementForDropdownTesting,
@@ -31,10 +30,9 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
       <RecoilRoot
         initializeState={({ set }) => {
           set(
-            extractComponentState(
-              recordIndexActionMenuDropdownPositionComponentState,
-              'action-menu-dropdown-story',
-            ),
+            recordIndexActionMenuDropdownPositionComponentState.atomFamily({
+              instanceId: 'action-menu-dropdown-story',
+            }),
             { x: 10, y: 10 },
           );
 

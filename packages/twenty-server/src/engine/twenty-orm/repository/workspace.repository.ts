@@ -27,7 +27,8 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { QueryDeepPartialEntityWithRelationConnect } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
+import { DeepPartialWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/deep-partial-entity-with-nested-relation-fields.type';
+import { QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
@@ -81,6 +82,7 @@ export class WorkspaceRepository<
       this.internalContext,
       this.shouldBypassPermissionChecks,
       this.authContext,
+      this.featureFlagMap,
     );
   }
 
@@ -242,31 +244,31 @@ export class WorkspaceRepository<
   /**
    * SAVE METHODS
    */
-  override save<U extends DeepPartial<T>>(
+  override save<U extends DeepPartialWithNestedRelationFields<T>>(
     entities: U[],
     options: SaveOptions & { reload: false },
     entityManager?: WorkspaceEntityManager,
   ): Promise<T[]>;
 
-  override save<U extends DeepPartial<T>>(
+  override save<U extends DeepPartialWithNestedRelationFields<T>>(
     entities: U[],
     options?: SaveOptions,
     entityManager?: WorkspaceEntityManager,
   ): Promise<(U & T)[]>;
 
-  override save<U extends DeepPartial<T>>(
+  override save<U extends DeepPartialWithNestedRelationFields<T>>(
     entity: U,
     options: SaveOptions & { reload: false },
     entityManager?: WorkspaceEntityManager,
   ): Promise<T>;
 
-  override save<U extends DeepPartial<T>>(
+  override save<U extends DeepPartialWithNestedRelationFields<T>>(
     entity: U,
     options?: SaveOptions,
     entityManager?: WorkspaceEntityManager,
   ): Promise<U & T>;
 
-  override async save<U extends DeepPartial<T>>(
+  override async save<U extends DeepPartialWithNestedRelationFields<T>>(
     entityOrEntities: U | U[],
     options?: SaveOptions | (SaveOptions & { reload: false }),
     entityManager?: WorkspaceEntityManager,
@@ -535,9 +537,10 @@ export class WorkspaceRepository<
    */
   override async insert(
     entity:
-      | QueryDeepPartialEntityWithRelationConnect<T>
-      | QueryDeepPartialEntityWithRelationConnect<T>[],
+      | QueryDeepPartialEntityWithNestedRelationFields<T>
+      | QueryDeepPartialEntityWithNestedRelationFields<T>[],
     entityManager?: WorkspaceEntityManager,
+    selectedColumns?: string[],
   ): Promise<InsertResult> {
     const manager = entityManager || this.manager;
 
@@ -546,7 +549,12 @@ export class WorkspaceRepository<
       objectRecordsPermissions: this.objectRecordsPermissions,
     };
 
-    return manager.insert(this.target, entity, permissionOptions);
+    return manager.insert(
+      this.target,
+      entity,
+      selectedColumns,
+      permissionOptions,
+    );
   }
 
   /**
@@ -565,6 +573,7 @@ export class WorkspaceRepository<
       | FindOptionsWhere<T>,
     partialEntity: QueryDeepPartialEntity<T>,
     entityManager?: WorkspaceEntityManager,
+    selectedColumns?: string[],
   ): Promise<UpdateResult> {
     const manager = entityManager || this.manager;
 
@@ -582,6 +591,7 @@ export class WorkspaceRepository<
       criteria,
       partialEntity,
       permissionOptions,
+      selectedColumns,
     );
   }
 
@@ -589,6 +599,7 @@ export class WorkspaceRepository<
     entityOrEntities: QueryDeepPartialEntity<T> | QueryDeepPartialEntity<T>[],
     conflictPathsOrOptions: string[] | UpsertOptions<T>,
     entityManager?: WorkspaceEntityManager,
+    selectedColumns: string[] = [],
   ): Promise<InsertResult> {
     const manager = entityManager || this.manager;
 
@@ -602,6 +613,7 @@ export class WorkspaceRepository<
       entityOrEntities,
       conflictPathsOrOptions,
       permissionOptions,
+      selectedColumns,
     );
 
     return {
@@ -777,6 +789,7 @@ export class WorkspaceRepository<
     propertyPath: string,
     value: number | string,
     entityManager?: WorkspaceEntityManager,
+    selectedColumns?: string[],
   ): Promise<UpdateResult> {
     const manager = entityManager || this.manager;
     const computedConditions = await this.transformOptions({
@@ -794,6 +807,7 @@ export class WorkspaceRepository<
       propertyPath,
       value,
       permissionOptions,
+      selectedColumns,
     );
   }
 
@@ -802,6 +816,7 @@ export class WorkspaceRepository<
     propertyPath: string,
     value: number | string,
     entityManager?: WorkspaceEntityManager,
+    selectedColumns?: string[],
   ): Promise<UpdateResult> {
     const manager = entityManager || this.manager;
     const computedConditions = await this.transformOptions({
@@ -819,6 +834,7 @@ export class WorkspaceRepository<
       propertyPath,
       value,
       permissionOptions,
+      selectedColumns,
     );
   }
 

@@ -268,6 +268,7 @@ describe('WorkspaceRepository', () => {
       expect(mockEntityManager.insert).toHaveBeenCalledWith(
         'test-entity',
         { id: 'test-id' },
+        undefined,
         {
           shouldBypassPermissionChecks: false,
           objectRecordsPermissions: mockObjectRecordsPermissions,
@@ -294,6 +295,7 @@ describe('WorkspaceRepository', () => {
           shouldBypassPermissionChecks: false,
           objectRecordsPermissions: mockObjectRecordsPermissions,
         },
+        [],
       );
     });
   });
@@ -319,6 +321,7 @@ describe('WorkspaceRepository', () => {
           shouldBypassPermissionChecks: false,
           objectRecordsPermissions: mockObjectRecordsPermissions,
         },
+        undefined,
       );
     });
   });
@@ -362,6 +365,7 @@ describe('WorkspaceRepository', () => {
           shouldBypassPermissionChecks: false,
           objectRecordsPermissions: mockObjectRecordsPermissions,
         },
+        undefined,
       );
     });
   });

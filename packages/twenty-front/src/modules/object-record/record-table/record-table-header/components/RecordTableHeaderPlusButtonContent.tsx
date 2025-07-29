@@ -30,7 +30,9 @@ export const RecordTableHeaderPlusButtonContent = () => {
   );
 
   const { getIcon } = useIcons();
-  const { handleColumnVisibilityChange } = useTableColumns();
+  const { handleColumnVisibilityChange } = useTableColumns({
+    objectMetadataId: objectMetadataItem.id,
+  });
 
   const handleAddColumn = useCallback(
     (column: ColumnDefinition<FieldMetadata>) => {
