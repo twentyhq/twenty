@@ -11,17 +11,19 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
 import { UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
 import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
-@Controller('view-fields')
-@UseFilters(PermissionsGraphqlApiExceptionFilter)
+@Controller('rest/metadata/view-fields')
+@UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
+@UseFilters(RestApiExceptionFilter)
 export class ViewFieldController {
   constructor(private readonly viewFieldService: ViewFieldService) {}
 

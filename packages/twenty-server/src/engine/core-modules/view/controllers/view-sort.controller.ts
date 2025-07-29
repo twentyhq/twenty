@@ -11,17 +11,19 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { CreateViewSortInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-sort.input';
 import { UpdateViewSortInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-sort.input';
 import { ViewSortDTO } from 'src/engine/core-modules/view/dtos/view-sort.dto';
 import { ViewSortService } from 'src/engine/core-modules/view/services/view-sort.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
-@Controller('view-sorts')
-@UseFilters(PermissionsGraphqlApiExceptionFilter)
+@Controller('rest/metadata/view-sorts')
+@UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
+@UseFilters(RestApiExceptionFilter)
 export class ViewSortController {
   constructor(private readonly viewSortService: ViewSortService) {}
 
