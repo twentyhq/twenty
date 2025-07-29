@@ -223,10 +223,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         existingFieldMetadata.isLabelSyncedWithName;
 
       if (isLabelSyncedWithName) {
-        validateNameAndLabelAreSyncOrThrow(
-          fieldMetadataForUpdate.label ?? existingFieldMetadata.label,
-          fieldMetadataForUpdate.name ?? existingFieldMetadata.name,
-        );
+        validateNameAndLabelAreSyncOrThrow({
+          label: fieldMetadataForUpdate.label ?? existingFieldMetadata.label,
+          name: fieldMetadataForUpdate.name ?? existingFieldMetadata.name,
+        });
       }
 
       await fieldMetadataRepository.update(id, fieldMetadataForUpdate);
