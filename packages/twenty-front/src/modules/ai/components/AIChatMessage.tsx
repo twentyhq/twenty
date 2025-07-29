@@ -1,12 +1,11 @@
 import { keyframes, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
-import Markdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { AgentChatMessageRole } from '@/ai/constants/agent-chat-message-role';
+import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 
 import { AgentChatMessage } from '~/generated/graphql';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
@@ -127,7 +126,7 @@ export const AIChatMessage = ({
   const theme = useTheme();
 
   const markdownRender = (text: string) => {
-    return <Markdown remarkPlugins={[remarkGfm]}>{text}</Markdown>;
+    return <LazyMarkdownRenderer text={text} />;
   };
 
   const getAssistantMessageContent = (message: AgentChatMessage) => {
