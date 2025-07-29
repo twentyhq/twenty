@@ -9,6 +9,8 @@
 
 export { assertUnreachable } from './assertUnreachable';
 export { deepMerge } from './deepMerge';
+export type { StringPropertyKeys } from './extract-trim-and-remove-duplicated-whitespaces-from-object-string-properties';
+export { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from './extract-trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { getURLSafely } from './getURLSafely';
