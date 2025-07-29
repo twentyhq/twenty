@@ -554,12 +554,7 @@ export const useAuth = () => {
   const handleCredentialsSignUp = useCallback(
     async (email: string, password: string, captchaToken?: string) => {
       const signUpResult = await signUp({
-        variables: {
-          email,
-          password,
-          captchaToken,
-          locale: i18n.locale ?? 'en',
-        },
+        variables: { email, password, captchaToken },
       });
 
       if (isDefined(signUpResult.errors)) {
