@@ -1,14 +1,17 @@
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
 import { CREATE_STEP_NODE_WIDTH } from '@/workflow/workflow-diagram/constants/CreateStepNodeWidth';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useOpenWorkflowViewFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowViewFilterInCommandMenu';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import {
   WorkflowDiagramEdge,
   WorkflowDiagramEdgeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { useTheme } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   BaseEdge,
   EdgeLabelRenderer,
@@ -30,8 +33,19 @@ const assertFilterEdgeDataOrThrow: (
   }
 };
 
-const StyledIconButtonGroup = styled(IconButtonGroup)`
+const StyledIconButtonGroup = styled(IconButtonGroup)<{ selected?: boolean }>`
   pointer-events: all;
+
+  ${({ selected, theme }) =>
+    selected &&
+    css`
+      background-color: ${theme.adaptiveColors.blue1};
+      border: 1px solid ${theme.color.blue};
+
+      .icon-button {
+        color: ${theme.color.blue};
+      }
+    `}
 `;
 
 const StyledConfiguredFilterContainer = styled.div`
@@ -56,6 +70,13 @@ export const WorkflowDiagramFilterEdgeReadonly = ({
     targetX: CREATE_STEP_NODE_WIDTH,
     targetY,
   });
+
+  const workflowSelectedNode = useRecoilComponentValueV2(
+    workflowSelectedNodeComponentState,
+  );
+
+  const isFilterNodeSelected =
+    isNonEmptyString(data.stepId) && workflowSelectedNode === data.stepId;
 
   const { openWorkflowViewFilterInCommandMenu } =
     useOpenWorkflowViewFilterInCommandMenu();
@@ -92,6 +113,7 @@ export const WorkflowDiagramFilterEdgeReadonly = ({
                     onClick: handleFilterButtonClick,
                   },
                 ]}
+                selected={isFilterNodeSelected}
               />
             </StyledConfiguredFilterContainer>
           </WorkflowDiagramEdgeV2VisibilityContainer>
