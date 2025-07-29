@@ -82,28 +82,28 @@ const StyledGridHeader = styled.div<PositionProps>`
   padding-right: ${({ theme }) => theme.spacing(4)};
 `;
 
-type ColumnGridProps<T extends string> = {
-  columns: SpreadsheetColumns<T>;
+type ColumnGridProps = {
+  columns: SpreadsheetColumns;
   renderUserColumn: (
-    columns: SpreadsheetColumns<T>,
+    columns: SpreadsheetColumns,
     columnIndex: number,
   ) => React.ReactNode;
   renderTemplateColumn: (
-    columns: SpreadsheetColumns<T>,
+    columns: SpreadsheetColumns,
     columnIndex: number,
   ) => React.ReactNode;
   renderUnmatchedColumn: (
-    columns: SpreadsheetColumns<T>,
+    columns: SpreadsheetColumns,
     columnIndex: number,
   ) => React.ReactNode;
 };
 
-export const ColumnGrid = <T extends string>({
+export const ColumnGrid = ({
   columns,
   renderUserColumn,
   renderTemplateColumn,
   renderUnmatchedColumn,
-}: ColumnGridProps<T>) => {
+}: ColumnGridProps) => {
   return (
     <>
       <StyledGridContainer>

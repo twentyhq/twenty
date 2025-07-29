@@ -1,40 +1,29 @@
 import { useRecoilCallback } from 'recoil';
 
-import { isNavigationSectionOpenComponentState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenComponentState';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 
-export const useNavigationSection = (scopeId: string) => {
+export const useNavigationSection = (navigationSectionId: string) => {
   const closeNavigationSection = useRecoilCallback(
     ({ set }) =>
       () => {
-        set(
-          isNavigationSectionOpenComponentState({
-            scopeId,
-          }),
-          false,
-        );
+        set(isNavigationSectionOpenFamilyState(navigationSectionId), false);
       },
-    [scopeId],
+    [navigationSectionId],
   );
 
   const openNavigationSection = useRecoilCallback(
     ({ set }) =>
       () => {
-        set(
-          isNavigationSectionOpenComponentState({
-            scopeId,
-          }),
-          true,
-        );
+        set(isNavigationSectionOpenFamilyState(navigationSectionId), true);
       },
-    [scopeId],
+    [navigationSectionId],
   );
 
   const toggleNavigationSection = useRecoilCallback(
     ({ snapshot }) =>
       () => {
         const isNavigationSectionOpen = snapshot
-          .getLoadable(isNavigationSectionOpenComponentState({ scopeId }))
+          .getLoadable(isNavigationSectionOpenFamilyState(navigationSectionId))
           .getValue();
 
         if (isNavigationSectionOpen) {
@@ -43,13 +32,11 @@ export const useNavigationSection = (scopeId: string) => {
           openNavigationSection();
         }
       },
-    [closeNavigationSection, openNavigationSection, scopeId],
+    [closeNavigationSection, openNavigationSection, navigationSectionId],
   );
 
-  const isNavigationSectionOpenState = extractComponentState(
-    isNavigationSectionOpenComponentState,
-    scopeId,
-  );
+  const isNavigationSectionOpenState =
+    isNavigationSectionOpenFamilyState(navigationSectionId);
 
   return {
     isNavigationSectionOpenState,

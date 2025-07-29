@@ -26,7 +26,7 @@ export const ObjectOptionsDropdownFieldsContent = () => {
     handleColumnVisibilityChange,
     handleReorderColumns,
     visibleTableColumns,
-  } = useObjectOptionsForTable(recordIndexId);
+  } = useObjectOptionsForTable(recordIndexId, objectMetadataItem.id);
 
   const {
     visibleBoardFields,

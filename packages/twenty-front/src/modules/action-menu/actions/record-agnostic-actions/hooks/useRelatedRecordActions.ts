@@ -81,16 +81,17 @@ export const useRelatedRecordActions = ({
         objectPermissions,
         getTargetObjectWritePermission,
       }) =>
-        isDefined(selectedRecord) &&
-        !selectedRecord.isRemote &&
-        objectPermissions.canUpdateObjectRecords &&
-        getTargetObjectWritePermission(
-          targetObjectNameSingular === CoreObjectNameSingular.TaskTarget
-            ? CoreObjectNameSingular.Task
-            : targetObjectNameSingular === CoreObjectNameSingular.NoteTarget
-              ? CoreObjectNameSingular.Note
-              : targetObjectNameSingular,
-        ),
+        (isDefined(selectedRecord) &&
+          !selectedRecord.isRemote &&
+          objectPermissions.canUpdateObjectRecords &&
+          getTargetObjectWritePermission(
+            targetObjectNameSingular === CoreObjectNameSingular.TaskTarget
+              ? CoreObjectNameSingular.Task
+              : targetObjectNameSingular === CoreObjectNameSingular.NoteTarget
+                ? CoreObjectNameSingular.Note
+                : targetObjectNameSingular,
+          )) ??
+        false,
       availableOn: [
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,

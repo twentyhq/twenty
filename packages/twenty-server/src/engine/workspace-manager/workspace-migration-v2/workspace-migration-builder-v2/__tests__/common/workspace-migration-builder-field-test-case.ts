@@ -3,8 +3,8 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { getFlatFieldMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-field-metadata.mock';
-import { getFlatObjectMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-object-metadata.mock';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { WorkspaceMigrationBuilderTestCase } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/types/workspace-migration-builder-test-case.type';
 
 const basicObjectMetadataId = faker.string.uuid();
@@ -25,13 +25,21 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
     context: {
       input: () => {
         const objectMetadataId = faker.string.uuid();
-
+        const targetObjectMetadataId = faker.string.uuid();
         const createdFlatRelationFieldMetadata = getFlatFieldMetadataMock({
           uniqueIdentifier: 'field-metadata-unique-identifier-1',
           objectMetadataId,
           type: FieldMetadataType.RELATION,
           relationTargetFieldMetadataId: faker.string.uuid(),
           relationTargetObjectMetadataId: faker.string.uuid(),
+          flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
+            objectMetadataId: targetObjectMetadataId,
+            type: FieldMetadataType.RELATION,
+            uniqueIdentifier: 'field-metadata-unique-identifier-2',
+          }),
+          flatRelationTargetObjectMetadata: getFlatObjectMetadataMock({
+            uniqueIdentifier: 'object-metadata-unique-identifier-2',
+          }),
         });
         const flatObjectMetadata = getFlatObjectMetadataMock({
           uniqueIdentifier: 'object-metadata-unique-identifier-1',

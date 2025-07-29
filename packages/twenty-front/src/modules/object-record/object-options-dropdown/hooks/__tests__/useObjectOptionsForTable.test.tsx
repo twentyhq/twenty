@@ -16,7 +16,7 @@ describe('useObjectOptionsForTable', () => {
   ];
 
   const renderWithRecoil = () =>
-    renderHook(() => useObjectOptionsForTable('instance-id'), {
+    renderHook(() => useObjectOptionsForTable('instance-id', 'object-id'), {
       wrapper: ({ children }) => (
         <RecordTableComponentInstanceContext.Provider
           value={{ instanceId: 'instance-id', onColumnsChange: jest.fn() }}

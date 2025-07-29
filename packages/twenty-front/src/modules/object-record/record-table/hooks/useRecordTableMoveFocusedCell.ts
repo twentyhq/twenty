@@ -1,7 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
 import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';

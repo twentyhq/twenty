@@ -16,6 +16,7 @@ import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 
 import { AgentChatMessageEntity } from './agent-chat-message.entity';
 import { AgentChatThreadEntity } from './agent-chat-thread.entity';
@@ -53,6 +54,7 @@ import { AgentService } from './agent.service';
     WorkspacePermissionsCacheModule,
     WorkspaceCacheStorageModule,
     TokenModule,
+    DomainManagerModule,
   ],
   controllers: [AgentChatController],
   providers: [

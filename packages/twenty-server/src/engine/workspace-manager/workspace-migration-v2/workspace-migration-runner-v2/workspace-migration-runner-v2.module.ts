@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
+import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceMetadataFieldActionRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-metadata-migration-runner/workspace-metadata-field-action-runner.service';
 import { WorkspaceMetadataIndexActionRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-metadata-migration-runner/workspace-metadata-index-action-runner.service';
 import { WorkspaceMetadataMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-metadata-migration-runner/workspace-metadata-migration-runner-service';
@@ -13,7 +16,13 @@ import { WorkspaceSchemaMigrationRunnerService } from 'src/engine/workspace-mana
 import { WorkspaceSchemaObjectActionRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/workspace-schema-object-action-runner.service';
 
 @Module({
-  imports: [FeatureFlagModule, TypeORMModule],
+  imports: [
+    FeatureFlagModule,
+    TypeORMModule,
+    DataSourceModule,
+    WorkspaceMetadataVersionModule,
+    WorkspacePermissionsCacheModule,
+  ],
   providers: [
     WorkspaceMetadataObjectActionRunnerService,
     WorkspaceMetadataIndexActionRunnerService,

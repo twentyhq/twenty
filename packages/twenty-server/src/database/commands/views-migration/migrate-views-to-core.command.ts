@@ -26,6 +26,7 @@ import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/vie
 import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
+import { transformViewFilterWorkspaceValueToCoreValue } from 'src/modules/view/utils/transform-view-filter-workspace-value-to-core-value';
 
 @Command({
   name: 'migrate:views-to-core',
@@ -36,18 +37,6 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(View, 'core')
-    private readonly coreViewRepository: Repository<View>,
-    @InjectRepository(ViewField, 'core')
-    private readonly coreViewFieldRepository: Repository<ViewField>,
-    @InjectRepository(ViewFilter, 'core')
-    private readonly coreViewFilterRepository: Repository<ViewFilter>,
-    @InjectRepository(ViewSort, 'core')
-    private readonly coreViewSortRepository: Repository<ViewSort>,
-    @InjectRepository(ViewGroup, 'core')
-    private readonly coreViewGroupRepository: Repository<ViewGroup>,
-    @InjectRepository(ViewFilterGroup, 'core')
-    private readonly coreViewFilterGroupRepository: Repository<ViewFilterGroup>,
     private readonly featureFlagService: FeatureFlagService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectDataSource('core')
@@ -71,17 +60,6 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
     await queryRunner.connect();
 
     try {
-      const featureFlags =
-        await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
-
-      if (featureFlags?.IS_CORE_VIEW_SYNCING_ENABLED) {
-        this.logger.log(
-          `Workspace ${workspaceId} already has IS_CORE_VIEW_SYNCING_ENABLED feature flag, skipping migration`,
-        );
-
-        return;
-      }
-
       await queryRunner.startTransaction();
 
       try {
@@ -168,25 +146,9 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
       return;
     }
 
-    const viewRepository = queryRunner.manager.getRepository(View);
-
-    const existingCoreViews = await viewRepository.find({
-      where: { workspaceId },
-      select: ['id'],
-      withDeleted: true,
-    });
-
-    const existingViewIds = new Set(existingCoreViews.map((view) => view.id));
+    await this.deleteExistingCoreViewObjects(workspaceId, queryRunner, dryRun);
 
     for (const workspaceView of workspaceViews) {
-      if (existingViewIds.has(workspaceView.id)) {
-        this.logger.warn(
-          `View ${workspaceView.id} already exists in core schema for workspace ${workspaceId}, skipping`,
-        );
-
-        continue;
-      }
-
       await this.migrateViewEntity(workspaceView, workspaceId, queryRunner);
 
       if (workspaceView.viewFields?.length > 0) {
@@ -237,12 +199,51 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
     }
   }
 
+  private async deleteExistingCoreViewObjects(
+    workspaceId: string,
+    queryRunner: QueryRunner,
+    dryRun: boolean,
+  ): Promise<void> {
+    const viewRepository = queryRunner.manager.getRepository(View);
+    const existingViews = await viewRepository.find({
+      where: { workspaceId },
+      select: ['id'],
+      withDeleted: true,
+    });
+
+    if (existingViews.length === 0) {
+      this.logger.log(
+        `No existing core view objects found for workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
+    this.logger.log(
+      `${dryRun ? 'DRY RUN: ' : ''}Deleting ${existingViews.length} existing core view objects for workspace ${workspaceId}`,
+    );
+
+    if (dryRun) {
+      this.logger.log(
+        `DRY RUN: Would delete all existing core view objects for workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
+    await viewRepository.delete({ workspaceId });
+
+    this.logger.log(
+      `Deleted all existing core view objects for workspace ${workspaceId}`,
+    );
+  }
+
   private async migrateViewEntity(
     workspaceView: ViewWorkspaceEntity,
     workspaceId: string,
     queryRunner: QueryRunner,
   ): Promise<void> {
-    const coreView = {
+    const coreView: Partial<View> = {
       id: workspaceView.id,
       name: workspaceView.name,
       objectMetadataId: workspaceView.objectMetadataId,
@@ -264,6 +265,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
       deletedAt: workspaceView.deletedAt
         ? new Date(workspaceView.deletedAt)
         : null,
+      anyFieldFilterValue: workspaceView.anyFieldFilterValue,
     };
 
     const repository = queryRunner.manager.getRepository(View);
@@ -277,7 +279,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
     queryRunner: QueryRunner,
   ): Promise<void> {
     for (const field of workspaceViewFields) {
-      const coreViewField = {
+      const coreViewField: Partial<ViewField> = {
         id: field.id,
         fieldMetadataId: field.fieldMetadataId,
         viewId: field.viewId,
@@ -309,23 +311,12 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         continue;
       }
 
-      let parsedValue: JSON;
-
-      try {
-        parsedValue = JSON.parse(filter.value);
-      } catch {
-        throw new Error(
-          `Could not parse value to JSON for view filter ${filter.id} for workspace ${workspaceId}`,
-        );
-      }
-
-      const coreViewFilter = {
+      const coreViewFilter: Partial<ViewFilter> = {
         id: filter.id,
         fieldMetadataId: filter.fieldMetadataId,
         viewId: filter.viewId,
         operand: filter.operand,
-        value: parsedValue,
-        displayValue: filter.displayValue,
+        value: transformViewFilterWorkspaceValueToCoreValue(filter.value),
         viewFilterGroupId: filter.viewFilterGroupId,
         workspaceId,
         createdAt: new Date(filter.createdAt),
@@ -354,7 +345,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
 
       const direction = sort.direction.toUpperCase() as ViewSortDirection;
 
-      const coreViewSort = {
+      const coreViewSort: Partial<ViewSort> = {
         id: sort.id,
         fieldMetadataId: sort.fieldMetadataId,
         viewId: sort.viewId,
@@ -384,7 +375,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         continue;
       }
 
-      const coreViewGroup = {
+      const coreViewGroup: Partial<ViewGroup> = {
         id: group.id,
         fieldMetadataId: group.fieldMetadataId,
         viewId: group.viewId,
@@ -409,7 +400,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
     queryRunner: QueryRunner,
   ): Promise<void> {
     for (const filterGroup of workspaceViewFilterGroups) {
-      const coreViewFilterGroup = {
+      const coreViewFilterGroup: Partial<ViewFilterGroup> = {
         id: filterGroup.id,
         viewId: filterGroup.viewId,
         logicalOperator:

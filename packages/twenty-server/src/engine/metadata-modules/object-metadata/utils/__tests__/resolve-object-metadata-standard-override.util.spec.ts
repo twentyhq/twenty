@@ -478,4 +478,53 @@ describe('resolveObjectMetadataStandardOverride', () => {
       expect(mockI18n._).toHaveBeenCalledWith('auto.translation.id');
     });
   });
+
+  describe('Undefined locale handling', () => {
+    it('should use SOURCE_LOCALE fallback when locale is undefined for standard object', () => {
+      const objectMetadata = {
+        labelSingular: 'Standard Label',
+        labelPlural: 'Standard Labels',
+        description: 'Standard Description',
+        icon: 'default-icon',
+        isCustom: false,
+        standardOverrides: {
+          labelSingular: 'Source Override',
+        },
+      };
+
+      const result = resolveObjectMetadataStandardOverride(
+        objectMetadata,
+        'labelSingular',
+        undefined,
+      );
+
+      expect(result).toBe('Source Override');
+      expect(mockGenerateMessageId).not.toHaveBeenCalled();
+      expect(mockI18n._).not.toHaveBeenCalled();
+    });
+
+    it('should fall back to auto translation when locale is undefined and no SOURCE_LOCALE override exists', () => {
+      mockI18n._.mockReturnValue('Auto Translated Label');
+      mockGenerateMessageId.mockReturnValue('auto.translation.id');
+
+      const objectMetadata = {
+        labelSingular: 'Standard Label',
+        labelPlural: 'Standard Labels',
+        description: 'Standard Description',
+        icon: 'default-icon',
+        isCustom: false,
+        standardOverrides: undefined,
+      };
+
+      const result = resolveObjectMetadataStandardOverride(
+        objectMetadata,
+        'labelSingular',
+        undefined,
+      );
+
+      expect(result).toBe('Auto Translated Label');
+      expect(mockGenerateMessageId).toHaveBeenCalledWith('Standard Label');
+      expect(mockI18n._).toHaveBeenCalledWith('auto.translation.id');
+    });
+  });
 });

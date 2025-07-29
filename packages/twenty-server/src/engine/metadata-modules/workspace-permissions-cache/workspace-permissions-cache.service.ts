@@ -11,7 +11,7 @@ import { In, Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
@@ -184,7 +184,7 @@ export class WorkspacePermissionsCacheService {
       },
       relations: [
         'objectPermissions',
-        'settingPermissions',
+        'permissionFlags',
         ...(isFieldPermissionsEnabled ? ['fieldPermissions'] : []),
       ],
     });
@@ -317,9 +317,9 @@ export class WorkspacePermissionsCacheService {
   private hasWorkflowsPermissions(role: RoleEntity): boolean {
     const hasWorkflowsPermissionFromRole = role.canUpdateAllSettings;
     const hasWorkflowsPermissionsFromSettingPermissions = isDefined(
-      role.settingPermissions.find(
-        (settingPermission) =>
-          settingPermission.setting === SettingPermissionType.WORKFLOWS,
+      role.permissionFlags.find(
+        (permissionFlag) =>
+          permissionFlag.flag === PermissionFlagType.WORKFLOWS,
       ),
     );
 
