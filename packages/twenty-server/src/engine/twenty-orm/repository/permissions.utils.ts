@@ -79,7 +79,7 @@ export const validateOperationIsPermittedOrThrow = ({
     return;
   }
 
-  const fieldMetadataIdForColumnNameMap = isFieldPermissionsEnabled
+  const columnNameToFieldMetadataIdMap = isFieldPermissionsEnabled
     ? getColumnNameToFieldMetadataIdMap(objectMetadata)
     : {};
 
@@ -99,7 +99,7 @@ export const validateOperationIsPermittedOrThrow = ({
         validateReadFieldPermissionOrThrow({
           restrictedFields: permissionsForEntity.restrictedFields,
           selectedColumns,
-          fieldMetadataIdForColumnNameMap,
+          columnNameToFieldMetadataIdMap,
           allFieldsSelected,
         });
       }
@@ -117,7 +117,7 @@ export const validateOperationIsPermittedOrThrow = ({
         validateReadFieldPermissionOrThrow({
           restrictedFields: permissionsForEntity.restrictedFields,
           selectedColumns,
-          fieldMetadataIdForColumnNameMap,
+          columnNameToFieldMetadataIdMap,
         });
       }
 
@@ -125,7 +125,7 @@ export const validateOperationIsPermittedOrThrow = ({
         validateUpdateFieldPermissionOrThrow({
           restrictedFields: permissionsForEntity.restrictedFields,
           updatedColumns,
-          fieldMetadataIdForColumnNameMap,
+          columnNameToFieldMetadataIdMap,
         });
       }
       break;
@@ -141,7 +141,7 @@ export const validateOperationIsPermittedOrThrow = ({
         validateReadFieldPermissionOrThrow({
           restrictedFields: permissionsForEntity.restrictedFields,
           selectedColumns,
-          fieldMetadataIdForColumnNameMap,
+          columnNameToFieldMetadataIdMap,
         });
       }
       break;
@@ -158,7 +158,7 @@ export const validateOperationIsPermittedOrThrow = ({
         validateReadFieldPermissionOrThrow({
           restrictedFields: permissionsForEntity.restrictedFields,
           selectedColumns,
-          fieldMetadataIdForColumnNameMap,
+          columnNameToFieldMetadataIdMap,
         });
       }
       break;
@@ -244,12 +244,12 @@ export const validateQueryIsPermittedOrThrow = ({
 const validateReadFieldPermissionOrThrow = ({
   restrictedFields,
   selectedColumns,
-  fieldMetadataIdForColumnNameMap,
+  columnNameToFieldMetadataIdMap,
   allFieldsSelected,
 }: {
   restrictedFields: RestrictedFields;
   selectedColumns: string[];
-  fieldMetadataIdForColumnNameMap: Record<string, string>;
+  columnNameToFieldMetadataIdMap: Record<string, string>;
   allFieldsSelected?: boolean;
 }) => {
   if (isEmpty(restrictedFields)) {
@@ -264,7 +264,7 @@ const validateReadFieldPermissionOrThrow = ({
   }
 
   for (const column of selectedColumns) {
-    const fieldMetadataId = fieldMetadataIdForColumnNameMap[column];
+    const fieldMetadataId = columnNameToFieldMetadataIdMap[column];
 
     if (!fieldMetadataId) {
       throw new InternalServerError(
@@ -284,18 +284,18 @@ const validateReadFieldPermissionOrThrow = ({
 const validateUpdateFieldPermissionOrThrow = ({
   restrictedFields,
   updatedColumns,
-  fieldMetadataIdForColumnNameMap,
+  columnNameToFieldMetadataIdMap,
 }: {
   restrictedFields: RestrictedFields;
   updatedColumns: string[];
-  fieldMetadataIdForColumnNameMap: Record<string, string>;
+  columnNameToFieldMetadataIdMap: Record<string, string>;
 }) => {
   if (isEmpty(restrictedFields)) {
     return;
   }
 
   for (const column of updatedColumns) {
-    const fieldMetadataId = fieldMetadataIdForColumnNameMap[column];
+    const fieldMetadataId = columnNameToFieldMetadataIdMap[column];
 
     if (!fieldMetadataId) {
       throw new InternalServerError(
