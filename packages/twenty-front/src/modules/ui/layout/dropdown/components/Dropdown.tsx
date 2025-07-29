@@ -59,6 +59,7 @@ export type DropdownProps = {
   onOpen?: () => void;
   excludedClickOutsideIds?: string[];
   isDropdownInModal?: boolean;
+  disableClickForClickableComponent?: boolean;
 };
 
 export const Dropdown = ({
@@ -76,6 +77,7 @@ export const Dropdown = ({
   clickableComponentWidth = 'auto',
   excludedClickOutsideIds,
   isDropdownInModal = false,
+  disableClickForClickableComponent = false,
 }: DropdownProps) => {
   const isDropdownOpen = useRecoilComponentValueV2(
     isDropdownOpenComponentState,
@@ -151,6 +153,7 @@ export const Dropdown = ({
 
   const handleClickableComponentClick = useRecoilCallback(
     () => async (event: MouseEvent) => {
+      if (disableClickForClickableComponent) return;
       event.stopPropagation();
       event.preventDefault();
 
@@ -159,7 +162,12 @@ export const Dropdown = ({
         globalHotkeysConfig,
       });
     },
-    [globalHotkeysConfig, toggleDropdown, dropdownId],
+    [
+      globalHotkeysConfig,
+      toggleDropdown,
+      dropdownId,
+      disableClickForClickableComponent,
+    ],
   );
 
   return (
