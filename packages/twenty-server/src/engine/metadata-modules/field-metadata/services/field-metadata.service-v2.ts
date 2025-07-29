@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { AggregateError } from 'src/engine/core-modules/error/aggregate-error';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -119,7 +119,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         from: existingFlatObjectMetadatas,
         to: flatObjectMetadatasWithNewFields,
       },
-      inferDeletionFromMissingObjectOrField: false,
+      inferDeletionFromMissingObjectFieldIndex: false,
       workspaceId,
     });
 

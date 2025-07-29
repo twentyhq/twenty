@@ -19,11 +19,11 @@ export class WorkspaceMigrationBuilderV2Service {
   build({
     objectMetadataFromToInputs,
     workspaceId,
-    inferDeletionFromMissingObjectOrField = true,
+    inferDeletionFromMissingObjectFieldIndex = true,
   }: {
     objectMetadataFromToInputs: FromTo<FlatObjectMetadata[]>;
     workspaceId: string;
-    inferDeletionFromMissingObjectOrField?: boolean;
+    inferDeletionFromMissingObjectFieldIndex?: boolean;
   }): WorkspaceMigrationV2 {
     const {
       created: createdObjectMetadata,
@@ -46,7 +46,7 @@ export class WorkspaceMigrationBuilderV2Service {
       );
 
     const deletedObjectWorkspaceMigrationDeleteFieldActions =
-      inferDeletionFromMissingObjectOrField
+      inferDeletionFromMissingObjectFieldIndex
         ? deletedObjectMetadata.flatMap((flatObjectMetadata) =>
             flatObjectMetadata.flatFieldMetadatas.map((flatFieldMetadata) =>
               getWorkspaceMigrationV2FieldDeleteAction({
@@ -64,17 +64,18 @@ export class WorkspaceMigrationBuilderV2Service {
 
     const fieldWorkspaceMigrationActions =
       buildWorkspaceMigrationV2FieldActions({
-        inferDeletionFromMissingObjectOrField,
+        inferDeletionFromMissingObjectFieldIndex,
         objectMetadataDeletedCreatedUpdatedFields,
       });
 
-    const updatedObjectMetadataIndexDeletedCreatedUpdatedMatrix =
+    const objectMetadataDeletedCreatedUpdatedIndex =
       computeUpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix(
         updatedObjectMetadata,
       );
-    const indexWorkspaceMigrationActions = buildWorkspaceMigrationIndexActions(
-      updatedObjectMetadataIndexDeletedCreatedUpdatedMatrix,
-    );
+    const indexWorkspaceMigrationActions = buildWorkspaceMigrationIndexActions({
+      objectMetadataDeletedCreatedUpdatedIndex,
+      inferDeletionFromMissingObjectFieldIndex,
+    });
 
     return {
       workspaceId,

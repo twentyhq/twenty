@@ -11,11 +11,11 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-field-actions';
 
 type BuildWorkspaceMigrationV2FieldActionsArgs = {
-  inferDeletionFromMissingObjectOrField: boolean;
+  inferDeletionFromMissingObjectFieldIndex: boolean;
   objectMetadataDeletedCreatedUpdatedFields: UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix[];
 };
 export const buildWorkspaceMigrationV2FieldActions = ({
-  inferDeletionFromMissingObjectOrField,
+  inferDeletionFromMissingObjectFieldIndex,
   objectMetadataDeletedCreatedUpdatedFields,
 }: BuildWorkspaceMigrationV2FieldActionsArgs): WorkspaceMigrationFieldActionV2[] => {
   let allUpdatedObjectMetadataFieldActions: WorkspaceMigrationFieldActionV2[] =
@@ -58,7 +58,7 @@ export const buildWorkspaceMigrationV2FieldActions = ({
       }),
     );
 
-    const deleteFieldAction = inferDeletionFromMissingObjectOrField
+    const deleteFieldAction = inferDeletionFromMissingObjectFieldIndex
       ? deletedFieldMetadata.map((flatFieldMetadata) =>
           getWorkspaceMigrationV2FieldDeleteAction({
             flatFieldMetadata,

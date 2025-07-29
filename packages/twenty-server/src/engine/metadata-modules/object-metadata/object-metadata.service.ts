@@ -149,7 +149,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             from: existingFlatObjectMetadatas,
             to: [createdFlatObjectMetadata],
           },
-          inferDeletionFromMissingObjectOrField: false,
+          inferDeletionFromMissingObjectFieldIndex: false,
           workspaceId: objectMetadataInput.workspaceId,
         });
 
