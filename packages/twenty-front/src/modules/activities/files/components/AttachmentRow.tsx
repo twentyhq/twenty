@@ -199,7 +199,7 @@ export const AttachmentRow = ({
           </StyledCalendarIconContainer>
           {formatToHumanReadableDate(attachment.createdAt)}
           <AttachmentDropdown
-            scopeKey={attachment.id}
+            attachmentId={attachment.id}
             onDelete={handleDelete}
             onDownload={handleDownload}
             onRename={handleRename}

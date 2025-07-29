@@ -4,7 +4,7 @@ import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserve
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppRootErrorFallback } from '@/error-handler/components/AppRootErrorFallback';
 import { ExceptionHandlerProvider } from '@/error-handler/components/ExceptionHandlerProvider';
-import { SnackBarComponentInstanceContextProvider } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarComponentInstanceContextProvider';
+import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
@@ -25,7 +25,9 @@ export const App = () => {
         <I18nProvider i18n={i18n}>
           <RecoilDebugObserverEffect />
           <ApolloDevLogEffect />
-          <SnackBarComponentInstanceContextProvider snackBarComponentInstanceId="snack-bar-manager">
+          <SnackBarComponentInstanceContext.Provider
+            value={{ instanceId: 'snack-bar-manager' }}
+          >
             <IconsProvider>
               <ExceptionHandlerProvider>
                 <HelmetProvider>
@@ -37,7 +39,7 @@ export const App = () => {
                 </HelmetProvider>
               </ExceptionHandlerProvider>
             </IconsProvider>
-          </SnackBarComponentInstanceContextProvider>
+          </SnackBarComponentInstanceContext.Provider>
         </I18nProvider>
       </AppErrorBoundary>
     </RecoilRoot>
