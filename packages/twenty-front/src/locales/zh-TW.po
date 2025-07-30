@@ -1348,14 +1348,8 @@ msgstr "繼續使用 Microsoft"
 msgid "Copied to clipboard"
 msgstr "已複製到剪貼板"
 
-#. js-lingui-id: u+VWhB
-#: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
-#: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigCopyableText.tsx
-msgid "Copied to clipboard!"
-msgstr "已複製到剪貼板！"
-
 #. js-lingui-id: he3ygx
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -2116,6 +2110,11 @@ msgstr "電子郵件地址"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
 msgstr "電子郵件不能為空"
+
+#. js-lingui-id: UZQ5eW
+#: src/modules/object-record/record-field/meta-types/input/components/EmailsFieldInput.tsx
+msgid "Email copied to clipboard"
+msgstr ""
 
 #. js-lingui-id: lfQsvW
 #: src/pages/onboarding/ChooseYourPlan.tsx
