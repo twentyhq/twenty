@@ -104,12 +104,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   override async createOne(
     fieldMetadataInput: CreateFieldInput,
   ): Promise<FieldMetadataEntity> {
-    const isV2Enabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-      fieldMetadataInput.workspaceId,
-    );
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        fieldMetadataInput.workspaceId,
+      );
 
-    if (isV2Enabled) {
+    if (isWorkspaceMigrationV2Enabled) {
       return this.fieldMetadataServiceV2.createOne(fieldMetadataInput);
     }
 
@@ -129,15 +130,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     id: string,
     fieldMetadataInput: UpdateFieldInput,
   ): Promise<FieldMetadataEntity> {
-    const isV2Enabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-      fieldMetadataInput.workspaceId,
-    );
-
-    if (isV2Enabled) {
-      return this.fieldMetadataServiceV2.updateOne(id, fieldMetadataInput);
-    }
-
     const { objectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
         { workspaceId: fieldMetadataInput.workspaceId },
@@ -586,13 +578,21 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     if (!fieldMetadataInputs.length) {
       return [];
     }
+    const workspaceId = fieldMetadataInputs[0].workspaceId;
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspaceId,
+      );
+
+    if (isWorkspaceMigrationV2Enabled) {
+      return this.fieldMetadataServiceV2.createMany(fieldMetadataInputs);
+    }
 
     const { objectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
         { workspaceId: fieldMetadataInputs[0].workspaceId },
       );
-
-    const workspaceId = fieldMetadataInputs[0].workspaceId;
 
     const isMorphRelationEnabled =
       await this.featureFlagService.isFeatureEnabled(
