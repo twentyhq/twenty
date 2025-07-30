@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 import { stepBarInternalState } from '@/ui/navigation/step-bar/states/stepBarInternalState';
@@ -13,7 +12,6 @@ const meta: Meta<typeof SpreadsheetImportStepperContainer> = {
   title: 'Modules/SpreadsheetImport/Steps',
   component: SpreadsheetImportStepperContainer,
   decorators: [
-    ComponentWithRecoilScopeDecorator,
     SnackBarDecorator,
     I18nFrontDecorator,
     ObjectMetadataItemsDecorator,

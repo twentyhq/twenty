@@ -16,20 +16,20 @@ const StyledIconChevronDown = styled(IconChevronDown)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-export type SubMatchingSelectDropdownButtonProps<T> = {
-  option: SpreadsheetMatchedOptions<T> | Partial<SpreadsheetMatchedOptions<T>>;
+export type SubMatchingSelectDropdownButtonProps = {
+  option: SpreadsheetMatchedOptions | Partial<SpreadsheetMatchedOptions>;
   column:
-    | SpreadsheetMatchedSelectColumn<T>
-    | SpreadsheetMatchedSelectOptionsColumn<T>;
+    | SpreadsheetMatchedSelectColumn
+    | SpreadsheetMatchedSelectOptionsColumn;
   placeholder: string;
 };
 
-export const SubMatchingSelectDropdownButton = <T extends string>({
+export const SubMatchingSelectDropdownButton = ({
   option,
   column,
   placeholder,
-}: SubMatchingSelectDropdownButtonProps<T>) => {
-  const { fields } = useSpreadsheetImportInternal<T>();
+}: SubMatchingSelectDropdownButtonProps) => {
+  const { spreadsheetImportFields: fields } = useSpreadsheetImportInternal();
   const options = getFieldOptions(fields, column.value) as SelectOption[];
   const value = options.find((opt) => opt.value === option.value);
 

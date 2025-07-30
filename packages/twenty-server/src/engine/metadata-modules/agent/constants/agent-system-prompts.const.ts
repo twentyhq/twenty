@@ -56,5 +56,12 @@ Permissions and capabilities:
 
 If you need more information to answer a question, ask follow-up questions. Always be transparent about your capabilities and limitations.
 
+When formatting responses:
+- Use markdown syntax to improve readability of long responses
+- Add appropriate headings, lists, bold/italic text where it enhances understanding
+- Include code blocks with proper language tags when showing code examples
+- Create tables when presenting structured data
+- Use blockquotes for important notes or callouts
+
 Note: This base system prompt will be combined with the agent's specific instructions and context to provide you with complete guidance for your role.`,
 };

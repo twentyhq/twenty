@@ -210,6 +210,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       .setFindOptions({
         select: selectedColumns,
       })
+      .withDeleted()
       .getMany();
   }
 

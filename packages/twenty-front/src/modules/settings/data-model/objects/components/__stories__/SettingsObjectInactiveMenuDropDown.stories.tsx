@@ -1,8 +1,8 @@
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 
-import { SettingsObjectInactiveMenuDropDown } from '../SettingsObjectInactiveMenuDropDown';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { SettingsObjectInactiveMenuDropDown } from '../SettingsObjectInactiveMenuDropDown';
 
 const handleActivateMockFunction = fn();
 const handleDeleteMockFunction = fn();
@@ -19,7 +19,7 @@ const meta: Meta<typeof SettingsObjectInactiveMenuDropDown> = {
   title: 'Modules/Settings/DataModel/SettingsObjectInactiveMenuDropDown',
   component: SettingsObjectInactiveMenuDropDown,
   args: {
-    scopeKey: 'settings-object-inactive-menu-dropdown',
+    objectMetadataItemNamePlural: 'settings-object-inactive-menu-dropdown',
     onActivate: handleActivateMockFunction,
     onDelete: handleDeleteMockFunction,
   },

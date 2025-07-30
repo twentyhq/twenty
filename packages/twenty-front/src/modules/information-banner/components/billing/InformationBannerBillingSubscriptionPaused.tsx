@@ -1,6 +1,6 @@
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
-import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { SettingsPath } from '@/types/SettingsPath';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,7 +21,7 @@ export const InformationBannerBillingSubscriptionPaused = () => {
 
   const {
     [PermissionFlagType.WORKSPACE]: hasPermissionToUpdateBillingDetails,
-  } = useSettingsPermissionMap();
+  } = usePermissionFlagMap();
 
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {

@@ -4,7 +4,7 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
-import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
@@ -63,7 +63,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
     false;
   const labPublicFeatureFlags = useRecoilValue(labPublicFeatureFlagsState);
 
-  const permissionMap = useSettingsPermissionMap();
+  const permissionMap = usePermissionFlagMap();
   return [
     {
       label: t`User`,
@@ -151,20 +151,20 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
     },
     {
       label: t`Developers`,
-      isAdvanced: true,
+      isAdvanced: false,
       items: [
         {
           label: t`APIs`,
           path: SettingsPath.APIs,
           Icon: IconApi,
-          isAdvanced: true,
+          isAdvanced: false,
           isHidden: !permissionMap[PermissionFlagType.API_KEYS_AND_WEBHOOKS],
         },
         {
           label: t`Webhooks`,
           path: SettingsPath.Webhooks,
           Icon: IconWebhook,
-          isAdvanced: true,
+          isAdvanced: false,
           isHidden: !permissionMap[PermissionFlagType.API_KEYS_AND_WEBHOOKS],
         },
         {

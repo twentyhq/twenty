@@ -13,8 +13,8 @@ import {
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
-import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
-import { SnackBarComponentInstanceContextProvider } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarComponentInstanceContextProvider';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 
 const mockCurrentUser = {
   id: 'fake-user-id',
@@ -45,21 +45,23 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider>
     <RecoilRoot initializeState={initializeState}>
       <MemoryRouter>
-        <SnackBarComponentInstanceContextProvider snackBarComponentInstanceId="test-scope-id">
+        <SnackBarComponentInstanceContext.Provider
+          value={{ instanceId: 'test-scope-id' }}
+        >
           {children}
-        </SnackBarComponentInstanceContextProvider>
+        </SnackBarComponentInstanceContext.Provider>
       </MemoryRouter>
     </RecoilRoot>
   </MockedProvider>
 );
 
-jest.mock('@/settings/roles/hooks/useSettingsPermissionMap', () => ({
-  useSettingsPermissionMap: jest.fn(),
+jest.mock('@/settings/roles/hooks/usePermissionFlagMap', () => ({
+  usePermissionFlagMap: jest.fn(),
 }));
 
 describe('useSettingsNavigationItems', () => {
   it('should hide workspace settings when no permissions', () => {
-    (useSettingsPermissionMap as jest.Mock).mockImplementation(() => ({
+    (usePermissionFlagMap as jest.Mock).mockImplementation(() => ({
       [PermissionFlagType.WORKSPACE]: false,
       [PermissionFlagType.WORKSPACE_MEMBERS]: false,
       [PermissionFlagType.DATA_MODEL]: false,
@@ -80,7 +82,7 @@ describe('useSettingsNavigationItems', () => {
   });
 
   it('should show workspace settings when has permissions', () => {
-    (useSettingsPermissionMap as jest.Mock).mockImplementation(() => ({
+    (usePermissionFlagMap as jest.Mock).mockImplementation(() => ({
       [PermissionFlagType.WORKSPACE]: true,
       [PermissionFlagType.WORKSPACE_MEMBERS]: true,
       [PermissionFlagType.DATA_MODEL]: true,

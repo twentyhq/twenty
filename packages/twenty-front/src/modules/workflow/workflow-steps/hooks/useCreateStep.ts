@@ -13,7 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const useCreateStep = ({
   workflow,
 }: {
-  workflow: WorkflowWithCurrentVersion;
+  workflow: WorkflowWithCurrentVersion | undefined;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { createWorkflowVersionStep } = useCreateWorkflowVersionStep();
@@ -25,6 +25,12 @@ export const useCreateStep = ({
   );
 
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
+
+  if (!isDefined(workflow)) {
+    return {
+      createStep: async () => undefined,
+    };
+  }
 
   const createStep = async ({
     newStepType,

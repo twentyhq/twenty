@@ -10,9 +10,7 @@ import { useChildStepFiltersAndChildStepFilterGroups } from '@/workflow/workflow
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { rootLevelStepFilterGroupComponentSelector } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/rootLevelStepFilterGroupComponentSelector';
 import { isStepFilterGroupChildAStepFilterGroup } from '@/workflow/workflow-steps/workflow-actions/filter-action/utils/isStepFilterGroupChildAStepFilterGroup';
-import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
@@ -27,10 +25,6 @@ const StyledChildContainer = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(6)};
   width: 100%;
-`;
-
-const StyledDangerContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.danger};
 `;
 
 type WorkflowEditActionFilterBodyProps = {
@@ -49,8 +43,6 @@ export const WorkflowEditActionFilterBody = ({
   action,
   actionOptions,
 }: WorkflowEditActionFilterBodyProps) => {
-  const { t } = useLingui();
-
   const rootStepFilterGroup = useRecoilComponentValueV2(
     rootLevelStepFilterGroupComponentSelector,
   );
@@ -76,22 +68,6 @@ export const WorkflowEditActionFilterBody = ({
       },
     });
   };
-
-  const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep(
-    {},
-  );
-
-  const noAvailableVariables = availableVariablesInWorkflowStep.length === 0;
-
-  if (noAvailableVariables) {
-    return (
-      <WorkflowStepBody>
-        <StyledDangerContainer>
-          {t`No Available Step Outputs`}
-        </StyledDangerContainer>
-      </WorkflowStepBody>
-    );
-  }
 
   return (
     <WorkflowStepFilterContext.Provider
