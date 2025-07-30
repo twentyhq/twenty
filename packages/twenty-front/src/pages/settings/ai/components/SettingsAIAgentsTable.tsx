@@ -14,8 +14,8 @@ import { Agent } from '~/generated-metadata/graphql';
 import { SETTINGS_AI_AGENT_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsAIAgentTableMetadata';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import {
-    SettingsAIAgentTableRow,
-    StyledAIAgentTableRow,
+  SettingsAIAgentTableRow,
+  StyledAIAgentTableRow,
 } from './SettingsAIAgentTableRow';
 
 const StyledSearchInput = styled(TextInput)`
@@ -36,10 +36,7 @@ export const SettingsAIAgentsTable = ({ agents }: { agents: Agent[] }) => {
   const theme = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
 
-  const sortedAgents = useSortedArray(
-    agents,
-    SETTINGS_AI_AGENT_TABLE_METADATA,
-  );
+  const sortedAgents = useSortedArray(agents, SETTINGS_AI_AGENT_TABLE_METADATA);
 
   const filteredAgents = useMemo(
     () =>
@@ -75,7 +72,7 @@ export const SettingsAIAgentsTable = ({ agents }: { agents: Agent[] }) => {
               />
             ),
           )}
-          <TableHeader></TableHeader>
+          <TableHeader />
         </StyledTableHeaderRow>
         {filteredAgents.map((agent) => (
           <SettingsAIAgentTableRow
