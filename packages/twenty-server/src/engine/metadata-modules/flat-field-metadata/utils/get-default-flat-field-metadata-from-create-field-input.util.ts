@@ -1,4 +1,4 @@
-import { sanitizeObjectStringFields } from 'twenty-shared/utils';
+import { extractAndSanitizeObjectStringFields } from 'twenty-shared/utils';
 
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
@@ -12,7 +12,7 @@ export const getDefaultFlatFieldMetadata = ({
   createFieldInput,
   fieldMetadataId,
 }: GetDefaultFlatFieldMetadataArgs) => {
-  const { defaultValue, settings } = sanitizeObjectStringFields(
+  const { defaultValue, settings } = extractAndSanitizeObjectStringFields(
     createFieldInput,
     ['defaultValue', 'settings'],
   );
