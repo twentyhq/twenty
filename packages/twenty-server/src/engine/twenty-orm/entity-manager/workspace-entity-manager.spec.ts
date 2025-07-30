@@ -18,7 +18,7 @@ jest.mock('src/engine/twenty-orm/repository/permissions.utils', () => ({
 jest.mock(
   'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util',
   () => ({
-    getObjectMetadataFromEntityTarget: jest.fn(),
+    getObjectMetadataFromEntityTarget: jest.fn().mockReturnValue({}),
   }),
 );
 
