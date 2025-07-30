@@ -2,7 +2,6 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
@@ -35,11 +34,6 @@ export const CommandMenuMergeRecordPage = () => {
     throw new Error('Command menu page instance id is not defined');
   }
 
-  const { records: selectedRecords, loading } =
-    useFindManyRecordsSelectedInContextStore({
-      limit: 10,
-    });
-
   return (
     <RecordFilterGroupsComponentInstanceContext.Provider
       value={{ instanceId: `record-merge-${commandMenuPageInstanceId}` }}
@@ -59,9 +53,7 @@ export const CommandMenuMergeRecordPage = () => {
               <StyledRightDrawerRecord isMobile={isMobile}>
                 <MergeRecordsContainer
                   objectNameSingular={objectMetadataItem.nameSingular}
-                  selectedRecords={selectedRecords}
                   componentInstanceId={commandMenuPageInstanceId}
-                  loading={loading}
                 />
               </StyledRightDrawerRecord>
             </ActionMenuComponentInstanceContext.Provider>

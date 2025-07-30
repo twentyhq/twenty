@@ -14,7 +14,6 @@ import {
 
 export const useMergeRecordsContainerTabs = (
   selectedRecords: ObjectRecord[],
-  loading: boolean,
 ): { tabs: SingleTabProps[] } => {
   const { t } = useLingui();
 
@@ -23,7 +22,6 @@ export const useMergeRecordsContainerTabs = (
       id: MergeRecordsTabId.MERGE_PREVIEW,
       title: t`Merge preview`,
       Icon: IconArrowMerge,
-      hide: loading,
     };
 
     const recordTabs: SingleTabProps[] = selectedRecords.map(
@@ -31,7 +29,6 @@ export const useMergeRecordsContainerTabs = (
         id: record.id,
         title: getPositionWordLabel(index),
         Icon: getPositionNumberIcon(index),
-        hide: loading,
       }),
     );
 
@@ -39,11 +36,10 @@ export const useMergeRecordsContainerTabs = (
       id: MergeRecordsTabId.SETTINGS,
       title: t`Settings`,
       Icon: IconSettings,
-      hide: loading,
     };
 
     return [mergePreviewTab, ...recordTabs, settingsTab];
-  }, [t, loading, selectedRecords]);
+  }, [t, selectedRecords]);
 
   return { tabs };
 };

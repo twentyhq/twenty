@@ -1,4 +1,5 @@
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
+import { useMergeRecordsActions } from '@/object-record/record-merge/hooks/useMergeRecordsActions';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
@@ -22,24 +23,25 @@ const StyledFooterActions = styled.div`
 `;
 
 type MergeRecordsFooterProps = {
-  onMerge: () => void;
-  onOptionsClick?: () => void;
-  isMerging: boolean;
+  objectNameSingular: string;
 };
 
 export const MergeRecordsFooter = ({
-  onMerge,
-  isMerging,
+  objectNameSingular,
 }: MergeRecordsFooterProps) => {
+  const { handleMergeRecords, isMerging } = useMergeRecordsActions({
+    objectNameSingular,
+  });
+
   useHotkeysOnFocusedElement({
     keys: [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
     callback: () => {
       if (!isMerging) {
-        onMerge?.();
+        handleMergeRecords();
       }
     },
     focusId: SIDE_PANEL_FOCUS_ID,
-    dependencies: [onMerge, isMerging],
+    dependencies: [handleMergeRecords, isMerging],
   });
 
   return (
@@ -61,7 +63,7 @@ export const MergeRecordsFooter = ({
           size="medium"
           Icon={IconArrowMerge}
           hotkeys={isMerging ? undefined : ['⌘', '⏎']}
-          onClick={onMerge}
+          onClick={handleMergeRecords}
           disabled={isMerging}
         />
       </StyledFooterActions>

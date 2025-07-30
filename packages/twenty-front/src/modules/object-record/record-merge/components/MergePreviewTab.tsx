@@ -1,39 +1,29 @@
-import styled from '@emotion/styled';
-
-import { useMergeRecordRelationships } from '@/object-record/record-merge/hooks/useMergeRecordRelationships';
+import { useMergePreview } from '@/object-record/record-merge/hooks/useMergePreview';
 import { CardComponents } from '@/object-record/record-show/components/CardComponents';
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/layout';
 
 const StyledLoadingContainer = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
+  height: 100px;
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(8)};
 `;
 
 type MergePreviewTabProps = {
   objectNameSingular: string;
-  mergedPreviewRecord?: ObjectRecord | null;
-  onPreviewChange?: boolean;
-  selectedRecords: ObjectRecord[];
 };
 
 export const MergePreviewTab = ({
   objectNameSingular,
-  mergedPreviewRecord,
-  onPreviewChange = false,
-  selectedRecords,
 }: MergePreviewTabProps) => {
-  const { isLoading: isLoadingRelationships } = useMergeRecordRelationships({
+  const { mergePreviewRecord, isGeneratingPreview } = useMergePreview({
     objectNameSingular,
-    previewRecordId: mergedPreviewRecord?.id || '',
-    selectedRecords: selectedRecords,
   });
 
-  if (onPreviewChange || isLoadingRelationships) {
+  if (isGeneratingPreview) {
     return (
       <StyledLoadingContainer>
         Generating merge preview...
@@ -41,7 +31,7 @@ export const MergePreviewTab = ({
     );
   }
 
-  if (!mergedPreviewRecord) {
+  if (!isDefined(mergePreviewRecord)) {
     return null;
   }
 
@@ -49,14 +39,14 @@ export const MergePreviewTab = ({
     <Section>
       <SummaryCard
         objectNameSingular={objectNameSingular}
-        objectRecordId={mergedPreviewRecord.id}
+        objectRecordId={mergePreviewRecord.id}
         isInRightDrawer={true}
       />
 
       <CardComponents.FieldCard
         targetableObject={{
           targetObjectNameSingular: objectNameSingular,
-          id: mergedPreviewRecord.id,
+          id: mergePreviewRecord.id,
         }}
         isInRightDrawer={true}
       />

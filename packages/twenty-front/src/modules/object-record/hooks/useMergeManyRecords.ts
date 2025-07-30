@@ -10,7 +10,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getMergeManyRecordsMutationResponseField } from '@/object-record/utils/getMergeManyRecordsMutationResponseField';
 
 export type MergeManySettings = {
-  priorityRecordIndex: number;
+  conflictPriorityIndex: number;
 };
 
 export type UseMergeManyRecordsProps = {
@@ -66,7 +66,7 @@ export const useMergeManyRecords = <
           mutation: mergeManyRecordsMutation,
           variables: {
             ids: recordIds,
-            conflictPriorityIndex: mergeSettings.priorityRecordIndex,
+            conflictPriorityIndex: mergeSettings.conflictPriorityIndex,
             dryRun: preview,
           },
           // Prevent cache updates during dry run to avoid overwriting original record data

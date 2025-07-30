@@ -1,28 +1,20 @@
-import { MergeManySettings } from '@/object-record/hooks/useMergeManyRecords';
+import { useMergeRecordsSettings } from '@/object-record/record-merge/hooks/useMergeRecordsSettings';
 import {
   getPositionNumberIcon,
   getPositionWordLabel,
 } from '@/object-record/record-merge/utils/recordMergeUtils';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Select } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
 import { Section } from 'twenty-ui/layout';
-
-type MergeSettingsTabProps = {
-  selectedRecords: ObjectRecord[];
-  mergeSettings: MergeManySettings;
-  onMergeSettingsChange: (settings: MergeManySettings) => void;
-};
 
 const StyledSection = styled(Section)`
   margin: ${({ theme }) => theme.spacing(4)};
 `;
 
-export const MergeSettingsTab = ({
-  selectedRecords,
-  mergeSettings,
-  onMergeSettingsChange,
-}: MergeSettingsTabProps) => {
+export const MergeSettingsTab = () => {
+  const { mergeSettings, updatePriorityRecordIndex, selectedRecords } =
+    useMergeRecordsSettings();
+
   const priorityOptions = selectedRecords.map((_, index) => ({
     value: index,
     label: `${getPositionWordLabel(index)} record holds priority`,
@@ -31,10 +23,7 @@ export const MergeSettingsTab = ({
   }));
 
   const handleSelectionChange = (index: number) => {
-    onMergeSettingsChange({
-      ...mergeSettings,
-      priorityRecordIndex: index,
-    });
+    updatePriorityRecordIndex(index);
   };
 
   return (
@@ -42,7 +31,7 @@ export const MergeSettingsTab = ({
       <Select
         dropdownId="merge-settings-priority-select"
         options={priorityOptions}
-        value={mergeSettings.priorityRecordIndex}
+        value={mergeSettings.conflictPriorityIndex}
         onChange={handleSelectionChange}
         label="Fields conflicts"
       />

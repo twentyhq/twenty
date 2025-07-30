@@ -1,11 +1,4 @@
-export type RecordFieldValue =
-  | string
-  | number
-  | boolean
-  | null
-  | Record<string, unknown>;
-
-export const hasRecordFieldValue = (value: RecordFieldValue): boolean => {
+export const hasRecordFieldValue = (value: unknown): boolean => {
   if (value === null || value === undefined) {
     return false;
   }
@@ -29,9 +22,7 @@ export const hasRecordFieldValue = (value: RecordFieldValue): boolean => {
   if (typeof value === 'object') {
     const objectValue = value as Record<string, unknown>;
 
-    return Object.values(objectValue).some((val) =>
-      hasRecordFieldValue(val as RecordFieldValue),
-    );
+    return Object.values(objectValue).some((val) => hasRecordFieldValue(val));
   }
 
   return true;

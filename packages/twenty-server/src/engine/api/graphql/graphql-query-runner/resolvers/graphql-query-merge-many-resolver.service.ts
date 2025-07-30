@@ -25,10 +25,7 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
-import {
-  hasRecordFieldValue,
-  RecordFieldValue,
-} from 'src/engine/api/graphql/graphql-query-runner/utils/has-value.util';
+import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -83,9 +80,15 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       priorityRecord.id,
     );
 
-    await executionArgs.repository.softDelete({
-      id: In(idsToDelete),
-    });
+    const queryBuilder = executionArgs.repository.createQueryBuilder(
+      objectMetadataItemWithFieldMaps.nameSingular,
+    );
+
+    await queryBuilder
+      .softDelete()
+      .whereInIds(idsToDelete)
+      .returning('*')
+      .execute();
 
     const updatedRecord = await this.updatePriorityRecord(
       executionArgs,
@@ -170,8 +173,7 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     });
 
     allFieldNames.forEach((fieldName) => {
-      const recordsWithValues: { value: RecordFieldValue; recordId: string }[] =
-        [];
+      const recordsWithValues: { value: unknown; recordId: string }[] = [];
 
       recordsToMerge.forEach((record) => {
         const fieldValue = record[fieldName];
@@ -403,26 +405,32 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     assertMutationNotOnRemoteObject(options.objectMetadataItemWithFieldMaps);
 
     if (!isDefined(options.objectMetadataItemWithFieldMaps.duplicateCriteria)) {
-      throw new Error(
+      throw new GraphqlQueryRunnerException(
         `Merge is only available for objects with duplicate criteria. Object '${options.objectMetadataItemWithFieldMaps.nameSingular}' does not have duplicate criteria defined.`,
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
       );
     }
 
     const { ids, conflictPriorityIndex } = args;
 
     if (!ids || ids.length < 2) {
-      throw new Error('At least 2 record IDs are required for merge');
+      throw new GraphqlQueryRunnerException(
+        'At least 2 record IDs are required for merge',
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      );
     }
 
     if (ids.length > MUTATION_MAX_MERGE_RECORDS) {
-      throw new Error(
+      throw new GraphqlQueryRunnerException(
         `Maximum ${MUTATION_MAX_MERGE_RECORDS} records can be merged at once`,
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
       );
     }
 
     if (conflictPriorityIndex < 0 || conflictPriorityIndex >= ids.length) {
-      throw new Error(
+      throw new GraphqlQueryRunnerException(
         `Invalid conflict priority '${conflictPriorityIndex}'. Valid options for ${ids.length} records: 0-${ids.length - 1}`,
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
       );
     }
   }
