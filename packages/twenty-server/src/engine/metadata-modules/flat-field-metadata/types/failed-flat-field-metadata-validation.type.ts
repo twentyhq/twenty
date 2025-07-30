@@ -2,10 +2,14 @@ import { FieldMetadataException } from 'src/engine/metadata-modules/field-metada
 import { ObjectMetadataException } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 
+export type FailedFlatFieldMetadataValidationExceptions =
+  | FieldMetadataException
+  | ObjectMetadataException
+  | InvalidMetadataException;
+
 export type FailedFlatFieldMetadataValidation = {
   status: 'fail';
-  error:
-    | FieldMetadataException
-    | ObjectMetadataException
-    | InvalidMetadataException;
+  errors:
+    | Array<FailedFlatFieldMetadataValidationExceptions>
+    | FailedFlatFieldMetadataValidationExceptions;
 };

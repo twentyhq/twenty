@@ -72,8 +72,8 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
       ).filter(isDefined);
 
       if (createdFlatFieldMetadataValidationResult.length > 0) {
-        const errors = createdFlatFieldMetadataValidationResult.map(
-          (validationResult) => validationResult.error,
+        const errors = createdFlatFieldMetadataValidationResult.flatMap(
+          (validationResult) => validationResult.errors,
         );
 
         throw new AggregateError(
