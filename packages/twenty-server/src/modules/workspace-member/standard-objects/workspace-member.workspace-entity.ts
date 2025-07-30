@@ -10,6 +10,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
+import { NumberDataType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -149,6 +150,9 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Start of the week`,
     defaultValue: 0,
     description: msg`User's preferred start day of the week`,
+    settings: {
+      dataType: NumberDataType.INT,
+    },
   })
   @WorkspaceIsSystem()
   calendarStartDay: number;
