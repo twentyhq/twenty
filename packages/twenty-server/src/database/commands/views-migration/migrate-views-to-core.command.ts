@@ -4,8 +4,8 @@ import { Command } from 'nest-commander';
 import { DataSource, QueryRunner, Repository } from 'typeorm';
 
 import {
-    ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-    RunOnWorkspaceArgs,
+  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
+  RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
