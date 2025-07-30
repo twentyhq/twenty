@@ -30,27 +30,36 @@ export type Story = StoryObj<typeof SettingsDevelopersApiKeyDetail>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const zapierElements = await canvas.findAllByText(
-      'Zapier Integration',
-      undefined,
-      { timeout: 3000 },
-    );
-    expect(zapierElements).toHaveLength(2);
-    await canvas.findByText('Role');
+
+    await canvas.findByText('Role', undefined, { timeout: 3000 });
     await canvas.findByText('Admin');
+
+    await canvas.findByText('API Key');
+    await canvas.findByText('Regenerate an API key');
+    await canvas.findByText('Name');
+    await canvas.findByText('Name of your API key');
+    await canvas.findByText('Expiration');
+    await canvas.findByText('When the key will be disabled');
+    await canvas.findByText('Danger zone');
+    await canvas.findByText('Delete this integration');
+
+    await canvas.findByText('APIs');
+
+    const regenerateButton = await canvas.findByText('Regenerate Key');
+    const deleteButton = await canvas.findByText('Delete');
+
+    expect(regenerateButton).toBeInTheDocument();
+    expect(deleteButton).toBeInTheDocument();
   },
 };
 
 export const RegenerateApiKey: Story = {
   play: async ({ step }) => {
     const canvas = within(document.body);
-    const zapierElements = await canvas.findAllByText(
-      'Zapier Integration',
-      undefined,
-      { timeout: 3000 },
-    );
-    expect(zapierElements).toHaveLength(2);
-    await canvas.findByText('Role');
+
+    await canvas.findByText('Role', undefined, { timeout: 3000 });
+
+    await canvas.findByText('Regenerate Key');
 
     await userEvent.click(await canvas.findByText('Regenerate Key'));
 
@@ -78,13 +87,10 @@ export const RegenerateApiKey: Story = {
 export const DeleteApiKey: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    const zapierElements = await canvas.findAllByText(
-      'Zapier Integration',
-      undefined,
-      { timeout: 3000 },
-    );
-    expect(zapierElements).toHaveLength(2);
-    await canvas.findByText('Role');
+
+    await canvas.findByText('Role', undefined, { timeout: 3000 });
+
+    await canvas.findByText('Delete');
 
     await userEvent.click(await canvas.findByText('Delete'));
 
