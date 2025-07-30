@@ -351,7 +351,7 @@ describe('usePageChangeEffectNavigateLocation', () => {
             ['isWorkspaceSuspended:true', 'isWorkspaceSuspended:false']
               .length) +
           ['nonExistingObjectInParam', 'existingObjectInParam:false'].length +
-          ['caseWithRedirectionToverifyEmailRedirectPath', 'caseWithout'].length,
+          ['caseWithRedirectionToVerifyEmailRedirectPath', 'caseWithout'].length,
       );
     });
   });

@@ -28,7 +28,9 @@ export const VerifyEmailEffect = () => {
   const [searchParams] = useSearchParams();
   const [isError, setIsError] = useState(false);
 
-  const setverifyEmailRedirectPath = useSetRecoilState(verifyEmailRedirectPathState);
+  const setVerifyEmailRedirectPath = useSetRecoilState(
+    verifyEmailRedirectPathState,
+  );
 
   const email = searchParams.get('email');
   const emailVerificationToken = searchParams.get('emailVerificationToken');
@@ -85,7 +87,7 @@ export const VerifyEmailEffect = () => {
         }
 
         if (isDefined(verifyEmailRedirectPath)) {
-          setverifyEmailRedirectPath(verifyEmailRedirectPath);
+          setVerifyEmailRedirectPath(verifyEmailRedirectPath);
         }
 
         return verifyLoginToken(loginToken.token);

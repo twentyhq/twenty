@@ -101,11 +101,11 @@ export const ChooseYourPlan = () => {
 
   const calendarBookingPageId = useRecoilValue(calendarBookingPageIdState);
 
-  const [verifyEmailRedirectPath, setverifyEmailRedirectPath] = useRecoilState(
+  const [verifyEmailRedirectPath, setVerifyEmailRedirectPath] = useRecoilState(
     verifyEmailRedirectPathState,
   );
   if (isDefined(verifyEmailRedirectPath)) {
-    setverifyEmailRedirectPath(undefined);
+    setVerifyEmailRedirectPath(undefined);
   }
   const { data: plans } = useBillingBaseProductPricesQuery();
 
