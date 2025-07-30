@@ -473,6 +473,18 @@ export type CreateAgentChatThreadInput = {
   agentId: Scalars['UUID'];
 };
 
+export type CreateAgentInput = {
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  isCustom?: InputMaybe<Scalars['Boolean']>;
+  label: Scalars['String'];
+  modelId: Scalars['String'];
+  name: Scalars['String'];
+  prompt: Scalars['String'];
+  responseFormat?: InputMaybe<Scalars['JSON']>;
+  roleId?: InputMaybe<Scalars['UUID']>;
+};
+
 export type CreateApiKeyDto = {
   expiresAt: Scalars['String'];
   name: Scalars['String'];
@@ -1130,6 +1142,7 @@ export type Mutation = {
   createFile: File;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
+  createOneAgent: Agent;
   createOneAppToken: AppToken;
   createOneField: Field;
   createOneObject: Object;
@@ -1300,6 +1313,11 @@ export type MutationCreateObjectEventArgs = {
   objectMetadataId: Scalars['String'];
   properties?: InputMaybe<Scalars['JSON']>;
   recordId: Scalars['String'];
+};
+
+
+export type MutationCreateOneAgentArgs = {
+  input: CreateAgentInput;
 };
 
 
@@ -1991,6 +2009,7 @@ export type Query = {
   field: Field;
   fields: FieldConnection;
   findDistantTablesWithStatus: Array<RemoteTable>;
+  findManyAgents: Array<Agent>;
   findManyRemoteServersByType: Array<RemoteServer>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
@@ -2667,7 +2686,10 @@ export type UuidFilterComparison = {
 
 export type UpdateAgentInput = {
   description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
+  isCustom?: InputMaybe<Scalars['Boolean']>;
+  label: Scalars['String'];
   modelId: Scalars['String'];
   name: Scalars['String'];
   prompt: Scalars['String'];

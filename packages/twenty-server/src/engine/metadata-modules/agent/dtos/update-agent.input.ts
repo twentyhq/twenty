@@ -1,6 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import {
+  IsBoolean,
   IsNotEmpty,
   IsObject,
   IsOptional,
@@ -26,6 +27,16 @@ export class UpdateAgentInput {
 
   @IsString()
   @IsOptional()
+  @Field()
+  label?: string;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  icon?: string;
+
+  @IsString()
+  @IsOptional()
   @Field({ nullable: true })
   description?: string;
 
@@ -43,4 +54,9 @@ export class UpdateAgentInput {
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   responseFormat?: object;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  isCustom?: boolean;
 }

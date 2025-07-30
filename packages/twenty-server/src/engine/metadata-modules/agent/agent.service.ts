@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
 import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 
@@ -18,6 +19,7 @@ export class AgentService {
     @InjectRepository(RoleTargetsEntity, 'core')
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly agentChatService: AgentChatService,
+    private readonly agentRoleService: AgentRoleService,
   ) {}
 
   async findManyAgents(workspaceId: string) {
@@ -83,18 +85,30 @@ export class AgentService {
       name: string;
       label: string;
       description?: string;
+      icon?: string;
       prompt: string;
       modelId: ModelId;
+      roleId?: string;
       responseFormat?: object;
+      isCustom?: boolean;
     },
     workspaceId: string,
   ) {
     const agent = this.agentRepository.create({
       ...input,
       workspaceId,
+      isCustom: input.isCustom ?? true,
     });
 
     const createdAgent = await this.agentRepository.save(agent);
+
+    if (input.roleId) {
+      await this.agentRoleService.assignRoleToAgent({
+        workspaceId,
+        agentId: createdAgent.id,
+        roleId: input.roleId,
+      });
+    }
 
     return this.findOneAgent(createdAgent.id, workspaceId);
   }
@@ -103,10 +117,13 @@ export class AgentService {
     input: {
       id: string;
       name?: string;
+      label?: string;
       description?: string;
+      icon?: string;
       prompt?: string;
       modelId?: ModelId;
       responseFormat?: object;
+      isCustom?: boolean;
     },
     workspaceId: string,
   ) {

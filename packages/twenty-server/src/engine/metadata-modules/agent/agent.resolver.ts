@@ -14,12 +14,19 @@ import { AgentService } from './agent.service';
 
 import { AgentIdInput } from './dtos/agent-id.input';
 import { AgentDTO } from './dtos/agent.dto';
+import { CreateAgentInput } from './dtos/create-agent.input';
 import { UpdateAgentInput } from './dtos/update-agent.input';
 
 @UseGuards(WorkspaceAuthGuard, FeatureFlagGuard)
 @Resolver()
 export class AgentResolver {
   constructor(private readonly agentService: AgentService) {}
+
+  @Query(() => [AgentDTO])
+  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
+  async findManyAgents(@AuthWorkspace() { id: workspaceId }: Workspace) {
+    return this.agentService.findManyAgents(workspaceId);
+  }
 
   @Query(() => AgentDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
@@ -28,6 +35,15 @@ export class AgentResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     return this.agentService.findOneAgent(id, workspaceId);
+  }
+
+  @Mutation(() => AgentDTO)
+  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
+  async createOneAgent(
+    @Args('input') input: CreateAgentInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    return this.agentService.createOneAgent(input, workspaceId);
   }
 
   @Mutation(() => AgentDTO)
