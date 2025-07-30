@@ -1,5 +1,11 @@
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { FieldMetadataType, NonNullableRequired } from 'twenty-shared/types';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { z } from 'zod';
+
+import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
+
 import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultOption,
@@ -8,7 +14,6 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 import { ValidateOneFieldMetadataArgs } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -18,9 +23,6 @@ import {
 } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import { EnumFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/enum-column-action.factory';
 import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
-import { FieldMetadataType, NonNullableRequired } from 'twenty-shared/types';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { z } from 'zod';
 
 /// Move to dedicated file
 const QUOTED_STRING_REGEX = /^['"](.*)['"]$/;
