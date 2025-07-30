@@ -3,9 +3,12 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { H2Title } from 'twenty-ui/display';
+import { H2Title, IconPlus } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { SettingsAIAgentsTable } from './components/SettingsAIAgentsTable';
+import { DUMMY_AI_AGENTS } from './data/dummyAIAgents';
 
 export const SettingsAI = () => {
   const { t } = useLingui();
@@ -13,6 +16,14 @@ export const SettingsAI = () => {
   return (
     <SubMenuTopBarContainer
       title={t`AI`}
+      actionButton={
+        <Button
+          Icon={IconPlus}
+          title={t`New Agent`}
+          accent="blue"
+          size="small"
+        />
+      }
       links={[
         {
           children: t`Workspace`,
@@ -24,10 +35,10 @@ export const SettingsAI = () => {
       <SettingsPageContainer>
         <Section>
           <H2Title
-            title={t`AI Configuration`}
-            description={t`Configure AI settings for your workspace`}
+            title={t`Agents`}
+            description={t`Agents used to route queries to specialized agents`}
           />
-          {/* AI settings content will go here */}
+          <SettingsAIAgentsTable agents={DUMMY_AI_AGENTS} />
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
