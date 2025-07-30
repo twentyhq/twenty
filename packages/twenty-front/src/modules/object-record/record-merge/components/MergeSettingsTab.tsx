@@ -1,11 +1,9 @@
 import { useMergeRecordsSettings } from '@/object-record/record-merge/hooks/useMergeRecordsSettings';
-import {
-  getPositionNumberIcon,
-  getPositionWordLabel,
-} from '@/object-record/record-merge/utils/recordMergeUtils';
 import { Select } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
 import { Section } from 'twenty-ui/layout';
+import { getPositionNumberIcon } from '../utils/getPositionNumberIcon';
+import { getPositionWordLabel } from '../utils/getPositionWordLabel';
 
 const StyledSection = styled(Section)`
   margin: ${({ theme }) => theme.spacing(4)};

@@ -4,7 +4,7 @@ import { useRecoilCallback } from 'recoil';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
-import { mergeRecordRelationshipData } from '@/object-record/record-merge/utils/mergeRelationshipDataUtils';
+import { mergeRecordRelationshipData } from '@/object-record/record-merge/utils/mergeRelationshipData';
 import { buildFindOneRecordForShowPageOperationSignature } from '@/object-record/record-show/graphql/operations/factories/findOneRecordForShowPageOperationSignatureFactory';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';

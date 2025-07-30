@@ -1,37 +1,8 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { mergeManyToOneRelationship } from '@/object-record/record-merge/utils/mergeManyToOneRelationship';
+import { mergeOneToManyRelationships } from '@/object-record/record-merge/utils/mergeOneToManyRelationships';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
-
-export const mergeOneToManyRelationships = (
-  records: ObjectRecord[],
-  fieldName: string,
-): ObjectRecord[] => {
-  const allRelatedRecords: ObjectRecord[] = [];
-
-  records.forEach((record) => {
-    const relationValue = record[fieldName];
-    if (Array.isArray(relationValue)) {
-      allRelatedRecords.push(...relationValue);
-    }
-  });
-
-  return allRelatedRecords.filter(
-    (record, index, array) =>
-      array.findIndex((r) => r.id === record.id) === index,
-  );
-};
-
-export const mergeManyToOneRelationship = (
-  records: ObjectRecord[],
-  fieldName: string,
-): ObjectRecord | null => {
-  const firstNonNullValue = records
-    .map((record) => record[fieldName])
-    .find((value) => isDefined(value) && value !== null);
-
-  return firstNonNullValue || null;
-};
 
 export const mergeRecordRelationshipData = (
   records: ObjectRecord[],
