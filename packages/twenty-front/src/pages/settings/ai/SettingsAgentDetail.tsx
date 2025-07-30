@@ -74,13 +74,13 @@ export const SettingsAgentDetail = () => {
       if (isDefined(agent)) {
         formConfig.reset({
           name: agent.name,
-          label: agent.label || '',
-          description: agent.description || '',
+          label: agent.label,
+          description: agent.description,
           icon: agent.icon || 'IconRobot',
           modelId: agent.modelId,
-          role: agent.roleId || '',
+          role: agent.roleId,
           prompt: agent.prompt,
-          isCustom: agent.isCustom ?? true,
+          isCustom: agent.isCustom,
         });
       } else {
         enqueueErrorSnackBar({
@@ -101,41 +101,12 @@ export const SettingsAgentDetail = () => {
 
   const agent = data?.findOneAgent;
 
-  if (loading) {
-    return (
-      <SubMenuTopBarContainer
-        title={t`Agent`}
-        links={[
-          {
-            children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
-          },
-          { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
-          { children: t`Agent` },
-        ]}
-      >
-        <SettingsPageContainer>
-          <Section>
-            <H2Title
-              title={t`Edit Agent`}
-              description={t`Update agent information`}
-            />
-            <SettingsAgentDetailSkeletonLoader />
-          </Section>
-        </SettingsPageContainer>
-      </SubMenuTopBarContainer>
-    );
-  }
-
-  if (!isDefined(agent)) {
-    return <></>;
-  }
-
   const { isValid, isSubmitting } = formConfig.formState;
-  const canSave = isValid && !isSubmitting;
 
   const handleSave = async (formData: SettingsAIAgentFormValues) => {
-    if (!agent) return;
+    if (!agent) {
+      return;
+    }
 
     try {
       await updateAgent({
@@ -162,62 +133,72 @@ export const SettingsAgentDetail = () => {
     }
   };
 
+  if (!loading && !agent) {
+    return <></>;
+  }
+
+  const agentName = agent ? agent.name : t`Agent`;
+
   return (
-    <>
-      <SubMenuTopBarContainer
-        title={agent.name}
-        actionButton={
+    <SubMenuTopBarContainer
+      title={agentName}
+      actionButton={
+        !loading && (
           <SaveAndCancelButtons
             onSave={formConfig.handleSubmit(handleSave)}
             onCancel={() => navigate(SettingsPath.AI)}
-            isSaveDisabled={!canSave}
-            isLoading={isSubmitting}
+            isSaveDisabled={!isValid || isSubmitting}
             isCancelDisabled={isSubmitting}
+            isLoading={isSubmitting}
           />
-        }
-        links={[
-          {
-            children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
-          },
-          { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
-          { children: agent.name },
-        ]}
-      >
-        <SettingsPageContainer>
-          <StyledContentContainer>
-            <Section>
-              <H2Title
-                title={t`Edit Agent`}
-                description={t`Update agent information`}
-              />
+        )
+      }
+      links={[
+        {
+          children: t`Workspace`,
+          href: getSettingsPath(SettingsPath.Workspace),
+        },
+        { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
+        { children: agentName },
+      ]}
+    >
+      <SettingsPageContainer>
+        <Section>
+          <H2Title
+            title={t`Edit Agent`}
+            description={t`Update agent information`}
+          />
+          {loading ? (
+            <SettingsAgentDetailSkeletonLoader />
+          ) : (
+            <StyledContentContainer>
               <FormProvider
                 // eslint-disable-next-line react/jsx-props-no-spreading
                 {...formConfig}
               >
                 <SettingsAIAgentForm />
               </FormProvider>
-            </Section>
-            <StyledDangerZoneSection>
-              <H2Title
-                title={t`Danger zone`}
-                description={t`Delete this agent`}
-              />
-              <Button
-                accent="danger"
-                variant="secondary"
-                title={t`Delete Agent`}
-                Icon={IconTrash}
-                onClick={() => openModal(DELETE_AGENT_MODAL_ID)}
-              />
-            </StyledDangerZoneSection>
-          </StyledContentContainer>
-        </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+              <StyledDangerZoneSection>
+                <H2Title
+                  title={t`Danger zone`}
+                  description={t`Delete this agent`}
+                />
+                <Button
+                  accent="danger"
+                  variant="secondary"
+                  title={t`Delete Agent`}
+                  Icon={IconTrash}
+                  onClick={() => openModal(DELETE_AGENT_MODAL_ID)}
+                />
+              </StyledDangerZoneSection>
+            </StyledContentContainer>
+          )}
+        </Section>
+      </SettingsPageContainer>
       <SettingsAgentDeleteConfirmationModal
-        agentId={agent.id}
-        agentName={agent.name}
+        agentId={agent?.id}
+        agentName={agent?.name as string}
       />
-    </>
+    </SubMenuTopBarContainer>
   );
 };
