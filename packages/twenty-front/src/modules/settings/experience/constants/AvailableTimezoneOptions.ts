@@ -13,4 +13,4 @@ export const AVAILABLE_TIMEZONE_OPTIONS = Object.values(
       optionA.label.localeCompare(optionB.label)
     : // Sort by time zone offset if different.
       difference;
-}); 
+});

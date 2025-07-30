@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 
+import { CalendarStartDay } from '@/localization/constants/CalendarStartDay';
+import { detectCalendarStartDay } from '@/localization/utils/detectCalendarStartDay';
 import { Select } from '@/ui/input/components/Select';
 import { DayNameWithIndex } from '@/ui/input/components/internal/date/types/DayNameWithIndex';
 import { t } from '@lingui/core/macro';
@@ -14,18 +16,31 @@ export const DateTimeSettingsCalendarStartDaySelect = ({
   value,
   onChange,
 }: DateTimeSettingsCalendarStartDaySelectProps) => {
+  const systemCalendarStartDay = CalendarStartDay[detectCalendarStartDay()];
+
   const options: SelectOption<number>[] = useMemo(() => {
+    const systemDayLabel =
+      systemCalendarStartDay === CalendarStartDay.SUNDAY
+        ? t`System settings - Sunday`
+        : systemCalendarStartDay === CalendarStartDay.MONDAY
+          ? t`System settings - Monday`
+          : t`System settings - Saturday`;
+
     const allowedDaysWeek: DayNameWithIndex[] = [
-      { day: t`Sunday`, index: 0 },
-      { day: t`Monday`, index: 1 },
-      { day: t`Saturday`, index: 6 },
+      {
+        day: systemDayLabel,
+        index: CalendarStartDay.SYSTEM,
+      },
+      { day: t`Sunday`, index: CalendarStartDay.SUNDAY },
+      { day: t`Monday`, index: CalendarStartDay.MONDAY },
+      { day: t`Saturday`, index: CalendarStartDay.SATURDAY },
     ];
 
     return allowedDaysWeek.map(({ day, index }) => ({
       label: day,
       value: index,
     }));
-  }, []);
+  }, [systemCalendarStartDay]);
 
   return (
     <Select

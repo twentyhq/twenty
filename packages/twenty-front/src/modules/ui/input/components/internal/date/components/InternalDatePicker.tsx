@@ -5,6 +5,8 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { CalendarStartDay } from '@/localization/constants/CalendarStartDay';
+import { detectCalendarStartDay } from '@/localization/utils/detectCalendarStartDay';
 import { AbsoluteDatePickerHeader } from '@/ui/input/components/internal/date/components/AbsoluteDatePickerHeader';
 import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
@@ -504,7 +506,10 @@ export const DateTimePicker = ({
             disabledKeyboardNavigation
             onChange={handleDateChange as any}
             calendarStartDay={
-              currentWorkspaceMember?.calendarStartDay ?? undefined
+              currentWorkspaceMember?.calendarStartDay ===
+              CalendarStartDay.SYSTEM
+                ? CalendarStartDay[detectCalendarStartDay()]
+                : (currentWorkspaceMember?.calendarStartDay ?? undefined)
             }
             customInput={
               <DateTimeInput

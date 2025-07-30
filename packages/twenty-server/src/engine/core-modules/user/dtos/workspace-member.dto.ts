@@ -41,7 +41,7 @@ export class WorkspaceMember {
 
   @Field(() => Int, { nullable: true })
   @Min(0)
-  @Max(6)
+  @Max(7)
   calendarStartDay: number;
 
   @Field({ nullable: true })

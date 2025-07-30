@@ -27,10 +27,7 @@ export const SettingsAccountsCalendarDisplaySettings = () => {
 
   return (
     <StyledContainer>
-      <DateTimeSettingsTimeZoneSelect
-        value={timeZone}
-        onChange={setTimeZone}
-      />
+      <DateTimeSettingsTimeZoneSelect value={timeZone} onChange={setTimeZone} />
       <DateTimeSettingsDateFormatSelect
         value={dateFormat}
         onChange={setDateFormat}

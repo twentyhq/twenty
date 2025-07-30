@@ -7,10 +7,10 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { NumberDataType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
-import { NumberDataType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -148,7 +148,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.calendarStartDay,
     type: FieldMetadataType.NUMBER,
     label: msg`Start of the week`,
-    defaultValue: 0,
+    defaultValue: 7,
     description: msg`User's preferred start day of the week`,
     settings: {
       dataType: NumberDataType.INT,

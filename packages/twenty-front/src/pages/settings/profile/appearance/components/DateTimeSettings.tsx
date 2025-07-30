@@ -61,7 +61,7 @@ export const DateTimeSettings = () => {
   if (!isDefined(currentWorkspaceMember)) return;
 
   const handleUpdateCalendarStartDay = async (index: number) => {
-    if (!isNumber(index) || index > 6 || index < 0) return;
+    if (!isNumber(index) || index > 7 || index < 0) return;
     const changedFields = {
       calendarStartDay: index ?? 0,
     };

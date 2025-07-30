@@ -39,4 +39,4 @@ export const DateTimeSettingsTimeZoneSelect = ({
       withSearchInput
     />
   );
-}; 
+};

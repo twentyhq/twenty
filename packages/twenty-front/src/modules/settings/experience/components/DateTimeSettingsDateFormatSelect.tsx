@@ -70,4 +70,4 @@ export const DateTimeSettingsDateFormatSelect = ({
       onChange={onChange}
     />
   );
-}; 
+};

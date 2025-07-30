@@ -25,4 +25,4 @@ export const AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL = IANA_TIME_ZONES.reduce<
     ...result,
     [timeZoneLabel]: { label: timeZoneLabel, value: ianaTimeZone },
   };
-}, {}); 
+}, {});
