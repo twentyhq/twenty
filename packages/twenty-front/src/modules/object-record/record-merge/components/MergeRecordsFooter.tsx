@@ -1,4 +1,7 @@
+import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import styled from '@emotion/styled';
+import { Key } from 'ts-key-enum';
 import { IconArrowMerge, IconDotsVertical } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
@@ -28,6 +31,17 @@ export const MergeRecordsFooter = ({
   onMerge,
   isMerging,
 }: MergeRecordsFooterProps) => {
+  useHotkeysOnFocusedElement({
+    keys: [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
+    callback: () => {
+      if (!isMerging) {
+        onMerge?.();
+      }
+    },
+    focusId: SIDE_PANEL_FOCUS_ID,
+    dependencies: [onMerge, isMerging],
+  });
+
   return (
     <StyledFooterContainer>
       <StyledFooterActions>
