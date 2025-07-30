@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 
 import { SortDirection } from '@ptc-org/nestjs-query-core';
 import {
-    NestjsQueryGraphQLModule,
-    PagingStrategies,
+  NestjsQueryGraphQLModule,
+  PagingStrategies,
 } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
@@ -35,13 +35,14 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 import { ViewModule } from 'src/modules/view/view.module';
-
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { WorkspaceMigrationBuilderV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.module';
 import { WorkspaceMigrationRunnerV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.module';
+
+import { FieldMetadataEntity } from './field-metadata.entity';
+
 import { CreateFieldInput } from './dtos/create-field.input';
 import { UpdateFieldInput } from './dtos/update-field.input';
-import { FieldMetadataEntity } from './field-metadata.entity';
 import { FieldMetadataService } from './services/field-metadata.service';
 
 @Module({

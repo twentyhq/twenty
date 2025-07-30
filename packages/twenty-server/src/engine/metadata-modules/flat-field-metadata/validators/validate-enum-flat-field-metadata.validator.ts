@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType, NonNullableRequired } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
+import { QUOTED_STRING_REGEX } from 'twenty-shared/constants';
 
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
@@ -15,7 +16,11 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { ValidateOneFieldMetadataArgs } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
-import { FailedFlatFieldMetadataValidationExceptions, FlatFieldMetadataValidator, runFlatFieldMetadataValidators } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
+import {
+  FailedFlatFieldMetadataValidationExceptions,
+  FlatFieldMetadataValidator,
+  runFlatFieldMetadataValidators,
+} from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import {
   beneathDatabaseIdentifierMinimumLength,
@@ -23,7 +28,6 @@ import {
 } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import { EnumFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/enum-column-action.factory';
 import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
-import { QUOTED_STRING_REGEX } from 'twenty-shared/constants';
 
 const validateMetadataOptionId = (sanitizedId?: string) => {
   const validators: FlatFieldMetadataValidator<string>[] = [
@@ -102,7 +106,9 @@ const validateDuplicates = (
     | FieldMetadataComplexOption[]
   )[number])[];
   const duplicatedValidators = fieldsToCheckForDuplicates.map<
-    FlatFieldMetadataValidator<FieldMetadataDefaultOption[] | FieldMetadataComplexOption[]>
+    FlatFieldMetadataValidator<
+      FieldMetadataDefaultOption[] | FieldMetadataComplexOption[]
+    >
   >((field) => ({
     message: `Duplicated option ${field}`,
     validator: () =>
