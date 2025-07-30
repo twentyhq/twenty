@@ -24,6 +24,7 @@ export enum SettingsPath {
   Domain = 'general/domain',
   AI = 'ai',
   NewAgent = 'ai/new-agent',
+  AgentDetail = 'ai/agents/:agentId',
   APIs = 'apis',
   RestPlayground = 'playground/rest/:schema',
   GraphQLPlayground = 'playground/graphql/:schema',

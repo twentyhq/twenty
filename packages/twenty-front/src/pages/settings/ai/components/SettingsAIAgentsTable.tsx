@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 
+import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -11,6 +12,7 @@ import { useTheme } from '@emotion/react';
 import { IconChevronRight, IconSearch } from 'twenty-ui/display';
 import { Agent } from '~/generated-metadata/graphql';
 import { GET_SETTINGS_AI_AGENT_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsAIAgentTableMetadata';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import {
   SettingsAIAgentTableRow,
   StyledAIAgentTableRow,
@@ -85,7 +87,9 @@ export const SettingsAIAgentsTable = ({ agents }: { agents: Agent[] }) => {
                 stroke={theme.icon.stroke.sm}
               />
             }
-            link={`/settings/ai/agents/${agent.id}`}
+            link={getSettingsPath(SettingsPath.AgentDetail, {
+              agentId: agent.id,
+            })}
           />
         ))}
       </StyledTable>
