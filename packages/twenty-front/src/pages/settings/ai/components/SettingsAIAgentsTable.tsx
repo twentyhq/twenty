@@ -11,11 +11,11 @@ import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { useTheme } from '@emotion/react';
 import { IconChevronRight, IconSearch } from 'twenty-ui/display';
 import { Agent } from '~/generated-metadata/graphql';
-import { GET_SETTINGS_AI_AGENT_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsAIAgentTableMetadata';
+import { SETTINGS_AI_AGENT_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsAIAgentTableMetadata';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import {
-  SettingsAIAgentTableRow,
-  StyledAIAgentTableRow,
+    SettingsAIAgentTableRow,
+    StyledAIAgentTableRow,
 } from './SettingsAIAgentTableRow';
 
 const StyledSearchInput = styled(TextInput)`
@@ -38,7 +38,7 @@ export const SettingsAIAgentsTable = ({ agents }: { agents: Agent[] }) => {
 
   const sortedAgents = useSortedArray(
     agents,
-    GET_SETTINGS_AI_AGENT_TABLE_METADATA,
+    SETTINGS_AI_AGENT_TABLE_METADATA,
   );
 
   const filteredAgents = useMemo(
@@ -63,15 +63,15 @@ export const SettingsAIAgentsTable = ({ agents }: { agents: Agent[] }) => {
 
       <StyledTable>
         <StyledTableHeaderRow>
-          {GET_SETTINGS_AI_AGENT_TABLE_METADATA.fields.map(
+          {SETTINGS_AI_AGENT_TABLE_METADATA.fields.map(
             (settingsAIAgentTableMetadataField) => (
               <SortableTableHeader
                 key={settingsAIAgentTableMetadataField.fieldName}
                 fieldName={settingsAIAgentTableMetadataField.fieldName}
                 label={t(settingsAIAgentTableMetadataField.fieldLabel)}
-                tableId={GET_SETTINGS_AI_AGENT_TABLE_METADATA.tableId}
+                tableId={SETTINGS_AI_AGENT_TABLE_METADATA.tableId}
                 align={settingsAIAgentTableMetadataField.align}
-                initialSort={GET_SETTINGS_AI_AGENT_TABLE_METADATA.initialSort}
+                initialSort={SETTINGS_AI_AGENT_TABLE_METADATA.initialSort}
               />
             ),
           )}
