@@ -223,10 +223,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         existingFieldMetadata.isLabelSyncedWithName;
 
       if (isLabelSyncedWithName) {
-        validateNameAndLabelAreSyncOrThrow(
-          fieldMetadataForUpdate.label ?? existingFieldMetadata.label,
-          fieldMetadataForUpdate.name ?? existingFieldMetadata.name,
-        );
+        validateNameAndLabelAreSyncOrThrow({
+          label: fieldMetadataForUpdate.label ?? existingFieldMetadata.label,
+          name: fieldMetadataForUpdate.name ?? existingFieldMetadata.name,
+        });
       }
 
       await fieldMetadataRepository.update(id, fieldMetadataForUpdate);
@@ -696,10 +696,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     if (fieldMetadataInput.isLabelSyncedWithName === true) {
-      validateNameAndLabelAreSyncOrThrow(
-        fieldMetadataInput.label,
-        fieldMetadataInput.name,
-      );
+      validateNameAndLabelAreSyncOrThrow({
+        label: fieldMetadataInput.label,
+        name: fieldMetadataInput.name,
+      });
     }
 
     const fieldMetadataForCreate =

@@ -56,7 +56,9 @@
     "docx": "^9.1.0",
     "file-saver": "^2.0.5",
     "input-otp": "^1.4.2",
+    "react-markdown": "^10.1.0",
     "react-qr-code": "^2.0.18",
+    "remark-gfm": "^4.0.1",
     "transliteration": "^2.3.5",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*"
