@@ -1,0 +1,219 @@
+import { TEST_FIELD_METADATA_1_ID } from 'test/integration/constants/test-view-ids.constants';
+import { createViewGroupOperationFactory } from 'test/integration/graphql/utils/create-view-group-operation-factory.util';
+import { deleteViewGroupOperationFactory } from 'test/integration/graphql/utils/delete-view-group-operation-factory.util';
+import { findViewGroupsOperationFactory } from 'test/integration/graphql/utils/find-view-groups-operation-factory.util';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { updateViewGroupOperationFactory } from 'test/integration/graphql/utils/update-view-group-operation-factory.util';
+import {
+  createViewGroupData,
+  updateViewGroupData,
+} from 'test/integration/graphql/utils/view-data-factory.util';
+import {
+  assertErrorResponse,
+  assertSuccessfulResponse,
+  assertViewGroupStructure,
+  cleanupViewRecords,
+  createTestView,
+} from 'test/integration/graphql/utils/view-test-utils';
+
+describe('View Group Resolver', () => {
+  let testViewId: string;
+
+  beforeAll(async () => {
+    await cleanupViewRecords();
+
+    const view = await createTestView({
+      name: 'Test View for Groups',
+    });
+
+    testViewId = view.id;
+  });
+
+  afterAll(async () => {
+    await cleanupViewRecords();
+  });
+
+  afterEach(async () => {
+    const operation = findViewGroupsOperationFactory({ viewId: testViewId });
+    const viewGroups = await makeGraphqlAPIRequest(operation);
+
+    if (viewGroups.body.data.getCoreViewGroups.length > 0) {
+      await Promise.all(
+        viewGroups.body.data.getCoreViewGroups.map((group: any) => {
+          const deleteOperation = deleteViewGroupOperationFactory({
+            viewGroupId: group.id,
+          });
+
+          return makeGraphqlAPIRequest(deleteOperation);
+        }),
+      );
+    }
+  });
+
+  describe('getCoreViewGroups', () => {
+    it('should return empty array when no view groups exist', async () => {
+      const operation = findViewGroupsOperationFactory({ viewId: testViewId });
+      const response = await makeGraphqlAPIRequest(operation);
+
+      assertSuccessfulResponse(response);
+      expect(response.body.data.getCoreViewGroups).toEqual([]);
+    });
+
+    it('should return view groups for a specific view', async () => {
+      const groupData = createViewGroupData(testViewId, {
+        isVisible: true,
+        fieldValue: 'active',
+        position: 0,
+      });
+      const createOperation = createViewGroupOperationFactory({
+        data: groupData,
+      });
+
+      await makeGraphqlAPIRequest(createOperation);
+
+      const getOperation = findViewGroupsOperationFactory({
+        viewId: testViewId,
+      });
+      const response = await makeGraphqlAPIRequest(getOperation);
+
+      assertSuccessfulResponse(response);
+      expect(response.body.data.getCoreViewGroups).toHaveLength(1);
+      assertViewGroupStructure(response.body.data.getCoreViewGroups[0], {
+        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
+        isVisible: true,
+        fieldValue: 'active',
+        position: 0,
+        viewId: testViewId,
+      });
+    });
+  });
+
+  describe('createCoreViewGroup', () => {
+    it('should create a new view group', async () => {
+      const groupData = createViewGroupData(testViewId, {
+        isVisible: false,
+        fieldValue: 'inactive',
+        position: 1,
+      });
+
+      const operation = createViewGroupOperationFactory({
+        data: groupData,
+      });
+      const response = await makeGraphqlAPIRequest(operation);
+
+      assertSuccessfulResponse(response);
+      assertViewGroupStructure(response.body.data.createCoreViewGroup, {
+        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
+        isVisible: false,
+        fieldValue: 'inactive',
+        position: 1,
+        viewId: testViewId,
+      });
+    });
+
+    it('should create a view group with null fieldValue', async () => {
+      const groupData = createViewGroupData(testViewId, {
+        isVisible: true,
+        fieldValue: null,
+        position: 2,
+      });
+
+      const operation = createViewGroupOperationFactory({
+        data: groupData,
+      });
+      const response = await makeGraphqlAPIRequest(operation);
+
+      assertSuccessfulResponse(response);
+      assertViewGroupStructure(response.body.data.createCoreViewGroup, {
+        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
+        isVisible: true,
+        fieldValue: null,
+        position: 2,
+      });
+    });
+  });
+
+  describe('updateCoreViewGroup', () => {
+    it('should update an existing view group', async () => {
+      const groupData = createViewGroupData(testViewId, {
+        isVisible: true,
+        fieldValue: 'original',
+        position: 0,
+      });
+      const createOperation = createViewGroupOperationFactory({
+        data: groupData,
+      });
+      const createResponse = await makeGraphqlAPIRequest(createOperation);
+      const viewGroup = createResponse.body.data.createCoreViewGroup;
+
+      const updateInput = updateViewGroupData({
+        isVisible: false,
+        fieldValue: 'updated',
+        position: 5,
+      });
+      const updateOperation = updateViewGroupOperationFactory({
+        viewGroupId: viewGroup.id,
+        data: updateInput,
+      });
+      const response = await makeGraphqlAPIRequest(updateOperation);
+
+      assertSuccessfulResponse(response);
+      expect(response.body.data.updateCoreViewGroup).toMatchObject({
+        id: viewGroup.id,
+        isVisible: false,
+        fieldValue: 'updated',
+        position: 5,
+      });
+    });
+  });
+
+  describe('deleteCoreViewGroup', () => {
+    it('should delete an existing view group', async () => {
+      const groupData = createViewGroupData(testViewId, {
+        isVisible: true,
+        fieldValue: 'to delete',
+        position: 0,
+      });
+      const createOperation = createViewGroupOperationFactory({
+        data: groupData,
+      });
+      const createResponse = await makeGraphqlAPIRequest(createOperation);
+      const viewGroup = createResponse.body.data.createCoreViewGroup;
+
+      // Delete the view group
+      const deleteOperation = deleteViewGroupOperationFactory({
+        viewGroupId: viewGroup.id,
+      });
+      const response = await makeGraphqlAPIRequest(deleteOperation);
+
+      assertSuccessfulResponse(response);
+      expect(response.body.data.deleteCoreViewGroup).toBe(true);
+    });
+  });
+
+  describe('validation', () => {
+    const requiredFields = ['viewId', 'fieldMetadataId'];
+    const validInput = {
+      viewId: testViewId,
+      fieldMetadataId: TEST_FIELD_METADATA_1_ID,
+      isVisible: true,
+      fieldValue: 'test',
+      position: 0,
+    };
+
+    requiredFields.forEach((field) => {
+      it(`should require ${field} for creation`, async () => {
+        const invalidInput = { ...validInput };
+
+        delete invalidInput[field as keyof typeof invalidInput];
+
+        const operation = createViewGroupOperationFactory({
+          data: invalidInput,
+        });
+        const response = await makeGraphqlAPIRequest(operation);
+
+        assertErrorResponse(response, field);
+      });
+    });
+  });
+});
