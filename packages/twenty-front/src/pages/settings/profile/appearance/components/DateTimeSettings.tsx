@@ -13,16 +13,18 @@ import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { getWorkspaceDateFormatFromDateFormat } from '@/localization/utils/getWorkspaceDateFormatFromDateFormat';
 import { getWorkspaceTimeFormatFromTimeFormat } from '@/localization/utils/getWorkspaceTimeFormatFromTimeFormat';
+import { DateTimeSettingsDateFormatSelect } from '@/settings/experience/components/DateTimeSettingsDateFormatSelect';
+import { DateTimeSettingsTimeFormatSelect } from '@/settings/experience/components/DateTimeSettingsTimeFormatSelect';
+import { DateTimeSettingsTimeZoneSelect } from '@/settings/experience/components/DateTimeSettingsTimeZoneSelect';
+import { isNumber } from '@tiptap/core';
+import { isDefined } from 'twenty-shared/utils';
 import {
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
-import { DateTimeSettingsDateFormatSelect } from '~/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect';
-import { DateTimeSettingsTimeFormatSelect } from '~/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect';
-import { DateTimeSettingsTimeZoneSelect } from '~/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect';
+import { DateTimeSettingsCalendarStartDaySelect } from '~/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect';
 import { isEmptyObject } from '~/utils/isEmptyObject';
 import { logError } from '~/utils/logError';
-import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -57,6 +59,20 @@ export const DateTimeSettings = () => {
   };
 
   if (!isDefined(currentWorkspaceMember)) return;
+
+  const handleUpdateCalendarStartDay = async (index: number) => {
+    if (!isNumber(index) || index > 7 || index < 0) return;
+    const changedFields = {
+      calendarStartDay: index ?? 0,
+    };
+
+    setCurrentWorkspaceMember({
+      ...currentWorkspaceMember,
+      ...changedFields,
+    });
+
+    updateWorkspaceMember(changedFields);
+  };
 
   const handleSettingsChange = (
     settingName: 'timeZone' | 'dateFormat' | 'timeFormat',
@@ -139,6 +155,10 @@ export const DateTimeSettings = () => {
         value={timeFormat}
         onChange={(value) => handleSettingsChange('timeFormat', value)}
         timeZone={timeZone}
+      />
+      <DateTimeSettingsCalendarStartDaySelect
+        value={currentWorkspaceMember?.calendarStartDay ?? 0}
+        onChange={handleUpdateCalendarStartDay}
       />
     </StyledContainer>
   );
