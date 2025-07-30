@@ -153,7 +153,7 @@ export abstract class RestApiBaseHandler {
       }
     }
 
-    if (!roleId && isDefined(userWorkspaceId)) {
+    if (isDefined(userWorkspaceId)) {
       roleId =
         await this.workspacePermissionsCacheService.getRoleIdFromUserWorkspaceId(
           {

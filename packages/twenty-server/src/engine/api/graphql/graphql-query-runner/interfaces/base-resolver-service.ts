@@ -139,7 +139,7 @@ export abstract class GraphqlQueryBaseResolverService<
         }
       }
 
-      if (!roleId && authContext.userWorkspaceId) {
+      if (authContext.userWorkspaceId) {
         roleId = await this.userRoleService.getRoleIdForUserWorkspace({
           userWorkspaceId: authContext.userWorkspaceId,
           workspaceId: workspace.id,
