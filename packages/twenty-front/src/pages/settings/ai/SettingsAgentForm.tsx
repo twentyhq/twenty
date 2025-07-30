@@ -130,7 +130,6 @@ export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
           modelId: formData.modelId,
           roleId: formData.role || undefined,
           prompt: formData.prompt,
-          isCustom: formData.isCustom,
         };
 
         await createAgent({
@@ -155,7 +154,6 @@ export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
             modelId: formData.modelId,
             roleId: formData.role || null,
             prompt: formData.prompt,
-            isCustom: formData.isCustom,
           },
         },
       });
