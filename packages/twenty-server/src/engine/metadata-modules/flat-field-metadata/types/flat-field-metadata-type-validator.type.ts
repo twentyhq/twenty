@@ -6,5 +6,7 @@ import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata
 export type FlatFieldMetadataTypeValidator = {
   [P in FieldMetadataType]: (
     args: ValidateOneFieldMetadataArgs<P>,
-  ) => FailedFlatFieldMetadataValidationExceptions[] | Promise<FailedFlatFieldMetadataValidationExceptions[]>;
+  ) =>
+    | FailedFlatFieldMetadataValidationExceptions[]
+    | Promise<FailedFlatFieldMetadataValidationExceptions[]>;
 };

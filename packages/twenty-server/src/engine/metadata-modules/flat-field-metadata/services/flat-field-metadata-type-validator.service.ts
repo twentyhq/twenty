@@ -103,15 +103,7 @@ export class FlatFieldMetadataTypeValidatorService {
         validateEnumSelectFlatFieldMetadata(
           args as ValidateOneFieldMetadataArgs<EnumFieldMetadataType>,
         ),
-      TEXT: async ({
-        existingFlatObjectMetadatas,
-        flatFieldMetadataToValidate,
-        workspaceId,
-        othersFlatObjectMetadataToValidate,
-      }) => {
-        flatFieldMetadataToValidate.defaultValue;
-
-        flatFieldMetadataToValidate.settings;
+      TEXT: async (_args) => {
         return [];
       },
       TS_VECTOR: async (_args) => {
