@@ -10,6 +10,7 @@ type AgentFormValues = {
   name: string;
   prompt: string;
   modelId: string;
+  label: string;
 };
 
 export const useAgentUpdateFormState = ({
@@ -23,6 +24,7 @@ export const useAgentUpdateFormState = ({
     name: '',
     prompt: '',
     modelId: '',
+    label: '',
   });
 
   const { loading } = useFindOneAgentQuery({
@@ -35,6 +37,7 @@ export const useAgentUpdateFormState = ({
           name: agent.name,
           prompt: agent.prompt,
           modelId: agent.modelId,
+          label: agent.label,
         });
       }
     },
@@ -62,6 +65,7 @@ export const useAgentUpdateFormState = ({
       name: formData.name,
       prompt: formData.prompt,
       modelId: formData.modelId,
+      label: formData.label,
     });
   }, 500);
 
