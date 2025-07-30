@@ -44,20 +44,12 @@ export const DateTimeSettings = () => {
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
 
-  const calendarDaysWeek = [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-  ];
 
-  const allowedDaysWeek = ['Sunday', 'Monday', 'Saturday'].map((day) => {
-    const foundIndexDay = calendarDaysWeek.indexOf(day);
-    return { day, index: foundIndexDay };
-  });
+  const allowedDaysWeek = [
+    { day: t`Sunday`, index: 0 },
+    { day: t`Monday`, index: 1 },
+    { day: t`Saturday`, index: 6 },
+  ];
 
   const updateWorkspaceMember = async (changedFields: any) => {
     if (!currentWorkspaceMember?.id) {
