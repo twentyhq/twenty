@@ -23,6 +23,7 @@ export type WorkspaceMember = {
   timeZone?: string | null;
   dateFormat?: WorkspaceMemberDateFormatEnum | null;
   timeFormat?: WorkspaceMemberTimeFormatEnum | null;
+  calendarStartDay?: number | null;
 };
 
 export type WorkspaceInvitation = {
