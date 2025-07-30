@@ -2,18 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { QueryRunner } from 'typeorm';
 
+import { WorkspaceSchemaIndexDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-index-definition.type';
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
-
-export type IndexType = 'BTREE' | 'HASH' | 'GIST' | 'SPGIST' | 'GIN' | 'BRIN';
-
-export type IndexDefinition = {
-  name: string;
-  columns: string[];
-  type?: IndexType;
-  isUnique?: boolean;
-  where?: string;
-  include?: string[];
-};
 
 @Injectable()
 export class WorkspaceSchemaIndexManagerService {
@@ -21,7 +11,7 @@ export class WorkspaceSchemaIndexManagerService {
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
-    index: IndexDefinition,
+    index: WorkspaceSchemaIndexDefinition,
   ): Promise<void> {
     try {
       const safeSchemaName = removeSqlDDLInjection(schemaName);

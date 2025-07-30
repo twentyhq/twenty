@@ -2,16 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { QueryRunner } from 'typeorm';
 
+import { WorkspaceSchemaForeignKeyDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-foreign-key-definition.type';
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
-
-export type ForeignKeyDefinition = {
-  name: string;
-  columnNames: string[];
-  referencedTableName: string;
-  referencedColumnNames: string[];
-  onDelete?: 'CASCADE' | 'SET NULL' | 'RESTRICT' | 'NO ACTION' | 'SET DEFAULT';
-  onUpdate?: 'CASCADE' | 'SET NULL' | 'RESTRICT' | 'NO ACTION' | 'SET DEFAULT';
-};
 
 @Injectable()
 export class WorkspaceSchemaForeignKeyManagerService {
@@ -19,7 +11,7 @@ export class WorkspaceSchemaForeignKeyManagerService {
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
-    foreignKey: ForeignKeyDefinition,
+    foreignKey: WorkspaceSchemaForeignKeyDefinition,
   ): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
@@ -186,7 +178,7 @@ export class WorkspaceSchemaForeignKeyManagerService {
     columnName: string,
     referencedTableName: string,
     referencedColumnName = 'id',
-    onDelete?: ForeignKeyDefinition['onDelete'],
+    onDelete?: WorkspaceSchemaForeignKeyDefinition['onDelete'],
   ): Promise<void> {
     const foreignKeyName = queryRunner.connection.namingStrategy.foreignKeyName(
       tableName,
@@ -195,7 +187,7 @@ export class WorkspaceSchemaForeignKeyManagerService {
       [referencedColumnName],
     );
 
-    const foreignKey: ForeignKeyDefinition = {
+    const foreignKey: WorkspaceSchemaForeignKeyDefinition = {
       name: foreignKeyName,
       columnNames: [columnName],
       referencedTableName,

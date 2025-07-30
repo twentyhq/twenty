@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { QueryRunner } from 'typeorm';
 
-import { WorkspaceSchemaTableManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services';
+import { WorkspaceSchemaTableManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-table-manager.service';
 
 describe('WorkspaceSchemaTableManager', () => {
   let service: WorkspaceSchemaTableManagerService;

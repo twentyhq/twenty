@@ -2,10 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { QueryRunner } from 'typeorm';
 
-import {
-  IndexDefinition,
-  WorkspaceSchemaIndexManagerService,
-} from 'src/engine/twenty-orm/workspace-schema-manager/services';
+import { WorkspaceSchemaIndexManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-index-manager.service';
+import { WorkspaceSchemaIndexDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-index-definition.type';
 
 describe('WorkspaceSchemaIndexManager', () => {
   let service: WorkspaceSchemaIndexManagerService;
@@ -34,7 +32,7 @@ describe('WorkspaceSchemaIndexManager', () => {
       // Prepare
       const schemaName = 'workspace_test';
       const tableName = 'users';
-      const index: IndexDefinition = {
+      const index: WorkspaceSchemaIndexDefinition = {
         name: 'idx_users_email',
         columns: ['email'],
       };
@@ -52,7 +50,7 @@ describe('WorkspaceSchemaIndexManager', () => {
       // Prepare
       const schemaName = 'workspace_test';
       const tableName = 'users';
-      const index: IndexDefinition = {
+      const index: WorkspaceSchemaIndexDefinition = {
         name: 'idx_users_email_unique',
         columns: ['email'],
         isUnique: true,
@@ -71,7 +69,7 @@ describe('WorkspaceSchemaIndexManager', () => {
       // Prepare
       const schemaName = 'workspace_test';
       const tableName = 'users';
-      const index: IndexDefinition = {
+      const index: WorkspaceSchemaIndexDefinition = {
         name: 'idx_users_data_gin',
         columns: ['data'],
         type: 'GIN',
@@ -90,7 +88,7 @@ describe('WorkspaceSchemaIndexManager', () => {
       // Prepare
       const schemaName = 'workspace_test';
       const tableName = 'users';
-      const index: IndexDefinition = {
+      const index: WorkspaceSchemaIndexDefinition = {
         name: 'idx_users_name',
         columns: ['name'],
         type: 'BTREE',
@@ -109,7 +107,7 @@ describe('WorkspaceSchemaIndexManager', () => {
       // Prepare
       const schemaName = 'workspace_test';
       const tableName = 'users';
-      const index: IndexDefinition = {
+      const index: WorkspaceSchemaIndexDefinition = {
         name: 'idx_users_active_email',
         columns: ['email'],
         where: 'active = true',
@@ -128,7 +126,7 @@ describe('WorkspaceSchemaIndexManager', () => {
       // Prepare
       const schemaName = 'workspace_test';
       const tableName = 'users';
-      const index: IndexDefinition = {
+      const index: WorkspaceSchemaIndexDefinition = {
         name: 'idx_users_email_include',
         columns: ['email'],
         include: ['name', 'created_at'],
@@ -147,7 +145,7 @@ describe('WorkspaceSchemaIndexManager', () => {
       // Prepare
       const schemaName = 'workspace_test';
       const tableName = 'users';
-      const index: IndexDefinition = {
+      const index: WorkspaceSchemaIndexDefinition = {
         name: 'idx_users_company_department',
         columns: ['companyId', 'departmentId'],
       };
@@ -164,7 +162,7 @@ describe('WorkspaceSchemaIndexManager', () => {
     it('should create index with all options combined', async () => {
       const schemaName = 'workspace_test';
       const tableName = 'users';
-      const index: IndexDefinition = {
+      const index: WorkspaceSchemaIndexDefinition = {
         name: 'idx_users_complex',
         columns: ['email', 'status'],
         type: 'BTREE',
@@ -191,7 +189,7 @@ describe('WorkspaceSchemaIndexManager', () => {
 
       const schemaName = 'workspace_test';
       const tableName = 'users';
-      const index: IndexDefinition = {
+      const index: WorkspaceSchemaIndexDefinition = {
         name: 'idx_existing',
         columns: ['email'],
       };
@@ -209,7 +207,7 @@ describe('WorkspaceSchemaIndexManager', () => {
 
       const schemaName = 'workspace_test';
       const tableName = 'users';
-      const index: IndexDefinition = {
+      const index: WorkspaceSchemaIndexDefinition = {
         name: 'idx_failing',
         columns: ['email'],
       };
@@ -223,7 +221,7 @@ describe('WorkspaceSchemaIndexManager', () => {
       // Prepare
       const schemaName = 'workspace"test';
       const tableName = 'users"table';
-      const index: IndexDefinition = {
+      const index: WorkspaceSchemaIndexDefinition = {
         name: 'idx"test',
         columns: ['email"col', 'name"col'],
         include: ['include"col'],

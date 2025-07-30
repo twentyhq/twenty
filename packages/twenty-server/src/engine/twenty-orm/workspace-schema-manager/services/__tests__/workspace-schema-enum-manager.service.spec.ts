@@ -6,7 +6,7 @@ import {
   TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { WorkspaceSchemaEnumManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services';
+import { WorkspaceSchemaEnumManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-enum-manager.service';
 
 describe('WorkspaceSchemaEnumManager', () => {
   let service: WorkspaceSchemaEnumManagerService;

@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { QueryRunner } from 'typeorm';
 
-import { WorkspaceSchemaColumnManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services';
+import { WorkspaceSchemaColumnManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-column-manager.service';
 
 describe('WorkspaceSchemaColumnManager', () => {
   let service: WorkspaceSchemaColumnManagerService;

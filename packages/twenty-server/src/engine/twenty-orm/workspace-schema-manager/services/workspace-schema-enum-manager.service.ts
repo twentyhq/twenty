@@ -8,11 +8,6 @@ import {
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
 
-export type EnumDefinition = {
-  name: string;
-  values: string[];
-};
-
 @Injectable()
 export class WorkspaceSchemaEnumManagerService {
   async createEnum(

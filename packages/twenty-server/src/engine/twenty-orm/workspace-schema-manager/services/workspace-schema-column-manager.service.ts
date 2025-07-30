@@ -2,20 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { QueryRunner } from 'typeorm';
 
+import { WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { sanitizeDefaultValue } from 'src/engine/twenty-orm/workspace-schema-manager/utils/sanitize-default-value.util';
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
-
-export type ColumnDefinition = {
-  name: string;
-  type: string;
-  isNullable?: boolean;
-  default?: string | number | boolean | null;
-  isPrimary?: boolean;
-  isUnique?: boolean;
-  isArray?: boolean;
-  asExpression?: string;
-  generatedType?: 'STORED' | 'VIRTUAL';
-};
 
 @Injectable()
 export class WorkspaceSchemaColumnManagerService {
@@ -23,7 +12,7 @@ export class WorkspaceSchemaColumnManagerService {
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
-    column: ColumnDefinition,
+    column: WorkspaceSchemaColumnDefinition,
   ): Promise<void> {
     const columnDef = this.buildColumnDefinition(column);
     const safeSchemaName = removeSqlDDLInjection(schemaName);
@@ -168,7 +157,9 @@ export class WorkspaceSchemaColumnManagerService {
     return result[0]?.exists || false;
   }
 
-  private buildColumnDefinition(column: ColumnDefinition): string {
+  private buildColumnDefinition(
+    column: WorkspaceSchemaColumnDefinition,
+  ): string {
     const safeName = removeSqlDDLInjection(column.name);
     const parts = [`"${safeName}"`];
 

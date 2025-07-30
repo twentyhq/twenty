@@ -2,10 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { QueryRunner } from 'typeorm';
 
-import {
-  ForeignKeyDefinition,
-  WorkspaceSchemaForeignKeyManagerService,
-} from 'src/engine/twenty-orm/workspace-schema-manager/services';
+import { WorkspaceSchemaForeignKeyManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-foreign-key-manager.service';
+import { WorkspaceSchemaForeignKeyDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-foreign-key-definition.type';
 
 describe('WorkspaceSchemaForeignKeyManager', () => {
   let service: WorkspaceSchemaForeignKeyManagerService;
@@ -39,7 +37,7 @@ describe('WorkspaceSchemaForeignKeyManager', () => {
       // Prepare
       const schemaName = 'workspace_test';
       const tableName = 'users';
-      const foreignKey: ForeignKeyDefinition = {
+      const foreignKey: WorkspaceSchemaForeignKeyDefinition = {
         name: 'FK_user_company',
         columnNames: ['companyId'],
         referencedTableName: 'companies',
@@ -63,7 +61,7 @@ describe('WorkspaceSchemaForeignKeyManager', () => {
     it('should create a foreign key with ON DELETE CASCADE', async () => {
       const schemaName = 'workspace_test';
       const tableName = 'users';
-      const foreignKey: ForeignKeyDefinition = {
+      const foreignKey: WorkspaceSchemaForeignKeyDefinition = {
         name: 'FK_user_company',
         columnNames: ['companyId'],
         referencedTableName: 'companies',
@@ -86,7 +84,7 @@ describe('WorkspaceSchemaForeignKeyManager', () => {
     it('should create a foreign key with ON UPDATE SET NULL', async () => {
       const schemaName = 'workspace_test';
       const tableName = 'users';
-      const foreignKey: ForeignKeyDefinition = {
+      const foreignKey: WorkspaceSchemaForeignKeyDefinition = {
         name: 'FK_user_company',
         columnNames: ['companyId'],
         referencedTableName: 'companies',
@@ -109,7 +107,7 @@ describe('WorkspaceSchemaForeignKeyManager', () => {
     it('should create a foreign key with both ON DELETE and ON UPDATE', async () => {
       const schemaName = 'workspace_test';
       const tableName = 'users';
-      const foreignKey: ForeignKeyDefinition = {
+      const foreignKey: WorkspaceSchemaForeignKeyDefinition = {
         name: 'FK_user_company',
         columnNames: ['companyId'],
         referencedTableName: 'companies',
@@ -134,7 +132,7 @@ describe('WorkspaceSchemaForeignKeyManager', () => {
     it('should handle multiple columns in foreign key', async () => {
       const schemaName = 'workspace_test';
       const tableName = 'orders';
-      const foreignKey: ForeignKeyDefinition = {
+      const foreignKey: WorkspaceSchemaForeignKeyDefinition = {
         name: 'FK_order_composite',
         columnNames: ['userId', 'companyId'],
         referencedTableName: 'user_companies',
@@ -160,7 +158,7 @@ describe('WorkspaceSchemaForeignKeyManager', () => {
       // Prepare
       const schemaName = 'workspace"test';
       const tableName = 'users"table';
-      const foreignKey: ForeignKeyDefinition = {
+      const foreignKey: WorkspaceSchemaForeignKeyDefinition = {
         name: 'FK"constraint',
         columnNames: ['column"id'],
         referencedTableName: 'ref"table',

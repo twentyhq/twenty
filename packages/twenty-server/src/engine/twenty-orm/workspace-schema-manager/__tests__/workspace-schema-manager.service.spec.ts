@@ -2,13 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { QueryRunner } from 'typeorm';
 
-import {
-  WorkspaceSchemaColumnManagerService,
-  WorkspaceSchemaEnumManagerService,
-  WorkspaceSchemaForeignKeyManagerService,
-  WorkspaceSchemaIndexManagerService,
-  WorkspaceSchemaTableManagerService,
-} from 'src/engine/twenty-orm/workspace-schema-manager/services';
+import { WorkspaceSchemaColumnManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-column-manager.service';
+import { WorkspaceSchemaEnumManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-enum-manager.service';
+import { WorkspaceSchemaForeignKeyManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-foreign-key-manager.service';
+import { WorkspaceSchemaIndexManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-index-manager.service';
+import { WorkspaceSchemaTableManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-table-manager.service';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 
 describe('WorkspaceSchemaManager', () => {
@@ -102,48 +100,6 @@ describe('WorkspaceSchemaManager', () => {
     });
   });
 
-  describe('setSearchPath', () => {
-    it('should set search path with sanitized schema name', async () => {
-      // Prepare
-      const schemaName = 'workspace_abc123';
-
-      // Act
-      await service.setSearchPath(mockQueryRunner, schemaName);
-
-      // Assert
-      expect(mockQueryRunner.query).toHaveBeenCalledWith(
-        `SET LOCAL search_path TO ${schemaName}`,
-      );
-    });
-
-    it('should sanitize schema name before setting search path', async () => {
-      // Prepare
-      const schemaName = 'workspace_abc123; DROP TABLE users; --';
-      const expectedSanitizedName = 'workspace_abc123DROPTABLEusers';
-
-      // Act
-      await service.setSearchPath(mockQueryRunner, schemaName);
-
-      // Assert
-      expect(mockQueryRunner.query).toHaveBeenCalledWith(
-        `SET LOCAL search_path TO ${expectedSanitizedName}`,
-      );
-    });
-
-    it('should handle empty schema name', async () => {
-      // Prepare
-      const schemaName = '';
-
-      // Act
-      await service.setSearchPath(mockQueryRunner, schemaName);
-
-      // Assert
-      expect(mockQueryRunner.query).toHaveBeenCalledWith(
-        'SET LOCAL search_path TO ',
-      );
-    });
-  });
-
   describe('manager access', () => {
     it('should provide access to table manager', () => {
       // Act & Assert
@@ -183,8 +139,6 @@ describe('WorkspaceSchemaManager', () => {
       const tableName = 'users';
 
       // Act
-      await service.setSearchPath(mockQueryRunner, schemaName);
-
       await service.tableManager.createTable(
         mockQueryRunner,
         schemaName,
