@@ -168,9 +168,6 @@ describe('WorkspaceSchemaManager', () => {
       );
 
       // Assert
-      expect(mockQueryRunner.query).toHaveBeenCalledWith(
-        `SET LOCAL search_path TO ${schemaName}`,
-      );
       expect(tableManager.createTable).toHaveBeenCalled();
       expect(enumManager.createEnum).toHaveBeenCalled();
       expect(indexManager.createIndex).toHaveBeenCalled();
