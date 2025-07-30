@@ -31,20 +31,9 @@ export class ImapGetMessageListService {
       const result: GetMessageListsResponse = [];
 
       for (const folder of messageFolders) {
-        let mailboxName: string;
+        const mailboxName = await this.getMailboxName(client, folder.name);
 
-        if (folder.name === MessageFolderName.INBOX) {
-          mailboxName = 'INBOX';
-        } else if (folder.name === MessageFolderName.SENT_ITEMS) {
-          const sentMailbox = await findSentMailbox(client, this.logger);
-
-          if (!sentMailbox) {
-            this.logger.warn('SENT folder not found, skipping');
-            continue;
-          }
-          mailboxName = sentMailbox;
-        } else {
-          this.logger.warn(`Unknown folder name: ${folder.name}, skipping`);
+        if (!mailboxName) {
           continue;
         }
 
@@ -87,6 +76,29 @@ export class ImapGetMessageListService {
     } finally {
       await this.imapClientProvider.closeClient(connectedAccount.id);
     }
+  }
+
+  private async getMailboxName(
+    client: ImapFlow,
+    folderName: string,
+  ): Promise<string | null> {
+    if (folderName === MessageFolderName.INBOX) {
+      return 'INBOX';
+    }
+
+    if (folderName === MessageFolderName.SENT_ITEMS) {
+      const sentMailbox = await findSentMailbox(client, this.logger);
+
+      if (!sentMailbox) {
+        this.logger.warn('SENT folder not found, skipping');
+
+        return null;
+      }
+
+      return sentMailbox;
+    }
+
+    return folderName;
   }
 
   private async getMessageListForMailbox(
