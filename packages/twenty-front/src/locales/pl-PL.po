@@ -215,6 +215,11 @@ msgstr "Metoda 2FA została usunięta pomyślnie."
 msgid "2FA Method Reset"
 msgstr "Reset metody 2FA"
 
+#. js-lingui-id: C6xZqR
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "A role must be selected for the API key"
+msgstr ""
+
 #. js-lingui-id: nMTB1f
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "A shared environment where you will be able to manage your customer relations with your team."
@@ -4311,11 +4316,6 @@ msgstr "Proszę odświeżyć stronę."
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Please search for a user first"
 msgstr "Najpierw proszę wyszukać użytkownika"
-
-#. js-lingui-id: iG3JPU
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-msgid "Please select a role for the API key"
-msgstr ""
 
 #. js-lingui-id: 6nsIo3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx

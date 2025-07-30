@@ -215,6 +215,11 @@ msgstr "2단계 인증 방법이 성공적으로 삭제되었습니다."
 msgid "2FA Method Reset"
 msgstr "2단계 인증 방법 재설정"
 
+#. js-lingui-id: C6xZqR
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "A role must be selected for the API key"
+msgstr ""
+
 #. js-lingui-id: nMTB1f
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "A shared environment where you will be able to manage your customer relations with your team."
@@ -4311,11 +4316,6 @@ msgstr "페이지를 새로 고침 해 주세요."
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Please search for a user first"
 msgstr "먼저 사용자를 검색하세요"
-
-#. js-lingui-id: iG3JPU
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-msgid "Please select a role for the API key"
-msgstr ""
 
 #. js-lingui-id: 6nsIo3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
