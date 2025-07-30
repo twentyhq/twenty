@@ -1116,6 +1116,7 @@ export type Mutation = {
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
   deleteFile: File;
+  deleteOneAgent: Agent;
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRole: Scalars['String'];
@@ -1322,6 +1323,11 @@ export type MutationDeleteDatabaseConfigVariableArgs = {
 
 export type MutationDeleteFileArgs = {
   fileId: Scalars['String'];
+};
+
+
+export type MutationDeleteOneAgentArgs = {
+  input: AgentIdInput;
 };
 
 
