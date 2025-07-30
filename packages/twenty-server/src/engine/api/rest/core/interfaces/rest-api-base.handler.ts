@@ -406,7 +406,9 @@ export abstract class RestApiBaseHandler {
     const objectMetadataNameSingular =
       objectMetadata.objectMetadataMapItem.nameSingular;
 
-    const qb = repository.createQueryBuilder(objectMetadataNameSingular);
+    const qb = repository
+      .createQueryBuilder(objectMetadataNameSingular)
+      .select('id');
 
     const inputs = this.getVariablesFactory.create(
       recordId,

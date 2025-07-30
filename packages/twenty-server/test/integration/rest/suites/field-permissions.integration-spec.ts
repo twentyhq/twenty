@@ -113,7 +113,7 @@ describe('Restricted fields', () => {
         field.node.object.nameSingular === 'person',
     ).node.id;
 
-    // Get admin role ID
+    // Get member role ID
     const getRolesOperation = {
       query: gql`
         query {
@@ -166,7 +166,7 @@ describe('Restricted fields', () => {
       await makeGraphqlAPIRequest(disablePermissionsQuery);
     });
 
-    it('should hide fields when user has restricted read permissions - findMany', async () => {
+    it('should hide fields when user has restricted read permissions - findOne', async () => {
       await makeRestAPIRequest({
         method: 'get',
         path: `/people/${TEST_PERSON_1_ID}`,
@@ -192,7 +192,7 @@ describe('Restricted fields', () => {
               objectMetadataId: personObjectId,
               fieldMetadataId: phonesFieldId,
               canReadFieldValue: false,
-              canUpdateFieldValue: false,
+              canUpdateFieldValue: null,
             },
           ],
         });
@@ -230,7 +230,7 @@ describe('Restricted fields', () => {
         });
 
         await makeRestAPIRequest({
-          method: 'post',
+          method: 'patch',
           path: `/people/${TEST_PERSON_1_ID}`,
           bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
           body: {

@@ -1175,7 +1175,7 @@ export class WorkspaceEntityManager extends EntityManager {
       this.getFeatureFlagMap().IS_FIELDS_PERMISSIONS_ENABLED;
 
     const permissionCheckApplies =
-      permissionOptionsFromArgs?.shouldBypassPermissionChecks !== true ||
+      permissionOptionsFromArgs?.shouldBypassPermissionChecks !== true &&
       objectMetadataItem.isSystem !== true;
 
     if (isFieldPermissionsEnabled && permissionCheckApplies) {
