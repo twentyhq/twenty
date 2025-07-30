@@ -18,7 +18,7 @@ export type ColumnDefinition = {
 };
 
 @Injectable()
-export class WorkspaceSchemaColumnManager {
+export class WorkspaceSchemaColumnManagerService {
   async addColumn(
     queryRunner: QueryRunner,
     schemaName: string,

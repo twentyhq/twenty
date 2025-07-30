@@ -14,7 +14,7 @@ export type ForeignKeyDefinition = {
 };
 
 @Injectable()
-export class WorkspaceSchemaForeignKeyManager {
+export class WorkspaceSchemaForeignKeyManagerService {
   async createForeignKey(
     queryRunner: QueryRunner,
     schemaName: string,

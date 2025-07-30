@@ -16,7 +16,7 @@ export type IndexDefinition = {
 };
 
 @Injectable()
-export class WorkspaceSchemaIndexManager {
+export class WorkspaceSchemaIndexManagerService {
   async createIndex(
     queryRunner: QueryRunner,
     schemaName: string,

@@ -2,10 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { QueryRunner } from 'typeorm';
 
-import { WorkspaceSchemaTableManager } from 'src/engine/twenty-orm/workspace-schema-manager/services';
+import { WorkspaceSchemaTableManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services';
 
 describe('WorkspaceSchemaTableManager', () => {
-  let service: WorkspaceSchemaTableManager;
+  let service: WorkspaceSchemaTableManagerService;
   let mockQueryRunner: jest.Mocked<QueryRunner>;
 
   beforeEach(async () => {
@@ -14,11 +14,11 @@ describe('WorkspaceSchemaTableManager', () => {
     } as any;
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [WorkspaceSchemaTableManager],
+      providers: [WorkspaceSchemaTableManagerService],
     }).compile();
 
-    service = module.get<WorkspaceSchemaTableManager>(
-      WorkspaceSchemaTableManager,
+    service = module.get<WorkspaceSchemaTableManagerService>(
+      WorkspaceSchemaTableManagerService,
     );
   });
 

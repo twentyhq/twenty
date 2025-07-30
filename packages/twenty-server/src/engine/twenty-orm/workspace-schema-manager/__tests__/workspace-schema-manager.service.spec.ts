@@ -3,22 +3,22 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { QueryRunner } from 'typeorm';
 
 import {
-  WorkspaceSchemaColumnManager,
-  WorkspaceSchemaEnumManager,
-  WorkspaceSchemaForeignKeyManager,
-  WorkspaceSchemaIndexManager,
-  WorkspaceSchemaTableManager,
+  WorkspaceSchemaColumnManagerService,
+  WorkspaceSchemaEnumManagerService,
+  WorkspaceSchemaForeignKeyManagerService,
+  WorkspaceSchemaIndexManagerService,
+  WorkspaceSchemaTableManagerService,
 } from 'src/engine/twenty-orm/workspace-schema-manager/services';
-import { WorkspaceSchemaManager } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
+import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 
 describe('WorkspaceSchemaManager', () => {
-  let service: WorkspaceSchemaManager;
+  let service: WorkspaceSchemaManagerService;
   let mockQueryRunner: jest.Mocked<QueryRunner>;
-  let tableManager: jest.Mocked<WorkspaceSchemaTableManager>;
-  let columnManager: jest.Mocked<WorkspaceSchemaColumnManager>;
-  let indexManager: jest.Mocked<WorkspaceSchemaIndexManager>;
-  let enumManager: jest.Mocked<WorkspaceSchemaEnumManager>;
-  let foreignKeyManager: jest.Mocked<WorkspaceSchemaForeignKeyManager>;
+  let tableManager: jest.Mocked<WorkspaceSchemaTableManagerService>;
+  let columnManager: jest.Mocked<WorkspaceSchemaColumnManagerService>;
+  let indexManager: jest.Mocked<WorkspaceSchemaIndexManagerService>;
+  let enumManager: jest.Mocked<WorkspaceSchemaEnumManagerService>;
+  let foreignKeyManager: jest.Mocked<WorkspaceSchemaForeignKeyManagerService>;
 
   beforeEach(async () => {
     // Prepare
@@ -64,19 +64,24 @@ describe('WorkspaceSchemaManager', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        WorkspaceSchemaManager,
-        { provide: WorkspaceSchemaTableManager, useValue: tableManager },
-        { provide: WorkspaceSchemaColumnManager, useValue: columnManager },
-        { provide: WorkspaceSchemaIndexManager, useValue: indexManager },
-        { provide: WorkspaceSchemaEnumManager, useValue: enumManager },
+        WorkspaceSchemaManagerService,
+        { provide: WorkspaceSchemaTableManagerService, useValue: tableManager },
         {
-          provide: WorkspaceSchemaForeignKeyManager,
+          provide: WorkspaceSchemaColumnManagerService,
+          useValue: columnManager,
+        },
+        { provide: WorkspaceSchemaIndexManagerService, useValue: indexManager },
+        { provide: WorkspaceSchemaEnumManagerService, useValue: enumManager },
+        {
+          provide: WorkspaceSchemaForeignKeyManagerService,
           useValue: foreignKeyManager,
         },
       ],
     }).compile();
 
-    service = module.get<WorkspaceSchemaManager>(WorkspaceSchemaManager);
+    service = module.get<WorkspaceSchemaManagerService>(
+      WorkspaceSchemaManagerService,
+    );
   });
 
   afterEach(() => {

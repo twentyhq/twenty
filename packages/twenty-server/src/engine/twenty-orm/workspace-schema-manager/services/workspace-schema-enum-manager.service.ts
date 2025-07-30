@@ -14,7 +14,7 @@ export type EnumDefinition = {
 };
 
 @Injectable()
-export class WorkspaceSchemaEnumManager {
+export class WorkspaceSchemaEnumManagerService {
   async createEnum(
     queryRunner: QueryRunner,
     schemaName: string,

@@ -4,11 +4,11 @@ import { QueryRunner } from 'typeorm';
 
 import {
   IndexDefinition,
-  WorkspaceSchemaIndexManager,
+  WorkspaceSchemaIndexManagerService,
 } from 'src/engine/twenty-orm/workspace-schema-manager/services';
 
 describe('WorkspaceSchemaIndexManager', () => {
-  let service: WorkspaceSchemaIndexManager;
+  let service: WorkspaceSchemaIndexManagerService;
   let mockQueryRunner: jest.Mocked<QueryRunner>;
 
   beforeEach(async () => {
@@ -17,11 +17,11 @@ describe('WorkspaceSchemaIndexManager', () => {
     } as any;
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [WorkspaceSchemaIndexManager],
+      providers: [WorkspaceSchemaIndexManagerService],
     }).compile();
 
-    service = module.get<WorkspaceSchemaIndexManager>(
-      WorkspaceSchemaIndexManager,
+    service = module.get<WorkspaceSchemaIndexManagerService>(
+      WorkspaceSchemaIndexManagerService,
     );
   });
 

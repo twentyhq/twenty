@@ -6,10 +6,10 @@ import {
   TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { WorkspaceSchemaEnumManager } from 'src/engine/twenty-orm/workspace-schema-manager/services';
+import { WorkspaceSchemaEnumManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services';
 
 describe('WorkspaceSchemaEnumManager', () => {
-  let service: WorkspaceSchemaEnumManager;
+  let service: WorkspaceSchemaEnumManagerService;
   let mockQueryRunner: jest.Mocked<QueryRunner>;
 
   beforeEach(async () => {
@@ -22,11 +22,11 @@ describe('WorkspaceSchemaEnumManager', () => {
     } as any;
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [WorkspaceSchemaEnumManager],
+      providers: [WorkspaceSchemaEnumManagerService],
     }).compile();
 
-    service = module.get<WorkspaceSchemaEnumManager>(
-      WorkspaceSchemaEnumManager,
+    service = module.get<WorkspaceSchemaEnumManagerService>(
+      WorkspaceSchemaEnumManagerService,
     );
   });
 

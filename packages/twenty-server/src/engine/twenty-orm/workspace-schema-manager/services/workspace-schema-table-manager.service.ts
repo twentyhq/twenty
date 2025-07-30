@@ -6,7 +6,7 @@ import { sanitizeDefaultValue } from 'src/engine/twenty-orm/workspace-schema-man
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
 
 @Injectable()
-export class WorkspaceSchemaTableManager {
+export class WorkspaceSchemaTableManagerService {
   async createTable(
     queryRunner: QueryRunner,
     schemaName: string,

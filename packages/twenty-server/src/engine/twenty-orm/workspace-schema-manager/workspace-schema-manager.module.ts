@@ -1,23 +1,23 @@
 import { Module } from '@nestjs/common';
 
 import {
-  WorkspaceSchemaColumnManager,
-  WorkspaceSchemaEnumManager,
-  WorkspaceSchemaForeignKeyManager,
-  WorkspaceSchemaIndexManager,
-  WorkspaceSchemaTableManager,
+  WorkspaceSchemaColumnManagerService,
+  WorkspaceSchemaEnumManagerService,
+  WorkspaceSchemaForeignKeyManagerService,
+  WorkspaceSchemaIndexManagerService,
+  WorkspaceSchemaTableManagerService,
 } from './services';
-import { WorkspaceSchemaManager } from './workspace-schema-manager.service';
+import { WorkspaceSchemaManagerService } from './workspace-schema-manager.service';
 
 @Module({
   providers: [
-    WorkspaceSchemaManager,
-    WorkspaceSchemaTableManager,
-    WorkspaceSchemaColumnManager,
-    WorkspaceSchemaIndexManager,
-    WorkspaceSchemaEnumManager,
-    WorkspaceSchemaForeignKeyManager,
+    WorkspaceSchemaManagerService,
+    WorkspaceSchemaTableManagerService,
+    WorkspaceSchemaColumnManagerService,
+    WorkspaceSchemaIndexManagerService,
+    WorkspaceSchemaEnumManagerService,
+    WorkspaceSchemaForeignKeyManagerService,
   ],
-  exports: [WorkspaceSchemaManager],
+  exports: [WorkspaceSchemaManagerService],
 })
 export class WorkspaceSchemaManagerModule {}

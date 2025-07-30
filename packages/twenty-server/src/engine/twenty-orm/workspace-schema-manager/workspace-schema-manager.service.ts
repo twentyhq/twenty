@@ -3,28 +3,28 @@ import { Injectable } from '@nestjs/common';
 import { QueryRunner } from 'typeorm';
 
 import {
-  WorkspaceSchemaColumnManager,
-  WorkspaceSchemaEnumManager,
-  WorkspaceSchemaForeignKeyManager,
-  WorkspaceSchemaIndexManager,
-  WorkspaceSchemaTableManager,
+  WorkspaceSchemaColumnManagerService,
+  WorkspaceSchemaEnumManagerService,
+  WorkspaceSchemaForeignKeyManagerService,
+  WorkspaceSchemaIndexManagerService,
+  WorkspaceSchemaTableManagerService,
 } from 'src/engine/twenty-orm/workspace-schema-manager/services';
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
 
 @Injectable()
-export class WorkspaceSchemaManager {
-  public readonly tableManager: WorkspaceSchemaTableManager;
-  public readonly columnManager: WorkspaceSchemaColumnManager;
-  public readonly indexManager: WorkspaceSchemaIndexManager;
-  public readonly enumManager: WorkspaceSchemaEnumManager;
-  public readonly foreignKeyManager: WorkspaceSchemaForeignKeyManager;
+export class WorkspaceSchemaManagerService {
+  public readonly tableManager: WorkspaceSchemaTableManagerService;
+  public readonly columnManager: WorkspaceSchemaColumnManagerService;
+  public readonly indexManager: WorkspaceSchemaIndexManagerService;
+  public readonly enumManager: WorkspaceSchemaEnumManagerService;
+  public readonly foreignKeyManager: WorkspaceSchemaForeignKeyManagerService;
 
   constructor(
-    workspaceSchemaTableManager: WorkspaceSchemaTableManager,
-    workspaceSchemaColumnManager: WorkspaceSchemaColumnManager,
-    workspaceSchemaIndexManager: WorkspaceSchemaIndexManager,
-    workspaceSchemaEnumManager: WorkspaceSchemaEnumManager,
-    workspaceSchemaForeignKeyManager: WorkspaceSchemaForeignKeyManager,
+    workspaceSchemaTableManager: WorkspaceSchemaTableManagerService,
+    workspaceSchemaColumnManager: WorkspaceSchemaColumnManagerService,
+    workspaceSchemaIndexManager: WorkspaceSchemaIndexManagerService,
+    workspaceSchemaEnumManager: WorkspaceSchemaEnumManagerService,
+    workspaceSchemaForeignKeyManager: WorkspaceSchemaForeignKeyManagerService,
   ) {
     this.tableManager = workspaceSchemaTableManager;
     this.columnManager = workspaceSchemaColumnManager;

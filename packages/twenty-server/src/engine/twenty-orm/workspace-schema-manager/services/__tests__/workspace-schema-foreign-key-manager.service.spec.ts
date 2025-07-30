@@ -4,11 +4,11 @@ import { QueryRunner } from 'typeorm';
 
 import {
   ForeignKeyDefinition,
-  WorkspaceSchemaForeignKeyManager,
+  WorkspaceSchemaForeignKeyManagerService,
 } from 'src/engine/twenty-orm/workspace-schema-manager/services';
 
 describe('WorkspaceSchemaForeignKeyManager', () => {
-  let service: WorkspaceSchemaForeignKeyManager;
+  let service: WorkspaceSchemaForeignKeyManagerService;
   let mockQueryRunner: jest.Mocked<QueryRunner>;
 
   beforeEach(async () => {
@@ -22,11 +22,11 @@ describe('WorkspaceSchemaForeignKeyManager', () => {
     } as any;
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [WorkspaceSchemaForeignKeyManager],
+      providers: [WorkspaceSchemaForeignKeyManagerService],
     }).compile();
 
-    service = module.get<WorkspaceSchemaForeignKeyManager>(
-      WorkspaceSchemaForeignKeyManager,
+    service = module.get<WorkspaceSchemaForeignKeyManagerService>(
+      WorkspaceSchemaForeignKeyManagerService,
     );
   });
 
