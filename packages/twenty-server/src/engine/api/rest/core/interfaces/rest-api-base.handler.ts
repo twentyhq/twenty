@@ -135,8 +135,6 @@ export abstract class RestApiBaseHandler {
       );
     }
 
-    const shouldBypassPermissionChecks = false;
-
     let roleId: string | undefined = undefined;
 
     if (isDefined(apiKey)) {
@@ -179,7 +177,7 @@ export abstract class RestApiBaseHandler {
 
     const repository = workspaceDataSource.getRepository<ObjectRecord>(
       objectMetadataNameSingular,
-      shouldBypassPermissionChecks,
+      false,
       roleId,
     );
 
