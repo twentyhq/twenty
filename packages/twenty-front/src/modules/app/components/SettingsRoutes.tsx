@@ -152,6 +152,12 @@ const SettingsAI = lazy(() =>
   })),
 );
 
+const SettingsNewAgent = lazy(() =>
+  import('~/pages/settings/ai/SettingsNewAgent').then((module) => ({
+    default: module.SettingsNewAgent,
+  })),
+);
+
 const SettingsDomain = lazy(() =>
   import('~/pages/settings/workspace/SettingsDomain').then((module) => ({
     default: module.SettingsDomain,
@@ -417,6 +423,7 @@ export const SettingsRoutes = ({
       >
         <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
         <Route path={SettingsPath.AI} element={<SettingsAI />} />
+        <Route path={SettingsPath.NewAgent} element={<SettingsNewAgent />} />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
       </Route>
