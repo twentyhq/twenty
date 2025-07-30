@@ -1,4 +1,6 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Select } from '@/ui/input/components/Select';
+import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 import { Role } from '~/generated-metadata/graphql';
 
@@ -19,6 +21,21 @@ export const SettingsDevelopersRoleSelector = ({
 }: SettingsDevelopersRoleSelectorProps) => {
   const { getIcon } = useIcons();
 
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+
+  let doesDefaultRoleExistInRoles = false;
+
+  const defaultRole = currentWorkspace?.defaultRole;
+  try {
+    doesDefaultRoleExistInRoles = roles.some(
+      (role) => role.id === defaultRole?.id,
+    );
+  } catch {
+    throw new Error(
+      'Default role does not exist in roles, this should not happen',
+    );
+  }
+
   if (roles.length === 0) {
     return null;
   }
@@ -29,7 +46,8 @@ export const SettingsDevelopersRoleSelector = ({
     Icon: getIcon(role.icon) ?? undefined,
   }));
 
-  const selectValue = value || roles[0].id;
+  const selectValue =
+    value || (doesDefaultRoleExistInRoles ? defaultRole?.id : roles[0].id);
 
   return (
     <Select
