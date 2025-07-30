@@ -2,16 +2,14 @@ import { Module } from '@nestjs/common';
 
 import { SortDirection } from '@ptc-org/nestjs-query-core';
 import {
-  NestjsQueryGraphQLModule,
-  PagingStrategies,
+    NestjsQueryGraphQLModule,
+    PagingStrategies,
 } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
@@ -26,6 +24,7 @@ import { FieldMetadataValidationService } from 'src/engine/metadata-modules/fiel
 import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
 import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
 import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-options.validator';
+import { FlatFieldMetadataModule } from 'src/engine/metadata-modules/flat-field-metadata/flat-field-metadata.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -34,10 +33,9 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
-import { ViewModule } from 'src/modules/view/view.module';
-import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { WorkspaceMigrationBuilderV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.module';
 import { WorkspaceMigrationRunnerV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.module';
+import { ViewModule } from 'src/modules/view/view.module';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 
@@ -67,36 +65,15 @@ import { FieldMetadataService } from './services/field-metadata.service';
         WorkspaceMetadataCacheModule,
         WorkspaceMigrationBuilderV2Module,
         WorkspaceMigrationRunnerV2Module,
+        FlatFieldMetadataModule,
       ],
       services: [
         IsFieldMetadataDefaultValue,
-        {
-          provide: FieldMetadataService,
-          useFactory: async (
-            featureFlagService: FeatureFlagService,
-            fieldMetadataService: FieldMetadataService,
-            fieldMetadataServiceV2: FieldMetadataServiceV2,
-          ) => {
-            const isV2Enabled = await featureFlagService.isFeatureEnabled(
-              FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-              'system',
-            );
-
-            return isV2Enabled ? fieldMetadataServiceV2 : fieldMetadataService;
-          },
-          inject: [
-            FeatureFlagService,
-            FieldMetadataService,
-            FieldMetadataServiceV2,
-          ],
-        },
-        FieldMetadataServiceV2,
         FieldMetadataRelatedRecordsService,
         FieldMetadataMorphRelationService,
         FieldMetadataRelationService,
         FieldMetadataValidationService,
         FieldMetadataEnumValidationService,
-        FlatFieldMetadataValidatorService,
       ],
       resolvers: [
         {
@@ -138,7 +115,6 @@ import { FieldMetadataService } from './services/field-metadata.service';
     FieldMetadataEnumValidationService,
     FieldMetadataResolver,
     BeforeUpdateOneField,
-    FlatFieldMetadataValidatorService,
   ],
   exports: [
     FieldMetadataService,
