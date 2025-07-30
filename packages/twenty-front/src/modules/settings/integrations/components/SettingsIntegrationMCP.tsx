@@ -1,4 +1,3 @@
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -7,6 +6,7 @@ import { useState } from 'react';
 import { IconCopy, IconDatabase, IconSitemap } from 'twenty-ui/display';
 import { Button, CodeEditor } from 'twenty-ui/input';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledWrapper = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -57,8 +57,8 @@ const StyledEditorContainer = styled.div`
 
 export const SettingsIntegrationMCP = () => {
   const theme = useTheme();
-  const { enqueueSuccessSnackBar } = useSnackBar();
   const { t } = useLingui();
+  const { copyToClipboard } = useCopyToClipboard();
 
   const generateMcpContent = (pathSuffix: string, serverName: string) => {
     return JSON.stringify(
@@ -125,14 +125,10 @@ export const SettingsIntegrationMCP = () => {
           <Button
             Icon={IconCopy}
             onClick={() => {
-              enqueueSuccessSnackBar({
-                message: t`MCP Configuration copied to clipboard`,
-                options: {
-                  icon: <IconCopy size={theme.icon.size.md} />,
-                  duration: 2000,
-                },
-              });
-              navigator.clipboard.writeText(selectedOption.content);
+              copyToClipboard(
+                selectedOption.content,
+                t`MCP Configuration copied to clipboard`,
+              );
             }}
             type="button"
           />

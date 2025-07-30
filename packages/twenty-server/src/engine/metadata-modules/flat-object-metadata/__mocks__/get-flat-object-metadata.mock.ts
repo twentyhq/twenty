@@ -9,15 +9,10 @@ type FlatObjectMetadataOverrides = Required<
 export const getFlatObjectMetadataMock = (
   overrides: FlatObjectMetadataOverrides,
 ): FlatObjectMetadata => {
-  const createdAt = faker.date.anytime();
-
   return {
     flatFieldMetadatas: [],
     flatIndexMetadatas: [],
-    createdAt,
-    dataSourceId: faker.string.uuid(),
     description: 'default flat object metadata description',
-    duplicateCriteria: [],
     icon: 'icon',
     id: faker.string.uuid(),
     imageIdentifierFieldMetadataId: faker.string.uuid(),
@@ -37,7 +32,6 @@ export const getFlatObjectMetadataMock = (
     standardId: null,
     standardOverrides: null,
     targetTableName: '',
-    updatedAt: createdAt,
     workspaceId: faker.string.uuid(),
     ...overrides,
   };

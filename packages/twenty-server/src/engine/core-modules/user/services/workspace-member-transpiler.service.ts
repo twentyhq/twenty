@@ -60,6 +60,7 @@ export class WorkspaceMemberTranspiler {
       timeFormat,
       timeZone,
       dateFormat,
+      calendarStartDay,
     } = workspaceMemberEntity;
 
     const avatarUrl = this.generateSignedAvatarUrl({
@@ -84,6 +85,7 @@ export class WorkspaceMemberTranspiler {
       timeFormat: timeFormat as WorkspaceMemberTimeFormatEnum,
       timeZone,
       roles,
+      calendarStartDay,
     } satisfies WorkspaceMember;
   }
 

@@ -21,6 +21,7 @@ export { getUniqueConstraintsFields } from './indexMetadata/getUniqueConstraints
 export { parseJson } from './parseJson';
 export { removePropertiesFromRecord } from './removePropertiesFromRecord';
 export { removeUndefinedFields } from './removeUndefinedFields';
+export { sanitizeObjectStringFields } from './sanitizeObjectStringFields';
 export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';
 export { capitalize } from './strings/capitalize';
