@@ -9,7 +9,6 @@ import {
   ValidationError,
   validateSync,
 } from 'class-validator';
-import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
@@ -66,16 +65,6 @@ export class ConfigVariables {
   })
   @IsOptional()
   IS_EMAIL_VERIFICATION_REQUIRED = false;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TwoFactorAuthentication,
-    description:
-      'Select the two-factor authentication strategy (e.g., TOTP or HOTP) to be used for workspace logins.',
-    type: ConfigVariableType.ENUM,
-    options: Object.values(TwoFactorAuthenticationStrategy),
-  })
-  @IsOptional()
-  TWO_FACTOR_AUTHENTICATION_STRATEGY = TwoFactorAuthenticationStrategy.TOTP;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
@@ -1170,6 +1159,23 @@ export class ConfigVariables {
   @IsOptionalOrEmptyString()
   @IsTwentySemVer()
   APP_VERSION?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Enable or disable google map api usage',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    isSensitive: true,
+    description: 'Google map api key for places and map',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf((env) => env.IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED)
+  GOOGLE_MAP_API_KEY: string;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {

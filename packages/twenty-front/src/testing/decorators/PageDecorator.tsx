@@ -13,7 +13,7 @@ import { RecoilRoot } from 'recoil';
 
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloCoreClientMockedProvider';
-import { SnackBarComponentInstanceContextProvider } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarComponentInstanceContextProvider';
+
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
@@ -28,6 +28,7 @@ import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/reco
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
+import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
@@ -77,7 +78,9 @@ await dynamicActivate(SOURCE_LOCALE);
 const Providers = () => {
   return (
     <RecoilRoot>
-      <SnackBarComponentInstanceContextProvider snackBarComponentInstanceId="snack-bar-manager">
+      <SnackBarComponentInstanceContext.Provider
+        value={{ instanceId: 'snack-bar-manager' }}
+      >
         <RecoilDebugObserverEffect />
         <ApolloProvider client={mockedApolloClient}>
           <I18nProvider i18n={i18n}>
@@ -125,7 +128,7 @@ const Providers = () => {
             </ClientConfigProvider>
           </I18nProvider>
         </ApolloProvider>
-      </SnackBarComponentInstanceContextProvider>
+      </SnackBarComponentInstanceContext.Provider>
     </RecoilRoot>
   );
 };

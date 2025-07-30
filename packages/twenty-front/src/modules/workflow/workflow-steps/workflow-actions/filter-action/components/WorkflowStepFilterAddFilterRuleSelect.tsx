@@ -22,7 +22,6 @@ type WorkflowStepFilterAddFilterRuleSelectProps = {
 };
 
 const BASE_NEW_STEP_FILTER = {
-  id: v4(),
   type: 'unknown',
   label: '',
   value: '',
@@ -53,6 +52,7 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
     closeDropdown(dropdownId);
 
     const newStepFilter = {
+      id: v4(),
       ...BASE_NEW_STEP_FILTER,
       stepFilterGroupId: stepFilterGroup.id,
       positionInStepFilterGroup: newPositionInStepFilterGroup,
@@ -76,6 +76,7 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
     };
 
     const newStepFilter: StepFilter = {
+      id: v4(),
       ...BASE_NEW_STEP_FILTER,
       stepFilterGroupId: newStepFilterGroupId,
       positionInStepFilterGroup: 1,

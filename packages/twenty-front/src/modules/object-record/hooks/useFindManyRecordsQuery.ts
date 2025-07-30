@@ -8,6 +8,8 @@ import {
   generateFindManyRecordsQuery,
   QueryCursorDirection,
 } from '@/object-record/utils/generateFindManyRecordsQuery';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useFindManyRecordsQuery = ({
   objectNameSingular,
@@ -28,6 +30,10 @@ export const useFindManyRecordsQuery = ({
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
+  const featureFlags = useFeatureFlagsMap();
+  const isFieldsPermissionsEnabled =
+    featureFlags[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
+
   const findManyRecordsQuery = generateFindManyRecordsQuery({
     objectMetadataItem,
     objectMetadataItems,
@@ -35,6 +41,7 @@ export const useFindManyRecordsQuery = ({
     computeReferences,
     cursorDirection,
     objectPermissionsByObjectMetadataId,
+    isFieldsPermissionsEnabled,
   });
 
   return {
