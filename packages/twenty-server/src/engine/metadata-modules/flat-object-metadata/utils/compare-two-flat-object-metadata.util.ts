@@ -23,7 +23,7 @@ export type FlatObjectMetadataPropertiesToCompare =
   (typeof flatObjectMetadataPropertiesToCompare)[number];
 
 /**
- * This comparator handles update on colliding uniqueIdentifier flatObjectdMetadata
+ * This comparator handles update on colliding uniqueIdentifier flatObjectMetadata
  */
 export const compareTwoFlatObjectMetadata = ({
   from,
