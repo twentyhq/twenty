@@ -6,14 +6,14 @@ export const SIGN_UP = gql`
     $password: String!
     $captchaToken: String
     $locale: String
-    $verifyEmailNextPath: String
+    $verifyEmailRedirectPath: String
   ) {
     signUp(
       email: $email
       password: $password
       captchaToken: $captchaToken
       locale: $locale
-      verifyEmailNextPath: $verifyEmailNextPath
+      verifyEmailRedirectPath: $verifyEmailRedirectPath
     ) {
       availableWorkspaces {
         ...AvailableWorkspacesFragment

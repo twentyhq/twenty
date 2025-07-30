@@ -52,11 +52,11 @@ describe('AuthResolve (integration)', () => {
       });
   });
 
-  it('should getAccessTokensFromLoginToken with login token', () => {
+  it('should getAuthTokensFromLoginToken with login token', () => {
     const queryData = {
       query: `
-        mutation GetAccessTokensFromLoginToken {
-          getAccessTokensFromLoginToken(loginToken: "${loginToken}", origin: "${ORIGIN.toString()}") {
+        mutation GetAuthTokensFromLoginToken {
+          getAuthTokensFromLoginToken(loginToken: "${loginToken}", origin: "${ORIGIN.toString()}") {
             tokens {
               accessToken {
                 token
@@ -77,7 +77,7 @@ describe('AuthResolve (integration)', () => {
         expect(res.body.errors).toBeUndefined();
       })
       .expect((res) => {
-        const data = res.body.data.getAccessTokensFromLoginToken;
+        const data = res.body.data.getAuthTokensFromLoginToken;
 
         expect(data).toBeDefined();
         expect(data.tokens).toBeDefined();

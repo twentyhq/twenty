@@ -7,12 +7,12 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 export const useVerifyLogin = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const navigate = useNavigateApp();
-  const { getAccessTokensFromLoginToken } = useAuth();
+  const { getAuthTokensFromLoginToken } = useAuth();
   const { t } = useLingui();
 
   const verifyLoginToken = async (loginToken: string) => {
     try {
-      await getAccessTokensFromLoginToken(loginToken);
+      await getAuthTokensFromLoginToken(loginToken);
     } catch (error) {
       enqueueErrorSnackBar({
         message: t`Authentication failed`,

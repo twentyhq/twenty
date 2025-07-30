@@ -43,7 +43,7 @@ describe('useVerifyLogin', () => {
     jest.clearAllMocks();
 
     (useAuth as jest.Mock).mockReturnValue({
-      getAccessTokensFromLoginToken: mockGetAuthTokensFromLoginToken,
+      getAuthTokensFromLoginToken: mockGetAuthTokensFromLoginToken,
     });
 
     (useSnackBar as jest.Mock).mockReturnValue({

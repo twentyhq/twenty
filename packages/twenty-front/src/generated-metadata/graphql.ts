@@ -1162,7 +1162,7 @@ export type Mutation = {
   executeOneServerlessFunction: ServerlessFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientToken;
-  getAccessTokensFromLoginToken: AuthTokens;
+  getAuthTokensFromLoginToken: AuthTokens;
   getAuthTokensFromOTP: AuthTokens;
   getAuthorizationUrlForSSO: GetAuthorizationUrlForSsoOutput;
   getLoginTokenFromCredentials: LoginToken;
@@ -1439,7 +1439,7 @@ export type MutationGenerateApiKeyTokenArgs = {
 };
 
 
-export type MutationGetAccessTokensFromLoginTokenArgs = {
+export type MutationGetAuthTokensFromLoginTokenArgs = {
   loginToken: Scalars['String'];
   origin: Scalars['String'];
 };
@@ -1464,7 +1464,7 @@ export type MutationGetLoginTokenFromCredentialsArgs = {
   locale?: InputMaybe<Scalars['String']>;
   origin: Scalars['String'];
   password: Scalars['String'];
-  verifyEmailNextPath?: InputMaybe<Scalars['String']>;
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1549,7 +1549,7 @@ export type MutationSignInArgs = {
   email: Scalars['String'];
   locale?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
-  verifyEmailNextPath?: InputMaybe<Scalars['String']>;
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1558,7 +1558,7 @@ export type MutationSignUpArgs = {
   email: Scalars['String'];
   locale?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
-  verifyEmailNextPath?: InputMaybe<Scalars['String']>;
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1567,7 +1567,7 @@ export type MutationSignUpInWorkspaceArgs = {
   email: Scalars['String'];
   locale?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
-  verifyEmailNextPath?: InputMaybe<Scalars['String']>;
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
   workspaceId?: InputMaybe<Scalars['String']>;
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
   workspacePersonalInviteToken?: InputMaybe<Scalars['String']>;
@@ -3202,13 +3202,13 @@ export type GenerateTransientTokenMutationVariables = Exact<{ [key: string]: nev
 
 export type GenerateTransientTokenMutation = { __typename?: 'Mutation', generateTransientToken: { __typename?: 'TransientToken', transientToken: { __typename?: 'AuthToken', token: string } } };
 
-export type GetAccessTokensFromLoginTokenMutationVariables = Exact<{
+export type GetAuthTokensFromLoginTokenMutationVariables = Exact<{
   loginToken: Scalars['String'];
   origin: Scalars['String'];
 }>;
 
 
-export type GetAccessTokensFromLoginTokenMutation = { __typename?: 'Mutation', getAccessTokensFromLoginToken: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type GetAuthTokensFromLoginTokenMutation = { __typename?: 'Mutation', getAuthTokensFromLoginToken: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type GetAuthTokensFromOtpMutationVariables = Exact<{
   loginToken: Scalars['String'];
@@ -3313,7 +3313,7 @@ export type SignUpMutationVariables = Exact<{
   password: Scalars['String'];
   captchaToken?: InputMaybe<Scalars['String']>;
   locale?: InputMaybe<Scalars['String']>;
-  verifyEmailNextPath?: InputMaybe<Scalars['String']>;
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -3332,7 +3332,7 @@ export type SignUpInWorkspaceMutationVariables = Exact<{
   captchaToken?: InputMaybe<Scalars['String']>;
   workspaceId?: InputMaybe<Scalars['String']>;
   locale?: InputMaybe<Scalars['String']>;
-  verifyEmailNextPath?: InputMaybe<Scalars['String']>;
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -4852,42 +4852,42 @@ export function useGenerateTransientTokenMutation(baseOptions?: Apollo.MutationH
 export type GenerateTransientTokenMutationHookResult = ReturnType<typeof useGenerateTransientTokenMutation>;
 export type GenerateTransientTokenMutationResult = Apollo.MutationResult<GenerateTransientTokenMutation>;
 export type GenerateTransientTokenMutationOptions = Apollo.BaseMutationOptions<GenerateTransientTokenMutation, GenerateTransientTokenMutationVariables>;
-export const GetAccessTokensFromLoginTokenDocument = gql`
-    mutation GetAccessTokensFromLoginToken($loginToken: String!, $origin: String!) {
-  getAccessTokensFromLoginToken(loginToken: $loginToken, origin: $origin) {
+export const GetAuthTokensFromLoginTokenDocument = gql`
+    mutation getAuthTokensFromLoginToken($loginToken: String!, $origin: String!) {
+  getAuthTokensFromLoginToken(loginToken: $loginToken, origin: $origin) {
     tokens {
       ...AuthTokensFragment
     }
   }
 }
     ${AuthTokensFragmentFragmentDoc}`;
-export type GetAccessTokensFromLoginTokenMutationFn = Apollo.MutationFunction<GetAccessTokensFromLoginTokenMutation, GetAccessTokensFromLoginTokenMutationVariables>;
+export type GetAuthTokensFromLoginTokenMutationFn = Apollo.MutationFunction<GetAuthTokensFromLoginTokenMutation, GetAuthTokensFromLoginTokenMutationVariables>;
 
 /**
- * __useGetAccessTokensFromLoginTokenMutation__
+ * __useGetAuthTokensFromLoginTokenMutation__
  *
- * To run a mutation, you first call `useGetAccessTokensFromLoginTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useGetAccessTokensFromLoginTokenMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useGetAuthTokensFromLoginTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetAuthTokensFromLoginTokenMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [getAccessTokensFromLoginTokenMutation, { data, loading, error }] = useGetAccessTokensFromLoginTokenMutation({
+ * const [getAuthTokensFromLoginTokenMutation, { data, loading, error }] = useGetAuthTokensFromLoginTokenMutation({
  *   variables: {
  *      loginToken: // value for 'loginToken'
  *      origin: // value for 'origin'
  *   },
  * });
  */
-export function useGetAccessTokensFromLoginTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetAccessTokensFromLoginTokenMutation, GetAccessTokensFromLoginTokenMutationVariables>) {
+export function useGetAuthTokensFromLoginTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetAuthTokensFromLoginTokenMutation, GetAuthTokensFromLoginTokenMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GetAccessTokensFromLoginTokenMutation, GetAccessTokensFromLoginTokenMutationVariables>(GetAccessTokensFromLoginTokenDocument, options);
+        return Apollo.useMutation<GetAuthTokensFromLoginTokenMutation, GetAuthTokensFromLoginTokenMutationVariables>(GetAuthTokensFromLoginTokenDocument, options);
       }
-export type GetAccessTokensFromLoginTokenMutationHookResult = ReturnType<typeof useGetAccessTokensFromLoginTokenMutation>;
-export type GetAccessTokensFromLoginTokenMutationResult = Apollo.MutationResult<GetAccessTokensFromLoginTokenMutation>;
-export type GetAccessTokensFromLoginTokenMutationOptions = Apollo.BaseMutationOptions<GetAccessTokensFromLoginTokenMutation, GetAccessTokensFromLoginTokenMutationVariables>;
+export type GetAuthTokensFromLoginTokenMutationHookResult = ReturnType<typeof useGetAuthTokensFromLoginTokenMutation>;
+export type GetAuthTokensFromLoginTokenMutationResult = Apollo.MutationResult<GetAuthTokensFromLoginTokenMutation>;
+export type GetAuthTokensFromLoginTokenMutationOptions = Apollo.BaseMutationOptions<GetAuthTokensFromLoginTokenMutation, GetAuthTokensFromLoginTokenMutationVariables>;
 export const GetAuthTokensFromOtpDocument = gql`
     mutation getAuthTokensFromOTP($loginToken: String!, $otp: String!, $captchaToken: String, $origin: String!) {
   getAuthTokensFromOTP(
@@ -5356,13 +5356,13 @@ export type SignInMutationHookResult = ReturnType<typeof useSignInMutation>;
 export type SignInMutationResult = Apollo.MutationResult<SignInMutation>;
 export type SignInMutationOptions = Apollo.BaseMutationOptions<SignInMutation, SignInMutationVariables>;
 export const SignUpDocument = gql`
-    mutation SignUp($email: String!, $password: String!, $captchaToken: String, $locale: String, $verifyEmailNextPath: String) {
+    mutation SignUp($email: String!, $password: String!, $captchaToken: String, $locale: String, $verifyEmailRedirectPath: String) {
   signUp(
     email: $email
     password: $password
     captchaToken: $captchaToken
     locale: $locale
-    verifyEmailNextPath: $verifyEmailNextPath
+    verifyEmailRedirectPath: $verifyEmailRedirectPath
   ) {
     availableWorkspaces {
       ...AvailableWorkspacesFragment
@@ -5393,7 +5393,7 @@ export type SignUpMutationFn = Apollo.MutationFunction<SignUpMutation, SignUpMut
  *      password: // value for 'password'
  *      captchaToken: // value for 'captchaToken'
  *      locale: // value for 'locale'
- *      verifyEmailNextPath: // value for 'verifyEmailNextPath'
+ *      verifyEmailRedirectPath: // value for 'verifyEmailRedirectPath'
  *   },
  * });
  */
@@ -5446,7 +5446,7 @@ export type SignUpInNewWorkspaceMutationHookResult = ReturnType<typeof useSignUp
 export type SignUpInNewWorkspaceMutationResult = Apollo.MutationResult<SignUpInNewWorkspaceMutation>;
 export type SignUpInNewWorkspaceMutationOptions = Apollo.BaseMutationOptions<SignUpInNewWorkspaceMutation, SignUpInNewWorkspaceMutationVariables>;
 export const SignUpInWorkspaceDocument = gql`
-    mutation SignUpInWorkspace($email: String!, $password: String!, $workspaceInviteHash: String, $workspacePersonalInviteToken: String = null, $captchaToken: String, $workspaceId: String, $locale: String, $verifyEmailNextPath: String) {
+    mutation SignUpInWorkspace($email: String!, $password: String!, $workspaceInviteHash: String, $workspacePersonalInviteToken: String = null, $captchaToken: String, $workspaceId: String, $locale: String, $verifyEmailRedirectPath: String) {
   signUpInWorkspace(
     email: $email
     password: $password
@@ -5455,7 +5455,7 @@ export const SignUpInWorkspaceDocument = gql`
     captchaToken: $captchaToken
     workspaceId: $workspaceId
     locale: $locale
-    verifyEmailNextPath: $verifyEmailNextPath
+    verifyEmailRedirectPath: $verifyEmailRedirectPath
   ) {
     loginToken {
       ...AuthTokenFragment
@@ -5492,7 +5492,7 @@ export type SignUpInWorkspaceMutationFn = Apollo.MutationFunction<SignUpInWorksp
  *      captchaToken: // value for 'captchaToken'
  *      workspaceId: // value for 'workspaceId'
  *      locale: // value for 'locale'
- *      verifyEmailNextPath: // value for 'verifyEmailNextPath'
+ *      verifyEmailRedirectPath: // value for 'verifyEmailRedirectPath'
  *   },
  * });
  */

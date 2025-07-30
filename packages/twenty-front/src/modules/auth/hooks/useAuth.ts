@@ -19,7 +19,7 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   AuthTokenPair,
   useCheckUserExistsLazyQuery,
-  useGetAccessTokensFromLoginTokenMutation,
+  useGetAuthTokensFromLoginTokenMutation,
   useGetAuthTokensFromOtpMutation,
   useGetCurrentUserLazyQuery,
   useGetLoginTokenFromCredentialsMutation,
@@ -114,8 +114,8 @@ export const useAuth = () => {
   const [signIn] = useSignInMutation();
   const [signUp] = useSignUpMutation();
   const [signUpInWorkspace] = useSignUpInWorkspaceMutation();
-  const [getAccessTokensFromLoginToken] =
-    useGetAccessTokensFromLoginTokenMutation();
+  const [getAuthTokensFromLoginToken] =
+    useGetAuthTokensFromLoginTokenMutation();
   const [getLoginTokenFromEmailVerificationToken] =
     useGetLoginTokenFromEmailVerificationTokenMutation();
   const [getWorkspaceAgnosticTokenFromEmailVerificationToken] =
@@ -443,7 +443,7 @@ export const useAuth = () => {
   const handleGetAuthTokensFromLoginToken = useCallback(
     async (loginToken: string) => {
       try {
-        const getAuthTokensResult = await getAccessTokensFromLoginToken({
+        const getAuthTokensResult = await getAuthTokensFromLoginToken({
           variables: {
             loginToken: loginToken,
             origin,
@@ -454,12 +454,12 @@ export const useAuth = () => {
           throw getAuthTokensResult.errors;
         }
 
-        if (!getAuthTokensResult.data?.getAccessTokensFromLoginToken) {
-          throw new Error('No getAccessTokensFromLoginToken result');
+        if (!getAuthTokensResult.data?.getAuthTokensFromLoginToken) {
+          throw new Error('No getAuthTokensFromLoginToken result');
         }
 
         await handleLoadWorkspaceAfterAuthentication(
-          getAuthTokensResult.data.getAccessTokensFromLoginToken.tokens,
+          getAuthTokensResult.data.getAuthTokensFromLoginToken.tokens,
         );
       } catch (error) {
         if (
@@ -485,7 +485,7 @@ export const useAuth = () => {
     },
     [
       handleSetLoginToken,
-      getAccessTokensFromLoginToken,
+      getAuthTokensFromLoginToken,
       origin,
       handleLoadWorkspaceAfterAuthentication,
       setSignInUpStep,
@@ -621,14 +621,14 @@ export const useAuth = () => {
       workspaceInviteHash,
       workspacePersonalInviteToken,
       captchaToken,
-      verifyEmailNextPath,
+      verifyEmailRedirectPath,
     }: {
       email: string;
       password: string;
       workspaceInviteHash?: string;
       workspacePersonalInviteToken?: string;
       captchaToken?: string;
-      verifyEmailNextPath?: string;
+      verifyEmailRedirectPath?: string;
     }) => {
       const signUpInWorkspaceResult = await signUpInWorkspace({
         variables: {
@@ -641,7 +641,7 @@ export const useAuth = () => {
           ...(workspacePublicData?.id
             ? { workspaceId: workspacePublicData.id }
             : {}),
-          verifyEmailNextPath,
+          verifyEmailRedirectPath,
         },
       });
 
@@ -788,7 +788,7 @@ export const useAuth = () => {
       handleGetWorkspaceAgnosticTokenFromEmailVerificationToken,
     getLoginTokenFromEmailVerificationToken:
       handleGetLoginTokenFromEmailVerificationToken,
-    getAccessTokensFromLoginToken: handleGetAuthTokensFromLoginToken,
+    getAuthTokensFromLoginToken: handleGetAuthTokensFromLoginToken,
 
     loadCurrentUser,
 

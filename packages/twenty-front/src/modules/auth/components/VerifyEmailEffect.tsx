@@ -3,7 +3,7 @@ import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 
-import { verifyEmailNextPathState } from '@/app/states/verifyEmailNextPathState';
+import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { Modal } from '@/ui/layout/modal/components/Modal';
@@ -28,11 +28,11 @@ export const VerifyEmailEffect = () => {
   const [searchParams] = useSearchParams();
   const [isError, setIsError] = useState(false);
 
-  const setVerifyEmailNextPath = useSetRecoilState(verifyEmailNextPathState);
+  const setverifyEmailRedirectPath = useSetRecoilState(verifyEmailRedirectPathState);
 
   const email = searchParams.get('email');
   const emailVerificationToken = searchParams.get('emailVerificationToken');
-  const verifyEmailNextPath = searchParams.get('nextPath');
+  const verifyEmailRedirectPath = searchParams.get('nextPath');
 
   const navigate = useNavigateApp();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
@@ -84,8 +84,8 @@ export const VerifyEmailEffect = () => {
           });
         }
 
-        if (isDefined(verifyEmailNextPath)) {
-          setVerifyEmailNextPath(verifyEmailNextPath);
+        if (isDefined(verifyEmailRedirectPath)) {
+          setverifyEmailRedirectPath(verifyEmailRedirectPath);
         }
 
         return verifyLoginToken(loginToken.token);

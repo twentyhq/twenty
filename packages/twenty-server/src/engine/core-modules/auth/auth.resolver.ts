@@ -370,7 +370,7 @@ export class AuthResolver {
       user.email,
       undefined,
       signUpInput.locale ?? SOURCE_LOCALE,
-      signUpInput.verifyEmailNextPath,
+      signUpInput.verifyEmailRedirectPath,
     );
 
     return {
@@ -454,7 +454,7 @@ export class AuthResolver {
       user.email,
       workspace,
       signUpInput.locale ?? SOURCE_LOCALE,
-      signUpInput.verifyEmailNextPath,
+      signUpInput.verifyEmailRedirectPath,
     );
 
     const loginToken = await this.loginTokenService.generateLoginToken(
@@ -532,7 +532,7 @@ export class AuthResolver {
 
   @Mutation(() => AuthTokens)
   @UseGuards(PublicEndpointGuard)
-  async getAccessTokensFromLoginToken(
+  async getAuthTokensFromLoginToken(
     @Args() getAuthTokensFromLoginTokenInput: GetAuthTokensFromLoginTokenInput,
     @Args('origin') origin: string,
   ): Promise<AuthTokens> {

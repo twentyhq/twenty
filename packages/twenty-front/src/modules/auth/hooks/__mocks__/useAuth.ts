@@ -1,5 +1,5 @@
 import {
-  GetAccessTokensFromLoginTokenDocument,
+  GetAuthTokensFromLoginTokenDocument,
   GetCurrentUserDocument,
   GetLoginTokenFromCredentialsDocument,
   SignUpDocument,
@@ -8,7 +8,7 @@ import {
 
 export const queries = {
   getLoginTokenFromCredentials: GetLoginTokenFromCredentialsDocument,
-  getAccessTokensFromLoginToken: GetAccessTokensFromLoginTokenDocument,
+  getAuthTokensFromLoginToken: GetAuthTokensFromLoginTokenDocument,
   signup: SignUpDocument,
   getCurrentUser: GetCurrentUserDocument,
   signUpInWorkspace: SignUpInWorkspaceDocument,
@@ -26,7 +26,7 @@ export const variables = {
     password,
     origin,
   },
-  getAccessTokensFromLoginToken: { loginToken: token, origin },
+  getAuthTokensFromLoginToken: { loginToken: token, origin },
   signup: {
     email,
     password,
@@ -49,7 +49,7 @@ export const results = {
       expiresAt: '2022-01-01',
     },
   },
-  getAccessTokensFromLoginToken: {
+  getAuthTokensFromLoginToken: {
     tokens: {
       accessToken: { token, expiresAt: 'expiresAt' },
       refreshToken: { token, expiresAt: 'expiresAt' },
@@ -121,14 +121,14 @@ export const mocks = {
       },
     })),
   },
-  getAccessTokensFromLoginToken: {
+  getAuthTokensFromLoginToken: {
     request: {
-      query: queries.getAccessTokensFromLoginToken,
-      variables: variables.getAccessTokensFromLoginToken,
+      query: queries.getAuthTokensFromLoginToken,
+      variables: variables.getAuthTokensFromLoginToken,
     },
     result: jest.fn(() => ({
       data: {
-        getAccessTokensFromLoginToken: results.getAccessTokensFromLoginToken,
+        getAuthTokensFromLoginToken: results.getAuthTokensFromLoginToken,
       },
     })),
   },
