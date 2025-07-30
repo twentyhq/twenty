@@ -38,6 +38,7 @@ export const SettingsNavigationDrawerItem = ({
           Icon={item.Icon}
           active={isActive}
           soon={item.soon}
+          isNew={item.isNew}
           onClick={item.onClick}
         />
       </AdvancedSettingsWrapper>
@@ -53,6 +54,7 @@ export const SettingsNavigationDrawerItem = ({
       Icon={item.Icon}
       active={isActive}
       soon={item.soon}
+      isNew={item.isNew}
       onClick={item.onClick}
     />
   );
