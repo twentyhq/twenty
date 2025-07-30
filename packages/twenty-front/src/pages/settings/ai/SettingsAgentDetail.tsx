@@ -10,9 +10,11 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/display';
+import { H2Title, IconTrash } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
   useFindOneAgentQuery,
@@ -21,6 +23,7 @@ import {
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { SettingsAgentDeleteConfirmationModal } from './components/SettingsAgentDeleteConfirmationModal';
 import { SettingsAgentDetailSkeletonLoader } from './components/SettingsAgentDetailSkeletonLoader';
 import { SettingsAIAgentForm } from './forms/components/SettingsAIAgentForm';
 import {
@@ -34,12 +37,19 @@ const StyledContentContainer = styled.div`
   padding-left: 0;
 `;
 
+const StyledDangerZoneSection = styled(Section)`
+  margin-top: ${({ theme }) => theme.spacing(8)};
+`;
+
+const DELETE_AGENT_MODAL_ID = 'delete-agent-modal';
+
 export const SettingsAgentDetail = () => {
   const { t } = useLingui();
   const { agentId = '' } = useParams<{ agentId: string }>();
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
   const { enqueueErrorSnackBar } = useSnackBar();
+  const { openModal } = useModal();
 
   const formConfig = useForm<SettingsAIAgentFormValues>({
     mode: 'onChange',
@@ -153,42 +163,61 @@ export const SettingsAgentDetail = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
-      title={agent.name}
-      actionButton={
-        <SaveAndCancelButtons
-          onSave={formConfig.handleSubmit(handleSave)}
-          onCancel={() => navigate(SettingsPath.AI)}
-          isSaveDisabled={!canSave}
-          isLoading={isSubmitting}
-          isCancelDisabled={isSubmitting}
-        />
-      }
-      links={[
-        {
-          children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
-        },
-        { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
-        { children: agent.name },
-      ]}
-    >
-      <SettingsPageContainer>
-        <StyledContentContainer>
-          <Section>
-            <H2Title
-              title={t`Edit Agent`}
-              description={t`Update agent information`}
-            />
-            <FormProvider
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...formConfig}
-            >
-              <SettingsAIAgentForm />
-            </FormProvider>
-          </Section>
-        </StyledContentContainer>
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    <>
+      <SubMenuTopBarContainer
+        title={agent.name}
+        actionButton={
+          <SaveAndCancelButtons
+            onSave={formConfig.handleSubmit(handleSave)}
+            onCancel={() => navigate(SettingsPath.AI)}
+            isSaveDisabled={!canSave}
+            isLoading={isSubmitting}
+            isCancelDisabled={isSubmitting}
+          />
+        }
+        links={[
+          {
+            children: t`Workspace`,
+            href: getSettingsPath(SettingsPath.Workspace),
+          },
+          { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
+          { children: agent.name },
+        ]}
+      >
+        <SettingsPageContainer>
+          <StyledContentContainer>
+            <Section>
+              <H2Title
+                title={t`Edit Agent`}
+                description={t`Update agent information`}
+              />
+              <FormProvider
+                // eslint-disable-next-line react/jsx-props-no-spreading
+                {...formConfig}
+              >
+                <SettingsAIAgentForm />
+              </FormProvider>
+            </Section>
+            <StyledDangerZoneSection>
+              <H2Title
+                title={t`Danger zone`}
+                description={t`Delete this agent`}
+              />
+              <Button
+                accent="danger"
+                variant="secondary"
+                title={t`Delete Agent`}
+                Icon={IconTrash}
+                onClick={() => openModal(DELETE_AGENT_MODAL_ID)}
+              />
+            </StyledDangerZoneSection>
+          </StyledContentContainer>
+        </SettingsPageContainer>
+      </SubMenuTopBarContainer>
+      <SettingsAgentDeleteConfirmationModal
+        agentId={agent.id}
+        agentName={agent.name}
+      />
+    </>
   );
 };

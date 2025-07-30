@@ -54,4 +54,13 @@ export class AgentResolver {
   ) {
     return this.agentService.updateOneAgent(input, workspaceId);
   }
+
+  @Mutation(() => AgentDTO)
+  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
+  async deleteOneAgent(
+    @Args('input') { id }: AgentIdInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    return this.agentService.deleteOneAgent(id, workspaceId);
+  }
 }
