@@ -12,6 +12,7 @@ export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export { FieldMetadataType } from './FieldMetadataType';
 export type { FromTo } from './FromToType';
 export type { IsExactly } from './IsExactly';
+export type { NonNullableRequired } from './NonNullableRequired';
 export type { NullablePartial } from './NullablePartial';
 export type { ObjectRecordsPermissions } from './ObjectRecordsPermissions';
 export type { ObjectRecordsPermissionsByRoleId } from './ObjectRecordsPermissionsByRoleId';
