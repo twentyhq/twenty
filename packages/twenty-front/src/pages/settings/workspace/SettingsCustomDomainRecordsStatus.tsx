@@ -35,7 +35,6 @@ const StyledTableCell = styled(TableCell)`
 
 const records = [
   { name: 'CNAME', validationType: 'redirection' as const },
-  { name: 'TXT Validation', validationType: 'ownership' as const },
   { name: 'SSL Certificate Generation', validationType: 'ssl' as const },
 ];
 
