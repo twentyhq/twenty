@@ -13,15 +13,13 @@ import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { getWorkspaceDateFormatFromDateFormat } from '@/localization/utils/getWorkspaceDateFormatFromDateFormat';
 import { getWorkspaceTimeFormatFromTimeFormat } from '@/localization/utils/getWorkspaceTimeFormatFromTimeFormat';
-import { DaySelect } from '@/ui/input/components/internal/date/DaySelect';
-import { DayNameWithIndex } from '@/ui/input/components/internal/date/types/DayNameWithIndex';
-import { t } from '@lingui/core/macro';
 import { isNumber } from '@tiptap/core';
 import { isDefined } from 'twenty-shared/utils';
 import {
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
+import { DateTimeSettingsCalendarStartDaySelect } from '~/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect';
 import { DateTimeSettingsDateFormatSelect } from '~/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect';
 import { DateTimeSettingsTimeFormatSelect } from '~/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect';
 import { DateTimeSettingsTimeZoneSelect } from '~/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect';
@@ -45,12 +43,6 @@ export const DateTimeSettings = () => {
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
 
-  const allowedDaysWeek: DayNameWithIndex[] = [
-    { day: t`Sunday`, index: 0 },
-    { day: t`Monday`, index: 1 },
-    { day: t`Saturday`, index: 6 },
-  ];
-
   const updateWorkspaceMember = async (changedFields: any) => {
     if (!currentWorkspaceMember?.id) {
       throw new Error('User is not logged in');
@@ -68,7 +60,7 @@ export const DateTimeSettings = () => {
 
   if (!isDefined(currentWorkspaceMember)) return;
 
-  const handleUpdateCalendarStartDay = async (index: number | string) => {
+  const handleUpdateCalendarStartDay = async (index: number) => {
     if (!isNumber(index) || index > 6 || index < 0) return;
     const changedFields = {
       calendarStartDay: index ?? 0,
@@ -81,6 +73,7 @@ export const DateTimeSettings = () => {
 
     updateWorkspaceMember(changedFields);
   };
+
   const handleSettingsChange = (
     settingName: 'timeZone' | 'dateFormat' | 'timeFormat',
     value: string,
@@ -163,11 +156,9 @@ export const DateTimeSettings = () => {
         onChange={(value) => handleSettingsChange('timeFormat', value)}
         timeZone={timeZone}
       />
-      <DaySelect
-        label={t`Calendar start day`}
-        selectedDayIndex={currentWorkspaceMember?.calendarStartDay ?? 0}
-        onChange={(dayIndex) => handleUpdateCalendarStartDay(dayIndex)}
-        dayList={allowedDaysWeek}
+      <DateTimeSettingsCalendarStartDaySelect
+        value={currentWorkspaceMember?.calendarStartDay ?? 0}
+        onChange={handleUpdateCalendarStartDay}
       />
     </StyledContainer>
   );
