@@ -2,8 +2,8 @@ import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
+import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
-import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 import { dialogInternalComponentState } from '@/ui/feedback/dialog-manager/states/dialogInternalComponentState';
 import { DialogOptions } from '@/ui/feedback/dialog-manager/types/DialogOptions';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -13,12 +13,13 @@ jest.mock('uuid');
 
 (uuidv4 as jest.Mock).mockReturnValue(mockedUuid);
 
-const dialogManagerScopeId = 'dialog-manager';
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>
-    <DialogManagerScope dialogComponentInstanceId={dialogManagerScopeId}>
+    <DialogComponentInstanceContext.Provider
+      value={{ instanceId: 'dialog-manager' }}
+    >
       {children}
-    </DialogManagerScope>
+    </DialogComponentInstanceContext.Provider>
   </RecoilRoot>
 );
 

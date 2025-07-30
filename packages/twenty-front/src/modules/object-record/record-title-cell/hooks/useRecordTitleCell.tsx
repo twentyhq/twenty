@@ -1,7 +1,7 @@
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useInitDraftValueV2 } from '@/object-record/record-field/hooks/useInitDraftValueV2';
-import { isInlineCellInEditModeScopedState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeScopedState';
+import { isInlineCellInEditModeFamilyState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeFamilyState';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
@@ -32,7 +32,7 @@ export const useRecordTitleCell = () => {
         containerType: RecordTitleCellContainerType;
       }) => {
         set(
-          isInlineCellInEditModeScopedState(
+          isInlineCellInEditModeFamilyState(
             getRecordFieldInputInstanceId({
               recordId,
               fieldName,
@@ -93,7 +93,7 @@ export const useRecordTitleCell = () => {
           fieldName,
           prefix: containerType,
         });
-        set(isInlineCellInEditModeScopedState(recordTitleCellId), true);
+        set(isInlineCellInEditModeFamilyState(recordTitleCellId), true);
 
         const fieldDefinitions = objectMetadataItem.fields.map(
           (fieldMetadataItem, index) =>

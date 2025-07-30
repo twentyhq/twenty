@@ -9,7 +9,9 @@ import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { capitalize } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useUpdateOneRecordMutation = ({
@@ -28,6 +30,10 @@ export const useUpdateOneRecordMutation = ({
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
+  const featureFlags = useFeatureFlagsMap();
+  const isFieldsPermissionsEnabled =
+    featureFlags[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
 
   if (isUndefinedOrNull(objectMetadataItem)) {
     return { updateOneRecordMutation: EMPTY_MUTATION };
@@ -54,6 +60,7 @@ export const useUpdateOneRecordMutation = ({
           computeReferences,
           recordGqlFields: appliedRecordGqlFields,
           objectPermissionsByObjectMetadataId,
+          isFieldsPermissionsEnabled,
         },
       )}
     }

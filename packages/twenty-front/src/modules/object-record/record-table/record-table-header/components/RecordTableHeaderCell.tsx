@@ -17,12 +17,12 @@ import { tableColumnsComponentState } from '@/object-record/record-table/states/
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
@@ -137,7 +137,9 @@ export const RecordTableHeaderCell = ({
   >(null);
   const [resizedFieldKey, setResizedFieldKey] = useState<string | null>(null);
 
-  const { handleColumnsChange } = useTableColumns();
+  const { handleColumnsChange } = useTableColumns({
+    objectMetadataId: objectMetadataItem.id,
+  });
 
   const handleResizeHandlerStart = useCallback<PointerEventListener>(
     ({ x }) => {
@@ -256,7 +258,10 @@ export const RecordTableHeaderCell = ({
       isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}
     >
       <StyledColumnHeadContainer>
-        <RecordTableColumnHeadWithDropdown column={column} />
+        <RecordTableColumnHeadWithDropdown
+          column={column}
+          objectMetadataId={objectMetadataItem.id}
+        />
         {(useIsMobile() || iconVisibility) &&
           !!column.isLabelIdentifier &&
           !isReadOnly &&

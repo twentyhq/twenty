@@ -16,12 +16,16 @@ import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 
 import { AgentChatMessageEntity } from './agent-chat-message.entity';
 import { AgentChatThreadEntity } from './agent-chat-thread.entity';
 import { AgentChatResolver } from './agent-chat.resolver';
 import { AgentChatService } from './agent-chat.service';
 import { AgentExecutionService } from './agent-execution.service';
+import { AgentHandoffExecutorService } from './agent-handoff-executor.service';
+import { AgentHandoffEntity } from './agent-handoff.entity';
+import { AgentHandoffService } from './agent-handoff.service';
 import { AgentStreamingService } from './agent-streaming.service';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 import { AgentToolService } from './agent-tool.service';
@@ -34,6 +38,7 @@ import { AgentService } from './agent.service';
     TypeOrmModule.forFeature(
       [
         AgentEntity,
+        AgentHandoffEntity,
         RoleEntity,
         RoleTargetsEntity,
         AgentChatMessageEntity,
@@ -53,6 +58,7 @@ import { AgentService } from './agent.service';
     WorkspacePermissionsCacheModule,
     WorkspaceCacheStorageModule,
     TokenModule,
+    DomainManagerModule,
   ],
   controllers: [AgentChatController],
   providers: [
@@ -64,6 +70,8 @@ import { AgentService } from './agent.service';
     AgentChatService,
     AgentStreamingService,
     AgentTitleGenerationService,
+    AgentHandoffExecutorService,
+    AgentHandoffService,
   ],
   exports: [
     AgentService,
@@ -76,6 +84,8 @@ import { AgentService } from './agent.service';
       [AgentEntity, AgentChatMessageEntity, AgentChatThreadEntity],
       'core',
     ),
+    AgentHandoffExecutorService,
+    AgentHandoffService,
   ],
 })
 export class AgentModule {}

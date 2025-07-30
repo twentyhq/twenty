@@ -62,17 +62,17 @@ describe('validateFieldNameAvailabilityOrThrow', () => {
     ({ context: { input, shouldNotThrow } }) => {
       if (shouldNotThrow) {
         expect(() =>
-          validateFieldNameAvailabilityOrThrow(
-            input,
-            objectMetadataMapItemMock,
-          ),
+          validateFieldNameAvailabilityOrThrow({
+            name: input,
+            objectMetadata: objectMetadataMapItemMock,
+          }),
         ).not.toThrow();
       } else {
         expect(() =>
-          validateFieldNameAvailabilityOrThrow(
-            input,
-            objectMetadataMapItemMock,
-          ),
+          validateFieldNameAvailabilityOrThrow({
+            name: input,
+            objectMetadata: objectMetadataMapItemMock,
+          }),
         ).toThrowErrorMatchingSnapshot();
       }
     },

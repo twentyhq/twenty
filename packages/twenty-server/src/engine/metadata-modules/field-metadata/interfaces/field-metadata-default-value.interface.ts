@@ -76,7 +76,7 @@ export type FieldMetadataDefaultValue<
     ? FieldMetadataDefaultValueForAnyType | null // Could be improved to be | unknown
     : T extends keyof FieldMetadataDefaultValueMapping
       ? FieldMetadataDefaultValueForType<T>
-      : never;
+      : never | null;
 
 type FieldMetadataDefaultValueExtractedTypes = {
   [K in keyof FieldMetadataDefaultValueMapping]: ExtractValueType<
