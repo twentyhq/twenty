@@ -11,7 +11,6 @@ import { mergeTwoFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-ob
 
 // Remark: This is duplicated with api metadata transpilers exceptions handlers
 // We might wanna have an NotValidatedFlatFieldMetadata and NotValidatedFlatObjectMetadata, in order to avoid
-// Should we check that no defaultValue, settings or options are provided -> No we would extract them from the runner
 export const validateRelationFlatFieldMetadata = async ({
   existingFlatObjectMetadatas,
   flatFieldMetadataToValidate: {
