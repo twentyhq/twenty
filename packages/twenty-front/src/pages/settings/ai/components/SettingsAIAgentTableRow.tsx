@@ -50,13 +50,7 @@ export const SettingsAIAgentTableRow = ({
   return (
     <StyledAIAgentTableRow key={agent.id} to={link}>
       <StyledNameTableCell>
-        {!!Icon && (
-          <Icon
-            style={{ minWidth: theme.icon.size.md, flexShrink: 0 }}
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
-        )}
+        <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         <StyledNameLabel title={agent.name}>{agent.name}</StyledNameLabel>
       </StyledNameTableCell>
       <TableCell>
