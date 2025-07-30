@@ -6,11 +6,18 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { FieldMetadataEnumValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service';
+import { ValidateOneFieldMetadataArgs } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { FlatFieldMetadataTypeValidator } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
+import { validateEnumSelectFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator';
 import { validateRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-relation-flat-field-metadata.validator';
+import { EnumFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/enum-column-action.factory';
 @Injectable()
 export class FlatFieldMetadataTypeValidatorService {
-  constructor(private readonly featureFlagService: FeatureFlagService) {}
+  constructor(
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly fieldMetadataEnumValidationService: FieldMetadataEnumValidationService,
+  ) {}
 
   public readonly FIELD_METADATA_TYPE_VALIDATOR_HASHMAP: FlatFieldMetadataTypeValidator =
     {
@@ -62,9 +69,10 @@ export class FlatFieldMetadataTypeValidatorService {
 
         return [];
       },
-      MULTI_SELECT: async (_args) => {
-        return [];
-      },
+      MULTI_SELECT: (args) =>
+        validateEnumSelectFlatFieldMetadata(
+          args as ValidateOneFieldMetadataArgs<EnumFieldMetadataType>,
+        ),
       NUMBER: async (_args) => {
         return [];
       },
@@ -77,9 +85,10 @@ export class FlatFieldMetadataTypeValidatorService {
       POSITION: async (_args) => {
         return [];
       },
-      RATING: async (_args) => {
-        return [];
-      },
+      RATING: (args) =>
+        validateEnumSelectFlatFieldMetadata(
+          args as ValidateOneFieldMetadataArgs<EnumFieldMetadataType>,
+        ),
       RAW_JSON: async (_args) => {
         return [];
       },
@@ -90,10 +99,19 @@ export class FlatFieldMetadataTypeValidatorService {
       RICH_TEXT_V2: async (_args) => {
         return [];
       },
-      SELECT: async (_args) => {
-        return [];
-      },
-      TEXT: async (_args) => {
+      SELECT: (args) =>
+        validateEnumSelectFlatFieldMetadata(
+          args as ValidateOneFieldMetadataArgs<EnumFieldMetadataType>,
+        ),
+      TEXT: async ({
+        existingFlatObjectMetadatas,
+        flatFieldMetadataToValidate,
+        workspaceId,
+        othersFlatObjectMetadataToValidate,
+      }) => {
+        flatFieldMetadataToValidate.defaultValue;
+
+        flatFieldMetadataToValidate.settings;
         return [];
       },
       TS_VECTOR: async (_args) => {
