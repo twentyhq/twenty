@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { Max, Min } from 'class-validator';
@@ -39,7 +39,7 @@ export class WorkspaceMember {
   @Field({ nullable: true })
   locale: string;
 
-  @Field({ nullable: true })
+  @Field(() => Int, { nullable: true })
   @Min(0)
   @Max(6)
   calendarStartDay: number;

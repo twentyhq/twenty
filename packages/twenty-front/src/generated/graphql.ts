@@ -2856,7 +2856,7 @@ export type WorkspaceInviteHashValid = {
 export type WorkspaceMember = {
   __typename?: 'WorkspaceMember';
   avatarUrl?: Maybe<Scalars['String']>;
-  calendarStartDay?: Maybe<Scalars['Float']>;
+  calendarStartDay?: Maybe<Scalars['Int']>;
   colorScheme: Scalars['String'];
   dateFormat?: Maybe<WorkspaceMemberDateFormatEnum>;
   id: Scalars['UUID'];
