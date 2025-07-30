@@ -653,6 +653,7 @@ export class WorkflowVersionStepWorkspaceService {
       id: v4(),
       position,
       valid: false,
+      nextStepIds: [],
     };
 
     switch (type) {
