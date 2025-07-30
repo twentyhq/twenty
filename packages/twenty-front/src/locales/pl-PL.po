@@ -169,6 +169,7 @@ msgstr "10 000 wykonanych operacji w węźle procesów"
 
 #. js-lingui-id: 4EdXYs
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
+#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "12h ({hour12Label})"
 msgstr "12h ({hour12Label})"
 
@@ -200,6 +201,7 @@ msgstr "20 000 wykonanych operacji w węźle procesów"
 
 #. js-lingui-id: QsMprd
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
+#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "24h ({hour24Label})"
 msgstr "24h ({hour24Label})"
 
@@ -961,6 +963,11 @@ msgstr "Wydarzenie kalendarzowe"
 msgid "Calendar settings"
 msgstr "Ustawienia kalendarza"
 
+#. js-lingui-id: xmUVPi
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
+msgid "Calendar start day"
+msgstr ""
+
 #. js-lingui-id: LbIh3Y
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Calendar Sync"
@@ -1674,6 +1681,7 @@ msgstr "Data i czas"
 
 #. js-lingui-id: Lhd0oQ
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx
+#: src/modules/settings/experience/components/DateTimeSettingsDateFormatSelect.tsx
 msgid "Date format"
 msgstr "Format daty"
 
@@ -3598,6 +3606,11 @@ msgstr "Min"
 msgid "Minutes between triggers"
 msgstr "Minuty pomiędzy wyzwalaczami"
 
+#. js-lingui-id: hty0d5
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
+msgid "Monday"
+msgstr ""
+
 #. js-lingui-id: 8g3Cgz
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Monitor the execution of your calendar events sync job"
@@ -4628,6 +4641,11 @@ msgstr "Uruchom workflow i wróć tutaj, aby zobaczyć jego wykonania"
 msgid "Russian"
 msgstr "rosyjski"
 
+#. js-lingui-id: +5kO8P
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
+msgid "Saturday"
+msgstr ""
+
 #. js-lingui-id: tfDRzk
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
@@ -5289,6 +5307,11 @@ msgstr "Sugerowane"
 msgid "Sum"
 msgstr "Suma"
 
+#. js-lingui-id: DBC3t5
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
+msgid "Sunday"
+msgstr ""
+
 #. js-lingui-id: XYLcNv
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Support"
@@ -5333,18 +5356,37 @@ msgstr "Synchronizuj etykiety obiektów i nazwy API"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
+#: src/modules/settings/experience/components/DateTimeSettingsTimeZoneSelect.tsx
+#: src/modules/settings/experience/components/DateTimeSettingsTimeZoneSelect.tsx
 msgid "System settings"
 msgstr "Ustawienia systemowe"
 
 #. js-lingui-id: E3AMmw
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx
+#: src/modules/settings/experience/components/DateTimeSettingsDateFormatSelect.tsx
 msgid "System settings - {systemDateFormatLabel}"
 msgstr "Ustawienia systemowe - {systemDateFormatLabel}"
 
 #. js-lingui-id: 0ZgB1e
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
+#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "System Settings - {systemTimeFormatLabel}"
 msgstr "Ustawienia systemowe - {systemTimeFormatLabel}"
+
+#. js-lingui-id: e89dEj
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
+msgid "System settings - Monday"
+msgstr ""
+
+#. js-lingui-id: o+Kvng
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
+msgid "System settings - Saturday"
+msgstr ""
+
+#. js-lingui-id: gluMQd
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
+msgid "System settings - Sunday"
+msgstr ""
 
 #. js-lingui-id: 4hJhzz
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
@@ -5537,11 +5579,13 @@ msgstr "Spowoduje to przywrócenie wartości bazy danych na wartość środowisk
 
 #. js-lingui-id: n9nSNJ
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
+#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "Time format"
 msgstr "Format czasu"
 
 #. js-lingui-id: Mz2JN2
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
+#: src/modules/settings/experience/components/DateTimeSettingsTimeZoneSelect.tsx
 msgid "Time zone"
 msgstr "Strefa czasowa"
 

@@ -13,13 +13,10 @@ type FlatFieldMetadataOverrides<
 export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
   overrides: FlatFieldMetadataOverrides<T>,
 ): FlatFieldMetadata => {
-  const createdAt = faker.date.anytime();
-
   return {
     defaultValue: null,
     options: null,
     settings: null,
-    createdAt,
     description: 'default flat field metadata description',
     icon: 'icon',
     id: faker.string.uuid(),
@@ -33,7 +30,6 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     isSystem: false,
     standardId: null,
     standardOverrides: null,
-    updatedAt: createdAt,
     workspaceId: faker.string.uuid(),
     flatRelationTargetFieldMetadata: null,
     relationTargetFieldMetadataId: null,

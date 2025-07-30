@@ -4,12 +4,12 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 
 import { Trans, useLingui } from '@lingui/react/macro';
+import { H2Title } from 'twenty-ui/display';
+import { ColorSchemePicker } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { DateTimeSettings } from '~/pages/settings/profile/appearance/components/DateTimeSettings';
 import { LocalePicker } from '~/pages/settings/profile/appearance/components/LocalePicker';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { ColorSchemePicker } from 'twenty-ui/input';
-import { H2Title } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
 
 export const SettingsExperience = () => {
   const { colorScheme, setColorScheme } = useColorScheme();
@@ -38,13 +38,6 @@ export const SettingsExperience = () => {
             systemLabel={t`System settings`}
           />
         </Section>
-        <Section>
-          <H2Title
-            title={t`Date and time`}
-            description={t`Configure how dates are displayed across the app`}
-          />
-          <DateTimeSettings />
-        </Section>
 
         <Section>
           <H2Title
@@ -52,6 +45,14 @@ export const SettingsExperience = () => {
             description={t`Select your preferred language`}
           />
           <LocalePicker />
+        </Section>
+
+        <Section>
+          <H2Title
+            title={t`Date and time`}
+            description={t`Configure how dates are displayed across the app`}
+          />
+          <DateTimeSettings />
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

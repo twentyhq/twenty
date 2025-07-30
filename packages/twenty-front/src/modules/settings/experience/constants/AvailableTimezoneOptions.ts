@@ -1,6 +1,6 @@
 import { getTimezoneOffset } from 'date-fns-tz';
 
-import { AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL } from '@/settings/accounts/constants/AvailableTimezoneOptionsByLabel';
+import { AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL } from '@/settings/experience/constants/AvailableTimezoneOptionsByLabel';
 
 export const AVAILABLE_TIMEZONE_OPTIONS = Object.values(
   AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL,
