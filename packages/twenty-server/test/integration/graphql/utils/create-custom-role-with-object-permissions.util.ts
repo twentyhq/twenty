@@ -78,7 +78,8 @@ export const createCustomRoleWithObjectPermissions = async (options: {
     objectPermissions.push({
       objectMetadataId: personObjectId,
       canReadObjectRecords: options.canReadPerson,
-      canUpdateObjectRecords: options.canUpdatePerson,
+      canUpdateObjectRecords:
+        options.canUpdatePerson === undefined ? false : options.canUpdatePerson,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     });
@@ -91,7 +92,10 @@ export const createCustomRoleWithObjectPermissions = async (options: {
     objectPermissions.push({
       objectMetadataId: companyObjectId,
       canReadObjectRecords: options.canReadCompany,
-      canUpdateObjectRecords: options.canUpdateCompany,
+      canUpdateObjectRecords:
+        options.canUpdateCompany === undefined
+          ? false
+          : options.canUpdateCompany,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     });
@@ -104,7 +108,10 @@ export const createCustomRoleWithObjectPermissions = async (options: {
     objectPermissions.push({
       objectMetadataId: opportunityObjectId,
       canReadObjectRecords: options.canReadOpportunities,
-      canUpdateObjectRecords: options.canUpdateOpportunities,
+      canUpdateObjectRecords:
+        options.canUpdateOpportunities === undefined
+          ? false
+          : options.canUpdateOpportunities,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     });
