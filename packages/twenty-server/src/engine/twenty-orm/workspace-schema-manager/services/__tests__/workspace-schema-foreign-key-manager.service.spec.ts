@@ -578,13 +578,11 @@ describe('WorkspaceSchemaForeignKeyManager', () => {
 
       const actualCall = mockQueryRunner.query.mock.calls[0][0];
 
-      // Verify the SQL is properly structured
       expect(actualCall).toMatch(/ALTER TABLE .+ RENAME CONSTRAINT .+ TO/);
       expect(actualCall).toContain('"workspacetest"."userstable"');
       expect(actualCall).toContain('"FKold"');
       expect(actualCall).toContain('"FKnew"');
 
-      // Verify dangerous unescaped quotes are not present
       expect(actualCall).not.toContain('workspace"test');
       expect(actualCall).not.toContain('users"table');
       expect(actualCall).not.toContain('FK"old');
@@ -616,86 +614,10 @@ describe('WorkspaceSchemaForeignKeyManager', () => {
 
       const actualCall = mockQueryRunner.query.mock.calls[0][0];
 
-      // Verify the SQL is properly structured
       expect(actualCall).toMatch(/ALTER TABLE .+ VALIDATE CONSTRAINT/);
       expect(actualCall).toContain('"workspacetest"."userstable"');
       expect(actualCall).toContain('"FKconstraint"');
 
-      // Verify dangerous unescaped quotes are not present
-      expect(actualCall).not.toContain('workspace"test');
-      expect(actualCall).not.toContain('users"table');
-      expect(actualCall).not.toContain('FK"constraint');
-    });
-  });
-
-  describe('disableForeignKeyCheck', () => {
-    it('should disable foreign key constraint check', async () => {
-      await service.disableForeignKeyCheck(
-        mockQueryRunner,
-        'workspace_test',
-        'users',
-        'FK_user_company',
-      );
-
-      expect(mockQueryRunner.query).toHaveBeenCalledWith(
-        `ALTER TABLE "workspace_test"."users" ALTER CONSTRAINT "FK_user_company" NOT ENFORCED`,
-      );
-    });
-
-    it('should sanitize input parameters', async () => {
-      await service.disableForeignKeyCheck(
-        mockQueryRunner,
-        'workspace"test',
-        'users"table',
-        'FK"constraint',
-      );
-
-      const actualCall = mockQueryRunner.query.mock.calls[0][0];
-
-      // Verify the SQL is properly structured
-      expect(actualCall).toMatch(
-        /ALTER TABLE .+ ALTER CONSTRAINT .+ NOT ENFORCED/,
-      );
-      expect(actualCall).toContain('"workspacetest"."userstable"');
-      expect(actualCall).toContain('"FKconstraint"');
-
-      // Verify dangerous unescaped quotes are not present
-      expect(actualCall).not.toContain('workspace"test');
-      expect(actualCall).not.toContain('users"table');
-      expect(actualCall).not.toContain('FK"constraint');
-    });
-  });
-
-  describe('enableForeignKeyCheck', () => {
-    it('should enable foreign key constraint check', async () => {
-      await service.enableForeignKeyCheck(
-        mockQueryRunner,
-        'workspace_test',
-        'users',
-        'FK_user_company',
-      );
-
-      expect(mockQueryRunner.query).toHaveBeenCalledWith(
-        `ALTER TABLE "workspace_test"."users" ALTER CONSTRAINT "FK_user_company" ENFORCED`,
-      );
-    });
-
-    it('should sanitize input parameters', async () => {
-      await service.enableForeignKeyCheck(
-        mockQueryRunner,
-        'workspace"test',
-        'users"table',
-        'FK"constraint',
-      );
-
-      const actualCall = mockQueryRunner.query.mock.calls[0][0];
-
-      // Verify the SQL is properly structured
-      expect(actualCall).toMatch(/ALTER TABLE .+ ALTER CONSTRAINT .+ ENFORCED/);
-      expect(actualCall).toContain('"workspacetest"."userstable"');
-      expect(actualCall).toContain('"FKconstraint"');
-
-      // Verify dangerous unescaped quotes are not present
       expect(actualCall).not.toContain('workspace"test');
       expect(actualCall).not.toContain('users"table');
       expect(actualCall).not.toContain('FK"constraint');

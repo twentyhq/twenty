@@ -44,7 +44,7 @@ describe('WorkspaceSchemaIndexManager', () => {
 
       // Assert
       expect(mockQueryRunner.query).toHaveBeenCalledWith(
-        `CREATE  INDEX IF NOT EXISTS "idx_users_email" ON "workspace_test"."users"  ("email")`,
+        `CREATE INDEX IF NOT EXISTS "idx_users_email" ON "workspace_test"."users" ("email")`,
       );
     });
 
@@ -664,13 +664,11 @@ describe('WorkspaceSchemaIndexManager', () => {
 
       const actualCall = mockQueryRunner.query.mock.calls[0][0];
 
-      // Verify the SQL is properly structured
       expect(actualCall).toMatch(/ALTER TABLE .+ ADD CONSTRAINT .+ UNIQUE/);
       expect(actualCall).toContain('"workspacetest"."userstable"');
       expect(actualCall).toContain('"UQtest"');
       expect(actualCall).toContain('"emailcol"');
 
-      // Verify dangerous unescaped quotes are not present
       expect(actualCall).not.toContain('workspace"test');
       expect(actualCall).not.toContain('users"table');
       expect(actualCall).not.toContain('UQ"test');
@@ -713,12 +711,10 @@ describe('WorkspaceSchemaIndexManager', () => {
 
       const actualCall = mockQueryRunner.query.mock.calls[0][0];
 
-      // Verify the SQL is properly structured
       expect(actualCall).toMatch(/ALTER TABLE .+ DROP CONSTRAINT IF EXISTS/);
       expect(actualCall).toContain('"workspacetest"."userstable"');
       expect(actualCall).toContain('"UQtest"');
 
-      // Verify dangerous unescaped quotes are not present
       expect(actualCall).not.toContain('workspace"test');
       expect(actualCall).not.toContain('users"table');
       expect(actualCall).not.toContain('UQ"test');

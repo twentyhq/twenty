@@ -236,7 +236,7 @@ export class WorkspaceSchemaForeignKeyManager {
     await queryRunner.query(sql);
   }
 
-  async disableForeignKeyCheck(
+  async setForeignKeyNotDeferrable(
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
@@ -245,12 +245,12 @@ export class WorkspaceSchemaForeignKeyManager {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeForeignKeyName = removeSqlDDLInjection(foreignKeyName);
-    const sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER CONSTRAINT "${safeForeignKeyName}" NOT ENFORCED`;
+    const sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER CONSTRAINT "${safeForeignKeyName}" NOT DEFERRABLE`;
 
     await queryRunner.query(sql);
   }
 
-  async enableForeignKeyCheck(
+  async setForeignKeyDeferrable(
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
@@ -259,7 +259,7 @@ export class WorkspaceSchemaForeignKeyManager {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeForeignKeyName = removeSqlDDLInjection(foreignKeyName);
-    const sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER CONSTRAINT "${safeForeignKeyName}" ENFORCED`;
+    const sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER CONSTRAINT "${safeForeignKeyName}" DEFERRABLE`;
 
     await queryRunner.query(sql);
   }

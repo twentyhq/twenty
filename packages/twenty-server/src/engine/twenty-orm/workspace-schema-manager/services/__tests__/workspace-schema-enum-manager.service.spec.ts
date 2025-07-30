@@ -15,6 +15,10 @@ describe('WorkspaceSchemaEnumManager', () => {
   beforeEach(async () => {
     mockQueryRunner = {
       query: jest.fn().mockResolvedValue([]),
+      isTransactionActive: false,
+      startTransaction: jest.fn(),
+      commitTransaction: jest.fn(),
+      rollbackTransaction: jest.fn(),
     } as any;
 
     const module: TestingModule = await Test.createTestingModule({
@@ -241,13 +245,11 @@ describe('WorkspaceSchemaEnumManager', () => {
 
       const actualCall = mockQueryRunner.query.mock.calls[0][0];
 
-      // Verify the SQL is properly structured
       expect(actualCall).toMatch(/ALTER TYPE .+ ADD VALUE .+ BEFORE/);
       expect(actualCall).toContain('"workspacetest"."statusenum"');
       expect(actualCall).toContain("'valuetest'");
       expect(actualCall).toContain("'beforevalue'");
 
-      // Verify dangerous unescaped quotes are not present
       expect(actualCall).not.toContain('workspace"test');
       expect(actualCall).not.toContain('status"enum');
       expect(actualCall).not.toContain('value"test');
@@ -291,13 +293,11 @@ describe('WorkspaceSchemaEnumManager', () => {
 
       const actualCall = mockQueryRunner.query.mock.calls[0][0];
 
-      // Verify the SQL is properly structured
       expect(actualCall).toMatch(/ALTER TYPE .+ RENAME VALUE .+ TO/);
       expect(actualCall).toContain('"workspacetest"."statusenum"');
       expect(actualCall).toContain("'oldvalue'");
       expect(actualCall).toContain("'newvalue'");
 
-      // Verify dangerous unescaped quotes are not present
       expect(actualCall).not.toContain('workspace"test');
       expect(actualCall).not.toContain('status"enum');
       expect(actualCall).not.toContain('old"value');
@@ -492,7 +492,6 @@ describe('WorkspaceSchemaEnumManager', () => {
 
   describe('alterEnumValues', () => {
     beforeEach(() => {
-      // Mock the getEnumNameForColumn method to return a valid enum name
       jest
         .spyOn(service, 'getEnumNameForColumn')
         .mockResolvedValue('old_status_enum');
@@ -505,10 +504,8 @@ describe('WorkspaceSchemaEnumManager', () => {
       const newValues = ['draft', 'published', 'archived'];
       const valueMapping = { active: 'published', inactive: 'archived' };
 
-      // Mock the data migration query
       mockQueryRunner.query.mockImplementation((sql: string) => {
         if (sql.includes('SELECT id')) {
-          // Extract the column name from the SQL query to match the dynamic old column name
           const columnMatch = sql.match(/SELECT id, "([^"]+)"/);
           const columnName = columnMatch ? columnMatch[1] : 'old_status';
 
@@ -530,20 +527,16 @@ describe('WorkspaceSchemaEnumManager', () => {
         valueMapping,
       );
 
-      // Verify the sequence of SQL operations
       const calls = mockQueryRunner.query.mock.calls.map((call) => call[0]);
 
-      // Should rename column
       expect(
         calls.some((call) => call.includes('RENAME COLUMN "status" TO')),
       ).toBe(true);
 
-      // Should rename enum
       expect(
         calls.some((call) => call.includes('RENAME TO "old_status_enum_temp"')),
       ).toBe(true);
 
-      // Should create new enum
       expect(
         calls.some(
           (call) =>
@@ -551,23 +544,18 @@ describe('WorkspaceSchemaEnumManager', () => {
         ),
       ).toBe(true);
 
-      // Should add new column
       expect(calls.some((call) => call.includes('ADD COLUMN "status"'))).toBe(
         true,
       );
 
-      // Should update data
       expect(
         calls.some(
-          (call) =>
-            call.includes('UPDATE') && call.includes('SET "status" = $1'),
+          (call) => call.includes('UPDATE') && call.includes('CASE "old_'),
         ),
       ).toBe(true);
 
-      // Should drop old column
       expect(calls.some((call) => call.includes('DROP COLUMN'))).toBe(true);
 
-      // Should drop temp enum
       expect(
         calls.some(
           (call) => call.includes('DROP TYPE') && call.includes('temp'),

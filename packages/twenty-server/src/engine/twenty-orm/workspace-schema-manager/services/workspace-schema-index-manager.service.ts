@@ -41,8 +41,21 @@ export class WorkspaceSchemaIndexManager {
             .join(', ')})`
         : '';
 
-      const sql =
-        `CREATE ${isUnique} INDEX IF NOT EXISTS "${safeIndexName}" ON "${safeSchemaName}"."${safeTableName}" ${indexType} (${quotedColumns.join(', ')}) ${includeClause} ${whereClause}`.trim();
+      const sql = [
+        'CREATE',
+        isUnique && 'UNIQUE',
+        'INDEX IF NOT EXISTS',
+        `"${safeIndexName}"`,
+        'ON',
+        `"${safeSchemaName}"."${safeTableName}"`,
+        indexType,
+        `(${quotedColumns.join(', ')})`,
+        includeClause,
+        whereClause,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .trim();
 
       await queryRunner.query(sql);
     } catch (error: unknown) {
