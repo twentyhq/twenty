@@ -1,14 +1,16 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { CreateViewSortInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-sort.input';
 import { UpdateViewSortInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-sort.input';
 import { ViewSortDTO } from 'src/engine/core-modules/view/dtos/view-sort.dto';
 import { ViewSortService } from 'src/engine/core-modules/view/services/view-sort.service';
+import { ViewGraphqlApiExceptionFilter } from 'src/engine/core-modules/view/utils/view-graphql-api-exception.filter';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { ViewGraphqlApiExceptionFilter } from 'src/engine/core-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewSortDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
@@ -57,17 +59,7 @@ export class ViewSortResolver {
     @Args('input') input: UpdateViewSortInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewSortDTO> {
-    const updatedViewSort = await this.viewSortService.update(
-      id,
-      workspace.id,
-      input,
-    );
-
-    if (!updatedViewSort) {
-      throw new Error('ViewSort not found');
-    }
-
-    return updatedViewSort;
+    return this.viewSortService.update(id, workspace.id, input);
   }
 
   @Mutation(() => Boolean)
@@ -78,6 +70,6 @@ export class ViewSortResolver {
   ): Promise<boolean> {
     const deletedViewSort = await this.viewSortService.delete(id, workspace.id);
 
-    return deletedViewSort !== null;
+    return isDefined(deletedViewSort);
   }
 }

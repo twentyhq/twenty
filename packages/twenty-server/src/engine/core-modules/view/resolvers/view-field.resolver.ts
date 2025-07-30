@@ -1,15 +1,17 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
 import { UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
 import { ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
 import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
+import { ViewGraphqlApiExceptionFilter } from 'src/engine/core-modules/view/utils/view-graphql-api-exception.filter';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { ViewGraphqlApiExceptionFilter } from 'src/engine/core-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewFieldDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
@@ -41,17 +43,7 @@ export class ViewFieldResolver {
     @Args('input') input: UpdateViewFieldInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewField> {
-    const updatedViewField = await this.viewFieldService.update(
-      id,
-      workspace.id,
-      input,
-    );
-
-    if (!updatedViewField) {
-      throw new Error('ViewField not found');
-    }
-
-    return updatedViewField;
+    return this.viewFieldService.update(id, workspace.id, input);
   }
 
   @Mutation(() => ViewFieldDTO)
@@ -77,6 +69,6 @@ export class ViewFieldResolver {
       workspace.id,
     );
 
-    return !!deletedViewField;
+    return isDefined(deletedViewField);
   }
 }

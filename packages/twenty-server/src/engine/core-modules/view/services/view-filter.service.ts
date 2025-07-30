@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
 import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
@@ -40,33 +41,6 @@ export class ViewFilterService {
     });
   }
 
-  async findByFieldMetadataId(
-    workspaceId: string,
-    fieldMetadataId: string,
-  ): Promise<ViewFilter[]> {
-    return this.viewFilterRepository.find({
-      where: {
-        workspaceId,
-        fieldMetadataId,
-        deletedAt: IsNull(),
-      },
-    });
-  }
-
-  async findByViewFilterGroupId(
-    workspaceId: string,
-    viewFilterGroupId: string,
-  ): Promise<ViewFilter[]> {
-    return this.viewFilterRepository.find({
-      where: {
-        workspaceId,
-        viewFilterGroupId,
-        deletedAt: IsNull(),
-      },
-      order: { positionInViewFilterGroup: 'ASC' },
-    });
-  }
-
   async findById(id: string, workspaceId: string): Promise<ViewFilter | null> {
     const viewFilter = await this.viewFilterRepository.findOne({
       where: {
@@ -80,7 +54,7 @@ export class ViewFilterService {
   }
 
   async create(viewFilterData: Partial<ViewFilter>): Promise<ViewFilter> {
-    if (!viewFilterData.workspaceId) {
+    if (!isDefined(viewFilterData.workspaceId)) {
       throw new ViewFilterException(
         'WorkspaceId is required',
         ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
@@ -91,7 +65,7 @@ export class ViewFilterService {
       );
     }
 
-    if (!viewFilterData.viewId) {
+    if (!isDefined(viewFilterData.viewId)) {
       throw new ViewFilterException(
         'ViewId is required',
         ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
@@ -99,7 +73,7 @@ export class ViewFilterService {
       );
     }
 
-    if (!viewFilterData.fieldMetadataId) {
+    if (!isDefined(viewFilterData.fieldMetadataId)) {
       throw new ViewFilterException(
         'FieldMetadataId is required',
         ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
@@ -119,70 +93,36 @@ export class ViewFilterService {
     id: string,
     workspaceId: string,
     updateData: Partial<ViewFilter>,
-  ): Promise<ViewFilter | null> {
-    const viewFilter = await this.findById(id, workspaceId);
-
-    if (!viewFilter) {
-      return null;
-    }
-
-    await this.viewFilterRepository.update(id, updateData);
-
-    return this.findById(id, workspaceId);
-  }
-
-  async delete(id: string, workspaceId: string): Promise<ViewFilter | null> {
-    const viewFilter = await this.findById(id, workspaceId);
-
-    if (!viewFilter) {
-      return null;
-    }
-
-    await this.viewFilterRepository.softDelete(id);
-
-    return viewFilter;
-  }
-
-  async validateViewFilter(
-    id: string,
-    workspaceId: string,
   ): Promise<ViewFilter> {
-    const viewFilter = await this.findById(id, workspaceId);
+    const existingViewFilter = await this.findById(id, workspaceId);
 
-    if (!viewFilter) {
+    if (!isDefined(existingViewFilter)) {
       throw new ViewFilterException(
         `ViewFilter with id ${id} not found`,
         ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
       );
     }
 
+    const updatedViewFilter = await this.viewFilterRepository.save({
+      id,
+      ...updateData,
+    });
+
+    return { ...existingViewFilter, ...updatedViewFilter };
+  }
+
+  async delete(id: string, workspaceId: string): Promise<ViewFilter> {
+    const viewFilter = await this.findById(id, workspaceId);
+
+    if (!isDefined(viewFilter)) {
+      throw new ViewFilterException(
+        `ViewFilter with id ${id} not found`,
+        ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
+      );
+    }
+
+    await this.viewFilterRepository.softDelete(id);
+
     return viewFilter;
-  }
-
-  async bulkDeleteByFieldMetadataId(
-    workspaceId: string,
-    fieldMetadataId: string,
-  ): Promise<void> {
-    await this.viewFilterRepository.softDelete({
-      workspaceId,
-      fieldMetadataId,
-    });
-  }
-
-  async bulkDeleteByViewId(workspaceId: string, viewId: string): Promise<void> {
-    await this.viewFilterRepository.softDelete({
-      workspaceId,
-      viewId,
-    });
-  }
-
-  async bulkDeleteByViewFilterGroupId(
-    workspaceId: string,
-    viewFilterGroupId: string,
-  ): Promise<void> {
-    await this.viewFilterRepository.softDelete({
-      workspaceId,
-      viewFilterGroupId,
-    });
   }
 }

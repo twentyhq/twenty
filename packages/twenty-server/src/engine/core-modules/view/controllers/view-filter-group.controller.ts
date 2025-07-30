@@ -11,6 +11,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { CreateViewFilterGroupInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-filter-group.input';
 import { UpdateViewFilterGroupInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-filter-group.input';
@@ -76,10 +78,6 @@ export class ViewFilterGroupController {
       input,
     );
 
-    if (!updatedViewFilterGroup) {
-      throw new Error('ViewFilterGroup not found');
-    }
-
     return updatedViewFilterGroup;
   }
 
@@ -94,6 +92,6 @@ export class ViewFilterGroupController {
       workspace.id,
     );
 
-    return { success: deletedViewFilterGroup !== null };
+    return { success: isDefined(deletedViewFilterGroup) };
   }
 }

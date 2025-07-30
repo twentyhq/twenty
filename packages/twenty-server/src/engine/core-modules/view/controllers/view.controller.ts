@@ -11,6 +11,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/core-modules/view/dtos/inputs/update-view.input';
@@ -73,10 +75,6 @@ export class ViewController {
   ): Promise<ViewDTO> {
     const updatedView = await this.viewService.update(id, workspace.id, input);
 
-    if (!updatedView) {
-      throw new Error('View not found');
-    }
-
     return updatedView;
   }
 
@@ -88,6 +86,6 @@ export class ViewController {
   ): Promise<{ success: boolean }> {
     const deletedView = await this.viewService.delete(id, workspace.id);
 
-    return { success: !!deletedView };
+    return { success: isDefined(deletedView) };
   }
 }

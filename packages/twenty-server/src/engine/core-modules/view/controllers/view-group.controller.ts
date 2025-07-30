@@ -11,6 +11,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { CreateViewGroupInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-group.input';
 import { UpdateViewGroupInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-group.input';
@@ -74,10 +76,6 @@ export class ViewGroupController {
       input,
     );
 
-    if (!updatedViewGroup) {
-      throw new Error('ViewGroup not found');
-    }
-
     return updatedViewGroup;
   }
 
@@ -92,6 +90,6 @@ export class ViewGroupController {
       workspace.id,
     );
 
-    return { success: deletedViewGroup !== null };
+    return { success: isDefined(deletedViewGroup) };
   }
 }

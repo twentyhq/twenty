@@ -11,6 +11,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { CreateViewSortInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-sort.input';
 import { UpdateViewSortInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-sort.input';
@@ -74,10 +76,6 @@ export class ViewSortController {
       input,
     );
 
-    if (!updatedViewSort) {
-      throw new Error('ViewSort not found');
-    }
-
     return updatedViewSort;
   }
 
@@ -89,6 +87,6 @@ export class ViewSortController {
   ): Promise<{ success: boolean }> {
     const deletedViewSort = await this.viewSortService.delete(id, workspace.id);
 
-    return { success: deletedViewSort !== null };
+    return { success: isDefined(deletedViewSort) };
   }
 }

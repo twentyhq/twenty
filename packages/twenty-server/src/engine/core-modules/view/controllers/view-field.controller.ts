@@ -11,6 +11,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
 import { UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
@@ -62,10 +64,6 @@ export class ViewFieldController {
       input,
     );
 
-    if (!updatedViewField) {
-      throw new Error('ViewField not found');
-    }
-
     return updatedViewField;
   }
 
@@ -92,6 +90,6 @@ export class ViewFieldController {
       workspace.id,
     );
 
-    return { success: !!deletedViewField };
+    return { success: isDefined(deletedViewField) };
   }
 }

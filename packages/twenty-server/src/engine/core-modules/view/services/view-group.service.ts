@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
 import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
@@ -40,19 +41,6 @@ export class ViewGroupService {
     });
   }
 
-  async findByFieldMetadataId(
-    workspaceId: string,
-    fieldMetadataId: string,
-  ): Promise<ViewGroup[]> {
-    return this.viewGroupRepository.find({
-      where: {
-        workspaceId,
-        fieldMetadataId,
-        deletedAt: IsNull(),
-      },
-    });
-  }
-
   async findById(id: string, workspaceId: string): Promise<ViewGroup | null> {
     const viewGroup = await this.viewGroupRepository.findOne({
       where: {
@@ -66,7 +54,7 @@ export class ViewGroupService {
   }
 
   async create(viewGroupData: Partial<ViewGroup>): Promise<ViewGroup> {
-    if (!viewGroupData.workspaceId) {
+    if (!isDefined(viewGroupData.workspaceId)) {
       throw new ViewGroupException(
         'WorkspaceId is required',
         ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA,
@@ -77,7 +65,7 @@ export class ViewGroupService {
       );
     }
 
-    if (!viewGroupData.viewId) {
+    if (!isDefined(viewGroupData.viewId)) {
       throw new ViewGroupException(
         'ViewId is required',
         ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA,
@@ -85,7 +73,7 @@ export class ViewGroupService {
       );
     }
 
-    if (!viewGroupData.fieldMetadataId) {
+    if (!isDefined(viewGroupData.fieldMetadataId)) {
       throw new ViewGroupException(
         'FieldMetadataId is required',
         ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA,
@@ -105,57 +93,36 @@ export class ViewGroupService {
     id: string,
     workspaceId: string,
     updateData: Partial<ViewGroup>,
-  ): Promise<ViewGroup | null> {
-    const viewGroup = await this.findById(id, workspaceId);
+  ): Promise<ViewGroup> {
+    const existingViewGroup = await this.findById(id, workspaceId);
 
-    if (!viewGroup) {
-      return null;
-    }
-
-    await this.viewGroupRepository.update(id, updateData);
-
-    return this.findById(id, workspaceId);
-  }
-
-  async delete(id: string, workspaceId: string): Promise<ViewGroup | null> {
-    const viewGroup = await this.findById(id, workspaceId);
-
-    if (!viewGroup) {
-      return null;
-    }
-
-    await this.viewGroupRepository.softDelete(id);
-
-    return viewGroup;
-  }
-
-  async validateViewGroup(id: string, workspaceId: string): Promise<ViewGroup> {
-    const viewGroup = await this.findById(id, workspaceId);
-
-    if (!viewGroup) {
+    if (!isDefined(existingViewGroup)) {
       throw new ViewGroupException(
         `ViewGroup with id ${id} not found`,
         ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND,
       );
     }
 
+    const updatedViewGroup = await this.viewGroupRepository.save({
+      id,
+      ...updateData,
+    });
+
+    return { ...existingViewGroup, ...updatedViewGroup };
+  }
+
+  async delete(id: string, workspaceId: string): Promise<ViewGroup> {
+    const viewGroup = await this.findById(id, workspaceId);
+
+    if (!isDefined(viewGroup)) {
+      throw new ViewGroupException(
+        `ViewGroup with id ${id} not found`,
+        ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND,
+      );
+    }
+
+    await this.viewGroupRepository.softDelete(id);
+
     return viewGroup;
-  }
-
-  async bulkDeleteByFieldMetadataId(
-    workspaceId: string,
-    fieldMetadataId: string,
-  ): Promise<void> {
-    await this.viewGroupRepository.softDelete({
-      workspaceId,
-      fieldMetadataId,
-    });
-  }
-
-  async bulkDeleteByViewId(workspaceId: string, viewId: string): Promise<void> {
-    await this.viewGroupRepository.softDelete({
-      workspaceId,
-      viewId,
-    });
   }
 }

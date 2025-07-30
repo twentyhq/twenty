@@ -57,17 +57,7 @@ export class ViewGroupResolver {
     @Args('input') input: UpdateViewGroupInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewGroupDTO> {
-    const updatedViewGroup = await this.viewGroupService.update(
-      id,
-      workspace.id,
-      input,
-    );
-
-    if (!updatedViewGroup) {
-      throw new Error('ViewGroup not found');
-    }
-
-    return updatedViewGroup;
+    return this.viewGroupService.update(id, workspace.id, input);
   }
 
   @Mutation(() => Boolean)
