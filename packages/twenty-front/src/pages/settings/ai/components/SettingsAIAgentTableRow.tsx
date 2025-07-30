@@ -15,23 +15,27 @@ export type SettingsAIAgentTableRowProps = {
 };
 
 export const StyledAIAgentTableRow = styled(TableRow)`
-  grid-template-columns: 300px 120px 36px;
+  grid-template-columns: 1fr 120px 36px;
 `;
 
 const StyledNameTableCell = styled(TableCell)`
   color: ${({ theme }) => theme.font.color.primary};
   gap: ${({ theme }) => theme.spacing(2)};
+  min-width: 0;
+  overflow: hidden;
 `;
 
 const StyledNameLabel = styled.div`
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  min-width: 0;
+  flex: 1;
 `;
 
 const StyledActionTableCell = styled(TableCell)`
-  justify-content: center;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  justify-content: flex-end;
+  padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const SettingsAIAgentTableRow = ({
@@ -48,7 +52,7 @@ export const SettingsAIAgentTableRow = ({
       <StyledNameTableCell>
         {!!Icon && (
           <Icon
-            style={{ minWidth: theme.icon.size.md }}
+            style={{ minWidth: theme.icon.size.md, flexShrink: 0 }}
             size={theme.icon.size.md}
             stroke={theme.icon.stroke.sm}
           />

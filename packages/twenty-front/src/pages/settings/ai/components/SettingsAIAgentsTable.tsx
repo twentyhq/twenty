@@ -8,12 +8,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { useTheme } from '@emotion/react';
-import {
-  IconChevronRight,
-  IconDotsVertical,
-  IconSearch,
-} from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
+import { IconChevronRight, IconSearch } from 'twenty-ui/display';
 import { Agent } from '~/generated-metadata/graphql';
 import { GET_SETTINGS_AI_AGENT_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsAIAgentTableMetadata';
 import {
@@ -28,6 +23,10 @@ const StyledSearchInput = styled(TextInput)`
 
 const StyledTable = styled(Table)`
   margin-top: ${({ theme }) => theme.spacing(3)};
+`;
+
+const StyledTableHeaderRow = styled(StyledAIAgentTableRow)`
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const SettingsAIAgentsTable = ({ agents }: { agents: Agent[] }) => {
@@ -61,7 +60,7 @@ export const SettingsAIAgentsTable = ({ agents }: { agents: Agent[] }) => {
       />
 
       <StyledTable>
-        <StyledAIAgentTableRow>
+        <StyledTableHeaderRow>
           {GET_SETTINGS_AI_AGENT_TABLE_METADATA.fields.map(
             (settingsAIAgentTableMetadataField) => (
               <SortableTableHeader
@@ -75,25 +74,18 @@ export const SettingsAIAgentsTable = ({ agents }: { agents: Agent[] }) => {
             ),
           )}
           <TableHeader></TableHeader>
-        </StyledAIAgentTableRow>
+        </StyledTableHeaderRow>
         {filteredAgents.map((agent) => (
           <SettingsAIAgentTableRow
             key={agent.id}
             agent={agent}
             action={
-              agent.isCustom ? (
-                <LightIconButton
-                  Icon={IconDotsVertical}
-                  accent="tertiary"
-                  size="small"
-                />
-              ) : (
-                <IconChevronRight
-                  size={theme.icon.size.md}
-                  stroke={theme.icon.stroke.sm}
-                />
-              )
+              <IconChevronRight
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+              />
             }
+            link={`/settings/ai/agents/${agent.id}`}
           />
         ))}
       </StyledTable>
