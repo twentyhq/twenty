@@ -17,6 +17,8 @@ import { H2Title, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
+  CreateAgentInput,
+  useCreateOneAgentMutation,
   useFindOneAgentQuery,
   useUpdateOneAgentMutation,
 } from '~/generated-metadata/graphql';
@@ -43,13 +45,21 @@ const StyledDangerZoneSection = styled(Section)`
 
 const DELETE_AGENT_MODAL_ID = 'delete-agent-modal';
 
-export const SettingsAgentDetail = () => {
+type SettingsAgentFormMode = 'create' | 'edit';
+
+interface SettingsAgentFormProps {
+  mode: SettingsAgentFormMode;
+}
+
+export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
   const { t } = useLingui();
   const { agentId = '' } = useParams<{ agentId: string }>();
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { openModal } = useModal();
+
+  const isEditMode = mode === 'edit';
 
   const formConfig = useForm<SettingsAIAgentFormValues>({
     mode: 'onChange',
@@ -59,7 +69,7 @@ export const SettingsAgentDetail = () => {
       label: '',
       description: '',
       icon: 'IconRobot',
-      modelId: '',
+      modelId: isEditMode ? '' : 'auto',
       role: '',
       prompt: '',
       isCustom: true,
@@ -68,7 +78,7 @@ export const SettingsAgentDetail = () => {
 
   const { data, loading } = useFindOneAgentQuery({
     variables: { id: agentId },
-    skip: !agentId,
+    skip: !isEditMode || !agentId,
     onCompleted: (data) => {
       const agent = data?.findOneAgent;
       if (isDefined(agent)) {
@@ -78,7 +88,7 @@ export const SettingsAgentDetail = () => {
           description: agent.description,
           icon: agent.icon || 'IconRobot',
           modelId: agent.modelId,
-          role: agent.roleId,
+          role: agent.roleId || '',
           prompt: agent.prompt,
           isCustom: agent.isCustom,
         });
@@ -97,18 +107,43 @@ export const SettingsAgentDetail = () => {
     },
   });
 
+  const [createAgent] = useCreateOneAgentMutation();
   const [updateAgent] = useUpdateOneAgentMutation();
 
   const agent = data?.findOneAgent;
 
+  if (isEditMode && !loading && !agent) {
+    return <></>;
+  }
+
   const { isValid, isSubmitting } = formConfig.formState;
+  const canSave = isValid && !isSubmitting;
 
   const handleSave = async (formData: SettingsAIAgentFormValues) => {
-    if (!agent) {
-      return;
-    }
-
     try {
+      if (!isEditMode) {
+        const input: CreateAgentInput = {
+          name: formData.name,
+          label: formData.label,
+          description: formData.description || undefined,
+          icon: formData.icon || undefined,
+          modelId: formData.modelId,
+          roleId: formData.role || undefined,
+          prompt: formData.prompt,
+          isCustom: formData.isCustom,
+        };
+
+        await createAgent({
+          variables: { input },
+        });
+        navigate(SettingsPath.AI);
+        return;
+      }
+
+      if (!agent) {
+        return;
+      }
+
       await updateAgent({
         variables: {
           input: {
@@ -133,72 +168,78 @@ export const SettingsAgentDetail = () => {
     }
   };
 
-  if (!loading && !agent) {
-    return <></>;
-  }
-
-  const agentName = agent ? agent.name : t`Agent`;
+  const title = isEditMode ? (loading ? t`Agent` : agent?.name) : t`New Agent`;
+  const pageTitle = isEditMode ? t`Edit Agent` : t`New Agent`;
+  const pageDescription = isEditMode
+    ? t`Update agent information`
+    : t`Create a new AI agent`;
+  const breadcrumbText = isEditMode
+    ? loading
+      ? t`Agent`
+      : agent?.name
+    : t`New Agent`;
 
   return (
-    <SubMenuTopBarContainer
-      title={agentName}
-      actionButton={
-        !loading && (
+    <>
+      <SubMenuTopBarContainer
+        title={title}
+        actionButton={
           <SaveAndCancelButtons
             onSave={formConfig.handleSubmit(handleSave)}
             onCancel={() => navigate(SettingsPath.AI)}
-            isSaveDisabled={!isValid || isSubmitting}
-            isCancelDisabled={isSubmitting}
+            isSaveDisabled={!canSave}
             isLoading={isSubmitting}
+            isCancelDisabled={isSubmitting}
           />
-        )
-      }
-      links={[
-        {
-          children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
-        },
-        { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
-        { children: agentName },
-      ]}
-    >
-      <SettingsPageContainer>
-        <Section>
-          <H2Title
-            title={t`Edit Agent`}
-            description={t`Update agent information`}
-          />
-          {loading ? (
-            <SettingsAgentDetailSkeletonLoader />
-          ) : (
-            <StyledContentContainer>
-              <FormProvider
-                // eslint-disable-next-line react/jsx-props-no-spreading
-                {...formConfig}
-              >
-                <SettingsAIAgentForm />
-              </FormProvider>
-              <StyledDangerZoneSection>
-                <H2Title
-                  title={t`Danger zone`}
-                  description={t`Delete this agent`}
-                />
-                <Button
-                  accent="danger"
-                  variant="secondary"
-                  title={t`Delete Agent`}
-                  Icon={IconTrash}
-                  onClick={() => openModal(DELETE_AGENT_MODAL_ID)}
-                />
-              </StyledDangerZoneSection>
-            </StyledContentContainer>
-          )}
-        </Section>
-      </SettingsPageContainer>
-      <SettingsAgentDeleteConfirmationModal
-        agentId={agent?.id}
-        agentName={agent?.name as string}
-      />
-    </SubMenuTopBarContainer>
+        }
+        links={[
+          {
+            children: t`Workspace`,
+            href: getSettingsPath(SettingsPath.Workspace),
+          },
+          { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
+          { children: breadcrumbText },
+        ]}
+      >
+        <SettingsPageContainer>
+          <Section>
+            <H2Title title={pageTitle} description={pageDescription} />
+            {isEditMode && loading ? (
+              <SettingsAgentDetailSkeletonLoader />
+            ) : (
+              <StyledContentContainer>
+                <FormProvider
+                  // eslint-disable-next-line react/jsx-props-no-spreading
+                  {...formConfig}
+                >
+                  <SettingsAIAgentForm />
+                </FormProvider>
+                {isEditMode && agent && (
+                  <StyledDangerZoneSection>
+                    <H2Title
+                      title={t`Danger zone`}
+                      description={t`Delete this agent`}
+                    />
+                    <Button
+                      accent="danger"
+                      variant="secondary"
+                      title={t`Delete Agent`}
+                      Icon={IconTrash}
+                      onClick={() => openModal(DELETE_AGENT_MODAL_ID)}
+                    />
+                  </StyledDangerZoneSection>
+                )}
+              </StyledContentContainer>
+            )}
+          </Section>
+        </SettingsPageContainer>
+      </SubMenuTopBarContainer>
+      {isEditMode && agent && (
+        <SettingsAgentDeleteConfirmationModal
+          agentId={agent.id}
+          agentName={agent.name}
+        />
+      )}
+    </>
   );
 };
