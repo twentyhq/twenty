@@ -150,7 +150,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
   ) => {
     if (!selectedRoleId) {
       enqueueErrorSnackBar({
-        message: t`Please select a role for the API key`,
+        message: t`A role must be selected for the API key`,
       });
       return;
     }
