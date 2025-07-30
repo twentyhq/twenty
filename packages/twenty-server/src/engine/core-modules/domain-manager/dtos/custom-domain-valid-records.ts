@@ -3,10 +3,10 @@ import { Field, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 class CustomDomainRecord {
   @Field(() => String)
-  validationType: 'ownership' | 'ssl' | 'redirection';
+  validationType: 'ssl' | 'redirection';
 
   @Field(() => String)
-  type: 'txt' | 'cname';
+  type: 'cname';
 
   @Field(() => String)
   key: string;

@@ -1,10 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class RecordCRUDActionException extends CustomException {
-  constructor(message: string, code: RecordCRUDActionExceptionCode) {
-    super(message, code);
-  }
-}
+export class RecordCRUDActionException extends CustomException<RecordCRUDActionExceptionCode> {}
 
 export enum RecordCRUDActionExceptionCode {
   INVALID_REQUEST = 'INVALID_REQUEST',

@@ -1,15 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class ObjectMetadataException extends CustomException {
-  declare code: ObjectMetadataExceptionCode;
-  constructor(
-    message: string,
-    code: ObjectMetadataExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
-  ) {
-    super(message, code, userFriendlyMessage);
-  }
-}
+export class ObjectMetadataException extends CustomException<ObjectMetadataExceptionCode> {}
 
 export enum ObjectMetadataExceptionCode {
   OBJECT_METADATA_NOT_FOUND = 'OBJECT_METADATA_NOT_FOUND',

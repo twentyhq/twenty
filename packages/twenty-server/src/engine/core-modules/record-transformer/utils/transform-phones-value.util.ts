@@ -43,7 +43,7 @@ const validatePrimaryPhoneCountryCodeAndCallingCode = ({
     throw new RecordTransformerException(
       `Invalid country code ${countryCode}`,
       RecordTransformerExceptionCode.INVALID_PHONE_COUNTRY_CODE,
-      t`Invalid country code ${countryCode}`,
+      { userFriendlyMessage: t`Invalid country code ${countryCode}` },
     );
   }
 
@@ -57,7 +57,7 @@ const validatePrimaryPhoneCountryCodeAndCallingCode = ({
     throw new RecordTransformerException(
       `Invalid calling code ${callingCode}`,
       RecordTransformerExceptionCode.INVALID_PHONE_CALLING_CODE,
-      t`Invalid calling code ${callingCode}`,
+      { userFriendlyMessage: t`Invalid calling code ${callingCode}` },
     );
   }
 
@@ -70,7 +70,9 @@ const validatePrimaryPhoneCountryCodeAndCallingCode = ({
     throw new RecordTransformerException(
       `Provided country code and calling code are conflicting`,
       RecordTransformerExceptionCode.CONFLICTING_PHONE_CALLING_CODE_AND_COUNTRY_CODE,
-      t`Provided country code and calling code are conflicting`,
+      {
+        userFriendlyMessage: t`Provided country code and calling code are conflicting`,
+      },
     );
   }
 };
@@ -91,7 +93,7 @@ const parsePhoneNumberExceptionWrapper = ({
     throw new RecordTransformerException(
       `Provided phone number is invalid ${number}`,
       RecordTransformerExceptionCode.INVALID_PHONE_NUMBER,
-      t`Provided phone number is invalid ${number}`,
+      { userFriendlyMessage: t`Provided phone number is invalid ${number}` },
     );
   }
 };
@@ -115,7 +117,9 @@ const validateAndInferMetadataFromPrimaryPhoneNumber = ({
     throw new RecordTransformerException(
       'Provided and inferred country code are conflicting',
       RecordTransformerExceptionCode.CONFLICTING_PHONE_COUNTRY_CODE,
-      t`Provided and inferred country code are conflicting`,
+      {
+        userFriendlyMessage: t`Provided and inferred country code are conflicting`,
+      },
     );
   }
 
@@ -127,7 +131,9 @@ const validateAndInferMetadataFromPrimaryPhoneNumber = ({
     throw new RecordTransformerException(
       'Provided and inferred calling code are conflicting',
       RecordTransformerExceptionCode.CONFLICTING_PHONE_CALLING_CODE,
-      t`Provided and inferred calling code are conflicting`,
+      {
+        userFriendlyMessage: t`Provided and inferred calling code are conflicting`,
+      },
     );
   }
 

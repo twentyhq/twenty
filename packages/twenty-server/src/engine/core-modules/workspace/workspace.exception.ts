@@ -1,11 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class WorkspaceException extends CustomException {
-  declare code: WorkspaceExceptionCode;
-  constructor(message: string, code: WorkspaceExceptionCode) {
-    super(message, code);
-  }
-}
+export class WorkspaceException extends CustomException<WorkspaceExceptionCode> {}
 
 export enum WorkspaceExceptionCode {
   SUBDOMAIN_NOT_FOUND = 'SUBDOMAIN_NOT_FOUND',

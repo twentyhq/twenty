@@ -1,13 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class ConnectedAccountRefreshAccessTokenException extends CustomException {
-  constructor(
-    message: string,
-    code: ConnectedAccountRefreshAccessTokenExceptionCode,
-  ) {
-    super(message, code);
-  }
-}
+export class ConnectedAccountRefreshAccessTokenException extends CustomException<ConnectedAccountRefreshAccessTokenExceptionCode> {}
 
 export enum ConnectedAccountRefreshAccessTokenExceptionCode {
   REFRESH_TOKEN_NOT_FOUND = 'REFRESH_TOKEN_NOT_FOUND',

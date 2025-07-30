@@ -48,6 +48,7 @@ export class CloudflareController {
           exception: new DomainManagerException(
             'Hostname missing',
             DomainManagerExceptionCode.INVALID_INPUT_DATA,
+            { userFriendlyMessage: 'Hostname missing' },
           ),
           exceptionHandlerService: this.exceptionHandlerService,
         });
@@ -101,6 +102,7 @@ export class CloudflareController {
         exception: new DomainManagerException(
           err.message ?? 'Unknown error occurred',
           DomainManagerExceptionCode.INTERNAL_SERVER_ERROR,
+          { userFriendlyMessage: 'Unknown error occurred' },
         ),
         exceptionHandlerService: this.exceptionHandlerService,
       });

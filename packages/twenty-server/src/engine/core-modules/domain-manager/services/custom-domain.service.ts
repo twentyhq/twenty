@@ -61,6 +61,7 @@ export class CustomDomainService {
       throw new DomainManagerException(
         'Hostname already registered',
         DomainManagerExceptionCode.HOSTNAME_ALREADY_REGISTERED,
+        { userFriendlyMessage: 'Hostname already registered' },
       );
     }
 
@@ -86,70 +87,42 @@ export class CustomDomainService {
     }
 
     if (response.result.length === 1) {
+      // @ts-expect-error - type definition doesn't reflect the real API
+      const dcvRecords = response.result[0].ssl.dcv_delegation_records[0];
+
       return {
         id: response.result[0].id,
         customDomain: response.result[0].hostname,
         records: [
-          response.result[0].ownership_verification,
-          ...(response.result[0].ssl?.validation_records ?? []),
-        ]
-          .map<CustomDomainValidRecords['records'][0] | undefined>((record) => {
-            if (!record) return;
-
-            if (
-              'txt_name' in record &&
-              'txt_value' in record &&
-              record.txt_name &&
-              record.txt_value
-            ) {
-              return {
-                validationType: 'ssl' as const,
-                type: 'txt' as const,
-                status:
-                  !response.result[0].ssl.status ||
-                  response.result[0].ssl.status.startsWith('pending')
-                    ? 'pending'
-                    : response.result[0].ssl.status,
-                key: record.txt_name,
-                value: record.txt_value,
-              };
-            }
-
-            if (
-              'type' in record &&
-              record.type === 'txt' &&
-              record.value &&
-              record.name
-            ) {
-              return {
-                validationType: 'ownership' as const,
-                type: 'txt' as const,
-                status: response.result[0].status ?? 'pending',
-                key: record.name,
-                value: record.value,
-              };
-            }
-          })
-          .filter(isDefined)
-          .concat([
-            {
-              validationType: 'redirection' as const,
-              type: 'cname' as const,
-              status:
-                // wait 10s before starting the real check
-                response.result[0].created_at &&
-                new Date().getTime() -
-                  new Date(response.result[0].created_at).getTime() <
-                  1000 * 10
-                  ? 'pending'
-                  : response.result[0].verification_errors?.[0] ===
-                      'custom hostname does not CNAME to this zone.'
-                    ? 'error'
-                    : 'success',
-              key: response.result[0].hostname,
-              value: this.domainManagerService.getBaseUrl().hostname,
-            },
-          ]),
+          {
+            validationType: 'redirection' as const,
+            type: 'cname',
+            status:
+              // wait 10s before starting the real check
+              response.result[0].created_at &&
+              new Date().getTime() -
+                new Date(response.result[0].created_at).getTime() <
+                1000 * 10
+                ? 'pending'
+                : response.result[0].verification_errors?.[0] ===
+                    'custom hostname does not CNAME to this zone.'
+                  ? 'error'
+                  : 'success',
+            key: response.result[0].hostname,
+            value: this.domainManagerService.getBaseUrl().hostname,
+          },
+          {
+            validationType: 'ssl' as const,
+            type: 'cname',
+            status:
+              !response.result[0].ssl.status ||
+              response.result[0].ssl.status.startsWith('pending')
+                ? 'pending'
+                : response.result[0].ssl.status,
+            key: dcvRecords.cname,
+            value: dcvRecords.cname_target,
+          },
+        ],
       };
     }
 
@@ -211,6 +184,7 @@ export class CustomDomainService {
       workspace.customDomain,
     );
 
+    console.log('>>>>>>>>>>>>>>', customDomainDetails);
     if (!customDomainDetails) return;
 
     await this.refreshCustomDomain(customDomainDetails);
