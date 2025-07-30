@@ -124,7 +124,6 @@ export class AgentService {
       modelId?: ModelId;
       roleId?: string;
       responseFormat?: object;
-      isCustom?: boolean;
     },
     workspaceId: string,
   ) {

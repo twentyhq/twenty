@@ -479,7 +479,6 @@ export type CreateAgentChatThreadInput = {
 export type CreateAgentInput = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
-  isCustom?: InputMaybe<Scalars['Boolean']>;
   label: Scalars['String'];
   modelId: Scalars['String'];
   name: Scalars['String'];
@@ -2697,7 +2696,6 @@ export type UpdateAgentInput = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
-  isCustom?: InputMaybe<Scalars['Boolean']>;
   label: Scalars['String'];
   modelId: Scalars['String'];
   name: Scalars['String'];

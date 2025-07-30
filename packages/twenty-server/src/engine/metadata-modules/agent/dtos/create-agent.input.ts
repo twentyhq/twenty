@@ -1,12 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsObject,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -53,9 +47,4 @@ export class CreateAgentInput {
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   responseFormat?: object;
-
-  @IsBoolean()
-  @IsOptional()
-  @Field({ nullable: true })
-  isCustom?: boolean;
 }
