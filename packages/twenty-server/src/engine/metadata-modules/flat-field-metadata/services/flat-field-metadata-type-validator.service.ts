@@ -13,9 +13,7 @@ import { validateRelationFlatFieldMetadata } from 'src/engine/metadata-modules/f
 import { EnumFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/enum-column-action.factory';
 @Injectable()
 export class FlatFieldMetadataTypeValidatorService {
-  constructor(
-    private readonly featureFlagService: FeatureFlagService,
-  ) {}
+  constructor(private readonly featureFlagService: FeatureFlagService) {}
 
   public readonly FIELD_METADATA_TYPE_VALIDATOR_HASHMAP: FlatFieldMetadataTypeValidator =
     {

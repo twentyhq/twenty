@@ -1,10 +1,11 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { ObjectMetadataException } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
-import { isDefined } from 'twenty-shared/utils';
 
 export type FailedFlatFieldMetadataValidationExceptions =
   | FieldMetadataException
