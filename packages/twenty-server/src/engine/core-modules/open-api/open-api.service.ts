@@ -37,12 +37,12 @@ import {
   getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
 import { getServerUrl } from 'src/utils/get-server-url';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class OpenApiService {
@@ -194,6 +194,30 @@ export class OpenApiService {
       {
         nameSingular: 'apiKey',
         namePlural: 'apiKeys',
+      },
+      {
+        nameSingular: 'view',
+        namePlural: 'views',
+      },
+      {
+        nameSingular: 'viewField',
+        namePlural: 'viewFields',
+      },
+      {
+        nameSingular: 'viewFilter',
+        namePlural: 'viewFilters',
+      },
+      {
+        nameSingular: 'viewSort',
+        namePlural: 'viewSorts',
+      },
+      {
+        nameSingular: 'viewGroup',
+        namePlural: 'viewGroups',
+      },
+      {
+        nameSingular: 'viewFilterGroup',
+        namePlural: 'viewFilterGroups',
       },
     ];
 
