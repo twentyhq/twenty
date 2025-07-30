@@ -14,25 +14,25 @@ export class AddAgentHandoffTable1753709914396 implements MigrationInterface {
       `CREATE INDEX "IDX_AGENT_HANDOFF_ID_DELETED_AT" ON "core"."agentHandoff" ("id", "deletedAt") `,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."agentHandoff" ADD CONSTRAINT "FK_d22cdf705b1302c8fa423e73dc1" FOREIGN KEY ("fromAgentId") REFERENCES "core"."agent"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+      `ALTER TABLE "core"."agentHandoff" ADD CONSTRAINT "FK_7128daa5ac9f787388391b52269" FOREIGN KEY ("fromAgentId") REFERENCES "core"."agent"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."agentHandoff" ADD CONSTRAINT "FK_a1aa45815aa37507f986e971996" FOREIGN KEY ("toAgentId") REFERENCES "core"."agent"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+      `ALTER TABLE "core"."agentHandoff" ADD CONSTRAINT "FK_020114432e51baf65bbbc46e350" FOREIGN KEY ("toAgentId") REFERENCES "core"."agent"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."agentHandoff" ADD CONSTRAINT "FK_fe6aae82838e18de7d411b81018" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+      `ALTER TABLE "core"."agentHandoff" ADD CONSTRAINT "FK_7ea2d1182dc5324e7cef9903302" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."agentHandoff" DROP CONSTRAINT "FK_fe6aae82838e18de7d411b81018"`,
+      `ALTER TABLE "core"."agentHandoff" DROP CONSTRAINT "FK_7ea2d1182dc5324e7cef9903302"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."agentHandoff" DROP CONSTRAINT "FK_a1aa45815aa37507f986e971996"`,
+      `ALTER TABLE "core"."agentHandoff" DROP CONSTRAINT "FK_020114432e51baf65bbbc46e350"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."agentHandoff" DROP CONSTRAINT "FK_d22cdf705b1302c8fa423e73dc1"`,
+      `ALTER TABLE "core"."agentHandoff" DROP CONSTRAINT "FK_7128daa5ac9f787388391b52269"`,
     );
     await queryRunner.query(
       `DROP INDEX "core"."IDX_AGENT_HANDOFF_ID_DELETED_AT"`,
