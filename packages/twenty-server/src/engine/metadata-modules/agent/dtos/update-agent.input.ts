@@ -50,6 +50,11 @@ export class UpdateAgentInput {
   @Field(() => String)
   modelId?: ModelId;
 
+  @IsString()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  roleId?: string;
+
   @IsObject()
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })

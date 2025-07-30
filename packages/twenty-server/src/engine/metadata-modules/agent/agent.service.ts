@@ -122,6 +122,7 @@ export class AgentService {
       icon?: string;
       prompt?: string;
       modelId?: ModelId;
+      roleId?: string;
       responseFormat?: object;
       isCustom?: boolean;
     },
@@ -134,7 +135,22 @@ export class AgentService {
       ...input,
     });
 
-    return updatedAgent;
+    if (input.roleId !== undefined) {
+      if (input.roleId) {
+        await this.agentRoleService.assignRoleToAgent({
+          workspaceId,
+          agentId: agent.id,
+          roleId: input.roleId,
+        });
+      } else {
+        await this.agentRoleService.removeRoleFromAgent({
+          workspaceId,
+          agentId: agent.id,
+        });
+      }
+    }
+
+    return this.findOneAgent(updatedAgent.id, workspaceId);
   }
 
   async deleteOneAgent(id: string, workspaceId: string) {
