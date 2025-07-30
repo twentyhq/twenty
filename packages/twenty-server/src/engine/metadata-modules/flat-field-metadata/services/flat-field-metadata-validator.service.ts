@@ -8,10 +8,7 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
-import {
-  FailedFlatFieldMetadataValidation,
-  FailedFlatFieldMetadataValidationExceptions,
-} from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
+import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-flat-field-metadata-name-availability.validator';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -49,7 +46,7 @@ export class FlatFieldMetadataValidatorService {
     othersFlatObjectMetadataToValidate,
     workspaceId,
   }: ValidateOneFieldMetadataArgs<T>): Promise<
-    FailedFlatFieldMetadataValidation | undefined
+    FailedFlatFieldMetadataValidationExceptions[]
   > {
     const errors: FailedFlatFieldMetadataValidationExceptions[] = [];
     const allFlatObjectMetadata = [
@@ -148,13 +145,6 @@ export class FlatFieldMetadataValidatorService {
       );
     }
 
-    if (errors.length > 0) {
-      return {
-        status: 'fail',
-        errors,
-      };
-    }
-
-    return;
+    return errors;
   }
 }

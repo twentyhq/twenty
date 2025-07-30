@@ -6,10 +6,3 @@ export type FailedFlatFieldMetadataValidationExceptions =
   | FieldMetadataException
   | ObjectMetadataException
   | InvalidMetadataException;
-
-export type FailedFlatFieldMetadataValidation = {
-  status: 'fail';
-  errors:
-    | Array<FailedFlatFieldMetadataValidationExceptions>
-    | FailedFlatFieldMetadataValidationExceptions;
-};
