@@ -21,6 +21,7 @@ import {
   WorkflowDiagramEdge,
   WorkflowDiagramEdgeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { css, useTheme } from '@emotion/react';
@@ -58,16 +59,14 @@ const assertFilterEdgeDataOrThrow: (
 const StyledIconButtonGroup = styled(IconButtonGroup)<{ selected?: boolean }>`
   pointer-events: all;
 
-  ${({ selected, theme }) =>
-    selected &&
-    css`
-      background-color: ${theme.adaptiveColors.blue1};
-      border: 1px solid ${theme.color.blue};
-
-      .icon-button {
-        color: ${theme.color.blue};
-      }
-    `}
+  ${({ selected, theme }) => {
+    if (!selected) return '';
+    const colors = getWorkflowDiagramNodeSelectedColors('default', theme);
+    return css`
+      background-color: ${colors.background};
+      border: 1px solid ${colors.borderColor};
+    `;
+  }}
 `;
 
 const StyledConfiguredFilterContainer = styled.div`
@@ -128,12 +127,6 @@ export const WorkflowDiagramFilterEdgeEditable = ({
 
   const isFilterNodeSelected =
     isNonEmptyString(data.stepId) && workflowSelectedNode === data.stepId;
-
-  console.log('-----------------------data', data);
-  console.log(
-    '-----------------------workflowSelectedNode',
-    workflowSelectedNode,
-  );
 
   const dropdownId = `${WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}-${source}-${target}`;
 

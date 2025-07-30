@@ -9,6 +9,7 @@ import {
   WorkflowDiagramEdge,
   WorkflowDiagramEdgeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -36,16 +37,14 @@ const assertFilterEdgeDataOrThrow: (
 const StyledIconButtonGroup = styled(IconButtonGroup)<{ selected?: boolean }>`
   pointer-events: all;
 
-  ${({ selected, theme }) =>
-    selected &&
-    css`
-      background-color: ${theme.adaptiveColors.blue1};
-      border: 1px solid ${theme.color.blue};
-
-      .icon-button {
-        color: ${theme.color.blue};
-      }
-    `}
+  ${({ selected, theme }) => {
+    if (!selected) return '';
+    const colors = getWorkflowDiagramNodeSelectedColors('default', theme);
+    return css`
+      background-color: ${colors.background};
+      border: 1px solid ${colors.borderColor};
+    `;
+  }}
 `;
 
 const StyledConfiguredFilterContainer = styled.div`
