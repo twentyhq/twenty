@@ -1,11 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import {
-    IsBoolean,
-    IsNotEmpty,
-    IsObject,
-    IsOptional,
-    IsString,
+  IsBoolean,
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
 } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
