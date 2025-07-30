@@ -47,30 +47,33 @@ export class AssignRolesToExistingApiKeysCommand extends ActiveOrSuspendedWorksp
       `Assigning roles to existing API keys for workspace ${workspaceId} ${index + 1}/${total}`,
     );
 
-    try {
-      const result = await this.assignRolesToWorkspaceApiKeys(
-        workspaceId,
-        options.dryRun ?? false,
-      );
+    const result = await this.assignRolesToWorkspaceApiKeys(
+      workspaceId,
+      options.dryRun ?? false,
+    );
 
+    if (result.failed.length > 0) {
+      this.logger.warn(
+        `  ⚠️  Workspace ${workspaceId}: Processed ${result.processed}, Assigned roles to ${result.assigned} API keys, Failed: ${result.failed.length}`,
+      );
+      this.logger.warn(
+        `     Failed API keys: ${result.failed.map((f) => `${f.name} (${f.id}): ${f.error}`).join(', ')}`,
+      );
+    } else {
       this.logger.log(
         `  ✅ Workspace ${workspaceId}: Processed ${result.processed}, Assigned roles to ${result.assigned} API keys`,
       );
-    } catch (error) {
-      this.logger.error(
-        `  ❌ Failed to assign roles to API keys for workspace ${workspaceId}:`,
-        error,
-      );
-      if (!options.dryRun) {
-        throw error;
-      }
     }
   }
 
   private async assignRolesToWorkspaceApiKeys(
     workspaceId: string,
     dryRun: boolean,
-  ): Promise<{ processed: number; assigned: number }> {
+  ): Promise<{
+    processed: number;
+    assigned: number;
+    failed: Array<{ id: string; name: string; error: string }>;
+  }> {
     const apiKeys = await this.apiKeyRepository.find({
       where: { workspaceId },
       select: ['id', 'name', 'workspaceId'],
@@ -79,7 +82,7 @@ export class AssignRolesToExistingApiKeysCommand extends ActiveOrSuspendedWorksp
     if (apiKeys.length === 0) {
       this.logger.log(`    No API keys found in workspace ${workspaceId}`);
 
-      return { processed: 0, assigned: 0 };
+      return { processed: 0, assigned: 0, failed: [] };
     }
 
     this.logger.log(`    Found ${apiKeys.length} API keys in workspace`);
@@ -102,7 +105,7 @@ export class AssignRolesToExistingApiKeysCommand extends ActiveOrSuspendedWorksp
     if (apiKeysWithoutRoles.length === 0) {
       this.logger.log(`    All API keys already have role assignments`);
 
-      return { processed: apiKeys.length, assigned: 0 };
+      return { processed: apiKeys.length, assigned: 0, failed: [] };
     }
 
     this.logger.log(
@@ -117,6 +120,7 @@ export class AssignRolesToExistingApiKeysCommand extends ActiveOrSuspendedWorksp
       return {
         processed: apiKeys.length,
         assigned: apiKeysWithoutRoles.length,
+        failed: [],
       };
     }
 
@@ -132,12 +136,14 @@ export class AssignRolesToExistingApiKeysCommand extends ActiveOrSuspendedWorksp
         `    No Admin role found in workspace ${workspaceId}, skipping...`,
       );
 
-      return { processed: apiKeys.length, assigned: 0 };
+      return { processed: apiKeys.length, assigned: 0, failed: [] };
     }
 
     this.logger.log(`    Using Admin role: ${adminRole.id}`);
 
     let assignedCount = 0;
+    const failedApiKeys: Array<{ id: string; name: string; error: string }> =
+      [];
 
     for (const apiKey of apiKeysWithoutRoles) {
       try {
@@ -152,13 +158,24 @@ export class AssignRolesToExistingApiKeysCommand extends ActiveOrSuspendedWorksp
         );
         assignedCount++;
       } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+
+        failedApiKeys.push({
+          id: apiKey.id,
+          name: apiKey.name,
+          error: errorMessage,
+        });
         this.logger.error(
-          `      ❌ Failed to assign role to API key "${apiKey.name}" (${apiKey.id}):`,
-          error,
+          `      ❌ Failed to assign role to API key "${apiKey.name}" (${apiKey.id}): ${errorMessage}`,
         );
       }
     }
 
-    return { processed: apiKeys.length, assigned: assignedCount };
+    return {
+      processed: apiKeys.length,
+      assigned: assignedCount,
+      failed: failedApiKeys,
+    };
   }
 }
