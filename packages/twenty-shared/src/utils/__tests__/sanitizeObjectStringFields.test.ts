@@ -1,5 +1,5 @@
 import { EachTestingContext } from '@/testing/types/EachTestingContext.type';
-import { sanitizeObjectStringFields } from '../sanitizeObjectStringFields';
+import { extractAndSanitizeObjectStringFields } from '../extractAndSanitizeObjectStringFields';
 
 type TestObject = {
   name?: string;
@@ -25,7 +25,7 @@ type SanitizeTestCase = EachTestingContext<{
   expected: object;
 }>;
 
-describe('sanitizeObjectStringFields', () => {
+describe('extractAndSanitizeObjectStringFields', () => {
   const testCases: SanitizeTestCase[] = [
     {
       title: 'should handle basic string properties and trim whitespaces',
@@ -172,7 +172,7 @@ describe('sanitizeObjectStringFields', () => {
         expected,
       },
     }) => {
-      const result = sanitizeObjectStringFields(obj, keys);
+      const result = extractAndSanitizeObjectStringFields(obj, keys);
 
       expect(result).toEqual(expected);
     },
