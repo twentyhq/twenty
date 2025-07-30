@@ -90,7 +90,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
     onCompleted: (data) => {
       if (isDefined(data?.apiKey)) {
         setApiKeyName(data.apiKey.name);
-        setSelectedRoleId(data.apiKey.role.id);
+        if (isDefined(data.apiKey.role)) {
+          setSelectedRoleId(data.apiKey.role.id);
+        }
       }
     },
   });

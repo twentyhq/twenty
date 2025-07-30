@@ -7,6 +7,7 @@ import { AssignRolesToExistingApiKeysCommand } from 'src/database/commands/upgra
 import { RemoveWorkflowRunsWithoutState } from 'src/database/commands/upgrade-version-command/1-2/1-2-remove-workflow-runs-without-state.command';
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -32,6 +33,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     RoleModule,
     WorkspaceDataSourceModule,
     ApiKeyModule,
+    FeatureFlagModule,
     TwentyORMModule,
   ],
   providers: [
