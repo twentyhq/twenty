@@ -73,9 +73,9 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
         createFieldInput: {
           icon: relationCreationPayload.targetFieldIcon,
           label: relationCreationPayload.targetFieldLabel,
-          name: computeMetadataNameFromLabel(
+          name: `${computeMetadataNameFromLabel(
             relationCreationPayload.targetFieldLabel,
-          ),
+          )}Id`,
           objectMetadataId: targetParentFlatObjectMetadata.id,
           type: FieldMetadataType.RELATION,
           workspaceId: createFieldInput.workspaceId,
