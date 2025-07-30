@@ -135,19 +135,21 @@ export class AgentService {
       ...input,
     });
 
-    if (input.roleId !== undefined) {
-      if (input.roleId) {
-        await this.agentRoleService.assignRoleToAgent({
-          workspaceId,
-          agentId: agent.id,
-          roleId: input.roleId,
-        });
-      } else {
-        await this.agentRoleService.removeRoleFromAgent({
-          workspaceId,
-          agentId: agent.id,
-        });
-      }
+    if (input.roleId === undefined) {
+      return updatedAgent;
+    }
+
+    if (input.roleId) {
+      await this.agentRoleService.assignRoleToAgent({
+        workspaceId,
+        agentId: agent.id,
+        roleId: input.roleId,
+      });
+    } else {
+      await this.agentRoleService.removeRoleFromAgent({
+        workspaceId,
+        agentId: agent.id,
+      });
     }
 
     return this.findOneAgent(updatedAgent.id, workspaceId);
