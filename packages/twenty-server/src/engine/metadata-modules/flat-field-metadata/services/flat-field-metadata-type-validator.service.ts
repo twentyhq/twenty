@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
@@ -13,34 +14,34 @@ export class FlatFieldMetadataTypeValidatorService {
 
   public readonly FIELD_METADATA_TYPE_VALIDATOR_HASHMAP: FlatFieldMetadataTypeValidator =
     {
-      ACTOR: async (args) => {
+      ACTOR: async (_args) => {
         return [];
       },
-      ADDRESS: async (args) => {
+      ADDRESS: async (_args) => {
         return [];
       },
-      ARRAY: async (args) => {
+      ARRAY: async (_args) => {
         return [];
       },
-      BOOLEAN: async (args) => {
+      BOOLEAN: async (_args) => {
         return [];
       },
-      CURRENCY: async (args) => {
+      CURRENCY: async (_args) => {
         return [];
       },
-      DATE: async (args) => {
+      DATE: async (_args) => {
         return [];
       },
-      DATE_TIME: async (args) => {
+      DATE_TIME: async (_args) => {
         return [];
       },
-      EMAILS: async (args) => {
+      EMAILS: async (_args) => {
         return [];
       },
-      FULL_NAME: async (args) => {
+      FULL_NAME: async (_args) => {
         return [];
       },
-      LINKS: async (args) => {
+      LINKS: async (_args) => {
         return [];
       },
       MORPH_RELATION: async ({ workspaceId }) => {
@@ -58,46 +59,47 @@ export class FlatFieldMetadataTypeValidatorService {
             ),
           ];
         }
+
         return [];
       },
-      MULTI_SELECT: async (args) => {
+      MULTI_SELECT: async (_args) => {
         return [];
       },
-      NUMBER: async (args) => {
+      NUMBER: async (_args) => {
         return [];
       },
-      NUMERIC: async (args) => {
+      NUMERIC: async (_args) => {
         return [];
       },
-      PHONES: async (args) => {
+      PHONES: async (_args) => {
         return [];
       },
-      POSITION: async (args) => {
+      POSITION: async (_args) => {
         return [];
       },
-      RATING: async (args) => {
+      RATING: async (_args) => {
         return [];
       },
-      RAW_JSON: async (args) => {
+      RAW_JSON: async (_args) => {
         return [];
       },
       RELATION: validateRelationFlatFieldMetadata,
-      RICH_TEXT: async (args) => {
+      RICH_TEXT: async (_args) => {
         return [];
       },
-      RICH_TEXT_V2: async (args) => {
+      RICH_TEXT_V2: async (_args) => {
         return [];
       },
-      SELECT: async (args) => {
+      SELECT: async (_args) => {
         return [];
       },
-      TEXT: async (args) => {
+      TEXT: async (_args) => {
         return [];
       },
-      TS_VECTOR: async (args) => {
+      TS_VECTOR: async (_args) => {
         return [];
       },
-      UUID: async (args) => {
+      UUID: async (_args) => {
         return [];
       },
     };
