@@ -1129,8 +1129,8 @@ export type Mutation = {
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWebhook: Webhook;
-  createWorkflowVersionEdge: WorkflowEdge;
-  createWorkflowVersionStep: WorkflowAction;
+  createWorkflowVersionEdge: WorkflowVersionStepUpdates;
+  createWorkflowVersionStep: WorkflowVersionStepUpdates;
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
@@ -1145,8 +1145,8 @@ export type Mutation = {
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
   deleteWebhook: Scalars['Boolean'];
-  deleteWorkflowVersionEdge: WorkflowEdge;
-  deleteWorkflowVersionStep: WorkflowAction;
+  deleteWorkflowVersionEdge: WorkflowVersionStepUpdates;
+  deleteWorkflowVersionStep: WorkflowVersionStepUpdates;
   deleteWorkspaceInvitation: Scalars['String'];
   disablePostgresProxy: PostgresCredentials;
   editSSOIdentityProvider: EditSsoOutput;
@@ -2895,12 +2895,6 @@ export type WorkflowAction = {
   valid: Scalars['Boolean'];
 };
 
-export type WorkflowEdge = {
-  __typename?: 'WorkflowEdge';
-  source: Scalars['String'];
-  target: Scalars['String'];
-};
-
 export type WorkflowRun = {
   __typename?: 'WorkflowRun';
   workflowRunId: Scalars['UUID'];
@@ -2935,6 +2929,14 @@ export type WorkflowVersionEdgeInput = {
   target: Scalars['String'];
   /** Workflow version ID */
   workflowVersionId: Scalars['String'];
+};
+
+export type WorkflowVersionStepUpdates = {
+  __typename?: 'WorkflowVersionStepUpdates';
+  createdStep?: Maybe<WorkflowAction>;
+  deletedStepId?: Maybe<Scalars['String']>;
+  stepsNextStepIds?: Maybe<Scalars['JSON']>;
+  triggerNextStepIds?: Maybe<Array<Scalars['String']>>;
 };
 
 export type Workspace = {

@@ -10,7 +10,6 @@ import { v4 } from 'uuid';
 
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
-import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
@@ -34,8 +33,9 @@ import {
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
-import { WorkflowEdgeDTO } from 'src/engine/core-modules/workflow/dtos/workflow-edge.dto';
 import { WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
+import { WorkflowVersionStepUpdatesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-updates.dto';
+import { computeWorkflowVersionStepUpdates } from 'src/modules/workflow/workflow-builder/workflow-step/utils/compute-workflow-version-step-updates.util';
 
 const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
   outputSchema: {},
@@ -70,7 +70,7 @@ export class WorkflowVersionStepWorkspaceService {
   }: {
     workspaceId: string;
     input: CreateWorkflowVersionStepInput;
-  }): Promise<WorkflowActionDTO> {
+  }): Promise<WorkflowVersionStepUpdatesDTO> {
     const { workflowVersionId, stepType, parentStepId, nextStepId, position } =
       input;
 
@@ -124,7 +124,11 @@ export class WorkflowVersionStepWorkspaceService {
       steps: updatedSteps,
     });
 
-    return updatedInsertedStep;
+    return computeWorkflowVersionStepUpdates({
+      createdStep: updatedInsertedStep,
+      trigger: updatedTrigger,
+      steps: updatedSteps,
+    });
   }
 
   async updateWorkflowVersionStep({
@@ -193,7 +197,7 @@ export class WorkflowVersionStepWorkspaceService {
     workspaceId: string;
     workflowVersionId: string;
     stepIdToDelete: string;
-  }) {
+  }): Promise<WorkflowVersionStepUpdatesDTO> {
     const workflowVersionRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
         workspaceId,
@@ -228,7 +232,11 @@ export class WorkflowVersionStepWorkspaceService {
         trigger: null,
       });
 
-      return;
+      return computeWorkflowVersionStepUpdates({
+        trigger: null,
+        steps: workflowVersion?.steps,
+        deletedStepId: stepIdToDelete,
+      });
     }
 
     const existingTrigger = workflowVersion.trigger;
@@ -259,6 +267,11 @@ export class WorkflowVersionStepWorkspaceService {
     await this.runWorkflowVersionStepDeletionSideEffects({
       step: stepToDelete,
       workspaceId,
+    });
+
+    return computeWorkflowVersionStepUpdates({
+      ...workflowVersionUpdates,
+      deletedStepId: stepIdToDelete,
     });
   }
 
@@ -365,7 +378,7 @@ export class WorkflowVersionStepWorkspaceService {
     target: string;
     workflowVersionId: string;
     workspaceId: string;
-  }): Promise<WorkflowEdgeDTO> {
+  }): Promise<WorkflowVersionStepUpdatesDTO> {
     const workflowVersionRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
         workspaceId,
@@ -388,13 +401,13 @@ export class WorkflowVersionStepWorkspaceService {
 
     assertWorkflowVersionIsDraft(workflowVersion);
 
-    const existingSteps = workflowVersion.steps || [];
+    const steps = workflowVersion.steps || [];
 
     const trigger = workflowVersion.trigger;
 
     const isSourceTrigger = source === 'trigger';
 
-    const targetStep = existingSteps.find((step) => step.id === target);
+    const targetStep = steps.find((step) => step.id === target);
 
     if (!isDefined(targetStep)) {
       throw new WorkflowVersionStepException(
@@ -412,7 +425,10 @@ export class WorkflowVersionStepWorkspaceService {
       }
 
       if (trigger.nextStepIds?.includes(target)) {
-        return { source, target };
+        return computeWorkflowVersionStepUpdates({
+          trigger,
+          steps,
+        });
       }
 
       const updatedTrigger = {
@@ -423,39 +439,50 @@ export class WorkflowVersionStepWorkspaceService {
       await workflowVersionRepository.update(workflowVersion.id, {
         trigger: updatedTrigger,
       });
-    } else {
-      const sourceStep = existingSteps.find((step) => step.id === source);
 
-      if (!isDefined(sourceStep)) {
-        throw new WorkflowVersionStepException(
-          `Source step '${source}' not found in workflowVersion '${workflowVersionId}'`,
-          WorkflowVersionStepExceptionCode.NOT_FOUND,
-        );
-      }
-
-      if (sourceStep.nextStepIds?.includes(target)) {
-        return { source, target };
-      }
-
-      const updatedSourceStep = {
-        ...sourceStep,
-        nextStepIds: [...(sourceStep.nextStepIds ?? []), target],
-      };
-
-      const updatedSteps = existingSteps.map((step) => {
-        if (step.id === source) {
-          return updatedSourceStep;
-        }
-
-        return step;
-      });
-
-      await workflowVersionRepository.update(workflowVersion.id, {
-        steps: updatedSteps,
+      return computeWorkflowVersionStepUpdates({
+        trigger: updatedTrigger,
+        steps,
       });
     }
 
-    return { source, target };
+    const sourceStep = steps.find((step) => step.id === source);
+
+    if (!isDefined(sourceStep)) {
+      throw new WorkflowVersionStepException(
+        `Source step '${source}' not found in workflowVersion '${workflowVersionId}'`,
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    if (sourceStep.nextStepIds?.includes(target)) {
+      return computeWorkflowVersionStepUpdates({
+        trigger,
+        steps,
+      });
+    }
+
+    const updatedSourceStep = {
+      ...sourceStep,
+      nextStepIds: [...(sourceStep.nextStepIds ?? []), target],
+    };
+
+    const updatedSteps = steps.map((step) => {
+      if (step.id === source) {
+        return updatedSourceStep;
+      }
+
+      return step;
+    });
+
+    await workflowVersionRepository.update(workflowVersion.id, {
+      steps: updatedSteps,
+    });
+
+    return computeWorkflowVersionStepUpdates({
+      trigger,
+      steps: updatedSteps,
+    });
   }
 
   async deleteWorkflowVersionEdge({
@@ -468,7 +495,7 @@ export class WorkflowVersionStepWorkspaceService {
     target: string;
     workflowVersionId: string;
     workspaceId: string;
-  }): Promise<WorkflowEdgeDTO> {
+  }): Promise<WorkflowVersionStepUpdatesDTO> {
     const workflowVersionRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
         workspaceId,
@@ -491,13 +518,13 @@ export class WorkflowVersionStepWorkspaceService {
 
     assertWorkflowVersionIsDraft(workflowVersion);
 
-    const existingSteps = workflowVersion.steps || [];
+    const steps = workflowVersion.steps || [];
 
     const trigger = workflowVersion.trigger;
 
     const isSourceTrigger = source === 'trigger';
 
-    const targetStep = existingSteps.find((step) => step.id === target);
+    const targetStep = steps.find((step) => step.id === target);
 
     if (!isDefined(targetStep)) {
       throw new WorkflowVersionStepException(
@@ -515,7 +542,10 @@ export class WorkflowVersionStepWorkspaceService {
       }
 
       if (!trigger.nextStepIds?.includes(target)) {
-        return { source, target };
+        return computeWorkflowVersionStepUpdates({
+          trigger,
+          steps,
+        });
       }
 
       const updatedTrigger = {
@@ -528,41 +558,52 @@ export class WorkflowVersionStepWorkspaceService {
       await workflowVersionRepository.update(workflowVersion.id, {
         trigger: updatedTrigger,
       });
-    } else {
-      const sourceStep = existingSteps.find((step) => step.id === source);
 
-      if (!isDefined(sourceStep)) {
-        throw new WorkflowVersionStepException(
-          `Source step '${source}' not found in workflowVersion '${workflowVersionId}'`,
-          WorkflowVersionStepExceptionCode.NOT_FOUND,
-        );
-      }
-
-      if (!sourceStep.nextStepIds?.includes(target)) {
-        return { source, target };
-      }
-
-      const updatedSourceStep = {
-        ...sourceStep,
-        nextStepIds: sourceStep.nextStepIds?.filter(
-          (nextStepId) => nextStepId !== target,
-        ),
-      };
-
-      const updatedSteps = existingSteps.map((step) => {
-        if (step.id === source) {
-          return updatedSourceStep;
-        }
-
-        return step;
-      });
-
-      await workflowVersionRepository.update(workflowVersion.id, {
-        steps: updatedSteps,
+      return computeWorkflowVersionStepUpdates({
+        trigger: updatedTrigger,
+        steps,
       });
     }
 
-    return { source, target };
+    const sourceStep = steps.find((step) => step.id === source);
+
+    if (!isDefined(sourceStep)) {
+      throw new WorkflowVersionStepException(
+        `Source step '${source}' not found in workflowVersion '${workflowVersionId}'`,
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    if (!sourceStep.nextStepIds?.includes(target)) {
+      return computeWorkflowVersionStepUpdates({
+        trigger,
+        steps,
+      });
+    }
+
+    const updatedSourceStep = {
+      ...sourceStep,
+      nextStepIds: sourceStep.nextStepIds?.filter(
+        (nextStepId) => nextStepId !== target,
+      ),
+    };
+
+    const updatedSteps = steps.map((step) => {
+      if (step.id === source) {
+        return updatedSourceStep;
+      }
+
+      return step;
+    });
+
+    await workflowVersionRepository.update(workflowVersion.id, {
+      steps: updatedSteps,
+    });
+
+    return computeWorkflowVersionStepUpdates({
+      trigger,
+      steps: updatedSteps,
+    });
   }
 
   private async enrichOutputSchema({

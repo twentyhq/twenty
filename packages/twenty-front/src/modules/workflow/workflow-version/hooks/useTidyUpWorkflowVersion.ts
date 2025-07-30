@@ -64,17 +64,20 @@ export const useTidyUpWorkflowVersion = ({
       (position) => position.id === 'trigger',
     );
 
-    const updatedTrigger = isDefined(triggerPosition)
-      ? { ...cachedRecord.trigger, position: triggerPosition.position }
-      : cachedRecord.trigger;
+    const updatedTrigger =
+      isDefined(triggerPosition) && isDefined(cachedRecord.trigger)
+        ? { ...cachedRecord.trigger, position: triggerPosition.position }
+        : cachedRecord.trigger;
 
     const updatedSteps = cachedRecord.steps?.map((step: WorkflowAction) => {
       const stepPosition = positions.find(
         (position) => position.id === step.id,
       );
+
       if (!isDefined(stepPosition)) {
         return step;
       }
+
       return { ...step, position: stepPosition.position };
     });
 

@@ -101,7 +101,12 @@ describe('WorkflowVersionStepWorkspaceService', () => {
           provide: TwentyORMGlobalManager,
           useValue: twentyORMGlobalManager,
         },
-        { provide: WorkflowSchemaWorkspaceService, useValue: {} },
+        {
+          provide: WorkflowSchemaWorkspaceService,
+          useValue: {
+            computeStepOutputSchema: jest.fn(),
+          },
+        },
         { provide: ServerlessFunctionService, useValue: {} },
         { provide: AgentService, useValue: {} },
         {
@@ -124,6 +129,108 @@ describe('WorkflowVersionStepWorkspaceService', () => {
     );
   });
 
+  describe('createWorkflowVersionStep', () => {
+    it('should create a step linked to trigger', async () => {
+      const result = await service.createWorkflowVersionStep({
+        input: {
+          stepType: WorkflowActionType.FORM,
+          parentStepId: 'trigger',
+          nextStepId: undefined,
+          workflowVersionId: mockWorkflowVersionId,
+        },
+        workspaceId: mockWorkspaceId,
+      });
+
+      expect(mockWorkflowVersionWorkspaceRepository.update).toHaveBeenCalled();
+
+      expect(result.createdStep).toBeDefined();
+
+      const createdStepId = result.createdStep?.id;
+
+      expect(result.triggerNextStepIds).toEqual(['step-1', createdStepId]);
+      expect(result.stepsNextStepIds).toEqual({
+        'step-1': ['step-2'],
+        'step-2': [],
+        'step-3': [],
+      });
+    });
+
+    it('should create a step between a trigger and a step', async () => {
+      const result = await service.createWorkflowVersionStep({
+        input: {
+          stepType: WorkflowActionType.FORM,
+          parentStepId: 'trigger',
+          nextStepId: 'step-1',
+          workflowVersionId: mockWorkflowVersionId,
+        },
+        workspaceId: mockWorkspaceId,
+      });
+
+      expect(mockWorkflowVersionWorkspaceRepository.update).toHaveBeenCalled();
+
+      expect(result.createdStep).toBeDefined();
+
+      const createdStepId = result.createdStep?.id as string;
+
+      expect(result.triggerNextStepIds).toEqual([createdStepId]);
+      expect(result.stepsNextStepIds).toEqual({
+        [createdStepId]: ['step-1'],
+        'step-1': ['step-2'],
+        'step-2': [],
+        'step-3': [],
+      });
+    });
+
+    it('should create a step between two steps', async () => {
+      const result = await service.createWorkflowVersionStep({
+        input: {
+          stepType: WorkflowActionType.FORM,
+          parentStepId: 'step-1',
+          nextStepId: 'step-2',
+          workflowVersionId: mockWorkflowVersionId,
+        },
+        workspaceId: mockWorkspaceId,
+      });
+
+      expect(mockWorkflowVersionWorkspaceRepository.update).toHaveBeenCalled();
+
+      expect(result.createdStep).toBeDefined();
+
+      const createdStepId = result.createdStep?.id as string;
+
+      expect(result.triggerNextStepIds).toEqual(['step-1']);
+      expect(result.stepsNextStepIds).toEqual({
+        'step-1': [createdStepId],
+        [createdStepId]: ['step-2'],
+        'step-2': [],
+        'step-3': [],
+      });
+    });
+
+    it('should create a step without parent or children', async () => {
+      const result = await service.createWorkflowVersionStep({
+        input: {
+          stepType: WorkflowActionType.FORM,
+          parentStepId: undefined,
+          nextStepId: undefined,
+          workflowVersionId: mockWorkflowVersionId,
+        },
+        workspaceId: mockWorkspaceId,
+      });
+
+      expect(mockWorkflowVersionWorkspaceRepository.update).toHaveBeenCalled();
+
+      expect(result.createdStep).toBeDefined();
+
+      expect(result.triggerNextStepIds).toEqual(['step-1']);
+      expect(result.stepsNextStepIds).toEqual({
+        'step-1': ['step-2'],
+        'step-2': [],
+        'step-3': [],
+      });
+    });
+  });
+
   describe('createWorkflowVersionEdge', () => {
     it('should throw if target does not exists', async () => {
       const call = async () =>
@@ -141,7 +248,7 @@ describe('WorkflowVersionStepWorkspaceService', () => {
 
     describe('with source is the trigger', () => {
       it('should create an edge between trigger and step-1', async () => {
-        await service.createWorkflowVersionEdge({
+        const result = await service.createWorkflowVersionEdge({
           source: 'trigger',
           target: 'step-3',
           workflowVersionId: mockWorkflowVersionId,
@@ -156,10 +263,19 @@ describe('WorkflowVersionStepWorkspaceService', () => {
             nextStepIds: ['step-1', 'step-3'],
           },
         });
+
+        expect(result).toEqual({
+          triggerNextStepIds: ['step-1', 'step-3'],
+          stepsNextStepIds: {
+            'step-1': ['step-2'],
+            'step-2': [],
+            'step-3': [],
+          },
+        });
       });
 
       it('should not duplicated stepIds if edge already exists', async () => {
-        await service.createWorkflowVersionEdge({
+        const result = await service.createWorkflowVersionEdge({
           source: 'trigger',
           target: 'step-1',
           workflowVersionId: mockWorkflowVersionId,
@@ -169,12 +285,21 @@ describe('WorkflowVersionStepWorkspaceService', () => {
         expect(
           mockWorkflowVersionWorkspaceRepository.update,
         ).not.toHaveBeenCalled();
+
+        expect(result).toEqual({
+          triggerNextStepIds: ['step-1'],
+          stepsNextStepIds: {
+            'step-1': ['step-2'],
+            'step-2': [],
+            'step-3': [],
+          },
+        });
       });
     });
 
     describe('with source is a step', () => {
       it('should create an edge between step-2 and step-3', async () => {
-        await service.createWorkflowVersionEdge({
+        const result = await service.createWorkflowVersionEdge({
           source: 'step-2',
           target: 'step-3',
           workflowVersionId: mockWorkflowVersionId,
@@ -195,10 +320,19 @@ describe('WorkflowVersionStepWorkspaceService', () => {
             return step;
           }),
         });
+
+        expect(result).toEqual({
+          triggerNextStepIds: ['step-1'],
+          stepsNextStepIds: {
+            'step-1': ['step-2'],
+            'step-2': ['step-3'],
+            'step-3': [],
+          },
+        });
       });
 
       it('should not duplicate if edge already exist between 2 steps', async () => {
-        await service.createWorkflowVersionEdge({
+        const result = await service.createWorkflowVersionEdge({
           source: 'step-1',
           target: 'step-2',
           workflowVersionId: mockWorkflowVersionId,
@@ -208,6 +342,15 @@ describe('WorkflowVersionStepWorkspaceService', () => {
         expect(
           mockWorkflowVersionWorkspaceRepository.update,
         ).not.toHaveBeenCalled();
+
+        expect(result).toEqual({
+          triggerNextStepIds: ['step-1'],
+          stepsNextStepIds: {
+            'step-1': ['step-2'],
+            'step-2': [],
+            'step-3': [],
+          },
+        });
       });
 
       it('should throw if source step does not exists', async () => {
@@ -243,7 +386,7 @@ describe('WorkflowVersionStepWorkspaceService', () => {
 
     describe('with source is the trigger', () => {
       it('should delete an edge between trigger and step-1', async () => {
-        await service.deleteWorkflowVersionEdge({
+        const result = await service.deleteWorkflowVersionEdge({
           source: 'trigger',
           target: 'step-1',
           workflowVersionId: mockWorkflowVersionId,
@@ -258,10 +401,19 @@ describe('WorkflowVersionStepWorkspaceService', () => {
             nextStepIds: [],
           },
         });
+
+        expect(result).toEqual({
+          triggerNextStepIds: [],
+          stepsNextStepIds: {
+            'step-1': ['step-2'],
+            'step-2': [],
+            'step-3': [],
+          },
+        });
       });
 
       it('should not delete if edge does not exists', async () => {
-        await service.deleteWorkflowVersionEdge({
+        const result = await service.deleteWorkflowVersionEdge({
           source: 'trigger',
           target: 'step-2',
           workflowVersionId: mockWorkflowVersionId,
@@ -271,12 +423,21 @@ describe('WorkflowVersionStepWorkspaceService', () => {
         expect(
           mockWorkflowVersionWorkspaceRepository.update,
         ).not.toHaveBeenCalled();
+
+        expect(result).toEqual({
+          triggerNextStepIds: ['step-1'],
+          stepsNextStepIds: {
+            'step-1': ['step-2'],
+            'step-2': [],
+            'step-3': [],
+          },
+        });
       });
     });
 
     describe('with source is a step', () => {
       it('should delete an existing edge between two steps', async () => {
-        await service.deleteWorkflowVersionEdge({
+        const result = await service.deleteWorkflowVersionEdge({
           source: 'step-1',
           target: 'step-2',
           workflowVersionId: mockWorkflowVersionId,
@@ -297,10 +458,19 @@ describe('WorkflowVersionStepWorkspaceService', () => {
             return step;
           }),
         });
+
+        expect(result).toEqual({
+          triggerNextStepIds: ['step-1'],
+          stepsNextStepIds: {
+            'step-1': [],
+            'step-2': [],
+            'step-3': [],
+          },
+        });
       });
 
       it('should not delete if edge does not exist', async () => {
-        await service.deleteWorkflowVersionEdge({
+        const result = await service.deleteWorkflowVersionEdge({
           source: 'step-1',
           target: 'step-3',
           workflowVersionId: mockWorkflowVersionId,
@@ -310,6 +480,15 @@ describe('WorkflowVersionStepWorkspaceService', () => {
         expect(
           mockWorkflowVersionWorkspaceRepository.update,
         ).not.toHaveBeenCalledWith();
+
+        expect(result).toEqual({
+          triggerNextStepIds: ['step-1'],
+          stepsNextStepIds: {
+            'step-1': ['step-2'],
+            'step-2': [],
+            'step-3': [],
+          },
+        });
       });
 
       it('should throw if source step does not exists', async () => {
@@ -330,7 +509,7 @@ describe('WorkflowVersionStepWorkspaceService', () => {
 
   describe('deleteWorkflowVersionStep', () => {
     it('should delete step linked to trigger', async () => {
-      await service.deleteWorkflowVersionStep({
+      const result = await service.deleteWorkflowVersionStep({
         stepIdToDelete: 'step-1',
         workflowVersionId: mockWorkflowVersionId,
         workspaceId: mockWorkspaceId,
@@ -342,10 +521,19 @@ describe('WorkflowVersionStepWorkspaceService', () => {
         trigger: { ...mockTrigger, nextStepIds: ['step-2'] },
         steps: mockSteps.filter((step) => step.id !== 'step-1'),
       });
+
+      expect(result).toEqual({
+        triggerNextStepIds: ['step-2'],
+        stepsNextStepIds: {
+          'step-2': [],
+          'step-3': [],
+        },
+        deletedStepId: 'step-1',
+      });
     });
 
     it('should delete trigger', async () => {
-      await service.deleteWorkflowVersionStep({
+      const result = await service.deleteWorkflowVersionStep({
         stepIdToDelete: 'trigger',
         workflowVersionId: mockWorkflowVersionId,
         workspaceId: mockWorkspaceId,
@@ -355,6 +543,15 @@ describe('WorkflowVersionStepWorkspaceService', () => {
         mockWorkflowVersionWorkspaceRepository.update,
       ).toHaveBeenCalledWith(mockWorkflowVersionId, {
         trigger: null,
+      });
+
+      expect(result).toEqual({
+        stepsNextStepIds: {
+          'step-1': ['step-2'],
+          'step-2': [],
+          'step-3': [],
+        },
+        deletedStepId: 'trigger',
       });
     });
   });
