@@ -264,8 +264,9 @@ export const NavigationDrawerItem = ({
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
   const showBreadcrumb = indentationLevel === 2;
-  const showStyledSpacer =
-    !!soon || !!isNew || !!count || !!keyboard || !!rightOptions;
+  const showStyledSpacer = Boolean(
+    soon || isNew || count || keyboard || rightOptions,
+  );
 
   const handleMobileNavigation = () => {
     if (isMobile) {
