@@ -1,5 +1,5 @@
 import { formatTimeZoneLabel } from '@/localization/utils/formatTimeZoneLabel';
-import { AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL } from '@/settings/accounts/constants/AvailableTimezoneOptionsByLabel';
+import { AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL } from '@/settings/experience/constants/AvailableTimezoneOptionsByLabel';
 
 /**
  * Finds the matching available IANA time zone select option from a given IANA time zone.

@@ -145,6 +145,11 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     ApiKeyService,
     AuthSsoService,
   ],
-  exports: [AccessTokenService, LoginTokenService, RefreshTokenService],
+  exports: [
+    AccessTokenService,
+    LoginTokenService,
+    RefreshTokenService,
+    CreateMessageFolderService,
+  ],
 })
 export class AuthModule {}

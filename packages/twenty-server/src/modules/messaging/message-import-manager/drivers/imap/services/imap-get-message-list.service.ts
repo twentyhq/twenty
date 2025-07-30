@@ -4,9 +4,13 @@ import { ImapFlow } from 'imapflow';
 
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-handle-error.service';
+import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/imap/types/folders';
 import { findSentMailbox } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/find-sent-mailbox.util';
 import { GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
-import { GetMessageListsResponse } from 'src/modules/messaging/message-import-manager/types/get-message-lists-response.type';
+import {
+  GetMessageListsResponse,
+  GetOneMessageListResponse,
+} from 'src/modules/messaging/message-import-manager/types/get-message-lists-response.type';
 
 @Injectable()
 export class ImapGetMessageListService {
@@ -20,59 +24,38 @@ export class ImapGetMessageListService {
   async getMessageLists({
     messageChannel,
     connectedAccount,
+    messageFolders,
   }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
     try {
       const client = await this.imapClientProvider.getClient(connectedAccount);
+      const result: GetMessageListsResponse = [];
 
-      const mailboxes = ['INBOX'];
+      for (const folder of messageFolders) {
+        const mailboxName = await this.getMailboxName(client, folder.name);
 
-      const sentFolder = await findSentMailbox(client, this.logger);
+        if (!mailboxName) {
+          continue;
+        }
 
-      if (sentFolder) {
-        mailboxes.push(sentFolder);
-      }
-
-      let allMessages: { id: string; date: string }[] = [];
-
-      for (const mailbox of mailboxes) {
         try {
-          const messages = await this.getMessagesFromMailbox(
+          const response = await this.getMessageListForMailbox(
             client,
-            mailbox,
-            messageChannel.syncCursor,
+            mailboxName,
+            folder.syncCursor,
           );
 
-          allMessages = [...allMessages, ...messages];
-          this.logger.log(
-            `Fetched ${messages.length} messages from ${mailbox}`,
-          );
+          result.push({
+            ...response,
+            folderId: folder.id,
+          });
         } catch (error) {
           this.logger.warn(
-            `Error fetching from mailbox ${mailbox}: ${error.message}. Continuing with other mailboxes.`,
+            `Error fetching from folder ${folder.name} (${mailboxName}): ${error.message}. Continuing with other folders.`,
           );
         }
       }
 
-      allMessages.sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-      );
-
-      const messageExternalIds = allMessages.map((message) => message.id);
-
-      const nextSyncCursor =
-        allMessages.length > 0
-          ? allMessages[allMessages.length - 1].date
-          : messageChannel.syncCursor || '';
-
-      return [
-        {
-          messageExternalIds,
-          nextSyncCursor,
-          previousSyncCursor: messageChannel.syncCursor,
-          messageExternalIdsToDelete: [],
-          folderId: undefined,
-        },
-      ];
+      return result;
     } catch (error) {
       this.logger.error(
         `Error getting message list: ${error.message}`,
@@ -93,6 +76,54 @@ export class ImapGetMessageListService {
     } finally {
       await this.imapClientProvider.closeClient(connectedAccount.id);
     }
+  }
+
+  private async getMailboxName(
+    client: ImapFlow,
+    folderName: string,
+  ): Promise<string | null> {
+    if (folderName === MessageFolderName.INBOX) {
+      return 'INBOX';
+    }
+
+    if (folderName === MessageFolderName.SENT_ITEMS) {
+      const sentMailbox = await findSentMailbox(client, this.logger);
+
+      if (!sentMailbox) {
+        this.logger.warn('SENT folder not found, skipping');
+
+        return null;
+      }
+
+      return sentMailbox;
+    }
+
+    return folderName;
+  }
+
+  private async getMessageListForMailbox(
+    client: ImapFlow,
+    mailbox: string,
+    cursor?: string,
+  ): Promise<GetOneMessageListResponse> {
+    const messages = await this.getMessagesFromMailbox(client, mailbox, cursor);
+
+    messages.sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+    );
+
+    const messageExternalIds = messages.map((message) => message.id);
+
+    const nextSyncCursor =
+      messages.length > 0 ? messages[messages.length - 1].date : cursor || '';
+
+    return {
+      messageExternalIds,
+      nextSyncCursor,
+      previousSyncCursor: cursor || '',
+      messageExternalIdsToDelete: [],
+      folderId: undefined,
+    };
   }
 
   private async getMessagesFromMailbox(
