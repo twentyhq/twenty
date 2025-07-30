@@ -11,6 +11,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { CreateViewFilterInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-filter.input';
 import { UpdateViewFilterInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-filter.input';
@@ -74,10 +76,6 @@ export class ViewFilterController {
       input,
     );
 
-    if (!updatedViewFilter) {
-      throw new Error('ViewFilter not found');
-    }
-
     return updatedViewFilter;
   }
 
@@ -92,6 +90,6 @@ export class ViewFilterController {
       workspace.id,
     );
 
-    return { success: deletedViewFilter !== null };
+    return { success: isDefined(deletedViewFilter) };
   }
 }

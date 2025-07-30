@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
 import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
@@ -40,20 +41,6 @@ export class ViewFilterGroupService {
     });
   }
 
-  async findByParentViewFilterGroupId(
-    workspaceId: string,
-    parentViewFilterGroupId: string,
-  ): Promise<ViewFilterGroup[]> {
-    return this.viewFilterGroupRepository.find({
-      where: {
-        workspaceId,
-        parentViewFilterGroupId,
-        deletedAt: IsNull(),
-      },
-      order: { positionInViewFilterGroup: 'ASC' },
-    });
-  }
-
   async findById(
     id: string,
     workspaceId: string,
@@ -72,7 +59,7 @@ export class ViewFilterGroupService {
   async create(
     viewFilterGroupData: Partial<ViewFilterGroup>,
   ): Promise<ViewFilterGroup> {
-    if (!viewFilterGroupData.workspaceId) {
+    if (!isDefined(viewFilterGroupData.workspaceId)) {
       throw new ViewFilterGroupException(
         'WorkspaceId is required',
         ViewFilterGroupExceptionCode.INVALID_VIEW_FILTER_GROUP_DATA,
@@ -83,7 +70,7 @@ export class ViewFilterGroupService {
       );
     }
 
-    if (!viewFilterGroupData.viewId) {
+    if (!isDefined(viewFilterGroupData.viewId)) {
       throw new ViewFilterGroupException(
         'ViewId is required',
         ViewFilterGroupExceptionCode.INVALID_VIEW_FILTER_GROUP_DATA,
@@ -104,63 +91,36 @@ export class ViewFilterGroupService {
     id: string,
     workspaceId: string,
     updateData: Partial<ViewFilterGroup>,
-  ): Promise<ViewFilterGroup | null> {
-    const viewFilterGroup = await this.findById(id, workspaceId);
-
-    if (!viewFilterGroup) {
-      return null;
-    }
-
-    await this.viewFilterGroupRepository.update(id, updateData);
-
-    return this.findById(id, workspaceId);
-  }
-
-  async delete(
-    id: string,
-    workspaceId: string,
-  ): Promise<ViewFilterGroup | null> {
-    const viewFilterGroup = await this.findById(id, workspaceId);
-
-    if (!viewFilterGroup) {
-      return null;
-    }
-
-    await this.viewFilterGroupRepository.softDelete(id);
-
-    return viewFilterGroup;
-  }
-
-  async validateViewFilterGroup(
-    id: string,
-    workspaceId: string,
   ): Promise<ViewFilterGroup> {
-    const viewFilterGroup = await this.findById(id, workspaceId);
+    const existingViewFilterGroup = await this.findById(id, workspaceId);
 
-    if (!viewFilterGroup) {
+    if (!isDefined(existingViewFilterGroup)) {
       throw new ViewFilterGroupException(
         `ViewFilterGroup with id ${id} not found`,
         ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
       );
     }
 
+    const updatedViewFilterGroup = await this.viewFilterGroupRepository.save({
+      id,
+      ...updateData,
+    });
+
+    return { ...existingViewFilterGroup, ...updatedViewFilterGroup };
+  }
+
+  async delete(id: string, workspaceId: string): Promise<ViewFilterGroup> {
+    const viewFilterGroup = await this.findById(id, workspaceId);
+
+    if (!isDefined(viewFilterGroup)) {
+      throw new ViewFilterGroupException(
+        `ViewFilterGroup with id ${id} not found`,
+        ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
+      );
+    }
+
+    await this.viewFilterGroupRepository.softDelete(id);
+
     return viewFilterGroup;
-  }
-
-  async bulkDeleteByViewId(workspaceId: string, viewId: string): Promise<void> {
-    await this.viewFilterGroupRepository.softDelete({
-      workspaceId,
-      viewId,
-    });
-  }
-
-  async bulkDeleteByParentViewFilterGroupId(
-    workspaceId: string,
-    parentViewFilterGroupId: string,
-  ): Promise<void> {
-    await this.viewFilterGroupRepository.softDelete({
-      workspaceId,
-      parentViewFilterGroupId,
-    });
   }
 }

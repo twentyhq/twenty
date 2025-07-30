@@ -1,14 +1,16 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { CreateViewFilterGroupInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-filter-group.input';
 import { UpdateViewFilterGroupInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-filter-group.input';
 import { ViewFilterGroupDTO } from 'src/engine/core-modules/view/dtos/view-filter-group.dto';
 import { ViewFilterGroupService } from 'src/engine/core-modules/view/services/view-filter-group.service';
+import { ViewGraphqlApiExceptionFilter } from 'src/engine/core-modules/view/utils/view-graphql-api-exception.filter';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { ViewGraphqlApiExceptionFilter } from 'src/engine/core-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewFilterGroupDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
@@ -59,17 +61,7 @@ export class ViewFilterGroupResolver {
     @Args('input') input: UpdateViewFilterGroupInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewFilterGroupDTO> {
-    const updatedViewFilterGroup = await this.viewFilterGroupService.update(
-      id,
-      workspace.id,
-      input,
-    );
-
-    if (!updatedViewFilterGroup) {
-      throw new Error('ViewFilterGroup not found');
-    }
-
-    return updatedViewFilterGroup;
+    return this.viewFilterGroupService.update(id, workspace.id, input);
   }
 
   @Mutation(() => Boolean)
@@ -83,6 +75,6 @@ export class ViewFilterGroupResolver {
       workspace.id,
     );
 
-    return deletedViewFilterGroup !== null;
+    return isDefined(deletedViewFilterGroup);
   }
 }

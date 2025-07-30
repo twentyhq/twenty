@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
 import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
@@ -35,19 +36,6 @@ export class ViewSortService {
     });
   }
 
-  async findByFieldMetadataId(
-    workspaceId: string,
-    fieldMetadataId: string,
-  ): Promise<ViewSort[]> {
-    return this.viewSortRepository.find({
-      where: {
-        workspaceId,
-        fieldMetadataId,
-        deletedAt: IsNull(),
-      },
-    });
-  }
-
   async findById(id: string, workspaceId: string): Promise<ViewSort | null> {
     const viewSort = await this.viewSortRepository.findOne({
       where: {
@@ -61,7 +49,7 @@ export class ViewSortService {
   }
 
   async create(viewSortData: Partial<ViewSort>): Promise<ViewSort> {
-    if (!viewSortData.workspaceId) {
+    if (!isDefined(viewSortData.workspaceId)) {
       throw new ViewSortException(
         'WorkspaceId is required',
         ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
@@ -71,7 +59,7 @@ export class ViewSortService {
       );
     }
 
-    if (!viewSortData.viewId) {
+    if (!isDefined(viewSortData.viewId)) {
       throw new ViewSortException(
         'ViewId is required',
         ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
@@ -79,7 +67,7 @@ export class ViewSortService {
       );
     }
 
-    if (!viewSortData.fieldMetadataId) {
+    if (!isDefined(viewSortData.fieldMetadataId)) {
       throw new ViewSortException(
         'FieldMetadataId is required',
         ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
@@ -99,57 +87,36 @@ export class ViewSortService {
     id: string,
     workspaceId: string,
     updateData: Partial<ViewSort>,
-  ): Promise<ViewSort | null> {
-    const viewSort = await this.findById(id, workspaceId);
+  ): Promise<ViewSort> {
+    const existingViewSort = await this.findById(id, workspaceId);
 
-    if (!viewSort) {
-      return null;
-    }
-
-    await this.viewSortRepository.update(id, updateData);
-
-    return this.findById(id, workspaceId);
-  }
-
-  async delete(id: string, workspaceId: string): Promise<ViewSort | null> {
-    const viewSort = await this.findById(id, workspaceId);
-
-    if (!viewSort) {
-      return null;
-    }
-
-    await this.viewSortRepository.softDelete(id);
-
-    return viewSort;
-  }
-
-  async validateViewSort(id: string, workspaceId: string): Promise<ViewSort> {
-    const viewSort = await this.findById(id, workspaceId);
-
-    if (!viewSort) {
+    if (!isDefined(existingViewSort)) {
       throw new ViewSortException(
         `ViewSort with id ${id} not found`,
         ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
       );
     }
 
+    const updatedViewSort = await this.viewSortRepository.save({
+      id,
+      ...updateData,
+    });
+
+    return { ...existingViewSort, ...updatedViewSort };
+  }
+
+  async delete(id: string, workspaceId: string): Promise<ViewSort> {
+    const viewSort = await this.findById(id, workspaceId);
+
+    if (!isDefined(viewSort)) {
+      throw new ViewSortException(
+        `ViewSort with id ${id} not found`,
+        ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
+      );
+    }
+
+    await this.viewSortRepository.softDelete(id);
+
     return viewSort;
-  }
-
-  async bulkDeleteByFieldMetadataId(
-    workspaceId: string,
-    fieldMetadataId: string,
-  ): Promise<void> {
-    await this.viewSortRepository.softDelete({
-      workspaceId,
-      fieldMetadataId,
-    });
-  }
-
-  async bulkDeleteByViewId(workspaceId: string, viewId: string): Promise<void> {
-    await this.viewSortRepository.softDelete({
-      workspaceId,
-      viewId,
-    });
   }
 }

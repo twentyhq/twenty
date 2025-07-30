@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
@@ -53,7 +54,7 @@ export class ViewService {
   }
 
   async create(viewData: Partial<View>): Promise<View> {
-    if (!viewData.workspaceId) {
+    if (!isDefined(viewData.workspaceId)) {
       throw new ViewException(
         'WorkspaceId is required',
         ViewExceptionCode.INVALID_VIEW_DATA,
@@ -61,7 +62,7 @@ export class ViewService {
       );
     }
 
-    if (!viewData.objectMetadataId) {
+    if (!isDefined(viewData.objectMetadataId)) {
       throw new ViewException(
         'ObjectMetadataId is required',
         ViewExceptionCode.INVALID_VIEW_DATA,
@@ -80,39 +81,35 @@ export class ViewService {
     id: string,
     workspaceId: string,
     updateData: Partial<View>,
-  ): Promise<View | null> {
-    const view = await this.findById(id, workspaceId);
+  ): Promise<View> {
+    const existingView = await this.findById(id, workspaceId);
 
-    if (!view) {
-      return null;
-    }
-
-    await this.viewRepository.update(id, updateData);
-
-    return this.findById(id, workspaceId);
-  }
-
-  async delete(id: string, workspaceId: string): Promise<View | null> {
-    const view = await this.findById(id, workspaceId);
-
-    if (!view) {
-      return null;
-    }
-
-    await this.viewRepository.softDelete(id);
-
-    return view;
-  }
-
-  async validateView(id: string, workspaceId: string): Promise<View> {
-    const view = await this.findById(id, workspaceId);
-
-    if (!view) {
+    if (!isDefined(existingView)) {
       throw new ViewException(
         `View with id ${id} not found`,
         ViewExceptionCode.VIEW_NOT_FOUND,
       );
     }
+
+    const updatedView = await this.viewRepository.save({
+      id,
+      ...updateData,
+    });
+
+    return { ...existingView, ...updatedView };
+  }
+
+  async delete(id: string, workspaceId: string): Promise<View> {
+    const view = await this.findById(id, workspaceId);
+
+    if (!isDefined(view)) {
+      throw new ViewException(
+        `View with id ${id} not found`,
+        ViewExceptionCode.VIEW_NOT_FOUND,
+      );
+    }
+
+    await this.viewRepository.softDelete(id);
 
     return view;
   }

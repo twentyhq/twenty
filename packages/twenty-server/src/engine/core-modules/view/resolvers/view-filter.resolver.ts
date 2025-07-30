@@ -1,14 +1,16 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { CreateViewFilterInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-filter.input';
 import { UpdateViewFilterInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-filter.input';
 import { ViewFilterDTO } from 'src/engine/core-modules/view/dtos/view-filter.dto';
 import { ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
+import { ViewGraphqlApiExceptionFilter } from 'src/engine/core-modules/view/utils/view-graphql-api-exception.filter';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { ViewGraphqlApiExceptionFilter } from 'src/engine/core-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewFilterDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
@@ -57,17 +59,7 @@ export class ViewFilterResolver {
     @Args('input') input: UpdateViewFilterInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewFilterDTO> {
-    const updatedViewFilter = await this.viewFilterService.update(
-      id,
-      workspace.id,
-      input,
-    );
-
-    if (!updatedViewFilter) {
-      throw new Error('ViewFilter not found');
-    }
-
-    return updatedViewFilter;
+    return this.viewFilterService.update(id, workspace.id, input);
   }
 
   @Mutation(() => Boolean)
@@ -81,6 +73,6 @@ export class ViewFilterResolver {
       workspace.id,
     );
 
-    return deletedViewFilter !== null;
+    return isDefined(deletedViewFilter);
   }
 }
