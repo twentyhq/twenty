@@ -17,7 +17,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { AgentEntity } from './agent.entity';
 
-@Entity('agent_handoff')
+@Entity('agentHandoff')
 @Index('IDX_AGENT_HANDOFF_ID_DELETED_AT', ['id', 'deletedAt'])
 @Unique('IDX_AGENT_HANDOFF_FROM_TO_WORKSPACE_UNIQUE', [
   'fromAgentId',
