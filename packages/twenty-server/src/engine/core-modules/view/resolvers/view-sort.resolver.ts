@@ -8,10 +8,10 @@ import { ViewSortService } from 'src/engine/core-modules/view/services/view-sort
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { ViewGraphqlApiExceptionFilter } from 'src/engine/core-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewSortDTO)
-@UseFilters(PermissionsGraphqlApiExceptionFilter)
+@UseFilters(ViewGraphqlApiExceptionFilter)
 export class ViewSortResolver {
   constructor(private readonly viewSortService: ViewSortService) {}
 
