@@ -166,7 +166,7 @@ describe('Restricted fields', () => {
       await makeGraphqlAPIRequest(disablePermissionsQuery);
     });
 
-    it('should hide fields when user has restricted read permissions', async () => {
+    it('should hide fields when user has restricted read permissions - findMany', async () => {
       await makeRestAPIRequest({
         method: 'get',
         path: `/people/${TEST_PERSON_1_ID}`,
@@ -183,6 +183,38 @@ describe('Restricted fields', () => {
     });
 
     describe('updateOne', () => {
+      it('should hide fields in the response when user has restricted read permissions', async () => {
+        // Create field permission restricting update access to phones field
+        await upsertFieldPermissions({
+          roleId: memberRoleId,
+          fieldPermissions: [
+            {
+              objectMetadataId: personObjectId,
+              fieldMetadataId: phonesFieldId,
+              canReadFieldValue: false,
+              canUpdateFieldValue: false,
+            },
+          ],
+        });
+
+        await makeRestAPIRequest({
+          method: 'patch',
+          path: `/people/${TEST_PERSON_1_ID}`,
+          bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          body: {
+            name: {
+              firstName: 'John',
+            },
+          },
+        })
+          .expect(200)
+          .expect((res) => {
+            const updatedPerson = res.body.data.updatePerson;
+
+            expect(updatedPerson.name.firstName).toBe('John');
+            expect(updatedPerson.phones).toBeUndefined();
+          });
+      });
       it('should block update when user tries to update non-updatable field', async () => {
         // Create field permission restricting update access to phones field
         await upsertFieldPermissions({
@@ -285,7 +317,7 @@ describe('Restricted fields', () => {
       });
 
       it('should allow create when user has no restricted update permissions', async () => {
-        // Remove field permission restrictions
+        // Remove field permission restrictions on phones
         await upsertFieldPermissions({
           roleId: memberRoleId,
           fieldPermissions: [
@@ -311,6 +343,7 @@ describe('Restricted fields', () => {
             const createdPerson = res.body.data.createPerson;
 
             expect(createdPerson.city).toBe('New City');
+            expect(createdPerson.emails).toBeUndefined(); // No reading rights on emails
           });
       });
     });
@@ -385,7 +418,9 @@ describe('Restricted fields', () => {
 
             expect(createdPeople).toHaveLength(2);
             expect(createdPeople[0].city).toBe('Batch City 1');
+            expect(createdPeople[0].emails).toBeUndefined(); // No reading rights on emails
             expect(createdPeople[1].city).toBe('Batch City 2');
+            expect(createdPeople[1].emails).toBeUndefined(); // No reading rights on emails
           });
       });
     });

@@ -15,6 +15,30 @@ jest.mock('src/engine/twenty-orm/repository/permissions.utils', () => ({
   validateOperationIsPermittedOrThrow: jest.fn(),
 }));
 
+jest.mock(
+  'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util',
+  () => ({
+    getObjectMetadataFromEntityTarget: jest.fn(),
+  }),
+);
+
+jest.mock('src/engine/twenty-orm/utils/format-data.util', () => ({
+  formatData: jest.fn().mockReturnValue([]),
+}));
+
+jest.mock('src/engine/twenty-orm/utils/format-result.util', () => ({
+  formatResult: jest.fn().mockReturnValue([]),
+}));
+
+jest.mock(
+  'src/engine/twenty-orm/entity-manager/workspace-entity-manager',
+  () => ({
+    ...jest.requireActual(
+      'src/engine/twenty-orm/entity-manager/workspace-entity-manager',
+    ),
+  }),
+);
+
 const mockedWorkspaceUpdateQueryBuilder = {
   set: jest.fn().mockImplementation(() => ({
     where: jest.fn().mockReturnThis(),
@@ -121,7 +145,22 @@ describe('WorkspaceEntityManager', () => {
     } as WorkspaceInternalContext;
 
     mockDataSource = {
-      featureFlagMap: {},
+      featureFlagMap: {
+        IS_AIRTABLE_INTEGRATION_ENABLED: false,
+        IS_POSTGRESQL_INTEGRATION_ENABLED: false,
+        IS_STRIPE_INTEGRATION_ENABLED: false,
+        IS_UNIQUE_INDEXES_ENABLED: false,
+        IS_JSON_FILTER_ENABLED: false,
+        IS_AI_ENABLED: false,
+        IS_IMAP_SMTP_CALDAV_ENABLED: false,
+        IS_MORPH_RELATION_ENABLED: false,
+        IS_WORKFLOW_FILTERING_ENABLED: false,
+        IS_RELATION_CONNECT_ENABLED: false,
+        IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED: false,
+        IS_FIELDS_PERMISSIONS_ENABLED: false,
+        IS_CORE_VIEW_SYNCING_ENABLED: false,
+        IS_TWO_FACTOR_AUTHENTICATION_ENABLED: false,
+      },
       permissionsPerRoleId: {},
     } as WorkspaceDataSource;
 
@@ -190,6 +229,15 @@ describe('WorkspaceEntityManager', () => {
 
     jest.spyOn(entityManager as any, 'validatePermissions');
     jest.spyOn(entityManager as any, 'createQueryBuilder');
+    jest
+      .spyOn(entityManager as any, 'getFormattedResultWithoutNonReadableFields')
+      .mockImplementation(
+        ({ formattedResult }: { formattedResult: string[] }) => formattedResult,
+      );
+
+    jest.spyOn(entityManager as any, 'getFeatureFlagMap').mockReturnValue({
+      IS_FIELDS_PERMISSIONS_ENABLED: true,
+    });
 
     jest
       .spyOn(entityManager as any, 'extractTargetNameSingularFromEntityTarget')
@@ -275,17 +323,172 @@ describe('WorkspaceEntityManager', () => {
         operationType: 'update',
         permissionOptions: mockPermissionOptions,
         selectedColumns: [],
+        updatedColumns: [],
       });
       expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
         entityName: 'test-entity',
+        isFieldPermissionsEnabled: true,
         operationType: 'update',
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
         objectRecordsPermissions:
           mockPermissionOptions.objectRecordsPermissions,
         selectedColumns: [],
         allFieldsSelected: false,
+        updatedColumns: [],
       });
     });
+
+    // it('should filter out restricted fields from save response when field permissions are enabled', async () => {
+    //   // Mock the feature flag to enable field permissions
+    //   jest.spyOn(entityManager, 'getFeatureFlagMap').mockReturnValue({
+    //     IS_AIRTABLE_INTEGRATION_ENABLED: false,
+    //     IS_POSTGRESQL_INTEGRATION_ENABLED: false,
+    //     IS_STRIPE_INTEGRATION_ENABLED: false,
+    //     IS_UNIQUE_INDEXES_ENABLED: false,
+    //     IS_JSON_FILTER_ENABLED: false,
+    //     IS_AI_ENABLED: false,
+    //     IS_IMAP_SMTP_CALDAV_ENABLED: false,
+    //     IS_MORPH_RELATION_ENABLED: false,
+    //     IS_WORKFLOW_FILTERING_ENABLED: false,
+    //     IS_RELATION_CONNECT_ENABLED: false,
+    //     IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED: false,
+    //     IS_FIELDS_PERMISSIONS_ENABLED: true,
+    //     IS_CORE_VIEW_SYNCING_ENABLED: false,
+    //     IS_TWO_FACTOR_AUTHENTICATION_ENABLED: false,
+    //   });
+
+    //   // Mock getObjectMetadataFromEntityTarget to return our test metadata
+    //   (getObjectMetadataFromEntityTarget as jest.Mock).mockReturnValue({
+    //     id: 'test-entity-id',
+    //     nameSingular: 'test-entity',
+    //     fieldsById: {
+    //       'field-id-0': {
+    //         id: 'field-id-0',
+    //         name: 'id',
+    //         type: 'UUID',
+    //         label: 'ID',
+    //         objectMetadataId: 'test-entity-id',
+    //         isNullable: false,
+    //         isLabelSyncedWithName: false,
+    //         createdAt: new Date(),
+    //         updatedAt: new Date(),
+    //       },
+    //       'field-id-1': {
+    //         id: 'field-id-1',
+    //         name: 'name',
+    //         type: 'TEXT',
+    //         label: 'Name',
+    //         objectMetadataId: 'test-entity-id',
+    //         isNullable: true,
+    //         isLabelSyncedWithName: false,
+    //         createdAt: new Date(),
+    //         updatedAt: new Date(),
+    //       },
+    //       'field-id-2': {
+    //         id: 'field-id-2',
+    //         name: 'city',
+    //         type: 'TEXT',
+    //         label: 'City',
+    //         objectMetadataId: 'test-entity-id',
+    //         isNullable: true,
+    //         isLabelSyncedWithName: false,
+    //         createdAt: new Date(),
+    //         updatedAt: new Date(),
+    //       },
+    //     },
+    //     fieldIdByName: {
+    //       id: 'field-id-0',
+    //       name: 'field-id-1',
+    //       city: 'field-id-2',
+    //     },
+    //     fieldIdByJoinColumnName: {},
+    //   });
+
+    //   // Mock the save method to return a result with both fields
+    //   const mockSaveResult = {
+    //     id: 'test-id',
+    //     name: 'John Doe',
+    //     city: 'New York',
+    //   };
+
+    //   jest
+    //     .spyOn(EntityManager.prototype, 'save')
+    //     .mockResolvedValue(mockSaveResult);
+
+    //   // Mock the find method to return empty array (no existing entities)
+    //   jest.spyOn(entityManager, 'find').mockResolvedValue([]);
+
+    //   // Mock the createQueryBuilder to return a mock query builder
+    //   const mockQueryBuilder = {
+    //     insert: jest.fn().mockReturnThis(),
+    //     into: jest.fn().mockReturnThis(),
+    //     values: jest.fn().mockReturnThis(),
+    //     returning: jest.fn().mockReturnThis(),
+    //     execute: jest.fn().mockResolvedValue({
+    //       raw: [mockSaveResult],
+    //       generatedMaps: [mockSaveResult],
+    //       identifiers: [{ id: 'test-id' }],
+    //     }),
+    //   };
+
+    //   jest
+    //     .spyOn(entityManager, 'createQueryBuilder')
+    //     .mockReturnValue(mockQueryBuilder as any);
+
+    //   // Mock the EntityPersistExecutor
+    //   jest
+    //     .spyOn(EntityPersistExecutor.prototype, 'execute')
+    //     .mockResolvedValue();
+
+    //   // Mock the formatData and formatResult functions
+    //   const {
+    //     formatData,
+    //   } = require('src/engine/twenty-orm/utils/format-data.util');
+    //   const {
+    //     formatResult,
+    //   } = require('src/engine/twenty-orm/utils/format-result.util');
+
+    //   (formatData as jest.Mock).mockReturnValue([mockSaveResult]);
+    //   (formatResult as jest.Mock).mockReturnValue([mockSaveResult]);
+
+    //   // Create permission options with restricted fields
+    //   const permissionOptionsWithRestrictedFields = {
+    //     shouldBypassPermissionChecks: false,
+    //     objectRecordsPermissions: {
+    //       'test-entity-id': {
+    //         canRead: true,
+    //         canUpdate: true,
+    //         canSoftDelete: false,
+    //         canDestroy: false,
+    //         restrictedFields: {
+    //           'field-id-1': { canRead: false, canUpdate: null },
+    //           'field-id-2': { canRead: true, canUpdate: true },
+    //         },
+    //       },
+    //     },
+    //   };
+
+    //   // Call the save method
+    //   const result = await entityManager.save(
+    //     'test-entity',
+    //     {
+    //       id: 'test-id',
+    //       name: 'John Doe',
+    //       city: 'New York',
+    //     },
+    //     { reload: false },
+    //     permissionOptionsWithRestrictedFields,
+    //   );
+
+    //   // Verify that the restricted field is filtered out from the result
+    //   expect(result).toEqual({
+    //     id: 'test-id',
+    //     city: 'New York',
+    //   });
+
+    //   // Verify that the restricted field is not present in the result
+    //   expect(result).not.toHaveProperty('name');
+    // });
   });
 
   describe('Update Methods', () => {
@@ -312,11 +515,13 @@ describe('WorkspaceEntityManager', () => {
       expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
         entityName: 'test-entity',
         operationType: 'delete',
+        isFieldPermissionsEnabled: true,
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
         objectRecordsPermissions:
           mockPermissionOptions.objectRecordsPermissions,
         selectedColumns: [],
         allFieldsSelected: false,
+        updatedColumns: [],
       });
     });
   });
