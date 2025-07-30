@@ -107,12 +107,15 @@ export const SettingsAIAgentForm = () => {
           name="label"
           control={control}
           defaultValue=""
-          render={({ field: { onChange, value } }) => (
+          render={({ field: { onChange, value }, formState: { errors } }) => (
             <TextInput
               instanceId="agent-label-input"
               placeholder={t`Enter label`}
               value={value}
               onChange={onChange}
+              error={
+                errors.label?.message ? String(errors.label.message) : undefined
+              }
               noErrorHelper={true}
               fullWidth
             />
