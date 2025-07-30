@@ -37,8 +37,6 @@ import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-ru
 import { WorkflowEdgeDTO } from 'src/engine/core-modules/workflow/dtos/workflow-edge.dto';
 import { WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
 
-const TRIGGER_STEP_ID = 'trigger';
-
 const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
   outputSchema: {},
   errorHandlingOptions: {
@@ -195,7 +193,7 @@ export class WorkflowVersionStepWorkspaceService {
     workspaceId: string;
     workflowVersionId: string;
     stepIdToDelete: string;
-  }): Promise<WorkflowActionDTO> {
+  }) {
     const workflowVersionRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
         workspaceId,
@@ -225,6 +223,16 @@ export class WorkflowVersionStepWorkspaceService {
       );
     }
 
+    if (stepIdToDelete === 'trigger') {
+      await workflowVersionRepository.update(workflowVersion.id, {
+        trigger: null,
+      });
+
+      return;
+    }
+
+    const existingTrigger = workflowVersion.trigger;
+
     const stepToDelete = workflowVersion.steps.find(
       (step) => step.id === stepIdToDelete,
     );
@@ -236,16 +244,12 @@ export class WorkflowVersionStepWorkspaceService {
       );
     }
 
-    const workflowVersionUpdates =
-      stepIdToDelete === TRIGGER_STEP_ID
-        ? { trigger: null }
-        : {
-            steps: removeStep({
-              existingSteps: workflowVersion.steps,
-              stepIdToDelete,
-              stepToDeleteChildrenIds: stepToDelete.nextStepIds,
-            }),
-          };
+    const workflowVersionUpdates = removeStep({
+      existingTrigger,
+      existingSteps: workflowVersion.steps,
+      stepIdToDelete,
+      stepToDeleteChildrenIds: stepToDelete.nextStepIds,
+    });
 
     await workflowVersionRepository.update(
       workflowVersion.id,
@@ -256,8 +260,6 @@ export class WorkflowVersionStepWorkspaceService {
       step: stepToDelete,
       workspaceId,
     });
-
-    return stepToDelete;
   }
 
   async duplicateStep({
