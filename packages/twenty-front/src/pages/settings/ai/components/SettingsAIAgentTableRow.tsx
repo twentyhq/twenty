@@ -4,9 +4,9 @@ import { ReactNode } from 'react';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { Tag } from 'twenty-ui/components';
 import { useIcons } from 'twenty-ui/display';
 import { Agent } from '~/generated-metadata/graphql';
-import { SettingsAIAgentTypeTag } from './SettingsAIAgentTypeTag';
 
 export type SettingsAIAgentTableRowProps = {
   action: ReactNode;
@@ -60,7 +60,11 @@ export const SettingsAIAgentTableRow = ({
         <StyledNameLabel title={agent.name}>{agent.name}</StyledNameLabel>
       </StyledNameTableCell>
       <TableCell>
-        <SettingsAIAgentTypeTag isCustom={agent.isCustom} />
+        <Tag
+          text={agent.isCustom ? 'Custom' : 'Standard'}
+          color={agent.isCustom ? 'orange' : 'blue'}
+          weight="medium"
+        />
       </TableCell>
       <StyledActionTableCell>{action}</StyledActionTableCell>
     </StyledAIAgentTableRow>
