@@ -18,13 +18,13 @@ const StyledInputsContainer = styled.div`
 const StyledFormSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledIconNameRow = styled.div`
   align-items: flex-start;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledIconContainer = styled.div`
@@ -110,7 +110,6 @@ export const SettingsAIAgentForm = () => {
           render={({ field: { onChange, value } }) => (
             <TextInput
               instanceId="agent-label-input"
-              label={t`Label`}
               placeholder={t`Enter label`}
               value={value}
               onChange={onChange}
