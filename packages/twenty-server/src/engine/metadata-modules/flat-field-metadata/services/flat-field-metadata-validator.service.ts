@@ -36,10 +36,6 @@ type ValidateOneFieldMetadataArgs = {
 export class FlatFieldMetadataValidatorService {
   constructor(private readonly featureFlagService: FeatureFlagService) {}
 
-  /**
-   * This method only validates the end data, it should never mutate anything
-   * Only returns exceptions to the caller
-   */
   async validateOneFlatFieldMetadata({
     existingFlatObjectMetadatas,
     flatFieldMetadataToValidate,

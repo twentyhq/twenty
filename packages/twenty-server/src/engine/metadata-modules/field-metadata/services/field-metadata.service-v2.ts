@@ -6,9 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { AggregateError } from 'src/engine/core-modules/error/aggregate-error';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
@@ -21,12 +18,11 @@ import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager
 import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
 
 @Injectable()
-export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {
+export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEntity> {
   constructor(
     @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceMigrationBuilderV2: WorkspaceMigrationBuilderV2Service,
     private readonly flatFieldMetadataValidatorService: FlatFieldMetadataValidatorService,
     private readonly workspaceMigrationRunnerV2Service: WorkspaceMigrationRunnerV2Service,
@@ -42,16 +38,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     const workspaceId = fieldMetadataInputs[0].workspaceId;
-
-    const isWorkspaceMigrationV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        workspaceId,
-      );
-
-    if (!isWorkspaceMigrationV2Enabled) {
-      throw new UserInputError('Workspace migration v2 is not enabled');
-    }
 
     const { objectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
