@@ -35,7 +35,6 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -159,12 +158,12 @@ export const RecordDetailRelationRecordsListItem = ({
     )
     .sort();
 
-  const dropdownScopeId = `record-field-card-menu-${relationFieldMetadataId}-${relationRecord.id}`;
+  const dropdownInstanceId = `record-field-card-menu-${relationFieldMetadataId}-${relationRecord.id}`;
 
   const { closeDropdown } = useCloseDropdown();
   const isDropdownOpen = useRecoilComponentValueV2(
     isDropdownOpenComponentState,
-    dropdownScopeId,
+    dropdownInstanceId,
   );
 
   const dropdownId = getRecordFieldCardRelationPickerDropdownId({
@@ -177,7 +176,7 @@ export const RecordDetailRelationRecordsListItem = ({
   );
 
   const handleDetach = () => {
-    closeDropdown(dropdownScopeId);
+    closeDropdown(dropdownInstanceId);
 
     const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
       ({ id }) => id === relationFieldMetadataId,
@@ -202,7 +201,7 @@ export const RecordDetailRelationRecordsListItem = ({
   };
 
   const handleDelete = async () => {
-    closeDropdown(dropdownScopeId);
+    closeDropdown(dropdownInstanceId);
     openModal(getDeleteRelationModalId(relationRecord.id));
   };
 
@@ -262,39 +261,37 @@ export const RecordDetailRelationRecordsListItem = ({
           />
         </StyledClickableZone>
         {!isFieldReadOnly && (
-          <DropdownScope dropdownScopeId={dropdownScopeId}>
-            <Dropdown
-              dropdownId={dropdownScopeId}
-              dropdownPlacement="right-start"
-              clickableComponent={
-                <LightIconButton
-                  className="displayOnHover"
-                  Icon={IconDotsVertical}
-                  accent="tertiary"
-                />
-              }
-              dropdownComponents={
-                <DropdownContent>
-                  <DropdownMenuItemsContainer>
-                    <MenuItem
-                      LeftIcon={IconUnlink}
-                      text="Detach"
-                      onClick={handleDetach}
-                    />
-                    {!isAccountOwnerRelation &&
-                      relationObjectPermissions.canSoftDeleteObjectRecords && (
-                        <MenuItem
-                          LeftIcon={IconTrash}
-                          text="Delete"
-                          accent="danger"
-                          onClick={handleDelete}
-                        />
-                      )}
-                  </DropdownMenuItemsContainer>
-                </DropdownContent>
-              }
-            />
-          </DropdownScope>
+          <Dropdown
+            dropdownId={dropdownInstanceId}
+            dropdownPlacement="right-start"
+            clickableComponent={
+              <LightIconButton
+                className="displayOnHover"
+                Icon={IconDotsVertical}
+                accent="tertiary"
+              />
+            }
+            dropdownComponents={
+              <DropdownContent>
+                <DropdownMenuItemsContainer>
+                  <MenuItem
+                    LeftIcon={IconUnlink}
+                    text="Detach"
+                    onClick={handleDetach}
+                  />
+                  {!isAccountOwnerRelation &&
+                    relationObjectPermissions.canSoftDeleteObjectRecords && (
+                      <MenuItem
+                        LeftIcon={IconTrash}
+                        text="Delete"
+                        accent="danger"
+                        onClick={handleDelete}
+                      />
+                    )}
+                </DropdownMenuItemsContainer>
+              </DropdownContent>
+            }
+          />
         )}
       </StyledListItem>
       <AnimatedEaseInOut isOpen={isExpanded}>

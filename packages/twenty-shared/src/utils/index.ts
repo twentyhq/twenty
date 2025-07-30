@@ -8,7 +8,9 @@
  */
 
 export { assertUnreachable } from './assertUnreachable';
+export { deepMerge } from './deepMerge';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
+export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { getURLSafely } from './getURLSafely';
 export { getImageAbsoluteURI } from './image/getImageAbsoluteURI';
 export {
@@ -17,10 +19,14 @@ export {
 } from './image/getLogoUrlFromDomainName';
 export { getUniqueConstraintsFields } from './indexMetadata/getUniqueConstraintsFields';
 export { parseJson } from './parseJson';
+export { removePropertiesFromRecord } from './removePropertiesFromRecord';
 export { removeUndefinedFields } from './removeUndefinedFields';
 export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';
 export { capitalize } from './strings/capitalize';
+export type { StringPropertyKeys } from './trim-and-remove-duplicated-whitespaces-from-object-string-properties';
+export { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from './trim-and-remove-duplicated-whitespaces-from-object-string-properties';
+export { trimAndRemoveDuplicatedWhitespacesFromString } from './trim-and-remove-duplicated-whitespaces-from-string';
 export { absoluteUrlSchema } from './url/absoluteUrlSchema';
 export { buildSignedPath } from './url/buildSignedPath';
 export { getAbsoluteUrl } from './url/getAbsoluteUrl';
