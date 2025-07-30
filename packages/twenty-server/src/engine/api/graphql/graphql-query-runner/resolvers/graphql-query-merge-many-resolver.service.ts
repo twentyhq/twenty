@@ -75,12 +75,6 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       );
     }
 
-    const updatedRecord = await this.updatePriorityRecord(
-      executionArgs,
-      priorityRecord.id,
-      mergedData,
-    );
-
     const idsToDelete = ids.filter((id) => id !== priorityRecord.id);
 
     await this.migrateRelatedRecords(
@@ -92,6 +86,12 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     await executionArgs.repository.softDelete({
       id: In(idsToDelete),
     });
+
+    const updatedRecord = await this.updatePriorityRecord(
+      executionArgs,
+      priorityRecord.id,
+      mergedData,
+    );
 
     if (roleId) {
       await this.processNestedRelations(
