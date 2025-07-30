@@ -1,13 +1,9 @@
 import { useMemo } from 'react';
 
-import { SELECT_DAY_DROPDOWN_ID } from '@/ui/input/components/internal/day/constants/SelectDayDropdownId';
+import { SELECT_DAY_DROPDOWN_ID } from '@/ui/input/components/internal/date/constants/SelectDayDropdownId';
+import { DayNameWithIndex } from '@/ui/input/components/internal/date/types/DayNameWithIndex';
 import { Select } from '@/ui/input/components/Select';
 import { SelectOption } from 'twenty-ui/input';
-
-export type dayNameWithIndex = {
-  day: string;
-  index: number;
-};
 
 export const DaySelect = ({
   label,
@@ -18,7 +14,7 @@ export const DaySelect = ({
   label: string;
   selectedDayIndex: number;
   onChange: (dayIndex: number | string) => void;
-  dayList: dayNameWithIndex[];
+  dayList: DayNameWithIndex[];
 }) => {
   const options: SelectOption<string | number>[] = useMemo(() => {
     const days = dayList?.map<SelectOption<string | number>>(
@@ -43,4 +39,4 @@ export const DaySelect = ({
       dropdownWidthAuto
     />
   );
-};
+}; 

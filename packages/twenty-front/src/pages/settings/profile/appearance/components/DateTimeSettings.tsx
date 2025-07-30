@@ -13,7 +13,8 @@ import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { getWorkspaceDateFormatFromDateFormat } from '@/localization/utils/getWorkspaceDateFormatFromDateFormat';
 import { getWorkspaceTimeFormatFromTimeFormat } from '@/localization/utils/getWorkspaceTimeFormatFromTimeFormat';
-import { DaySelect } from '@/ui/input/components/internal/day/DaySelect';
+import { DaySelect } from '@/ui/input/components/internal/date/DaySelect';
+import { DayNameWithIndex } from '@/ui/input/components/internal/date/types/DayNameWithIndex';
 import { t } from '@lingui/core/macro';
 import { isNumber } from '@tiptap/core';
 import { isDefined } from 'twenty-shared/utils';
@@ -44,8 +45,7 @@ export const DateTimeSettings = () => {
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
 
-
-  const allowedDaysWeek = [
+  const allowedDaysWeek: DayNameWithIndex[] = [
     { day: t`Sunday`, index: 0 },
     { day: t`Monday`, index: 1 },
     { day: t`Saturday`, index: 6 },
