@@ -18,12 +18,14 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconRepeat, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
+  FeatureFlagKey,
   useAssignRoleToApiKeyMutation,
   useCreateApiKeyMutation,
   useGenerateApiKeyTokenMutation,
@@ -68,6 +70,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
         set(apiKeyTokenFamilyState(apiKeyId), token);
       },
     [],
+  );
+
+  const isApiKeyRolesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
   );
 
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
@@ -271,17 +277,19 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 onNameUpdate={setApiKeyName}
               />
             </Section>
-            <Section>
-              <H2Title
-                title={t`Role`}
-                description={t`What this API can do: Select a user role to define its permissions.`}
-              />
-              <SettingsDevelopersRoleSelector
-                value={selectedRoleId}
-                onChange={handleRoleChange}
-                roles={roles}
-              />
-            </Section>
+            {isApiKeyRolesEnabled && (
+              <Section>
+                <H2Title
+                  title={t`Role`}
+                  description={t`What this API can do: Select a user role to define its permissions.`}
+                />
+                <SettingsDevelopersRoleSelector
+                  value={selectedRoleId}
+                  onChange={handleRoleChange}
+                  roles={roles}
+                />
+              </Section>
+            )}
             <Section>
               <H2Title
                 title={t`Expiration`}

@@ -118,24 +118,32 @@ export abstract class GraphqlQueryBaseResolverService<
       )) as Input;
 
       let roleId: string | undefined;
+      let shouldBypassPermissionChecks = false;
 
       const executedByApiKey = isDefined(authContext.apiKey);
 
       if (executedByApiKey && authContext.apiKey) {
-        const apiKeyRoleMap =
-          await this.workspacePermissionsCacheService.getApiKeyRoleMapFromCache(
-            {
-              workspaceId: workspace.id,
-            },
-          );
+        const isApiKeyRolesEnabled =
+          featureFlagsMap[FeatureFlagKey.IS_API_KEY_ROLES_ENABLED];
 
-        roleId = apiKeyRoleMap.data[authContext.apiKey.id];
+        if (!isApiKeyRolesEnabled) {
+          shouldBypassPermissionChecks = true;
+        } else {
+          const apiKeyRoleMap =
+            await this.workspacePermissionsCacheService.getApiKeyRoleMapFromCache(
+              {
+                workspaceId: workspace.id,
+              },
+            );
 
-        if (!roleId) {
-          throw new PermissionsException(
-            PermissionsExceptionMessage.API_KEY_ROLE_NOT_FOUND,
-            PermissionsExceptionCode.API_KEY_ROLE_NOT_FOUND,
-          );
+          roleId = apiKeyRoleMap.data[authContext.apiKey.id];
+
+          if (!roleId) {
+            throw new PermissionsException(
+              PermissionsExceptionMessage.API_KEY_ROLE_NOT_FOUND,
+              PermissionsExceptionCode.API_KEY_ROLE_NOT_FOUND,
+            );
+          }
         }
       }
 
@@ -162,7 +170,7 @@ export abstract class GraphqlQueryBaseResolverService<
 
       const repository = workspaceDataSource.getRepository(
         objectMetadataItemWithFieldMaps.nameSingular,
-        false,
+        shouldBypassPermissionChecks,
         roleId,
         authContext,
       );

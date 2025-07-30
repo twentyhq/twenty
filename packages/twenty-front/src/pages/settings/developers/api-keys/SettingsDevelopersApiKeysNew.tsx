@@ -11,6 +11,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
@@ -18,6 +19,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import {
+  FeatureFlagKey,
   useCreateApiKeyMutation,
   useGenerateApiKeyTokenMutation,
   useGetRolesQuery,
@@ -31,6 +33,12 @@ export const SettingsDevelopersApiKeysNew = () => {
   const navigateSettings = useNavigateSettings();
   const { data: rolesData, loading: rolesLoading } = useGetRolesQuery();
   const roles = rolesData?.getRoles ?? [];
+  const isApiKeyRolesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
+  );
+
+  const adminRole = roles.find((role) => role.label === 'Admin');
+
   const [formValues, setFormValues] = useState<{
     name: string;
     expirationDate: number | null;
@@ -56,12 +64,20 @@ export const SettingsDevelopersApiKeysNew = () => {
       .plus({ days: formValues.expirationDate ?? 30 })
       .toString();
 
+    const roleIdToUse = isApiKeyRolesEnabled
+      ? formValues.roleId
+      : adminRole?.id;
+
+    if (!roleIdToUse) {
+      return;
+    }
+
     const { data: newApiKeyData } = await createApiKey({
       variables: {
         input: {
           name: formValues.name,
           expiresAt,
-          roleId: formValues.roleId,
+          roleId: roleIdToUse,
         },
       },
     });
@@ -89,7 +105,10 @@ export const SettingsDevelopersApiKeysNew = () => {
       });
     }
   };
-  const canSave = !!formValues.name && !!formValues.roleId && createApiKey;
+
+  const canSave = isApiKeyRolesEnabled
+    ? !!formValues.name && !!formValues.roleId && createApiKey
+    : !!formValues.name && !!adminRole?.id && createApiKey;
 
   if (rolesLoading) {
     return <SettingsSkeletonLoader />;
@@ -140,22 +159,24 @@ export const SettingsDevelopersApiKeysNew = () => {
             fullWidth
           />
         </Section>
-        <Section>
-          <H2Title
-            title={t`Role`}
-            description={t`What this API can do: Select a user role to define its permissions.`}
-          />
-          <SettingsDevelopersRoleSelector
-            value={formValues.roleId}
-            onChange={(roleId) => {
-              setFormValues((prevState) => ({
-                ...prevState,
-                roleId,
-              }));
-            }}
-            roles={roles}
-          />
-        </Section>
+        {isApiKeyRolesEnabled && (
+          <Section>
+            <H2Title
+              title={t`Role`}
+              description={t`What this API can do: Select a user role to define its permissions.`}
+            />
+            <SettingsDevelopersRoleSelector
+              value={formValues.roleId}
+              onChange={(roleId) => {
+                setFormValues((prevState) => ({
+                  ...prevState,
+                  roleId,
+                }));
+              }}
+              roles={roles}
+            />
+          </Section>
+        )}
         <Section>
           <H2Title
             title={t`Expiration Date`}

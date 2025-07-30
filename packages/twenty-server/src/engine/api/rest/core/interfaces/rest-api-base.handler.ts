@@ -136,18 +136,29 @@ export abstract class RestApiBaseHandler {
     }
 
     let roleId: string | undefined = undefined;
+    let shouldBypassPermissionChecks = false;
 
     if (isDefined(apiKey)) {
-      roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
-        apiKey.id,
-        workspace.id,
-      );
-
-      if (!roleId) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.API_KEY_ROLE_NOT_FOUND,
-          PermissionsExceptionCode.API_KEY_ROLE_NOT_FOUND,
+      const isApiKeyRolesEnabled =
+        await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
+          workspace.id,
         );
+
+      if (!isApiKeyRolesEnabled) {
+        shouldBypassPermissionChecks = true;
+      } else {
+        roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
+          apiKey.id,
+          workspace.id,
+        );
+
+        if (!roleId) {
+          throw new PermissionsException(
+            PermissionsExceptionMessage.API_KEY_ROLE_NOT_FOUND,
+            PermissionsExceptionCode.API_KEY_ROLE_NOT_FOUND,
+          );
+        }
       }
     }
 
@@ -177,7 +188,7 @@ export abstract class RestApiBaseHandler {
 
     const repository = workspaceDataSource.getRepository<ObjectRecord>(
       objectMetadataNameSingular,
-      false,
+      shouldBypassPermissionChecks,
       roleId,
     );
 

@@ -27,6 +27,7 @@ import { FixUpdateStandardFieldsIsLabelSyncedWithName } from 'src/database/comma
 import { MigrateWorkflowRunStatesCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-workflow-run-state.command';
 import { AddEnqueuedStatusToWorkflowRunV2Command } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-enqueued-status-to-workflow-run-v2.command';
 import { AddNextStepIdsToWorkflowVersionTriggers } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-next-step-ids-to-workflow-version-triggers.command';
+import { AssignRolesToExistingApiKeysCommand } from 'src/database/commands/upgrade-version-command/1-2/1-2-assign-roles-to-existing-api-keys.command';
 import { RemoveWorkflowRunsWithoutState } from 'src/database/commands/upgrade-version-command/1-2/1-2-remove-workflow-runs-without-state.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -153,6 +154,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly removeWorkflowRunsWithoutState: RemoveWorkflowRunsWithoutState,
     protected readonly addNextStepIdsToWorkflowVersionTriggers: AddNextStepIdsToWorkflowVersionTriggers,
     protected readonly addEnqueuedStatusToWorkflowRunV2Command: AddEnqueuedStatusToWorkflowRunV2Command,
+    protected readonly assignRolesToExistingApiKeysCommand: AssignRolesToExistingApiKeysCommand,
 
     // 1.3 Commands
   ) {
@@ -210,7 +212,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.addNextStepIdsToWorkflowVersionTriggers,
         this.addEnqueuedStatusToWorkflowRunV2Command,
       ],
-      afterSyncMetadata: [],
+      afterSyncMetadata: [this.assignRolesToExistingApiKeysCommand],
     };
 
     const commands_130: VersionCommands = {

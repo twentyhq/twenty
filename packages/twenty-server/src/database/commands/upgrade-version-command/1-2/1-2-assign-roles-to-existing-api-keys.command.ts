@@ -9,6 +9,8 @@ import {
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
@@ -32,6 +34,7 @@ export class AssignRolesToExistingApiKeysCommand extends ActiveOrSuspendedWorksp
     @InjectRepository(RoleTargetsEntity, 'core')
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly apiKeyRoleService: ApiKeyRoleService,
+    private readonly featureFlagService: FeatureFlagService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
@@ -63,6 +66,27 @@ export class AssignRolesToExistingApiKeysCommand extends ActiveOrSuspendedWorksp
       this.logger.log(
         `  ✅ Workspace ${workspaceId}: Processed ${result.processed}, Assigned roles to ${result.assigned} API keys`,
       );
+    }
+
+    if (!options.dryRun && (result.assigned > 0 || result.processed === 0)) {
+      try {
+        await this.featureFlagService.upsertWorkspaceFeatureFlag({
+          workspaceId,
+          featureFlag: FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
+          value: true,
+        });
+        this.logger.log(
+          `  🏁 Enabled API key roles feature flag for workspace ${workspaceId}`,
+        );
+      } catch (error) {
+        this.logger.error(
+          `  ❌ Failed to enable feature flag for workspace ${workspaceId}:`,
+          error,
+        );
+        throw new Error(
+          `Failed to enable API key roles feature flag for workspace ${workspaceId}: ${error.message}`,
+        );
+      }
     }
   }
 
