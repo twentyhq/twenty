@@ -396,7 +396,7 @@ export class WorkflowVersionStepWorkspaceService {
 
     if (!isDefined(targetStep)) {
       throw new WorkflowVersionStepException(
-        `Target step ${targetStep} not found in workflowVersion ${workflowVersionId}`,
+        `Target step '${target}' not found in workflowVersion '${workflowVersionId}'`,
         WorkflowVersionStepExceptionCode.NOT_FOUND,
       );
     }
@@ -404,9 +404,13 @@ export class WorkflowVersionStepWorkspaceService {
     if (isSourceTrigger) {
       if (!isDefined(trigger)) {
         throw new WorkflowVersionStepException(
-          `Trigger not found in workflowVersion ${workflowVersionId}`,
+          `Trigger not found in workflowVersion '${workflowVersionId}'`,
           WorkflowVersionStepExceptionCode.NOT_FOUND,
         );
+      }
+
+      if (trigger.nextStepIds?.includes(target)) {
+        return { source, target };
       }
 
       const updatedTrigger = {
@@ -422,9 +426,13 @@ export class WorkflowVersionStepWorkspaceService {
 
       if (!isDefined(sourceStep)) {
         throw new WorkflowVersionStepException(
-          `Source step ${sourceStep} not found in workflowVersion ${workflowVersionId}`,
+          `Source step '${source}' not found in workflowVersion '${workflowVersionId}'`,
           WorkflowVersionStepExceptionCode.NOT_FOUND,
         );
+      }
+
+      if (sourceStep.nextStepIds?.includes(target)) {
+        return { source, target };
       }
 
       const updatedSourceStep = {
@@ -491,7 +499,7 @@ export class WorkflowVersionStepWorkspaceService {
 
     if (!isDefined(targetStep)) {
       throw new WorkflowVersionStepException(
-        `Target step ${targetStep} not found in workflowVersion ${workflowVersionId}`,
+        `Target step '${target}' not found in workflowVersion '${workflowVersionId}'`,
         WorkflowVersionStepExceptionCode.NOT_FOUND,
       );
     }
@@ -499,9 +507,13 @@ export class WorkflowVersionStepWorkspaceService {
     if (isSourceTrigger) {
       if (!isDefined(trigger)) {
         throw new WorkflowVersionStepException(
-          `Trigger not found in workflowVersion ${workflowVersionId}`,
+          `Trigger not found in workflowVersion '${workflowVersionId}'`,
           WorkflowVersionStepExceptionCode.NOT_FOUND,
         );
+      }
+
+      if (!trigger.nextStepIds?.includes(target)) {
+        return { source, target };
       }
 
       const updatedTrigger = {
@@ -519,9 +531,13 @@ export class WorkflowVersionStepWorkspaceService {
 
       if (!isDefined(sourceStep)) {
         throw new WorkflowVersionStepException(
-          `Source step ${sourceStep} not found in workflowVersion ${workflowVersionId}`,
+          `Source step '${source}' not found in workflowVersion '${workflowVersionId}'`,
           WorkflowVersionStepExceptionCode.NOT_FOUND,
         );
+      }
+
+      if (!sourceStep.nextStepIds?.includes(target)) {
+        return { source, target };
       }
 
       const updatedSourceStep = {
