@@ -5,11 +5,14 @@ export const FIND_ONE_AGENT = gql`
     findOneAgent(input: { id: $id }) {
       id
       name
+      label
       description
+      icon
       prompt
       modelId
       responseFormat
       roleId
+      isCustom
     }
   }
 `;

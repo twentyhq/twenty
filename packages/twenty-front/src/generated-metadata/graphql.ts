@@ -3147,7 +3147,7 @@ export type UpdateOneAgentMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOneAgentMutation = { __typename?: 'Mutation', updateOneAgent: { __typename?: 'Agent', id: any, name: string, description?: string | null, prompt: string, modelId: string, responseFormat?: any | null } };
+export type UpdateOneAgentMutation = { __typename?: 'Mutation', updateOneAgent: { __typename?: 'Agent', id: any, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: any | null, isCustom: boolean } };
 
 export type FindManyAgentsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3159,7 +3159,7 @@ export type FindOneAgentQueryVariables = Exact<{
 }>;
 
 
-export type FindOneAgentQuery = { __typename?: 'Query', findOneAgent: { __typename?: 'Agent', id: any, name: string, description?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: any | null } };
+export type FindOneAgentQuery = { __typename?: 'Query', findOneAgent: { __typename?: 'Agent', id: any, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: any | null, isCustom: boolean } };
 
 export type GetAgentChatMessagesQueryVariables = Exact<{
   threadId: Scalars['String'];
@@ -4529,10 +4529,14 @@ export const UpdateOneAgentDocument = gql`
   updateOneAgent(input: $input) {
     id
     name
+    label
     description
+    icon
     prompt
     modelId
     responseFormat
+    roleId
+    isCustom
   }
 }
     `;
@@ -4612,11 +4616,14 @@ export const FindOneAgentDocument = gql`
   findOneAgent(input: {id: $id}) {
     id
     name
+    label
     description
+    icon
     prompt
     modelId
     responseFormat
     roleId
+    isCustom
   }
 }
     `;

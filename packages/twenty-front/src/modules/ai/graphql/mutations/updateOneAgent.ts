@@ -5,10 +5,14 @@ export const UPDATE_ONE_AGENT = gql`
     updateOneAgent(input: $input) {
       id
       name
+      label
       description
+      icon
       prompt
       modelId
       responseFormat
+      roleId
+      isCustom
     }
   }
 `;
