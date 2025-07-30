@@ -132,11 +132,9 @@ export class AssignRolesToExistingApiKeysCommand extends ActiveOrSuspendedWorksp
     });
 
     if (!adminRole) {
-      this.logger.warn(
-        `    No Admin role found in workspace ${workspaceId}, skipping...`,
+      throw new Error(
+        `No Admin role found in workspace ${workspaceId}. Should not happen.`,
       );
-
-      return { processed: apiKeys.length, assigned: 0, failed: [] };
     }
 
     this.logger.log(`    Using Admin role: ${adminRole.id}`);
