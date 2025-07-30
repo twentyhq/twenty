@@ -80,17 +80,19 @@ export class WorkflowStepResolver {
     });
   }
 
-  @Mutation(() => WorkflowActionDTO)
+  @Mutation(() => Boolean)
   async deleteWorkflowVersionStep(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('input')
     { stepId, workflowVersionId }: DeleteWorkflowVersionStepInput,
-  ): Promise<WorkflowActionDTO> {
-    return this.workflowVersionStepWorkspaceService.deleteWorkflowVersionStep({
+  ): Promise<boolean> {
+    await this.workflowVersionStepWorkspaceService.deleteWorkflowVersionStep({
       workspaceId,
       workflowVersionId,
       stepIdToDelete: stepId,
     });
+
+    return true;
   }
 
   @Mutation(() => Boolean)

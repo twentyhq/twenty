@@ -31,7 +31,7 @@ const mockWorkspaceId = 'workspace-id';
 const mockSteps = [
   {
     id: 'step-1',
-    type: WorkflowActionType.CODE,
+    type: WorkflowActionType.FORM,
     settings: {
       errorHandlingOptions: {
         continueOnFailure: { value: false },
@@ -324,6 +324,37 @@ describe('WorkflowVersionStepWorkspaceService', () => {
         await expect(call).rejects.toThrow(
           `Source step 'not-existing-step' not found in workflowVersion '${mockWorkflowVersionId}'`,
         );
+      });
+    });
+  });
+
+  describe('deleteWorkflowVersionStep', () => {
+    it('should delete step linked to trigger', async () => {
+      await service.deleteWorkflowVersionStep({
+        stepIdToDelete: 'step-1',
+        workflowVersionId: mockWorkflowVersionId,
+        workspaceId: mockWorkspaceId,
+      });
+
+      expect(
+        mockWorkflowVersionWorkspaceRepository.update,
+      ).toHaveBeenCalledWith(mockWorkflowVersionId, {
+        trigger: { ...mockTrigger, nextStepIds: ['step-2'] },
+        steps: mockSteps.filter((step) => step.id !== 'step-1'),
+      });
+    });
+
+    it('should delete trigger', async () => {
+      await service.deleteWorkflowVersionStep({
+        stepIdToDelete: 'trigger',
+        workflowVersionId: mockWorkflowVersionId,
+        workspaceId: mockWorkspaceId,
+      });
+
+      expect(
+        mockWorkflowVersionWorkspaceRepository.update,
+      ).toHaveBeenCalledWith(mockWorkflowVersionId, {
+        trigger: null,
       });
     });
   });
