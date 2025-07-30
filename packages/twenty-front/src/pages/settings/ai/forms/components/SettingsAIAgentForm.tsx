@@ -9,30 +9,22 @@ import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useGetRolesQuery } from '~/generated-metadata/graphql';
 
-import { SettingsAIAgentFormValues } from '~/pages/settings/ai/validation-schemas/settingsAIAgentFormSchema';
-
 const StyledInputsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledInputContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(8)};
 `;
 
 const StyledFormSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledIconNameRow = styled.div`
-  align-items: flex-end;
+  align-items: flex-start;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledIconContainer = styled.div`
@@ -43,31 +35,16 @@ const StyledNameContainer = styled.div`
   flex: 1;
 `;
 
-const StyledLabel = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
+const StyledErrorMessage = styled.div`
+  color: ${({ theme }) => theme.color.red};
   font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
-type SettingsAIAgentFormProps = {
-  onNewDirtyField?: () => void;
-};
-
-export const SettingsAIAgentForm = ({
-  onNewDirtyField,
-}: SettingsAIAgentFormProps) => {
-  const { control, watch } = useFormContext<SettingsAIAgentFormValues>();
+export const SettingsAIAgentForm = () => {
+  const { control } = useFormContext();
   const { t } = useLingui();
 
-  const name = watch('name');
-  const label = watch('label');
-  const description = watch('description');
-  const icon = watch('icon');
-  const modelId = watch('modelId');
-  const prompt = watch('prompt');
-
-  // Get AI models and roles from backend
   const modelOptions = useAiModelOptions();
   const { data: rolesData } = useGetRolesQuery();
 
@@ -93,7 +70,6 @@ export const SettingsAIAgentForm = ({
                   selectedIconKey={value}
                   onChange={({ iconKey }) => {
                     onChange(iconKey);
-                    onNewDirtyField?.();
                   }}
                 />
               )}
@@ -114,8 +90,11 @@ export const SettingsAIAgentForm = ({
                   placeholder={t`Enter agent name`}
                   value={value}
                   onChange={onChange}
-                  onBlur={() => onNewDirtyField?.()}
-                  error={errors.name?.message}
+                  error={
+                    errors.name?.message
+                      ? String(errors.name.message)
+                      : undefined
+                  }
                   noErrorHelper={true}
                   fullWidth
                 />
@@ -128,14 +107,13 @@ export const SettingsAIAgentForm = ({
           name="label"
           control={control}
           defaultValue=""
-          render={({ field: { onChange, value }, formState: { errors } }) => (
+          render={({ field: { onChange, value } }) => (
             <TextInput
               instanceId="agent-label-input"
+              label={t`Label`}
               placeholder={t`Enter label`}
               value={value}
               onChange={onChange}
-              onBlur={() => onNewDirtyField?.()}
-              error={errors.label?.message}
               noErrorHelper={true}
               fullWidth
             />
@@ -152,7 +130,6 @@ export const SettingsAIAgentForm = ({
               minRows={3}
               value={value ?? undefined}
               onChange={(nextValue) => onChange(nextValue ?? null)}
-              onBlur={() => onNewDirtyField?.()}
             />
           )}
         />
@@ -163,37 +140,34 @@ export const SettingsAIAgentForm = ({
           name="modelId"
           control={control}
           defaultValue="auto"
-          render={({ field: { onChange, value }, formState: { errors } }) => (
+          render={({ field: { onChange, value } }) => (
             <Select
               dropdownId="ai-model-select"
               label={t`AI Model`}
               value={value}
               onChange={onChange}
-              onBlur={() => onNewDirtyField?.()}
               options={modelOptions}
               disabled={noModelsAvailable}
               fullWidth
             />
           )}
         />
-
         {noModelsAvailable && (
-          <div style={{ color: 'red', fontSize: '12px', marginTop: '4px' }}>
+          <StyledErrorMessage>
             {t`You haven't configured any model provider. Please set up an API Key in your instance's admin panel or as an environment variable.`}
-          </div>
+          </StyledErrorMessage>
         )}
 
         <Controller
           name="role"
           control={control}
           defaultValue=""
-          render={({ field: { onChange, value }, formState: { errors } }) => (
+          render={({ field: { onChange, value } }) => (
             <Select
               dropdownId="ai-role-select"
               label={t`Role`}
               value={value}
               onChange={onChange}
-              onBlur={() => onNewDirtyField?.()}
               options={rolesOptions}
               emptyOption={{
                 label: t`Select a role`,
@@ -208,7 +182,7 @@ export const SettingsAIAgentForm = ({
           name="prompt"
           control={control}
           defaultValue=""
-          render={({ field: { onChange, value }, formState: { errors } }) => (
+          render={({ field: { onChange, value } }) => (
             <TextArea
               textAreaId="agent-prompt-textarea"
               label={t`System Prompt`}
@@ -216,7 +190,6 @@ export const SettingsAIAgentForm = ({
               minRows={6}
               value={value}
               onChange={onChange}
-              onBlur={() => onNewDirtyField?.()}
             />
           )}
         />

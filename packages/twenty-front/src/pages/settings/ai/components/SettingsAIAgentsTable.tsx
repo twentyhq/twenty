@@ -14,8 +14,8 @@ import {
   IconSearch,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { Agent } from '~/generated-metadata/graphql';
 import { GET_SETTINGS_AI_AGENT_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsAIAgentTableMetadata';
-import { SettingsAIAgentTableItem } from '~/pages/settings/ai/types/SettingsAIAgentTableItem';
 import {
   SettingsAIAgentTableRow,
   StyledAIAgentTableRow,
@@ -30,13 +30,7 @@ const StyledTable = styled(Table)`
   margin-top: ${({ theme }) => theme.spacing(3)};
 `;
 
-export type SettingsAIAgentsTableProps = {
-  agents: SettingsAIAgentTableItem[];
-};
-
-export const SettingsAIAgentsTable = ({
-  agents,
-}: SettingsAIAgentsTableProps) => {
+export const SettingsAIAgentsTable = ({ agents }: { agents: Agent[] }) => {
   const { t } = useLingui();
   const theme = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
@@ -51,7 +45,7 @@ export const SettingsAIAgentsTable = ({
       sortedAgents.filter(
         (agent) =>
           agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          agent.type.toLowerCase().includes(searchTerm.toLowerCase()),
+          agent.label.toLowerCase().includes(searchTerm.toLowerCase()),
       ),
     [sortedAgents, searchTerm],
   );
@@ -87,7 +81,7 @@ export const SettingsAIAgentsTable = ({
             key={agent.id}
             agent={agent}
             action={
-              agent.type === 'Custom' ? (
+              agent.isCustom ? (
                 <LightIconButton
                   Icon={IconDotsVertical}
                   accent="tertiary"

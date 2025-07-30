@@ -1,30 +1,27 @@
 import { Tag } from 'twenty-ui/components';
 
 type SettingsAIAgentTypeTagProps = {
-  type: 'Standard' | 'Custom';
+  isCustom: boolean;
   className?: string;
 };
 
 export const SettingsAIAgentTypeTag = ({
   className,
-  type,
+  isCustom,
 }: SettingsAIAgentTypeTagProps) => {
-  const getTagColor = (type: 'Standard' | 'Custom') => {
-    switch (type) {
-      case 'Standard':
-        return 'blue';
-      case 'Custom':
-        return 'orange';
-      default:
-        return 'gray';
-    }
+  const getTagColor = (isCustom: boolean) => {
+    return isCustom ? 'orange' : 'blue';
+  };
+
+  const getTagText = (isCustom: boolean) => {
+    return isCustom ? 'Custom' : 'Standard';
   };
 
   return (
     <Tag
       className={className}
-      color={getTagColor(type)}
-      text={type}
+      color={getTagColor(isCustom)}
+      text={getTagText(isCustom)}
       weight="medium"
     />
   );

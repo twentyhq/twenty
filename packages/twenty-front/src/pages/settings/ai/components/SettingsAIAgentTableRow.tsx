@@ -5,12 +5,12 @@ import { ReactNode } from 'react';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useIcons } from 'twenty-ui/display';
-import { SettingsAIAgentTableItem } from '~/pages/settings/ai/types/SettingsAIAgentTableItem';
+import { Agent } from '~/generated-metadata/graphql';
 import { SettingsAIAgentTypeTag } from './SettingsAIAgentTypeTag';
 
 export type SettingsAIAgentTableRowProps = {
   action: ReactNode;
-  agent: SettingsAIAgentTableItem;
+  agent: Agent;
   link?: string;
 };
 
@@ -34,8 +34,6 @@ const StyledActionTableCell = styled(TableCell)`
   padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-
-
 export const SettingsAIAgentTableRow = ({
   action,
   agent,
@@ -43,7 +41,7 @@ export const SettingsAIAgentTableRow = ({
 }: SettingsAIAgentTableRowProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const Icon = getIcon(agent.icon);
+  const Icon = getIcon(agent.icon || 'IconRobot');
 
   return (
     <StyledAIAgentTableRow key={agent.id} to={link}>
@@ -58,7 +56,7 @@ export const SettingsAIAgentTableRow = ({
         <StyledNameLabel title={agent.name}>{agent.name}</StyledNameLabel>
       </StyledNameTableCell>
       <TableCell>
-        <SettingsAIAgentTypeTag type={agent.type} />
+        <SettingsAIAgentTypeTag isCustom={agent.isCustom} />
       </TableCell>
       <StyledActionTableCell>{action}</StyledActionTableCell>
     </StyledAIAgentTableRow>

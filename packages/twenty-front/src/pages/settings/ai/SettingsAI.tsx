@@ -7,12 +7,14 @@ import { H2Title, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { useFindManyAgentsQuery } from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+
 import { SettingsAIAgentsTable } from './components/SettingsAIAgentsTable';
-import { DUMMY_AI_AGENTS } from './data/dummyAIAgents';
 
 export const SettingsAI = () => {
   const { t } = useLingui();
+  const { data } = useFindManyAgentsQuery();
 
   return (
     <SubMenuTopBarContainer
@@ -41,7 +43,7 @@ export const SettingsAI = () => {
             title={t`Agents`}
             description={t`Agents used to route queries to specialized agents`}
           />
-          <SettingsAIAgentsTable agents={DUMMY_AI_AGENTS} />
+          <SettingsAIAgentsTable agents={data?.findManyAgents || []} />
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
