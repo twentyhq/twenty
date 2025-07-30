@@ -9,7 +9,6 @@ type MergeRecordTabProps = {
 };
 
 export const MergeRecordTab = ({
-  isInRightDrawer = true,
   objectNameSingular,
   recordId,
 }: MergeRecordTabProps) => {
@@ -18,7 +17,7 @@ export const MergeRecordTab = ({
       <SummaryCard
         objectNameSingular={objectNameSingular}
         objectRecordId={recordId}
-        isInRightDrawer={isInRightDrawer}
+        isInRightDrawer={true}
       />
 
       <CardComponents.FieldCard
@@ -26,7 +25,7 @@ export const MergeRecordTab = ({
           targetObjectNameSingular: objectNameSingular,
           id: recordId,
         }}
-        isInRightDrawer={isInRightDrawer}
+        isInRightDrawer={true}
       />
     </Section>
   );

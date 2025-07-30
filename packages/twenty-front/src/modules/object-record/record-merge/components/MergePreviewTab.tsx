@@ -15,7 +15,6 @@ const StyledLoadingContainer = styled.div`
 `;
 
 type MergePreviewTabProps = {
-  isInRightDrawer?: boolean;
   objectNameSingular: string;
   mergedPreviewRecord?: ObjectRecord | null;
   onPreviewChange?: boolean;
@@ -23,7 +22,6 @@ type MergePreviewTabProps = {
 };
 
 export const MergePreviewTab = ({
-  isInRightDrawer = true,
   objectNameSingular,
   mergedPreviewRecord,
   onPreviewChange = false,
@@ -52,7 +50,7 @@ export const MergePreviewTab = ({
       <SummaryCard
         objectNameSingular={objectNameSingular}
         objectRecordId={mergedPreviewRecord.id}
-        isInRightDrawer={isInRightDrawer}
+        isInRightDrawer={true}
       />
 
       <CardComponents.FieldCard
@@ -60,7 +58,7 @@ export const MergePreviewTab = ({
           targetObjectNameSingular: objectNameSingular,
           id: mergedPreviewRecord.id,
         }}
-        isInRightDrawer={isInRightDrawer}
+        isInRightDrawer={true}
       />
     </Section>
   );

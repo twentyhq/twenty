@@ -188,9 +188,15 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconArrowMerge,
     accent: 'default',
     isPinned: false,
-    shouldBeRegistered: ({ objectMetadataItem, numberOfSelectedRecords }) =>
+    shouldBeRegistered: ({
+      objectMetadataItem,
+      numberOfSelectedRecords,
+      objectPermissions,
+    }) =>
       isDefined(objectMetadataItem?.duplicateCriteria) &&
       isDefined(numberOfSelectedRecords) &&
+      Boolean(objectPermissions.canUpdateObjectRecords) &&
+      Boolean(objectPermissions.canDestroyObjectRecords) &&
       numberOfSelectedRecords <= MUTATION_MAX_MERGE_RECORDS,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     component: (

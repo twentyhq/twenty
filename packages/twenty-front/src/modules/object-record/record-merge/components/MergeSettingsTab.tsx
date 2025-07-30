@@ -9,19 +9,16 @@ import styled from '@emotion/styled';
 import { Section } from 'twenty-ui/layout';
 
 type MergeSettingsTabProps = {
-  isInRightDrawer?: boolean;
   selectedRecords: ObjectRecord[];
   mergeSettings: MergeManySettings;
   onMergeSettingsChange: (settings: MergeManySettings) => void;
 };
 
-const StyledSection = styled(Section)<{ isInRightDrawer: boolean }>`
-  margin: ${({ isInRightDrawer, theme }) =>
-    isInRightDrawer ? theme.spacing(4) : ''};
+const StyledSection = styled(Section)`
+  margin: ${({ theme }) => theme.spacing(4)};
 `;
 
 export const MergeSettingsTab = ({
-  isInRightDrawer = true,
   selectedRecords,
   mergeSettings,
   onMergeSettingsChange,
@@ -41,7 +38,7 @@ export const MergeSettingsTab = ({
   };
 
   return (
-    <StyledSection isInRightDrawer={isInRightDrawer}>
+    <StyledSection>
       <Select
         dropdownId="merge-settings-priority-select"
         options={priorityOptions}
