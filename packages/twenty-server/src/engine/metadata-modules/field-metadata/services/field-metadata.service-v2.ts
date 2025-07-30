@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { MultitpleMetadataValidationErrors } from 'src/engine/core-modules/error/multiple-metadata-validation-errors';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataException, FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { fromCreateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -28,6 +29,20 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
     private readonly workspaceMigrationRunnerV2Service: WorkspaceMigrationRunnerV2Service,
   ) {
     super(fieldMetadataRepository);
+  }
+  override async createOne(
+    fieldMetadataInput: CreateFieldInput,
+  ): Promise<FieldMetadataEntity> {
+    const [createdFieldMetadata] = await this.createMany([fieldMetadataInput]);
+
+    if (!isDefined(createdFieldMetadata)) {
+      throw new FieldMetadataException(
+        'Failed to create field metadata',
+        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return createdFieldMetadata;
   }
 
   async createMany(

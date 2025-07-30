@@ -6,7 +6,6 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { FieldMetadataEnumValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service';
 import { ValidateOneFieldMetadataArgs } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { FlatFieldMetadataTypeValidator } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { validateEnumSelectFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator';
@@ -16,7 +15,6 @@ import { EnumFieldMetadataType } from 'src/engine/metadata-modules/workspace-mig
 export class FlatFieldMetadataTypeValidatorService {
   constructor(
     private readonly featureFlagService: FeatureFlagService,
-    private readonly fieldMetadataEnumValidationService: FieldMetadataEnumValidationService,
   ) {}
 
   public readonly FIELD_METADATA_TYPE_VALIDATOR_HASHMAP: FlatFieldMetadataTypeValidator =
