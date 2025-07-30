@@ -7,7 +7,6 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -19,11 +18,14 @@ import { AgentEntity } from './agent.entity';
 
 @Entity('agentHandoff')
 @Index('IDX_AGENT_HANDOFF_ID_DELETED_AT', ['id', 'deletedAt'])
-@Unique('IDX_AGENT_HANDOFF_FROM_TO_WORKSPACE_UNIQUE', [
-  'fromAgentId',
-  'toAgentId',
-  'workspaceId',
-])
+@Index(
+  'IDX_AGENT_HANDOFF_FROM_TO_WORKSPACE_UNIQUE',
+  ['fromAgentId', 'toAgentId', 'workspaceId'],
+  {
+    unique: true,
+    where: '"deletedAt" IS NULL',
+  },
+)
 export class AgentHandoffEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

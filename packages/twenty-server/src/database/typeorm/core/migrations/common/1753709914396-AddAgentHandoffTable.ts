@@ -5,7 +5,7 @@ export class AddAgentHandoffTable1753709914396 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TABLE "core"."agentHandoff" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fromAgentId" uuid NOT NULL, "toAgentId" uuid NOT NULL, "workspaceId" uuid NOT NULL, "description" text, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP WITH TIME ZONE, CONSTRAINT "IDX_AGENT_HANDOFF_FROM_TO_WORKSPACE_UNIQUE" UNIQUE ("fromAgentId", "toAgentId", "workspaceId"), CONSTRAINT "PK_44aad35fb18ea2696f242d3fd76" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "core"."agentHandoff" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fromAgentId" uuid NOT NULL, "toAgentId" uuid NOT NULL, "workspaceId" uuid NOT NULL, "description" text, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP WITH TIME ZONE, CONSTRAINT "IDX_AGENT_HANDOFF_FROM_TO_WORKSPACE_UNIQUE" UNIQUE ("fromAgentId", "toAgentId", "workspaceId") WHERE "deletedAt" IS NULL, CONSTRAINT "PK_44aad35fb18ea2696f242d3fd76" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE INDEX "IDX_AGENT_HANDOFF_ID_DELETED_AT" ON "core"."agentHandoff" ("id", "deletedAt") `,
