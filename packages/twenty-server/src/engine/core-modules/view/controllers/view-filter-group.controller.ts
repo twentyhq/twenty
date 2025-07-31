@@ -13,10 +13,10 @@ import {
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { CreateViewFilterGroupInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-filter-group.input';
 import { UpdateViewFilterGroupInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-filter-group.input';
 import { ViewFilterGroupDTO } from 'src/engine/core-modules/view/dtos/view-filter-group.dto';
+import { ViewFilterGroupRestApiExceptionFilter } from 'src/engine/core-modules/view/filters/view-filter-group-rest-api-exception.filter';
 import { ViewFilterGroupService } from 'src/engine/core-modules/view/services/view-filter-group.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -25,7 +25,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @Controller('rest/metadata/viewFilterGroups')
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
-@UseFilters(RestApiExceptionFilter)
+@UseFilters(ViewFilterGroupRestApiExceptionFilter)
 export class ViewFilterGroupController {
   constructor(
     private readonly viewFilterGroupService: ViewFilterGroupService,
