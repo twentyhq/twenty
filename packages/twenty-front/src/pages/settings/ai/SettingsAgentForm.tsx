@@ -119,7 +119,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           description: formValues.description,
           icon: formValues.icon,
           modelId: formValues.modelId,
-          roleId: formValues.role,
+          roleId: formValues.role || undefined,
           prompt: formValues.prompt,
         };
 
@@ -143,7 +143,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
             description: formValues.description,
             icon: formValues.icon,
             modelId: formValues.modelId,
-            roleId: formValues.role,
+            roleId: formValues.role || undefined,
             prompt: formValues.prompt,
           },
         },
