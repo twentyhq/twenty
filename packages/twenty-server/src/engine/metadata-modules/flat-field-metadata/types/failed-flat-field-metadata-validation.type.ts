@@ -13,7 +13,7 @@ export type FailedFlatFieldMetadataValidationExceptions =
   | InvalidMetadataException;
 
 export type FlatFieldMetadataValidator<T> = {
-  validator: (str: T) => boolean;
+  validator: (value: T) => boolean;
   message: string;
 };
 
@@ -21,9 +21,9 @@ export const runFlatFieldMetadataValidator = <T>(
   elementToValidate: T,
   { message, validator }: FlatFieldMetadataValidator<T>,
 ): FailedFlatFieldMetadataValidationExceptions | undefined => {
-  const shouldReturnError = validator(elementToValidate);
+  const validationFailed = validator(elementToValidate);
 
-  if (shouldReturnError) {
+  if (validationFailed) {
     return new FieldMetadataException(
       message,
       FieldMetadataExceptionCode.INVALID_FIELD_INPUT,

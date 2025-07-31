@@ -140,9 +140,7 @@ export class FlatFieldMetadataValidatorService {
           othersFlatObjectMetadataToValidate,
         });
 
-      fieldMetadataTypeValidatorExceptions.forEach((exception) =>
-        errors.push(exception),
-      );
+      errors.push(...fieldMetadataTypeValidatorExceptions);
     }
 
     return errors;
