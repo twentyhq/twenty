@@ -105,8 +105,7 @@ export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
 
   const agent = data?.findOneAgent;
 
-  // Check if this is the default agent (ASKAI bot)
-  const isDefaultAgent = agent?.id === currentWorkspace?.defaultAgent?.id;
+  const isAskAIAgent = agent?.id === currentWorkspace?.defaultAgent?.id;
 
   if (isEditMode && !loading && !agent) {
     return <></>;
@@ -185,13 +184,15 @@ export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
       <SubMenuTopBarContainer
         title={title}
         actionButton={
-          <SaveAndCancelButtons
-            onSave={handleSave}
-            onCancel={() => navigate(SettingsPath.AI)}
-            isSaveDisabled={!canSave}
-            isLoading={isSubmitting}
-            isCancelDisabled={isSubmitting}
-          />
+          !isEditMode || !isAskAIAgent ? (
+            <SaveAndCancelButtons
+              onSave={handleSave}
+              onCancel={() => navigate(SettingsPath.AI)}
+              isSaveDisabled={!canSave}
+              isLoading={isSubmitting}
+              isCancelDisabled={isSubmitting}
+            />
+          ) : undefined
         }
         links={[
           {
@@ -204,32 +205,37 @@ export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
       >
         <SettingsPageContainer>
           <Section>
-            <H2Title title={pageTitle} description={pageDescription} />
+            {!isAskAIAgent ? (
+              <H2Title title={pageTitle} description={pageDescription} />
+            ) : null}
             {isEditMode && loading ? (
               <SettingsAgentDetailSkeletonLoader />
             ) : (
               <StyledContentContainer>
-                <SettingsAIAgentForm
-                  formValues={formValues}
-                  onFieldChange={handleFieldChange}
-                />
-                {isEditMode && agent && isDefaultAgent && (
-                  <SettingsAgentHandoffSection agentId={agent.id} />
-                )}
-                {isEditMode && agent && (
-                  <Section>
-                    <H2Title
-                      title={t`Danger zone`}
-                      description={t`Delete this agent`}
+                {isAskAIAgent ? (
+                  <SettingsAgentHandoffSection agentId={agent?.id} />
+                ) : (
+                  <>
+                    <SettingsAIAgentForm
+                      formValues={formValues}
+                      onFieldChange={handleFieldChange}
                     />
-                    <Button
-                      accent="danger"
-                      variant="secondary"
-                      title={t`Delete Agent`}
-                      Icon={IconTrash}
-                      onClick={() => openModal(DELETE_AGENT_MODAL_ID)}
-                    />
-                  </Section>
+                    {isEditMode && agent && formValues.isCustom && (
+                      <Section>
+                        <H2Title
+                          title={t`Danger zone`}
+                          description={t`Delete this agent`}
+                        />
+                        <Button
+                          accent="danger"
+                          variant="secondary"
+                          title={t`Delete Agent`}
+                          Icon={IconTrash}
+                          onClick={() => openModal(DELETE_AGENT_MODAL_ID)}
+                        />
+                      </Section>
+                    )}
+                  </>
                 )}
               </StyledContentContainer>
             )}
