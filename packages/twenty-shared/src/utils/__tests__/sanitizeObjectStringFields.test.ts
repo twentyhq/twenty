@@ -1,3 +1,4 @@
+import { eachTestingContextFilter } from '@/testing';
 import { EachTestingContext } from '@/testing/types/EachTestingContext.type';
 import { extractAndSanitizeObjectStringFields } from '../extractAndSanitizeObjectStringFields';
 
@@ -84,6 +85,16 @@ describe('extractAndSanitizeObjectStringFields', () => {
           obj: { name: 'John', age: 30 },
           keys: ['city', 'name'],
         },
+        expected: { name: 'John' },
+      },
+    },
+    {
+      title: 'should handle object with number field',
+      context: {
+        input: {
+          obj: { name: 'John', age: 30 },
+          keys: ['age', 'name'],
+        },
         expected: { name: 'John', age: 30 },
       },
     },
@@ -164,7 +175,7 @@ describe('extractAndSanitizeObjectStringFields', () => {
     },
   ];
 
-  test.each(testCases)(
+  test.each(eachTestingContextFilter(testCases))(
     '$title',
     ({
       context: {
