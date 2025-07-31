@@ -84,6 +84,7 @@ export class TwoFactorAuthenticationResolver {
         user.id,
         userEmail,
         workspace.id,
+        workspace.displayName,
       );
 
     if (!isDefined(uri)) {
@@ -107,6 +108,7 @@ export class TwoFactorAuthenticationResolver {
         user.id,
         user.email,
         workspace.id,
+        workspace.displayName,
       );
 
     if (!isDefined(uri)) {

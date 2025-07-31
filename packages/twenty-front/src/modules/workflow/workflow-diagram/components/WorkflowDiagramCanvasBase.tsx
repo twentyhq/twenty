@@ -10,6 +10,7 @@ import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightD
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
 import { workflowDiagramWaitingNodesDimensionsComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramWaitingNodesDimensionsComponentState';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import {
   WorkflowDiagram,
   WorkflowDiagramEdge,
@@ -145,6 +146,9 @@ export const WorkflowDiagramCanvasBase = ({
   const setWorkflowInsertStepIds = useSetRecoilComponentStateV2(
     workflowInsertStepIdsComponentState,
   );
+  const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
+    workflowSelectedNodeComponentState,
+  );
   const workflowDiagramWaitingNodesDimensionsState =
     useRecoilComponentCallbackStateV2(
       workflowDiagramWaitingNodesDimensionsComponentState,
@@ -192,6 +196,7 @@ export const WorkflowDiagramCanvasBase = ({
       parentStepId: undefined,
       nextStepId: undefined,
     });
+    setWorkflowSelectedNode(undefined);
   });
 
   const containerRef = useRef<HTMLDivElement>(null);

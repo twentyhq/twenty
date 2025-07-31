@@ -1,5 +1,6 @@
+import { eachTestingContextFilter } from '@/testing';
 import { EachTestingContext } from '@/testing/types/EachTestingContext.type';
-import { sanitizeObjectStringFields } from '../sanitizeObjectStringFields';
+import { extractAndSanitizeObjectStringFields } from '../extractAndSanitizeObjectStringFields';
 
 type TestObject = {
   name?: string;
@@ -25,7 +26,7 @@ type SanitizeTestCase = EachTestingContext<{
   expected: object;
 }>;
 
-describe('sanitizeObjectStringFields', () => {
+describe('extractAndSanitizeObjectStringFields', () => {
   const testCases: SanitizeTestCase[] = [
     {
       title: 'should handle basic string properties and trim whitespaces',
@@ -83,6 +84,16 @@ describe('sanitizeObjectStringFields', () => {
         input: {
           obj: { name: 'John', age: 30 },
           keys: ['city', 'name'],
+        },
+        expected: { name: 'John' },
+      },
+    },
+    {
+      title: 'should handle object with number field',
+      context: {
+        input: {
+          obj: { name: 'John', age: 30 },
+          keys: ['age', 'name'],
         },
         expected: { name: 'John', age: 30 },
       },
@@ -164,7 +175,7 @@ describe('sanitizeObjectStringFields', () => {
     },
   ];
 
-  test.each(testCases)(
+  test.each(eachTestingContextFilter(testCases))(
     '$title',
     ({
       context: {
@@ -172,7 +183,7 @@ describe('sanitizeObjectStringFields', () => {
         expected,
       },
     }) => {
-      const result = sanitizeObjectStringFields(obj, keys);
+      const result = extractAndSanitizeObjectStringFields(obj, keys);
 
       expect(result).toEqual(expected);
     },
