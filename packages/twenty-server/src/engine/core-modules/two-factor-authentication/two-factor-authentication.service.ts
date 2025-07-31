@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { authenticator } from 'otplib';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -24,6 +25,8 @@ import {
 import { twoFactorAuthenticationMethodsValidator } from './two-factor-authentication.validation';
 
 import { OTPStatus } from './strategies/otp/otp.constants';
+
+const PENDING_METHOD_REUSE_WINDOW_MS = 60 * 60 * 1000;
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -91,6 +94,22 @@ export class TwoFactorAuthenticationService {
         'A two factor authentication method has already been set. Please delete it and try again.',
         TwoFactorAuthenticationExceptionCode.TWO_FACTOR_AUTHENTICATION_METHOD_ALREADY_PROVISIONED,
       );
+    }
+
+    if (existing2FAMethod && 
+        existing2FAMethod.status === 'PENDING' && 
+        existing2FAMethod.createdAt &&
+        (Date.now() - existing2FAMethod.createdAt.getTime()) < PENDING_METHOD_REUSE_WINDOW_MS) {
+      
+      const existingSecret = await this.simpleSecretEncryptionUtil.decryptSecret(
+        existing2FAMethod.secret,
+        userId + workspaceId + 'otp-secret',
+      );
+
+      const issuer = `Twenty${userWorkspace.workspace.displayName ? ` - ${userWorkspace.workspace.displayName}` : ''}`;
+      const reuseUri = authenticator.keyuri(userEmail, issuer, existingSecret);
+      
+      return reuseUri;
     }
 
     const { uri, context } = new TotpStrategy(
