@@ -84,7 +84,6 @@ export const SettingsAIAgentForm = ({
                 fillNameFromLabel(value);
               }}
               fullWidth
-              disabled={!formValues.isCustom}
             />
           </StyledNameContainer>
         </StyledIconNameRow>
@@ -97,7 +96,6 @@ export const SettingsAIAgentForm = ({
           minRows={3}
           value={formValues.description || ''}
           onChange={(value) => onFieldChange('description', value)}
-          disabled={!formValues.isCustom}
         />
       </StyledFormContainer>
 
