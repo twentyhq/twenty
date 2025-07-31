@@ -139,6 +139,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
         { workspaceId },
       );
 
+    // Could create a util called retrieve fieldMetadataFromCache
     return flatFieldToCreateAndItsFlatObjectMetadataArray.flatMap<FieldMetadataEntity>(
       (createdFlatFieldAndItsParentFlatObject) => {
         return createdFlatFieldAndItsParentFlatObject.flatMap(
@@ -162,7 +163,11 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
             }
 
             // Remark: Typing not accurate does not contain relations we might need data loaders ? To see with Charles
-            return fieldMetadataFromCache;
+            return {
+              ...fieldMetadataFromCache,
+              createdAt: new Date(fieldMetadataFromCache.createdAt),
+              updatedAt: new Date(fieldMetadataFromCache.updatedAt),
+            };
           },
         );
       },
