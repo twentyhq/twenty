@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { Controller, useFormContext } from 'react-hook-form';
 
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { IconPicker } from '@/ui/input/components/IconPicker';
@@ -10,11 +9,12 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { isDefined } from 'twenty-shared/utils';
 import { useGetRolesQuery } from '~/generated-metadata/graphql';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
+import { SettingsAIAgentFormValues } from '../../hooks/useSettingsAgentFormState';
 
 const StyledInputsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(8)};
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledFormSection = styled.div`
@@ -43,8 +43,15 @@ const StyledErrorMessage = styled.div`
   margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const SettingsAIAgentForm = () => {
-  const { control, setValue } = useFormContext();
+interface SettingsAIAgentFormProps {
+  formValues: SettingsAIAgentFormValues;
+  onFieldChange: (field: keyof SettingsAIAgentFormValues, value: any) => void;
+}
+
+export const SettingsAIAgentForm = ({
+  formValues,
+  onFieldChange,
+}: SettingsAIAgentFormProps) => {
   const { t } = useLingui();
 
   const modelOptions = useAiModelOptions();
@@ -60,9 +67,7 @@ export const SettingsAIAgentForm = () => {
 
   const fillNameFromLabel = (label: string) => {
     isDefined(label) &&
-      setValue('name', computeMetadataNameFromLabel(label), {
-        shouldDirty: true,
-      });
+      onFieldChange('name', computeMetadataNameFromLabel(label));
   };
 
   return (
@@ -70,123 +75,77 @@ export const SettingsAIAgentForm = () => {
       <StyledFormSection>
         <StyledIconNameRow>
           <StyledIconContainer>
-            <Controller
-              name="icon"
-              control={control}
-              defaultValue="IconRobot"
-              render={({ field: { onChange, value } }) => (
-                <IconPicker
-                  selectedIconKey={value}
-                  onChange={({ iconKey }) => {
-                    onChange(iconKey);
-                  }}
-                />
-              )}
+            <IconPicker
+              selectedIconKey={formValues.icon || 'IconRobot'}
+              onChange={({ iconKey }) => {
+                onFieldChange('icon', iconKey);
+              }}
             />
           </StyledIconContainer>
 
           <StyledNameContainer>
-            <Controller
-              name="label"
-              control={control}
-              defaultValue=""
-              render={({
-                field: { onChange, value },
-                formState: { errors },
-              }) => (
-                <TextInput
-                  instanceId="agent-label-input"
-                  placeholder={t`Enter agent name`}
-                  value={value}
-                  onChange={(value) => {
-                    onChange(value);
-                    fillNameFromLabel(value);
-                  }}
-                  error={
-                    errors.label?.message
-                      ? String(errors.label.message)
-                      : undefined
-                  }
-                  noErrorHelper={true}
-                  fullWidth
-                />
-              )}
+            <TextInput
+              instanceId="agent-label-input"
+              placeholder={t`Enter agent name*`}
+              value={formValues.label}
+              onChange={(value) => {
+                onFieldChange('label', value);
+                fillNameFromLabel(value);
+              }}
+              fullWidth
             />
           </StyledNameContainer>
         </StyledIconNameRow>
+      </StyledFormSection>
 
-        <Controller
-          name="description"
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <TextArea
-              textAreaId="agent-description-textarea"
-              placeholder={t`Write a description for this agent`}
-              minRows={3}
-              value={value ?? undefined}
-              onChange={(nextValue) => onChange(nextValue ?? null)}
-            />
-          )}
+      <StyledFormSection>
+        <TextArea
+          textAreaId="agent-description-textarea"
+          placeholder={t`Write a description for this agent`}
+          minRows={3}
+          value={formValues.description || ''}
+          onChange={(value) => onFieldChange('description', value)}
         />
       </StyledFormSection>
 
       <StyledFormSection>
-        <Controller
-          name="modelId"
-          control={control}
-          defaultValue="auto"
-          render={({ field: { onChange, value } }) => (
-            <Select
-              dropdownId="ai-model-select"
-              label={t`AI Model`}
-              value={value}
-              onChange={onChange}
-              options={modelOptions}
-              disabled={noModelsAvailable}
-              fullWidth
-            />
-          )}
+        <Select
+          dropdownId="ai-model-select"
+          label={t`AI Model`}
+          value={formValues.modelId}
+          onChange={(value) => onFieldChange('modelId', value)}
+          options={modelOptions}
+          disabled={noModelsAvailable}
         />
         {noModelsAvailable && (
           <StyledErrorMessage>
-            {t`You haven't configured any model provider. Please set up an API Key in your instance's admin panel or as an environment variable.`}
+            {t`No models available. Please configure AI models in your workspace settings.`}
           </StyledErrorMessage>
         )}
+      </StyledFormSection>
 
-        <Controller
-          name="role"
-          control={control}
-          defaultValue=""
-          render={({ field: { onChange, value } }) => (
-            <Select
-              dropdownId="ai-role-select"
-              label={t`Role`}
-              value={value}
-              onChange={onChange}
-              options={rolesOptions}
-              emptyOption={{
-                label: t`Select a role`,
-                value: '',
-              }}
-              fullWidth
-            />
-          )}
+      <StyledFormSection>
+        <Select
+          dropdownId="ai-role-select"
+          label={t`Role`}
+          value={formValues.role || ''}
+          onChange={(value) => onFieldChange('role', value)}
+          options={rolesOptions}
+          emptyOption={{
+            label: t`Select a role`,
+            value: '',
+          }}
         />
+      </StyledFormSection>
 
-        <Controller
-          name="prompt"
-          control={control}
-          defaultValue=""
-          render={({ field: { onChange, value } }) => (
-            <TextArea
-              textAreaId="agent-prompt-textarea"
-              label={t`System Prompt`}
-              placeholder={t`Enter the system prompt that defines this agent's behavior and capabilities`}
-              minRows={6}
-              value={value}
-              onChange={onChange}
-            />
-          )}
+      <StyledFormSection>
+        <TextArea
+          textAreaId="agent-prompt-textarea"
+          label={t`System Prompt*`}
+          placeholder={t`Enter the system prompt that defines this agent's behavior and capabilities`}
+          minRows={6}
+          value={formValues.prompt}
+          onChange={(value) => onFieldChange('prompt', value)}
         />
       </StyledFormSection>
     </StyledInputsContainer>

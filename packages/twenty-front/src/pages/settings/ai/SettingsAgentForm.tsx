@@ -1,8 +1,6 @@
 import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
-import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -28,10 +26,7 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { SettingsAgentDeleteConfirmationModal } from './components/SettingsAgentDeleteConfirmationModal';
 import { SettingsAgentDetailSkeletonLoader } from './components/SettingsAgentDetailSkeletonLoader';
 import { SettingsAIAgentForm } from './forms/components/SettingsAIAgentForm';
-import {
-  settingsAIAgentFormSchema,
-  SettingsAIAgentFormValues,
-} from './validation-schemas/settingsAIAgentFormSchema';
+import { useSettingsAgentFormState } from './hooks/useSettingsAgentFormState';
 
 const StyledContentContainer = styled.div`
   flex: 1;
@@ -61,20 +56,15 @@ export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
 
   const isEditMode = mode === 'edit';
 
-  const formConfig = useForm<SettingsAIAgentFormValues>({
-    mode: 'onChange',
-    resolver: zodResolver(settingsAIAgentFormSchema),
-    defaultValues: {
-      name: '',
-      label: '',
-      description: '',
-      icon: 'IconRobot',
-      modelId: isEditMode ? '' : 'auto',
-      role: '',
-      prompt: '',
-      isCustom: true,
-    },
-  });
+  const {
+    formValues,
+    isSubmitting,
+    isValid,
+    handleFieldChange,
+    resetForm,
+    setIsSubmitting,
+    validateForm,
+  } = useSettingsAgentFormState(mode);
 
   const { data, loading } = useFindOneAgentQuery({
     variables: { id: agentId },
@@ -82,7 +72,7 @@ export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
     onCompleted: (data) => {
       const agent = data?.findOneAgent;
       if (isDefined(agent)) {
-        formConfig.reset({
+        resetForm({
           name: agent.name,
           label: agent.label,
           description: agent.description,
@@ -116,20 +106,25 @@ export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
     return <></>;
   }
 
-  const { isValid, isSubmitting } = formConfig.formState;
   const canSave = isValid && !isSubmitting;
 
-  const handleSave = async (formData: SettingsAIAgentFormValues) => {
+  const handleSave = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
     try {
       if (!isEditMode) {
         const input: CreateAgentInput = {
-          name: formData.name,
-          label: formData.label,
-          description: formData.description || undefined,
-          icon: formData.icon || undefined,
-          modelId: formData.modelId,
-          roleId: formData.role || undefined,
-          prompt: formData.prompt,
+          name: formValues.name,
+          label: formValues.label,
+          description: formValues.description || undefined,
+          icon: formValues.icon || undefined,
+          modelId: formValues.modelId,
+          roleId: formValues.role || undefined,
+          prompt: formValues.prompt,
         };
 
         await createAgent({
@@ -147,13 +142,13 @@ export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
         variables: {
           input: {
             id: agent.id,
-            name: formData.name || '',
-            label: formData.label,
-            description: formData.description,
-            icon: formData.icon,
-            modelId: formData.modelId,
-            roleId: formData.role || null,
-            prompt: formData.prompt,
+            name: formValues.name || '',
+            label: formValues.label,
+            description: formValues.description,
+            icon: formValues.icon,
+            modelId: formValues.modelId,
+            roleId: formValues.role || null,
+            prompt: formValues.prompt,
           },
         },
       });
@@ -163,6 +158,8 @@ export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
       enqueueErrorSnackBar({
         apolloError: error instanceof ApolloError ? error : undefined,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -183,7 +180,7 @@ export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
         title={title}
         actionButton={
           <SaveAndCancelButtons
-            onSave={formConfig.handleSubmit(handleSave)}
+            onSave={handleSave}
             onCancel={() => navigate(SettingsPath.AI)}
             isSaveDisabled={!canSave}
             isLoading={isSubmitting}
@@ -206,12 +203,10 @@ export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
               <SettingsAgentDetailSkeletonLoader />
             ) : (
               <StyledContentContainer>
-                <FormProvider
-                  // eslint-disable-next-line react/jsx-props-no-spreading
-                  {...formConfig}
-                >
-                  <SettingsAIAgentForm />
-                </FormProvider>
+                <SettingsAIAgentForm
+                  formValues={formValues}
+                  onFieldChange={handleFieldChange}
+                />
                 {isEditMode && agent && (
                   <StyledDangerZoneSection>
                     <H2Title
@@ -235,7 +230,7 @@ export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
       {isEditMode && agent && (
         <SettingsAgentDeleteConfirmationModal
           agentId={agent.id}
-          agentName={agent.name}
+          agentName={agent.label}
         />
       )}
     </>
