@@ -47,11 +47,13 @@ export const generateFields = <
   kind,
   options,
   typeFactory,
+  objectMetadataCollection,
 }: {
   objectMetadata: ObjectMetadataEntity;
   kind: T;
   options: WorkspaceBuildSchemaOptions;
   typeFactory: TypeFactory<T>;
+  objectMetadataCollection: ObjectMetadataEntity[];
 }): T extends InputTypeDefinitionKind
   ? GraphQLInputFieldConfigMap
   : // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -75,6 +77,7 @@ export const generateFields = <
         kind,
         options,
         typeFactory,
+        objectMetadataCollection,
       });
     } else {
       generatedField = generateField({
@@ -162,6 +165,7 @@ const generateRelationField = <
   kind,
   options,
   typeFactory,
+  objectMetadataCollection,
 }: {
   fieldMetadata: FieldMetadataEntity<
     FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
@@ -169,6 +173,7 @@ const generateRelationField = <
   kind: T;
   options: WorkspaceBuildSchemaOptions;
   typeFactory: TypeFactory<T>;
+  objectMetadataCollection: ObjectMetadataEntity[];
 }) => {
   const relationFields = {};
 
@@ -201,7 +206,7 @@ const generateRelationField = <
 
   //TODO : temporary - continue ej/1278 branch (https://github.com/twentyhq/core-team-issues/issues/1278 issue) before removing this
   if (fieldMetadata.type === FieldMetadataType.MORPH_RELATION)
-    return relationField;
+    return relationFields;
 
   if (
     [InputTypeDefinitionKind.Create, InputTypeDefinitionKind.Update].includes(
@@ -221,8 +226,25 @@ const generateRelationField = <
         isRelationConnectField: true,
       },
     );
+    //TODO : temporary - continue ej/1278 branch (https://github.com/twentyhq/core-team-issues/issues/1278 issue) before removing this
 
-    // todo @guillim
+    // const objectMetadataTarget = objectMetadataCollection.find(
+    //   (objectMetadata) =>
+    //     objectMetadata.id === fieldMetadata.relationTargetObjectMetadataId,
+    // );
+
+    // if (!objectMetadataTarget) {
+    //   throw new Error(`Object Metadata Target not found`);
+    // }
+
+    // const fieldName =
+    //   fieldMetadata.type === FieldMetadataType.MORPH_RELATION
+    //     ? computeMorphRelationFieldName({
+    //         name: fieldMetadata.name,
+    //         targetObjectMetadataNameSingular: objectMetadataTarget.nameSingular,
+    //       })
+    //     : fieldMetadata.name;
+
     // @ts-expect-error legacy noImplicitAny
     relationFields[fieldMetadata.name] = {
       type: type,

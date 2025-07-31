@@ -183,6 +183,7 @@ export class TypeDefinitionsGenerator {
         objectMetadata,
         ObjectTypeDefinitionKind.Plain,
         options,
+        objectMetadataCollection,
       ),
     );
 
@@ -227,24 +228,28 @@ export class TypeDefinitionsGenerator {
             objectMetadata,
             kind: InputTypeDefinitionKind.Create,
             options,
+            objectMetadataCollection,
           }),
           // Input type for update
           this.inputTypeDefinitionFactory.create({
             objectMetadata: optionalExtendedObjectMetadata,
             kind: InputTypeDefinitionKind.Update,
             options,
+            objectMetadataCollection,
           }),
           // Filter input type
           this.inputTypeDefinitionFactory.create({
             objectMetadata: optionalExtendedObjectMetadata,
             kind: InputTypeDefinitionKind.Filter,
             options,
+            objectMetadataCollection,
           }),
           // OrderBy input type
           this.inputTypeDefinitionFactory.create({
             objectMetadata: optionalExtendedObjectMetadata,
             kind: InputTypeDefinitionKind.OrderBy,
             options,
+            objectMetadataCollection,
           }),
         ];
       })
