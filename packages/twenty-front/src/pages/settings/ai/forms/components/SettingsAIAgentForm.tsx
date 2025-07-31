@@ -33,10 +33,13 @@ const StyledErrorMessage = styled.div`
   margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
-interface SettingsAIAgentFormProps {
+type SettingsAIAgentFormProps = {
   formValues: SettingsAIAgentFormValues;
-  onFieldChange: (field: keyof SettingsAIAgentFormValues, value: any) => void;
-}
+  onFieldChange: (
+    field: keyof SettingsAIAgentFormValues,
+    value: SettingsAIAgentFormValues[keyof SettingsAIAgentFormValues],
+  ) => void;
+};
 
 export const SettingsAIAgentForm = ({
   formValues,
