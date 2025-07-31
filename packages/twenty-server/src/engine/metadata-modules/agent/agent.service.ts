@@ -7,6 +7,7 @@ import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
 import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label.util';
 
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
@@ -57,7 +58,7 @@ export class AgentService {
 
   async createOneAgentAndFirstThread(
     input: {
-      name: string;
+      name?: string;
       label: string;
       description?: string;
       prompt: string;
@@ -82,7 +83,7 @@ export class AgentService {
 
   async createOneAgent(
     input: {
-      name: string;
+      name?: string;
       label: string;
       description?: string;
       icon?: string;
@@ -96,6 +97,7 @@ export class AgentService {
   ) {
     const agent = this.agentRepository.create({
       ...input,
+      name: input.name || computeMetadataNameFromLabel(input.label),
       workspaceId,
       isCustom: input.isCustom ?? true,
     });
@@ -129,9 +131,16 @@ export class AgentService {
   ) {
     const agent = await this.findOneAgent(input.id, workspaceId);
 
+    let updatedName = input.name;
+
+    if (input.label) {
+      updatedName = computeMetadataNameFromLabel(input.label);
+    }
+
     const updatedAgent = await this.agentRepository.save({
       ...agent,
       ...input,
+      name: updatedName,
     });
 
     if (input.roleId === undefined) {

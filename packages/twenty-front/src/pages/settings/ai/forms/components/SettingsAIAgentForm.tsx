@@ -7,7 +7,9 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { isDefined } from 'twenty-shared/utils';
 import { useGetRolesQuery } from '~/generated-metadata/graphql';
+import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -42,7 +44,7 @@ const StyledErrorMessage = styled.div`
 `;
 
 export const SettingsAIAgentForm = () => {
-  const { control } = useFormContext();
+  const { control, setValue } = useFormContext();
   const { t } = useLingui();
 
   const modelOptions = useAiModelOptions();
@@ -55,6 +57,13 @@ export const SettingsAIAgentForm = () => {
     })) || [];
 
   const noModelsAvailable = modelOptions.length === 0;
+
+  const fillNameFromLabel = (label: string) => {
+    isDefined(label) &&
+      setValue('name', computeMetadataNameFromLabel(label), {
+        shouldDirty: true,
+      });
+  };
 
   return (
     <StyledInputsContainer>
@@ -78,7 +87,7 @@ export const SettingsAIAgentForm = () => {
 
           <StyledNameContainer>
             <Controller
-              name="name"
+              name="label"
               control={control}
               defaultValue=""
               render={({
@@ -86,13 +95,16 @@ export const SettingsAIAgentForm = () => {
                 formState: { errors },
               }) => (
                 <TextInput
-                  instanceId="agent-name-input"
+                  instanceId="agent-label-input"
                   placeholder={t`Enter agent name`}
                   value={value}
-                  onChange={onChange}
+                  onChange={(value) => {
+                    onChange(value);
+                    fillNameFromLabel(value);
+                  }}
                   error={
-                    errors.name?.message
-                      ? String(errors.name.message)
+                    errors.label?.message
+                      ? String(errors.label.message)
                       : undefined
                   }
                   noErrorHelper={true}
@@ -102,25 +114,6 @@ export const SettingsAIAgentForm = () => {
             />
           </StyledNameContainer>
         </StyledIconNameRow>
-
-        <Controller
-          name="label"
-          control={control}
-          defaultValue=""
-          render={({ field: { onChange, value }, formState: { errors } }) => (
-            <TextInput
-              instanceId="agent-label-input"
-              placeholder={t`Enter label`}
-              value={value}
-              onChange={onChange}
-              error={
-                errors.label?.message ? String(errors.label.message) : undefined
-              }
-              noErrorHelper={true}
-              fullWidth
-            />
-          )}
-        />
 
         <Controller
           name="description"

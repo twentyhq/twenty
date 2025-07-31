@@ -481,7 +481,7 @@ export type CreateAgentInput = {
   icon?: InputMaybe<Scalars['String']>;
   label: Scalars['String'];
   modelId: Scalars['String'];
-  name: Scalars['String'];
+  name?: InputMaybe<Scalars['String']>;
   prompt: Scalars['String'];
   responseFormat?: InputMaybe<Scalars['JSON']>;
   roleId?: InputMaybe<Scalars['UUID']>;

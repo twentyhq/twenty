@@ -9,9 +9,9 @@ import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 @InputType()
 export class CreateAgentInput {
   @IsString()
-  @IsNotEmpty()
-  @Field()
-  name: string;
+  @IsOptional()
+  @Field({ nullable: true })
+  name?: string;
 
   @IsString()
   @IsNotEmpty()

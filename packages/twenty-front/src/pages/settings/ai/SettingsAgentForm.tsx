@@ -147,7 +147,7 @@ export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
         variables: {
           input: {
             id: agent.id,
-            name: formData.name,
+            name: formData.name || '',
             label: formData.label,
             description: formData.description,
             icon: formData.icon,

@@ -54,7 +54,7 @@ export const SettingsAIAgentTableRow = ({
     >
       <StyledNameTableCell>
         <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        <StyledNameLabel title={agent.name}>{agent.name}</StyledNameLabel>
+        <StyledNameLabel title={agent.label}>{agent.label}</StyledNameLabel>
       </StyledNameTableCell>
       <TableCell>
         <Tag
