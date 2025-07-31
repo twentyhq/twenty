@@ -14,6 +14,7 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -36,7 +37,6 @@ export class CleanerWorkspaceService {
   private readonly inactiveDaysBeforeDelete: number;
   private readonly inactiveDaysBeforeWarn: number;
   private readonly maxNumberOfWorkspacesDeletedPerExecution: number;
-
   constructor(
     private readonly workspaceService: WorkspaceService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -122,8 +122,8 @@ export class CleanerWorkspaceService {
       locale: workspaceMember.locale,
     };
     const emailTemplate = WarnSuspendedWorkspaceEmail(emailData);
-    const html = await render(emailTemplate, { pretty: true });
-    const text = await render(emailTemplate, { plainText: true });
+    const html = render(emailTemplate, { pretty: true });
+    const text = render(emailTemplate, { plainText: true });
 
     i18n.activate(workspaceMember.locale);
 
@@ -198,8 +198,8 @@ export class CleanerWorkspaceService {
       locale: workspaceMember.locale,
     };
     const emailTemplate = CleanSuspendedWorkspaceEmail(emailData);
-    const html = await render(emailTemplate, { pretty: true });
-    const text = await render(emailTemplate, { plainText: true });
+    const html = render(emailTemplate, { pretty: true });
+    const text = render(emailTemplate, { plainText: true });
 
     this.emailService.send({
       to: workspaceMember.userEmail,
@@ -391,5 +391,64 @@ export class CleanerWorkspaceService {
     this.logger.log(
       `${dryRun ? 'DRY RUN - ' : ''}batchWarnOrCleanSuspendedWorkspaces done!`,
     );
+  }
+
+  async destroyBillingDeactivatedAndSoftDeletedWorkspaces(
+    workspaceIds: string[],
+    dryRun = false,
+  ): Promise<void> {
+    this.logger.log(
+      `${dryRun ? 'DRY RUN - ' : ''}destroyBillingDeactivatedAndSoftDeletedWorkspaces running...`,
+    );
+
+    const workspaces = await this.workspaceRepository.find({
+      where: {
+        id: In(workspaceIds),
+      },
+      withDeleted: true,
+    });
+
+    for (const workspace of workspaces) {
+      if (!isDefined(workspace.deletedAt)) {
+        this.logger.warn(
+          `${dryRun ? 'DRY RUN - ' : ''}Workspace ${workspace.id} is not soft deleted, skipping`,
+        );
+
+        continue;
+      }
+
+      if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+        const activeBillingSubscription =
+          await this.billingSubscriptionRepository.findOne({
+            where: {
+              workspaceId: workspace.id,
+              status: In([
+                SubscriptionStatus.Active,
+                SubscriptionStatus.Trialing,
+              ]),
+            },
+          });
+
+        if (isDefined(activeBillingSubscription)) {
+          this.logger.warn(
+            `${dryRun ? 'DRY RUN - ' : ''}Workspace ${workspace.id} has an active billing subscription, skipping`,
+          );
+
+          continue;
+        }
+      }
+
+      this.logger.log(
+        `${dryRun ? 'DRY RUN - ' : ''}Destroying workspace ${workspace.id}`,
+      );
+
+      if (!dryRun) {
+        await this.workspaceService.deleteWorkspace(workspace.id);
+      }
+
+      this.logger.log(
+        `${dryRun ? 'DRY RUN - ' : ''}Destroyed workspace ${workspace.id}`,
+      );
+    }
   }
 }

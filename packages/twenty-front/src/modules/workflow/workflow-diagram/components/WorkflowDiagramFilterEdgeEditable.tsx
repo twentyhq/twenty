@@ -16,13 +16,15 @@ import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workf
 import { useOpenWorkflowEditFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowEditFilterInCommandMenu';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import {
   WorkflowDiagramEdge,
   WorkflowDiagramEdgeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
-import { useTheme } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
@@ -54,8 +56,17 @@ const assertFilterEdgeDataOrThrow: (
   }
 };
 
-const StyledIconButtonGroup = styled(IconButtonGroup)`
+const StyledIconButtonGroup = styled(IconButtonGroup)<{ selected?: boolean }>`
   pointer-events: all;
+
+  ${({ selected, theme }) => {
+    if (!selected) return '';
+    const colors = getWorkflowDiagramNodeSelectedColors('default', theme);
+    return css`
+      background-color: ${colors.background};
+      border: 1px solid ${colors.borderColor};
+    `;
+  }}
 `;
 
 const StyledConfiguredFilterContainer = styled.div`
@@ -104,11 +115,18 @@ export const WorkflowDiagramFilterEdgeEditable = ({
     workflowInsertStepIdsComponentState,
   );
 
-  const isSelected =
-    workflowInsertStepIds.nextStepId === source &&
-    (workflowInsertStepIds.parentStepId === target ||
-      (isNonEmptyString(data.stepId) &&
-        workflowInsertStepIds.parentStepId === data.stepId));
+  const isEdgeSelected =
+    (workflowInsertStepIds.nextStepId === source &&
+      workflowInsertStepIds.parentStepId === target) ||
+    (isNonEmptyString(data.stepId) &&
+      workflowInsertStepIds.parentStepId === data.stepId);
+
+  const workflowSelectedNode = useRecoilComponentValueV2(
+    workflowSelectedNodeComponentState,
+  );
+
+  const isFilterNodeSelected =
+    isNonEmptyString(data.stepId) && workflowSelectedNode === data.stepId;
 
   const dropdownId = `${WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}-${source}-${target}`;
 
@@ -154,7 +172,7 @@ export const WorkflowDiagramFilterEdgeEditable = ({
         >
           <WorkflowDiagramEdgeV2VisibilityContainer shouldDisplay>
             <StyledConfiguredFilterContainer>
-              {hovered || isDropdownOpen || isSelected ? (
+              {hovered || isDropdownOpen || isEdgeSelected ? (
                 <StyledIconButtonGroup
                   className="nodrag nopan"
                   iconButtons={[
@@ -171,6 +189,7 @@ export const WorkflowDiagramFilterEdgeEditable = ({
                       },
                     },
                   ]}
+                  selected={isFilterNodeSelected}
                 />
               ) : (
                 <StyledIconButtonGroup
@@ -181,6 +200,7 @@ export const WorkflowDiagramFilterEdgeEditable = ({
                       onClick: handleFilterButtonClick,
                     },
                   ]}
+                  selected={isFilterNodeSelected}
                 />
               )}
             </StyledConfiguredFilterContainer>

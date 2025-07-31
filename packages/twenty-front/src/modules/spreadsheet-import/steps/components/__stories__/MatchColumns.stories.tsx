@@ -5,7 +5,7 @@ import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/comp
 import { SpreadSheetImportModalWrapper } from '@/spreadsheet-import/components/SpreadSheetImportModalWrapper';
 import { MatchColumnsStep } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
-import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
+import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
@@ -62,7 +62,9 @@ const mockData = [
 ];
 
 export const Default = () => (
-  <DialogManagerScope dialogComponentInstanceId="dialog-manager">
+  <DialogComponentInstanceContext.Provider
+    value={{ instanceId: 'dialog-manager' }}
+  >
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
       <SpreadSheetImportModalWrapper
         modalId="match-columns-step"
@@ -80,5 +82,5 @@ export const Default = () => (
         />
       </SpreadSheetImportModalWrapper>
     </ReactSpreadsheetImportContextProvider>
-  </DialogManagerScope>
+  </DialogComponentInstanceContext.Provider>
 );

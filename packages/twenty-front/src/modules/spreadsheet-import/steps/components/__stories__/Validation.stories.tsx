@@ -8,7 +8,7 @@ import {
 import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/components/ReactSpreadsheetImportContextProvider';
 import { SpreadSheetImportModalWrapper } from '@/spreadsheet-import/components/SpreadSheetImportModalWrapper';
 import { ValidationStep } from '@/spreadsheet-import/steps/components/ValidationStep/ValidationStep';
-import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
+import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { RecoilRoot } from 'recoil';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -43,7 +43,9 @@ export default meta;
 const file = new File([''], 'file.csv');
 
 export const Default = () => (
-  <DialogManagerScope dialogComponentInstanceId="dialog-manager">
+  <DialogComponentInstanceContext.Provider
+    value={{ instanceId: 'dialog-manager' }}
+  >
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
       <SpreadSheetImportModalWrapper
         modalId="validation-step"
@@ -58,5 +60,5 @@ export const Default = () => (
         />
       </SpreadSheetImportModalWrapper>
     </ReactSpreadsheetImportContextProvider>
-  </DialogManagerScope>
+  </DialogComponentInstanceContext.Provider>
 );

@@ -3,6 +3,7 @@ import { NODE_BORDER_WIDTH } from '@/workflow/workflow-diagram/constants/NodeBor
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
+import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Position } from '@xyflow/react';
@@ -106,32 +107,11 @@ const StyledStepNodeInnerContainer = styled.div<{
     :is(.workflow-node-container, .workflow-node-container:hover)
     & {
     ${({ theme, variant }) => {
-      switch (variant) {
-        case 'running': {
-          return css`
-            background: ${theme.adaptiveColors.yellow1};
-            border-color: ${theme.adaptiveColors.yellow4};
-          `;
-        }
-        case 'success': {
-          return css`
-            background: ${theme.adaptiveColors.turquoise1};
-            border-color: ${theme.adaptiveColors.turquoise4};
-          `;
-        }
-        case 'failure': {
-          return css`
-            background: ${theme.background.danger};
-            border-color: ${theme.color.red};
-          `;
-        }
-        default: {
-          return css`
-            background: ${theme.adaptiveColors.blue1};
-            border-color: ${theme.color.blue};
-          `;
-        }
-      }
+      const colors = getWorkflowDiagramNodeSelectedColors(variant, theme);
+      return css`
+        background: ${colors.background};
+        border-color: ${colors.borderColor};
+      `;
     }}
   }
 `;

@@ -23,6 +23,7 @@ type MapFieldMetadataToGraphQLQueryArgs = {
   relationRecordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
   objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
+  isFieldsPermissionsEnabled?: boolean;
 };
 // TODO: change ObjectMetadataItems mock before refactoring with relation computed field
 export const mapFieldMetadataToGraphQLQuery = ({
@@ -32,6 +33,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
   relationRecordGqlFields,
   computeReferences = false,
   objectPermissionsByObjectMetadataId,
+  isFieldsPermissionsEnabled,
 }: MapFieldMetadataToGraphQLQueryArgs): string => {
   const fieldType = fieldMetadata.type;
 
@@ -81,6 +83,7 @@ ${mapObjectMetadataToGraphQLQuery({
   computeReferences: computeReferences,
   isRootLevel: false,
   objectPermissionsByObjectMetadataId,
+  isFieldsPermissionsEnabled,
 })}`;
   }
 
@@ -117,6 +120,7 @@ ${mapObjectMetadataToGraphQLQuery({
       computeReferences,
       isRootLevel: false,
       objectPermissionsByObjectMetadataId,
+      isFieldsPermissionsEnabled,
     })}
   }
 }`;

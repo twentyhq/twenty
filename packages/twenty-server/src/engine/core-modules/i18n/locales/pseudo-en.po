@@ -2156,6 +2156,11 @@ msgstr ""
 msgid "Start Date"
 msgstr ""
 
+#. js-lingui-id: amGzX5
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Start of the week"
+msgstr ""
+
 #. js-lingui-id: RS0o7b
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "State"
@@ -2471,12 +2476,14 @@ msgstr ""
 
 #. js-lingui-id: NbABJb
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/validate-flat-field-metadata-name-availability.validator.ts
 msgid "This name is not available as it is already used by another field"
 msgstr ""
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/validate-flat-field-metadata-name-availability.validator.ts
 msgid "This name is not available."
 msgstr ""
 
@@ -2620,6 +2627,11 @@ msgstr ""
 #. js-lingui-id: 43zCwQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred date format"
+msgstr ""
+
+#. js-lingui-id: Uce+A8
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "User's preferred start day of the week"
 msgstr ""
 
 #. js-lingui-id: kJuoKm

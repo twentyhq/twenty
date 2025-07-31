@@ -12,4 +12,5 @@ export const RESOLVER_METHOD_NAMES = {
   RESTORE_ONE: 'restoreOne',
   DESTROY_MANY: 'destroyMany',
   DESTROY_ONE: 'destroyOne',
+  MERGE_MANY: 'mergeMany',
 } as const;

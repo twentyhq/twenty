@@ -43,5 +43,5 @@ export class SignUpInput {
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
-  verifyEmailNextPath?: string;
+  verifyEmailRedirectPath?: string;
 }
