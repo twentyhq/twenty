@@ -201,7 +201,7 @@ const generateRelationField = <
 
   //TODO : temporary - continue ej/1278 branch (https://github.com/twentyhq/core-team-issues/issues/1278 issue) before removing this
   if (fieldMetadata.type === FieldMetadataType.MORPH_RELATION)
-    return relationField;
+    return relationFields;
 
   if (
     [InputTypeDefinitionKind.Create, InputTypeDefinitionKind.Update].includes(
