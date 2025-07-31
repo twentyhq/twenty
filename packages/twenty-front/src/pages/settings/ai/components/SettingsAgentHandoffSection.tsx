@@ -1,7 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -66,16 +64,13 @@ const StyledFormActions = styled.div`
   justify-content: flex-end;
 `;
 
-interface SettingsAgentHandoffSectionProps {
-  agentId: string;
-}
-
 export const SettingsAgentHandoffSection = ({
   agentId,
-}: SettingsAgentHandoffSectionProps) => {
+}: {
+  agentId: string;
+}) => {
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const [isAddingHandoff, setIsAddingHandoff] = useState(false);
   const [selectedToAgentId, setSelectedToAgentId] = useState('');
@@ -149,11 +144,6 @@ export const SettingsAgentHandoffSection = ({
         message: t`Failed to remove handoff`,
       });
     }
-  };
-
-  const getAgentLabel = (agentId: string) => {
-    const agent = availableAgents.find((a) => a.id === agentId);
-    return agent?.label || 'Unknown Agent';
   };
 
   return (
