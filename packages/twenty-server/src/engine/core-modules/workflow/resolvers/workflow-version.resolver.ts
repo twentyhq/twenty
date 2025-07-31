@@ -13,7 +13,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { WorkflowVersionWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version/workflow-version.workspace-service';
-import { UpdateDraftWorkflowVersionPositionsInput } from 'src/engine/core-modules/workflow/dtos/update-draft-workflow-version-positions-input.dto';
+import { UpdateWorkflowVersionPositionsInput } from 'src/engine/core-modules/workflow/dtos/update-draft-workflow-version-positions-input.dto';
 
 @Resolver()
 @UsePipes(ResolverValidationPipe)
@@ -52,18 +52,16 @@ export class WorkflowVersionResolver {
   }
 
   @Mutation(() => Boolean)
-  async updateDraftWorkflowVersionPositions(
+  async updateWorkflowVersionPositions(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('input')
-    { workflowVersionId, positions }: UpdateDraftWorkflowVersionPositionsInput,
+    { workflowVersionId, positions }: UpdateWorkflowVersionPositionsInput,
   ) {
-    await this.workflowVersionWorkspaceService.updateDraftWorkflowVersionPositions(
-      {
-        workspaceId,
-        workflowVersionId,
-        positions,
-      },
-    );
+    await this.workflowVersionWorkspaceService.updateWorkflowVersionPositions({
+      workspaceId,
+      workflowVersionId,
+      positions,
+    });
 
     return true;
   }

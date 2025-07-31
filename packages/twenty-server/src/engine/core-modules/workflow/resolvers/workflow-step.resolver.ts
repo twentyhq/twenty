@@ -86,13 +86,11 @@ export class WorkflowStepResolver {
     @Args('input')
     { stepId, workflowVersionId }: DeleteWorkflowVersionStepInput,
   ): Promise<WorkflowVersionStepUpdatesDTO> {
-    return await this.workflowVersionStepWorkspaceService.deleteWorkflowVersionStep(
-      {
-        workspaceId,
-        workflowVersionId,
-        stepIdToDelete: stepId,
-      },
-    );
+    return this.workflowVersionStepWorkspaceService.deleteWorkflowVersionStep({
+      workspaceId,
+      workflowVersionId,
+      stepIdToDelete: stepId,
+    });
   }
 
   @Mutation(() => Boolean)
@@ -132,14 +130,12 @@ export class WorkflowStepResolver {
     @Args('input')
     { source, target, workflowVersionId }: CreateWorkflowVersionEdgeInput,
   ): Promise<WorkflowVersionStepUpdatesDTO> {
-    return await this.workflowVersionStepWorkspaceService.createWorkflowVersionEdge(
-      {
-        source,
-        target,
-        workflowVersionId,
-        workspaceId,
-      },
-    );
+    return this.workflowVersionStepWorkspaceService.createWorkflowVersionEdge({
+      source,
+      target,
+      workflowVersionId,
+      workspaceId,
+    });
   }
 
   @Mutation(() => WorkflowVersionStepUpdatesDTO)
@@ -148,13 +144,11 @@ export class WorkflowStepResolver {
     @Args('input')
     { source, target, workflowVersionId }: CreateWorkflowVersionEdgeInput,
   ): Promise<WorkflowVersionStepUpdatesDTO> {
-    return await this.workflowVersionStepWorkspaceService.deleteWorkflowVersionEdge(
-      {
-        source,
-        target,
-        workflowVersionId,
-        workspaceId,
-      },
-    );
+    return this.workflowVersionStepWorkspaceService.deleteWorkflowVersionEdge({
+      source,
+      target,
+      workflowVersionId,
+      workspaceId,
+    });
   }
 }

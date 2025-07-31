@@ -4,7 +4,7 @@ import { WorkflowStepPositionUpdateInput } from 'src/engine/core-modules/workflo
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
-export class UpdateDraftWorkflowVersionPositionsInput {
+export class UpdateWorkflowVersionPositionsInput {
   @Field(() => UUIDScalarType, {
     description: 'Workflow version ID',
     nullable: false,

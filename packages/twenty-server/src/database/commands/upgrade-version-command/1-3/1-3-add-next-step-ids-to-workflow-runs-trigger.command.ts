@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -29,54 +29,55 @@ export class AddNextStepIdsToWorkflowRunsTrigger extends ActiveOrSuspendedWorksp
   }
 
   override async runOnWorkspace({
-    workspaceId: _,
+    workspaceId,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const activeWorkspaces = await this.workspaceRepository.find({
-      where: {
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      },
-    });
-
     const mainDataSource =
       await this.workspaceDataSourceService.connectToMainDataSource();
 
-    for (const activeWorkspace of activeWorkspaces) {
-      const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
-      const workflowRuns = await mainDataSource.query(
-        `SELECT id, state FROM ${schemaName}."workflowRun"`,
-      );
+    const schemaName = getWorkspaceSchemaName(workspaceId);
 
-      for (const workflowRun of workflowRuns) {
-        try {
-          const rootSteps = this.getRootSteps(
-            workflowRun.state.flow.steps || [],
-          );
+    const workflowRuns = await mainDataSource.query(
+      `SELECT id, state FROM ${schemaName}."workflowRun"`,
+    );
 
-          const nextStepIds = rootSteps.map((step) => step.id);
+    let updatedWorkflowRunCount = 0;
 
-          const updatedState = {
-            ...workflowRun.state,
-            flow: {
-              ...workflowRun.state.flow,
-              trigger: {
-                ...workflowRun.state.flow.trigger,
-                nextStepIds,
-              },
-            },
-          };
-
-          await mainDataSource.query(
-            `UPDATE ${schemaName}."workflowRun" SET state = '${JSON.stringify(updatedState)}'::jsonb`,
-          );
-        } catch (error) {
-          this.logger.error(
-            `Error while adding nextStepIds to workflowRun state '${workflowRun.id}'`,
-            error,
-          );
+    for (const workflowRun of workflowRuns) {
+      try {
+        if (isDefined(workflowRun.state.flow.trigger.nextStepIds)) {
+          continue;
         }
+
+        const rootSteps = this.getRootSteps(workflowRun.state.flow.steps || []);
+
+        const nextStepIds = rootSteps.map((step) => step.id);
+
+        const updatedState = {
+          ...workflowRun.state,
+          flow: {
+            ...workflowRun.state.flow,
+            trigger: {
+              ...workflowRun.state.flow.trigger,
+              nextStepIds,
+            },
+          },
+        };
+
+        await mainDataSource.query(
+          `UPDATE ${schemaName}."workflowRun" SET state = '${JSON.stringify(updatedState)}'::jsonb`,
+        );
+
+        updatedWorkflowRunCount += 1;
+      } catch (error) {
+        this.logger.error(
+          `Error while adding nextStepIds to workflowRun state '${workflowRun.id}'`,
+          error,
+        );
       }
-      this.logger.log(`${workflowRuns.length} triggers updated`);
     }
+    this.logger.log(
+      `${updatedWorkflowRunCount}/${workflowRuns.length} triggers updated`,
+    );
   }
 
   private getRootSteps(steps: WorkflowAction[]): WorkflowAction[] {
