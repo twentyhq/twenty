@@ -12,7 +12,7 @@ import { useFindManyAgentsQuery } from '~/generated-metadata/graphql';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 import { WorkflowOutputSchemaBuilder } from './WorkflowOutputSchemaBuilder';
 
-const StyledInfoMessage = styled.div`
+const StyledErrorMessage = styled.div`
   color: ${({ theme }) => theme.font.color.danger};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.regular};
@@ -113,9 +113,9 @@ export const WorkflowEditActionAiAgent = ({
           />
 
           {noCustomAgentsAvailable && (
-            <StyledInfoMessage>
+            <StyledErrorMessage>
               {t`Please create agents in the AI settings to use in workflows.`}
-            </StyledInfoMessage>
+            </StyledErrorMessage>
           )}
         </div>
         <WorkflowOutputSchemaBuilder
