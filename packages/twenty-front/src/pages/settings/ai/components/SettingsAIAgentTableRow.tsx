@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { Tag } from 'twenty-ui/components';
-import { useIcons } from 'twenty-ui/display';
+import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
 import { Agent } from '~/generated-metadata/graphql';
 
 export type SettingsAIAgentTableRowProps = {
@@ -23,14 +23,6 @@ const StyledNameTableCell = styled(TableCell)`
   gap: ${({ theme }) => theme.spacing(2)};
   min-width: 0;
   overflow: hidden;
-`;
-
-const StyledNameLabel = styled.div`
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  min-width: 0;
-  flex: 1;
 `;
 
 const StyledActionTableCell = styled(TableCell)`
@@ -54,7 +46,7 @@ export const SettingsAIAgentTableRow = ({
     >
       <StyledNameTableCell>
         <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        <StyledNameLabel title={agent.label}>{agent.label}</StyledNameLabel>
+        <OverflowingTextWithTooltip text={agent.label} />
       </StyledNameTableCell>
       <TableCell>
         <Tag
