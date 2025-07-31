@@ -2,7 +2,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { isDefined } from 'twenty-shared/utils';
 
-export const getFielMetadataEntityFromObjectMetadataMaps = ({
+export const getFieldMetadataEntityFromObjectMetadataMaps = ({
   fieldMetadataId,
   objectMetadataId,
   objectMetadataMaps,

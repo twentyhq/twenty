@@ -17,7 +17,7 @@ import { fromCreateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-mod
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-maps-to-flat-object-metadatas.util';
 import { mergeTwoFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/merge-two-flat-object-metadatas.util';
-import { getFielMetadataEntityFromObjectMetadataMaps } from 'src/engine/metadata-modules/utils/get-field-metadata-by-id-from-object-metadata-maps.util';
+import { getFieldMetadataEntityFromObjectMetadataMaps } from 'src/engine/metadata-modules/utils/get-field-metadata-by-id-from-object-metadata-maps.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
@@ -148,7 +148,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
               flatFieldMetadata: { id: fieldMetadataId },
               parentFlatObjectMetadata: { id: objectMetadataId },
             }) =>
-              getFielMetadataEntityFromObjectMetadataMaps({
+              getFieldMetadataEntityFromObjectMetadataMaps({
                 fieldMetadataId,
                 objectMetadataId,
                 objectMetadataMaps: recomputedCache.objectMetadataMaps,
