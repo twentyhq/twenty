@@ -61,9 +61,13 @@ export const generateFields = <
   for (const fieldMetadata of objectMetadata.fields) {
     let generatedField;
 
-    if (isFieldMetadataRelationOrMorphRelation(fieldMetadata)) {
+    const isRelation = isFieldMetadataRelationOrMorphRelation(fieldMetadata);
+
+    if (isRelation) {
       generatedField = generateRelationField({
-        fieldMetadata,
+        fieldMetadata: fieldMetadata as FieldMetadataEntity<
+          FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+        >,
         kind,
         options,
         typeFactory,
