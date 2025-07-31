@@ -12,6 +12,7 @@ import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-flat-field-metadata-name-availability.validator';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { mergeTwoFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/merge-two-flat-object-metadatas.util';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
@@ -49,14 +50,18 @@ export class FlatFieldMetadataValidatorService {
     FailedFlatFieldMetadataValidationExceptions[]
   > {
     const errors: FailedFlatFieldMetadataValidationExceptions[] = [];
-    const allFlatObjectMetadata = [
-      ...existingFlatObjectMetadatas,
-      ...(othersFlatObjectMetadataToValidate ?? []),
-    ];
+
+    const allFlatObjectMetadata = isDefined(othersFlatObjectMetadataToValidate)
+      ? mergeTwoFlatObjectMetadatas({
+          destFlatObjectMetadatas: existingFlatObjectMetadatas,
+          toMergeFlatObjectMetadatas: othersFlatObjectMetadataToValidate,
+        })
+      : existingFlatObjectMetadatas;
+
     const parentFlatObjectMetadata = allFlatObjectMetadata.find(
       (existingFlatObjectMetadata) =>
         existingFlatObjectMetadata.id ===
-        flatFieldMetadataToValidate.objectMetadataId, // Question: Should we comparing unique identifier here ?
+        flatFieldMetadataToValidate.objectMetadataId,
     );
 
     if (!isDefined(parentFlatObjectMetadata)) {
