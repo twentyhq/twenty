@@ -11,16 +11,16 @@ type SettingsObjectInactiveMenuDropDownProps = {
   isCustomObject: boolean;
   onActivate: () => void;
   onDelete: () => void;
-  scopeKey: string;
+  objectMetadataItemNamePlural: string;
 };
 
 export const SettingsObjectInactiveMenuDropDown = ({
   onActivate,
-  scopeKey,
+  objectMetadataItemNamePlural,
   onDelete,
   isCustomObject,
 }: SettingsObjectInactiveMenuDropDownProps) => {
-  const dropdownId = `${scopeKey}-settings-object-inactive-menu-dropdown`;
+  const dropdownId = `${objectMetadataItemNamePlural}-settings-object-inactive-menu-dropdown`;
 
   const { closeDropdown } = useCloseDropdown();
 

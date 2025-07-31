@@ -1,4 +1,5 @@
 import { ActionLink } from '@/action-menu/actions/components/ActionLink';
+import { ActionOpenSidePanelPage } from '@/action-menu/actions/components/ActionOpenSidePanelPage';
 import { DeleteMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction';
 import { DestroyMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction';
 import { ExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/ExportMultipleRecordsAction';
@@ -24,6 +25,7 @@ import { ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { BACKEND_BATCH_REQUEST_MAX_COUNT } from '@/object-record/constants/BackendBatchRequestMaxCount';
@@ -31,8 +33,11 @@ import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { MUTATION_MAX_MERGE_RECORDS } from 'twenty-shared/constants';
+
 import { isDefined } from 'twenty-shared/utils';
 import {
+  IconArrowMerge,
   IconBuildingSkyscraper,
   IconCheckbox,
   IconChevronDown,
@@ -53,6 +58,7 @@ import {
   IconTrashX,
   IconUser,
 } from 'twenty-ui/display';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
   | NoSelectionRecordActionKeys
@@ -70,7 +76,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     isPinned: true,
     Icon: IconPlus,
     shouldBeRegistered: ({ objectPermissions, isSoftDeleteFilterActive }) =>
-      objectPermissions.canUpdateObjectRecords && !isSoftDeleteFilterActive,
+      (objectPermissions.canUpdateObjectRecords && !isSoftDeleteFilterActive) ??
+      false,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     component: <CreateNewTableRecordNoSelectionRecordAction />,
   },
@@ -169,6 +176,36 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isDefined(selectedRecord) && !selectedRecord.isRemote,
     availableOn: [ActionViewType.SHOW_PAGE],
     component: <ExportSingleRecordAction />,
+    requiredPermissionFlag: PermissionFlagType.EXPORT_CSV,
+  },
+  [MultipleRecordsActionKeys.MERGE]: {
+    type: ActionType.Standard,
+    scope: ActionScope.RecordSelection,
+    key: MultipleRecordsActionKeys.MERGE,
+    label: msg`Merge records`,
+    shortLabel: msg`Merge`,
+    position: 5,
+    Icon: IconArrowMerge,
+    accent: 'default',
+    isPinned: false,
+    shouldBeRegistered: ({
+      objectMetadataItem,
+      numberOfSelectedRecords,
+      objectPermissions,
+    }) =>
+      isDefined(objectMetadataItem?.duplicateCriteria) &&
+      isDefined(numberOfSelectedRecords) &&
+      Boolean(objectPermissions.canUpdateObjectRecords) &&
+      Boolean(objectPermissions.canDestroyObjectRecords) &&
+      numberOfSelectedRecords <= MUTATION_MAX_MERGE_RECORDS,
+    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
+    component: (
+      <ActionOpenSidePanelPage
+        page={CommandMenuPages.MergeRecords}
+        pageTitle={msg`Merge records`}
+        pageIcon={IconArrowMerge}
+      />
+    ),
   },
   [MultipleRecordsActionKeys.EXPORT]: {
     type: ActionType.Standard,
@@ -176,13 +213,14 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: MultipleRecordsActionKeys.EXPORT,
     label: msg`Export records`,
     shortLabel: msg`Export`,
-    position: 5,
+    position: 6,
     Icon: IconFileExport,
     accent: 'default',
     isPinned: false,
     shouldBeRegistered: () => true,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     component: <ExportMultipleRecordsAction />,
+    requiredPermissionFlag: PermissionFlagType.EXPORT_CSV,
   },
   [NoSelectionRecordActionKeys.IMPORT_RECORDS]: {
     type: ActionType.Standard,
@@ -190,7 +228,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.IMPORT_RECORDS,
     label: msg`Import records`,
     shortLabel: msg`Import`,
-    position: 6,
+    position: 7,
     Icon: IconFileImport,
     accent: 'default',
     isPinned: false,
@@ -198,6 +236,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       !isSoftDeleteFilterActive,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     component: <ImportRecordsNoSelectionRecordAction />,
+    requiredPermissionFlag: PermissionFlagType.IMPORT_CSV,
   },
   [NoSelectionRecordActionKeys.EXPORT_VIEW]: {
     type: ActionType.Standard,
@@ -205,13 +244,14 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.EXPORT_VIEW,
     label: msg`Export view`,
     shortLabel: msg`Export`,
-    position: 7,
+    position: 8,
     Icon: IconFileExport,
     accent: 'default',
     isPinned: false,
     shouldBeRegistered: () => true,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     component: <ExportMultipleRecordsAction />,
+    requiredPermissionFlag: PermissionFlagType.EXPORT_CSV,
   },
   [SingleRecordActionKeys.DELETE]: {
     type: ActionType.Standard,
@@ -219,7 +259,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: SingleRecordActionKeys.DELETE,
     label: msg`Delete`,
     shortLabel: msg`Delete`,
-    position: 8,
+    position: 9,
     Icon: IconTrash,
     accent: 'default',
     isPinned: true,
@@ -228,11 +268,12 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isSoftDeleteFilterActive,
       objectPermissions,
     }) =>
-      isDefined(selectedRecord) &&
-      !selectedRecord.isRemote &&
-      !isSoftDeleteFilterActive &&
-      objectPermissions.canSoftDeleteObjectRecords &&
-      !isDefined(selectedRecord?.deletedAt),
+      (isDefined(selectedRecord) &&
+        !selectedRecord.isRemote &&
+        !isSoftDeleteFilterActive &&
+        objectPermissions.canSoftDeleteObjectRecords &&
+        !isDefined(selectedRecord?.deletedAt)) ??
+      false,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
@@ -245,7 +286,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: MultipleRecordsActionKeys.DELETE,
     label: msg`Delete records`,
     shortLabel: msg`Delete`,
-    position: 9,
+    position: 10,
     Icon: IconTrash,
     accent: 'default',
     isPinned: true,
@@ -255,11 +296,12 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isSoftDeleteFilterActive,
       numberOfSelectedRecords,
     }) =>
-      objectPermissions.canSoftDeleteObjectRecords &&
-      !isRemote &&
-      !isSoftDeleteFilterActive &&
-      isDefined(numberOfSelectedRecords) &&
-      numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT,
+      (objectPermissions.canSoftDeleteObjectRecords &&
+        !isRemote &&
+        !isSoftDeleteFilterActive &&
+        isDefined(numberOfSelectedRecords) &&
+        numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT) ??
+      false,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     component: <DeleteMultipleRecordsAction />,
   },
@@ -269,7 +311,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.SEE_DELETED_RECORDS,
     label: msg`See deleted records`,
     shortLabel: msg`Deleted records`,
-    position: 10,
+    position: 11,
     Icon: IconRotate2,
     accent: 'default',
     isPinned: false,
@@ -284,7 +326,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.CREATE_NEW_VIEW,
     label: msg`Create View`,
     shortLabel: msg`Create View`,
-    position: 11,
+    position: 12,
     Icon: IconLayout,
     accent: 'default',
     isPinned: false,
@@ -299,7 +341,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS,
     label: msg`Hide deleted records`,
     shortLabel: msg`Hide deleted`,
-    position: 12,
+    position: 13,
     Icon: IconEyeOff,
     accent: 'default',
     isPinned: false,
@@ -314,14 +356,15 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: SingleRecordActionKeys.DESTROY,
     label: msg`Permanently destroy record`,
     shortLabel: msg`Destroy`,
-    position: 13,
+    position: 14,
     Icon: IconTrashX,
     accent: 'danger',
     isPinned: true,
     shouldBeRegistered: ({ selectedRecord, objectPermissions, isRemote }) =>
-      objectPermissions.canDestroyObjectRecords &&
-      !isRemote &&
-      isDefined(selectedRecord?.deletedAt),
+      (objectPermissions.canDestroyObjectRecords &&
+        !isRemote &&
+        isDefined(selectedRecord?.deletedAt)) ??
+      false,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
@@ -333,7 +376,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     scope: ActionScope.RecordSelection,
     key: SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
     label: msg`Navigate to previous record`,
-    position: 14,
+    position: 15,
     isPinned: true,
     Icon: IconChevronUp,
     shouldBeRegistered: ({ isInRightDrawer }) => !isInRightDrawer,
@@ -345,7 +388,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     scope: ActionScope.RecordSelection,
     key: SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
     label: msg`Navigate to next record`,
-    position: 15,
+    position: 16,
     isPinned: true,
     Icon: IconChevronDown,
     shouldBeRegistered: ({ isInRightDrawer }) => !isInRightDrawer,
@@ -358,7 +401,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: MultipleRecordsActionKeys.DESTROY,
     label: msg`Permanently destroy records`,
     shortLabel: msg`Destroy`,
-    position: 16,
+    position: 17,
     Icon: IconTrashX,
     accent: 'danger',
     isPinned: true,
@@ -368,12 +411,13 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isSoftDeleteFilterActive,
       numberOfSelectedRecords,
     }) =>
-      objectPermissions.canDestroyObjectRecords &&
-      !isRemote &&
-      isDefined(isSoftDeleteFilterActive) &&
-      isSoftDeleteFilterActive &&
-      isDefined(numberOfSelectedRecords) &&
-      numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT,
+      (objectPermissions.canDestroyObjectRecords &&
+        !isRemote &&
+        isDefined(isSoftDeleteFilterActive) &&
+        isSoftDeleteFilterActive &&
+        isDefined(numberOfSelectedRecords) &&
+        numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT) ??
+      false,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     component: <DestroyMultipleRecordsAction />,
   },
@@ -383,7 +427,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: SingleRecordActionKeys.RESTORE,
     label: msg`Restore record`,
     shortLabel: msg`Restore`,
-    position: 17,
+    position: 18,
     Icon: IconRefresh,
     accent: 'default',
     isPinned: true,
@@ -394,11 +438,12 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isShowPage,
       isSoftDeleteFilterActive,
     }) =>
-      !isRemote &&
-      isDefined(selectedRecord?.deletedAt) &&
-      objectPermissions.canSoftDeleteObjectRecords &&
-      ((isDefined(isShowPage) && isShowPage) ||
-        (isDefined(isSoftDeleteFilterActive) && isSoftDeleteFilterActive)),
+      (!isRemote &&
+        isDefined(selectedRecord?.deletedAt) &&
+        objectPermissions.canSoftDeleteObjectRecords &&
+        ((isDefined(isShowPage) && isShowPage) ||
+          (isDefined(isSoftDeleteFilterActive) && isSoftDeleteFilterActive))) ??
+      false,
     availableOn: [
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -411,7 +456,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: MultipleRecordsActionKeys.RESTORE,
     label: msg`Restore records`,
     shortLabel: msg`Restore`,
-    position: 18,
+    position: 19,
     Icon: IconRefresh,
     accent: 'default',
     isPinned: true,
@@ -421,12 +466,13 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isSoftDeleteFilterActive,
       numberOfSelectedRecords,
     }) =>
-      objectPermissions.canSoftDeleteObjectRecords &&
-      !isRemote &&
-      isDefined(isSoftDeleteFilterActive) &&
-      isSoftDeleteFilterActive &&
-      isDefined(numberOfSelectedRecords) &&
-      numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT,
+      (objectPermissions.canSoftDeleteObjectRecords &&
+        !isRemote &&
+        isDefined(isSoftDeleteFilterActive) &&
+        isSoftDeleteFilterActive &&
+        isDefined(numberOfSelectedRecords) &&
+        numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT) ??
+      false,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     component: <RestoreMultipleRecordsAction />,
   },
@@ -436,7 +482,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_WORKFLOWS,
     label: msg`Go to workflows`,
     shortLabel: msg`See workflows`,
-    position: 19,
+    position: 20,
     Icon: IconSettingsAutomation,
     accent: 'default',
     isPinned: false,
@@ -468,7 +514,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_PEOPLE,
     label: msg`Go to People`,
     shortLabel: msg`People`,
-    position: 20,
+    position: 21,
     Icon: IconUser,
     isPinned: false,
     availableOn: [
@@ -499,7 +545,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_COMPANIES,
     label: msg`Go to Companies`,
     shortLabel: msg`Companies`,
-    position: 21,
+    position: 22,
     Icon: IconBuildingSkyscraper,
     isPinned: false,
     availableOn: [
@@ -530,7 +576,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES,
     label: msg`Go to Opportunities`,
     shortLabel: msg`Opportunities`,
-    position: 22,
+    position: 23,
     Icon: IconTargetArrow,
     isPinned: false,
     availableOn: [
@@ -563,7 +609,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_SETTINGS,
     label: msg`Go to Settings`,
     shortLabel: msg`Settings`,
-    position: 23,
+    position: 24,
     Icon: IconSettings,
     isPinned: false,
     availableOn: [
@@ -589,7 +635,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_TASKS,
     label: msg`Go to Tasks`,
     shortLabel: msg`Tasks`,
-    position: 24,
+    position: 25,
     Icon: IconCheckbox,
     isPinned: false,
     availableOn: [
@@ -620,7 +666,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_NOTES,
     label: msg`Go to Notes`,
     shortLabel: msg`Notes`,
-    position: 25,
+    position: 26,
     Icon: IconCheckbox,
     isPinned: false,
     availableOn: [

@@ -15,7 +15,7 @@ export const EXCHANGE_AUTHORIZATION_CODE = gql`
         token
         expiresAt
       }
-      accessToken {
+      accessOrWorkspaceAgnosticToken {
         token
         expiresAt
       }
@@ -31,7 +31,7 @@ export const RENEW_TOKEN = gql`
   mutation RenewToken($appToken: String!) {
     renewToken(appToken: $appToken) {
       tokens {
-        accessToken {
+        accessOrWorkspaceAgnosticToken {
           token
           expiresAt
         }

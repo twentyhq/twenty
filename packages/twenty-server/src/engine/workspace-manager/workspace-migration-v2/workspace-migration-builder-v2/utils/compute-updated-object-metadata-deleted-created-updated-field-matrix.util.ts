@@ -1,16 +1,14 @@
-import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
-import {
-  FlatObjectMetadata,
-  FlatObjectMetadataWithoutFields,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
-import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
+import { FromTo } from 'twenty-shared/types';
+
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   CustomDeletedCreatedUpdatedMatrix,
   deletedCreatedUpdatedMatrixDispatcher,
 } from 'src/engine/workspace-manager/workspace-migration-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 
 export type UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix = {
-  flatObjectMetadata: FlatObjectMetadataWithoutFields;
+  flatObjectMetadata: FlatObjectMetadata;
 } & CustomDeletedCreatedUpdatedMatrix<'fieldMetadata', FlatFieldMetadata>;
 
 export const computeUpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix = (

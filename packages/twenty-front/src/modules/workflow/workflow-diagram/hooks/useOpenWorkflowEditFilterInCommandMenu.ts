@@ -47,7 +47,7 @@ export const useOpenWorkflowEditFilterInCommandMenu = () => {
         ...diagram,
         nodes: diagram.nodes.map((node) => ({
           ...node,
-          selected: false,
+          selected: node.id === stepId,
         })),
       };
     });

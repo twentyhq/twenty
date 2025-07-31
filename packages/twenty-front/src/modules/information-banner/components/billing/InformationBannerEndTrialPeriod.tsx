@@ -1,6 +1,6 @@
 import { useEndSubscriptionTrialPeriod } from '@/billing/hooks/useEndSubscriptionTrialPeriod';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
-import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useLingui } from '@lingui/react/macro';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
@@ -9,7 +9,7 @@ export const InformationBannerEndTrialPeriod = () => {
   const { t } = useLingui();
 
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToEndTrialPeriod } =
-    useSettingsPermissionMap();
+    usePermissionFlagMap();
 
   return (
     <InformationBanner

@@ -46,7 +46,7 @@ export class EmailVerificationService {
       | WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType
       | undefined,
     locale: keyof typeof APP_LOCALES,
-    verifyEmailNextPath?: string,
+    verifyEmailRedirectPath?: string,
   ) {
     if (!this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       return { success: false };
@@ -60,8 +60,8 @@ export class EmailVerificationService {
       searchParams: {
         emailVerificationToken,
         email,
-        ...(isDefined(verifyEmailNextPath)
-          ? { nextPath: verifyEmailNextPath }
+        ...(isDefined(verifyEmailRedirectPath)
+          ? { nextPath: verifyEmailRedirectPath }
           : {}),
       },
     };
@@ -79,13 +79,12 @@ export class EmailVerificationService {
 
     const emailTemplate = SendEmailVerificationLinkEmail(emailData);
 
-    const html = await render(emailTemplate);
-    const text = await render(emailTemplate, {
+    const html = render(emailTemplate);
+    const text = render(emailTemplate, {
       plainText: true,
     });
 
     i18n.activate(locale);
-
     await this.emailService.send({
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',

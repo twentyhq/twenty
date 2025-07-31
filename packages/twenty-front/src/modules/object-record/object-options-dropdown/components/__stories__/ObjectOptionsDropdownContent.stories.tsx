@@ -24,7 +24,7 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
-const instanceId = 'entity-options-scope';
+const instanceId = 'entity-options-instance';
 
 const meta: Meta<typeof ObjectOptionsDropdownContent> = {
   title:

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { authenticator } from 'otplib';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -25,6 +26,8 @@ import { twoFactorAuthenticationMethodsValidator } from './two-factor-authentica
 
 import { OTPStatus } from './strategies/otp/otp.constants';
 
+const PENDING_METHOD_REUSE_WINDOW_MS = 60 * 60 * 1000;
+
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class TwoFactorAuthenticationService {
@@ -34,6 +37,16 @@ export class TwoFactorAuthenticationService {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly simpleSecretEncryptionUtil: SimpleSecretEncryptionUtil,
   ) {}
+
+  /**
+   * Generates encryption key for OTP secret based on user and workspace identifiers.
+   */
+  private generateOtpSecretEncryptionKey(
+    userId: string,
+    workspaceId: string,
+  ): string {
+    return userId + workspaceId + 'otp-secret';
+  }
 
   /**
    * Validates two-factor authentication requirements for a workspace.
@@ -71,6 +84,7 @@ export class TwoFactorAuthenticationService {
     userId: string,
     userEmail: string,
     workspaceId: string,
+    workspaceDisplayName?: string,
   ) {
     const userWorkspace =
       await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
@@ -93,16 +107,35 @@ export class TwoFactorAuthenticationService {
       );
     }
 
+    if (
+      existing2FAMethod &&
+      existing2FAMethod.status === 'PENDING' &&
+      existing2FAMethod.createdAt &&
+      Date.now() - existing2FAMethod.createdAt.getTime() <
+        PENDING_METHOD_REUSE_WINDOW_MS
+    ) {
+      const existingSecret =
+        await this.simpleSecretEncryptionUtil.decryptSecret(
+          existing2FAMethod.secret,
+          this.generateOtpSecretEncryptionKey(userId, workspaceId),
+        );
+
+      const issuer = `Twenty${workspaceDisplayName ? ` - ${workspaceDisplayName}` : ''}`;
+      const reuseUri = authenticator.keyuri(userEmail, issuer, existingSecret);
+
+      return reuseUri;
+    }
+
     const { uri, context } = new TotpStrategy(
       TOTP_DEFAULT_CONFIGURATION,
     ).initiate(
       userEmail,
-      `Twenty${userWorkspace.workspace.displayName ? ` - ${userWorkspace.workspace.displayName}` : ''}`,
+      `Twenty${workspaceDisplayName ? ` - ${workspaceDisplayName}` : ''}`,
     );
 
     const encryptedSecret = await this.simpleSecretEncryptionUtil.encryptSecret(
       context.secret,
-      userId + workspaceId + 'otp-secret',
+      this.generateOtpSecretEncryptionKey(userId, workspaceId),
     );
 
     await this.twoFactorAuthenticationMethodRepository.save({
@@ -149,7 +182,7 @@ export class TwoFactorAuthenticationService {
 
     const originalSecret = await this.simpleSecretEncryptionUtil.decryptSecret(
       userTwoFactorAuthenticationMethod.secret,
-      userId + workspaceId + 'otp-secret',
+      this.generateOtpSecretEncryptionKey(userId, workspaceId),
     );
 
     const otpContext = {

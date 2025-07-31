@@ -14,6 +14,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ViewFilterValue } from 'src/engine/metadata-modules/view/types/view-filter-value.type';
 import { View } from 'src/engine/metadata-modules/view/view.entity';
 
 @Entity({ name: 'viewFilter', schema: 'core' })
@@ -31,7 +32,7 @@ export class ViewFilter {
   operand: string;
 
   @Column({ nullable: false, type: 'jsonb' })
-  value: JSON;
+  value: ViewFilterValue;
 
   @Column({ nullable: true, type: 'uuid' })
   viewFilterGroupId?: string | null;

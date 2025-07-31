@@ -1,5 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import GraphQLJSON from 'graphql-type-json';
+import { RestrictedFields } from 'twenty-shared/types';
+
 @ObjectType('ObjectPermission')
 export class ObjectPermissionDTO {
   @Field({ nullable: false })
@@ -16,4 +19,9 @@ export class ObjectPermissionDTO {
 
   @Field({ nullable: true })
   canDestroyObjectRecords?: boolean;
+
+  @Field(() => GraphQLJSON, {
+    nullable: true,
+  })
+  restrictedFields?: RestrictedFields;
 }

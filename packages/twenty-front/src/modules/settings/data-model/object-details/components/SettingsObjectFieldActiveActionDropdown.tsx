@@ -19,7 +19,7 @@ type SettingsObjectFieldActiveActionDropdownProps = {
   onDeactivate?: () => void;
   onEdit: () => void;
   onSetAsLabelIdentifier?: () => void;
-  scopeKey: string;
+  fieldMetadataItemId: string;
 };
 
 export const SettingsObjectFieldActiveActionDropdown = ({
@@ -27,9 +27,9 @@ export const SettingsObjectFieldActiveActionDropdown = ({
   onDeactivate,
   onEdit,
   onSetAsLabelIdentifier,
-  scopeKey,
+  fieldMetadataItemId,
 }: SettingsObjectFieldActiveActionDropdownProps) => {
-  const dropdownId = `${scopeKey}-settings-field-active-action-dropdown`;
+  const dropdownId = `${fieldMetadataItemId}-settings-field-active-action-dropdown`;
 
   const { closeDropdown } = useCloseDropdown();
 

@@ -1,0 +1,1 @@
+export const MUTATION_MAX_MERGE_RECORDS = 9;
