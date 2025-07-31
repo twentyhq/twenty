@@ -254,10 +254,12 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
 
     for (const row of values) {
       const rowSize = Buffer.byteLength(JSON.stringify(row));
+
       chunk.push(row);
       currentSizeBytes += rowSize;
 
       const currentSizeMB = currentSizeBytes / 1024 / 1024;
+
       if (
         chunk.length >= chunkSize ||
         (maxMemoryMB !== undefined && currentSizeMB >= maxMemoryMB)
