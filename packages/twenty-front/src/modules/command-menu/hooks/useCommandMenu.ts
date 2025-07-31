@@ -98,12 +98,6 @@ export const useCommandMenu = () => {
 
         const newPersistentState = !isCommandMenuPersistent;
         set(isCommandMenuPersistentState, newPersistentState);
-
-        // If enabling persistent mode, ensure command menu is open
-        if (newPersistentState) {
-          set(isCommandMenuOpenedState, true);
-          openCommandMenu();
-        }
       },
     [openCommandMenu],
   );
@@ -122,8 +116,6 @@ export const useCommandMenu = () => {
     ({ set }) =>
       () => {
         set(isCommandMenuPersistentState, false);
-        // Optionally close the menu when disabling persistent mode
-        // set(isCommandMenuOpenedState, false);
       },
     [],
   );

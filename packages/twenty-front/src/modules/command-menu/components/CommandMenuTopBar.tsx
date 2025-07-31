@@ -76,13 +76,13 @@ const StyledContentContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledButtonContainer = styled.div`
+const StyledButtonContainer = styled.div<{ isPersistent: boolean }>`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: flex-end;
   flex-shrink: 0;
   white-space: nowrap;
-  margin-right: 40px;
+  margin-right: ${({ isPersistent }) => (isPersistent ? '0' : '40px')};
 `;
 
 export const CommandMenuTopBar = () => {
@@ -167,7 +167,7 @@ export const CommandMenuTopBar = () => {
         )}
       </StyledContentContainer>
       {!isMobile && (
-        <StyledButtonContainer>
+        <StyledButtonContainer isPersistent={isCommandMenuPersistent}>
           <Button
             Icon={isCommandMenuPersistent ? IconPinnedOff : IconPin}
             dataTestId="command-menu-persistent-toggle-button"

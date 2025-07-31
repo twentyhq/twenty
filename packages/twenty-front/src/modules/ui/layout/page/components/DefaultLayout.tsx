@@ -79,10 +79,7 @@ export const DefaultLayout = () => {
   const isCommandMenuPersistent = useRecoilValue(isCommandMenuPersistentState);
 
   const shouldShowPersistentCommandMenu =
-    !showAuthModal &&
-    !isMobile &&
-    isCommandMenuPersistent &&
-    isCommandMenuOpened;
+    !showAuthModal && !isMobile && isCommandMenuPersistent;
 
   const shouldShowOverlayCommandMenu =
     !showAuthModal && (!isCommandMenuPersistent || isMobile);
@@ -105,10 +102,7 @@ export const DefaultLayout = () => {
                   ? (windowsWidth -
                       (OBJECT_SETTINGS_WIDTH +
                         NAV_DRAWER_WIDTHS.menu.desktop.expanded +
-                        76 +
-                        (shouldShowPersistentCommandMenu
-                          ? parseInt(THEME_COMMON.rightDrawerWidth)
-                          : 0))) /
+                        76)) /
                     2
                   : 0,
             }}

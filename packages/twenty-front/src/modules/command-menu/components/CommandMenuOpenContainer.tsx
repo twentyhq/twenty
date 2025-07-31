@@ -47,8 +47,6 @@ export const CommandMenuOpenContainer = ({
 
   const targetVariantForAnimation: CommandMenuAnimationVariant = isMobile
     ? 'fullScreen'
-    : isCommandMenuPersistent
-      ? 'persistent'
       : 'normal';
 
   const theme = useTheme();
@@ -99,10 +97,13 @@ export const CommandMenuOpenContainer = ({
       data-click-outside-id={COMMAND_MENU_CLICK_OUTSIDE_ID}
       ref={commandMenuRef}
       animate={targetVariantForAnimation}
-      initial="closed"
-      exit="closed"
+      initial={isCommandMenuPersistent ? targetVariantForAnimation : 'closed'}
+      exit={isCommandMenuPersistent ? targetVariantForAnimation : 'closed'}
       variants={COMMAND_MENU_ANIMATION_VARIANTS}
-      transition={{ duration: theme.animation.duration.normal }}
+      transition={{ 
+        duration: theme.animation.duration.normal,
+        ease: 'easeInOut'
+      }}
       isPersistent={isCommandMenuPersistent}
     >
       {children}

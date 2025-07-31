@@ -5,7 +5,6 @@ import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/Com
 import { useCommandMenuCloseAnimationCompleteCleanup } from '@/command-menu/hooks/useCommandMenuCloseAnimationCompleteCleanup';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
-import { isCommandMenuPersistentState } from '@/command-menu/states/isCommandMenuPersistentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
@@ -27,7 +26,6 @@ export const CommandMenuContainer = ({
     useCommandMenuCloseAnimationCompleteCleanup();
 
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
-  const isCommandMenuPersistent = useRecoilValue(isCommandMenuPersistentState);
 
   const objectMetadataItemId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -73,18 +71,11 @@ export const CommandMenuContainer = ({
               value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
             >
               <CommandMenuPersistentContextStoreEffect />
-              {isCommandMenuPersistent ? (
-                // In persistent mode, always render without AnimatePresence
-                isCommandMenuOpened && commandMenuContent
-              ) : (
-                // In normal mode, use AnimatePresence for animations
-                <AnimatePresence
-                  mode="wait"
-                  onExitComplete={commandMenuCloseAnimationCompleteCleanup}
-                >
-                  {isCommandMenuOpened && commandMenuContent}
-                </AnimatePresence>
-              )}
+              <AnimatePresence
+                onExitComplete={commandMenuCloseAnimationCompleteCleanup}
+              >
+                {isCommandMenuOpened && commandMenuContent}
+              </AnimatePresence>
             </ActionMenuComponentInstanceContext.Provider>
           </ContextStoreComponentInstanceContext.Provider>
         </RecordSortsComponentInstanceContext.Provider>
