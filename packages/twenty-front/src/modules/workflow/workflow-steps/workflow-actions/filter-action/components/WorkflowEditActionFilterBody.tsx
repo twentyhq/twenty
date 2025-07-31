@@ -1,3 +1,4 @@
+import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { WorkflowFilterAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
@@ -11,6 +12,7 @@ import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-ac
 import { rootLevelStepFilterGroupComponentSelector } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/rootLevelStepFilterGroupComponentSelector';
 import { isStepFilterGroupChildAStepFilterGroup } from '@/workflow/workflow-steps/workflow-actions/filter-action/utils/isStepFilterGroupChildAStepFilterGroup';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
@@ -25,6 +27,10 @@ const StyledChildContainer = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(6)};
   width: 100%;
+`;
+
+const StyledFilterBodyContainer = styled(WorkflowStepBody)`
+  gap: ${({ theme }) => theme.spacing(0)};
 `;
 
 type WorkflowEditActionFilterBodyProps = {
@@ -77,7 +83,8 @@ export const WorkflowEditActionFilterBody = ({
         onFilterSettingsUpdate,
       }}
     >
-      <WorkflowStepBody>
+      <StyledFilterBodyContainer>
+        <InputLabel>{t`Conditions`}</InputLabel>
         {isDefined(rootStepFilterGroup) ? (
           <StyledContainer>
             <StyledChildContainer>
@@ -111,7 +118,7 @@ export const WorkflowEditActionFilterBody = ({
         ) : (
           <WorkflowStepFilterAddRootStepFilterButton />
         )}
-      </WorkflowStepBody>
+      </StyledFilterBodyContainer>
     </WorkflowStepFilterContext.Provider>
   );
 };

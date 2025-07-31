@@ -9,6 +9,7 @@
 
 export { assertUnreachable } from './assertUnreachable';
 export { deepMerge } from './deepMerge';
+export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { getURLSafely } from './getURLSafely';

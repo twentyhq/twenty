@@ -3,6 +3,7 @@ import { CommandMenuAIChatThreadsPage } from '@/command-menu/pages/AIChatThreads
 import { CommandMenuAskAIPage } from '@/command-menu/pages/ask-ai/components/CommandMenuAskAIPage';
 import { CommandMenuCalendarEventPage } from '@/command-menu/pages/calendar-event/components/CommandMenuCalendarEventPage';
 import { CommandMenuMessageThreadPage } from '@/command-menu/pages/message-thread/components/CommandMenuMessageThreadPage';
+import { CommandMenuMergeRecordPage } from '@/command-menu/pages/record-page/components/CommandMenuMergeRecordPage';
 import { CommandMenuRecordPage } from '@/command-menu/pages/record-page/components/CommandMenuRecordPage';
 import { CommandMenuEditRichTextPage } from '@/command-menu/pages/rich-text-page/components/CommandMenuEditRichTextPage';
 import { CommandMenuSearchRecordsPage } from '@/command-menu/pages/search/components/CommandMenuSearchRecordsPage';
@@ -19,6 +20,7 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
 >([
   [CommandMenuPages.Root, <CommandMenu />],
   [CommandMenuPages.ViewRecord, <CommandMenuRecordPage />],
+  [CommandMenuPages.MergeRecords, <CommandMenuMergeRecordPage />],
   [CommandMenuPages.ViewEmailThread, <CommandMenuMessageThreadPage />],
   [CommandMenuPages.ViewCalendarEvent, <CommandMenuCalendarEventPage />],
   [CommandMenuPages.EditRichText, <CommandMenuEditRichTextPage />],

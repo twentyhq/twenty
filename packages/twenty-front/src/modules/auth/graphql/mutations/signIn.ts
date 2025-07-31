@@ -7,7 +7,7 @@ export const SIGN_IN = gql`
         ...AvailableWorkspacesFragment
       }
       tokens {
-        ...AuthTokensFragment
+        ...AuthTokenPairFragment
       }
     }
   }

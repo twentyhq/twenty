@@ -3,6 +3,7 @@ import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
+  FieldMetadataEntityRelationProperties,
   FlatFieldMetadata,
   fieldMetadataRelationProperties,
 } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -26,11 +27,6 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = <
     );
   }
 
-  const fieldMetadataWithoutRelations = removePropertiesFromRecord(
-    fieldMetadataEntity,
-    fieldMetadataRelationProperties,
-  );
-
   if (
     isFieldMetadataEntityOfType(
       fieldMetadataEntity,
@@ -41,12 +37,20 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = <
       FieldMetadataType.MORPH_RELATION,
     )
   ) {
+    const fieldMetadataWithoutRelations = removePropertiesFromRecord<
+      FieldMetadataEntity<
+        FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+      >,
+      FieldMetadataEntityRelationProperties
+    >(fieldMetadataEntity, fieldMetadataRelationProperties);
+
     const newDepth = isDefined(_depth) ? _depth + 1 : 1;
     const flatRelationTargetFieldMetadata =
       fromFieldMetadataEntityToFlatFieldMetadata(
         fieldMetadataEntity.relationTargetFieldMetadata,
         newDepth,
       );
+
     const flatObjectTargetFieldMetadata =
       fromObjectMetadataEntityToFlatObjectMetadata(
         fieldMetadataEntity.relationTargetObjectMetadata,
@@ -63,8 +67,16 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = <
         fieldMetadataWithoutRelations.id,
       flatRelationTargetFieldMetadata,
       flatRelationTargetObjectMetadata,
-    } as FlatFieldMetadata<FieldMetadataType.RELATION>;
+      type: fieldMetadataEntity.type,
+    } satisfies FlatFieldMetadata<
+      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+    >;
   }
+
+  const fieldMetadataWithoutRelations = removePropertiesFromRecord(
+    fieldMetadataEntity,
+    fieldMetadataRelationProperties,
+  );
 
   return {
     ...fieldMetadataWithoutRelations,

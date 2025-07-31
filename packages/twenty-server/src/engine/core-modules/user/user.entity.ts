@@ -14,6 +14,7 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -94,7 +95,7 @@ export class User {
   deletedAt: Date;
 
   @Field(() => String, { nullable: false })
-  @Column({ nullable: false, default: 'en' })
+  @Column({ nullable: false, default: SOURCE_LOCALE })
   locale: string;
 
   @OneToMany(() => AppToken, (appToken) => appToken.user, {

@@ -6,9 +6,14 @@ import {
   getWorkspaceMigrationV2DeleteIndexAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-index-actions';
 
-export const buildWorkspaceMigrationIndexActions = (
-  objectMetadataDeletedCreatedUpdatedIndex: UpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix[],
-): WorkspaceMigrationIndexActionV2[] => {
+type BuildWorkspaceMigrationIndexActionsArgs = {
+  objectMetadataDeletedCreatedUpdatedIndex: UpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix[];
+  inferDeletionFromMissingObjectFieldIndex: boolean;
+};
+export const buildWorkspaceMigrationIndexActions = ({
+  inferDeletionFromMissingObjectFieldIndex,
+  objectMetadataDeletedCreatedUpdatedIndex,
+}: BuildWorkspaceMigrationIndexActionsArgs): WorkspaceMigrationIndexActionV2[] => {
   let allUpdatedObjectMetadataIndexActions: WorkspaceMigrationIndexActionV2[] =
     [];
 
@@ -36,9 +41,9 @@ export const buildWorkspaceMigrationIndexActions = (
     const createIndexActions = createdIndexMetadata.map(
       getWorkspaceMigrationV2CreateIndexAction,
     );
-    const deleteIndexActions = deletedIndexMetadata.map(
-      getWorkspaceMigrationV2DeleteIndexAction,
-    );
+    const deleteIndexActions = inferDeletionFromMissingObjectFieldIndex
+      ? deletedIndexMetadata.map(getWorkspaceMigrationV2DeleteIndexAction)
+      : [];
 
     allUpdatedObjectMetadataIndexActions =
       allUpdatedObjectMetadataIndexActions.concat([

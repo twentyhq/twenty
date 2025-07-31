@@ -9,7 +9,7 @@ export const SIGN_UP_IN_WORKSPACE = gql`
     $captchaToken: String
     $workspaceId: String
     $locale: String
-    $verifyEmailNextPath: String
+    $verifyEmailRedirectPath: String
   ) {
     signUpInWorkspace(
       email: $email
@@ -19,7 +19,7 @@ export const SIGN_UP_IN_WORKSPACE = gql`
       captchaToken: $captchaToken
       workspaceId: $workspaceId
       locale: $locale
-      verifyEmailNextPath: $verifyEmailNextPath
+      verifyEmailRedirectPath: $verifyEmailRedirectPath
     ) {
       loginToken {
         ...AuthTokenFragment

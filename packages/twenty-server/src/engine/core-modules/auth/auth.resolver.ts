@@ -27,9 +27,9 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AvailableWorkspacesAndAccessTokensOutput } from 'src/engine/core-modules/auth/dto/available-workspaces-and-access-tokens.output';
+import { GetAuthTokenFromEmailVerificationTokenInput } from 'src/engine/core-modules/auth/dto/get-auth-token-from-email-verification-token.input';
 import { GetAuthorizationUrlForSSOInput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.input';
 import { GetAuthorizationUrlForSSOOutput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.output';
-import { GetLoginTokenFromEmailVerificationTokenInput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.input';
 import { GetLoginTokenFromEmailVerificationTokenOutput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.output';
 import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
@@ -213,7 +213,7 @@ export class AuthResolver {
           AuthProviderEnum.Password,
         ),
       tokens: {
-        accessToken:
+        accessOrWorkspaceAgnosticToken:
           await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
             {
               userId: user.id,
@@ -233,13 +233,13 @@ export class AuthResolver {
   @UseGuards(PublicEndpointGuard)
   async getLoginTokenFromEmailVerificationToken(
     @Args()
-    getLoginTokenFromEmailVerificationTokenInput: GetLoginTokenFromEmailVerificationTokenInput,
+    getAuthTokenFromEmailVerificationTokenInput: GetAuthTokenFromEmailVerificationTokenInput,
     @Args('origin') origin: string,
     @AuthProvider() authProvider: AuthProviderEnum,
   ) {
     const appToken =
       await this.emailVerificationTokenService.validateEmailVerificationTokenOrThrow(
-        getLoginTokenFromEmailVerificationTokenInput,
+        getAuthTokenFromEmailVerificationTokenInput,
       );
 
     const workspace =
@@ -262,6 +262,50 @@ export class AuthResolver {
     const workspaceUrls = this.domainManagerService.getWorkspaceUrls(workspace);
 
     return { loginToken, workspaceUrls };
+  }
+
+  @Mutation(() => AvailableWorkspacesAndAccessTokensOutput)
+  @UseGuards(PublicEndpointGuard)
+  async getWorkspaceAgnosticTokenFromEmailVerificationToken(
+    @Args()
+    getAuthTokenFromEmailVerificationTokenInput: GetAuthTokenFromEmailVerificationTokenInput,
+    @AuthProvider() authProvider: AuthProviderEnum,
+  ) {
+    const appToken =
+      await this.emailVerificationTokenService.validateEmailVerificationTokenOrThrow(
+        getAuthTokenFromEmailVerificationTokenInput,
+      );
+
+    await this.userService.markEmailAsVerified(appToken.user.id);
+    await this.appTokenRepository.remove(appToken);
+
+    const availableWorkspaces =
+      await this.userWorkspaceService.findAvailableWorkspacesByEmail(
+        appToken.user.email,
+      );
+
+    return {
+      availableWorkspaces:
+        await this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
+          availableWorkspaces,
+          appToken.user,
+          authProvider,
+        ),
+      tokens: {
+        accessOrWorkspaceAgnosticToken:
+          await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
+            {
+              userId: appToken.user.id,
+              authProvider: AuthProviderEnum.Password,
+            },
+          ),
+        refreshToken: await this.refreshTokenService.generateRefreshToken({
+          userId: appToken.user.id,
+          authProvider: AuthProviderEnum.Password,
+          targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
+        }),
+      },
+    };
   }
 
   @Mutation(() => AuthTokens)
@@ -321,6 +365,14 @@ export class AuthResolver {
         user.email,
       );
 
+    await this.emailVerificationService.sendVerificationEmail(
+      user.id,
+      user.email,
+      undefined,
+      signUpInput.locale ?? SOURCE_LOCALE,
+      signUpInput.verifyEmailRedirectPath,
+    );
+
     return {
       availableWorkspaces:
         await this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
@@ -329,7 +381,7 @@ export class AuthResolver {
           AuthProviderEnum.Password,
         ),
       tokens: {
-        accessToken:
+        accessOrWorkspaceAgnosticToken:
           await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
             {
               userId: user.id,
@@ -402,7 +454,7 @@ export class AuthResolver {
       user.email,
       workspace,
       signUpInput.locale ?? SOURCE_LOCALE,
-      signUpInput.verifyEmailNextPath,
+      signUpInput.verifyEmailRedirectPath,
     );
 
     const loginToken = await this.loginTokenService.generateLoginToken(
@@ -507,6 +559,8 @@ export class AuthResolver {
     }
 
     const user = await this.userService.getUserByEmail(email);
+
+    await this.authService.checkIsEmailVerified(user.isEmailVerified);
 
     const currentUserWorkspace =
       await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
