@@ -412,8 +412,9 @@ export class WorkflowVersionStepWorkspaceService {
           workspaceId,
         );
 
-        await this.agentService.deleteOneAgent(agent.id, workspaceId);
-
+        if (isDefined(agent)) {
+          await this.agentService.deleteOneAgent(agent.id, workspaceId);
+        }
         break;
       }
     }
