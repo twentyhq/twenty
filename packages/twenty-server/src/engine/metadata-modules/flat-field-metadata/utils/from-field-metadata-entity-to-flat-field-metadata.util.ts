@@ -16,7 +16,7 @@ import {
 } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatRelationTargetFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-relation-target-field-metadata.type';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
-import { fromObjectMetadataEntityToFlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/from-object-metadata-entity-to-flat-object-metadata-without-fields.util copy';
+import { fromObjectMetadataEntityToFlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/from-object-metadata-entity-to-flat-object-metadata-without-fields.util';
 
 export const fromFieldMetadataEntityToFlatRelationTargetFieldMetadata = (
   fieldMetadataEntity: FieldMetadataEntity<RelationAndMorphRelationFieldMetadataType>,

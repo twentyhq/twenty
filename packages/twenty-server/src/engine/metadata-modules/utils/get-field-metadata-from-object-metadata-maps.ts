@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
-export const getFieldMetadataEntityFromObjectMetadataMaps = ({
+export const getFieldMetadataFromObjectMetadataMaps = ({
   fieldMetadataId,
   objectMetadataId,
   objectMetadataMaps,

@@ -87,7 +87,7 @@ export const fromCachedFieldMetadataEntityToFlatFieldMetadata = <
     ) {
       throw new WorkspaceMetadataCacheException(
         'Cache field is invalid',
-        WorkspaceMetadataCacheExceptionCode.FIELD_METADATA_NOT_FOUND,
+        WorkspaceMetadataCacheExceptionCode.FIELD_METADATA_INVALID,
       );
     }
 
