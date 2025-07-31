@@ -1,8 +1,6 @@
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -12,7 +10,7 @@ import {
   getBezierPath,
 } from '@xyflow/react';
 import { useState } from 'react';
-import { IconPlus, IconReorder } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
@@ -36,10 +34,6 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
 }: WorkflowDiagramFilteringDisabledEdgeEditableProps) => {
   const theme = useTheme();
 
-  const workflowInsertStepIds = useRecoilComponentValueV2(
-    workflowInsertStepIdsComponentState,
-  );
-
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
     sourceY,
@@ -57,11 +51,12 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
     setHovered(false);
   };
 
-  const { startNodeCreation } = useStartNodeCreation();
+  const { startNodeCreation, isNodeCreationStarted } = useStartNodeCreation();
 
-  const isSelected =
-    workflowInsertStepIds.parentStepId === source &&
-    workflowInsertStepIds.nextStepId === target;
+  const forceDisplayAddButton = isNodeCreationStarted({
+    parentStepId: source,
+    nextStepId: target,
+  });
 
   return (
     <>
@@ -81,7 +76,7 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
           onMouseLeave={handleMouseLeave}
         >
           <WorkflowDiagramEdgeV2VisibilityContainer
-            shouldDisplay={hovered || isSelected}
+            shouldDisplay={hovered || forceDisplayAddButton}
           >
             <StyledIconButtonGroup
               className="nodrag nopan"

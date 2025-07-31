@@ -5,7 +5,33 @@ import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/Wo
 import { FloatingIconButton } from 'twenty-ui/input';
 import { IconTrash } from 'twenty-ui/display';
 import { WorkflowDiagramCreateStepElement } from '@/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement';
-import React from 'react';
+import React, { useState } from 'react';
+import styled from '@emotion/styled';
+import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
+
+const StyledDeleteButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  position: absolute;
+  right: ${({ theme }) => theme.spacing(-4)};
+  bottom: 0;
+  top: 0;
+  transform: translateX(100%);
+`;
+
+const StyledAddStepButtonContainer = styled.div<{
+  shouldDisplay: boolean;
+}>`
+  display: flex;
+  align-items: center;
+  position: absolute;
+  justify-content: center;
+  flex-direction: column;
+  opacity: ${({ shouldDisplay }) => (shouldDisplay ? 1 : 0)};
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%) translateY(100%);
+`;
 
 export const WorkflowDiagramStepNodeEditableContent = ({
   data,
@@ -18,23 +44,49 @@ export const WorkflowDiagramStepNodeEditableContent = ({
   selected: boolean;
   onDelete: () => void;
 }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => setIsHovered(true);
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
+  const { isNodeCreationStarted } = useStartNodeCreation();
+
   return (
     <WorkflowDiagramStepNodeBase
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       name={data.name}
       variant={variant}
       nodeType={data.nodeType}
       Icon={<WorkflowDiagramStepNodeIcon data={data} />}
       RightFloatingElement={
         selected && (
-          <FloatingIconButton
-            size="medium"
-            Icon={IconTrash}
-            onClick={onDelete}
-          />
+          <StyledDeleteButtonContainer>
+            <FloatingIconButton
+              size="medium"
+              Icon={IconTrash}
+              onClick={onDelete}
+            />
+          </StyledDeleteButtonContainer>
         )
       }
       BottomHoverFloatingElement={
-        !data.hasNextStepIds && <WorkflowDiagramCreateStepElement data={data} />
+        !data.hasNextStepIds && (
+          <StyledAddStepButtonContainer
+            shouldDisplay={
+              isHovered ||
+              selected ||
+              isNodeCreationStarted({ parentStepId: data.stepId })
+            }
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            <WorkflowDiagramCreateStepElement data={data} />
+          </StyledAddStepButtonContainer>
+        )
       }
     />
   );
