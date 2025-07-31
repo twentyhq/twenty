@@ -87,42 +87,43 @@ export class CustomDomainService {
     }
 
     if (response.result.length === 1) {
+      const { hostname, id, ssl, verification_errors, created_at } =
+        response.result[0];
       // @ts-expect-error - type definition doesn't reflect the real API
-      const dcvRecords = response.result[0].ssl.dcv_delegation_records?.[0];
+      const dcvRecords = ssl.dcv_delegation_records?.[0];
 
       return {
-        id: response.result[0].id,
-        customDomain: response.result[0].hostname,
+        id: id,
+        customDomain: hostname,
         records: [
           {
             validationType: 'redirection' as const,
             type: 'cname',
             status:
               // wait 10s before starting the real check
-              response.result[0].created_at &&
-              new Date().getTime() -
-                new Date(response.result[0].created_at).getTime() <
-                1000 * 10
+              created_at &&
+              new Date().getTime() - new Date(created_at).getTime() < 1000 * 10
                 ? 'pending'
-                : response.result[0].verification_errors?.[0] ===
+                : verification_errors?.[0] ===
                     'custom hostname does not CNAME to this zone.'
                   ? 'error'
                   : 'success',
-            key: response.result[0].hostname,
+            key: hostname,
             value: this.domainManagerService.getBaseUrl().hostname,
           },
           {
             validationType: 'ssl' as const,
             type: 'cname',
             status:
-              !response.result[0].ssl.status ||
-              response.result[0].ssl.status.startsWith('pending')
+              !ssl.status || ssl.status.startsWith('pending')
                 ? 'pending'
-                : response.result[0].ssl.status === 'active'
+                : ssl.status === 'active'
                   ? 'success'
-                  : response.result[0].ssl.status,
-            key: dcvRecords?.cname,
-            value: dcvRecords?.cname_target,
+                  : ssl.status,
+            key: dcvRecords?.cname ?? `_acme-challenge.${hostname}`,
+            value:
+              dcvRecords?.cname_target ??
+              `${hostname}.${this.twentyConfigService.get('CLOUDFLARE_DCV_DELEGATION_ID')}.dcv.cloudflare.com`,
           },
         ],
       };

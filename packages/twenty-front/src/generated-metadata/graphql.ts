@@ -603,11 +603,11 @@ export type CursorPaging = {
 
 export type CustomDomainRecord = {
   __typename?: 'CustomDomainRecord';
-  key?: Maybe<Scalars['String']>;
+  key: Scalars['String'];
   status: Scalars['String'];
   type: Scalars['String'];
   validationType: Scalars['String'];
-  value?: Maybe<Scalars['String']>;
+  value: Scalars['String'];
 };
 
 export type CustomDomainValidRecords = {
@@ -4055,7 +4055,7 @@ export type UploadWorkspaceLogoMutation = { __typename?: 'Mutation', uploadWorks
 export type CheckCustomDomainValidRecordsMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CheckCustomDomainValidRecordsMutation = { __typename?: 'Mutation', checkCustomDomainValidRecords?: { __typename?: 'CustomDomainValidRecords', id: string, customDomain: string, records: Array<{ __typename?: 'CustomDomainRecord', type: string, key?: string | null, value?: string | null, validationType: string, status: string }> } | null };
+export type CheckCustomDomainValidRecordsMutation = { __typename?: 'Mutation', checkCustomDomainValidRecords?: { __typename?: 'CustomDomainValidRecords', id: string, customDomain: string, records: Array<{ __typename?: 'CustomDomainRecord', type: string, key: string, value: string, validationType: string, status: string }> } | null };
 
 export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
   inviteHash: Scalars['String'];

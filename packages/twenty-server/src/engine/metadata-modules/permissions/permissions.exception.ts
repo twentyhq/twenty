@@ -1,7 +1,11 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 // TODO: It would be usefull to enable typed message like below. More refactorisation is necessary to use it.
-// class PermissionsException extends CustomException<PermissionsExceptionCode, PermissionsExceptionMessage> {}
+// export class PermissionsException extends CustomException<
+//   PermissionsExceptionCode,
+//   false,
+//   PermissionsExceptionMessage
+// > {}
 export class PermissionsException extends CustomException<PermissionsExceptionCode> {}
 
 export enum PermissionsExceptionCode {

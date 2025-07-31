@@ -11,11 +11,11 @@ class CustomDomainRecord {
   @Field(() => String)
   status: string;
 
-  @Field(() => String, { nullable: true })
-  key?: string;
+  @Field(() => String)
+  key: string;
 
-  @Field(() => String, { nullable: true })
-  value?: string;
+  @Field(() => String)
+  value: string;
 }
 
 @ObjectType()

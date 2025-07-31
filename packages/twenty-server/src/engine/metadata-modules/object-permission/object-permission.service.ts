@@ -63,7 +63,7 @@ export class ObjectPermissionService {
 
         if (!isDefined(objectMetadataForObjectPermission)) {
           throw new PermissionsException(
-            'Object metadata id not found',
+            'Object metadata id not foun',
             PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
           );
         }
