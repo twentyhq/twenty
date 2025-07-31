@@ -12,7 +12,10 @@ jest.mock('@/auth/services/AuthService', () => {
     ...initialAuthService,
     renewToken: jest.fn().mockReturnValue(
       Promise.resolve({
-        accessToken: { token: 'newAccessToken', expiresAt: '' },
+        accessOrWorkspaceAgnosticToken: {
+          token: 'newAccessToken',
+          expiresAt: '',
+        },
         refreshToken: { token: 'newRefreshToken', expiresAt: '' },
       }),
     ),

@@ -58,7 +58,7 @@ describe('AuthResolve (integration)', () => {
         mutation GetAuthTokensFromLoginToken {
           getAuthTokensFromLoginToken(loginToken: "${loginToken}", origin: "${ORIGIN.toString()}") {
             tokens {
-              accessToken {
+              accessOrWorkspaceAgnosticToken {
                 token
               }
             }
@@ -82,7 +82,7 @@ describe('AuthResolve (integration)', () => {
         expect(data).toBeDefined();
         expect(data.tokens).toBeDefined();
 
-        const accessToken = data.tokens.accessToken;
+        const accessToken = data.tokens.accessOrWorkspaceAgnosticToken;
 
         expect(accessToken).toBeDefined();
         expect(accessToken.token).toBeDefined();

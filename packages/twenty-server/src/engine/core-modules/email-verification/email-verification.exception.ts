@@ -2,8 +2,12 @@ import { CustomException } from 'src/utils/custom-exception';
 
 export class EmailVerificationException extends CustomException {
   declare code: EmailVerificationExceptionCode;
-  constructor(message: string, code: EmailVerificationExceptionCode) {
-    super(message, code);
+  constructor(
+    message: string,
+    code: EmailVerificationExceptionCode,
+    { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
+  ) {
+    super(message, code, userFriendlyMessage ?? message);
   }
 }
 

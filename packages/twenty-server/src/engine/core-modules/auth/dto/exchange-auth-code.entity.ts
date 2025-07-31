@@ -5,7 +5,7 @@ import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
 @ObjectType()
 export class ExchangeAuthCode {
   @Field(() => AuthToken)
-  accessToken: AuthToken;
+  accessOrWorkspaceAgnosticToken: AuthToken;
 
   @Field(() => AuthToken)
   refreshToken: AuthToken;

@@ -151,7 +151,12 @@ describe('TwoFactorAuthenticationResolver', () => {
       expect(userService.getUserByEmail).toHaveBeenCalledWith(mockUser.email);
       expect(
         twoFactorAuthenticationService.initiateStrategyConfiguration,
-      ).toHaveBeenCalledWith(mockUser.id, mockUser.email, mockWorkspace.id);
+      ).toHaveBeenCalledWith(
+        mockUser.id,
+        mockUser.email,
+        mockWorkspace.id,
+        mockWorkspace.displayName,
+      );
     });
 
     it('should throw WORKSPACE_NOT_FOUND when workspace is not found', async () => {
@@ -219,7 +224,12 @@ describe('TwoFactorAuthenticationResolver', () => {
       });
       expect(
         twoFactorAuthenticationService.initiateStrategyConfiguration,
-      ).toHaveBeenCalledWith(mockUser.id, mockUser.email, mockWorkspace.id);
+      ).toHaveBeenCalledWith(
+        mockUser.id,
+        mockUser.email,
+        mockWorkspace.id,
+        mockWorkspace.displayName,
+      );
     });
 
     it('should throw INTERNAL_SERVER_ERROR when URI is missing', async () => {

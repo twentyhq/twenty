@@ -18,7 +18,7 @@ export class ApiKeyToken {
 @ObjectType()
 export class AuthTokenPair {
   @Field(() => AuthToken)
-  accessToken: AuthToken;
+  accessOrWorkspaceAgnosticToken: AuthToken;
 
   @Field(() => AuthToken)
   refreshToken: AuthToken;

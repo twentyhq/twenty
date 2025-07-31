@@ -49,6 +49,7 @@ export class WorkspaceMetadataObjectActionRunnerService
       ...flatObjectMetadataWithoutFields,
       dataSourceId: lastDataSourceMetadata.id,
       targetTableName: 'DEPRECATED',
+      // TODO call for each provided field too or pass fields here
     });
   };
 
