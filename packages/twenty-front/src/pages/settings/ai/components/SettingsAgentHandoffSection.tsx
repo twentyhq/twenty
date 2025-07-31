@@ -92,20 +92,13 @@ export const SettingsAgentHandoffSection = ({
   const handoffTargets = handoffTargetsData?.findAgentHandoffTargets || [];
 
   const handleAddHandoff = async () => {
-    if (!selectedToAgentId) {
-      enqueueErrorSnackBar({
-        message: t`Please select a target agent`,
-      });
-      return;
-    }
-
     try {
       await createAgentHandoff({
         variables: {
           input: {
             fromAgentId: agentId,
             toAgentId: selectedToAgentId,
-            description: handoffDescription || undefined,
+            description: handoffDescription,
           },
         },
       });
@@ -222,6 +215,7 @@ export const SettingsAgentHandoffSection = ({
                 size="small"
                 title={t`Add Handoff`}
                 onClick={handleAddHandoff}
+                disabled={!selectedToAgentId}
               />
             </StyledFormActions>
           </StyledAddHandoffForm>
