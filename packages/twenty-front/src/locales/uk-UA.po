@@ -2099,6 +2099,11 @@ msgstr "Редагувати записи на всіх об'єктах"
 msgid "Edit your subdomain name or set a custom domain."
 msgstr "Редагуйте назву вашого субдомену або встановіть спеціальний домен."
 
+#. js-lingui-id: hpAStM
+#: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
+msgid "Eighth"
+msgstr ""
+
 #. js-lingui-id: O3oNi5
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -2595,6 +2600,11 @@ msgstr "Поля"
 msgid "Fields Count"
 msgstr "Кількість полів"
 
+#. js-lingui-id: uTDtiS
+#: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
+msgid "Fifth"
+msgstr ""
+
 #. js-lingui-id: o7J4JM
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
@@ -2624,6 +2634,11 @@ msgstr "Завершити потік з помилками"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Finnish"
 msgstr "Фінська"
+
+#. js-lingui-id: syyeb9
+#: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
+msgid "First"
+msgstr ""
 
 #. js-lingui-id: ZyIk6Y
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
@@ -2660,6 +2675,11 @@ msgstr "Формат"
 #: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
 msgid "Format e.g. d-MMM-y (qqq''yy)"
 msgstr "Формат, напр. д-MMM-р (qqq''yy)"
+
+#. js-lingui-id: a8nooQ
+#: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
+msgid "Fourth"
+msgstr ""
 
 #. js-lingui-id: wjsFMQ
 #: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
@@ -3572,6 +3592,22 @@ msgstr "Член"
 msgid "Members"
 msgstr "Члени"
 
+#. js-lingui-id: UODtG8
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Merge"
+msgstr ""
+
+#. js-lingui-id: d2c8f+
+#: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
+msgid "Merge preview"
+msgstr ""
+
+#. js-lingui-id: Cmeamd
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Merge records"
+msgstr ""
+
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Message not found"
@@ -3824,6 +3860,11 @@ msgstr "Новий провайдер єдиної системи входу"
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 msgid "Next Step"
 msgstr "Наступний крок"
+
+#. js-lingui-id: ulck7h
+#: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
+msgid "Ninth"
+msgstr ""
 
 #. js-lingui-id: tFxVHz
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
@@ -4780,6 +4821,11 @@ msgstr "місце / місяць - виставляється рахунок щ
 msgid "Seats"
 msgstr "Місця"
 
+#. js-lingui-id: ku//5b
+#: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
+msgid "Second"
+msgstr ""
+
 #. js-lingui-id: 8VEDbV
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Secret"
@@ -5026,6 +5072,7 @@ msgstr "Налаштування вашої бази даних..."
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
+#: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 #: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Settings"
@@ -5051,6 +5098,11 @@ msgstr "Ключ налаштувань скопійований у буфер �
 #: src/pages/auth/SignInUp.tsx
 msgid "Setup your 2FA"
 msgstr "Налаштуйте свою 2FA"
+
+#. js-lingui-id: dsCM1m
+#: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
+msgid "Seventh"
+msgstr ""
 
 #. js-lingui-id: Vy9kmk
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -5127,6 +5179,11 @@ msgstr "Одниночні і множинні мітки мають бути р
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural names must be different"
 msgstr "Одниночні і множинні імена мають бути різними"
+
+#. js-lingui-id: Swe8Fi
+#: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
+msgid "Sixth"
+msgstr ""
 
 #. js-lingui-id: 6Uau97
 #: src/pages/onboarding/InviteTeam.tsx
@@ -5295,6 +5352,11 @@ msgstr "Перехід на підписку «Організація» здій
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription has been switched to Yearly."
 msgstr "Перехід на передплату <b>на рік</b> здійснено."
+
+#. js-lingui-id: OjK1bU
+#: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
+msgid "Successfully merged {recordCount} records"
+msgstr ""
 
 #. js-lingui-id: nyQWMb
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -5521,6 +5583,11 @@ msgstr "Є ще рядки, що містять помилки. Рядки з п
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
 msgstr "Сталася помилка під час оновлення пароля."
+
+#. js-lingui-id: UlykKR
+#: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
+msgid "Third"
+msgstr ""
 
 #. js-lingui-id: Kb1oAw
 #: src/modules/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityRowHook.ts

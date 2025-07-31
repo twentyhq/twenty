@@ -7,9 +7,9 @@ export const AUTH_TOKEN = gql`
   }
 `;
 
-export const AUTH_TOKENS = gql`
-  fragment AuthTokensFragment on AuthTokenPair {
-    accessToken {
+export const AUTH_TOKEN_PAIR = gql`
+  fragment AuthTokenPairFragment on AuthTokenPair {
+    accessOrWorkspaceAgnosticToken {
       ...AuthTokenFragment
     }
     refreshToken {
