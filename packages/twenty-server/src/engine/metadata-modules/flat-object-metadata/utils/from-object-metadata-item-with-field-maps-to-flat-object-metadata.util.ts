@@ -16,7 +16,7 @@ export const fromObjectMetadataItemWithFieldMapsToFlatObjectMetadata = ({
     fieldsById,
     fieldIdByJoinColumnName: _fieldIdByJoinColumnName,
     fieldIdByName: _fieldIdByName,
-    indexMetadatas,
+    indexMetadatas: _indexMetadatas,
     ...rest
   } = objectMetadataItemWithFieldMaps;
 
@@ -35,6 +35,6 @@ export const fromObjectMetadataItemWithFieldMapsToFlatObjectMetadata = ({
     ...rest,
     flatFieldMetadatas,
     uniqueIdentifier: rest.standardId ?? rest.id,
-    flatIndexMetadatas: [],
+    flatIndexMetadatas: [], // prastoin TODO convert from indexMetadatas to flatIndexMetadatas
   };
 };

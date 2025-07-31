@@ -21,9 +21,6 @@ import { fromObjectMetadataEntityToFlatObjectMetadataWithoutFields } from 'src/e
 export const fromFieldMetadataEntityToFlatRelationTargetFieldMetadata = (
   fieldMetadataEntity: FieldMetadataEntity<RelationAndMorphRelationFieldMetadataType>,
 ): FlatRelationTargetFieldMetadata => {
-  const { relationTargetFieldMetadata, relationTargetObjectMetadata, ...rest } =
-    fieldMetadataEntity;
-
   return {
     uniqueIdentifier: fieldMetadataEntity.standardId ?? fieldMetadataEntity.id,
     ...removePropertiesFromRecord(fieldMetadataEntity, [

@@ -1,4 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   FlatFieldMetadata,
@@ -12,7 +13,6 @@ import {
   WorkspaceMetadataCacheExceptionCode,
 } from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
 import { isCachedFieldMetadataEntityOfType } from 'src/engine/utils/is-cached-field-metadata-of-type.util';
-import { isDefined } from 'twenty-shared/utils';
 
 const fromCachedRelationFieldMetadataEntityToFlatRelationTargetFieldMetadata = <
   T extends FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION,
@@ -57,6 +57,7 @@ export const fromCachedFieldMetadataEntityToFlatFieldMetadata = <
       objectMetadataMaps.byId[
         cachedFieldMetadataEntity.relationTargetObjectMetadataId
       ];
+
     if (!isDefined(relationTargetObjectMetadataItemWithFieldsMaps)) {
       throw new WorkspaceMetadataCacheException(
         'Cache object is not up to date',
@@ -73,6 +74,7 @@ export const fromCachedFieldMetadataEntityToFlatFieldMetadata = <
       relationTargetObjectMetadataItemWithFieldsMaps.fieldsById[
         cachedFieldMetadataEntity.relationTargetFieldMetadataId
       ];
+
     if (!isDefined(relationTargetCachedFieldMetadata)) {
       throw new WorkspaceMetadataCacheException(
         'Cache field is not up to date',
