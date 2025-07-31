@@ -1,6 +1,6 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useMutation } from '@apollo/client';
-import { WorkflowVersionEdgeInput } from '~/generated/graphql';
+import { CreateWorkflowVersionEdgeInput } from '~/generated/graphql';
 import { DELETE_WORKFLOW_VERSION_EDGE } from '@/workflow/graphql/mutations/deleteWorkflowVersionEdge';
 import {
   DeleteWorkflowVersionEdgeMutation,
@@ -18,7 +18,9 @@ export const useDeleteWorkflowVersionEdge = () => {
     DeleteWorkflowVersionEdgeMutationVariables
   >(DELETE_WORKFLOW_VERSION_EDGE, { client: apolloCoreClient });
 
-  const deleteWorkflowVersionEdge = async (input: WorkflowVersionEdgeInput) => {
+  const deleteWorkflowVersionEdge = async (
+    input: CreateWorkflowVersionEdgeInput,
+  ) => {
     const result = await mutate({ variables: { input } });
 
     const workflowVersionStepUpdates = result?.data?.deleteWorkflowVersionEdge;

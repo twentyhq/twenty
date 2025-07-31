@@ -608,6 +608,15 @@ export type CreateWebhookDto = {
   targetUrl: Scalars['String'];
 };
 
+export type CreateWorkflowVersionEdgeInput = {
+  /** Workflow version source step ID */
+  source: Scalars['String'];
+  /** Workflow version target step ID */
+  target: Scalars['String'];
+  /** Workflow version ID */
+  workflowVersionId: Scalars['String'];
+};
+
 export type CreateWorkflowVersionStepInput = {
   /** Next step ID */
   nextStepId?: InputMaybe<Scalars['String']>;
@@ -1401,7 +1410,7 @@ export type MutationCreateWebhookArgs = {
 
 
 export type MutationCreateWorkflowVersionEdgeArgs = {
-  input: WorkflowVersionEdgeInput;
+  input: CreateWorkflowVersionEdgeInput;
 };
 
 
@@ -1476,7 +1485,7 @@ export type MutationDeleteWebhookArgs = {
 
 
 export type MutationDeleteWorkflowVersionEdgeArgs = {
-  input: WorkflowVersionEdgeInput;
+  input: CreateWorkflowVersionEdgeInput;
 };
 
 
@@ -2788,7 +2797,7 @@ export type UpdateDraftWorkflowVersionPositionsInput = {
   /** Workflow version updated positions */
   positions: Array<WorkflowStepPositionUpdateInput>;
   /** Workflow version ID */
-  workflowVersionId: Scalars['String'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 export type UpdateFieldInput = {
@@ -3087,21 +3096,13 @@ export type WorkflowStepPositionInput = {
 export type WorkflowStepPositionUpdateInput = {
   /** Step or trigger ID */
   id: Scalars['String'];
+  /** Position of the step or trigger */
   position: WorkflowStepPositionInput;
 };
 
 export type WorkflowVersion = {
   __typename?: 'WorkflowVersion';
   id: Scalars['UUID'];
-};
-
-export type WorkflowVersionEdgeInput = {
-  /** Workflow version source step ID */
-  source: Scalars['String'];
-  /** Workflow version target step ID */
-  target: Scalars['String'];
-  /** Workflow version ID */
-  workflowVersionId: Scalars['String'];
 };
 
 export type WorkflowVersionStepUpdates = {
@@ -4150,7 +4151,7 @@ export type CreateDraftFromWorkflowVersionMutationVariables = Exact<{
 export type CreateDraftFromWorkflowVersionMutation = { __typename?: 'Mutation', createDraftFromWorkflowVersion: { __typename?: 'WorkflowVersion', id: any } };
 
 export type CreateWorkflowVersionEdgeMutationVariables = Exact<{
-  input: WorkflowVersionEdgeInput;
+  input: CreateWorkflowVersionEdgeInput;
 }>;
 
 
@@ -4171,7 +4172,7 @@ export type DeactivateWorkflowVersionMutationVariables = Exact<{
 export type DeactivateWorkflowVersionMutation = { __typename?: 'Mutation', deactivateWorkflowVersion: boolean };
 
 export type DeleteWorkflowVersionEdgeMutationVariables = Exact<{
-  input: WorkflowVersionEdgeInput;
+  input: CreateWorkflowVersionEdgeInput;
 }>;
 
 
@@ -9311,7 +9312,7 @@ export type CreateDraftFromWorkflowVersionMutationHookResult = ReturnType<typeof
 export type CreateDraftFromWorkflowVersionMutationResult = Apollo.MutationResult<CreateDraftFromWorkflowVersionMutation>;
 export type CreateDraftFromWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>;
 export const CreateWorkflowVersionEdgeDocument = gql`
-    mutation CreateWorkflowVersionEdge($input: WorkflowVersionEdgeInput!) {
+    mutation CreateWorkflowVersionEdge($input: CreateWorkflowVersionEdgeInput!) {
   createWorkflowVersionEdge(input: $input) {
     triggerNextStepIds
     stepsNextStepIds
@@ -9422,7 +9423,7 @@ export type DeactivateWorkflowVersionMutationHookResult = ReturnType<typeof useD
 export type DeactivateWorkflowVersionMutationResult = Apollo.MutationResult<DeactivateWorkflowVersionMutation>;
 export type DeactivateWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<DeactivateWorkflowVersionMutation, DeactivateWorkflowVersionMutationVariables>;
 export const DeleteWorkflowVersionEdgeDocument = gql`
-    mutation DeleteWorkflowVersionEdge($input: WorkflowVersionEdgeInput!) {
+    mutation DeleteWorkflowVersionEdge($input: CreateWorkflowVersionEdgeInput!) {
   deleteWorkflowVersionEdge(input: $input) {
     triggerNextStepIds
     stepsNextStepIds

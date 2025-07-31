@@ -47,6 +47,7 @@ describe('isStepNode', () => {
       position: { x: 0, y: 0 },
       data: {
         nodeType: 'empty-trigger',
+        position: { x: 0, y: 0 },
       },
     };
 

@@ -4,7 +4,7 @@ import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-
 type WorkflowInsertStepIdsState = {
   parentStepId: string | undefined;
   nextStepId: string | undefined;
-  position?: { x: number; y: number } | undefined;
+  position?: { x: number; y: number };
 };
 
 export const workflowInsertStepIdsComponentState =
