@@ -6,11 +6,11 @@ import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatable
 import { isDefined } from 'twenty-shared/utils';
 import { useMutation } from '@apollo/client';
 import {
-  UpdateDraftWorkflowVersionPositionsMutation,
-  UpdateDraftWorkflowVersionPositionsMutationVariables,
+  UpdateWorkflowVersionPositionsMutation,
+  UpdateWorkflowVersionPositionsMutationVariables,
   WorkflowAction,
 } from '~/generated-metadata/graphql';
-import { UPDATE_DRAFT_WORKFLOW_VERSION_POSITIONS } from '@/workflow/workflow-version/graphql/mutations/updateDraftWorkflowVersionPositions';
+
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -18,6 +18,7 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { UPDATE_WORKFLOW_VERSION_POSITIONS } from '@/workflow/workflow-version/graphql/mutations/updateWorkflowVersionPositions';
 
 export const useTidyUpWorkflowVersion = ({
   workflow,
@@ -37,9 +38,9 @@ export const useTidyUpWorkflowVersion = ({
   });
 
   const [mutate] = useMutation<
-    UpdateDraftWorkflowVersionPositionsMutation,
-    UpdateDraftWorkflowVersionPositionsMutationVariables
-  >(UPDATE_DRAFT_WORKFLOW_VERSION_POSITIONS, { client: apolloCoreClient });
+    UpdateWorkflowVersionPositionsMutation,
+    UpdateWorkflowVersionPositionsMutationVariables
+  >(UPDATE_WORKFLOW_VERSION_POSITIONS, { client: apolloCoreClient });
 
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
 

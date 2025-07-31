@@ -114,7 +114,7 @@ export class WorkflowVersionWorkspaceService {
     return draftWorkflowVersion.id;
   }
 
-  async updateDraftWorkflowVersionPositions({
+  async updateWorkflowVersionPositions({
     workflowVersionId,
     positions,
     workspaceId,

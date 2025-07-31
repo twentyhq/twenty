@@ -1162,7 +1162,6 @@ export type Mutation = {
   trackAnalytics: Analytics;
   updateApiKey?: Maybe<ApiKey>;
   updateDatabaseConfigVariable: Scalars['Boolean'];
-  updateDraftWorkflowVersionPositions: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneAgent: Agent;
   updateOneField: Field;
@@ -1172,6 +1171,7 @@ export type Mutation = {
   updatePasswordViaResetToken: InvalidatePassword;
   updateWebhook?: Maybe<Webhook>;
   updateWorkflowRunStep: WorkflowAction;
+  updateWorkflowVersionPositions: Scalars['Boolean'];
   updateWorkflowVersionStep: WorkflowAction;
   updateWorkspace: Workspace;
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
@@ -1555,11 +1555,6 @@ export type MutationUpdateDatabaseConfigVariableArgs = {
 };
 
 
-export type MutationUpdateDraftWorkflowVersionPositionsArgs = {
-  input: UpdateDraftWorkflowVersionPositionsInput;
-};
-
-
 export type MutationUpdateLabPublicFeatureFlagArgs = {
   input: UpdateLabPublicFeatureFlagInput;
 };
@@ -1603,6 +1598,11 @@ export type MutationUpdateWebhookArgs = {
 
 export type MutationUpdateWorkflowRunStepArgs = {
   input: UpdateWorkflowRunStepInput;
+};
+
+
+export type MutationUpdateWorkflowVersionPositionsArgs = {
+  input: UpdateWorkflowVersionPositionsInput;
 };
 
 
@@ -2557,13 +2557,6 @@ export type UpdateApiKeyDto = {
   revokedAt?: InputMaybe<Scalars['String']>;
 };
 
-export type UpdateDraftWorkflowVersionPositionsInput = {
-  /** Workflow version updated positions */
-  positions: Array<WorkflowStepPositionUpdateInput>;
-  /** Workflow version ID */
-  workflowVersionId: Scalars['UUID'];
-};
-
 export type UpdateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
@@ -2651,6 +2644,13 @@ export type UpdateWorkflowRunStepInput = {
   step: Scalars['JSON'];
   /** Workflow run ID */
   workflowRunId: Scalars['String'];
+};
+
+export type UpdateWorkflowVersionPositionsInput = {
+  /** Workflow version updated positions */
+  positions: Array<WorkflowStepPositionUpdateInput>;
+  /** Workflow version ID */
+  workflowVersionId: Scalars['UUID'];
 };
 
 export type UpdateWorkflowVersionStepInput = {
