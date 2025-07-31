@@ -52,7 +52,10 @@ export function getColumnNameToFieldMetadataIdMap(
     },
   };
 
-  processFieldMetadataForColumnNameMapping(objectMetadataItemWithFieldMaps, processor);
+  processFieldMetadataForColumnNameMapping(
+    objectMetadataItemWithFieldMaps,
+    processor,
+  );
 
   return columnNameToFieldMetadataIdMap;
 }
