@@ -1201,6 +1201,7 @@ msgstr "Firmy"
 
 #. js-lingui-id: 0CuAor
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody.tsx
 msgid "Conditions"
 msgstr "Warunki"
 
