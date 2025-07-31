@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { t } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { StepStatus } from 'twenty-shared/workflow';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
-import { StepStatus } from 'twenty-shared/workflow';
 
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
@@ -15,6 +15,7 @@ import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.s
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
@@ -611,10 +612,13 @@ export class WorkflowVersionStepWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
+        const label = `AI Agent Workflow Step ${newStepId}`;
+        const agentName = computeMetadataNameFromLabel(label);
+
         const newAgent = await this.agentService.createOneAgentAndFirstThread(
           {
-            label: 'AI Agent Workflow Step',
-            name: `ai-agent-workflow-${newStepId}`,
+            label,
+            name: agentName,
             description: 'Created automatically for workflow step',
             prompt: '',
             modelId: 'auto',

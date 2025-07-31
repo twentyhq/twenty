@@ -63,7 +63,10 @@ export class AgentService {
     workspaceId: string,
     userWorkspaceId: string | null,
   ) {
-    const agent = await this.createOneAgent(input, workspaceId);
+    const agent = await this.createOneAgent(
+      { ...input, isCustom: false },
+      workspaceId,
+    );
 
     if (!userWorkspaceId) {
       throw new AgentException(
@@ -78,14 +81,14 @@ export class AgentService {
   }
 
   async createOneAgent(
-    input: CreateAgentInput & { isCustom?: boolean },
+    input: CreateAgentInput & { isCustom: boolean },
     workspaceId: string,
   ) {
     const agent = this.agentRepository.create({
       ...input,
       name: input.name || computeMetadataNameFromLabel(input.label),
       workspaceId,
-      isCustom: input.isCustom ?? true,
+      isCustom: input.isCustom,
     });
 
     const createdAgent = await this.agentRepository.save(agent);

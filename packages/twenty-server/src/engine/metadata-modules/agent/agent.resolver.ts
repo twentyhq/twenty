@@ -70,7 +70,10 @@ export class AgentResolver {
     @Args('input') input: CreateAgentInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.agentService.createOneAgent(input, workspaceId);
+    return this.agentService.createOneAgent(
+      { ...input, isCustom: true },
+      workspaceId,
+    );
   }
 
   @Mutation(() => AgentDTO)
