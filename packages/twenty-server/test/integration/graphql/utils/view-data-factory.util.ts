@@ -3,7 +3,15 @@ import {
   TEST_OBJECT_METADATA_1_ID,
 } from 'test/integration/constants/test-view-ids.constants';
 
-export const createViewData = (overrides: Record<string, any> = {}) => ({
+import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
+import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
+import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
+import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
+
+export const createViewData = (overrides: Partial<View> = {}) => ({
   name: 'Test View',
   objectMetadataId: TEST_OBJECT_METADATA_1_ID,
   icon: 'IconTable',
@@ -15,7 +23,7 @@ export const createViewData = (overrides: Record<string, any> = {}) => ({
   ...overrides,
 });
 
-export const updateViewData = (overrides: Record<string, any> = {}) => ({
+export const updateViewData = (overrides: Partial<View> = {}) => ({
   name: 'Updated View',
   type: 'kanban',
   isCompact: true,
@@ -24,7 +32,7 @@ export const updateViewData = (overrides: Record<string, any> = {}) => ({
 
 export const createViewFieldData = (
   viewId: string,
-  overrides: Record<string, any> = {},
+  overrides: Partial<ViewField> = {},
 ) => ({
   viewId,
   fieldMetadataId: TEST_FIELD_METADATA_1_ID,
@@ -34,7 +42,7 @@ export const createViewFieldData = (
   ...overrides,
 });
 
-export const updateViewFieldData = (overrides: Record<string, any> = {}) => ({
+export const updateViewFieldData = (overrides: Partial<ViewField> = {}) => ({
   position: 5,
   isVisible: false,
   size: 300,
@@ -43,7 +51,7 @@ export const updateViewFieldData = (overrides: Record<string, any> = {}) => ({
 
 export const createViewSortData = (
   viewId: string,
-  overrides: Record<string, any> = {},
+  overrides: Partial<ViewSort> = {},
 ) => ({
   viewId,
   fieldMetadataId: TEST_FIELD_METADATA_1_ID,
@@ -51,14 +59,14 @@ export const createViewSortData = (
   ...overrides,
 });
 
-export const updateViewSortData = (overrides: Record<string, any> = {}) => ({
+export const updateViewSortData = (overrides: Partial<ViewSort> = {}) => ({
   direction: 'DESC',
   ...overrides,
 });
 
 export const createViewFilterData = (
   viewId: string,
-  overrides: Record<string, any> = {},
+  overrides: Partial<ViewFilter> = {},
 ) => ({
   viewId,
   fieldMetadataId: TEST_FIELD_METADATA_1_ID,
@@ -67,7 +75,7 @@ export const createViewFilterData = (
   ...overrides,
 });
 
-export const updateViewFilterData = (overrides: Record<string, any> = {}) => ({
+export const updateViewFilterData = (overrides: Partial<ViewFilter> = {}) => ({
   operand: 'IsNot',
   value: 'updated-value',
   ...overrides,
@@ -75,7 +83,7 @@ export const updateViewFilterData = (overrides: Record<string, any> = {}) => ({
 
 export const createViewGroupData = (
   viewId: string,
-  overrides: Record<string, any> = {},
+  overrides: Partial<ViewGroup> = {},
 ) => ({
   viewId,
   fieldMetadataId: TEST_FIELD_METADATA_1_ID,
@@ -85,7 +93,7 @@ export const createViewGroupData = (
   ...overrides,
 });
 
-export const updateViewGroupData = (overrides: Record<string, any> = {}) => ({
+export const updateViewGroupData = (overrides: Partial<ViewGroup> = {}) => ({
   fieldValue: 'updated-group-value',
   isVisible: false,
   position: 1,
@@ -94,7 +102,7 @@ export const updateViewGroupData = (overrides: Record<string, any> = {}) => ({
 
 export const createViewFilterGroupData = (
   viewId: string,
-  overrides: Record<string, any> = {},
+  overrides: Partial<ViewFilterGroup> = {},
 ) => ({
   viewId,
   logicalOperator: 'AND',
@@ -102,7 +110,7 @@ export const createViewFilterGroupData = (
 });
 
 export const updateViewFilterGroupData = (
-  overrides: Record<string, any> = {},
+  overrides: Partial<ViewFilterGroup> = {},
 ) => ({
   logicalOperator: 'OR',
   ...overrides,
@@ -123,7 +131,7 @@ export const viewScenarios = {
     key: 'OPPORTUNITIES',
     position: 1,
     isCompact: true,
-    openRecordIn: 'MODAL',
+    openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
   }),
 
   compactTableView: () => ({

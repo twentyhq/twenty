@@ -15,6 +15,8 @@ import {
   createTestView,
 } from 'test/integration/graphql/utils/view-test.util';
 
+import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
+
 describe('View Filter Group Resolver', () => {
   let testViewId: string;
 
@@ -45,7 +47,7 @@ describe('View Filter Group Resolver', () => {
 
     it('should return all filter groups for workspace when no viewId provided', async () => {
       const filterGroupData = createViewFilterGroupData(testViewId, {
-        logicalOperator: 'AND',
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
       });
       const createOperation = createViewFilterGroupOperationFactory({
         data: filterGroupData,
@@ -59,14 +61,14 @@ describe('View Filter Group Resolver', () => {
       assertSuccessfulResponse(response);
       expect(response.body.data.getCoreViewFilterGroups).toHaveLength(1);
       expect(response.body.data.getCoreViewFilterGroups[0]).toMatchObject({
-        logicalOperator: 'AND',
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
         viewId: testViewId,
       });
     });
 
     it('should return view filter groups for a specific view', async () => {
       const filterGroupData = createViewFilterGroupData(testViewId, {
-        logicalOperator: 'OR',
+        logicalOperator: ViewFilterGroupLogicalOperator.OR,
       });
       const createOperation = createViewFilterGroupOperationFactory({
         data: filterGroupData,
@@ -84,7 +86,7 @@ describe('View Filter Group Resolver', () => {
       assertViewFilterGroupStructure(
         response.body.data.getCoreViewFilterGroups[0],
         {
-          logicalOperator: 'OR',
+          logicalOperator: ViewFilterGroupLogicalOperator.OR,
           viewId: testViewId,
         },
       );
@@ -92,7 +94,7 @@ describe('View Filter Group Resolver', () => {
 
     it('should return nested filter groups with parent relationships', async () => {
       const parentData = createViewFilterGroupData(testViewId, {
-        logicalOperator: 'AND',
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
       });
       const parentOperation = createViewFilterGroupOperationFactory({
         data: parentData,
@@ -102,7 +104,7 @@ describe('View Filter Group Resolver', () => {
 
       const childData = createViewFilterGroupData(testViewId, {
         parentViewFilterGroupId: parentId,
-        logicalOperator: 'OR',
+        logicalOperator: ViewFilterGroupLogicalOperator.OR,
       });
       const childOperation = createViewFilterGroupOperationFactory({
         data: childData,
@@ -126,13 +128,13 @@ describe('View Filter Group Resolver', () => {
       );
 
       assertViewFilterGroupStructure(parentGroup, {
-        logicalOperator: 'AND',
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
         parentViewFilterGroupId: null,
       });
 
       assertViewFilterGroupStructure(childGroup, {
         parentViewFilterGroupId: parentId,
-        logicalOperator: 'OR',
+        logicalOperator: ViewFilterGroupLogicalOperator.OR,
       });
     });
   });
@@ -150,7 +152,7 @@ describe('View Filter Group Resolver', () => {
 
     it('should return filter group when it exists', async () => {
       const filterGroupData = createViewFilterGroupData(testViewId, {
-        logicalOperator: 'NOT',
+        logicalOperator: ViewFilterGroupLogicalOperator.NOT,
       });
       const createOperation = createViewFilterGroupOperationFactory({
         data: filterGroupData,
@@ -169,7 +171,7 @@ describe('View Filter Group Resolver', () => {
         response.body.data.getCoreViewFilterGroup,
         {
           id: filterGroupId,
-          logicalOperator: 'NOT',
+          logicalOperator: ViewFilterGroupLogicalOperator.NOT,
           viewId: testViewId,
         },
       );
@@ -179,7 +181,7 @@ describe('View Filter Group Resolver', () => {
   describe('createCoreViewFilterGroup', () => {
     it('should create a new filter group with AND operator', async () => {
       const filterGroupData = createViewFilterGroupData(testViewId, {
-        logicalOperator: 'AND',
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
       });
       const operation = createViewFilterGroupOperationFactory({
         data: filterGroupData,
@@ -190,7 +192,7 @@ describe('View Filter Group Resolver', () => {
       assertViewFilterGroupStructure(
         response.body.data.createCoreViewFilterGroup,
         {
-          logicalOperator: 'AND',
+          logicalOperator: ViewFilterGroupLogicalOperator.AND,
           viewId: testViewId,
         },
       );
@@ -198,7 +200,7 @@ describe('View Filter Group Resolver', () => {
 
     it('should create a filter group with OR operator', async () => {
       const filterGroupData = createViewFilterGroupData(testViewId, {
-        logicalOperator: 'OR',
+        logicalOperator: ViewFilterGroupLogicalOperator.OR,
       });
       const operation = createViewFilterGroupOperationFactory({
         data: filterGroupData,
@@ -209,14 +211,14 @@ describe('View Filter Group Resolver', () => {
       assertViewFilterGroupStructure(
         response.body.data.createCoreViewFilterGroup,
         {
-          logicalOperator: 'OR',
+          logicalOperator: ViewFilterGroupLogicalOperator.OR,
         },
       );
     });
 
     it('should create a filter group with NOT operator (default)', async () => {
       const filterGroupData = createViewFilterGroupData(testViewId, {
-        logicalOperator: 'NOT',
+        logicalOperator: ViewFilterGroupLogicalOperator.NOT,
       });
       const operation = createViewFilterGroupOperationFactory({
         data: filterGroupData,
@@ -227,14 +229,14 @@ describe('View Filter Group Resolver', () => {
       assertViewFilterGroupStructure(
         response.body.data.createCoreViewFilterGroup,
         {
-          logicalOperator: 'NOT',
+          logicalOperator: ViewFilterGroupLogicalOperator.NOT,
         },
       );
     });
 
     it('should create a nested filter group with parent relationship', async () => {
       const parentData = createViewFilterGroupData(testViewId, {
-        logicalOperator: 'AND',
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
       });
       const parentOperation = createViewFilterGroupOperationFactory({
         data: parentData,
@@ -244,7 +246,7 @@ describe('View Filter Group Resolver', () => {
 
       const childData = createViewFilterGroupData(testViewId, {
         parentViewFilterGroupId: parentId,
-        logicalOperator: 'OR',
+        logicalOperator: ViewFilterGroupLogicalOperator.OR,
       });
       const childOperation = createViewFilterGroupOperationFactory({
         data: childData,
@@ -256,7 +258,7 @@ describe('View Filter Group Resolver', () => {
         childResponse.body.data.createCoreViewFilterGroup,
         {
           parentViewFilterGroupId: parentId,
-          logicalOperator: 'OR',
+          logicalOperator: ViewFilterGroupLogicalOperator.OR,
         },
       );
     });
@@ -265,7 +267,7 @@ describe('View Filter Group Resolver', () => {
   describe('updateCoreViewFilterGroup', () => {
     it('should update an existing filter group', async () => {
       const filterGroupData = createViewFilterGroupData(testViewId, {
-        logicalOperator: 'AND',
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
       });
       const createOperation = createViewFilterGroupOperationFactory({
         data: filterGroupData,
@@ -275,7 +277,7 @@ describe('View Filter Group Resolver', () => {
         createResponse.body.data.createCoreViewFilterGroup.id;
 
       const updateInput = updateViewFilterGroupData({
-        logicalOperator: 'OR',
+        logicalOperator: ViewFilterGroupLogicalOperator.OR,
       });
       const updateOperation = updateViewFilterGroupOperationFactory({
         viewFilterGroupId: filterGroupId,
@@ -286,13 +288,13 @@ describe('View Filter Group Resolver', () => {
       assertSuccessfulResponse(response);
       expect(response.body.data.updateCoreViewFilterGroup).toMatchObject({
         id: filterGroupId,
-        logicalOperator: 'OR',
+        logicalOperator: ViewFilterGroupLogicalOperator.OR,
       });
     });
 
     it('should update parent relationship of filter group', async () => {
       const parentData = createViewFilterGroupData(testViewId, {
-        logicalOperator: 'AND',
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
       });
       const parentOperation = createViewFilterGroupOperationFactory({
         data: parentData,
@@ -301,7 +303,7 @@ describe('View Filter Group Resolver', () => {
       const parentId = parentResponse.body.data.createCoreViewFilterGroup.id;
 
       const childData = createViewFilterGroupData(testViewId, {
-        logicalOperator: 'OR',
+        logicalOperator: ViewFilterGroupLogicalOperator.OR,
       });
       const childOperation = createViewFilterGroupOperationFactory({
         data: childData,
@@ -327,7 +329,7 @@ describe('View Filter Group Resolver', () => {
 
     it('should throw error when updating non-existent filter group', async () => {
       const updateInput = updateViewFilterGroupData({
-        logicalOperator: 'AND',
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
       });
       const operation = updateViewFilterGroupOperationFactory({
         viewFilterGroupId: '99999999-1c25-4d02-bf25-6aeccf7ea419',
@@ -345,7 +347,7 @@ describe('View Filter Group Resolver', () => {
   describe('deleteCoreViewFilterGroup', () => {
     it('should delete an existing filter group', async () => {
       const filterGroupData = createViewFilterGroupData(testViewId, {
-        logicalOperator: 'AND',
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
       });
       const createOperation = createViewFilterGroupOperationFactory({
         data: filterGroupData,

@@ -21,6 +21,8 @@ import {
   createTestView,
 } from 'test/integration/graphql/utils/view-test.util';
 
+import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
+
 describe('View Resolver', () => {
   beforeEach(async () => {
     await cleanupViewRecords();
@@ -57,7 +59,7 @@ describe('View Resolver', () => {
         icon: 'IconTable',
         position: 0,
         isCompact: false,
-        openRecordIn: 'SIDE_PANEL',
+        openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
       });
     });
 
@@ -151,7 +153,7 @@ describe('View Resolver', () => {
         key: 'INDEX',
         position: 0,
         isCompact: false,
-        openRecordIn: 'SIDE_PANEL',
+        openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
       });
     });
   });
