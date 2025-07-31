@@ -59,6 +59,10 @@ export type WorkflowRunDiagramStepNodeData = Exclude<
 
 export type WorkflowDiagramEmptyTriggerNodeData = {
   nodeType: 'empty-trigger';
+  position: {
+    x: number;
+    y: number;
+  };
 };
 
 export type WorkflowDiagramNodeData =

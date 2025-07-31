@@ -1,7 +1,6 @@
 import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
 import { FIRST_NODE_POSITION } from '@/workflow/workflow-diagram/constants/FirstNodePosition';
 import { VERTICAL_DISTANCE_BETWEEN_TWO_NODES } from '@/workflow/workflow-diagram/constants/VerticalDistanceBetweenTwoNodes';
-import { WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEmptyTriggerNodeDefinition';
 import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workflow-diagram/constants/WorkflowVisualizerEdgeDefaultConfiguration';
 import {
   WorkflowDiagram,
@@ -15,6 +14,8 @@ import { getWorkflowDiagramTriggerNode } from '@/workflow/workflow-diagram/utils
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEmptyTriggerNodeDefinition';
+import { getRootStepIds } from '@/workflow/workflow-trigger/utils/getRootStepIds';
 
 export const generateWorkflowDiagram = ({
   trigger,
@@ -32,6 +33,21 @@ export const generateWorkflowDiagram = ({
     nodes.push(getWorkflowDiagramTriggerNode({ trigger }));
   } else {
     nodes.push(WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION);
+
+    const triggerNextStepIds = isDefined(steps) ? getRootStepIds(steps) : [];
+
+    triggerNextStepIds.forEach((stepId) => {
+      edges.push({
+        ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
+        type: defaultEdgeType,
+        ...(defaultEdgeType.includes('editable')
+          ? { deletable: true, selectable: true }
+          : {}),
+        id: v4(),
+        source: 'trigger',
+        target: stepId,
+      });
+    });
   }
 
   let levelYPos = FIRST_NODE_POSITION.y;
