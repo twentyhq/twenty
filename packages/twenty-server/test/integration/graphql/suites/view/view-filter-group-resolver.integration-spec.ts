@@ -220,7 +220,7 @@ describe('View Filter Group Resolver', () => {
       );
     });
 
-    it('should create a filter group with NOT operator (default)', async () => {
+    it('should create a filter group with NOT operator', async () => {
       const filterGroupData = createViewFilterGroupData(testViewId, {
         logicalOperator: ViewFilterGroupLogicalOperator.NOT,
       });
