@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -38,14 +38,10 @@ export const SettingsAIAgentsTable = ({ agents }: { agents: Agent[] }) => {
 
   const sortedAgents = useSortedArray(agents, SETTINGS_AI_AGENT_TABLE_METADATA);
 
-  const filteredAgents = useMemo(
-    () =>
-      sortedAgents.filter(
-        (agent) =>
-          agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          agent.label.toLowerCase().includes(searchTerm.toLowerCase()),
-      ),
-    [sortedAgents, searchTerm],
+  const filteredAgents = sortedAgents.filter(
+    (agent) =>
+      agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      agent.label.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
