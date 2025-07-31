@@ -1,5 +1,5 @@
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
-import { CustomException, UnknownException } from 'src/utils/custom-exception';
+import { UnknownException } from 'src/utils/custom-exception';
 
 describe('featureFlagValidator', () => {
   describe('assertIsFeatureFlagKey', () => {
