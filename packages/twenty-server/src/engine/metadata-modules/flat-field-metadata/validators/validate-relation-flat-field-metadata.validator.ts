@@ -63,8 +63,8 @@ export const validateRelationFlatFieldMetadata = async ({
 
   const targetRelationFlatFieldMetadata =
     targetRelationFlatObjectMetadata?.flatFieldMetadatas.find(
-      (flatFieldtMetadata) =>
-        flatFieldtMetadata.id === relationTargetFieldMetadataId,
+      (flatFieldMetadata) =>
+        flatFieldMetadata.id === relationTargetFieldMetadataId,
     );
 
   if (!isDefined(targetRelationFlatFieldMetadata)) {

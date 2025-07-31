@@ -6,7 +6,7 @@ export const extractAndSanitizeObjectStringFields = <
 >(
   obj: T,
   keys: TKeys,
-  maxDepth: number = 10,
+  maxDepth = 10,
 ): {
   [P in TKeys[number]]: T[P];
 } => {
