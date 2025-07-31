@@ -50,6 +50,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
 import { THEME_COMMON } from 'twenty-ui/theme';
 import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
+import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -185,14 +188,22 @@ export const WorkflowDiagramCanvasBase = ({
     workflowDiagramWaitingNodesDimensionsComponentState,
   );
 
+  const isWorkflowBranchEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
+  );
+
   const [workflowDiagramFlowInitialized, setWorkflowDiagramFlowInitialized] =
     useState<boolean>(false);
 
-  const { nodes, edges } = useMemo(
-    () =>
-      isDefined(workflowDiagram) ? workflowDiagram : { nodes: [], edges: [] },
-    [workflowDiagram],
-  );
+  const { nodes, edges } = useMemo(() => {
+    if (isDefined(workflowDiagram)) {
+      if (isWorkflowBranchEnabled) {
+        return workflowDiagram;
+      }
+      return getOrganizedDiagram(workflowDiagram);
+    }
+    return { nodes: [], edges: [] };
+  }, [workflowDiagram, isWorkflowBranchEnabled]);
 
   const { rightDrawerState } = useRightDrawerState();
   const { isInRightDrawer } = useContext(ActionMenuContext);
@@ -440,17 +451,23 @@ export const WorkflowDiagramCanvasBase = ({
         edges={edges}
         onNodesChange={handleNodesChanges}
         onEdgesChange={handleEdgesChange}
-        onConnect={onConnect}
-        onNodeDragStop={onNodeDragStop}
-        onBeforeDelete={onBeforeDelete}
+        onConnect={isWorkflowBranchEnabled ? onConnect : undefined}
+        onNodeDragStop={isWorkflowBranchEnabled ? onNodeDragStop : undefined}
+        onBeforeDelete={
+          isWorkflowBranchEnabled ? onBeforeDelete : async () => false
+        }
         selectNodesOnDrag={false}
         proOptions={{ hideAttribution: true }}
         multiSelectionKeyCode={null}
         nodesFocusable={false}
-        edgesFocusable={isDefined(onDeleteEdge)}
+        edgesFocusable={
+          isWorkflowBranchEnabled ? isDefined(onDeleteEdge) : false
+        }
         panOnDrag={workflowDiagramPanOnDrag}
-        onPaneContextMenu={onPaneContextMenu}
-        nodesConnectable={nodesConnectable}
+        onPaneContextMenu={
+          isWorkflowBranchEnabled ? onPaneContextMenu : undefined
+        }
+        nodesConnectable={isWorkflowBranchEnabled ? nodesConnectable : false}
         paneClickDistance={10} // Fix small unwanted user dragging does not select node
         preventScrolling={false}
       >
@@ -459,7 +476,7 @@ export const WorkflowDiagramCanvasBase = ({
         {children}
       </ReactFlow>
 
-      {isDefined(handlePaneContextMenu) && (
+      {isDefined(handlePaneContextMenu) && isWorkflowBranchEnabled && (
         <WorkflowDiagramRightClickCommandMenu />
       )}
 

@@ -1,6 +1,5 @@
 import { WorkflowDiagramStepNodeBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeBase';
 import styled from '@emotion/styled';
-import React from 'react';
 
 const StyledStepNodeLabelIconContainer = styled.div`
   align-items: center;
