@@ -17,11 +17,8 @@ class ComponentInstanceContextMap {
     }
   }
 
-  public get(key: string): ComponentInstanceStateContext<any> {
+  public get(key: string): ComponentInstanceStateContext<any> | undefined {
     const context = window.componentComponentStateContextMap.get(key);
-    if (!context) {
-      throw new Error(`Context for key "${key}" is not defined`);
-    }
     return context;
   }
 
