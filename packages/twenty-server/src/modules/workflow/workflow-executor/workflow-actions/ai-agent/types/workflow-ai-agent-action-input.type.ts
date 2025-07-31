@@ -1,3 +1,3 @@
 export type WorkflowAiAgentActionInput = {
-  agentId: string;
+  agentId?: string;
 };

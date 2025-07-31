@@ -15,7 +15,6 @@ import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.s
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
@@ -404,14 +403,17 @@ export class WorkflowVersionStepWorkspaceService {
         break;
       }
       case WorkflowActionType.AI_AGENT: {
+        if (!isDefined(step.settings.input.agentId)) {
+          break;
+        }
+
         const agent = await this.agentService.findOneAgent(
           step.settings.input.agentId,
           workspaceId,
         );
 
-        if (agent) {
-          await this.agentService.deleteOneAgent(agent.id, workspaceId);
-        }
+        await this.agentService.deleteOneAgent(agent.id, workspaceId);
+
         break;
       }
     }
@@ -612,28 +614,6 @@ export class WorkflowVersionStepWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
-        const label = `AI Agent Workflow Step ${newStepId}`;
-        const agentName = computeMetadataNameFromLabel(label);
-
-        const newAgent = await this.agentService.createOneAgentAndFirstThread(
-          {
-            label,
-            name: agentName,
-            description: 'Created automatically for workflow step',
-            prompt: '',
-            modelId: 'auto',
-          },
-          workspaceId,
-          this.scopedWorkspaceContextFactory.create().userWorkspaceId,
-        );
-
-        if (!isDefined(newAgent)) {
-          throw new WorkflowVersionStepException(
-            'Failed to create AI Agent Step',
-            WorkflowVersionStepExceptionCode.FAILURE,
-          );
-        }
-
         return {
           id: newStepId,
           name: 'AI Agent',
@@ -641,9 +621,7 @@ export class WorkflowVersionStepWorkspaceService {
           valid: false,
           settings: {
             ...BASE_STEP_DEFINITION,
-            input: {
-              agentId: newAgent.id,
-            },
+            input: {},
           },
         };
       }
