@@ -1,7 +1,11 @@
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { QUOTED_STRING_REGEX } from 'twenty-shared/constants';
-import { EnumFieldMetadataType, FieldMetadataType, NonNullableRequired } from 'twenty-shared/types';
+import {
+  EnumFieldMetadataType,
+  FieldMetadataType,
+  NonNullableRequired,
+} from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -32,11 +36,11 @@ const validateMetadataOptionId = (sanitizedId?: string) => {
   const validators: FlatFieldMetadataValidator<string>[] = [
     {
       validator: (id) => !isDefined(id),
-      message: 'Option id is required',
+      message: t`Option id is required`,
     },
     {
       validator: (id) => !z.string().uuid().safeParse(id).success,
-      message: 'Option id is invalid',
+      message: t`Option id is invalid`,
     },
   ];
 
@@ -86,7 +90,7 @@ const validateMetadataOptionValue = (sanitizedValue: string) => {
     },
     {
       validator: (value) => !isSnakeCaseString(value),
-      message: `Value must be in UPPER_CASE and follow snake_case "${sanitizedValue}"`,
+      message: t`Value must be in UPPER_CASE and follow snake_case "${sanitizedValue}"`,
     },
   ];
 
@@ -109,7 +113,7 @@ const validateDuplicates = (
       FieldMetadataDefaultOption[] | FieldMetadataComplexOption[]
     >
   >((field) => ({
-    message: `Duplicated option ${field}`,
+    message: t`Duplicated option ${field}`,
     validator: () =>
       new Set(options.map((option) => option[field])).size !== options.length,
   }));
@@ -151,7 +155,7 @@ const validateSelectDefaultValue = (
   if (typeof defaultValue !== 'string') {
     return [
       new FieldMetadataException(
-        'Default value for multi-select must be a stringified array',
+        'Default value for select must be a string',
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       ),
     ];
