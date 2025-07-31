@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
@@ -115,7 +116,7 @@ export class AgentService {
       name: updatedName,
     });
 
-    if (input.roleId === undefined) {
+    if (!isDefined(input.roleId)) {
       return updatedAgent;
     }
 
