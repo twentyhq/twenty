@@ -39,6 +39,16 @@ export class TwoFactorAuthenticationService {
   ) {}
 
   /**
+   * Generates encryption key for OTP secret based on user and workspace identifiers.
+   */
+  private generateOtpSecretEncryptionKey(
+    userId: string,
+    workspaceId: string,
+  ): string {
+    return userId + workspaceId + 'otp-secret';
+  }
+
+  /**
    * Validates two-factor authentication requirements for a workspace.
    *
    * @throws {AuthException} with TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED if 2FA is set up and needs verification
@@ -107,7 +117,7 @@ export class TwoFactorAuthenticationService {
       const existingSecret =
         await this.simpleSecretEncryptionUtil.decryptSecret(
           existing2FAMethod.secret,
-          userId + workspaceId + 'otp-secret',
+          this.generateOtpSecretEncryptionKey(userId, workspaceId),
         );
 
       const issuer = `Twenty${workspaceDisplayName ? ` - ${workspaceDisplayName}` : ''}`;
@@ -125,7 +135,7 @@ export class TwoFactorAuthenticationService {
 
     const encryptedSecret = await this.simpleSecretEncryptionUtil.encryptSecret(
       context.secret,
-      userId + workspaceId + 'otp-secret',
+      this.generateOtpSecretEncryptionKey(userId, workspaceId),
     );
 
     await this.twoFactorAuthenticationMethodRepository.save({
@@ -172,7 +182,7 @@ export class TwoFactorAuthenticationService {
 
     const originalSecret = await this.simpleSecretEncryptionUtil.decryptSecret(
       userTwoFactorAuthenticationMethod.secret,
-      userId + workspaceId + 'otp-secret',
+      this.generateOtpSecretEncryptionKey(userId, workspaceId),
     );
 
     const otpContext = {
