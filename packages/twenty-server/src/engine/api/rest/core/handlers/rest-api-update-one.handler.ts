@@ -23,7 +23,9 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
     const { objectMetadata, repository, restrictedFields } =
       await this.getRepositoryAndMetadataOrFail(request);
 
-    const recordToUpdate = await repository.findOneOrFail({
+    // assert the record exists
+    await repository.findOneOrFail({
+      select: { id: true },
       where: { id: recordId },
     });
 
@@ -33,7 +35,7 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
     });
 
     const updatedRecord = await repository.save({
-      ...recordToUpdate,
+      id: recordId,
       ...overriddenBody,
     });
 

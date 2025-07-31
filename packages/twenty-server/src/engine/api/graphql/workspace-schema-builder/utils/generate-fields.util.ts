@@ -13,10 +13,10 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { InputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/factories/object-type-definition.factory';
 import { formatRelationConnectInputTarget } from 'src/engine/api/graphql/workspace-schema-builder/factories/relation-connect-input-type-definition.factory';
+import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/workspace-schema-builder/utils/is-field-metadata-relation-or-morph-relation.utils';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 type TypeFactory<T extends InputTypeDefinitionKind | ObjectTypeDefinitionKind> =
   {
@@ -55,23 +55,19 @@ export const generateFields = <
 }): T extends InputTypeDefinitionKind
   ? GraphQLInputFieldConfigMap
   : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     GraphQLFieldConfigMap<any, any> => {
   const allGeneratedFields = {};
 
   for (const fieldMetadata of objectMetadata.fields) {
     let generatedField;
 
-    const isRelation =
-      isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION) ||
-      isFieldMetadataEntityOfType(
-        fieldMetadata,
-        FieldMetadataType.MORPH_RELATION,
-      );
+    const isRelation = isFieldMetadataRelationOrMorphRelation(fieldMetadata);
 
     if (isRelation) {
       generatedField = generateRelationField({
-        fieldMetadata,
+        fieldMetadata: fieldMetadata as FieldMetadataEntity<
+          FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+        >,
         kind,
         options,
         typeFactory,

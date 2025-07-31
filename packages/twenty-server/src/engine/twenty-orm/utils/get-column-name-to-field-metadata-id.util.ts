@@ -8,10 +8,10 @@ import {
   processFieldMetadataForColumnNameMapping,
 } from 'src/engine/twenty-orm/utils/process-field-metadata-for-column-name-mapping.util';
 
-export function getFieldMetadataIdToColumnNamesMap(
+export function getColumnNameToFieldMetadataIdMap(
   objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
 ) {
-  const fieldMetadataToColumnNamesMap = new Map<string, string[]>();
+  const columnNameToFieldMetadataIdMap: Record<string, string> = {};
 
   const processor: ColumnNameProcessor = {
     processCompositeField: ({
@@ -29,13 +29,7 @@ export function getFieldMetadataIdToColumnNamesMap(
           compositeProperty,
         );
 
-        const existingColumns =
-          fieldMetadataToColumnNamesMap.get(fieldMetadataId) ?? [];
-
-        fieldMetadataToColumnNamesMap.set(fieldMetadataId, [
-          ...existingColumns,
-          columnName,
-        ]);
+        columnNameToFieldMetadataIdMap[columnName] = fieldMetadataId;
       });
     },
     processRelationField: ({
@@ -43,20 +37,18 @@ export function getFieldMetadataIdToColumnNamesMap(
       columnName,
     }: {
       fieldMetadataId: string;
-      fieldMetadata: FieldMetadataEntity;
       columnName: string;
     }) => {
-      fieldMetadataToColumnNamesMap.set(fieldMetadataId, [columnName]); // TODO test
+      columnNameToFieldMetadataIdMap[columnName] = fieldMetadataId;
     },
     processSimpleField: ({
       fieldMetadataId,
       columnName,
     }: {
       fieldMetadataId: string;
-      fieldMetadata: FieldMetadataEntity;
       columnName: string;
     }) => {
-      fieldMetadataToColumnNamesMap.set(fieldMetadataId, [columnName]);
+      columnNameToFieldMetadataIdMap[columnName] = fieldMetadataId;
     },
   };
 
@@ -65,5 +57,5 @@ export function getFieldMetadataIdToColumnNamesMap(
     processor,
   );
 
-  return fieldMetadataToColumnNamesMap;
+  return columnNameToFieldMetadataIdMap;
 }
