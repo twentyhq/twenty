@@ -6,6 +6,8 @@ import { Repository } from 'typeorm';
 import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
 import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.service';
+import { CreateAgentInput } from 'src/engine/metadata-modules/agent/dtos/create-agent.input';
+import { UpdateAgentInput } from 'src/engine/metadata-modules/agent/dtos/update-agent.input';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label.util';
 
@@ -75,17 +77,7 @@ export class AgentService {
   }
 
   async createOneAgent(
-    input: {
-      name?: string;
-      label: string;
-      description?: string;
-      icon?: string;
-      prompt: string;
-      modelId: ModelId;
-      roleId?: string;
-      responseFormat?: object;
-      isCustom?: boolean;
-    },
+    input: CreateAgentInput & { isCustom?: boolean },
     workspaceId: string,
   ) {
     const agent = this.agentRepository.create({
@@ -108,20 +100,7 @@ export class AgentService {
     return this.findOneAgent(createdAgent.id, workspaceId);
   }
 
-  async updateOneAgent(
-    input: {
-      id: string;
-      name?: string;
-      label?: string;
-      description?: string;
-      icon?: string;
-      prompt?: string;
-      modelId?: ModelId;
-      roleId?: string;
-      responseFormat?: object;
-    },
-    workspaceId: string,
-  ) {
+  async updateOneAgent(input: UpdateAgentInput, workspaceId: string) {
     const agent = await this.findOneAgent(input.id, workspaceId);
 
     let updatedName = input.name;
