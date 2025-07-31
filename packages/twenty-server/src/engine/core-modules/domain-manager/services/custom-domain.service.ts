@@ -88,7 +88,7 @@ export class CustomDomainService {
 
     if (response.result.length === 1) {
       // @ts-expect-error - type definition doesn't reflect the real API
-      const dcvRecords = response.result[0].ssl.dcv_delegation_records[0];
+      const dcvRecords = response.result[0].ssl.dcv_delegation_records?.[0];
 
       return {
         id: response.result[0].id,
@@ -118,9 +118,11 @@ export class CustomDomainService {
               !response.result[0].ssl.status ||
               response.result[0].ssl.status.startsWith('pending')
                 ? 'pending'
-                : response.result[0].ssl.status,
-            key: dcvRecords.cname,
-            value: dcvRecords.cname_target,
+                : response.result[0].ssl.status === 'active'
+                  ? 'success'
+                  : response.result[0].ssl.status,
+            key: dcvRecords?.cname,
+            value: dcvRecords?.cname_target,
           },
         ],
       };
@@ -184,7 +186,6 @@ export class CustomDomainService {
       workspace.customDomain,
     );
 
-    console.log('>>>>>>>>>>>>>>', customDomainDetails);
     if (!customDomainDetails) return;
 
     await this.refreshCustomDomain(customDomainDetails);

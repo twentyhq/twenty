@@ -9,13 +9,13 @@ class CustomDomainRecord {
   type: 'cname';
 
   @Field(() => String)
-  key: string;
-
-  @Field(() => String)
   status: string;
 
-  @Field(() => String)
-  value: string;
+  @Field(() => String, { nullable: true })
+  key?: string;
+
+  @Field(() => String, { nullable: true })
+  value?: string;
 }
 
 @ObjectType()

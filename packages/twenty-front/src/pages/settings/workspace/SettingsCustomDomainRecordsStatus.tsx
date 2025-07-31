@@ -34,8 +34,8 @@ const StyledTableCell = styled(TableCell)`
 `;
 
 const records = [
-  { name: 'CNAME', validationType: 'redirection' as const },
-  { name: 'SSL Certificate Generation', validationType: 'ssl' as const },
+  { name: 'Domain Setup', validationType: 'redirection' as const },
+  { name: 'Secure Connection', validationType: 'ssl' as const },
 ];
 
 export const SettingsCustomDomainRecordsStatus = () => {

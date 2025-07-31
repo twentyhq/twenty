@@ -567,11 +567,11 @@ export type CursorPaging = {
 
 export type CustomDomainRecord = {
   __typename?: 'CustomDomainRecord';
-  key: Scalars['String'];
+  key?: Maybe<Scalars['String']>;
   status: Scalars['String'];
   type: Scalars['String'];
   validationType: Scalars['String'];
-  value: Scalars['String'];
+  value?: Maybe<Scalars['String']>;
 };
 
 export type CustomDomainValidRecords = {
