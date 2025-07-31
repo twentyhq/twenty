@@ -169,13 +169,12 @@ export class ExtendObjectTypeDefinitionV2Factory {
         );
       }
 
-      // todo @guillim to go on for ont to many needs plural
       const fieldName =
         fieldMetadata.type === FieldMetadataType.MORPH_RELATION
           ? computeMorphRelationFieldName({
-              name: fieldMetadata.name,
-              targetObjectMetadataNameSingular:
-                objectMetadataTarget.nameSingular,
+              fieldName: fieldMetadata.name,
+              relationDirection: fieldMetadata.settings.relationType,
+              targetObjectMetadata: objectMetadataTarget,
             })
           : fieldMetadata.name;
 
