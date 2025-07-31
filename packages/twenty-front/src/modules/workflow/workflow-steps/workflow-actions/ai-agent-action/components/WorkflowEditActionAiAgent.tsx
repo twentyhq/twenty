@@ -1,4 +1,5 @@
 import { useAiAgentOutputSchema } from '@/ai/hooks/useAiAgentOutputSchema';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Select } from '@/ui/input/components/Select';
 import { WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
@@ -7,6 +8,7 @@ import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-acti
 import { BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { useFindManyAgentsQuery } from '~/generated-metadata/graphql';
@@ -34,6 +36,7 @@ export const WorkflowEditActionAiAgent = ({
   action,
   actionOptions,
 }: WorkflowEditActionAiAgentProps) => {
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { getIcon } = useIcons();
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
@@ -54,7 +57,7 @@ export const WorkflowEditActionAiAgent = ({
 
   const agentOptions =
     agentsData?.findManyAgents?.reduce<SelectOption<string>[]>((acc, agent) => {
-      if (agent.isCustom) {
+      if (agent.id !== currentWorkspace?.defaultAgent?.id) {
         acc.push({
           label: agent.label,
           value: agent.id,
@@ -64,7 +67,7 @@ export const WorkflowEditActionAiAgent = ({
       return acc;
     }, []) || [];
 
-  const noCustomAgentsAvailable = agentOptions.length === 0;
+  const noAgentsAvailable = agentOptions.length === 0;
 
   const handleAgentChange = (value: string) => {
     if (actionOptions.readonly === true) {
@@ -107,16 +110,16 @@ export const WorkflowEditActionAiAgent = ({
             options={agentOptions}
             value={agentId}
             onChange={handleAgentChange}
-            disabled={actionOptions.readonly || noCustomAgentsAvailable}
+            disabled={actionOptions.readonly || noAgentsAvailable}
             emptyOption={{
-              label: noCustomAgentsAvailable
+              label: noAgentsAvailable
                 ? t`No agents available`
                 : t`Select an agent`,
               value: '',
             }}
           />
 
-          {noCustomAgentsAvailable && (
+          {noAgentsAvailable && (
             <StyledErrorMessage>
               {t`Please create agents in the AI settings to use in workflows.`}
             </StyledErrorMessage>
