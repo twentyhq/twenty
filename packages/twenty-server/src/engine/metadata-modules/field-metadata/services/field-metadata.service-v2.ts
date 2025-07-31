@@ -78,6 +78,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
     );
 
     let flatObjectMetadatasWithNewFields: FlatObjectMetadata[] = [];
+
     for (const flatFieldMetadataAndParentPair of flatFieldToCreateAndItsFlatObjectMetadataArray) {
       const createdFlatFieldMetadataValidationResult = (
         await Promise.all(
