@@ -14,6 +14,7 @@ module.exports = {
     'lingui.config.ts',
     'vite.config.ts',
     'setupTests.ts',
+    '**/__mocks__/**',
   ],
   overrides: [
     {
