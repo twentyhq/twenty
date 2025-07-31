@@ -72,7 +72,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           description: agent.description,
           icon: agent.icon || 'IconRobot',
           modelId: agent.modelId,
-          role: agent.roleId || '',
+          role: agent.roleId,
           prompt: agent.prompt,
           isCustom: agent.isCustom,
         });
@@ -116,10 +116,10 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
         const input: CreateAgentInput = {
           name: formValues.name,
           label: formValues.label,
-          description: formValues.description || undefined,
-          icon: formValues.icon || undefined,
+          description: formValues.description,
+          icon: formValues.icon,
           modelId: formValues.modelId,
-          roleId: formValues.role || undefined,
+          roleId: formValues.role,
           prompt: formValues.prompt,
         };
 
@@ -143,7 +143,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
             description: formValues.description,
             icon: formValues.icon,
             modelId: formValues.modelId,
-            roleId: formValues.role || null,
+            roleId: formValues.role,
             prompt: formValues.prompt,
           },
         },
@@ -196,9 +196,9 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       >
         <SettingsPageContainer>
           <Section>
-            {!isAskAIAgent ? (
+            {!isAskAIAgent && (
               <H2Title title={pageTitle} description={pageDescription} />
-            ) : null}
+            )}
             {isEditMode && loading ? (
               <SettingsAgentDetailSkeletonLoader />
             ) : (
