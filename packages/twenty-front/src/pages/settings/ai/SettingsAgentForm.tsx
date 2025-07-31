@@ -42,13 +42,7 @@ const StyledContentContainer = styled.div`
 
 const DELETE_AGENT_MODAL_ID = 'delete-agent-modal';
 
-type SettingsAgentFormMode = 'create' | 'edit';
-
-interface SettingsAgentFormProps {
-  mode: SettingsAgentFormMode;
-}
-
-export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
+export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const { t } = useLingui();
   const { agentId = '' } = useParams<{ agentId: string }>();
   const navigate = useNavigateSettings();
