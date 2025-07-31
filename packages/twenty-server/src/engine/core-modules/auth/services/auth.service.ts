@@ -174,18 +174,22 @@ export class AuthService {
       );
     }
 
+    await this.checkIsEmailVerified(user.isEmailVerified);
+
+    return user;
+  }
+
+  async checkIsEmailVerified(isEmailVerified: boolean) {
     const isEmailVerificationRequired = this.twentyConfigService.get(
       'IS_EMAIL_VERIFICATION_REQUIRED',
     );
 
-    if (isEmailVerificationRequired && !user.isEmailVerified) {
+    if (isEmailVerificationRequired && !isEmailVerified) {
       throw new AuthException(
         'Email is not verified',
         AuthExceptionCode.EMAIL_NOT_VERIFIED,
       );
     }
-
-    return user;
   }
 
   private async validatePassword(
@@ -296,7 +300,7 @@ export class AuthService {
 
     return {
       tokens: {
-        accessToken,
+        accessOrWorkspaceAgnosticToken: accessToken,
         refreshToken,
       },
     };
@@ -474,12 +478,12 @@ export class AuthService {
       locale: firstUserWorkspace.locale,
     });
 
-    const html = await render(emailTemplate, { pretty: true });
-    const text = await render(emailTemplate, { plainText: true });
+    const html = render(emailTemplate, { pretty: true });
+    const text = render(emailTemplate, { plainText: true });
 
     i18n.activate(firstUserWorkspace.locale);
 
-    this.emailService.send({
+    await this.emailService.send({
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
       )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
@@ -731,7 +735,7 @@ export class AuthService {
         pathname: '/welcome',
         searchParams: {
           tokenPair: JSON.stringify({
-            accessToken:
+            accessOrWorkspaceAgnosticToken:
               await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
                 {
                   userId: user.id,

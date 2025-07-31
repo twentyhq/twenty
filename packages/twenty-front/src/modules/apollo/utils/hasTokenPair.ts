@@ -3,5 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const hasTokenPair = () => {
   const tokenPair = getTokenPair();
-  return isDefined(tokenPair) && isDefined(tokenPair.accessToken?.token);
+  return (
+    isDefined(tokenPair) &&
+    isDefined(tokenPair.accessOrWorkspaceAgnosticToken?.token)
+  );
 };
