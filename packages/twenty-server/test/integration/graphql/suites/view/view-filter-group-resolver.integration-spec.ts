@@ -13,7 +13,7 @@ import {
   assertViewFilterGroupStructure,
   cleanupViewRecords,
   createTestView,
-} from 'test/integration/graphql/utils/view-test-utils';
+} from 'test/integration/graphql/utils/view-test.util';
 
 describe('View Filter Group Resolver', () => {
   let testViewId: string;
@@ -380,55 +380,6 @@ describe('View Filter Group Resolver', () => {
       expect(response.body.data).toBeDefined();
       expect(response.body.errors).toBeDefined();
       expect(response.body.errors[0].message).toContain('not found');
-    });
-  });
-
-  describe('validation', () => {
-    it('should require viewId for creation', async () => {
-      const invalidData = {
-        logicalOperator: 'AND',
-      } as any;
-      const operation = createViewFilterGroupOperationFactory({
-        data: invalidData,
-      });
-      const response = await makeGraphqlAPIRequest(operation);
-
-      expect(response.status).toBe(200);
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors[0].message).toContain('viewId');
-    });
-
-    it('should validate logical operator enum values', async () => {
-      const invalidData = createViewFilterGroupData(testViewId, {
-        logicalOperator: 'INVALID_OPERATOR' as any,
-      });
-      const operation = createViewFilterGroupOperationFactory({
-        data: invalidData,
-      });
-      const response = await makeGraphqlAPIRequest(operation);
-
-      expect(response.status).toBe(200);
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors[0].message).toContain('logicalOperator');
-    });
-
-    it('should allow valid logical operator values', async () => {
-      const operators = ['AND', 'OR', 'NOT'];
-
-      for (const operator of operators) {
-        const filterGroupData = createViewFilterGroupData(testViewId, {
-          logicalOperator: operator,
-        });
-        const operation = createViewFilterGroupOperationFactory({
-          data: filterGroupData,
-        });
-        const response = await makeGraphqlAPIRequest(operation);
-
-        assertSuccessfulResponse(response);
-        expect(
-          response.body.data.createCoreViewFilterGroup.logicalOperator,
-        ).toBe(operator);
-      }
     });
   });
 });

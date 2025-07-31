@@ -37,8 +37,7 @@ export const assertErrorResponse = (
   response: any,
   expectedErrorMessage?: string,
 ) => {
-  expect(response.status).toBe(200);
-  expect(response.body.data).toBeDefined();
+  expect(response.status).toBe(400);
   expect(response.body.errors).toBeDefined();
   expect(response.body.errors).toHaveLength(1);
 

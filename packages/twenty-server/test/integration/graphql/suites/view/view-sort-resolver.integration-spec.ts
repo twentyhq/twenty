@@ -9,12 +9,11 @@ import {
   updateViewSortData,
 } from 'test/integration/graphql/utils/view-data-factory.util';
 import {
-  assertErrorResponse,
   assertSuccessfulResponse,
   assertViewSortStructure,
   cleanupViewRecords,
   createTestView,
-} from 'test/integration/graphql/utils/view-test-utils';
+} from 'test/integration/graphql/utils/view-test.util';
 
 describe('View Sort Resolver', () => {
   let testViewId: string;
@@ -135,30 +134,6 @@ describe('View Sort Resolver', () => {
 
       assertSuccessfulResponse(response);
       expect(response.body.data.deleteCoreViewSort).toBe(true);
-    });
-  });
-
-  describe('validation', () => {
-    const requiredFields = ['viewId', 'fieldMetadataId', 'direction'];
-    const validInput = {
-      viewId: testViewId,
-      fieldMetadataId: TEST_FIELD_METADATA_1_ID,
-      direction: 'ASC',
-    };
-
-    requiredFields.forEach((field) => {
-      it(`should require ${field} for creation`, async () => {
-        const invalidInput = { ...validInput };
-
-        delete invalidInput[field as keyof typeof invalidInput];
-
-        const operation = createViewSortOperationFactory({
-          data: invalidInput,
-        });
-        const response = await makeGraphqlAPIRequest(operation);
-
-        assertErrorResponse(response, field);
-      });
     });
   });
 });

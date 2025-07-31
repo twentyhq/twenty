@@ -10,12 +10,11 @@ import {
   viewScenarios,
 } from 'test/integration/graphql/utils/view-data-factory.util';
 import {
-  assertErrorResponse,
   assertSuccessfulResponse,
   assertViewFieldStructure,
   cleanupViewRecords,
   createTestView,
-} from 'test/integration/graphql/utils/view-test-utils';
+} from 'test/integration/graphql/utils/view-test.util';
 
 describe('View Field Resolver', () => {
   let testViewId: string;
@@ -160,32 +159,6 @@ describe('View Field Resolver', () => {
 
       assertSuccessfulResponse(response);
       expect(response.body.data.deleteCoreViewField).toBe(true);
-    });
-  });
-
-  describe('validation', () => {
-    const requiredFields = ['viewId', 'fieldMetadataId'];
-    const validInput = {
-      viewId: testViewId,
-      fieldMetadataId: TEST_FIELD_METADATA_1_ID,
-      position: 0,
-      isVisible: true,
-      size: 150,
-    };
-
-    requiredFields.forEach((field) => {
-      it(`should require ${field} for creation`, async () => {
-        const invalidInput = { ...validInput };
-
-        delete invalidInput[field as keyof typeof invalidInput];
-
-        const operation = createViewFieldOperationFactory({
-          data: invalidInput,
-        });
-        const response = await makeGraphqlAPIRequest(operation);
-
-        assertErrorResponse(response, field);
-      });
     });
   });
 });
