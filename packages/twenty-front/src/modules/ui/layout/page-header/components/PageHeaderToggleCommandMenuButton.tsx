@@ -1,5 +1,6 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isCommandMenuPersistentState } from '@/command-menu/states/isCommandMenuPersistentState';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderCommandMenuButtonClickOutsideId';
 import { useTheme } from '@emotion/react';
@@ -109,14 +110,18 @@ const AnimatedIcon = ({
 export const PageHeaderToggleCommandMenuButton = () => {
   const { toggleCommandMenu } = useCommandMenu();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
+  const isCommandMenuPersistent = useRecoilValue(isCommandMenuPersistentState);
 
   const isMobile = useIsMobile();
+  const theme = useTheme();
+
+  if (isCommandMenuPersistent) {
+    return null;
+  }
 
   const ariaLabel = isCommandMenuOpened
     ? t`Close command menu`
     : t`Open command menu`;
-
-  const theme = useTheme();
 
   return (
     <StyledButtonWrapper>
@@ -130,7 +135,9 @@ export const PageHeaderToggleCommandMenuButton = () => {
           size={isMobile ? 'medium' : 'small'}
           variant="secondary"
           accent="default"
-          hotkeys={isCommandMenuOpened ? undefined : [getOsControlSymbol(), 'K']}
+          hotkeys={
+            isCommandMenuOpened ? undefined : [getOsControlSymbol(), 'K']
+          }
           ariaLabel={ariaLabel}
           onClick={toggleCommandMenu}
           animate={{

@@ -3,6 +3,8 @@ import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-men
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
+import { isCommandMenuPersistentState } from '@/command-menu/states/isCommandMenuPersistentState';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -20,7 +22,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { IconBrowserMaximize } from 'twenty-ui/display';
+import { IconBrowserMaximize, IconDotsVertical } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -37,7 +39,7 @@ export const RecordShowRightDrawerOpenRecordButton = ({
   const record = useRecoilValue<ObjectRecord | null | undefined>(
     recordStoreFamilyState(recordId),
   );
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeCommandMenu, navigateCommandMenu } = useCommandMenu();
 
   const commandMenuPageComponentInstance = useComponentInstanceStateContext(
     CommandMenuPageComponentInstanceContext,
@@ -103,12 +105,26 @@ export const RecordShowRightDrawerOpenRecordButton = ({
           getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId),
         );
 
-        closeCommandMenu();
+        const isCommandMenuPersistent = snapshot
+          .getLoadable(isCommandMenuPersistentState)
+          .getValue();
+
+        if (isCommandMenuPersistent) {
+          navigateCommandMenu({
+            page: CommandMenuPages.Root,
+            pageTitle: 'Command Menu',
+            pageIcon: IconDotsVertical,
+            resetNavigationStack: true,
+          });
+        } else {
+          closeCommandMenu();
+        }
       },
     [
       actionMenuId,
       activeTabIdInRightDrawer,
       closeCommandMenu,
+      navigateCommandMenu,
       closeDropdown,
       navigate,
       objectNameSingular,
