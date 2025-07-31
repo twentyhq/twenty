@@ -3,8 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const hasTokenPair = () => {
   const tokenPair = getTokenPair();
-  return (
-    isDefined(tokenPair) &&
-    isDefined(tokenPair.accessOrWorkspaceAgnosticToken?.token)
-  );
+  // getTokenPair now handles validation internally, so if it returns a tokenPair,
+  // it's guaranteed to have the correct structure
+  return isDefined(tokenPair);
 };
