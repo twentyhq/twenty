@@ -543,6 +543,15 @@ export type CreateWebhookDto = {
   targetUrl: Scalars['String'];
 };
 
+export type CreateWorkflowVersionEdgeInput = {
+  /** Workflow version source step ID */
+  source: Scalars['String'];
+  /** Workflow version target step ID */
+  target: Scalars['String'];
+  /** Workflow version ID */
+  workflowVersionId: Scalars['String'];
+};
+
 export type CreateWorkflowVersionStepInput = {
   /** Next step ID */
   nextStepId?: InputMaybe<Scalars['String']>;
@@ -1286,7 +1295,7 @@ export type MutationCreateWebhookArgs = {
 
 
 export type MutationCreateWorkflowVersionEdgeArgs = {
-  input: WorkflowVersionEdgeInput;
+  input: CreateWorkflowVersionEdgeInput;
 };
 
 
@@ -1351,7 +1360,7 @@ export type MutationDeleteWebhookArgs = {
 
 
 export type MutationDeleteWorkflowVersionEdgeArgs = {
-  input: WorkflowVersionEdgeInput;
+  input: CreateWorkflowVersionEdgeInput;
 };
 
 
@@ -2552,7 +2561,7 @@ export type UpdateDraftWorkflowVersionPositionsInput = {
   /** Workflow version updated positions */
   positions: Array<WorkflowStepPositionUpdateInput>;
   /** Workflow version ID */
-  workflowVersionId: Scalars['String'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 export type UpdateFieldInput = {
@@ -2833,21 +2842,13 @@ export type WorkflowStepPositionInput = {
 export type WorkflowStepPositionUpdateInput = {
   /** Step or trigger ID */
   id: Scalars['String'];
+  /** Position of the step or trigger */
   position: WorkflowStepPositionInput;
 };
 
 export type WorkflowVersion = {
   __typename?: 'WorkflowVersion';
   id: Scalars['UUID'];
-};
-
-export type WorkflowVersionEdgeInput = {
-  /** Workflow version source step ID */
-  source: Scalars['String'];
-  /** Workflow version target step ID */
-  target: Scalars['String'];
-  /** Workflow version ID */
-  workflowVersionId: Scalars['String'];
 };
 
 export type WorkflowVersionStepUpdates = {

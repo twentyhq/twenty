@@ -689,7 +689,7 @@ export class WorkflowVersionStepWorkspaceService {
     const newStepId = v4();
 
     const baseStep = {
-      id: v4(),
+      id: newStepId,
       position,
       valid: false,
       nextStepIds: [],

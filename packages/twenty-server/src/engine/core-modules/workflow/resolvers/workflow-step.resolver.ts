@@ -21,7 +21,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-step/workflow-version-step.workspace-service';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
-import { WorkflowVersionEdgeInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-edge-input.dto';
+import { CreateWorkflowVersionEdgeInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-edge-input.dto';
 import { WorkflowVersionStepUpdatesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-updates.dto';
 
 @Resolver()
@@ -130,7 +130,7 @@ export class WorkflowStepResolver {
   async createWorkflowVersionEdge(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('input')
-    { source, target, workflowVersionId }: WorkflowVersionEdgeInput,
+    { source, target, workflowVersionId }: CreateWorkflowVersionEdgeInput,
   ): Promise<WorkflowVersionStepUpdatesDTO> {
     return await this.workflowVersionStepWorkspaceService.createWorkflowVersionEdge(
       {
@@ -146,7 +146,7 @@ export class WorkflowStepResolver {
   async deleteWorkflowVersionEdge(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('input')
-    { source, target, workflowVersionId }: WorkflowVersionEdgeInput,
+    { source, target, workflowVersionId }: CreateWorkflowVersionEdgeInput,
   ): Promise<WorkflowVersionStepUpdatesDTO> {
     return await this.workflowVersionStepWorkspaceService.deleteWorkflowVersionEdge(
       {

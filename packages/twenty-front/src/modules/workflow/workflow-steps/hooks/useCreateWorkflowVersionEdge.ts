@@ -5,7 +5,7 @@ import {
   CreateWorkflowVersionEdgeMutationVariables,
 } from '~/generated-metadata/graphql';
 import { CREATE_WORKFLOW_VERSION_EDGE } from '@/workflow/graphql/mutations/createWorkflowVersionEdge';
-import { WorkflowVersionEdgeInput } from '~/generated/graphql';
+import { CreateWorkflowVersionEdgeInput } from '~/generated/graphql';
 import { useWorkflowVersionStepUpdateCache } from '@/workflow/workflow-steps/hooks/useWorkflowVersionStepUpdateCache';
 
 export const useCreateWorkflowVersionEdge = () => {
@@ -18,7 +18,9 @@ export const useCreateWorkflowVersionEdge = () => {
     CreateWorkflowVersionEdgeMutationVariables
   >(CREATE_WORKFLOW_VERSION_EDGE, { client: apolloCoreClient });
 
-  const createWorkflowVersionEdge = async (input: WorkflowVersionEdgeInput) => {
+  const createWorkflowVersionEdge = async (
+    input: CreateWorkflowVersionEdgeInput,
+  ) => {
     const result = await mutate({ variables: { input } });
 
     const workflowVersionStepUpdates = result?.data?.createWorkflowVersionEdge;

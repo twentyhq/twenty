@@ -27,5 +27,5 @@ export class WorkflowActionDTO {
   nextStepIds?: string[];
 
   @Field(() => WorkflowStepPosition, { nullable: true })
-  position?: object;
+  position?: WorkflowStepPosition;
 }

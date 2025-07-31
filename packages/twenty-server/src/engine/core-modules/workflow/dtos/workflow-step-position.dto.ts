@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-@ObjectType()
+@ObjectType('WorkflowStepPosition')
 export class WorkflowStepPosition {
   @Field(() => Number)
   x: number;
