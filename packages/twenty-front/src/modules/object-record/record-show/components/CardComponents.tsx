@@ -112,7 +112,7 @@ export const CardComponents: Record<CardType, CardComponentType> = {
   [CardType.FieldCard]: ({
     targetableObject,
     isInRightDrawer,
-    isMergeMode,
+    isMergeMode = false,
   }: FieldsCardComponentProps) => (
     <StyledGreyBox isInRightDrawer={isInRightDrawer}>
       <FieldsCard
