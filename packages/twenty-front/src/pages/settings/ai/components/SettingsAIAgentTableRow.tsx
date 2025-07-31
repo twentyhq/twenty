@@ -30,6 +30,10 @@ const StyledActionTableCell = styled(TableCell)`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledIconContainer = styled.div`
+  flex-shrink: 0;
+`;
+
 export const SettingsAIAgentTableRow = ({
   action,
   agent,
@@ -45,7 +49,9 @@ export const SettingsAIAgentTableRow = ({
       to={agent.isCustom ? link : undefined}
     >
       <StyledNameTableCell>
-        <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+        <StyledIconContainer>
+          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+        </StyledIconContainer>
         <OverflowingTextWithTooltip text={agent.label} />
       </StyledNameTableCell>
       <TableCell>
