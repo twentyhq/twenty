@@ -169,7 +169,7 @@ export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
     }
   };
 
-  const title = isEditMode ? (loading ? t`Agent` : agent?.name) : t`New Agent`;
+  const title = isEditMode ? (loading ? t`Agent` : agent?.label) : t`New Agent`;
   const pageTitle = isEditMode ? t`Edit Agent` : t`New Agent`;
   const pageDescription = isEditMode
     ? t`Update agent information`
