@@ -11,13 +11,7 @@ import { useGetRolesQuery } from '~/generated-metadata/graphql';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 import { SettingsAIAgentFormValues } from '../../hooks/useSettingsAgentFormState';
 
-const StyledInputsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledFormSection = styled.div`
+const StyledFormContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
@@ -27,10 +21,6 @@ const StyledIconNameRow = styled.div`
   align-items: flex-start;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledIconContainer = styled.div`
-  flex-shrink: 0;
 `;
 
 const StyledNameContainer = styled.div`
@@ -71,17 +61,15 @@ export const SettingsAIAgentForm = ({
   };
 
   return (
-    <StyledInputsContainer>
-      <StyledFormSection>
+    <StyledFormContainer>
+      <StyledFormContainer>
         <StyledIconNameRow>
-          <StyledIconContainer>
-            <IconPicker
-              selectedIconKey={formValues.icon || 'IconRobot'}
-              onChange={({ iconKey }) => {
-                onFieldChange('icon', iconKey);
-              }}
-            />
-          </StyledIconContainer>
+          <IconPicker
+            selectedIconKey={formValues.icon || 'IconRobot'}
+            onChange={({ iconKey }) => {
+              onFieldChange('icon', iconKey);
+            }}
+          />
 
           <StyledNameContainer>
             <TextInput
@@ -96,9 +84,9 @@ export const SettingsAIAgentForm = ({
             />
           </StyledNameContainer>
         </StyledIconNameRow>
-      </StyledFormSection>
+      </StyledFormContainer>
 
-      <StyledFormSection>
+      <StyledFormContainer>
         <TextArea
           textAreaId="agent-description-textarea"
           placeholder={t`Write a description for this agent`}
@@ -106,9 +94,9 @@ export const SettingsAIAgentForm = ({
           value={formValues.description || ''}
           onChange={(value) => onFieldChange('description', value)}
         />
-      </StyledFormSection>
+      </StyledFormContainer>
 
-      <StyledFormSection>
+      <StyledFormContainer>
         <Select
           dropdownId="ai-model-select"
           label={t`AI Model`}
@@ -122,9 +110,9 @@ export const SettingsAIAgentForm = ({
             {t`No models available. Please configure AI models in your workspace settings.`}
           </StyledErrorMessage>
         )}
-      </StyledFormSection>
+      </StyledFormContainer>
 
-      <StyledFormSection>
+      <StyledFormContainer>
         <Select
           dropdownId="ai-role-select"
           label={t`Role`}
@@ -136,9 +124,9 @@ export const SettingsAIAgentForm = ({
             value: '',
           }}
         />
-      </StyledFormSection>
+      </StyledFormContainer>
 
-      <StyledFormSection>
+      <StyledFormContainer>
         <TextArea
           textAreaId="agent-prompt-textarea"
           label={t`System Prompt*`}
@@ -147,7 +135,7 @@ export const SettingsAIAgentForm = ({
           value={formValues.prompt}
           onChange={(value) => onFieldChange('prompt', value)}
         />
-      </StyledFormSection>
-    </StyledInputsContainer>
+      </StyledFormContainer>
+    </StyledFormContainer>
   );
 };
