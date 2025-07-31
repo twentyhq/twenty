@@ -6,7 +6,7 @@
  * - Null values from target are preserved
  * - Undefined values from target are ignored
  * - Date and RegExp objects are treated as primitives (replaced, not merged)
- * 
+ *
  * @param source The source object to merge from
  * @param target The target object to merge into
  * @returns A new merged object
@@ -76,4 +76,4 @@ export const deepMerge = <T extends object>(
   });
 
   return output;
-}; 
+};
