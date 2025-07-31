@@ -49,7 +49,7 @@ export class UpdateAgentInput {
   @Field(() => String)
   modelId?: ModelId;
 
-  @IsString()
+  @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
   roleId?: string;

@@ -45,7 +45,6 @@ export class CreateAgentInput {
   modelId: ModelId;
 
   @IsUUID()
-  @IsString()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
   roleId?: string;
