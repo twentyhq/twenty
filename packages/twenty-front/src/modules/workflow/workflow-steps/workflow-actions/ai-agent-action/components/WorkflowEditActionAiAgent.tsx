@@ -8,6 +8,7 @@ import { BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutput
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useIcons } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
 import { useFindManyAgentsQuery } from '~/generated-metadata/graphql';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 import { WorkflowOutputSchemaBuilder } from './WorkflowOutputSchemaBuilder';
@@ -52,13 +53,16 @@ export const WorkflowEditActionAiAgent = ({
   const { data: agentsData, loading: agentsLoading } = useFindManyAgentsQuery();
 
   const agentOptions =
-    agentsData?.findManyAgents
-      ?.filter((agent) => agent.isCustom)
-      ?.map((agent) => ({
-        label: agent.label,
-        value: agent.id,
-        Icon: agent.icon ? getIcon(agent.icon) : undefined,
-      })) || [];
+    agentsData?.findManyAgents?.reduce<SelectOption<string>[]>((acc, agent) => {
+      if (agent.isCustom) {
+        acc.push({
+          label: agent.label,
+          value: agent.id,
+          Icon: agent.icon ? getIcon(agent.icon) : undefined,
+        });
+      }
+      return acc;
+    }, []) || [];
 
   const noCustomAgentsAvailable = agentOptions.length === 0;
 
