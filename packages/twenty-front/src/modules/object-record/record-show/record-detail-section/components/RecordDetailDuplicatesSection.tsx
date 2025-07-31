@@ -6,11 +6,10 @@ import { RecordDetailRecordsList } from '@/object-record/record-show/record-deta
 import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-detail-section/components/RecordDetailRecordsListItem';
 import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
 import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
-import { t } from '@lingui/core/macro';
 
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowMerge } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+import { LightIconButton } from 'twenty-ui/input';
 
 export const RecordDetailDuplicatesSection = ({
   objectRecordId,
@@ -49,10 +48,10 @@ export const RecordDetailDuplicatesSection = ({
       <RecordDetailSectionHeader
         title="Duplicates"
         rightAdornment={
-          <Button
-            title={t`Merge Records`}
+          <LightIconButton
+            className="displayOnHover"
             Icon={IconArrowMerge}
-            size="small"
+            accent="tertiary"
             onClick={openMergeRecordsPageInCommandMenu}
           />
         }
