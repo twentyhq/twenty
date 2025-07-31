@@ -428,7 +428,7 @@ export const SettingsRoutes = ({
           element={<SettingsAgentForm mode="create" />}
         />
         <Route
-          path={SettingsPath.AgentDetail}
+          path={SettingsPath.AIAgentDetail}
           element={<SettingsAgentForm mode="edit" />}
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
