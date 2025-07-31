@@ -36,7 +36,6 @@ const StyledContentContainer = styled.div`
   flex: 1;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(8)};
-  padding-left: 0;
   width: 100%;
 `;
 
