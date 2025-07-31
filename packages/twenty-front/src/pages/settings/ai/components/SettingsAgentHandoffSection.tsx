@@ -64,6 +64,19 @@ const StyledFormActions = styled.div`
   justify-content: flex-end;
 `;
 
+const StyledEmptyState = styled.div`
+  align-items: center;
+  background: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  color: ${({ theme }) => theme.font.color.secondary};
+  display: flex;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  justify-content: center;
+  padding: ${({ theme }) => theme.spacing(6)};
+  text-align: center;
+`;
+
 export const SettingsAgentHandoffSection = ({
   agentId,
 }: {
@@ -76,7 +89,7 @@ export const SettingsAgentHandoffSection = ({
   const [selectedToAgentId, setSelectedToAgentId] = useState('');
   const [handoffDescription, setHandoffDescription] = useState('');
 
-  const { data: agentsData } = useFindManyAgentsQuery();
+  const { data: agentsData, loading: agentsLoading } = useFindManyAgentsQuery();
   const { data: handoffTargetsData, refetch: refetchHandoffTargets } =
     useFindAgentHandoffTargetsQuery({
       variables: { input: { id: agentId } },
@@ -85,6 +98,8 @@ export const SettingsAgentHandoffSection = ({
 
   const [createAgentHandoff] = useCreateAgentHandoffMutation();
   const [removeAgentHandoff] = useRemoveAgentHandoffMutation();
+
+  const handoffTargets = handoffTargetsData?.findAgentHandoffTargets || [];
 
   const availableAgentOptions =
     agentsData?.findManyAgents?.reduce<SelectOption[]>((acc, agent) => {
@@ -99,8 +114,6 @@ export const SettingsAgentHandoffSection = ({
       }
       return acc;
     }, []) || [];
-
-  const handoffTargets = handoffTargetsData?.findAgentHandoffTargets || [];
 
   const resetHandoffForm = () => {
     setIsAddingHandoff(false);
@@ -162,25 +175,35 @@ export const SettingsAgentHandoffSection = ({
       />
 
       <StyledHandoffContainer>
-        {handoffTargets.map((targetAgent) => (
-          <StyledHandoffItem key={targetAgent.id}>
-            <StyledHandoffInfo>
-              <StyledHandoffLabel>{targetAgent.label}</StyledHandoffLabel>
-              {targetAgent.description && (
-                <StyledHandoffDescription>
-                  {targetAgent.description}
-                </StyledHandoffDescription>
-              )}
-            </StyledHandoffInfo>
-            <Button
-              accent="danger"
-              variant="secondary"
-              title={t`Remove Handoff`}
-              Icon={IconTrash}
-              onClick={() => handleRemoveHandoff(targetAgent.id)}
-            />
-          </StyledHandoffItem>
-        ))}
+        {handoffTargets.length === 0 ? (
+          <StyledEmptyState>
+            {agentsLoading
+              ? t`Loading agents...`
+              : availableAgentOptions.length === 0
+                ? t`No other agents available for handoff.`
+                : t`No handoffs configured for this agent.`}
+          </StyledEmptyState>
+        ) : (
+          handoffTargets.map((targetAgent) => (
+            <StyledHandoffItem key={targetAgent.id}>
+              <StyledHandoffInfo>
+                <StyledHandoffLabel>{targetAgent.label}</StyledHandoffLabel>
+                {targetAgent.description && (
+                  <StyledHandoffDescription>
+                    {targetAgent.description}
+                  </StyledHandoffDescription>
+                )}
+              </StyledHandoffInfo>
+              <Button
+                accent="danger"
+                variant="secondary"
+                title={t`Remove Handoff`}
+                Icon={IconTrash}
+                onClick={() => handleRemoveHandoff(targetAgent.id)}
+              />
+            </StyledHandoffItem>
+          ))
+        )}
 
         {isAddingHandoff ? (
           <StyledAddHandoffForm>
@@ -226,9 +249,16 @@ export const SettingsAgentHandoffSection = ({
           <Button
             variant="secondary"
             size="small"
-            title={t`Add Handoff`}
+            title={
+              agentsLoading
+                ? t`Loading...`
+                : availableAgentOptions.length === 0
+                  ? t`No agents available for handoff`
+                  : t`Add Handoff`
+            }
             Icon={IconPlus}
             onClick={() => setIsAddingHandoff(true)}
+            disabled={agentsLoading || availableAgentOptions.length === 0}
           />
         )}
       </StyledHandoffContainer>
