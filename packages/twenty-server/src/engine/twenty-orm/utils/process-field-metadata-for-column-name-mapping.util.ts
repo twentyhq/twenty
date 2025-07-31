@@ -43,7 +43,7 @@ export type ColumnNameProcessor = {
   }) => void;
 };
 
-export function processFieldMetadata(
+export function processFieldMetadataForColumnNameMapping(
   objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
   processor: ColumnNameProcessor,
 ) {

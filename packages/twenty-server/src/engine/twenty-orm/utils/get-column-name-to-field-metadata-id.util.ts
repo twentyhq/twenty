@@ -5,8 +5,8 @@ import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-me
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import {
   ColumnNameProcessor,
-  processFieldMetadata,
-} from 'src/engine/twenty-orm/utils/process-field-metadata.util';
+  processFieldMetadataForColumnNameMapping,
+} from 'src/engine/twenty-orm/utils/process-field-metadata-for-column-name-mapping.util';
 
 export function getColumnNameToFieldMetadataIdMap(
   objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
@@ -52,7 +52,7 @@ export function getColumnNameToFieldMetadataIdMap(
     },
   };
 
-  processFieldMetadata(objectMetadataItemWithFieldMaps, processor);
+  processFieldMetadataForColumnNameMapping(objectMetadataItemWithFieldMaps, processor);
 
   return columnNameToFieldMetadataIdMap;
 }
