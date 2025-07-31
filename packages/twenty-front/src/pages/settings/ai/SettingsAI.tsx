@@ -1,5 +1,3 @@
-import { useLingui } from '@lingui/react/macro';
-
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -10,10 +8,10 @@ import { UndecoratedLink } from 'twenty-ui/navigation';
 import { useFindManyAgentsQuery } from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
+import { t } from '@lingui/core/macro';
 import { SettingsAIAgentsTable } from './components/SettingsAIAgentsTable';
 
 export const SettingsAI = () => {
-  const { t } = useLingui();
   const { data } = useFindManyAgentsQuery();
 
   return (

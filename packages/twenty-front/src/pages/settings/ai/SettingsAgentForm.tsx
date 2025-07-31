@@ -1,6 +1,5 @@
 import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
@@ -12,6 +11,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -42,7 +42,6 @@ const StyledContentContainer = styled.div`
 const DELETE_AGENT_MODAL_ID = 'delete-agent-modal';
 
 export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
-  const { t } = useLingui();
   const { agentId = '' } = useParams<{ agentId: string }>();
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
