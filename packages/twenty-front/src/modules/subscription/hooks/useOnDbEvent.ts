@@ -22,7 +22,6 @@ export const useOnDbEvent = ({
   const tokenPair = getTokenPair();
 
   const sseClient = useMemo(() => {
-    // Additional safety check for token structure
     const token = tokenPair?.accessOrWorkspaceAgnosticToken?.token;
 
     return createClient({

@@ -105,7 +105,6 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
           };
         }
 
-        // Additional safety check for token structure
         const token = tokenPair.accessOrWorkspaceAgnosticToken?.token;
 
         return {
