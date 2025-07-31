@@ -99,13 +99,13 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     );
 
     if (roleId) {
-      await this.processNestedRelations(
+      await this.processNestedRelations({
         executionArgs,
-        [updatedRecord],
+        updatedRecords: [updatedRecord],
         authContext,
         roleId,
         featureFlagsMap,
-      );
+      });
     }
 
     return this.formatResponse(
@@ -360,13 +360,19 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     }
   }
 
-  private async processNestedRelations(
-    executionArgs: GraphqlQueryResolverExecutionArgs<MergeManyResolverArgs>,
-    updatedRecords: ObjectRecord[],
-    authContext: AuthContext,
-    roleId: string,
-    featureFlagsMap: Record<FeatureFlagKey, boolean>,
-  ): Promise<void> {
+  private async processNestedRelations({
+    executionArgs,
+    updatedRecords,
+    authContext,
+    roleId,
+    featureFlagsMap,
+  }: {
+    executionArgs: GraphqlQueryResolverExecutionArgs<MergeManyResolverArgs>;
+    updatedRecords: ObjectRecord[];
+    authContext: AuthContext;
+    roleId: string;
+    featureFlagsMap: Record<FeatureFlagKey, boolean>;
+  }): Promise<void> {
     const { objectMetadataMaps, objectMetadataItemWithFieldMaps } =
       executionArgs.options;
 

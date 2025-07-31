@@ -58,14 +58,14 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       shouldBypassPermissionChecks = !isApiKeyRolesEnabled;
     }
 
-    await this.processNestedRelationsIfNeeded(
+    await this.processNestedRelationsIfNeeded({
       executionArgs,
-      upsertedRecords,
+      records: upsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
       shouldBypassPermissionChecks,
       roleId,
-    );
+    });
 
     return this.formatRecordsForResponse(
       upsertedRecords,
@@ -392,14 +392,21 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     return upsertedRecords as ObjectRecord[];
   }
 
-  private async processNestedRelationsIfNeeded(
-    executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
-    upsertedRecords: ObjectRecord[],
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-    objectMetadataMaps: ObjectMetadataMaps,
-    shouldBypassPermissionChecks: boolean,
-    roleId?: string,
-  ): Promise<void> {
+  private async processNestedRelationsIfNeeded({
+    executionArgs,
+    records,
+    objectMetadataItemWithFieldMaps,
+    objectMetadataMaps,
+    shouldBypassPermissionChecks,
+    roleId,
+  }: {
+    executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>;
+    records: ObjectRecord[];
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+    objectMetadataMaps: ObjectMetadataMaps;
+    shouldBypassPermissionChecks: boolean;
+    roleId?: string;
+  }): Promise<void> {
     if (!executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       return;
     }
@@ -407,7 +414,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     await this.processNestedRelationsHelper.processNestedRelations({
       objectMetadataMaps,
       parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-      parentObjectRecords: upsertedRecords,
+      parentObjectRecords: records,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       limit: QUERY_MAX_RECORDS,
       authContext: executionArgs.options.authContext,
