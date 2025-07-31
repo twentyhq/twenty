@@ -27,6 +27,7 @@ import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/g
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -43,6 +44,7 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
 
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<MergeManyResolverArgs>,
+    featureFlagsMap: Record<FeatureFlagKey, boolean>,
   ): Promise<ObjectRecord> {
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
@@ -102,6 +104,7 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
         [updatedRecord],
         authContext,
         roleId,
+        featureFlagsMap,
       );
     }
 
@@ -362,11 +365,21 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     updatedRecords: ObjectRecord[],
     authContext: AuthContext,
     roleId: string,
+    featureFlagsMap: Record<FeatureFlagKey, boolean>,
   ): Promise<void> {
     const { objectMetadataMaps, objectMetadataItemWithFieldMaps } =
       executionArgs.options;
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
+      let shouldBypassPermissionChecks = false;
+
+      if (executionArgs.isExecutedByApiKey) {
+        const isApiKeyRolesEnabled =
+          featureFlagsMap[FeatureFlagKey.IS_API_KEY_ROLES_ENABLED];
+
+        shouldBypassPermissionChecks = !isApiKeyRolesEnabled;
+      }
+
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
@@ -376,7 +389,7 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
         authContext,
         workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
-        shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
+        shouldBypassPermissionChecks,
         selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }
