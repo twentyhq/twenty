@@ -1,4 +1,4 @@
-import { FieldMetadataType } from '@/types/FieldMetadataType';
+import { FieldMetadataType } from './FieldMetadataType';
 
 export type EnumFieldMetadataType =
   | FieldMetadataType.RATING
