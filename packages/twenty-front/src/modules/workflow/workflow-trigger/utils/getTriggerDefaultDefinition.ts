@@ -8,16 +8,7 @@ import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
 import { isDefined } from 'twenty-shared/utils';
-
-const getRootStepIds = (steps: WorkflowAction[]): string[] => {
-  const childIds = new Set<string>();
-
-  for (const step of steps) {
-    step.nextStepIds?.forEach((id) => childIds.add(id));
-  }
-
-  return steps.filter((step) => !childIds.has(step.id)).map((step) => step.id);
-};
+import { getRootStepIds } from '@/workflow/workflow-trigger/utils/getRootStepIds';
 
 // TODO: This needs to be migrated to the server
 export const getTriggerDefaultDefinition = ({
