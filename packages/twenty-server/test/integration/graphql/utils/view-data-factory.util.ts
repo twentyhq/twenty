@@ -154,7 +154,6 @@ export const viewScenarios = {
     fieldMetadataId: TEST_FIELD_METADATA_1_ID,
     operand: 'Contains',
     value: 'search-term',
-    displayValue: 'Search Term',
   }),
 
   andFilterGroup: (viewId: string) => ({
