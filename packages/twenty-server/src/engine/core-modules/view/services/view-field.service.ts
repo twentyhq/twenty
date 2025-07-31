@@ -8,6 +8,8 @@ import { ViewField } from 'src/engine/core-modules/view/entities/view-field.enti
 import {
   ViewFieldException,
   ViewFieldExceptionCode,
+  ViewFieldExceptionMessage,
+  ViewFieldExceptionUserFriendlyMessage,
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
 
 @Injectable()
@@ -56,30 +58,33 @@ export class ViewFieldService {
   async create(viewFieldData: Partial<ViewField>): Promise<ViewField> {
     if (!isDefined(viewFieldData.workspaceId)) {
       throw new ViewFieldException(
-        'WorkspaceId is required',
+        ViewFieldExceptionMessage.WORKSPACE_ID_REQUIRED,
         ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
         {
           userFriendlyMessage:
-            'WorkspaceId is required to create a view field.',
+            ViewFieldExceptionUserFriendlyMessage.WORKSPACE_ID_REQUIRED,
         },
       );
     }
 
     if (!isDefined(viewFieldData.viewId)) {
       throw new ViewFieldException(
-        'ViewId is required',
+        ViewFieldExceptionMessage.VIEW_ID_REQUIRED,
         ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
-        { userFriendlyMessage: 'ViewId is required to create a view field.' },
+        {
+          userFriendlyMessage:
+            ViewFieldExceptionUserFriendlyMessage.VIEW_ID_REQUIRED,
+        },
       );
     }
 
     if (!isDefined(viewFieldData.fieldMetadataId)) {
       throw new ViewFieldException(
-        'FieldMetadataId is required',
+        ViewFieldExceptionMessage.FIELD_METADATA_ID_REQUIRED,
         ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
         {
           userFriendlyMessage:
-            'FieldMetadataId is required to create a view field.',
+            ViewFieldExceptionUserFriendlyMessage.FIELD_METADATA_ID_REQUIRED,
         },
       );
     }
@@ -98,7 +103,7 @@ export class ViewFieldService {
 
     if (!isDefined(existingViewField)) {
       throw new ViewFieldException(
-        `ViewField with id ${id} not found`,
+        ViewFieldExceptionMessage.VIEW_FIELD_NOT_FOUND,
         ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
       );
     }
@@ -116,7 +121,7 @@ export class ViewFieldService {
 
     if (!isDefined(viewField)) {
       throw new ViewFieldException(
-        `ViewField with id ${id} not found`,
+        ViewFieldExceptionMessage.VIEW_FIELD_NOT_FOUND,
         ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
       );
     }

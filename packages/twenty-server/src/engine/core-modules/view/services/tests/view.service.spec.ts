@@ -7,6 +7,8 @@ import { View } from 'src/engine/core-modules/view/entities/view.entity';
 import {
   ViewException,
   ViewExceptionCode,
+  ViewExceptionMessage,
+  ViewExceptionUserFriendlyMessage,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 
@@ -157,9 +159,12 @@ describe('ViewService', () => {
 
       await expect(viewService.create(invalidData)).rejects.toThrow(
         new ViewException(
-          'WorkspaceId is required',
+          ViewExceptionMessage.WORKSPACE_ID_REQUIRED,
           ViewExceptionCode.INVALID_VIEW_DATA,
-          { userFriendlyMessage: 'WorkspaceId is required to create a view.' },
+          {
+            userFriendlyMessage:
+              ViewExceptionUserFriendlyMessage.WORKSPACE_ID_REQUIRED,
+          },
         ),
       );
     });
@@ -169,11 +174,11 @@ describe('ViewService', () => {
 
       await expect(viewService.create(invalidData)).rejects.toThrow(
         new ViewException(
-          'ObjectMetadataId is required',
+          ViewExceptionMessage.OBJECT_METADATA_ID_REQUIRED,
           ViewExceptionCode.INVALID_VIEW_DATA,
           {
             userFriendlyMessage:
-              'ObjectMetadataId is required to create a view.',
+              ViewExceptionUserFriendlyMessage.OBJECT_METADATA_ID_REQUIRED,
           },
         ),
       );
@@ -211,7 +216,7 @@ describe('ViewService', () => {
         viewService.update(id, workspaceId, updateData),
       ).rejects.toThrow(
         new ViewException(
-          `View with id ${id} not found`,
+          ViewExceptionMessage.VIEW_NOT_FOUND,
           ViewExceptionCode.VIEW_NOT_FOUND,
         ),
       );
@@ -241,7 +246,7 @@ describe('ViewService', () => {
 
       await expect(viewService.delete(id, workspaceId)).rejects.toThrow(
         new ViewException(
-          `View with id ${id} not found`,
+          ViewExceptionMessage.VIEW_NOT_FOUND,
           ViewExceptionCode.VIEW_NOT_FOUND,
         ),
       );

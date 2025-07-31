@@ -1,4 +1,7 @@
-import { TEST_FIELD_METADATA_1_ID } from 'test/integration/constants/test-view-ids.constants';
+import {
+  TEST_FIELD_METADATA_1_ID,
+  TEST_NOT_EXISTING_VIEW_FILTER_ID,
+} from 'test/integration/constants/test-view-ids.constants';
 import { createViewFilterOperationFactory } from 'test/integration/graphql/utils/create-view-filter-operation-factory.util';
 import { deleteViewFilterOperationFactory } from 'test/integration/graphql/utils/delete-view-filter-operation-factory.util';
 import { findViewFiltersOperationFactory } from 'test/integration/graphql/utils/find-view-filters-operation-factory.util';
@@ -6,11 +9,15 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { updateViewFilterOperationFactory } from 'test/integration/graphql/utils/update-view-filter-operation-factory.util';
 import { createViewFilterData } from 'test/integration/graphql/utils/view-data-factory.util';
 import {
+  assertErrorResponse,
   assertSuccessfulResponse,
   assertViewFilterStructure,
   cleanupViewRecords,
   createTestView,
 } from 'test/integration/graphql/utils/view-test.util';
+
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { ViewFilterExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-filter.exception';
 
 describe('View Filter Resolver', () => {
   let testViewId: string;
@@ -152,6 +159,19 @@ describe('View Filter Resolver', () => {
         value: 'updated',
       });
     });
+
+    it('should throw an error when updating non-existent view filter', async () => {
+      const operation = updateViewFilterOperationFactory({
+        viewFilterId: TEST_NOT_EXISTING_VIEW_FILTER_ID,
+      });
+      const response = await makeGraphqlAPIRequest(operation);
+
+      assertErrorResponse(
+        response,
+        ErrorCode.NOT_FOUND,
+        ViewFilterExceptionMessage.VIEW_FILTER_NOT_FOUND,
+      );
+    });
   });
 
   describe('deleteCoreViewFilter', () => {
@@ -175,6 +195,19 @@ describe('View Filter Resolver', () => {
 
       assertSuccessfulResponse(response);
       expect(response.body.data.deleteCoreViewFilter).toBe(true);
+    });
+
+    it('should throw an error when deleting non-existent view filter', async () => {
+      const operation = deleteViewFilterOperationFactory({
+        viewFilterId: TEST_NOT_EXISTING_VIEW_FILTER_ID,
+      });
+      const response = await makeGraphqlAPIRequest(operation);
+
+      assertErrorResponse(
+        response,
+        ErrorCode.NOT_FOUND,
+        ViewFilterExceptionMessage.VIEW_FILTER_NOT_FOUND,
+      );
     });
   });
 });

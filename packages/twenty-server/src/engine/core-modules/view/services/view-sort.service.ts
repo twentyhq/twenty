@@ -8,6 +8,8 @@ import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity
 import {
   ViewSortException,
   ViewSortExceptionCode,
+  ViewSortExceptionMessage,
+  ViewSortExceptionUserFriendlyMessage,
 } from 'src/engine/core-modules/view/exceptions/view-sort.exception';
 
 @Injectable()
@@ -51,29 +53,33 @@ export class ViewSortService {
   async create(viewSortData: Partial<ViewSort>): Promise<ViewSort> {
     if (!isDefined(viewSortData.workspaceId)) {
       throw new ViewSortException(
-        'WorkspaceId is required',
+        ViewSortExceptionMessage.WORKSPACE_ID_REQUIRED,
         ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
         {
-          userFriendlyMessage: 'WorkspaceId is required to create a view sort.',
+          userFriendlyMessage:
+            ViewSortExceptionUserFriendlyMessage.WORKSPACE_ID_REQUIRED,
         },
       );
     }
 
     if (!isDefined(viewSortData.viewId)) {
       throw new ViewSortException(
-        'ViewId is required',
+        ViewSortExceptionMessage.VIEW_ID_REQUIRED,
         ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
-        { userFriendlyMessage: 'ViewId is required to create a view sort.' },
+        {
+          userFriendlyMessage:
+            ViewSortExceptionUserFriendlyMessage.VIEW_ID_REQUIRED,
+        },
       );
     }
 
     if (!isDefined(viewSortData.fieldMetadataId)) {
       throw new ViewSortException(
-        'FieldMetadataId is required',
+        ViewSortExceptionMessage.FIELD_METADATA_ID_REQUIRED,
         ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
         {
           userFriendlyMessage:
-            'FieldMetadataId is required to create a view sort.',
+            ViewSortExceptionUserFriendlyMessage.FIELD_METADATA_ID_REQUIRED,
         },
       );
     }
@@ -92,7 +98,7 @@ export class ViewSortService {
 
     if (!isDefined(existingViewSort)) {
       throw new ViewSortException(
-        `ViewSort with id ${id} not found`,
+        ViewSortExceptionMessage.VIEW_SORT_NOT_FOUND,
         ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
       );
     }
@@ -110,7 +116,7 @@ export class ViewSortService {
 
     if (!isDefined(viewSort)) {
       throw new ViewSortException(
-        `ViewSort with id ${id} not found`,
+        ViewSortExceptionMessage.VIEW_SORT_NOT_FOUND,
         ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
       );
     }

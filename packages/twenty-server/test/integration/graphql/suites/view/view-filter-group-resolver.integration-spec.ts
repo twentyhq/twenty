@@ -1,3 +1,4 @@
+import { TEST_NOT_EXISTING_VIEW_FILTER_GROUP_ID } from 'test/integration/constants/test-view-ids.constants';
 import { createViewFilterGroupOperationFactory } from 'test/integration/graphql/utils/create-view-filter-group-operation-factory.util';
 import { deleteViewFilterGroupOperationFactory } from 'test/integration/graphql/utils/delete-view-filter-group-operation-factory.util';
 import { findViewFilterGroupOperationFactory } from 'test/integration/graphql/utils/find-view-filter-group-operation-factory.util';
@@ -9,13 +10,16 @@ import {
   updateViewFilterGroupData,
 } from 'test/integration/graphql/utils/view-data-factory.util';
 import {
+  assertErrorResponse,
   assertSuccessfulResponse,
   assertViewFilterGroupStructure,
   cleanupViewRecords,
   createTestView,
 } from 'test/integration/graphql/utils/view-test.util';
 
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
+import { ViewFilterGroupExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';
 
 describe('View Filter Group Resolver', () => {
   let testViewId: string;
@@ -142,7 +146,7 @@ describe('View Filter Group Resolver', () => {
   describe('getCoreViewFilterGroup', () => {
     it('should return null when filter group does not exist', async () => {
       const operation = findViewFilterGroupOperationFactory({
-        viewFilterGroupId: '99999999-1c25-4d02-bf25-6aeccf7ea419',
+        viewFilterGroupId: TEST_NOT_EXISTING_VIEW_FILTER_GROUP_ID,
       });
       const response = await makeGraphqlAPIRequest(operation);
 
@@ -332,15 +336,16 @@ describe('View Filter Group Resolver', () => {
         logicalOperator: ViewFilterGroupLogicalOperator.AND,
       });
       const operation = updateViewFilterGroupOperationFactory({
-        viewFilterGroupId: '99999999-1c25-4d02-bf25-6aeccf7ea419',
+        viewFilterGroupId: TEST_NOT_EXISTING_VIEW_FILTER_GROUP_ID,
         data: updateInput,
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      expect(response.status).toBe(200);
-      expect(response.body.data).toBeDefined();
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors[0].message).toContain('not found');
+      assertErrorResponse(
+        response,
+        ErrorCode.NOT_FOUND,
+        ViewFilterGroupExceptionMessage.VIEW_FILTER_GROUP_NOT_FOUND,
+      );
     });
   });
 
@@ -372,16 +377,17 @@ describe('View Filter Group Resolver', () => {
       expect(getResponse.body.data.getCoreViewFilterGroup).toBeNull();
     });
 
-    it('should return false when deleting non-existent filter group', async () => {
+    it('should throw an error when deleting non-existent filter group', async () => {
       const operation = deleteViewFilterGroupOperationFactory({
-        viewFilterGroupId: '99999999-1c25-4d02-bf25-6aeccf7ea419',
+        viewFilterGroupId: TEST_NOT_EXISTING_VIEW_FILTER_GROUP_ID,
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      expect(response.status).toBe(200);
-      expect(response.body.data).toBeDefined();
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors[0].message).toContain('not found');
+      assertErrorResponse(
+        response,
+        ErrorCode.NOT_FOUND,
+        ViewFilterGroupExceptionMessage.VIEW_FILTER_GROUP_NOT_FOUND,
+      );
     });
   });
 });

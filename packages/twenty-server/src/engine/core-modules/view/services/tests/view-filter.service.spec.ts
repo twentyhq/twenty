@@ -7,6 +7,8 @@ import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.en
 import {
   ViewFilterException,
   ViewFilterExceptionCode,
+  ViewFilterExceptionMessage,
+  ViewFilterExceptionUserFriendlyMessage,
 } from 'src/engine/core-modules/view/exceptions/view-filter.exception';
 import { ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
 
@@ -165,11 +167,11 @@ describe('ViewFilterService', () => {
 
       await expect(viewFilterService.create(invalidData)).rejects.toThrow(
         new ViewFilterException(
-          'WorkspaceId is required',
+          ViewFilterExceptionMessage.WORKSPACE_ID_REQUIRED,
           ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
           {
             userFriendlyMessage:
-              'WorkspaceId is required to create a view filter.',
+              ViewFilterExceptionUserFriendlyMessage.WORKSPACE_ID_REQUIRED,
           },
         ),
       );
@@ -180,10 +182,11 @@ describe('ViewFilterService', () => {
 
       await expect(viewFilterService.create(invalidData)).rejects.toThrow(
         new ViewFilterException(
-          'ViewId is required',
+          ViewFilterExceptionMessage.VIEW_ID_REQUIRED,
           ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
           {
-            userFriendlyMessage: 'ViewId is required to create a view filter.',
+            userFriendlyMessage:
+              ViewFilterExceptionUserFriendlyMessage.VIEW_ID_REQUIRED,
           },
         ),
       );
@@ -197,11 +200,11 @@ describe('ViewFilterService', () => {
 
       await expect(viewFilterService.create(invalidData)).rejects.toThrow(
         new ViewFilterException(
-          'FieldMetadataId is required',
+          ViewFilterExceptionMessage.FIELD_METADATA_ID_REQUIRED,
           ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
           {
             userFriendlyMessage:
-              'FieldMetadataId is required to create a view filter.',
+              ViewFilterExceptionUserFriendlyMessage.FIELD_METADATA_ID_REQUIRED,
           },
         ),
       );
@@ -247,7 +250,7 @@ describe('ViewFilterService', () => {
         viewFilterService.update(id, workspaceId, updateData),
       ).rejects.toThrow(
         new ViewFilterException(
-          `ViewFilter with id ${id} not found`,
+          ViewFilterExceptionMessage.VIEW_FILTER_NOT_FOUND,
           ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
         ),
       );
@@ -281,7 +284,7 @@ describe('ViewFilterService', () => {
 
       await expect(viewFilterService.delete(id, workspaceId)).rejects.toThrow(
         new ViewFilterException(
-          `ViewFilter with id ${id} not found`,
+          ViewFilterExceptionMessage.VIEW_FILTER_NOT_FOUND,
           ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
         ),
       );

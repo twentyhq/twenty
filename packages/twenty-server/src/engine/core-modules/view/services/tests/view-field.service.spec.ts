@@ -7,6 +7,8 @@ import { ViewField } from 'src/engine/core-modules/view/entities/view-field.enti
 import {
   ViewFieldException,
   ViewFieldExceptionCode,
+  ViewFieldExceptionMessage,
+  ViewFieldExceptionUserFriendlyMessage,
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
 import { ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
 
@@ -161,11 +163,11 @@ describe('ViewFieldService', () => {
 
       await expect(viewFieldService.create(invalidData)).rejects.toThrow(
         new ViewFieldException(
-          'WorkspaceId is required',
+          ViewFieldExceptionMessage.WORKSPACE_ID_REQUIRED,
           ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
           {
             userFriendlyMessage:
-              'WorkspaceId is required to create a view field.',
+              ViewFieldExceptionUserFriendlyMessage.WORKSPACE_ID_REQUIRED,
           },
         ),
       );
@@ -176,9 +178,12 @@ describe('ViewFieldService', () => {
 
       await expect(viewFieldService.create(invalidData)).rejects.toThrow(
         new ViewFieldException(
-          'ViewId is required',
+          ViewFieldExceptionMessage.VIEW_ID_REQUIRED,
           ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
-          { userFriendlyMessage: 'ViewId is required to create a view field.' },
+          {
+            userFriendlyMessage:
+              ViewFieldExceptionUserFriendlyMessage.VIEW_ID_REQUIRED,
+          },
         ),
       );
     });
@@ -188,11 +193,11 @@ describe('ViewFieldService', () => {
 
       await expect(viewFieldService.create(invalidData)).rejects.toThrow(
         new ViewFieldException(
-          'FieldMetadataId is required',
+          ViewFieldExceptionMessage.FIELD_METADATA_ID_REQUIRED,
           ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
           {
             userFriendlyMessage:
-              'FieldMetadataId is required to create a view field.',
+              ViewFieldExceptionUserFriendlyMessage.FIELD_METADATA_ID_REQUIRED,
           },
         ),
       );
@@ -232,7 +237,7 @@ describe('ViewFieldService', () => {
         viewFieldService.update(id, workspaceId, updateData),
       ).rejects.toThrow(
         new ViewFieldException(
-          `ViewField with id ${id} not found`,
+          ViewFieldExceptionMessage.VIEW_FIELD_NOT_FOUND,
           ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
         ),
       );
@@ -264,7 +269,7 @@ describe('ViewFieldService', () => {
 
       await expect(viewFieldService.delete(id, workspaceId)).rejects.toThrow(
         new ViewFieldException(
-          `ViewField with id ${id} not found`,
+          ViewFieldExceptionMessage.VIEW_FIELD_NOT_FOUND,
           ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
         ),
       );

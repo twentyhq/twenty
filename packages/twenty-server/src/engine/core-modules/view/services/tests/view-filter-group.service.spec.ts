@@ -8,6 +8,8 @@ import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enu
 import {
   ViewFilterGroupException,
   ViewFilterGroupExceptionCode,
+  ViewFilterGroupExceptionMessage,
+  ViewFilterGroupExceptionUserFriendlyMessage,
 } from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';
 import { ViewFilterGroupService } from 'src/engine/core-modules/view/services/view-filter-group.service';
 
@@ -175,11 +177,11 @@ describe('ViewFilterGroupService', () => {
 
       await expect(viewFilterGroupService.create(invalidData)).rejects.toThrow(
         new ViewFilterGroupException(
-          'WorkspaceId is required',
+          ViewFilterGroupExceptionMessage.WORKSPACE_ID_REQUIRED,
           ViewFilterGroupExceptionCode.INVALID_VIEW_FILTER_GROUP_DATA,
           {
             userFriendlyMessage:
-              'WorkspaceId is required to create a view filter group.',
+              ViewFilterGroupExceptionUserFriendlyMessage.WORKSPACE_ID_REQUIRED,
           },
         ),
       );
@@ -190,11 +192,11 @@ describe('ViewFilterGroupService', () => {
 
       await expect(viewFilterGroupService.create(invalidData)).rejects.toThrow(
         new ViewFilterGroupException(
-          'ViewId is required',
+          ViewFilterGroupExceptionMessage.VIEW_ID_REQUIRED,
           ViewFilterGroupExceptionCode.INVALID_VIEW_FILTER_GROUP_DATA,
           {
             userFriendlyMessage:
-              'ViewId is required to create a view filter group.',
+              ViewFilterGroupExceptionUserFriendlyMessage.VIEW_ID_REQUIRED,
           },
         ),
       );
@@ -246,7 +248,7 @@ describe('ViewFilterGroupService', () => {
         viewFilterGroupService.update(id, workspaceId, updateData),
       ).rejects.toThrow(
         new ViewFilterGroupException(
-          `ViewFilterGroup with id ${id} not found`,
+          ViewFilterGroupExceptionMessage.VIEW_FILTER_GROUP_NOT_FOUND,
           ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
         ),
       );
@@ -285,7 +287,7 @@ describe('ViewFilterGroupService', () => {
         viewFilterGroupService.delete(id, workspaceId),
       ).rejects.toThrow(
         new ViewFilterGroupException(
-          `ViewFilterGroup with id ${id} not found`,
+          ViewFilterGroupExceptionMessage.VIEW_FILTER_GROUP_NOT_FOUND,
           ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
         ),
       );

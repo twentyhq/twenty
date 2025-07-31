@@ -1,4 +1,7 @@
-import { TEST_FIELD_METADATA_1_ID } from 'test/integration/constants/test-view-ids.constants';
+import {
+  TEST_FIELD_METADATA_1_ID,
+  TEST_NOT_EXISTING_VIEW_SORT_ID,
+} from 'test/integration/constants/test-view-ids.constants';
 import { createViewSortOperationFactory } from 'test/integration/graphql/utils/create-view-sort-operation-factory.util';
 import { deleteViewSortOperationFactory } from 'test/integration/graphql/utils/delete-view-sort-operation-factory.util';
 import { findViewSortsOperationFactory } from 'test/integration/graphql/utils/find-view-sorts-operation-factory.util';
@@ -9,13 +12,16 @@ import {
   updateViewSortData,
 } from 'test/integration/graphql/utils/view-data-factory.util';
 import {
+  assertErrorResponse,
   assertSuccessfulResponse,
   assertViewSortStructure,
   cleanupViewRecords,
   createTestView,
 } from 'test/integration/graphql/utils/view-test.util';
 
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
+import { ViewSortExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-sort.exception';
 
 describe('View Sort Resolver', () => {
   let testViewId: string;
@@ -128,6 +134,19 @@ describe('View Sort Resolver', () => {
         direction: 'DESC',
       });
     });
+
+    it('should throw an error when updating non-existent view sort', async () => {
+      const operation = updateViewSortOperationFactory({
+        viewSortId: TEST_NOT_EXISTING_VIEW_SORT_ID,
+      });
+      const response = await makeGraphqlAPIRequest(operation);
+
+      assertErrorResponse(
+        response,
+        ErrorCode.NOT_FOUND,
+        ViewSortExceptionMessage.VIEW_SORT_NOT_FOUND,
+      );
+    });
   });
 
   describe('deleteCoreViewSort', () => {
@@ -146,6 +165,19 @@ describe('View Sort Resolver', () => {
 
       assertSuccessfulResponse(response);
       expect(response.body.data.deleteCoreViewSort).toBe(true);
+    });
+
+    it('should throw an error when deleting non-existent view sort', async () => {
+      const operation = deleteViewSortOperationFactory({
+        viewSortId: TEST_NOT_EXISTING_VIEW_SORT_ID,
+      });
+      const response = await makeGraphqlAPIRequest(operation);
+
+      assertErrorResponse(
+        response,
+        ErrorCode.NOT_FOUND,
+        ViewSortExceptionMessage.VIEW_SORT_NOT_FOUND,
+      );
     });
   });
 });

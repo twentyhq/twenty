@@ -8,6 +8,8 @@ import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-
 import {
   ViewSortException,
   ViewSortExceptionCode,
+  ViewSortExceptionMessage,
+  ViewSortExceptionUserFriendlyMessage,
 } from 'src/engine/core-modules/view/exceptions/view-sort.exception';
 import { ViewSortService } from 'src/engine/core-modules/view/services/view-sort.service';
 
@@ -152,11 +154,11 @@ describe('ViewSortService', () => {
 
       await expect(viewSortService.create(invalidData)).rejects.toThrow(
         new ViewSortException(
-          'WorkspaceId is required',
+          ViewSortExceptionMessage.WORKSPACE_ID_REQUIRED,
           ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
           {
             userFriendlyMessage:
-              'WorkspaceId is required to create a view sort.',
+              ViewSortExceptionUserFriendlyMessage.WORKSPACE_ID_REQUIRED,
           },
         ),
       );
@@ -167,9 +169,12 @@ describe('ViewSortService', () => {
 
       await expect(viewSortService.create(invalidData)).rejects.toThrow(
         new ViewSortException(
-          'ViewId is required',
+          ViewSortExceptionMessage.VIEW_ID_REQUIRED,
           ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
-          { userFriendlyMessage: 'ViewId is required to create a view sort.' },
+          {
+            userFriendlyMessage:
+              ViewSortExceptionUserFriendlyMessage.VIEW_ID_REQUIRED,
+          },
         ),
       );
     });
@@ -179,11 +184,11 @@ describe('ViewSortService', () => {
 
       await expect(viewSortService.create(invalidData)).rejects.toThrow(
         new ViewSortException(
-          'FieldMetadataId is required',
+          ViewSortExceptionMessage.FIELD_METADATA_ID_REQUIRED,
           ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
           {
             userFriendlyMessage:
-              'FieldMetadataId is required to create a view sort.',
+              ViewSortExceptionUserFriendlyMessage.FIELD_METADATA_ID_REQUIRED,
           },
         ),
       );
@@ -221,7 +226,7 @@ describe('ViewSortService', () => {
         viewSortService.update(id, workspaceId, updateData),
       ).rejects.toThrow(
         new ViewSortException(
-          `ViewSort with id ${id} not found`,
+          ViewSortExceptionMessage.VIEW_SORT_NOT_FOUND,
           ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
         ),
       );
@@ -251,7 +256,7 @@ describe('ViewSortService', () => {
 
       await expect(viewSortService.delete(id, workspaceId)).rejects.toThrow(
         new ViewSortException(
-          `ViewSort with id ${id} not found`,
+          ViewSortExceptionMessage.VIEW_SORT_NOT_FOUND,
           ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
         ),
       );
