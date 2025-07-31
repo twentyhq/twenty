@@ -6,7 +6,7 @@ import { TextArea } from '@/ui/input/components/TextArea';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { H2Title, IconPlus, IconTrash } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+import { Button, SelectOption } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
   useCreateAgentHandoffMutation,
@@ -86,8 +86,19 @@ export const SettingsAgentHandoffSection = ({
   const [createAgentHandoff] = useCreateAgentHandoffMutation();
   const [removeAgentHandoff] = useRemoveAgentHandoffMutation();
 
-  const availableAgents =
-    agentsData?.findManyAgents?.filter((agent) => agent.id !== agentId) || [];
+  const availableAgentOptions =
+    agentsData?.findManyAgents?.reduce<SelectOption[]>((acc, agent) => {
+      if (
+        agent.id !== agentId &&
+        !handoffTargets.some((target) => target.id === agent.id)
+      ) {
+        acc.push({
+          label: agent.label,
+          value: agent.id,
+        });
+      }
+      return acc;
+    }, []) || [];
 
   const handoffTargets = handoffTargetsData?.findAgentHandoffTargets || [];
 
@@ -175,15 +186,7 @@ export const SettingsAgentHandoffSection = ({
               label={t`Target Agent`}
               value={selectedToAgentId}
               onChange={setSelectedToAgentId}
-              options={availableAgents
-                .filter(
-                  (agent) =>
-                    !handoffTargets.find((target) => target.id === agent.id),
-                )
-                .map((agent) => ({
-                  label: agent.label,
-                  value: agent.id,
-                }))}
+              options={availableAgentOptions}
               emptyOption={{
                 label: t`Select a target agent`,
                 value: '',
