@@ -72,8 +72,8 @@ export const WorkflowDiagramCanvasEditable = ({
     createEdge?.(edgeConnect);
   };
 
-  const onDeleteEdge = (edge: WorkflowDiagramEdge) => {
-    deleteEdge(edge);
+  const onDeleteEdge = async (edge: WorkflowDiagramEdge) => {
+    await deleteEdge(edge);
   };
 
   const onNodeDragStop = async (
@@ -86,7 +86,7 @@ export const WorkflowDiagramCanvasEditable = ({
       );
 
     if (isDefined(stepToUpdate)) {
-      updateStep?.({
+      await updateStep({
         ...stepToUpdate,
         position: node.position,
       });

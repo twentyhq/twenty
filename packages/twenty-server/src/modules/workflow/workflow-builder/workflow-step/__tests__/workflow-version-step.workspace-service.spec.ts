@@ -23,6 +23,7 @@ type MockWorkspaceRepository = Partial<
   WorkspaceRepository<WorkflowVersionWorkspaceEntity>
 > & {
   findOne: jest.Mock;
+  update: jest.Mock;
 };
 
 const mockWorkflowVersionId = 'workflow-version-id';
@@ -88,6 +89,10 @@ describe('WorkflowVersionStepWorkspaceService', () => {
       update: jest.fn(),
     };
 
+    mockWorkflowVersionWorkspaceRepository.findOne.mockResolvedValue(
+      mockWorkflowVersion,
+    );
+
     twentyORMGlobalManager = {
       getRepositoryForWorkspace: jest
         .fn()
@@ -123,10 +128,6 @@ describe('WorkflowVersionStepWorkspaceService', () => {
     }).compile();
 
     service = module.get(WorkflowVersionStepWorkspaceService);
-
-    mockWorkflowVersionWorkspaceRepository.findOne.mockResolvedValue(
-      mockWorkflowVersion,
-    );
   });
 
   describe('createWorkflowVersionStep', () => {
@@ -274,7 +275,7 @@ describe('WorkflowVersionStepWorkspaceService', () => {
         });
       });
 
-      it('should not duplicated stepIds if edge already exists', async () => {
+      it('should not duplicate stepIds if edge already exists', async () => {
         const result = await service.createWorkflowVersionEdge({
           source: 'trigger',
           target: 'step-1',
