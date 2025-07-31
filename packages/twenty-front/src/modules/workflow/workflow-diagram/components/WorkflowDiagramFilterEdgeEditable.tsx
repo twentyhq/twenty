@@ -101,7 +101,7 @@ export const WorkflowDiagramFilterEdgeEditable = ({
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
 
   const { deleteStep } = useDeleteStep({ workflow });
-  const { startNodeCreation } = useStartNodeCreation();
+  const { startNodeCreation, isNodeCreationStarted } = useStartNodeCreation();
 
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
@@ -116,11 +116,10 @@ export const WorkflowDiagramFilterEdgeEditable = ({
     workflowInsertStepIdsComponentState,
   );
 
-  const isEdgeSelected =
-    (workflowInsertStepIds.nextStepId === source &&
-      workflowInsertStepIds.parentStepId === target) ||
-    (isNonEmptyString(data.stepId) &&
-      workflowInsertStepIds.parentStepId === data.stepId);
+  const isEdgeSelected = isNodeCreationStarted({
+    parentStepId: data.stepId,
+    nextStepId: target,
+  });
 
   const workflowSelectedNode = useRecoilComponentValueV2(
     workflowSelectedNodeComponentState,
