@@ -3147,6 +3147,8 @@ export type WorkspaceUrlsAndId = {
   workspaceUrls: WorkspaceUrls;
 };
 
+export type AgentFieldsFragment = { __typename?: 'Agent', id: any, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: any | null, isCustom: boolean, createdAt: string, updatedAt: string };
+
 export type AssignRoleToAgentMutationVariables = Exact<{
   agentId: Scalars['UUID'];
   roleId: Scalars['UUID'];
@@ -3174,14 +3176,14 @@ export type CreateOneAgentMutationVariables = Exact<{
 }>;
 
 
-export type CreateOneAgentMutation = { __typename?: 'Mutation', createOneAgent: { __typename?: 'Agent', id: any, name: string, label: string, icon?: string | null, description?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: any | null, isCustom: boolean, createdAt: string, updatedAt: string } };
+export type CreateOneAgentMutation = { __typename?: 'Mutation', createOneAgent: { __typename?: 'Agent', id: any, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: any | null, isCustom: boolean, createdAt: string, updatedAt: string } };
 
 export type DeleteOneAgentMutationVariables = Exact<{
   input: AgentIdInput;
 }>;
 
 
-export type DeleteOneAgentMutation = { __typename?: 'Mutation', deleteOneAgent: { __typename?: 'Agent', id: any, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: any | null, isCustom: boolean } };
+export type DeleteOneAgentMutation = { __typename?: 'Mutation', deleteOneAgent: { __typename?: 'Agent', id: any, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: any | null, isCustom: boolean, createdAt: string, updatedAt: string } };
 
 export type RemoveAgentHandoffMutationVariables = Exact<{
   input: RemoveAgentHandoffInput;
@@ -3202,7 +3204,7 @@ export type UpdateOneAgentMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOneAgentMutation = { __typename?: 'Mutation', updateOneAgent: { __typename?: 'Agent', id: any, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: any | null, isCustom: boolean } };
+export type UpdateOneAgentMutation = { __typename?: 'Mutation', updateOneAgent: { __typename?: 'Agent', id: any, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: any | null, isCustom: boolean, createdAt: string, updatedAt: string } };
 
 export type FindAgentHandoffTargetsQueryVariables = Exact<{
   input: AgentIdInput;
@@ -3214,14 +3216,14 @@ export type FindAgentHandoffTargetsQuery = { __typename?: 'Query', findAgentHand
 export type FindManyAgentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindManyAgentsQuery = { __typename?: 'Query', findManyAgents: Array<{ __typename?: 'Agent', id: any, name: string, label: string, icon?: string | null, description?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: any | null, isCustom: boolean, createdAt: string, updatedAt: string }> };
+export type FindManyAgentsQuery = { __typename?: 'Query', findManyAgents: Array<{ __typename?: 'Agent', id: any, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: any | null, isCustom: boolean, createdAt: string, updatedAt: string }> };
 
 export type FindOneAgentQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type FindOneAgentQuery = { __typename?: 'Query', findOneAgent: { __typename?: 'Agent', id: any, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: any | null, isCustom: boolean } };
+export type FindOneAgentQuery = { __typename?: 'Query', findOneAgent: { __typename?: 'Agent', id: any, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: any | null, isCustom: boolean, createdAt: string, updatedAt: string } };
 
 export type GetAgentChatMessagesQueryVariables = Exact<{
   threadId: Scalars['String'];
@@ -4163,6 +4165,22 @@ export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
 
 export type GetWorkspaceFromInviteHashQuery = { __typename?: 'Query', findWorkspaceFromInviteHash: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, allowImpersonation: boolean } };
 
+export const AgentFieldsFragmentDoc = gql`
+    fragment AgentFields on Agent {
+  id
+  name
+  label
+  description
+  icon
+  prompt
+  modelId
+  responseFormat
+  roleId
+  isCustom
+  createdAt
+  updatedAt
+}
+    `;
 export const AuthTokenFragmentFragmentDoc = gql`
     fragment AuthTokenFragment on AuthToken {
   token
@@ -4545,21 +4563,10 @@ export type CreateAgentHandoffMutationOptions = Apollo.BaseMutationOptions<Creat
 export const CreateOneAgentDocument = gql`
     mutation CreateOneAgent($input: CreateAgentInput!) {
   createOneAgent(input: $input) {
-    id
-    name
-    label
-    icon
-    description
-    prompt
-    modelId
-    responseFormat
-    roleId
-    isCustom
-    createdAt
-    updatedAt
+    ...AgentFields
   }
 }
-    `;
+    ${AgentFieldsFragmentDoc}`;
 export type CreateOneAgentMutationFn = Apollo.MutationFunction<CreateOneAgentMutation, CreateOneAgentMutationVariables>;
 
 /**
@@ -4589,19 +4596,10 @@ export type CreateOneAgentMutationOptions = Apollo.BaseMutationOptions<CreateOne
 export const DeleteOneAgentDocument = gql`
     mutation DeleteOneAgent($input: AgentIdInput!) {
   deleteOneAgent(input: $input) {
-    id
-    name
-    label
-    description
-    icon
-    prompt
-    modelId
-    responseFormat
-    roleId
-    isCustom
+    ...AgentFields
   }
 }
-    `;
+    ${AgentFieldsFragmentDoc}`;
 export type DeleteOneAgentMutationFn = Apollo.MutationFunction<DeleteOneAgentMutation, DeleteOneAgentMutationVariables>;
 
 /**
@@ -4693,19 +4691,10 @@ export type RemoveRoleFromAgentMutationOptions = Apollo.BaseMutationOptions<Remo
 export const UpdateOneAgentDocument = gql`
     mutation UpdateOneAgent($input: UpdateAgentInput!) {
   updateOneAgent(input: $input) {
-    id
-    name
-    label
-    description
-    icon
-    prompt
-    modelId
-    responseFormat
-    roleId
-    isCustom
+    ...AgentFields
   }
 }
-    `;
+    ${AgentFieldsFragmentDoc}`;
 export type UpdateOneAgentMutationFn = Apollo.MutationFunction<UpdateOneAgentMutation, UpdateOneAgentMutationVariables>;
 
 /**
@@ -4779,21 +4768,10 @@ export type FindAgentHandoffTargetsQueryResult = Apollo.QueryResult<FindAgentHan
 export const FindManyAgentsDocument = gql`
     query FindManyAgents {
   findManyAgents {
-    id
-    name
-    label
-    icon
-    description
-    prompt
-    modelId
-    responseFormat
-    roleId
-    isCustom
-    createdAt
-    updatedAt
+    ...AgentFields
   }
 }
-    `;
+    ${AgentFieldsFragmentDoc}`;
 
 /**
  * __useFindManyAgentsQuery__
@@ -4824,19 +4802,10 @@ export type FindManyAgentsQueryResult = Apollo.QueryResult<FindManyAgentsQuery, 
 export const FindOneAgentDocument = gql`
     query FindOneAgent($id: UUID!) {
   findOneAgent(input: {id: $id}) {
-    id
-    name
-    label
-    description
-    icon
-    prompt
-    modelId
-    responseFormat
-    roleId
-    isCustom
+    ...AgentFields
   }
 }
-    `;
+    ${AgentFieldsFragmentDoc}`;
 
 /**
  * __useFindOneAgentQuery__
