@@ -74,6 +74,7 @@ export class TwoFactorAuthenticationService {
     userId: string,
     userEmail: string,
     workspaceId: string,
+    workspaceDisplayName?: string,
   ) {
     const userWorkspace =
       await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
@@ -109,7 +110,7 @@ export class TwoFactorAuthenticationService {
           userId + workspaceId + 'otp-secret',
         );
 
-      const issuer = `Twenty${userWorkspace.workspace.displayName ? ` - ${userWorkspace.workspace.displayName}` : ''}`;
+      const issuer = `Twenty${workspaceDisplayName ? ` - ${workspaceDisplayName}` : ''}`;
       const reuseUri = authenticator.keyuri(userEmail, issuer, existingSecret);
 
       return reuseUri;
@@ -119,7 +120,7 @@ export class TwoFactorAuthenticationService {
       TOTP_DEFAULT_CONFIGURATION,
     ).initiate(
       userEmail,
-      `Twenty${userWorkspace.workspace.displayName ? ` - ${userWorkspace.workspace.displayName}` : ''}`,
+      `Twenty${workspaceDisplayName ? ` - ${workspaceDisplayName}` : ''}`,
     );
 
     const encryptedSecret = await this.simpleSecretEncryptionUtil.encryptSecret(
