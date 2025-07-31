@@ -167,7 +167,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const breadcrumbText = isEditMode
     ? loading
       ? t`Agent`
-      : agent?.name
+      : agent?.label
     : t`New Agent`;
 
   return (
