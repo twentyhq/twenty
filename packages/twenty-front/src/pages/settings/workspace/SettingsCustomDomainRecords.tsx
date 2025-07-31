@@ -6,8 +6,12 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { Button } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
-import { CustomDomainValidRecords } from '~/generated/graphql';
+import {
+  CustomDomainRecord,
+  CustomDomainValidRecords,
+} from '~/generated/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledTable = styled(Table)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -58,7 +62,14 @@ export const SettingsCustomDomainRecords = ({
       </TableRow>
       <TableBody>
         {records
-          .filter((record) => record.status !== 'success')
+          .filter<CustomDomainRecord & { key: string; value: string }>(
+            (
+              record,
+            ): record is CustomDomainRecord & { key: string; value: string } =>
+              record.status !== 'success' &&
+              isDefined(record.key) &&
+              isDefined(record.value),
+          )
           .map((record) => (
             <TableRow gridAutoColumns="30% 16% auto" key={record.key}>
               <StyledTableCell>
