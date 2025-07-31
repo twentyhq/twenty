@@ -15,6 +15,8 @@ export const fieldMetadataRelationProperties = [
 export type FieldMetadataEntityRelationProperties =
   (typeof fieldMetadataRelationProperties)[number];
 
+export type FlatRelationTargetFieldMetadata = FlatFieldMetadata<FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION>['flatRelationTargetFieldMetadata']
+
 export type FlatFieldMetadata<T extends FieldMetadataType = FieldMetadataType> =
   Omit<
     FieldMetadataEntity<T>,
