@@ -216,7 +216,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_130: VersionCommands = {
-      beforeSyncMetadata: [],
+      beforeSyncMetadata: [
+        this.addNextStepIdsToWorkflowVersionTriggers, // We add that command again because nextStepIds where not added on freshly created triggers. It will be done in 1.3
+      ],
       afterSyncMetadata: [],
     };
 
