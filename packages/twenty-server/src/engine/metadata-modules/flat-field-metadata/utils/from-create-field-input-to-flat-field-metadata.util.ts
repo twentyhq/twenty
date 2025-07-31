@@ -31,6 +31,7 @@ export type FlatFieldMetadataAndParentFlatObjectMetadata<
   parentFlatObjectMetadata: FlatObjectMetadata;
 };
 
+// TODO rename
 export const fromCreateFieldInputToFlatFieldMetadata = async ({
   existingFlatObjectMetadatas,
   rawCreateFieldInput,

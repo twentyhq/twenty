@@ -66,18 +66,21 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
     const existingFlatObjectMetadatas =
       fromObjectMetadataMapsToFlatObjectMetadatas(objectMetadataMaps);
 
+    const flatFieldToCreateAndItsFlatObjectMetadataArray = await Promise.all(
+      fieldMetadataInputs.map(
+        async (fieldMetadataInput) =>
+          await fromCreateFieldInputToFlatFieldMetadata({
+            existingFlatObjectMetadatas,
+            rawCreateFieldInput: fieldMetadataInput,
+          }),
+      ),
+    );
+
     let flatObjectMetadatasWithNewFields: FlatObjectMetadata[] = [];
-
-    for (const fieldMetadataInput of fieldMetadataInputs) {
-      const createdFlatFieldsMetadataAndParentFlatObjectMetadata =
-        await fromCreateFieldInputToFlatFieldMetadata({
-          existingFlatObjectMetadatas,
-          rawCreateFieldInput: fieldMetadataInput,
-        });
-
+    for (const flatFieldMetadataAndParentPair of flatFieldToCreateAndItsFlatObjectMetadataArray) {
       const createdFlatFieldMetadataValidationResult = (
         await Promise.all(
-          createdFlatFieldsMetadataAndParentFlatObjectMetadata.map(
+          flatFieldMetadataAndParentPair.flatMap(
             ({ flatFieldMetadata: flatFieldMetadataToValidate }) =>
               this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadata(
                 {
@@ -88,7 +91,9 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
               ),
           ),
         )
-      ).filter(isDefined);
+      )
+        .flat()
+        .filter(isDefined);
 
       if (createdFlatFieldMetadataValidationResult.length > 0) {
         const errors = createdFlatFieldMetadataValidationResult.flat();
@@ -100,7 +105,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
       }
 
       const updatedFlatObjectMetadatas =
-        createdFlatFieldsMetadataAndParentFlatObjectMetadata.map<FlatObjectMetadata>(
+        flatFieldMetadataAndParentPair.map<FlatObjectMetadata>(
           ({ flatFieldMetadata, parentFlatObjectMetadata }) => {
             return {
               ...parentFlatObjectMetadata,
@@ -129,11 +134,38 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
 
     await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
 
-    // const recomputedCache =
-    //   await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
-    //     { workspaceId },
-    //   );
+    const recomputedCache =
+      await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
+        { workspaceId },
+      );
 
-    return []; //TODO to retrieve from cache or directly from find
+    return flatFieldToCreateAndItsFlatObjectMetadataArray.flatMap<FieldMetadataEntity>(
+      (createdFlatFieldAndItsParentFlatObject) => {
+        return createdFlatFieldAndItsParentFlatObject.flatMap(
+          ({ flatFieldMetadata, parentFlatObjectMetadata }) => {
+            const objectMetadataFromCache =
+              recomputedCache.objectMetadataMaps.byId[
+                parentFlatObjectMetadata.id
+              ];
+
+            if (!isDefined(objectMetadataFromCache)) {
+              // Question: Should we throw ?
+              return [];
+            }
+
+            const fieldMetadataFromCache =
+              objectMetadataFromCache.fieldsById[flatFieldMetadata.id];
+
+            if (!isDefined(fieldMetadataFromCache)) {
+              // Question: Should we throw ?
+              return [];
+            }
+
+            // Remark: Typing not accurate does not contain relations we might need data loaders ? To see with Charles
+            return fieldMetadataFromCache;
+          },
+        );
+      },
+    );
   }
 }
