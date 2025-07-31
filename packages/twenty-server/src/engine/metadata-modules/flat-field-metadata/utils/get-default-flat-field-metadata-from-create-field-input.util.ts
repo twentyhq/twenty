@@ -1,7 +1,6 @@
 import { extractAndSanitizeObjectStringFields } from 'twenty-shared/utils';
 
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 type GetDefaultFlatFieldMetadataArgs = {
@@ -24,11 +23,7 @@ export const getDefaultFlatFieldMetadata = ({
     isActive: true,
     isCustom: true,
     isLabelSyncedWithName: createFieldInput.isLabelSyncedWithName ?? false,
-    isNullable: generateNullable(
-      createFieldInput.type,
-      createFieldInput.isNullable,
-      createFieldInput.isRemoteCreation,
-    ),
+    isNullable: createFieldInput.isNullable ?? true,
     isSystem: false,
     isUnique: createFieldInput.isUnique ?? null,
     label: createFieldInput.label ?? null,

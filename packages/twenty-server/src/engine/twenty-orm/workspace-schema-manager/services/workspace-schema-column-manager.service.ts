@@ -185,14 +185,9 @@ export class WorkspaceSchemaColumnManagerService {
         parts.push('UNIQUE');
       }
 
-      if (column.default !== undefined) {
-        if (typeof column.default === 'string') {
-          const safeDefault = sanitizeDefaultValue(column.default);
-
-          parts.push(`DEFAULT ${safeDefault}`);
-        } else {
-          parts.push(`DEFAULT ${column.default}`);
-        }
+      // TODO: to sanitize
+      if (column.default) {
+        parts.push(`DEFAULT ${column.default}`);
       }
     }
 
