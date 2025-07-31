@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
 import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.service';
 import { CreateAgentInput } from 'src/engine/metadata-modules/agent/dtos/create-agent.input';
@@ -50,34 +49,6 @@ export class AgentService {
       ...agent,
       roleId: roleTarget?.roleId || null,
     };
-  }
-
-  async createOneAgentAndFirstThread(
-    input: {
-      name?: string;
-      label: string;
-      description?: string;
-      prompt: string;
-      modelId: ModelId;
-    },
-    workspaceId: string,
-    userWorkspaceId: string | null,
-  ) {
-    const agent = await this.createOneAgent(
-      { ...input, isCustom: false },
-      workspaceId,
-    );
-
-    if (!userWorkspaceId) {
-      throw new AgentException(
-        'User workspace ID not found',
-        AgentExceptionCode.USER_WORKSPACE_ID_NOT_FOUND,
-      );
-    }
-
-    await this.agentChatService.createThread(agent.id, userWorkspaceId);
-
-    return agent;
   }
 
   async createOneAgent(
