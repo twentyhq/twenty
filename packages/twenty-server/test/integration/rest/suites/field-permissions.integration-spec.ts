@@ -1,9 +1,6 @@
 import gql from 'graphql-tag';
 import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
-import {
-  TEST_PERSON_1_ID,
-  TEST_PERSON_2_ID,
-} from 'test/integration/constants/test-person-ids.constants';
+import { TEST_PERSON_1_ID } from 'test/integration/constants/test-person-ids.constants';
 import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
@@ -300,7 +297,6 @@ describe('Restricted fields', () => {
           path: `/people`,
           bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
           body: {
-            id: TEST_PERSON_2_ID,
             phones: {
               primaryPhoneNumber: '555123456',
               primaryPhoneCountryCode: 'US',
