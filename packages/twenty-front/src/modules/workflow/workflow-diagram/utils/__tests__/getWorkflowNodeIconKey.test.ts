@@ -18,10 +18,17 @@ jest.mock(
   }),
 );
 
+const baseNodeData = {
+  hasNextStepIds: false,
+  position: { x: 0, y: 0 },
+  stepId: '',
+};
+
 describe('getWorkflowNodeIconKey', () => {
   describe('trigger nodes', () => {
     it('should return the icon from trigger node data', () => {
       const triggerNodeData: WorkflowDiagramStepNodeData = {
+        ...baseNodeData,
         nodeType: 'trigger',
         triggerType: 'DATABASE_EVENT',
         name: 'Company Created',
@@ -35,6 +42,7 @@ describe('getWorkflowNodeIconKey', () => {
 
     it('should return icon for manual trigger', () => {
       const manualTriggerData: WorkflowDiagramStepNodeData = {
+        ...baseNodeData,
         nodeType: 'trigger',
         triggerType: 'MANUAL',
         name: 'Manual Trigger',
@@ -48,6 +56,7 @@ describe('getWorkflowNodeIconKey', () => {
 
     it('should return icon for webhook trigger', () => {
       const webhookTriggerData: WorkflowDiagramStepNodeData = {
+        ...baseNodeData,
         nodeType: 'trigger',
         triggerType: 'WEBHOOK',
         name: 'Webhook Trigger',
@@ -63,6 +72,7 @@ describe('getWorkflowNodeIconKey', () => {
   describe('action nodes', () => {
     it('should return icon for CREATE_RECORD action', () => {
       const createActionData: WorkflowDiagramStepNodeData = {
+        ...baseNodeData,
         nodeType: 'action',
         actionType: 'CREATE_RECORD',
         name: 'Create Company',
@@ -75,6 +85,7 @@ describe('getWorkflowNodeIconKey', () => {
 
     it('should return icon for UPDATE_RECORD action', () => {
       const updateActionData: WorkflowDiagramStepNodeData = {
+        ...baseNodeData,
         nodeType: 'action',
         actionType: 'UPDATE_RECORD',
         name: 'Update Company',
@@ -87,6 +98,7 @@ describe('getWorkflowNodeIconKey', () => {
 
     it('should return icon for DELETE_RECORD action', () => {
       const deleteActionData: WorkflowDiagramStepNodeData = {
+        ...baseNodeData,
         nodeType: 'action',
         actionType: 'DELETE_RECORD',
         name: 'Delete Company',
@@ -99,6 +111,7 @@ describe('getWorkflowNodeIconKey', () => {
 
     it('should return icon for SEND_EMAIL action', () => {
       const emailActionData: WorkflowDiagramStepNodeData = {
+        ...baseNodeData,
         nodeType: 'action',
         actionType: 'SEND_EMAIL',
         name: 'Send Email',
@@ -111,6 +124,7 @@ describe('getWorkflowNodeIconKey', () => {
 
     it('should return icon for FILTER action', () => {
       const filterActionData: WorkflowDiagramStepNodeData = {
+        ...baseNodeData,
         nodeType: 'action',
         actionType: 'FILTER',
         name: 'Filter Records',
@@ -123,6 +137,7 @@ describe('getWorkflowNodeIconKey', () => {
 
     it('should handle unknown action types', () => {
       const unknownActionData: WorkflowDiagramStepNodeData = {
+        ...baseNodeData,
         nodeType: 'action',
         actionType: 'UNKNOWN_ACTION' as any,
         name: 'Unknown Action',
