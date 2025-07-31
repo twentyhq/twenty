@@ -43,7 +43,16 @@ export class CloudflareController {
   @UseGuards(CloudflareSecretMatchGuard, PublicEndpointGuard)
   async customHostnameWebhooks(@Req() req: Request, @Res() res: Response) {
     try {
-      if (!req.body?.data?.data?.hostname) {
+      // Cloudflare documentation is inaccurate - some webhooks lack the hostname field.
+      // Fallback to extracting hostname from validation_records.
+      const hostname =
+        req.body?.data?.data?.hostname ??
+        req.body?.data?.data?.ssl?.validation_records?.[0]?.txt_name?.replace(
+          /^_acme-challenge\./,
+          '',
+        );
+
+      if (!hostname) {
         handleException({
           exception: new DomainManagerException(
             'Hostname missing',
@@ -57,7 +66,7 @@ export class CloudflareController {
       }
 
       const workspace = await this.workspaceRepository.findOneBy({
-        customDomain: req.body.data.data.hostname,
+        customDomain: hostname,
       });
 
       if (!workspace) return;
@@ -67,9 +76,7 @@ export class CloudflareController {
       });
 
       const customDomainDetails =
-        await this.customDomainService.getCustomDomainDetails(
-          req.body.data.data.hostname,
-        );
+        await this.customDomainService.getCustomDomainDetails(hostname);
 
       const workspaceUpdated: Partial<Workspace> = {
         customDomain: workspace.customDomain,
