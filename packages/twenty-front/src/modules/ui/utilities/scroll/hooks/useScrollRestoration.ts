@@ -1,24 +1,45 @@
-import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-
-const CONTENT_RENDER_DELAY = 50;
-const FLAG_RESET_DELAY = 100;
 
 export const useScrollRestoration = (componentInstanceId: string) => {
   const location = useLocation();
   const storageKey = `scroll-${location.pathname}`;
   const [isRestoring, setIsRestoring] = useState(false);
 
-  const { scrollWrapperHTMLElement } =
-    useScrollWrapperElement(componentInstanceId);
-
   const scrollTop = useRecoilComponentValueV2(
     scrollWrapperScrollTopComponentState,
     componentInstanceId,
+  );
+
+  const restoreScrollPosition = useCallback(
+    (position: number, elementId: string) => {
+      const attemptRestore = () => {
+        const element = document.getElementById(elementId);
+
+        if (!isDefined(element)) {
+          requestAnimationFrame(attemptRestore);
+          return;
+        }
+
+        const isScrollable = element.scrollHeight > element.clientHeight;
+        if (!isScrollable) {
+          requestAnimationFrame(attemptRestore);
+          return;
+        }
+
+        element.scrollTo({ top: position });
+
+        requestAnimationFrame(() => {
+          setIsRestoring(false);
+        });
+      };
+
+      requestAnimationFrame(attemptRestore);
+    },
+    [],
   );
 
   useEffect(() => {
@@ -29,20 +50,24 @@ export const useScrollRestoration = (componentInstanceId: string) => {
 
   useEffect(() => {
     const savedPosition = sessionStorage.getItem(storageKey);
-    if (isDefined(savedPosition)) {
-      const position = parseInt(savedPosition, 10);
+    const expectedElementId = `scroll-wrapper-${componentInstanceId}`;
 
-      setIsRestoring(true);
-
-      setTimeout(() => {
-        if (isDefined(scrollWrapperHTMLElement)) {
-          scrollWrapperHTMLElement.scrollTo({ top: position });
-        }
-
-        setTimeout(() => {
-          setIsRestoring(false);
-        }, FLAG_RESET_DELAY);
-      }, CONTENT_RENDER_DELAY);
+    if (!isDefined(savedPosition)) {
+      return;
     }
-  }, [location.pathname, storageKey, scrollWrapperHTMLElement]);
+
+    const position = parseInt(savedPosition, 10);
+
+    if (position <= 0) {
+      return;
+    }
+
+    setIsRestoring(true);
+    restoreScrollPosition(position, expectedElementId);
+  }, [
+    location.pathname,
+    storageKey,
+    componentInstanceId,
+    restoreScrollPosition,
+  ]);
 };
