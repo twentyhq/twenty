@@ -79,20 +79,24 @@ export const SettingsCustomDomainRecords = ({
 
   const rows = rowsDefinitions.map<
     { name: string; status: string; color: ThemeColor } & CustomDomainRecord
-  >((record) => {
-    const foundRecord = records.find(
-      ({ validationType }) => validationType === record.validationType,
+  >((row) => {
+    const record = records.find(
+      ({ validationType }) => validationType === row.validationType,
     );
+
+    if (!record) {
+      throw new Error(`Record ${row.name} not found`);
+    }
+
     return {
-      name: record.name,
-      status: foundRecord ? foundRecord.status : defaultValues.status,
+      name: row.name,
       color:
-        foundRecord && foundRecord.status === 'error'
+        record && record.status === 'error'
           ? 'red'
-          : foundRecord && foundRecord.status === 'pending'
+          : record && record.status === 'pending'
             ? 'yellow'
             : defaultValues.color,
-      ...foundRecord,
+      ...record,
     };
   });
 
