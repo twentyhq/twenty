@@ -31,9 +31,9 @@ export abstract class CustomException<
   ) {
     super(message);
     this.code = code;
-    this.userFriendlyMessage = (
-      userFriendlyMessage as { userFriendlyMessage?: ExceptionFriendlyMessage }
-    )?.userFriendlyMessage;
+    this.userFriendlyMessage = userFriendlyMessage
+      ? userFriendlyMessage?.[0]?.userFriendlyMessage
+      : undefined;
   }
 }
 

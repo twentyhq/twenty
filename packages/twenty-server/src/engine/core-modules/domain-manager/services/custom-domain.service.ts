@@ -90,7 +90,7 @@ export class CustomDomainService {
       const { hostname, id, ssl, verification_errors, created_at } =
         response.result[0];
       // @ts-expect-error - type definition doesn't reflect the real API
-      const dcvRecords = ssl.dcv_delegation_records?.[0];
+      const dcvRecords = ssl?.dcv_delegation_records?.[0];
 
       return {
         id: id,

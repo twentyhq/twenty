@@ -151,6 +151,9 @@ describe('CustomDomainService', () => {
         hostname: customDomain,
         ownership_verification: undefined,
         verification_errors: [],
+        ssl: {
+          dcv_delegation_records: [],
+        },
       };
       const cloudflareMock = {
         customHostnames: {

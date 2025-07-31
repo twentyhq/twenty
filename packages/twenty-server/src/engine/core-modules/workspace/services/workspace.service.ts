@@ -176,6 +176,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       await this.customDomainService.deleteCustomHostnameByHostnameSilently(
         workspace.customDomain,
       );
+      workspace.isCustomDomainEnabled = false;
     }
 
     if (
