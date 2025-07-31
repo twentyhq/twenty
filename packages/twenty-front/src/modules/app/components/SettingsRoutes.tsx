@@ -424,7 +424,7 @@ export const SettingsRoutes = ({
         <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
         <Route path={SettingsPath.AI} element={<SettingsAI />} />
         <Route
-          path={SettingsPath.NewAgent}
+          path={SettingsPath.AINewAgent}
           element={<SettingsAgentForm mode="create" />}
         />
         <Route

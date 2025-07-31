@@ -23,7 +23,7 @@ export enum SettingsPath {
   Workspace = 'general',
   Domain = 'general/domain',
   AI = 'ai',
-  NewAgent = 'ai/new-agent',
+  AINewAgent = 'ai/new-agent',
   AgentDetail = 'ai/agents/:agentId',
   APIs = 'apis',
   RestPlayground = 'playground/rest/:schema',

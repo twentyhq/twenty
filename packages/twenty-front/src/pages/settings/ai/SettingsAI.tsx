@@ -20,7 +20,7 @@ export const SettingsAI = () => {
     <SubMenuTopBarContainer
       title={t`AI`}
       actionButton={
-        <UndecoratedLink to={getSettingsPath(SettingsPath.NewAgent)}>
+        <UndecoratedLink to={getSettingsPath(SettingsPath.AINewAgent)}>
           <Button
             Icon={IconPlus}
             title={t`New Agent`}
