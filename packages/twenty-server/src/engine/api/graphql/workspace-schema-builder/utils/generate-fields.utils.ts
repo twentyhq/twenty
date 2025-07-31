@@ -170,10 +170,10 @@ const generateRelationField = <
   options: WorkspaceBuildSchemaOptions;
   typeFactory: TypeFactory<T>;
 }) => {
-  const relationField = {};
+  const relationFields = {};
 
   if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
-    return relationField;
+    return relationFields;
   }
 
   const joinColumnName = fieldMetadata.settings?.joinColumnName;
@@ -194,7 +194,7 @@ const generateRelationField = <
   );
 
   // @ts-expect-error legacy noImplicitAny
-  relationField[joinColumnName] = {
+  relationFields[joinColumnName] = {
     type,
     description: fieldMetadata.description,
   };
@@ -221,15 +221,16 @@ const generateRelationField = <
         isRelationConnectField: true,
       },
     );
+
+    // todo @guillim
+    // @ts-expect-error legacy noImplicitAny
+    relationFields[fieldMetadata.name] = {
+      type: type,
+      description: fieldMetadata.description,
+    };
   }
 
-  // @ts-expect-error legacy noImplicitAny
-  relationField[fieldMetadata.name] = {
-    type: type,
-    description: fieldMetadata.description,
-  };
-
-  return relationField;
+  return relationFields;
 };
 
 // Type guard

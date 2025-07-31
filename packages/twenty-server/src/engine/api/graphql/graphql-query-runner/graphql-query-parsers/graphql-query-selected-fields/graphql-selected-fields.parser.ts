@@ -8,6 +8,7 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
+import { isMorphRelationFieldMetadataType } from 'src/engine/utils/is-morph-relation-field-metadata-type.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 export type GraphqlQuerySelectedFieldsResult = {
@@ -71,53 +72,46 @@ export class GraphqlQuerySelectedFieldsParser {
     objectMetadataMapItem: ObjectMetadataItemWithFieldMaps,
     accumulator: GraphqlQuerySelectedFieldsResult,
   ): void {
-    for (const [fieldKey, fieldValue] of Object.entries(
-      graphqlSelectedFields,
+    for (const fieldMetadata of Object.values(
+      objectMetadataMapItem.fieldsById,
     )) {
-      const fieldMetadataBasedOnName =
-        objectMetadataMapItem.fieldsById[
-          objectMetadataMapItem.fieldIdByName[fieldKey]
-        ];
+      const graphqlSelectedFieldValue =
+        graphqlSelectedFields[fieldMetadata.name];
 
-      const isFieldForeignKey =
-        !fieldMetadataBasedOnName && fieldKey.endsWith('Id');
-
-      if (isFieldForeignKey) {
-        const fieldMetadataBasedOnRelationName =
-          objectMetadataMapItem.fieldsById[
-            objectMetadataMapItem.fieldIdByName[fieldKey.slice(0, -2)]
-          ];
-
-        if (fieldMetadataBasedOnRelationName) {
-          accumulator.select[fieldKey] = true; // field is not a connection so should not be treated as a relation
-          continue;
-        }
-      }
-
-      const fieldMetadata = fieldMetadataBasedOnName;
-
-      if (!fieldMetadata) {
+      if (!graphqlSelectedFieldValue) {
         continue;
       }
 
       if (isRelationFieldMetadataType(fieldMetadata.type)) {
         this.graphqlQuerySelectedFieldsRelationParser.parseRelationField(
           fieldMetadata,
-          fieldKey,
-          fieldValue,
+          fieldMetadata.name,
+          graphqlSelectedFieldValue,
           accumulator,
         );
       } else if (isCompositeFieldMetadataType(fieldMetadata.type)) {
         const compositeResult = this.parseCompositeField(
           fieldMetadata,
-          fieldValue,
+          graphqlSelectedFieldValue,
         );
 
         Object.assign(accumulator.select, compositeResult);
       } else {
-        accumulator.select[fieldKey] = true;
+        accumulator.select[fieldMetadata.name] = true;
       }
     }
+
+    this.parseMorphRelationIdRecord(
+      graphqlSelectedFields,
+      objectMetadataMapItem,
+      accumulator,
+    );
+
+    this.parseMorphRelationRecord(
+      graphqlSelectedFields,
+      objectMetadataMapItem,
+      accumulator,
+    );
   }
 
   private parseConnectionField(
@@ -183,5 +177,117 @@ export class GraphqlQuerySelectedFieldsParser {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         {} as Record<string, any>,
       );
+  }
+
+  private getFieldMetadataJoinColumnName({
+    fieldMetadata,
+    objectMetadataMapItem,
+  }: {
+    fieldMetadata: FieldMetadataEntity;
+    objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+  }): string | undefined {
+    return Object.entries(objectMetadataMapItem.fieldIdByJoinColumnName).find(
+      ([_, fieldId]) => fieldId === fieldMetadata.id,
+    )?.[0];
+  }
+
+  parseMorphRelationIdRecord(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    graphqlSelectedFields: Partial<Record<string, any>>,
+    objectMetadataMapItem: ObjectMetadataItemWithFieldMaps,
+    accumulator: GraphqlQuerySelectedFieldsResult,
+  ): void {
+    const possibleJoinColumnNames = Object.keys(
+      objectMetadataMapItem.fieldIdByJoinColumnName,
+    );
+
+    const requestedJoinColumnNames = possibleJoinColumnNames.filter(
+      (joinColumnName) => graphqlSelectedFields[joinColumnName],
+    );
+
+    const requestedJoinColumnNamesFieldIds = requestedJoinColumnNames.map(
+      (joinColumnName) =>
+        objectMetadataMapItem.fieldIdByJoinColumnName[joinColumnName],
+    );
+
+    const requestedJoinColumnNamesFieldIdsFieldMetadatas =
+      requestedJoinColumnNamesFieldIds.map(
+        (fieldMetadataId) => objectMetadataMapItem.fieldsById[fieldMetadataId],
+      );
+
+    for (const fieldMetadata of requestedJoinColumnNamesFieldIdsFieldMetadatas) {
+      const joinColumnName = this.getFieldMetadataJoinColumnName({
+        fieldMetadata,
+        objectMetadataMapItem,
+      });
+
+      if (!joinColumnName) {
+        continue;
+      }
+      const graphqlSelectedFieldValue = graphqlSelectedFields[joinColumnName];
+
+      if (!graphqlSelectedFieldValue) {
+        continue;
+      }
+      accumulator.select[joinColumnName] = true;
+    }
+  }
+
+  parseMorphRelationRecord(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    graphqlSelectedFields: Partial<Record<string, any>>,
+    objectMetadataMapItem: ObjectMetadataItemWithFieldMaps,
+    accumulator: GraphqlQuerySelectedFieldsResult,
+  ): void {
+    const possibleJoinColumnNames = Object.keys(
+      objectMetadataMapItem.fieldIdByJoinColumnName,
+    );
+
+    const requestedFieldsFromJoinColumnNames = possibleJoinColumnNames.filter(
+      (joinColumnName) => graphqlSelectedFields[joinColumnName.slice(0, -2)],
+    );
+
+    const requestedFieldsFromJoinColumnNamesFieldIds =
+      requestedFieldsFromJoinColumnNames.map(
+        (joinColumnName) =>
+          objectMetadataMapItem.fieldIdByJoinColumnName[joinColumnName],
+      );
+
+    const requestedFieldsFromJoinColumnNamesFieldIdsFieldMetadatas =
+      requestedFieldsFromJoinColumnNamesFieldIds.map(
+        (fieldMetadataId) => objectMetadataMapItem.fieldsById[fieldMetadataId],
+      );
+
+    for (const fieldMetadata of requestedFieldsFromJoinColumnNamesFieldIdsFieldMetadatas) {
+      const joinColumnName = this.getFieldMetadataJoinColumnName({
+        fieldMetadata,
+        objectMetadataMapItem,
+      });
+
+      if (!joinColumnName) {
+        continue;
+      }
+      const graphqlSelectedFieldValue = graphqlSelectedFields[joinColumnName];
+
+      if (!graphqlSelectedFieldValue) {
+        continue;
+      }
+
+      if (
+        isRelationFieldMetadataType(fieldMetadata.type) ||
+        isMorphRelationFieldMetadataType(fieldMetadata.type)
+      ) {
+        this.graphqlQuerySelectedFieldsRelationParser.parseRelationField(
+          fieldMetadata,
+          joinColumnName.slice(0, -2), // we do not have access to the target objectmetadata name here
+          graphqlSelectedFieldValue,
+          accumulator,
+        );
+      } else {
+        throw new Error(
+          `Expected a morph relation ${joinColumnName.slice(0, -2)} but got ${fieldMetadata.type}`,
+        );
+      }
+    }
   }
 }

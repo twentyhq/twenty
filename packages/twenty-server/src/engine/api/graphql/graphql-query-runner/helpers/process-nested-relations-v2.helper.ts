@@ -112,13 +112,28 @@ export class ProcessNestedRelationsV2Helper {
   }): Promise<void> {
     const sourceFieldMetadataId =
       parentObjectMetadataItem.fieldIdByName[sourceFieldName];
-    const sourceFieldMetadata =
+    let sourceFieldMetadata =
       parentObjectMetadataItem.fieldsById[sourceFieldMetadataId];
+
+    // it empty, it could be a morph relation
+    if (!sourceFieldMetadata) {
+      const sourceFieldMetadataId =
+        parentObjectMetadataItem.fieldIdByJoinColumnName[
+          `${sourceFieldName}Id`
+        ];
+
+      sourceFieldMetadata =
+        parentObjectMetadataItem.fieldsById[sourceFieldMetadataId];
+    }
 
     if (
       !isFieldMetadataEntityOfType(
         sourceFieldMetadata,
         FieldMetadataType.RELATION,
+      ) &&
+      !isFieldMetadataEntityOfType(
+        sourceFieldMetadata,
+        FieldMetadataType.MORPH_RELATION,
       )
     ) {
       // TODO: Maybe we should throw an error here ?
@@ -248,8 +263,19 @@ export class ProcessNestedRelationsV2Helper {
   }) {
     const targetFieldMetadataId =
       parentObjectMetadataItem.fieldIdByName[sourceFieldName];
-    const targetFieldMetadata =
+    let targetFieldMetadata =
       parentObjectMetadataItem.fieldsById[targetFieldMetadataId];
+
+    // morph relation case
+    if (!targetFieldMetadata) {
+      const targetFieldMetadataId =
+        parentObjectMetadataItem.fieldIdByJoinColumnName[
+          `${sourceFieldName}Id`
+        ];
+
+      targetFieldMetadata =
+        parentObjectMetadataItem.fieldsById[targetFieldMetadataId];
+    }
 
     const targetObjectMetadata = getTargetObjectMetadataOrThrow(
       targetFieldMetadata,

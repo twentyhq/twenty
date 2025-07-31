@@ -14,6 +14,7 @@ import { RelationTypeV2Factory } from 'src/engine/api/graphql/workspace-schema-b
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
 import { getResolverArgs } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-resolver-args.util';
 import { objectContainsRelationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/object-contains-relation-field';
+import { computeMorphRelationFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-field-name.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
@@ -46,6 +47,7 @@ export class ExtendObjectTypeDefinitionV2Factory {
   public create(
     objectMetadata: ObjectMetadataEntity,
     options: WorkspaceBuildSchemaOptions,
+    objectMetadataCollection: ObjectMetadataEntity[],
   ): ObjectTypeDefinition {
     const kind = ObjectTypeDefinitionKind.Plain;
     const gqlType = this.typeDefinitionsStorage.getObjectTypeByKey(
@@ -94,7 +96,11 @@ export class ExtendObjectTypeDefinitionV2Factory {
         ...config,
         fields: () => ({
           ...config.fields,
-          ...this.generateFields(objectMetadata, options),
+          ...this.generateFields(
+            objectMetadata,
+            options,
+            objectMetadataCollection,
+          ),
         }),
       }),
     };
@@ -103,6 +109,7 @@ export class ExtendObjectTypeDefinitionV2Factory {
   private generateFields(
     objectMetadata: ObjectMetadataEntity,
     options: WorkspaceBuildSchemaOptions,
+    objectMetadataCollection: ObjectMetadataEntity[],
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): GraphQLFieldConfigMap<any, any> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -151,7 +158,26 @@ export class ExtendObjectTypeDefinitionV2Factory {
         );
       }
 
-      fields[fieldMetadata.name] = {
+      const objectMetadataTarget = objectMetadataCollection.find(
+        (objectMetadata) =>
+          objectMetadata.id === fieldMetadata.relationTargetObjectMetadataId,
+      );
+
+      if (!objectMetadataTarget) {
+        throw new Error(`Object Metadata Target not found`);
+      }
+
+      // todo @guillim to go on for ont to many needs plural
+      const fieldName =
+        fieldMetadata.type === FieldMetadataType.MORPH_RELATION
+          ? computeMorphRelationFieldName({
+              name: fieldMetadata.name,
+              targetObjectMetadataNameSingular:
+                objectMetadataTarget.nameSingular,
+            })
+          : fieldMetadata.name;
+
+      fields[fieldName] = {
         type: relationType,
         args: argsType,
         description: fieldMetadata.description,
