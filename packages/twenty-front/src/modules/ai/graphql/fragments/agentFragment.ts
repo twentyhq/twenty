@@ -15,4 +15,4 @@ export const AGENT_FRAGMENT = gql`
     createdAt
     updatedAt
   }
-`; 
+`;
