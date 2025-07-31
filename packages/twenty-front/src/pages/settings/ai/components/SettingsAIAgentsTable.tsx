@@ -14,8 +14,8 @@ import { Agent } from '~/generated-metadata/graphql';
 import { SETTINGS_AI_AGENT_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsAIAgentTableMetadata';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import {
-    SettingsAIAgentTableRow,
-    StyledAIAgentTableRow,
+  SettingsAIAgentTableRow,
+  StyledAIAgentTableRow,
 } from './SettingsAIAgentTableRow';
 
 const StyledSearchInput = styled(TextInput)`

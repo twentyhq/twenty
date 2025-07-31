@@ -44,10 +44,7 @@ export const SettingsAIAgentTableRow = ({
   const Icon = getIcon(agent.icon || 'IconRobot');
 
   return (
-    <StyledAIAgentTableRow
-      key={agent.id}
-      to={link}
-    >
+    <StyledAIAgentTableRow key={agent.id} to={link}>
       <StyledNameTableCell>
         <StyledIconContainer>
           <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
@@ -61,9 +58,7 @@ export const SettingsAIAgentTableRow = ({
           weight="medium"
         />
       </TableCell>
-      <StyledActionTableCell>
-        {action}
-      </StyledActionTableCell>
+      <StyledActionTableCell>{action}</StyledActionTableCell>
     </StyledAIAgentTableRow>
   );
 };
