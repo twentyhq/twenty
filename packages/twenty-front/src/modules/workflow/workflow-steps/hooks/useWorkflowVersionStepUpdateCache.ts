@@ -57,7 +57,7 @@ export const useWorkflowVersionStepUpdateCache = () => {
         : cachedRecord.trigger,
       steps: (cachedRecord.steps || []).map((step: WorkflowAction) => ({
         ...step,
-        nextStepIds: stepsNextStepIds[step.id],
+        nextStepIds: stepsNextStepIds[step.id] ?? step.nextStepIds,
       })),
     };
 
