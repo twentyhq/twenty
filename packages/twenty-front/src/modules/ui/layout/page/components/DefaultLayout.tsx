@@ -1,6 +1,5 @@
 import { AuthModal } from '@/auth/components/AuthModal';
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { isCommandMenuPersistentState } from '@/command-menu/states/isCommandMenuPersistentState';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
@@ -21,7 +20,6 @@ import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { THEME_COMMON } from 'twenty-ui/theme';
 import { useScreenSize } from 'twenty-ui/utilities';
 
 const StyledLayout = styled.div`
@@ -63,11 +61,6 @@ const StyledMainContainer = styled.div<{
   overflow: hidden;
 `;
 
-const StyledCommandMenuContainer = styled.div`
-  flex-shrink: 0;
-  width: ${THEME_COMMON.rightDrawerWidth};
-`;
-
 export const DefaultLayout = () => {
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
@@ -75,14 +68,7 @@ export const DefaultLayout = () => {
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
-  const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const isCommandMenuPersistent = useRecoilValue(isCommandMenuPersistentState);
-
-  const shouldShowPersistentCommandMenu =
-    !showAuthModal && !isMobile && isCommandMenuPersistent;
-
-  const shouldShowOverlayCommandMenu =
-    !showAuthModal && (!isCommandMenuPersistent || isMobile);
 
   return (
     <>
@@ -131,20 +117,17 @@ export const DefaultLayout = () => {
             ) : (
               <>
                 <StyledMainContainer
-                  hasCommandMenuPersistent={shouldShowPersistentCommandMenu}
+                  hasCommandMenuPersistent={
+                    !isMobile && isCommandMenuPersistent
+                  }
                 >
                   <AppErrorBoundary FallbackComponent={AppPageErrorFallback}>
                     <Outlet />
                   </AppErrorBoundary>
                 </StyledMainContainer>
-                {shouldShowPersistentCommandMenu && (
-                  <StyledCommandMenuContainer>
-                    <CommandMenuRouter />
-                  </StyledCommandMenuContainer>
-                )}
               </>
             )}
-            {shouldShowOverlayCommandMenu && <CommandMenuRouter />}
+            {!showAuthModal && <CommandMenuRouter />}
             {!showAuthModal && <KeyboardShortcutMenu />}
           </StyledPageContainer>
           {isMobile && !showAuthModal && <MobileNavigationBar />}

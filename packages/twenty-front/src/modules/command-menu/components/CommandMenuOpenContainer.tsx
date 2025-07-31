@@ -47,7 +47,7 @@ export const CommandMenuOpenContainer = ({
 
   const targetVariantForAnimation: CommandMenuAnimationVariant = isMobile
     ? 'fullScreen'
-      : 'normal';
+    : 'normal';
 
   const theme = useTheme();
 
@@ -100,9 +100,9 @@ export const CommandMenuOpenContainer = ({
       initial={isCommandMenuPersistent ? targetVariantForAnimation : 'closed'}
       exit={isCommandMenuPersistent ? targetVariantForAnimation : 'closed'}
       variants={COMMAND_MENU_ANIMATION_VARIANTS}
-      transition={{ 
+      transition={{
         duration: theme.animation.duration.normal,
-        ease: 'easeInOut'
+        ease: 'easeInOut',
       }}
       isPersistent={isCommandMenuPersistent}
     >

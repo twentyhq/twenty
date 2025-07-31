@@ -99,7 +99,7 @@ export const useCommandMenu = () => {
         const newPersistentState = !isCommandMenuPersistent;
         set(isCommandMenuPersistentState, newPersistentState);
       },
-    [openCommandMenu],
+    [],
   );
 
   const enableCommandMenuPersistent = useRecoilCallback(
@@ -107,9 +107,8 @@ export const useCommandMenu = () => {
       () => {
         set(isCommandMenuPersistentState, true);
         set(isCommandMenuOpenedState, true);
-        openCommandMenu();
       },
-    [openCommandMenu],
+    [],
   );
 
   const disableCommandMenuPersistent = useRecoilCallback(
