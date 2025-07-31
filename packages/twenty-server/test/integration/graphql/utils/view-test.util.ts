@@ -173,6 +173,7 @@ export const assertViewFilterGroupStructure = (
   expect([
     ViewFilterGroupLogicalOperator.AND,
     ViewFilterGroupLogicalOperator.OR,
+    ViewFilterGroupLogicalOperator.NOT,
   ]).toContain(viewFilterGroup.logicalOperator);
 
   if (expectedFields) {

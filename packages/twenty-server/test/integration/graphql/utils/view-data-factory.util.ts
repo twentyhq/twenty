@@ -10,6 +10,7 @@ import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.enti
 import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
+import { ViewFilterGroupLogicalOperator } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
 
 export const createViewData = (overrides: Partial<View> = {}) => ({
   name: 'Test View',
@@ -105,14 +106,14 @@ export const createViewFilterGroupData = (
   overrides: Partial<ViewFilterGroup> = {},
 ) => ({
   viewId,
-  logicalOperator: 'AND',
+  logicalOperator: ViewFilterGroupLogicalOperator.AND,
   ...overrides,
 });
 
 export const updateViewFilterGroupData = (
   overrides: Partial<ViewFilterGroup> = {},
 ) => ({
-  logicalOperator: 'OR',
+  logicalOperator: ViewFilterGroupLogicalOperator.OR,
   ...overrides,
 });
 
@@ -166,11 +167,11 @@ export const viewScenarios = {
 
   andFilterGroup: (viewId: string) => ({
     viewId,
-    logicalOperator: 'AND',
+    logicalOperator: ViewFilterGroupLogicalOperator.AND,
   }),
 
   orFilterGroup: (viewId: string) => ({
     viewId,
-    logicalOperator: 'OR',
+    logicalOperator: ViewFilterGroupLogicalOperator.OR,
   }),
 };
