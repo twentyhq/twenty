@@ -22,15 +22,15 @@ export const useOnDbEvent = ({
   const tokenPair = getTokenPair();
 
   const sseClient = useMemo(() => {
+    const token = tokenPair?.accessOrWorkspaceAgnosticToken?.token;
+
     return createClient({
       url: `${REACT_APP_SERVER_BASE_URL}/graphql`,
       headers: {
-        Authorization: tokenPair?.accessOrWorkspaceAgnosticToken.token
-          ? `Bearer ${tokenPair?.accessOrWorkspaceAgnosticToken.token}`
-          : '',
+        Authorization: token ? `Bearer ${token}` : '',
       },
     });
-  }, [tokenPair?.accessOrWorkspaceAgnosticToken.token]);
+  }, [tokenPair?.accessOrWorkspaceAgnosticToken?.token]);
 
   useEffect(() => {
     if (skip === true) {
