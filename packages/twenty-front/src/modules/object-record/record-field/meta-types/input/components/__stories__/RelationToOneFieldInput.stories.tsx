@@ -5,7 +5,6 @@ import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -150,12 +149,9 @@ export default meta;
 
 type Story = StoryObj<typeof RelationToOneFieldInputWithContext>;
 
-export const Default: Story = {
-  decorators: [ComponentWithRecoilScopeDecorator],
-};
+export const Default: Story = {};
 
 export const Submit: Story = {
-  decorators: [ComponentWithRecoilScopeDecorator],
   play: async () => {
     const canvas = within(getCanvasElementForDropdownTesting());
 
@@ -174,7 +170,6 @@ export const Submit: Story = {
 };
 
 export const Cancel: Story = {
-  decorators: [ComponentWithRecoilScopeDecorator],
   play: async () => {
     const canvas = within(getCanvasElementForDropdownTesting());
 

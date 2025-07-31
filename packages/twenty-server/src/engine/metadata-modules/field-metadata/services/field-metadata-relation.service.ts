@@ -1,8 +1,7 @@
-import { Injectable, ValidationError } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { t } from '@lingui/core/macro';
-import { plainToInstance } from 'class-transformer';
-import { IsEnum, IsString, IsUUID, validateOrReject } from 'class-validator';
+import { IsEnum, IsString, IsUUID } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -20,6 +19,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
+import { validateRelationCreationPayloadOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/validate-relation-creation-payload.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -156,19 +156,17 @@ export class FieldMetadataRelationService {
           .relationCreationPayload,
       )
     ) {
-      validateFieldNameAvailabilityOrThrow(
-        `${fieldMetadataInput.name}Id`,
+      validateFieldNameAvailabilityOrThrow({
+        name: `${fieldMetadataInput.name}Id`,
         objectMetadata,
-      );
+      });
 
       const relationCreationPayload = (
         fieldMetadataInput as unknown as CreateFieldInput
       ).relationCreationPayload;
 
       if (isDefined(relationCreationPayload)) {
-        await this.validateRelationCreationPayloadOrThrow(
-          relationCreationPayload,
-        );
+        await validateRelationCreationPayloadOrThrow(relationCreationPayload);
         const computedMetadataNameFromLabel = computeMetadataNameFromLabel(
           relationCreationPayload.targetFieldLabel,
         );
@@ -187,15 +185,15 @@ export class FieldMetadataRelationService {
           );
         }
 
-        validateFieldNameAvailabilityOrThrow(
-          computedMetadataNameFromLabel,
-          objectMetadataTarget,
-        );
+        validateFieldNameAvailabilityOrThrow({
+          name: computedMetadataNameFromLabel,
+          objectMetadata: objectMetadataTarget,
+        });
 
-        validateFieldNameAvailabilityOrThrow(
-          `${computedMetadataNameFromLabel}Id`,
-          objectMetadataTarget,
-        );
+        validateFieldNameAvailabilityOrThrow({
+          name: `${computedMetadataNameFromLabel}Id`,
+          objectMetadata: objectMetadataTarget,
+        });
 
         if (
           computedMetadataNameFromLabel === fieldMetadataInput.name &&
@@ -213,31 +211,6 @@ export class FieldMetadataRelationService {
     }
 
     return fieldMetadataInput;
-  }
-
-  private async validateRelationCreationPayloadOrThrow(
-    relationCreationPayload: RelationCreationPayloadValidation,
-  ) {
-    try {
-      const relationCreationPayloadInstance = plainToInstance(
-        RelationCreationPayloadValidation,
-        relationCreationPayload,
-      );
-
-      await validateOrReject(relationCreationPayloadInstance);
-    } catch (error) {
-      const errorMessages = Array.isArray(error)
-        ? error
-            .map((err: ValidationError) => Object.values(err.constraints ?? {}))
-            .flat()
-            .join(', ')
-        : error.message;
-
-      throw new FieldMetadataException(
-        `Relation creation payload is invalid: ${errorMessages}`,
-        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      );
-    }
   }
 
   async findCachedFieldMetadataRelation(

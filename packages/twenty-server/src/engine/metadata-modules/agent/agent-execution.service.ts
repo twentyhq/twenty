@@ -3,8 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Readable } from 'stream';
 
-import { createAnthropic } from '@ai-sdk/anthropic';
-import { createOpenAI } from '@ai-sdk/openai';
 import {
   CoreMessage,
   CoreUserMessage,
@@ -17,10 +15,7 @@ import {
 } from 'ai';
 import { In, Repository } from 'typeorm';
 
-import {
-  ModelId,
-  ModelProvider,
-} from 'src/engine/core-modules/ai/constants/ai-models.const';
+import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
@@ -41,6 +36,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
@@ -62,6 +58,7 @@ export class AgentExecutionService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly agentToolService: AgentToolService,
     private readonly fileService: FileService,
+    private readonly domainManagerService: DomainManagerService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly aiModelRegistryService: AiModelRegistryService,
@@ -70,38 +67,6 @@ export class AgentExecutionService {
     @InjectRepository(FileEntity, 'core')
     private readonly fileRepository: Repository<FileEntity>,
   ) {}
-
-  getModel = (modelId: ModelId, provider: ModelProvider) => {
-    switch (provider) {
-      case ModelProvider.OPENAI_COMPATIBLE: {
-        const OpenAIProvider = createOpenAI({
-          baseURL: this.twentyConfigService.get('OPENAI_COMPATIBLE_BASE_URL'),
-          apiKey: this.twentyConfigService.get('OPENAI_COMPATIBLE_API_KEY'),
-        });
-
-        return OpenAIProvider(modelId);
-      }
-      case ModelProvider.OPENAI: {
-        const OpenAIProvider = createOpenAI({
-          apiKey: this.twentyConfigService.get('OPENAI_API_KEY'),
-        });
-
-        return OpenAIProvider(modelId);
-      }
-      case ModelProvider.ANTHROPIC: {
-        const AnthropicProvider = createAnthropic({
-          apiKey: this.twentyConfigService.get('ANTHROPIC_API_KEY'),
-        });
-
-        return AnthropicProvider(modelId);
-      }
-      default:
-        throw new AgentException(
-          `Unsupported provider: ${provider}`,
-          AgentExceptionCode.AGENT_EXECUTION_FAILED,
-        );
-    }
-  };
 
   private async validateApiKey(provider: ModelProvider): Promise<void> {
     let apiKey: string | undefined;
@@ -169,10 +134,21 @@ export class AgentExecutionService {
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
 
+      const registeredModel = this.aiModelRegistryService.getModel(
+        aiModel.modelId,
+      );
+
+      if (!registeredModel) {
+        throw new AgentException(
+          `Model ${aiModel.modelId} not found in registry`,
+          AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        );
+      }
+
       return {
         system,
         tools,
-        model: this.getModel(aiModel.modelId, aiModel.provider),
+        model: registeredModel.model,
         ...(messages && { messages }),
         ...(prompt && { prompt }),
         maxSteps: AGENT_CONFIG.MAX_STEPS,
@@ -245,7 +221,7 @@ export class AgentExecutionService {
     const contextObject = (
       await Promise.all(
         recordIdsByObjectMetadataNameSingular.map(
-          (recordsWithObjectMetadataNameSingular) => {
+          async (recordsWithObjectMetadataNameSingular) => {
             if (recordsWithObjectMetadataNameSingular.recordIds.length === 0) {
               return [];
             }
@@ -256,10 +232,20 @@ export class AgentExecutionService {
               roleId,
             );
 
-            return repository.find({
-              where: {
-                id: In(recordsWithObjectMetadataNameSingular.recordIds),
-              },
+            return (
+              await repository.find({
+                where: {
+                  id: In(recordsWithObjectMetadataNameSingular.recordIds),
+                },
+              })
+            ).map((record) => {
+              return {
+                ...record,
+                resourceUrl: this.domainManagerService.buildWorkspaceURL({
+                  workspace,
+                  pathname: `object/${recordsWithObjectMetadataNameSingular.objectMetadataNameSingular}/${record.id}`,
+                }),
+              };
             });
           },
         ),
