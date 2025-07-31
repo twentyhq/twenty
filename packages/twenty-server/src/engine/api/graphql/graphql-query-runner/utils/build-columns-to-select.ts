@@ -1,10 +1,9 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { isFieldMetadataTypeMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-morph-relation.util';
+import { isFieldMetadataTypeRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-relation.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export const buildColumnsToSelect = ({
   select,
@@ -39,25 +38,37 @@ const getRequiredRelationColumns = (
 ): string[] => {
   const requiredColumns: string[] = [];
 
-  for (const [relationFieldName, _] of Object.entries(relations)) {
-    const fieldMetadataId = objectMetadataItem.fieldIdByName[relationFieldName];
+  const fieldMetadataIds: string[] = [];
 
-    if (!fieldMetadataId) {
-      throw new InternalServerError(
-        `Field metadata not found for relation field name: ${relationFieldName}`,
-      );
+  for (const relationFieldName of Object.keys(relations)) {
+    const relationFieldMetadataId =
+      objectMetadataItem.fieldIdByName[relationFieldName];
+
+    if (relationFieldMetadataId) {
+      fieldMetadataIds.push(relationFieldMetadataId);
+      continue;
     }
 
+    const morphJoinColumnName = `${relationFieldName}Id`;
+    const morphRelationFieldMetadataId =
+      objectMetadataItem.fieldIdByJoinColumnName[morphJoinColumnName];
+
+    if (morphRelationFieldMetadataId) {
+      fieldMetadataIds.push(morphRelationFieldMetadataId);
+      continue;
+    }
+
+    throw new InternalServerError(
+      `Field metadata not found for relation field name: ${relationFieldName}`,
+    );
+  }
+
+  for (const fieldMetadataId of fieldMetadataIds) {
     const fieldMetadata = objectMetadataItem.fieldsById[fieldMetadataId];
 
-    if (!fieldMetadata) {
-      throw new InternalServerError(
-        `Field metadata not found for relation field name: ${relationFieldName}`,
-      );
-    }
-
     if (
-      !isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION)
+      !isFieldMetadataTypeRelation(fieldMetadata) &&
+      !isFieldMetadataTypeMorphRelation(fieldMetadata)
     ) {
       continue;
     }

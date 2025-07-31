@@ -201,7 +201,7 @@ export class WorkspaceDatasourceFactory {
                 dataSourceMetadata.url ??
                 this.twentyConfigService.get('PG_DATABASE_URL'),
               type: 'postgres',
-              logging: this.twentyConfigService.getLoggingConfig(),
+              logging: true,
               schema: dataSourceMetadata.schema,
               entities: cachedEntitySchemas,
               ssl: this.twentyConfigService.get('PG_SSL_ALLOW_SELF_SIGNED')

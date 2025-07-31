@@ -139,6 +139,7 @@ export abstract class GraphqlQueryBaseResolverService<
         graphqlQueryParser.parseSelectedFields(
           objectMetadataItemWithFieldMaps,
           selectedFields,
+          options.objectMetadataMaps,
         );
 
       const graphqlQueryResolverExecutionArgs = {
