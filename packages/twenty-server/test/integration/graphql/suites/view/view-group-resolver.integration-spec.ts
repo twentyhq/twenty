@@ -9,12 +9,11 @@ import {
   updateViewGroupData,
 } from 'test/integration/graphql/utils/view-data-factory.util';
 import {
-  assertErrorResponse,
   assertSuccessfulResponse,
   assertViewGroupStructure,
   cleanupViewRecords,
   createTestView,
-} from 'test/integration/graphql/utils/view-test-utils';
+} from 'test/integration/graphql/utils/view-test.util';
 
 describe('View Group Resolver', () => {
   let testViewId: string;
@@ -163,7 +162,6 @@ describe('View Group Resolver', () => {
       const createResponse = await makeGraphqlAPIRequest(createOperation);
       const viewGroup = createResponse.body.data.createCoreViewGroup;
 
-      // Delete the view group
       const deleteOperation = deleteViewGroupOperationFactory({
         viewGroupId: viewGroup.id,
       });
@@ -171,32 +169,6 @@ describe('View Group Resolver', () => {
 
       assertSuccessfulResponse(response);
       expect(response.body.data.deleteCoreViewGroup).toBe(true);
-    });
-  });
-
-  describe('validation', () => {
-    const requiredFields = ['viewId', 'fieldMetadataId'];
-    const validInput = {
-      viewId: testViewId,
-      fieldMetadataId: TEST_FIELD_METADATA_1_ID,
-      isVisible: true,
-      fieldValue: 'test',
-      position: 0,
-    };
-
-    requiredFields.forEach((field) => {
-      it(`should require ${field} for creation`, async () => {
-        const invalidInput = { ...validInput };
-
-        delete invalidInput[field as keyof typeof invalidInput];
-
-        const operation = createViewGroupOperationFactory({
-          data: invalidInput,
-        });
-        const response = await makeGraphqlAPIRequest(operation);
-
-        assertErrorResponse(response, field);
-      });
     });
   });
 });

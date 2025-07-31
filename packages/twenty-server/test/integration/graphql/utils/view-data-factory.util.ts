@@ -64,14 +64,12 @@ export const createViewFilterData = (
   fieldMetadataId: TEST_FIELD_METADATA_1_ID,
   operand: 'Is',
   value: 'test-value',
-  displayValue: 'Test Value',
   ...overrides,
 });
 
 export const updateViewFilterData = (overrides: Record<string, any> = {}) => ({
   operand: 'IsNot',
   value: 'updated-value',
-  displayValue: 'Updated Value',
   ...overrides,
 });
 

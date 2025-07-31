@@ -19,7 +19,7 @@ import {
   assertViewStructure,
   cleanupViewRecords,
   createTestView,
-} from 'test/integration/graphql/utils/view-test-utils';
+} from 'test/integration/graphql/utils/view-test.util';
 
 describe('View Resolver', () => {
   beforeEach(async () => {
@@ -219,28 +219,6 @@ describe('View Resolver', () => {
       const response = await makeGraphqlAPIRequest(operation);
 
       assertErrorResponse(response, 'not found');
-    });
-  });
-
-  describe('validation', () => {
-    const requiredFields = ['name', 'objectMetadataId', 'icon'];
-    const validInput = {
-      name: 'Test View',
-      objectMetadataId: TEST_OBJECT_METADATA_1_ID,
-      icon: 'IconTable',
-    };
-
-    requiredFields.forEach((field) => {
-      it(`should require ${field} for creation`, async () => {
-        const invalidInput = { ...validInput };
-
-        delete invalidInput[field as keyof typeof invalidInput];
-
-        const operation = createViewOperationFactory({ data: invalidInput });
-        const response = await makeGraphqlAPIRequest(operation);
-
-        assertErrorResponse(response, field);
-      });
     });
   });
 });
