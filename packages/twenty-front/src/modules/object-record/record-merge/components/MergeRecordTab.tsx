@@ -26,6 +26,7 @@ export const MergeRecordTab = ({
           id: recordId,
         }}
         isInRightDrawer={true}
+        isMergeMode={true}
       />
     </Section>
   );
