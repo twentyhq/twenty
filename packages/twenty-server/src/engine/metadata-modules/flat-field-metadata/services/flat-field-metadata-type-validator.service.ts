@@ -6,11 +6,10 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { ValidateOneFieldMetadataArgs } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { FlatFieldMetadataTypeValidator } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
+import { isEnumValidateOneFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-validate-one-field-metadata-args.util';
 import { validateEnumSelectFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator';
 import { validateRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-relation-flat-field-metadata.validator';
-import { EnumFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/enum-column-action.factory';
 @Injectable()
 export class FlatFieldMetadataTypeValidatorService {
   constructor(private readonly featureFlagService: FeatureFlagService) {}
@@ -65,10 +64,15 @@ export class FlatFieldMetadataTypeValidatorService {
 
         return [];
       },
-      MULTI_SELECT: (args) =>
-        validateEnumSelectFlatFieldMetadata(
-          args as ValidateOneFieldMetadataArgs<EnumFieldMetadataType>,
-        ),
+      MULTI_SELECT: (args) => {
+        if (!isEnumValidateOneFieldMetadata(args)) {
+          throw new Error(
+            'Should never occur, invaliad enum field metadata type',
+          );
+        }
+
+        return validateEnumSelectFlatFieldMetadata(args);
+      },
       NUMBER: async (_args) => {
         return [];
       },
@@ -81,10 +85,15 @@ export class FlatFieldMetadataTypeValidatorService {
       POSITION: async (_args) => {
         return [];
       },
-      RATING: (args) =>
-        validateEnumSelectFlatFieldMetadata(
-          args as ValidateOneFieldMetadataArgs<EnumFieldMetadataType>,
-        ),
+      RATING: (args) => {
+        if (!isEnumValidateOneFieldMetadata(args)) {
+          throw new Error(
+            'Should never occur, invaliad enum field metadata type',
+          );
+        }
+
+        return validateEnumSelectFlatFieldMetadata(args);
+      },
       RAW_JSON: async (_args) => {
         return [];
       },
@@ -95,10 +104,15 @@ export class FlatFieldMetadataTypeValidatorService {
       RICH_TEXT_V2: async (_args) => {
         return [];
       },
-      SELECT: (args) =>
-        validateEnumSelectFlatFieldMetadata(
-          args as ValidateOneFieldMetadataArgs<EnumFieldMetadataType>,
-        ),
+      SELECT: (args) => {
+        if (!isEnumValidateOneFieldMetadata(args)) {
+          throw new Error(
+            'Should never occur, invaliad enum field metadata type',
+          );
+        }
+
+        return validateEnumSelectFlatFieldMetadata(args);
+      },
       TEXT: async (_args) => {
         return [];
       },
