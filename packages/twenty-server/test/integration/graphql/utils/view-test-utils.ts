@@ -1,19 +1,11 @@
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
 import { createViewOperationFactory } from './create-view-operation-factory.util';
 import { createViewData } from './view-data-factory.util';
 
 export const cleanupViewRecords = async (): Promise<void> => {
-  await Promise.all([
-    deleteAllRecords('viewField'),
-    deleteAllRecords('viewSort'),
-    deleteAllRecords('viewFilter'),
-    deleteAllRecords('viewGroup'),
-    deleteAllRecords('viewFilterGroup'),
-  ]);
-
-  await deleteAllRecords('view');
+  // @ts-expect-error legacy noImplicitAny
+  await global.testDataSource.query(`DELETE from "core"."view"`);
 };
 
 export const createTestView = async (overrides: Record<string, any> = {}) => {
