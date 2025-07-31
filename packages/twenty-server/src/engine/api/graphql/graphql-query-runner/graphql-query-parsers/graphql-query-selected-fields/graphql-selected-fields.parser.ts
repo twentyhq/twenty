@@ -267,7 +267,9 @@ export class GraphqlQuerySelectedFieldsParser {
       if (!joinColumnName) {
         continue;
       }
-      const graphqlSelectedFieldValue = graphqlSelectedFields[joinColumnName];
+
+      const columnName = joinColumnName.slice(0, -2);
+      const graphqlSelectedFieldValue = graphqlSelectedFields[columnName];
 
       if (!graphqlSelectedFieldValue) {
         continue;
@@ -279,13 +281,13 @@ export class GraphqlQuerySelectedFieldsParser {
       ) {
         this.graphqlQuerySelectedFieldsRelationParser.parseRelationField(
           fieldMetadata,
-          joinColumnName.slice(0, -2), // we do not have access to the target objectmetadata name here
+          columnName,
           graphqlSelectedFieldValue,
           accumulator,
         );
       } else {
         throw new Error(
-          `Expected a morph relation ${joinColumnName.slice(0, -2)} but got ${fieldMetadata.type}`,
+          `Expected a morph relation ${columnName} but got ${fieldMetadata.type}`,
         );
       }
     }

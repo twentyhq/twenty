@@ -164,7 +164,9 @@ export class ExtendObjectTypeDefinitionV2Factory {
       );
 
       if (!objectMetadataTarget) {
-        throw new Error(`Object Metadata Target not found`);
+        throw new Error(
+          `Object Metadata Target not found for Id: ${fieldMetadata.relationTargetObjectMetadataId} on fieldMetadata name: ${fieldMetadata.name}`,
+        );
       }
 
       // todo @guillim to go on for ont to many needs plural

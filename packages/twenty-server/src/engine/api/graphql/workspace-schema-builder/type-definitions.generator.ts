@@ -273,7 +273,9 @@ export class TypeDefinitionsGenerator {
     // Generate extended object type defs only for objects that contain composite fields
     const objectMetadataCollectionWithCompositeFields =
       objectMetadataCollection.filter(
-        objectContainsRelationField || objectContainsMorphRelationField,
+        (obj) =>
+          objectContainsRelationField(obj) ||
+          objectContainsMorphRelationField(obj),
       );
     const workspaceId =
       objectMetadataCollectionWithCompositeFields[0]?.workspaceId;
