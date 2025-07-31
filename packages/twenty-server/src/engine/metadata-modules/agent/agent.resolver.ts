@@ -1,5 +1,8 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -10,6 +13,7 @@ import {
 } from 'src/engine/guards/feature-flag.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
+import { AgentEntity } from './agent.entity';
 import { AgentService } from './agent.service';
 
 import { AgentIdInput } from './dtos/agent-id.input';
@@ -20,12 +24,19 @@ import { UpdateAgentInput } from './dtos/update-agent.input';
 @UseGuards(WorkspaceAuthGuard, FeatureFlagGuard)
 @Resolver()
 export class AgentResolver {
-  constructor(private readonly agentService: AgentService) {}
+  constructor(
+    @InjectRepository(AgentEntity, 'core')
+    private readonly agentRepository: Repository<AgentEntity>,
+    private readonly agentService: AgentService,
+  ) {}
 
   @Query(() => [AgentDTO])
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async findManyAgents(@AuthWorkspace() { id: workspaceId }: Workspace) {
-    return this.agentService.findManyAgents(workspaceId);
+    return this.agentRepository.find({
+      where: { workspaceId },
+      order: { createdAt: 'DESC' },
+    });
   }
 
   @Query(() => AgentDTO)

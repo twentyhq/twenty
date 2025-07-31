@@ -23,13 +23,6 @@ export class AgentService {
     private readonly agentRoleService: AgentRoleService,
   ) {}
 
-  async findManyAgents(workspaceId: string) {
-    return this.agentRepository.find({
-      where: { workspaceId },
-      order: { createdAt: 'DESC' },
-    });
-  }
-
   async findOneAgent(id: string, workspaceId: string) {
     const agent = await this.agentRepository.findOne({
       where: { id, workspaceId },
