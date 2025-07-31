@@ -1,15 +1,37 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationAndMorphRelationFieldMetadataType,
+} from 'twenty-shared/types';
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import {
+  FieldMetadataException,
+  FieldMetadataExceptionCode,
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import {
   FieldMetadataEntityRelationProperties,
   FlatFieldMetadata,
   fieldMetadataRelationProperties,
 } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-entity-to-flat-object-metadata.util';
+import { FlatRelationTargetFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-relation-target-field-metadata.type';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
-import { fromFlatObjectMetadataToFlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/from-flat-object-metadata-to-flat-object-metadata-without-fields.util';
+import { fromObjectMetadataEntityToFlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/from-object-metadata-entity-to-flat-object-metadata-without-fields.util copy';
+
+export const fromFieldMetadataEntityToFlatRelationTargetFieldMetadata = (
+  fieldMetadataEntity: FieldMetadataEntity<RelationAndMorphRelationFieldMetadataType>,
+): FlatRelationTargetFieldMetadata => {
+  const { relationTargetFieldMetadata, relationTargetObjectMetadata, ...rest } =
+    fieldMetadataEntity;
+
+  return {
+    uniqueIdentifier: fieldMetadataEntity.standardId ?? fieldMetadataEntity.id,
+    ...removePropertiesFromRecord(fieldMetadataEntity, [
+      'relationTargetObjectMetadata',
+      'relationTargetFieldMetadata',
+    ]),
+  };
+};
 
 // TODO refactor this method should not be recursive but depth 1
 export const fromFieldMetadataEntityToFlatFieldMetadata = <
@@ -35,18 +57,26 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = <
       FieldMetadataEntityRelationProperties
     >(fieldMetadataEntity, fieldMetadataRelationProperties);
 
+    if (
+      !isFieldMetadataEntityOfType(
+        fieldMetadataEntity.relationTargetFieldMetadata,
+        FieldMetadataType.RELATION,
+      )
+    ) {
+      throw new FieldMetadataException(
+        'Relation target field is not a field metadata type relation',
+        FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+      );
+    }
+
     const flatRelationTargetFieldMetadata =
-      fromFieldMetadataEntityToFlatFieldMetadata(
+      fromFieldMetadataEntityToFlatRelationTargetFieldMetadata(
         fieldMetadataEntity.relationTargetFieldMetadata,
       );
 
-    const flatObjectTargetFieldMetadata =
-      fromObjectMetadataEntityToFlatObjectMetadata(
-        fieldMetadataEntity.relationTargetObjectMetadata,
-      );
     const flatRelationTargetObjectMetadata =
-      fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(
-        flatObjectTargetFieldMetadata,
+      fromObjectMetadataEntityToFlatObjectMetadataWithoutFields(
+        fieldMetadataEntity.relationTargetObjectMetadata,
       );
 
     return {
