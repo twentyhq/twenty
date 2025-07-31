@@ -1,3 +1,5 @@
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardCardBodyContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBodyContainer';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
@@ -9,10 +11,12 @@ import {
   RecordUpdateHook,
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
+import { fieldIsReadOnlyByPermissions } from '@/object-record/record-field/hooks/useIsFieldReadOnlyByPermissions';
+import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/useIsRecordFieldReadOnly';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
-import { isFieldValueReadOnly } from '@/object-record/record-field/utils/isFieldValueReadOnly';
+import { isFieldReadOnlyBySystem } from '@/object-record/record-field/utils/isFieldReadOnlyBySystem';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useContext } from 'react';
@@ -24,7 +28,8 @@ export const RecordBoardCardBody = ({
 }) => {
   const { recordId, isRecordReadOnly } = useContext(RecordBoardCardContext);
 
-  const { updateOneRecord } = useContext(RecordBoardContext);
+  const { updateOneRecord, objectMetadataItem } =
+    useContext(RecordBoardContext);
 
   const useUpdateOneRecordHook: RecordUpdateHook = () => {
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {
@@ -37,23 +42,44 @@ export const RecordBoardCardBody = ({
     return [updateEntity, { loading: false }];
   };
 
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
+  const objectPermissions = getObjectPermissionsForObject(
+    objectPermissionsByObjectMetadataId,
+    objectMetadataItem.id,
+  );
+
+  const fieldDefinitionsWithReadOnly = fieldDefinitions.map(
+    (fieldDefinition) => ({
+      ...fieldDefinition,
+      isFieldReadOnly:
+        isRecordReadOnly ||
+        isRecordFieldReadOnly({
+          isFieldReadOnlyByPermissions: fieldIsReadOnlyByPermissions({
+            objectPermissions,
+            fieldMetadataId: fieldDefinition.fieldMetadataId,
+          }),
+          isFieldReadOnlyBySystem: isFieldReadOnlyBySystem({
+            objectNameSingular:
+              fieldDefinition.metadata.objectMetadataNameSingular,
+            fieldName: fieldDefinition.metadata.fieldName,
+            fieldType: fieldDefinition.type,
+            isCustom: fieldDefinition.metadata.isCustom,
+          }),
+        }),
+    }),
+  );
+
   return (
     <RecordBoardCardBodyContainer>
-      {fieldDefinitions.map((fieldDefinition) => (
+      {fieldDefinitionsWithReadOnly.map((fieldDefinition) => (
         <StopPropagationContainer key={fieldDefinition.fieldMetadataId}>
           <FieldContext.Provider
             value={{
               recordId,
               maxWidth: 156,
               isLabelIdentifier: false,
-              isReadOnly: isFieldValueReadOnly({
-                objectNameSingular:
-                  fieldDefinition.metadata.objectMetadataNameSingular,
-                fieldName: fieldDefinition.metadata.fieldName,
-                fieldType: fieldDefinition.type,
-                isRecordReadOnly,
-                isCustom: fieldDefinition.metadata.isCustom,
-              }),
+              isReadOnly: fieldDefinition.isFieldReadOnly,
               fieldDefinition: {
                 disableTooltip: false,
                 fieldMetadataId: fieldDefinition.fieldMetadataId,

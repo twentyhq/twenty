@@ -1,7 +1,7 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
+import { useFieldIsReadOnly } from '@/object-record/record-field/hooks/useIsFieldReadOnly';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
 import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -26,9 +26,13 @@ export const RecordTableCellFieldContextGeneric = ({
     useRecordIndexContextOrThrow();
   const { columnDefinition } = useContext(RecordTableCellContext);
 
-  const isFieldReadOnly = useIsFieldValueReadOnly({
-    fieldDefinition: columnDefinition,
-    isRecordReadOnly: isTableRowReadOnly ?? false,
+  const isFieldReadOnly = useFieldIsReadOnly({
+    objectNameSingular: objectMetadataItem.nameSingular,
+    fieldName: columnDefinition.metadata.fieldName,
+    fieldType: columnDefinition.type,
+    isCustom: objectMetadataItem.isCustom,
+    fieldMetadataId: columnDefinition.fieldMetadataId,
+    objectMetadataId: objectMetadataItem.id,
   });
 
   const updateRecord = useContext(RecordUpdateContext);
@@ -55,6 +59,8 @@ export const RecordTableCellFieldContextGeneric = ({
     hasObjectReadPermissions = relationObjectPermissions.canReadObjectRecords;
   }
 
+  const isReadOnly = (isFieldReadOnly || isTableRowReadOnly) ?? false;
+
   return (
     <FieldContext.Provider
       value={{
@@ -70,7 +76,7 @@ export const RecordTableCellFieldContextGeneric = ({
           objectMetadataItem,
         }),
         displayedMaxRows: 1,
-        isReadOnly: isFieldReadOnly,
+        isReadOnly,
         isForbidden: !hasObjectReadPermissions,
       }}
     >

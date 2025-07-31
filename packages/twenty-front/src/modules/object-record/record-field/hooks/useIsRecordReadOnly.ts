@@ -1,28 +1,18 @@
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
-
-type UseIsRecordReadOnlyParams = {
-  recordId: string;
-  objectMetadataId: string;
-};
+import { useFieldIsReadOnlyByPermissions } from '@/object-record/record-field/hooks/useIsFieldReadOnlyByPermissions';
+import { useIsRecordDeleted } from '@/object-record/record-field/hooks/useIsRecordDeleted';
 
 export const useIsRecordReadOnly = ({
   recordId,
   objectMetadataId,
-}: UseIsRecordReadOnlyParams) => {
-  const recordDeletedAt = useRecoilValue<ObjectRecord | null>(
-    recordStoreFamilySelector({
-      recordId,
-      fieldName: 'deletedAt',
-    }),
-  );
+}: {
+  recordId: string;
+  objectMetadataId: string;
+}) => {
+  const isRecordDeleted = useIsRecordDeleted({ recordId });
 
-  const objectPermissions = useObjectPermissionsForObject(objectMetadataId);
+  const isObjectReadOnlyByPermissions = useFieldIsReadOnlyByPermissions({
+    objectMetadataId,
+  });
 
-  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
-
-  return !hasObjectUpdatePermissions || isDefined(recordDeletedAt);
+  return isRecordDeleted || isObjectReadOnlyByPermissions;
 };

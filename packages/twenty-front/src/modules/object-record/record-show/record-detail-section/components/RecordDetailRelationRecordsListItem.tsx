@@ -17,8 +17,7 @@ import {
   RecordUpdateHook,
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
-import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
+import { useIsRecordFieldReadOnly } from '@/object-record/record-field/hooks/useIsRecordFieldReadOnly';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -52,7 +51,6 @@ import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 import { RelationType } from '~/generated-metadata/graphql';
-
 const StyledListItem = styled(RecordDetailRecordsListItem)<{
   isDropdownOpen?: boolean;
 }>`
@@ -236,14 +234,12 @@ export const RecordDetailRelationRecordsListItem = ({
     [isExpanded],
   );
 
-  const isRecordReadOnly = useIsRecordReadOnly({
+  const isReadOnly = useIsRecordFieldReadOnly({
     recordId: relationRecord.id,
+    fieldMetadataId: relationFieldMetadataId,
     objectMetadataId: relationObjectMetadataItem.id,
-  });
-
-  const isFieldReadOnly = useIsFieldValueReadOnly({
-    fieldDefinition,
-    isRecordReadOnly,
+    objectNameSingular: relationObjectMetadataItem.nameSingular,
+    fieldName: fieldDefinition.metadata.fieldName,
   });
 
   return (
@@ -260,7 +256,7 @@ export const RecordDetailRelationRecordsListItem = ({
             accent="tertiary"
           />
         </StyledClickableZone>
-        {!isFieldReadOnly && (
+        {!isReadOnly && (
           <Dropdown
             dropdownId={dropdownInstanceId}
             dropdownPlacement="right-start"
@@ -312,7 +308,7 @@ export const RecordDetailRelationRecordsListItem = ({
                     labelWidth: 90,
                   }),
                   useUpdateRecord: useUpdateOneObjectRecordMutation,
-                  isReadOnly: isFieldReadOnly,
+                  isReadOnly,
                 }}
               >
                 <RecordFieldComponentInstanceContext.Provider

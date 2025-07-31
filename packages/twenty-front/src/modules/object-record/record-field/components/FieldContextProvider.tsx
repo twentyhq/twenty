@@ -1,12 +1,12 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   FieldContext,
   RecordUpdateHook,
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
+import { useIsRecordFieldReadOnly } from '@/object-record/record-field/hooks/useIsRecordFieldReadOnly';
 import { ReactNode } from 'react';
 
 export const FieldContextProvider = ({
@@ -34,10 +34,6 @@ export const FieldContextProvider = ({
     objectNameSingular,
   });
 
-  const objectPermissions = useObjectPermissionsForObject(
-    objectMetadataItem.id,
-  );
-
   const fieldMetadataItem = objectMetadataItem?.fields.find(
     (field) => field.name === fieldMetadataName,
   );
@@ -57,11 +53,19 @@ export const FieldContextProvider = ({
     return [updateEntity, { loading: false }];
   };
 
+  const isReadOnly = useIsRecordFieldReadOnly({
+    recordId: objectRecordId,
+    fieldMetadataId: fieldMetadataItem?.id,
+    objectMetadataId: objectMetadataItem.id,
+    objectNameSingular,
+    fieldName: fieldMetadataName,
+    fieldType: fieldMetadataItem?.type,
+    isCustom: objectMetadataItem.isCustom,
+  });
+
   if (!fieldMetadataItem) {
     return null;
   }
-
-  const isObjectReadOnly = !objectPermissions.canUpdateObjectRecords;
 
   return (
     <FieldContext.Provider
@@ -80,7 +84,7 @@ export const FieldContextProvider = ({
           customUseUpdateOneObjectHook ?? useUpdateOneObjectMutation,
         clearable,
         overridenIsFieldEmpty,
-        isReadOnly: isObjectReadOnly,
+        isReadOnly,
       }}
     >
       {children}
