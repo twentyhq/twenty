@@ -9,7 +9,6 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { EMPTY_TRIGGER_STEP_ID } from '@/workflow/workflow-diagram/constants/EmptyTriggerStepId';
-import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { useTriggerNodeSelection } from '@/workflow/workflow-diagram/hooks/useTriggerNodeSelection';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import {
@@ -23,7 +22,6 @@ import { useIcons } from 'twenty-ui/display';
 
 export const WorkflowDiagramCanvasEditableEffect = () => {
   const { getIcon } = useIcons();
-  const { startNodeCreation } = useStartNodeCreation();
 
   const {
     openWorkflowTriggerTypeInCommandMenu,
@@ -85,7 +83,6 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       setCommandMenuNavigationStack,
       workflowVisualizerWorkflowId,
       openWorkflowTriggerTypeInCommandMenu,
-      startNodeCreation,
       openWorkflowEditStepInCommandMenu,
       getIcon,
       setWorkflowSelectedNode,
