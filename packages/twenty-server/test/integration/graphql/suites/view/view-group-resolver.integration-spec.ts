@@ -96,7 +96,7 @@ describe('View Group Resolver', () => {
     it('should create a view group with null fieldValue', async () => {
       const groupData = createViewGroupData(testViewId, {
         isVisible: true,
-        fieldValue: null,
+        fieldValue: '',
         position: 2,
       });
 
@@ -109,7 +109,7 @@ describe('View Group Resolver', () => {
       assertViewGroupStructure(response.body.data.createCoreViewGroup, {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         isVisible: true,
-        fieldValue: null,
+        fieldValue: '',
         position: 2,
       });
     });

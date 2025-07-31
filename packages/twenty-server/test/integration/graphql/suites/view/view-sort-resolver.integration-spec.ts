@@ -15,6 +15,8 @@ import {
   createTestView,
 } from 'test/integration/graphql/utils/view-test.util';
 
+import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
+
 describe('View Sort Resolver', () => {
   let testViewId: string;
 
@@ -42,7 +44,9 @@ describe('View Sort Resolver', () => {
     });
 
     it('should return view sorts for a specific view', async () => {
-      const sortData = createViewSortData(testViewId, { direction: 'ASC' });
+      const sortData = createViewSortData(testViewId, {
+        direction: ViewSortDirection.ASC,
+      });
       const createOperation = createViewSortOperationFactory({
         data: sortData,
       });
@@ -58,7 +62,7 @@ describe('View Sort Resolver', () => {
       expect(response.body.data.getCoreViewSorts).toHaveLength(1);
       assertViewSortStructure(response.body.data.getCoreViewSorts[0], {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
-        direction: 'ASC',
+        direction: ViewSortDirection.ASC,
         viewId: testViewId,
       });
     });
@@ -66,7 +70,9 @@ describe('View Sort Resolver', () => {
 
   describe('createCoreViewSort', () => {
     it('should create a new view sort with ASC direction', async () => {
-      const sortData = createViewSortData(testViewId, { direction: 'ASC' });
+      const sortData = createViewSortData(testViewId, {
+        direction: ViewSortDirection.ASC,
+      });
 
       const operation = createViewSortOperationFactory({ data: sortData });
       const response = await makeGraphqlAPIRequest(operation);
@@ -74,13 +80,15 @@ describe('View Sort Resolver', () => {
       assertSuccessfulResponse(response);
       assertViewSortStructure(response.body.data.createCoreViewSort, {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
-        direction: 'ASC',
+        direction: ViewSortDirection.ASC,
         viewId: testViewId,
       });
     });
 
     it('should create a view sort with DESC direction', async () => {
-      const sortData = createViewSortData(testViewId, { direction: 'DESC' });
+      const sortData = createViewSortData(testViewId, {
+        direction: ViewSortDirection.DESC,
+      });
 
       const operation = createViewSortOperationFactory({ data: sortData });
       const response = await makeGraphqlAPIRequest(operation);
@@ -88,7 +96,7 @@ describe('View Sort Resolver', () => {
       assertSuccessfulResponse(response);
       assertViewSortStructure(response.body.data.createCoreViewSort, {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
-        direction: 'DESC',
+        direction: ViewSortDirection.DESC,
         viewId: testViewId,
       });
     });
@@ -96,14 +104,18 @@ describe('View Sort Resolver', () => {
 
   describe('updateCoreViewSort', () => {
     it('should update an existing view sort', async () => {
-      const sortData = createViewSortData(testViewId, { direction: 'ASC' });
+      const sortData = createViewSortData(testViewId, {
+        direction: ViewSortDirection.ASC,
+      });
       const createOperation = createViewSortOperationFactory({
         data: sortData,
       });
       const createResponse = await makeGraphqlAPIRequest(createOperation);
       const viewSort = createResponse.body.data.createCoreViewSort;
 
-      const updateInput = updateViewSortData({ direction: 'DESC' });
+      const updateInput = updateViewSortData({
+        direction: ViewSortDirection.DESC,
+      });
       const updateOperation = updateViewSortOperationFactory({
         viewSortId: viewSort.id,
         data: updateInput,
