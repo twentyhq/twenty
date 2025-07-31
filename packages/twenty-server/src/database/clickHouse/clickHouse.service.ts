@@ -229,6 +229,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async insertInChunks<T extends Record<string, any>>(
     client: ClickHouseClient,
     table: string,
