@@ -410,11 +410,11 @@ export const WorkflowDiagramCanvasBase = ({
     WorkflowDiagramNode,
     WorkflowDiagramEdge
   > = async (diagram) => {
-    if (isDefined(onDeleteEdge)) {
-      // Removing nodes from delete events
-      diagram.nodes.length = 0;
+    if (
+      diagram.nodes.length === 0 // We don't call deleteEdge when node diagram deletion is called
+    ) {
       for (const edge of diagram.edges) {
-        onDeleteEdge(edge);
+        onDeleteEdge?.(edge);
       }
       return diagram;
     }
