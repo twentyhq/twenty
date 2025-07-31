@@ -190,7 +190,6 @@ export const WorkflowDiagramStepNodeBase = ({
         {RightFloatingElement}
 
         {BottomHoverFloatingElement}
-
       </StyledStepNodeInnerContainer>
 
       <WorkflowDiagramBaseHandle

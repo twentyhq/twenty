@@ -22,7 +22,6 @@ import {
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
-import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -110,10 +109,6 @@ export const WorkflowDiagramFilterEdgeEditable = ({
 
   const setWorkflowDiagramPanOnDrag = useSetRecoilComponentStateV2(
     workflowDiagramPanOnDragComponentState,
-  );
-
-  const workflowInsertStepIds = useRecoilComponentValueV2(
-    workflowInsertStepIdsComponentState,
   );
 
   const isEdgeSelected = isNodeCreationStarted({

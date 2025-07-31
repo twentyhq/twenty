@@ -9,6 +9,8 @@ import { CatalogDecorator, CatalogStory } from 'twenty-ui/testing';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { WorkflowDiagramStepNodeEditableContent } from '../WorkflowDiagramStepNodeEditableContent';
+import { RecoilRoot } from 'recoil';
+import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
 type ComponentState = 'default' | 'hover' | 'selected';
 
@@ -168,7 +170,13 @@ export const Catalog: CatalogStory<Story, typeof Wrapper> = {
         <div
           className={`selectable ${args.state === 'selected' ? 'selected' : args.state === 'hover' ? 'workflow-node-container hover' : ''}`}
         >
-          <Story />
+          <RecoilRoot>
+            <WorkflowVisualizerComponentInstanceContext.Provider
+              value={{ instanceId: 'workflow-visualizer-instance-id' }}
+            >
+              <Story />
+            </WorkflowVisualizerComponentInstanceContext.Provider>
+          </RecoilRoot>
         </div>
       );
     },
