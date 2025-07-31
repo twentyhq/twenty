@@ -36,12 +36,10 @@ export class InputTypeDefinitionFactory {
     objectMetadata,
     kind,
     options,
-    objectMetadataCollection,
   }: {
     objectMetadata: ObjectMetadataEntity;
     kind: InputTypeDefinitionKind;
     options: WorkspaceBuildSchemaOptions;
-    objectMetadataCollection: ObjectMetadataEntity[];
   }): InputTypeDefinition {
     // @ts-expect-error legacy noImplicitAny
     const inputType = new GraphQLInputObjectType({
@@ -66,7 +64,6 @@ export class InputTypeDefinitionFactory {
                 kind,
                 options,
                 typeFactory: this.inputTypeFactory,
-                objectMetadataCollection,
               }),
               and: {
                 type: andOrType,
@@ -90,7 +87,6 @@ export class InputTypeDefinitionFactory {
               kind,
               options,
               typeFactory: this.inputTypeFactory,
-              objectMetadataCollection,
             });
         }
       },
