@@ -243,8 +243,6 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
 
     const flush = async () => {
       if (chunk.length === 0) return;
-      const estimatedSizeMB =
-        Buffer.byteLength(JSON.stringify(chunk)) / 1024 / 1024;
       await client.insert({
         table,
         values: chunk,
