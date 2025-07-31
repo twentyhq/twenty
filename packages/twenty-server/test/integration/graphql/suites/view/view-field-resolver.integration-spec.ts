@@ -10,7 +10,6 @@ import { updateViewFieldOperationFactory } from 'test/integration/graphql/utils/
 import {
   createViewFieldData,
   updateViewFieldData,
-  viewScenarios,
 } from 'test/integration/graphql/utils/view-data-factory.util';
 import {
   assertErrorResponse,
@@ -100,7 +99,13 @@ describe('View Field Resolver', () => {
     });
 
     it('should create a hidden view field', async () => {
-      const fieldData = viewScenarios.hiddenViewField(testViewId);
+      const fieldData = {
+        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
+        position: 2,
+        isVisible: false,
+        size: 100,
+        viewId: testViewId,
+      };
 
       const operation = createViewFieldOperationFactory({ data: fieldData });
       const response = await makeGraphqlAPIRequest(operation);
