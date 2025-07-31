@@ -1,7 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, Not, Repository } from 'typeorm';
-import chunk from 'lodash.chunk';
+import { IsNull, Not, Repository, Raw } from 'typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -31,26 +30,21 @@ export class CheckCustomDomainValidRecordsCronJob {
       where: {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
         customDomain: Not(IsNull()),
+        createdAt: Raw(
+          (alias) => `EXTRACT(HOUR FROM ${alias}) = EXTRACT(HOUR FROM NOW())`,
+        ),
       },
       select: ['id', 'customDomain', 'isCustomDomainEnabled'],
     });
 
-    const chunkItems = chunk(workspaces, 5);
-
-    for (const chunkItem of chunkItems) {
-      await Promise.all(
-        chunkItem.map(async (workspace) => {
-          try {
-            await this.customDomainService.checkCustomDomainValidRecords(
-              workspace,
-            );
-          } catch (error) {
-            throw new Error(
-              `[${CheckCustomDomainValidRecordsCronJob.name}] Cannot check custom domain for workspaces: ${error.message}`,
-            );
-          }
-        }),
-      );
+    for (const workspace of workspaces) {
+      try {
+        await this.customDomainService.checkCustomDomainValidRecords(workspace);
+      } catch (error) {
+        throw new Error(
+          `[${CheckCustomDomainValidRecordsCronJob.name}] Cannot check custom domain for workspaces: ${error.message}`,
+        );
+      }
     }
   }
 }
