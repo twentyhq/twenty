@@ -10,8 +10,8 @@ import { findViewsOperationFactory } from 'test/integration/graphql/utils/find-v
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateViewOperationFactory } from 'test/integration/graphql/utils/update-view-operation-factory.util';
 import {
+  createViewData,
   updateViewData,
-  viewScenarios,
 } from 'test/integration/graphql/utils/view-data-factory.util';
 import {
   assertErrorResponse,
@@ -44,8 +44,14 @@ describe('View Resolver', () => {
     });
 
     it('should return all views for workspace when no objectMetadataId provided', async () => {
+      const viewName = 'Test View';
+
       await createTestView({
-        name: 'Test View',
+        name: viewName,
+      });
+
+      const viewData = createViewData({
+        name: viewName,
       });
 
       const operation = findViewsOperationFactory();
@@ -53,26 +59,20 @@ describe('View Resolver', () => {
 
       assertSuccessfulResponse(response);
       expect(response.body.data.getCoreViews).toHaveLength(1);
-      expect(response.body.data.getCoreViews[0]).toMatchObject({
-        name: 'Test View',
-        objectMetadataId: TEST_OBJECT_METADATA_1_ID,
-        type: 'table',
-        key: 'INDEX',
-        icon: 'IconTable',
-        position: 0,
-        isCompact: false,
-        openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
-      });
+      expect(response.body.data.getCoreViews[0]).toMatchObject(viewData);
     });
 
     it('should filter views by objectMetadataId when provided', async () => {
+      const object1ViewName = 'View for Object 1';
+      const object2ViewName = 'View for Object 2';
+
       await Promise.all([
         createTestView({
-          name: 'View for Object 1',
+          name: object1ViewName,
           objectMetadataId: TEST_OBJECT_METADATA_1_ID,
         }),
         createTestView({
-          name: 'View for Object 2',
+          name: object2ViewName,
           objectMetadataId: TEST_OBJECT_METADATA_2_ID,
         }),
       ]);
@@ -85,8 +85,7 @@ describe('View Resolver', () => {
       assertSuccessfulResponse(response);
       expect(response.body.data.getCoreViews).toHaveLength(1);
       expect(response.body.data.getCoreViews[0]).toMatchObject({
-        name: 'View for Object 1',
-        objectMetadataId: TEST_OBJECT_METADATA_1_ID,
+        name: object1ViewName,
       });
     });
   });
@@ -103,8 +102,10 @@ describe('View Resolver', () => {
     });
 
     it('should return view when it exists', async () => {
+      const viewName = 'Test View for Get';
+
       const view = await createTestView({
-        name: 'Test View for Get',
+        name: viewName,
       });
 
       const operation = findViewOperationFactory({ viewId: view.id });
@@ -113,7 +114,7 @@ describe('View Resolver', () => {
       assertSuccessfulResponse(response);
       assertViewStructure(response.body.data.getCoreView, {
         id: view.id,
-        name: 'Test View for Get',
+        name: viewName,
         objectMetadataId: TEST_OBJECT_METADATA_1_ID,
       });
     });
@@ -121,7 +122,16 @@ describe('View Resolver', () => {
 
   describe('createCoreView', () => {
     it('should create a new view with all properties', async () => {
-      const input = viewScenarios.kanbanView();
+      const input = {
+        name: 'Kanban View',
+        objectMetadataId: TEST_OBJECT_METADATA_1_ID,
+        icon: 'IconDeal',
+        type: 'kanban',
+        key: 'OPPORTUNITIES',
+        position: 1,
+        isCompact: true,
+        openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
+      };
 
       const operation = createViewOperationFactory({ data: input });
       const response = await makeGraphqlAPIRequest(operation);
@@ -140,7 +150,11 @@ describe('View Resolver', () => {
     });
 
     it('should create a view with minimum required fields', async () => {
-      const input = viewScenarios.minimalView();
+      const input = {
+        name: 'Minimal View',
+        objectMetadataId: TEST_OBJECT_METADATA_1_ID,
+        icon: 'IconList',
+      };
 
       const operation = createViewOperationFactory({ data: input });
       const response = await makeGraphqlAPIRequest(operation);

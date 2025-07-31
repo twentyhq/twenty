@@ -9,7 +9,6 @@ import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.en
 import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
 import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
-import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewFilterGroupLogicalOperator } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
 
 export const createViewData = (overrides: Partial<View> = {}) => ({
@@ -116,62 +115,3 @@ export const updateViewFilterGroupData = (
   logicalOperator: ViewFilterGroupLogicalOperator.OR,
   ...overrides,
 });
-
-export const viewScenarios = {
-  minimalView: () => ({
-    name: 'Minimal View',
-    objectMetadataId: TEST_OBJECT_METADATA_1_ID,
-    icon: 'IconList',
-  }),
-
-  kanbanView: () => ({
-    name: 'Kanban View',
-    objectMetadataId: TEST_OBJECT_METADATA_1_ID,
-    icon: 'IconDeal',
-    type: 'kanban',
-    key: 'OPPORTUNITIES',
-    position: 1,
-    isCompact: true,
-    openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
-  }),
-
-  compactTableView: () => ({
-    name: 'Compact Table View',
-    objectMetadataId: TEST_OBJECT_METADATA_1_ID,
-    icon: 'IconTable',
-    type: 'table',
-    key: 'COMPANIES',
-    isCompact: true,
-  }),
-
-  hiddenViewField: (viewId: string) => ({
-    viewId,
-    fieldMetadataId: TEST_FIELD_METADATA_1_ID,
-    position: 2,
-    isVisible: false,
-    size: 100,
-  }),
-
-  descSort: (viewId: string) => ({
-    viewId,
-    fieldMetadataId: TEST_FIELD_METADATA_1_ID,
-    direction: 'DESC',
-  }),
-
-  containsFilter: (viewId: string) => ({
-    viewId,
-    fieldMetadataId: TEST_FIELD_METADATA_1_ID,
-    operand: 'Contains',
-    value: 'search-term',
-  }),
-
-  andFilterGroup: (viewId: string) => ({
-    viewId,
-    logicalOperator: ViewFilterGroupLogicalOperator.AND,
-  }),
-
-  orFilterGroup: (viewId: string) => ({
-    viewId,
-    logicalOperator: ViewFilterGroupLogicalOperator.OR,
-  }),
-};
