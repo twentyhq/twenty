@@ -87,7 +87,7 @@ export const WorkflowEditTriggerManualForm = ({
   const hotkeys = `${getOsControlSymbol()}K`;
 
   const availabilityDescriptions = {
-    WHEN_RECORD_SELECTED: t`To trigger,  elect a record and then use the shortcut ${hotkeys}`,
+    WHEN_RECORD_SELECTED: t`To trigger, select a record and then use the shortcut ${hotkeys}`,
     EVERYWHERE: t`To trigger, use the shortcut ${hotkeys}`,
   };
 
