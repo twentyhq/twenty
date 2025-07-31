@@ -3,8 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   FlatFieldMetadata,
-  FlatRelationTargetFieldMetadata,
 } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatRelationTargetFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-relation-target-field-metadata.type';
 import { fromObjectMetadataItemWithFieldMapsToFlatObjectMetadataWithoutFields } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-item-with-field-maps-to-flat-object-metadata-without-fields.util';
 import { CachedFieldMetadataEntity } from 'src/engine/metadata-modules/types/cached-field-metadata-entity';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
