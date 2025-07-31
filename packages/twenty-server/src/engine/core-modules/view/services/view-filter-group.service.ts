@@ -8,6 +8,8 @@ import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filt
 import {
   ViewFilterGroupException,
   ViewFilterGroupExceptionCode,
+  ViewFilterGroupExceptionMessage,
+  ViewFilterGroupExceptionUserFriendlyMessage,
 } from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';
 
 @Injectable()
@@ -61,22 +63,22 @@ export class ViewFilterGroupService {
   ): Promise<ViewFilterGroup> {
     if (!isDefined(viewFilterGroupData.workspaceId)) {
       throw new ViewFilterGroupException(
-        'WorkspaceId is required',
+        ViewFilterGroupExceptionMessage.WORKSPACE_ID_REQUIRED,
         ViewFilterGroupExceptionCode.INVALID_VIEW_FILTER_GROUP_DATA,
         {
           userFriendlyMessage:
-            'WorkspaceId is required to create a view filter group.',
+            ViewFilterGroupExceptionUserFriendlyMessage.WORKSPACE_ID_REQUIRED,
         },
       );
     }
 
     if (!isDefined(viewFilterGroupData.viewId)) {
       throw new ViewFilterGroupException(
-        'ViewId is required',
+        ViewFilterGroupExceptionMessage.VIEW_ID_REQUIRED,
         ViewFilterGroupExceptionCode.INVALID_VIEW_FILTER_GROUP_DATA,
         {
           userFriendlyMessage:
-            'ViewId is required to create a view filter group.',
+            ViewFilterGroupExceptionUserFriendlyMessage.VIEW_ID_REQUIRED,
         },
       );
     }
@@ -96,7 +98,7 @@ export class ViewFilterGroupService {
 
     if (!isDefined(existingViewFilterGroup)) {
       throw new ViewFilterGroupException(
-        `ViewFilterGroup with id ${id} not found`,
+        ViewFilterGroupExceptionMessage.VIEW_FILTER_GROUP_NOT_FOUND,
         ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
       );
     }
@@ -114,7 +116,7 @@ export class ViewFilterGroupService {
 
     if (!isDefined(viewFilterGroup)) {
       throw new ViewFilterGroupException(
-        `ViewFilterGroup with id ${id} not found`,
+        ViewFilterGroupExceptionMessage.VIEW_FILTER_GROUP_NOT_FOUND,
         ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
       );
     }

@@ -8,6 +8,8 @@ import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.enti
 import {
   ViewGroupException,
   ViewGroupExceptionCode,
+  ViewGroupExceptionMessage,
+  ViewGroupExceptionUserFriendlyMessage,
 } from 'src/engine/core-modules/view/exceptions/view-group.exception';
 
 @Injectable()
@@ -56,30 +58,33 @@ export class ViewGroupService {
   async create(viewGroupData: Partial<ViewGroup>): Promise<ViewGroup> {
     if (!isDefined(viewGroupData.workspaceId)) {
       throw new ViewGroupException(
-        'WorkspaceId is required',
+        ViewGroupExceptionMessage.WORKSPACE_ID_REQUIRED,
         ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA,
         {
           userFriendlyMessage:
-            'WorkspaceId is required to create a view group.',
+            ViewGroupExceptionUserFriendlyMessage.WORKSPACE_ID_REQUIRED,
         },
       );
     }
 
     if (!isDefined(viewGroupData.viewId)) {
       throw new ViewGroupException(
-        'ViewId is required',
+        ViewGroupExceptionMessage.VIEW_ID_REQUIRED,
         ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA,
-        { userFriendlyMessage: 'ViewId is required to create a view group.' },
+        {
+          userFriendlyMessage:
+            ViewGroupExceptionUserFriendlyMessage.VIEW_ID_REQUIRED,
+        },
       );
     }
 
     if (!isDefined(viewGroupData.fieldMetadataId)) {
       throw new ViewGroupException(
-        'FieldMetadataId is required',
+        ViewGroupExceptionMessage.FIELD_METADATA_ID_REQUIRED,
         ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA,
         {
           userFriendlyMessage:
-            'FieldMetadataId is required to create a view group.',
+            ViewGroupExceptionUserFriendlyMessage.FIELD_METADATA_ID_REQUIRED,
         },
       );
     }
@@ -98,7 +103,7 @@ export class ViewGroupService {
 
     if (!isDefined(existingViewGroup)) {
       throw new ViewGroupException(
-        `ViewGroup with id ${id} not found`,
+        ViewGroupExceptionMessage.VIEW_GROUP_NOT_FOUND,
         ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND,
       );
     }
@@ -116,7 +121,7 @@ export class ViewGroupService {
 
     if (!isDefined(viewGroup)) {
       throw new ViewGroupException(
-        `ViewGroup with id ${id} not found`,
+        ViewGroupExceptionMessage.VIEW_GROUP_NOT_FOUND,
         ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND,
       );
     }

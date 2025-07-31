@@ -1,4 +1,7 @@
-import { TEST_FIELD_METADATA_1_ID } from 'test/integration/constants/test-view-ids.constants';
+import {
+  TEST_FIELD_METADATA_1_ID,
+  TEST_NOT_EXISTING_VIEW_FIELD_ID,
+} from 'test/integration/constants/test-view-ids.constants';
 import { createViewFieldOperationFactory } from 'test/integration/graphql/utils/create-view-field-operation-factory.util';
 import { deleteViewFieldOperationFactory } from 'test/integration/graphql/utils/delete-view-field-operation-factory.util';
 import { findViewFieldsOperationFactory } from 'test/integration/graphql/utils/find-view-fields-operation-factory.util';
@@ -10,11 +13,15 @@ import {
   viewScenarios,
 } from 'test/integration/graphql/utils/view-data-factory.util';
 import {
+  assertErrorResponse,
   assertSuccessfulResponse,
   assertViewFieldStructure,
   cleanupViewRecords,
   createTestView,
 } from 'test/integration/graphql/utils/view-test.util';
+
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { ViewFieldExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-field.exception';
 
 describe('View Field Resolver', () => {
   let testViewId: string;
@@ -141,6 +148,19 @@ describe('View Field Resolver', () => {
         size: 300,
       });
     });
+
+    it('should throw an error when updating non-existent view field', async () => {
+      const operation = updateViewFieldOperationFactory({
+        viewFieldId: TEST_NOT_EXISTING_VIEW_FIELD_ID,
+      });
+      const response = await makeGraphqlAPIRequest(operation);
+
+      assertErrorResponse(
+        response,
+        ErrorCode.NOT_FOUND,
+        ViewFieldExceptionMessage.VIEW_FIELD_NOT_FOUND,
+      );
+    });
   });
 
   describe('deleteCoreViewField', () => {
@@ -159,6 +179,19 @@ describe('View Field Resolver', () => {
 
       assertSuccessfulResponse(response);
       expect(response.body.data.deleteCoreViewField).toBe(true);
+    });
+
+    it('should throw an error when deleting non-existent view field', async () => {
+      const operation = deleteViewFieldOperationFactory({
+        viewFieldId: TEST_NOT_EXISTING_VIEW_FIELD_ID,
+      });
+      const response = await makeGraphqlAPIRequest(operation);
+
+      assertErrorResponse(
+        response,
+        ErrorCode.NOT_FOUND,
+        ViewFieldExceptionMessage.VIEW_FIELD_NOT_FOUND,
+      );
     });
   });
 });

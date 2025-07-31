@@ -21,7 +21,9 @@ import {
   createTestView,
 } from 'test/integration/graphql/utils/view-test.util';
 
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
+import { ViewExceptionMessage } from 'src/modules/view/views.exception';
 
 describe('View Resolver', () => {
   beforeEach(async () => {
@@ -64,7 +66,6 @@ describe('View Resolver', () => {
     });
 
     it('should filter views by objectMetadataId when provided', async () => {
-      // Create views for different objects
       await Promise.all([
         createTestView({
           name: 'View for Object 1',
@@ -192,7 +193,11 @@ describe('View Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertErrorResponse(response, 'not found');
+      assertErrorResponse(
+        response,
+        ErrorCode.NOT_FOUND,
+        ViewExceptionMessage.VIEW_NOT_FOUND,
+      );
     });
   });
 
@@ -214,13 +219,17 @@ describe('View Resolver', () => {
       expect(getResponse.body.data.getCoreView).toBeNull();
     });
 
-    it('should return false when deleting non-existent view', async () => {
+    it('should throw an error when deleting non-existent view', async () => {
       const operation = deleteViewOperationFactory({
         viewId: TEST_NOT_EXISTING_VIEW_ID,
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertErrorResponse(response, 'not found');
+      assertErrorResponse(
+        response,
+        ErrorCode.NOT_FOUND,
+        ViewExceptionMessage.VIEW_NOT_FOUND,
+      );
     });
   });
 });

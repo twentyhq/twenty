@@ -1,6 +1,9 @@
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
-import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  BaseGraphQLError,
+  ErrorCode,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
 import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
@@ -68,14 +71,19 @@ export const assertSuccessfulResponse = <T extends Record<string, unknown>>(
 
 export const assertErrorResponse = <T extends Record<string, unknown>>(
   response: GraphQLResponse<T>,
+  expectedErrorCode: ErrorCode,
   expectedErrorMessage?: string,
 ) => {
-  expect(response.status).toBe(400);
+  expect(response.status).toBe(200);
   expect(response.body.errors).toBeDefined();
   expect(response.body.errors).toHaveLength(1);
 
+  if (expectedErrorCode && response.body.errors) {
+    expect(response.body.errors[0].extensions.code).toBe(expectedErrorCode);
+  }
+
   if (expectedErrorMessage && response.body.errors) {
-    expect(response.body.errors[0].message).toContain(expectedErrorMessage);
+    expect(response.body.errors[0].message).toBe(expectedErrorMessage);
   }
 };
 

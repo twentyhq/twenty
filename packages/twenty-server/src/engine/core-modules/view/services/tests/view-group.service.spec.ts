@@ -7,6 +7,8 @@ import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.enti
 import {
   ViewGroupException,
   ViewGroupExceptionCode,
+  ViewGroupExceptionMessage,
+  ViewGroupExceptionUserFriendlyMessage,
 } from 'src/engine/core-modules/view/exceptions/view-group.exception';
 import { ViewGroupService } from 'src/engine/core-modules/view/services/view-group.service';
 
@@ -161,11 +163,11 @@ describe('ViewGroupService', () => {
 
       await expect(viewGroupService.create(invalidData)).rejects.toThrow(
         new ViewGroupException(
-          'WorkspaceId is required',
+          ViewGroupExceptionMessage.WORKSPACE_ID_REQUIRED,
           ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA,
           {
             userFriendlyMessage:
-              'WorkspaceId is required to create a view group.',
+              ViewGroupExceptionUserFriendlyMessage.WORKSPACE_ID_REQUIRED,
           },
         ),
       );
@@ -176,9 +178,12 @@ describe('ViewGroupService', () => {
 
       await expect(viewGroupService.create(invalidData)).rejects.toThrow(
         new ViewGroupException(
-          'ViewId is required',
+          ViewGroupExceptionMessage.VIEW_ID_REQUIRED,
           ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA,
-          { userFriendlyMessage: 'ViewId is required to create a view group.' },
+          {
+            userFriendlyMessage:
+              ViewGroupExceptionUserFriendlyMessage.VIEW_ID_REQUIRED,
+          },
         ),
       );
     });
@@ -188,11 +193,11 @@ describe('ViewGroupService', () => {
 
       await expect(viewGroupService.create(invalidData)).rejects.toThrow(
         new ViewGroupException(
-          'FieldMetadataId is required',
+          ViewGroupExceptionMessage.FIELD_METADATA_ID_REQUIRED,
           ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA,
           {
             userFriendlyMessage:
-              'FieldMetadataId is required to create a view group.',
+              ViewGroupExceptionUserFriendlyMessage.FIELD_METADATA_ID_REQUIRED,
           },
         ),
       );
@@ -232,7 +237,7 @@ describe('ViewGroupService', () => {
         viewGroupService.update(id, workspaceId, updateData),
       ).rejects.toThrow(
         new ViewGroupException(
-          `ViewGroup with id ${id} not found`,
+          ViewGroupExceptionMessage.VIEW_GROUP_NOT_FOUND,
           ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND,
         ),
       );
@@ -264,7 +269,7 @@ describe('ViewGroupService', () => {
 
       await expect(viewGroupService.delete(id, workspaceId)).rejects.toThrow(
         new ViewGroupException(
-          `ViewGroup with id ${id} not found`,
+          ViewGroupExceptionMessage.VIEW_GROUP_NOT_FOUND,
           ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND,
         ),
       );

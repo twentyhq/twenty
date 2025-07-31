@@ -8,6 +8,8 @@ import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.en
 import {
   ViewFilterException,
   ViewFilterExceptionCode,
+  ViewFilterExceptionMessage,
+  ViewFilterExceptionUserFriendlyMessage,
 } from 'src/engine/core-modules/view/exceptions/view-filter.exception';
 
 @Injectable()
@@ -56,30 +58,33 @@ export class ViewFilterService {
   async create(viewFilterData: Partial<ViewFilter>): Promise<ViewFilter> {
     if (!isDefined(viewFilterData.workspaceId)) {
       throw new ViewFilterException(
-        'WorkspaceId is required',
+        ViewFilterExceptionMessage.WORKSPACE_ID_REQUIRED,
         ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
         {
           userFriendlyMessage:
-            'WorkspaceId is required to create a view filter.',
+            ViewFilterExceptionUserFriendlyMessage.WORKSPACE_ID_REQUIRED,
         },
       );
     }
 
     if (!isDefined(viewFilterData.viewId)) {
       throw new ViewFilterException(
-        'ViewId is required',
+        ViewFilterExceptionMessage.VIEW_ID_REQUIRED,
         ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
-        { userFriendlyMessage: 'ViewId is required to create a view filter.' },
+        {
+          userFriendlyMessage:
+            ViewFilterExceptionUserFriendlyMessage.VIEW_ID_REQUIRED,
+        },
       );
     }
 
     if (!isDefined(viewFilterData.fieldMetadataId)) {
       throw new ViewFilterException(
-        'FieldMetadataId is required',
+        ViewFilterExceptionMessage.FIELD_METADATA_ID_REQUIRED,
         ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
         {
           userFriendlyMessage:
-            'FieldMetadataId is required to create a view filter.',
+            ViewFilterExceptionUserFriendlyMessage.FIELD_METADATA_ID_REQUIRED,
         },
       );
     }
@@ -98,7 +103,7 @@ export class ViewFilterService {
 
     if (!isDefined(existingViewFilter)) {
       throw new ViewFilterException(
-        `ViewFilter with id ${id} not found`,
+        ViewFilterExceptionMessage.VIEW_FILTER_NOT_FOUND,
         ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
       );
     }
@@ -116,7 +121,7 @@ export class ViewFilterService {
 
     if (!isDefined(viewFilter)) {
       throw new ViewFilterException(
-        `ViewFilter with id ${id} not found`,
+        ViewFilterExceptionMessage.VIEW_FILTER_NOT_FOUND,
         ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
       );
     }

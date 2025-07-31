@@ -8,6 +8,8 @@ import { View } from 'src/engine/core-modules/view/entities/view.entity';
 import {
   ViewException,
   ViewExceptionCode,
+  ViewExceptionMessage,
+  ViewExceptionUserFriendlyMessage,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
 
 @Injectable()
@@ -56,18 +58,22 @@ export class ViewService {
   async create(viewData: Partial<View>): Promise<View> {
     if (!isDefined(viewData.workspaceId)) {
       throw new ViewException(
-        'WorkspaceId is required',
+        ViewExceptionMessage.WORKSPACE_ID_REQUIRED,
         ViewExceptionCode.INVALID_VIEW_DATA,
-        { userFriendlyMessage: 'WorkspaceId is required to create a view.' },
+        {
+          userFriendlyMessage:
+            ViewExceptionUserFriendlyMessage.WORKSPACE_ID_REQUIRED,
+        },
       );
     }
 
     if (!isDefined(viewData.objectMetadataId)) {
       throw new ViewException(
-        'ObjectMetadataId is required',
+        ViewExceptionMessage.OBJECT_METADATA_ID_REQUIRED,
         ViewExceptionCode.INVALID_VIEW_DATA,
         {
-          userFriendlyMessage: 'ObjectMetadataId is required to create a view.',
+          userFriendlyMessage:
+            ViewExceptionUserFriendlyMessage.OBJECT_METADATA_ID_REQUIRED,
         },
       );
     }
@@ -86,7 +92,7 @@ export class ViewService {
 
     if (!isDefined(existingView)) {
       throw new ViewException(
-        `View with id ${id} not found`,
+        ViewExceptionMessage.VIEW_NOT_FOUND,
         ViewExceptionCode.VIEW_NOT_FOUND,
       );
     }
@@ -104,7 +110,7 @@ export class ViewService {
 
     if (!isDefined(view)) {
       throw new ViewException(
-        `View with id ${id} not found`,
+        ViewExceptionMessage.VIEW_NOT_FOUND,
         ViewExceptionCode.VIEW_NOT_FOUND,
       );
     }

@@ -1,4 +1,7 @@
-import { TEST_FIELD_METADATA_1_ID } from 'test/integration/constants/test-view-ids.constants';
+import {
+  TEST_FIELD_METADATA_1_ID,
+  TEST_NOT_EXISTING_VIEW_GROUP_ID,
+} from 'test/integration/constants/test-view-ids.constants';
 import { createViewGroupOperationFactory } from 'test/integration/graphql/utils/create-view-group-operation-factory.util';
 import { deleteViewGroupOperationFactory } from 'test/integration/graphql/utils/delete-view-group-operation-factory.util';
 import { findViewGroupsOperationFactory } from 'test/integration/graphql/utils/find-view-groups-operation-factory.util';
@@ -9,11 +12,15 @@ import {
   updateViewGroupData,
 } from 'test/integration/graphql/utils/view-data-factory.util';
 import {
+  assertErrorResponse,
   assertSuccessfulResponse,
   assertViewGroupStructure,
   cleanupViewRecords,
   createTestView,
 } from 'test/integration/graphql/utils/view-test.util';
+
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { ViewGroupExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-group.exception';
 
 describe('View Group Resolver', () => {
   let testViewId: string;
@@ -147,6 +154,19 @@ describe('View Group Resolver', () => {
         position: 5,
       });
     });
+
+    it('should throw an error when updating non-existent view group', async () => {
+      const operation = updateViewGroupOperationFactory({
+        viewGroupId: TEST_NOT_EXISTING_VIEW_GROUP_ID,
+      });
+      const response = await makeGraphqlAPIRequest(operation);
+
+      assertErrorResponse(
+        response,
+        ErrorCode.NOT_FOUND,
+        ViewGroupExceptionMessage.VIEW_GROUP_NOT_FOUND,
+      );
+    });
   });
 
   describe('deleteCoreViewGroup', () => {
@@ -169,6 +189,19 @@ describe('View Group Resolver', () => {
 
       assertSuccessfulResponse(response);
       expect(response.body.data.deleteCoreViewGroup).toBe(true);
+    });
+
+    it('should throw an error when deleting non-existent view group', async () => {
+      const operation = deleteViewGroupOperationFactory({
+        viewGroupId: TEST_NOT_EXISTING_VIEW_GROUP_ID,
+      });
+      const response = await makeGraphqlAPIRequest(operation);
+
+      assertErrorResponse(
+        response,
+        ErrorCode.NOT_FOUND,
+        ViewGroupExceptionMessage.VIEW_GROUP_NOT_FOUND,
+      );
     });
   });
 });
