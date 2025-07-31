@@ -1,11 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 
+import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
-import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { mergeSettingsState } from '../states/mergeSettingsState';
 
 type UseMergeRecordsActionsProps = {
@@ -26,9 +25,9 @@ export const useMergeRecordsActions = ({
     objectNameSingular,
   });
 
-  const navigate = useNavigateApp();
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const handleMergeRecords = async () => {
     try {
@@ -48,9 +47,9 @@ export const useMergeRecordsActions = ({
         message: t`Successfully merged ${recordCount} records`,
       });
 
-      navigate(AppPath.RecordShowPage, {
-        objectNameSingular: objectNameSingular,
-        objectRecordId: mergedRecord.id,
+      openRecordInCommandMenu({
+        objectNameSingular,
+        recordId: mergedRecord.id,
       });
     } catch (error) {
       enqueueErrorSnackBar({
