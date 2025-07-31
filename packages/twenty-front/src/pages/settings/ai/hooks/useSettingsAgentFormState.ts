@@ -7,8 +7,6 @@ export type SettingsAIAgentFormValues = z.infer<
   typeof settingsAIAgentFormSchema
 >;
 
-type FormErrors = Partial<Record<keyof SettingsAIAgentFormValues, string>>;
-
 export const useSettingsAgentFormState = (mode: 'create' | 'edit') => {
   const [formValues, setFormValues] = useState<SettingsAIAgentFormValues>({
     name: '',
@@ -28,13 +26,6 @@ export const useSettingsAgentFormState = (mode: 'create' | 'edit') => {
       settingsAIAgentFormSchema.parse(formValues);
       return true;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        const newErrors: FormErrors = {};
-        error.errors.forEach((err) => {
-          const field = err.path[0] as keyof SettingsAIAgentFormValues;
-          newErrors[field] = err.message;
-        });
-      }
       return false;
     }
   };
@@ -63,19 +54,9 @@ export const useSettingsAgentFormState = (mode: 'create' | 'edit') => {
     }
   };
 
-  const isValid = (): boolean => {
-    try {
-      settingsAIAgentFormSchema.parse(formValues);
-      return true;
-    } catch (error) {
-      return false;
-    }
-  };
-
   return {
     formValues,
     isSubmitting,
-    isValid: isValid(),
     handleFieldChange,
     resetForm,
     setIsSubmitting,

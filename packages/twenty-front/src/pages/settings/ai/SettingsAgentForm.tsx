@@ -62,7 +62,6 @@ export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
   const {
     formValues,
     isSubmitting,
-    isValid,
     handleFieldChange,
     resetForm,
     setIsSubmitting,
@@ -111,7 +110,7 @@ export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
     return <></>;
   }
 
-  const canSave = isValid && !isSubmitting;
+  const canSave = validateForm() && !isSubmitting;
 
   const handleSave = async () => {
     if (!validateForm()) {
