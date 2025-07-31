@@ -3,14 +3,12 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { DATA_MODEL_OBJECT_ROW_ID_PREFIX } from '@/settings/data-model/constants/DataModelObjectRowIDPrefix';
 import {
   SettingsObjectMetadataItemTableRow,
   StyledObjectTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
 import { SettingsObjectCoverImage } from '@/settings/data-model/objects/components/SettingsObjectCoverImage';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
-import { lastVisitedDataModelObjectState } from '@/settings/data-model/states/lastVisitedDataModelObjectState';
 import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -20,7 +18,6 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
-import { ScrollRestoreEffect } from '@/ui/utilities/scroll/components/ScrollRestoreEffect';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -147,10 +144,6 @@ export const SettingsObjects = () => {
 
   return (
     <>
-      <ScrollRestoreEffect
-        lastVisitedItemState={lastVisitedDataModelObjectState}
-        idPrefix={DATA_MODEL_OBJECT_ROW_ID_PREFIX}
-      />
       <SubMenuTopBarContainer
         title={t`Data model`}
         actionButton={

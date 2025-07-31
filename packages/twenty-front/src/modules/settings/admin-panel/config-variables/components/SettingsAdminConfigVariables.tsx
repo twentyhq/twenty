@@ -2,13 +2,10 @@ import { SettingsAdminTabSkeletonLoader } from '@/settings/admin-panel/component
 import { ConfigVariableFilterContainer } from '@/settings/admin-panel/config-variables/components/ConfigVariableFilterContainer';
 import { ConfigVariableFilterDropdown } from '@/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown';
 import { SettingsAdminConfigVariablesTable } from '@/settings/admin-panel/config-variables/components/SettingsAdminConfigVariablesTable';
-import { CONFIG_VARIABLE_ROW_ID_PREFIX } from '@/settings/admin-panel/config-variables/constants/ConfigVariableRowId';
 import { ConfigVariableSourceOptions } from '@/settings/admin-panel/config-variables/constants/ConfigVariableSourceOptions';
 import { configVariableGroupFilterState } from '@/settings/admin-panel/config-variables/states/configVariableGroupFilterState';
 import { configVariableSourceFilterState } from '@/settings/admin-panel/config-variables/states/configVariableSourceFilterState';
-import { lastVisitedConfigVariableState } from '@/settings/admin-panel/config-variables/states/lastVisitedConfigVariableState';
 import { showHiddenGroupVariablesState } from '@/settings/admin-panel/config-variables/states/showHiddenGroupVariablesState';
-import { ScrollRestoreEffect } from '@/ui/utilities/scroll/components/ScrollRestoreEffect';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
@@ -159,10 +156,6 @@ export const SettingsAdminConfigVariables = () => {
 
   return (
     <>
-      <ScrollRestoreEffect
-        lastVisitedItemState={lastVisitedConfigVariableState}
-        idPrefix={CONFIG_VARIABLE_ROW_ID_PREFIX}
-      />
       <Section>
         <H2Title title={t`Config Variables`} />
 

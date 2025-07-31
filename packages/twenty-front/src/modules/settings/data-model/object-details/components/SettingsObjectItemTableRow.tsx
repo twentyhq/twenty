@@ -3,13 +3,10 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { DATA_MODEL_OBJECT_ROW_ID_PREFIX } from '@/settings/data-model/constants/DataModelObjectRowIDPrefix';
 import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/components/SettingsDataModelObjectTypeTag';
-import { lastVisitedDataModelObjectState } from '@/settings/data-model/states/lastVisitedDataModelObjectState';
 import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useSetRecoilState } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 
 export type SettingsObjectMetadataItemTableRowProps = {
@@ -46,23 +43,13 @@ export const SettingsObjectMetadataItemTableRow = ({
   totalObjectCount,
 }: SettingsObjectMetadataItemTableRowProps) => {
   const theme = useTheme();
-  const setLastVisitedDataModelObject = useSetRecoilState(
-    lastVisitedDataModelObjectState,
-  );
 
   const { getIcon } = useIcons();
   const Icon = getIcon(objectMetadataItem.icon);
   const objectTypeLabel = getObjectTypeLabel(objectMetadataItem);
 
   return (
-    <StyledObjectTableRow
-      key={objectMetadataItem.namePlural}
-      to={link}
-      onClick={() =>
-        setLastVisitedDataModelObject(objectMetadataItem.namePlural)
-      }
-      id={`${DATA_MODEL_OBJECT_ROW_ID_PREFIX}-${objectMetadataItem.namePlural}`}
-    >
+    <StyledObjectTableRow key={objectMetadataItem.namePlural} to={link}>
       <StyledNameTableCell>
         {!!Icon && (
           <Icon
