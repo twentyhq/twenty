@@ -44,7 +44,6 @@ type TableRowProps = {
   className?: string;
   gridAutoColumns?: string;
   mobileGridAutoColumns?: string;
-  id?: string;
 };
 
 export const TableRow = ({
@@ -55,7 +54,6 @@ export const TableRow = ({
   children,
   gridAutoColumns,
   mobileGridAutoColumns,
-  id,
 }: React.PropsWithChildren<TableRowProps>) => (
   <StyledTableRow
     isSelected={isSelected}
@@ -65,7 +63,6 @@ export const TableRow = ({
     mobileGridAutoColumns={mobileGridAutoColumns}
     to={to}
     as={to ? Link : 'div'}
-    id={id}
   >
     {children}
   </StyledTableRow>

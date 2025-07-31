@@ -6,7 +6,6 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { useDeleteRecordFromCache } from '@/object-record/cache/hooks/useDeleteRecordFromCache';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
-import { OBJECT_FIELD_ROW_ID_PREFIX } from '@/settings/data-model/constants/ObjectFieldTowIDPrefix';
 import { SettingsObjectFieldActiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldActiveActionDropdown';
 import { SettingsObjectFieldInactiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
@@ -216,15 +215,13 @@ export const SettingsObjectFieldItemTableRow = ({
     <StyledObjectFieldTableRow
       onClick={
         mode === 'view'
-          ? () => {
+          ? () =>
               navigate(SettingsPath.ObjectFieldEdit, {
                 objectNamePlural: objectMetadataItem.namePlural,
                 fieldName: fieldMetadataItem.name,
-              });
-            }
+              })
           : undefined
       }
-      id={`${OBJECT_FIELD_ROW_ID_PREFIX}-${fieldMetadataItem.name}`}
     >
       <UndecoratedLink to={linkToNavigate}>
         <StyledNameTableCell>
