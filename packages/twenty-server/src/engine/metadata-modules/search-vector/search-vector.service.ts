@@ -120,7 +120,7 @@ export class SearchVectorService {
       queryRunner,
     );
 
-    await this.indexMetadataService.createIndexMetadata({
+    await this.indexMetadataService.createIndex({
       workspaceId: objectMetadataInput.workspaceId,
       objectMetadata: createdObjectMetadata,
       fieldMetadataToIndex: [searchVectorFieldMetadata],
