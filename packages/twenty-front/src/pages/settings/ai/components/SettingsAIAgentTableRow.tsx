@@ -46,7 +46,7 @@ export const SettingsAIAgentTableRow = ({
   return (
     <StyledAIAgentTableRow
       key={agent.id}
-      to={agent.isCustom ? link : undefined}
+      to={link}
     >
       <StyledNameTableCell>
         <StyledIconContainer>
@@ -62,7 +62,7 @@ export const SettingsAIAgentTableRow = ({
         />
       </TableCell>
       <StyledActionTableCell>
-        {agent.isCustom ? action : null}
+        {action}
       </StyledActionTableCell>
     </StyledAIAgentTableRow>
   );

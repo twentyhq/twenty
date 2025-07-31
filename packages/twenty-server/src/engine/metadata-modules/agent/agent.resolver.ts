@@ -12,7 +12,10 @@ import {
   RequireFeatureFlag,
 } from 'src/engine/guards/feature-flag.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CreateAgentHandoffInput } from 'src/engine/metadata-modules/agent/dtos/create-agent-handoff.input';
+import { RemoveAgentHandoffInput } from 'src/engine/metadata-modules/agent/dtos/remove-agent-handoff.input';
 
+import { AgentHandoffService } from './agent-handoff.service';
 import { AgentEntity } from './agent.entity';
 import { AgentService } from './agent.service';
 
@@ -28,6 +31,7 @@ export class AgentResolver {
     @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
     private readonly agentService: AgentService,
+    private readonly agentHandoffService: AgentHandoffService,
   ) {}
 
   @Query(() => [AgentDTO])
@@ -46,6 +50,18 @@ export class AgentResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     return this.agentService.findOneAgent(id, workspaceId);
+  }
+
+  @Query(() => [AgentDTO])
+  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
+  async findAgentHandoffTargets(
+    @Args('input') { id }: AgentIdInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    return this.agentHandoffService.getHandoffTargets({
+      fromAgentId: id,
+      workspaceId,
+    });
   }
 
   @Mutation(() => AgentDTO)
@@ -73,5 +89,36 @@ export class AgentResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     return this.agentService.deleteOneAgent(id, workspaceId);
+  }
+
+  @Mutation(() => Boolean)
+  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
+  async createAgentHandoff(
+    @Args('input') input: CreateAgentHandoffInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    await this.agentHandoffService.createHandoff({
+      fromAgentId: input.fromAgentId,
+      toAgentId: input.toAgentId,
+      workspaceId,
+      description: input.description,
+    });
+
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
+  async removeAgentHandoff(
+    @Args('input') input: RemoveAgentHandoffInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    await this.agentHandoffService.removeHandoff({
+      fromAgentId: input.fromAgentId,
+      toAgentId: input.toAgentId,
+      workspaceId,
+    });
+
+    return true;
   }
 }

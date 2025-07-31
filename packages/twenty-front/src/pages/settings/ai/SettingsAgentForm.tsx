@@ -2,7 +2,9 @@ import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { AppPath } from '@/types/AppPath';
@@ -25,17 +27,17 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { SettingsAgentDeleteConfirmationModal } from './components/SettingsAgentDeleteConfirmationModal';
 import { SettingsAgentDetailSkeletonLoader } from './components/SettingsAgentDetailSkeletonLoader';
+import { SettingsAgentHandoffSection } from './components/SettingsAgentHandoffSection';
 import { SettingsAIAgentForm } from './forms/components/SettingsAIAgentForm';
 import { useSettingsAgentFormState } from './hooks/useSettingsAgentFormState';
 
 const StyledContentContainer = styled.div`
+  display: flex;
   flex: 1;
-  width: 100%;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(8)};
   padding-left: 0;
-`;
-
-const StyledDangerZoneSection = styled(Section)`
-  margin-top: ${({ theme }) => theme.spacing(8)};
+  width: 100%;
 `;
 
 const DELETE_AGENT_MODAL_ID = 'delete-agent-modal';
@@ -53,6 +55,7 @@ export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
   const navigateApp = useNavigateApp();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { openModal } = useModal();
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const isEditMode = mode === 'edit';
 
@@ -101,6 +104,9 @@ export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
   const [updateAgent] = useUpdateOneAgentMutation();
 
   const agent = data?.findOneAgent;
+
+  // Check if this is the default agent (ASKAI bot)
+  const isDefaultAgent = agent?.id === currentWorkspace?.defaultAgent?.id;
 
   if (isEditMode && !loading && !agent) {
     return <></>;
@@ -207,8 +213,11 @@ export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
                   formValues={formValues}
                   onFieldChange={handleFieldChange}
                 />
+                {isEditMode && agent && isDefaultAgent && (
+                  <SettingsAgentHandoffSection agentId={agent.id} />
+                )}
                 {isEditMode && agent && (
-                  <StyledDangerZoneSection>
+                  <Section>
                     <H2Title
                       title={t`Danger zone`}
                       description={t`Delete this agent`}
@@ -220,7 +229,7 @@ export const SettingsAgentForm = ({ mode }: SettingsAgentFormProps) => {
                       Icon={IconTrash}
                       onClick={() => openModal(DELETE_AGENT_MODAL_ID)}
                     />
-                  </StyledDangerZoneSection>
+                  </Section>
                 )}
               </StyledContentContainer>
             )}
