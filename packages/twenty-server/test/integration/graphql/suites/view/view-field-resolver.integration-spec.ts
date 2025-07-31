@@ -20,11 +20,11 @@ import {
 describe('View Field Resolver', () => {
   let testViewId: string;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     await cleanupViewRecords();
 
     const view = await createTestView({
-      name: 'Test View for Fields',
+      name: 'Test View for Groups',
     });
 
     testViewId = view.id;
@@ -32,23 +32,6 @@ describe('View Field Resolver', () => {
 
   afterAll(async () => {
     await cleanupViewRecords();
-  });
-
-  afterEach(async () => {
-    const operation = findViewFieldsOperationFactory({ viewId: testViewId });
-    const viewFields = await makeGraphqlAPIRequest(operation);
-
-    if (viewFields.body.data.getCoreViewFields.length > 0) {
-      await Promise.all(
-        viewFields.body.data.getCoreViewFields.map((field: any) => {
-          const deleteOperation = deleteViewFieldOperationFactory({
-            viewFieldId: field.id,
-          });
-
-          return makeGraphqlAPIRequest(deleteOperation);
-        }),
-      );
-    }
   });
 
   describe('getCoreViewFields', () => {

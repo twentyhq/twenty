@@ -1,7 +1,6 @@
 import gql from 'graphql-tag';
 import { TEST_FIELD_METADATA_1_ID } from 'test/integration/constants/test-view-ids.constants';
 import { createViewFilterOperationFactory } from 'test/integration/graphql/utils/create-view-filter-operation-factory.util';
-import { deleteViewFilterOperationFactory } from 'test/integration/graphql/utils/delete-view-filter-operation-factory.util';
 import { findViewFiltersOperationFactory } from 'test/integration/graphql/utils/find-view-filters-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createViewFilterData } from 'test/integration/graphql/utils/view-data-factory.util';
@@ -15,11 +14,11 @@ import {
 describe('View Filter Resolver', () => {
   let testViewId: string;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     await cleanupViewRecords();
 
     const view = await createTestView({
-      name: 'Test View for Filters',
+      name: 'Test View for Groups',
     });
 
     testViewId = view.id;
@@ -27,24 +26,6 @@ describe('View Filter Resolver', () => {
 
   afterAll(async () => {
     await cleanupViewRecords();
-  });
-
-  afterEach(async () => {
-    // Only clean up filters, keep the view
-    const operation = findViewFiltersOperationFactory({ viewId: testViewId });
-    const viewFilters = await makeGraphqlAPIRequest(operation);
-
-    if (viewFilters.body.data.getCoreViewFilters.length > 0) {
-      await Promise.all(
-        viewFilters.body.data.getCoreViewFilters.map((filter: any) => {
-          const deleteOperation = deleteViewFilterOperationFactory({
-            viewFilterId: filter.id,
-          });
-
-          return makeGraphqlAPIRequest(deleteOperation);
-        }),
-      );
-    }
   });
 
   describe('getCoreViewFilters', () => {

@@ -22,11 +22,11 @@ import {
 } from 'test/integration/graphql/utils/view-test-utils';
 
 describe('View Resolver', () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
     await cleanupViewRecords();
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     await cleanupViewRecords();
   });
 
