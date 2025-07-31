@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
 import { AppPath } from '@/types/AppPath';
@@ -28,6 +29,7 @@ export const useMergeRecordsActions = ({
 
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { closeCommandMenu } = useCommandMenu();
 
   const navigate = useNavigateApp();
   const handleMergeRecords = async () => {
@@ -47,6 +49,7 @@ export const useMergeRecordsActions = ({
       enqueueSuccessSnackBar({
         message: t`Successfully merged ${recordCount} records`,
       });
+      closeCommandMenu();
 
       navigate(AppPath.RecordShowPage, {
         objectNameSingular,
