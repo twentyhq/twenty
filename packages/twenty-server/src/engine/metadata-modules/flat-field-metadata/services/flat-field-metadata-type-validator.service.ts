@@ -66,8 +66,9 @@ export class FlatFieldMetadataTypeValidatorService {
       },
       MULTI_SELECT: (args) => {
         if (!isEnumValidateOneFieldMetadata(args)) {
-          throw new Error(
+          throw new FieldMetadataException(
             'Should never occur, invaliad enum field metadata type',
+            FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
           );
         }
 
@@ -87,8 +88,9 @@ export class FlatFieldMetadataTypeValidatorService {
       },
       RATING: (args) => {
         if (!isEnumValidateOneFieldMetadata(args)) {
-          throw new Error(
+          throw new FieldMetadataException(
             'Should never occur, invaliad enum field metadata type',
+            FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
           );
         }
 
@@ -106,8 +108,9 @@ export class FlatFieldMetadataTypeValidatorService {
       },
       SELECT: (args) => {
         if (!isEnumValidateOneFieldMetadata(args)) {
-          throw new Error(
+          throw new FieldMetadataException(
             'Should never occur, invaliad enum field metadata type',
+            FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
           );
         }
 
