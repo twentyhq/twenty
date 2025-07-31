@@ -18,11 +18,11 @@ import {
 describe('View Filter Group Resolver', () => {
   let testViewId: string;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     await cleanupViewRecords();
 
     const view = await createTestView({
-      name: 'Test View for Filter Groups',
+      name: 'Test View for Groups',
     });
 
     testViewId = view.id;
@@ -30,25 +30,6 @@ describe('View Filter Group Resolver', () => {
 
   afterAll(async () => {
     await cleanupViewRecords();
-  });
-
-  afterEach(async () => {
-    const operation = findViewFilterGroupsOperationFactory({
-      viewId: testViewId,
-    });
-    const viewFilterGroups = await makeGraphqlAPIRequest(operation);
-
-    if (viewFilterGroups.body.data.getCoreViewFilterGroups.length > 0) {
-      await Promise.all(
-        viewFilterGroups.body.data.getCoreViewFilterGroups.map((group: any) => {
-          const deleteOperation = deleteViewFilterGroupOperationFactory({
-            viewFilterGroupId: group.id,
-          });
-
-          return makeGraphqlAPIRequest(deleteOperation);
-        }),
-      );
-    }
   });
 
   describe('getCoreViewFilterGroups', () => {

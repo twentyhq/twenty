@@ -19,7 +19,7 @@ import {
 describe('View Sort Resolver', () => {
   let testViewId: string;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     await cleanupViewRecords();
 
     const view = await createTestView({
@@ -31,23 +31,6 @@ describe('View Sort Resolver', () => {
 
   afterAll(async () => {
     await cleanupViewRecords();
-  });
-
-  afterEach(async () => {
-    const operation = findViewSortsOperationFactory({ viewId: testViewId });
-    const viewSorts = await makeGraphqlAPIRequest(operation);
-
-    if (viewSorts.body.data.getCoreViewSorts.length > 0) {
-      await Promise.all(
-        viewSorts.body.data.getCoreViewSorts.map((sort: any) => {
-          const deleteOperation = deleteViewSortOperationFactory({
-            viewSortId: sort.id,
-          });
-
-          return makeGraphqlAPIRequest(deleteOperation);
-        }),
-      );
-    }
   });
 
   describe('getCoreViewSorts', () => {

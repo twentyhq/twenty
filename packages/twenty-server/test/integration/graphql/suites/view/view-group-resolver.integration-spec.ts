@@ -19,7 +19,7 @@ import {
 describe('View Group Resolver', () => {
   let testViewId: string;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     await cleanupViewRecords();
 
     const view = await createTestView({
@@ -31,23 +31,6 @@ describe('View Group Resolver', () => {
 
   afterAll(async () => {
     await cleanupViewRecords();
-  });
-
-  afterEach(async () => {
-    const operation = findViewGroupsOperationFactory({ viewId: testViewId });
-    const viewGroups = await makeGraphqlAPIRequest(operation);
-
-    if (viewGroups.body.data.getCoreViewGroups.length > 0) {
-      await Promise.all(
-        viewGroups.body.data.getCoreViewGroups.map((group: any) => {
-          const deleteOperation = deleteViewGroupOperationFactory({
-            viewGroupId: group.id,
-          });
-
-          return makeGraphqlAPIRequest(deleteOperation);
-        }),
-      );
-    }
   });
 
   describe('getCoreViewGroups', () => {
