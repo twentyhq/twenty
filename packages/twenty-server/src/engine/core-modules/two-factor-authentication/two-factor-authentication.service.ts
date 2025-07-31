@@ -96,19 +96,22 @@ export class TwoFactorAuthenticationService {
       );
     }
 
-    if (existing2FAMethod && 
-        existing2FAMethod.status === 'PENDING' && 
-        existing2FAMethod.createdAt &&
-        (Date.now() - existing2FAMethod.createdAt.getTime()) < PENDING_METHOD_REUSE_WINDOW_MS) {
-      
-      const existingSecret = await this.simpleSecretEncryptionUtil.decryptSecret(
-        existing2FAMethod.secret,
-        userId + workspaceId + 'otp-secret',
-      );
+    if (
+      existing2FAMethod &&
+      existing2FAMethod.status === 'PENDING' &&
+      existing2FAMethod.createdAt &&
+      Date.now() - existing2FAMethod.createdAt.getTime() <
+        PENDING_METHOD_REUSE_WINDOW_MS
+    ) {
+      const existingSecret =
+        await this.simpleSecretEncryptionUtil.decryptSecret(
+          existing2FAMethod.secret,
+          userId + workspaceId + 'otp-secret',
+        );
 
       const issuer = `Twenty${userWorkspace.workspace.displayName ? ` - ${userWorkspace.workspace.displayName}` : ''}`;
       const reuseUri = authenticator.keyuri(userEmail, issuer, existingSecret);
-      
+
       return reuseUri;
     }
 

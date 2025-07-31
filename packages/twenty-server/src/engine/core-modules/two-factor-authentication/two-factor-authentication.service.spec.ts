@@ -34,8 +34,10 @@ const totpStrategyMocks = {
 jest.mock('otplib', () => ({
   authenticator: {
     generateSecret: jest.fn(() => 'RAW_OTP_SECRET'),
-    keyuri: jest.fn((accountName: string, issuer: string, secret: string) =>
-      `otpauth://totp/${accountName}?secret=${secret}&issuer=${encodeURIComponent(issuer)}`),
+    keyuri: jest.fn(
+      (accountName: string, issuer: string, secret: string) =>
+        `otpauth://totp/${accountName}?secret=${secret}&issuer=${encodeURIComponent(issuer)}`,
+    ),
   },
 }));
 
@@ -179,7 +181,9 @@ describe('TwoFactorAuthenticationService', () => {
         workspace.id,
       );
 
-      expect(uri).toBe('otpauth://totp/test@example.com?secret=RAW_OTP_SECRET&issuer=Twenty%20-%20Test%20Workspace');
+      expect(uri).toBe(
+        'otpauth://totp/test@example.com?secret=RAW_OTP_SECRET&issuer=Twenty%20-%20Test%20Workspace',
+      );
       expect(simpleSecretEncryptionUtil.encryptSecret).toHaveBeenCalledWith(
         rawSecret,
         mockUser.id + workspace.id + 'otp-secret',
@@ -230,7 +234,9 @@ describe('TwoFactorAuthenticationService', () => {
         workspace.id,
       );
 
-      expect(uri).toBe('otpauth://totp/test@example.com?secret=RAW_OTP_SECRET&issuer=Twenty%20-%20Test%20Workspace');
+      expect(uri).toBe(
+        'otpauth://totp/test@example.com?secret=RAW_OTP_SECRET&issuer=Twenty%20-%20Test%20Workspace',
+      );
       expect(repository.save).toHaveBeenCalledWith(
         expect.objectContaining({
           id: existingMethod.id,
@@ -277,8 +283,9 @@ describe('TwoFactorAuthenticationService', () => {
       simpleSecretEncryptionUtil.decryptSecret.mockResolvedValue(rawSecret);
 
       // Mock authenticator.keyuri to return a URI
-      const expectedUri = 'otpauth://totp/test@example.com?secret=RAW_OTP_SECRET&issuer=Twenty%20-%20Test%20Workspace';
-      
+      const expectedUri =
+        'otpauth://totp/test@example.com?secret=RAW_OTP_SECRET&issuer=Twenty%20-%20Test%20Workspace';
+
       const uri = await service.initiateStrategyConfiguration(
         mockUser.id,
         mockUser.email,
@@ -345,7 +352,10 @@ describe('TwoFactorAuthenticationService', () => {
 
       repository.findOne.mockResolvedValue(existingMethod);
       const decryptionError = new Error('Decryption failed');
-      simpleSecretEncryptionUtil.decryptSecret.mockRejectedValue(decryptionError);
+
+      simpleSecretEncryptionUtil.decryptSecret.mockRejectedValue(
+        decryptionError,
+      );
 
       // Should throw the decryption error instead of silently handling it
       await expect(
@@ -383,7 +393,7 @@ describe('TwoFactorAuthenticationService', () => {
       expect(uri).toMatch(/^otpauth:\/\/totp\//);
       expect(uri).toContain('test@example.com');
       expect(uri).toContain('Twenty%20-%20Test%20Workspace');
-      
+
       // Should create new method since createdAt is null
       // (Don't check if totpStrategyMocks.initiate was called due to mocking complexity)
       expect(repository.save).toHaveBeenCalledWith(
