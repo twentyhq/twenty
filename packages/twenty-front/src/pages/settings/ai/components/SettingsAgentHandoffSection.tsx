@@ -102,6 +102,12 @@ export const SettingsAgentHandoffSection = ({
 
   const handoffTargets = handoffTargetsData?.findAgentHandoffTargets || [];
 
+  const resetHandoffForm = () => {
+    setIsAddingHandoff(false);
+    setSelectedToAgentId('');
+    setHandoffDescription('');
+  };
+
   const handleAddHandoff = async () => {
     try {
       await createAgentHandoff({
@@ -115,9 +121,7 @@ export const SettingsAgentHandoffSection = ({
       });
 
       await refetchHandoffTargets();
-      setIsAddingHandoff(false);
-      setSelectedToAgentId('');
-      setHandoffDescription('');
+      resetHandoffForm();
       enqueueSuccessSnackBar({
         message: t`Handoff created successfully`,
       });
@@ -207,11 +211,7 @@ export const SettingsAgentHandoffSection = ({
                 size="small"
                 variant="secondary"
                 title={t`Cancel`}
-                onClick={() => {
-                  setIsAddingHandoff(false);
-                  setSelectedToAgentId('');
-                  setHandoffDescription('');
-                }}
+                onClick={resetHandoffForm}
               />
               <Button
                 accent="blue"
