@@ -77,7 +77,7 @@ export class ApprovedAccessDomainService {
         lastName: sender.name.lastName,
       },
       serverUrl: this.twentyConfigService.get('SERVER_URL'),
-      locale: 'en',
+      locale: sender.locale,
     });
     const html = await render(emailTemplate);
     const text = await render(emailTemplate, {

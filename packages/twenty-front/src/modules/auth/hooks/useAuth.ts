@@ -73,7 +73,7 @@ import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefres
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { i18n } from '@lingui/core';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { APP_LOCALES } from 'twenty-shared/translations';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { iconsState } from 'twenty-ui/display';
 import { AuthToken } from '~/generated/graphql';
@@ -230,7 +230,7 @@ export const useAuth = () => {
       const workspaceMembers = user.workspaceMembers.map((workspaceMember) => ({
         ...workspaceMember,
         colorScheme: workspaceMember.colorScheme as ColorScheme,
-        locale: workspaceMember.locale ?? 'en',
+        locale: workspaceMember.locale ?? SOURCE_LOCALE,
       }));
 
       setCurrentWorkspaceMembers(workspaceMembers);
@@ -248,7 +248,7 @@ export const useAuth = () => {
       workspaceMember = {
         ...user.workspaceMember,
         colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
-        locale: user.workspaceMember?.locale ?? 'en',
+        locale: user.workspaceMember?.locale ?? SOURCE_LOCALE,
       };
 
       setCurrentWorkspaceMember(workspaceMember);
@@ -271,7 +271,7 @@ export const useAuth = () => {
           : TimeFormat[detectTimeFormat()],
       });
       dynamicActivate(
-        (workspaceMember.locale as keyof typeof APP_LOCALES) ?? 'en',
+        (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,
       );
     }
 
@@ -558,7 +558,7 @@ export const useAuth = () => {
           email,
           password,
           captchaToken,
-          locale: i18n.locale ?? 'en',
+          locale: i18n.locale ?? SOURCE_LOCALE,
         },
       });
 
@@ -637,7 +637,7 @@ export const useAuth = () => {
           workspaceInviteHash,
           workspacePersonalInviteToken,
           captchaToken,
-          locale: i18n.locale ?? 'en',
+          locale: i18n.locale ?? SOURCE_LOCALE,
           ...(workspacePublicData?.id
             ? { workspaceId: workspacePublicData.id }
             : {}),
