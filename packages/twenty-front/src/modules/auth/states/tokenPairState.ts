@@ -1,6 +1,6 @@
+import { createState } from 'twenty-ui/utilities';
 import { AuthTokenPair } from '~/generated/graphql';
 import { cookieStorageEffect } from '~/utils/recoil-effects';
-import { createState } from 'twenty-ui/utilities';
 
 export const tokenPairState = createState<AuthTokenPair | null>({
   key: 'tokenPairState',
@@ -11,7 +11,7 @@ export const tokenPairState = createState<AuthTokenPair | null>({
       {},
       {
         validateInitFn: (payload: AuthTokenPair) =>
-          Boolean(payload['accessToken']),
+          Boolean(payload['accessOrWorkspaceAgnosticToken']),
       },
     ),
   ],

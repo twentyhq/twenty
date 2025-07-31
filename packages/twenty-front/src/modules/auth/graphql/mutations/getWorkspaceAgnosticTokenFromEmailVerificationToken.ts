@@ -1,19 +1,15 @@
 import { gql } from '@apollo/client';
 
-export const SIGN_UP = gql`
-  mutation SignUp(
+export const GET_WORKSPACE_AGNOSTIC_TOKEN_FROM_EMAIL_VERIFICATION_TOKEN = gql`
+  mutation GetWorkspaceAgnosticTokenFromEmailVerificationToken(
+    $emailVerificationToken: String!
     $email: String!
-    $password: String!
     $captchaToken: String
-    $locale: String
-    $verifyEmailRedirectPath: String
   ) {
-    signUp(
+    getWorkspaceAgnosticTokenFromEmailVerificationToken(
+      emailVerificationToken: $emailVerificationToken
       email: $email
-      password: $password
       captchaToken: $captchaToken
-      locale: $locale
-      verifyEmailRedirectPath: $verifyEmailRedirectPath
     ) {
       availableWorkspaces {
         ...AvailableWorkspacesFragment

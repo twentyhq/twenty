@@ -3,13 +3,13 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { User } from 'src/engine/core-modules/user/user.entity';
 
 import { RenewTokenService } from './renew-token.service';
 
@@ -101,7 +101,7 @@ describe('RenewTokenService', () => {
         await service.generateTokensFromRefreshToken(mockRefreshToken);
 
       expect(result).toEqual({
-        accessToken: mockAccessToken,
+        accessOrWorkspaceAgnosticToken: mockAccessToken,
         refreshToken: mockNewRefreshToken,
       });
       expect(refreshTokenService.verifyRefreshToken).toHaveBeenCalledWith(

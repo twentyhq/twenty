@@ -109,8 +109,8 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
           headers: {
             ...headers,
             ...options.headers,
-            authorization: tokenPair.accessToken.token
-              ? `Bearer ${tokenPair.accessToken.token}`
+            authorization: tokenPair.accessOrWorkspaceAgnosticToken.token
+              ? `Bearer ${tokenPair.accessOrWorkspaceAgnosticToken.token}`
               : '',
             ...(this.currentWorkspaceMember?.locale
               ? { 'x-locale': this.currentWorkspaceMember.locale }
