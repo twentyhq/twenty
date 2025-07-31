@@ -1,5 +1,8 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
+import { SelectControl } from '@/ui/input/components/SelectControl';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import {
   WorkflowManualTrigger,
   WorkflowManualTriggerAvailability,
@@ -12,14 +15,12 @@ import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTrigg
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useLingui } from '@lingui/react/macro';
-import { IconPicker } from '@/ui/input/components/IconPicker';
-import { SelectControl } from '@/ui/input/components/SelectControl';
-import styled from '@emotion/styled';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 type WorkflowEditTriggerManualFormProps = {
   trigger: WorkflowManualTrigger;
@@ -83,9 +84,11 @@ export const WorkflowEditTriggerManualForm = ({
 
   const headerType = getTriggerHeaderType(trigger);
 
+  const hotkeys = `${getOsControlSymbol()}K`;
+
   const availabilityDescriptions = {
-    WHEN_RECORD_SELECTED: t`Select a record then open the ⌘K to trigger this workflow`,
-    EVERYWHERE: t`Open the ⌘K to trigger this workflow`,
+    WHEN_RECORD_SELECTED: t`To trigger,  elect a record and then use the shortcut ${hotkeys}`,
+    EVERYWHERE: t`To trigger, use the shortcut ${hotkeys}`,
   };
 
   return (

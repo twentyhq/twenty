@@ -54,18 +54,18 @@ const StyledAppNavigationDrawerMock = styled(SignInAppNavigationDrawerMock)`
   flex-shrink: 0;
 `;
 
-const StyledMainContainer = styled.div<{ 
+const StyledMainContainer = styled.div<{
   hasCommandMenuPersistent: boolean;
 }>`
   display: flex;
-  flex: ${({ hasCommandMenuPersistent }) => 
+  flex: ${({ hasCommandMenuPersistent }) =>
     hasCommandMenuPersistent ? '1' : '0 1 100%'};
   overflow: hidden;
 `;
 
 const StyledCommandMenuContainer = styled.div`
-  width: ${THEME_COMMON.rightDrawerWidth};
   flex-shrink: 0;
+  width: ${THEME_COMMON.rightDrawerWidth};
 `;
 
 export const DefaultLayout = () => {
@@ -78,15 +78,14 @@ export const DefaultLayout = () => {
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const isCommandMenuPersistent = useRecoilValue(isCommandMenuPersistentState);
 
-  const shouldShowPersistentCommandMenu = 
-    !showAuthModal && 
-    !isMobile && 
-    isCommandMenuPersistent && 
+  const shouldShowPersistentCommandMenu =
+    !showAuthModal &&
+    !isMobile &&
+    isCommandMenuPersistent &&
     isCommandMenuOpened;
 
-  const shouldShowOverlayCommandMenu = 
-    !showAuthModal && 
-    (!isCommandMenuPersistent || isMobile);
+  const shouldShowOverlayCommandMenu =
+    !showAuthModal && (!isCommandMenuPersistent || isMobile);
 
   return (
     <>
@@ -107,7 +106,9 @@ export const DefaultLayout = () => {
                       (OBJECT_SETTINGS_WIDTH +
                         NAV_DRAWER_WIDTHS.menu.desktop.expanded +
                         76 +
-                        (shouldShowPersistentCommandMenu ? parseInt(THEME_COMMON.rightDrawerWidth) : 0))) /
+                        (shouldShowPersistentCommandMenu
+                          ? parseInt(THEME_COMMON.rightDrawerWidth)
+                          : 0))) /
                     2
                   : 0,
             }}
@@ -135,7 +136,9 @@ export const DefaultLayout = () => {
               </>
             ) : (
               <>
-                <StyledMainContainer hasCommandMenuPersistent={shouldShowPersistentCommandMenu}>
+                <StyledMainContainer
+                  hasCommandMenuPersistent={shouldShowPersistentCommandMenu}
+                >
                   <AppErrorBoundary FallbackComponent={AppPageErrorFallback}>
                     <Outlet />
                   </AppErrorBoundary>
@@ -147,12 +150,8 @@ export const DefaultLayout = () => {
                 )}
               </>
             )}
-            {shouldShowOverlayCommandMenu && (
-              <CommandMenuRouter />
-            )}
-            {!showAuthModal && (
-              <KeyboardShortcutMenu />
-            )}
+            {shouldShowOverlayCommandMenu && <CommandMenuRouter />}
+            {!showAuthModal && <KeyboardShortcutMenu />}
           </StyledPageContainer>
           {isMobile && !showAuthModal && <MobileNavigationBar />}
         </AppErrorBoundary>

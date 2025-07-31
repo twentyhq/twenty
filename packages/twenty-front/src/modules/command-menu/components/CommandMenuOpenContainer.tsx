@@ -48,8 +48,8 @@ export const CommandMenuOpenContainer = ({
   const targetVariantForAnimation: CommandMenuAnimationVariant = isMobile
     ? 'fullScreen'
     : isCommandMenuPersistent
-    ? 'persistent'
-    : 'normal';
+      ? 'persistent'
+      : 'normal';
 
   const theme = useTheme();
 

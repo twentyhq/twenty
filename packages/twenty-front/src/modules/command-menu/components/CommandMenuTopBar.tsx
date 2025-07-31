@@ -22,9 +22,14 @@ import { useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, IconLayoutSidebarRight, IconLayoutSidebarRightCollapse, IconX } from 'twenty-ui/display';
+import {
+  IconChevronLeft,
+  IconPin,
+  IconPinnedOff,
+  IconX,
+} from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -74,10 +79,10 @@ const StyledContentContainer = styled.div`
 const StyledButtonContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledCloseButtonWrapper = styled.div<{ isVisible: boolean }>`
-  visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')};
+  justify-content: flex-end;
+  flex-shrink: 0;
+  white-space: nowrap;
+  margin-right: 40px;
 `;
 
 export const CommandMenuTopBar = () => {
@@ -164,30 +169,29 @@ export const CommandMenuTopBar = () => {
       {!isMobile && (
         <StyledButtonContainer>
           <Button
-            Icon={isCommandMenuPersistent ? IconLayoutSidebarRightCollapse : IconLayoutSidebarRight}
+            Icon={isCommandMenuPersistent ? IconPinnedOff : IconPin}
             dataTestId="command-menu-persistent-toggle-button"
             size={'small'}
             variant="secondary"
             accent="default"
             ariaLabel={
               isCommandMenuPersistent
-                ? 'Disable persistent mode'
-                : 'Enable persistent mode'
+                ? 'Unpin command menu'
+                : 'Pin command menu'
             }
             onClick={toggleCommandMenuPersistent}
           />
-          <StyledCloseButtonWrapper isVisible={isButtonVisible && !isCommandMenuPersistent}>
+          {isButtonVisible && !isCommandMenuPersistent && (
             <Button
               Icon={IconX}
               dataTestId="page-header-close-command-menu-button"
               size={'small'}
               variant="secondary"
               accent="default"
-              hotkeys={[getOsControlSymbol(), 'K']}
               ariaLabel="Close command menu"
               onClick={closeCommandMenu}
             />
-          </StyledCloseButtonWrapper>
+          )}
         </StyledButtonContainer>
       )}
     </StyledInputContainer>

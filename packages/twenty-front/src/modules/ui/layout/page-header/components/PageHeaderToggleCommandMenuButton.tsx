@@ -130,7 +130,7 @@ export const PageHeaderToggleCommandMenuButton = () => {
           size={isMobile ? 'medium' : 'small'}
           variant="secondary"
           accent="default"
-          hotkeys={[getOsControlSymbol(), 'K']}
+          hotkeys={isCommandMenuOpened ? undefined : [getOsControlSymbol(), 'K']}
           ariaLabel={ariaLabel}
           onClick={toggleCommandMenu}
           animate={{

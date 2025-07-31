@@ -1,5 +1,6 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { CommandMenuOpenContainer } from '@/command-menu/components/CommandMenuOpenContainer';
+import { CommandMenuPersistentContextStoreEffect } from '@/command-menu/components/CommandMenuPersistentContextStoreEffect';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { useCommandMenuCloseAnimationCompleteCleanup } from '@/command-menu/hooks/useCommandMenuCloseAnimationCompleteCleanup';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
@@ -52,9 +53,7 @@ export const CommandMenuContainer = ({
   useCommandMenuHotKeys();
 
   const commandMenuContent = (
-    <CommandMenuOpenContainer>
-      {children}
-    </CommandMenuOpenContainer>
+    <CommandMenuOpenContainer>{children}</CommandMenuOpenContainer>
   );
 
   return (
@@ -73,6 +72,7 @@ export const CommandMenuContainer = ({
             <ActionMenuComponentInstanceContext.Provider
               value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
             >
+              <CommandMenuPersistentContextStoreEffect />
               {isCommandMenuPersistent ? (
                 // In persistent mode, always render without AnimatePresence
                 isCommandMenuOpened && commandMenuContent
