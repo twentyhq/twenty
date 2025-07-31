@@ -99,7 +99,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const isAskAIAgent = agent?.id === currentWorkspace?.defaultAgent?.id;
 
   if (isEditMode && !loading && !agent) {
-    return <></>;
+    return null;
   }
 
   const canSave = validateForm() && !isSubmitting;
