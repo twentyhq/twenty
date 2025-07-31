@@ -300,7 +300,7 @@ export class AuthService {
 
     return {
       tokens: {
-        accessToken,
+        accessOrWorkspaceAgnosticToken: accessToken,
         refreshToken,
       },
     };
@@ -735,7 +735,7 @@ export class AuthService {
         pathname: '/welcome',
         searchParams: {
           tokenPair: JSON.stringify({
-            accessToken:
+            accessOrWorkspaceAgnosticToken:
               await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
                 {
                   userId: user.id,

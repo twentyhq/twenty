@@ -11,7 +11,7 @@ export type ExchangeAuthCodeInput = {
 
 export type Tokens = {
   loginToken: AuthToken;
-  accessToken: AuthToken;
+  accessOrWorkspaceAgnosticToken: AuthToken;
   refreshToken: AuthToken;
 };
 
