@@ -15,6 +15,8 @@ import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hoo
 import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/getTriggerDefaultDefinition';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemCommand } from 'twenty-ui/navigation';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const CommandMenuWorkflowSelectTriggerTypeContent = ({
   workflow,
@@ -32,6 +34,10 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
   );
   const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
 
+  const isWorkflowBranchEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
+  );
+
   const handleTriggerTypeClick = ({
     type,
     defaultLabel,
@@ -47,6 +53,7 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
           defaultLabel,
           type,
           activeNonSystemObjectMetadataItems,
+          steps: !isWorkflowBranchEnabled ? workflow.currentVersion.steps : [],
         }),
       );
 
