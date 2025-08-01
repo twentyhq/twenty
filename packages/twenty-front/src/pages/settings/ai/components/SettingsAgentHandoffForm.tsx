@@ -32,12 +32,7 @@ const StyledAddButtonContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(3)};
 `;
 
-interface AgentOption {
-  id: string;
-  label: string;
-}
-
-interface SettingsAgentHandoffFormProps {
+type SettingsAgentHandoffFormProps = {
   agentId: string;
   availableAgentOptions: SelectOption[];
   agentsLoading: boolean;
