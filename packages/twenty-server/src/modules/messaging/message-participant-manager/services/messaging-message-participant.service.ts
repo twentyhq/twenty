@@ -39,6 +39,7 @@ export class MessagingMessageParticipantService {
       participants: savedParticipants,
       objectMetadataName: 'messageParticipant',
       transactionManager,
+      matchWith: 'workspaceMemberAndPerson',
     });
   }
 }

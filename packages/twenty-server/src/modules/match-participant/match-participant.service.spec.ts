@@ -212,6 +212,7 @@ describe('MatchParticipantService', () => {
       await service.matchParticipants({
         participants: mockParticipants,
         objectMetadataName: 'messageParticipant',
+        matchWith: 'workspaceMemberAndPerson',
       });
 
       expect(mockMessageParticipantRepository.update).toHaveBeenCalledWith(
@@ -231,6 +232,7 @@ describe('MatchParticipantService', () => {
       await service.matchParticipants({
         participants: mockParticipants,
         objectMetadataName: 'messageParticipant',
+        matchWith: 'workspaceMemberAndPerson',
       });
 
       expect(mockMessageParticipantRepository.update).toHaveBeenCalledWith(
@@ -250,6 +252,7 @@ describe('MatchParticipantService', () => {
       await service.matchParticipants({
         participants: mockParticipants,
         objectMetadataName: 'messageParticipant',
+        matchWith: 'workspaceMemberAndPerson',
       });
 
       expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
@@ -299,6 +302,7 @@ describe('MatchParticipantService', () => {
       await calendarService.matchParticipants({
         participants: calendarParticipants,
         objectMetadataName: 'calendarEventParticipant',
+        matchWith: 'workspaceMemberAndPerson',
       });
 
       expect(mockCalendarEventParticipantRepository.update).toHaveBeenCalled();
@@ -327,6 +331,7 @@ describe('MatchParticipantService', () => {
       await service.matchParticipants({
         participants: mockParticipants,
         objectMetadataName: 'messageParticipant',
+        matchWith: 'workspaceMemberAndPerson',
       });
 
       expect(mockMessageParticipantRepository.update).toHaveBeenCalledWith(
@@ -348,6 +353,7 @@ describe('MatchParticipantService', () => {
         service.matchParticipants({
           participants: mockParticipants,
           objectMetadataName: 'messageParticipant',
+          matchWith: 'workspaceMemberAndPerson',
         }),
       ).rejects.toThrow('Workspace ID is required');
     });
@@ -356,6 +362,7 @@ describe('MatchParticipantService', () => {
       await service.matchParticipants({
         participants: mockParticipants,
         objectMetadataName: 'messageParticipant',
+        matchWith: 'workspaceMemberAndPerson',
         transactionManager: mockTransactionManager,
       });
 
@@ -397,11 +404,9 @@ describe('MatchParticipantService', () => {
 
     describe('person matching', () => {
       it('should match unmatched participants to new person', async () => {
-        await service.matchParticipantsAfterPersonCreation({
-          handle: 'test-1@example.com',
-          isPrimaryEmail: true,
+        await service.matchParticipantsForPeople({
+          personIds: ['new-person-id'],
           objectMetadataName: 'messageParticipant',
-          personId: 'new-person-id',
         });
 
         expect(mockMessageParticipantRepository.update).toHaveBeenCalledWith(
@@ -417,11 +422,9 @@ describe('MatchParticipantService', () => {
       });
 
       it('should re-match participants when new person has primary email and existing person has secondary', async () => {
-        await service.matchParticipantsAfterPersonCreation({
-          handle: 'test-2@company.com',
-          isPrimaryEmail: true,
+        await service.matchParticipantsForPeople({
+          personIds: ['new-person-id'],
           objectMetadataName: 'messageParticipant',
-          personId: 'new-person-id',
         });
 
         expect(mockMessageParticipantRepository.update).toHaveBeenCalledWith(
@@ -455,22 +458,18 @@ describe('MatchParticipantService', () => {
           participantsWithPrimaryEmail,
         );
 
-        await service.matchParticipantsAfterPersonCreation({
-          handle: 'test-1@example.com',
-          isPrimaryEmail: false,
+        await service.matchParticipantsForPeople({
+          personIds: ['new-person-id'],
           objectMetadataName: 'messageParticipant',
-          personId: 'new-person-id',
         });
 
         expect(mockMessageParticipantRepository.update).not.toHaveBeenCalled();
       });
 
       it('should not re-match when new email is secondary and existing person has secondary', async () => {
-        await service.matchParticipantsAfterPersonCreation({
-          handle: 'test-1@example.com',
-          isPrimaryEmail: false,
+        await service.matchParticipantsForPeople({
+          personIds: ['new-person-id'],
           objectMetadataName: 'messageParticipant',
-          personId: 'new-person-id',
         });
 
         expect(mockMessageParticipantRepository.update).toHaveBeenCalledTimes(
@@ -485,11 +484,9 @@ describe('MatchParticipantService', () => {
           .mockResolvedValueOnce(mockExistingParticipants)
           .mockResolvedValueOnce(updatedParticipants);
 
-        await service.matchParticipantsAfterPersonCreation({
-          handle: 'test-1@example.com',
-          isPrimaryEmail: true,
+        await service.matchParticipantsForPeople({
+          personIds: ['new-person-id'],
           objectMetadataName: 'messageParticipant',
-          personId: 'new-person-id',
         });
 
         expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
@@ -509,10 +506,9 @@ describe('MatchParticipantService', () => {
 
     describe('workspace member matching', () => {
       it('should match all participants to workspace member', async () => {
-        await service.matchParticipantsAfterWorkspaceMemberCreation({
-          handle: 'test-1@example.com',
+        await service.matchParticipantsForWorkspaceMembers({
+          workspaceMemberIds: ['workspace-member-id'],
           objectMetadataName: 'messageParticipant',
-          workspaceMemberId: 'workspace-member-id',
         });
 
         expect(mockMessageParticipantRepository.update).toHaveBeenCalledWith(
@@ -534,215 +530,11 @@ describe('MatchParticipantService', () => {
       });
 
       await expect(
-        service.matchParticipantsAfterPersonCreation({
-          handle: 'test-1@example.com',
-          isPrimaryEmail: true,
+        service.matchParticipantsForPeople({
+          personIds: ['new-person-id'],
           objectMetadataName: 'messageParticipant',
-          personId: 'person-id',
         }),
       ).rejects.toThrow('Workspace ID is required');
-    });
-  });
-
-  describe('unmatchParticipants', () => {
-    beforeEach(() => {
-      mockMessageParticipantRepository.update.mockResolvedValue({
-        affected: 1,
-      });
-      mockMessageParticipantRepository.find.mockResolvedValue([]);
-      const mockQueryBuilder = {
-        select: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        andWhere: jest.fn().mockReturnThis(),
-        orWhere: jest.fn().mockReturnThis(),
-        orderBy: jest.fn().mockReturnThis(),
-        getMany: jest.fn().mockResolvedValue([]),
-        withDeleted: jest.fn().mockReturnThis(),
-      };
-
-      mockPersonRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
-      mockQueryBuilder.getMany.mockResolvedValue([]);
-    });
-
-    describe('person unmatching', () => {
-      it('should unmatch participants from person', async () => {
-        await service.unmatchParticipants({
-          handle: 'test-1@example.com',
-          objectMetadataName: 'messageParticipant',
-          personId: 'person-id',
-        });
-
-        expect(mockMessageParticipantRepository.update).toHaveBeenCalledWith(
-          {
-            handle: expect.any(Object),
-          },
-          {
-            person: null,
-          },
-        );
-      });
-
-      it('should re-match to next best person after unmatching', async () => {
-        const mockAlternativePeople = [
-          {
-            id: 'alternative-person',
-            emails: {
-              primaryEmail: 'test-1@example.com',
-              additionalEmails: [],
-            },
-          },
-        ] as PersonWorkspaceEntity[];
-
-        const mockQueryBuilder = {
-          select: jest.fn().mockReturnThis(),
-          where: jest.fn().mockReturnThis(),
-          andWhere: jest.fn().mockReturnThis(),
-          orWhere: jest.fn().mockReturnThis(),
-          orderBy: jest.fn().mockReturnThis(),
-          getMany: jest.fn().mockResolvedValue(mockAlternativePeople),
-          withDeleted: jest.fn().mockReturnThis(),
-        };
-
-        mockPersonRepository.createQueryBuilder.mockReturnValue(
-          mockQueryBuilder,
-        );
-        mockQueryBuilder.getMany.mockResolvedValue(mockAlternativePeople);
-
-        const rematchedParticipants = [
-          {
-            id: 'participant-1',
-            handle: 'test-1@example.com',
-          },
-        ] as MessageParticipantWorkspaceEntity[];
-
-        mockMessageParticipantRepository.find.mockResolvedValue(
-          rematchedParticipants,
-        );
-
-        await service.unmatchParticipants({
-          handle: 'test-1@example.com',
-          objectMetadataName: 'messageParticipant',
-          personId: 'old-person-id',
-        });
-
-        expect(mockMessageParticipantRepository.update).toHaveBeenCalledWith(
-          {
-            handle: expect.any(Object),
-          },
-          {
-            person: null,
-          },
-        );
-
-        expect(mockMessageParticipantRepository.update).toHaveBeenCalledWith(
-          {
-            handle: expect.any(Object),
-          },
-          {
-            personId: 'alternative-person',
-          },
-        );
-
-        expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
-          'messageParticipant_matched',
-          [
-            {
-              workspaceMemberId: null,
-              participants: rematchedParticipants,
-            },
-          ],
-          mockWorkspaceId,
-        );
-      });
-
-      it('should not re-match when no alternative people found', async () => {
-        const mockQueryBuilder = {
-          select: jest.fn().mockReturnThis(),
-          where: jest.fn().mockReturnThis(),
-          andWhere: jest.fn().mockReturnThis(),
-          orWhere: jest.fn().mockReturnThis(),
-          orderBy: jest.fn().mockReturnThis(),
-          getMany: jest.fn().mockResolvedValue([]),
-          withDeleted: jest.fn().mockReturnThis(),
-        };
-
-        mockPersonRepository.createQueryBuilder.mockReturnValue(
-          mockQueryBuilder,
-        );
-        mockQueryBuilder.getMany.mockResolvedValue([]);
-
-        await service.unmatchParticipants({
-          handle: 'test-1@example.com',
-          objectMetadataName: 'messageParticipant',
-          personId: 'person-id',
-        });
-
-        expect(mockMessageParticipantRepository.update).toHaveBeenCalledTimes(
-          1,
-        );
-        expect(
-          workspaceEventEmitter.emitCustomBatchEvent,
-        ).not.toHaveBeenCalled();
-      });
-    });
-
-    describe('workspace member unmatching', () => {
-      it('should unmatch participants from workspace member', async () => {
-        await service.unmatchParticipants({
-          handle: 'test-1@example.com',
-          objectMetadataName: 'messageParticipant',
-          workspaceMemberId: 'workspace-member-id',
-        });
-
-        expect(mockMessageParticipantRepository.update).toHaveBeenCalledWith(
-          {
-            handle: expect.any(Object),
-          },
-          {
-            workspaceMember: null,
-          },
-        );
-      });
-    });
-
-    it('should throw error when workspace ID is not found', async () => {
-      scopedWorkspaceContextFactory.create = jest.fn().mockReturnValue({
-        workspaceId: null,
-      });
-
-      await expect(
-        service.unmatchParticipants({
-          handle: 'test-1@example.com',
-          objectMetadataName: 'messageParticipant',
-          personId: 'person-id',
-        }),
-      ).rejects.toThrow('Workspace ID is required');
-    });
-  });
-
-  describe('getParticipantRepository', () => {
-    it('should return message participant repository for messageParticipant', async () => {
-      const repository = await (service as any).getParticipantRepository(
-        mockWorkspaceId,
-        'messageParticipant',
-      );
-
-      expect(
-        twentyORMGlobalManager.getRepositoryForWorkspace,
-      ).toHaveBeenCalledWith(mockWorkspaceId, 'messageParticipant');
-      expect(repository).toBe(mockMessageParticipantRepository);
-    });
-
-    it('should return calendar event participant repository for calendarEventParticipant', async () => {
-      const repository = await (service as any).getParticipantRepository(
-        mockWorkspaceId,
-        'calendarEventParticipant',
-      );
-
-      expect(
-        twentyORMGlobalManager.getRepositoryForWorkspace,
-      ).toHaveBeenCalledWith(mockWorkspaceId, 'calendarEventParticipant');
-      expect(repository).toBe(mockCalendarEventParticipantRepository);
     });
   });
 });

@@ -154,6 +154,7 @@ export class CalendarEventParticipantService {
       participants: savedParticipants,
       objectMetadataName: 'calendarEventParticipant',
       transactionManager,
+      matchWith: 'workspaceMemberAndPerson',
     });
   }
 }
