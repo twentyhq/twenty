@@ -7,7 +7,7 @@ export class IndexMetadataException extends CustomException {
     code: IndexMetadataExceptionCode,
     { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
   ) {
-    super(message, code, userFriendlyMessage);
+    super(message, code, { userFriendlyMessage });
   }
 }
 
