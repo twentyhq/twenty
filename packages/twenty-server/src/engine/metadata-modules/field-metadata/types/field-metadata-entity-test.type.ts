@@ -165,7 +165,7 @@ type SettingsAssertions = [
   Expect<
     HasAllProperties<
       RelationFieldMetadata,
-      { settings: FieldMetadataRelationSettings | null }
+      { settings: FieldMetadataRelationSettings }
     >
   >,
   Expect<
