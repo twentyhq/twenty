@@ -22,14 +22,10 @@ const useFieldIsReadOnlyByPermissions = ({
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   return useMemo(() => {
-    if (!fieldMetadataId) {
-      return false;
-    }
     const objectPermissions = getObjectPermissionsForObject(
       objectPermissionsByObjectMetadataId,
       objectMetadataId,
     );
-
     return isFieldReadOnlyByPermissions({
       objectPermissions,
       fieldMetadataId,
