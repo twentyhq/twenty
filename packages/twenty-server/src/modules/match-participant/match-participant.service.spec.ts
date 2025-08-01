@@ -405,7 +405,10 @@ describe('MatchParticipantService', () => {
     describe('person matching', () => {
       it('should match unmatched participants to new person', async () => {
         await service.matchParticipantsForPeople({
-          personIds: ['new-person-id'],
+          participantMatching: {
+            personIds: ['new-person-id'],
+            personEmails: [],
+          },
           objectMetadataName: 'messageParticipant',
         });
 
@@ -423,7 +426,10 @@ describe('MatchParticipantService', () => {
 
       it('should re-match participants when new person has primary email and existing person has secondary', async () => {
         await service.matchParticipantsForPeople({
-          personIds: ['new-person-id'],
+          participantMatching: {
+            personIds: ['new-person-id'],
+            personEmails: [],
+          },
           objectMetadataName: 'messageParticipant',
         });
 
@@ -459,7 +465,10 @@ describe('MatchParticipantService', () => {
         );
 
         await service.matchParticipantsForPeople({
-          personIds: ['new-person-id'],
+          participantMatching: {
+            personIds: ['new-person-id'],
+            personEmails: [],
+          },
           objectMetadataName: 'messageParticipant',
         });
 
@@ -468,7 +477,10 @@ describe('MatchParticipantService', () => {
 
       it('should not re-match when new email is secondary and existing person has secondary', async () => {
         await service.matchParticipantsForPeople({
-          personIds: ['new-person-id'],
+          participantMatching: {
+            personIds: ['new-person-id'],
+            personEmails: [],
+          },
           objectMetadataName: 'messageParticipant',
         });
 
@@ -485,7 +497,10 @@ describe('MatchParticipantService', () => {
           .mockResolvedValueOnce(updatedParticipants);
 
         await service.matchParticipantsForPeople({
-          personIds: ['new-person-id'],
+          participantMatching: {
+            personIds: ['new-person-id'],
+            personEmails: [],
+          },
           objectMetadataName: 'messageParticipant',
         });
 
@@ -507,7 +522,9 @@ describe('MatchParticipantService', () => {
     describe('workspace member matching', () => {
       it('should match all participants to workspace member', async () => {
         await service.matchParticipantsForWorkspaceMembers({
-          workspaceMemberIds: ['workspace-member-id'],
+          participantMatching: {
+            workspaceMemberIds: ['workspace-member-id'],
+          },
           objectMetadataName: 'messageParticipant',
         });
 
@@ -531,7 +548,10 @@ describe('MatchParticipantService', () => {
 
       await expect(
         service.matchParticipantsForPeople({
-          personIds: ['new-person-id'],
+          participantMatching: {
+            personIds: ['new-person-id'],
+            personEmails: [],
+          },
           objectMetadataName: 'messageParticipant',
         }),
       ).rejects.toThrow('Workspace ID is required');

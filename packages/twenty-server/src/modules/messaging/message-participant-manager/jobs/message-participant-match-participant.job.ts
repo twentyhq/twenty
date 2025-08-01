@@ -8,8 +8,11 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/
 
 export type MessageParticipantMatchParticipantJobData = {
   workspaceId: string;
-  personIds: string[];
-  workspaceMemberIds: string[];
+  participantMatching: {
+    personIds: string[];
+    personEmails: string[];
+    workspaceMemberIds: string[];
+  };
 };
 
 @Processor({
@@ -23,18 +26,21 @@ export class MessageParticipantMatchParticipantJob {
 
   @Process(MessageParticipantMatchParticipantJob.name)
   async handle(data: MessageParticipantMatchParticipantJobData): Promise<void> {
-    const { personIds, workspaceMemberIds } = data;
+    const { participantMatching } = data;
 
-    if (personIds.length > 0) {
+    if (
+      participantMatching.personIds.length > 0 ||
+      participantMatching.personEmails.length > 0
+    ) {
       await this.matchParticipantService.matchParticipantsForPeople({
-        personIds,
+        participantMatching,
         objectMetadataName: 'messageParticipant',
       });
     }
 
-    if (workspaceMemberIds.length > 0) {
+    if (participantMatching.workspaceMemberIds.length > 0) {
       await this.matchParticipantService.matchParticipantsForWorkspaceMembers({
-        workspaceMemberIds,
+        participantMatching,
         objectMetadataName: 'messageParticipant',
       });
     }

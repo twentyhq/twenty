@@ -43,8 +43,11 @@ export class MessageParticipantPersonListener {
       MessageParticipantMatchParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
-        personIds: toMatchParticipantsForPersonIds,
-        workspaceMemberIds: [],
+        participantMatching: {
+          personIds: toMatchParticipantsForPersonIds,
+          personEmails: [],
+          workspaceMemberIds: [],
+        },
       },
     );
   }
@@ -68,8 +71,11 @@ export class MessageParticipantPersonListener {
       MessageParticipantMatchParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
-        personIds: toMatchParticipantsForPersonIds,
-        workspaceMemberIds: [],
+        participantMatching: {
+          personIds: toMatchParticipantsForPersonIds,
+          personEmails: [],
+          workspaceMemberIds: [],
+        },
       },
     );
   }
@@ -80,20 +86,27 @@ export class MessageParticipantPersonListener {
       ObjectRecordDeleteEvent<PersonWorkspaceEntity>
     >,
   ) {
-    const toUnmatchParticipantsForPersonIds = payload.events
-      .filter(
-        (eventPayload) =>
-          isDefined(eventPayload.properties.before.emails?.primaryEmail) ||
-          isDefined(eventPayload.properties.before.emails?.additionalEmails),
-      )
-      .map((eventPayload) => eventPayload.recordId);
+    const toUnmatchParticipantsForPerson = payload.events.filter(
+      (eventPayload) =>
+        isDefined(eventPayload.properties.before.emails?.primaryEmail) ||
+        isDefined(eventPayload.properties.before.emails?.additionalEmails),
+    );
 
     await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
       MessageParticipantMatchParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
-        personIds: toUnmatchParticipantsForPersonIds,
-        workspaceMemberIds: [],
+        participantMatching: {
+          personIds: [],
+          personEmails: toUnmatchParticipantsForPerson.flatMap(
+            (eventPayload) => [
+              eventPayload.properties.before.emails.primaryEmail,
+              ...(eventPayload.properties.before.emails
+                .additionalEmails as string[]),
+            ],
+          ),
+          workspaceMemberIds: [],
+        },
       },
     );
   }

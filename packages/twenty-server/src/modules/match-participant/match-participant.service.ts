@@ -18,12 +18,17 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 type ObjectMetadataName = 'messageParticipant' | 'calendarEventParticipant';
 
 type MatchParticipantsForWorkspaceMembersArgs = {
-  workspaceMemberIds: string[];
+  participantMatching: {
+    workspaceMemberIds: string[];
+  };
   objectMetadataName: ObjectMetadataName;
 };
 
 type MatchParticipantsForPeopleArgs = {
-  personIds: string[];
+  participantMatching: {
+    personIds: string[];
+    personEmails: string[];
+  };
   objectMetadataName: ObjectMetadataName;
 };
 
@@ -188,7 +193,7 @@ export class MatchParticipantService<
   }
 
   public async matchParticipantsForWorkspaceMembers({
-    workspaceMemberIds,
+    participantMatching,
     objectMetadataName,
   }: MatchParticipantsForWorkspaceMembersArgs) {
     const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
@@ -204,7 +209,7 @@ export class MatchParticipantService<
 
     const participants = await participantRepository.find({
       where: {
-        workspaceMemberId: In(workspaceMemberIds),
+        workspaceMemberId: In(participantMatching.workspaceMemberIds),
       },
     });
 
@@ -223,7 +228,7 @@ export class MatchParticipantService<
   }
 
   public async matchParticipantsForPeople({
-    personIds,
+    participantMatching,
     objectMetadataName,
   }: MatchParticipantsForPeopleArgs) {
     const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
@@ -243,34 +248,53 @@ export class MatchParticipantService<
         'person',
         { shouldBypassPermissionChecks: true },
       );
+    let participantsMatchingExistingPersonEmails: ParticipantWorkspaceEntity[] =
+      [];
+    let participantsMatchingOtherPersonEmails: ParticipantWorkspaceEntity[] =
+      [];
+    let participantsMatchingPersonId: ParticipantWorkspaceEntity[] = [];
 
-    const people = await personRepository.find({
-      where: {
-        id: In(personIds),
-      },
-    });
+    if (participantMatching.personIds.length > 0) {
+      const people = await personRepository.find({
+        where: {
+          id: In(participantMatching.personIds),
+        },
+      });
 
-    const participantsMatchingPersonId = await participantRepository.find({
-      where: {
-        personId: In(personIds),
-      },
-    });
+      const exitingPeopleEmails = people.flatMap((person) => [
+        person.emails.primaryEmail,
+        ...(person.emails.additionalEmails as string[]),
+      ]);
 
-    const emails = people.flatMap((person) => [
-      person.emails.primaryEmail,
-      ...(person.emails.additionalEmails as string[]),
-    ]);
+      participantsMatchingExistingPersonEmails =
+        (await participantRepository.find({
+          where: {
+            handle: In(exitingPeopleEmails),
+          },
+        })) as ParticipantWorkspaceEntity[];
 
-    const participantsMatchingPersonEmails = await participantRepository.find({
-      where: {
-        handle: In(emails),
-      },
-    });
+      participantsMatchingPersonId = (await participantRepository.find({
+        where: {
+          personId: In(participantMatching.personIds),
+        },
+      })) as ParticipantWorkspaceEntity[];
+    }
+
+    if (participantMatching.personEmails.length > 0) {
+      participantsMatchingOtherPersonEmails = (await participantRepository.find(
+        {
+          where: {
+            handle: In(participantMatching.personEmails),
+          },
+        },
+      )) as ParticipantWorkspaceEntity[];
+    }
 
     const uniqueParticipants = [
       ...new Set([
         ...participantsMatchingPersonId,
-        ...participantsMatchingPersonEmails,
+        ...participantsMatchingExistingPersonEmails,
+        ...participantsMatchingOtherPersonEmails,
       ]),
     ];
 

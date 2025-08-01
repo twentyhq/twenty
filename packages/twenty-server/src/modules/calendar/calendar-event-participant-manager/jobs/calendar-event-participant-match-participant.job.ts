@@ -12,8 +12,11 @@ import { MatchParticipantService } from 'src/modules/match-participant/match-par
 
 export type CalendarEventParticipantMatchParticipantJobData = {
   workspaceId: string;
-  personIds: string[];
-  workspaceMemberIds: string[];
+  participantMatching: {
+    personIds: string[];
+    personEmails: string[];
+    workspaceMemberIds: string[];
+  };
 };
 
 @Processor({
@@ -31,7 +34,7 @@ export class CalendarEventParticipantMatchParticipantJob {
   async handle(
     data: CalendarEventParticipantMatchParticipantJobData,
   ): Promise<void> {
-    const { workspaceId, personIds, workspaceMemberIds } = data;
+    const { workspaceId, participantMatching } = data;
 
     const workspace = await this.workspaceRepository.findOne({
       where: {
@@ -43,17 +46,20 @@ export class CalendarEventParticipantMatchParticipantJob {
       return;
     }
 
-    if (personIds.length > 0) {
+    if (
+      participantMatching.personIds.length > 0 ||
+      participantMatching.personEmails.length > 0
+    ) {
       await this.matchParticipantService.matchParticipantsForPeople({
         objectMetadataName: 'calendarEventParticipant',
-        personIds,
+        participantMatching,
       });
     }
 
-    if (workspaceMemberIds.length > 0) {
+    if (participantMatching.workspaceMemberIds.length > 0) {
       await this.matchParticipantService.matchParticipantsForWorkspaceMembers({
         objectMetadataName: 'calendarEventParticipant',
-        workspaceMemberIds,
+        participantMatching,
       });
     }
   }
