@@ -56,14 +56,18 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     const workspaceId = context.workspaceId as string;
 
     try {
-      const agent = await this.agentRepository.findOne({
-        where: {
-          id: agentId,
-          workspaceId,
-        },
-      });
+      let agent: AgentEntity | null = null;
 
-      if (!agent) {
+      if (agentId) {
+        agent = await this.agentRepository.findOne({
+          where: {
+            id: agentId,
+            workspaceId,
+          },
+        });
+      }
+
+      if (agentId && !agent) {
         throw new AgentException(
           `Agent with id ${agentId} not found`,
           AgentExceptionCode.AGENT_NOT_FOUND,
@@ -78,7 +82,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       });
 
       await this.aiBillingService.calculateAndBillUsage(
-        agent.modelId,
+        agent?.modelId ?? 'auto',
         usage,
         workspaceId,
       );

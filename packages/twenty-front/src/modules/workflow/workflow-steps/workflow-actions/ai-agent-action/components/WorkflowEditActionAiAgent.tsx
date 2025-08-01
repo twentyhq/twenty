@@ -55,8 +55,10 @@ export const WorkflowEditActionAiAgent = ({
 
   const { data: agentsData, loading: agentsLoading } = useFindManyAgentsQuery();
 
-  const agentOptions =
-    agentsData?.findManyAgents?.reduce<SelectOption<string>[]>((acc, agent) => {
+  const agentOptions = (agentsData?.findManyAgents || []).reduce<
+    SelectOption<string>[]
+  >(
+    (acc, agent) => {
       if (agent.id !== currentWorkspace?.defaultAgent?.id) {
         acc.push({
           label: agent.label,
@@ -65,7 +67,14 @@ export const WorkflowEditActionAiAgent = ({
         });
       }
       return acc;
-    }, []) || [];
+    },
+    [
+      {
+        label: t`No Agent`,
+        value: '',
+      },
+    ],
+  );
 
   const noAgentsAvailable = agentOptions.length === 0;
 
@@ -108,15 +117,9 @@ export const WorkflowEditActionAiAgent = ({
             dropdownId="select-agent"
             label={t`Select Agent`}
             options={agentOptions}
-            value={action.settings.input.agentId}
+            value={action.settings.input.agentId || ''}
             onChange={(value) => handleFieldChange('agentId', value)}
             disabled={actionOptions.readonly || noAgentsAvailable}
-            emptyOption={{
-              label: noAgentsAvailable
-                ? t`No agents available`
-                : t`Select an agent`,
-              value: '',
-            }}
           />
 
           {noAgentsAvailable && (

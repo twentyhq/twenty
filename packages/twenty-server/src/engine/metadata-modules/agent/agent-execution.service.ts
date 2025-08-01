@@ -95,20 +95,22 @@ export class AgentExecutionService {
     agent,
   }: {
     system: string;
-    agent: AgentEntity;
+    agent: AgentEntity | null;
     prompt?: string;
     messages?: CoreMessage[];
   }) {
     try {
-      this.logger.log(
-        `Preparing AI request config for agent ${agent.id} with model ${agent.modelId}`,
-      );
+      if (agent) {
+        this.logger.log(
+          `Preparing AI request config for agent ${agent.id} with model ${agent.modelId}`,
+        );
+      }
 
       const aiModel = this.aiModelRegistryService.getEffectiveModelConfig(
-        agent.modelId,
+        agent?.modelId ?? 'auto',
       );
 
-      if (!aiModel) {
+      if (agent && !aiModel) {
         const error = `AI model with id ${agent.modelId} not found`;
 
         this.logger.error(error);
@@ -126,10 +128,12 @@ export class AgentExecutionService {
 
       await this.validateApiKey(provider);
 
-      const tools = await this.agentToolService.generateToolsForAgent(
-        agent.id,
-        agent.workspaceId,
-      );
+      const tools = agent
+        ? await this.agentToolService.generateToolsForAgent(
+            agent.id,
+            agent.workspaceId,
+          )
+        : {};
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
 
@@ -154,7 +158,7 @@ export class AgentExecutionService {
       };
     } catch (error) {
       this.logger.error(
-        `Failed to prepare AI request config for agent ${agent.id}:`,
+        `Failed to prepare AI request config for agent ${agent?.id ?? 'no agent'}`,
         error instanceof Error ? error.stack : error,
       );
       throw error;
@@ -345,14 +349,14 @@ export class AgentExecutionService {
     schema,
     userPrompt,
   }: {
-    agent: AgentEntity;
+    agent: AgentEntity | null;
     context: Record<string, unknown>;
     schema: OutputSchema;
     userPrompt: string;
   }): Promise<AgentExecutionResult> {
     try {
       const aiRequestConfig = await this.prepareAIRequestConfig({
-        system: `You are executing as part of a workflow automation. ${agent.prompt}`,
+        system: `You are executing as part of a workflow automation. ${agent ? agent.prompt : ''}`,
         agent,
         prompt: userPrompt,
       });
