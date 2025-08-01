@@ -5,8 +5,8 @@ import { In } from 'typeorm';
 
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
-    ApiKeyException,
-    ApiKeyExceptionCode,
+  ApiKeyException,
+  ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/api-key.exception';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
