@@ -9,7 +9,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { validateRelationCreationPayloadOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/validate-relation-creation-payload.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { FlatFieldMetadataAndParentFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadata.util';
+import { FlatFieldAndItsFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-and-its-flat-object-metadata.util';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
@@ -24,7 +24,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
   sourceParentFlatObjectMetadata,
   createFieldInput,
 }: FromRelationCreateFieldInputToFlatFieldMetadataArgs): Promise<
-  FlatFieldMetadataAndParentFlatObjectMetadata[]
+  FlatFieldAndItsFlatObjectMetadata[]
 > => {
   const { relationCreationPayload } = createFieldInput;
 
@@ -104,5 +104,5 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
       flatFieldMetadata: targetFlatFieldMetadata,
       parentFlatObjectMetadata: targetParentFlatObjectMetadata,
     },
-  ] satisfies FlatFieldMetadataAndParentFlatObjectMetadata<FieldMetadataType.RELATION>[];
+  ] satisfies FlatFieldAndItsFlatObjectMetadata<FieldMetadataType.RELATION>[];
 };

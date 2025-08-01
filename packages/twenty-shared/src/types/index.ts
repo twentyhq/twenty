@@ -17,6 +17,7 @@ export type { NonNullableRequired } from './NonNullableRequired';
 export type { NullablePartial } from './NullablePartial';
 export type { ObjectRecordsPermissions } from './ObjectRecordsPermissions';
 export type { ObjectRecordsPermissionsByRoleId } from './ObjectRecordsPermissionsByRoleId';
+export type { RelationAndMorphRelationFieldMetadataType } from './RelationAndMorphRelationFieldMetadataType';
 export type { RestrictedField } from './RestrictedField';
 export type { RestrictedFields } from './RestrictedFields';
 export type { StepFilterGroup, StepFilter } from './StepFilters';
