@@ -65,6 +65,11 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: false,
       },
+      {
+        key: FeatureFlagKey.IS_PIN_COMMAND_MENU_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
     ])
     .execute();
 };

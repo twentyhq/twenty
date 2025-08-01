@@ -30,6 +30,15 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       imagePath: '',
     },
   },
+  {
+    key: FeatureFlagKey.IS_PIN_COMMAND_MENU_ENABLED,
+    metadata: {
+      label: 'Pin Command Menu',
+      description:
+        'Allow users to pin the command menu to keep it open persistently',
+      imagePath: '',
+    },
+  },
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
         // {

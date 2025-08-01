@@ -2,6 +2,7 @@ import { COMMAND_MENU_ANIMATION_VARIANTS } from '@/command-menu/constants/Comman
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { isCommandMenuPersistentState } from '@/command-menu/states/isCommandMenuPersistentState';
 import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
 import { RECORD_CHIP_CLICK_OUTSIDE_ID } from '@/object-record/record-table/constants/RecordChipClickOutsideId';
 import { SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/SlashMenuDropdownClickOutsideId';
@@ -17,11 +18,11 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRef } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-const StyledCommandMenu = styled(motion.div)`
+const StyledCommandMenu = styled(motion.div)<{ isPersistent: boolean }>`
   background: ${({ theme }) => theme.background.primary};
   border-left: 1px solid ${({ theme }) => theme.border.color.medium};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
@@ -29,10 +30,11 @@ const StyledCommandMenu = styled(motion.div)`
   height: 100%;
   overflow: hidden;
   padding: 0;
-  position: fixed;
-  right: 0%;
-  top: 0%;
-  z-index: ${RootStackingContextZIndices.CommandMenu};
+  position: ${({ isPersistent }) => (isPersistent ? 'relative' : 'fixed')};
+  right: ${({ isPersistent }) => (isPersistent ? 'auto' : '0%')};
+  top: ${({ isPersistent }) => (isPersistent ? 'auto' : '0%')};
+  z-index: ${({ isPersistent }) =>
+    isPersistent ? 'auto' : RootStackingContextZIndices.CommandMenu};
   display: flex;
   flex-direction: column;
 `;
@@ -41,6 +43,7 @@ export const CommandMenuOpenContainer = ({
   children,
 }: React.PropsWithChildren) => {
   const isMobile = useIsMobile();
+  const isCommandMenuPersistent = useRecoilValue(isCommandMenuPersistentState);
 
   const targetVariantForAnimation: CommandMenuAnimationVariant = isMobile
     ? 'fullScreen'
@@ -55,6 +58,10 @@ export const CommandMenuOpenContainer = ({
   const handleClickOutside = useRecoilCallback(
     ({ snapshot }) =>
       (event: MouseEvent | TouchEvent) => {
+        if (isCommandMenuPersistent) {
+          return;
+        }
+
         const currentFocusId = snapshot
           .getLoadable(currentFocusIdSelector)
           .getValue();
@@ -65,7 +72,7 @@ export const CommandMenuOpenContainer = ({
           closeCommandMenu();
         }
       },
-    [closeCommandMenu],
+    [closeCommandMenu, isCommandMenuPersistent],
   );
 
   useListenClickOutside({
@@ -89,10 +96,14 @@ export const CommandMenuOpenContainer = ({
       data-click-outside-id={COMMAND_MENU_CLICK_OUTSIDE_ID}
       ref={commandMenuRef}
       animate={targetVariantForAnimation}
-      initial="closed"
-      exit="closed"
+      initial={isCommandMenuPersistent ? targetVariantForAnimation : 'closed'}
+      exit={isCommandMenuPersistent ? targetVariantForAnimation : 'closed'}
       variants={COMMAND_MENU_ANIMATION_VARIANTS}
-      transition={{ duration: theme.animation.duration.normal }}
+      transition={{
+        duration: theme.animation.duration.normal,
+        ease: 'easeInOut',
+      }}
+      isPersistent={isCommandMenuPersistent}
     >
       {children}
     </StyledCommandMenu>

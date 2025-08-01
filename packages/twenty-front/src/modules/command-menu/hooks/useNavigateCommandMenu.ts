@@ -10,6 +10,7 @@ import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isCommandMenuPersistentState } from '@/command-menu/states/isCommandMenuPersistentState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
@@ -42,6 +43,10 @@ export const useNavigateCommandMenu = () => {
           .getLoadable(isCommandMenuOpenedState)
           .getValue();
 
+        const isCommandMenuPersistent = snapshot
+          .getLoadable(isCommandMenuPersistentState)
+          .getValue();
+
         const isCommandMenuClosing = snapshot
           .getLoadable(isCommandMenuClosingState)
           .getValue();
@@ -50,7 +55,7 @@ export const useNavigateCommandMenu = () => {
           commandMenuCloseAnimationCompleteCleanup();
         }
 
-        if (isCommandMenuOpened) {
+        if (!isCommandMenuPersistent && isCommandMenuOpened) {
           return;
         }
 
@@ -64,6 +69,10 @@ export const useNavigateCommandMenu = () => {
             enableGlobalHotkeysConflictingWithKeyboard: false,
           },
         });
+
+        if (isCommandMenuOpened) {
+          return;
+        }
 
         copyContextStoreStates({
           instanceIdToCopyFrom: MAIN_CONTEXT_STORE_INSTANCE_ID,

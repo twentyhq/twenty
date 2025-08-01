@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 import { IconArrowMerge, IconDotsVertical } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 const StyledFooterContainer = styled.div`
   align-items: flex-end;
@@ -62,7 +63,7 @@ export const MergeRecordsFooter = ({
           accent="blue"
           size="medium"
           Icon={IconArrowMerge}
-          hotkeys={isMerging ? undefined : ['⌘', '⏎']}
+          hotkeys={isMerging ? undefined : [getOsControlSymbol(), '⏎']}
           onClick={handleMergeRecords}
           disabled={isMerging}
         />

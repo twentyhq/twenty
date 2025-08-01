@@ -10,20 +10,22 @@ import { useCommandMenuContextChips } from '@/command-menu/hooks/useCommandMenuC
 import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { isCommandMenuPersistentState } from '@/command-menu/states/isCommandMenuPersistentState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
-import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, IconX } from 'twenty-ui/display';
+import { IconChevronLeft, IconPin, IconPinnedOff } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
+import { useIsMobile } from 'twenty-ui/utilities';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -70,8 +72,16 @@ const StyledContentContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledCloseButtonWrapper = styled.div<{ isVisible: boolean }>`
-  visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')};
+const StyledButtonContainer = styled.div<{ isPersistent: boolean }>`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  justify-content: flex-end;
+  flex-shrink: 0;
+  white-space: nowrap;
+  margin-right: ${({ isPersistent, theme }) =>
+    isPersistent
+      ? '0'
+      : `calc(${theme.icon.size.sm}px + ${theme.spacing(2)} * 2 + ${theme.spacing(2)})`};
 `;
 
 export const CommandMenuTopBar = () => {
@@ -88,7 +98,7 @@ export const CommandMenuTopBar = () => {
 
   const isMobile = useIsMobile();
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { toggleCommandMenuPersistent } = useCommandMenu();
 
   const { goBackFromCommandMenu } = useCommandMenuHistory();
 
@@ -99,14 +109,15 @@ export const CommandMenuTopBar = () => {
 
   const commandMenuPage = useRecoilValue(commandMenuPageState);
 
+  const isCommandMenuPersistent = useRecoilValue(isCommandMenuPersistentState);
+
+  const isPinCommandMenuEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_PIN_COMMAND_MENU_ENABLED,
+  );
+
   const theme = useTheme();
 
   const { contextChips } = useCommandMenuContextChips();
-
-  const location = useLocation();
-  const isButtonVisible =
-    !location.pathname.startsWith('/objects/') &&
-    !location.pathname.startsWith('/object/');
 
   const backButtonAnimationDuration =
     contextChips.length > 0 ? theme.animation.duration.instant : 0;
@@ -154,18 +165,23 @@ export const CommandMenuTopBar = () => {
         )}
       </StyledContentContainer>
       {!isMobile && (
-        <StyledCloseButtonWrapper isVisible={isButtonVisible}>
-          <Button
-            Icon={IconX}
-            dataTestId="page-header-close-command-menu-button"
-            size={'small'}
-            variant="secondary"
-            accent="default"
-            hotkeys={[getOsControlSymbol(), 'K']}
-            ariaLabel="Close command menu"
-            onClick={closeCommandMenu}
-          />
-        </StyledCloseButtonWrapper>
+        <StyledButtonContainer isPersistent={isCommandMenuPersistent}>
+          {isPinCommandMenuEnabled && (
+            <Button
+              Icon={isCommandMenuPersistent ? IconPinnedOff : IconPin}
+              dataTestId="command-menu-persistent-toggle-button"
+              size={'small'}
+              variant="secondary"
+              accent="default"
+              ariaLabel={
+                isCommandMenuPersistent
+                  ? 'Unpin command menu'
+                  : 'Pin command menu'
+              }
+              onClick={toggleCommandMenuPersistent}
+            />
+          )}
+        </StyledButtonContainer>
       )}
     </StyledInputContainer>
   );

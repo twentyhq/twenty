@@ -5,7 +5,7 @@ import {
   useNavigate,
   useParams,
 } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import {
   setSessionId,
@@ -16,6 +16,7 @@ import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCapt
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { isCommandMenuPersistentState } from '@/command-menu/states/isCommandMenuPersistentState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -95,6 +96,10 @@ export const PageChangeEffect = () => {
 
   const { resetFocusStackToRecordIndex } = useResetFocusStackToRecordIndex();
 
+  const [isCommandMenuPersistent, setIsCommandMenuPersistent] = useRecoilState(
+    isCommandMenuPersistentState,
+  );
+
   useEffect(() => {
     closeCommandMenu();
   }, [location.pathname, closeCommandMenu]);
@@ -141,6 +146,10 @@ export const PageChangeEffect = () => {
         break;
       }
       case isMatchingLocation(location, AppPath.RecordShowPage): {
+        if (isCommandMenuPersistent) {
+          return;
+        }
+
         resetFocusStackToFocusItem({
           focusStackItem: {
             focusId: PageFocusId.RecordShowPage,
@@ -269,6 +278,9 @@ export const PageChangeEffect = () => {
         break;
       }
       case location.pathname.startsWith(AppBasePath.Settings): {
+        setIsCommandMenuPersistent(false);
+        closeCommandMenu();
+
         resetFocusStackToFocusItem({
           focusStackItem: {
             focusId: PageFocusId.Settings,
@@ -289,6 +301,7 @@ export const PageChangeEffect = () => {
     location,
     previousLocation,
     contextStoreCurrentViewType,
+    isCommandMenuPersistent,
     resetTableSelections,
     unfocusRecordTableRow,
     deactivateRecordTableRow,
@@ -297,6 +310,8 @@ export const PageChangeEffect = () => {
     unfocusBoardCard,
     resetFocusStackToRecordIndex,
     resetFocusStackToFocusItem,
+    setIsCommandMenuPersistent,
+    closeCommandMenu,
   ]);
 
   useEffect(() => {

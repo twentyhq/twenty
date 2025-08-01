@@ -1,5 +1,6 @@
 import { AuthModal } from '@/auth/components/AuthModal';
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
+import { isCommandMenuPersistentState } from '@/command-menu/states/isCommandMenuPersistentState';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
 import { AppPageErrorFallback } from '@/error-handler/components/AppPageErrorFallback';
@@ -18,6 +19,7 @@ import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import { useScreenSize } from 'twenty-ui/utilities';
 
 const StyledLayout = styled.div`
@@ -50,9 +52,12 @@ const StyledAppNavigationDrawerMock = styled(SignInAppNavigationDrawerMock)`
   flex-shrink: 0;
 `;
 
-const StyledMainContainer = styled.div`
+const StyledMainContainer = styled.div<{
+  hasCommandMenuPersistent: boolean;
+}>`
   display: flex;
-  flex: 0 1 100%;
+  flex: ${({ hasCommandMenuPersistent }) =>
+    hasCommandMenuPersistent ? '1' : '0 1 100%'};
   overflow: hidden;
 `;
 
@@ -63,6 +68,7 @@ export const DefaultLayout = () => {
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
+  const isCommandMenuPersistent = useRecoilValue(isCommandMenuPersistentState);
 
   return (
     <>
@@ -90,12 +96,6 @@ export const DefaultLayout = () => {
               duration: theme.animation.duration.normal,
             }}
           >
-            {!showAuthModal && (
-              <>
-                <CommandMenuRouter />
-                <KeyboardShortcutMenu />
-              </>
-            )}
             {showAuthModal ? (
               <StyledAppNavigationDrawerMock />
             ) : useShowFullScreen ? null : (
@@ -103,7 +103,7 @@ export const DefaultLayout = () => {
             )}
             {showAuthModal ? (
               <>
-                <StyledMainContainer>
+                <StyledMainContainer hasCommandMenuPersistent={false}>
                   <SignInBackgroundMockPage />
                 </StyledMainContainer>
                 <AnimatePresence mode="wait">
@@ -115,12 +115,20 @@ export const DefaultLayout = () => {
                 </AnimatePresence>
               </>
             ) : (
-              <StyledMainContainer>
-                <AppErrorBoundary FallbackComponent={AppPageErrorFallback}>
-                  <Outlet />
-                </AppErrorBoundary>
-              </StyledMainContainer>
+              <>
+                <StyledMainContainer
+                  hasCommandMenuPersistent={
+                    !isMobile && isCommandMenuPersistent
+                  }
+                >
+                  <AppErrorBoundary FallbackComponent={AppPageErrorFallback}>
+                    <Outlet />
+                  </AppErrorBoundary>
+                </StyledMainContainer>
+              </>
             )}
+            {!showAuthModal && <CommandMenuRouter />}
+            {!showAuthModal && <KeyboardShortcutMenu />}
           </StyledPageContainer>
           {isMobile && !showAuthModal && <MobileNavigationBar />}
         </AppErrorBoundary>
