@@ -32,7 +32,7 @@ export class AgentHandoffExecutorService {
 
   async executeHandoff(handoffRequest: HandoffRequest) {
     try {
-      const { fromAgentId, toAgentId, workspaceId, reason } = handoffRequest;
+      const { fromAgentId, toAgentId, workspaceId } = handoffRequest;
 
       const canHandoff = await this.agentHandoffService.canHandoffTo({
         fromAgentId,

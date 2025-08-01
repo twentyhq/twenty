@@ -32,12 +32,6 @@ const StyledTable = styled(Table)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
-const StyledTextContainerWithEllipsis = styled.div`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
 const StyledSearchContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
