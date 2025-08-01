@@ -522,10 +522,10 @@ msgstr "Всі ({relationRecordsCount})"
 msgid "All Actions Access"
 msgstr "Доступ до всіх дій"
 
-#. js-lingui-id: 7EZqN0
+#. js-lingui-id: dJn2LR
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-msgid "All emails and events linked to this account will be deleted"
-msgstr "Всі електронні листи та події, пов'язані з цим обліковим записом, будуть видалені"
+msgid "All emails and events linked to this account ({accountHandle}) will be deleted"
+msgstr ""
 
 #. js-lingui-id: 3xugyj
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx

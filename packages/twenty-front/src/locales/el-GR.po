@@ -522,10 +522,10 @@ msgstr "Όλα ({relationRecordsCount})"
 msgid "All Actions Access"
 msgstr "Πρόσβαση σε Όλες τις Ενέργειες"
 
-#. js-lingui-id: 7EZqN0
+#. js-lingui-id: dJn2LR
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-msgid "All emails and events linked to this account will be deleted"
-msgstr "Όλα τα emails και τα γεγονότα που συνδέονται με αυτόν τον λογαριασμό θα διαγραφούν"
+msgid "All emails and events linked to this account ({accountHandle}) will be deleted"
+msgstr ""
 
 #. js-lingui-id: 3xugyj
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
