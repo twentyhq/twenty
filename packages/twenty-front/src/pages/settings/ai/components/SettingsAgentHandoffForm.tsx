@@ -54,6 +54,8 @@ export const SettingsAgentHandoffForm = ({
 
   const [createAgentHandoff] = useCreateAgentHandoffMutation();
 
+  const noAvailableAgents = availableAgentOptions.length === 0;
+
   const resetHandoffForm = () => {
     setIsAddingHandoff(false);
     setSelectedTargetAgentId('');
@@ -134,13 +136,13 @@ export const SettingsAgentHandoffForm = ({
             title={
               agentsLoading
                 ? t`Loading...`
-                : availableAgentOptions.length === 0
+                : noAvailableAgents
                   ? t`No agents available for handoff`
                   : t`Add Handoff`
             }
             Icon={IconPlus}
             onClick={() => setIsAddingHandoff(true)}
-            disabled={agentsLoading || availableAgentOptions.length === 0}
+            disabled={agentsLoading || noAvailableAgents}
           />
         </StyledAddButtonContainer>
       )}
