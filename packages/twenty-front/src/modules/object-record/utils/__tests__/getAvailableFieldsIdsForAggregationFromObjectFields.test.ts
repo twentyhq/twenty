@@ -67,10 +67,11 @@ jest.mock(
 
 describe('getAvailableFieldsIdsForAggregationFromObjectFields', () => {
   it('should handle empty fields array', () => {
-    const result = getAvailableFieldsIdsForAggregationFromObjectFields(
-      [],
-      COUNT_AGGREGATE_OPERATION_OPTIONS,
-    );
+    const result = getAvailableFieldsIdsForAggregationFromObjectFields({
+      fields: [],
+      targetAggregateOperations: COUNT_AGGREGATE_OPERATION_OPTIONS,
+      restrictedFieldMetadataIds: [],
+    });
 
     COUNT_AGGREGATE_OPERATION_OPTIONS.forEach((operation) => {
       expect(result[operation]).toEqual([]);
@@ -79,10 +80,11 @@ describe('getAvailableFieldsIdsForAggregationFromObjectFields', () => {
 
   describe('with count aggregate operations', () => {
     it('should include all fields', () => {
-      const result = getAvailableFieldsIdsForAggregationFromObjectFields(
-        FIELDS_MOCKS as FieldMetadataItem[],
-        COUNT_AGGREGATE_OPERATION_OPTIONS,
-      );
+      const result = getAvailableFieldsIdsForAggregationFromObjectFields({
+        fields: FIELDS_MOCKS as FieldMetadataItem[],
+        targetAggregateOperations: COUNT_AGGREGATE_OPERATION_OPTIONS,
+        restrictedFieldMetadataIds: [],
+      });
 
       expect(result.COUNT).toEqual(
         expect.arrayContaining([
@@ -107,10 +109,11 @@ describe('getAvailableFieldsIdsForAggregationFromObjectFields', () => {
 
   describe('with percentage aggregate operations', () => {
     it('should include all fields', () => {
-      const result = getAvailableFieldsIdsForAggregationFromObjectFields(
-        FIELDS_MOCKS as FieldMetadataItem[],
-        PERCENT_AGGREGATE_OPERATION_OPTIONS,
-      );
+      const result = getAvailableFieldsIdsForAggregationFromObjectFields({
+        fields: FIELDS_MOCKS as FieldMetadataItem[],
+        targetAggregateOperations: PERCENT_AGGREGATE_OPERATION_OPTIONS,
+        restrictedFieldMetadataIds: [],
+      });
 
       PERCENT_AGGREGATE_OPERATION_OPTIONS.forEach((operation) => {
         expect(result[operation]).toEqual([
@@ -132,10 +135,11 @@ describe('getAvailableFieldsIdsForAggregationFromObjectFields', () => {
 
   describe('with non standard aggregate operations', () => {
     it('should exclude non-numeric fields', () => {
-      const result = getAvailableFieldsIdsForAggregationFromObjectFields(
-        FIELDS_MOCKS as FieldMetadataItem[],
-        NON_STANDARD_AGGREGATE_OPERATION_OPTIONS,
-      );
+      const result = getAvailableFieldsIdsForAggregationFromObjectFields({
+        fields: FIELDS_MOCKS as FieldMetadataItem[],
+        targetAggregateOperations: NON_STANDARD_AGGREGATE_OPERATION_OPTIONS,
+        restrictedFieldMetadataIds: [],
+      });
 
       COUNT_AGGREGATE_OPERATION_OPTIONS.forEach((operation) => {
         expect(result[operation]).toBeUndefined();
