@@ -54,7 +54,7 @@ export class UserWorkspace {
   @JoinColumn({ name: 'userId' })
   user: Relation<User>;
 
-  @Field({ nullable: false })
+  @Field(() => UUIDScalarType, { nullable: false })
   @Column()
   userId: string;
 
@@ -65,7 +65,7 @@ export class UserWorkspace {
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<Workspace>;
 
-  @Field({ nullable: false })
+  @Field(() => UUIDScalarType, { nullable: false })
   @Column()
   workspaceId: string;
 

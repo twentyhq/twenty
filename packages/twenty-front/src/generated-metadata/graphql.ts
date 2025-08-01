@@ -111,7 +111,7 @@ export type ApiKey = {
   revokedAt?: Maybe<Scalars['DateTime']>;
   updatedAt: Scalars['DateTime'];
   workspace: Workspace;
-  workspaceId: Scalars['String'];
+  workspaceId: Scalars['UUID'];
 };
 
 export type ApiKeyToken = {
@@ -683,7 +683,7 @@ export type DeletedWorkspaceMember = {
   id: Scalars['UUID'];
   name: FullName;
   userEmail: Scalars['String'];
-  userWorkspaceId?: Maybe<Scalars['String']>;
+  userWorkspaceId?: Maybe<Scalars['UUID']>;
 };
 
 /** Schema update on a table */
@@ -734,7 +734,7 @@ export type FeatureFlag = {
   id: Scalars['UUID'];
   key: FeatureFlagKey;
   value: Scalars['Boolean'];
-  workspaceId: Scalars['String'];
+  workspaceId: Scalars['UUID'];
 };
 
 export type FeatureFlagDto = {
@@ -1297,9 +1297,9 @@ export type MutationCreateOidcIdentityProviderArgs = {
 
 export type MutationCreateObjectEventArgs = {
   event: Scalars['String'];
-  objectMetadataId: Scalars['String'];
+  objectMetadataId: Scalars['UUID'];
   properties?: InputMaybe<Scalars['JSON']>;
-  recordId: Scalars['String'];
+  recordId: Scalars['UUID'];
 };
 
 
@@ -2378,7 +2378,7 @@ export type SearchRecord = {
   imageUrl?: Maybe<Scalars['String']>;
   label: Scalars['String'];
   objectNameSingular: Scalars['String'];
-  recordId: Scalars['String'];
+  recordId: Scalars['UUID'];
   tsRank: Scalars['Float'];
   tsRankCD: Scalars['Float'];
 };
@@ -2894,9 +2894,9 @@ export type UserWorkspace = {
   twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticationMethodDto>>;
   updatedAt: Scalars['DateTime'];
   user: User;
-  userId: Scalars['String'];
+  userId: Scalars['UUID'];
   workspace?: Maybe<Workspace>;
-  workspaceId: Scalars['String'];
+  workspaceId: Scalars['UUID'];
 };
 
 export type ValidateApprovedAccessDomainInput = {
@@ -2932,7 +2932,7 @@ export type Webhook = {
   targetUrl: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   workspace: Workspace;
-  workspaceId: Scalars['String'];
+  workspaceId: Scalars['UUID'];
 };
 
 export type WorkerQueueMetrics = {
@@ -3052,7 +3052,7 @@ export type WorkspaceMember = {
   timeFormat?: Maybe<WorkspaceMemberTimeFormatEnum>;
   timeZone?: Maybe<Scalars['String']>;
   userEmail: Scalars['String'];
-  userWorkspaceId?: Maybe<Scalars['String']>;
+  userWorkspaceId?: Maybe<Scalars['UUID']>;
 };
 
 /** Date format as Month first, Day first, Year first or system as default */

@@ -56,6 +56,6 @@ export class WorkspaceMember {
   @Field(() => [RoleDTO], { nullable: true })
   roles?: RoleDTO[];
 
-  @Field(() => String, { nullable: true })
+  @Field(() => UUIDScalarType, { nullable: true })
   userWorkspaceId?: string;
 }

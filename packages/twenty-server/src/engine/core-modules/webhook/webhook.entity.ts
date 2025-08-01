@@ -41,7 +41,7 @@ export class Webhook {
   @Column()
   secret: string;
 
-  @Field()
+  @Field(() => UUIDScalarType)
   @Column('uuid')
   workspaceId: string;
 
