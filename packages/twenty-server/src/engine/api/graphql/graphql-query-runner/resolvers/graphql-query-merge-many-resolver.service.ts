@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-    MUTATION_MAX_MERGE_RECORDS,
-    QUERY_MAX_RECORDS,
+  MUTATION_MAX_MERGE_RECORDS,
+  QUERY_MAX_RECORDS,
 } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -10,8 +10,8 @@ import { In } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
-    GraphqlQueryBaseResolverService,
-    GraphqlQueryResolverExecutionArgs,
+  GraphqlQueryBaseResolverService,
+  GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
@@ -20,14 +20,13 @@ import { FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import {
-    GraphqlQueryRunnerException,
-    GraphqlQueryRunnerExceptionCode,
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -44,7 +43,6 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
 
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<MergeManyResolverArgs>,
-    featureFlagsMap: Record<FeatureFlagKey, boolean>,
   ): Promise<ObjectRecord> {
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
@@ -104,7 +102,6 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
         updatedRecords: [updatedRecord],
         authContext,
         roleId,
-        featureFlagsMap,
       });
     }
 
@@ -365,13 +362,11 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     updatedRecords,
     authContext,
     roleId,
-    featureFlagsMap,
   }: {
     executionArgs: GraphqlQueryResolverExecutionArgs<MergeManyResolverArgs>;
     updatedRecords: ObjectRecord[];
     authContext: AuthContext;
     roleId: string;
-    featureFlagsMap: Record<FeatureFlagKey, boolean>;
   }): Promise<void> {
     const { objectMetadataMaps, objectMetadataItemWithFieldMaps } =
       executionArgs.options;
