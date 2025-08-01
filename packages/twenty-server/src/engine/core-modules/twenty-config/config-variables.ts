@@ -973,6 +973,15 @@ export class ConfigVariables {
   CLOUDFLARE_WEBHOOK_SECRET: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description:
+      'Id to generate value for CNAME record to validate ownership and manage ssl for custom hostname with Cloudflare',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  CLOUDFLARE_DCV_DELEGATION_ID: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
       'Default model ID for AI operations (can be any available model)',

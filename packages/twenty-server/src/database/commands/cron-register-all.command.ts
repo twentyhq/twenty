@@ -10,6 +10,7 @@ import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/mess
 import { MessagingMessagesImportCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-messages-import.cron.command';
 import { MessagingOngoingStaleCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-ongoing-stale.cron.command';
 import { CronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/cron-trigger.cron.command';
+import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-modules/domain-manager/crons/commands/check-custom-domain-valid-records.cron.command';
 
 @Command({
   name: 'cron:register:all',
@@ -27,6 +28,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly calendarOngoingStaleCronCommand: CalendarOngoingStaleCronCommand,
     private readonly cronTriggerCronCommand: CronTriggerCronCommand,
     private readonly cleanupOrphanedFilesCronCommand: CleanupOrphanedFilesCronCommand,
+    private readonly checkCustomDomainValidRecordsCronCommand: CheckCustomDomainValidRecordsCronCommand,
   ) {
     super();
   }
@@ -63,6 +65,10 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'CleanupOrphanedFiles',
         command: this.cleanupOrphanedFilesCronCommand,
+      },
+      {
+        name: 'CheckCustomDomainValidRecords',
+        command: this.checkCustomDomainValidRecordsCronCommand,
       },
     ];
 

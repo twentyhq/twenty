@@ -1,11 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class GraphqlQueryRunnerException extends CustomException {
-  declare code: GraphqlQueryRunnerExceptionCode;
-  constructor(message: string, code: GraphqlQueryRunnerExceptionCode) {
-    super(message, code);
-  }
-}
+export class GraphqlQueryRunnerException extends CustomException<GraphqlQueryRunnerExceptionCode> {}
 
 export enum GraphqlQueryRunnerExceptionCode {
   INVALID_QUERY_INPUT = 'INVALID_QUERY_INPUT',
