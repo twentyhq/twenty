@@ -68,6 +68,12 @@ export class EntityEventsToDbListener {
       (event) => event.objectMetadata?.isAuditLogged,
     );
 
+    this.logger.log(
+      `handleEvent called for ${filteredEvents.length} events, action: ${action}, objectMetadata: ${JSON.stringify(
+        batchEvent.events[0].objectMetadata.nameSingular,
+      )}`,
+    );
+
     if (filteredEvents.length === 0) {
       return;
     }

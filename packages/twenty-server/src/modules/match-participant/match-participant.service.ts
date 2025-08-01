@@ -98,6 +98,11 @@ export class MatchParticipantService<
         { shouldBypassPermissionChecks: true },
       );
 
+    const participantRepository = await this.getParticipantRepository(
+      workspaceId,
+      objectMetadataName,
+    );
+
     const workspaceMemberRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
@@ -130,53 +135,51 @@ export class MatchParticipantService<
         transactionManager,
       );
 
-      const partipantsWithNewMatch = participants.map((participant) => {
-        const person = findPersonByPrimaryOrAdditionalEmail({
-          people,
-          email: participant.handle,
-        });
+      const partipantsToBeUpdated = participants
+        .map((participant) => {
+          const person = findPersonByPrimaryOrAdditionalEmail({
+            people,
+            email: participant.handle,
+          });
 
-        const workspaceMember = workspaceMembers.find(
-          (workspaceMember) => workspaceMember.userEmail === participant.handle,
-        );
-
-        const shouldMatchWithPerson =
-          matchWith === 'workspaceMemberAndPerson' ||
-          matchWith === 'personOnly';
-
-        const shouldMatchWithWorkspaceMember =
-          matchWith === 'workspaceMemberAndPerson' ||
-          matchWith === 'workspaceMemberOnly';
-
-        return {
-          ...participant,
-          ...(shouldMatchWithPerson && {
-            personId: isDefined(person) ? person.id : null,
-          }),
-          ...(shouldMatchWithWorkspaceMember && {
-            workspaceMemberId: isDefined(workspaceMember)
-              ? workspaceMember.id
-              : null,
-          }),
-        };
-      });
-
-      if (objectMetadataName === 'messageParticipant') {
-        const participantRepository =
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageParticipantWorkspaceEntity>(
-            workspaceId,
-            objectMetadataName,
+          const workspaceMember = workspaceMembers.find(
+            (workspaceMember) =>
+              workspaceMember.userEmail === participant.handle,
           );
 
-        await participantRepository.save(partipantsWithNewMatch);
-      } else {
-        const participantRepository =
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace<CalendarEventParticipantWorkspaceEntity>(
-            workspaceId,
-            objectMetadataName,
-          );
+          const shouldMatchWithPerson =
+            matchWith === 'workspaceMemberAndPerson' ||
+            matchWith === 'personOnly';
 
-        await participantRepository.save(partipantsWithNewMatch);
+          const shouldMatchWithWorkspaceMember =
+            matchWith === 'workspaceMemberAndPerson' ||
+            matchWith === 'workspaceMemberOnly';
+
+          const newParticipant = {
+            ...participant,
+            ...(shouldMatchWithPerson && {
+              personId: isDefined(person) ? person.id : null,
+            }),
+            ...(shouldMatchWithWorkspaceMember && {
+              workspaceMemberId: isDefined(workspaceMember)
+                ? workspaceMember.id
+                : null,
+            }),
+          };
+
+          if (
+            newParticipant.personId === participant.personId &&
+            newParticipant.workspaceMemberId === participant.workspaceMemberId
+          ) {
+            return null;
+          }
+
+          return newParticipant;
+        })
+        .filter(isDefined);
+
+      for (const participant of partipantsToBeUpdated) {
+        await participantRepository.update(participant.id, participant);
       }
 
       this.workspaceEventEmitter.emitCustomBatchEvent(
@@ -184,7 +187,7 @@ export class MatchParticipantService<
         [
           {
             workspaceMemberId: null,
-            participants: partipantsWithNewMatch,
+            participants: partipantsToBeUpdated,
           },
         ],
         workspaceId,
