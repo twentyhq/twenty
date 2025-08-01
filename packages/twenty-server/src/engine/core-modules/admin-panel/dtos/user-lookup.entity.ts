@@ -1,10 +1,11 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @ObjectType()
 class UserInfo {
-  @Field(() => String)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @Field(() => String)
@@ -19,7 +20,7 @@ class UserInfo {
 
 @ObjectType()
 class WorkspaceInfo {
-  @Field(() => String)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @Field(() => String)

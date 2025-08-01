@@ -1,8 +1,10 @@
-import { InputType, Field, ID } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
+
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
 export class RemoteTableInput {
-  @Field(() => ID)
+  @Field(() => UUIDScalarType)
   remoteServerId: string;
 
   @Field(() => String)

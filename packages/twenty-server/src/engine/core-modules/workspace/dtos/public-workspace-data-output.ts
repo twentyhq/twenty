@@ -1,15 +1,16 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import {
   IdentityProviderType,
   SSOIdentityProviderStatus,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { WorkspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @ObjectType()
 export class SSOIdentityProvider {
-  @Field(() => String)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @Field(() => String)
@@ -45,7 +46,7 @@ export class AuthProviders {
 
 @ObjectType()
 export class PublicWorkspaceDataOutput {
-  @Field(() => String)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @Field(() => AuthProviders)
