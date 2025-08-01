@@ -1,0 +1,53 @@
+---
+title: Configure your workspace
+info: Start configuring your workspace with these three steps.
+icon: IconNote
+image: /images/user-guide/create-workspace/workspace-cover.png
+sectionInfo: Discover Twenty, an open-source CRM.
+---
+
+Every business works differently. That’s why Twenty lets you shape the CRM around your needs—not force your process into ours. These three steps will help you set it up your way.
+
+## Connect your mailbox
+If you have not done so when creating your workspace, connect you Google or Microsoft account. This allows Twenty to:
+- Import your messages and meetings
+- Auto-create contacts based on interactions (optional)
+- Keep communication history visible for your team
+
+You can do so under Settings → Accounts.
+
+You control which contacts are imported in Twenty and what gets shared with the rest of your team: full message content, subjext and the metadata (sender, date, subject), or just the metadata. This is the same for your meetings.
+Configure the visibility and contact creation preferences under the Email and Calendar settings.
+
+
+## Import data via csv
+Bringing your existing data into Twenty gives your team context from the start. Use the csv import to add the contacts who are not in your mailbox, as well as your previous deals, notes, tasks.
+Import via csv is available for any custom object.
+
+To import a CSV, make sure you’re on the right object first—like 'All people’ if you’re uploading people. Then open the Command menu and choose ```Import records```. 
+- Download the sample to provide a csv in the expected format.
+- You can upload up to 10k records per csv
+- Do not include duplicate emails for People or duplicate domains for Companies. These fields are used as unique identifiers, alongside the id fields.
+- Creating relations between objects via csv currently needs to be done providing the records ids. Here is an example:
+  - Upload your companies in Twenty
+  - Export all the companies from Twenty
+  - Add in your People.csv a column companyId, containing the if of the related company in Twenty.
+  - Map this field to the Company when uploading your People records.
+  Relations will be supported by the csv import function during the Fall 2025. Please reach out to us to get any help importing your data.
+
+## Create your first custom view and save it as Favourite
+Creating different views is key to make the data actionable for you and your team.
+
+Start editing a table view:
+-  Add or hide columns.
+    - Hide a column clicking on its name and then ```Hide```
+    - Add a column clicking on the ```+``` at the very right of the table.
+    - You can also manage the fields visible in a given view clicking on Options and then Fields.
+- Reorder fields
+  - Use the Move Left, Move Right functions when clicking on the column name or reorder the fields under the Options / Fields section.
+- Filter records by value or status
+- Sort records
+And then Save it. You can also switch to Kanban layout or Group by layout if your object has a “stage” or similar select-type field.
+Finally, you can add it to your Favourties section using the dropdown menu showing the different views.
+
+<ArticleEditContent></ArticleEditContent>
