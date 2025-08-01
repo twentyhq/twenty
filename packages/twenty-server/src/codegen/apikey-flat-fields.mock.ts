@@ -1,7 +1,9 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { DateDisplayFormat } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 export const APIKEY_FLAT_FIELDS_MOCK = {
   name: getFlatFieldMetadataMock({
