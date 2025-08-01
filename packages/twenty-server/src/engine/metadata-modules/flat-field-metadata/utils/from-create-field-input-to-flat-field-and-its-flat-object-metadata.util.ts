@@ -24,18 +24,18 @@ type FromCreateFieldInputToFlatObjectMetadata = {
   rawCreateFieldInput: CreateFieldInput;
   existingFlatObjectMetadatas: FlatObjectMetadata[];
 };
-export type FlatFieldMetadataAndParentFlatObjectMetadata<
+export type FlatFieldAndItsFlatObjectMetadata<
   T extends FieldMetadataType = FieldMetadataType,
 > = {
   flatFieldMetadata: FlatFieldMetadata<T>;
   parentFlatObjectMetadata: FlatObjectMetadata;
 };
 
-export const fromCreateFieldInputToFlatFieldMetadata = async ({
+export const fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata = async ({
   existingFlatObjectMetadatas,
   rawCreateFieldInput,
 }: FromCreateFieldInputToFlatObjectMetadata): Promise<
-  FlatFieldMetadataAndParentFlatObjectMetadata[]
+  FlatFieldAndItsFlatObjectMetadata[]
 > => {
   if (rawCreateFieldInput.isRemoteCreation) {
     throw new FieldMetadataException(
