@@ -12,10 +12,8 @@ import { MatchParticipantService } from 'src/modules/match-participant/match-par
 
 export type CalendarEventParticipantMatchParticipantJobData = {
   workspaceId: string;
-  isPrimaryEmail: boolean;
-  email: string;
-  personId?: string;
-  workspaceMemberId?: string;
+  personIds: string[];
+  workspaceMemberIds: string[];
 };
 
 @Processor({
@@ -33,8 +31,7 @@ export class CalendarEventParticipantMatchParticipantJob {
   async handle(
     data: CalendarEventParticipantMatchParticipantJobData,
   ): Promise<void> {
-    const { workspaceId, isPrimaryEmail, email, personId, workspaceMemberId } =
-      data;
+    const { workspaceId, personIds, workspaceMemberIds } = data;
 
     const workspace = await this.workspaceRepository.findOne({
       where: {
@@ -46,23 +43,18 @@ export class CalendarEventParticipantMatchParticipantJob {
       return;
     }
 
-    if (personId) {
-      await this.matchParticipantService.matchParticipantsAfterPersonCreation({
-        handle: email,
-        isPrimaryEmail,
+    if (personIds.length > 0) {
+      await this.matchParticipantService.matchParticipantsForPeople({
         objectMetadataName: 'calendarEventParticipant',
-        personId,
+        personIds,
       });
     }
 
-    if (workspaceMemberId) {
-      await this.matchParticipantService.matchParticipantsAfterWorkspaceMemberCreation(
-        {
-          handle: email,
-          objectMetadataName: 'calendarEventParticipant',
-          workspaceMemberId,
-        },
-      );
+    if (workspaceMemberIds.length > 0) {
+      await this.matchParticipantService.matchParticipantsForWorkspaceMembers({
+        objectMetadataName: 'calendarEventParticipant',
+        workspaceMemberIds,
+      });
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -21,6 +21,7 @@ import { ObjectRecordEventForWebhook } from 'src/modules/webhook/types/object-re
 
 @Injectable()
 export class EntityEventsToDbListener {
+  private readonly logger = new Logger(EntityEventsToDbListener.name);
   constructor(
     @InjectMessageQueue(MessageQueue.entityEventsToDbQueue)
     private readonly entityEventsToDbQueueService: MessageQueueService,
@@ -63,6 +64,10 @@ export class EntityEventsToDbListener {
     batchEvent: WorkspaceEventBatch<T>,
     action: DatabaseEventAction,
   ) {
+    this.logger.log(
+      `handleEvent called for ${batchEvent.events.length} events, action: ${action}`,
+    );
+
     const filteredEvents = batchEvent.events.filter(
       (event) => event.objectMetadata?.isAuditLogged,
     );
