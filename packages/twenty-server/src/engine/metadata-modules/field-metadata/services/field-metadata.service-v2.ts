@@ -15,7 +15,6 @@ import {
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-and-its-flat-object-metadata.util';
-import { mergeTwoFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/merge-two-flat-field-metadatas.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   FlatObjectAndFlatFieldsToCreate,
@@ -23,25 +22,12 @@ import {
 } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-field-and-flat-object-metadata-array-to-flat-object-and-flat-fields-to-create.util';
 import { fromObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-maps-to-flat-object-metadatas.util';
 import { mergeTwoFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/merge-two-flat-object-metadatas.util';
+import { optimisticallyApplyFlatFieldMetadatasToCreateToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/optimistically-apply-flat-field-metadatas-to-create-to-flat-object-metadata.util';
 import { removeFlatFieldMetadataFromFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/remove-flat-field-metadata-from-flat-object-metadatas.util';
 import { getFieldMetadataEntityFromCachedObjectMetadataMaps } from 'src/engine/metadata-modules/utils/get-field-metadata-entity-from-cached-object-metadata-maps.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
-
-const optimisticallyApplyFlatFieldMetadataCreationToFlatObjectMetadata = (
-  args: FlatObjectAndFlatFieldsToCreate[],
-): FlatObjectMetadata[] => {
-  return args.map(({ flatObjectMetadata, toCreateFlatFieldMetadata }) => {
-    return {
-      ...flatObjectMetadata,
-      flatFieldMetadatas: mergeTwoFlatFieldMetadatas({
-        destFlatFieldMetadatas: flatObjectMetadata.flatFieldMetadatas,
-        toMergeFlatFieldMetadatas: toCreateFlatFieldMetadata,
-      }),
-    };
-  });
-};
 
 type ValidateFlatFieldMetadatasToCreateArgs = {
   flatObjectAndFlatFieldsToCreate: FlatObjectAndFlatFieldsToCreate;
@@ -141,14 +127,14 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
 
     let flatObjectMetadatasWithNewFields: FlatObjectMetadata[] = [];
 
-    for (const FlatFieldsToCreateAndItsParentFlatObject of flatObjectAndFlatFieldToCreateCollection) {
+    for (const flatFieldsToCreateAndItsParentFlatObject of flatObjectAndFlatFieldToCreateCollection) {
       const optimisticRenderedFlatObjectMetadatas =
-        optimisticallyApplyFlatFieldMetadataCreationToFlatObjectMetadata(
-          FlatFieldsToCreateAndItsParentFlatObject,
+        optimisticallyApplyFlatFieldMetadatasToCreateToFlatObjectMetadata(
+          flatFieldsToCreateAndItsParentFlatObject,
         );
 
       const flatFieldMetadataValidationPromises =
-        FlatFieldsToCreateAndItsParentFlatObject.map(
+        flatFieldsToCreateAndItsParentFlatObject.map(
           (flatObjectAndFlatFieldsToCreate) =>
             this.validateFlatFieldMetadatasToCreate({
               existingFlatObjectMetadatas,

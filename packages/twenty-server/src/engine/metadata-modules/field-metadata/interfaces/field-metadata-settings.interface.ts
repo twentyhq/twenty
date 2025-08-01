@@ -47,7 +47,7 @@ type FieldMetadataSettingsMapping = {
   [FieldMetadataType.DATE_TIME]: FieldMetadataDateTimeSettings | null;
   [FieldMetadataType.TEXT]: FieldMetadataTextSettings | null;
   [FieldMetadataType.RELATION]: FieldMetadataRelationSettings;
-  [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings | null; // Should not be null
+  [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings | null; // TODO Should not be null
 };
 
 export type AllFieldMetadataSettings =
