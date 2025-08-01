@@ -1,14 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class TwentyORMException extends CustomException {
-  constructor(
-    message: string,
-    code: TwentyORMExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
-  ) {
-    super(message, code, userFriendlyMessage);
-  }
-}
+export class TwentyORMException extends CustomException<TwentyORMExceptionCode> {}
 
 export enum TwentyORMExceptionCode {
   METADATA_VERSION_MISMATCH = 'METADATA_VERSION_MISMATCH',

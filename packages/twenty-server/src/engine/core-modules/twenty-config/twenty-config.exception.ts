@@ -1,11 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class ConfigVariableException extends CustomException {
-  declare code: ConfigVariableExceptionCode;
-  constructor(message: string, code: ConfigVariableExceptionCode) {
-    super(message, code);
-  }
-}
+export class ConfigVariableException extends CustomException<ConfigVariableExceptionCode> {}
 
 export enum ConfigVariableExceptionCode {
   DATABASE_CONFIG_DISABLED = 'DATABASE_CONFIG_DISABLED',

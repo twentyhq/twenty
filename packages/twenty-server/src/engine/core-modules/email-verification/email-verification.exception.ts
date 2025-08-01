@@ -1,15 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class EmailVerificationException extends CustomException {
-  declare code: EmailVerificationExceptionCode;
-  constructor(
-    message: string,
-    code: EmailVerificationExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
-  ) {
-    super(message, code, userFriendlyMessage ?? message);
-  }
-}
+export class EmailVerificationException extends CustomException<EmailVerificationExceptionCode> {}
 
 export enum EmailVerificationExceptionCode {
   EMAIL_VERIFICATION_NOT_REQUIRED = 'EMAIL_VERIFICATION_NOT_REQUIRED',

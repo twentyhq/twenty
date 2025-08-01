@@ -189,6 +189,11 @@ export class DatabaseEventTriggerListener {
       const joinField =
         objectMetadataItemWithFieldsMaps.fieldsById[joinFieldId];
       const joinRecordId = record[joinColumnName];
+
+      if (!isDefined(joinRecordId)) {
+        continue;
+      }
+
       const relatedObjectMetadataId = joinField.relationTargetObjectMetadataId;
 
       if (!isDefined(relatedObjectMetadataId)) {
