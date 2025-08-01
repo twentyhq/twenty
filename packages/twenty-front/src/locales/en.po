@@ -517,10 +517,10 @@ msgstr "All ({relationRecordsCount})"
 msgid "All Actions Access"
 msgstr "All Actions Access"
 
-#. js-lingui-id: 7EZqN0
+#. js-lingui-id: dJn2LR
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-msgid "All emails and events linked to this account will be deleted"
-msgstr "All emails and events linked to this account will be deleted"
+msgid "All emails and events linked to this account ({accountHandle}) will be deleted"
+msgstr "All emails and events linked to this account ({accountHandle}) will be deleted"
 
 #. js-lingui-id: 3xugyj
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx

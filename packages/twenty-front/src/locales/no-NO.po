@@ -522,10 +522,10 @@ msgstr "Alle ({relationRecordsCount})"
 msgid "All Actions Access"
 msgstr "Tilgang til alle handlinger"
 
-#. js-lingui-id: 7EZqN0
+#. js-lingui-id: dJn2LR
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-msgid "All emails and events linked to this account will be deleted"
-msgstr "Alle e-poster og hendelser knyttet til denne kontoen vil bli slettet"
+msgid "All emails and events linked to this account ({accountHandle}) will be deleted"
+msgstr ""
 
 #. js-lingui-id: 3xugyj
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
