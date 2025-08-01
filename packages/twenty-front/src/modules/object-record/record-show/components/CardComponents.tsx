@@ -51,7 +51,13 @@ type CardComponentProps = {
   isInRightDrawer?: boolean;
 };
 
-type CardComponentType = (props: CardComponentProps) => JSX.Element | null;
+type CardComponentType = (
+  props: CardComponentProps | FieldsCardComponentProps,
+) => JSX.Element | null;
+
+type FieldsCardComponentProps = CardComponentProps & {
+  showDuplicatesSection?: boolean;
+};
 
 const LoadingSkeleton = () => {
   const theme = useTheme();
@@ -103,11 +109,16 @@ export const CardComponents: Record<CardType, CardComponentType> = {
     />
   ),
 
-  [CardType.FieldCard]: ({ targetableObject, isInRightDrawer }) => (
+  [CardType.FieldCard]: ({
+    targetableObject,
+    isInRightDrawer,
+    showDuplicatesSection,
+  }: FieldsCardComponentProps) => (
     <StyledGreyBox isInRightDrawer={isInRightDrawer}>
       <FieldsCard
         objectNameSingular={targetableObject.targetObjectNameSingular}
         objectRecordId={targetableObject.id}
+        showDuplicatesSection={showDuplicatesSection}
       />
     </StyledGreyBox>
   ),

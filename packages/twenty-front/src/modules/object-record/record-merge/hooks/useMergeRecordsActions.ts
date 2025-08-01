@@ -1,15 +1,12 @@
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
-import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { mergeSettingsState } from '../states/mergeSettingsState';
 
 type UseMergeRecordsActionsProps = {
@@ -32,25 +29,9 @@ export const useMergeRecordsActions = ({
 
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
-  const { objectNamePlural } = useObjectNamePluralFromSingular({
-    objectNameSingular,
-  });
-  const contextStoreCurrentViewId = useRecoilComponentValueV2(
-    contextStoreCurrentViewIdComponentState,
-  );
+  const { closeCommandMenu } = useCommandMenu();
 
-  if (!contextStoreCurrentViewId) {
-    throw new Error('Current view ID is not defined');
-  }
-
-  const { resetTableRowSelection } = useRecordTable({
-    recordTableId: getRecordIndexIdFromObjectNamePluralAndViewId(
-      objectNamePlural,
-      contextStoreCurrentViewId,
-    ),
-  });
-
+  const navigate = useNavigateApp();
   const handleMergeRecords = async () => {
     try {
       const mergedRecord = await mergeManyRecords({
@@ -68,11 +49,11 @@ export const useMergeRecordsActions = ({
       enqueueSuccessSnackBar({
         message: t`Successfully merged ${recordCount} records`,
       });
+      closeCommandMenu();
 
-      resetTableRowSelection();
-      openRecordInCommandMenu({
+      navigate(AppPath.RecordShowPage, {
         objectNameSingular,
-        recordId: mergedRecord.id,
+        objectRecordId: mergedRecord.id,
       });
     } catch (error) {
       enqueueErrorSnackBar({

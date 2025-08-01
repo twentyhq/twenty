@@ -26,6 +26,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 type FieldsCardProps = {
   objectNameSingular: string;
   objectRecordId: string;
+  showDuplicatesSection?: boolean;
 };
 
 const INPUT_ID_PREFIX = 'fields-card';
@@ -33,6 +34,7 @@ const INPUT_ID_PREFIX = 'fields-card';
 export const FieldsCard = ({
   objectNameSingular,
   objectRecordId,
+  showDuplicatesSection = true,
 }: FieldsCardProps) => {
   const { recordLoading, labelIdentifierFieldMetadataItem, isPrefetchLoading } =
     useRecordShowContainerData({
@@ -204,10 +206,12 @@ export const FieldsCard = ({
           </>
         )}
       </PropertyBox>
-      <RecordDetailDuplicatesSection
-        objectRecordId={objectRecordId}
-        objectNameSingular={objectNameSingular}
-      />
+      {showDuplicatesSection && (
+        <RecordDetailDuplicatesSection
+          objectRecordId={objectRecordId}
+          objectNameSingular={objectNameSingular}
+        />
+      )}
       {boxedRelationFieldMetadataItems?.map((fieldMetadataItem, index) => (
         <FieldContext.Provider
           key={objectRecordId + fieldMetadataItem.id}

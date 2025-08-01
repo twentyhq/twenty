@@ -1,9 +1,13 @@
+import { useLazyQuery } from '@apollo/client';
 import { useEffect, useMemo, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
+import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
+import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
+import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { mergeRecordRelationshipData } from '@/object-record/record-merge/utils/mergeRelationshipData';
 import { buildFindOneRecordForShowPageOperationSignature } from '@/object-record/record-show/graphql/operations/factories/findOneRecordForShowPageOperationSignatureFactory';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -46,20 +50,23 @@ export const useMergeRecordRelationships = ({
     }).fields;
   }, [objectMetadataItem, objectMetadataItems]);
 
-  const { findManyRecordsLazy } = useLazyFindManyRecords({
+  const apolloCoreClient = useApolloCoreClient();
+
+  const { findManyRecordsQuery } = useFindManyRecordsQuery({
     objectNameSingular,
     recordGqlFields,
-    filter: {
-      id: {
-        in: selectedRecords.map((record) => record.id),
-      },
-    },
   });
+
+  const [findManyRecords] = useLazyQuery<RecordGqlOperationFindManyResult>(
+    findManyRecordsQuery,
+    {
+      fetchPolicy: 'cache-first',
+      client: apolloCoreClient,
+    },
+  );
 
   useEffect(() => {
     if (selectedRecords.length === 0 || !previewRecordId) {
-      setCompleteRecords([]);
-      setError(undefined);
       return;
     }
 
@@ -68,7 +75,29 @@ export const useMergeRecordRelationships = ({
       setError(undefined);
 
       try {
-        const { records } = await findManyRecordsLazy();
+        const result = await findManyRecords({
+          variables: {
+            filter: {
+              id: {
+                in: selectedRecords.map((record) => record.id),
+              },
+            },
+          },
+        });
+
+        const records = getRecordsFromRecordConnection({
+          recordConnection: {
+            edges: result?.data?.[objectMetadataItem.namePlural]?.edges ?? [],
+            pageInfo: result?.data?.[objectMetadataItem.namePlural]
+              ?.pageInfo ?? {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: '',
+              endCursor: '',
+            },
+          },
+        });
+
         setCompleteRecords(records || []);
       } catch (fetchError) {
         const errorMessage =
@@ -78,14 +107,18 @@ export const useMergeRecordRelationships = ({
         setError(
           new Error(`Failed to merge record relationships: ${errorMessage}`),
         );
-        setCompleteRecords([]);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchCompleteRecords();
-  }, [selectedRecords, findManyRecordsLazy, previewRecordId]);
+  }, [
+    selectedRecords,
+    findManyRecords,
+    previewRecordId,
+    objectMetadataItem.namePlural,
+  ]);
 
   const mergedRelationshipData = useMemo((): MergedRelationshipData => {
     return mergeRecordRelationshipData(
