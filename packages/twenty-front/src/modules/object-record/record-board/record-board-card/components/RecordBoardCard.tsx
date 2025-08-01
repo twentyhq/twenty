@@ -31,7 +31,7 @@ import { useDebouncedCallback } from 'use-debounce';
 
 const StyledBoardCard = styled.div<{
   isDragging?: boolean;
-  shouldHide?: boolean;
+  isSecondaryDragged?: boolean;
   isPrimaryMultiDrag?: boolean;
 }>`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -40,12 +40,10 @@ const StyledBoardCard = styled.div<{
   color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
 
-  ${({ shouldHide }) =>
-    shouldHide &&
+  ${({ isSecondaryDragged }) =>
+    isSecondaryDragged &&
     `
-    opacity: 0;
-    pointer-events: none;
-    
+    opacity: 0.3;
   `}
 
   &[data-selected='true'] {
@@ -107,7 +105,7 @@ const StyledRecordBoardCardStackCard = styled.div<{ offset: number }>`
   left: 0;
   right: 0;
   height: 100%;
-  background-color: ${({ theme }) => theme.color.blueAccent15};
+  background-color: ${({ theme }) => theme.accent.tertiary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   z-index: ${({ offset }) => -offset};
@@ -131,7 +129,7 @@ export const RecordBoardCard = () => {
     recordId === multiDragState.primaryDraggedRecordId &&
     multiDragState.originalSelection.length > 1;
 
-  const isSecondarySelectedItem =
+  const isSecondaryDragged =
     multiDragState?.isDragging &&
     multiDragState.originalSelection.includes(recordId) &&
     recordId !== multiDragState.primaryDraggedRecordId;
@@ -249,7 +247,7 @@ export const RecordBoardCard = () => {
             onMouseLeave={onMouseLeaveBoard}
             onClick={handleCardClick}
             isPrimaryMultiDrag={isPrimaryMultiDrag}
-            shouldHide={isSecondarySelectedItem}
+            isSecondaryDragged={isSecondaryDragged}
           >
             <RecordBoardCardHeader
               isCardExpanded={isCardExpanded}
