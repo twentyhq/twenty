@@ -3,7 +3,7 @@ import { formatter } from '@lingui/format-po';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 
 export default defineConfig({
-  sourceLocale: 'en',
+  sourceLocale: SOURCE_LOCALE,
   locales: Object.values(APP_LOCALES),
   pseudoLocale: 'pseudo-en',
   fallbackLocales: {

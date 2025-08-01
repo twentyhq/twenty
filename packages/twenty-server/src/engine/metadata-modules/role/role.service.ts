@@ -292,7 +292,7 @@ export class RoleService {
         throw new PermissionsException(
           PermissionsExceptionMessage.ROLE_LABEL_ALREADY_EXISTS,
           PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS,
-          t`A role with this label already exists.`,
+          { userFriendlyMessage: t`A role with this label already exists.` },
         );
       }
     }

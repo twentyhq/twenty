@@ -3,7 +3,7 @@ import { ArgsType, Field } from '@nestjs/graphql';
 import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
 
 @ArgsType()
-export class GetLoginTokenFromEmailVerificationTokenInput {
+export class GetAuthTokenFromEmailVerificationTokenInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { FieldMetadataType } from 'twenty-shared/types';
+import { EnumFieldMetadataType, FieldMetadataType } from 'twenty-shared/types';
 
 import { WorkspaceColumnActionOptions } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-options.interface';
 
@@ -18,11 +18,6 @@ import {
   WorkspaceMigrationException,
   WorkspaceMigrationExceptionCode,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
-
-export type EnumFieldMetadataType =
-  | FieldMetadataType.RATING
-  | FieldMetadataType.SELECT
-  | FieldMetadataType.MULTI_SELECT;
 
 @Injectable()
 export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFieldMetadataType> {

@@ -1,10 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class SendEmailToolException extends CustomException {
-  constructor(message: string, code: SendEmailToolExceptionCode) {
-    super(message, code);
-  }
-}
+export class SendEmailToolException extends CustomException<SendEmailToolExceptionCode> {}
 
 export enum SendEmailToolExceptionCode {
   INVALID_CONNECTED_ACCOUNT_ID = 'INVALID_CONNECTED_ACCOUNT_ID',

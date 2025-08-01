@@ -826,7 +826,7 @@ export type AuthToken = {
 };
 
 export type AuthTokenPair = {
-  accessToken: AuthToken;
+  accessOrWorkspaceAgnosticToken: AuthToken;
   refreshToken: AuthToken;
 };
 

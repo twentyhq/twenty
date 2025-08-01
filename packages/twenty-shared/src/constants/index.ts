@@ -11,8 +11,10 @@ export { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from './FieldForTotalCountA
 export { MAX_OPTIONS_TO_DISPLAY } from './FieldMetadataMaxOptionsToDisplay';
 export { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from './FieldRestrictedAdditionalPermissionsRequired';
 export { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from './LabelIdentifierFieldMetadataTypes';
+export { MUTATION_MAX_MERGE_RECORDS } from './MutationMaxMergeRecords';
 export { PermissionsOnAllObjectRecords } from './PermissionsOnAllObjectRecords';
 export { QUERY_MAX_RECORDS } from './QueryMaxRecords';
+export { QUOTED_STRING_REGEX } from './QuotedStringRegex';
 export { RELATION_NESTED_QUERY_KEYWORDS } from './RelationNestedQueriesKeyword';
 export { STANDARD_OBJECT_RECORDS_UNDER_OBJECT_RECORDS_PERMISSIONS } from './StandardObjectRecordsUnderObjectRecordsPermissions';
 export { TWENTY_COMPANIES_BASE_URL } from './TwentyCompaniesBaseUrl';

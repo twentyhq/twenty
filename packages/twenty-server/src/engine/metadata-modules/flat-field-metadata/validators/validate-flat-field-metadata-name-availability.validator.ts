@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { FailedFlatFieldMetadataValidation } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
+import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   InvalidMetadataException,
@@ -41,7 +41,7 @@ export const validateFlatFieldMetadataNameAvailability = ({
 }: {
   name: string;
   objectMetadata: FlatObjectMetadata;
-}): FailedFlatFieldMetadataValidation | undefined => {
+}): FailedFlatFieldMetadataValidationExceptions | undefined => {
   const reservedCompositeFieldsNames =
     getReservedCompositeFieldNames(objectMetadata);
 
@@ -53,29 +53,23 @@ export const validateFlatFieldMetadataNameAvailability = ({
           `${field.name}Id` === name),
     )
   ) {
-    return {
-      status: 'fail',
-      error: new InvalidMetadataException(
-        `Name "${name}" is not available as it is already used by another field`,
-        InvalidMetadataExceptionCode.NOT_AVAILABLE,
-        {
-          userFriendlyMessage: t`This name is not available as it is already used by another field`,
-        },
-      ),
-    };
+    return new InvalidMetadataException(
+      `Name "${name}" is not available as it is already used by another field`,
+      InvalidMetadataExceptionCode.NOT_AVAILABLE,
+      {
+        userFriendlyMessage: t`This name is not available as it is already used by another field`,
+      },
+    );
   }
 
   if (reservedCompositeFieldsNames.includes(name)) {
-    return {
-      status: 'fail',
-      error: new InvalidMetadataException(
-        `Name "${name}" is not available`,
-        InvalidMetadataExceptionCode.RESERVED_KEYWORD,
-        {
-          userFriendlyMessage: t`This name is not available.`,
-        },
-      ),
-    };
+    return new InvalidMetadataException(
+      `Name "${name}" is not available`,
+      InvalidMetadataExceptionCode.RESERVED_KEYWORD,
+      {
+        userFriendlyMessage: t`This name is not available.`,
+      },
+    );
   }
 
   return undefined;

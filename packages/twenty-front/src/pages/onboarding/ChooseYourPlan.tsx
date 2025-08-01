@@ -1,4 +1,4 @@
-import { verifyEmailNextPathState } from '@/app/states/verifyEmailNextPathState';
+import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -101,11 +101,11 @@ export const ChooseYourPlan = () => {
 
   const calendarBookingPageId = useRecoilValue(calendarBookingPageIdState);
 
-  const [verifyEmailNextPath, setVerifyEmailNextPath] = useRecoilState(
-    verifyEmailNextPathState,
+  const [verifyEmailRedirectPath, setVerifyEmailRedirectPath] = useRecoilState(
+    verifyEmailRedirectPathState,
   );
-  if (isDefined(verifyEmailNextPath)) {
-    setVerifyEmailNextPath(undefined);
+  if (isDefined(verifyEmailRedirectPath)) {
+    setVerifyEmailRedirectPath(undefined);
   }
   const { data: plans } = useBillingBaseProductPricesQuery();
 
