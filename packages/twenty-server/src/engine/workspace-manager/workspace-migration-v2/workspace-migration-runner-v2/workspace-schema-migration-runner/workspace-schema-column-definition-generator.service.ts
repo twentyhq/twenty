@@ -6,11 +6,10 @@ import { WorkspaceSchemaColumnDefinitionGenerator } from 'src/engine/workspace-m
 
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
-import { BasicColumnDefinitionGenerator } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/generators/basic-column-definition.generator';
-import { CompositeColumnDefinitionGenerator } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/generators/composite-column-definition.generator';
-import { EnumColumnDefinitionGenerator } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/generators/enum-column-definition.generator';
-import { RelationColumnDefinitionGenerator } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/generators/relation-column-definition.generator';
-import { TsVectorColumnDefinitionGenerator } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/generators/ts-vector-column-definition.generator';
+import { BasicColumnDefinitionGenerator } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/column-generators/basic-column-definition.generator';
+import { CompositeColumnDefinitionGenerator } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/column-generators/composite-column-definition.generator';
+import { RelationColumnDefinitionGenerator } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/column-generators/relation-column-definition.generator';
+import { TsVectorColumnDefinitionGenerator } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/column-generators/ts-vector-column-definition.generator';
 
 @Injectable()
 export class WorkspaceSchemaColumnDefinitionGeneratorService {
@@ -25,7 +24,6 @@ export class WorkspaceSchemaColumnDefinitionGeneratorService {
   constructor(
     private readonly basicColumnDefinitionGenerator: BasicColumnDefinitionGenerator,
     private readonly tsVectorColumnDefinitionGenerator: TsVectorColumnDefinitionGenerator,
-    private readonly enumColumnDefinitionGenerator: EnumColumnDefinitionGenerator,
     private readonly compositeColumnDefinitionGenerator: CompositeColumnDefinitionGenerator,
     private readonly relationColumnDefinitionGenerator: RelationColumnDefinitionGenerator,
   ) {
@@ -44,9 +42,9 @@ export class WorkspaceSchemaColumnDefinitionGeneratorService {
       [FieldMetadataType.DATE_TIME, this.basicColumnDefinitionGenerator],
       [FieldMetadataType.DATE, this.basicColumnDefinitionGenerator],
       [FieldMetadataType.ARRAY, this.basicColumnDefinitionGenerator],
-      [FieldMetadataType.RATING, this.enumColumnDefinitionGenerator],
-      [FieldMetadataType.SELECT, this.enumColumnDefinitionGenerator],
-      [FieldMetadataType.MULTI_SELECT, this.enumColumnDefinitionGenerator],
+      [FieldMetadataType.RATING, this.basicColumnDefinitionGenerator],
+      [FieldMetadataType.SELECT, this.basicColumnDefinitionGenerator],
+      [FieldMetadataType.MULTI_SELECT, this.basicColumnDefinitionGenerator],
       [FieldMetadataType.CURRENCY, this.compositeColumnDefinitionGenerator],
       [FieldMetadataType.ADDRESS, this.compositeColumnDefinitionGenerator],
       [FieldMetadataType.FULL_NAME, this.compositeColumnDefinitionGenerator],

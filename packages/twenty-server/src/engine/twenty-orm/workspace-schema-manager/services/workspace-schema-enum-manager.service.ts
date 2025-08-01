@@ -40,6 +40,26 @@ export class WorkspaceSchemaEnumManagerService {
     await queryRunner.query(sql);
   }
 
+  async dropEnumForColumn(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+    columnName: string,
+  ): Promise<void> {
+    const enumName = await this.getEnumNameForColumn(
+      queryRunner,
+      schemaName,
+      tableName,
+      columnName,
+    );
+
+    if (!enumName) {
+      return;
+    }
+
+    await this.dropEnum(queryRunner, schemaName, enumName);
+  }
+
   async renameEnum(
     queryRunner: QueryRunner,
     schemaName: string,

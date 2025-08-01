@@ -41,9 +41,6 @@ export class CompositeColumnDefinitionGenerator
       // @ts-expect-error legacy noImplicitAny
       const defaultValue = fieldMetadata.defaultValue?.[property.name];
       const serializedDefaultValue = serializeDefaultValue(defaultValue);
-      const enumOptions = property.options
-        ? [...property.options.map((option) => option.value)]
-        : undefined;
 
       columnDefinitions.push({
         name: columnName,
@@ -55,7 +52,6 @@ export class CompositeColumnDefinitionGenerator
           property.type === FieldMetadataType.ARRAY ||
           property.type === FieldMetadataType.MULTI_SELECT ||
           property.isArray,
-        enum: enumOptions,
       });
     }
 
