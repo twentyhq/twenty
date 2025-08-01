@@ -4,5 +4,7 @@ import { EmailsDisplay } from '@/ui/field/display/components/EmailsDisplay';
 export const EmailsFieldDisplay = () => {
   const { fieldValue } = useEmailsFieldDisplay();
 
+  console.log('EmailsFieldDisplay', fieldValue);
+
   return <EmailsDisplay value={fieldValue} />;
 };
