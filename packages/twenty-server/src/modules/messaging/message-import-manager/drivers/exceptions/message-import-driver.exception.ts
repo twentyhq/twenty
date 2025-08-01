@@ -1,10 +1,9 @@
 import { CustomException } from 'src/utils/custom-exception';
+import { MessageNetworkExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-network.exception';
 
-export class MessageImportDriverException extends CustomException {
-  constructor(message: string, code: MessageImportDriverExceptionCode) {
-    super(message, code);
-  }
-}
+export class MessageImportDriverException extends CustomException<
+  MessageImportDriverExceptionCode | MessageNetworkExceptionCode
+> {}
 
 export enum MessageImportDriverExceptionCode {
   NOT_FOUND = 'NOT_FOUND',

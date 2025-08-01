@@ -522,10 +522,10 @@ msgstr "Vše ({relationRecordsCount})"
 msgid "All Actions Access"
 msgstr "Přístup ke všem akcím"
 
-#. js-lingui-id: 7EZqN0
+#. js-lingui-id: dJn2LR
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-msgid "All emails and events linked to this account will be deleted"
-msgstr "Všechny e-maily a události spojené s tímto účtem budou smazány"
+msgid "All emails and events linked to this account ({accountHandle}) will be deleted"
+msgstr ""
 
 #. js-lingui-id: 3xugyj
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx

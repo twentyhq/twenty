@@ -4,7 +4,6 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IsNull, LessThan, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileMetadataService } from 'src/engine/core-modules/file/services/file-metadata.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -22,7 +21,6 @@ export class CleanupOrphanedFilesCronJob {
     @InjectRepository(FileEntity, 'core')
     private readonly fileRepository: Repository<FileEntity>,
     private readonly fileMetadataService: FileMetadataService,
-    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @Process(CleanupOrphanedFilesCronJob.name)

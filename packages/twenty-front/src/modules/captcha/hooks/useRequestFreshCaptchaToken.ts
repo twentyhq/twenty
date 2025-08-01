@@ -7,13 +7,6 @@ import { captchaState } from '@/client-config/states/captchaState';
 import { CaptchaDriverType } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-declare global {
-  interface Window {
-    grecaptcha?: any;
-    turnstile?: any;
-  }
-}
-
 export const useRequestFreshCaptchaToken = () => {
   const setCaptchaToken = useSetRecoilState(captchaTokenState);
   const setIsRequestingCaptchaToken = useSetRecoilState(
