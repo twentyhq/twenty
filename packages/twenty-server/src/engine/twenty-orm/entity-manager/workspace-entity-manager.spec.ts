@@ -15,6 +15,30 @@ jest.mock('src/engine/twenty-orm/repository/permissions.utils', () => ({
   validateOperationIsPermittedOrThrow: jest.fn(),
 }));
 
+jest.mock(
+  'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util',
+  () => ({
+    getObjectMetadataFromEntityTarget: jest.fn().mockReturnValue({}),
+  }),
+);
+
+jest.mock('src/engine/twenty-orm/utils/format-data.util', () => ({
+  formatData: jest.fn().mockReturnValue([]),
+}));
+
+jest.mock('src/engine/twenty-orm/utils/format-result.util', () => ({
+  formatResult: jest.fn().mockReturnValue([]),
+}));
+
+jest.mock(
+  'src/engine/twenty-orm/entity-manager/workspace-entity-manager',
+  () => ({
+    ...jest.requireActual(
+      'src/engine/twenty-orm/entity-manager/workspace-entity-manager',
+    ),
+  }),
+);
+
 const mockedWorkspaceUpdateQueryBuilder = {
   set: jest.fn().mockImplementation(() => ({
     where: jest.fn().mockReturnThis(),
@@ -122,7 +146,22 @@ describe('WorkspaceEntityManager', () => {
     } as WorkspaceInternalContext;
 
     mockDataSource = {
-      featureFlagMap: {},
+      featureFlagMap: {
+        IS_AIRTABLE_INTEGRATION_ENABLED: false,
+        IS_POSTGRESQL_INTEGRATION_ENABLED: false,
+        IS_STRIPE_INTEGRATION_ENABLED: false,
+        IS_UNIQUE_INDEXES_ENABLED: false,
+        IS_JSON_FILTER_ENABLED: false,
+        IS_AI_ENABLED: false,
+        IS_IMAP_SMTP_CALDAV_ENABLED: false,
+        IS_MORPH_RELATION_ENABLED: false,
+        IS_WORKFLOW_FILTERING_ENABLED: false,
+        IS_RELATION_CONNECT_ENABLED: false,
+        IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED: false,
+        IS_FIELDS_PERMISSIONS_ENABLED: true,
+        IS_CORE_VIEW_SYNCING_ENABLED: false,
+        IS_TWO_FACTOR_AUTHENTICATION_ENABLED: false,
+      },
       permissionsPerRoleId: {},
     } as WorkspaceDataSource;
 
@@ -191,6 +230,15 @@ describe('WorkspaceEntityManager', () => {
 
     jest.spyOn(entityManager as any, 'validatePermissions');
     jest.spyOn(entityManager as any, 'createQueryBuilder');
+    jest
+      .spyOn(entityManager as any, 'getFormattedResultWithoutNonReadableFields')
+      .mockImplementation(
+        ({ formattedResult }: { formattedResult: string[] }) => formattedResult,
+      );
+
+    jest.spyOn(entityManager as any, 'getFeatureFlagMap').mockReturnValue({
+      IS_FIELDS_PERMISSIONS_ENABLED: true,
+    });
 
     jest
       .spyOn(entityManager as any, 'extractTargetNameSingularFromEntityTarget')
@@ -276,15 +324,18 @@ describe('WorkspaceEntityManager', () => {
         operationType: 'update',
         permissionOptions: mockPermissionOptions,
         selectedColumns: [],
+        updatedColumns: [],
       });
       expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
         entityName: 'test-entity',
+        isFieldPermissionsEnabled: true,
         operationType: 'update',
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
         objectRecordsPermissions:
           mockPermissionOptions.objectRecordsPermissions,
         selectedColumns: [],
         allFieldsSelected: false,
+        updatedColumns: [],
       });
     });
   });
@@ -313,11 +364,13 @@ describe('WorkspaceEntityManager', () => {
       expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
         entityName: 'test-entity',
         operationType: 'delete',
+        isFieldPermissionsEnabled: true,
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
         objectRecordsPermissions:
           mockPermissionOptions.objectRecordsPermissions,
         selectedColumns: [],
         allFieldsSelected: false,
+        updatedColumns: [],
       });
     });
   });

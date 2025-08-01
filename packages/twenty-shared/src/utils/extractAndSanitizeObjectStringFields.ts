@@ -1,12 +1,12 @@
 import { trimAndRemoveDuplicatedWhitespacesFromString } from '@/utils/trim-and-remove-duplicated-whitespaces-from-string';
-// TODO rename with extract meaning
-export const sanitizeObjectStringFields = <
+
+export const extractAndSanitizeObjectStringFields = <
   T extends object,
   TKeys extends (keyof T)[],
 >(
   obj: T,
   keys: TKeys,
-  maxDepth: number = 10,
+  maxDepth = 10,
 ): {
   [P in TKeys[number]]: T[P];
 } => {

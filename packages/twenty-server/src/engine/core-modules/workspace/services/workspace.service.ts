@@ -8,14 +8,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
-import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-deactivated';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
@@ -67,10 +63,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly billingService: BillingService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly domainManagerService: DomainManagerService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly permissionsService: PermissionsService,
-    private readonly auditService: AuditService,
     private readonly customDomainService: CustomDomainService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
@@ -182,6 +176,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       await this.customDomainService.deleteCustomHostnameByHostnameSilently(
         workspace.customDomain,
       );
+      workspace.isCustomDomainEnabled = false;
     }
 
     if (
@@ -399,38 +394,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     });
 
     return !existingWorkspace;
-  }
-
-  async checkCustomDomainValidRecords(workspace: Workspace) {
-    if (!workspace.customDomain) return;
-
-    const customDomainDetails =
-      await this.customDomainService.getCustomDomainDetails(
-        workspace.customDomain,
-      );
-
-    if (!customDomainDetails) return;
-
-    const isCustomDomainWorking =
-      this.domainManagerService.isCustomDomainWorking(customDomainDetails);
-
-    if (workspace.isCustomDomainEnabled !== isCustomDomainWorking) {
-      workspace.isCustomDomainEnabled = isCustomDomainWorking;
-      await this.workspaceRepository.save(workspace);
-
-      const analytics = this.auditService.createContext({
-        workspaceId: workspace.id,
-      });
-
-      analytics.insertWorkspaceEvent(
-        workspace.isCustomDomainEnabled
-          ? CUSTOM_DOMAIN_ACTIVATED_EVENT
-          : CUSTOM_DOMAIN_DEACTIVATED_EVENT,
-        {},
-      );
-    }
-
-    return customDomainDetails;
   }
 
   private async validateSecurityPermissions({

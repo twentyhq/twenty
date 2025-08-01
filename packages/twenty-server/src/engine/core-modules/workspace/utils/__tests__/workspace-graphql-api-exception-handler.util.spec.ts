@@ -7,7 +7,6 @@ import {
   WorkspaceException,
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
-import { CustomException } from 'src/utils/custom-exception';
 
 describe('workspaceGraphqlApiExceptionHandler', () => {
   it('should throw NotFoundError when WorkspaceExceptionCode is SUBDOMAIN_NOT_FOUND', () => {
@@ -48,7 +47,7 @@ describe('workspaceGraphqlApiExceptionHandler', () => {
     const error = new WorkspaceException('Unknown error', 'UNKNOWN_CODE');
 
     expect(() => workspaceGraphqlApiExceptionHandler(error)).toThrow(
-      CustomException,
+      WorkspaceException,
     );
   });
 

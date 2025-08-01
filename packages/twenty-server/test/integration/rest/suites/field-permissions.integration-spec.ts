@@ -1,5 +1,7 @@
 import gql from 'graphql-tag';
+import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
 import { TEST_PERSON_1_ID } from 'test/integration/constants/test-person-ids.constants';
+import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { upsertFieldPermissions } from 'test/integration/graphql/utils/upsert-field-permissions.util';
@@ -11,12 +13,24 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 
 describe('Restricted fields', () => {
   let personCity: string;
-  let adminRoleId: string;
+  let memberRoleId: string;
   let personObjectId: string;
   let emailsFieldId: string;
+  let phonesFieldId: string;
 
   beforeAll(async () => {
     personCity = generateRecordName(TEST_PERSON_1_ID);
+
+    await makeRestAPIRequest({
+      method: 'post',
+      path: '/companies',
+      body: {
+        id: TEST_COMPANY_1_ID,
+        domainName: {
+          primaryLinkUrl: TEST_PRIMARY_LINK_URL,
+        },
+      },
+    });
 
     await makeRestAPIRequest({
       method: 'post',
@@ -26,6 +40,11 @@ describe('Restricted fields', () => {
         city: personCity,
         emails: {
           primaryEmail: 'test@test.com',
+        },
+        phones: {
+          primaryPhoneNumber: '123456789',
+          primaryPhoneCountryCode: 'US',
+          primaryPhoneCallingCode: '+1',
         },
       },
     });
@@ -85,7 +104,13 @@ describe('Restricted fields', () => {
         field.node.object.nameSingular === 'person',
     ).node.id;
 
-    // Get admin role ID
+    phonesFieldId = fields.find(
+      (field: any) =>
+        field.node.name === 'phones' &&
+        field.node.object.nameSingular === 'person',
+    ).node.id;
+
+    // Get member role ID
     const getRolesOperation = {
       query: gql`
         query {
@@ -99,13 +124,13 @@ describe('Restricted fields', () => {
 
     const rolesResponse = await makeMetadataAPIRequest(getRolesOperation);
 
-    adminRoleId = rolesResponse.body.data.getRoles.find(
+    memberRoleId = rolesResponse.body.data.getRoles.find(
       (role: any) => role.label === 'Member',
     )?.id;
 
     // Create field permission restricting read access to email field
     await upsertFieldPermissions({
-      roleId: adminRoleId,
+      roleId: memberRoleId,
       fieldPermissions: [
         {
           objectMetadataId: personObjectId,
@@ -137,7 +162,8 @@ describe('Restricted fields', () => {
 
       await makeGraphqlAPIRequest(disablePermissionsQuery);
     });
-    it('should hide fields when user has restricted read permissions', async () => {
+
+    it('should hide fields when user has restricted read permissions - findOne', async () => {
       await makeRestAPIRequest({
         method: 'get',
         path: `/people/${TEST_PERSON_1_ID}`,
@@ -151,6 +177,248 @@ describe('Restricted fields', () => {
           expect(person.id).toBeDefined();
           expect(person.emails).toBeUndefined();
         });
+    });
+
+    describe('updateOne', () => {
+      it('should hide fields in the response when user has restricted read permissions', async () => {
+        // Create field permission restricting update access to phones field
+        await upsertFieldPermissions({
+          roleId: memberRoleId,
+          fieldPermissions: [
+            {
+              objectMetadataId: personObjectId,
+              fieldMetadataId: phonesFieldId,
+              canReadFieldValue: false,
+              canUpdateFieldValue: null,
+            },
+          ],
+        });
+
+        await makeRestAPIRequest({
+          method: 'patch',
+          path: `/people/${TEST_PERSON_1_ID}`,
+          bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          body: {
+            name: {
+              firstName: 'John',
+            },
+          },
+        })
+          .expect(200)
+          .expect((res) => {
+            const updatedPerson = res.body.data.updatePerson;
+
+            expect(updatedPerson.name.firstName).toBe('John');
+            expect(updatedPerson.phones).toBeUndefined();
+          });
+      });
+      it('should block update when user tries to update non-updatable field', async () => {
+        // Create field permission restricting update access to phones field
+        await upsertFieldPermissions({
+          roleId: memberRoleId,
+          fieldPermissions: [
+            {
+              objectMetadataId: personObjectId,
+              fieldMetadataId: phonesFieldId,
+              canReadFieldValue: null,
+              canUpdateFieldValue: false,
+            },
+          ],
+        });
+
+        await makeRestAPIRequest({
+          method: 'patch',
+          path: `/people/${TEST_PERSON_1_ID}`,
+          bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          body: {
+            phones: {
+              primaryPhoneNumber: '987654321',
+              primaryPhoneCountryCode: 'FR',
+              primaryPhoneCallingCode: '+33',
+            },
+          },
+        })
+          .expect(400)
+          .expect((res) => {
+            expect(res.body.messages[0]).toContain(
+              'User does not have permission',
+            );
+          });
+      });
+
+      it('should allow update when user has no restricted update permissions', async () => {
+        // Remove field permission restrictions
+        await upsertFieldPermissions({
+          roleId: memberRoleId,
+          fieldPermissions: [
+            {
+              objectMetadataId: personObjectId,
+              fieldMetadataId: phonesFieldId,
+              canReadFieldValue: null,
+              canUpdateFieldValue: null,
+            },
+          ],
+        });
+
+        await makeRestAPIRequest({
+          method: 'patch',
+          path: `/people/${TEST_PERSON_1_ID}`,
+          bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          body: {
+            city: 'Updated City',
+          },
+        })
+          .expect(200)
+          .expect((res) => {
+            const updatedPerson = res.body.data.updatePerson;
+
+            expect(updatedPerson.city).toBe('Updated City');
+          });
+      });
+    });
+
+    describe('createOne', () => {
+      it('should block create when user has restricted update permissions on phones field', async () => {
+        // Create field permission restricting update access to phones field
+        await upsertFieldPermissions({
+          roleId: memberRoleId,
+          fieldPermissions: [
+            {
+              objectMetadataId: personObjectId,
+              fieldMetadataId: phonesFieldId,
+              canReadFieldValue: null,
+              canUpdateFieldValue: false,
+            },
+          ],
+        });
+
+        await makeRestAPIRequest({
+          method: 'post',
+          path: `/people`,
+          bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          body: {
+            phones: {
+              primaryPhoneNumber: '555123456',
+              primaryPhoneCountryCode: 'US',
+              primaryPhoneCallingCode: '+1',
+            },
+          },
+        })
+          .expect(400)
+          .expect((res) => {
+            expect(res.body.messages[0]).toContain(
+              'User does not have permission',
+            );
+          });
+      });
+
+      it('should allow create when user has no restricted update permissions', async () => {
+        // Remove field permission restrictions on phones
+        await upsertFieldPermissions({
+          roleId: memberRoleId,
+          fieldPermissions: [
+            {
+              objectMetadataId: personObjectId,
+              fieldMetadataId: phonesFieldId,
+              canReadFieldValue: null,
+              canUpdateFieldValue: null,
+            },
+          ],
+        });
+
+        await makeRestAPIRequest({
+          method: 'post',
+          path: `/people`,
+          bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          body: {
+            city: 'New City',
+          },
+        })
+          .expect(201)
+          .expect((res) => {
+            const createdPerson = res.body.data.createPerson;
+
+            expect(createdPerson.city).toBe('New City');
+            expect(createdPerson.emails).toBeUndefined(); // No reading rights on emails
+          });
+      });
+    });
+
+    describe('createMany', () => {
+      it('should block createMany when user has restricted update permissions on phones field', async () => {
+        // Create field permission restricting update access to phones field
+        await upsertFieldPermissions({
+          roleId: memberRoleId,
+          fieldPermissions: [
+            {
+              objectMetadataId: personObjectId,
+              fieldMetadataId: phonesFieldId,
+              canReadFieldValue: null,
+              canUpdateFieldValue: false,
+            },
+          ],
+        });
+
+        await makeRestAPIRequest({
+          method: 'post',
+          path: `/batch/people`,
+          bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          body: [
+            {
+              phones: {
+                primaryPhoneNumber: '555123456',
+                primaryPhoneCountryCode: 'US',
+                primaryPhoneCallingCode: '+1',
+              },
+            },
+          ],
+        })
+          .expect(400)
+          .expect((res) => {
+            expect(res.body.messages[0]).toContain(
+              'User does not have permission',
+            );
+          });
+      });
+
+      it('should allow createMany when user has no restricted update permissions', async () => {
+        // Remove field permission restrictions
+        await upsertFieldPermissions({
+          roleId: memberRoleId,
+          fieldPermissions: [
+            {
+              objectMetadataId: personObjectId,
+              fieldMetadataId: phonesFieldId,
+              canReadFieldValue: null,
+              canUpdateFieldValue: null,
+            },
+          ],
+        });
+
+        await makeRestAPIRequest({
+          method: 'post',
+          path: `/batch/people`,
+          bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          body: [
+            {
+              city: 'Batch City 1',
+            },
+            {
+              city: 'Batch City 2',
+            },
+          ],
+        })
+          .expect(201)
+          .expect((res) => {
+            const createdPeople = res.body.data.createPeople;
+
+            expect(createdPeople).toHaveLength(2);
+            expect(createdPeople[0].city).toBe('Batch City 1');
+            expect(createdPeople[0].emails).toBeUndefined(); // No reading rights on emails
+            expect(createdPeople[1].city).toBe('Batch City 2');
+            expect(createdPeople[1].emails).toBeUndefined(); // No reading rights on emails
+          });
+      });
     });
   });
 
@@ -168,6 +436,27 @@ describe('Restricted fields', () => {
           expect(person).toBeDefined();
           expect(person.id).toBeDefined();
           expect(person.emails).toBeDefined();
+        });
+    });
+
+    it('should allow updates despite field permission restriction', async () => {
+      await makeRestAPIRequest({
+        method: 'patch',
+        path: `/people/${TEST_PERSON_1_ID}`,
+        bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        body: {
+          phones: {
+            primaryPhoneNumber: '111222333',
+            primaryPhoneCountryCode: 'US',
+            primaryPhoneCallingCode: '+1',
+          },
+        },
+      })
+        .expect(200)
+        .expect((res) => {
+          const updatedPerson = res.body.data.updatePerson;
+
+          expect(updatedPerson.phones.primaryPhoneNumber).toBe('111222333');
         });
     });
   });

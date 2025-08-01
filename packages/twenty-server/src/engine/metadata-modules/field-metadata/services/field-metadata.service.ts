@@ -30,6 +30,7 @@ import { FieldMetadataMorphRelationService } from 'src/engine/metadata-modules/f
 import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-related-records.service';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
 import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service';
+import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
 import { areFieldMetadatasTypeRelationOrMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/are-field-metadatas-type-relation-or-morph-relation.util';
 import { assertDoesNotNullifyDefaultValueForNonNullableField } from 'src/engine/metadata-modules/field-metadata/utils/assert-does-not-nullify-default-value-for-non-nullable-field.util';
 import { buildUpdatableStandardFieldInput } from 'src/engine/metadata-modules/field-metadata/utils/build-updatable-standard-field-input.util';
@@ -95,6 +96,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly fieldMetadataValidationService: FieldMetadataValidationService,
     private readonly fieldMetadataMorphRelationService: FieldMetadataMorphRelationService,
     private readonly fieldMetadataRelationService: FieldMetadataRelationService,
+    private readonly fieldMetadataServiceV2: FieldMetadataServiceV2,
   ) {
     super(fieldMetadataRepository);
   }
@@ -102,6 +104,16 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   override async createOne(
     fieldMetadataInput: CreateFieldInput,
   ): Promise<FieldMetadataEntity> {
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        fieldMetadataInput.workspaceId,
+      );
+
+    if (isWorkspaceMigrationV2Enabled) {
+      return this.fieldMetadataServiceV2.createOne(fieldMetadataInput);
+    }
+
     const [createdFieldMetadata] = await this.createMany([fieldMetadataInput]);
 
     if (!isDefined(createdFieldMetadata)) {
@@ -566,13 +578,21 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     if (!fieldMetadataInputs.length) {
       return [];
     }
+    const workspaceId = fieldMetadataInputs[0].workspaceId;
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspaceId,
+      );
+
+    if (isWorkspaceMigrationV2Enabled) {
+      return this.fieldMetadataServiceV2.createMany(fieldMetadataInputs);
+    }
 
     const { objectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
         { workspaceId: fieldMetadataInputs[0].workspaceId },
       );
-
-    const workspaceId = fieldMetadataInputs[0].workspaceId;
 
     const isMorphRelationEnabled =
       await this.featureFlagService.isFeatureEnabled(

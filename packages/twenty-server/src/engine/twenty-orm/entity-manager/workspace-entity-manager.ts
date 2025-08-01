@@ -1,4 +1,4 @@
-import { Entity } from '@microsoft/microsoft-graph-types';
+import isEmpty from 'lodash.isempty';
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -35,10 +35,12 @@ import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/works
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { DeepPartialWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/deep-partial-entity-with-nested-relation-fields.type';
 import { QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
@@ -352,6 +354,7 @@ export class WorkspaceEntityManager extends EntityManager {
     operationType,
     permissionOptions,
     selectedColumns,
+    updatedColumns = [],
   }: {
     target: EntityTarget<Entity> | Entity;
     operationType: OperationType;
@@ -360,6 +363,7 @@ export class WorkspaceEntityManager extends EntityManager {
       objectRecordsPermissions?: ObjectRecordsPermissions;
     };
     selectedColumns: string[];
+    updatedColumns?: string[];
   }): void {
     if (permissionOptions?.shouldBypassPermissionChecks === true) {
       return;
@@ -378,6 +382,9 @@ export class WorkspaceEntityManager extends EntityManager {
       objectMetadataMaps: this.internalContext.objectMetadataMaps,
       selectedColumns,
       allFieldsSelected: false,
+      updatedColumns,
+      isFieldPermissionsEnabled:
+        this.getFeatureFlagMap().IS_FIELDS_PERMISSIONS_ENABLED,
     });
   }
 
@@ -702,7 +709,7 @@ export class WorkspaceEntityManager extends EntityManager {
       permissionOptions,
     )
       .setFindOptions(options || {})
-      .select('1')
+      .select('id')
       .limit(1)
       .getRawOne()
       .then((result) => isDefined(result));
@@ -722,7 +729,7 @@ export class WorkspaceEntityManager extends EntityManager {
       permissionOptions,
     )
       .setFindOptions({ where })
-      .select('1')
+      .select('id')
       .limit(1)
       .getRawOne()
       .then((result) => isDefined(result));
@@ -762,7 +769,7 @@ export class WorkspaceEntityManager extends EntityManager {
       .getCount();
   }
 
-  async callAggregateFunCustom(
+  async callAggregateFunCustom<Entity extends ObjectLiteral>(
     entityClass: EntityTarget<Entity>,
     fnName: string,
     columnName: string,
@@ -1033,13 +1040,6 @@ export class WorkspaceEntityManager extends EntityManager {
         ? maybeOptionsOrMaybePermissionOptions
         : permissionOptions;
 
-    this.validatePermissions({
-      target: targetOrEntity,
-      operationType: 'update',
-      permissionOptions: permissionOptionsFromArgs,
-      selectedColumns: [], // TODO
-    });
-
     let target =
       arguments.length > 1 &&
       (typeof targetOrEntity === 'function' ||
@@ -1047,7 +1047,9 @@ export class WorkspaceEntityManager extends EntityManager {
         typeof targetOrEntity === 'string')
         ? targetOrEntity
         : undefined;
+
     const entity = target ? entityOrMaybeOptions : targetOrEntity;
+
     const options = target
       ? maybeOptionsOrMaybePermissionOptions
       : entityOrMaybeOptions;
@@ -1094,7 +1096,7 @@ export class WorkspaceEntityManager extends EntityManager {
       {
         where: { id: In(entityIds) },
       },
-      permissionOptions,
+      { shouldBypassPermissionChecks: true }, // Bypass as this is for event emission
     );
 
     const beforeUpdateMapById = beforeUpdate.reduce(
@@ -1116,6 +1118,18 @@ export class WorkspaceEntityManager extends EntityManager {
       objectMetadataItem,
     );
 
+    const updatedColumns = formattedEntityOrEntities
+      .map((e) => Object.keys(e))
+      .flat();
+
+    this.validatePermissions({
+      target: targetOrEntity,
+      operationType: 'update',
+      permissionOptions: permissionOptionsFromArgs,
+      selectedColumns: [],
+      updatedColumns,
+    });
+
     const result = await new EntityPersistExecutor(
       this.connection,
       queryRunnerForEntityPersistExecutor,
@@ -1130,7 +1144,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
     const resultArray = Array.isArray(result) ? result : [result];
 
-    const formattedResult = formatResult<Entity[]>(
+    let formattedResult = formatResult<Entity[]>(
       resultArray,
       objectMetadataItem,
       this.internalContext.objectMetadataMaps,
@@ -1157,7 +1171,77 @@ export class WorkspaceEntityManager extends EntityManager {
       }
     }
 
+    const isFieldPermissionsEnabled =
+      this.getFeatureFlagMap().IS_FIELDS_PERMISSIONS_ENABLED;
+
+    const permissionCheckApplies =
+      permissionOptionsFromArgs?.shouldBypassPermissionChecks !== true &&
+      objectMetadataItem.isSystem !== true;
+
+    if (isFieldPermissionsEnabled && permissionCheckApplies) {
+      formattedResult = this.getFormattedResultWithoutNonReadableFields({
+        formattedResult,
+        objectMetadataItem,
+        permissionOptionsFromArgs,
+      });
+    }
+
     return isEntityArray ? formattedResult : formattedResult[0];
+  }
+
+  private getFormattedResultWithoutNonReadableFields<
+    Entity extends ObjectLiteral,
+  >({
+    formattedResult,
+    objectMetadataItem,
+    permissionOptionsFromArgs,
+  }: {
+    formattedResult: Entity[];
+    objectMetadataItem: ObjectMetadataItemWithFieldMaps;
+    permissionOptionsFromArgs: PermissionOptions | undefined;
+  }): Entity[] {
+    const restrictedFields =
+      permissionOptionsFromArgs?.objectRecordsPermissions?.[
+        objectMetadataItem.id
+      ].restrictedFields;
+
+    if (!restrictedFields) {
+      throw new InternalServerError('Restricted fields not found');
+    }
+
+    if (isEmpty(restrictedFields)) {
+      return formattedResult;
+    }
+
+    const objectMetadataItemWithFieldMaps =
+      this.internalContext.objectMetadataMaps.byId[objectMetadataItem.id];
+
+    const restrictedFieldNames = new Set(
+      Object.entries(restrictedFields)
+        .filter(([_, fieldPermissions]) => fieldPermissions.canRead === false)
+        .map(([fieldMetadataId]) => {
+          const fieldMetadata =
+            objectMetadataItemWithFieldMaps?.fieldsById[fieldMetadataId];
+
+          if (!isDefined(fieldMetadata)) {
+            throw new InternalServerError(
+              `Field metadata not found for field ${fieldMetadataId}`,
+            );
+          }
+
+          return fieldMetadata.name;
+        }),
+    );
+
+    const filteredResult = formattedResult.map((individualFormattedResult) => {
+      return Object.fromEntries(
+        Object.entries(individualFormattedResult).filter(
+          ([key]) => !restrictedFieldNames.has(key),
+        ),
+      );
+    });
+
+    return filteredResult as Entity[];
   }
 
   override remove<Entity>(

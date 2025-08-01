@@ -1,12 +1,12 @@
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  appendCommonExceptionCode,
+  CustomException,
+} from 'src/utils/custom-exception';
 
-export class DistantTableException extends CustomException {
-  constructor(message: string, code: DistantTableExceptionCode) {
-    super(message, code);
-  }
-}
+export class DistantTableException extends CustomException<
+  keyof typeof DistantTableExceptionCode
+> {}
 
-export enum DistantTableExceptionCode {
-  INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
-  TIMEOUT_ERROR = 'TIMEOUT_ERROR',
-}
+export const DistantTableExceptionCode = appendCommonExceptionCode({
+  TIMEOUT_ERROR: 'TIMEOUT_ERROR',
+} as const);

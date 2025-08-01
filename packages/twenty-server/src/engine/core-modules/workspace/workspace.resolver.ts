@@ -25,7 +25,6 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-valid-records';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag-dto';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -70,7 +69,7 @@ import { Workspace } from './workspace.entity';
 import { WorkspaceService } from './services/workspace.service';
 
 const OriginHeader = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext) => {
+  (_: unknown, ctx: ExecutionContext) => {
     const request = getRequest(ctx);
 
     return request.headers['origin'];
@@ -316,14 +315,6 @@ export class WorkspaceResolver {
       workspace.isPasswordAuthEnabled &&
       this.twentyConfigService.get('AUTH_PASSWORD_ENABLED')
     );
-  }
-
-  @Mutation(() => CustomDomainValidRecords, { nullable: true })
-  @UseGuards(WorkspaceAuthGuard)
-  async checkCustomDomainValidRecords(
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<CustomDomainValidRecords | undefined> {
-    return this.workspaceService.checkCustomDomainValidRecords(workspace);
   }
 
   @Query(() => PublicWorkspaceDataOutput)

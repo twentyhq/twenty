@@ -30759,9 +30759,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cloudflare@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "cloudflare@npm:4.0.0"
+"cloudflare@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "cloudflare@npm:4.5.0"
   dependencies:
     "@types/node": "npm:^18.11.18"
     "@types/node-fetch": "npm:^2.6.4"
@@ -30770,7 +30770,7 @@ __metadata:
     form-data-encoder: "npm:1.7.2"
     formdata-node: "npm:^4.3.2"
     node-fetch: "npm:^2.6.7"
-  checksum: 10c0/d83a4d0544de5794935acb802c875c6f718713d8c7613b2a74d6145b922f18415e514cc57bbef9249726d83c0788ac8a72517a69efb1fd5b5af58b654403c375
+  checksum: 10c0/376ca8cde08878e383a151626c40f702160565776cdb455f6091009b6733628bae266bf47d61c8e2ff21fb94388f0a609af24872dea7c01a1b3e26d76deec8db
   languageName: node
   linkType: hard
 
@@ -57194,7 +57194,7 @@ __metadata:
     cache-manager-redis-yet: "npm:^4.1.2"
     class-validator: "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch"
     class-validator-jsonschema: "npm:^5.0.2"
-    cloudflare: "npm:^4.0.0"
+    cloudflare: "npm:^4.5.0"
     connect-redis: "npm:^7.1.1"
     express-session: "npm:^1.18.1"
     graphql-middleware: "npm:^6.1.35"
