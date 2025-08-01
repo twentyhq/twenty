@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 
 import {
-  GraphqlQueryBaseResolverService,
-  GraphqlQueryResolverExecutionArgs,
+    GraphqlQueryBaseResolverService,
+    GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
@@ -67,7 +67,8 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
         authContext,
         workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
-        shouldBypassPermissionChecks: false,
+        shouldBypassPermissionChecks:
+          executionArgs.shouldBypassPermissionChecks,
         selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }

@@ -3,25 +3,25 @@ import { Injectable } from '@nestjs/common';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 
 import {
-  GraphqlQueryBaseResolverService,
-  GraphqlQueryResolverExecutionArgs,
+    GraphqlQueryBaseResolverService,
+    GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import {
-  ObjectRecord,
-  ObjectRecordFilter,
+    ObjectRecord,
+    ObjectRecordFilter,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { FindOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
+    GraphqlQueryRunnerException,
+    GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import {
-  WorkspaceQueryRunnerException,
-  WorkspaceQueryRunnerExceptionCode,
+    WorkspaceQueryRunnerException,
+    WorkspaceQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 
 @Injectable()
@@ -83,7 +83,8 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
         authContext,
         workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
-        shouldBypassPermissionChecks: false,
+        shouldBypassPermissionChecks:
+          executionArgs.shouldBypassPermissionChecks,
         selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }

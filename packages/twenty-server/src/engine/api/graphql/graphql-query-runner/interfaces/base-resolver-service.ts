@@ -47,6 +47,7 @@ export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   graphqlQuerySelectedFieldsResult: GraphqlQuerySelectedFieldsResult;
   isExecutedByApiKey: boolean;
   roleId?: string;
+  shouldBypassPermissionChecks: boolean;
 };
 
 @Injectable()
@@ -120,9 +121,7 @@ export abstract class GraphqlQueryBaseResolverService<
       let roleId: string | undefined;
       let shouldBypassPermissionChecks = false;
 
-      const executedByApiKey = isDefined(authContext.apiKey);
-
-      if (executedByApiKey && authContext.apiKey) {
+      if (isDefined(authContext.apiKey)) {
         const isApiKeyRolesEnabled =
           featureFlagsMap[FeatureFlagKey.IS_API_KEY_ROLES_ENABLED];
 
@@ -147,7 +146,7 @@ export abstract class GraphqlQueryBaseResolverService<
         }
       }
 
-      if (authContext.userWorkspaceId) {
+      if (isDefined(authContext.userWorkspaceId)) {
         roleId = await this.userRoleService.getRoleIdForUserWorkspace({
           userWorkspaceId: authContext.userWorkspaceId,
           workspaceId: workspace.id,
@@ -161,7 +160,10 @@ export abstract class GraphqlQueryBaseResolverService<
         }
       }
 
-      if (!authContext.apiKey && !authContext.userWorkspaceId) {
+      if (
+        !isDefined(authContext.apiKey) &&
+        !isDefined(authContext.userWorkspaceId)
+      ) {
         throw new PermissionsException(
           PermissionsExceptionMessage.NO_AUTHENTICATION_CONTEXT,
           PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
@@ -195,8 +197,9 @@ export abstract class GraphqlQueryBaseResolverService<
         repository,
         graphqlQueryParser,
         graphqlQuerySelectedFieldsResult,
-        isExecutedByApiKey: executedByApiKey,
+        isExecutedByApiKey: isDefined(authContext.apiKey),
         roleId,
+        shouldBypassPermissionChecks,
       };
 
       const results = await this.resolve(

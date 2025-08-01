@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-  MUTATION_MAX_MERGE_RECORDS,
-  QUERY_MAX_RECORDS,
+    MUTATION_MAX_MERGE_RECORDS,
+    QUERY_MAX_RECORDS,
 } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -10,8 +10,8 @@ import { In } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
-  GraphqlQueryBaseResolverService,
-  GraphqlQueryResolverExecutionArgs,
+    GraphqlQueryBaseResolverService,
+    GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
@@ -20,8 +20,8 @@ import { FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
+    GraphqlQueryRunnerException,
+    GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
@@ -377,15 +377,6 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       executionArgs.options;
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
-      let shouldBypassPermissionChecks = false;
-
-      if (executionArgs.isExecutedByApiKey) {
-        const isApiKeyRolesEnabled =
-          featureFlagsMap[FeatureFlagKey.IS_API_KEY_ROLES_ENABLED];
-
-        shouldBypassPermissionChecks = !isApiKeyRolesEnabled;
-      }
-
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
@@ -395,7 +386,8 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
         authContext,
         workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
-        shouldBypassPermissionChecks,
+        shouldBypassPermissionChecks:
+          executionArgs.shouldBypassPermissionChecks,
         selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }

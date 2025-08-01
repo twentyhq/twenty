@@ -20,7 +20,6 @@ import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/g
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -34,7 +33,6 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
 > {
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
-    featureFlagsMap: Record<FeatureFlagKey, boolean>,
   ): Promise<ObjectRecord[]> {
     const { objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
@@ -49,21 +47,11 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       objectMetadataItemWithFieldMaps,
     );
 
-    let shouldBypassPermissionChecks = false;
-
-    if (executionArgs.isExecutedByApiKey) {
-      const isApiKeyRolesEnabled =
-        featureFlagsMap[FeatureFlagKey.IS_API_KEY_ROLES_ENABLED];
-
-      shouldBypassPermissionChecks = !isApiKeyRolesEnabled;
-    }
-
     await this.processNestedRelationsIfNeeded({
       executionArgs,
       records: upsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      shouldBypassPermissionChecks,
       roleId,
     });
 
@@ -397,14 +385,12 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     records,
     objectMetadataItemWithFieldMaps,
     objectMetadataMaps,
-    shouldBypassPermissionChecks,
     roleId,
   }: {
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>;
     records: ObjectRecord[];
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
     objectMetadataMaps: ObjectMetadataMaps;
-    shouldBypassPermissionChecks: boolean;
     roleId?: string;
   }): Promise<void> {
     if (!executionArgs.graphqlQuerySelectedFieldsResult.relations) {
@@ -420,7 +406,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       authContext: executionArgs.options.authContext,
       workspaceDataSource: executionArgs.workspaceDataSource,
       roleId,
-      shouldBypassPermissionChecks,
+      shouldBypassPermissionChecks: executionArgs.shouldBypassPermissionChecks,
       selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
     });
   }
