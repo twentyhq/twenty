@@ -42,13 +42,13 @@ import {
 import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
 import { createMigrationActions } from 'src/engine/metadata-modules/field-metadata/utils/create-migration-actions.util';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
-import { hasNoDefaultValueForUniqueField } from 'src/engine/metadata-modules/field-metadata/utils/has-no-default-value-for-unique-field.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isFieldMetadataTypeMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-morph-relation.util';
 import { isFieldMetadataTypeRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-relation.util';
 import { isSelectOrMultiSelectFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/is-select-or-multi-select-field-metadata.util';
 import { prepareCustomFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/utils/prepare-custom-field-metadata-for-options.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
+import { validateUniqueFieldDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/validate-unique-field-default-value.util';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { computeUniqueIndexWhereClause } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-index-where-clause.util';
 import { shouldCreateUniqueIndex } from 'src/engine/metadata-modules/index-metadata/utils/should-create-unique-index.util';
@@ -173,17 +173,17 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     const isUniqueInput = fieldMetadataInput.isUnique;
 
     if (
-      !hasNoDefaultValueForUniqueField(
+      !validateUniqueFieldDefaultValue(
         fieldMetadataInput.defaultValue,
         isUniqueInput,
         existingFieldMetadata.type,
       ) ||
-      !hasNoDefaultValueForUniqueField(
+      !validateUniqueFieldDefaultValue(
         fieldMetadataInput.defaultValue,
         existingFieldMetadata.isUnique ?? false,
         existingFieldMetadata.type,
       ) ||
-      !hasNoDefaultValueForUniqueField(
+      !validateUniqueFieldDefaultValue(
         existingFieldMetadata.defaultValue,
         isUniqueInput ?? false,
         existingFieldMetadata.type,
@@ -840,7 +840,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     queryRunner: QueryRunner,
   ) {
     if (
-      !hasNoDefaultValueForUniqueField(
+      !validateUniqueFieldDefaultValue(
         fieldMetadataInput.defaultValue,
         fieldMetadataInput.isUnique,
         fieldMetadataInput.type,
@@ -863,10 +863,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           fieldMetadata.objectMetadataId === objectMetadata.id,
       );
 
-    if (emptyFields.length > 0 && !isDefined(initialCreatedField)) {
+    if (emptyFields.length > 0 || !isDefined(initialCreatedField)) {
       throw new FieldMetadataException(
         'Name and objectMetadataId should be unique for a field metadata (morph relation excepted)',
-        FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }
 
