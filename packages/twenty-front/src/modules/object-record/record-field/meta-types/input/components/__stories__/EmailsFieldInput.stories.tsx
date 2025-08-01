@@ -98,7 +98,7 @@ const EmailInputWithContext = ({
           },
           recordId,
           isLabelIdentifier: false,
-          isReadOnly: false,
+          isRecordFieldReadOnly: false,
           useUpdateRecord: () => [updateRecord, { loading: false }],
         }}
       >

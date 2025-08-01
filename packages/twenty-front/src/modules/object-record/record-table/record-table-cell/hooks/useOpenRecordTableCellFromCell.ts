@@ -19,7 +19,11 @@ export type OpenTableCellArgs = {
 };
 
 export const useOpenRecordTableCellFromCell = () => {
-  const { recordId, fieldDefinition, isReadOnly } = useContext(FieldContext);
+  const {
+    recordId,
+    fieldDefinition,
+    isRecordFieldReadOnly: isReadOnly,
+  } = useContext(FieldContext);
 
   const { pathToShowPage, objectNameSingular } =
     useRecordTableRowContextOrThrow();

@@ -2,8 +2,7 @@ import styled from '@emotion/styled';
 import { useCallback, useMemo, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 
-import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { isObjectReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isObjectReadOnly';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
@@ -115,7 +114,8 @@ type RecordTableHeaderCellProps = {
 export const RecordTableHeaderCell = ({
   column,
 }: RecordTableHeaderCellProps) => {
-  const { objectMetadataItem } = useRecordTableContextOrThrow();
+  const { objectMetadataItem, objectPermissions } =
+    useRecordTableContextOrThrow();
 
   const resizeFieldOffsetState = useRecoilComponentCallbackStateV2(
     resizeFieldOffsetComponentState,
@@ -223,11 +223,9 @@ export const RecordTableHeaderCell = ({
     createNewIndexRecord();
   };
 
-  const isReadOnly = isObjectMetadataReadOnly(objectMetadataItem);
-
-  const objectPermissions = useObjectPermissionsForObject(
-    objectMetadataItem.id,
-  );
+  const isReadOnly = isObjectReadOnly({
+    objectPermissions,
+  });
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 

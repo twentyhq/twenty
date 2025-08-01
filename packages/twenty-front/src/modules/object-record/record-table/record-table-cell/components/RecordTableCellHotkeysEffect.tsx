@@ -18,7 +18,7 @@ import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritin
 
 export const RecordTableCellHotkeysEffect = () => {
   const { openTableCell } = useOpenRecordTableCellFromCell();
-  const { isReadOnly } = useContext(FieldContext);
+  const { isRecordFieldReadOnly: isReadOnly } = useContext(FieldContext);
   const cellFocusId = useCurrentlyFocusedRecordTableCellFocusId();
   const { onCloseTableCell } = useRecordTableBodyContextOrThrow();
 

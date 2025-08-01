@@ -51,7 +51,7 @@ export const useMockFieldContext = ({
               }),
               useUpdateRecord: useUpdateOneObjectMutation,
               clearable,
-              isReadOnly: false,
+              isRecordFieldReadOnly: false,
             }}
           >
             {children}

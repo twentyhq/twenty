@@ -8,9 +8,10 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
+import { isFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isFieldReadOnly';
+import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
+import { useIsRecordDeleted } from '@/object-record/record-field/hooks/useIsRecordDeleted';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { isFieldValueReadOnly } from '@/object-record/record-field/utils/isFieldValueReadOnly';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
@@ -104,9 +105,8 @@ export const FieldsCard = ({
       ).canReadObjectRecords,
   );
 
-  const isRecordReadOnly = useIsRecordReadOnly({
+  const isRecordDeleted = useIsRecordDeleted({
     recordId: objectRecordId,
-    objectMetadataId: objectMetadataItem.id,
   });
 
   return (
@@ -133,12 +133,19 @@ export const FieldsCard = ({
                     }),
                     useUpdateRecord: useUpdateOneObjectRecordMutation,
                     isDisplayModeFixHeight: true,
-                    isReadOnly: isFieldValueReadOnly({
-                      objectNameSingular,
-                      fieldName: fieldMetadataItem.name,
-                      fieldType: fieldMetadataItem.type,
-                      isCustom: fieldMetadataItem.isCustom ?? false,
-                      isRecordReadOnly,
+                    isRecordFieldReadOnly: isRecordFieldReadOnly({
+                      isRecordDeleted,
+                      isFieldReadOnly: isFieldReadOnly({
+                        objectPermissions:
+                          objectPermissionsByObjectMetadataId[
+                            objectMetadataItem.id
+                          ],
+                        fieldMetadataId: fieldMetadataItem.id,
+                        objectNameSingular,
+                        fieldName: fieldMetadataItem.name,
+                        fieldType: fieldMetadataItem.type,
+                        isCustom: fieldMetadataItem.isCustom ?? false,
+                      }),
                     }),
                   }}
                 >
@@ -178,12 +185,19 @@ export const FieldsCard = ({
                   }),
                   useUpdateRecord: useUpdateOneObjectRecordMutation,
                   isDisplayModeFixHeight: true,
-                  isReadOnly: isFieldValueReadOnly({
-                    objectNameSingular,
-                    fieldName: fieldMetadataItem.name,
-                    fieldType: fieldMetadataItem.type,
-                    isCustom: fieldMetadataItem.isCustom ?? false,
-                    isRecordReadOnly,
+                  isRecordFieldReadOnly: isRecordFieldReadOnly({
+                    isRecordDeleted,
+                    isFieldReadOnly: isFieldReadOnly({
+                      objectPermissions:
+                        objectPermissionsByObjectMetadataId[
+                          objectMetadataItem.id
+                        ],
+                      fieldMetadataId: fieldMetadataItem.id,
+                      objectNameSingular,
+                      fieldName: fieldMetadataItem.name,
+                      fieldType: fieldMetadataItem.type,
+                      isCustom: fieldMetadataItem.isCustom ?? false,
+                    }),
                   }),
                 }}
               >
@@ -225,7 +239,18 @@ export const FieldsCard = ({
             }),
             useUpdateRecord: useUpdateOneObjectRecordMutation,
             isDisplayModeFixHeight: true,
-            isReadOnly: isRecordReadOnly,
+            isRecordFieldReadOnly: isRecordFieldReadOnly({
+              isRecordDeleted,
+              isFieldReadOnly: isFieldReadOnly({
+                objectPermissions:
+                  objectPermissionsByObjectMetadataId[objectMetadataItem.id],
+                fieldMetadataId: fieldMetadataItem.id,
+                objectNameSingular,
+                fieldName: fieldMetadataItem.name,
+                fieldType: fieldMetadataItem.type,
+                isCustom: fieldMetadataItem.isCustom ?? false,
+              }),
+            }),
           }}
         >
           <RecordDetailRelationSection

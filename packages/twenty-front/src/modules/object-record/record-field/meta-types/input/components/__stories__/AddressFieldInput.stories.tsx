@@ -84,7 +84,7 @@ const AddressInputWithContext = ({
             },
             recordId: recordId ?? '123',
             isLabelIdentifier: false,
-            isReadOnly: false,
+            isRecordFieldReadOnly: false,
           }}
         >
           <AddressValueSetterEffect value={value} />

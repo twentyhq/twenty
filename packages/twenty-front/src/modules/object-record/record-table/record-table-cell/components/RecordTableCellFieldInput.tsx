@@ -14,7 +14,7 @@ import { useRecoilCallback } from 'recoil';
 
 export const RecordTableCellFieldInput = () => {
   const { onMoveFocus, onCloseTableCell } = useRecordTableBodyContextOrThrow();
-  const { isReadOnly } = useContext(FieldContext);
+  const { isRecordFieldReadOnly: isReadOnly } = useContext(FieldContext);
   const instanceId = useAvailableComponentInstanceId(
     RecordFieldComponentInstanceContext,
   );

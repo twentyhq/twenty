@@ -1,6 +1,6 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
+import { useIsFieldReadOnly } from '@/object-record/record-field/hooks/read-only/useIsFieldReadOnly';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
@@ -26,8 +26,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
 }: RecordTableCellFieldContextLabelIdentifierProps) => {
   const { indexIdentifierUrl, objectPermissionsByObjectMetadataId } =
     useRecordIndexContextOrThrow();
-  const { recordId, isReadOnly: isTableRowReadOnly } =
-    useRecordTableRowContextOrThrow();
+  const { recordId, isRecordReadOnly } = useRecordTableRowContextOrThrow();
 
   const { columnDefinition } = useContext(RecordTableCellContext);
   const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
@@ -40,9 +39,13 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
     isRecordTableScrolledLeftComponentState,
   );
 
-  const isFieldReadOnly = useIsFieldValueReadOnly({
-    fieldDefinition: columnDefinition,
-    isRecordReadOnly: isTableRowReadOnly ?? false,
+  const isFieldReadOnly = useIsFieldReadOnly({
+    objectNameSingular: objectMetadataItem.nameSingular,
+    fieldName: columnDefinition.metadata.fieldName,
+    fieldType: columnDefinition.type,
+    isCustom: objectMetadataItem.isCustom,
+    fieldMetadataId: columnDefinition.fieldMetadataId,
+    objectMetadataId: objectMetadataItem.id,
   });
 
   const objectPermissions = getObjectPermissionsForObject(
@@ -65,6 +68,8 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
       ? 'CLICK'
       : 'MOUSE_DOWN';
 
+  const isReadOnly = (isFieldReadOnly || isRecordReadOnly) ?? false;
+
   return (
     <FieldContext.Provider
       value={{
@@ -75,7 +80,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
         isLabelIdentifier: true,
         isLabelIdentifierCompact,
         displayedMaxRows: 1,
-        isReadOnly: isFieldReadOnly,
+        isRecordFieldReadOnly: isReadOnly,
         maxWidth: columnDefinition.size,
         onRecordChipClick: () => {
           activateRecordTableRow(rowIndex);

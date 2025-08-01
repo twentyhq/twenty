@@ -15,7 +15,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
       fieldDefinition: phonesFieldDefinition,
       recordId,
       isLabelIdentifier: false,
-      isReadOnly: false,
+      isRecordFieldReadOnly: false,
     }}
   >
     <RecoilRoot>{children}</RecoilRoot>

@@ -44,7 +44,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
             fieldDefinition: textfieldDefinition,
             recordId: 'recordId',
             isLabelIdentifier: false,
-            isReadOnly: false,
+            isRecordFieldReadOnly: false,
           }}
         >
           <RecordTableRowContextProvider value={recordTableRowContextValue}>

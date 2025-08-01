@@ -75,7 +75,7 @@ const RichTextFieldInputWithContext = ({
             },
           },
           isLabelIdentifier: false,
-          isReadOnly: false,
+          isRecordFieldReadOnly: false,
         }}
       >
         <RichTextFieldInput

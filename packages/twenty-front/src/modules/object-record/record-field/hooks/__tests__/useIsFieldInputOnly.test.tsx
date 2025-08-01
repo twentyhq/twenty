@@ -21,7 +21,7 @@ const getWrapper =
         fieldDefinition,
         recordId,
         isLabelIdentifier: false,
-        isReadOnly: false,
+        isRecordFieldReadOnly: false,
       }}
     >
       <RecoilRoot>{children}</RecoilRoot>

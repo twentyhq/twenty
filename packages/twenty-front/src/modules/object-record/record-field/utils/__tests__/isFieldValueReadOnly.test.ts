@@ -1,18 +1,10 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { isFieldValueReadOnly } from '@/object-record/record-field/utils/isFieldValueReadOnly';
+import { isFieldReadOnlyBySystem } from '@/object-record/record-field/hooks/read-only/utils/isFieldReadOnlyBySystem';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-describe('isFieldValueReadOnly', () => {
-  it('should return true if record is read only', () => {
-    const result = isFieldValueReadOnly({
-      isRecordReadOnly: true,
-    });
-
-    expect(result).toBe(true);
-  });
-
+describe('isFieldReadOnlyBySystem', () => {
   it('should return true if object is a workflow sub object', () => {
-    const result = isFieldValueReadOnly({
+    const result = isFieldReadOnlyBySystem({
       objectNameSingular: 'workflowRun',
     });
 
@@ -20,7 +12,7 @@ describe('isFieldValueReadOnly', () => {
   });
 
   it('should return true if object is a calendar event', () => {
-    const result = isFieldValueReadOnly({
+    const result = isFieldReadOnlyBySystem({
       objectNameSingular: CoreObjectNameSingular.CalendarEvent,
     });
 
@@ -28,7 +20,7 @@ describe('isFieldValueReadOnly', () => {
   });
 
   it('should return true if object is a workflow and field is not name', () => {
-    const result = isFieldValueReadOnly({
+    const result = isFieldReadOnlyBySystem({
       objectNameSingular: CoreObjectNameSingular.Workflow,
       fieldName: 'description',
     });
@@ -37,7 +29,7 @@ describe('isFieldValueReadOnly', () => {
   });
 
   it('should return false if object is a workflow and field is name', () => {
-    const result = isFieldValueReadOnly({
+    const result = isFieldReadOnlyBySystem({
       objectNameSingular: CoreObjectNameSingular.Workflow,
       fieldName: 'name',
     });
@@ -46,7 +38,7 @@ describe('isFieldValueReadOnly', () => {
   });
 
   it('should return false if object is a workflow object and field is custom', () => {
-    const result = isFieldValueReadOnly({
+    const result = isFieldReadOnlyBySystem({
       objectNameSingular: CoreObjectNameSingular.Workflow,
       fieldName: 'test',
       isCustom: true,
@@ -56,7 +48,7 @@ describe('isFieldValueReadOnly', () => {
   });
 
   it('should return false if object is a workflow sub object and field is custom', () => {
-    const result = isFieldValueReadOnly({
+    const result = isFieldReadOnlyBySystem({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
       fieldName: 'test',
       isCustom: true,
@@ -67,7 +59,7 @@ describe('isFieldValueReadOnly', () => {
 
   describe('when checking field types', () => {
     it('should return true if fieldType is RICH_TEXT', () => {
-      const result = isFieldValueReadOnly({
+      const result = isFieldReadOnlyBySystem({
         fieldType: FieldMetadataType.RICH_TEXT,
       });
 
@@ -75,7 +67,7 @@ describe('isFieldValueReadOnly', () => {
     });
 
     it('should return false if fieldType is RICH_TEXT_V2', () => {
-      const result = isFieldValueReadOnly({
+      const result = isFieldReadOnlyBySystem({
         fieldType: FieldMetadataType.RICH_TEXT_V2,
       });
 
@@ -83,7 +75,7 @@ describe('isFieldValueReadOnly', () => {
     });
 
     it('should return true if fieldType is ACTOR', () => {
-      const result = isFieldValueReadOnly({
+      const result = isFieldReadOnlyBySystem({
         fieldType: FieldMetadataType.ACTOR,
       });
 
@@ -91,7 +83,7 @@ describe('isFieldValueReadOnly', () => {
     });
 
     it('should return false for other field types', () => {
-      const result = isFieldValueReadOnly({
+      const result = isFieldReadOnlyBySystem({
         fieldType: FieldMetadataType.TEXT,
       });
 
@@ -100,11 +92,10 @@ describe('isFieldValueReadOnly', () => {
   });
 
   it('should return false for standard editable fields', () => {
-    const result = isFieldValueReadOnly({
+    const result = isFieldReadOnlyBySystem({
       objectNameSingular: 'company',
       fieldName: 'name',
       fieldType: FieldMetadataType.TEXT,
-      isRecordReadOnly: false,
     });
 
     expect(result).toBe(false);

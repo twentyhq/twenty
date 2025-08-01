@@ -104,7 +104,7 @@ const getWrapper =
             recordId,
             isLabelIdentifier: false,
             useUpdateRecord: useUpdateOneRecordMutation,
-            isReadOnly: false,
+            isRecordFieldReadOnly: false,
           }}
         >
           {children}

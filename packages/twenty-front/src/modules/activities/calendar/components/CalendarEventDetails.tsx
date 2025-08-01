@@ -7,6 +7,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { useIsRecordDeleted } from '@/object-record/record-field/hooks/useIsRecordDeleted';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
@@ -94,6 +95,10 @@ export const CalendarEventDetails = ({
 
   const { calendarEventParticipants } = calendarEvent;
 
+  const isRecordDeleted = useIsRecordDeleted({
+    recordId: calendarEvent.id,
+  });
+
   const Fields = fieldsToDisplay.map((fieldName) => (
     <StyledPropertyBox key={fieldName}>
       <FieldContext.Provider
@@ -108,7 +113,7 @@ export const CalendarEventDetails = ({
           }),
           useUpdateRecord: () => [() => undefined, { loading: false }],
           maxWidth: 300,
-          isReadOnly: false,
+          isRecordFieldReadOnly: isRecordDeleted || false,
         }}
       >
         <RecordFieldComponentInstanceContext.Provider

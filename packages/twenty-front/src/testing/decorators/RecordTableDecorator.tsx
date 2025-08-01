@@ -92,6 +92,8 @@ const InternalTableContextProviders = ({
           recordTableId: objectMetadataItem.namePlural,
           viewBarId: 'view-bar',
           visibleTableColumns: visibleTableColumns,
+          objectPermissions:
+            objectPermissionsByObjectMetadataId[objectMetadataItem.id],
         }}
       >
         <RecordTableBodyContextProvider

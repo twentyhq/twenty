@@ -82,7 +82,7 @@ const TextFieldInputWithContext = ({
             },
           },
           isLabelIdentifier: false,
-          isReadOnly: false,
+          isRecordFieldReadOnly: false,
         }}
       >
         <TextFieldValueSetterEffect value={value} />

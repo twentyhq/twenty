@@ -99,7 +99,7 @@ const ArrayInputWithContext = ({
           },
           recordId,
           isLabelIdentifier: false,
-          isReadOnly: false,
+          isRecordFieldReadOnly: false,
           useUpdateRecord: () => [updateRecord, { loading: false }],
         }}
       >

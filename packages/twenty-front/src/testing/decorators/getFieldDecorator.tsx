@@ -136,7 +136,7 @@ export const getFieldDecorator =
               position: 0,
               objectMetadataItem,
             }),
-            isReadOnly: false,
+            isRecordFieldReadOnly: false,
           }}
         >
           <RecordMockSetterEffect
