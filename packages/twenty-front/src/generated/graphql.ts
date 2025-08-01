@@ -867,7 +867,7 @@ export type GetApiKeyDto = {
 };
 
 export type GetAuthorizationUrlForSsoInput = {
-  identityProviderId: Scalars['String'];
+  identityProviderId: Scalars['UUID'];
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
 };
 
@@ -1300,7 +1300,7 @@ export type MutationDeleteDatabaseConfigVariableArgs = {
 
 
 export type MutationDeleteFileArgs = {
-  fileId: Scalars['String'];
+  fileId: Scalars['UUID'];
 };
 
 
@@ -1315,7 +1315,7 @@ export type MutationDeleteOneObjectArgs = {
 
 
 export type MutationDeleteOneRoleArgs = {
-  roleId: Scalars['String'];
+  roleId: Scalars['UUID'];
 };
 
 
@@ -1366,7 +1366,7 @@ export type MutationExecuteOneServerlessFunctionArgs = {
 
 
 export type MutationGenerateApiKeyTokenArgs = {
-  apiKeyId: Scalars['String'];
+  apiKeyId: Scalars['UUID'];
   expiresAt: Scalars['String'];
 };
 
@@ -1594,8 +1594,8 @@ export type MutationUpdateWorkspaceFeatureFlagArgs = {
 
 
 export type MutationUpdateWorkspaceMemberRoleArgs = {
-  roleId: Scalars['String'];
-  workspaceMemberId: Scalars['String'];
+  roleId: Scalars['UUID'];
+  workspaceMemberId: Scalars['UUID'];
 };
 
 
@@ -1653,7 +1653,7 @@ export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs 
 export type Object = {
   __typename?: 'Object';
   createdAt: Scalars['DateTime'];
-  dataSourceId: Scalars['String'];
+  dataSourceId: Scalars['UUID'];
   description?: Maybe<Scalars['String']>;
   duplicateCriteria?: Maybe<Array<Array<Scalars['String']>>>;
   fields: ObjectFieldsConnection;
@@ -2728,7 +2728,7 @@ export type UserWorkspace = {
 };
 
 export type ValidateApprovedAccessDomainInput = {
-  approvedAccessDomainId: Scalars['String'];
+  approvedAccessDomainId: Scalars['UUID'];
   validationToken: Scalars['String'];
 };
 

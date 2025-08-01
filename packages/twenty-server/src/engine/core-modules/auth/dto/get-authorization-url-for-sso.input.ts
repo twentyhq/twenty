@@ -2,12 +2,14 @@
 
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
+
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
 export class GetAuthorizationUrlForSSOInput {
-  @Field(() => String)
-  @IsString()
+  @Field(() => UUIDScalarType)
+  @IsUUID()
   identityProviderId: string;
 
   @Field(() => String, { nullable: true })
