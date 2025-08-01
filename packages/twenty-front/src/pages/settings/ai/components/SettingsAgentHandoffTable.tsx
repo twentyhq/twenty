@@ -3,7 +3,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -11,11 +11,9 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
-  AppTooltip,
   IconSearch,
   IconTrash,
   OverflowingTextWithTooltip,
-  TooltipDelay,
 } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { useRemoveAgentHandoffMutation } from '~/generated-metadata/graphql';
@@ -44,16 +42,8 @@ const StyledSearchContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledSearchInput = styled(TextInput)`
-  input {
-    background: ${({ theme }) => theme.background.transparent.lighter};
-    border: 1px solid ${({ theme }) => theme.border.color.medium};
-  }
-`;
-
 const StyledTableRows = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-block: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledNoHandoffs = styled(TableCell)`
@@ -94,7 +84,9 @@ export const SettingsAgentHandoffTable = ({
       });
 
   const handleRemoveHandoff = async () => {
-    if (!handoffToDelete) return;
+    if (!handoffToDelete) {
+      return;
+    }
 
     try {
       await removeAgentHandoff({
@@ -122,8 +114,7 @@ export const SettingsAgentHandoffTable = ({
   return (
     <>
       <StyledSearchContainer>
-        <StyledSearchInput
-          instanceId="agent-handoffs-search"
+        <TextInputV2
           value={searchFilter}
           onChange={setSearchFilter}
           placeholder={t`Search handoffs...`}
@@ -134,40 +125,21 @@ export const SettingsAgentHandoffTable = ({
       </StyledSearchContainer>
 
       <StyledTable>
-        <TableRow
-          gridAutoColumns="150px 1fr 1fr"
-          mobileGridAutoColumns="100px 1fr 1fr"
-        >
+        <TableRow gridAutoColumns="2fr 2fr 1fr">
           <TableHeader>
             <Trans>Target Agent</Trans>
           </TableHeader>
           <TableHeader>
             <Trans>Description</Trans>
           </TableHeader>
-          <TableHeader align={'right'}></TableHeader>
+          <TableHeader align={'right'} />
         </TableRow>
         <StyledTableRows>
           {filteredHandoffTargets.length > 0 ? (
             filteredHandoffTargets.map((handoff) => (
-              <TableRow
-                gridAutoColumns="150px 1fr 1fr"
-                mobileGridAutoColumns="100px 1fr 1fr"
-                key={handoff.id}
-              >
+              <TableRow gridAutoColumns="2fr 2fr 1fr" key={handoff.id}>
                 <TableCell>
-                  <StyledTextContainerWithEllipsis
-                    id={`handoff-agent-${handoff.toAgent.id}`}
-                  >
-                    {handoff.toAgent.label}
-                  </StyledTextContainerWithEllipsis>
-                  <AppTooltip
-                    anchorSelect={`#handoff-agent-${handoff.toAgent.id}`}
-                    content={handoff.toAgent.label}
-                    noArrow
-                    place="top"
-                    positionStrategy="fixed"
-                    delay={TooltipDelay.shortDelay}
-                  />
+                  <OverflowingTextWithTooltip text={handoff.toAgent.label} />
                 </TableCell>
 
                 <StyledTableCell>
