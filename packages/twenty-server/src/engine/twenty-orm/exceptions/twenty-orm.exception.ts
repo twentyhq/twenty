@@ -1,14 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class TwentyORMException extends CustomException {
-  constructor(
-    message: string,
-    code: TwentyORMExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
-  ) {
-    super(message, code, userFriendlyMessage);
-  }
-}
+export class TwentyORMException extends CustomException<TwentyORMExceptionCode> {}
 
 export enum TwentyORMExceptionCode {
   METADATA_VERSION_MISMATCH = 'METADATA_VERSION_MISMATCH',
@@ -23,4 +15,5 @@ export enum TwentyORMExceptionCode {
   CONNECT_UNIQUE_CONSTRAINT_ERROR = 'CONNECT_UNIQUE_CONSTRAINT_ERROR',
   MISSING_MAIN_ALIAS_TARGET = 'MISSING_MAIN_ALIAS_TARGET',
   METHOD_NOT_ALLOWED = 'METHOD_NOT_ALLOWED',
+  ENUM_TYPE_NAME_NOT_FOUND = 'ENUM_TYPE_NAME_NOT_FOUND',
 }

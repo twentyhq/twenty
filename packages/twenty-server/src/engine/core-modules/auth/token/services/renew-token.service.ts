@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
@@ -11,8 +11,8 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
+import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class RenewTokenService {
   ) {}
 
   async generateTokensFromRefreshToken(token: string): Promise<{
-    accessToken: AuthToken;
+    accessOrWorkspaceAgnosticToken: AuthToken;
     refreshToken: AuthToken;
   }> {
     if (!token) {
@@ -80,7 +80,7 @@ export class RenewTokenService {
     });
 
     return {
-      accessToken,
+      accessOrWorkspaceAgnosticToken: accessToken,
       refreshToken,
     };
   }

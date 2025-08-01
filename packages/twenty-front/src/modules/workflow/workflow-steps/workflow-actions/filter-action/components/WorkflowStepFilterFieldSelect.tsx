@@ -116,7 +116,9 @@ export const WorkflowStepFilterFieldSelect = ({
     : variableLabel;
   const dropdownId = `step-filter-field-${stepFilter.id}`;
 
-  if (noAvailableVariables) {
+  const isReadonly = readonly ?? false;
+
+  if (isReadonly || noAvailableVariables) {
     return (
       <Dropdown
         dropdownId={dropdownId}
@@ -124,7 +126,9 @@ export const WorkflowStepFilterFieldSelect = ({
           <SelectControl
             selectedOption={{
               value: stepFilter.stepOutputKey,
-              label: t`No available fields to select`,
+              label: isReadonly
+                ? (variableLabel ?? '')
+                : t`No available fields to select`,
             }}
             isDisabled={true}
           />
@@ -145,7 +149,6 @@ export const WorkflowStepFilterFieldSelect = ({
             value: stepFilter.stepOutputKey,
             label,
           }}
-          isDisabled={readonly}
           textAccent={isSelectedFieldNotFound ? 'placeholder' : 'default'}
         />
       }

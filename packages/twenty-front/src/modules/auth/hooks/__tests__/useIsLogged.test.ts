@@ -30,7 +30,7 @@ describe('useIsLogged', () => {
 
     await act(async () => {
       result.current.setTokenPair({
-        accessToken: {
+        accessOrWorkspaceAgnosticToken: {
           expiresAt: '',
           token: 'testToken',
         },

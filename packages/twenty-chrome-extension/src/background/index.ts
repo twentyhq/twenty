@@ -62,7 +62,7 @@ const setTokenStateFromCookie = (cookie: string) => {
   if (isDefined(tokenPair)) {
     chrome.storage.local.set({
       isAuthenticated: true,
-      accessToken: tokenPair.accessToken,
+      accessToken: tokenPair.accessOrWorkspaceAgnosticToken,
       refreshToken: tokenPair.refreshToken,
     });
   }
