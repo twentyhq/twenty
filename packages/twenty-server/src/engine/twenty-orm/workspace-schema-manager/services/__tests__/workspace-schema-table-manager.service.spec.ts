@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { QueryRunner } from 'typeorm';
 
 import { WorkspaceSchemaTableManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-table-manager.service';
+import { WorkspaceSchemaTableDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-table-definition.type';
 
 describe('WorkspaceSchemaTableManager', () => {
   let service: WorkspaceSchemaTableManagerService;
@@ -31,9 +32,13 @@ describe('WorkspaceSchemaTableManager', () => {
       // Prepare
       const schemaName = 'workspace_test';
       const tableName = 'users';
+      const tableDefinition: WorkspaceSchemaTableDefinition = {
+        name: tableName,
+        columns: [],
+      };
 
       // Act
-      await service.createTable(mockQueryRunner, schemaName, tableName);
+      await service.createTable(mockQueryRunner, schemaName, tableDefinition);
 
       // Assert
       const actualCall = mockQueryRunner.query.mock.calls[0][0];
@@ -56,13 +61,12 @@ describe('WorkspaceSchemaTableManager', () => {
         { name: 'tags', type: 'varchar', isArray: true },
         { name: 'email', type: 'varchar', isUnique: true },
       ];
-
-      await service.createTable(
-        mockQueryRunner,
-        schemaName,
-        tableName,
+      const tableDefinition: WorkspaceSchemaTableDefinition = {
+        name: tableName,
         columns,
-      );
+      };
+
+      await service.createTable(mockQueryRunner, schemaName, tableDefinition);
 
       const expectedSql = expect.stringContaining(
         'CREATE TABLE IF NOT EXISTS "workspace_test"."products"',
@@ -83,9 +87,13 @@ describe('WorkspaceSchemaTableManager', () => {
       // Prepare
       const schemaName = 'workspace_test; DROP TABLE';
       const tableName = 'users; DELETE FROM';
+      const tableDefinition: WorkspaceSchemaTableDefinition = {
+        name: tableName,
+        columns: [],
+      };
 
       // Act
-      await service.createTable(mockQueryRunner, schemaName, tableName);
+      await service.createTable(mockQueryRunner, schemaName, tableDefinition);
 
       // Assert
       expect(mockQueryRunner.query).toHaveBeenCalledWith(
@@ -96,9 +104,13 @@ describe('WorkspaceSchemaTableManager', () => {
     it('should sanitize column names and types', async () => {
       // Prepare
       const columns = [{ name: 'user_id; DROP', type: 'varchar; EXEC' }];
+      const tableDefinition: WorkspaceSchemaTableDefinition = {
+        name: 'table',
+        columns,
+      };
 
       // Act
-      await service.createTable(mockQueryRunner, 'schema', 'table', columns);
+      await service.createTable(mockQueryRunner, 'schema', tableDefinition);
 
       // Assert
       const actualCall = mockQueryRunner.query.mock.calls[0][0];
@@ -228,7 +240,16 @@ describe('WorkspaceSchemaTableManager', () => {
     it('should prevent SQL injection in schema names', async () => {
       const maliciousSchema = "workspace'; DROP TABLE users; --";
 
-      await service.createTable(mockQueryRunner, maliciousSchema, 'table');
+      const tableDefinition: WorkspaceSchemaTableDefinition = {
+        name: 'table',
+        columns: [],
+      };
+
+      await service.createTable(
+        mockQueryRunner,
+        maliciousSchema,
+        tableDefinition,
+      );
 
       const actualCall = mockQueryRunner.query.mock.calls[0][0];
 
@@ -256,12 +277,12 @@ describe('WorkspaceSchemaTableManager', () => {
         },
       ];
 
-      await service.createTable(
-        mockQueryRunner,
-        'schema',
-        'table',
-        maliciousColumns,
-      );
+      const tableDefinition: WorkspaceSchemaTableDefinition = {
+        name: 'table',
+        columns: maliciousColumns,
+      };
+
+      await service.createTable(mockQueryRunner, 'schema', tableDefinition);
 
       const actualCall = mockQueryRunner.query.mock.calls[0][0];
 

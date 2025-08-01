@@ -7,6 +7,7 @@ import { WorkspaceSchemaEnumManagerService } from 'src/engine/twenty-orm/workspa
 import { WorkspaceSchemaForeignKeyManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-foreign-key-manager.service';
 import { WorkspaceSchemaIndexManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-index-manager.service';
 import { WorkspaceSchemaTableManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-table-manager.service';
+import { WorkspaceSchemaTableDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-table-definition.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 
 describe('WorkspaceSchemaManager', () => {
@@ -138,16 +139,16 @@ describe('WorkspaceSchemaManager', () => {
       const schemaName = 'workspace_test';
       const tableName = 'users';
 
+      const tableDefinition: WorkspaceSchemaTableDefinition = {
+        name: tableName,
+        columns: [],
+      };
+
       // Act
       await service.tableManager.createTable(
         mockQueryRunner,
         schemaName,
-        tableName,
-        [
-          { name: 'id', type: 'uuid', isPrimary: true },
-          { name: 'name', type: 'varchar', isNullable: false },
-          { name: 'status', type: 'varchar' },
-        ],
+        tableDefinition,
       );
 
       await service.enumManager.createEnum(

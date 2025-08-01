@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { QueryRunner } from 'typeorm';
 
+import { WorkspaceSchemaTableDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-table-definition.type';
 import { sanitizeDefaultValue } from 'src/engine/twenty-orm/workspace-schema-manager/utils/sanitize-default-value.util';
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
 
@@ -10,19 +11,10 @@ export class WorkspaceSchemaTableManagerService {
   async createTable(
     queryRunner: QueryRunner,
     schemaName: string,
-    tableName: string,
-    columns?: Array<{
-      name: string;
-      type: string;
-      isNullable?: boolean;
-      default?: string | number | boolean | null;
-      isPrimary?: boolean;
-      isUnique?: boolean;
-      isArray?: boolean;
-    }>,
+    tableDefinition: WorkspaceSchemaTableDefinition,
   ): Promise<void> {
     const columnDefinitions =
-      columns?.map((column) => {
+      tableDefinition.columns?.map((column) => {
         const safeName = removeSqlDDLInjection(column.name);
         const safeType = removeSqlDDLInjection(column.type);
         const parts = [
@@ -60,7 +52,7 @@ export class WorkspaceSchemaTableManagerService {
     }
 
     const safeSchemaName = removeSqlDDLInjection(schemaName);
-    const safeTableName = removeSqlDDLInjection(tableName);
+    const safeTableName = removeSqlDDLInjection(tableDefinition.name);
     const sql = `CREATE TABLE IF NOT EXISTS "${safeSchemaName}"."${safeTableName}" (${columnDefinitions.join(', ')})`;
 
     await queryRunner.query(sql);

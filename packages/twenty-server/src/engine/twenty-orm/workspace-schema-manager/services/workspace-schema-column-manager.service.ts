@@ -22,6 +22,22 @@ export class WorkspaceSchemaColumnManagerService {
     await queryRunner.query(sql);
   }
 
+  async addColumns(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+    columns: WorkspaceSchemaColumnDefinition[],
+  ): Promise<void> {
+    const columnDefs = columns.map((column) =>
+      this.buildColumnDefinition(column),
+    );
+    const safeSchemaName = removeSqlDDLInjection(schemaName);
+    const safeTableName = removeSqlDDLInjection(tableName);
+    const sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ADD COLUMN ${columnDefs.join(', ')}`;
+
+    await queryRunner.query(sql);
+  }
+
   async dropColumn(
     queryRunner: QueryRunner,
     schemaName: string,
