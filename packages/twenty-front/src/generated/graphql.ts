@@ -817,8 +817,8 @@ export type FieldPermission = {
 export type FieldPermissionInput = {
   canReadFieldValue?: InputMaybe<Scalars['Boolean']>;
   canUpdateFieldValue?: InputMaybe<Scalars['Boolean']>;
-  fieldMetadataId: Scalars['String'];
-  objectMetadataId: Scalars['String'];
+  fieldMetadataId: Scalars['UUID'];
+  objectMetadataId: Scalars['UUID'];
 };
 
 export type File = {
@@ -1175,7 +1175,7 @@ export type Mutation = {
 
 
 export type MutationActivateWorkflowVersionArgs = {
-  workflowVersionId: Scalars['String'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 
@@ -1285,7 +1285,7 @@ export type MutationCreateWorkflowVersionStepArgs = {
 
 
 export type MutationDeactivateWorkflowVersionArgs = {
-  workflowVersionId: Scalars['String'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 
@@ -1416,8 +1416,8 @@ export type MutationGetWorkspaceAgnosticTokenFromEmailVerificationTokenArgs = {
 
 
 export type MutationImpersonateArgs = {
-  userId: Scalars['String'];
-  workspaceId: Scalars['String'];
+  userId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
 };
 
 
@@ -1740,7 +1740,7 @@ export type ObjectPermission = {
   canReadObjectRecords?: Maybe<Scalars['Boolean']>;
   canSoftDeleteObjectRecords?: Maybe<Scalars['Boolean']>;
   canUpdateObjectRecords?: Maybe<Scalars['Boolean']>;
-  objectMetadataId: Scalars['String'];
+  objectMetadataId: Scalars['UUID'];
   restrictedFields?: Maybe<Scalars['JSON']>;
 };
 
@@ -1749,7 +1749,7 @@ export type ObjectPermissionInput = {
   canReadObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canSoftDeleteObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canUpdateObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  objectMetadataId: Scalars['String'];
+  objectMetadataId: Scalars['UUID'];
 };
 
 export type ObjectRecordFilterInput = {
@@ -2640,12 +2640,12 @@ export type UpdateWorkspaceInput = {
 
 export type UpsertFieldPermissionsInput = {
   fieldPermissions: Array<FieldPermissionInput>;
-  roleId: Scalars['String'];
+  roleId: Scalars['UUID'];
 };
 
 export type UpsertObjectPermissionsInput = {
   objectPermissions: Array<ObjectPermissionInput>;
-  roleId: Scalars['String'];
+  roleId: Scalars['UUID'];
 };
 
 export type UpsertPermissionFlagsInput = {
