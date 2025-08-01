@@ -26,7 +26,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 type FieldsCardProps = {
   objectNameSingular: string;
   objectRecordId: string;
-  isMergeMode?: boolean;
+  showDuplicatesSection?: boolean;
 };
 
 const INPUT_ID_PREFIX = 'fields-card';
@@ -34,7 +34,7 @@ const INPUT_ID_PREFIX = 'fields-card';
 export const FieldsCard = ({
   objectNameSingular,
   objectRecordId,
-  isMergeMode = false,
+  showDuplicatesSection = true,
 }: FieldsCardProps) => {
   const { recordLoading, labelIdentifierFieldMetadataItem, isPrefetchLoading } =
     useRecordShowContainerData({
@@ -206,7 +206,7 @@ export const FieldsCard = ({
           </>
         )}
       </PropertyBox>
-      {!isMergeMode && (
+      {showDuplicatesSection && (
         <RecordDetailDuplicatesSection
           objectRecordId={objectRecordId}
           objectNameSingular={objectNameSingular}

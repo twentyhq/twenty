@@ -56,7 +56,7 @@ type CardComponentType = (
 ) => JSX.Element | null;
 
 type FieldsCardComponentProps = CardComponentProps & {
-  isMergeMode?: boolean;
+  showDuplicatesSection?: boolean;
 };
 
 const LoadingSkeleton = () => {
@@ -112,13 +112,13 @@ export const CardComponents: Record<CardType, CardComponentType> = {
   [CardType.FieldCard]: ({
     targetableObject,
     isInRightDrawer,
-    isMergeMode = false,
+    showDuplicatesSection,
   }: FieldsCardComponentProps) => (
     <StyledGreyBox isInRightDrawer={isInRightDrawer}>
       <FieldsCard
         objectNameSingular={targetableObject.targetObjectNameSingular}
         objectRecordId={targetableObject.id}
-        isMergeMode={isMergeMode}
+        showDuplicatesSection={showDuplicatesSection}
       />
     </StyledGreyBox>
   ),

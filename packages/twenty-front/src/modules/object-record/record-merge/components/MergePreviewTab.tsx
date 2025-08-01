@@ -48,7 +48,7 @@ export const MergePreviewTab = ({
           targetObjectNameSingular: objectNameSingular,
           id: mergePreviewRecord.id,
         }}
-        isMergeMode={true}
+        showDuplicatesSection={false}
         isInRightDrawer={true}
       />
     </Section>
