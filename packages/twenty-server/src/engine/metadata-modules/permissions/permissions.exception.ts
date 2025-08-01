@@ -52,7 +52,7 @@ export enum PermissionsExceptionCode {
 }
 
 export enum PermissionsExceptionMessage {
-  PERMISSION_DENIED = 'User does not have permission',
+  PERMISSION_DENIED = 'Entity performing the request does not have permission',
   USER_WORKSPACE_NOT_FOUND = 'User workspace not found',
   ROLE_NOT_FOUND = 'Role not found',
   CANNOT_UNASSIGN_LAST_ADMIN = 'Cannot unassign admin role from last admin of the workspace',
