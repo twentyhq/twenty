@@ -46,9 +46,6 @@ export const WorkflowEditActionAiAgent = ({
       defaultTitle: 'AI Agent',
     });
 
-  const agentId = action.settings.input.agentId;
-  const prompt = action.settings.input.prompt || '';
-
   const { handleOutputSchemaChange, outputFields } = useAiAgentOutputSchema(
     action.settings.outputSchema as BaseOutputSchema,
     actionOptions.readonly === true ? undefined : actionOptions.onActionUpdate,
@@ -127,7 +124,7 @@ export const WorkflowEditActionAiAgent = ({
             dropdownId="select-agent"
             label={t`Select Agent`}
             options={agentOptions}
-            value={agentId}
+            value={action.settings.input.agentId}
             onChange={handleAgentChange}
             disabled={actionOptions.readonly || noAgentsAvailable}
             emptyOption={{
@@ -150,7 +147,7 @@ export const WorkflowEditActionAiAgent = ({
           VariablePicker={WorkflowVariablePicker}
           label={t`Instructions for AI`}
           placeholder={t`Describe what you want the AI to do...`}
-          defaultValue={prompt}
+          defaultValue={action.settings.input.prompt}
           onChange={handlePromptChange}
           readonly={actionOptions.readonly}
         />
