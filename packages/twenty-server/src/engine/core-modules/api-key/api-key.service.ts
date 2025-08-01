@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, Repository } from 'typeorm';
+import { DataSource, IsNull, Repository } from 'typeorm';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
@@ -20,22 +20,33 @@ export class ApiKeyService {
     private readonly apiKeyRepository: Repository<ApiKey>,
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
+    @InjectDataSource('core')
+    private readonly dataSource: DataSource,
   ) {}
 
   async create(
     apiKeyData: Partial<ApiKey> & { roleId: string },
   ): Promise<ApiKey> {
     const { roleId, ...apiKeyFields } = apiKeyData;
-    const apiKey = this.apiKeyRepository.create(apiKeyFields);
-    const savedApiKey = await this.apiKeyRepository.save(apiKey);
 
-    await this.apiKeyRoleService.assignRoleToApiKey({
-      apiKeyId: savedApiKey.id,
-      roleId,
-      workspaceId: savedApiKey.workspaceId,
-    });
+    return await this.dataSource
+      .transaction(async (manager) => {
+        const apiKey = manager.create(ApiKey, apiKeyFields);
+        const savedApiKey = await manager.save(apiKey);
 
-    return savedApiKey;
+        await this.apiKeyRoleService.assignRoleToApiKeyWithManager(manager, {
+          apiKeyId: savedApiKey.id,
+          roleId,
+          workspaceId: savedApiKey.workspaceId,
+        });
+
+        return savedApiKey;
+      })
+      .then(async (savedApiKey) => {
+        await this.apiKeyRoleService.recomputeCache(savedApiKey.workspaceId);
+
+        return savedApiKey;
+      });
   }
 
   async findById(id: string, workspaceId: string): Promise<ApiKey | null> {

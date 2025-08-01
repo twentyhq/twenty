@@ -29,7 +29,7 @@ const StyledEllipsisLabel = styled.div`
 `;
 
 type ApiKeyType = Pick<ApiKey, 'id' | 'name' | 'expiresAt' | 'revokedAt'> & {
-  role: { id: string; label: string; icon?: string | null };
+  role?: { id: string; label: string; icon?: string | null } | null;
 };
 
 type SettingsApiKeysFieldItemTableRowProps = {
@@ -58,7 +58,7 @@ export const SettingsApiKeysFieldItemTableRow = ({
 
       {isApiKeyRolesEnabled && (
         <StyledTruncatedCell color={theme.font.color.tertiary}>
-          <StyledEllipsisLabel>{apiKey.role.label}</StyledEllipsisLabel>
+          <StyledEllipsisLabel>{apiKey.role?.label || '-'}</StyledEllipsisLabel>
         </StyledTruncatedCell>
       )}
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { In, Repository } from 'typeorm';
+import { DataSource, EntityManager, In, Repository } from 'typeorm';
 
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
@@ -27,6 +27,8 @@ export class ApiKeyRoleService {
     @InjectRepository(ApiKey, 'core')
     private readonly apiKeyRepository: Repository<ApiKey>,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    @InjectDataSource('core')
+    private readonly dataSource: DataSource,
   ) {}
 
   public async assignRoleToApiKey({
@@ -47,22 +49,44 @@ export class ApiKeyRoleService {
     if (validationResult?.roleToAssignIsSameAsCurrentRole) {
       return;
     }
-    await this.roleTargetsRepository.delete({
+
+    await this.dataSource.transaction(async (manager) => {
+      await this.assignRoleToApiKeyWithManager(manager, {
+        apiKeyId,
+        roleId,
+        workspaceId,
+      });
+    });
+
+    await this.workspacePermissionsCacheService.recomputeApiKeyRoleMapCache({
+      workspaceId,
+    });
+  }
+
+  public async assignRoleToApiKeyWithManager(
+    manager: EntityManager,
+    {
+      apiKeyId,
+      roleId,
+      workspaceId,
+    }: {
+      apiKeyId: string;
+      roleId: string;
+      workspaceId: string;
+    },
+  ): Promise<void> {
+    await manager.delete(RoleTargetsEntity, {
       apiKeyId,
       workspaceId,
     });
 
-    const roleTarget = this.roleTargetsRepository.create({
+    const roleTarget = manager.create(RoleTargetsEntity, {
       apiKeyId,
       roleId,
       workspaceId,
     });
 
-    await this.roleTargetsRepository.save(roleTarget);
-
-    await this.workspacePermissionsCacheService.recomputeApiKeyRoleMapCache({
-      workspaceId,
-    });
+    await manager.save(roleTarget);
   }
 
   async getRoleIdForApiKey(
@@ -84,18 +108,6 @@ export class ApiKeyRoleService {
     }
 
     return roleId;
-  }
-
-  async getRoleForApiKey(
-    apiKeyId: string,
-    workspaceId: string,
-  ): Promise<RoleEntity | null> {
-    const roleTarget = await this.roleTargetsRepository.findOne({
-      where: { apiKeyId, workspaceId },
-      relations: ['role'],
-    });
-
-    return roleTarget?.role || null;
   }
 
   async recomputeCache(workspaceId: string): Promise<void> {

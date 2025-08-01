@@ -4,12 +4,12 @@ type MockedApiKey = Pick<
   ApiKey,
   'id' | 'name' | 'createdAt' | 'updatedAt' | 'expiresAt'
 > & {
-  role: {
+  role?: {
     __typename: 'Role';
     id: string;
     label: string;
     icon: string | null;
-  };
+  } | null;
 };
 
 export const mockedApiKeys: Array<MockedApiKey> = [
