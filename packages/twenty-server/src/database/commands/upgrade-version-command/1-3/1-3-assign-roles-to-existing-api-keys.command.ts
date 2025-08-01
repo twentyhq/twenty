@@ -18,7 +18,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Command({
-  name: 'upgrade:1-2:assign-roles-to-existing-api-keys',
+  name: 'upgrade:1-3:assign-roles-to-existing-api-keys',
   description:
     'Assign Admin roles to existing API keys that lack role assignments. ' +
     'This ensures existing integrations continue to work after enabling role-based permissions.',
