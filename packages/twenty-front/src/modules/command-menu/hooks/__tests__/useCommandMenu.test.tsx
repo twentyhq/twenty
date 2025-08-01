@@ -8,6 +8,7 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isCommandMenuPersistentState } from '@/command-menu/states/isCommandMenuPersistentState';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>
@@ -25,6 +26,9 @@ const renderHooks = () => {
     () => {
       const commandMenu = useCommandMenu();
       const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
+      const isCommandMenuPersistent = useRecoilValue(
+        isCommandMenuPersistentState,
+      );
       const commandMenuNavigationStack = useRecoilValue(
         commandMenuNavigationStackState,
       );
@@ -34,6 +38,7 @@ const renderHooks = () => {
       return {
         commandMenu,
         isCommandMenuOpened,
+        isCommandMenuPersistent,
         commandMenuNavigationStack,
         commandMenuPage,
         commandMenuPageInfo,
@@ -83,5 +88,50 @@ describe('useCommandMenu', () => {
     });
 
     expect(result.current.isCommandMenuOpened).toBe(false);
+  });
+
+  it('should toggle command menu persistent state', () => {
+    const { result } = renderHooks();
+
+    expect(result.current.isCommandMenuPersistent).toBe(false);
+
+    act(() => {
+      result.current.commandMenu.toggleCommandMenuPersistent();
+    });
+
+    expect(result.current.isCommandMenuPersistent).toBe(true);
+
+    act(() => {
+      result.current.commandMenu.toggleCommandMenuPersistent();
+    });
+
+    expect(result.current.isCommandMenuPersistent).toBe(false);
+  });
+
+  it('should not close menu when persistent and closeCommandMenu is called', () => {
+    const { result } = renderHooks();
+
+    // Open the menu first
+    act(() => {
+      result.current.commandMenu.openCommandMenu();
+    });
+
+    expect(result.current.isCommandMenuOpened).toBe(true);
+
+    // Make the menu persistent
+    act(() => {
+      result.current.commandMenu.toggleCommandMenuPersistent();
+    });
+
+    expect(result.current.isCommandMenuPersistent).toBe(true);
+    expect(result.current.isCommandMenuOpened).toBe(true);
+
+    // Try to close the menu - it should remain open because it's persistent
+    act(() => {
+      result.current.commandMenu.closeCommandMenu();
+    });
+
+    expect(result.current.isCommandMenuOpened).toBe(true);
+    expect(result.current.isCommandMenuPersistent).toBe(true);
   });
 });

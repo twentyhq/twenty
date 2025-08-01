@@ -6,6 +6,7 @@ import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useCommandMenuCloseAnimationCompleteCleanup } from '@/command-menu/hooks/useCommandMenuCloseAnimationCompleteCleanup';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isCommandMenuPersistentState } from '@/command-menu/states/isCommandMenuPersistentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
@@ -53,9 +54,14 @@ export const CommandMenuContainer = ({
     currentViewId ?? '',
   );
 
+  const isCommandMenuPersistent = useRecoilValue(isCommandMenuPersistentState);
+
   useCommandMenuHotKeys();
 
   const handleCommandMenuClick = () => {
+    if (!isCommandMenuPersistent) {
+      return;
+    }
     pushFocusItemToFocusStack({
       focusId: SIDE_PANEL_FOCUS_ID,
       component: {

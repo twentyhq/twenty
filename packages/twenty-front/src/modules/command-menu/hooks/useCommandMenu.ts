@@ -74,7 +74,6 @@ export const useCommandMenu = () => {
 
         set(commandMenuSearchState, '');
 
-        // Don't toggle if in persistent mode
         if (isCommandMenuPersistent) {
           return;
         }

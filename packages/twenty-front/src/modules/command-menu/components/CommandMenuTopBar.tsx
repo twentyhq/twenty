@@ -20,15 +20,9 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
-import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconChevronLeft,
-  IconPin,
-  IconPinnedOff,
-  IconX,
-} from 'twenty-ui/display';
+import { IconChevronLeft, IconPin, IconPinnedOff } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -104,7 +98,7 @@ export const CommandMenuTopBar = () => {
 
   const isMobile = useIsMobile();
 
-  const { closeCommandMenu, toggleCommandMenuPersistent } = useCommandMenu();
+  const { toggleCommandMenuPersistent } = useCommandMenu();
 
   const { goBackFromCommandMenu } = useCommandMenuHistory();
 
@@ -124,11 +118,6 @@ export const CommandMenuTopBar = () => {
   const theme = useTheme();
 
   const { contextChips } = useCommandMenuContextChips();
-
-  const location = useLocation();
-  const isButtonVisible =
-    !location.pathname.startsWith('/objects/') &&
-    !location.pathname.startsWith('/object/');
 
   const backButtonAnimationDuration =
     contextChips.length > 0 ? theme.animation.duration.instant : 0;
@@ -190,17 +179,6 @@ export const CommandMenuTopBar = () => {
                   : 'Pin command menu'
               }
               onClick={toggleCommandMenuPersistent}
-            />
-          )}
-          {isButtonVisible && !isCommandMenuPersistent && (
-            <Button
-              Icon={IconX}
-              dataTestId="page-header-close-command-menu-button"
-              size={'small'}
-              variant="secondary"
-              accent="default"
-              ariaLabel="Close command menu"
-              onClick={closeCommandMenu}
             />
           )}
         </StyledButtonContainer>
