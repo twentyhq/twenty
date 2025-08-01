@@ -35,6 +35,7 @@ export const prepareCustomFieldMetadataForCreation = (
       fieldMetadataInput?.relationCreationPayload?.targetObjectMetadataId,
     defaultValue,
     ...options,
+    isUnique: fieldMetadataInput.isUnique ?? false,
     isActive: true,
     isCustom: true,
     settings: fieldMetadataInput.settings,
