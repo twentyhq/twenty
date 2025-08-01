@@ -26,8 +26,8 @@ export abstract class CustomException<
     message: ExceptionMessage,
     code: ExceptionCode,
     ...userFriendlyMessage: ForceFriendlyMessage extends true
-      ? [{ userFriendlyMessage: string }]
-      : [{ userFriendlyMessage?: string }?]
+      ? [{ userFriendlyMessage: ExceptionFriendlyMessage }]
+      : [{ userFriendlyMessage?: ExceptionFriendlyMessage }?]
   ) {
     super(message);
     this.code = code;
