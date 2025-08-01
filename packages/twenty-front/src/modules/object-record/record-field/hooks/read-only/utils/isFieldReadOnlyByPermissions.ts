@@ -1,0 +1,41 @@
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { isObjectReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isObjectReadOnly';
+import { useMemo } from 'react';
+import { ObjectPermission } from '~/generated/graphql';
+
+export type IsFieldReadOnlyByPermissionParams = {
+  objectPermissions: ObjectPermission;
+  fieldMetadataId?: string;
+};
+
+export const isFieldReadOnlyByPermissions = ({
+  objectPermissions,
+  fieldMetadataId,
+}: IsFieldReadOnlyByPermissionParams) => {
+  if (isObjectReadOnly({ objectPermissions }) === true) {
+    return true;
+  }
+
+  if (!fieldMetadataId || objectPermissions.canUpdateObjectRecords === false) {
+    return !objectPermissions.canUpdateObjectRecords;
+  }
+
+  const fieldMetadataIsRestrictedForUpdate =
+    objectPermissions.restrictedFields[fieldMetadataId]?.canUpdate === false;
+
+  return fieldMetadataIsRestrictedForUpdate;
+};
+
+export const useObjectIsReadOnlyByPermissions = ({
+  objectMetadataId,
+}: {
+  objectMetadataId: string;
+}) => {
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
+  return useMemo(() => {
+    return isObjectReadOnly({
+      objectPermissions: objectPermissionsByObjectMetadataId[objectMetadataId],
+    });
+  }, [objectPermissionsByObjectMetadataId, objectMetadataId]);
+};

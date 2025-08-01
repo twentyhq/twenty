@@ -1,17 +1,18 @@
-import { useFieldIsReadOnlyByPermissions } from '@/object-record/record-field/hooks/useIsFieldReadOnlyByPermissions';
+import { isObjectReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isObjectReadOnly';
 import { useIsRecordDeleted } from '@/object-record/record-field/hooks/useIsRecordDeleted';
+import { ObjectPermission } from '~/generated/graphql';
 
 export const useIsRecordReadOnly = ({
   recordId,
-  objectMetadataId,
+  objectPermissions,
 }: {
   recordId: string;
-  objectMetadataId: string;
+  objectPermissions: ObjectPermission;
 }) => {
   const isRecordDeleted = useIsRecordDeleted({ recordId });
 
-  const isObjectReadOnlyByPermissions = useFieldIsReadOnlyByPermissions({
-    objectMetadataId,
+  const isObjectReadOnlyByPermissions = isObjectReadOnly({
+    objectPermissions,
   });
 
   return isRecordDeleted || isObjectReadOnlyByPermissions;
