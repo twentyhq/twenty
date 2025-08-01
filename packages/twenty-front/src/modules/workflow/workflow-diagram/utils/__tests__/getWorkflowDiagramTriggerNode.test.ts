@@ -18,9 +18,15 @@ describe('getWorkflowDiagramTriggerNode', () => {
       expect(result).toMatchInlineSnapshot(`
         {
           "data": {
+            "hasNextStepIds": false,
             "icon": "IconHandMove",
             "name": "Manual trigger",
             "nodeType": "trigger",
+            "position": {
+              "x": 0,
+              "y": 0,
+            },
+            "stepId": "trigger",
             "triggerType": "MANUAL",
           },
           "id": "trigger",
@@ -53,9 +59,15 @@ describe('getWorkflowDiagramTriggerNode', () => {
       expect(result).toMatchInlineSnapshot(`
         {
           "data": {
+            "hasNextStepIds": false,
             "icon": "IconClock",
             "name": "On a schedule",
             "nodeType": "trigger",
+            "position": {
+              "x": 0,
+              "y": 0,
+            },
+            "stepId": "trigger",
             "triggerType": "CRON",
           },
           "id": "trigger",
@@ -85,9 +97,15 @@ describe('getWorkflowDiagramTriggerNode', () => {
       expect(result).toMatchInlineSnapshot(`
         {
           "data": {
+            "hasNextStepIds": false,
             "icon": "IconWebhook",
             "name": "Webhook",
             "nodeType": "trigger",
+            "position": {
+              "x": 0,
+              "y": 0,
+            },
+            "stepId": "trigger",
             "triggerType": "WEBHOOK",
           },
           "id": "trigger",
@@ -116,9 +134,15 @@ describe('getWorkflowDiagramTriggerNode', () => {
       expect(result).toMatchInlineSnapshot(`
         {
           "data": {
+            "hasNextStepIds": false,
             "icon": "IconPlaylistAdd",
             "name": "Record is created",
             "nodeType": "trigger",
+            "position": {
+              "x": 0,
+              "y": 0,
+            },
+            "stepId": "trigger",
             "triggerType": "DATABASE_EVENT",
           },
           "id": "trigger",
@@ -145,9 +169,15 @@ describe('getWorkflowDiagramTriggerNode', () => {
       expect(result).toMatchInlineSnapshot(`
         {
           "data": {
+            "hasNextStepIds": false,
             "icon": undefined,
             "name": "",
             "nodeType": "trigger",
+            "position": {
+              "x": 0,
+              "y": 0,
+            },
+            "stepId": "trigger",
             "triggerType": "DATABASE_EVENT",
           },
           "id": "trigger",
@@ -177,9 +207,15 @@ describe('getWorkflowDiagramTriggerNode', () => {
       expect(result).toMatchInlineSnapshot(`
         {
           "data": {
+            "hasNextStepIds": false,
             "icon": "IconHandMove",
             "name": "Custom Trigger Name",
             "nodeType": "trigger",
+            "position": {
+              "x": 0,
+              "y": 0,
+            },
+            "stepId": "trigger",
             "triggerType": "MANUAL",
           },
           "id": "trigger",

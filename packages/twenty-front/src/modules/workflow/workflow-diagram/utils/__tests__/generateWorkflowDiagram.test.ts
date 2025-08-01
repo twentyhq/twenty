@@ -37,6 +37,7 @@ describe('generateWorkflowDiagram', () => {
         eventName: 'company.created',
         outputSchema: {},
       },
+      nextStepIds: ['step1'],
     };
     const steps: WorkflowStep[] = [
       {
@@ -97,6 +98,12 @@ describe('generateWorkflowDiagram', () => {
         nodeType: 'action',
         actionType: 'CODE',
         name: step.name,
+        hasNextStepIds: step.id !== 'step2',
+        stepId: step.id,
+        position: {
+          x: 0,
+          y: 150 * (index + 1),
+        },
       });
     }
   });
@@ -109,6 +116,7 @@ describe('generateWorkflowDiagram', () => {
         eventName: 'company.created',
         outputSchema: {},
       },
+      nextStepIds: ['step1'],
     };
     const steps: WorkflowStep[] = [
       {
@@ -175,6 +183,7 @@ describe('generateWorkflowDiagram', () => {
         eventName: 'company.created',
         outputSchema: {},
       },
+      nextStepIds: ['step2'],
     };
     const steps: WorkflowStep[] = [
       {
@@ -241,6 +250,7 @@ describe('generateWorkflowDiagram', () => {
         eventName: 'company.created',
         outputSchema: {},
       },
+      nextStepIds: ['step2', 'step3'],
     };
     const steps: WorkflowStep[] = [
       {

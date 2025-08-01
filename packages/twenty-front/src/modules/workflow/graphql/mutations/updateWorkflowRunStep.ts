@@ -9,6 +9,10 @@ export const UPDATE_WORKFLOW_RUN_STEP = gql`
       settings
       valid
       nextStepIds
+      position {
+        x
+        y
+      }
     }
   }
 `;

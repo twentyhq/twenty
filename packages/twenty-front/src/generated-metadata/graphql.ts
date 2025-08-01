@@ -579,11 +579,22 @@ export type CreateWebhookDto = {
   targetUrl: Scalars['String'];
 };
 
+export type CreateWorkflowVersionEdgeInput = {
+  /** Workflow version source step ID */
+  source: Scalars['String'];
+  /** Workflow version target step ID */
+  target: Scalars['String'];
+  /** Workflow version ID */
+  workflowVersionId: Scalars['String'];
+};
+
 export type CreateWorkflowVersionStepInput = {
   /** Next step ID */
   nextStepId?: InputMaybe<Scalars['String']>;
   /** Parent step ID */
   parentStepId?: InputMaybe<Scalars['String']>;
+  /** Step position */
+  position?: InputMaybe<WorkflowStepPositionInput>;
   /** New step type */
   stepType: Scalars['String'];
   /** Workflow version ID */
@@ -756,6 +767,7 @@ export enum FeatureFlagKey {
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
   IS_TWO_FACTOR_AUTHENTICATION_ENABLED = 'IS_TWO_FACTOR_AUTHENTICATION_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
+  IS_WORKFLOW_BRANCH_ENABLED = 'IS_WORKFLOW_BRANCH_ENABLED',
   IS_WORKFLOW_FILTERING_ENABLED = 'IS_WORKFLOW_FILTERING_ENABLED',
   IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED = 'IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED',
   IS_WORKSPACE_MIGRATION_V2_ENABLED = 'IS_WORKSPACE_MIGRATION_V2_ENABLED'
@@ -1138,7 +1150,8 @@ export type Mutation = {
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWebhook: Webhook;
-  createWorkflowVersionStep: WorkflowAction;
+  createWorkflowVersionEdge: WorkflowVersionStepUpdates;
+  createWorkflowVersionStep: WorkflowVersionStepUpdates;
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
@@ -1153,7 +1166,8 @@ export type Mutation = {
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
   deleteWebhook: Scalars['Boolean'];
-  deleteWorkflowVersionStep: WorkflowAction;
+  deleteWorkflowVersionEdge: WorkflowVersionStepUpdates;
+  deleteWorkflowVersionStep: WorkflowVersionStepUpdates;
   deleteWorkspaceInvitation: Scalars['String'];
   disablePostgresProxy: PostgresCredentials;
   editSSOIdentityProvider: EditSsoOutput;
@@ -1206,6 +1220,7 @@ export type Mutation = {
   updatePasswordViaResetToken: InvalidatePassword;
   updateWebhook?: Maybe<Webhook>;
   updateWorkflowRunStep: WorkflowAction;
+  updateWorkflowVersionPositions: Scalars['Boolean'];
   updateWorkflowVersionStep: WorkflowAction;
   updateWorkspace: Workspace;
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
@@ -1343,6 +1358,11 @@ export type MutationCreateWebhookArgs = {
 };
 
 
+export type MutationCreateWorkflowVersionEdgeArgs = {
+  input: CreateWorkflowVersionEdgeInput;
+};
+
+
 export type MutationCreateWorkflowVersionStepArgs = {
   input: CreateWorkflowVersionStepInput;
 };
@@ -1405,6 +1425,11 @@ export type MutationDeleteTwoFactorAuthenticationMethodArgs = {
 
 export type MutationDeleteWebhookArgs = {
   input: DeleteWebhookDto;
+};
+
+
+export type MutationDeleteWorkflowVersionEdgeArgs = {
+  input: CreateWorkflowVersionEdgeInput;
 };
 
 
@@ -1662,6 +1687,11 @@ export type MutationUpdateWebhookArgs = {
 
 export type MutationUpdateWorkflowRunStepArgs = {
   input: UpdateWorkflowRunStepInput;
+};
+
+
+export type MutationUpdateWorkflowVersionPositionsArgs = {
+  input: UpdateWorkflowVersionPositionsInput;
 };
 
 
@@ -2778,6 +2808,13 @@ export type UpdateWorkflowRunStepInput = {
   workflowRunId: Scalars['String'];
 };
 
+export type UpdateWorkflowVersionPositionsInput = {
+  /** Workflow version updated positions */
+  positions: Array<WorkflowStepPositionUpdateInput>;
+  /** Workflow version ID */
+  workflowVersionId: Scalars['UUID'];
+};
+
 export type UpdateWorkflowVersionStepInput = {
   /** Step to update in JSON format */
   step: Scalars['JSON'];
@@ -2952,6 +2989,7 @@ export type WorkflowAction = {
   id: Scalars['UUID'];
   name: Scalars['String'];
   nextStepIds?: Maybe<Array<Scalars['UUID']>>;
+  position?: Maybe<WorkflowStepPosition>;
   settings: Scalars['JSON'];
   type: Scalars['String'];
   valid: Scalars['Boolean'];
@@ -2962,9 +3000,35 @@ export type WorkflowRun = {
   workflowRunId: Scalars['UUID'];
 };
 
+export type WorkflowStepPosition = {
+  __typename?: 'WorkflowStepPosition';
+  x: Scalars['Float'];
+  y: Scalars['Float'];
+};
+
+export type WorkflowStepPositionInput = {
+  x: Scalars['Float'];
+  y: Scalars['Float'];
+};
+
+export type WorkflowStepPositionUpdateInput = {
+  /** Step or trigger ID */
+  id: Scalars['String'];
+  /** Position of the step or trigger */
+  position: WorkflowStepPositionInput;
+};
+
 export type WorkflowVersion = {
   __typename?: 'WorkflowVersion';
   id: Scalars['UUID'];
+};
+
+export type WorkflowVersionStepUpdates = {
+  __typename?: 'WorkflowVersionStepUpdates';
+  createdStep?: Maybe<WorkflowAction>;
+  deletedStepId?: Maybe<Scalars['String']>;
+  stepsNextStepIds?: Maybe<Scalars['JSON']>;
+  triggerNextStepIds?: Maybe<Array<Scalars['String']>>;
 };
 
 export type Workspace = {
@@ -3947,12 +4011,19 @@ export type CreateDraftFromWorkflowVersionMutationVariables = Exact<{
 
 export type CreateDraftFromWorkflowVersionMutation = { __typename?: 'Mutation', createDraftFromWorkflowVersion: { __typename?: 'WorkflowVersion', id: any } };
 
+export type CreateWorkflowVersionEdgeMutationVariables = Exact<{
+  input: CreateWorkflowVersionEdgeInput;
+}>;
+
+
+export type CreateWorkflowVersionEdgeMutation = { __typename?: 'Mutation', createWorkflowVersionEdge: { __typename?: 'WorkflowVersionStepUpdates', triggerNextStepIds?: Array<string> | null, stepsNextStepIds?: any | null } };
+
 export type CreateWorkflowVersionStepMutationVariables = Exact<{
   input: CreateWorkflowVersionStepInput;
 }>;
 
 
-export type CreateWorkflowVersionStepMutation = { __typename?: 'Mutation', createWorkflowVersionStep: { __typename?: 'WorkflowAction', id: any, name: string, type: string, settings: any, valid: boolean, nextStepIds?: Array<any> | null } };
+export type CreateWorkflowVersionStepMutation = { __typename?: 'Mutation', createWorkflowVersionStep: { __typename?: 'WorkflowVersionStepUpdates', triggerNextStepIds?: Array<string> | null, stepsNextStepIds?: any | null, createdStep?: { __typename?: 'WorkflowAction', id: any, name: string, type: string, settings: any, valid: boolean, nextStepIds?: Array<any> | null, position?: { __typename?: 'WorkflowStepPosition', x: number, y: number } | null } | null } };
 
 export type DeactivateWorkflowVersionMutationVariables = Exact<{
   workflowVersionId: Scalars['String'];
@@ -3961,12 +4032,19 @@ export type DeactivateWorkflowVersionMutationVariables = Exact<{
 
 export type DeactivateWorkflowVersionMutation = { __typename?: 'Mutation', deactivateWorkflowVersion: boolean };
 
+export type DeleteWorkflowVersionEdgeMutationVariables = Exact<{
+  input: CreateWorkflowVersionEdgeInput;
+}>;
+
+
+export type DeleteWorkflowVersionEdgeMutation = { __typename?: 'Mutation', deleteWorkflowVersionEdge: { __typename?: 'WorkflowVersionStepUpdates', triggerNextStepIds?: Array<string> | null, stepsNextStepIds?: any | null } };
+
 export type DeleteWorkflowVersionStepMutationVariables = Exact<{
   input: DeleteWorkflowVersionStepInput;
 }>;
 
 
-export type DeleteWorkflowVersionStepMutation = { __typename?: 'Mutation', deleteWorkflowVersionStep: { __typename?: 'WorkflowAction', id: any, name: string, type: string, settings: any, valid: boolean, nextStepIds?: Array<any> | null } };
+export type DeleteWorkflowVersionStepMutation = { __typename?: 'Mutation', deleteWorkflowVersionStep: { __typename?: 'WorkflowVersionStepUpdates', triggerNextStepIds?: Array<string> | null, stepsNextStepIds?: any | null, deletedStepId?: string | null } };
 
 export type RunWorkflowVersionMutationVariables = Exact<{
   input: RunWorkflowVersionInput;
@@ -3980,14 +4058,14 @@ export type UpdateWorkflowRunStepMutationVariables = Exact<{
 }>;
 
 
-export type UpdateWorkflowRunStepMutation = { __typename?: 'Mutation', updateWorkflowRunStep: { __typename?: 'WorkflowAction', id: any, name: string, type: string, settings: any, valid: boolean, nextStepIds?: Array<any> | null } };
+export type UpdateWorkflowRunStepMutation = { __typename?: 'Mutation', updateWorkflowRunStep: { __typename?: 'WorkflowAction', id: any, name: string, type: string, settings: any, valid: boolean, nextStepIds?: Array<any> | null, position?: { __typename?: 'WorkflowStepPosition', x: number, y: number } | null } };
 
 export type UpdateWorkflowVersionStepMutationVariables = Exact<{
   input: UpdateWorkflowVersionStepInput;
 }>;
 
 
-export type UpdateWorkflowVersionStepMutation = { __typename?: 'Mutation', updateWorkflowVersionStep: { __typename?: 'WorkflowAction', id: any, name: string, type: string, settings: any, valid: boolean, nextStepIds?: Array<any> | null } };
+export type UpdateWorkflowVersionStepMutation = { __typename?: 'Mutation', updateWorkflowVersionStep: { __typename?: 'WorkflowAction', id: any, name: string, type: string, settings: any, valid: boolean, nextStepIds?: Array<any> | null, position?: { __typename?: 'WorkflowStepPosition', x: number, y: number } | null } };
 
 export type SubmitFormStepMutationVariables = Exact<{
   input: SubmitFormStepInput;
@@ -3995,6 +4073,13 @@ export type SubmitFormStepMutationVariables = Exact<{
 
 
 export type SubmitFormStepMutation = { __typename?: 'Mutation', submitFormStep: boolean };
+
+export type UpdateWorkflowVersionPositionsMutationVariables = Exact<{
+  input: UpdateWorkflowVersionPositionsInput;
+}>;
+
+
+export type UpdateWorkflowVersionPositionsMutation = { __typename?: 'Mutation', updateWorkflowVersionPositions: boolean };
 
 export type DeleteWorkspaceInvitationMutationVariables = Exact<{
   appTokenId: Scalars['String'];
@@ -8791,15 +8876,57 @@ export function useCreateDraftFromWorkflowVersionMutation(baseOptions?: Apollo.M
 export type CreateDraftFromWorkflowVersionMutationHookResult = ReturnType<typeof useCreateDraftFromWorkflowVersionMutation>;
 export type CreateDraftFromWorkflowVersionMutationResult = Apollo.MutationResult<CreateDraftFromWorkflowVersionMutation>;
 export type CreateDraftFromWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>;
+export const CreateWorkflowVersionEdgeDocument = gql`
+    mutation CreateWorkflowVersionEdge($input: CreateWorkflowVersionEdgeInput!) {
+  createWorkflowVersionEdge(input: $input) {
+    triggerNextStepIds
+    stepsNextStepIds
+  }
+}
+    `;
+export type CreateWorkflowVersionEdgeMutationFn = Apollo.MutationFunction<CreateWorkflowVersionEdgeMutation, CreateWorkflowVersionEdgeMutationVariables>;
+
+/**
+ * __useCreateWorkflowVersionEdgeMutation__
+ *
+ * To run a mutation, you first call `useCreateWorkflowVersionEdgeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateWorkflowVersionEdgeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createWorkflowVersionEdgeMutation, { data, loading, error }] = useCreateWorkflowVersionEdgeMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateWorkflowVersionEdgeMutation(baseOptions?: Apollo.MutationHookOptions<CreateWorkflowVersionEdgeMutation, CreateWorkflowVersionEdgeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateWorkflowVersionEdgeMutation, CreateWorkflowVersionEdgeMutationVariables>(CreateWorkflowVersionEdgeDocument, options);
+      }
+export type CreateWorkflowVersionEdgeMutationHookResult = ReturnType<typeof useCreateWorkflowVersionEdgeMutation>;
+export type CreateWorkflowVersionEdgeMutationResult = Apollo.MutationResult<CreateWorkflowVersionEdgeMutation>;
+export type CreateWorkflowVersionEdgeMutationOptions = Apollo.BaseMutationOptions<CreateWorkflowVersionEdgeMutation, CreateWorkflowVersionEdgeMutationVariables>;
 export const CreateWorkflowVersionStepDocument = gql`
     mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
   createWorkflowVersionStep(input: $input) {
-    id
-    name
-    type
-    settings
-    valid
-    nextStepIds
+    triggerNextStepIds
+    stepsNextStepIds
+    createdStep {
+      id
+      name
+      type
+      settings
+      valid
+      nextStepIds
+      position {
+        x
+        y
+      }
+    }
   }
 }
     `;
@@ -8860,15 +8987,46 @@ export function useDeactivateWorkflowVersionMutation(baseOptions?: Apollo.Mutati
 export type DeactivateWorkflowVersionMutationHookResult = ReturnType<typeof useDeactivateWorkflowVersionMutation>;
 export type DeactivateWorkflowVersionMutationResult = Apollo.MutationResult<DeactivateWorkflowVersionMutation>;
 export type DeactivateWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<DeactivateWorkflowVersionMutation, DeactivateWorkflowVersionMutationVariables>;
+export const DeleteWorkflowVersionEdgeDocument = gql`
+    mutation DeleteWorkflowVersionEdge($input: CreateWorkflowVersionEdgeInput!) {
+  deleteWorkflowVersionEdge(input: $input) {
+    triggerNextStepIds
+    stepsNextStepIds
+  }
+}
+    `;
+export type DeleteWorkflowVersionEdgeMutationFn = Apollo.MutationFunction<DeleteWorkflowVersionEdgeMutation, DeleteWorkflowVersionEdgeMutationVariables>;
+
+/**
+ * __useDeleteWorkflowVersionEdgeMutation__
+ *
+ * To run a mutation, you first call `useDeleteWorkflowVersionEdgeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteWorkflowVersionEdgeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteWorkflowVersionEdgeMutation, { data, loading, error }] = useDeleteWorkflowVersionEdgeMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteWorkflowVersionEdgeMutation(baseOptions?: Apollo.MutationHookOptions<DeleteWorkflowVersionEdgeMutation, DeleteWorkflowVersionEdgeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteWorkflowVersionEdgeMutation, DeleteWorkflowVersionEdgeMutationVariables>(DeleteWorkflowVersionEdgeDocument, options);
+      }
+export type DeleteWorkflowVersionEdgeMutationHookResult = ReturnType<typeof useDeleteWorkflowVersionEdgeMutation>;
+export type DeleteWorkflowVersionEdgeMutationResult = Apollo.MutationResult<DeleteWorkflowVersionEdgeMutation>;
+export type DeleteWorkflowVersionEdgeMutationOptions = Apollo.BaseMutationOptions<DeleteWorkflowVersionEdgeMutation, DeleteWorkflowVersionEdgeMutationVariables>;
 export const DeleteWorkflowVersionStepDocument = gql`
     mutation DeleteWorkflowVersionStep($input: DeleteWorkflowVersionStepInput!) {
   deleteWorkflowVersionStep(input: $input) {
-    id
-    name
-    type
-    settings
-    valid
-    nextStepIds
+    triggerNextStepIds
+    stepsNextStepIds
+    deletedStepId
   }
 }
     `;
@@ -8940,6 +9098,10 @@ export const UpdateWorkflowRunStepDocument = gql`
     settings
     valid
     nextStepIds
+    position {
+      x
+      y
+    }
   }
 }
     `;
@@ -8978,6 +9140,10 @@ export const UpdateWorkflowVersionStepDocument = gql`
     settings
     valid
     nextStepIds
+    position {
+      x
+      y
+    }
   }
 }
     `;
@@ -9038,6 +9204,37 @@ export function useSubmitFormStepMutation(baseOptions?: Apollo.MutationHookOptio
 export type SubmitFormStepMutationHookResult = ReturnType<typeof useSubmitFormStepMutation>;
 export type SubmitFormStepMutationResult = Apollo.MutationResult<SubmitFormStepMutation>;
 export type SubmitFormStepMutationOptions = Apollo.BaseMutationOptions<SubmitFormStepMutation, SubmitFormStepMutationVariables>;
+export const UpdateWorkflowVersionPositionsDocument = gql`
+    mutation UpdateWorkflowVersionPositions($input: UpdateWorkflowVersionPositionsInput!) {
+  updateWorkflowVersionPositions(input: $input)
+}
+    `;
+export type UpdateWorkflowVersionPositionsMutationFn = Apollo.MutationFunction<UpdateWorkflowVersionPositionsMutation, UpdateWorkflowVersionPositionsMutationVariables>;
+
+/**
+ * __useUpdateWorkflowVersionPositionsMutation__
+ *
+ * To run a mutation, you first call `useUpdateWorkflowVersionPositionsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateWorkflowVersionPositionsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateWorkflowVersionPositionsMutation, { data, loading, error }] = useUpdateWorkflowVersionPositionsMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateWorkflowVersionPositionsMutation(baseOptions?: Apollo.MutationHookOptions<UpdateWorkflowVersionPositionsMutation, UpdateWorkflowVersionPositionsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateWorkflowVersionPositionsMutation, UpdateWorkflowVersionPositionsMutationVariables>(UpdateWorkflowVersionPositionsDocument, options);
+      }
+export type UpdateWorkflowVersionPositionsMutationHookResult = ReturnType<typeof useUpdateWorkflowVersionPositionsMutation>;
+export type UpdateWorkflowVersionPositionsMutationResult = Apollo.MutationResult<UpdateWorkflowVersionPositionsMutation>;
+export type UpdateWorkflowVersionPositionsMutationOptions = Apollo.BaseMutationOptions<UpdateWorkflowVersionPositionsMutation, UpdateWorkflowVersionPositionsMutationVariables>;
 export const DeleteWorkspaceInvitationDocument = gql`
     mutation DeleteWorkspaceInvitation($appTokenId: String!) {
   deleteWorkspaceInvitation(appTokenId: $appTokenId)

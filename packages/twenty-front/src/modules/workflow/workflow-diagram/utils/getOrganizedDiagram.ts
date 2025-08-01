@@ -5,17 +5,16 @@ export const getOrganizedDiagram = (
   diagram: WorkflowDiagram,
 ): WorkflowDiagram => {
   const graph = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
-  graph.setGraph({ rankdir: 'TB' });
-
-  const biggestNodeWidth = diagram.nodes.reduce(
-    (acc, node) => Math.max(acc, node.measured?.width ?? 0),
-    0,
-  );
+  graph.setGraph({
+    ranksep: 80, // Vertical distance between 2 nodes
+    nodesep: 200, // Horizontal distance between 2 nodes
+    rankdir: 'TB',
+  });
 
   diagram.edges.forEach((edge) => graph.setEdge(edge.source, edge.target));
   diagram.nodes.forEach((node) =>
     graph.setNode(node.id, {
-      width: biggestNodeWidth,
+      width: node.measured?.width ?? 0,
       height: node.measured?.height ?? 0,
     }),
   );

@@ -1,4 +1,3 @@
-import { WorkflowDiagramBaseHandle } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseHandle';
 import { NODE_BORDER_WIDTH } from '@/workflow/workflow-diagram/constants/NodeBorderWidth';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -6,17 +5,16 @@ import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/Wo
 import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Position } from '@xyflow/react';
-import React from 'react';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import React, { MouseEvent } from 'react';
+import { capitalize } from 'twenty-shared/utils';
 import { Label, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
+import { WorkflowDiagramBaseHandle } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseHandle';
+import { Position } from '@xyflow/react';
 
 const StyledStepNodeContainer = styled.div`
   display: flex;
   flex-direction: column;
-
-  padding-block: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledStepNodeType = styled.div<{
@@ -142,37 +140,41 @@ const StyledStepNodeLabel = styled.div<{
   }
 `;
 
-const StyledRightFloatingElementContainer = styled.div`
-  display: flex;
-  align-items: center;
-  position: absolute;
-  right: ${({ theme }) => theme.spacing(-4)};
-  bottom: 0;
-  top: 0;
-  transform: translateX(100%);
-`;
-
 export const WorkflowDiagramStepNodeBase = ({
   nodeType,
   name,
   variant,
   Icon,
   RightFloatingElement,
+  BottomHoverFloatingElement,
+  displayHandle = true,
+  onMouseEnter,
+  onMouseLeave,
 }: {
   nodeType: WorkflowDiagramStepNodeData['nodeType'];
   name: string;
   variant: WorkflowDiagramNodeVariant;
   Icon?: React.ReactNode;
   RightFloatingElement?: React.ReactNode;
+  BottomHoverFloatingElement?: React.ReactNode;
+  displayHandle?: boolean;
+  onMouseEnter?: (event: MouseEvent<HTMLDivElement>) => void;
+  onMouseLeave?: (event: MouseEvent<HTMLDivElement>) => void;
 }) => {
   return (
     <StyledStepNodeContainer
       className="workflow-node-container"
       data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
-      {nodeType !== 'trigger' ? (
-        <WorkflowDiagramBaseHandle type="target" position={Position.Top} />
-      ) : null}
+      {nodeType !== 'trigger' && (
+        <WorkflowDiagramBaseHandle
+          type="target"
+          position={Position.Top}
+          isVisible={displayHandle}
+        />
+      )}
 
       <StyledStepNodeType variant="small" nodeVariant={variant}>
         {capitalize(nodeType)}
@@ -182,17 +184,19 @@ export const WorkflowDiagramStepNodeBase = ({
         <StyledStepNodeLabel variant={variant}>
           {variant === 'running' ? <Loader /> : Icon}
 
-          <OverflowingTextWithTooltip text={name} />
+          <OverflowingTextWithTooltip text={name} hideTooltip={true} />
         </StyledStepNodeLabel>
 
-        {isDefined(RightFloatingElement) ? (
-          <StyledRightFloatingElementContainer>
-            {RightFloatingElement}
-          </StyledRightFloatingElementContainer>
-        ) : null}
+        {RightFloatingElement}
+
+        {BottomHoverFloatingElement}
       </StyledStepNodeInnerContainer>
 
-      <WorkflowDiagramBaseHandle type="source" position={Position.Bottom} />
+      <WorkflowDiagramBaseHandle
+        type="source"
+        position={Position.Bottom}
+        isVisible={displayHandle}
+      />
     </StyledStepNodeContainer>
   );
 };

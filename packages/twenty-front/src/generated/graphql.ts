@@ -543,11 +543,22 @@ export type CreateWebhookDto = {
   targetUrl: Scalars['String'];
 };
 
+export type CreateWorkflowVersionEdgeInput = {
+  /** Workflow version source step ID */
+  source: Scalars['String'];
+  /** Workflow version target step ID */
+  target: Scalars['String'];
+  /** Workflow version ID */
+  workflowVersionId: Scalars['String'];
+};
+
 export type CreateWorkflowVersionStepInput = {
   /** Next step ID */
   nextStepId?: InputMaybe<Scalars['String']>;
   /** Parent step ID */
   parentStepId?: InputMaybe<Scalars['String']>;
+  /** Step position */
+  position?: InputMaybe<WorkflowStepPositionInput>;
   /** New step type */
   stepType: Scalars['String'];
   /** Workflow version ID */
@@ -720,6 +731,7 @@ export enum FeatureFlagKey {
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
   IS_TWO_FACTOR_AUTHENTICATION_ENABLED = 'IS_TWO_FACTOR_AUTHENTICATION_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
+  IS_WORKFLOW_BRANCH_ENABLED = 'IS_WORKFLOW_BRANCH_ENABLED',
   IS_WORKFLOW_FILTERING_ENABLED = 'IS_WORKFLOW_FILTERING_ENABLED',
   IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED = 'IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED',
   IS_WORKSPACE_MIGRATION_V2_ENABLED = 'IS_WORKSPACE_MIGRATION_V2_ENABLED'
@@ -1094,7 +1106,8 @@ export type Mutation = {
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWebhook: Webhook;
-  createWorkflowVersionStep: WorkflowAction;
+  createWorkflowVersionEdge: WorkflowVersionStepUpdates;
+  createWorkflowVersionStep: WorkflowVersionStepUpdates;
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
@@ -1108,7 +1121,8 @@ export type Mutation = {
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
   deleteWebhook: Scalars['Boolean'];
-  deleteWorkflowVersionStep: WorkflowAction;
+  deleteWorkflowVersionEdge: WorkflowVersionStepUpdates;
+  deleteWorkflowVersionStep: WorkflowVersionStepUpdates;
   deleteWorkspaceInvitation: Scalars['String'];
   disablePostgresProxy: PostgresCredentials;
   editSSOIdentityProvider: EditSsoOutput;
@@ -1157,6 +1171,7 @@ export type Mutation = {
   updatePasswordViaResetToken: InvalidatePassword;
   updateWebhook?: Maybe<Webhook>;
   updateWorkflowRunStep: WorkflowAction;
+  updateWorkflowVersionPositions: Scalars['Boolean'];
   updateWorkflowVersionStep: WorkflowAction;
   updateWorkspace: Workspace;
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
@@ -1279,6 +1294,11 @@ export type MutationCreateWebhookArgs = {
 };
 
 
+export type MutationCreateWorkflowVersionEdgeArgs = {
+  input: CreateWorkflowVersionEdgeInput;
+};
+
+
 export type MutationCreateWorkflowVersionStepArgs = {
   input: CreateWorkflowVersionStepInput;
 };
@@ -1336,6 +1356,11 @@ export type MutationDeleteTwoFactorAuthenticationMethodArgs = {
 
 export type MutationDeleteWebhookArgs = {
   input: DeleteWebhookDto;
+};
+
+
+export type MutationDeleteWorkflowVersionEdgeArgs = {
+  input: CreateWorkflowVersionEdgeInput;
 };
 
 
@@ -1573,6 +1598,11 @@ export type MutationUpdateWebhookArgs = {
 
 export type MutationUpdateWorkflowRunStepArgs = {
   input: UpdateWorkflowRunStepInput;
+};
+
+
+export type MutationUpdateWorkflowVersionPositionsArgs = {
+  input: UpdateWorkflowVersionPositionsInput;
 };
 
 
@@ -2616,6 +2646,13 @@ export type UpdateWorkflowRunStepInput = {
   workflowRunId: Scalars['String'];
 };
 
+export type UpdateWorkflowVersionPositionsInput = {
+  /** Workflow version updated positions */
+  positions: Array<WorkflowStepPositionUpdateInput>;
+  /** Workflow version ID */
+  workflowVersionId: Scalars['UUID'];
+};
+
 export type UpdateWorkflowVersionStepInput = {
   /** Step to update in JSON format */
   step: Scalars['JSON'];
@@ -2780,6 +2817,7 @@ export type WorkflowAction = {
   id: Scalars['UUID'];
   name: Scalars['String'];
   nextStepIds?: Maybe<Array<Scalars['UUID']>>;
+  position?: Maybe<WorkflowStepPosition>;
   settings: Scalars['JSON'];
   type: Scalars['String'];
   valid: Scalars['Boolean'];
@@ -2790,9 +2828,35 @@ export type WorkflowRun = {
   workflowRunId: Scalars['UUID'];
 };
 
+export type WorkflowStepPosition = {
+  __typename?: 'WorkflowStepPosition';
+  x: Scalars['Float'];
+  y: Scalars['Float'];
+};
+
+export type WorkflowStepPositionInput = {
+  x: Scalars['Float'];
+  y: Scalars['Float'];
+};
+
+export type WorkflowStepPositionUpdateInput = {
+  /** Step or trigger ID */
+  id: Scalars['String'];
+  /** Position of the step or trigger */
+  position: WorkflowStepPositionInput;
+};
+
 export type WorkflowVersion = {
   __typename?: 'WorkflowVersion';
   id: Scalars['UUID'];
+};
+
+export type WorkflowVersionStepUpdates = {
+  __typename?: 'WorkflowVersionStepUpdates';
+  createdStep?: Maybe<WorkflowAction>;
+  deletedStepId?: Maybe<Scalars['String']>;
+  stepsNextStepIds?: Maybe<Scalars['JSON']>;
+  triggerNextStepIds?: Maybe<Array<Scalars['String']>>;
 };
 
 export type Workspace = {

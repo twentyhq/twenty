@@ -9,7 +9,6 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { EMPTY_TRIGGER_STEP_ID } from '@/workflow/workflow-diagram/constants/EmptyTriggerStepId';
-import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { useTriggerNodeSelection } from '@/workflow/workflow-diagram/hooks/useTriggerNodeSelection';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import {
@@ -17,14 +16,12 @@ import {
   WorkflowDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
-import { isCreateStepNode } from '@/workflow/workflow-diagram/utils/isCreateStepNode';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
 export const WorkflowDiagramCanvasEditableEffect = () => {
   const { getIcon } = useIcons();
-  const { startNodeCreation } = useStartNodeCreation();
 
   const {
     openWorkflowTriggerTypeInCommandMenu,
@@ -67,15 +64,6 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
         return;
       }
 
-      if (isCreateStepNode(selectedNode)) {
-        startNodeCreation({
-          parentStepId: selectedNode.data.parentNodeId,
-          nextStepId: undefined,
-        });
-
-        return;
-      }
-
       const selectedNodeData = selectedNode.data as WorkflowDiagramStepNodeData;
 
       setWorkflowSelectedNode(selectedNode.id);
@@ -95,7 +83,6 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       setCommandMenuNavigationStack,
       workflowVisualizerWorkflowId,
       openWorkflowTriggerTypeInCommandMenu,
-      startNodeCreation,
       openWorkflowEditStepInCommandMenu,
       getIcon,
       setWorkflowSelectedNode,
