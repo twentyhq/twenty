@@ -4,7 +4,7 @@ import { H2Title } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
-  useFindAgentHandoffTargetsQuery,
+  useFindAgentHandoffsQuery,
   useFindManyAgentsQuery,
 } from '~/generated-metadata/graphql';
 import { SettingsAgentHandoffForm } from './SettingsAgentHandoffForm';
@@ -19,18 +19,18 @@ export const SettingsAgentHandoffSection = ({
 
   const { data: agentsData, loading: agentsLoading } = useFindManyAgentsQuery();
   const { data: handoffData, refetch: refetchHandoffTargets } =
-    useFindAgentHandoffTargetsQuery({
+    useFindAgentHandoffsQuery({
       variables: { input: { id: agentId } },
       skip: !agentId,
     });
 
-  const handoffTargets = handoffData?.findAgentHandoffTargets || [];
+  const handoffTargets = handoffData?.findAgentHandoffs || [];
 
   const availableAgentOptions =
     agentsData?.findManyAgents?.reduce<SelectOption[]>((acc, agent) => {
       if (
         agent.id !== agentId &&
-        !handoffTargets.some((target: any) => target.id === agent.id)
+        !handoffTargets.some((handoff: any) => handoff.toAgent.id === agent.id)
       ) {
         acc.push({
           label: agent.label,

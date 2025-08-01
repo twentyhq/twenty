@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -15,10 +14,12 @@ import {
   AppTooltip,
   IconSearch,
   IconTrash,
+  OverflowingTextWithTooltip,
   TooltipDelay,
 } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { useRemoveAgentHandoffMutation } from '~/generated-metadata/graphql';
+import { AgentHandoffDto } from '~/generated/graphql';
 
 const AGENT_HANDOFF_DELETION_MODAL_ID = 'agent-handoff-deletion-modal';
 
@@ -59,20 +60,15 @@ const StyledNoHandoffs = styled(TableCell)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-interface AgentHandoff {
-  id: string;
-  label: string;
-  description?: string | null;
-  // TODO: This should be the handoff description, not the agent description
-  // The current GraphQL query only returns agent data, not handoff data
-  // Need to implement findAgentHandoffs query to get handoff descriptions
-}
+const StyledTableCell = styled(TableCell)`
+  overflow: hidden;
+`;
 
-interface SettingsAgentHandoffTableProps {
+type SettingsAgentHandoffTableProps = {
   agentId: string;
-  handoffTargets: AgentHandoff[];
+  handoffTargets: AgentHandoffDto[];
   onHandoffRemoved: () => void;
-}
+};
 
 export const SettingsAgentHandoffTable = ({
   agentId,
@@ -81,7 +77,6 @@ export const SettingsAgentHandoffTable = ({
 }: SettingsAgentHandoffTableProps) => {
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-  const theme = useTheme();
 
   const [searchFilter, setSearchFilter] = useState('');
   const [handoffToDelete, setHandoffToDelete] = useState<string | undefined>();
@@ -90,10 +85,10 @@ export const SettingsAgentHandoffTable = ({
 
   const filteredHandoffTargets = !searchFilter
     ? handoffTargets
-    : handoffTargets.filter((target) => {
+    : handoffTargets.filter((handoff) => {
         const searchTerm = searchFilter.toLowerCase();
-        const label = target.label?.toLowerCase() || '';
-        const description = target.description?.toLowerCase() || '';
+        const label = handoff.toAgent.label?.toLowerCase() || '';
+        const description = handoff.description?.toLowerCase() || '';
 
         return label.includes(searchTerm) || description.includes(searchTerm);
       });
@@ -153,39 +148,39 @@ export const SettingsAgentHandoffTable = ({
         </TableRow>
         <StyledTableRows>
           {filteredHandoffTargets.length > 0 ? (
-            filteredHandoffTargets.map((targetAgent) => (
+            filteredHandoffTargets.map((handoff) => (
               <TableRow
                 gridAutoColumns="150px 1fr 1fr"
                 mobileGridAutoColumns="100px 1fr 1fr"
-                key={targetAgent.id}
+                key={handoff.id}
               >
                 <TableCell>
                   <StyledTextContainerWithEllipsis
-                    id={`handoff-agent-${targetAgent.id}`}
+                    id={`handoff-agent-${handoff.toAgent.id}`}
                   >
-                    {targetAgent.label}
+                    {handoff.toAgent.label}
                   </StyledTextContainerWithEllipsis>
                   <AppTooltip
-                    anchorSelect={`#handoff-agent-${targetAgent.id}`}
-                    content={targetAgent.label}
+                    anchorSelect={`#handoff-agent-${handoff.toAgent.id}`}
+                    content={handoff.toAgent.label}
                     noArrow
                     place="top"
                     positionStrategy="fixed"
                     delay={TooltipDelay.shortDelay}
                   />
                 </TableCell>
-                <TableCell>
-                  <StyledTextContainerWithEllipsis>
-                    {/* TODO: This should show the handoff description, not the agent description */}
-                    {t`Handoff description not available yet`}
-                  </StyledTextContainerWithEllipsis>
-                </TableCell>
+
+                <StyledTableCell>
+                  <OverflowingTextWithTooltip
+                    text={handoff.description || t`No description`}
+                  />
+                </StyledTableCell>
                 <TableCell align={'right'}>
                   <StyledButtonContainer>
                     <IconButton
                       onClick={() => {
                         openModal(AGENT_HANDOFF_DELETION_MODAL_ID);
-                        setHandoffToDelete(targetAgent.id);
+                        setHandoffToDelete(handoff.toAgent.id);
                       }}
                       variant="tertiary"
                       size="medium"

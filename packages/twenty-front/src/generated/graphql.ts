@@ -84,6 +84,13 @@ export type AgentChatThread = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type AgentHandoffDto = {
+  __typename?: 'AgentHandoffDTO';
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  toAgent: Agent;
+};
+
 export type AgentIdInput = {
   /** The id of the agent. */
   id: Scalars['UUID'];
@@ -1946,6 +1953,7 @@ export type Query = {
   field: Field;
   fields: FieldConnection;
   findAgentHandoffTargets: Array<Agent>;
+  findAgentHandoffs: Array<AgentHandoffDto>;
   findManyAgents: Array<Agent>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
@@ -2022,6 +2030,11 @@ export type QueryCheckWorkspaceInviteHashIsValidArgs = {
 
 
 export type QueryFindAgentHandoffTargetsArgs = {
+  input: AgentIdInput;
+};
+
+
+export type QueryFindAgentHandoffsArgs = {
   input: AgentIdInput;
 };
 

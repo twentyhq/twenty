@@ -19,6 +19,7 @@ import { AgentHandoffService } from './agent-handoff.service';
 import { AgentEntity } from './agent.entity';
 import { AgentService } from './agent.service';
 
+import { AgentHandoffDTO } from './dtos/agent-handoff.dto';
 import { AgentIdInput } from './dtos/agent-id.input';
 import { AgentDTO } from './dtos/agent.dto';
 import { CreateAgentInput } from './dtos/create-agent.input';
@@ -59,6 +60,18 @@ export class AgentResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     return this.agentHandoffService.getHandoffTargets({
+      fromAgentId: id,
+      workspaceId,
+    });
+  }
+
+  @Query(() => [AgentHandoffDTO])
+  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
+  async findAgentHandoffs(
+    @Args('input') { id }: AgentIdInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    return this.agentHandoffService.getAgentHandoffs({
       fromAgentId: id,
       workspaceId,
     });

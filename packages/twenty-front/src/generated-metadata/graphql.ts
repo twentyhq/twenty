@@ -84,6 +84,13 @@ export type AgentChatThread = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type AgentHandoffDto = {
+  __typename?: 'AgentHandoffDTO';
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  toAgent: Agent;
+};
+
 export type AgentIdInput = {
   /** The id of the agent. */
   id: Scalars['UUID'];
@@ -2035,6 +2042,7 @@ export type Query = {
   field: Field;
   fields: FieldConnection;
   findAgentHandoffTargets: Array<Agent>;
+  findAgentHandoffs: Array<AgentHandoffDto>;
   findDistantTablesWithStatus: Array<RemoteTable>;
   findManyAgents: Array<Agent>;
   findManyRemoteServersByType: Array<RemoteServer>;
@@ -2125,6 +2133,11 @@ export type QueryFieldsArgs = {
 
 
 export type QueryFindAgentHandoffTargetsArgs = {
+  input: AgentIdInput;
+};
+
+
+export type QueryFindAgentHandoffsArgs = {
   input: AgentIdInput;
 };
 
@@ -3212,6 +3225,13 @@ export type FindAgentHandoffTargetsQueryVariables = Exact<{
 
 
 export type FindAgentHandoffTargetsQuery = { __typename?: 'Query', findAgentHandoffTargets: Array<{ __typename?: 'Agent', id: any, name: string, label: string, description?: string | null, icon?: string | null, modelId: string, prompt: string, isCustom: boolean, createdAt: string, updatedAt: string }> };
+
+export type FindAgentHandoffsQueryVariables = Exact<{
+  input: AgentIdInput;
+}>;
+
+
+export type FindAgentHandoffsQuery = { __typename?: 'Query', findAgentHandoffs: Array<{ __typename?: 'AgentHandoffDTO', id: string, description?: string | null, toAgent: { __typename?: 'Agent', id: any, name: string, label: string, description?: string | null, icon?: string | null, modelId: string, prompt: string, isCustom: boolean, createdAt: string, updatedAt: string } }> };
 
 export type FindManyAgentsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4765,6 +4785,54 @@ export function useFindAgentHandoffTargetsLazyQuery(baseOptions?: Apollo.LazyQue
 export type FindAgentHandoffTargetsQueryHookResult = ReturnType<typeof useFindAgentHandoffTargetsQuery>;
 export type FindAgentHandoffTargetsLazyQueryHookResult = ReturnType<typeof useFindAgentHandoffTargetsLazyQuery>;
 export type FindAgentHandoffTargetsQueryResult = Apollo.QueryResult<FindAgentHandoffTargetsQuery, FindAgentHandoffTargetsQueryVariables>;
+export const FindAgentHandoffsDocument = gql`
+    query FindAgentHandoffs($input: AgentIdInput!) {
+  findAgentHandoffs(input: $input) {
+    id
+    description
+    toAgent {
+      id
+      name
+      label
+      description
+      icon
+      modelId
+      prompt
+      isCustom
+      createdAt
+      updatedAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useFindAgentHandoffsQuery__
+ *
+ * To run a query within a React component, call `useFindAgentHandoffsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindAgentHandoffsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindAgentHandoffsQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useFindAgentHandoffsQuery(baseOptions: Apollo.QueryHookOptions<FindAgentHandoffsQuery, FindAgentHandoffsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindAgentHandoffsQuery, FindAgentHandoffsQueryVariables>(FindAgentHandoffsDocument, options);
+      }
+export function useFindAgentHandoffsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindAgentHandoffsQuery, FindAgentHandoffsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindAgentHandoffsQuery, FindAgentHandoffsQueryVariables>(FindAgentHandoffsDocument, options);
+        }
+export type FindAgentHandoffsQueryHookResult = ReturnType<typeof useFindAgentHandoffsQuery>;
+export type FindAgentHandoffsLazyQueryHookResult = ReturnType<typeof useFindAgentHandoffsLazyQuery>;
+export type FindAgentHandoffsQueryResult = Apollo.QueryResult<FindAgentHandoffsQuery, FindAgentHandoffsQueryVariables>;
 export const FindManyAgentsDocument = gql`
     query FindManyAgents {
   findManyAgents {
