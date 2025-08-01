@@ -7,7 +7,7 @@ export const updateFeatureFlagFactory = (
 ) => ({
   query: gql`
     mutation UpdateWorkspaceFeatureFlag(
-      $workspaceId: String!
+      $workspaceId: UUID!
       $featureFlag: String!
       $value: Boolean!
     ) {

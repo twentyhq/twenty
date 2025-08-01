@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 
 export const UPDATE_WORKSPACE_FEATURE_FLAG = gql`
   mutation UpdateWorkspaceFeatureFlag(
-    $workspaceId: String!
+    $workspaceId: UUID!
     $featureFlag: String!
     $value: Boolean!
   ) {

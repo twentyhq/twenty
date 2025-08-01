@@ -1,4 +1,4 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
@@ -15,6 +15,6 @@ export class PostgresCredentialsDTO {
   @Field()
   password: string;
 
-  @Field()
+  @Field(() => UUIDScalarType)
   workspaceId: string;
 }

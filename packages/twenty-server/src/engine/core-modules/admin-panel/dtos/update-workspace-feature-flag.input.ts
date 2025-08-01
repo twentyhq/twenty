@@ -1,14 +1,15 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsUUID } from 'class-validator';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 @ArgsType()
 export class UpdateWorkspaceFeatureFlagInput {
-  @Field(() => String)
+  @Field(() => UUIDScalarType)
   @IsNotEmpty()
-  @IsString()
+  @IsUUID()
   workspaceId: string;
 
   @Field(() => String)
