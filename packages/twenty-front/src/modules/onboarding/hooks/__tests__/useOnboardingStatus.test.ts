@@ -8,7 +8,10 @@ import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '~/generated/graphql';
 
 const tokenPair = {
-  accessToken: { token: 'accessToken', expiresAt: 'expiresAt' },
+  accessOrWorkspaceAgnosticToken: {
+    token: 'accessToken',
+    expiresAt: 'expiresAt',
+  },
   refreshToken: { token: 'refreshToken', expiresAt: 'expiresAt' },
 };
 const currentUser = {

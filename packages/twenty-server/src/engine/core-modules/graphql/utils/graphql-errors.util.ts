@@ -170,42 +170,6 @@ export class ForbiddenError extends BaseGraphQLError {
   }
 }
 
-export class PersistedQueryNotFoundError extends BaseGraphQLError {
-  constructor(customException: CustomException);
-
-  constructor(message?: string, extensions?: RestrictedGraphQLErrorExtensions);
-
-  constructor(
-    messageOrException?: string | CustomException,
-    extensions?: RestrictedGraphQLErrorExtensions,
-  ) {
-    super(
-      messageOrException || 'PersistedQueryNotFound',
-      ErrorCode.PERSISTED_QUERY_NOT_FOUND,
-      extensions,
-    );
-    Object.defineProperty(this, 'name', {
-      value: 'PersistedQueryNotFoundError',
-    });
-  }
-}
-
-export class PersistedQueryNotSupportedError extends BaseGraphQLError {
-  constructor(
-    messageOrException?: string | CustomException,
-    extensions?: RestrictedGraphQLErrorExtensions,
-  ) {
-    super(
-      messageOrException || 'PersistedQueryNotSupported',
-      ErrorCode.PERSISTED_QUERY_NOT_SUPPORTED,
-      extensions,
-    );
-    Object.defineProperty(this, 'name', {
-      value: 'PersistedQueryNotSupportedError',
-    });
-  }
-}
-
 export class UserInputError extends BaseGraphQLError {
   constructor(exception: CustomException);
 

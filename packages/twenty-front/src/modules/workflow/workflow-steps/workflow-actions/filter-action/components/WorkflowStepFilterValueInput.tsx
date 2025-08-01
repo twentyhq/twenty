@@ -1,6 +1,7 @@
 import { useGetFieldMetadataItemById } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
+import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { WorkflowStepFilterValueCompositeInput } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterValueCompositeInput';
@@ -90,6 +91,10 @@ export const WorkflowStepFilterValueInput = ({
     ? getFieldMetadataItemById(fieldMetadataId)
     : undefined;
 
+  const isFilterableByMultiSelectValue =
+    variableType === FieldMetadataType.MULTI_SELECT ||
+    variableType === FieldMetadataType.SELECT;
+
   if (
     !isDefined(variableType) ||
     !isFilterableFieldMetadataType(variableType) ||
@@ -114,6 +119,19 @@ export const WorkflowStepFilterValueInput = ({
       <WorkflowStepFilterValueCompositeInput
         stepFilter={stepFilter}
         onChange={handleValueChange}
+      />
+    );
+  }
+
+  if (isFilterableByMultiSelectValue) {
+    return (
+      <FormMultiSelectFieldInput
+        label={''}
+        defaultValue={stepFilter.value}
+        onChange={handleValueChange}
+        readonly={readonly}
+        VariablePicker={WorkflowVariablePicker}
+        options={selectedFieldMetadataItem?.options ?? []}
       />
     );
   }

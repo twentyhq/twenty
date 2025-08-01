@@ -130,7 +130,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           );
         }
 
-        const verifyEmailNextPath = buildAppPathWithQueryParams(
+        const verifyEmailRedirectPath = buildAppPathWithQueryParams(
           AppPath.PlanRequired,
           await buildSearchParamsFromUrlSyncedStates(),
         );
@@ -141,7 +141,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           workspaceInviteHash,
           workspacePersonalInviteToken,
           captchaToken: token,
-          verifyEmailNextPath,
+          verifyEmailRedirectPath,
         });
       } catch (error: any) {
         enqueueErrorSnackBar({

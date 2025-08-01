@@ -8,6 +8,7 @@ import { ReleaseNote } from '@/app/(public)/releases/api/route';
 import { ArticleContent } from '@/app/_components/ui/layout/articles/ArticleContent';
 import MotionContainer from '@/app/_components/ui/layout/LoaderAnimation';
 import { Theme } from '@/app/_components/ui/theme/theme';
+import { formatGithubPublishedAtDisplayDate } from '@/shared-utils/formatDisplayDate';
 
 const StyledContainer = styled.div`
   width: 810px;
@@ -24,6 +25,7 @@ const StyledContainer = styled.div`
 const StyledVersion = styled.div`
   text-align: center;
   width: 148px;
+  min-width: 148px;
   font-size: 24px;
   display: flex;
   flex-flow: column;
@@ -33,6 +35,7 @@ const StyledVersion = styled.div`
 
   @media (max-width: 810px) {
     width: 100%;
+    min-width: unset;
     font-size: 20px;
     flex-flow: row;
     justify-content: space-between;
@@ -50,6 +53,8 @@ const StyledDate = styled.span`
   color: ${Theme.text.color.secondary};
   font-weight: 400;
   font-size: ${Theme.font.size.sm};
+  white-space: nowrap;
+  margin-top: 4px;
 `;
 
 const gabarito = Gabarito({
@@ -75,9 +80,7 @@ export const Release = ({
         <StyledVersion>
           <StyledRelease>{release.release}</StyledRelease>
           <StyledDate>
-            {githubPublishedAt.endsWith(new Date().getFullYear().toString())
-              ? githubPublishedAt.slice(0, -5)
-              : githubPublishedAt}
+            {formatGithubPublishedAtDisplayDate(githubPublishedAt)}
           </StyledDate>
         </StyledVersion>
         <ArticleContent>{mdxReleaseContent}</ArticleContent>

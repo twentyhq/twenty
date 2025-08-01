@@ -2,7 +2,7 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
-import { APP_LOCALES } from 'twenty-shared/translations';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
   Column,
   CreateDateColumn,
@@ -73,7 +73,7 @@ export class UserWorkspace {
   defaultAvatarUrl: string;
 
   @Field(() => String, { nullable: false })
-  @Column({ nullable: false, default: 'en', type: 'varchar' })
+  @Column({ nullable: false, default: SOURCE_LOCALE, type: 'varchar' })
   locale: keyof typeof APP_LOCALES;
 
   @Field()

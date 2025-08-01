@@ -1,11 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class AgentException extends CustomException {
-  declare code: AgentExceptionCode;
-  constructor(message: string, code: AgentExceptionCode) {
-    super(message, code);
-  }
-}
+export class AgentException extends CustomException<AgentExceptionCode> {}
 
 export enum AgentExceptionCode {
   AGENT_NOT_FOUND = 'AGENT_NOT_FOUND',
@@ -13,4 +8,5 @@ export enum AgentExceptionCode {
   API_KEY_NOT_CONFIGURED = 'API_KEY_NOT_CONFIGURED',
   USER_WORKSPACE_ID_NOT_FOUND = 'USER_WORKSPACE_ID_NOT_FOUND',
   ROLE_NOT_FOUND = 'ROLE_NOT_FOUND',
+  HANDOFF_ALREADY_EXISTS = 'HANDOFF_ALREADY_EXISTS',
 }

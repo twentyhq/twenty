@@ -6,6 +6,7 @@ import { billingState } from '@/client-config/states/billingState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import {
@@ -26,11 +27,12 @@ import {
   IconRocket,
   IconServer,
   IconSettings,
+  IconSparkles,
   IconUserCircle,
   IconUsers,
   IconWebhook,
 } from 'twenty-ui/display';
-import { PermissionFlagType } from '~/generated/graphql';
+import { FeatureFlagKey, PermissionFlagType } from '~/generated/graphql';
 
 export type SettingsNavigationSection = {
   label: string;
@@ -49,6 +51,7 @@ export type SettingsNavigationItem = {
   subItems?: SettingsNavigationItem[];
   isAdvanced?: boolean;
   soon?: boolean;
+  isNew?: boolean;
 };
 
 const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
@@ -62,6 +65,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
     (currentUser?.canImpersonate || currentUser?.canAccessFullAdminPanel) ??
     false;
   const labPublicFeatureFlags = useRecoilValue(labPublicFeatureFlagsState);
+  const isAIEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
   const permissionMap = usePermissionFlagMap();
   return [
@@ -141,6 +145,14 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !permissionMap[PermissionFlagType.API_KEYS_AND_WEBHOOKS],
         },
         {
+          label: t`AI`,
+          path: SettingsPath.AI,
+          Icon: IconSparkles,
+          isHidden:
+            !isAIEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
+          isNew: true,
+        },
+        {
           label: t`Security`,
           path: SettingsPath.Security,
           Icon: IconKey,
@@ -151,20 +163,20 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
     },
     {
       label: t`Developers`,
-      isAdvanced: true,
+      isAdvanced: false,
       items: [
         {
           label: t`APIs`,
           path: SettingsPath.APIs,
           Icon: IconApi,
-          isAdvanced: true,
+          isAdvanced: false,
           isHidden: !permissionMap[PermissionFlagType.API_KEYS_AND_WEBHOOKS],
         },
         {
           label: t`Webhooks`,
           path: SettingsPath.Webhooks,
           Icon: IconWebhook,
-          isAdvanced: true,
+          isAdvanced: false,
           isHidden: !permissionMap[PermissionFlagType.API_KEYS_AND_WEBHOOKS],
         },
         {

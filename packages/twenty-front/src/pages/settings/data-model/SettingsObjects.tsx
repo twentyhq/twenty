@@ -235,7 +235,7 @@ export const SettingsObjects = () => {
                             isCustomObject={
                               objectSettingsItem.objectMetadataItem.isCustom
                             }
-                            scopeKey={
+                            objectMetadataItemNamePlural={
                               objectSettingsItem.objectMetadataItem.namePlural
                             }
                             onActivate={() =>

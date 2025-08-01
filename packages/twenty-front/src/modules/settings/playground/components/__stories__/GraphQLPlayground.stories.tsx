@@ -4,13 +4,12 @@ import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
   ComponentDecorator,
   ComponentWithRouterDecorator,
 } from 'twenty-ui/testing';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const PlaygroundApiKeySetterEffect = () => {
   const setPlaygroundApiKey = useSetRecoilState(playgroundApiKeyState);
@@ -29,7 +28,6 @@ const meta: Meta<typeof GraphQLPlayground> = {
     ComponentDecorator,
     I18nFrontDecorator,
     ComponentWithRouterDecorator,
-    ComponentWithRecoilScopeDecorator,
   ],
   parameters: {
     docs: {

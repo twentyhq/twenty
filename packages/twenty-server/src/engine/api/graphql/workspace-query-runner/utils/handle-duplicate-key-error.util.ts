@@ -33,7 +33,9 @@ export const handleDuplicateKeyError = (
         });
 
     if (!isDefined(affectedColumns)) {
-      throw new UserInputError(`A duplicate entry was detected`);
+      throw new UserInputError(`A duplicate entry was detected`, {
+        userFriendlyMessage: `This record already exists. Please check your data and try again.`,
+      });
     }
 
     const columnNames = affectedColumns.join(', ');
@@ -41,11 +43,17 @@ export const handleDuplicateKeyError = (
     if (affectedColumns?.length === 1) {
       throw new UserInputError(
         `Duplicate ${columnNames}. Please set a unique one.`,
+        {
+          userFriendlyMessage: `This ${columnNames.toLowerCase()} is already taken. Please choose a different value.`,
+        },
       );
     }
 
     throw new UserInputError(
       `A duplicate entry was detected. The combination of ${columnNames} must be unique.`,
+      {
+        userFriendlyMessage: `This combination of ${columnNames.toLowerCase()} already exists. Please use different values.`,
+      },
     );
   }
 };

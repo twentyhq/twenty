@@ -56,6 +56,8 @@ export const permissionGraphqlApiExceptionHandler = (
     case PermissionsExceptionCode.METHOD_NOT_ALLOWED:
     case PermissionsExceptionCode.RAW_SQL_NOT_ALLOWED:
     case PermissionsExceptionCode.OBJECT_PERMISSION_NOT_FOUND:
+    case PermissionsExceptionCode.JOIN_COLUMN_NAME_REQUIRED:
+    case PermissionsExceptionCode.COMPOSITE_TYPE_NOT_FOUND:
       throw error;
     default: {
       const _exhaustiveCheck: never = error.code;

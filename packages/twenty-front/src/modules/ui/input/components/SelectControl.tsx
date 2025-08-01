@@ -48,7 +48,7 @@ const StyledControlContainer = styled.div<{
       ? theme.font.color.tertiary
       : textAccent === 'default'
         ? theme.font.color.primary
-        : theme.font.color.secondary};
+        : theme.font.color.tertiary};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   text-align: left;
 `;

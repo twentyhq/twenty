@@ -8,7 +8,7 @@ export const getAuthToken = async (page: Page) => {
   if (!authCookie) {
     throw new Error('No auth cookie found');
   }
-  const token = JSON.parse(decodeURIComponent(authCookie.value)).accessToken
+  const token = JSON.parse(decodeURIComponent(authCookie.value)).accessOrWorkspaceAgnosticToken
     .token;
 
   return { authToken: token };

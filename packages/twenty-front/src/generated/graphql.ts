@@ -53,7 +53,10 @@ export type Agent = {
   __typename?: 'Agent';
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
+  isCustom: Scalars['Boolean'];
+  label: Scalars['String'];
   modelId: Scalars['String'];
   name: Scalars['String'];
   prompt: Scalars['String'];
@@ -79,6 +82,13 @@ export type AgentChatThread = {
   id: Scalars['UUID'];
   title?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
+};
+
+export type AgentHandoffDto = {
+  __typename?: 'AgentHandoffDTO';
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  toAgent: Agent;
 };
 
 export type AgentIdInput = {
@@ -161,7 +171,7 @@ export type AuthToken = {
 
 export type AuthTokenPair = {
   __typename?: 'AuthTokenPair';
-  accessToken: AuthToken;
+  accessOrWorkspaceAgnosticToken: AuthToken;
   refreshToken: AuthToken;
 };
 
@@ -173,6 +183,12 @@ export type AuthTokens = {
 export type AuthorizeApp = {
   __typename?: 'AuthorizeApp';
   redirectUrl: Scalars['String'];
+};
+
+export type AutocompleteResultDto = {
+  __typename?: 'AutocompleteResultDto';
+  placeId: Scalars['String'];
+  text: Scalars['String'];
 };
 
 export type AvailableWorkspace = {
@@ -467,6 +483,23 @@ export type CreateAgentChatThreadInput = {
   agentId: Scalars['UUID'];
 };
 
+export type CreateAgentHandoffInput = {
+  description?: InputMaybe<Scalars['String']>;
+  fromAgentId: Scalars['UUID'];
+  toAgentId: Scalars['UUID'];
+};
+
+export type CreateAgentInput = {
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  label: Scalars['String'];
+  modelId: Scalars['String'];
+  name?: InputMaybe<Scalars['String']>;
+  prompt: Scalars['String'];
+  responseFormat?: InputMaybe<Scalars['JSON']>;
+  roleId?: InputMaybe<Scalars['UUID']>;
+};
+
 export type CreateApiKeyDto = {
   expiresAt: Scalars['String'];
   name: Scalars['String'];
@@ -715,7 +748,8 @@ export enum FeatureFlagKey {
   IS_TWO_FACTOR_AUTHENTICATION_ENABLED = 'IS_TWO_FACTOR_AUTHENTICATION_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
   IS_WORKFLOW_FILTERING_ENABLED = 'IS_WORKFLOW_FILTERING_ENABLED',
-  IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED = 'IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED'
+  IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED = 'IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED',
+  IS_WORKSPACE_MIGRATION_V2_ENABLED = 'IS_WORKSPACE_MIGRATION_V2_ENABLED'
 }
 
 export type Field = {
@@ -1039,6 +1073,12 @@ export type LinksMetadata = {
   secondaryLinks?: Maybe<Array<LinkMetadata>>;
 };
 
+export type LocationDto = {
+  __typename?: 'LocationDto';
+  lat?: Maybe<Scalars['Float']>;
+  lng?: Maybe<Scalars['Float']>;
+};
+
 export type LoginToken = {
   __typename?: 'LoginToken';
   loginToken: AuthToken;
@@ -1067,6 +1107,7 @@ export type Mutation = {
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
   createAgentChatThread: AgentChatThread;
+  createAgentHandoff: Scalars['Boolean'];
   createApiKey: ApiKey;
   createApprovedAccessDomain: ApprovedAccessDomain;
   createDatabaseConfigVariable: Scalars['Boolean'];
@@ -1074,6 +1115,7 @@ export type Mutation = {
   createFile: File;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
+  createOneAgent: Agent;
   createOneAppToken: AppToken;
   createOneField: Field;
   createOneObject: Object;
@@ -1087,6 +1129,7 @@ export type Mutation = {
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
   deleteFile: File;
+  deleteOneAgent: Agent;
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRole: Scalars['String'];
@@ -1110,10 +1153,12 @@ export type Mutation = {
   getAuthorizationUrlForSSO: GetAuthorizationUrlForSsoOutput;
   getLoginTokenFromCredentials: LoginToken;
   getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
+  getWorkspaceAgnosticTokenFromEmailVerificationToken: AvailableWorkspacesAndAccessTokensOutput;
   impersonate: ImpersonateOutput;
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
   publishServerlessFunction: ServerlessFunction;
+  removeAgentHandoff: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
@@ -1201,6 +1246,11 @@ export type MutationCreateAgentChatThreadArgs = {
 };
 
 
+export type MutationCreateAgentHandoffArgs = {
+  input: CreateAgentHandoffInput;
+};
+
+
 export type MutationCreateApiKeyArgs = {
   input: CreateApiKeyDto;
 };
@@ -1237,6 +1287,11 @@ export type MutationCreateObjectEventArgs = {
   objectMetadataId: Scalars['String'];
   properties?: InputMaybe<Scalars['JSON']>;
   recordId: Scalars['String'];
+};
+
+
+export type MutationCreateOneAgentArgs = {
+  input: CreateAgentInput;
 };
 
 
@@ -1287,6 +1342,11 @@ export type MutationDeleteDatabaseConfigVariableArgs = {
 
 export type MutationDeleteFileArgs = {
   fileId: Scalars['String'];
+};
+
+
+export type MutationDeleteOneAgentArgs = {
+  input: AgentIdInput;
 };
 
 
@@ -1379,8 +1439,10 @@ export type MutationGetAuthorizationUrlForSsoArgs = {
 export type MutationGetLoginTokenFromCredentialsArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  locale?: InputMaybe<Scalars['String']>;
   origin: Scalars['String'];
   password: Scalars['String'];
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1389,6 +1451,13 @@ export type MutationGetLoginTokenFromEmailVerificationTokenArgs = {
   email: Scalars['String'];
   emailVerificationToken: Scalars['String'];
   origin: Scalars['String'];
+};
+
+
+export type MutationGetWorkspaceAgnosticTokenFromEmailVerificationTokenArgs = {
+  captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  emailVerificationToken: Scalars['String'];
 };
 
 
@@ -1406,6 +1475,11 @@ export type MutationInitiateOtpProvisioningArgs = {
 
 export type MutationPublishServerlessFunctionArgs = {
   input: PublishServerlessFunctionInput;
+};
+
+
+export type MutationRemoveAgentHandoffArgs = {
+  input: RemoveAgentHandoffInput;
 };
 
 
@@ -1456,14 +1530,18 @@ export type MutationSendInvitationsArgs = {
 export type MutationSignInArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  locale?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationSignUpArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  locale?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1472,7 +1550,7 @@ export type MutationSignUpInWorkspaceArgs = {
   email: Scalars['String'];
   locale?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
-  verifyEmailNextPath?: InputMaybe<Scalars['String']>;
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
   workspaceId?: InputMaybe<Scalars['String']>;
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
   workspacePersonalInviteToken?: InputMaybe<Scalars['String']>;
@@ -1816,6 +1894,15 @@ export enum PermissionsOnAllObjectRecords {
   UPDATE_ALL_OBJECT_RECORDS = 'UPDATE_ALL_OBJECT_RECORDS'
 }
 
+export type PlaceDetailsResultDto = {
+  __typename?: 'PlaceDetailsResultDto';
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
+  location?: Maybe<LocationDto>;
+  postcode?: Maybe<Scalars['String']>;
+  state?: Maybe<Scalars['String']>;
+};
+
 export type PostgresCredentials = {
   __typename?: 'PostgresCredentials';
   id: Scalars['UUID'];
@@ -1865,12 +1952,17 @@ export type Query = {
   currentWorkspace: Workspace;
   field: Field;
   fields: FieldConnection;
+  findAgentHandoffTargets: Array<Agent>;
+  findAgentHandoffs: Array<AgentHandoffDto>;
+  findManyAgents: Array<Agent>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
+  getAddressDetails: PlaceDetailsResultDto;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
+  getAutoCompleteAddress: Array<AutocompleteResultDto>;
   getAvailablePackages: Scalars['JSON'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
@@ -1937,6 +2029,16 @@ export type QueryCheckWorkspaceInviteHashIsValidArgs = {
 };
 
 
+export type QueryFindAgentHandoffTargetsArgs = {
+  input: AgentIdInput;
+};
+
+
+export type QueryFindAgentHandoffsArgs = {
+  input: AgentIdInput;
+};
+
+
 export type QueryFindOneAgentArgs = {
   input: AgentIdInput;
 };
@@ -1949,6 +2051,20 @@ export type QueryFindOneServerlessFunctionArgs = {
 
 export type QueryFindWorkspaceFromInviteHashArgs = {
   inviteHash: Scalars['String'];
+};
+
+
+export type QueryGetAddressDetailsArgs = {
+  placeId: Scalars['String'];
+  token: Scalars['String'];
+};
+
+
+export type QueryGetAutoCompleteAddressArgs = {
+  address: Scalars['String'];
+  country?: InputMaybe<Scalars['String']>;
+  isFieldCity?: InputMaybe<Scalars['Boolean']>;
+  token: Scalars['String'];
 };
 
 
@@ -2106,6 +2222,11 @@ export enum RemoteTableStatus {
   NOT_SYNCED = 'NOT_SYNCED',
   SYNCED = 'SYNCED'
 }
+
+export type RemoveAgentHandoffInput = {
+  fromAgentId: Scalars['String'];
+  toAgentId: Scalars['String'];
+};
 
 export type ResendEmailVerificationTokenOutput = {
   __typename?: 'ResendEmailVerificationTokenOutput';
@@ -2461,11 +2582,14 @@ export type UuidFilterComparison = {
 
 export type UpdateAgentInput = {
   description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
+  label: Scalars['String'];
   modelId: Scalars['String'];
   name: Scalars['String'];
   prompt: Scalars['String'];
   responseFormat?: InputMaybe<Scalars['JSON']>;
+  roleId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateApiKeyDto = {
@@ -2818,6 +2942,7 @@ export type WorkspaceInviteHashValid = {
 export type WorkspaceMember = {
   __typename?: 'WorkspaceMember';
   avatarUrl?: Maybe<Scalars['String']>;
+  calendarStartDay?: Maybe<Scalars['Int']>;
   colorScheme: Scalars['String'];
   dateFormat?: Maybe<WorkspaceMemberDateFormatEnum>;
   id: Scalars['UUID'];

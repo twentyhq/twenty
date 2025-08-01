@@ -5,9 +5,9 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { SnackBarComponentInstanceContextProvider } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarComponentInstanceContextProvider';
 
 import { MultipleRecordPickerRecords } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerRecords';
+import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import {
   query,
@@ -55,9 +55,11 @@ const mocks = [
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
     <MockedProvider mocks={mocks} addTypename={false}>
-      <SnackBarComponentInstanceContextProvider snackBarComponentInstanceId="snack-bar-manager">
+      <SnackBarComponentInstanceContext.Provider
+        value={{ instanceId: 'snack-bar-manager' }}
+      >
         {children}
-      </SnackBarComponentInstanceContextProvider>
+      </SnackBarComponentInstanceContext.Provider>
     </MockedProvider>
   </RecoilRoot>
 );

@@ -13,6 +13,7 @@ import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/re
 import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
 import { isRecordIndexBoardColumnLoadingFamilyState } from '@/object-record/states/isRecordBoardColumnLoadingFamilyState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+
 const StyledColumnCardsContainer = styled.div`
   display: flex;
   flex: 1;
