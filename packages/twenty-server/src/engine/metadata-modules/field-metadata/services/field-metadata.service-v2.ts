@@ -13,59 +13,24 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import {
-  FlatFieldAndItsFlatObjectMetadata,
-  fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata,
-} from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-and-its-flat-object-metadata.util';
+import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
+import { fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-and-its-flat-object-metadata.util';
 import { mergeTwoFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/merge-two-flat-field-metadatas.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  FlatObjectAndFlatFieldsToCreate,
+  fromFlatFieldAndFlatObjectMetadataArrayToFlatObjectAndFlatFieldsToCreate,
+} from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-field-and-flat-object-metadata-array-to-flat-object-and-flat-fields-to-create.util';
 import { fromObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-maps-to-flat-object-metadatas.util';
 import { mergeTwoFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/merge-two-flat-object-metadatas.util';
+import { removeFlatFieldMetadataFromFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/remove-flat-field-metadata-from-flat-object-metadatas.util';
 import { getFieldMetadataEntityFromCachedObjectMetadataMaps } from 'src/engine/metadata-modules/utils/get-field-metadata-entity-from-cached-object-metadata-maps.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
 
-type FlatObjectAndFlatFieldToCreate = {
-  flatObjectMetadata: FlatObjectMetadata;
-  toCreateFlatFieldMetadata: FlatFieldMetadata[];
-};
-const fromFlatFieldAndItsFlatObjectMetadataToFlatObjectAndFlatFieldToCreate = (
-  prastoin: FlatFieldAndItsFlatObjectMetadata[],
-): FlatObjectAndFlatFieldToCreate[] => {
-  const record = prastoin.reduce<
-    Record<string, FlatObjectAndFlatFieldToCreate>
-  >((acc, { flatFieldMetadata, parentFlatObjectMetadata }) => {
-    const occurrence = acc[parentFlatObjectMetadata.id];
-
-    if (occurrence) {
-      return {
-        ...acc,
-        [parentFlatObjectMetadata.id]: {
-          ...occurrence,
-          toCreateFlatFieldMetadata: [
-            ...occurrence.toCreateFlatFieldMetadata,
-            flatFieldMetadata,
-          ],
-        },
-      };
-    }
-
-    return {
-      ...acc,
-      [parentFlatObjectMetadata.id]: {
-        flatObjectMetadata: parentFlatObjectMetadata,
-        toCreateFlatFieldMetadata: [flatFieldMetadata],
-      },
-    };
-  }, {});
-
-  return Object.values(record);
-};
-
 const optimisticallyApplyFlatFieldMetadataCreationToFlatObjectMetadata = (
-  args: FlatObjectAndFlatFieldToCreate[],
+  args: FlatObjectAndFlatFieldsToCreate[],
 ): FlatObjectMetadata[] => {
   return args.map(({ flatObjectMetadata, toCreateFlatFieldMetadata }) => {
     return {
@@ -78,30 +43,12 @@ const optimisticallyApplyFlatFieldMetadataCreationToFlatObjectMetadata = (
   });
 };
 
-const removeFlatFieldMetadataFromFlatObjectMetadatas = ({
-  flatFieldMetadata: flatFieldMetadataToRemove,
-  flatObjectMetadatas,
-}: {
-  flatObjectMetadatas: FlatObjectMetadata[];
-  flatFieldMetadata: FlatFieldMetadata;
-}) => {
-  return flatObjectMetadatas.map((flatObjectMetadata) => {
-    if (flatObjectMetadata.id !== flatFieldMetadataToRemove.objectMetadataId) {
-      return flatObjectMetadata;
-    }
-
-    const flatFieldMetadatas = flatObjectMetadata.flatFieldMetadatas.filter(
-      ({ id: flatFieldMetadataId }) =>
-        flatFieldMetadataId !== flatFieldMetadataToRemove.id,
-    );
-
-    return {
-      ...flatObjectMetadata,
-      flatFieldMetadatas,
-    };
-  });
+type PrastoinArgs = {
+  flatObjectAndFlatFieldsToCreate: FlatObjectAndFlatFieldsToCreate;
+  optimisticRenderedFlatObjectMetadatas: FlatObjectMetadata[];
+  workspaceId: string;
+  existingFlatObjectMetadatas: FlatObjectMetadata[];
 };
-
 @Injectable()
 export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEntity> {
   constructor(
@@ -114,6 +61,34 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
   ) {
     super(fieldMetadataRepository);
   }
+
+  private validateFlatFieldMetadatasToCreate = async ({
+    flatObjectAndFlatFieldsToCreate: { toCreateFlatFieldMetadata },
+    optimisticRenderedFlatObjectMetadatas,
+    workspaceId,
+    existingFlatObjectMetadatas,
+  }: PrastoinArgs): Promise<FailedFlatFieldMetadataValidationExceptions[]> => {
+    const validationPromises = toCreateFlatFieldMetadata.map<
+      Promise<FailedFlatFieldMetadataValidationExceptions[]>
+    >((flatFieldMetadataToValidate) => {
+      const othersFlatObjectMetadataToValidate =
+        removeFlatFieldMetadataFromFlatObjectMetadatas({
+          flatFieldMetadata: flatFieldMetadataToValidate,
+          flatObjectMetadatas: optimisticRenderedFlatObjectMetadatas,
+        });
+
+      return this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadata(
+        {
+          existingFlatObjectMetadatas,
+          flatFieldMetadataToValidate,
+          workspaceId,
+          othersFlatObjectMetadataToValidate,
+        },
+      );
+    });
+
+    return (await Promise.all(validationPromises)).flat();
+  };
 
   override async createOne(
     fieldMetadataInput: CreateFieldInput,
@@ -159,7 +134,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
 
     const flatObjectAndFlatFieldToCreateCollection =
       flatFieldToCreateAndItsFlatObjectMetadataArray.map(
-        fromFlatFieldAndItsFlatObjectMetadataToFlatObjectAndFlatFieldToCreate,
+        fromFlatFieldAndFlatObjectMetadataArrayToFlatObjectAndFlatFieldsToCreate,
       );
 
     let flatObjectMetadatasWithNewFields: FlatObjectMetadata[] = [];
@@ -170,25 +145,14 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
           FlatFieldsToCreateAndItsParentFlatObject,
         );
 
-      // TODO avoid one more depth indent
       const flatFieldMetadataValidationPromises =
-        FlatFieldsToCreateAndItsParentFlatObject.flatMap(
-          ({ toCreateFlatFieldMetadata }) =>
-            toCreateFlatFieldMetadata.flatMap((flatFieldMetadataToValidate) => {
-              const othersFlatObjectMetadataToValidate =
-                removeFlatFieldMetadataFromFlatObjectMetadatas({
-                  flatFieldMetadata: flatFieldMetadataToValidate,
-                  flatObjectMetadatas: optimisticRenderedFlatObjectMetadatas,
-                });
-
-              return this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadata(
-                {
-                  existingFlatObjectMetadatas,
-                  flatFieldMetadataToValidate,
-                  workspaceId,
-                  othersFlatObjectMetadataToValidate,
-                },
-              );
+        FlatFieldsToCreateAndItsParentFlatObject.map(
+          (flatObjectAndFlatFieldsToCreate) =>
+            this.validateFlatFieldMetadatasToCreate({
+              existingFlatObjectMetadatas,
+              flatObjectAndFlatFieldsToCreate,
+              optimisticRenderedFlatObjectMetadatas,
+              workspaceId,
             }),
         );
 
