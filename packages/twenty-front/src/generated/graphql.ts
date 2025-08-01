@@ -485,8 +485,8 @@ export type CreateAgentChatThreadInput = {
 
 export type CreateAgentHandoffInput = {
   description?: InputMaybe<Scalars['String']>;
-  fromAgentId: Scalars['String'];
-  toAgentId: Scalars['String'];
+  fromAgentId: Scalars['UUID'];
+  toAgentId: Scalars['UUID'];
 };
 
 export type CreateAgentInput = {
