@@ -1,10 +1,12 @@
 import { useAiAgentOutputSchema } from '@/ai/hooks/useAiAgentOutputSchema';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
 import { WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
+import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -45,6 +47,7 @@ export const WorkflowEditActionAiAgent = ({
     });
 
   const agentId = action.settings.input.agentId;
+  const prompt = action.settings.input.prompt || '';
 
   const { handleOutputSchemaChange, outputFields } = useAiAgentOutputSchema(
     action.settings.outputSchema as BaseOutputSchema,
@@ -80,6 +83,22 @@ export const WorkflowEditActionAiAgent = ({
         input: {
           ...action.settings.input,
           agentId: value,
+        },
+      },
+    });
+  };
+
+  const handlePromptChange = (value: string) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
+    actionOptions.onActionUpdate?.({
+      ...action,
+      settings: {
+        ...action.settings,
+        input: {
+          ...action.settings.input,
+          prompt: value,
         },
       },
     });
@@ -125,6 +144,17 @@ export const WorkflowEditActionAiAgent = ({
             </StyledErrorMessage>
           )}
         </div>
+
+        <FormTextFieldInput
+          multiline
+          VariablePicker={WorkflowVariablePicker}
+          label={t`Instructions for AI`}
+          placeholder={t`Describe what you want the AI to do...`}
+          defaultValue={prompt}
+          onChange={handlePromptChange}
+          readonly={actionOptions.readonly}
+        />
+
         <WorkflowOutputSchemaBuilder
           fields={outputFields}
           onChange={handleOutputSchemaChange}

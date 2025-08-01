@@ -18,6 +18,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 
 import { isWorkflowAiAgentAction } from './guards/is-workflow-ai-agent-action.guard';
 
@@ -51,7 +52,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { agentId } = step.settings.input;
+    const { agentId, prompt } = step.settings.input;
     const workspaceId = context.workspaceId as string;
 
     try {
@@ -73,6 +74,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         agent,
         context,
         schema: step.settings.outputSchema,
+        userPrompt: resolveInput(prompt, context) as string,
       });
 
       await this.aiBillingService.calculateAndBillUsage(

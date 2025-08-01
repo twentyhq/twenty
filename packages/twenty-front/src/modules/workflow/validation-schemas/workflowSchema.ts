@@ -136,6 +136,7 @@ export const workflowAiAgentActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
       agentId: z.string(),
+      prompt: z.string().optional(),
     }),
   });
 

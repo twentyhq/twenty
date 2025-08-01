@@ -622,7 +622,10 @@ export class WorkflowVersionStepWorkspaceService {
           valid: false,
           settings: {
             ...BASE_STEP_DEFINITION,
-            input: {},
+            input: {
+              agentId: '',
+              prompt: '',
+            },
           },
         };
       }

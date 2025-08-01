@@ -17,6 +17,7 @@ import { In, Repository } from 'typeorm';
 
 import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { extractFolderPathAndFilename } from 'src/engine/core-modules/file/utils/extract-folderpath-and-filename.utils';
@@ -34,9 +35,7 @@ import { convertOutputSchemaToZod } from 'src/engine/metadata-modules/agent/util
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
-import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
@@ -343,18 +342,19 @@ export class AgentExecutionService {
 
   async executeAgent({
     agent,
-    context,
     schema,
+    userPrompt,
   }: {
     agent: AgentEntity;
     context: Record<string, unknown>;
     schema: OutputSchema;
+    userPrompt: string;
   }): Promise<AgentExecutionResult> {
     try {
       const aiRequestConfig = await this.prepareAIRequestConfig({
-        system: AGENT_SYSTEM_PROMPTS.AGENT_EXECUTION,
+        system: `You are executing as part of a workflow automation. ${agent.prompt}`,
         agent,
-        prompt: resolveInput(agent.prompt, context) as string,
+        prompt: userPrompt,
       });
       const textResponse = await generateText(aiRequestConfig);
 
