@@ -13,11 +13,14 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-object-actions';
 
 export type CreatedDeletedUpdatedObjectMetadataInputMatrix =
-  CustomDeletedCreatedUpdatedMatrix<'objectMetadata', FlatObjectMetadata>;
+  CustomDeletedCreatedUpdatedMatrix<'objectMetadata', FlatObjectMetadata> & {
+    inferDeletionFromMissingObjectFieldIndex: boolean;
+  };
 export const buildWorkspaceMigrationV2ObjectActions = ({
   createdObjectMetadata,
   deletedObjectMetadata,
   updatedObjectMetadata,
+  inferDeletionFromMissingObjectFieldIndex,
 }: CreatedDeletedUpdatedObjectMetadataInputMatrix): WorkspaceMigrationObjectActionV2[] => {
   const createdObjectActions = createdObjectMetadata.map(
     (flatObjectMetadata) => {
@@ -36,9 +39,9 @@ export const buildWorkspaceMigrationV2ObjectActions = ({
     },
   );
 
-  const deletedObjectActions = deletedObjectMetadata.map(
-    getWorkspaceMigrationV2ObjectDeleteAction,
-  );
+  const deletedObjectActions = inferDeletionFromMissingObjectFieldIndex
+    ? deletedObjectMetadata.map(getWorkspaceMigrationV2ObjectDeleteAction)
+    : [];
 
   const updatedObjectActions =
     updatedObjectMetadata.flatMap<UpdateObjectAction>(({ from, to }) => {

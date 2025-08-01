@@ -1,5 +1,9 @@
 import styled from '@emotion/styled';
-import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
+import {
+  DragDropContext,
+  DragStart,
+  OnDragEndResponder,
+} from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useContext, useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
 
@@ -11,19 +15,20 @@ import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/comp
 import { RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-board/constants/RecordBoardClickOutsideListenerId';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
+import { useBoardCardDragState } from '@/object-record/record-board/hooks/useBoardCardDragState';
+import { useEndBoardCardDrag } from '@/object-record/record-board/hooks/useEndBoardCardDrag';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
+import { useRecordBoardDragOperations } from '@/object-record/record-board/hooks/useRecordBoardDragOperations';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
+import { useStartBoardCardDrag } from '@/object-record/record-board/hooks/useStartBoardCardDrag';
 import { RecordBoardDeactivateBoardCardEffect } from '@/object-record/record-board/record-board-card/components/RecordBoardDeactivateBoardCardEffect';
 import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
-import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
-import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
+import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
-import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { MODAL_BACKDROP_CLICK_OUTSIDE_ID } from '@/ui/layout/modal/constants/ModalBackdropClickOutsideId';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -39,7 +44,6 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { ViewType } from '@/views/types/ViewType';
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
-import { getIndexNeighboursElementsFromArray } from '~/utils/array/getIndexNeighboursElementsFromArray';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -71,8 +75,7 @@ const StyledBoardContentContainer = styled.div`
 `;
 
 export const RecordBoard = () => {
-  const { updateOneRecord, selectFieldMetadataItem, recordBoardId } =
-    useContext(RecordBoardContext);
+  const { recordBoardId } = useContext(RecordBoardContext);
   const boardRef = useRef<HTMLDivElement>(null);
 
   const { toggleClickOutside } = useClickOutsideListener(
@@ -86,7 +89,6 @@ export const RecordBoard = () => {
 
   const handleDragSelectionStart = () => {
     closeAnyOpenDropdown();
-
     toggleClickOutside(false);
   };
 
@@ -99,17 +101,24 @@ export const RecordBoard = () => {
     ViewType.Kanban,
   );
 
-  const recordIndexRecordIdsByGroupFamilyState =
-    useRecoilComponentCallbackStateV2(
-      recordIndexRecordIdsByGroupComponentFamilyState,
-    );
-
   const { resetRecordSelection, setRecordAsSelected } =
     useRecordBoardSelection(recordBoardId);
 
   const currentRecordSorts = useRecoilComponentValueV2(
     currentRecordSortsComponentState,
   );
+
+  const recordBoardSelectedRecordIdsSelector =
+    useRecoilComponentCallbackStateV2(
+      recordBoardSelectedRecordIdsComponentSelector,
+      recordBoardId,
+    );
+
+  const startDrag = useStartBoardCardDrag(recordBoardId);
+  const endDrag = useEndBoardCardDrag(recordBoardId);
+  const multiDragState = useBoardCardDragState(recordBoardId);
+
+  const { processDragOperation } = useRecordBoardDragOperations();
 
   useListenClickOutside({
     excludedClickOutsideIds: [
@@ -123,81 +132,48 @@ export const RecordBoard = () => {
     listenerId: RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
     refs: [],
     callback: () => {
-      resetRecordSelection();
-      deactivateBoardCard();
-      unfocusBoardCard();
+      if (!multiDragState.isDragging) {
+        resetRecordSelection();
+        deactivateBoardCard();
+        unfocusBoardCard();
+      }
     },
   });
 
   const { openModal } = useModal();
 
-  const handleDragEnd: OnDragEndResponder = useRecoilCallback(
+  const handleDragStart = useRecoilCallback(
     ({ snapshot }) =>
-      (result) => {
-        if (!result.destination) return;
-
-        if (currentRecordSorts.length > 0) {
-          openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
-          return;
-        }
-
-        const draggedRecordId = result.draggableId;
-        const sourceRecordGroupId = result.source.droppableId;
-        const destinationRecordGroupId = result.destination.droppableId;
-        const destinationIndexInColumn = result.destination.index;
-
-        if (!destinationRecordGroupId || !selectFieldMetadataItem) return;
-
-        const recordGroup = getSnapshotValue(
+      (start: DragStart) => {
+        const currentSelectedRecordIds = getSnapshotValue(
           snapshot,
-          recordGroupDefinitionFamilyState(destinationRecordGroupId),
+          recordBoardSelectedRecordIdsSelector,
         );
 
-        if (!recordGroup) return;
-
-        const destinationRecordByGroupIds = getSnapshotValue(
-          snapshot,
-          recordIndexRecordIdsByGroupFamilyState(destinationRecordGroupId),
-        );
-        const otherRecordIdsInDestinationColumn =
-          sourceRecordGroupId === destinationRecordGroupId
-            ? destinationRecordByGroupIds.filter(
-                (recordId) => recordId !== draggedRecordId,
-              )
-            : destinationRecordByGroupIds;
-
-        const { before: recordBeforeId, after: recordAfterId } =
-          getIndexNeighboursElementsFromArray({
-            index: destinationIndexInColumn,
-            array: otherRecordIdsInDestinationColumn,
-          });
-        const recordBefore = recordBeforeId
-          ? getSnapshotValue(snapshot, recordStoreFamilyState(recordBeforeId))
-          : null;
-
-        const recordAfter = recordAfterId
-          ? getSnapshotValue(snapshot, recordStoreFamilyState(recordAfterId))
-          : null;
-
-        const draggedRecordPosition = getDraggedRecordPosition(
-          recordBefore?.position,
-          recordAfter?.position,
-        );
-
-        updateOneRecord({
-          idToUpdate: draggedRecordId,
-          updateOneRecordInput: {
-            [selectFieldMetadataItem.name]: recordGroup.value,
-            position: draggedRecordPosition,
-          },
-        });
+        startDrag(start, currentSelectedRecordIds);
       },
+    [recordBoardSelectedRecordIdsSelector, startDrag],
+  );
+
+  const handleDragEnd: OnDragEndResponder = useRecoilCallback(
+    () => (result) => {
+      endDrag();
+
+      if (!result.destination) return;
+
+      if (currentRecordSorts.length > 0) {
+        openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
+        return;
+      }
+
+      processDragOperation(result, multiDragState.originalSelection);
+    },
     [
-      recordIndexRecordIdsByGroupFamilyState,
-      selectFieldMetadataItem,
-      updateOneRecord,
-      openModal,
+      processDragOperation,
+      multiDragState.originalSelection,
+      endDrag,
       currentRecordSorts,
+      openModal,
     ],
   );
 
@@ -221,7 +197,10 @@ export const RecordBoard = () => {
           <RecordBoardHeader />
           <StyledBoardContentContainer>
             <StyledContainer ref={boardRef}>
-              <DragDropContext onDragEnd={handleDragEnd}>
+              <DragDropContext
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+              >
                 <StyledColumnContainer>
                   {visibleRecordGroupIds.map((recordGroupId, index) => (
                     <RecordBoardColumn

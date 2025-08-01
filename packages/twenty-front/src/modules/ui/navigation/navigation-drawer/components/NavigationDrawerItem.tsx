@@ -33,6 +33,7 @@ export type NavigationDrawerItemProps = {
   active?: boolean;
   danger?: boolean;
   soon?: boolean;
+  isNew?: boolean;
   count?: number;
   keyboard?: string[];
   rightOptions?: ReactNode;
@@ -247,6 +248,7 @@ export const NavigationDrawerItem = ({
   active,
   danger,
   soon,
+  isNew,
   count,
   keyboard,
   subItemState,
@@ -262,7 +264,9 @@ export const NavigationDrawerItem = ({
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
   const showBreadcrumb = indentationLevel === 2;
-  const showStyledSpacer = !!soon || !!count || !!keyboard || !!rightOptions;
+  const showStyledSpacer = Boolean(
+    soon || isNew || count || keyboard || rightOptions,
+  );
 
   const handleMobileNavigation = () => {
     if (isMobile) {
@@ -340,6 +344,12 @@ export const NavigationDrawerItem = ({
           {soon && (
             <NavigationDrawerAnimatedCollapseWrapper>
               <Pill label="Soon" />
+            </NavigationDrawerAnimatedCollapseWrapper>
+          )}
+
+          {isNew && (
+            <NavigationDrawerAnimatedCollapseWrapper>
+              <Pill label="New" />
             </NavigationDrawerAnimatedCollapseWrapper>
           )}
 

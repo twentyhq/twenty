@@ -77,37 +77,43 @@ export class WorkspaceEventEmitter {
         });
         break;
       case DatabaseEventAction.UPDATED:
-        events = entityArray.map((after, idx) => {
-          if (!beforeEntities) {
-            throw new Error('beforeEntities is required for UPDATED action');
-          }
+        events = entityArray
+          .map((after, idx) => {
+            if (!beforeEntities) {
+              throw new Error('beforeEntities is required for UPDATED action');
+            }
 
-          const before = Array.isArray(beforeEntities)
-            ? beforeEntities?.[idx]
-            : beforeEntities;
+            const before = Array.isArray(beforeEntities)
+              ? beforeEntities?.[idx]
+              : beforeEntities;
 
-          const diff = objectRecordChangedValues(
-            before,
-            after,
-            objectMetadataItem,
-          ) as Partial<ObjectRecordDiff<T>>;
+            const diff = objectRecordChangedValues(
+              before,
+              after,
+              objectMetadataItem,
+            ) as Partial<ObjectRecordDiff<T>>;
 
-          const updatedFields = Object.keys(diff);
+            const updatedFields = Object.keys(diff);
 
-          const event = new ObjectRecordUpdateEvent<T>();
+            if (updatedFields.length === 0) {
+              return;
+            }
 
-          event.userId = authContext?.user?.id;
-          event.recordId = after.id;
-          event.objectMetadata = { ...objectMetadataItem, fields };
-          event.properties = {
-            before,
-            after,
-            updatedFields,
-            diff,
-          };
+            const event = new ObjectRecordUpdateEvent<T>();
 
-          return event;
-        });
+            event.userId = authContext?.user?.id;
+            event.recordId = after.id;
+            event.objectMetadata = { ...objectMetadataItem, fields };
+            event.properties = {
+              before,
+              after,
+              updatedFields,
+              diff,
+            };
+
+            return event;
+          })
+          .filter(isDefined);
         break;
       case DatabaseEventAction.DELETED:
         events = entityArray.map((before) => {

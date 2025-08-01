@@ -18,6 +18,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 
 import { isWorkflowAiAgentAction } from './guards/is-workflow-ai-agent-action.guard';
 
@@ -51,18 +52,22 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { agentId } = step.settings.input;
+    const { agentId, prompt } = step.settings.input;
     const workspaceId = context.workspaceId as string;
 
     try {
-      const agent = await this.agentRepository.findOne({
-        where: {
-          id: agentId,
-          workspaceId,
-        },
-      });
+      let agent: AgentEntity | null = null;
 
-      if (!agent) {
+      if (agentId) {
+        agent = await this.agentRepository.findOne({
+          where: {
+            id: agentId,
+            workspaceId,
+          },
+        });
+      }
+
+      if (agentId && !agent) {
         throw new AgentException(
           `Agent with id ${agentId} not found`,
           AgentExceptionCode.AGENT_NOT_FOUND,
@@ -73,10 +78,11 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         agent,
         context,
         schema: step.settings.outputSchema,
+        userPrompt: resolveInput(prompt, context) as string,
       });
 
       await this.aiBillingService.calculateAndBillUsage(
-        agent.modelId,
+        agent?.modelId ?? 'auto',
         usage,
         workspaceId,
       );

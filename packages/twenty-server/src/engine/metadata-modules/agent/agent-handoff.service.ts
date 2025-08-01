@@ -54,6 +54,24 @@ export class AgentHandoffService {
     return handoffs.map((handoff) => handoff.toAgent);
   }
 
+  async getAgentHandoffs({
+    fromAgentId,
+    workspaceId,
+  }: {
+    fromAgentId: string;
+    workspaceId: string;
+  }): Promise<AgentHandoffEntity[]> {
+    const handoffs = await this.agentHandoffRepository.find({
+      where: {
+        fromAgentId,
+        workspaceId,
+      },
+      relations: ['toAgent'],
+    });
+
+    return handoffs;
+  }
+
   async createHandoff({
     fromAgentId,
     toAgentId,

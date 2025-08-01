@@ -119,6 +119,7 @@ export const createAgentToolTestModule =
           useValue: {
             getHandoffTargets: jest.fn().mockResolvedValue([]),
             canHandoffTo: jest.fn().mockResolvedValue(true),
+            getAgentHandoffs: jest.fn().mockResolvedValue([]),
           },
         },
         {
