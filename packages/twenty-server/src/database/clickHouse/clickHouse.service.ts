@@ -148,10 +148,9 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
         return { success: false };
       }
 
-      await client.insert({
-        table,
-        values,
-        format: 'JSONEachRow',
+      await this.insertInChunks(client, table, values, {
+        chunkSize: 1000,
+        maxMemoryMB: 4,
       });
 
       return { success: true };
@@ -228,5 +227,48 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
 
       return false;
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private async insertInChunks<T extends Record<string, any>>(
+    client: ClickHouseClient,
+    table: string,
+    values: T[],
+    options: { chunkSize?: number; maxMemoryMB?: number } = {},
+  ): Promise<void> {
+    const chunkSize = options.chunkSize ?? 1000;
+    const maxMemoryMB = options.maxMemoryMB;
+
+    let chunk: T[] = [];
+    let currentSizeBytes = 0;
+
+    const flush = async () => {
+      if (chunk.length === 0) return;
+      await client.insert({
+        table,
+        values: chunk,
+        format: 'JSONEachRow',
+      });
+      chunk = [];
+      currentSizeBytes = 0;
+    };
+
+    for (const row of values) {
+      const rowSize = Buffer.byteLength(JSON.stringify(row));
+
+      chunk.push(row);
+      currentSizeBytes += rowSize;
+
+      const currentSizeMB = currentSizeBytes / 1024 / 1024;
+
+      if (
+        chunk.length >= chunkSize ||
+        (maxMemoryMB !== undefined && currentSizeMB >= maxMemoryMB)
+      ) {
+        await flush();
+      }
+    }
+
+    await flush();
   }
 }

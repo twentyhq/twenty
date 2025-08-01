@@ -5,6 +5,7 @@ import { generateText } from 'ai';
 import { Repository } from 'typeorm';
 
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
+import { AGENT_HANDOFF_PROMPT_TEMPLATE } from 'src/engine/metadata-modules/agent/constants/agent-handoff-prompt.const';
 
 import { AgentHandoffService } from './agent-handoff.service';
 import { AgentEntity } from './agent.entity';
@@ -31,7 +32,7 @@ export class AgentHandoffExecutorService {
 
   async executeHandoff(handoffRequest: HandoffRequest) {
     try {
-      const { fromAgentId, toAgentId, workspaceId, reason } = handoffRequest;
+      const { fromAgentId, toAgentId, workspaceId } = handoffRequest;
 
       const canHandoff = await this.agentHandoffService.canHandoffTo({
         fromAgentId,
@@ -76,13 +77,7 @@ export class AgentHandoffExecutorService {
 
       const textResponse = await generateText(aiRequestConfig);
 
-      return {
-        success: true,
-        newAgentId: toAgentId,
-        newAgentName: targetAgent.name,
-        message: `Successfully transferred to ${targetAgent.name}. ${reason}`,
-        response: textResponse.text,
-      };
+      return textResponse.text;
     } catch (error) {
       this.logger.error(
         `Handoff execution failed: ${error.message}`,
@@ -101,17 +96,9 @@ export class AgentHandoffExecutorService {
   private createHandoffPrompt(handoffRequest: HandoffRequest): string {
     const { reason, context } = handoffRequest;
 
-    const prompt = `
-You have received a handoff from another AI agent. This means the previous agent has determined that you are better suited to handle this conversation based on your specialized knowledge and capabilities.
-
-The previous agent has transferred this conversation to you because: ${reason}
-
-Additional context from the previous agent:
-${context || 'No additional context provided'}
-
-Please continue the conversation naturally, acknowledging that you are taking over from the previous agent. Use your specialized knowledge to provide the best possible assistance to the user.
-`;
-
-    return prompt;
+    return AGENT_HANDOFF_PROMPT_TEMPLATE.replace('{reason}', reason).replace(
+      '{context}',
+      context || 'No additional context provided',
+    );
   }
 }

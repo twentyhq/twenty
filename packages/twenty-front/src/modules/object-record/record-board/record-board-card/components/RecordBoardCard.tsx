@@ -1,6 +1,7 @@
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
+import { useBoardCardDragState } from '@/object-record/record-board/hooks/useBoardCardDragState';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { isRecordBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState';
 import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
@@ -30,12 +31,20 @@ import { useDebouncedCallback } from 'use-debounce';
 
 const StyledBoardCard = styled.div<{
   isDragging?: boolean;
+  isSecondaryDragged?: boolean;
+  isPrimaryMultiDrag?: boolean;
 }>`
   background-color: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
+
+  ${({ isSecondaryDragged }) =>
+    isSecondaryDragged &&
+    `
+    opacity: 0.3;
+  `}
 
   &[data-selected='true'] {
     background-color: ${({ theme }) => theme.accent.quaternary};
@@ -80,6 +89,28 @@ const StyledBoardCard = styled.div<{
   }
 `;
 
+const StyledCardContainer = styled.div<{ isPrimaryMultiDrag?: boolean }>`
+  position: relative;
+  ${({ isPrimaryMultiDrag }) =>
+    isPrimaryMultiDrag &&
+    `
+    transform: scale(1.02);
+    z-index: 10;
+  `}
+`;
+
+const StyledRecordBoardCardStackCard = styled.div<{ offset: number }>`
+  position: absolute;
+  top: ${({ offset }) => (offset === 1 ? 2 : (offset - 1) * 4 + 2)}px;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background-color: ${({ theme }) => theme.accent.tertiary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  z-index: ${({ offset }) => -offset};
+`;
+
 const StyledBoardCardWrapper = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
@@ -89,6 +120,19 @@ export const RecordBoardCard = () => {
   const { recordId, rowIndex, columnIndex } = useContext(
     RecordBoardCardContext,
   );
+
+  const multiDragState = useBoardCardDragState();
+
+  const isPrimaryMultiDrag =
+    multiDragState &&
+    multiDragState.isDragging &&
+    recordId === multiDragState.primaryDraggedRecordId &&
+    multiDragState.originalSelection.length > 1;
+
+  const isSecondaryDragged =
+    multiDragState?.isDragging &&
+    multiDragState.originalSelection.includes(recordId) &&
+    recordId !== multiDragState.primaryDraggedRecordId;
 
   const visibleFieldDefinitions = useRecoilComponentValueV2(
     recordBoardVisibleFieldDefinitionsComponentSelector,
@@ -187,27 +231,38 @@ export const RecordBoardCard = () => {
       onContextMenu={handleContextMenuOpen}
     >
       <InView>
-        <StyledBoardCard
-          ref={cardRef}
-          data-selected={isCurrentCardSelected}
-          data-focused={isCurrentCardFocused}
-          data-active={isCurrentCardActive}
-          onMouseLeave={onMouseLeaveBoard}
-          onClick={handleCardClick}
-        >
-          <RecordBoardCardHeader
-            isCardExpanded={isCardExpanded}
-            setIsCardExpanded={setIsCardExpanded}
-          />
-          <AnimatedEaseInOut
-            isOpen={isCardExpanded || !isCompactModeActive}
-            initial={false}
+        <StyledCardContainer isPrimaryMultiDrag={isPrimaryMultiDrag}>
+          {isPrimaryMultiDrag &&
+            Array.from({
+              length: Math.min(5, multiDragState.originalSelection.length - 1),
+            }).map((_, index) => (
+              <StyledRecordBoardCardStackCard key={index} offset={index + 1} />
+            ))}
+
+          <StyledBoardCard
+            ref={cardRef}
+            data-selected={isCurrentCardSelected}
+            data-focused={isCurrentCardFocused}
+            data-active={isCurrentCardActive}
+            onMouseLeave={onMouseLeaveBoard}
+            onClick={handleCardClick}
+            isPrimaryMultiDrag={isPrimaryMultiDrag}
+            isSecondaryDragged={isSecondaryDragged}
           >
-            <RecordBoardCardBody
-              fieldDefinitions={visibleFieldDefinitionsFiltered}
+            <RecordBoardCardHeader
+              isCardExpanded={isCardExpanded}
+              setIsCardExpanded={setIsCardExpanded}
             />
-          </AnimatedEaseInOut>
-        </StyledBoardCard>
+            <AnimatedEaseInOut
+              isOpen={isCardExpanded || !isCompactModeActive}
+              initial={false}
+            >
+              <RecordBoardCardBody
+                fieldDefinitions={visibleFieldDefinitionsFiltered}
+              />
+            </AnimatedEaseInOut>
+          </StyledBoardCard>
+        </StyledCardContainer>
       </InView>
     </StyledBoardCardWrapper>
   );
