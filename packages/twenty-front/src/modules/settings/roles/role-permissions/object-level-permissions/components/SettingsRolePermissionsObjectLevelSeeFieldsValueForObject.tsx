@@ -50,15 +50,14 @@ export const SettingsRolePermissionsObjectLevelSeeFieldsValueForObject = ({
     roleFieldPermissions.length === 0 ||
     numberOfRestrictedFieldMetadataItemsOnRead === 0;
 
-  const { objectReadIsRestricted: objectReadIsResctricted } =
-    useObjectPermissionDerivedStates({
-      roleId,
-      objectMetadataItemId,
-    });
+  const { objectReadIsRestricted } = useObjectPermissionDerivedStates({
+    roleId,
+    objectMetadataItemId,
+  });
 
   return (
     <>
-      {objectReadIsResctricted
+      {objectReadIsRestricted
         ? '-'
         : canReadAll
           ? t`All`

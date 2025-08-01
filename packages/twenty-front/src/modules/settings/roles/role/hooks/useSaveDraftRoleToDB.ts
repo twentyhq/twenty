@@ -72,7 +72,7 @@ export const useSaveDraftRoleToDB = ({
       );
     });
 
-  const fieldPermissionToUpsert =
+  const fieldPermissionsToUpsert =
     dirtyFields.fieldPermissions?.filter(
       (dirtyFieldPermissionToFilter) =>
         !fieldPermissionsThatShouldntBeCreatedBecauseTheyAreUseless?.some(
@@ -164,13 +164,13 @@ export const useSaveDraftRoleToDB = ({
         });
       }
 
-      if (isNonEmptyArray(fieldPermissionToUpsert)) {
+      if (isNonEmptyArray(fieldPermissionsToUpsert)) {
         await upsertFieldPermissions({
           variables: {
             upsertFieldPermissionsInput: {
               roleId: data.createOneRole.id,
               fieldPermissions:
-                fieldPermissionToUpsert.map((fieldPermission) => ({
+                fieldPermissionsToUpsert.map((fieldPermission) => ({
                   objectMetadataId: fieldPermission.objectMetadataId,
                   fieldMetadataId: fieldPermission.fieldMetadataId,
                   canReadFieldValue: fieldPermission.canReadFieldValue,
@@ -260,13 +260,13 @@ export const useSaveDraftRoleToDB = ({
         });
       }
 
-      if (isNonEmptyArray(fieldPermissionToUpsert)) {
+      if (isNonEmptyArray(fieldPermissionsToUpsert)) {
         await upsertFieldPermissions({
           variables: {
             upsertFieldPermissionsInput: {
               roleId: roleId,
               fieldPermissions:
-                fieldPermissionToUpsert.map((fieldPermission) => ({
+                fieldPermissionsToUpsert.map((fieldPermission) => ({
                   objectMetadataId: fieldPermission.objectMetadataId,
                   fieldMetadataId: fieldPermission.fieldMetadataId,
                   canReadFieldValue: fieldPermission.canReadFieldValue,
