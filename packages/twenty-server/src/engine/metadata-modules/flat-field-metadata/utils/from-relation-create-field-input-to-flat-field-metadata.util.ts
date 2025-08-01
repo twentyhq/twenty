@@ -8,7 +8,6 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
 import { validateRelationCreationPayloadOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/validate-relation-creation-payload.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatFieldAndItsFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-and-its-flat-object-metadata.util';
@@ -29,9 +28,7 @@ const computeFieldMetadataRelationSettingsForRelationType = ({
     return {
       relationType: RelationType.MANY_TO_ONE,
       onDelete: RelationOnDeleteAction.SET_NULL,
-      joinColumnName: computeRelationFieldJoinColumnName({
-        name: fieldMetadataName,
-      }),
+      joinColumnName: fieldMetadataName
     };
   }
 
