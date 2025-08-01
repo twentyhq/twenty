@@ -146,10 +146,12 @@ export class MatchParticipantService<
         return {
           ...participant,
           ...(shouldMatchWithPerson && {
-            personId: person?.id,
+            personId: isDefined(person) ? person.id : null,
           }),
           ...(shouldMatchWithWorkspaceMember && {
-            workspaceMemberId: workspaceMember?.id,
+            workspaceMemberId: isDefined(workspaceMember)
+              ? workspaceMember.id
+              : null,
           }),
         };
       });
@@ -235,13 +237,44 @@ export class MatchParticipantService<
       objectMetadataName,
     );
 
-    const participants = await participantRepository.find({
+    const personRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
+        workspaceId,
+        'person',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const people = await personRepository.find({
+      where: {
+        id: In(personIds),
+      },
+    });
+
+    const participantsMatchingPersonId = await participantRepository.find({
       where: {
         personId: In(personIds),
       },
     });
 
-    const tobeRematchedParticipants = participants.map((participant) => {
+    const emails = people.flatMap((person) => [
+      person.emails.primaryEmail,
+      ...(person.emails.additionalEmails as string[]),
+    ]);
+
+    const participantsMatchingPersonEmails = await participantRepository.find({
+      where: {
+        handle: In(emails),
+      },
+    });
+
+    const uniqueParticipants = [
+      ...new Set([
+        ...participantsMatchingPersonId,
+        ...participantsMatchingPersonEmails,
+      ]),
+    ];
+
+    const tobeRematchedParticipants = uniqueParticipants.map((participant) => {
       return {
         ...participant,
         personId: null,

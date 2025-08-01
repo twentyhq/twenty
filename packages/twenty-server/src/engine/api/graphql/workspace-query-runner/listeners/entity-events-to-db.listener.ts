@@ -64,12 +64,16 @@ export class EntityEventsToDbListener {
     batchEvent: WorkspaceEventBatch<T>,
     action: DatabaseEventAction,
   ) {
-    this.logger.log(
-      `handleEvent called for ${batchEvent.events.length} events, action: ${action}`,
-    );
-
     const filteredEvents = batchEvent.events.filter(
       (event) => event.objectMetadata?.isAuditLogged,
+    );
+
+    if (filteredEvents.length === 0) {
+      return;
+    }
+
+    this.logger.log(
+      `handleEvent called for ${filteredEvents.length} events, action: ${action}`,
     );
 
     const batchEventEventsForWebhook: ObjectRecordEventForWebhook[] =
