@@ -1,4 +1,4 @@
-import { SCROLL_TOP_THRESHOLD_PX } from '@/ui/utilities/scroll/constants/ScrollTopThreshold';
+import { SCROLL_RESTORATION_TOP_THRESHOLD_PX } from '@/ui/utilities/scroll/constants/ScrollRestorationTopThreshold';
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useCallback, useEffect, useState } from 'react';
@@ -46,7 +46,7 @@ export const useScrollRestoration = (componentInstanceId: string) => {
   useEffect(() => {
     if (isRestoring) return;
 
-    if (scrollTop <= SCROLL_TOP_THRESHOLD_PX) {
+    if (scrollTop <= SCROLL_RESTORATION_TOP_THRESHOLD_PX) {
       sessionStorage.removeItem(storageKey);
       return;
     }
