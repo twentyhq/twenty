@@ -1,13 +1,13 @@
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  appendCommonExceptionCode,
+  CustomException,
+} from 'src/utils/custom-exception';
 
-export enum FileExceptionCode {
-  UNAUTHENTICATED = 'UNAUTHENTICATED',
-  INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
-  FILE_NOT_FOUND = 'FILE_NOT_FOUND',
-}
+export class FileException extends CustomException<
+  keyof typeof FileExceptionCode
+> {}
 
-export class FileException extends CustomException {
-  constructor(message: string, code: FileExceptionCode) {
-    super(message, code);
-  }
-}
+export const FileExceptionCode = appendCommonExceptionCode({
+  UNAUTHENTICATED: 'UNAUTHENTICATED',
+  FILE_NOT_FOUND: 'FILE_NOT_FOUND',
+} as const);

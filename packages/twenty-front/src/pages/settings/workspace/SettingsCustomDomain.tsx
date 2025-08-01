@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
 import { SettingsCustomDomainRecords } from '~/pages/settings/workspace/SettingsCustomDomainRecords';
-import { SettingsCustomDomainRecordsStatus } from '~/pages/settings/workspace/SettingsCustomDomainRecordsStatus';
 import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
 import { useRecoilValue } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -79,33 +78,31 @@ export const SettingsCustomDomain = () => {
             />
           )}
         />
-        <StyledButtonGroup>
-          <StyledButton
-            isLoading={isLoading}
-            Icon={IconReload}
-            title={t`Reload`}
-            variant="primary"
-            onClick={checkCustomDomainRecords}
-            type="button"
-          />
-          <StyledButton
-            Icon={IconTrash}
-            variant="primary"
-            onClick={deleteCustomDomain}
-          />
-        </StyledButtonGroup>
+        {currentWorkspace?.customDomain && (
+          <StyledButtonGroup>
+            <StyledButton
+              isLoading={isLoading}
+              Icon={IconReload}
+              title={t`Reload`}
+              variant="primary"
+              onClick={checkCustomDomainRecords}
+              type="button"
+            />
+            <StyledButton
+              Icon={IconTrash}
+              variant="primary"
+              onClick={deleteCustomDomain}
+            />
+          </StyledButtonGroup>
+        )}
       </StyledDomainFormWrapper>
       {currentWorkspace?.customDomain && (
         <StyledRecordsWrapper>
-          <SettingsCustomDomainRecordsStatus />
-          {customDomainRecords &&
-            customDomainRecords.records.some(
-              (record) => record.status !== 'success',
-            ) && (
-              <SettingsCustomDomainRecords
-                records={customDomainRecords.records}
-              />
-            )}
+          {customDomainRecords && (
+            <SettingsCustomDomainRecords
+              records={customDomainRecords.records}
+            />
+          )}
         </StyledRecordsWrapper>
       )}
     </Section>

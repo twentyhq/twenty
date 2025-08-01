@@ -1,10 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class WorkflowRunException extends CustomException {
-  constructor(message: string, code: WorkflowRunExceptionCode) {
-    super(message, code);
-  }
-}
+export class WorkflowRunException extends CustomException<WorkflowRunExceptionCode> {}
 
 export enum WorkflowRunExceptionCode {
   WORKFLOW_RUN_NOT_FOUND = 'WORKFLOW_RUN_NOT_FOUND',
@@ -13,5 +9,4 @@ export enum WorkflowRunExceptionCode {
   INVALID_INPUT = 'INVALID_INPUT',
   WORKFLOW_RUN_LIMIT_REACHED = 'WORKFLOW_RUN_LIMIT_REACHED',
   WORKFLOW_RUN_INVALID = 'WORKFLOW_RUN_INVALID',
-  FAILURE = 'FAILURE',
 }
