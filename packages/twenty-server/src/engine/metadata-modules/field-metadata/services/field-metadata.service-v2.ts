@@ -43,7 +43,7 @@ const optimisticallyApplyFlatFieldMetadataCreationToFlatObjectMetadata = (
   });
 };
 
-type PrastoinArgs = {
+type ValidateFlatFieldMetadatasToCreateArgs = {
   flatObjectAndFlatFieldsToCreate: FlatObjectAndFlatFieldsToCreate;
   optimisticRenderedFlatObjectMetadatas: FlatObjectMetadata[];
   workspaceId: string;
@@ -67,7 +67,9 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
     optimisticRenderedFlatObjectMetadatas,
     workspaceId,
     existingFlatObjectMetadatas,
-  }: PrastoinArgs): Promise<FailedFlatFieldMetadataValidationExceptions[]> => {
+  }: ValidateFlatFieldMetadatasToCreateArgs): Promise<
+    FailedFlatFieldMetadataValidationExceptions[]
+  > => {
     const validationPromises = toCreateFlatFieldMetadata.map<
       Promise<FailedFlatFieldMetadataValidationExceptions[]>
     >((flatFieldMetadataToValidate) => {
