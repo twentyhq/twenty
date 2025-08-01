@@ -7,7 +7,7 @@ import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-met
 
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 
-export const hasNoDefaultValueForUniqueField = (
+export const validateUniqueFieldDefaultValue = (
   defaultValue: FieldMetadataDefaultValue | undefined,
   isUnique: boolean | undefined,
   type: FieldMetadataType,

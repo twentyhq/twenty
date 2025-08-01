@@ -153,15 +153,6 @@ describe('create records with custom unique fields', () => {
       `,
     });
 
-    const createRecordQuery = gql`
-      mutation CreateRecord($data: TestRecordObjectCreateInput!) {
-        createTestRecordObject(data: $data) {
-          id
-          uniqueTestField
-        }
-      }
-    `;
-
     const firstRecordResponse = await makeGraphqlAPIRequest({
       query: createRecordQuery,
       variables: {

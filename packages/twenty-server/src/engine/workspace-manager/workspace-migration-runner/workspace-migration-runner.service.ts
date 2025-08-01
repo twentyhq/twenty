@@ -255,6 +255,9 @@ export class WorkspaceMigrationRunnerService {
         throw new IndexMetadataException(
           `Unique index creation failed because of unique constraint violation`,
           IndexMetadataExceptionCode.INDEX_CREATION_FAILED,
+          {
+            userFriendlyMessage: `Can't create unicity because of duplicate values in current records.`,
+          },
         );
       }
 

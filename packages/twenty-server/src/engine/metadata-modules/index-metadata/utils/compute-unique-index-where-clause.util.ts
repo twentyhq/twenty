@@ -1,7 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
-import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -26,15 +25,22 @@ export const computeUniqueIndexWhereClause = (
     );
 
     uniqueCompositeProperties.forEach((property) => {
-      const defaultValue = standardDefaultValue?.[
-        property.name as keyof FieldMetadataDefaultValue
-      ] as string | undefined;
+      if (
+        standardDefaultValue &&
+        typeof standardDefaultValue === 'object' &&
+        property.name in standardDefaultValue
+      ) {
+        const defaultValue =
+          standardDefaultValue[
+            property.name as keyof typeof standardDefaultValue
+          ];
 
-      if (isDefined(defaultValue)) {
-        columnNamesWithDefaultValues.push([
-          computeCompositeColumnName(fieldMetadata, property),
-          defaultValue,
-        ]);
+        if (isDefined(defaultValue) && typeof defaultValue === 'string') {
+          columnNamesWithDefaultValues.push([
+            computeCompositeColumnName(fieldMetadata, property),
+            defaultValue,
+          ]);
+        }
       }
     });
 

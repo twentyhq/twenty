@@ -84,34 +84,6 @@ describe('create one unique field metadata', () => {
     expect(errors[0].message).toBe('Unique field cannot have a default value');
   });
 
-  it('should not create unique field metadata if it has composite type without unique subfields', async () => {
-    const createFieldInput = {
-      name: 'uniqueFullName',
-      label: 'Unique Full Name',
-      type: FieldMetadataType.FULL_NAME, // FULL_NAME has no properties with isIncludedInUniqueConstraint: true
-      objectMetadataId: createdObjectMetadataId,
-      isUnique: true,
-    };
-
-    const { data, errors } = await createOneFieldMetadata({
-      input: createFieldInput,
-      gqlFields: `
-        id
-        name
-        label
-        type
-        isUnique
-      `,
-      expectToFail: true,
-    });
-
-    expect(data).toBeNull();
-    expect(errors).toBeDefined();
-    expect(errors[0].message).toContain(
-      'Unique index cannot be created for field uniqueFullName of type FULL_NAME',
-    );
-  });
-
   it('should not create unique field metadata for composite type without unique subfields', async () => {
     const createFieldInput = {
       name: 'uniqueFullName',
@@ -130,6 +102,7 @@ describe('create one unique field metadata', () => {
         type
         isUnique
       `,
+      expectToFail: true,
     });
 
     expect(data).toBeNull();
