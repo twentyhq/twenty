@@ -82,7 +82,10 @@ const StyledButtonContainer = styled.div<{ isPersistent: boolean }>`
   justify-content: flex-end;
   flex-shrink: 0;
   white-space: nowrap;
-  margin-right: ${({ isPersistent }) => (isPersistent ? '0' : '40px')};
+  margin-right: ${({ isPersistent, theme }) =>
+    isPersistent
+      ? '0'
+      : `calc(${theme.icon.size.sm}px + ${theme.spacing(2)} * 2 + ${theme.spacing(2)})`};
 `;
 
 export const CommandMenuTopBar = () => {
