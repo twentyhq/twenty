@@ -217,6 +217,7 @@ export class WorkspaceManagerService {
         description: 'Default Routing Agent',
         prompt: '',
         modelId: 'auto',
+        isCustom: false,
       },
       workspaceId,
     );

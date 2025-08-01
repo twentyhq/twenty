@@ -10,6 +10,7 @@ import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { AgentHandoffExecutorService } from 'src/engine/metadata-modules/agent/agent-handoff-executor.service';
 import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
+import { AGENT_HANDOFF_DESCRIPTION_TEMPLATE } from 'src/engine/metadata-modules/agent/constants/agent-handoff-description.const';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { camelCase } from 'src/utils/camel-case';
 
@@ -67,49 +68,59 @@ export class AgentToolService {
     agentId: string,
     workspaceId: string,
   ): Promise<ToolSet> {
-    const handoffTargets = await this.agentHandoffService.getHandoffTargets({
+    const handoffs = await this.agentHandoffService.getAgentHandoffs({
       fromAgentId: agentId,
       workspaceId,
     });
 
-    const handoffTools = handoffTargets.reduce<ToolSet>(
-      (tools, targetAgent) => {
-        const toolName = `transfer_to_${camelCase(targetAgent.name)}`;
+    const handoffTools = handoffs.reduce<ToolSet>((tools, handoff) => {
+      const toolName = `handoff_to_${camelCase(handoff.toAgent.name)}`;
 
-        const handoffSchema = z.object({
-          reason: z.string().describe('Reason for transferring to this agent'),
+      const handoffSchema = z.object({
+        toolDescription: z
+          .string()
+          .describe(
+            "A clear, human-readable status message describing the handoff being made. This will be shown to the user while the handoff is being processed, so phrase it as a present-tense status update (e.g., 'Transferring you to the sales agent for pricing information').",
+          ),
+        input: z.object({
+          reason: z
+            .string()
+            .describe(
+              'Brief explanation of why this handoff is needed (e.g., "User needs pricing information", "User requires technical support", "User wants to discuss billing")',
+            ),
           context: z
             .string()
             .optional()
-            .describe('Additional context to pass to the receiving agent'),
-        });
+            .describe(
+              'Any relevant context or information to pass to the receiving agent (e.g., user preferences, previous conversation details, specific requirements)',
+            ),
+        }),
+      });
 
-        tools[toolName] = {
-          description: `Transfer this request to ${targetAgent.name} when you need their specialized expertise. Use this when the user's request is outside your capabilities or when ${targetAgent.name} would be better suited to handle the request.`,
-          parameters: handoffSchema,
-          execute: async ({ reason, context }) => {
-            const result =
-              await this.agentHandoffExecutorService.executeHandoff({
-                fromAgentId: agentId,
-                toAgentId: targetAgent.id,
-                workspaceId,
-                reason,
-                context,
-              });
+      tools[toolName] = {
+        description:
+          handoff.description ||
+          handoff.toAgent.description ||
+          AGENT_HANDOFF_DESCRIPTION_TEMPLATE.replace(
+            '{agentName}',
+            handoff.toAgent.name,
+          ),
+        parameters: handoffSchema,
+        execute: async ({ input: { reason, context } }) => {
+          const result = await this.agentHandoffExecutorService.executeHandoff({
+            fromAgentId: agentId,
+            toAgentId: handoff.toAgent.id,
+            workspaceId,
+            reason,
+            context,
+          });
 
-            return {
-              success: result.success,
-              message: result.message || `Transferred to ${targetAgent.name}`,
-              newAgentId: result.newAgentId,
-              newAgentName: result.newAgentName,
-            };
-          },
-        };
+          return result;
+        },
+      };
 
-        return tools;
-      },
-      {},
-    );
+      return tools;
+    }, {});
 
     return handoffTools;
   }

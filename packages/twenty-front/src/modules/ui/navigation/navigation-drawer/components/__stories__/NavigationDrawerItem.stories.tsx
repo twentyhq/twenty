@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
 
+import { IconSearch } from 'twenty-ui/display';
+import { CatalogDecorator, CatalogStory } from 'twenty-ui/testing';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { NavigationDrawerItem } from '../NavigationDrawerItem';
-import { CatalogDecorator, CatalogStory } from 'twenty-ui/testing';
-import { IconSearch } from 'twenty-ui/display';
-import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -88,6 +88,40 @@ export const Breadcrumb: Story = {
             subItemState: 'last-not-selected',
             label: 'Last not selected',
             Icon: IconSearch,
+          }}
+        />
+      </StyledContainer>
+    ),
+    ComponentWithRouterDecorator,
+  ],
+};
+
+export const NewPill: Story = {
+  decorators: [
+    (Story) => (
+      <StyledContainer>
+        <h1>New Pill Examples</h1>
+        <Story
+          args={{
+            label: 'New Feature',
+            Icon: IconSearch,
+            isNew: true,
+          }}
+        />
+        <Story
+          args={{
+            label: 'New Feature with Count',
+            Icon: IconSearch,
+            isNew: true,
+            count: 5,
+          }}
+        />
+        <Story
+          args={{
+            label: 'New Feature with Keyboard Shortcut',
+            Icon: IconSearch,
+            isNew: true,
+            keyboard: [getOsControlSymbol(), 'N'],
           }}
         />
       </StyledContainer>
@@ -182,15 +216,23 @@ export const Catalog: CatalogStory<Story, typeof NavigationDrawerItem> = {
         },
         {
           name: 'adornments',
-          values: ['Without Adornments', 'Soon Pill', 'Count', 'Keyboard Keys'],
+          values: [
+            'Without Adornments',
+            'Soon Pill',
+            'New Pill',
+            'Count',
+            'Keyboard Keys',
+          ],
           props: (adornmentName: string) =>
             adornmentName === 'Soon Pill'
               ? { soon: true }
-              : adornmentName === 'Count'
-                ? { count: 3 }
-                : adornmentName === 'Keyboard Keys'
-                  ? { keyboard: [getOsControlSymbol(), 'K'] }
-                  : {},
+              : adornmentName === 'New Pill'
+                ? { isNew: true }
+                : adornmentName === 'Count'
+                  ? { count: 3 }
+                  : adornmentName === 'Keyboard Keys'
+                    ? { keyboard: [getOsControlSymbol(), 'K'] }
+                    : {},
         },
       ],
     },

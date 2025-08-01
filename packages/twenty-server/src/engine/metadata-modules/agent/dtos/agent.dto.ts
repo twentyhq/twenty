@@ -1,6 +1,12 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
-import { IsDateString, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsNotEmpty,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -16,6 +22,14 @@ export class AgentDTO {
   @IsString()
   @Field()
   name: string;
+
+  @IsString()
+  @Field()
+  label: string;
+
+  @IsString()
+  @Field({ nullable: true })
+  icon?: string;
 
   @IsString()
   @Field({ nullable: true })
@@ -34,6 +48,10 @@ export class AgentDTO {
 
   @Field(() => UUIDScalarType, { nullable: true })
   roleId?: string;
+
+  @IsBoolean()
+  @Field()
+  isCustom: boolean;
 
   @HideField()
   workspaceId: string;
