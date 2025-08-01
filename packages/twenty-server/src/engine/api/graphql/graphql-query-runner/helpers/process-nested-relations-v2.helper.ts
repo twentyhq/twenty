@@ -12,7 +12,7 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
-import { getFieldMetadataFromNameOrJoinColumnName } from 'src/engine/api/graphql/graphql-query-runner/utils/get-field-metadata-from-name-or-join-column-name.util';
+import { getFieldMetadataFromGraphQLField } from 'src/engine/api/graphql/graphql-query-runner/utils/get-field-metadata-from-graphql-field.util';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -111,9 +111,10 @@ export class ProcessNestedRelationsV2Helper {
     roleId?: string;
     selectedFields: Record<string, unknown>;
   }): Promise<void> {
-    const sourceFieldMetadata = getFieldMetadataFromNameOrJoinColumnName({
+    const sourceFieldMetadata = getFieldMetadataFromGraphQLField({
       objectMetadataItem: parentObjectMetadataItem,
-      fieldName: sourceFieldName,
+      graphQLField: sourceFieldName,
+      objectMetadataMaps,
     });
 
     if (
@@ -159,6 +160,7 @@ export class ProcessNestedRelationsV2Helper {
       select: selectedFields,
       relations: nestedRelations,
       objectMetadataItemWithFieldMaps: targetObjectMetadata,
+      objectMetadataMaps,
     });
 
     targetObjectQueryBuilder = targetObjectQueryBuilder.setFindOptions({
@@ -252,9 +254,10 @@ export class ProcessNestedRelationsV2Helper {
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
     sourceFieldName: string;
   }) {
-    const targetFieldMetadata = getFieldMetadataFromNameOrJoinColumnName({
+    const targetFieldMetadata = getFieldMetadataFromGraphQLField({
       objectMetadataItem: parentObjectMetadataItem,
-      fieldName: sourceFieldName,
+      graphQLField: sourceFieldName,
+      objectMetadataMaps,
     });
 
     const targetObjectMetadata = getTargetObjectMetadataOrThrow(

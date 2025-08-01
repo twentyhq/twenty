@@ -45,6 +45,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       executionArgs,
       objectRecords,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     );
 
     const shouldBypassPermissionChecks = executionArgs.isExecutedByApiKey;
@@ -69,12 +70,14 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
   ): Promise<InsertResult> {
     if (!executionArgs.args.upsert) {
-      const { objectMetadataItemWithFieldMaps } = executionArgs.options;
+      const { objectMetadataItemWithFieldMaps, objectMetadataMaps } =
+        executionArgs.options;
 
       const selectedColumns = buildColumnsToReturn({
         select: executionArgs.graphqlQuerySelectedFieldsResult.select,
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         objectMetadataItemWithFieldMaps,
+        objectMetadataMaps,
       });
 
       return await executionArgs.repository.insert(
@@ -90,12 +93,14 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
   private async performUpsertOperation(
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
   ): Promise<InsertResult> {
-    const { objectMetadataItemWithFieldMaps } = executionArgs.options;
+    const { objectMetadataItemWithFieldMaps, objectMetadataMaps } =
+      executionArgs.options;
 
     const selectedColumns = buildColumnsToSelect({
       select: executionArgs.graphqlQuerySelectedFieldsResult.select,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
 
     const conflictingFields = this.getConflictingFields(
@@ -123,6 +128,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       select: executionArgs.graphqlQuerySelectedFieldsResult.select,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
 
     await this.processRecordsToUpdate({
@@ -359,6 +365,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
     objectRecords: InsertResult,
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+    objectMetadataMaps: ObjectMetadataMaps,
   ): Promise<ObjectRecord[]> {
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
@@ -368,6 +375,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       select: executionArgs.graphqlQuerySelectedFieldsResult.select,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
 
     const upsertedRecords = await queryBuilder

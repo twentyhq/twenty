@@ -131,7 +131,7 @@ export class GraphqlQuerySelectedFieldsParser {
 
         this.graphqlQuerySelectedFieldsRelationParser.parseRelationField(
           fieldMetadata,
-          fieldMetadata.name,
+          morphRelationFieldName,
           graphqlSelectedFieldValue,
           accumulator,
         );
