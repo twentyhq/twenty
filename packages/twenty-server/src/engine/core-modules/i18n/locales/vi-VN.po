@@ -842,6 +842,11 @@ msgstr "Nhân viên"
 msgid "End Date"
 msgstr "Ngày kết thúc"
 
+#. js-lingui-id: hcogQc
+#: src/engine/core-modules/domain-manager/validator/cloudflare.validate.ts
+msgid "Environnement variable CLOUDFLARE_API_KEY must be defined to use this feature."
+msgstr ""
+
 #. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event company"
