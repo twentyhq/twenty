@@ -64,3 +64,4 @@ export {
 export type { MenuItemAccent } from './menu-item/types/MenuItemAccent';
 export { NavigationBar } from './navigation-bar/components/NavigationBar';
 export { NavigationBarItem } from './navigation-bar/components/NavigationBarItem';
+export { NotificationCounter } from './notification-counter/components/NotificationCounter';
