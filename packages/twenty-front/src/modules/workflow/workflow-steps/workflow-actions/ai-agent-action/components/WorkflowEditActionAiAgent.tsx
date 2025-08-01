@@ -69,7 +69,7 @@ export const WorkflowEditActionAiAgent = ({
 
   const noAgentsAvailable = agentOptions.length === 0;
 
-  const handleAgentChange = (value: string) => {
+  const handleFieldChange = (field: 'agentId' | 'prompt', value: string) => {
     if (actionOptions.readonly === true) {
       return;
     }
@@ -79,23 +79,7 @@ export const WorkflowEditActionAiAgent = ({
         ...action.settings,
         input: {
           ...action.settings.input,
-          agentId: value,
-        },
-      },
-    });
-  };
-
-  const handlePromptChange = (value: string) => {
-    if (actionOptions.readonly === true) {
-      return;
-    }
-    actionOptions.onActionUpdate?.({
-      ...action,
-      settings: {
-        ...action.settings,
-        input: {
-          ...action.settings.input,
-          prompt: value,
+          [field]: value,
         },
       },
     });
@@ -125,7 +109,7 @@ export const WorkflowEditActionAiAgent = ({
             label={t`Select Agent`}
             options={agentOptions}
             value={action.settings.input.agentId}
-            onChange={handleAgentChange}
+            onChange={(value) => handleFieldChange('agentId', value)}
             disabled={actionOptions.readonly || noAgentsAvailable}
             emptyOption={{
               label: noAgentsAvailable
@@ -148,7 +132,7 @@ export const WorkflowEditActionAiAgent = ({
           label={t`Instructions for AI`}
           placeholder={t`Describe what you want the AI to do...`}
           defaultValue={action.settings.input.prompt}
-          onChange={handlePromptChange}
+          onChange={(value) => handleFieldChange('prompt', value)}
           readonly={actionOptions.readonly}
         />
 
