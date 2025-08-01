@@ -14,6 +14,7 @@ import { isCommandMenuPersistentState } from '@/command-menu/states/isCommandMen
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -30,6 +31,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -115,6 +117,10 @@ export const CommandMenuTopBar = () => {
 
   const isCommandMenuPersistent = useRecoilValue(isCommandMenuPersistentState);
 
+  const isPinCommandMenuEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_PIN_COMMAND_MENU_ENABLED,
+  );
+
   const theme = useTheme();
 
   const { contextChips } = useCommandMenuContextChips();
@@ -171,19 +177,21 @@ export const CommandMenuTopBar = () => {
       </StyledContentContainer>
       {!isMobile && (
         <StyledButtonContainer isPersistent={isCommandMenuPersistent}>
-          <Button
-            Icon={isCommandMenuPersistent ? IconPinnedOff : IconPin}
-            dataTestId="command-menu-persistent-toggle-button"
-            size={'small'}
-            variant="secondary"
-            accent="default"
-            ariaLabel={
-              isCommandMenuPersistent
-                ? 'Unpin command menu'
-                : 'Pin command menu'
-            }
-            onClick={toggleCommandMenuPersistent}
-          />
+          {isPinCommandMenuEnabled && (
+            <Button
+              Icon={isCommandMenuPersistent ? IconPinnedOff : IconPin}
+              dataTestId="command-menu-persistent-toggle-button"
+              size={'small'}
+              variant="secondary"
+              accent="default"
+              ariaLabel={
+                isCommandMenuPersistent
+                  ? 'Unpin command menu'
+                  : 'Pin command menu'
+              }
+              onClick={toggleCommandMenuPersistent}
+            />
+          )}
           {isButtonVisible && !isCommandMenuPersistent && (
             <Button
               Icon={IconX}

@@ -50,10 +50,6 @@ export const useNavigateCommandMenu = () => {
           commandMenuCloseAnimationCompleteCleanup();
         }
 
-        if (isCommandMenuOpened) {
-          return;
-        }
-
         pushFocusItemToFocusStack({
           focusId: SIDE_PANEL_FOCUS_ID,
           component: {
@@ -64,6 +60,10 @@ export const useNavigateCommandMenu = () => {
             enableGlobalHotkeysConflictingWithKeyboard: false,
           },
         });
+
+        if (isCommandMenuOpened) {
+          return;
+        }
 
         copyContextStoreStates({
           instanceIdToCopyFrom: MAIN_CONTEXT_STORE_INSTANCE_ID,
