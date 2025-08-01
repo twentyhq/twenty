@@ -31,21 +31,25 @@ export class CalendarEventParticipantPersonListener {
       ObjectRecordCreateEvent<PersonWorkspaceEntity>
     >,
   ) {
-    const toMatchParticipantsForPersonIds = payload.events
-      .filter(
-        (eventPayload) =>
-          isDefined(eventPayload.properties.after.emails?.primaryEmail) ||
-          isDefined(eventPayload.properties.after.emails?.additionalEmails),
-      )
-      .map((eventPayload) => eventPayload.recordId);
+    const personWithEmails = payload.events.filter(
+      (eventPayload) =>
+        isDefined(eventPayload.properties.after.emails?.primaryEmail) ||
+        isDefined(eventPayload.properties.after.emails?.additionalEmails),
+    );
 
     await this.messageQueueService.add<CalendarEventParticipantMatchParticipantJobData>(
       CalendarEventParticipantMatchParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
         participantMatching: {
-          personIds: toMatchParticipantsForPersonIds,
-          personEmails: [],
+          personIds: personWithEmails.map(
+            (eventPayload) => eventPayload.recordId,
+          ),
+          personEmails: personWithEmails.flatMap((eventPayload) => [
+            eventPayload.properties.after.emails.primaryEmail,
+            ...(eventPayload.properties.after.emails
+              .additionalEmails as string[]),
+          ]),
           workspaceMemberIds: [],
         },
       },
@@ -58,22 +62,26 @@ export class CalendarEventParticipantPersonListener {
       ObjectRecordUpdateEvent<PersonWorkspaceEntity>
     >,
   ) {
-    const toMatchParticipantsForPersonIds = payload.events
-      .filter((eventPayload) =>
-        objectRecordUpdateEventChangedProperties(
-          eventPayload.properties.before,
-          eventPayload.properties.after,
-        ).includes('emails'),
-      )
-      .map((eventPayload) => eventPayload.recordId);
+    const personWithEmails = payload.events.filter((eventPayload) =>
+      objectRecordUpdateEventChangedProperties(
+        eventPayload.properties.before,
+        eventPayload.properties.after,
+      ).includes('emails'),
+    );
 
     await this.messageQueueService.add<CalendarEventParticipantMatchParticipantJobData>(
       CalendarEventParticipantMatchParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
         participantMatching: {
-          personIds: toMatchParticipantsForPersonIds,
-          personEmails: [],
+          personIds: personWithEmails.map(
+            (eventPayload) => eventPayload.recordId,
+          ),
+          personEmails: personWithEmails.flatMap((eventPayload) => [
+            eventPayload.properties.after.emails.primaryEmail,
+            ...(eventPayload.properties.after.emails
+              .additionalEmails as string[]),
+          ]),
           workspaceMemberIds: [],
         },
       },

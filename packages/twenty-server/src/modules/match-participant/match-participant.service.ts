@@ -242,37 +242,10 @@ export class MatchParticipantService<
       objectMetadataName,
     );
 
-    const personRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
-        workspaceId,
-        'person',
-        { shouldBypassPermissionChecks: true },
-      );
-    let participantsMatchingExistingPersonEmails: ParticipantWorkspaceEntity[] =
-      [];
-    let participantsMatchingOtherPersonEmails: ParticipantWorkspaceEntity[] =
-      [];
+    let participantsMatchingPersonEmails: ParticipantWorkspaceEntity[] = [];
     let participantsMatchingPersonId: ParticipantWorkspaceEntity[] = [];
 
     if (participantMatching.personIds.length > 0) {
-      const people = await personRepository.find({
-        where: {
-          id: In(participantMatching.personIds),
-        },
-      });
-
-      const exitingPeopleEmails = people.flatMap((person) => [
-        person.emails.primaryEmail,
-        ...(person.emails.additionalEmails as string[]),
-      ]);
-
-      participantsMatchingExistingPersonEmails =
-        (await participantRepository.find({
-          where: {
-            handle: In(exitingPeopleEmails),
-          },
-        })) as ParticipantWorkspaceEntity[];
-
       participantsMatchingPersonId = (await participantRepository.find({
         where: {
           personId: In(participantMatching.personIds),
@@ -281,20 +254,17 @@ export class MatchParticipantService<
     }
 
     if (participantMatching.personEmails.length > 0) {
-      participantsMatchingOtherPersonEmails = (await participantRepository.find(
-        {
-          where: {
-            handle: In(participantMatching.personEmails),
-          },
+      participantsMatchingPersonEmails = (await participantRepository.find({
+        where: {
+          handle: In(participantMatching.personEmails),
         },
-      )) as ParticipantWorkspaceEntity[];
+      })) as ParticipantWorkspaceEntity[];
     }
 
     const uniqueParticipants = [
       ...new Set([
         ...participantsMatchingPersonId,
-        ...participantsMatchingExistingPersonEmails,
-        ...participantsMatchingOtherPersonEmails,
+        ...participantsMatchingPersonEmails,
       ]),
     ];
 
