@@ -31,7 +31,7 @@ export type AdminPanelHealthServiceData = {
   description: Scalars['String'];
   details?: Maybe<Scalars['String']>;
   errorMessage?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   label: Scalars['String'];
   queues?: Maybe<Array<AdminPanelWorkerQueueHealth>>;
   status: AdminPanelHealthServiceStatus;
@@ -44,7 +44,7 @@ export enum AdminPanelHealthServiceStatus {
 
 export type AdminPanelWorkerQueueHealth = {
   __typename?: 'AdminPanelWorkerQueueHealth';
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   queueName: Scalars['String'];
   status: AdminPanelHealthServiceStatus;
 };
@@ -195,7 +195,7 @@ export type AutocompleteResultDto = {
 export type AvailableWorkspace = {
   __typename?: 'AvailableWorkspace';
   displayName?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   inviteHash?: Maybe<Scalars['String']>;
   loginToken?: Maybe<Scalars['String']>;
   logo?: Maybe<Scalars['String']>;
@@ -456,10 +456,10 @@ export type ConfigVariablesOutput = {
 
 export type ConnectedImapSmtpCaldavAccount = {
   __typename?: 'ConnectedImapSmtpCaldavAccount';
-  accountOwnerId: Scalars['String'];
+  accountOwnerId: Scalars['UUID'];
   connectionParameters?: Maybe<ImapSmtpCaldavConnectionParameters>;
   handle: Scalars['String'];
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   provider: Scalars['String'];
 };
 
@@ -515,9 +515,9 @@ export type CreateApprovedAccessDomainInput = {
 
 export type CreateDraftFromWorkflowVersionInput = {
   /** Workflow ID */
-  workflowId: Scalars['String'];
+  workflowId: Scalars['UUID'];
   /** Workflow version ID */
-  workflowVersionIdToCopy: Scalars['String'];
+  workflowVersionIdToCopy: Scalars['UUID'];
 };
 
 export type CreateFieldInput = {
@@ -574,13 +574,13 @@ export type CreateWebhookDto = {
 
 export type CreateWorkflowVersionStepInput = {
   /** Next step ID */
-  nextStepId?: InputMaybe<Scalars['String']>;
+  nextStepId?: InputMaybe<Scalars['UUID']>;
   /** Parent step ID */
-  parentStepId?: InputMaybe<Scalars['String']>;
+  parentStepId?: InputMaybe<Scalars['UUID']>;
   /** New step type */
   stepType: Scalars['String'];
   /** Workflow version ID */
-  workflowVersionId: Scalars['String'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 export type CursorPaging = {
@@ -606,7 +606,7 @@ export type CustomDomainRecord = {
 export type CustomDomainValidRecords = {
   __typename?: 'CustomDomainValidRecords';
   customDomain: Scalars['String'];
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   records: Array<CustomDomainRecord>;
 };
 
@@ -645,12 +645,12 @@ export type DeleteOneObjectInput = {
 };
 
 export type DeleteSsoInput = {
-  identityProviderId: Scalars['String'];
+  identityProviderId: Scalars['UUID'];
 };
 
 export type DeleteSsoOutput = {
   __typename?: 'DeleteSsoOutput';
-  identityProviderId: Scalars['String'];
+  identityProviderId: Scalars['UUID'];
 };
 
 export type DeleteTwoFactorAuthenticationMethodOutput = {
@@ -665,9 +665,9 @@ export type DeleteWebhookDto = {
 
 export type DeleteWorkflowVersionStepInput = {
   /** Step to delete ID */
-  stepId: Scalars['String'];
+  stepId: Scalars['UUID'];
   /** Workflow version ID */
-  workflowVersionId: Scalars['String'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 export type DeletedWorkspaceMember = {
@@ -694,7 +694,7 @@ export type EditSsoInput = {
 
 export type EditSsoOutput = {
   __typename?: 'EditSsoOutput';
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   issuer: Scalars['String'];
   name: Scalars['String'];
   status: SsoIdentityProviderStatus;
@@ -855,8 +855,8 @@ export type File = {
   __typename?: 'File';
   createdAt: Scalars['DateTime'];
   fullPath: Scalars['String'];
-  id: Scalars['ID'];
-  messageId?: Maybe<Scalars['ID']>;
+  id: Scalars['UUID'];
+  messageId?: Maybe<Scalars['UUID']>;
   name: Scalars['String'];
   size: Scalars['Float'];
   type: Scalars['String'];
@@ -878,7 +878,7 @@ export enum FilterIs {
 
 export type FindAvailableSsoidpOutput = {
   __typename?: 'FindAvailableSSOIDPOutput';
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   issuer: Scalars['String'];
   name: Scalars['String'];
   status: SsoIdentityProviderStatus;
@@ -904,7 +904,7 @@ export type GetAuthorizationUrlForSsoInput = {
 export type GetAuthorizationUrlForSsoOutput = {
   __typename?: 'GetAuthorizationUrlForSSOOutput';
   authorizationURL: Scalars['String'];
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   type: Scalars['String'];
 };
 
@@ -1938,7 +1938,7 @@ export type PublicWorkspaceDataOutput = {
   __typename?: 'PublicWorkspaceDataOutput';
   authProviders: AuthProviders;
   displayName?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   logo?: Maybe<Scalars['String']>;
   workspaceUrls: WorkspaceUrls;
 };
@@ -2208,10 +2208,10 @@ export enum RelationType {
 export type RemoteServer = {
   __typename?: 'RemoteServer';
   createdAt: Scalars['DateTime'];
-  foreignDataWrapperId: Scalars['ID'];
+  foreignDataWrapperId: Scalars['UUID'];
   foreignDataWrapperOptions?: Maybe<Scalars['JSON']>;
   foreignDataWrapperType: Scalars['String'];
-  id: Scalars['ID'];
+  id: Scalars['UUID'];
   label: Scalars['String'];
   schema?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
@@ -2269,14 +2269,14 @@ export type RunWorkflowVersionInput = {
   /** Execution result in JSON format */
   payload?: InputMaybe<Scalars['JSON']>;
   /** Workflow run ID */
-  workflowRunId?: InputMaybe<Scalars['String']>;
+  workflowRunId?: InputMaybe<Scalars['UUID']>;
   /** Workflow version ID */
-  workflowVersionId: Scalars['String'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 export type SsoConnection = {
   __typename?: 'SSOConnection';
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   issuer: Scalars['String'];
   name: Scalars['String'];
   status: SsoIdentityProviderStatus;
@@ -2285,7 +2285,7 @@ export type SsoConnection = {
 
 export type SsoIdentityProvider = {
   __typename?: 'SSOIdentityProvider';
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   issuer: Scalars['String'];
   name: Scalars['String'];
   status: SsoIdentityProviderStatus;
@@ -2391,7 +2391,7 @@ export type SetupOidcSsoInput = {
 export type SetupSamlSsoInput = {
   certificate: Scalars['String'];
   fingerprint?: InputMaybe<Scalars['String']>;
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   issuer: Scalars['String'];
   name: Scalars['String'];
   ssoURL: Scalars['String'];
@@ -2399,7 +2399,7 @@ export type SetupSamlSsoInput = {
 
 export type SetupSsoOutput = {
   __typename?: 'SetupSsoOutput';
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   issuer: Scalars['String'];
   name: Scalars['String'];
   status: SsoIdentityProviderStatus;
@@ -2430,9 +2430,9 @@ export type SubmitFormStepInput = {
   /** Form response in JSON format */
   response: Scalars['JSON'];
   /** Workflow version ID */
-  stepId: Scalars['String'];
+  stepId: Scalars['UUID'];
   /** Workflow run ID */
-  workflowRunId: Scalars['String'];
+  workflowRunId: Scalars['UUID'];
 };
 
 export type Subscription = {
@@ -2695,14 +2695,14 @@ export type UpdateWorkflowRunStepInput = {
   /** Step to update in JSON format */
   step: Scalars['JSON'];
   /** Workflow run ID */
-  workflowRunId: Scalars['String'];
+  workflowRunId: Scalars['UUID'];
 };
 
 export type UpdateWorkflowVersionStepInput = {
   /** Step to update in JSON format */
   step: Scalars['JSON'];
   /** Workflow version ID */
-  workflowVersionId: Scalars['String'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 export type UpdateWorkspaceInput = {
@@ -2776,7 +2776,7 @@ export type UserInfo = {
   __typename?: 'UserInfo';
   email: Scalars['String'];
   firstName?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   lastName?: Maybe<Scalars['String']>;
 };
 
@@ -2817,7 +2817,7 @@ export type ValidateApprovedAccessDomainInput = {
 export type ValidatePasswordResetToken = {
   __typename?: 'ValidatePasswordResetToken';
   email: Scalars['String'];
-  id: Scalars['String'];
+  id: Scalars['UUID'];
 };
 
 export type VerifyTwoFactorAuthenticationMethodOutput = {
@@ -2930,7 +2930,7 @@ export type WorkspaceInfo = {
   __typename?: 'WorkspaceInfo';
   allowImpersonation: Scalars['Boolean'];
   featureFlags: Array<FeatureFlag>;
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   logo?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   totalUsers: Scalars['Float'];
@@ -2983,7 +2983,7 @@ export enum WorkspaceMemberTimeFormatEnum {
 export type WorkspaceNameAndId = {
   __typename?: 'WorkspaceNameAndId';
   displayName?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
+  id: Scalars['UUID'];
 };
 
 export type WorkspaceUrls = {
