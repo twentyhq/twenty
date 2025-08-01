@@ -41,8 +41,8 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
       fromCreateObjectInputToFlatObjectMetadata(objectMetadataInput);
     const existingFlatObjectMetadatas =
       fromObjectMetadataMapsToFlatObjectMetadatas(objectMetadataMaps);
-    // @ts-expect-error TODO implement validateFlatObjectMetadataData
-    const createdFlatObjectMetadata = validateFlatObjectMetadataData({
+    // @ts-expect-error TODO implement validateFlatObjectMetadata
+    const createdFlatObjectMetadata = validateFlatObjectMetadata({
       existing:
         // Here we assume that EVERYTHING is in cache and up to date, this is very critical, also race condition prone :thinking:
         fromObjectMetadataMapsToFlatObjectMetadatas(objectMetadataMaps),
