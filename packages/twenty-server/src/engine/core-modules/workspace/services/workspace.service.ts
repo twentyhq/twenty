@@ -459,7 +459,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
           userWorkspaceId,
           setting: PermissionFlagType.SECURITY,
           workspaceId: workspaceId,
-          isExecutedByApiKey: isDefined(apiKey),
+          apiKeyId: apiKey,
         });
 
       if (!userHasPermission) {
@@ -505,7 +505,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
           userWorkspaceId,
           workspaceId,
           setting: PermissionFlagType.WORKSPACE,
-          isExecutedByApiKey: isDefined(apiKey),
+          apiKeyId: apiKey,
         });
 
       if (!userHasPermission) {

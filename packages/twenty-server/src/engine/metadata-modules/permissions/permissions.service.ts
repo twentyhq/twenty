@@ -6,10 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
@@ -134,18 +130,14 @@ export class PermissionsService {
     userWorkspaceId,
     workspaceId,
     setting,
-    isExecutedByApiKey,
     apiKeyId,
   }: {
     userWorkspaceId?: string;
     workspaceId: string;
     setting: PermissionFlagType;
-    isExecutedByApiKey: boolean;
     apiKeyId?: string;
   }): Promise<boolean> {
-    let role: RoleEntity | null = null;
-
-    if (isExecutedByApiKey && apiKeyId) {
+    if (apiKeyId) {
       const isApiKeyRolesEnabled =
         await this.featureFlagService.isFeatureEnabled(
           FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
@@ -161,11 +153,22 @@ export class PermissionsService {
         workspaceId,
       );
 
-      role = await this.roleRepository.findOne({
+      const role = await this.roleRepository.findOne({
         where: { id: roleId, workspaceId },
         relations: ['permissionFlags'],
       });
-    } else if (userWorkspaceId) {
+
+      if (!isDefined(role)) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.API_KEY_ROLE_NOT_FOUND,
+          PermissionsExceptionCode.API_KEY_ROLE_NOT_FOUND,
+        );
+      }
+
+      return this.checkRolePermissions(role, setting);
+    }
+
+    if (userWorkspaceId) {
       const [roleOfUserWorkspace] = await this.userRoleService
         .getRolesByUserWorkspaces({
           userWorkspaceIds: [userWorkspaceId],
@@ -173,16 +176,26 @@ export class PermissionsService {
         })
         .then((roles) => roles?.get(userWorkspaceId) ?? []);
 
-      role = roleOfUserWorkspace;
+      if (!isDefined(roleOfUserWorkspace)) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+          PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+        );
+      }
+
+      return this.checkRolePermissions(roleOfUserWorkspace, setting);
     }
 
-    if (!isDefined(role)) {
-      throw new AuthException(
-        'No role found for user or API key',
-        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
-      );
-    }
+    throw new PermissionsException(
+      PermissionsExceptionMessage.NO_AUTHENTICATION_CONTEXT,
+      PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
+    );
+  }
 
+  private checkRolePermissions(
+    role: RoleEntity,
+    setting: PermissionFlagType,
+  ): boolean {
     if (role.canUpdateAllSettings === true) {
       return true;
     }

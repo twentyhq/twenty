@@ -249,7 +249,6 @@ export abstract class GraphqlQueryBaseResolverService<
           userWorkspaceId: authContext.userWorkspaceId,
           setting: permissionRequired,
           workspaceId: workspace.id,
-          isExecutedByApiKey: isDefined(authContext.apiKey),
           apiKeyId: authContext.apiKey?.id,
         });
 
