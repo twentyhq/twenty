@@ -7,6 +7,9 @@ export const createCustomRoleWithObjectPermissions = async (options: {
   canReadPerson?: boolean;
   canReadCompany?: boolean;
   canReadOpportunities?: boolean;
+  canUpdatePerson?: boolean;
+  canUpdateCompany?: boolean;
+  canUpdateOpportunities?: boolean;
   hasAllObjectRecordsReadPermission?: boolean;
 }) => {
   const createRoleOperation = {
@@ -68,31 +71,47 @@ export const createCustomRoleWithObjectPermissions = async (options: {
   // Create object permissions based on the options
   const objectPermissions = [];
 
-  if (options.canReadPerson !== undefined) {
+  if (
+    options.canReadPerson !== undefined ||
+    options.canUpdatePerson !== undefined
+  ) {
     objectPermissions.push({
       objectMetadataId: personObjectId,
       canReadObjectRecords: options.canReadPerson,
-      canUpdateObjectRecords: false,
+      canUpdateObjectRecords:
+        options.canUpdatePerson === undefined ? false : options.canUpdatePerson,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     });
   }
 
-  if (options.canReadCompany !== undefined) {
+  if (
+    options.canReadCompany !== undefined ||
+    options.canUpdateCompany !== undefined
+  ) {
     objectPermissions.push({
       objectMetadataId: companyObjectId,
       canReadObjectRecords: options.canReadCompany,
-      canUpdateObjectRecords: false,
+      canUpdateObjectRecords:
+        options.canUpdateCompany === undefined
+          ? false
+          : options.canUpdateCompany,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     });
   }
 
-  if (options.canReadOpportunities !== undefined) {
+  if (
+    options.canReadOpportunities !== undefined ||
+    options.canUpdateOpportunities !== undefined
+  ) {
     objectPermissions.push({
       objectMetadataId: opportunityObjectId,
       canReadObjectRecords: options.canReadOpportunities,
-      canUpdateObjectRecords: false,
+      canUpdateObjectRecords:
+        options.canUpdateOpportunities === undefined
+          ? false
+          : options.canUpdateOpportunities,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     });

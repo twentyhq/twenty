@@ -1,4 +1,4 @@
-export class AggregateError extends Error {
+export class MultipleMetadataValidationErrors extends Error {
   constructor(
     public readonly errors: Error[],
     message = 'Multiple errors occurred',

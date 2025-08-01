@@ -1,4 +1,5 @@
 import Cloudflare from 'cloudflare';
+import { t } from '@lingui/core/macro';
 
 import {
   DomainManagerException,
@@ -12,6 +13,9 @@ const isCloudflareInstanceDefined = (
     throw new DomainManagerException(
       'Cloudflare instance is not defined',
       DomainManagerExceptionCode.CLOUDFLARE_CLIENT_NOT_INITIALIZED,
+      {
+        userFriendlyMessage: t`Environnement variable CLOUDFLARE_API_KEY must be defined to use this feature.`,
+      },
     );
   }
 };

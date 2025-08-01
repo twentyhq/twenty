@@ -517,10 +517,10 @@ msgstr "All ({relationRecordsCount})"
 msgid "All Actions Access"
 msgstr "All Actions Access"
 
-#. js-lingui-id: 7EZqN0
+#. js-lingui-id: dJn2LR
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-msgid "All emails and events linked to this account will be deleted"
-msgstr "All emails and events linked to this account will be deleted"
+msgid "All emails and events linked to this account ({accountHandle}) will be deleted"
+msgstr "All emails and events linked to this account ({accountHandle}) will be deleted"
 
 #. js-lingui-id: 3xugyj
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -1196,6 +1196,7 @@ msgstr "Companies"
 
 #. js-lingui-id: 0CuAor
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody.tsx
 msgid "Conditions"
 msgstr "Conditions"
 

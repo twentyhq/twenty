@@ -1,11 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class TwoFactorAuthenticationException extends CustomException {
-  declare code: TwoFactorAuthenticationExceptionCode;
-  constructor(message: string, code: TwoFactorAuthenticationExceptionCode) {
-    super(message, code);
-  }
-}
+export class TwoFactorAuthenticationException extends CustomException<TwoFactorAuthenticationExceptionCode> {}
 
 export enum TwoFactorAuthenticationExceptionCode {
   INVALID_CONFIGURATION = 'INVALID_CONFIGURATION',
