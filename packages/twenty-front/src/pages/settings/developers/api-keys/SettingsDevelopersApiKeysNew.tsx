@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon';
 import { useState } from 'react';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
@@ -13,7 +14,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
@@ -31,7 +32,22 @@ export const SettingsDevelopersApiKeysNew = () => {
   const { t } = useLingui();
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const navigateSettings = useNavigateSettings();
-  const { data: rolesData, loading: rolesLoading } = useGetRolesQuery();
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const { data: rolesData, loading: rolesLoading } = useGetRolesQuery({
+    onCompleted: (data) => {
+      if (isApiKeyRolesEnabled && isDefined(data?.getRoles)) {
+        const defaultRole = data.getRoles.find(
+          (role) => role.id === currentWorkspace?.defaultRole?.id,
+        );
+        if (isDefined(defaultRole?.id) && !formValues.roleId) {
+          setFormValues((prev) => ({
+            ...prev,
+            roleId: defaultRole.id,
+          }));
+        }
+      }
+    },
+  });
   const roles = rolesData?.getRoles ?? [];
   const isApiKeyRolesEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
