@@ -2708,7 +2708,7 @@ export type UpdateWorkflowVersionStepInput = {
 export type UpdateWorkspaceInput = {
   allowImpersonation?: InputMaybe<Scalars['Boolean']>;
   customDomain?: InputMaybe<Scalars['String']>;
-  defaultRoleId?: InputMaybe<Scalars['String']>;
+  defaultRoleId?: InputMaybe<Scalars['UUID']>;
   displayName?: InputMaybe<Scalars['String']>;
   inviteHash?: InputMaybe<Scalars['String']>;
   isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']>;
@@ -2732,7 +2732,7 @@ export type UpsertObjectPermissionsInput = {
 
 export type UpsertPermissionFlagsInput = {
   permissionFlagKeys: Array<PermissionFlagType>;
-  roleId: Scalars['String'];
+  roleId: Scalars['UUID'];
 };
 
 export type User = {
