@@ -29,6 +29,14 @@ export const useCommandMenu = () => {
           .getLoadable(isCommandMenuOpenedState)
           .getValue();
 
+        const isCommandMenuPersistent = snapshot
+          .getLoadable(isCommandMenuPersistentState)
+          .getValue();
+
+        if (isCommandMenuPersistent) {
+          return;
+        }
+
         if (isCommandMenuOpened) {
           set(isCommandMenuOpenedState, false);
           set(isCommandMenuClosingState, true);
