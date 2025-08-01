@@ -1,10 +1,3 @@
-declare global {
-  interface Window {
-    _env_?: Record<string, string>;
-    __APOLLO_CLIENT__?: any;
-  }
-}
-
 const getDefaultUrl = () => {
   if (
     window.location.hostname === 'localhost' ||

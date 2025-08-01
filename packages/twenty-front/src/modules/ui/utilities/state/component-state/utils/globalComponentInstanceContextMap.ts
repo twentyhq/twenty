@@ -1,15 +1,6 @@
 import { ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
 import { isDefined } from 'twenty-shared/utils';
 
-declare global {
-  interface Window {
-    componentComponentStateContextMap: Map<
-      string,
-      ComponentInstanceStateContext<any>
-    >;
-  }
-}
-
 class ComponentInstanceContextMap {
   constructor() {
     if (!isDefined(window.componentComponentStateContextMap)) {
