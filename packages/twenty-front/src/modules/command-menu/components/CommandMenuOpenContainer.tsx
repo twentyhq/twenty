@@ -58,7 +58,6 @@ export const CommandMenuOpenContainer = ({
   const handleClickOutside = useRecoilCallback(
     ({ snapshot }) =>
       (event: MouseEvent | TouchEvent) => {
-        // Don't handle click outside if in persistent mode
         if (isCommandMenuPersistent) {
           return;
         }
