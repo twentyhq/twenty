@@ -37,7 +37,7 @@ type SettingsAgentHandoffFormProps = {
   availableAgentOptions: SelectOption[];
   agentsLoading: boolean;
   onHandoffAdded: () => void;
-}
+};
 
 export const SettingsAgentHandoffForm = ({
   agentId,
