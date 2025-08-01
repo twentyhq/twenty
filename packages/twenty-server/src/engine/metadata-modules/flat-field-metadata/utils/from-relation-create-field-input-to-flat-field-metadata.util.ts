@@ -2,12 +2,13 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { validateRelationCreationPayloadOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/validate-relation-creation-payload.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatFieldAndItsFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-and-its-flat-object-metadata.util';
@@ -28,7 +29,7 @@ const computeFieldMetadataRelationSettingsForRelationType = ({
     return {
       relationType: RelationType.MANY_TO_ONE,
       onDelete: RelationOnDeleteAction.SET_NULL,
-      joinColumnName: fieldMetadataName
+      joinColumnName: fieldMetadataName,
     };
   }
 

@@ -38,6 +38,7 @@ const fromFlatFieldAndItsFlatObjectMetadataToFlatObjectAndFlatFieldToCreate = (
     Record<string, FlatObjectAndFlatFieldToCreate>
   >((acc, { flatFieldMetadata, parentFlatObjectMetadata }) => {
     const occurrence = acc[parentFlatObjectMetadata.id];
+
     if (occurrence) {
       return {
         ...acc,
@@ -93,6 +94,7 @@ const removeFlatFieldMetadataFromFlatObjectMetadatas = ({
       ({ id: flatFieldMetadataId }) =>
         flatFieldMetadataId !== flatFieldMetadataToRemove.id,
     );
+
     return {
       ...flatObjectMetadata,
       flatFieldMetadatas,
