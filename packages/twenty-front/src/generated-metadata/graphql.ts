@@ -87,7 +87,7 @@ export type AgentChatThread = {
 export type AgentHandoffDto = {
   __typename?: 'AgentHandoffDTO';
   description?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   toAgent: Agent;
 };
 
@@ -3231,7 +3231,7 @@ export type FindAgentHandoffsQueryVariables = Exact<{
 }>;
 
 
-export type FindAgentHandoffsQuery = { __typename?: 'Query', findAgentHandoffs: Array<{ __typename?: 'AgentHandoffDTO', id: string, description?: string | null, toAgent: { __typename?: 'Agent', id: any, name: string, label: string, description?: string | null, icon?: string | null, modelId: string, prompt: string, isCustom: boolean, createdAt: string, updatedAt: string } }> };
+export type FindAgentHandoffsQuery = { __typename?: 'Query', findAgentHandoffs: Array<{ __typename?: 'AgentHandoffDTO', id: any, description?: string | null, toAgent: { __typename?: 'Agent', id: any, name: string, label: string, description?: string | null, icon?: string | null, modelId: string, prompt: string, isCustom: boolean, createdAt: string, updatedAt: string } }> };
 
 export type FindManyAgentsQueryVariables = Exact<{ [key: string]: never; }>;
 

@@ -87,7 +87,7 @@ export type AgentChatThread = {
 export type AgentHandoffDto = {
   __typename?: 'AgentHandoffDTO';
   description?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   toAgent: Agent;
 };
 
