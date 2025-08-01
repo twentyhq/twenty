@@ -49,14 +49,14 @@ export const SettingsAgentHandoffForm = ({
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const [isAddingHandoff, setIsAddingHandoff] = useState(false);
-  const [selectedToAgentId, setSelectedToAgentId] = useState('');
+  const [selectedTargetAgentId, setSelectedTargetAgentId] = useState('');
   const [handoffDescription, setHandoffDescription] = useState('');
 
   const [createAgentHandoff] = useCreateAgentHandoffMutation();
 
   const resetHandoffForm = () => {
     setIsAddingHandoff(false);
-    setSelectedToAgentId('');
+    setSelectedTargetAgentId('');
     setHandoffDescription('');
   };
 
@@ -66,7 +66,7 @@ export const SettingsAgentHandoffForm = ({
         variables: {
           input: {
             fromAgentId: agentId,
-            toAgentId: selectedToAgentId,
+            toAgentId: selectedTargetAgentId,
             description: handoffDescription,
           },
         },
@@ -92,8 +92,8 @@ export const SettingsAgentHandoffForm = ({
             fullWidth
             dropdownId="handoff-target-select"
             label={t`Target Agent`}
-            value={selectedToAgentId}
-            onChange={setSelectedToAgentId}
+            value={selectedTargetAgentId}
+            onChange={setSelectedTargetAgentId}
             options={availableAgentOptions}
             emptyOption={{
               label: t`Select a target agent`,
@@ -122,7 +122,7 @@ export const SettingsAgentHandoffForm = ({
               size="small"
               title={t`Add Handoff`}
               onClick={handleAddHandoff}
-              disabled={!selectedToAgentId}
+              disabled={!selectedTargetAgentId}
             />
           </StyledFormActions>
         </StyledAddHandoffForm>
