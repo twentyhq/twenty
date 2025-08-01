@@ -28,4 +28,4 @@ export class MakeFieldMetadataRelationConstraintDeferrable1752993324991
       `ALTER TABLE "core"."fieldMetadata" ADD CONSTRAINT "FK_47a6c57e1652b6475f8248cff78" FOREIGN KEY ("relationTargetFieldMetadataId") REFERENCES "core"."fieldMetadata"("id")`,
     );
   }
-} 
+}
