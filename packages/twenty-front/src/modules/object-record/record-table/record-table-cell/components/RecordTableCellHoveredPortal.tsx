@@ -53,7 +53,7 @@ const RecordTableCellHoveredPortalContent = () => {
 
   const isFirstColumn = hoverPosition?.column === 0;
 
-  const { isReadOnly } = useContext(FieldContext);
+  const { isRecordFieldReadOnly: isReadOnly } = useContext(FieldContext);
 
   const isFieldInputOnly = useIsFieldInputOnly();
 

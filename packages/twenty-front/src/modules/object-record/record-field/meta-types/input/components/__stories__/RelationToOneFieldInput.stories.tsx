@@ -94,7 +94,7 @@ const RelationToOneFieldInputWithContext = ({
           },
           recordId: recordId,
           isLabelIdentifier: false,
-          isReadOnly: false,
+          isRecordFieldReadOnly: false,
         }}
       >
         <RecordFieldComponentInstanceContext.Provider

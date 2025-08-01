@@ -70,6 +70,9 @@ const meta: Meta = {
               visibleTableColumns: mockPerformance.visibleTableColumns as any,
               objectNameSingular:
                 mockPerformance.objectMetadataItem.nameSingular,
+              objectPermissions: {
+                objectMetadataId: mockPerformance.objectMetadataItem.id,
+              },
             }}
           >
             <RecordTableComponentInstance
@@ -120,7 +123,7 @@ const meta: Meta = {
                           fieldDefinition: {
                             ...mockPerformance.fieldDefinition,
                           },
-                          isReadOnly: false,
+                          isRecordFieldReadOnly: false,
                         }}
                       >
                         <RelationFieldValueSetterEffect />

@@ -2,7 +2,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
+import { useIsRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordFieldReadOnly';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
@@ -68,9 +68,14 @@ export const ObjectRecordShowPageBreadcrumb = ({
     objectRecordId,
   });
 
-  const isRecordReadOnly = useIsRecordReadOnly({
+  const isLabelIdentifierReadOnly = useIsRecordFieldReadOnly({
     recordId: objectRecordId,
     objectMetadataId: objectMetadataItem.id,
+    fieldMetadataId: labelIdentifierFieldMetadataItem?.id,
+    objectNameSingular,
+    fieldName: labelIdentifierFieldMetadataItem?.name,
+    fieldType: labelIdentifierFieldMetadataItem?.type,
+    isCustom: objectMetadataItem?.isCustom,
   });
 
   const { navigateToIndexView, rankInView, totalCount } =
@@ -119,7 +124,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
             useUpdateRecord: useUpdateOneObjectRecordMutation,
             isCentered: false,
             isDisplayModeFixHeight: true,
-            isReadOnly: isRecordReadOnly,
+            isRecordFieldReadOnly: isLabelIdentifierReadOnly,
           }}
         >
           <RecordTitleCell

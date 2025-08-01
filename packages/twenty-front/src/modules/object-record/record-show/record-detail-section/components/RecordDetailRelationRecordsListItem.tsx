@@ -17,7 +17,9 @@ import {
   RecordUpdateHook,
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsRecordFieldReadOnly } from '@/object-record/record-field/hooks/useIsRecordFieldReadOnly';
+import { isFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isFieldReadOnly';
+import { isRecordFieldReadOnly as isRecordFieldReadOnlyFn } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
+import { useIsRecordDeleted } from '@/object-record/record-field/hooks/useIsRecordDeleted';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -51,6 +53,7 @@ import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 import { RelationType } from '~/generated-metadata/graphql';
+
 const StyledListItem = styled(RecordDetailRecordsListItem)<{
   isDropdownOpen?: boolean;
 }>`
@@ -105,7 +108,8 @@ export const RecordDetailRelationRecordsListItem = ({
   onClick,
   relationRecord,
 }: RecordDetailRelationRecordsListItemProps) => {
-  const { fieldDefinition, recordId } = useContext(FieldContext);
+  const { fieldDefinition, recordId, isRecordFieldReadOnly } =
+    useContext(FieldContext);
 
   const { openModal } = useModal();
 
@@ -173,12 +177,12 @@ export const RecordDetailRelationRecordsListItem = ({
     dropdownId,
   );
 
+  const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
+    ({ id }) => id === relationFieldMetadataId,
+  );
+
   const handleDetach = () => {
     closeDropdown(dropdownInstanceId);
-
-    const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
-      ({ id }) => id === relationFieldMetadataId,
-    );
 
     if (!relationFieldMetadataItem?.name) return;
 
@@ -234,12 +238,8 @@ export const RecordDetailRelationRecordsListItem = ({
     [isExpanded],
   );
 
-  const isReadOnly = useIsRecordFieldReadOnly({
+  const isRelationRecordDeleted = useIsRecordDeleted({
     recordId: relationRecord.id,
-    fieldMetadataId: relationFieldMetadataId,
-    objectMetadataId: relationObjectMetadataItem.id,
-    objectNameSingular: relationObjectMetadataItem.nameSingular,
-    fieldName: fieldDefinition.metadata.fieldName,
   });
 
   return (
@@ -256,7 +256,7 @@ export const RecordDetailRelationRecordsListItem = ({
             accent="tertiary"
           />
         </StyledClickableZone>
-        {!isReadOnly && (
+        {!isRecordFieldReadOnly && (
           <Dropdown
             dropdownId={dropdownInstanceId}
             dropdownPlacement="right-start"
@@ -308,7 +308,17 @@ export const RecordDetailRelationRecordsListItem = ({
                     labelWidth: 90,
                   }),
                   useUpdateRecord: useUpdateOneObjectRecordMutation,
-                  isReadOnly,
+                  isRecordFieldReadOnly: isRecordFieldReadOnlyFn({
+                    isRecordDeleted: isRelationRecordDeleted,
+                    isFieldReadOnly: isFieldReadOnly({
+                      objectPermissions: relationObjectPermissions,
+                      fieldMetadataId: fieldMetadataItem.id,
+                      objectNameSingular: relationObjectMetadataNameSingular,
+                      fieldName: fieldMetadataItem.name,
+                      fieldType: fieldMetadataItem.type,
+                      isCustom: relationObjectMetadataItem.isCustom,
+                    }),
+                  }),
                 }}
               >
                 <RecordFieldComponentInstanceContext.Provider

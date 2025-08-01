@@ -13,14 +13,14 @@ type RecordDetailRelationSectionDropdownProps = {
 export const RecordDetailRelationSectionDropdown = ({
   loading,
 }: RecordDetailRelationSectionDropdownProps) => {
-  const { fieldDefinition, isReadOnly } = useContext(FieldContext);
+  const { fieldDefinition, isRecordFieldReadOnly } = useContext(FieldContext);
   const { relationType } = fieldDefinition.metadata as FieldRelationMetadata;
 
   // TODO: use new relation type
   const isToOneObject = relationType === RelationType.MANY_TO_ONE;
   const isToManyObjects = relationType === RelationType.ONE_TO_MANY;
 
-  if (loading || isReadOnly) {
+  if (loading || isRecordFieldReadOnly) {
     return null;
   }
 

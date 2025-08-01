@@ -8,11 +8,10 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { fieldIsReadOnlyByPermissions } from '@/object-record/record-field/hooks/useIsFieldReadOnlyByPermissions';
+import { isFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isFieldReadOnly';
+import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
 import { useIsRecordDeleted } from '@/object-record/record-field/hooks/useIsRecordDeleted';
-import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/useIsRecordFieldReadOnly';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { isFieldReadOnlyBySystem } from '@/object-record/record-field/utils/isFieldReadOnlyBySystem';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
@@ -132,17 +131,14 @@ export const FieldsCard = ({
                     }),
                     useUpdateRecord: useUpdateOneObjectRecordMutation,
                     isDisplayModeFixHeight: true,
-                    isReadOnly: isRecordFieldReadOnly({
+                    isRecordFieldReadOnly: isRecordFieldReadOnly({
                       isRecordDeleted,
-                      isFieldReadOnlyByPermissions:
-                        fieldIsReadOnlyByPermissions({
-                          objectPermissions:
-                            objectPermissionsByObjectMetadataId[
-                              fieldMetadataItem.object?.id
-                            ],
-                          fieldMetadataId: fieldMetadataItem.id,
-                        }),
-                      isFieldReadOnlyBySystem: isFieldReadOnlyBySystem({
+                      isFieldReadOnly: isFieldReadOnly({
+                        objectPermissions:
+                          objectPermissionsByObjectMetadataId[
+                            objectMetadataItem.id
+                          ],
+                        fieldMetadataId: fieldMetadataItem.id,
                         objectNameSingular,
                         fieldName: fieldMetadataItem.name,
                         fieldType: fieldMetadataItem.type,
@@ -187,16 +183,14 @@ export const FieldsCard = ({
                   }),
                   useUpdateRecord: useUpdateOneObjectRecordMutation,
                   isDisplayModeFixHeight: true,
-                  isReadOnly: isRecordFieldReadOnly({
+                  isRecordFieldReadOnly: isRecordFieldReadOnly({
                     isRecordDeleted,
-                    isFieldReadOnlyByPermissions: fieldIsReadOnlyByPermissions({
+                    isFieldReadOnly: isFieldReadOnly({
                       objectPermissions:
                         objectPermissionsByObjectMetadataId[
-                          fieldMetadataItem.object?.id
+                          objectMetadataItem.id
                         ],
                       fieldMetadataId: fieldMetadataItem.id,
-                    }),
-                    isFieldReadOnlyBySystem: isFieldReadOnlyBySystem({
                       objectNameSingular,
                       fieldName: fieldMetadataItem.name,
                       fieldType: fieldMetadataItem.type,
@@ -241,16 +235,12 @@ export const FieldsCard = ({
             }),
             useUpdateRecord: useUpdateOneObjectRecordMutation,
             isDisplayModeFixHeight: true,
-            isReadOnly: isRecordFieldReadOnly({
+            isRecordFieldReadOnly: isRecordFieldReadOnly({
               isRecordDeleted,
-              isFieldReadOnlyByPermissions: fieldIsReadOnlyByPermissions({
+              isFieldReadOnly: isFieldReadOnly({
                 objectPermissions:
-                  objectPermissionsByObjectMetadataId[
-                    fieldMetadataItem.object?.id
-                  ],
+                  objectPermissionsByObjectMetadataId[objectMetadataItem.id],
                 fieldMetadataId: fieldMetadataItem.id,
-              }),
-              isFieldReadOnlyBySystem: isFieldReadOnlyBySystem({
                 objectNameSingular,
                 fieldName: fieldMetadataItem.name,
                 fieldType: fieldMetadataItem.type,

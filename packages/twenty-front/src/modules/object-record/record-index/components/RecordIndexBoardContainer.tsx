@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordBoard } from '@/object-record/record-board/components/RecordBoard';
 import { RecordBoardBodyEscapeHotkeyEffect } from '@/object-record/record-board/components/RecordBoardBodyEscapeHotkeyEffect';
@@ -26,6 +27,10 @@ export const RecordIndexBoardContainer = ({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
 
   const recordIndexKanbanFieldMetadataId = useRecoilValue(
     recordIndexKanbanFieldMetadataIdState,
@@ -60,6 +65,7 @@ export const RecordIndexBoardContainer = ({
         updateOneRecord,
         deleteOneRecord,
         recordBoardId,
+        objectPermissions,
       }}
     >
       <RecordBoard />

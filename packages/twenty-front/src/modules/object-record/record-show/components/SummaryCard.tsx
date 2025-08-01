@@ -2,7 +2,7 @@ import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandard
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsRecordFieldReadOnly } from '@/object-record/record-field/hooks/useIsRecordFieldReadOnly';
+import { useIsRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordFieldReadOnly';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
@@ -101,7 +101,7 @@ export const SummaryCard = ({
             useUpdateRecord: useUpdateOneObjectRecordMutation,
             isCentered: !isMobile,
             isDisplayModeFixHeight: true,
-            isReadOnly: isTitleReadOnly,
+            isRecordFieldReadOnly: isTitleReadOnly,
           }}
         >
           <RecordTitleCell

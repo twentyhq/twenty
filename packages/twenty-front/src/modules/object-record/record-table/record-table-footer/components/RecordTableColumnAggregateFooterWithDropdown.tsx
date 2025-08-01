@@ -1,5 +1,4 @@
 import { useDropdownContextCurrentContentId } from '@/dropdown-context-state-management/hooks/useDropdownContextCurrentContentId';
-import { useFieldIsReadOnlyByPermissions } from '@/object-record/record-field/hooks/useIsFieldReadOnlyByPermissions';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { RecordTableColumnAggregateFooterDropdownContent } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent';
@@ -50,11 +49,6 @@ export const RecordTableColumnFooterWithDropdown = ({
     ? `${fieldMetadataId}-footer-${currentRecordGroupId}`
     : `${fieldMetadataId}-footer`;
 
-  const isColumnReadOnly = useFieldIsReadOnlyByPermissions({
-    fieldMetadataId,
-    objectMetadataId: objectMetadataItem.id,
-  });
-
   return (
     <Dropdown
       onOpen={handleDropdownOpen}
@@ -66,7 +60,6 @@ export const RecordTableColumnFooterWithDropdown = ({
           isFirstCell={isFirstCell}
         />
       }
-      disableClickForClickableComponent={isColumnReadOnly}
       dropdownComponents={
         <RecordTableColumnAggregateFooterDropdownContext.Provider
           value={{

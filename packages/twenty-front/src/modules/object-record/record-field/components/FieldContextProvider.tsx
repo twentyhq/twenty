@@ -6,7 +6,7 @@ import {
   RecordUpdateHook,
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsRecordFieldReadOnly } from '@/object-record/record-field/hooks/useIsRecordFieldReadOnly';
+import { useIsRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordFieldReadOnly';
 import { ReactNode } from 'react';
 
 export const FieldContextProvider = ({
@@ -53,7 +53,7 @@ export const FieldContextProvider = ({
     return [updateEntity, { loading: false }];
   };
 
-  const isReadOnly = useIsRecordFieldReadOnly({
+  const isRecordFieldReadOnly = useIsRecordFieldReadOnly({
     recordId: objectRecordId,
     fieldMetadataId: fieldMetadataItem?.id,
     objectMetadataId: objectMetadataItem.id,
@@ -84,7 +84,7 @@ export const FieldContextProvider = ({
           customUseUpdateOneObjectHook ?? useUpdateOneObjectMutation,
         clearable,
         overridenIsFieldEmpty,
-        isReadOnly,
+        isRecordFieldReadOnly,
       }}
     >
       {children}

@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordTableContextProvider as RecordTableContextInternalProvider } from '@/object-record/record-table/contexts/RecordTableContext';
 
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
@@ -23,6 +24,10 @@ export const RecordTableContextProvider = ({
     objectNameSingular,
   });
 
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
   const visibleTableColumns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
     recordTableId,
@@ -36,6 +41,7 @@ export const RecordTableContextProvider = ({
         visibleTableColumns,
         recordTableId,
         objectNameSingular,
+        objectPermissions,
       }}
     >
       {children}
