@@ -4,6 +4,7 @@ const StyledTableHeader = styled.div<{
   align?: 'left' | 'center' | 'right';
   onClick?: () => void;
 }>`
+  gap: ${({ theme }) => theme.spacing(1)};
   align-items: center;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   color: ${({ theme }) => theme.font.color.tertiary};

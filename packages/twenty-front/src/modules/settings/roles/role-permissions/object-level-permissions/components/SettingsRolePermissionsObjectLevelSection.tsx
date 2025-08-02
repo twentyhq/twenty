@@ -1,9 +1,8 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isWorkflowRelatedObjectMetadata } from '@/object-metadata/utils/isWorkflowRelatedObjectMetadata';
 import { SettingsRolePermissionsObjectLevelTableHeader } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader';
 import { SettingsRolePermissionsObjectLevelTableRow } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRow';
-import { hasPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/utils/hasPermissionOverride';
+import { useFilterObjectsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -56,20 +55,13 @@ export const SettingsRolePermissionsObjectLevelSection = ({
     (item) => !isWorkflowRelatedObjectMetadata(item.nameSingular),
   );
 
-  const objectMetadataMap = filteredObjectMetadataItems.reduce(
-    (acc, item) => {
-      acc[item.id] = item;
-      return acc;
-    },
-    {} as Record<string, ObjectMetadataItem>,
-  );
+  const { filterObjectsWithPermissionOverride } =
+    useFilterObjectsWithPermissionOverride({
+      roleId,
+    });
 
   const filteredObjectPermissions = settingsDraftRole.objectPermissions?.filter(
-    (objectPermission) =>
-      hasPermissionOverride(objectPermission, settingsDraftRole) &&
-      !isWorkflowRelatedObjectMetadata(
-        objectMetadataMap[objectPermission.objectMetadataId]?.nameSingular,
-      ),
+    filterObjectsWithPermissionOverride,
   );
 
   const allObjectsHaveSetPermission =
@@ -96,9 +88,6 @@ export const SettingsRolePermissionsObjectLevelSection = ({
               <SettingsRolePermissionsObjectLevelTableRow
                 key={objectPermission.objectMetadataId}
                 objectPermission={objectPermission}
-                objectMetadataItem={
-                  objectMetadataMap[objectPermission.objectMetadataId]
-                }
                 roleId={roleId}
               />
             ))

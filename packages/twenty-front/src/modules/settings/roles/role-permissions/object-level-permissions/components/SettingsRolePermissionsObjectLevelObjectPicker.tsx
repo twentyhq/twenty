@@ -1,7 +1,7 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isWorkflowRelatedObjectMetadata } from '@/object-metadata/utils/isWorkflowRelatedObjectMetadata';
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { hasPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/utils/hasPermissionOverride';
+import { useFilterObjectsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -90,14 +90,17 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
     });
   };
 
+  const { filterObjectsWithPermissionOverride } =
+    useFilterObjectsWithPermissionOverride({
+      roleId,
+    });
+
   const excludedObjectMetadataIds = useMemo(
     () =>
       settingsDraftRole.objectPermissions
-        ?.filter((objectPermission) =>
-          hasPermissionOverride(objectPermission, settingsDraftRole),
-        )
+        ?.filter(filterObjectsWithPermissionOverride)
         .map((p) => p.objectMetadataId) ?? [],
-    [settingsDraftRole],
+    [settingsDraftRole, filterObjectsWithPermissionOverride],
   );
 
   const filteredObjectMetadataItems = useMemo(

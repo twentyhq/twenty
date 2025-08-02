@@ -1,4 +1,5 @@
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { TableSortValue } from '@/ui/layout/table/types/TableSortValue';
 import { useRecoilState } from 'recoil';
@@ -57,7 +58,7 @@ export const SortableTableHeader = ({
         )
       ) : null}
       {Icon && <Icon size={14} />}
-      {label}
+      <TableHeaderText>{label}</TableHeaderText>
       {isSortActive && align === 'left' ? (
         isAsc ? (
           <IconArrowUp size="14" />
