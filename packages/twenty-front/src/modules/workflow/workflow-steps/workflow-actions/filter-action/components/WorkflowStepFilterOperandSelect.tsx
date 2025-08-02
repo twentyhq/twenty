@@ -18,7 +18,10 @@ export const WorkflowStepFilterOperandSelect = ({
   const { readonly } = useContext(WorkflowStepFilterContext);
 
   const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
-  const operands = getViewFilterOperands({ filterType: stepFilter.type });
+  const operands = getViewFilterOperands({
+    filterType: stepFilter.type,
+    subFieldName: stepFilter.compositeFieldSubFieldName,
+  });
 
   const options = operands.map((operand) => ({
     value: operand,
