@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
 import { GoogleAPIsAuthController } from 'src/engine/core-modules/auth/controllers/google-apis-auth.controller';
@@ -12,7 +13,6 @@ import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/g
 import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-apis-auth.controller';
 import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-auth.controller';
 import { SSOAuthController } from 'src/engine/core-modules/auth/controllers/sso-auth.controller';
-import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
@@ -108,6 +108,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     PermissionsModule,
     UserRoleModule,
     TwoFactorAuthenticationModule,
+    ApiKeyModule,
   ],
   controllers: [
     GoogleAuthController,
@@ -142,7 +143,6 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     CreateConnectedAccountService,
     UpdateConnectedAccountOnReconnectService,
     TransientTokenService,
-    ApiKeyService,
     AuthSsoService,
   ],
   exports: [

@@ -719,6 +719,83 @@ export const graphqlMocks = {
         },
       });
     }),
+    metadataGraphql.mutation('CreateApiKey', ({ variables }) => {
+      const input = variables.input;
+      const newApiKey = {
+        __typename: 'ApiKey',
+        id: '20202020-1234-1234-1234-123456789012',
+        name: input.name,
+        expiresAt: input.expiresAt,
+        revokedAt: null,
+        role: {
+          __typename: 'Role',
+          id: input.roleId,
+          label: input.roleId === '2' ? 'Guest' : 'Admin',
+          icon: input.roleId === '2' ? 'IconUser' : 'IconSettings',
+        },
+      };
+
+      return HttpResponse.json({
+        data: {
+          createApiKey: newApiKey,
+        },
+      });
+    }),
+    metadataGraphql.mutation('AssignRoleToApiKey', () => {
+      return HttpResponse.json({
+        data: {
+          assignRoleToApiKey: true,
+        },
+      });
+    }),
+    metadataGraphql.mutation('GenerateApiKeyToken', () => {
+      return HttpResponse.json({
+        data: {
+          generateApiKeyToken: {
+            __typename: 'ApiKeyToken',
+            token: 'test-api-key-token-12345',
+          },
+        },
+      });
+    }),
+    metadataGraphql.mutation('RevokeApiKey', ({ variables }) => {
+      return HttpResponse.json({
+        data: {
+          revokeApiKey: {
+            __typename: 'ApiKey',
+            id: variables.input?.id,
+            name: 'Zapier Integration',
+            expiresAt: '2100-11-06T23:59:59.825Z',
+            revokedAt: new Date().toISOString(),
+            role: {
+              __typename: 'Role',
+              id: '1',
+              label: 'Admin',
+              icon: 'IconSettings',
+            },
+          },
+        },
+      });
+    }),
+    metadataGraphql.mutation('UpdateApiKey', ({ variables }) => {
+      return HttpResponse.json({
+        data: {
+          updateApiKey: {
+            __typename: 'ApiKey',
+            id: variables.input.id,
+            name: variables.input.name || 'Updated API Key',
+            expiresAt: '2100-11-06T23:59:59.825Z',
+            revokedAt: null,
+            role: {
+              __typename: 'Role',
+              id: '1',
+              label: 'Admin',
+              icon: 'IconSettings',
+            },
+          },
+        },
+      });
+    }),
     metadataGraphql.query('GetWebhooks', () => {
       return HttpResponse.json({
         data: {
