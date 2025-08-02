@@ -37,19 +37,24 @@ export class CalendarEventParticipantPersonListener {
         isDefined(eventPayload.properties.after.emails?.additionalEmails),
     );
 
+    const personIds = personWithEmails.map(
+      (eventPayload) => eventPayload.recordId,
+    );
+    const personEmails = personWithEmails
+      .flatMap((eventPayload) => [
+        eventPayload.properties.after.emails.primaryEmail,
+        ...((eventPayload.properties.after.emails?.additionalEmails ??
+          []) as string[]),
+      ])
+      .filter(isDefined);
+
     await this.messageQueueService.add<CalendarEventParticipantMatchParticipantJobData>(
       CalendarEventParticipantMatchParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
         participantMatching: {
-          personIds: personWithEmails.map(
-            (eventPayload) => eventPayload.recordId,
-          ),
-          personEmails: personWithEmails.flatMap((eventPayload) => [
-            eventPayload.properties.after.emails.primaryEmail,
-            ...(eventPayload.properties.after.emails
-              .additionalEmails as string[]),
-          ]),
+          personIds,
+          personEmails,
           workspaceMemberIds: [],
         },
       },
@@ -69,19 +74,24 @@ export class CalendarEventParticipantPersonListener {
       ).includes('emails'),
     );
 
+    const personIds = personWithEmails.map(
+      (eventPayload) => eventPayload.recordId,
+    );
+    const personEmails = personWithEmails
+      .flatMap((eventPayload) => [
+        eventPayload.properties.after.emails.primaryEmail,
+        ...((eventPayload.properties.after.emails?.additionalEmails ??
+          []) as string[]),
+      ])
+      .filter(isDefined);
+
     await this.messageQueueService.add<CalendarEventParticipantMatchParticipantJobData>(
       CalendarEventParticipantMatchParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
         participantMatching: {
-          personIds: personWithEmails.map(
-            (eventPayload) => eventPayload.recordId,
-          ),
-          personEmails: personWithEmails.flatMap((eventPayload) => [
-            eventPayload.properties.after.emails.primaryEmail,
-            ...(eventPayload.properties.after.emails
-              .additionalEmails as string[]),
-          ]),
+          personIds,
+          personEmails,
           workspaceMemberIds: [],
         },
       },
@@ -100,17 +110,21 @@ export class CalendarEventParticipantPersonListener {
         isDefined(eventPayload.properties.before.emails?.additionalEmails),
     );
 
+    const personEmails = peopleHavingEmails
+      .flatMap((eventPayload) => [
+        eventPayload.properties.before.emails.primaryEmail,
+        ...((eventPayload.properties.before.emails?.additionalEmails ??
+          []) as string[]),
+      ])
+      .filter(isDefined);
+
     await this.messageQueueService.add<CalendarEventParticipantMatchParticipantJobData>(
       CalendarEventParticipantMatchParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
         participantMatching: {
           personIds: [],
-          personEmails: peopleHavingEmails.flatMap((eventPayload) => [
-            eventPayload.properties.before.emails.primaryEmail,
-            ...(eventPayload.properties.before.emails
-              .additionalEmails as string[]),
-          ]),
+          personEmails,
           workspaceMemberIds: [],
         },
       },

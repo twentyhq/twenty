@@ -21,7 +21,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 @Injectable()
 export class MessageParticipantPersonListener {
   constructor(
-    @InjectMessageQueue(MessageQueue.calendarQueue)
+    @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
@@ -37,19 +37,24 @@ export class MessageParticipantPersonListener {
         isDefined(eventPayload.properties.after.emails?.additionalEmails),
     );
 
+    const personIds = personWithEmails.map(
+      (eventPayload) => eventPayload.recordId,
+    );
+    const personEmails = personWithEmails
+      .flatMap((eventPayload) => [
+        eventPayload.properties.after.emails.primaryEmail,
+        ...((eventPayload.properties.after.emails?.additionalEmails ??
+          []) as string[]),
+      ])
+      .filter(isDefined);
+
     await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
       MessageParticipantMatchParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
         participantMatching: {
-          personIds: personWithEmails.map(
-            (eventPayload) => eventPayload.recordId,
-          ),
-          personEmails: personWithEmails.flatMap((eventPayload) => [
-            eventPayload.properties.after.emails.primaryEmail,
-            ...(eventPayload.properties.after.emails
-              .additionalEmails as string[]),
-          ]),
+          personIds,
+          personEmails,
           workspaceMemberIds: [],
         },
       },
@@ -69,19 +74,24 @@ export class MessageParticipantPersonListener {
       ).includes('emails'),
     );
 
+    const personIds = personWithEmails.map(
+      (eventPayload) => eventPayload.recordId,
+    );
+    const personEmails = personWithEmails
+      .flatMap((eventPayload) => [
+        eventPayload.properties.after.emails.primaryEmail,
+        ...((eventPayload.properties.after.emails?.additionalEmails ??
+          []) as string[]),
+      ])
+      .filter(isDefined);
+
     await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
       MessageParticipantMatchParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
         participantMatching: {
-          personIds: personWithEmails.map(
-            (eventPayload) => eventPayload.recordId,
-          ),
-          personEmails: personWithEmails.flatMap((eventPayload) => [
-            eventPayload.properties.after.emails.primaryEmail,
-            ...(eventPayload.properties.after.emails
-              .additionalEmails as string[]),
-          ]),
+          personIds,
+          personEmails,
           workspaceMemberIds: [],
         },
       },
@@ -106,11 +116,13 @@ export class MessageParticipantPersonListener {
         workspaceId: payload.workspaceId,
         participantMatching: {
           personIds: [],
-          personEmails: personWithEmails.flatMap((eventPayload) => [
-            eventPayload.properties.before.emails.primaryEmail,
-            ...(eventPayload.properties.before.emails
-              .additionalEmails as string[]),
-          ]),
+          personEmails: personWithEmails
+            .flatMap((eventPayload) => [
+              eventPayload.properties.before.emails.primaryEmail,
+              ...((eventPayload.properties.before.emails?.additionalEmails ??
+                []) as string[]),
+            ])
+            .filter(isDefined),
           workspaceMemberIds: [],
         },
       },
