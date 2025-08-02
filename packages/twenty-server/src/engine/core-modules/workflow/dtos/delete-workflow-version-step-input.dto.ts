@@ -1,14 +1,16 @@
 import { Field, InputType } from '@nestjs/graphql';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
 @InputType()
 export class DeleteWorkflowVersionStepInput {
-  @Field(() => String, {
+  @Field(() => UUIDScalarType, {
     description: 'Workflow version ID',
     nullable: false,
   })
   workflowVersionId: string;
 
-  @Field(() => String, {
+  @Field(() => UUIDScalarType, {
     description: 'Step to delete ID',
     nullable: false,
   })

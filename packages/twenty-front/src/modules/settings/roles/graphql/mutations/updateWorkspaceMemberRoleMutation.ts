@@ -6,8 +6,8 @@ export const UPDATE_WORKSPACE_MEMBER_ROLE = gql`
   ${WORKSPACE_MEMBER_QUERY_FRAGMENT}
   ${ROLE_FRAGMENT}
   mutation UpdateWorkspaceMemberRole(
-    $workspaceMemberId: String!
-    $roleId: String!
+    $workspaceMemberId: UUID!
+    $roleId: UUID!
   ) {
     updateWorkspaceMemberRole(
       workspaceMemberId: $workspaceMemberId

@@ -33,7 +33,7 @@ export class BillingEntitlement {
   @Column({ nullable: false, type: 'text' })
   key: BillingEntitlementKey;
 
-  @Field()
+  @Field(() => UUIDScalarType)
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 

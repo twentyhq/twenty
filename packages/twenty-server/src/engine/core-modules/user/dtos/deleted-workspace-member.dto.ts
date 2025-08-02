@@ -19,6 +19,6 @@ export class DeletedWorkspaceMember {
   @Field(() => String, { nullable: true })
   avatarUrl: string | null;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => UUIDScalarType, { nullable: true })
   userWorkspaceId: string | null;
 }

@@ -1,11 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, IsUUID } from 'class-validator';
+
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ObjectType('SearchRecord')
 export class SearchRecordDTO {
-  @Field(() => String)
-  @IsString()
+  @Field(() => UUIDScalarType)
+  @IsUUID()
   @IsNotEmpty()
   recordId: string;
 

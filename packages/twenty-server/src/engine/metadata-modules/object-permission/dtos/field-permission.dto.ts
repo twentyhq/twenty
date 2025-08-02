@@ -1,17 +1,19 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
 @ObjectType('FieldPermission')
 export class FieldPermissionDTO {
-  @Field({ nullable: false })
+  @Field(() => UUIDScalarType, { nullable: false })
   id: string;
 
-  @Field({ nullable: false })
+  @Field(() => UUIDScalarType, { nullable: false })
   objectMetadataId: string;
 
-  @Field({ nullable: false })
+  @Field(() => UUIDScalarType, { nullable: false })
   fieldMetadataId: string;
 
-  @Field({ nullable: false })
+  @Field(() => UUIDScalarType, { nullable: false })
   roleId: string;
 
   @Field(() => Boolean, { nullable: true })
