@@ -7,7 +7,7 @@ import { useTableRowDragState } from '@/object-record/record-table/hooks/useTabl
 const StyledNotificationCounter = styled(NotificationCounter)`
   position: absolute;
   top: -7px;
-  right: -7px;
+  left: -7px;
   z-index: 1000;
 `;
 
