@@ -1,22 +1,46 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 
+import {
+  ApiKeyException,
+  ApiKeyExceptionCode,
+} from 'src/engine/core-modules/api-key/api-key.exception';
 import { CreateApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/create-api-key.dto';
 import { GetApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/get-api-key.dto';
 import { RevokeApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/revoke-api-key.dto';
 import { UpdateApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/update-api-key.dto';
 import { apiKeyGraphqlApiExceptionHandler } from 'src/engine/core-modules/api-key/utils/api-key-graphql-api-exception-handler.util';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 
+import { ApiKeyRoleService } from './api-key-role.service';
 import { ApiKey } from './api-key.entity';
 import { ApiKeyService } from './api-key.service';
 
 @Resolver(() => ApiKey)
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  WorkspaceAuthGuard,
+  SettingsPermissionsGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+)
 export class ApiKeyResolver {
-  constructor(private readonly apiKeyService: ApiKeyService) {}
+  constructor(
+    private readonly apiKeyService: ApiKeyService,
+    private readonly apiKeyRoleService: ApiKeyRoleService,
+    private readonly featureFlagService: FeatureFlagService,
+  ) {}
 
   @Query(() => [ApiKey])
   async apiKeys(@AuthWorkspace() workspace: Workspace): Promise<ApiKey[]> {
@@ -52,6 +76,7 @@ export class ApiKeyResolver {
       expiresAt: new Date(input.expiresAt),
       revokedAt: input.revokedAt ? new Date(input.revokedAt) : undefined,
       workspaceId: workspace.id,
+      roleId: input.roleId,
     });
   }
 
@@ -78,5 +103,56 @@ export class ApiKeyResolver {
     @Args('input') input: RevokeApiKeyDTO,
   ): Promise<ApiKey | null> {
     return this.apiKeyService.revoke(input.id, workspace.id);
+  }
+
+  @Mutation(() => Boolean)
+  async assignRoleToApiKey(
+    @AuthWorkspace() workspace: Workspace,
+    @Args('apiKeyId') apiKeyId: string,
+    @Args('roleId') roleId: string,
+  ): Promise<boolean> {
+    try {
+      await this.apiKeyRoleService.assignRoleToApiKey({
+        apiKeyId,
+        roleId,
+        workspaceId: workspace.id,
+      });
+
+      return true;
+    } catch (error) {
+      apiKeyGraphqlApiExceptionHandler(error);
+      throw error;
+    }
+  }
+
+  @ResolveField(() => RoleDTO, { nullable: true })
+  async role(
+    @Parent() apiKey: ApiKey,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<RoleDTO | null> {
+    const isApiKeyRolesEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
+      workspace.id,
+    );
+
+    if (!isApiKeyRolesEnabled) {
+      return null;
+    }
+
+    const rolesMap = await this.apiKeyRoleService.getRolesByApiKeys({
+      apiKeyIds: [apiKey.id],
+      workspaceId: workspace.id,
+    });
+
+    const role = rolesMap.get(apiKey.id);
+
+    if (!role) {
+      throw new ApiKeyException(
+        `API key ${apiKey.id} has no role assigned`,
+        ApiKeyExceptionCode.API_KEY_NO_ROLE_ASSIGNED,
+      );
+    }
+
+    return role;
   }
 }

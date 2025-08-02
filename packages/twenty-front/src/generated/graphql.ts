@@ -119,6 +119,7 @@ export type ApiKey = {
   id: Scalars['UUID'];
   name: Scalars['String'];
   revokedAt?: Maybe<Scalars['DateTime']>;
+  role?: Maybe<Role>;
   updatedAt: Scalars['DateTime'];
   workspace: Workspace;
   workspaceId: Scalars['String'];
@@ -504,6 +505,7 @@ export type CreateApiKeyDto = {
   expiresAt: Scalars['String'];
   name: Scalars['String'];
   revokedAt?: InputMaybe<Scalars['String']>;
+  roleId: Scalars['String'];
 };
 
 export type CreateApprovedAccessDomainInput = {
@@ -737,6 +739,7 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
+  IS_API_KEY_ROLES_ENABLED = 'IS_API_KEY_ROLES_ENABLED',
   IS_CORE_VIEW_SYNCING_ENABLED = 'IS_CORE_VIEW_SYNCING_ENABLED',
   IS_FIELDS_PERMISSIONS_ENABLED = 'IS_FIELDS_PERMISSIONS_ENABLED',
   IS_IMAP_SMTP_CALDAV_ENABLED = 'IS_IMAP_SMTP_CALDAV_ENABLED',
@@ -1102,6 +1105,7 @@ export type Mutation = {
   activateWorkflowVersion: Scalars['Boolean'];
   activateWorkspace: Workspace;
   assignRoleToAgent: Scalars['Boolean'];
+  assignRoleToApiKey: Scalars['Boolean'];
   authorizeApp: AuthorizeApp;
   checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
@@ -1218,6 +1222,12 @@ export type MutationActivateWorkspaceArgs = {
 export type MutationAssignRoleToAgentArgs = {
   agentId: Scalars['UUID'];
   roleId: Scalars['UUID'];
+};
+
+
+export type MutationAssignRoleToApiKeyArgs = {
+  apiKeyId: Scalars['String'];
+  roleId: Scalars['String'];
 };
 
 

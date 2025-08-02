@@ -51,7 +51,7 @@ export class WorkspaceMemberPreQueryHookService {
         userWorkspaceId,
         workspaceId,
         setting: PermissionFlagType.WORKSPACE_MEMBERS,
-        isExecutedByApiKey: isDefined(apiKey),
+        apiKeyId: apiKey ?? undefined,
       })
     ) {
       return;
