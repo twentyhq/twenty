@@ -65,7 +65,6 @@ export class CalendarSaveEventsService {
 
     await workspaceDataSource.transaction(
       async (transactionManager: WorkspaceEntityManager) => {
-        console.log('saving calendar events');
         const savedCalendarEvents = await calendarEventRepository.save(
           fetchedCalendarEventsWithDBEvents
             .filter(
