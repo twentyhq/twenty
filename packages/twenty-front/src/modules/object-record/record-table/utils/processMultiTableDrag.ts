@@ -1,7 +1,7 @@
 import { DropResult } from '@hello-pangea/dnd';
 import {
-    calculateTableRowPositions,
-    RecordPositionData,
+  calculateTableRowPositions,
+  RecordPositionData,
 } from './calculateTableRowPositions';
 
 type MultiTableDragContext = {
