@@ -1,19 +1,14 @@
-import { isNonEmptyString } from '@sniptt/guards';
-
 import { useAddressFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useAddressFieldDisplay';
 import { TextDisplay } from '@/ui/field/display/components/TextDisplay';
+import { formatAddressDisplay } from '~/utils/formatAddressDisplay';
 
 export const AddressFieldDisplay = () => {
-  const { fieldValue } = useAddressFieldDisplay();
+  const { fieldValue, fieldDefinition } = useAddressFieldDisplay();
+  const settings = fieldDefinition.metadata.settings;
 
-  const content = [
-    fieldValue?.addressStreet1,
-    fieldValue?.addressStreet2,
-    fieldValue?.addressCity,
-    fieldValue?.addressCountry,
-  ]
-    .filter(isNonEmptyString)
-    .join(', ');
+  const subFields =
+    settings && 'subFields' in settings ? settings.subFields : undefined;
 
-  return <TextDisplay text={content} />;
+  const parsedFieldValue = formatAddressDisplay(fieldValue, subFields);
+  return <TextDisplay text={parsedFieldValue} />;
 };

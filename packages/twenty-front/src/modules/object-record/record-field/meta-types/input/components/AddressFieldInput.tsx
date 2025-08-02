@@ -25,7 +25,7 @@ export const AddressFieldInput = ({
   onTab,
   onShiftTab,
 }: AddressFieldInputProps) => {
-  const { draftValue, setDraftValue } = useAddressField();
+  const { draftValue, setDraftValue, fieldDefinition } = useAddressField();
 
   const persistField = usePersistField();
 
@@ -43,7 +43,10 @@ export const AddressFieldInput = ({
       addressLng: newAddress?.addressLng ?? null,
     };
   };
+  const settings = fieldDefinition.metadata.settings;
 
+  const subFields =
+    settings && 'subFields' in settings ? settings.subFields : undefined;
   const handleEnter = (newAddress: FieldAddressDraftValue) => {
     onEnter?.(() => persistField(convertToAddress(newAddress)));
   };
@@ -85,6 +88,7 @@ export const AddressFieldInput = ({
       onChange={handleChange}
       onTab={handleTab}
       onShiftTab={handleShiftTab}
+      subFields={subFields}
     />
   );
 };

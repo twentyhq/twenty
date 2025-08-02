@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { ALLOWED_ADDRESS_SUBFIELDS } from 'twenty-shared/src/types/AddressFieldsType';
 import { FieldAddressValue } from '../FieldMetadata';
 
 export const addressSchema = z.object({
@@ -17,3 +18,11 @@ export const isFieldAddressValue = (
   fieldValue: unknown,
 ): fieldValue is FieldAddressValue =>
   addressSchema.safeParse(fieldValue).success;
+
+export const addressSettingsSchema = z.object({
+  subFields: z
+    .array(z.enum(ALLOWED_ADDRESS_SUBFIELDS))
+    .min(1)
+    .optional()
+    .nullable(),
+});
