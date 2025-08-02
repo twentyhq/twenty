@@ -85,9 +85,12 @@ export const useAddressAutocomplete = (
         addressCity: placeData?.city || (internalValue?.addressCity ?? null),
         addressState: placeData?.state || (internalValue?.addressState ?? null),
         addressCountry: countryName || (internalValue?.addressCountry ?? null),
-        addressPostcode: placeData?.postcode || (internalValue?.addressPostcode ?? null),
-        addressLat: placeData?.location?.lat ?? internalValue?.addressLat ?? null,
-        addressLng: placeData?.location?.lng ?? internalValue?.addressLng ?? null,
+        addressPostcode:
+          placeData?.postcode || (internalValue?.addressPostcode ?? null),
+        addressLat:
+          placeData?.location?.lat ?? internalValue?.addressLat ?? null,
+        addressLng:
+          placeData?.location?.lng ?? internalValue?.addressLng ?? null,
       };
 
       setTokenForPlaceApi(null);
