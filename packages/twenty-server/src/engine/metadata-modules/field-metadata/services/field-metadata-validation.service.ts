@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { t } from '@lingui/core/macro';
 import { ClassConstructor, plainToInstance } from 'class-transformer';
 import {
+  IsArray,
   IsEnum,
   IsInt,
   IsOptional,
@@ -11,7 +12,11 @@ import {
   ValidationError,
   validateOrReject,
 } from 'class-validator';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  ALLOWED_ADDRESS_SUBFIELDS,
+  AllowedAddressSubField,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
@@ -61,7 +66,12 @@ class TextSettingsValidation {
   @Max(100)
   displayedMaxRows?: number;
 }
-
+class AddressSettingsValidation {
+  @IsOptional()
+  @IsArray()
+  @IsEnum(ALLOWED_ADDRESS_SUBFIELDS, { each: true })
+  subFields?: AllowedAddressSubField[];
+}
 @Injectable()
 export class FieldMetadataValidationService {
   constructor(
@@ -87,6 +97,13 @@ export class FieldMetadataValidationService {
         await this.validateSettings({
           type: FieldMetadataType.TEXT,
           validator: TextSettingsValidation,
+          settings,
+        });
+        break;
+      case FieldMetadataType.ADDRESS:
+        await this.validateSettings({
+          type: FieldMetadataType.ADDRESS,
+          validator: AddressSettingsValidation,
           settings,
         });
         break;
