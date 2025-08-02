@@ -23,10 +23,15 @@ export const calculateTableRowPositions = ({
     (recordId: string) => !recordsToMove.includes(recordId),
   );
 
+  const filteredRecordIds =
+    recordsToMove.length === 1
+      ? otherRecordIds
+      : allRecordIds.filter((recordId) => recordId !== recordsToMove[0]);
+
   const { before: recordBeforeId, after: recordAfterId } =
     getIndexNeighboursElementsFromArray({
       index: destinationIndex,
-      array: otherRecordIds,
+      array: filteredRecordIds,
     });
 
   const recordBefore = recordBeforeId
