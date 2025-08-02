@@ -41,7 +41,7 @@ export class DatabaseEventTriggerListener {
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
   async handleObjectRecordCreateEvent(
-    payload: WorkspaceEventBatch<ObjectRecordCreateEvent<ObjectRecord>>,
+    payload: WorkspaceEventBatch<ObjectRecordCreateEvent>,
   ) {
     if (await this.shouldIgnoreEvent(payload)) {
       return;
@@ -58,7 +58,7 @@ export class DatabaseEventTriggerListener {
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.UPDATED)
   async handleObjectRecordUpdateEvent(
-    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<ObjectRecord>>,
+    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent>,
   ) {
     if (await this.shouldIgnoreEvent(payload)) {
       return;
@@ -76,7 +76,7 @@ export class DatabaseEventTriggerListener {
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.DELETED)
   async handleObjectRecordDeleteEvent(
-    payload: WorkspaceEventBatch<ObjectRecordDeleteEvent<ObjectRecord>>,
+    payload: WorkspaceEventBatch<ObjectRecordDeleteEvent>,
   ) {
     if (await this.shouldIgnoreEvent(payload)) {
       return;
@@ -93,7 +93,7 @@ export class DatabaseEventTriggerListener {
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.DESTROYED)
   async handleObjectRecordDestroyEvent(
-    payload: WorkspaceEventBatch<ObjectRecordDestroyEvent<ObjectRecord>>,
+    payload: WorkspaceEventBatch<ObjectRecordDestroyEvent>,
   ) {
     if (await this.shouldIgnoreEvent(payload)) {
       return;
@@ -109,7 +109,7 @@ export class DatabaseEventTriggerListener {
   }
 
   private async enrichCreatedEvent(
-    payload: WorkspaceEventBatch<ObjectRecordCreateEvent<ObjectRecord>>,
+    payload: WorkspaceEventBatch<ObjectRecordCreateEvent>,
   ) {
     const workspaceId = payload.workspaceId;
 
@@ -121,7 +121,7 @@ export class DatabaseEventTriggerListener {
   }
 
   private async enrichUpdatedEvent(
-    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<ObjectRecord>>,
+    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent>,
   ) {
     const workspaceId = payload.workspaceId;
 
@@ -138,7 +138,7 @@ export class DatabaseEventTriggerListener {
   }
 
   private async enrichDeletedEvent(
-    payload: WorkspaceEventBatch<ObjectRecordDeleteEvent<ObjectRecord>>,
+    payload: WorkspaceEventBatch<ObjectRecordDeleteEvent>,
   ) {
     const workspaceId = payload.workspaceId;
 
@@ -150,7 +150,7 @@ export class DatabaseEventTriggerListener {
   }
 
   private async enrichDestroyedEvent(
-    payload: WorkspaceEventBatch<ObjectRecordDestroyEvent<ObjectRecord>>,
+    payload: WorkspaceEventBatch<ObjectRecordDestroyEvent>,
   ) {
     const workspaceId = payload.workspaceId;
 
@@ -166,7 +166,7 @@ export class DatabaseEventTriggerListener {
     objectMetadataNameSingular,
     workspaceId,
   }: {
-    records: ObjectRecord[];
+    records: Partial<ObjectRecord>[];
     objectMetadataNameSingular: string;
     workspaceId: string;
   }) {
@@ -209,7 +209,6 @@ export class DatabaseEventTriggerListener {
           { shouldBypassPermissionChecks: true },
         );
 
-      console.log('joinRecordIds', joinRecordIds.length, joinRecordIds);
       const relatedRecords = await relatedObjectRepository.find({
         where: { id: In(joinRecordIds) },
       });
