@@ -26,9 +26,13 @@ export const SettingsApiKeysTable = () => {
 
   const apiKeys = apiKeysData?.apiKeys;
 
+  const gridAutoColumns = isApiKeyRolesEnabled
+    ? '5fr 2fr 3fr 1fr'
+    : '5fr 3fr 1fr';
+
   return (
     <Table>
-      <TableRow gridAutoColumns="5fr 2fr 3fr 1fr">
+      <TableRow gridAutoColumns={gridAutoColumns}>
         <TableHeader>
           <Trans>Name</Trans>
         </TableHeader>
