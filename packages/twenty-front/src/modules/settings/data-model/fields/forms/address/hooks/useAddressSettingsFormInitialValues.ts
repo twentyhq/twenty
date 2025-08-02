@@ -1,6 +1,6 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelFieldTextFormValues } from '@/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm';
-import { DefaultSelectionAddressWithMessages } from '@/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages';
+import { DEFAULT_SELECTION_ADDRESS_WITH_MESSAGES } from '@/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages';
 import { useFormContext } from 'react-hook-form';
 
 export const useAddressSettingsFormInitialValues = ({
@@ -8,12 +8,14 @@ export const useAddressSettingsFormInitialValues = ({
 }: {
   fieldMetadataItem?: Pick<FieldMetadataItem, 'settings'>;
 }) => {
-  const allAddressSubFields = DefaultSelectionAddressWithMessages.map(
+  const allAddressSubFields = DEFAULT_SELECTION_ADDRESS_WITH_MESSAGES.map(
     (selectionAddres) => selectionAddres.value,
   );
-  const initialDisplaySubFields = fieldMetadataItem?.settings?.subFields
-    ? fieldMetadataItem.settings.subFields
-    : allAddressSubFields;
+  const initialDisplaySubFields =
+    fieldMetadataItem?.settings?.subFields &&
+    fieldMetadataItem?.settings?.subFields?.length > 0
+      ? fieldMetadataItem.settings.subFields
+      : allAddressSubFields;
 
   const { resetField } = useFormContext<SettingsDataModelFieldTextFormValues>();
 

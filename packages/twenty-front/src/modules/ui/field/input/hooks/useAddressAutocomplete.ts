@@ -9,10 +9,12 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
+import { AllowedAddressSubField } from 'twenty-shared/types';
 import { useCountryUtils } from './useCountryUtils';
 
 export const useAddressAutocomplete = (
   onChange?: (updatedValue: FieldAddressDraftValue) => void,
+  subFields?: AllowedAddressSubField[] | null,
 ) => {
   const [placeAutocompleteData, setPlaceAutocompleteData] = useState<
     PlaceAutocompleteResult[] | null
@@ -68,7 +70,14 @@ export const useAddressAutocomplete = (
     },
     300,
   );
-
+  const IsfieldInputInSubFieldsAddress = (
+    field: AllowedAddressSubField,
+  ): boolean => {
+    if (isDefined(subFields)) {
+      return subFields.includes(field);
+    }
+    return true;
+  };
   const autoFillInputsFromPlaceDetails = useCallback(
     async (
       placeId: string,
@@ -80,17 +89,30 @@ export const useAddressAutocomplete = (
       const countryName = findCountryNameByCountryCode(placeData?.country);
 
       const updatedAddress = {
-        addressStreet1: addressStreet1 || (internalValue?.addressStreet1 ?? ''),
-        addressStreet2: internalValue?.addressStreet2 ?? null,
-        addressCity: placeData?.city || (internalValue?.addressCity ?? null),
-        addressState: placeData?.state || (internalValue?.addressState ?? null),
-        addressCountry: countryName || (internalValue?.addressCountry ?? null),
-        addressPostcode:
-          placeData?.postcode || (internalValue?.addressPostcode ?? null),
-        addressLat:
-          placeData?.location?.lat ?? internalValue?.addressLat ?? null,
-        addressLng:
-          placeData?.location?.lng ?? internalValue?.addressLng ?? null,
+        addressStreet1: IsfieldInputInSubFieldsAddress('addressStreet1')
+          ? addressStreet1 || (internalValue?.addressStreet1 ?? '')
+          : '',
+        addressStreet2: IsfieldInputInSubFieldsAddress('addressStreet1')
+          ? (internalValue?.addressStreet2 ?? null)
+          : null,
+        addressCity: IsfieldInputInSubFieldsAddress('addressStreet1')
+          ? placeData?.city || (internalValue?.addressCity ?? null)
+          : null,
+        addressState: IsfieldInputInSubFieldsAddress('addressStreet1')
+          ? placeData?.state || (internalValue?.addressState ?? null)
+          : null,
+        addressCountry: IsfieldInputInSubFieldsAddress('addressStreet1')
+          ? countryName || (internalValue?.addressCountry ?? null)
+          : null,
+        addressPostcode: IsfieldInputInSubFieldsAddress('addressStreet1')
+          ? placeData?.postcode || (internalValue?.addressPostcode ?? null)
+          : null,
+        addressLat: IsfieldInputInSubFieldsAddress('addressStreet1')
+          ? (placeData?.location?.lat ?? internalValue?.addressLat ?? null)
+          : null,
+        addressLng: IsfieldInputInSubFieldsAddress('addressStreet1')
+          ? (placeData?.location?.lng ?? internalValue?.addressLng ?? null)
+          : null,
       };
 
       setTokenForPlaceApi(null);
@@ -116,5 +138,6 @@ export const useAddressAutocomplete = (
     getAutocompletePlaceData,
     autoFillInputsFromPlaceDetails,
     closeDropdownOfAutocomplete,
+    IsfieldInputInSubFieldsAddress,
   };
 };

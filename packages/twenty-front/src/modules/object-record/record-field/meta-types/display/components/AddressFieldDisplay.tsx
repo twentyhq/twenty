@@ -1,6 +1,6 @@
 import { useAddressFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useAddressFieldDisplay';
 import { TextDisplay } from '@/ui/field/display/components/TextDisplay';
-import { extractSubFieldsAddressValues } from '~/utils/displaySubFieldsAddress';
+import { formatAddressDisplay } from '~/utils/formatAddressDisplay';
 
 export const AddressFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useAddressFieldDisplay();
@@ -9,6 +9,6 @@ export const AddressFieldDisplay = () => {
   const subFields =
     settings && 'subFields' in settings ? settings.subFields : undefined;
 
-  const parsedFieldValue = extractSubFieldsAddressValues(fieldValue, subFields);
+  const parsedFieldValue = formatAddressDisplay(fieldValue, subFields);
   return <TextDisplay text={parsedFieldValue} />;
 };

@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { AllowedAddressSubField } from 'twenty-shared/src/types/AddressFieldsType';
 
-export const DefaultSelectionAddressWithMessages: {
+export const DEFAULT_SELECTION_ADDRESS_WITH_MESSAGES: {
   value: AllowedAddressSubField;
   label: ReturnType<typeof msg>;
 }[] = [

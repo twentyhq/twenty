@@ -20,5 +20,9 @@ export const isFieldAddressValue = (
   addressSchema.safeParse(fieldValue).success;
 
 export const addressSettingsSchema = z.object({
-  subFields: z.array(z.enum(ALLOWED_ADDRESS_SUBFIELDS)).min(1),
+  subFields: z
+    .array(z.enum(ALLOWED_ADDRESS_SUBFIELDS))
+    .min(1)
+    .optional()
+    .nullable(),
 });

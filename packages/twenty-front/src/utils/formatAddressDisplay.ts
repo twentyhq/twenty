@@ -1,12 +1,12 @@
 import { FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';
-import { isNonEmptyString } from '@sniptt/guards';
 import {
   ALLOWED_ADDRESS_SUBFIELDS,
   AllowedAddressSubField,
 } from 'twenty-shared/src/types/AddressFieldsType';
 import { isDefined } from 'twenty-shared/utils';
+import { joinAddressFieldValues } from '~/utils/joinAddressFieldValues';
 
-export const extractSubFieldsAddressValues = (
+export const formatAddressDisplay = (
   fieldValue: FieldAddressValue | undefined,
   subFields: AllowedAddressSubField[] | null | undefined,
 ) => {
@@ -16,15 +16,5 @@ export const extractSubFieldsAddressValues = (
       ? subFields
       : [...ALLOWED_ADDRESS_SUBFIELDS];
 
-  return formatSubFieldsAddressValues(fieldValue, fieldsToUse);
-};
-
-const formatSubFieldsAddressValues = (
-  fieldValue: FieldAddressValue,
-  subFields: AllowedAddressSubField[],
-) => {
-  return subFields
-    .map((subField) => fieldValue[subField])
-    .filter(isNonEmptyString)
-    .join(',');
+  return joinAddressFieldValues(fieldValue, fieldsToUse);
 };

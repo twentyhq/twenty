@@ -7,7 +7,7 @@ import {
 } from '@/object-record/record-field/types/guards/isFieldAddressValue';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { MultiSelectAddressFields } from '@/settings/data-model/fields/forms/address/components/MultiSelectAddressFields';
-import { DefaultSelectionAddressWithMessages } from '@/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages';
+import { DEFAULT_SELECTION_ADDRESS_WITH_MESSAGES } from '@/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages';
 import { useAddressSettingsFormInitialValues } from '@/settings/data-model/fields/forms/address/hooks/useAddressSettingsFormInitialValues';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { Select } from '@/ui/input/components/Select';
@@ -133,10 +133,12 @@ export const SettingsDataModelFieldAddressForm = ({
               description={t`Decide which Sub-address fields you want to display`}
             >
               <MultiSelectAddressFields<string>
-                options={DefaultSelectionAddressWithMessages.map((option) => ({
-                  ...option,
-                  label: t(option.label),
-                }))}
+                options={DEFAULT_SELECTION_ADDRESS_WITH_MESSAGES.map(
+                  (option) => ({
+                    ...option,
+                    label: t(option.label),
+                  }),
+                )}
                 values={values}
                 dropdownId={'addressSubFieldsId'}
                 onChange={onChange}

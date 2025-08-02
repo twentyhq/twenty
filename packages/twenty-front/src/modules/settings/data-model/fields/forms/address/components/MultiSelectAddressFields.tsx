@@ -7,7 +7,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { MouseEvent, useMemo, useState } from 'react';
@@ -27,19 +26,8 @@ export type MultiSelectAddressFieldsProps<Value extends SelectValue> = {
   selectSizeVariant?: SelectSizeVariant;
   dropdownId: string;
   dropdownWidth?: number;
-  dropdownWidthAuto?: boolean;
-  emptyOption?: SelectOption<Value>;
-  fullWidth?: boolean;
-  label?: string;
-  description?: string;
   onChange?: (values: Value[]) => void;
-  onBlur?: () => void;
   options: SelectOption<Value>[];
-  value?: Value;
-  withSearchInput?: boolean;
-  needIconCheck?: boolean;
-  dropdownOffset?: DropdownOffset;
-  hasRightElement?: boolean;
   values: Value[];
   callToActionButton?: CallToActionButton;
 };
@@ -49,19 +37,8 @@ export const MultiSelectAddressFields = <Value extends SelectValue>({
   selectSizeVariant,
   dropdownId,
   dropdownWidth = GenericDropdownContentWidth.Medium,
-  dropdownWidthAuto: _dropdownWidthAuto = false,
-  emptyOption: _emptyOption,
-  fullWidth: _fullWidth,
-  label: _label,
-  description: _description,
   onChange,
-  onBlur: _onBlur,
   options,
-  value: _value,
-  withSearchInput: _withSearchInput,
-  needIconCheck: _needIconCheck,
-  dropdownOffset: _dropdownOffset,
-  hasRightElement: _hasRightElement,
   values,
   callToActionButton,
 }: MultiSelectAddressFieldsProps<Value>) => {
@@ -133,7 +110,6 @@ export const MultiSelectAddressFields = <Value extends SelectValue>({
                       onClick={() =>
                         onChange?.(onOptionSelected(option.value, values))
                       }
-                      // isKeySelected={selectedItemId === option.value}
                     />
                   </SelectableListItem>
                 );

@@ -18,6 +18,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 
+import { AllowedAddressSubField } from 'twenty-shared/types';
 import { useAddressAutocomplete } from '../hooks/useAddressAutocomplete';
 import { useCountryUtils } from '../hooks/useCountryUtils';
 import { useFocusManagement } from '../hooks/useFocusManagement';
@@ -72,6 +73,7 @@ export type AddressInputProps = {
   ) => void;
   clearable?: boolean;
   onChange?: (updatedValue: FieldAddressDraftValue) => void;
+  subFields?: AllowedAddressSubField[] | null;
 };
 
 export const AddressInput = ({
@@ -83,6 +85,7 @@ export const AddressInput = ({
   onEscape,
   onClickOutside,
   onChange,
+  subFields,
 }: AddressInputProps) => {
   const [internalValue, setInternalValue] = useState(value);
 
@@ -115,7 +118,8 @@ export const AddressInput = ({
     getAutocompletePlaceData,
     autoFillInputsFromPlaceDetails,
     closeDropdownOfAutocomplete,
-  } = useAddressAutocomplete(onChange);
+    IsfieldInputInSubFieldsAddress,
+  } = useAddressAutocomplete(onChange, subFields);
 
   const { getFocusHandler, handleTab, handleShiftTab } = useFocusManagement(
     inputRefs,
@@ -126,6 +130,9 @@ export const AddressInput = ({
 
   const getChangeHandler = useCallback(
     (field: keyof FieldAddressDraftValue) => (updatedAddressPart: string) => {
+      if (isDefined(subFields) && !subFields.includes(field)) {
+        return;
+      }
       const updatedAddress = { ...internalValue, [field]: updatedAddressPart };
       setInternalValue(updatedAddress);
       onChange?.(updatedAddress);
@@ -289,7 +296,11 @@ export const AddressInput = ({
       {renderInputWithAutocomplete(
         <TextInputV2
           autoFocus
-          value={internalValue.addressStreet1 ?? ''}
+          value={
+            IsfieldInputInSubFieldsAddress('addressStreet1')
+              ? (internalValue.addressStreet1 ?? '')
+              : ''
+          }
           ref={inputRefs.addressStreet1}
           label="Address 1"
           fullWidth
@@ -305,7 +316,11 @@ export const AddressInput = ({
         'addressStreet1',
       )}
       <TextInputV2
-        value={internalValue.addressStreet2 ?? ''}
+        value={
+          IsfieldInputInSubFieldsAddress('addressStreet2')
+            ? (internalValue.addressStreet2 ?? '')
+            : ''
+        }
         ref={inputRefs.addressStreet2}
         label="Address 2"
         fullWidth
@@ -315,7 +330,11 @@ export const AddressInput = ({
       <StyledHalfRowContainer>
         {renderInputWithAutocomplete(
           <TextInputV2
-            value={internalValue.addressCity ?? ''}
+            value={
+              IsfieldInputInSubFieldsAddress('addressCity')
+                ? (internalValue.addressCity ?? '')
+                : ''
+            }
             ref={inputRefs.addressCity}
             label="City"
             fullWidth
@@ -331,7 +350,11 @@ export const AddressInput = ({
           'addressCity',
         )}
         <TextInputV2
-          value={internalValue.addressState ?? ''}
+          value={
+            IsfieldInputInSubFieldsAddress('addressState')
+              ? (internalValue.addressState ?? '')
+              : ''
+          }
           ref={inputRefs.addressState}
           label="State"
           fullWidth
@@ -341,7 +364,11 @@ export const AddressInput = ({
       </StyledHalfRowContainer>
       <StyledHalfRowContainer>
         <TextInputV2
-          value={internalValue.addressPostcode ?? ''}
+          value={
+            IsfieldInputInSubFieldsAddress('addressPostcode')
+              ? (internalValue.addressPostcode ?? '')
+              : ''
+          }
           ref={inputRefs.addressPostcode}
           label="Post Code"
           fullWidth
@@ -351,7 +378,11 @@ export const AddressInput = ({
         <CountrySelect
           label="Country"
           onChange={getChangeHandler('addressCountry')}
-          selectedCountryName={internalValue.addressCountry ?? ''}
+          selectedCountryName={
+            IsfieldInputInSubFieldsAddress('addressCountry')
+              ? (internalValue.addressCountry ?? '')
+              : ''
+          }
         />
       </StyledHalfRowContainer>
     </StyledAddressContainer>
