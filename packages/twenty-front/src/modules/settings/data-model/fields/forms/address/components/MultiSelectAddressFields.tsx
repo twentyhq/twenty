@@ -21,7 +21,7 @@ type CallToActionButton = {
   Icon?: IconComponent;
 };
 
-export type SelectProps<Value extends SelectValue> = {
+export type MultiSelectAddressFieldsProps<Value extends SelectValue> = {
   className?: string;
   disabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
@@ -45,27 +45,26 @@ export type SelectProps<Value extends SelectValue> = {
 };
 
 export const MultiSelectAddressFields = <Value extends SelectValue>({
-  className,
-  disabled: disabledFromProps,
+  className: _className,
   selectSizeVariant,
   dropdownId,
   dropdownWidth = GenericDropdownContentWidth.Medium,
-  dropdownWidthAuto = false,
-  emptyOption,
-  fullWidth,
-  label,
-  description,
+  dropdownWidthAuto: _dropdownWidthAuto = false,
+  emptyOption: _emptyOption,
+  fullWidth: _fullWidth,
+  label: _label,
+  description: _description,
   onChange,
-  onBlur,
+  onBlur: _onBlur,
   options,
-  value,
-  withSearchInput,
-  needIconCheck,
-  dropdownOffset,
-  hasRightElement,
+  value: _value,
+  withSearchInput: _withSearchInput,
+  needIconCheck: _needIconCheck,
+  dropdownOffset: _dropdownOffset,
+  hasRightElement: _hasRightElement,
   values,
   callToActionButton,
-}: SelectProps<Value>) => {
+}: MultiSelectAddressFieldsProps<Value>) => {
   const [searchInputValue, setSearchInputValue] = useState('');
   const filteredOptions = useMemo(
     () =>
@@ -84,13 +83,13 @@ export const MultiSelectAddressFields = <Value extends SelectValue>({
     }
   };
   const selectableItemIdArray = filteredOptions.map((option) => option.label);
-  const oncloseDropdown = () => {
+  const onCloseDropdown = () => {
     setSearchInputValue('');
   };
   return (
     <Dropdown
       dropdownId={dropdownId}
-      onClose={oncloseDropdown}
+      onClose={onCloseDropdown}
       clickableComponent={
         <SelectControl
           selectedOption={{
@@ -100,7 +99,7 @@ export const MultiSelectAddressFields = <Value extends SelectValue>({
                 : values?.length.toString(),
             value: values?.length,
           }}
-          selectSizeVariant="small"
+          selectSizeVariant={selectSizeVariant}
         />
       }
       dropdownComponents={

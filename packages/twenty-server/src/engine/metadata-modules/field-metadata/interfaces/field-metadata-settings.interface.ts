@@ -1,4 +1,5 @@
 import { FieldMetadataType, IsExactly } from 'twenty-shared/types';
+import { AllowedAddressSubField } from 'twenty-shared/types/AddressFieldsType';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -41,7 +42,7 @@ export type FieldMetadataRelationSettings = {
   joinColumnName?: string | null;
 };
 export type FieldMetadataAddressSettings = {
-  subFields?: string[];
+  subFields?: AllowedAddressSubField[];
 };
 
 type FieldMetadataSettingsMapping = {

@@ -43,6 +43,7 @@ export const SettingsDataModelFieldAddressSettingsFormCard = ({
           fieldMetadataItem={{
             ...fieldMetadataItem,
             settings: {
+              ...fieldMetadataItem.settings,
               subFields: watchFormValue(
                 'settings.subFields',
                 initialDisplaySubFields,

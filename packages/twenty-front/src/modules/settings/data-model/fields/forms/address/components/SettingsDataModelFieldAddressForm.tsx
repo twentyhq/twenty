@@ -133,12 +133,15 @@ export const SettingsDataModelFieldAddressForm = ({
               description={t`Decide which Sub-address fields you want to display`}
             >
               <MultiSelectAddressFields<string>
-                options={DefaultSelectionAddressWithMessages}
+                options={DefaultSelectionAddressWithMessages.map((option) => ({
+                  ...option,
+                  label: t(option.label),
+                }))}
                 values={values}
                 dropdownId={'addressSubFieldsId'}
                 onChange={onChange}
                 callToActionButton={{
-                  text: 'Reset to default',
+                  text: t`Reset to default`,
                   onClick: (event: MouseEvent<HTMLDivElement>) => {
                     event.preventDefault();
                     reset();

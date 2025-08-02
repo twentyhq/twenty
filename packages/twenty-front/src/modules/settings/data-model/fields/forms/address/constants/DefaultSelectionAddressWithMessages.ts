@@ -1,31 +1,32 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { AllowedAddressSubField } from 'twenty-shared/src/types/AddressFieldsType';
+
 export const DefaultSelectionAddressWithMessages: {
   value: AllowedAddressSubField;
-  label: string;
+  label: ReturnType<typeof msg>;
 }[] = [
   {
     value: 'addressStreet1',
-    label: t`Address 1`,
+    label: msg`Address 1`,
   },
   {
     value: 'addressStreet2',
-    label: t`Address 2`,
+    label: msg`Address 2`,
   },
   {
     value: 'addressCity',
-    label: t`City`,
+    label: msg`City`,
   },
   {
     value: 'addressState',
-    label: t`State`,
+    label: msg`State`,
   },
   {
     value: 'addressPostcode',
-    label: t`Postcode`,
+    label: msg`Postcode`,
   },
   {
     value: 'addressCountry',
-    label: t`Country`,
+    label: msg`Country`,
   },
 ];
