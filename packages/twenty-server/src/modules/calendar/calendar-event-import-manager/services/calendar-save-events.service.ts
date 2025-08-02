@@ -199,7 +199,7 @@ export class CalendarSaveEventsService {
           transactionManager,
         );
 
-        const participantsToSave =
+        const participantsToCreate =
           fetchedCalendarEventsWithDBEventsEnrichedWithSavedEvents
             .filter(
               ({ newlyCreatedCalendarEvent }) =>
@@ -240,7 +240,7 @@ export class CalendarSaveEventsService {
 
         await this.calendarEventParticipantService.upsertAndDeleteCalendarEventParticipants(
           {
-            participantsToSave,
+            participantsToCreate,
             participantsToUpdate,
             transactionManager,
             calendarChannel,

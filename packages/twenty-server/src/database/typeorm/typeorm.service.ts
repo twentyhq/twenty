@@ -1,4 +1,9 @@
-import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 
 import { DataSource } from 'typeorm';
 
@@ -7,6 +12,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
   private mainDataSource: DataSource;
+  private readonly logger = new Logger(TypeORMService.name);
 
   constructor(private readonly twentyConfigService: TwentyConfigService) {
     const isJest = process.argv.some((arg) => arg.includes('jest'));
@@ -61,6 +67,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleDestroy() {
     // Destroy main data source "default" schema
+    this.logger.log('Destroying main data source');
     await this.mainDataSource.destroy();
   }
 }

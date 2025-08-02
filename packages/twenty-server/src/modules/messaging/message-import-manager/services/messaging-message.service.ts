@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
@@ -37,67 +39,76 @@ export class MessagingMessageService {
       );
 
     const messageExternalIdsAndIdsMap = new Map<string, string>();
-    const createdMessages: Partial<MessageWorkspaceEntity>[] = [];
 
-    for (const message of messages) {
-      const existingMessageChannelMessageAssociation =
-        await messageChannelMessageAssociationRepository.findOne(
-          {
-            where: {
-              messageExternalId: message.externalId,
-              messageChannelId: messageChannelId,
-            },
-          },
-          transactionManager,
-        );
+    const existingMessageChannelMessageAssociationsMap = new Map<
+      string,
+      MessageChannelMessageAssociationWorkspaceEntity
+    >();
+    const existingMessagesMap = new Map<string, MessageWorkspaceEntity>();
+    const messagesToCreate: Pick<
+      MessageWorkspaceEntity,
+      | 'id'
+      | 'headerMessageId'
+      | 'subject'
+      | 'receivedAt'
+      | 'text'
+      | 'messageThreadId'
+    >[] = [];
+    const messageChannelMessageAssociationsToCreate: Pick<
+      MessageChannelMessageAssociationWorkspaceEntity,
+      | 'messageChannelId'
+      | 'messageId'
+      | 'messageExternalId'
+      | 'messageThreadExternalId'
+      | 'direction'
+    >[] = [];
 
-      if (existingMessageChannelMessageAssociation) {
-        continue;
-      }
+    const existingMessages = await messageRepository.find({
+      where: {
+        headerMessageId: In(messages.map((message) => message.headerMessageId)),
+      },
+    });
 
-      const existingMessage = await messageRepository.findOne({
+    const existingMessageChannelMessageAssociations =
+      await messageChannelMessageAssociationRepository.find({
         where: {
-          headerMessageId: message.headerMessageId,
+          messageId: In(existingMessages.map((message) => message.id)),
+          messageChannelId,
         },
       });
 
+    for (const message of messages) {
+      const existingMessage = existingMessages.find(
+        (message) => message.headerMessageId === message.headerMessageId,
+      );
+
       if (existingMessage) {
-        const existingAssociation =
-          await messageChannelMessageAssociationRepository.findOne(
-            {
-              where: {
-                messageChannelId,
-                messageId: existingMessage.id,
-              },
-            },
-            transactionManager,
+        existingMessagesMap.set(message.headerMessageId, existingMessage);
+
+        const existingMessageChannelMessageAssociation =
+          existingMessageChannelMessageAssociations.find(
+            (association) => association.messageId === existingMessage.id,
           );
 
-        if (existingAssociation) {
-          await messageChannelMessageAssociationRepository.update(
-            {
-              id: existingAssociation.id,
-            },
-            {
-              messageExternalId: message.externalId,
-              messageThreadExternalId: message.messageThreadExternalId,
-            },
-            transactionManager,
-          );
-        } else {
-          await messageChannelMessageAssociationRepository.insert(
-            {
-              messageChannelId,
-              messageId: existingMessage.id,
-              messageExternalId: message.externalId,
-              messageThreadExternalId: message.messageThreadExternalId,
-            },
-            transactionManager,
+        if (existingMessageChannelMessageAssociation) {
+          existingMessageChannelMessageAssociationsMap.set(
+            message.headerMessageId,
+            existingMessageChannelMessageAssociation,
           );
         }
+      }
+    }
 
+    for (const message of messages) {
+      if (
+        existingMessageChannelMessageAssociationsMap.has(
+          message.headerMessageId,
+        )
+      ) {
         continue;
       }
+
+      const existingMessage = existingMessagesMap.get(message.headerMessageId);
 
       const existingThread = await messageThreadRepository.findOne(
         {
@@ -113,47 +124,60 @@ export class MessagingMessageService {
         transactionManager,
       );
 
-      let newOrExistingMessageThreadId = existingThread?.id;
+      let newOrExistingMessageThreadId: string;
 
-      if (!existingThread) {
+      if (!isDefined(existingThread)) {
         newOrExistingMessageThreadId = v4();
 
         await messageThreadRepository.insert(
           { id: newOrExistingMessageThreadId },
           transactionManager,
         );
+      } else {
+        newOrExistingMessageThreadId = existingThread.id;
       }
 
-      const newMessageId = v4();
-      const messageToCreate = {
-        id: newMessageId,
-        headerMessageId: message.headerMessageId,
-        subject: message.subject,
-        receivedAt: message.receivedAt,
-        text: message.text,
-        messageThreadId: newOrExistingMessageThreadId,
-      };
+      let newOrExistingMessageId: string;
 
-      await messageRepository.insert(messageToCreate, transactionManager);
+      if (!isDefined(existingMessage)) {
+        newOrExistingMessageId = v4();
 
-      createdMessages.push(messageToCreate);
+        const messageToCreate = {
+          id: newOrExistingMessageId,
+          headerMessageId: message.headerMessageId,
+          subject: message.subject,
+          receivedAt: message.receivedAt,
+          text: message.text,
+          messageThreadId: newOrExistingMessageThreadId,
+        };
 
-      messageExternalIdsAndIdsMap.set(message.externalId, newMessageId);
-
-      await messageChannelMessageAssociationRepository.insert(
-        {
-          messageChannelId,
-          messageId: newMessageId,
-          messageExternalId: message.externalId,
-          messageThreadExternalId: message.messageThreadExternalId,
-          direction: message.direction,
-        },
-        transactionManager,
+        messagesToCreate.push(messageToCreate);
+      } else {
+        newOrExistingMessageId = existingMessage.id;
+      }
+      messageExternalIdsAndIdsMap.set(
+        message.externalId,
+        newOrExistingMessageId,
       );
+
+      messageChannelMessageAssociationsToCreate.push({
+        messageChannelId,
+        messageId: newOrExistingMessageId,
+        messageExternalId: message.externalId,
+        messageThreadExternalId: message.messageThreadExternalId,
+        direction: message.direction,
+      });
     }
 
+    await messageRepository.insert(messagesToCreate, transactionManager);
+
+    await messageChannelMessageAssociationRepository.insert(
+      messageChannelMessageAssociationsToCreate,
+      transactionManager,
+    );
+
     return {
-      createdMessages,
+      createdMessages: messagesToCreate,
       messageExternalIdsAndIdsMap,
     };
   }

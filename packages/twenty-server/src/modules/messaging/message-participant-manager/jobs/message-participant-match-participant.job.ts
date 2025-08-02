@@ -8,10 +8,11 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/
 
 export type MessageParticipantMatchParticipantJobData = {
   workspaceId: string;
-  isPrimaryEmail: boolean;
-  email: string;
-  personId?: string;
-  workspaceMemberId?: string;
+  participantMatching: {
+    personIds: string[];
+    personEmails: string[];
+    workspaceMemberIds: string[];
+  };
 };
 
 @Processor({
@@ -25,25 +26,23 @@ export class MessageParticipantMatchParticipantJob {
 
   @Process(MessageParticipantMatchParticipantJob.name)
   async handle(data: MessageParticipantMatchParticipantJobData): Promise<void> {
-    const { isPrimaryEmail, email, personId, workspaceMemberId } = data;
+    const { participantMatching } = data;
 
-    if (personId) {
-      await this.matchParticipantService.matchParticipantsAfterPersonCreation({
-        handle: email,
-        isPrimaryEmail,
+    if (
+      participantMatching.personIds.length > 0 ||
+      participantMatching.personEmails.length > 0
+    ) {
+      await this.matchParticipantService.matchParticipantsForPeople({
+        participantMatching,
         objectMetadataName: 'messageParticipant',
-        personId,
       });
     }
 
-    if (workspaceMemberId) {
-      await this.matchParticipantService.matchParticipantsAfterWorkspaceMemberCreation(
-        {
-          handle: email,
-          objectMetadataName: 'messageParticipant',
-          workspaceMemberId,
-        },
-      );
+    if (participantMatching.workspaceMemberIds.length > 0) {
+      await this.matchParticipantService.matchParticipantsForWorkspaceMembers({
+        participantMatching,
+        objectMetadataName: 'messageParticipant',
+      });
     }
   }
 }

@@ -595,6 +595,32 @@ export class WorkspaceRepository<
     );
   }
 
+  // Experimental method to allow batch update and batch event emission
+  async updateMany(
+    inputs: {
+      criteria: string;
+      partialEntity: QueryDeepPartialEntity<T>;
+    }[],
+    entityManager?: WorkspaceEntityManager,
+    selectedColumns?: string[],
+  ): Promise<UpdateResult> {
+    const manager = entityManager || this.manager;
+
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+
+    const results = await manager.updateMany(
+      this.target,
+      inputs,
+      permissionOptions,
+      selectedColumns,
+    );
+
+    return results;
+  }
+
   override async upsert(
     entityOrEntities: QueryDeepPartialEntity<T> | QueryDeepPartialEntity<T>[],
     conflictPathsOrOptions: string[] | UpsertOptions<T>,

@@ -13,14 +13,13 @@ import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { isDate } from 'src/utils/date/isDate';
 import { isValidDate } from 'src/utils/date/isValidDate';
-
 export function formatResult<T>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any,
   objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps | undefined,
   objectMetadataMaps: ObjectMetadataMaps,
 ): T {
-  if (!data) {
+  if (!isDefined(data)) {
     return data;
   }
 

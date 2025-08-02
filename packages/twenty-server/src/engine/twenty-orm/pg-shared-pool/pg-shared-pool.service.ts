@@ -140,6 +140,7 @@ export class PgPoolSharedService {
    */
   async onApplicationShutdown(): Promise<void> {
     this.stopStatsLogging();
+    this.logger.log('onApplicationShutdown called in PgPoolSharedService');
     await this.closeAllPools();
   }
 

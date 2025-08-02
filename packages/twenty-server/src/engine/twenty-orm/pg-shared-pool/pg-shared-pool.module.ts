@@ -1,5 +1,6 @@
 import {
   Global,
+  Logger,
   Module,
   OnApplicationShutdown,
   OnModuleInit,
@@ -19,6 +20,7 @@ import { PgPoolSharedService } from 'src/engine/twenty-orm/pg-shared-pool/pg-sha
 })
 export class PgPoolSharedModule implements OnModuleInit, OnApplicationShutdown {
   constructor(private readonly pgPoolSharedService: PgPoolSharedService) {}
+  private readonly logger = new Logger(PgPoolSharedModule.name);
 
   /**
    * Initialize the pool sharing service when the module is initialized
@@ -31,6 +33,7 @@ export class PgPoolSharedModule implements OnModuleInit, OnApplicationShutdown {
    * Clean up any resources when the application shuts down
    */
   async onApplicationShutdown() {
+    this.logger.log('Shutting down PgPoolSharedModule');
     await this.pgPoolSharedService.onApplicationShutdown();
   }
 }
