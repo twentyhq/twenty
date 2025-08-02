@@ -62,7 +62,7 @@ export class MessagingMessageParticipantService {
     );
 
     await this.matchParticipantService.matchParticipants({
-      participants: createdParticipants.raw,
+      participants: createdParticipants.raw ?? [],
       objectMetadataName: 'messageParticipant',
       transactionManager,
       matchWith: 'workspaceMemberAndPerson',

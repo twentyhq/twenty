@@ -139,10 +139,18 @@ export class CalendarEventParticipantService {
       participantsToCreate.push(...newCalendarEventParticipants);
     }
 
-    const savedParticipants = await calendarEventParticipantRepository.insert(
-      participantsToCreate,
-      transactionManager,
-    );
+    const chunkedParticipantsToCreate = chunk(participantsToCreate, 200);
+    const savedParticipants: CalendarEventParticipantWorkspaceEntity[] = [];
+
+    for (const participantsToCreateChunk of chunkedParticipantsToCreate) {
+      const savedParticipantsChunk =
+        await calendarEventParticipantRepository.insert(
+          participantsToCreateChunk,
+          transactionManager,
+        );
+
+      savedParticipants.push(...savedParticipantsChunk.raw);
+    }
 
     if (calendarChannel.isContactAutoCreationEnabled) {
       await this.messageQueueService.add<CreateCompanyAndContactJobData>(
@@ -150,14 +158,14 @@ export class CalendarEventParticipantService {
         {
           workspaceId,
           connectedAccount,
-          contactsToCreate: savedParticipants.raw,
+          contactsToCreate: savedParticipants,
           source: FieldActorSource.CALENDAR,
         },
       );
     }
 
     await this.matchParticipantService.matchParticipants({
-      participants: savedParticipants.raw,
+      participants: savedParticipants,
       objectMetadataName: 'calendarEventParticipant',
       transactionManager,
       matchWith: 'workspaceMemberAndPerson',

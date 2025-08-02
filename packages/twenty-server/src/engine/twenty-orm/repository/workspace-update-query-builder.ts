@@ -175,8 +175,6 @@ export class WorkspaceUpdateQueryBuilder<
   }
 
   public async executeMany(): Promise<UpdateResult> {
-    console.log('manyInputs', this.manyInputs);
-
     for (const input of this.manyInputs) {
       const fakeExpressionMapToValidatePermissions = Object.assign(
         {},

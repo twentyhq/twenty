@@ -1113,7 +1113,9 @@ export class WorkspaceEntityManager extends EntityManager {
         })
       : entityArray;
 
-    const entityIds = entityArray.map((e) => (e as { id: string }).id);
+    const entityIds = entityArray
+      .map((entity) => (entity as { id: string }).id)
+      .filter(isDefined);
     const beforeUpdate = await this.find(
       entityTarget,
       {
