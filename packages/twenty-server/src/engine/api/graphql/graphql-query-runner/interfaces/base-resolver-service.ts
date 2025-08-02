@@ -33,7 +33,6 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -75,8 +74,6 @@ export abstract class GraphqlQueryBaseResolverService<
   protected readonly userRoleService: UserRoleService;
   @Inject()
   protected readonly apiKeyRoleService: ApiKeyRoleService;
-  @Inject()
-  protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService;
 
   public async execute(
     args: Input,
@@ -128,21 +125,10 @@ export abstract class GraphqlQueryBaseResolverService<
         if (!isApiKeyRolesEnabled) {
           shouldBypassPermissionChecks = true;
         } else {
-          const apiKeyRoleMap =
-            await this.workspacePermissionsCacheService.getApiKeyRoleMapFromCache(
-              {
-                workspaceId: workspace.id,
-              },
-            );
-
-          roleId = apiKeyRoleMap.data[authContext.apiKey.id];
-
-          if (!roleId) {
-            throw new PermissionsException(
-              PermissionsExceptionMessage.API_KEY_ROLE_NOT_FOUND,
-              PermissionsExceptionCode.API_KEY_ROLE_NOT_FOUND,
-            );
-          }
+          roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
+            authContext.apiKey.id,
+            workspace.id,
+          );
         }
       }
 

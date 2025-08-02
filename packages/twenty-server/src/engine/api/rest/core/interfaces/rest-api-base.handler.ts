@@ -152,13 +152,6 @@ export abstract class RestApiBaseHandler {
           apiKey.id,
           workspace.id,
         );
-
-        if (!roleId) {
-          throw new PermissionsException(
-            PermissionsExceptionMessage.API_KEY_ROLE_NOT_FOUND,
-            PermissionsExceptionCode.API_KEY_ROLE_NOT_FOUND,
-          );
-        }
       }
     }
 

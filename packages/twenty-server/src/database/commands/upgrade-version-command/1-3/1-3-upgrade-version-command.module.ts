@@ -11,6 +11,8 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
+import { WorkspaceFeatureFlagsMapCacheModule } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.module';
+import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 
 @Module({
@@ -30,6 +32,8 @@ import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
     FeatureFlagModule,
     TwentyORMModule,
     RoleModule,
+    WorkspacePermissionsCacheModule,
+    WorkspaceFeatureFlagsMapCacheModule,
   ],
   providers: [AssignRolesToExistingApiKeysCommand],
   exports: [AssignRolesToExistingApiKeysCommand],
