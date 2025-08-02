@@ -118,7 +118,7 @@ export const AddressInput = ({
     getAutocompletePlaceData,
     autoFillInputsFromPlaceDetails,
     closeDropdownOfAutocomplete,
-    IsfieldInputInSubFieldsAddress,
+    isFieldInputInSubFieldsAddress,
   } = useAddressAutocomplete(onChange, subFields);
 
   const { getFocusHandler, handleTab, handleShiftTab } = useFocusManagement(
@@ -166,6 +166,7 @@ export const AddressInput = ({
       typeOfAddressForAutocomplete,
       setTypeOfAddressForAutocomplete,
       getAutocompletePlaceData,
+      subFields
     ],
   );
 
@@ -297,7 +298,7 @@ export const AddressInput = ({
         <TextInputV2
           autoFocus
           value={
-            IsfieldInputInSubFieldsAddress('addressStreet1')
+            isFieldInputInSubFieldsAddress({ field:'addressStreet1'})
               ? (internalValue.addressStreet1 ?? '')
               : ''
           }
@@ -317,7 +318,7 @@ export const AddressInput = ({
       )}
       <TextInputV2
         value={
-          IsfieldInputInSubFieldsAddress('addressStreet2')
+          isFieldInputInSubFieldsAddress({ field:'addressStreet2'})
             ? (internalValue.addressStreet2 ?? '')
             : ''
         }
@@ -331,7 +332,7 @@ export const AddressInput = ({
         {renderInputWithAutocomplete(
           <TextInputV2
             value={
-              IsfieldInputInSubFieldsAddress('addressCity')
+              isFieldInputInSubFieldsAddress({ field:'addressCity'})
                 ? (internalValue.addressCity ?? '')
                 : ''
             }
@@ -351,7 +352,7 @@ export const AddressInput = ({
         )}
         <TextInputV2
           value={
-            IsfieldInputInSubFieldsAddress('addressState')
+            isFieldInputInSubFieldsAddress({ field:'addressState'})
               ? (internalValue.addressState ?? '')
               : ''
           }
@@ -365,7 +366,7 @@ export const AddressInput = ({
       <StyledHalfRowContainer>
         <TextInputV2
           value={
-            IsfieldInputInSubFieldsAddress('addressPostcode')
+            isFieldInputInSubFieldsAddress({ field:'addressPostcode'})
               ? (internalValue.addressPostcode ?? '')
               : ''
           }
@@ -379,7 +380,7 @@ export const AddressInput = ({
           label="Country"
           onChange={getChangeHandler('addressCountry')}
           selectedCountryName={
-            IsfieldInputInSubFieldsAddress('addressCountry')
+            isFieldInputInSubFieldsAddress({ field:'addressCountry'})
               ? (internalValue.addressCountry ?? '')
               : ''
           }
