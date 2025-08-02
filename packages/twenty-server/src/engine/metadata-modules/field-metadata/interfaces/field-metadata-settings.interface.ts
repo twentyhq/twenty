@@ -1,5 +1,4 @@
-import { FieldMetadataType, IsExactly } from 'twenty-shared/types';
-import { AllowedAddressSubField } from 'twenty-shared/types/AddressFieldsType';
+import { AllowedAddressSubField, FieldMetadataType, IsExactly } from 'twenty-shared/types';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
