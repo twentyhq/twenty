@@ -178,9 +178,12 @@ export class MatchParticipantService<
         })
         .filter(isDefined);
 
-      for (const participant of partipantsToBeUpdated) {
-        await participantRepository.update(participant.id, participant);
-      }
+      await participantRepository.updateMany(
+        partipantsToBeUpdated.map((participant) => ({
+          criteria: participant.id,
+          partialEntity: participant,
+        })),
+      );
 
       this.workspaceEventEmitter.emitCustomBatchEvent(
         `${objectMetadataName}_matched`,

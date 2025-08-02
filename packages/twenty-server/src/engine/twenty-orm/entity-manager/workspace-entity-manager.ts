@@ -134,7 +134,7 @@ export class WorkspaceEntityManager extends EntityManager {
       shouldBypassPermissionChecks: false,
       objectRecordsPermissions: {},
     },
-  ): SelectQueryBuilder<Entity> | WorkspaceSelectQueryBuilder<Entity> {
+  ): WorkspaceSelectQueryBuilder<Entity> {
     let queryBuilder: SelectQueryBuilder<Entity>;
 
     if (alias) {
@@ -314,6 +314,29 @@ export class WorkspaceEntityManager extends EntityManager {
         .returning(selectedColumns)
         .execute();
     }
+  }
+
+  public updateMany<Entity extends ObjectLiteral>(
+    target: EntityTarget<Entity>,
+    inputs: {
+      criteria: string;
+      partialEntity: QueryDeepPartialEntity<Entity>;
+    }[],
+    permissionOptions?: PermissionOptions,
+    selectedColumns?: string[],
+  ): Promise<UpdateResult> {
+    const metadata = this.connection.getMetadata(target);
+
+    return this.createQueryBuilder(
+      target,
+      metadata.name,
+      undefined,
+      permissionOptions,
+    )
+      .update()
+      .setManyInputs(inputs)
+      .returning(selectedColumns ?? [])
+      .execute();
   }
 
   override increment<Entity extends ObjectLiteral>(
