@@ -3,7 +3,7 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import gaxiosErrorMocks from 'src/modules/messaging/message-import-manager/drivers/gmail/mocks/gaxios-error-mocks';
-import { parseGaxiosError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gaxios-error.util';
+import { parseGaxiosError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-axios-gaxios-error.util';
 
 describe('parseGaxiosError', () => {
   it('should return a MessageImportDriverException for ECONNRESET', () => {
