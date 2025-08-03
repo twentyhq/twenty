@@ -16,8 +16,8 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { SubscriptionsJob } from 'src/engine/subscriptions/subscriptions.job';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
-import { CallWebhookJobsJob } from 'src/modules/webhook/jobs/call-webhook-jobs.job';
-import { ObjectRecordEventForWebhook } from 'src/modules/webhook/types/object-record-event-for-webhook.type';
+import { CallWebhookJobsJob } from 'src/engine/core-modules/webhook/jobs/call-webhook-jobs.job';
+import { ObjectRecordEventForWebhook } from 'src/engine/core-modules/webhook/types/object-record-event-for-webhook.type';
 
 @Injectable()
 export class EntityEventsToDbListener {

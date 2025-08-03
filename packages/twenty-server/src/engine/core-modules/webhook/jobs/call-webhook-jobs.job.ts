@@ -11,8 +11,8 @@ import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/wo
 import {
   CallWebhookJob,
   CallWebhookJobData,
-} from 'src/modules/webhook/jobs/call-webhook.job';
-import { ObjectRecordEventForWebhook } from 'src/modules/webhook/types/object-record-event-for-webhook.type';
+} from 'src/engine/core-modules/webhook/jobs/call-webhook.job';
+import { ObjectRecordEventForWebhook } from 'src/engine/core-modules/webhook/types/object-record-event-for-webhook.type';
 import { removeSecretFromWebhookRecord } from 'src/utils/remove-secret-from-webhook-record';
 
 @Processor(MessageQueue.webhookQueue)
