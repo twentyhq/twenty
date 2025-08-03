@@ -28,8 +28,12 @@ export const FavoriteNavigationDrawerItem = ({
   triggerEvent,
 }: FavoriteNavigationDrawerItemProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: favorite.objectNameSingular,
+    objectNameSingular: favorite.objectNameSingular || 'company', // fallback to avoid errors
   });
+
+  if (!favorite.objectNameSingular) {
+    return null;
+  }
 
   return (
     <NavigationDrawerItem

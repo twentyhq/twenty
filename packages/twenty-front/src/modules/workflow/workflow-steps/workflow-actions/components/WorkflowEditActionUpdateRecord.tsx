@@ -35,7 +35,7 @@ type WorkflowEditActionUpdateRecordProps = {
 };
 
 type UpdateRecordFormData = {
-  objectName: string;
+  objectNameSingular: string;
   objectRecordId: string;
   fieldsToUpdate: string[];
   [field: string]: unknown;
@@ -60,7 +60,7 @@ export const WorkflowEditActionUpdateRecord = ({
     }));
 
   const [formData, setFormData] = useState<UpdateRecordFormData>({
-    objectName: action.settings.input.objectName,
+    objectNameSingular: action.settings.input.objectName,
     objectRecordId: action.settings.input.objectRecordId,
     fieldsToUpdate: action.settings.input.fieldsToUpdate ?? [],
     ...action.settings.input.objectRecord,
@@ -83,7 +83,7 @@ export const WorkflowEditActionUpdateRecord = ({
   };
 
   const selectedObjectMetadataItem = activeNonSystemObjectMetadataItems.find(
-    (item) => item.nameSingular === formData.objectName,
+    (item) => item.nameSingular === formData.objectNameSingular,
   );
 
   const objectNameSingular = selectedObjectMetadataItem?.nameSingular;
@@ -114,7 +114,7 @@ export const WorkflowEditActionUpdateRecord = ({
       }
 
       const {
-        objectName: updatedObjectName,
+        objectNameSingular: updatedObjectName,
         objectRecordId: updatedObjectRecordId,
         fieldsToUpdate: updatedFieldsToUpdate,
         ...updatedOtherFields
@@ -174,12 +174,12 @@ export const WorkflowEditActionUpdateRecord = ({
           label="Object"
           fullWidth
           disabled={isFormDisabled}
-          value={formData.objectName}
+          value={formData.objectNameSingular}
           emptyOption={{ label: 'Select an option', value: '' }}
           options={availableMetadata}
           onChange={(updatedObjectName) => {
             const newFormData: UpdateRecordFormData = {
-              objectName: updatedObjectName,
+              objectNameSingular: updatedObjectName,
               objectRecordId: '',
               fieldsToUpdate: [],
             };
