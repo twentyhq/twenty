@@ -1,17 +1,23 @@
-import { compareTwoFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-field-metadata-comparator.util';
+import { compareTwoFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import {
   UpdateFieldAction,
   WorkspaceMigrationFieldActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/compute-updated-object-metadata-deleted-created-updated-field-matrix.util';
+import { fromFlatObjectMetadataToFlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/from-flat-object-metadata-to-flat-object-metadata-without-fields.util';
 import {
   getWorkspaceMigrationV2FieldCreateAction,
   getWorkspaceMigrationV2FieldDeleteAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-field-actions';
 
-export const buildWorkspaceMigrationV2FieldActions = (
-  objectMetadataDeletedCreatedUpdatedFields: UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix[],
-): WorkspaceMigrationFieldActionV2[] => {
+type BuildWorkspaceMigrationV2FieldActionsArgs = {
+  inferDeletionFromMissingObjectFieldIndex: boolean;
+  objectMetadataDeletedCreatedUpdatedFields: UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix[];
+};
+export const buildWorkspaceMigrationV2FieldActions = ({
+  inferDeletionFromMissingObjectFieldIndex,
+  objectMetadataDeletedCreatedUpdatedFields,
+}: BuildWorkspaceMigrationV2FieldActionsArgs): WorkspaceMigrationFieldActionV2[] => {
   let allUpdatedObjectMetadataFieldActions: WorkspaceMigrationFieldActionV2[] =
     [];
 
@@ -35,7 +41,11 @@ export const buildWorkspaceMigrationV2FieldActions = (
         return {
           type: 'update_field',
           flatFieldMetadata: to,
-          flatObjectMetadata,
+          flatObjectMetadataWithoutFields:
+            fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(
+              flatObjectMetadata,
+            ),
+          workspaceId: to.workspaceId,
           updates,
         };
       },
@@ -48,12 +58,14 @@ export const buildWorkspaceMigrationV2FieldActions = (
       }),
     );
 
-    const deleteFieldAction = deletedFieldMetadata.map((flatFieldMetadata) =>
-      getWorkspaceMigrationV2FieldDeleteAction({
-        flatFieldMetadata,
-        flatObjectMetadata,
-      }),
-    );
+    const deleteFieldAction = inferDeletionFromMissingObjectFieldIndex
+      ? deletedFieldMetadata.map((flatFieldMetadata) =>
+          getWorkspaceMigrationV2FieldDeleteAction({
+            flatFieldMetadata,
+            flatObjectMetadata,
+          }),
+        )
+      : [];
 
     allUpdatedObjectMetadataFieldActions =
       allUpdatedObjectMetadataFieldActions.concat([

@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { DeleteManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/delete-many-resolver.factory';
 import { DestroyManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-many-resolver.factory';
 import { DestroyOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-one-resolver.factory';
+import { MergeManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/merge-many-resolver.factory';
 import { RestoreManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-many-resolver.factory';
 import { RestoreOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-one-resolver.factory';
 import { UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-many-resolver.factory';
@@ -17,10 +18,9 @@ import {
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { getResolverName } from 'src/engine/utils/get-resolver-name.util';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
-import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
+import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
 
 import { CreateManyResolverFactory } from './factories/create-many-resolver.factory';
 import { CreateOneResolverFactory } from './factories/create-one-resolver.factory';
@@ -53,6 +53,7 @@ export class WorkspaceResolverFactory {
     private readonly restoreOneResolverFactory: RestoreOneResolverFactory,
     private readonly restoreManyResolverFactory: RestoreManyResolverFactory,
     private readonly destroyManyResolverFactory: DestroyManyResolverFactory,
+    private readonly mergeManyResolverFactory: MergeManyResolverFactory,
     private readonly workspaceResolverBuilderService: WorkspaceResolverBuilderService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
@@ -75,6 +76,7 @@ export class WorkspaceResolverFactory {
       ['findDuplicates', this.findDuplicatesResolverFactory],
       ['findMany', this.findManyResolverFactory],
       ['findOne', this.findOneResolverFactory],
+      ['mergeMany', this.mergeManyResolverFactory],
       ['restoreMany', this.restoreManyResolverFactory],
       ['restoreOne', this.restoreOneResolverFactory],
       ['updateMany', this.updateManyResolverFactory],
@@ -100,27 +102,14 @@ export class WorkspaceResolverFactory {
     for (const objectMetadata of Object.values(objectMetadataMaps.byId).filter(
       isDefined,
     )) {
-      const workspaceEntity = standardObjectMetadataDefinitions.find(
-        (entity) => {
-          const entityMetadata = metadataArgsStorage.filterEntities(entity);
-
-          return entityMetadata?.standardId === objectMetadata.standardId;
-        },
-      );
-
-      if (workspaceEntity) {
-        const entityMetadata =
-          metadataArgsStorage.filterEntities(workspaceEntity);
-
-        if (
-          isGatedAndNotEnabled(
-            entityMetadata?.gate,
-            workspaceFeatureFlagsMap,
-            'graphql',
-          )
-        ) {
-          continue;
-        }
+      if (
+        shouldExcludeFromWorkspaceApi(
+          objectMetadata,
+          standardObjectMetadataDefinitions,
+          workspaceFeatureFlagsMap,
+        )
+      ) {
+        continue;
       }
 
       // Generate query resolvers
@@ -168,12 +157,19 @@ export class WorkspaceResolverFactory {
           throw new Error(`Unknown mutation resolver type: ${methodName}`);
         }
 
-        // @ts-expect-error legacy noImplicitAny
-        resolvers.Mutation[resolverName] = resolverFactory.create({
-          authContext,
-          objectMetadataMaps,
-          objectMetadataItemWithFieldMaps: objectMetadata,
-        });
+        if (
+          this.workspaceResolverBuilderService.shouldBuildResolver(
+            objectMetadata,
+            methodName,
+          )
+        ) {
+          // @ts-expect-error legacy noImplicitAny
+          resolvers.Mutation[resolverName] = resolverFactory.create({
+            authContext,
+            objectMetadataMaps,
+            objectMetadataItemWithFieldMaps: objectMetadata,
+          });
+        }
       }
     }
 

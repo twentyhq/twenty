@@ -3,13 +3,14 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
 import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePersistViewFilterGroupRecords';
 import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilterRecords';
@@ -39,6 +40,10 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const { createOneRecord } = useCreateOneRecord<View>({
     objectNameSingular: CoreObjectNameSingular.View,
   });
+
+  const anyFieldFilterValue = useRecoilComponentValueV2(
+    anyFieldFilterValueComponentState,
+  );
 
   const { createViewFieldRecords } = usePersistViewFieldRecords();
 
@@ -126,6 +131,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           type: type ?? sourceView.type,
           objectMetadataId: sourceView.objectMetadataId,
           openRecordIn: sourceView.openRecordIn,
+          anyFieldFilterValue: anyFieldFilterValue,
         });
 
         if (isUndefinedOrNull(newView)) {
@@ -209,6 +215,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         set(isPersistingViewFieldsState, false);
       },
     [
+      anyFieldFilterValue,
       currentViewIdCallbackState,
       createOneRecord,
       createViewFieldRecords,

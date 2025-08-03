@@ -53,7 +53,10 @@ export type Agent = {
   __typename?: 'Agent';
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
+  isCustom: Scalars['Boolean'];
+  label: Scalars['String'];
   modelId: Scalars['String'];
   name: Scalars['String'];
   prompt: Scalars['String'];
@@ -79,6 +82,13 @@ export type AgentChatThread = {
   id: Scalars['UUID'];
   title?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
+};
+
+export type AgentHandoffDto = {
+  __typename?: 'AgentHandoffDTO';
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  toAgent: Agent;
 };
 
 export type AgentIdInput = {
@@ -109,6 +119,7 @@ export type ApiKey = {
   id: Scalars['UUID'];
   name: Scalars['String'];
   revokedAt?: Maybe<Scalars['DateTime']>;
+  role?: Maybe<Role>;
   updatedAt: Scalars['DateTime'];
   workspace: Workspace;
   workspaceId: Scalars['String'];
@@ -161,7 +172,7 @@ export type AuthToken = {
 
 export type AuthTokenPair = {
   __typename?: 'AuthTokenPair';
-  accessToken: AuthToken;
+  accessOrWorkspaceAgnosticToken: AuthToken;
   refreshToken: AuthToken;
 };
 
@@ -173,6 +184,12 @@ export type AuthTokens = {
 export type AuthorizeApp = {
   __typename?: 'AuthorizeApp';
   redirectUrl: Scalars['String'];
+};
+
+export type AutocompleteResultDto = {
+  __typename?: 'AutocompleteResultDto';
+  placeId: Scalars['String'];
+  text: Scalars['String'];
 };
 
 export type AvailableWorkspace = {
@@ -420,7 +437,8 @@ export enum ConfigVariablesGroup {
   ServerlessConfig = 'ServerlessConfig',
   StorageConfig = 'StorageConfig',
   SupportChatConfig = 'SupportChatConfig',
-  TokensDuration = 'TokensDuration'
+  TokensDuration = 'TokensDuration',
+  TwoFactorAuthentication = 'TwoFactorAuthentication'
 }
 
 export type ConfigVariablesGroupData = {
@@ -466,10 +484,28 @@ export type CreateAgentChatThreadInput = {
   agentId: Scalars['UUID'];
 };
 
+export type CreateAgentHandoffInput = {
+  description?: InputMaybe<Scalars['String']>;
+  fromAgentId: Scalars['UUID'];
+  toAgentId: Scalars['UUID'];
+};
+
+export type CreateAgentInput = {
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  label: Scalars['String'];
+  modelId: Scalars['String'];
+  name?: InputMaybe<Scalars['String']>;
+  prompt: Scalars['String'];
+  responseFormat?: InputMaybe<Scalars['JSON']>;
+  roleId?: InputMaybe<Scalars['UUID']>;
+};
+
 export type CreateApiKeyDto = {
   expiresAt: Scalars['String'];
   name: Scalars['String'];
   revokedAt?: InputMaybe<Scalars['String']>;
+  roleId: Scalars['String'];
 };
 
 export type CreateApprovedAccessDomainInput = {
@@ -511,6 +547,7 @@ export type CreateOneFieldMetadataInput = {
 };
 
 export type CreateRoleInput = {
+  canAccessAllTools?: InputMaybe<Scalars['Boolean']>;
   canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
@@ -616,6 +653,12 @@ export type DeleteSsoOutput = {
   identityProviderId: Scalars['String'];
 };
 
+export type DeleteTwoFactorAuthenticationMethodOutput = {
+  __typename?: 'DeleteTwoFactorAuthenticationMethodOutput';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean'];
+};
+
 export type DeleteWebhookDto = {
   id: Scalars['String'];
 };
@@ -696,7 +739,8 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
-  IS_ANY_FIELD_SEARCH_ENABLED = 'IS_ANY_FIELD_SEARCH_ENABLED',
+  IS_API_KEY_ROLES_ENABLED = 'IS_API_KEY_ROLES_ENABLED',
+  IS_CORE_VIEW_SYNCING_ENABLED = 'IS_CORE_VIEW_SYNCING_ENABLED',
   IS_FIELDS_PERMISSIONS_ENABLED = 'IS_FIELDS_PERMISSIONS_ENABLED',
   IS_IMAP_SMTP_CALDAV_ENABLED = 'IS_IMAP_SMTP_CALDAV_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
@@ -704,9 +748,11 @@ export enum FeatureFlagKey {
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IS_RELATION_CONNECT_ENABLED = 'IS_RELATION_CONNECT_ENABLED',
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
+  IS_TWO_FACTOR_AUTHENTICATION_ENABLED = 'IS_TWO_FACTOR_AUTHENTICATION_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
   IS_WORKFLOW_FILTERING_ENABLED = 'IS_WORKFLOW_FILTERING_ENABLED',
-  IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED = 'IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED'
+  IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED = 'IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED',
+  IS_WORKSPACE_MIGRATION_V2_ENABLED = 'IS_WORKSPACE_MIGRATION_V2_ENABLED'
 }
 
 export type Field = {
@@ -1006,6 +1052,11 @@ export enum IndexType {
   GIN = 'GIN'
 }
 
+export type InitiateTwoFactorAuthenticationProvisioningOutput = {
+  __typename?: 'InitiateTwoFactorAuthenticationProvisioningOutput';
+  uri: Scalars['String'];
+};
+
 export type InvalidatePassword = {
   __typename?: 'InvalidatePassword';
   /** Boolean that confirms query was dispatched */
@@ -1023,6 +1074,12 @@ export type LinksMetadata = {
   primaryLinkLabel: Scalars['String'];
   primaryLinkUrl: Scalars['String'];
   secondaryLinks?: Maybe<Array<LinkMetadata>>;
+};
+
+export type LocationDto = {
+  __typename?: 'LocationDto';
+  lat?: Maybe<Scalars['Float']>;
+  lng?: Maybe<Scalars['Float']>;
 };
 
 export type LoginToken = {
@@ -1048,11 +1105,13 @@ export type Mutation = {
   activateWorkflowVersion: Scalars['Boolean'];
   activateWorkspace: Workspace;
   assignRoleToAgent: Scalars['Boolean'];
+  assignRoleToApiKey: Scalars['Boolean'];
   authorizeApp: AuthorizeApp;
   checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
   createAgentChatThread: AgentChatThread;
+  createAgentHandoff: Scalars['Boolean'];
   createApiKey: ApiKey;
   createApprovedAccessDomain: ApprovedAccessDomain;
   createDatabaseConfigVariable: Scalars['Boolean'];
@@ -1060,6 +1119,7 @@ export type Mutation = {
   createFile: File;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
+  createOneAgent: Agent;
   createOneAppToken: AppToken;
   createOneField: Field;
   createOneObject: Object;
@@ -1073,11 +1133,13 @@ export type Mutation = {
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
   deleteFile: File;
+  deleteOneAgent: Agent;
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRole: Scalars['String'];
   deleteOneServerlessFunction: ServerlessFunction;
   deleteSSOIdentityProvider: DeleteSsoOutput;
+  deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
   deleteWebhook: Scalars['Boolean'];
   deleteWorkflowVersionStep: WorkflowAction;
@@ -1091,11 +1153,16 @@ export type Mutation = {
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientToken;
   getAuthTokensFromLoginToken: AuthTokens;
+  getAuthTokensFromOTP: AuthTokens;
   getAuthorizationUrlForSSO: GetAuthorizationUrlForSsoOutput;
   getLoginTokenFromCredentials: LoginToken;
   getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
+  getWorkspaceAgnosticTokenFromEmailVerificationToken: AvailableWorkspacesAndAccessTokensOutput;
   impersonate: ImpersonateOutput;
+  initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
+  initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
   publishServerlessFunction: ServerlessFunction;
+  removeAgentHandoff: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
@@ -1135,9 +1202,10 @@ export type Mutation = {
   uploadWorkspaceLogo: SignedFileDto;
   upsertFieldPermissions: Array<FieldPermission>;
   upsertObjectPermissions: Array<ObjectPermission>;
-  upsertSettingPermissions: Array<SettingPermission>;
+  upsertPermissionFlags: Array<PermissionFlag>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
+  verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
 };
 
 
@@ -1154,6 +1222,12 @@ export type MutationActivateWorkspaceArgs = {
 export type MutationAssignRoleToAgentArgs = {
   agentId: Scalars['UUID'];
   roleId: Scalars['UUID'];
+};
+
+
+export type MutationAssignRoleToApiKeyArgs = {
+  apiKeyId: Scalars['String'];
+  roleId: Scalars['String'];
 };
 
 
@@ -1179,6 +1253,11 @@ export type MutationComputeStepOutputSchemaArgs = {
 
 export type MutationCreateAgentChatThreadArgs = {
   input: CreateAgentChatThreadInput;
+};
+
+
+export type MutationCreateAgentHandoffArgs = {
+  input: CreateAgentHandoffInput;
 };
 
 
@@ -1218,6 +1297,11 @@ export type MutationCreateObjectEventArgs = {
   objectMetadataId: Scalars['String'];
   properties?: InputMaybe<Scalars['JSON']>;
   recordId: Scalars['String'];
+};
+
+
+export type MutationCreateOneAgentArgs = {
+  input: CreateAgentInput;
 };
 
 
@@ -1271,6 +1355,11 @@ export type MutationDeleteFileArgs = {
 };
 
 
+export type MutationDeleteOneAgentArgs = {
+  input: AgentIdInput;
+};
+
+
 export type MutationDeleteOneFieldArgs = {
   input: DeleteOneFieldInput;
 };
@@ -1293,6 +1382,11 @@ export type MutationDeleteOneServerlessFunctionArgs = {
 
 export type MutationDeleteSsoIdentityProviderArgs = {
   input: DeleteSsoInput;
+};
+
+
+export type MutationDeleteTwoFactorAuthenticationMethodArgs = {
+  twoFactorAuthenticationMethodId: Scalars['UUID'];
 };
 
 
@@ -1339,6 +1433,14 @@ export type MutationGetAuthTokensFromLoginTokenArgs = {
 };
 
 
+export type MutationGetAuthTokensFromOtpArgs = {
+  captchaToken?: InputMaybe<Scalars['String']>;
+  loginToken: Scalars['String'];
+  origin: Scalars['String'];
+  otp: Scalars['String'];
+};
+
+
 export type MutationGetAuthorizationUrlForSsoArgs = {
   input: GetAuthorizationUrlForSsoInput;
 };
@@ -1347,8 +1449,10 @@ export type MutationGetAuthorizationUrlForSsoArgs = {
 export type MutationGetLoginTokenFromCredentialsArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  locale?: InputMaybe<Scalars['String']>;
   origin: Scalars['String'];
   password: Scalars['String'];
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1360,14 +1464,32 @@ export type MutationGetLoginTokenFromEmailVerificationTokenArgs = {
 };
 
 
+export type MutationGetWorkspaceAgnosticTokenFromEmailVerificationTokenArgs = {
+  captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  emailVerificationToken: Scalars['String'];
+};
+
+
 export type MutationImpersonateArgs = {
   userId: Scalars['String'];
   workspaceId: Scalars['String'];
 };
 
 
+export type MutationInitiateOtpProvisioningArgs = {
+  loginToken: Scalars['String'];
+  origin: Scalars['String'];
+};
+
+
 export type MutationPublishServerlessFunctionArgs = {
   input: PublishServerlessFunctionInput;
+};
+
+
+export type MutationRemoveAgentHandoffArgs = {
+  input: RemoveAgentHandoffInput;
 };
 
 
@@ -1418,14 +1540,18 @@ export type MutationSendInvitationsArgs = {
 export type MutationSignInArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  locale?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationSignUpArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  locale?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1434,7 +1560,7 @@ export type MutationSignUpInWorkspaceArgs = {
   email: Scalars['String'];
   locale?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
-  verifyEmailNextPath?: InputMaybe<Scalars['String']>;
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
   workspaceId?: InputMaybe<Scalars['String']>;
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
   workspacePersonalInviteToken?: InputMaybe<Scalars['String']>;
@@ -1566,8 +1692,8 @@ export type MutationUpsertObjectPermissionsArgs = {
 };
 
 
-export type MutationUpsertSettingPermissionsArgs = {
-  upsertSettingPermissionsInput: UpsertSettingPermissionsInput;
+export type MutationUpsertPermissionFlagsArgs = {
+  upsertPermissionFlagsInput: UpsertPermissionFlagsInput;
 };
 
 
@@ -1578,6 +1704,11 @@ export type MutationUserLookupAdminPanelArgs = {
 
 export type MutationValidateApprovedAccessDomainArgs = {
   input: ValidateApprovedAccessDomainInput;
+};
+
+
+export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs = {
+  otp: Scalars['String'];
 };
 
 export type Object = {
@@ -1671,6 +1802,7 @@ export type ObjectPermission = {
   canSoftDeleteObjectRecords?: Maybe<Scalars['Boolean']>;
   canUpdateObjectRecords?: Maybe<Scalars['Boolean']>;
   objectMetadataId: Scalars['String'];
+  restrictedFields?: Maybe<Scalars['JSON']>;
 };
 
 export type ObjectPermissionInput = {
@@ -1744,12 +1876,42 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['ConnectionCursor']>;
 };
 
+export type PermissionFlag = {
+  __typename?: 'PermissionFlag';
+  flag: PermissionFlagType;
+  id: Scalars['String'];
+  roleId: Scalars['String'];
+};
+
+export enum PermissionFlagType {
+  ADMIN_PANEL = 'ADMIN_PANEL',
+  API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
+  DATA_MODEL = 'DATA_MODEL',
+  EXPORT_CSV = 'EXPORT_CSV',
+  IMPORT_CSV = 'IMPORT_CSV',
+  ROLES = 'ROLES',
+  SECURITY = 'SECURITY',
+  SEND_EMAIL_TOOL = 'SEND_EMAIL_TOOL',
+  WORKFLOWS = 'WORKFLOWS',
+  WORKSPACE = 'WORKSPACE',
+  WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
+}
+
 export enum PermissionsOnAllObjectRecords {
   DESTROY_ALL_OBJECT_RECORDS = 'DESTROY_ALL_OBJECT_RECORDS',
   READ_ALL_OBJECT_RECORDS = 'READ_ALL_OBJECT_RECORDS',
   SOFT_DELETE_ALL_OBJECT_RECORDS = 'SOFT_DELETE_ALL_OBJECT_RECORDS',
   UPDATE_ALL_OBJECT_RECORDS = 'UPDATE_ALL_OBJECT_RECORDS'
 }
+
+export type PlaceDetailsResultDto = {
+  __typename?: 'PlaceDetailsResultDto';
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
+  location?: Maybe<LocationDto>;
+  postcode?: Maybe<Scalars['String']>;
+  state?: Maybe<Scalars['String']>;
+};
 
 export type PostgresCredentials = {
   __typename?: 'PostgresCredentials';
@@ -1800,12 +1962,17 @@ export type Query = {
   currentWorkspace: Workspace;
   field: Field;
   fields: FieldConnection;
+  findAgentHandoffTargets: Array<Agent>;
+  findAgentHandoffs: Array<AgentHandoffDto>;
+  findManyAgents: Array<Agent>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
+  getAddressDetails: PlaceDetailsResultDto;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
+  getAutoCompleteAddress: Array<AutocompleteResultDto>;
   getAvailablePackages: Scalars['JSON'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
@@ -1872,6 +2039,16 @@ export type QueryCheckWorkspaceInviteHashIsValidArgs = {
 };
 
 
+export type QueryFindAgentHandoffTargetsArgs = {
+  input: AgentIdInput;
+};
+
+
+export type QueryFindAgentHandoffsArgs = {
+  input: AgentIdInput;
+};
+
+
 export type QueryFindOneAgentArgs = {
   input: AgentIdInput;
 };
@@ -1884,6 +2061,20 @@ export type QueryFindOneServerlessFunctionArgs = {
 
 export type QueryFindWorkspaceFromInviteHashArgs = {
   inviteHash: Scalars['String'];
+};
+
+
+export type QueryGetAddressDetailsArgs = {
+  placeId: Scalars['String'];
+  token: Scalars['String'];
+};
+
+
+export type QueryGetAutoCompleteAddressArgs = {
+  address: Scalars['String'];
+  country?: InputMaybe<Scalars['String']>;
+  isFieldCity?: InputMaybe<Scalars['Boolean']>;
+  token: Scalars['String'];
 };
 
 
@@ -2042,6 +2233,11 @@ export enum RemoteTableStatus {
   SYNCED = 'SYNCED'
 }
 
+export type RemoveAgentHandoffInput = {
+  fromAgentId: Scalars['String'];
+  toAgentId: Scalars['String'];
+};
+
 export type ResendEmailVerificationTokenOutput = {
   __typename?: 'ResendEmailVerificationTokenOutput';
   success: Scalars['Boolean'];
@@ -2053,6 +2249,7 @@ export type RevokeApiKeyDto = {
 
 export type Role = {
   __typename?: 'Role';
+  canAccessAllTools: Scalars['Boolean'];
   canDestroyAllObjectRecords: Scalars['Boolean'];
   canReadAllObjectRecords: Scalars['Boolean'];
   canSoftDeleteAllObjectRecords: Scalars['Boolean'];
@@ -2064,7 +2261,7 @@ export type Role = {
   isEditable: Scalars['Boolean'];
   label: Scalars['String'];
   objectPermissions?: Maybe<Array<ObjectPermission>>;
-  settingPermissions?: Maybe<Array<SettingPermission>>;
+  permissionFlags?: Maybe<Array<PermissionFlag>>;
   workspaceMembers: Array<WorkspaceMember>;
 };
 
@@ -2183,24 +2380,6 @@ export type ServerlessFunctionIdInput = {
   /** The id of the function. */
   id: Scalars['ID'];
 };
-
-export type SettingPermission = {
-  __typename?: 'SettingPermission';
-  id: Scalars['String'];
-  roleId: Scalars['String'];
-  setting: SettingPermissionType;
-};
-
-export enum SettingPermissionType {
-  ADMIN_PANEL = 'ADMIN_PANEL',
-  API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
-  DATA_MODEL = 'DATA_MODEL',
-  ROLES = 'ROLES',
-  SECURITY = 'SECURITY',
-  WORKFLOWS = 'WORKFLOWS',
-  WORKSPACE = 'WORKSPACE',
-  WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
-}
 
 export type SetupOidcSsoInput = {
   clientID: Scalars['String'];
@@ -2376,6 +2555,13 @@ export type TransientToken = {
   transientToken: AuthToken;
 };
 
+export type TwoFactorAuthenticationMethodDto = {
+  __typename?: 'TwoFactorAuthenticationMethodDTO';
+  status: Scalars['String'];
+  strategy: Scalars['String'];
+  twoFactorAuthenticationMethodId: Scalars['UUID'];
+};
+
 export type UuidFilter = {
   eq?: InputMaybe<Scalars['UUID']>;
   gt?: InputMaybe<Scalars['UUID']>;
@@ -2406,11 +2592,14 @@ export type UuidFilterComparison = {
 
 export type UpdateAgentInput = {
   description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
+  label: Scalars['String'];
   modelId: Scalars['String'];
   name: Scalars['String'];
   prompt: Scalars['String'];
   responseFormat?: InputMaybe<Scalars['JSON']>;
+  roleId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateApiKeyDto = {
@@ -2474,6 +2663,7 @@ export type UpdateRoleInput = {
 };
 
 export type UpdateRolePayload = {
+  canAccessAllTools?: InputMaybe<Scalars['Boolean']>;
   canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
@@ -2525,6 +2715,7 @@ export type UpdateWorkspaceInput = {
   isMicrosoftAuthEnabled?: InputMaybe<Scalars['Boolean']>;
   isPasswordAuthEnabled?: InputMaybe<Scalars['Boolean']>;
   isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']>;
+  isTwoFactorAuthenticationEnforced?: InputMaybe<Scalars['Boolean']>;
   logo?: InputMaybe<Scalars['String']>;
   subdomain?: InputMaybe<Scalars['String']>;
 };
@@ -2539,9 +2730,9 @@ export type UpsertObjectPermissionsInput = {
   roleId: Scalars['String'];
 };
 
-export type UpsertSettingPermissionsInput = {
+export type UpsertPermissionFlagsInput = {
+  permissionFlagKeys: Array<PermissionFlagType>;
   roleId: Scalars['String'];
-  settingPermissionKeys: Array<SettingPermissionType>;
 };
 
 export type User = {
@@ -2609,7 +2800,8 @@ export type UserWorkspace = {
   objectPermissions?: Maybe<Array<ObjectPermission>>;
   /** @deprecated Use objectPermissions instead */
   objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
-  settingsPermissions?: Maybe<Array<SettingPermissionType>>;
+  permissionFlags?: Maybe<Array<PermissionFlagType>>;
+  twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticationMethodDto>>;
   updatedAt: Scalars['DateTime'];
   user: User;
   userId: Scalars['String'];
@@ -2626,6 +2818,11 @@ export type ValidatePasswordResetToken = {
   __typename?: 'ValidatePasswordResetToken';
   email: Scalars['String'];
   id: Scalars['String'];
+};
+
+export type VerifyTwoFactorAuthenticationMethodOutput = {
+  __typename?: 'VerifyTwoFactorAuthenticationMethodOutput';
+  success: Scalars['Boolean'];
 };
 
 export type VersionInfo = {
@@ -2703,6 +2900,7 @@ export type Workspace = {
   isMicrosoftAuthEnabled: Scalars['Boolean'];
   isPasswordAuthEnabled: Scalars['Boolean'];
   isPublicInviteLinkEnabled: Scalars['Boolean'];
+  isTwoFactorAuthenticationEnforced: Scalars['Boolean'];
   logo?: Maybe<Scalars['String']>;
   metadataVersion: Scalars['Float'];
   subdomain: Scalars['String'];
@@ -2754,6 +2952,7 @@ export type WorkspaceInviteHashValid = {
 export type WorkspaceMember = {
   __typename?: 'WorkspaceMember';
   avatarUrl?: Maybe<Scalars['String']>;
+  calendarStartDay?: Maybe<Scalars['Int']>;
   colorScheme: Scalars['String'];
   dateFormat?: Maybe<WorkspaceMemberDateFormatEnum>;
   id: Scalars['UUID'];

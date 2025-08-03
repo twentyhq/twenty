@@ -973,6 +973,15 @@ export class ConfigVariables {
   CLOUDFLARE_WEBHOOK_SECRET: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description:
+      'Id to generate value for CNAME record to validate ownership and manage ssl for custom hostname with Cloudflare',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  CLOUDFLARE_DCV_DELEGATION_ID: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
       'Default model ID for AI operations (can be any available model)',
@@ -1159,6 +1168,23 @@ export class ConfigVariables {
   @IsOptionalOrEmptyString()
   @IsTwentySemVer()
   APP_VERSION?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Enable or disable google map api usage',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    isSensitive: true,
+    description: 'Google map api key for places and map',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf((env) => env.IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED)
+  GOOGLE_MAP_API_KEY: string;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {

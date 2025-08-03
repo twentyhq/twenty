@@ -145,6 +145,22 @@ export const getResolverArgs = (
           isNullable: false,
         },
       };
+    case 'mergeMany':
+      return {
+        ids: {
+          type: UUIDScalarType,
+          isNullable: false,
+          isArray: true,
+        },
+        conflictPriorityIndex: {
+          type: GraphQLInt,
+          isNullable: false,
+        },
+        dryRun: {
+          type: GraphQLBoolean,
+          isNullable: true,
+        },
+      };
     default:
       throw new Error(`Unknown resolver type: ${type}`);
   }

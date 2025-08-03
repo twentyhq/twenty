@@ -24,6 +24,7 @@ import { PostgresCredentials } from 'src/engine/core-modules/postgres-credential
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Webhook } from 'src/engine/core-modules/webhook/webhook.entity';
+import { AgentHandoffEntity } from 'src/engine/metadata-modules/agent/agent-handoff.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
@@ -130,6 +131,11 @@ export class Workspace {
   })
   agents: Relation<AgentEntity[]>;
 
+  @OneToMany(() => AgentHandoffEntity, (handoff) => handoff.workspace, {
+    onDelete: 'CASCADE',
+  })
+  agentHandoffs: Relation<AgentHandoffEntity[]>;
+
   @OneToMany(() => Webhook, (webhook) => webhook.workspace)
   webhooks: Relation<Webhook[]>;
 
@@ -159,6 +165,10 @@ export class Workspace {
   @Field()
   @Column({ default: true })
   isGoogleAuthEnabled: boolean;
+
+  @Field()
+  @Column({ default: false })
+  isTwoFactorAuthenticationEnforced: boolean;
 
   @Field()
   @Column({ default: true })

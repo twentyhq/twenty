@@ -14,7 +14,9 @@ import { coreQueryBuilderFactories } from 'src/engine/api/rest/core/query-builde
 import { RestApiCoreService } from 'src/engine/api/rest/core/services/rest-api-core.service';
 import { RestApiService } from 'src/engine/api/rest/rest-api.service';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
+import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
@@ -35,11 +37,13 @@ const restApiCoreResolvers = [
     CoreQueryBuilderModule,
     WorkspaceCacheStorageModule,
     AuthModule,
+    ApiKeyModule,
     HttpModule,
     TwentyORMModule,
     RecordTransformerModule,
     WorkspacePermissionsCacheModule,
     ActorModule,
+    FeatureFlagModule,
   ],
   controllers: [RestApiCoreController],
   providers: [

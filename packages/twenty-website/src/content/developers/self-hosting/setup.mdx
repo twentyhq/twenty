@@ -44,10 +44,10 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 ![Admin Panel Configuration Variables](/images/user-guide/setup/admin-panel-config-variables.png)
 
 <ArticleWarning>
-**Some configuration requires setting in .env:** Infrastructure like database connections (`PG_DATABASE_URL`), server URLs (`SERVER_URL`), and app secrets (`APP_SECRET`) can only be configured via `.env` file.
-Those configurations are marked as `isEnvOnly: true` in the source code.
+Each variable is documented with descriptions in your admin panel at **Settings → Admin Panel → Configuration Variables**. 
+Some infrastructure settings like database connections (`PG_DATABASE_URL`), server URLs (`SERVER_URL`), and app secrets (`APP_SECRET`) can only be configured via `.env` file.
 
-[See complete list of environment-only variables →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+[Complete technical reference →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </ArticleWarning>
 
 ## 2. Environment-Only Configuration

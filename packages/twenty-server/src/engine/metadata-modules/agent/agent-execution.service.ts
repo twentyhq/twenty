@@ -3,8 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Readable } from 'stream';
 
-import { createAnthropic } from '@ai-sdk/anthropic';
-import { createOpenAI } from '@ai-sdk/openai';
 import {
   CoreMessage,
   CoreUserMessage,
@@ -13,19 +11,18 @@ import {
   generateText,
   ImagePart,
   streamText,
-  TextPart,
+  UserContent,
 } from 'ai';
 import { In, Repository } from 'typeorm';
 
-import {
-  ModelId,
-  ModelProvider,
-} from 'src/engine/core-modules/ai/constants/ai-models.const';
+import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { extractFolderPathAndFilename } from 'src/engine/core-modules/file/utils/extract-folderpath-and-filename.utils';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   AgentChatMessageEntity,
   AgentChatMessageRole,
@@ -33,19 +30,18 @@ import {
 import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
+import { RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
 import { convertOutputSchemaToZod } from 'src/engine/metadata-modules/agent/utils/convert-output-schema-to-zod';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
-import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
 export interface AgentExecutionResult {
-  result: {
-    textResponse: string;
-    structuredOutput?: object;
-  };
+  result: object;
   usage: {
     promptTokens: number;
     completionTokens: number;
@@ -61,44 +57,15 @@ export class AgentExecutionService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly agentToolService: AgentToolService,
     private readonly fileService: FileService,
+    private readonly domainManagerService: DomainManagerService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
     @InjectRepository(FileEntity, 'core')
     private readonly fileRepository: Repository<FileEntity>,
   ) {}
-
-  getModel = (modelId: ModelId, provider: ModelProvider) => {
-    switch (provider) {
-      case ModelProvider.OPENAI_COMPATIBLE: {
-        const OpenAIProvider = createOpenAI({
-          baseURL: this.twentyConfigService.get('OPENAI_COMPATIBLE_BASE_URL'),
-          apiKey: this.twentyConfigService.get('OPENAI_COMPATIBLE_API_KEY'),
-        });
-
-        return OpenAIProvider(modelId);
-      }
-      case ModelProvider.OPENAI: {
-        const OpenAIProvider = createOpenAI({
-          apiKey: this.twentyConfigService.get('OPENAI_API_KEY'),
-        });
-
-        return OpenAIProvider(modelId);
-      }
-      case ModelProvider.ANTHROPIC: {
-        const AnthropicProvider = createAnthropic({
-          apiKey: this.twentyConfigService.get('ANTHROPIC_API_KEY'),
-        });
-
-        return AnthropicProvider(modelId);
-      }
-      default:
-        throw new AgentException(
-          `Unsupported provider: ${provider}`,
-          AgentExceptionCode.AGENT_EXECUTION_FAILED,
-        );
-    }
-  };
 
   private async validateApiKey(provider: ModelProvider): Promise<void> {
     let apiKey: string | undefined;
@@ -128,20 +95,22 @@ export class AgentExecutionService {
     agent,
   }: {
     system: string;
-    agent: AgentEntity;
+    agent: AgentEntity | null;
     prompt?: string;
     messages?: CoreMessage[];
   }) {
     try {
-      this.logger.log(
-        `Preparing AI request config for agent ${agent.id} with model ${agent.modelId}`,
-      );
+      if (agent) {
+        this.logger.log(
+          `Preparing AI request config for agent ${agent.id} with model ${agent.modelId}`,
+        );
+      }
 
       const aiModel = this.aiModelRegistryService.getEffectiveModelConfig(
-        agent.modelId,
+        agent?.modelId ?? 'auto',
       );
 
-      if (!aiModel) {
+      if (agent && !aiModel) {
         const error = `AI model with id ${agent.modelId} not found`;
 
         this.logger.error(error);
@@ -159,24 +128,37 @@ export class AgentExecutionService {
 
       await this.validateApiKey(provider);
 
-      const tools = await this.agentToolService.generateToolsForAgent(
-        agent.id,
-        agent.workspaceId,
-      );
+      const tools = agent
+        ? await this.agentToolService.generateToolsForAgent(
+            agent.id,
+            agent.workspaceId,
+          )
+        : {};
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
+
+      const registeredModel = this.aiModelRegistryService.getModel(
+        aiModel.modelId,
+      );
+
+      if (!registeredModel) {
+        throw new AgentException(
+          `Model ${aiModel.modelId} not found in registry`,
+          AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        );
+      }
 
       return {
         system,
         tools,
-        model: this.getModel(aiModel.modelId, aiModel.provider),
+        model: registeredModel.model,
         ...(messages && { messages }),
         ...(prompt && { prompt }),
         maxSteps: AGENT_CONFIG.MAX_STEPS,
       };
     } catch (error) {
       this.logger.error(
-        `Failed to prepare AI request config for agent ${agent.id}:`,
+        `Failed to prepare AI request config for agent ${agent?.id ?? 'no agent'}`,
         error instanceof Error ? error.stack : error,
       );
       throw error;
@@ -184,32 +166,96 @@ export class AgentExecutionService {
   }
 
   private async buildUserMessageWithFiles(
-    userMessage: string,
-    fileIds?: string[],
-  ): Promise<CoreUserMessage> {
-    if (!fileIds || fileIds.length === 0) {
-      return { role: AgentChatMessageRole.USER, content: userMessage };
-    }
-
+    fileIds: string[],
+  ): Promise<(ImagePart | FilePart)[]> {
     const files = await this.fileRepository.find({
       where: {
         id: In(fileIds),
       },
     });
 
-    const textPart: TextPart = {
-      type: 'text',
-      text: userMessage,
-    };
+    return await Promise.all(files.map((file) => this.createFilePart(file)));
+  }
 
-    const fileParts = await Promise.all(
-      files.map((file) => this.createFilePart(file)),
-    );
+  private async buildUserMessage(
+    userMessage: string,
+    fileIds: string[],
+  ): Promise<CoreUserMessage> {
+    const content: Exclude<UserContent, string> = [
+      {
+        type: 'text',
+        text: userMessage,
+      },
+    ];
+
+    if (fileIds.length !== 0) {
+      content.push(...(await this.buildUserMessageWithFiles(fileIds)));
+    }
 
     return {
       role: AgentChatMessageRole.USER,
-      content: [textPart, ...fileParts],
+      content,
     };
+  }
+
+  private async getContextForSystemPrompt(
+    workspace: Workspace,
+    recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType,
+    userWorkspaceId: string,
+  ) {
+    const roleId =
+      await this.workspacePermissionsCacheService.getRoleIdFromUserWorkspaceId({
+        workspaceId: workspace.id,
+        userWorkspaceId,
+      });
+
+    if (!roleId) {
+      throw new AgentException(
+        'Failed to retrieve user role.',
+        AgentExceptionCode.ROLE_NOT_FOUND,
+      );
+    }
+
+    const workspaceDataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId: workspace.id,
+      });
+
+    const contextObject = (
+      await Promise.all(
+        recordIdsByObjectMetadataNameSingular.map(
+          async (recordsWithObjectMetadataNameSingular) => {
+            if (recordsWithObjectMetadataNameSingular.recordIds.length === 0) {
+              return [];
+            }
+
+            const repository = workspaceDataSource.getRepository(
+              recordsWithObjectMetadataNameSingular.objectMetadataNameSingular,
+              false,
+              roleId,
+            );
+
+            return (
+              await repository.find({
+                where: {
+                  id: In(recordsWithObjectMetadataNameSingular.recordIds),
+                },
+              })
+            ).map((record) => {
+              return {
+                ...record,
+                resourceUrl: this.domainManagerService.buildWorkspaceURL({
+                  workspace,
+                  pathname: `object/${recordsWithObjectMetadataNameSingular.objectMetadataNameSingular}/${record.id}`,
+                }),
+              };
+            });
+          },
+        ),
+      )
+    ).flat(2);
+
+    return JSON.stringify(contextObject);
   }
 
   private async createFilePart(
@@ -241,15 +287,21 @@ export class AgentExecutionService {
   }
 
   async streamChatResponse({
+    workspace,
+    userWorkspaceId,
     agentId,
     userMessage,
     messages,
     fileIds,
+    recordIdsByObjectMetadataNameSingular,
   }: {
+    workspace: Workspace;
+    userWorkspaceId: string;
     agentId: string;
     userMessage: string;
     messages: AgentChatMessageEntity[];
-    fileIds?: string[];
+    fileIds: string[];
+    recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType;
   }) {
     const agent = await this.agentRepository.findOneOrFail({
       where: { id: agentId },
@@ -260,7 +312,19 @@ export class AgentExecutionService {
       content,
     }));
 
-    const userMessageWithFiles = await this.buildUserMessageWithFiles(
+    let contextString = '';
+
+    if (recordIdsByObjectMetadataNameSingular.length > 0) {
+      const contextPart = await this.getContextForSystemPrompt(
+        workspace,
+        recordIdsByObjectMetadataNameSingular,
+        userWorkspaceId,
+      );
+
+      contextString = `\n\nCONTEXT:\n${contextPart}`;
+    }
+
+    const userMessageWithFiles = await this.buildUserMessage(
       userMessage,
       fileIds,
     );
@@ -268,7 +332,7 @@ export class AgentExecutionService {
     llmMessages.push(userMessageWithFiles);
 
     const aiRequestConfig = await this.prepareAIRequestConfig({
-      system: `${AGENT_SYSTEM_PROMPTS.AGENT_CHAT}\n\n${agent.prompt}`,
+      system: `${AGENT_SYSTEM_PROMPTS.AGENT_CHAT}\n\n${agent.prompt}${contextString}`,
       agent,
       messages: llmMessages,
     });
@@ -282,24 +346,25 @@ export class AgentExecutionService {
 
   async executeAgent({
     agent,
-    context,
     schema,
+    userPrompt,
   }: {
-    agent: AgentEntity;
+    agent: AgentEntity | null;
     context: Record<string, unknown>;
     schema: OutputSchema;
+    userPrompt: string;
   }): Promise<AgentExecutionResult> {
     try {
       const aiRequestConfig = await this.prepareAIRequestConfig({
-        system: AGENT_SYSTEM_PROMPTS.AGENT_EXECUTION,
+        system: `You are executing as part of a workflow automation. ${agent ? agent.prompt : ''}`,
         agent,
-        prompt: resolveInput(agent.prompt, context) as string,
+        prompt: userPrompt,
       });
       const textResponse = await generateText(aiRequestConfig);
 
       if (Object.keys(schema).length === 0) {
         return {
-          result: { textResponse: textResponse.text },
+          result: { response: textResponse.text },
           usage: textResponse.usage,
         };
       }
@@ -315,10 +380,7 @@ export class AgentExecutionService {
       });
 
       return {
-        result: {
-          textResponse: textResponse.text,
-          structuredOutput: output.object,
-        },
+        result: output.object,
         usage: {
           promptTokens:
             (textResponse.usage?.promptTokens ?? 0) +

@@ -12,7 +12,10 @@ jest.mock('@/auth/services/AuthService', () => {
     ...initialAuthService,
     renewToken: jest.fn().mockReturnValue(
       Promise.resolve({
-        accessToken: { token: 'newAccessToken', expiresAt: '' },
+        accessOrWorkspaceAgnosticToken: {
+          token: 'newAccessToken',
+          expiresAt: '',
+        },
         refreshToken: { token: 'newRefreshToken', expiresAt: '' },
       }),
     ),
@@ -53,6 +56,7 @@ const mockWorkspace = {
     subdomainUrl: 'test.com',
     customUrl: 'test.com',
   },
+  isTwoFactorAuthenticationEnforced: false,
 };
 
 const createMockOptions = (): Options<any> => ({
@@ -63,6 +67,7 @@ const createMockOptions = (): Options<any> => ({
   isDebugMode: true,
   onError: mockOnError,
   onNetworkError: mockOnNetworkError,
+  appVersion: '1.0.0',
 });
 
 const makeRequest = async () => {

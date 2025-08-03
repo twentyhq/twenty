@@ -1,6 +1,7 @@
 export enum CommandMenuPages {
   Root = 'root',
   ViewRecord = 'view-record',
+  MergeRecords = 'merge-records',
   ViewEmailThread = 'view-email-thread',
   ViewCalendarEvent = 'view-calendar-event',
   EditRichText = 'edit-rich-text',

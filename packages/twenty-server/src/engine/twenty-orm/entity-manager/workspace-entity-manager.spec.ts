@@ -5,6 +5,7 @@ import { PlainObjectToDatabaseEntityTransformer } from 'typeorm/query-builder/tr
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
 
@@ -14,6 +15,30 @@ jest.mock('src/engine/twenty-orm/repository/permissions.utils', () => ({
   validateOperationIsPermittedOrThrow: jest.fn(),
 }));
 
+jest.mock(
+  'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util',
+  () => ({
+    getObjectMetadataFromEntityTarget: jest.fn().mockReturnValue({}),
+  }),
+);
+
+jest.mock('src/engine/twenty-orm/utils/format-data.util', () => ({
+  formatData: jest.fn().mockReturnValue([]),
+}));
+
+jest.mock('src/engine/twenty-orm/utils/format-result.util', () => ({
+  formatResult: jest.fn().mockReturnValue([]),
+}));
+
+jest.mock(
+  'src/engine/twenty-orm/entity-manager/workspace-entity-manager',
+  () => ({
+    ...jest.requireActual(
+      'src/engine/twenty-orm/entity-manager/workspace-entity-manager',
+    ),
+  }),
+);
+
 const mockedWorkspaceUpdateQueryBuilder = {
   set: jest.fn().mockImplementation(() => ({
     where: jest.fn().mockReturnThis(),
@@ -21,6 +46,7 @@ const mockedWorkspaceUpdateQueryBuilder = {
     execute: jest
       .fn()
       .mockResolvedValue({ affected: 1, raw: [], generatedMaps: [] }),
+    returning: jest.fn().mockReturnThis(),
   })),
   execute: jest
     .fn()
@@ -37,6 +63,7 @@ jest.mock('../repository/workspace-select-query-builder', () => ({
       .fn()
       .mockResolvedValue({ affected: 1, raw: [], generatedMaps: [] }),
     setFindOptions: jest.fn().mockReturnThis(),
+    returning: jest.fn().mockReturnThis(),
     update: jest.fn().mockReturnValue(mockedWorkspaceUpdateQueryBuilder),
     insert: jest.fn().mockReturnThis(),
   })),
@@ -88,7 +115,7 @@ describe('WorkspaceEntityManager', () => {
             },
             fieldIdByName: { fieldName: 'field-id' },
             fieldIdByJoinColumnName: {},
-          },
+          } as unknown as ObjectMetadataItemWithFieldMaps,
         },
         idByNameSingular: {
           'test-entity': 'test-entity-id',
@@ -107,7 +134,10 @@ describe('WorkspaceEntityManager', () => {
         IS_RELATION_CONNECT_ENABLED: false,
         IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED: false,
         IS_FIELDS_PERMISSIONS_ENABLED: false,
-        IS_ANY_FIELD_SEARCH_ENABLED: false,
+        IS_CORE_VIEW_SYNCING_ENABLED: false,
+        IS_TWO_FACTOR_AUTHENTICATION_ENABLED: false,
+        IS_WORKSPACE_MIGRATION_V2_ENABLED: false,
+        IS_API_KEY_ROLES_ENABLED: false,
       },
       eventEmitterService: {
         emitMutationEvent: jest.fn(),
@@ -117,7 +147,22 @@ describe('WorkspaceEntityManager', () => {
     } as WorkspaceInternalContext;
 
     mockDataSource = {
-      featureFlagMap: {},
+      featureFlagMap: {
+        IS_AIRTABLE_INTEGRATION_ENABLED: false,
+        IS_POSTGRESQL_INTEGRATION_ENABLED: false,
+        IS_STRIPE_INTEGRATION_ENABLED: false,
+        IS_UNIQUE_INDEXES_ENABLED: false,
+        IS_JSON_FILTER_ENABLED: false,
+        IS_AI_ENABLED: false,
+        IS_IMAP_SMTP_CALDAV_ENABLED: false,
+        IS_MORPH_RELATION_ENABLED: false,
+        IS_WORKFLOW_FILTERING_ENABLED: false,
+        IS_RELATION_CONNECT_ENABLED: false,
+        IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED: false,
+        IS_FIELDS_PERMISSIONS_ENABLED: true,
+        IS_CORE_VIEW_SYNCING_ENABLED: false,
+        IS_TWO_FACTOR_AUTHENTICATION_ENABLED: false,
+      },
       permissionsPerRoleId: {},
     } as WorkspaceDataSource;
 
@@ -186,6 +231,15 @@ describe('WorkspaceEntityManager', () => {
 
     jest.spyOn(entityManager as any, 'validatePermissions');
     jest.spyOn(entityManager as any, 'createQueryBuilder');
+    jest
+      .spyOn(entityManager as any, 'getFormattedResultWithoutNonReadableFields')
+      .mockImplementation(
+        ({ formattedResult }: { formattedResult: string[] }) => formattedResult,
+      );
+
+    jest.spyOn(entityManager as any, 'getFeatureFlagMap').mockReturnValue({
+      IS_FIELDS_PERMISSIONS_ENABLED: true,
+    });
 
     jest
       .spyOn(entityManager as any, 'extractTargetNameSingularFromEntityTarget')
@@ -266,17 +320,23 @@ describe('WorkspaceEntityManager', () => {
         { reload: false },
         mockPermissionOptions,
       );
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'update',
-        mockPermissionOptions,
-      );
+      expect(entityManager['validatePermissions']).toHaveBeenCalledWith({
+        target: 'test-entity',
+        operationType: 'update',
+        permissionOptions: mockPermissionOptions,
+        selectedColumns: [],
+        updatedColumns: [],
+      });
       expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
         entityName: 'test-entity',
+        isFieldPermissionsEnabled: true,
         operationType: 'update',
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
         objectRecordsPermissions:
           mockPermissionOptions.objectRecordsPermissions,
+        selectedColumns: [],
+        allFieldsSelected: false,
+        updatedColumns: [],
       });
     });
   });
@@ -285,7 +345,7 @@ describe('WorkspaceEntityManager', () => {
     it('should call createQueryBuilder with permissionOptions for update', async () => {
       await entityManager.update('test-entity', {}, {}, mockPermissionOptions);
       expect(entityManager['createQueryBuilder']).toHaveBeenCalledWith(
-        undefined,
+        'test-entity',
         undefined,
         undefined,
         mockPermissionOptions,
@@ -296,17 +356,22 @@ describe('WorkspaceEntityManager', () => {
   describe('Other Methods', () => {
     it('should call validatePermissions and validateOperationIsPermittedOrThrow for clear', async () => {
       await entityManager.clear('test-entity', mockPermissionOptions);
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'delete',
-        mockPermissionOptions,
-      );
+      expect(entityManager['validatePermissions']).toHaveBeenCalledWith({
+        target: 'test-entity',
+        operationType: 'delete',
+        permissionOptions: mockPermissionOptions,
+        selectedColumns: [],
+      });
       expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
         entityName: 'test-entity',
         operationType: 'delete',
+        isFieldPermissionsEnabled: true,
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
         objectRecordsPermissions:
           mockPermissionOptions.objectRecordsPermissions,
+        selectedColumns: [],
+        allFieldsSelected: false,
+        updatedColumns: [],
       });
     });
   });

@@ -8,11 +8,12 @@ import {
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateStep = ({
   workflow,
 }: {
-  workflow: WorkflowWithCurrentVersion;
+  workflow: WorkflowWithCurrentVersion | undefined;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { createWorkflowVersionStep } = useCreateWorkflowVersionStep();
@@ -24,6 +25,12 @@ export const useCreateStep = ({
   );
 
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
+
+  if (!isDefined(workflow)) {
+    return {
+      createStep: async () => undefined,
+    };
+  }
 
   const createStep = async ({
     newStepType,
@@ -52,12 +59,14 @@ export const useCreateStep = ({
         })
       )?.data?.createWorkflowVersionStep;
 
-      if (!createdStep) {
-        return;
+      if (!isDefined(createdStep)) {
+        throw new Error("Couldn't create step");
       }
 
       setWorkflowSelectedNode(createdStep.id);
       setWorkflowLastCreatedStepId(createdStep.id);
+
+      return createdStep;
     } finally {
       setIsLoading(false);
     }

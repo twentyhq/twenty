@@ -4,8 +4,10 @@ import { buildRecordGqlFieldsAggregateForView } from '@/object-record/record-boa
 import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
+import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
+import { turnAnyFieldFilterIntoRecordGqlFilter } from '@/object-record/record-filter/utils/turnAnyFieldFilterIntoRecordGqlFilter';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { UserContext } from '@/users/contexts/UserContext';
@@ -54,10 +56,20 @@ export const useAggregateRecordsForHeader = ({
     recordIndexKanbanAggregateOperation,
   });
 
+  const anyFieldFilterValue = useRecoilComponentValueV2(
+    anyFieldFilterValueComponentState,
+  );
+
+  const { recordGqlOperationFilter: anyFieldFilter } =
+    turnAnyFieldFilterIntoRecordGqlFilter({
+      objectMetadataItem,
+      filterValue: anyFieldFilterValue,
+    });
+
   const { data } = useAggregateRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFieldsAggregate,
-    filter: { ...requestFilters, ...additionalFilters },
+    filter: { ...requestFilters, ...additionalFilters, ...anyFieldFilter },
   });
 
   const { value, labelWithFieldName } = computeAggregateValueAndLabel({

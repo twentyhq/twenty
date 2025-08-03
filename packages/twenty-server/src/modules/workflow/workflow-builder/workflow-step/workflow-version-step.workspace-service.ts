@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { t } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { StepStatus } from 'twenty-shared/workflow';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
-import { StepStatus } from 'twenty-shared/workflow';
 
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
@@ -21,7 +21,6 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { StepOutput } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -329,18 +328,14 @@ export class WorkflowVersionStepWorkspaceService {
       response,
     });
 
-    const newStepOutput: StepOutput = {
-      id: stepId,
-      output: {
+    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
+      stepId,
+      stepInfo: {
+        status: StepStatus.SUCCESS,
         result: enrichedResponse,
       },
-    };
-
-    await this.workflowRunWorkspaceService.saveWorkflowRunState({
       workspaceId,
       workflowRunId,
-      stepOutput: newStepOutput,
-      stepStatus: StepStatus.SUCCESS,
     });
 
     await this.workflowRunnerWorkspaceService.resume({
@@ -408,12 +403,16 @@ export class WorkflowVersionStepWorkspaceService {
         break;
       }
       case WorkflowActionType.AI_AGENT: {
+        if (!isDefined(step.settings.input.agentId)) {
+          break;
+        }
+
         const agent = await this.agentService.findOneAgent(
           step.settings.input.agentId,
           workspaceId,
         );
 
-        if (agent) {
+        if (isDefined(agent)) {
           await this.agentService.deleteOneAgent(agent.id, workspaceId);
         }
         break;
@@ -616,25 +615,6 @@ export class WorkflowVersionStepWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
-        const newAgent = await this.agentService.createOneAgentAndFirstThread(
-          {
-            label: 'AI Agent Workflow Step',
-            name: `ai-agent-workflow-${newStepId}`,
-            description: 'Created automatically for workflow step',
-            prompt: '',
-            modelId: 'auto',
-          },
-          workspaceId,
-          this.scopedWorkspaceContextFactory.create().userWorkspaceId,
-        );
-
-        if (!isDefined(newAgent)) {
-          throw new WorkflowVersionStepException(
-            'Failed to create AI Agent Step',
-            WorkflowVersionStepExceptionCode.FAILURE,
-          );
-        }
-
         return {
           id: newStepId,
           name: 'AI Agent',
@@ -643,7 +623,8 @@ export class WorkflowVersionStepWorkspaceService {
           settings: {
             ...BASE_STEP_DEFINITION,
             input: {
-              agentId: newAgent.id,
+              agentId: '',
+              prompt: '',
             },
           },
         };

@@ -1,11 +1,12 @@
-import {
-  BadRequestException,
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
+import { t } from '@lingui/core/macro';
+
+import {
+  CaptchaException,
+  CaptchaExceptionCode,
+} from 'src/engine/core-modules/captcha/captcha.exception';
 import { CaptchaService } from 'src/engine/core-modules/captcha/captcha.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -33,8 +34,10 @@ export class CaptchaGuard implements CanActivate {
         ...(result.error ? { attributes: { error: result.error } } : {}),
       });
 
-      throw new BadRequestException(
+      throw new CaptchaException(
         'Invalid Captcha, please try another device',
+        CaptchaExceptionCode.INVALID_CAPTCHA,
+        { userFriendlyMessage: t`Invalid Captcha, please try another device` },
       );
     }
   }

@@ -10,6 +10,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 export type ClientConfig = {
+  appVersion?: string;
   aiModels: Array<ClientAiModelConfig>;
   analyticsEnabled: boolean;
   api: ApiConfig;
@@ -35,4 +36,5 @@ export type ClientConfig = {
   sentry: Sentry;
   signInPrefilled: boolean;
   support: Support;
+  isTwoFactorAuthenticationEnabled: boolean;
 };

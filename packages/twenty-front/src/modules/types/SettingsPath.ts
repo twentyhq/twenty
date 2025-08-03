@@ -1,5 +1,6 @@
 export enum SettingsPath {
   ProfilePage = 'profile',
+  TwoFactorAuthenticationStrategyConfig = 'profile/two-factor-authentication/:twoFactorAuthenticationStrategy',
   Experience = 'experience',
   Accounts = 'accounts',
   NewAccount = 'accounts/new',
@@ -21,6 +22,9 @@ export enum SettingsPath {
   WorkspaceMembersPage = 'members',
   Workspace = 'general',
   Domain = 'general/domain',
+  AI = 'ai',
+  AINewAgent = 'ai/new-agent',
+  AIAgentDetail = 'ai/agents/:agentId',
   APIs = 'apis',
   RestPlayground = 'playground/rest/:schema',
   GraphQLPlayground = 'playground/graphql/:schema',

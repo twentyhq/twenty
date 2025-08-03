@@ -20,7 +20,7 @@ export const ObjectTasks = ({ targetableObject }: ObjectTasksProps) => {
   return (
     <StyledContainer>
       <ObjectFilterDropdownComponentInstanceContext.Provider
-        value={{ instanceId: 'entity-tasks-filter-scope' }}
+        value={{ instanceId: 'entity-tasks-filter-instance' }}
       >
         <TaskGroups targetableObject={targetableObject} />
       </ObjectFilterDropdownComponentInstanceContext.Provider>

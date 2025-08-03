@@ -26,6 +26,16 @@ export class UpdateAgentInput {
 
   @IsString()
   @IsOptional()
+  @Field()
+  label?: string;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  icon?: string;
+
+  @IsString()
+  @IsOptional()
   @Field({ nullable: true })
   description?: string;
 
@@ -38,6 +48,11 @@ export class UpdateAgentInput {
   @IsOptional()
   @Field(() => String)
   modelId?: ModelId;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  roleId?: string;
 
   @IsObject()
   @IsOptional()

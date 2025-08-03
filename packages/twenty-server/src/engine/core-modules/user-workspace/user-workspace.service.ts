@@ -290,6 +290,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
         userId,
         workspaceId,
       },
+      relations: ['twoFactorAuthenticationMethods'],
     });
 
     if (!isDefined(userWorkspace)) {

@@ -23,6 +23,7 @@ export enum JwtTokenTypeEnum {
   API_KEY = 'API_KEY',
   POSTGRES_PROXY = 'POSTGRES_PROXY',
   REMOTE_SERVER = 'REMOTE_SERVER',
+  KEY_ENCRYPTION_KEY = 'KEY_ENCRYPTION_KEY',
 }
 
 type CommonPropertiesJwtPayload = {

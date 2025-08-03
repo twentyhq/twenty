@@ -805,6 +805,7 @@ describe('UserWorkspaceService', () => {
           userId,
           workspaceId,
         },
+        relations: ['twoFactorAuthenticationMethods'],
       });
       expect(result).toEqual(userWorkspace);
     });

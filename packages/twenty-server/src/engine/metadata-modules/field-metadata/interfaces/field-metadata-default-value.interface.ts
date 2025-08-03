@@ -73,10 +73,10 @@ export type FieldMetadataDefaultValue<
   T extends FieldMetadataType = FieldMetadataType,
 > =
   IsExactly<T, FieldMetadataType> extends true
-    ? FieldMetadataDefaultValueForAnyType
+    ? FieldMetadataDefaultValueForAnyType | null // Could be improved to be | unknown
     : T extends keyof FieldMetadataDefaultValueMapping
       ? FieldMetadataDefaultValueForType<T>
-      : never;
+      : never | null;
 
 type FieldMetadataDefaultValueExtractedTypes = {
   [K in keyof FieldMetadataDefaultValueMapping]: ExtractValueType<

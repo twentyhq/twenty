@@ -3,7 +3,6 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
@@ -32,7 +31,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -60,7 +59,7 @@ export class BillingResolver {
   @Query(() => BillingSessionOutput)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
+    SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
   )
   async billingPortalSession(
     @AuthWorkspace() workspace: Workspace,
@@ -92,7 +91,7 @@ export class BillingResolver {
     await this.validateCanCheckoutSessionPermissionOrThrow({
       workspaceId: workspace.id,
       userWorkspaceId,
-      isExecutedByApiKey: isDefined(apiKey),
+      apiKeyId: apiKey,
       workspaceActivationStatus: workspace.activationStatus,
     });
 
@@ -124,7 +123,7 @@ export class BillingResolver {
   @Mutation(() => BillingUpdateOutput)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
+    SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
   )
   async switchToYearlyInterval(@AuthWorkspace() workspace: Workspace) {
     await this.billingSubscriptionService.switchToYearlyInterval(workspace);
@@ -135,7 +134,7 @@ export class BillingResolver {
   @Mutation(() => BillingUpdateOutput)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
+    SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
   )
   async switchToEnterprisePlan(@AuthWorkspace() workspace: Workspace) {
     await this.billingSubscriptionService.switchToEnterprisePlan(workspace);
@@ -154,7 +153,7 @@ export class BillingResolver {
   @Mutation(() => BillingEndTrialPeriodOutput)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
+    SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
   )
   async endSubscriptionTrialPeriod(
     @AuthWorkspace() workspace: Workspace,
@@ -165,7 +164,7 @@ export class BillingResolver {
   @Query(() => [BillingMeteredProductUsageOutput])
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
+    SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
   )
   async getMeteredProductsUsage(
     @AuthWorkspace() workspace: Workspace,
@@ -176,12 +175,12 @@ export class BillingResolver {
   private async validateCanCheckoutSessionPermissionOrThrow({
     workspaceId,
     userWorkspaceId,
-    isExecutedByApiKey,
+    apiKeyId,
     workspaceActivationStatus,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
-    isExecutedByApiKey: boolean;
+    apiKeyId?: string;
     workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
     if (
@@ -199,8 +198,8 @@ export class BillingResolver {
       await this.permissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
         workspaceId,
-        setting: SettingPermissionType.WORKSPACE,
-        isExecutedByApiKey,
+        setting: PermissionFlagType.WORKSPACE,
+        apiKeyId,
       });
 
     if (!userHasPermission) {

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
+import { isDefined } from 'twenty-shared/utils';
 import { ObjectLiteral } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -44,7 +45,11 @@ export class WorkspaceEventEmitter {
   }) {
     const objectMetadataNameSingular = objectMetadataItem.nameSingular;
     const fields = Object.values(objectMetadataItem.fieldsById ?? {});
-    const entityArray = Array.isArray(entities) ? entities : [entities];
+    const entityArray = isDefined(entities)
+      ? Array.isArray(entities)
+        ? entities
+        : [entities]
+      : [];
     let events: (
       | ObjectRecordCreateEvent<T>
       | ObjectRecordUpdateEvent<T>
@@ -65,41 +70,59 @@ export class WorkspaceEventEmitter {
         });
         break;
       case DatabaseEventAction.UPDATED:
-        events = entityArray.map((after, idx) => {
-          if (!beforeEntities) {
-            throw new Error('beforeEntities is required for UPDATED action');
-          }
+        events = entityArray
+          .map((after, idx) => {
+            if (!beforeEntities) {
+              throw new Error('beforeEntities is required for UPDATED action');
+            }
 
-          const before = Array.isArray(beforeEntities)
-            ? beforeEntities?.[idx]
-            : beforeEntities;
+            const before = Array.isArray(beforeEntities)
+              ? beforeEntities?.[idx]
+              : beforeEntities;
 
-          const diff = objectRecordChangedValues(
-            before,
-            after,
-            objectMetadataItem,
-          ) as Partial<ObjectRecordDiff<T>>;
+            const diff = objectRecordChangedValues(
+              before,
+              after,
+              objectMetadataItem,
+            ) as Partial<ObjectRecordDiff<T>>;
 
-          const updatedFields = Object.keys(diff);
+            const updatedFields = Object.keys(diff);
 
-          const event = new ObjectRecordUpdateEvent<T>();
+            if (updatedFields.length === 0) {
+              return;
+            }
 
-          event.userId = authContext?.user?.id;
-          event.recordId = after.id;
-          event.objectMetadata = { ...objectMetadataItem, fields };
-          event.properties = {
-            before,
-            after,
-            updatedFields,
-            diff,
-          };
+            const event = new ObjectRecordUpdateEvent<T>();
 
-          return event;
-        });
+            event.userId = authContext?.user?.id;
+            event.recordId = after.id;
+            event.objectMetadata = { ...objectMetadataItem, fields };
+            event.properties = {
+              before,
+              after,
+              updatedFields,
+              diff,
+            };
+
+            return event;
+          })
+          .filter(isDefined);
         break;
       case DatabaseEventAction.DELETED:
         events = entityArray.map((before) => {
           const event = new ObjectRecordDeleteEvent<T>();
+
+          event.userId = authContext?.user?.id;
+          event.recordId = before.id;
+          event.objectMetadata = { ...objectMetadataItem, fields };
+          event.properties = { before };
+
+          return event;
+        });
+        break;
+      case DatabaseEventAction.DESTROYED:
+        events = entityArray.map((before) => {
+          const event = new ObjectRecordDestroyEvent<T>();
 
           event.userId = authContext?.user?.id;
           event.recordId = before.id;

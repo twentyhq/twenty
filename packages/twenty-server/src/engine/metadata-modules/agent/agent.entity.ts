@@ -18,6 +18,7 @@ import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { AgentChatThreadEntity } from './agent-chat-thread.entity';
+import { AgentHandoffEntity } from './agent-handoff.entity';
 
 @Entity('agent')
 @Index('IDX_AGENT_ID_DELETED_AT', ['id', 'deletedAt'])
@@ -61,6 +62,12 @@ export class AgentEntity {
 
   @OneToMany(() => AgentChatThreadEntity, (chatThread) => chatThread.agent)
   chatThreads: Relation<AgentChatThreadEntity[]>;
+
+  @OneToMany(() => AgentHandoffEntity, (handoff) => handoff.fromAgent)
+  outgoingHandoffs: Relation<AgentHandoffEntity[]>;
+
+  @OneToMany(() => AgentHandoffEntity, (handoff) => handoff.toAgent)
+  incomingHandoffs: Relation<AgentHandoffEntity[]>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

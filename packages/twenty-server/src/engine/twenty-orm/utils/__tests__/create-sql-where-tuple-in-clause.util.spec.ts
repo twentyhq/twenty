@@ -17,7 +17,7 @@ describe('createSqlWhereTupleInClause', () => {
     const result = createSqlWhereTupleInClause(conditions, tableName);
 
     expect(result.clause).toBe(
-      '(table_name.field1, table_name.field2) IN ((:value0_0, :value0_1), (:value1_0, :value1_1))',
+      '("table_name"."field1", "table_name"."field2") IN ((:value0_0, :value0_1), (:value1_0, :value1_1))',
     );
     expect(result.parameters).toEqual({
       value0_0: 'value1',

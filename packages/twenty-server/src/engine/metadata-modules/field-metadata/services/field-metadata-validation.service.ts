@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { t } from '@lingui/core/macro';
 import { ClassConstructor, plainToInstance } from 'class-transformer';
 import {
+  IsArray,
   IsEnum,
   IsInt,
   IsOptional,
@@ -11,14 +12,18 @@ import {
   ValidationError,
   validateOrReject,
 } from 'class-validator';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  ALLOWED_ADDRESS_SUBFIELDS,
+  AllowedAddressSubField,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
@@ -34,7 +39,7 @@ type ValidateFieldMetadataArgs = {
   fieldMetadataType: FieldMetadataType;
   fieldMetadataInput: CreateFieldInput | UpdateFieldInput;
   objectMetadata: ObjectMetadataItemWithFieldMaps;
-  existingFieldMetadata?: FieldMetadataInterface;
+  existingFieldMetadata?: FieldMetadataEntity;
 };
 
 enum ValueType {
@@ -61,7 +66,12 @@ class TextSettingsValidation {
   @Max(100)
   displayedMaxRows?: number;
 }
-
+class AddressSettingsValidation {
+  @IsOptional()
+  @IsArray()
+  @IsEnum(ALLOWED_ADDRESS_SUBFIELDS, { each: true })
+  subFields?: AllowedAddressSubField[];
+}
 @Injectable()
 export class FieldMetadataValidationService {
   constructor(
@@ -77,32 +87,44 @@ export class FieldMetadataValidationService {
   }) {
     switch (fieldType) {
       case FieldMetadataType.NUMBER:
-        await this.validateSettings<FieldMetadataType.NUMBER>(
-          NumberSettingsValidation,
+        await this.validateSettings({
+          type: FieldMetadataType.NUMBER,
+          validator: NumberSettingsValidation,
           settings,
-        );
+        });
         break;
       case FieldMetadataType.TEXT:
-        await this.validateSettings<FieldMetadataType.TEXT>(
-          TextSettingsValidation,
+        await this.validateSettings({
+          type: FieldMetadataType.TEXT,
+          validator: TextSettingsValidation,
           settings,
-        );
+        });
+        break;
+      case FieldMetadataType.ADDRESS:
+        await this.validateSettings({
+          type: FieldMetadataType.ADDRESS,
+          validator: AddressSettingsValidation,
+          settings,
+        });
         break;
       default:
         break;
     }
   }
 
-  private async validateSettings<Type extends FieldMetadataType>(
-    validator: ClassConstructor<
-      Type extends FieldMetadataType.NUMBER
-        ? NumberSettingsValidation
-        : Type extends FieldMetadataType.TEXT
-          ? TextSettingsValidation
-          : never
-    >,
-    settings: FieldMetadataSettings<Type>,
-  ) {
+  private async validateSettings<
+    Type extends FieldMetadataType,
+    TValidator extends ClassConstructor<object>,
+    TFieldMetadataType extends FieldMetadataType,
+  >({
+    type: _type,
+    settings,
+    validator,
+  }: {
+    validator: TValidator;
+    settings: FieldMetadataSettings<Type>;
+    type: TFieldMetadataType;
+  }) {
     try {
       const settingsInstance = plainToInstance(validator, settings);
 
@@ -136,6 +158,9 @@ export class FieldMetadataValidationService {
           throw new FieldMetadataException(
             error.message,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+            {
+              userFriendlyMessage: error.userFriendlyMessage,
+            },
           );
         }
 
@@ -143,10 +168,10 @@ export class FieldMetadataValidationService {
       }
 
       try {
-        validateFieldNameAvailabilityOrThrow(
-          fieldMetadataInput.name,
+        validateFieldNameAvailabilityOrThrow({
+          name: fieldMetadataInput.name,
           objectMetadata,
-        );
+        });
       } catch (error) {
         if (error instanceof InvalidMetadataException) {
           throw new FieldMetadataException(

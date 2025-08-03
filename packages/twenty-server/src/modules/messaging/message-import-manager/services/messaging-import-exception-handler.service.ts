@@ -21,9 +21,8 @@ import {
 } from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
 
 export enum MessageImportSyncStep {
-  FULL_MESSAGE_LIST_FETCH = 'FULL_MESSAGE_LIST_FETCH',
-  PARTIAL_MESSAGE_LIST_FETCH = 'PARTIAL_MESSAGE_LIST_FETCH',
-  FULL_OR_PARTIAL_MESSAGE_LIST_FETCH = 'FULL_OR_PARTIAL_MESSAGE_LIST_FETCH',
+  FULL_MESSAGE_LIST_FETCH = 'FULL_MESSAGE_LIST_FETCH', // TODO: deprecate to only use MESSAGE_LIST_FETCH
+  MESSAGE_LIST_FETCH = 'MESSAGE_LIST_FETCH',
   MESSAGES_IMPORT_PENDING = 'MESSAGES_IMPORT_PENDING',
   MESSAGES_IMPORT_ONGOING = 'MESSAGES_IMPORT_ONGOING',
 }
@@ -141,20 +140,17 @@ export class MessageImportExceptionHandlerService {
       { id: messageChannel.id },
       'throttleFailureCount',
       1,
+      undefined,
+      ['throttleFailureCount', 'id'],
     );
 
     switch (syncStep) {
       case MessageImportSyncStep.FULL_MESSAGE_LIST_FETCH:
-        await this.messageChannelSyncStatusService.scheduleFullMessageListFetch(
-          [messageChannel.id],
-        );
+        await this.messageChannelSyncStatusService.scheduleMessageListFetch([
+          messageChannel.id,
+        ]);
         break;
 
-      case MessageImportSyncStep.PARTIAL_MESSAGE_LIST_FETCH:
-        await this.messageChannelSyncStatusService.schedulePartialMessageListFetch(
-          [messageChannel.id],
-        );
-        break;
       case MessageImportSyncStep.MESSAGES_IMPORT_PENDING:
       case MessageImportSyncStep.MESSAGES_IMPORT_ONGOING:
         await this.messageChannelSyncStatusService.scheduleMessagesImport([
@@ -233,7 +229,7 @@ export class MessageImportExceptionHandlerService {
       return;
     }
 
-    await this.messageChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
+    await this.messageChannelSyncStatusService.resetAndScheduleMessageListFetch(
       [messageChannel.id],
       workspaceId,
     );

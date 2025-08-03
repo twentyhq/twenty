@@ -1,6 +1,7 @@
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useInitDraftValueV2 } from '@/object-record/record-field/hooks/useInitDraftValueV2';
-import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
-import { isInlineCellInEditModeScopedState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeScopedState';
+import { isInlineCellInEditModeFamilyState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeFamilyState';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
@@ -17,6 +18,8 @@ export const useRecordTitleCell = () => {
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+
   const closeRecordTitleCell = useRecoilCallback(
     ({ set }) =>
       ({
@@ -29,7 +32,7 @@ export const useRecordTitleCell = () => {
         containerType: RecordTitleCellContainerType;
       }) => {
         set(
-          isInlineCellInEditModeScopedState(
+          isInlineCellInEditModeFamilyState(
             getRecordFieldInputInstanceId({
               recordId,
               fieldName,
@@ -55,7 +58,7 @@ export const useRecordTitleCell = () => {
   const initFieldInputDraftValue = useInitDraftValueV2();
 
   const openRecordTitleCell = useRecoilCallback(
-    ({ set, snapshot }) =>
+    ({ set }) =>
       ({
         recordId,
         fieldName,
@@ -90,18 +93,25 @@ export const useRecordTitleCell = () => {
           fieldName,
           prefix: containerType,
         });
-        set(isInlineCellInEditModeScopedState(recordTitleCellId), true);
+        set(isInlineCellInEditModeFamilyState(recordTitleCellId), true);
 
-        const recordIndexFieldDefinitions = snapshot
-          .getLoadable(recordIndexFieldDefinitionsState)
-          .getValue();
+        const fieldDefinitions = objectMetadataItem.fields.map(
+          (fieldMetadataItem, index) =>
+            formatFieldMetadataItemAsColumnDefinition({
+              field: fieldMetadataItem,
+              objectMetadataItem,
+              position: index,
+            }),
+        );
 
-        const fieldDefinition = recordIndexFieldDefinitions.find(
+        const fieldDefinition = fieldDefinitions.find(
           (field) => field.metadata.fieldName === fieldName,
         );
 
         if (!fieldDefinition) {
-          return;
+          throw new Error(
+            `Cannot find field definition for field name ${fieldName}, this should not happen.`,
+          );
         }
 
         initFieldInputDraftValue({
@@ -110,7 +120,7 @@ export const useRecordTitleCell = () => {
           fieldComponentInstanceId: recordTitleCellId,
         });
       },
-    [initFieldInputDraftValue, pushFocusItemToFocusStack],
+    [initFieldInputDraftValue, pushFocusItemToFocusStack, objectMetadataItem],
   );
 
   return {

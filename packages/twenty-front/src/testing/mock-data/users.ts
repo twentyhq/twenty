@@ -3,7 +3,7 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
   FeatureFlagKey,
   OnboardingStatus,
-  SettingPermissionType,
+  PermissionFlagType,
   SubscriptionInterval,
   SubscriptionStatus,
   User,
@@ -68,6 +68,10 @@ export const mockCurrentWorkspace: Workspace = {
       key: FeatureFlagKey.IS_POSTGRESQL_INTEGRATION_ENABLED,
       value: true,
     },
+    {
+      key: FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
+      value: true,
+    },
   ],
   createdAt: '2023-04-26T10:23:42.33625+00:00',
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
@@ -90,6 +94,7 @@ export const mockCurrentWorkspace: Workspace = {
   workspaceMembersCount: 1,
   databaseSchema: '',
   databaseUrl: '',
+  isTwoFactorAuthenticationEnforced: false,
 };
 
 export const mockedWorkspaceMemberData: WorkspaceMember = {
@@ -124,7 +129,7 @@ export const mockedUserData: MockedUser = {
   workspaceMember: mockedWorkspaceMemberData,
   currentWorkspace: mockCurrentWorkspace,
   currentUserWorkspace: {
-    settingsPermissions: [SettingPermissionType.WORKSPACE_MEMBERS],
+    permissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
     objectPermissions: generatedMockObjectMetadataItems.map((item) => ({
       objectMetadataId: item.id,
       canReadObjectRecords: true,

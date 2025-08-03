@@ -1,14 +1,13 @@
-import { Injectable, ValidationError } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { t } from '@lingui/core/macro';
-import { plainToInstance } from 'class-transformer';
-import { IsEnum, IsString, IsUUID, validateOrReject } from 'class-validator';
+import { IsEnum, IsString, IsUUID } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
@@ -20,6 +19,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
+import { validateRelationCreationPayloadOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/validate-relation-creation-payload.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -28,7 +28,7 @@ import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 export class RelationCreationPayloadValidation {
@@ -50,7 +50,7 @@ type ValidateFieldMetadataArgs<T extends UpdateFieldInput | CreateFieldInput> =
     fieldMetadataType: FieldMetadataType;
     fieldMetadataInput: T;
     objectMetadata: ObjectMetadataItemWithFieldMaps;
-    existingFieldMetadata?: FieldMetadataInterface;
+    existingFieldMetadata?: FieldMetadataEntity;
     objectMetadataMaps: ObjectMetadataMaps;
   };
 
@@ -91,6 +91,7 @@ export class FieldMetadataRelationService {
       label: relationCreationPayload.targetFieldLabel,
       icon: relationCreationPayload.targetFieldIcon,
       workspaceId: fieldMetadataInput.workspaceId,
+      defaultValue: fieldMetadataInput.defaultValue,
     });
 
     const targetFieldMetadataToCreateWithRelation =
@@ -155,19 +156,17 @@ export class FieldMetadataRelationService {
           .relationCreationPayload,
       )
     ) {
-      validateFieldNameAvailabilityOrThrow(
-        `${fieldMetadataInput.name}Id`,
+      validateFieldNameAvailabilityOrThrow({
+        name: `${fieldMetadataInput.name}Id`,
         objectMetadata,
-      );
+      });
 
       const relationCreationPayload = (
         fieldMetadataInput as unknown as CreateFieldInput
       ).relationCreationPayload;
 
       if (isDefined(relationCreationPayload)) {
-        await this.validateRelationCreationPayloadOrThrow(
-          relationCreationPayload,
-        );
+        await validateRelationCreationPayloadOrThrow(relationCreationPayload);
         const computedMetadataNameFromLabel = computeMetadataNameFromLabel(
           relationCreationPayload.targetFieldLabel,
         );
@@ -186,15 +185,15 @@ export class FieldMetadataRelationService {
           );
         }
 
-        validateFieldNameAvailabilityOrThrow(
-          computedMetadataNameFromLabel,
-          objectMetadataTarget,
-        );
+        validateFieldNameAvailabilityOrThrow({
+          name: computedMetadataNameFromLabel,
+          objectMetadata: objectMetadataTarget,
+        });
 
-        validateFieldNameAvailabilityOrThrow(
-          `${computedMetadataNameFromLabel}Id`,
-          objectMetadataTarget,
-        );
+        validateFieldNameAvailabilityOrThrow({
+          name: `${computedMetadataNameFromLabel}Id`,
+          objectMetadata: objectMetadataTarget,
+        });
 
         if (
           computedMetadataNameFromLabel === fieldMetadataInput.name &&
@@ -214,35 +213,10 @@ export class FieldMetadataRelationService {
     return fieldMetadataInput;
   }
 
-  private async validateRelationCreationPayloadOrThrow(
-    relationCreationPayload: RelationCreationPayloadValidation,
-  ) {
-    try {
-      const relationCreationPayloadInstance = plainToInstance(
-        RelationCreationPayloadValidation,
-        relationCreationPayload,
-      );
-
-      await validateOrReject(relationCreationPayloadInstance);
-    } catch (error) {
-      const errorMessages = Array.isArray(error)
-        ? error
-            .map((err: ValidationError) => Object.values(err.constraints ?? {}))
-            .flat()
-            .join(', ')
-        : error.message;
-
-      throw new FieldMetadataException(
-        `Relation creation payload is invalid: ${errorMessages}`,
-        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      );
-    }
-  }
-
   async findCachedFieldMetadataRelation(
     fieldMetadataItems: Array<
       Pick<
-        FieldMetadataInterface,
+        FieldMetadataEntity,
         | 'id'
         | 'type'
         | 'objectMetadataId'
@@ -313,6 +287,7 @@ export class FieldMetadataRelationService {
     });
   }
 
+  // TODO refactor and strictly type
   computeCustomRelationFieldMetadataForCreation({
     fieldMetadataInput,
     relationCreationPayload,
@@ -323,22 +298,32 @@ export class FieldMetadataRelationService {
     joinColumnName: string;
   }) {
     const isRelation =
-      isFieldMetadataInterfaceOfType(
+      isFieldMetadataEntityOfType(
         fieldMetadataInput,
         FieldMetadataType.RELATION,
       ) ||
-      isFieldMetadataInterfaceOfType(
+      isFieldMetadataEntityOfType(
         fieldMetadataInput,
         FieldMetadataType.MORPH_RELATION,
       );
 
+    const defaultIcon = 'IconRelationOneToMany';
+
     const isManyToOne =
       isRelation && relationCreationPayload?.type === RelationType.MANY_TO_ONE;
 
-    const isOneToMany =
-      isRelation && relationCreationPayload?.type === RelationType.ONE_TO_MANY;
-
-    const defaultIcon = 'IconRelationOneToMany';
+    const settings = isManyToOne
+      ? {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.SET_NULL,
+          joinColumnName,
+        }
+      : {
+          ...(fieldMetadataInput.settings as FieldMetadataSettings<
+            FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+          >),
+          relationType: RelationType.ONE_TO_MANY,
+        };
 
     return {
       ...fieldMetadataInput,
@@ -346,21 +331,7 @@ export class FieldMetadataRelationService {
       relationCreationPayload,
       relationTargetObjectMetadataId:
         relationCreationPayload?.targetObjectMetadataId,
-      settings: {
-        ...fieldMetadataInput.settings,
-        ...(isOneToMany
-          ? {
-              relationType: RelationType.ONE_TO_MANY,
-            }
-          : {}),
-        ...(isManyToOne
-          ? {
-              relationType: RelationType.MANY_TO_ONE,
-              onDelete: RelationOnDeleteAction.SET_NULL,
-              joinColumnName,
-            }
-          : {}),
-      },
+      settings,
     };
   }
 }

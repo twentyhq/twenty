@@ -20,10 +20,12 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
       throw new BadRequestException('Record ID not found');
     }
 
-    const { objectMetadata, repository } =
+    const { objectMetadata, repository, restrictedFields } =
       await this.getRepositoryAndMetadataOrFail(request);
 
-    const recordToUpdate = await repository.findOneOrFail({
+    // assert the record exists
+    await repository.findOneOrFail({
+      select: { id: true },
       where: { id: recordId },
     });
 
@@ -33,7 +35,7 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
     });
 
     const updatedRecord = await repository.save({
-      ...recordToUpdate,
+      id: recordId,
       ...overriddenBody,
     });
 
@@ -42,6 +44,7 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
       repository,
       objectMetadata,
       depth: this.depthInputFactory.create(request),
+      restrictedFields,
     });
 
     const record = records[0];

@@ -31,10 +31,14 @@ const getReservedCompositeFieldNames = (
   return reservedCompositeFieldsNames;
 };
 
-export const validateFieldNameAvailabilityOrThrow = (
-  name: string,
-  objectMetadata: ObjectMetadataItemWithFieldMaps,
-) => {
+type ValidateFieldNameAvailabilityOrThrowArgs = {
+  name: string;
+  objectMetadata: ObjectMetadataItemWithFieldMaps;
+};
+export const validateFieldNameAvailabilityOrThrow = ({
+  name,
+  objectMetadata,
+}: ValidateFieldNameAvailabilityOrThrowArgs) => {
   const reservedCompositeFieldsNames =
     getReservedCompositeFieldNames(objectMetadata);
 
@@ -59,6 +63,9 @@ export const validateFieldNameAvailabilityOrThrow = (
     throw new InvalidMetadataException(
       `Name "${name}" is not available`,
       InvalidMetadataExceptionCode.RESERVED_KEYWORD,
+      {
+        userFriendlyMessage: t`This name is not available.`,
+      },
     );
   }
 };

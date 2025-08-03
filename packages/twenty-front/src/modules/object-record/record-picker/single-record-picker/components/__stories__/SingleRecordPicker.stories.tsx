@@ -2,7 +2,6 @@ import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -11,8 +10,8 @@ import { sleep } from '~/utils/sleep';
 
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
-import { ComponentDecorator } from 'twenty-ui/testing';
 import { IconUserCircle } from 'twenty-ui/display';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const records = allMockPersonRecords.map<SingleRecordPickerRecord>(
   (person) => ({
@@ -29,7 +28,6 @@ const meta: Meta<typeof SingleRecordPicker> = {
   component: SingleRecordPicker,
   decorators: [
     ComponentDecorator,
-    ComponentWithRecoilScopeDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
   ],

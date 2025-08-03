@@ -5,7 +5,7 @@ export const createSqlWhereTupleInClause = (
   const fieldNames = conditions[0].map(([field, _]) => field);
 
   const tupleClause = fieldNames
-    .map((field) => `${tableName}.${field}`)
+    .map((field) => `"${tableName}"."${field}"`)
     .join(', ');
   const valuePlaceholders = conditions
     .map((_, index) => {

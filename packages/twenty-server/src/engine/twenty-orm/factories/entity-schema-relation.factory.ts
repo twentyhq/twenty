@@ -6,7 +6,7 @@ import { EntitySchemaRelationOptions } from 'typeorm';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { determineSchemaRelationDetails } from 'src/engine/twenty-orm/utils/determine-schema-relation-details.util';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 type EntitySchemaRelationMap = {
   [key: string]: EntitySchemaRelationOptions;
@@ -28,11 +28,11 @@ export class EntitySchemaRelationFactory {
 
     for (const fieldMetadata of fieldMetadataCollection) {
       const isRelation =
-        isFieldMetadataInterfaceOfType(
+        isFieldMetadataEntityOfType(
           fieldMetadata,
           FieldMetadataType.RELATION,
         ) ||
-        isFieldMetadataInterfaceOfType(
+        isFieldMetadataEntityOfType(
           fieldMetadata,
           FieldMetadataType.MORPH_RELATION,
         );

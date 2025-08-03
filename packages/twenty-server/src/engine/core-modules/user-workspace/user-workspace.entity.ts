@@ -2,7 +2,7 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
-import { APP_LOCALES } from 'twenty-shared/translations';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
   Column,
   CreateDateColumn,
@@ -19,14 +19,15 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
+import { TwoFactorAuthenticationMethodSummaryDto } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-method.dto';
+import { TwoFactorAuthenticationMethod } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
-registerEnumType(SettingPermissionType, {
-  name: 'SettingPermissionType',
+registerEnumType(PermissionFlagType, {
+  name: 'PermissionFlagType',
 });
 
 registerEnumType(PermissionsOnAllObjectRecords, {
@@ -72,7 +73,7 @@ export class UserWorkspace {
   defaultAvatarUrl: string;
 
   @Field(() => String, { nullable: false })
-  @Column({ nullable: false, default: 'en', type: 'varchar' })
+  @Column({ nullable: false, default: SOURCE_LOCALE, type: 'varchar' })
   locale: keyof typeof APP_LOCALES;
 
   @Field()
@@ -88,13 +89,15 @@ export class UserWorkspace {
   deletedAt: Date;
 
   @OneToMany(
-    () => TwoFactorMethod,
-    (twoFactorMethod) => twoFactorMethod.userWorkspace,
+    () => TwoFactorAuthenticationMethod,
+    (twoFactorAuthenticationMethod) =>
+      twoFactorAuthenticationMethod.userWorkspace,
+    { nullable: true },
   )
-  twoFactorMethods: Relation<TwoFactorMethod[]>;
+  twoFactorAuthenticationMethods: Relation<TwoFactorAuthenticationMethod[]>;
 
-  @Field(() => [SettingPermissionType], { nullable: true })
-  settingsPermissions?: SettingPermissionType[];
+  @Field(() => [PermissionFlagType], { nullable: true })
+  permissionFlags?: PermissionFlagType[];
 
   @Field(() => [PermissionsOnAllObjectRecords], {
     nullable: true,
@@ -104,4 +107,7 @@ export class UserWorkspace {
 
   @Field(() => [ObjectPermissionDTO], { nullable: true })
   objectPermissions?: ObjectPermissionDTO[];
+
+  @Field(() => [TwoFactorAuthenticationMethodSummaryDto], { nullable: true })
+  twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummaryDto[];
 }

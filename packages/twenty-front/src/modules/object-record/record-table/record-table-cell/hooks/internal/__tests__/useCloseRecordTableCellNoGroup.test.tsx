@@ -22,7 +22,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 const onColumnsChange = jest.fn();
-const recordTableId = 'scopeId';
+const recordTableId = 'record-table-id';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot

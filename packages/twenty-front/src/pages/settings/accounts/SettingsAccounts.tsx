@@ -56,10 +56,7 @@ export const SettingsAccounts = () => {
                 title={t`Connected accounts`}
                 description={t`Manage your internet accounts.`}
               />
-              <SettingsAccountsConnectedAccountsListCard
-                accounts={accounts}
-                loading={loading}
-              />
+              <SettingsAccountsConnectedAccountsListCard accounts={accounts} />
             </Section>
             <SettingsAccountsBlocklistSection />
             <SettingsAccountsSettingsSection />

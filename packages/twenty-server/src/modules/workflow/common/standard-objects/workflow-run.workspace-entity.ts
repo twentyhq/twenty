@@ -162,35 +162,13 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   createdBy: ActorMetadata;
 
   @WorkspaceField({
-    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.output,
-    type: FieldMetadataType.RAW_JSON,
-    label: msg`Output`,
-    description: msg`Json object to provide output of the workflow run`,
-    icon: 'IconText',
-  })
-  @WorkspaceIsNullable()
-  output: WorkflowRunOutput | null;
-
-  @WorkspaceField({
-    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.context,
-    type: FieldMetadataType.RAW_JSON,
-    label: msg`Context`,
-    description: msg`Context`,
-    icon: 'IconHierarchy2',
-  })
-  @WorkspaceIsNullable()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  context: Record<string, any> | null;
-
-  @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.state,
     type: FieldMetadataType.RAW_JSON,
     label: msg`State`,
     description: msg`State of the workflow run`,
     icon: 'IconHierarchy2',
   })
-  @WorkspaceIsNullable()
-  state: WorkflowRunState | null;
+  state: WorkflowRunState;
 
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.position,

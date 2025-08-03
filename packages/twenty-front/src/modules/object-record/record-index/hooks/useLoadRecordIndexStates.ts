@@ -108,7 +108,11 @@ export const useLoadRecordIndexStates = () => {
           columnDefinitions,
         });
 
-        setTableColumns(newFieldDefinitions, recordIndexId);
+        setTableColumns(
+          newFieldDefinitions,
+          recordIndexId,
+          objectMetadataItem.id,
+        );
 
         const existingRecordIndexFieldDefinitions = snapshot
           .getLoadable(recordIndexFieldDefinitionsState)
@@ -194,6 +198,7 @@ export const useLoadRecordIndexStates = () => {
         setRecordIndexViewType(view.type);
         setRecordIndexOpenRecordIn(view.openRecordIn);
         setRecordIndexViewKanbanFieldMetadataIdState(
+          // TODO: replace with viewGroups.fieldMetadataId
           view.kanbanFieldMetadataId,
         );
         const kanbanAggregateOperationFieldMetadataType =

@@ -143,9 +143,10 @@ export class StandardFieldFactory {
         icon: workspaceFieldMetadataArgs.icon,
         label: workspaceFieldMetadataArgs.label,
         description: workspaceFieldMetadataArgs.description,
-        defaultValue: workspaceFieldMetadataArgs.defaultValue,
-        options: workspaceFieldMetadataArgs.options,
-        settings: workspaceFieldMetadataArgs.settings,
+        defaultValue: workspaceFieldMetadataArgs.defaultValue ?? null,
+        options: workspaceFieldMetadataArgs.options ?? null,
+        settings: workspaceFieldMetadataArgs.settings ?? null,
+        standardOverrides: null,
         workspaceId: context.workspaceId,
         isNullable: workspaceFieldMetadataArgs.isNullable,
         isUnique: workspaceFieldMetadataArgs.isUnique,
@@ -155,6 +156,10 @@ export class StandardFieldFactory {
         asExpression: workspaceFieldMetadataArgs.asExpression,
         generatedType: workspaceFieldMetadataArgs.generatedType,
         isLabelSyncedWithName: workspaceFieldMetadataArgs.isLabelSyncedWithName,
+        relationTargetFieldMetadata: null,
+        relationTargetFieldMetadataId: null,
+        relationTargetObjectMetadata: null,
+        relationTargetObjectMetadataId: null,
       },
     ];
   }
@@ -195,6 +200,14 @@ export class StandardFieldFactory {
       isActive: workspaceRelationMetadataArgs.isActive ?? true,
       isLabelSyncedWithName:
         workspaceRelationMetadataArgs.isLabelSyncedWithName,
+      defaultValue: null,
+      options: null,
+      relationTargetFieldMetadata: null,
+      relationTargetFieldMetadataId: null,
+      relationTargetObjectMetadata: null,
+      relationTargetObjectMetadataId: null,
+      settings: null, // accurate ? looks weird for this to be undefined even for standard fields ?
+      standardOverrides: null,
     });
 
     return fieldMetadataCollection;

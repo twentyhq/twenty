@@ -1,8 +1,8 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
@@ -18,10 +18,12 @@ import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { selectWorkflowDiagramNode } from '@/workflow/workflow-diagram/utils/selectWorkflowDiagramNode';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext, useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const WorkflowRunVisualizerEffect = ({
   workflowRunId,
@@ -66,6 +68,10 @@ export const WorkflowRunVisualizerEffect = ({
   const { populateStepsOutputSchema } = useStepsOutputSchema();
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
+
+  const isWorkflowFilteringEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
+  );
 
   useEffect(() => {
     setWorkflowRunId(workflowRunId);
@@ -117,6 +123,7 @@ export const WorkflowRunVisualizerEffect = ({
             trigger: workflowRunState.flow.trigger,
             steps: workflowRunState.flow.steps,
             stepInfos: workflowRunState.stepInfos,
+            isWorkflowFilteringEnabled,
           });
 
         if (isDefined(stepToOpenByDefault)) {
@@ -184,6 +191,7 @@ export const WorkflowRunVisualizerEffect = ({
     [
       flowState,
       getIcon,
+      isWorkflowFilteringEnabled,
       openWorkflowRunViewStepInCommandMenu,
       workflowDiagramState,
       workflowDiagramStatusState,

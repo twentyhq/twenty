@@ -444,6 +444,7 @@ export const VIEW_STANDARD_FIELD_IDS = {
   viewFilterGroups: '20202020-0318-474a-84a1-bac895ceaa5a',
   viewSorts: '20202020-891b-45c3-9fe1-80a75b4aa043',
   favorites: '20202020-c818-4a86-8284-9ec0ef0a59a5',
+  anyFieldFilterValue: '20202020-3143-46c0-bb05-034063ce0703',
 };
 
 export const WEBHOOK_STANDARD_FIELD_IDS = {
@@ -531,6 +532,7 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   dateFormat: '20202020-af13-4e11-b1e7-b8cf5ea13dc0',
   timeFormat: '20202020-8acb-4cf8-a851-a6ed443c8d81',
   searchVector: '20202020-46d0-4e7f-bc26-74c0edaeb619',
+  calendarStartDay: '20202020-92d0-1d7f-a126-25ededa6b142',
 };
 
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {

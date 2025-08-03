@@ -1,14 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class TwentyORMException extends CustomException {
-  constructor(
-    message: string,
-    code: TwentyORMExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
-  ) {
-    super(message, code, userFriendlyMessage);
-  }
-}
+export class TwentyORMException extends CustomException<TwentyORMExceptionCode> {}
 
 export enum TwentyORMExceptionCode {
   METADATA_VERSION_MISMATCH = 'METADATA_VERSION_MISMATCH',
@@ -16,6 +8,7 @@ export enum TwentyORMExceptionCode {
   ROLES_PERMISSIONS_VERSION_NOT_FOUND = 'ROLES_PERMISSIONS_VERSION_NOT_FOUND',
   FEATURE_FLAG_MAP_VERSION_NOT_FOUND = 'FEATURE_FLAG_MAP_VERSION_NOT_FOUND',
   USER_WORKSPACE_ROLE_MAP_VERSION_NOT_FOUND = 'USER_WORKSPACE_ROLE_MAP_VERSION_NOT_FOUND',
+  API_KEY_ROLE_MAP_VERSION_NOT_FOUND = 'API_KEY_ROLE_MAP_VERSION_NOT_FOUND',
   MALFORMED_METADATA = 'MALFORMED_METADATA',
   WORKSPACE_NOT_FOUND = 'WORKSPACE_NOT_FOUND',
   CONNECT_RECORD_NOT_FOUND = 'CONNECT_RECORD_NOT_FOUND',
@@ -23,4 +16,5 @@ export enum TwentyORMExceptionCode {
   CONNECT_UNIQUE_CONSTRAINT_ERROR = 'CONNECT_UNIQUE_CONSTRAINT_ERROR',
   MISSING_MAIN_ALIAS_TARGET = 'MISSING_MAIN_ALIAS_TARGET',
   METHOD_NOT_ALLOWED = 'METHOD_NOT_ALLOWED',
+  ENUM_TYPE_NAME_NOT_FOUND = 'ENUM_TYPE_NAME_NOT_FOUND',
 }

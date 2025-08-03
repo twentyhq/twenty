@@ -1,4 +1,8 @@
-import { FieldMetadataType, IsExactly } from 'twenty-shared/types';
+import {
+  AllowedAddressSubField,
+  FieldMetadataType,
+  IsExactly,
+} from 'twenty-shared/types';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -8,10 +12,6 @@ export enum NumberDataType {
   INT = 'int',
   BIGINT = 'bigint',
 }
-
-export type FieldMetadataDefaultSettings = {
-  isForeignKey?: boolean;
-};
 
 export enum DateDisplayFormat {
   RELATIVE = 'RELATIVE',
@@ -44,6 +44,9 @@ export type FieldMetadataRelationSettings = {
   onDelete?: RelationOnDeleteAction;
   joinColumnName?: string | null;
 };
+export type FieldMetadataAddressSettings = {
+  subFields?: AllowedAddressSubField[];
+};
 
 type FieldMetadataSettingsMapping = {
   [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings;
@@ -52,13 +55,17 @@ type FieldMetadataSettingsMapping = {
   [FieldMetadataType.TEXT]: FieldMetadataTextSettings;
   [FieldMetadataType.RELATION]: FieldMetadataRelationSettings;
   [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings;
+  [FieldMetadataType.ADDRESS]: FieldMetadataAddressSettings;
 };
+
+export type AllFieldMetadataSettings =
+  FieldMetadataSettingsMapping[keyof FieldMetadataSettingsMapping];
 
 export type FieldMetadataSettings<
   T extends FieldMetadataType = FieldMetadataType,
 > =
   IsExactly<T, FieldMetadataType> extends true
-    ? FieldMetadataDefaultSettings
+    ? null | AllFieldMetadataSettings // Could be improved to be | unknown
     : T extends keyof FieldMetadataSettingsMapping
-      ? FieldMetadataSettingsMapping[T] & FieldMetadataDefaultSettings
-      : never;
+      ? FieldMetadataSettingsMapping[T] | null
+      : never | null;

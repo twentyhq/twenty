@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { FieldMetadataType } from 'twenty-shared/types';
+import { EnumFieldMetadataType, FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { WorkspaceColumnActionOptions } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-options.interface';
 
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
 import { ColumnActionAbstractFactory } from 'src/engine/metadata-modules/workspace-migration/factories/column-action-abstract.factory';
@@ -19,17 +19,12 @@ import {
   WorkspaceMigrationExceptionCode,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
 
-export type EnumFieldMetadataType =
-  | FieldMetadataType.RATING
-  | FieldMetadataType.SELECT
-  | FieldMetadataType.MULTI_SELECT;
-
 @Injectable()
 export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFieldMetadataType> {
   protected readonly logger = new Logger(EnumColumnActionFactory.name);
 
   protected handleCreateAction(
-    fieldMetadata: FieldMetadataInterface<EnumFieldMetadataType>,
+    fieldMetadata: FieldMetadataEntity<EnumFieldMetadataType>,
     options: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnCreate[] {
     const columnName = computeColumnName(fieldMetadata);
@@ -54,8 +49,8 @@ export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFie
   }
 
   protected handleAlterAction(
-    currentFieldMetadata: FieldMetadataInterface<EnumFieldMetadataType>,
-    alteredFieldMetadata: FieldMetadataInterface<EnumFieldMetadataType>,
+    currentFieldMetadata: FieldMetadataEntity<EnumFieldMetadataType>,
+    alteredFieldMetadata: FieldMetadataEntity<EnumFieldMetadataType>,
     options: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnAlter[] {
     const currentColumnName = computeColumnName(currentFieldMetadata);
