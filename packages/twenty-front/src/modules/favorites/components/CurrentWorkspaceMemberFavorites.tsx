@@ -1,5 +1,6 @@
 import { FavoriteFolderNavigationDrawerItemDropdown } from '@/favorites/components/FavoriteFolderNavigationDrawerItemDropdown';
 import { FavoriteIcon } from '@/favorites/components/FavoriteIcon';
+import { FavoriteNavigationDrawerSubItem } from '@/favorites/components/FavoriteNavigationDrawerSubItem';
 import { FavoritesDroppable } from '@/favorites/components/FavoritesDroppable';
 import { FAVORITE_FOLDER_DELETE_MODAL_ID } from '@/favorites/constants/FavoriteFolderDeleteModalId';
 import { FavoritesDragContext } from '@/favorites/contexts/FavoritesDragContext';
@@ -18,7 +19,6 @@ import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpe
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
-import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { Droppable } from '@hello-pangea/dnd';
@@ -196,9 +196,9 @@ export const CurrentWorkspaceMemberFavorites = ({
                     index={index}
                     isInsideScrollableContainer
                     itemComponent={
-                      <NavigationDrawerSubItem
+                      <FavoriteNavigationDrawerSubItem
+                        favorite={favorite}
                         label={favorite.labelIdentifier}
-                        objectName={favorite.objectNameSingular}
                         Icon={() => <FavoriteIcon favorite={favorite} />}
                         to={isDragging ? undefined : favorite.link}
                         active={index === selectedFavoriteIndex}
