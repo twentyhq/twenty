@@ -39,13 +39,13 @@ export const RecordTableEmptyStateSoftDelete = () => {
     toggleSoftDeleteFilterState(false);
   };
 
-  const objectLabel = useObjectLabel(objectMetadataItem);
+  const objectLabelSingular = useObjectLabel(objectMetadataItem);
 
   return (
     <RecordTableEmptyStateDisplay
       buttonTitle={'Remove Deleted filter'}
       subTitle={'No deleted records matching the filter criteria were found.'}
-      title={`No Deleted ${objectLabel} found`}
+      title={`No Deleted ${objectLabelSingular} found`}
       ButtonIcon={IconFilterOff}
       animatedPlaceholderType="noDeletedRecord"
       onClick={handleButtonClick}

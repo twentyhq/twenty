@@ -11,7 +11,6 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { capitalize } from 'twenty-shared/utils';
 import { Pill } from 'twenty-ui/components';
 import { IconComponent, Label, TablerIconsProps } from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
@@ -24,7 +23,7 @@ export type NavigationDrawerItemIndentationLevel = 1 | 2;
 export type NavigationDrawerItemProps = {
   className?: string;
   label: string;
-  objectName?: string;
+  secondaryLabel?: string;
   indentationLevel?: NavigationDrawerItemIndentationLevel;
   subItemState?: NavigationDrawerSubItemState;
   to?: string;
@@ -142,7 +141,7 @@ const StyledItemLabel = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-const StyledItemObjectName = styled.span`
+const StyledItemSecondaryLabel = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   font-weight: ${({ theme }) => theme.font.weight.regular};
 `;
@@ -240,7 +239,7 @@ const StyledRightOptionsVisbility = styled.div<{
 export const NavigationDrawerItem = ({
   className,
   label,
-  objectName,
+  secondaryLabel,
   indentationLevel = DEFAULT_INDENTATION_LEVEL,
   Icon,
   to,
@@ -263,6 +262,7 @@ export const NavigationDrawerItem = ({
   const isSettingsPage = useIsSettingsPage();
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
+
   const showBreadcrumb = indentationLevel === 2;
   const showStyledSpacer = Boolean(
     soon || isNew || count || keyboard || rightOptions,
@@ -330,11 +330,11 @@ export const NavigationDrawerItem = ({
           <StyledLabelParent>
             <StyledEllipsisContainer>
               <StyledItemLabel>{label}</StyledItemLabel>
-              {objectName && (
-                <StyledItemObjectName>
+              {secondaryLabel && (
+                <StyledItemSecondaryLabel>
                   {' · '}
-                  {capitalize(objectName)}
-                </StyledItemObjectName>
+                  {secondaryLabel}
+                </StyledItemSecondaryLabel>
               )}
             </StyledEllipsisContainer>
           </StyledLabelParent>

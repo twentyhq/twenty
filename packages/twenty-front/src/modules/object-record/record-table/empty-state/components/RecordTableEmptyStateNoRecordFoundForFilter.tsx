@@ -15,11 +15,11 @@ export const RecordTableEmptyStateNoRecordFoundForFilter = () => {
     createNewIndexRecord();
   };
 
-  const objectLabel = useObjectLabel(objectMetadataItem);
+  const objectLabelSingular = useObjectLabel(objectMetadataItem);
 
-  const buttonTitle = `Add a ${objectLabel}`;
+  const buttonTitle = `Add a ${objectLabelSingular}`;
 
-  const title = `No ${objectLabel} found`;
+  const title = `No ${objectLabelSingular} found`;
 
   const subTitle = 'No records matching the filter criteria were found.';
 

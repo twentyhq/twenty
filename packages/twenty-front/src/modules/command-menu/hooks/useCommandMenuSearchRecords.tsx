@@ -5,15 +5,14 @@ import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { AppPath } from '@/types/AppPath';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { capitalize } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { useDebounce } from 'use-debounce';
 import { useSearchQuery } from '~/generated/graphql';
@@ -73,7 +72,10 @@ export const useCommandMenuSearchRecords = () => {
             />
           ),
           shouldBeRegistered: () => true,
-          description: capitalize(searchRecord.objectNameSingular),
+          description:
+            objectMetadataItems.find(
+              (item) => item.nameSingular === searchRecord.objectNameSingular,
+            )?.labelSingular ?? searchRecord.objectNameSingular,
         };
 
         if (
@@ -116,7 +118,7 @@ export const useCommandMenuSearchRecords = () => {
         };
       },
     );
-  }, [searchData, openRecordInCommandMenu]);
+  }, [searchData, openRecordInCommandMenu, objectMetadataItems]);
 
   return {
     loading,
