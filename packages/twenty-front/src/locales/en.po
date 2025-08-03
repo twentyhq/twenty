@@ -1855,10 +1855,10 @@ msgstr "delete"
 msgid "Delete"
 msgstr "Delete"
 
-#. js-lingui-id: 2nRIIp
+#. js-lingui-id: 65N6Yr
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Delete {objectLabel}"
-msgstr "Delete {objectLabel}"
+msgid "Delete {objectLabelPlural}"
+msgstr "Delete {objectLabelPlural}"
 
 #. js-lingui-id: ZDGm40
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -2018,10 +2018,10 @@ msgstr "destroy"
 msgid "Destroy"
 msgstr "Destroy"
 
-#. js-lingui-id: vI0W/N
+#. js-lingui-id: YI3c7h
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Destroy {objectLabel}"
-msgstr "Destroy {objectLabel}"
+msgid "Destroy {objectLabelPlural}"
+msgstr "Destroy {objectLabelPlural}"
 
 #. js-lingui-id: L68qSB
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -2147,10 +2147,10 @@ msgstr "Earliest date"
 msgid "Edit"
 msgstr "Edit"
 
-#. js-lingui-id: fGxkii
+#. js-lingui-id: zQXUkv
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Edit {objectLabel}"
-msgstr "Edit {objectLabel}"
+msgid "Edit {objectLabelPlural}"
+msgstr "Edit {objectLabelPlural}"
 
 #. js-lingui-id: CQrc7J
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -3926,10 +3926,10 @@ msgstr "Navigate to previous workflow"
 msgid "New"
 msgstr "New"
 
-#. js-lingui-id: Gntx7w
+#. js-lingui-id: LfvvW4
 #: src/modules/command-menu/hooks/useOpenRecordInCommandMenu.ts
-msgid "New {capitalizedObjectNameSingular}"
-msgstr "New {capitalizedObjectNameSingular}"
+msgid "New {objectLabelSingular}"
+msgstr "New {objectLabelSingular}"
 
 #. js-lingui-id: Kcr9Fr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
@@ -5065,10 +5065,10 @@ msgstr "Security"
 msgid "see"
 msgstr "see"
 
-#. js-lingui-id: rJnbMG
+#. js-lingui-id: aOvXdk
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "See {objectLabel}"
-msgstr "See {objectLabel}"
+msgid "See {objectLabelPlural}"
+msgstr "See {objectLabelPlural}"
 
 #. js-lingui-id: QREcJS
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
