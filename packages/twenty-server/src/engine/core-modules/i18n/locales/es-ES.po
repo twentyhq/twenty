@@ -126,7 +126,7 @@ msgstr "Un webhook"
 #. js-lingui-id: ZIN9Ga
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "A workflow"
-msgstr "Un workflow"
+msgstr "Un flujo de trabajo"
 
 #. js-lingui-id: YwBCp8
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
@@ -136,12 +136,12 @@ msgstr "Un activador automático de flujos de trabajo"
 #. js-lingui-id: 1+xDbI
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "A workflow run"
-msgstr "Una ejecución de workflow"
+msgstr "Una ejecución de flujo de trabajo"
 
 #. js-lingui-id: N0g7rp
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "A workflow version"
-msgstr "Una versión de workflow"
+msgstr "Una versión de flujo de trabajo"
 
 #. js-lingui-id: HpZ/I5
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -802,7 +802,7 @@ msgstr "Fecha de vencimiento"
 #. js-lingui-id: BXtAxc
 #: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
 msgid "Duplicated option {field}"
-msgstr ""
+msgstr "Opcion duplicada {field}"
 
 #. js-lingui-id: BBXuRb
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
@@ -845,7 +845,7 @@ msgstr "Fecha de finalización"
 #. js-lingui-id: hcogQc
 #: src/engine/core-modules/domain-manager/validator/cloudflare.validate.ts
 msgid "Environnement variable CLOUDFLARE_API_KEY must be defined to use this feature."
-msgstr ""
+msgstr "El entorno variable CLOUDFLARE_API_KEY debe estar definido para poder utilizar esta función."
 
 #. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -906,17 +906,17 @@ msgstr "Tarea del evento"
 #. js-lingui-id: dCV1dS
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event workflow"
-msgstr "Workflow del evento"
+msgstr "Flujo de trabajo del evento"
 
 #. js-lingui-id: W84pl6
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event workflow run"
-msgstr "Ejecución del workflow del evento"
+msgstr "Ejecución del flujo de trabajo del evento"
 
 #. js-lingui-id: vUpps9
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event workflow version"
-msgstr "Versión del workflow del evento"
+msgstr "Versión del flujo de trabajo del evento"
 
 #. js-lingui-id: LxOGsB
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -959,7 +959,7 @@ msgstr "Ejecutado por"
 #. js-lingui-id: o7LKFQ
 #: src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
 msgid "Expected 1 record to connect to {connectFieldName}, but found {recordToConnectTotal} for {formattedConnectCondition}"
-msgstr ""
+msgstr "Se esperava 1 registro para conectar con {connectFieldName}, pero se encontraron {recordToConnectTotal} para {formattedConnectCondition}"
 
 #. js-lingui-id: AiFXmG
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -1030,17 +1030,17 @@ msgstr "Vista favorita"
 #. js-lingui-id: l+lx2f
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite workflow"
-msgstr "Workflow favorito"
+msgstr "Flujo de trabajo favorito"
 
 #. js-lingui-id: BPBnux
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite workflow run"
-msgstr "Ejecución del workflow favorito"
+msgstr "Ejecución del flujo de trabajo favorito"
 
 #. js-lingui-id: 5X6Vlz
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite workflow version"
-msgstr "Versión favorita del workflow"
+msgstr "Versión favorita del flujo de trabajo"
 
 #. js-lingui-id: FDpezg
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1102,17 +1102,17 @@ msgstr "Favoritos vinculados a la vista"
 #. js-lingui-id: ee0tmj
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Favorites linked to the workflow"
-msgstr "Favoritos vinculados al workflow"
+msgstr "Favoritos vinculados al flujo de trabajo"
 
 #. js-lingui-id: zar5jz
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Favorites linked to the workflow run"
-msgstr "Favoritos vinculados a la ejecución del workflow"
+msgstr "Favoritos vinculados a la ejecución del flujo de trabajo"
 
 #. js-lingui-id: 499/sw
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Favorites linked to the workflow version"
-msgstr "Favoritos vinculados a la versión del workflow"
+msgstr "Favoritos vinculados a la versión del flujo de trabajo"
 
 #. js-lingui-id: rgmtb4
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -1682,7 +1682,7 @@ msgstr "Nombre de la carpeta favorita"
 #. js-lingui-id: csMjko
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Name of the workflow run"
-msgstr "Nombre de la ejecución del workflow"
+msgstr "Nombre de la ejecución del flujo de trabajo"
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1907,12 +1907,12 @@ msgstr "Etapa de la oportunidad"
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
 msgid "Option id is invalid"
-msgstr ""
+msgstr "Opcion id no es valida"
 
 #. js-lingui-id: MniXaX
 #: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
 msgid "Option id is required"
-msgstr ""
+msgstr "Opcion id es necesaria"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
@@ -2192,7 +2192,7 @@ msgstr "Fecha de inicio"
 #. js-lingui-id: amGzX5
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Start of the week"
-msgstr ""
+msgstr "Comienzo de la semana"
 
 #. js-lingui-id: RS0o7b
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2202,7 +2202,7 @@ msgstr "Estado"
 #. js-lingui-id: nY8GL/
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "State of the workflow run"
-msgstr "Estado de la ejecución del workflow"
+msgstr "Estado de la ejecución del flujo de trabajo"
 
 #. js-lingui-id: uAQUqI
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -2450,7 +2450,7 @@ msgstr "El creador del registro"
 #. js-lingui-id: bMyVOx
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "The current statuses of the workflow versions"
-msgstr "Los estados actuales de las versiones del workflow"
+msgstr "Los estados actuales de las versiones del flujo de trabajo"
 
 #. js-lingui-id: 0bo4Q0
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -2460,7 +2460,7 @@ msgstr "La fecha en que se recibió el mensaje"
 #. js-lingui-id: 8h4mhq
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "The executor of the workflow"
-msgstr "El ejecutor del workflow"
+msgstr "El ejecutor del flujo de trabajo"
 
 #. js-lingui-id: W3raza
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -2490,22 +2490,22 @@ msgstr "El tipo de disparador automático del flujo de trabajo"
 #. js-lingui-id: od0omS
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "The workflow last published version id"
-msgstr "ID de la última versión publicada del workflow"
+msgstr "ID de la última versión publicada del flujo de trabajo"
 
 #. js-lingui-id: /EdWx6
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "The workflow name"
-msgstr "El nombre del workflow"
+msgstr "El nombre del flujo de trabajo"
 
 #. js-lingui-id: EhAsND
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "The workflow version name"
-msgstr "El nombre de la versión del workflow"
+msgstr "El nombre de la versión del flujo de trabajo"
 
 #. js-lingui-id: dhx13p
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "The workflow version status"
-msgstr "El estado de la versión del workflow"
+msgstr "El estado de la versión del flujo de trabajo"
 
 #. js-lingui-id: NbABJb
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
@@ -2594,7 +2594,7 @@ msgstr "Actividades de la cronología vinculadas a la versión"
 #. js-lingui-id: B1CYKX
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Timeline activities linked to the workflow"
-msgstr "Actividades de la cronología vinculadas al workflow"
+msgstr "Actividades de la cronología vinculadas al flujo de trabajo"
 
 #. js-lingui-id: G0UmtQ
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -2665,7 +2665,7 @@ msgstr "Formato de fecha preferido del usuario"
 #. js-lingui-id: Uce+A8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred start day of the week"
-msgstr ""
+msgstr "Día de inicio de semana preferido por el usuario"
 
 #. js-lingui-id: kJuoKm
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -2680,7 +2680,7 @@ msgstr "Valor"
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
-msgstr ""
+msgstr "El valor debe estar en MAYUSCULAS y seguir el formato snake_case \"{sanitizedValue}\""
 
 #. js-lingui-id: 7aatUy
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -2955,7 +2955,7 @@ msgstr "Bienvenido a Twenty: por favor confirma tu correo electrónico"
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Workflow"
-msgstr "Workflow"
+msgstr "Flujo de trabajo"
 
 #. js-lingui-id: hdtWQn
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -2965,66 +2965,66 @@ msgstr "Disparadores automáticos del flujo de trabajo vinculados al flujo de tr
 #. js-lingui-id: vwSkSW
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow linked to the run."
-msgstr "Workflow vinculado a la ejecución."
+msgstr "Flujo de trabajo vinculado a la ejecución."
 
 #. js-lingui-id: y9tnFx
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow record position"
-msgstr "Posición del registro del Workflow"
+msgstr "Posición del registro del flujo de trabajo"
 
 #. js-lingui-id: 5vIcqC
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Workflow Run"
-msgstr "Ejecución de Workflow"
+msgstr "Ejecución de flujo de trabajo"
 
 #. js-lingui-id: 3Iz+qz
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run ended at"
-msgstr "Ejecución del Workflow finalizada en"
+msgstr "Ejecución del flujo de trabajo finalizada en"
 
 #. js-lingui-id: IUaK6s
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run position"
-msgstr "Posición de la ejecución del Workflow"
+msgstr "Posición de la ejecución del flujo de trabajo"
 
 #. js-lingui-id: zaN7tH
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run started at"
-msgstr "Ejecución del Workflow iniciada en"
+msgstr "Ejecución del flujo de trabajo iniciada en"
 
 #. js-lingui-id: 1TU2A8
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run status"
-msgstr "Estado de la ejecución del Workflow"
+msgstr "Estado de la ejecución del flujo de trabajo"
 
 #. js-lingui-id: u6DF/V
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow Runs"
-msgstr "Ejecuciones de Workflow"
+msgstr "Ejecuciones de flujo de trabajo"
 
 #. js-lingui-id: 9nOy7k
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Workflow runs linked to the version."
-msgstr "Ejecuciones de Workflow vinculadas a la versión."
+msgstr "Ejecuciones de flujo de trabajo vinculadas a la versión."
 
 #. js-lingui-id: c37F3j
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow runs linked to the workflow."
-msgstr "Ejecuciones de Workflow vinculadas al Workflow."
+msgstr "Ejecuciones de flujo de trabajo vinculadas al flujo de trabajo."
 
 #. js-lingui-id: lTXctu
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow version"
-msgstr "Versión de Workflow"
+msgstr "Versión de flujo de trabajo"
 
 #. js-lingui-id: +wYPET
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Workflow Version"
-msgstr "Versión de Workflow"
+msgstr "Versión de flujo de trabajo"
 
 #. js-lingui-id: n4/IOE
 #: src/modules/workflow/common/utils/assert-workflow-version-has-steps.ts
@@ -3045,22 +3045,22 @@ msgstr "La versión del flujo de trabajo no está en estado de borrador"
 #. js-lingui-id: CocTJJ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow version linked to the run."
-msgstr "Versión de Workflow vinculada a la ejecución."
+msgstr "Versión de flujo de trabajo vinculada a la ejecución."
 
 #. js-lingui-id: 9l+pJT
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Workflow version position"
-msgstr "Posición de la versión del Workflow"
+msgstr "Posición de la versión del flujo de trabajo"
 
 #. js-lingui-id: OCyhkn
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Workflow Versions"
-msgstr "Versiones de Workflow"
+msgstr "Versiones de flujo de trabajo"
 
 #. js-lingui-id: 018fP9
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow versions linked to the workflow."
-msgstr "Versiones de Workflow vinculadas al Workflow."
+msgstr "Versiones de flujo de trabajo vinculadas al flujo de trabajo."
 
 #. js-lingui-id: s7p+TL
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
@@ -3080,17 +3080,17 @@ msgstr "DisparadoresAutomatizadosFlujoDeTrabajo"
 #. js-lingui-id: woYYQq
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflows"
-msgstr "Workflows"
+msgstr "Flujos de trabajo"
 
 #. js-lingui-id: urCUgs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "WorkflowVersion"
-msgstr "WorkflowVersion"
+msgstr "VersionDeFlujoDeTrabajo"
 
 #. js-lingui-id: b4kire
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "WorkflowVersion workflow"
-msgstr "Workflow del WorkflowVersion"
+msgstr "Flujo de trabajo del VersionDeFlujoDeTrabajo"
 
 #. js-lingui-id: rklt6M
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
