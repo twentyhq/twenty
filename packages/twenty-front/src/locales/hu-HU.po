@@ -469,6 +469,16 @@ msgstr "Hozzáadva {beautifyPastDateRelative}"
 msgid "Added to blocklist"
 msgstr "Hozzáadva a tiltólistához"
 
+#. js-lingui-id: hW/fMg
+#: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+msgid "Address 1"
+msgstr ""
+
+#. js-lingui-id: 5Um70B
+#: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+msgid "Address 2"
+msgstr ""
+
 #. js-lingui-id: Eis4ey
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Adjust the role-related settings"
@@ -1141,6 +1151,11 @@ msgstr "Válassza ki a dátumérték megjelenítésére használt formátumot"
 msgid "Choose your Trial"
 msgstr "Válassza ki a próbaidőt"
 
+#. js-lingui-id: 3wV73y
+#: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+msgid "City"
+msgstr ""
+
 #. js-lingui-id: xCJdfg
 #: src/modules/ui/input/components/internal/date/components/InternalDatePicker.tsx
 msgid "Clear"
@@ -1498,6 +1513,11 @@ msgstr "Valós számlálása"
 msgid "Count unique values"
 msgstr "Egyedi értékek számlálása"
 
+#. js-lingui-id: JNCzPW
+#: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+msgid "Country"
+msgstr ""
+
 #. js-lingui-id: hYgDIe
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 msgid "Create"
@@ -1770,6 +1790,11 @@ msgstr "Munkafolyamat deaktiválása"
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "Deactivated"
 msgstr "Deaktiválva"
+
+#. js-lingui-id: dPDEh6
+#: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
+msgid "Decide which Sub-address fields you want to display"
+msgstr ""
 
 #. js-lingui-id: ovBPCi
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
@@ -4529,6 +4554,11 @@ msgstr "Portugál — Brazília"
 msgid "Portuguese — Portugal"
 msgstr "Portugál — Portugália"
 
+#. js-lingui-id: OKJUcC
+#: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+msgid "Postcode"
+msgstr ""
+
 #. js-lingui-id: /v6Rp9
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Prefilling your workspace data..."
@@ -4748,6 +4778,11 @@ msgstr "Jelszó visszaállítása"
 #: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx
 msgid "Reset to"
 msgstr "Visszaállítás"
+
+#. js-lingui-id: L+rMC9
+#: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
+msgid "Reset to default"
+msgstr ""
 
 #. js-lingui-id: Tj36Dr
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
@@ -5462,6 +5497,11 @@ msgstr "Szabvány"
 msgid "Start a conversation with your AI agent to get workflow insights, task assistance, and process guidance"
 msgstr "Kezdjen egy beszélgetést az AI ügynökével, hogy munkafolyamat betekintést, feladatsegítséget és folyamatirányítást kapjon"
 
+#. js-lingui-id: RS0o7b
+#: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+msgid "State"
+msgstr ""
+
 #. js-lingui-id: uAQUqI
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -5473,6 +5513,11 @@ msgstr "Állapot"
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
 msgid "Stored in database"
 msgstr "Adatbázisban tárolva"
+
+#. js-lingui-id: WIUeUf
+#: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
+msgid "Sub-Fields"
+msgstr ""
 
 #. js-lingui-id: ku9TbG
 #: src/pages/settings/workspace/SettingsSubdomain.tsx
