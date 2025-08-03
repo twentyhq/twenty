@@ -134,7 +134,7 @@ export class WorkspaceEntityManager extends EntityManager {
       shouldBypassPermissionChecks: false,
       objectRecordsPermissions: {},
     },
-  ): SelectQueryBuilder<Entity> | WorkspaceSelectQueryBuilder<Entity> {
+  ): WorkspaceSelectQueryBuilder<Entity> {
     let queryBuilder: SelectQueryBuilder<Entity>;
 
     if (alias) {
@@ -173,14 +173,15 @@ export class WorkspaceEntityManager extends EntityManager {
     selectedColumns: string[] = [],
     permissionOptions?: PermissionOptions,
   ): Promise<InsertResult> {
+    const metadata = this.connection.getMetadata(target);
+
     return this.createQueryBuilder(
-      undefined,
-      undefined,
+      target,
+      metadata.name,
       undefined,
       permissionOptions,
     )
       .insert()
-      .into(target)
       .values(entity)
       .returning(selectedColumns)
       .execute();
@@ -314,6 +315,29 @@ export class WorkspaceEntityManager extends EntityManager {
         .returning(selectedColumns)
         .execute();
     }
+  }
+
+  public updateMany<Entity extends ObjectLiteral>(
+    target: EntityTarget<Entity>,
+    inputs: {
+      criteria: string;
+      partialEntity: QueryDeepPartialEntity<Entity>;
+    }[],
+    permissionOptions?: PermissionOptions,
+    selectedColumns?: string[],
+  ): Promise<UpdateResult> {
+    const metadata = this.connection.getMetadata(target);
+
+    return this.createQueryBuilder(
+      target,
+      metadata.name,
+      undefined,
+      permissionOptions,
+    )
+      .update()
+      .setManyInputs(inputs)
+      .returning(selectedColumns ?? [])
+      .execute();
   }
 
   override increment<Entity extends ObjectLiteral>(
@@ -1077,7 +1101,7 @@ export class WorkspaceEntityManager extends EntityManager {
         entityTarget,
       );
 
-    const updatedEntities = isDefined(relationNestedConfig)
+    const entityWithConnectedRelations = isDefined(relationNestedConfig)
       ? await relationNestedQueries.processRelationNestedQueries({
           entities: entityArray,
           relationNestedConfig,
@@ -1090,7 +1114,9 @@ export class WorkspaceEntityManager extends EntityManager {
         })
       : entityArray;
 
-    const entityIds = entityArray.map((e) => (e as { id: string }).id);
+    const entityIds = entityArray
+      .map((entity) => (entity as { id: string }).id)
+      .filter(isDefined);
     const beforeUpdate = await this.find(
       entityTarget,
       {
@@ -1114,7 +1140,7 @@ export class WorkspaceEntityManager extends EntityManager {
     );
 
     const formattedEntityOrEntities = formatData(
-      updatedEntities,
+      entityWithConnectedRelations,
       objectMetadataItem,
     );
 
@@ -1150,26 +1176,29 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext.objectMetadataMaps,
     );
 
-    for (const entity of formattedResult) {
-      const isUpdate = beforeUpdateMapById[entity.id];
+    const updatedEntities = formattedResult.filter(
+      (entity) => beforeUpdateMapById[entity.id],
+    );
+    const createdEntities = formattedResult.filter(
+      (entity) => !beforeUpdateMapById[entity.id],
+    );
 
-      if (isUpdate) {
-        await this.internalContext.eventEmitterService.emitMutationEvent({
-          action: DatabaseEventAction.UPDATED,
-          objectMetadataItem,
-          workspaceId: this.internalContext.workspaceId,
-          entities: [entity],
-          beforeEntities: beforeUpdateMapById[entity.id],
-        });
-      } else {
-        await this.internalContext.eventEmitterService.emitMutationEvent({
-          action: DatabaseEventAction.CREATED,
-          objectMetadataItem,
-          workspaceId: this.internalContext.workspaceId,
-          entities: [entity],
-        });
-      }
-    }
+    await this.internalContext.eventEmitterService.emitMutationEvent({
+      action: DatabaseEventAction.UPDATED,
+      objectMetadataItem,
+      workspaceId: this.internalContext.workspaceId,
+      entities: updatedEntities,
+      beforeEntities: updatedEntities.map(
+        (entity) => beforeUpdateMapById[entity.id],
+      ),
+    });
+
+    await this.internalContext.eventEmitterService.emitMutationEvent({
+      action: DatabaseEventAction.CREATED,
+      objectMetadataItem,
+      workspaceId: this.internalContext.workspaceId,
+      entities: createdEntities,
+    });
 
     const isFieldPermissionsEnabled =
       this.getFeatureFlagMap().IS_FIELDS_PERMISSIONS_ENABLED;

@@ -78,6 +78,21 @@ export class WorkspaceDeleteQueryBuilder<
       this.internalContext,
     );
 
+    const eventSelectQueryBuilder = new WorkspaceSelectQueryBuilder(
+      this as unknown as WorkspaceSelectQueryBuilder<T>,
+      this.objectRecordsPermissions,
+      this.internalContext,
+      true,
+      this.authContext,
+      this.featureFlagMap,
+    );
+
+    eventSelectQueryBuilder.expressionMap.wheres = this.expressionMap.wheres;
+    eventSelectQueryBuilder.expressionMap.aliases = this.expressionMap.aliases;
+    eventSelectQueryBuilder.setParameters(this.getParameters());
+
+    const before = await eventSelectQueryBuilder.getOne();
+
     const result = await super.execute();
 
     const formattedResult = formatResult<T[]>(
@@ -86,11 +101,17 @@ export class WorkspaceDeleteQueryBuilder<
       this.internalContext.objectMetadataMaps,
     );
 
+    const formattedBefore = formatResult<T[]>(
+      before,
+      objectMetadata,
+      this.internalContext.objectMetadataMaps,
+    );
+
     await this.internalContext.eventEmitterService.emitMutationEvent({
       action: DatabaseEventAction.DESTROYED,
       objectMetadataItem: objectMetadata,
       workspaceId: this.internalContext.workspaceId,
-      entities: formattedResult,
+      entities: formattedBefore,
       authContext: this.authContext,
     });
 

@@ -298,7 +298,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     repository,
     objectMetadataItemWithFieldMaps,
     result,
-    columnsToReturn,
+    columnsToReturn: _,
   }: {
     partialRecordsToUpdate: Partial<ObjectRecord>[];
     repository: WorkspaceRepository<ObjectLiteral>;
@@ -306,26 +306,21 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     result: InsertResult;
     columnsToReturn: string[];
   }): Promise<void> {
-    for (const partialRecordToUpdate of partialRecordsToUpdate) {
-      const recordId = partialRecordToUpdate.id as string;
-
-      // we should not update an existing record's createdBy value
-      const partialRecordToUpdateWithoutCreatedByUpdate =
-        this.getRecordWithoutCreatedBy(
-          partialRecordToUpdate,
-          objectMetadataItemWithFieldMaps,
-        );
-
-      await repository.update(
-        recordId,
-        partialRecordToUpdateWithoutCreatedByUpdate,
-        undefined,
-        columnsToReturn,
+    const partialRecordsToUpdateWithoutCreatedByUpdate =
+      partialRecordsToUpdate.map((record) =>
+        this.getRecordWithoutCreatedBy(record, objectMetadataItemWithFieldMaps),
       );
 
-      result.identifiers.push({ id: recordId });
-      result.generatedMaps.push({ id: recordId });
-    }
+    const savedRecords = await repository.save(
+      partialRecordsToUpdateWithoutCreatedByUpdate,
+    );
+
+    result.identifiers.push(
+      ...savedRecords.map((record) => ({ id: record.id })),
+    );
+    result.generatedMaps.push(
+      ...savedRecords.map((record) => ({ id: record.id })),
+    );
   }
 
   private async processRecordsToInsert({

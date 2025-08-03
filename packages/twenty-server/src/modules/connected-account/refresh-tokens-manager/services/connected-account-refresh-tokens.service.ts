@@ -17,6 +17,7 @@ import {
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { isAxiosTemporaryError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-axios-gaxios-error.util';
 
 export type ConnectedAccountTokens = GoogleTokens | MicrosoftTokens;
 
@@ -98,29 +99,26 @@ export class ConnectedAccountRefreshTokensService {
       }
     } catch (error) {
       if (error?.name === 'AggregateError') {
-        const firstErrorCode = error?.errors?.[0]?.code;
-        const networkErrorCodes = [
-          'ENETUNREACH',
-          'ETIMEDOUT',
-          'ECONNABORTED',
-          'ERR_NETWORK',
-        ];
-        const isTemporaryNetworkError =
-          networkErrorCodes.includes(firstErrorCode);
+        const firstError = error?.errors?.[0];
 
-        this.logger.log(error?.message);
-        this.logger.log(firstErrorCode);
-        this.logger.log(error?.errors);
+        this.logger.log(firstError);
 
-        if (isTemporaryNetworkError) {
+        if (isAxiosTemporaryError(error)) {
           throw new ConnectedAccountRefreshAccessTokenException(
-            `Error refreshing tokens for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}: ${firstErrorCode}`,
+            `Error refreshing tokens for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}: ${firstError.code}`,
             ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR,
           );
         }
-      } else {
-        this.logger.log(error);
       }
+
+      if (isAxiosTemporaryError(error)) {
+        throw new ConnectedAccountRefreshAccessTokenException(
+          `Error refreshing tokens for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}: ${error.code}`,
+          ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR,
+        );
+      }
+
+      this.logger.log(error);
       throw new ConnectedAccountRefreshAccessTokenException(
         `Error refreshing tokens for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}: ${error.message} ${error?.response?.data?.error_description}`,
         ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED,
