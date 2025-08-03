@@ -1,9 +1,9 @@
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { getLabelIdentifierFieldValue } from '@/object-metadata/utils/getLabelIdentifierFieldValue';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { useRecoilValue } from 'recoil';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordShowPageTitle = ({
@@ -19,17 +19,14 @@ export const RecordShowPageTitle = ({
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
 
   const record = useRecoilValue(recordStoreFamilyState(objectRecordId));
-  const labelIdentifierFieldValue = record?.labelIdentifierFieldValue;
 
-  const pageName =
-    labelIdentifierFieldMetadataItem?.type === FieldMetadataType.FULL_NAME
-      ? [
-          labelIdentifierFieldValue?.firstName,
-          labelIdentifierFieldValue?.lastName,
-        ].join(' ')
-      : isDefined(labelIdentifierFieldValue)
-        ? `${labelIdentifierFieldValue}`
-        : '';
+  const pageName = isDefined(record)
+    ? getLabelIdentifierFieldValue(
+        record,
+        labelIdentifierFieldMetadataItem,
+        objectNameSingular,
+      )
+    : '';
 
   const pageTitle = pageName.trim()
     ? `${pageName} - ${objectMetadataItem.labelSingular}`

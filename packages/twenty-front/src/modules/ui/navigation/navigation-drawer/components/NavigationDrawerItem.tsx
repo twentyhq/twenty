@@ -1,5 +1,4 @@
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
@@ -11,7 +10,7 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { Pill } from 'twenty-ui/components';
 import { IconComponent, Label, TablerIconsProps } from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
@@ -264,12 +263,9 @@ export const NavigationDrawerItem = ({
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
 
-  const objectMetadataItem = useRecoilValue(
-    objectMetadataItemFamilySelector({
-      objectName: objectName ?? '',
-      objectNameType: 'singular',
-    }),
-  );
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: objectName ?? '',
+  });
 
   const showBreadcrumb = indentationLevel === 2;
   const showStyledSpacer = Boolean(
@@ -338,7 +334,7 @@ export const NavigationDrawerItem = ({
           <StyledLabelParent>
             <StyledEllipsisContainer>
               <StyledItemLabel>{label}</StyledItemLabel>
-              {objectName && objectMetadataItem && (
+              {isDefined(objectMetadataItem) && (
                 <StyledItemObjectName>
                   {' · '}
                   {objectMetadataItem.labelSingular}
