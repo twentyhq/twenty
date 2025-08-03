@@ -469,6 +469,16 @@ msgstr "Ajouté {beautifyPastDateRelative}"
 msgid "Added to blocklist"
 msgstr "Ajouté à la liste de blocage"
 
+#. js-lingui-id: hW/fMg
+#: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+msgid "Address 1"
+msgstr ""
+
+#. js-lingui-id: 5Um70B
+#: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+msgid "Address 2"
+msgstr ""
+
 #. js-lingui-id: Eis4ey
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Adjust the role-related settings"
@@ -1141,6 +1151,11 @@ msgstr "Choisir le format utilisé pour afficher la valeur de la date"
 msgid "Choose your Trial"
 msgstr "Choisissez votre essai"
 
+#. js-lingui-id: 3wV73y
+#: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+msgid "City"
+msgstr ""
+
 #. js-lingui-id: xCJdfg
 #: src/modules/ui/input/components/internal/date/components/InternalDatePicker.tsx
 msgid "Clear"
@@ -1498,6 +1513,11 @@ msgstr "Compter vrai"
 msgid "Count unique values"
 msgstr "Compter les valeurs uniques"
 
+#. js-lingui-id: JNCzPW
+#: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+msgid "Country"
+msgstr ""
+
 #. js-lingui-id: hYgDIe
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 msgid "Create"
@@ -1770,6 +1790,11 @@ msgstr "Désactiver le workflow"
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "Deactivated"
 msgstr "Désactivé"
+
+#. js-lingui-id: dPDEh6
+#: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
+msgid "Decide which Sub-address fields you want to display"
+msgstr ""
 
 #. js-lingui-id: ovBPCi
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
@@ -4529,6 +4554,11 @@ msgstr "Portugais — Brésil"
 msgid "Portuguese — Portugal"
 msgstr "Portugais — Portugal"
 
+#. js-lingui-id: OKJUcC
+#: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+msgid "Postcode"
+msgstr ""
+
 #. js-lingui-id: /v6Rp9
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Prefilling your workspace data..."
@@ -4748,6 +4778,11 @@ msgstr "Réinitialiser le mot de passe"
 #: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx
 msgid "Reset to"
 msgstr "Réinitialiser à"
+
+#. js-lingui-id: L+rMC9
+#: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
+msgid "Reset to default"
+msgstr ""
 
 #. js-lingui-id: Tj36Dr
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
@@ -5462,6 +5497,11 @@ msgstr "Standard"
 msgid "Start a conversation with your AI agent to get workflow insights, task assistance, and process guidance"
 msgstr "Commencez une conversation avec votre agent AI pour obtenir des informations sur le flux de travail, de l'aide à la tâche et des conseils sur le processus"
 
+#. js-lingui-id: RS0o7b
+#: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+msgid "State"
+msgstr ""
+
 #. js-lingui-id: uAQUqI
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -5473,6 +5513,11 @@ msgstr "Statut"
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
 msgid "Stored in database"
 msgstr "Stocké dans la base de données"
+
+#. js-lingui-id: WIUeUf
+#: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
+msgid "Sub-Fields"
+msgstr ""
 
 #. js-lingui-id: ku9TbG
 #: src/pages/settings/workspace/SettingsSubdomain.tsx
