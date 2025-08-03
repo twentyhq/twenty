@@ -15,10 +15,10 @@ describe('update one unique field metadata', () => {
       },
     } = await createOneObjectMetadata({
       input: {
-        nameSingular: 'testObject',
-        namePlural: 'testObjects',
-        labelSingular: 'Test Object',
-        labelPlural: 'Test Objects',
+        nameSingular: 'testObjectToTestUniqueField',
+        namePlural: 'testObjectsToTestUniqueFields',
+        labelSingular: 'Test Object To Test Unique Field',
+        labelPlural: 'Test Objects To Test Unique Fields',
         icon: 'IconTest',
       },
     });
