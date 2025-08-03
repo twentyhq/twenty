@@ -173,14 +173,15 @@ export class WorkspaceEntityManager extends EntityManager {
     selectedColumns: string[] = [],
     permissionOptions?: PermissionOptions,
   ): Promise<InsertResult> {
+    const metadata = this.connection.getMetadata(target);
+
     return this.createQueryBuilder(
-      undefined,
-      undefined,
+      target,
+      metadata.name,
       undefined,
       permissionOptions,
     )
       .insert()
-      .into(target)
       .values(entity)
       .returning(selectedColumns)
       .execute();

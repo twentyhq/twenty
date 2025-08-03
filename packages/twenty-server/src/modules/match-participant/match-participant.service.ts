@@ -34,13 +34,16 @@ type MatchParticipantsForPeopleArgs = {
 
 type MatchParticipantsArgs<
   ParticipantWorkspaceEntity extends
-    | CalendarEventParticipantWorkspaceEntity
-    | MessageParticipantWorkspaceEntity,
+    | Pick<
+        CalendarEventParticipantWorkspaceEntity,
+        'id' | 'handle' | 'workspaceMemberId' | 'personId' | 'calendarEventId'
+      >
+    | Pick<
+        MessageParticipantWorkspaceEntity,
+        'id' | 'handle' | 'workspaceMemberId' | 'personId' | 'messageId'
+      >,
 > = {
-  participants: Pick<
-    ParticipantWorkspaceEntity,
-    'id' | 'handle' | 'workspaceMemberId' | 'personId'
-  >[];
+  participants: ParticipantWorkspaceEntity[];
   objectMetadataName: ObjectMetadataName;
   transactionManager?: WorkspaceEntityManager;
   matchWith: 'workspaceMemberOnly' | 'personOnly' | 'workspaceMemberAndPerson';
@@ -228,7 +231,7 @@ export class MatchParticipantService<
 
     await this.matchParticipants({
       matchWith: 'workspaceMemberOnly',
-      participants: tobeRematchedParticipants,
+      participants: tobeRematchedParticipants as ParticipantWorkspaceEntity[],
       objectMetadataName,
     });
   }
