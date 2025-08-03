@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
 } from 'class-validator';
 
 @InputType()
@@ -22,4 +23,9 @@ export class CreateApiKeyDTO {
   @IsOptional()
   @IsDateString()
   revokedAt?: string;
+
+  @Field()
+  @IsNotEmpty()
+  @IsUUID()
+  roleId: string;
 }

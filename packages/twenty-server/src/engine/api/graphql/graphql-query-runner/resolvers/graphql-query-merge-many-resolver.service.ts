@@ -97,12 +97,12 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     );
 
     if (roleId) {
-      await this.processNestedRelations(
+      await this.processNestedRelations({
         executionArgs,
-        [updatedRecord],
+        updatedRecords: [updatedRecord],
         authContext,
         roleId,
-      );
+      });
     }
 
     return this.formatResponse(
@@ -357,12 +357,17 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     }
   }
 
-  private async processNestedRelations(
-    executionArgs: GraphqlQueryResolverExecutionArgs<MergeManyResolverArgs>,
-    updatedRecords: ObjectRecord[],
-    authContext: AuthContext,
-    roleId: string,
-  ): Promise<void> {
+  private async processNestedRelations({
+    executionArgs,
+    updatedRecords,
+    authContext,
+    roleId,
+  }: {
+    executionArgs: GraphqlQueryResolverExecutionArgs<MergeManyResolverArgs>;
+    updatedRecords: ObjectRecord[];
+    authContext: AuthContext;
+    roleId: string;
+  }): Promise<void> {
     const { objectMetadataMaps, objectMetadataItemWithFieldMaps } =
       executionArgs.options;
 
@@ -376,7 +381,8 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
         authContext,
         workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
-        shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
+        shouldBypassPermissionChecks:
+          executionArgs.shouldBypassPermissionChecks,
         selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }

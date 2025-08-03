@@ -5,8 +5,10 @@ import { useParams } from 'react-router-dom';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { ApiKeyNameInput } from '@/settings/developers/components/ApiKeyNameInput';
+import { SettingsDevelopersRoleSelector } from '@/settings/developers/components/SettingsDevelopersRoleSelector';
 import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyTokenFamilyState';
 import { computeNewExpirationDate } from '@/settings/developers/utils/computeNewExpirationDate';
 import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
@@ -16,15 +18,19 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconRepeat, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
+  FeatureFlagKey,
+  useAssignRoleToApiKeyMutation,
   useCreateApiKeyMutation,
   useGenerateApiKeyTokenMutation,
   useGetApiKeyQuery,
+  useGetRolesQuery,
   useRevokeApiKeyMutation,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -49,7 +55,7 @@ const REGENERATE_API_KEY_MODAL_ID = 'regenerate-api-key-modal';
 
 export const SettingsDevelopersApiKeyDetail = () => {
   const { t } = useLingui();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const { openModal } = useModal();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -66,10 +72,16 @@ export const SettingsDevelopersApiKeyDetail = () => {
     [],
   );
 
+  const isApiKeyRolesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
+  );
+
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const [createApiKey] = useCreateApiKeyMutation();
   const [revokeApiKey] = useRevokeApiKeyMutation();
-  const { data: apiKeyData } = useGetApiKeyQuery({
+  const [assignRoleToApiKey] = useAssignRoleToApiKeyMutation();
+
+  const { data: apiKeyData, loading: apiKeyLoading } = useGetApiKeyQuery({
     variables: {
       input: {
         id: apiKeyId,
@@ -78,12 +90,46 @@ export const SettingsDevelopersApiKeyDetail = () => {
     onCompleted: (data) => {
       if (isDefined(data?.apiKey)) {
         setApiKeyName(data.apiKey.name);
+        if (isDefined(data.apiKey.role?.id)) {
+          setSelectedRoleId(data.apiKey.role.id);
+        }
       }
     },
   });
 
+  const { data: rolesData, loading: rolesLoading } = useGetRolesQuery();
+
+  const roles = rolesData?.getRoles ?? [];
+
   const apiKey = apiKeyData?.apiKey;
   const [apiKeyName, setApiKeyName] = useState('');
+  const [selectedRoleId, setSelectedRoleId] = useState<string | undefined>(
+    undefined,
+  );
+
+  const handleRoleChange = async (roleId: string) => {
+    if (!apiKey?.id || !isNonEmptyString(roleId)) return;
+
+    setIsLoading(true);
+    try {
+      await assignRoleToApiKey({
+        variables: {
+          apiKeyId: apiKey.id,
+          roleId,
+        },
+      });
+      enqueueSuccessSnackBar({
+        message: t`Role updated successfully`,
+      });
+      setSelectedRoleId(roleId);
+    } catch (error) {
+      enqueueErrorSnackBar({
+        message: t`Error updating role`,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const deleteIntegration = async (redirect = true) => {
     setIsLoading(true);
@@ -110,11 +156,19 @@ export const SettingsDevelopersApiKeyDetail = () => {
     name: string,
     newExpiresAt: string | null,
   ) => {
+    if (!selectedRoleId) {
+      enqueueErrorSnackBar({
+        message: t`A role must be selected for the API key`,
+      });
+      return;
+    }
+
     const { data: newApiKeyData } = await createApiKey({
       variables: {
         input: {
           name: name,
           expiresAt: newExpiresAt ?? '',
+          roleId: selectedRoleId,
         },
       },
     });
@@ -165,6 +219,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
   };
 
   const confirmationValue = t`yes`;
+
+  if (apiKeyLoading || rolesLoading) {
+    return <SettingsSkeletonLoader />;
+  }
 
   return (
     <>
@@ -221,6 +279,19 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 onNameUpdate={setApiKeyName}
               />
             </Section>
+            {isApiKeyRolesEnabled && (
+              <Section>
+                <H2Title
+                  title={t`Role`}
+                  description={t`What this API can do: Select a user role to define its permissions.`}
+                />
+                <SettingsDevelopersRoleSelector
+                  value={selectedRoleId}
+                  onChange={handleRoleChange}
+                  roles={roles}
+                />
+              </Section>
+            )}
             <Section>
               <H2Title
                 title={t`Expiration`}

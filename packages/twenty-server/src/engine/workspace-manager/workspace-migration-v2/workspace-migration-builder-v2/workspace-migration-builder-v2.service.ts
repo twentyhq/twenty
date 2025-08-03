@@ -36,6 +36,7 @@ export class WorkspaceMigrationBuilderV2Service {
         createdObjectMetadata,
         deletedObjectMetadata,
         updatedObjectMetadata,
+        inferDeletionFromMissingObjectFieldIndex,
       });
 
     const createdObjectMetadataCreateIndexActions =

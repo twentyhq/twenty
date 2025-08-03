@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { z } from 'zod';
 import { StepStatus } from 'twenty-shared/workflow';
+import { z } from 'zod';
 
 // Base schemas
 export const objectRecordSchema = z.record(z.any());
@@ -135,7 +135,8 @@ export const workflowHttpRequestActionSettingsSchema =
 export const workflowAiAgentActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
-      agentId: z.string(),
+      agentId: z.string().optional(),
+      prompt: z.string().optional(),
     }),
   });
 
