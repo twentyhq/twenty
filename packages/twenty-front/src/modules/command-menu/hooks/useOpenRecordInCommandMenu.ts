@@ -163,11 +163,11 @@ export const useOpenRecordInCommandMenu = () => {
           theme,
         });
 
+        const objectLabel = objectMetadataItem.labelSingular;
+
         navigateCommandMenu({
           page: CommandMenuPages.ViewRecord,
-          pageTitle: isNewRecord
-            ? t`New ${objectMetadataItem.labelSingular}`
-            : objectMetadataItem.labelSingular,
+          pageTitle: isNewRecord ? t`New ${objectLabel}` : objectLabel,
           pageIcon: Icon,
           pageIconColor: IconColor,
           pageId: pageComponentInstanceId,
