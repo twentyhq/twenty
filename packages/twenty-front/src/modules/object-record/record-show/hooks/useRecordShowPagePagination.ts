@@ -216,13 +216,13 @@ export const useRecordShowPagePagination = (
 
   const rankFoundInView = rankInView > -1;
 
-  const objectLabel = objectMetadataItem.labelPlural;
+  const objectLabelPlural = objectMetadataItem.labelPlural;
 
   const totalCount = 1 + Math.max(totalCountBefore, totalCountAfter);
 
   const viewNameWithCount = rankFoundInView
-    ? `${rankInView + 1} of ${totalCount} in ${objectLabel}`
-    : `${objectLabel} (${totalCount})`;
+    ? `${rankInView + 1} of ${totalCount} in ${objectLabelPlural}`
+    : `${objectLabelPlural} (${totalCount})`;
 
   return {
     viewName: viewNameWithCount,
