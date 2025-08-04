@@ -1,4 +1,4 @@
-import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsRolePermissionsObjectLevelOverrideCellContainer } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCellContainer';
 import { SettingsRolePermissionsObjectLevelSeeFieldsValueForObject } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject';
 import { SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject';
@@ -13,7 +13,6 @@ import {
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui/display';
-import { ObjectPermission } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledNameTableCell = styled(TableCell)`
@@ -28,24 +27,16 @@ const StyledNameLabel = styled.div`
 `;
 
 type SettingsRolePermissionsObjectLevelTableRowProps = {
-  objectPermission: ObjectPermission;
+  objectMetadataItem: ObjectMetadataItem;
   roleId: string;
 };
 
 export const SettingsRolePermissionsObjectLevelTableRow = ({
-  objectPermission,
+  objectMetadataItem,
   roleId,
 }: SettingsRolePermissionsObjectLevelTableRowProps) => {
   const { getIcon } = useIcons();
   const theme = useTheme();
-
-  const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: objectPermission.objectMetadataId,
-  });
-
-  if (!objectMetadataItem) {
-    throw new Error('Object metadata item not found');
-  }
 
   const Icon = getIcon(objectMetadataItem.icon);
 
@@ -55,7 +46,7 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
     <TableRow
       to={getSettingsPath(SettingsPath.RoleObjectLevel, {
         roleId: roleId,
-        objectMetadataId: objectPermission.objectMetadataId,
+        objectMetadataId: objectMetadataItem.id,
       })}
       gridAutoColumns={OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS}
     >
@@ -73,7 +64,7 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
       </StyledNameTableCell>
       <TableCell>
         <SettingsRolePermissionsObjectLevelOverrideCellContainer
-          objectPermissions={objectPermission}
+          objectMetadataItem={objectMetadataItem}
           roleId={roleId}
           objectLabel={objectLabelPlural}
         />
@@ -81,13 +72,13 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
       <TableCell>
         <SettingsRolePermissionsObjectLevelSeeFieldsValueForObject
           roleId={roleId}
-          objectMetadataItemId={objectPermission.objectMetadataId}
+          objectMetadataItemId={objectMetadataItem.id}
         />
       </TableCell>
       <TableCell>
         <SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject
           roleId={roleId}
-          objectMetadataItemId={objectPermission.objectMetadataId}
+          objectMetadataItemId={objectMetadataItem.id}
         />
       </TableCell>
       <TableCell align={'right'}>

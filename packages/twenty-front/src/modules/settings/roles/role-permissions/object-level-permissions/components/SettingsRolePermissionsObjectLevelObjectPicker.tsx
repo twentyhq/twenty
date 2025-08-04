@@ -1,15 +1,14 @@
-import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+/* eslint-disable @nx/workspace-no-navigate-prefer-link */
 import { isWorkflowRelatedObjectMetadata } from '@/object-metadata/utils/isWorkflowRelatedObjectMetadata';
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { useFilterObjectsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
-import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
+import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useMemo, useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useState } from 'react';
 import { H2Title, IconSearch, useIcons } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -55,12 +54,9 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
   const theme = useTheme();
   const navigate = useNavigateSettings();
   const [searchFilter, setSearchFilter] = useState('');
-  const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
-    settingsDraftRoleFamilyState(roleId),
-  );
 
-  const { alphaSortedActiveNonSystemObjectMetadataItems: objectMetadataItems } =
-    useFilteredObjectMetadataItems();
+  const { objectMetadataItemsThatCanHavePermission } =
+    useObjectMetadataItemsThatCanHavePermission();
 
   const { getIcon } = useIcons();
 
@@ -69,52 +65,31 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
   };
 
   const handleSelectObjectMetadata = (objectMetadataId: string) => {
-    setSettingsDraftRole((draftRole) => ({
-      ...draftRole,
-      objectPermissions: [
-        ...(draftRole.objectPermissions ?? []).filter(
-          (permission) => permission.objectMetadataId !== objectMetadataId,
-        ),
-        {
-          objectMetadataId,
-          canReadObjectRecords: null,
-          canUpdateObjectRecords: null,
-          canSoftDeleteObjectRecords: null,
-          canDestroyObjectRecords: null,
-        },
-      ],
-    }));
     navigate(SettingsPath.RoleObjectLevel, {
       roleId,
       objectMetadataId,
     });
   };
 
-  const { filterObjectsWithPermissionOverride } =
-    useFilterObjectsWithPermissionOverride({
+  const { filterObjectMetadataItemsWithPermissionOverride } =
+    useFilterObjectMetadataItemsWithPermissionOverride({
       roleId,
     });
 
-  const excludedObjectMetadataIds = useMemo(
-    () =>
-      settingsDraftRole.objectPermissions
-        ?.filter(filterObjectsWithPermissionOverride)
-        .map((p) => p.objectMetadataId) ?? [],
-    [settingsDraftRole, filterObjectsWithPermissionOverride],
-  );
+  const objectMetadataItemIdsWithPermission =
+    objectMetadataItemsThatCanHavePermission
+      .filter(filterObjectMetadataItemsWithPermissionOverride)
+      .map((objectMetadataItem) => objectMetadataItem.id);
 
-  const filteredObjectMetadataItems = useMemo(
-    () =>
-      objectMetadataItems.filter(
-        (objectMetadataItem) =>
-          objectMetadataItem.labelPlural
-            .toLowerCase()
-            .includes(searchFilter.toLowerCase()) &&
-          !excludedObjectMetadataIds.includes(objectMetadataItem.id) &&
-          !isWorkflowRelatedObjectMetadata(objectMetadataItem.nameSingular),
-      ),
-    [objectMetadataItems, searchFilter, excludedObjectMetadataIds],
-  );
+  const filteredObjectMetadataItems =
+    objectMetadataItemsThatCanHavePermission.filter(
+      (objectMetadataItem) =>
+        objectMetadataItem.labelPlural
+          .toLowerCase()
+          .includes(searchFilter.toLowerCase()) &&
+        !objectMetadataItemIdsWithPermission.includes(objectMetadataItem.id) &&
+        !isWorkflowRelatedObjectMetadata(objectMetadataItem.nameSingular),
+    );
 
   const standardObjects = filteredObjectMetadataItems.filter(
     (item) => !item.isCustom,
@@ -170,7 +145,6 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
           </StyledContainer>
         </Section>
       )}
-
       {customObjects.length > 0 && (
         <Section>
           <H2Title title={t`Custom`} description={t`All your custom objects`} />

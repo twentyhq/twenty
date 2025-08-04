@@ -3,9 +3,8 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isWorkflowRelatedObjectMetadata } from '@/object-metadata/utils/isWorkflowRelatedObjectMetadata';
 import { useGetObjectPermissionDerivedStates } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useGetObjectPermissionDerivedStates';
 import { useCallback } from 'react';
-import { ObjectPermission } from '~/generated/graphql';
 
-export const useFilterObjectsWithPermissionOverride = ({
+export const useFilterObjectMetadataItemsWithPermissionOverride = ({
   roleId,
 }: {
   roleId: string;
@@ -30,20 +29,20 @@ export const useFilterObjectsWithPermissionOverride = ({
       roleId,
     });
 
-  const filterObjectsWithPermissionOverride = useCallback(
-    (objectPermission: ObjectPermission) => {
+  const filterObjectMetadataItemsWithPermissionOverride = useCallback(
+    (objectMetadataItem: ObjectMetadataItem) => {
       const {
         objectHasNoOverrideOnObjectPermission,
         thereAreFieldPermissionsButTheyShouldntBeTakenIntoAccountBecauseObjectPermissionsDontAllowIt,
         thereAreFieldPermissionsOnlyButTheyShouldBeTakenIntoAccount,
-      } = getObjectPermissionDerivedStates(objectPermission.objectMetadataId);
+      } = getObjectPermissionDerivedStates(objectMetadataItem.id);
 
       const shouldBeTaken =
         thereAreFieldPermissionsOnlyButTheyShouldBeTakenIntoAccount ||
         (!objectHasNoOverrideOnObjectPermission &&
           !thereAreFieldPermissionsButTheyShouldntBeTakenIntoAccountBecauseObjectPermissionsDontAllowIt &&
           !isWorkflowRelatedObjectMetadata(
-            objectMetadataMap[objectPermission.objectMetadataId]?.nameSingular,
+            objectMetadataMap[objectMetadataItem.id]?.nameSingular,
           ));
 
       return shouldBeTaken;
@@ -52,6 +51,6 @@ export const useFilterObjectsWithPermissionOverride = ({
   );
 
   return {
-    filterObjectsWithPermissionOverride,
+    filterObjectMetadataItemsWithPermissionOverride,
   };
 };
