@@ -47,7 +47,8 @@ export const RecordBoardCardBody = ({
         fieldName: fieldDefinition.metadata.fieldName,
         fieldType: fieldDefinition.type,
         isCustom: fieldDefinition.metadata.isCustom,
-        objectNameSingular: fieldDefinition.metadata.objectMetadataNameSingular,
+        objectNameSingular:
+          fieldDefinition.metadata.objectMetadataNameSingular ?? '',
       }),
     }),
   );

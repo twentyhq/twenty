@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export type IsFieldReadOnlyBySystemParams = {
-  objectNameSingular?: string;
+  objectNameSingular: string;
   fieldName?: string;
   fieldType?: FieldMetadataType;
   isCustom?: boolean;

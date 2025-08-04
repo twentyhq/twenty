@@ -61,6 +61,7 @@ describe('isFieldReadOnlyBySystem', () => {
     it('should return true if fieldType is RICH_TEXT', () => {
       const result = isFieldReadOnlyBySystem({
         fieldType: FieldMetadataType.RICH_TEXT,
+        objectNameSingular: 'company',
       });
 
       expect(result).toBe(true);
@@ -69,6 +70,7 @@ describe('isFieldReadOnlyBySystem', () => {
     it('should return false if fieldType is RICH_TEXT_V2', () => {
       const result = isFieldReadOnlyBySystem({
         fieldType: FieldMetadataType.RICH_TEXT_V2,
+        objectNameSingular: 'company',
       });
 
       expect(result).toBe(false);
@@ -77,6 +79,7 @@ describe('isFieldReadOnlyBySystem', () => {
     it('should return true if fieldType is ACTOR', () => {
       const result = isFieldReadOnlyBySystem({
         fieldType: FieldMetadataType.ACTOR,
+        objectNameSingular: 'company',
       });
 
       expect(result).toBe(true);
@@ -85,6 +88,7 @@ describe('isFieldReadOnlyBySystem', () => {
     it('should return false for other field types', () => {
       const result = isFieldReadOnlyBySystem({
         fieldType: FieldMetadataType.TEXT,
+        objectNameSingular: 'company',
       });
 
       expect(result).toBe(false);

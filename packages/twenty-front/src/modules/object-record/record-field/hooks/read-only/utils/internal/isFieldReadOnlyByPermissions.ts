@@ -3,7 +3,7 @@ import { ObjectPermission } from '~/generated/graphql';
 
 export type IsFieldReadOnlyByPermissionParams = {
   objectPermissions: ObjectPermission;
-  fieldMetadataId?: string;
+  fieldMetadataId: string;
 };
 
 export const isFieldReadOnlyByPermissions = ({
@@ -12,10 +12,6 @@ export const isFieldReadOnlyByPermissions = ({
 }: IsFieldReadOnlyByPermissionParams) => {
   if (isObjectReadOnly({ objectPermissions }) === true) {
     return true;
-  }
-
-  if (!fieldMetadataId) {
-    return false;
   }
 
   const fieldMetadataIsRestrictedForUpdate =
