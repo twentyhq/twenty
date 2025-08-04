@@ -19,19 +19,21 @@ export const createUpsertObjectPermissionsOperation = (
 ) => ({
   query: gql`
       mutation UpsertObjectPermissions(
-        $upsertObjectPermissionsInput: UpsertObjectPermissionsInput!
+        $roleId: String!
+        $objectPermissions: [ObjectPermissionInput!]!
       ) {
         upsertObjectPermissions(
-          upsertObjectPermissionsInput: $upsertObjectPermissionsInput
+          upsertObjectPermissionsInput: {
+            roleId: $roleId
+            objectPermissions: $objectPermissions
+          }
         ) {
           ${selectedFields.join('\n')}
         }
       }
     `,
   variables: {
-    upsertObjectPermissionsInput: {
-      roleId,
-      objectPermissions,
-    },
+    roleId,
+    objectPermissions,
   },
 });
