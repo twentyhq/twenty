@@ -171,7 +171,7 @@ export class WorkspaceEntityManager extends EntityManager {
     entity:
       | QueryDeepPartialEntityWithNestedRelationFields<Entity>
       | QueryDeepPartialEntityWithNestedRelationFields<Entity>[],
-    selectedColumns: string[] = [],
+    selectedColumns: string[] | '*' = '*',
     permissionOptions?: PermissionOptions,
   ): Promise<InsertResult> {
     const metadata = this.connection.getMetadata(target);
@@ -198,7 +198,7 @@ export class WorkspaceEntityManager extends EntityManager {
       shouldBypassPermissionChecks?: boolean;
       objectRecordsPermissions?: ObjectRecordsPermissions;
     },
-    selectedColumns: string[] = [],
+    selectedColumns: string[] | '*' = '*',
   ): Promise<InsertResult> {
     const metadata = this.connection.getMetadata(target);
     let options;
@@ -270,7 +270,7 @@ export class WorkspaceEntityManager extends EntityManager {
       | unknown,
     partialEntity: QueryDeepPartialEntity<Entity>,
     permissionOptions?: PermissionOptions,
-    selectedColumns: string[] = [],
+    selectedColumns: string[] | '*' = '*',
   ): Promise<UpdateResult> {
     const metadata = this.connection.getMetadata(target);
 
@@ -325,7 +325,7 @@ export class WorkspaceEntityManager extends EntityManager {
       partialEntity: QueryDeepPartialEntity<Entity>;
     }[],
     permissionOptions?: PermissionOptions,
-    selectedColumns?: string[],
+    selectedColumns: string[] | '*' = '*',
   ): Promise<UpdateResult> {
     const metadata = this.connection.getMetadata(target);
 
@@ -347,7 +347,7 @@ export class WorkspaceEntityManager extends EntityManager {
     propertyPath: string,
     value: number | string,
     permissionOptions?: PermissionOptions,
-    selectedColumns: string[] = [],
+    selectedColumns: string[] | '*' = '*',
   ): Promise<UpdateResult> {
     const metadata = this.connection.getMetadata(target);
     const column = metadata.findColumnWithPropertyPath(propertyPath);
@@ -948,7 +948,7 @@ export class WorkspaceEntityManager extends EntityManager {
     propertyPath: string,
     value: number | string,
     permissionOptions?: PermissionOptions,
-    selectedColumns: string[] = [],
+    selectedColumns: string[] | '*' = '*',
   ): Promise<UpdateResult> {
     const metadata = this.connection.getMetadata(target);
     const column = metadata.findColumnWithPropertyPath(propertyPath);

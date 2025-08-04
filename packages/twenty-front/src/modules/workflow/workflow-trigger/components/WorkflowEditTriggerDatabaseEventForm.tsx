@@ -17,7 +17,7 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTriggerHeaderType';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
-import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
+import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';

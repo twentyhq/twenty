@@ -157,7 +157,7 @@ export class WorkspaceInsertQueryBuilder<
 
       const afterResult = await eventSelectQueryBuilder.getMany();
 
-      const formattedResult = formatResult<T[]>(
+      const formattedResultForEvent = formatResult<T[]>(
         afterResult,
         objectMetadata,
         this.internalContext.objectMetadataMaps,
@@ -167,12 +167,30 @@ export class WorkspaceInsertQueryBuilder<
         action: DatabaseEventAction.CREATED,
         objectMetadataItem: objectMetadata,
         workspaceId: this.internalContext.workspaceId,
-        entities: formattedResult,
+        entities: formattedResultForEvent,
         authContext: this.authContext,
       });
 
+      // TypeORM returns all entity columns for insertions
+      const resultWithoutInsertionExtraColumns = result.raw.map(
+        (rawResult: Record<string, string>) =>
+          Object.keys(rawResult)
+            .filter((key) => this.expressionMap.returning.includes(key))
+            .reduce((filtered: Record<string, string>, key) => {
+              filtered[key] = rawResult[key];
+
+              return filtered;
+            }, {}),
+      );
+
+      const formattedResult = formatResult<T[]>(
+        resultWithoutInsertionExtraColumns,
+        objectMetadata,
+        this.internalContext.objectMetadataMaps,
+      );
+
       return {
-        raw: afterResult,
+        raw: resultWithoutInsertionExtraColumns,
         generatedMaps: formattedResult,
         identifiers: result.identifiers,
       };

@@ -10,7 +10,6 @@ import {
 } from '@/workflow/types/Workflow';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 
-import { addCreateStepNodes } from '@/workflow/workflow-diagram/utils/addCreateStepNodes';
 import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
 import { mergeWorkflowDiagrams } from '@/workflow/workflow-diagram/utils/mergeWorkflowDiagrams';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -49,13 +48,11 @@ export const WorkflowDiagramEffect = ({
           workflowDiagramState,
         );
 
-        const nextWorkflowDiagram = addCreateStepNodes(
-          getWorkflowVersionDiagram({
-            workflowVersion: currentVersion,
-            isWorkflowFilteringEnabled,
-            isEditable: true,
-          }),
-        );
+        const nextWorkflowDiagram = getWorkflowVersionDiagram({
+          workflowVersion: currentVersion,
+          isWorkflowFilteringEnabled,
+          isEditable: true,
+        });
 
         let mergedWorkflowDiagram = nextWorkflowDiagram;
 

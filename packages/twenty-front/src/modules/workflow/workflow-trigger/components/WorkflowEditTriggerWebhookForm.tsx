@@ -14,7 +14,7 @@ import { WEBHOOK_TRIGGER_AUTHENTICATION_OPTIONS } from '@/workflow/workflow-trig
 import { WEBHOOK_TRIGGER_HTTP_METHOD_OPTIONS } from '@/workflow/workflow-trigger/constants/WebhookTriggerHttpMethodOptions';
 import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTriggerHeaderType';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
-import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
+import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
 import { getWebhookTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getWebhookTriggerDefaultSettings';
 import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
