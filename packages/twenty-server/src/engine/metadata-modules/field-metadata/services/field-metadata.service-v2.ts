@@ -16,7 +16,6 @@ import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/f
 import { fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-and-its-flat-object-metadata.util';
 import { dispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/dispatch-and-merge-flat-field-metadatas-in-flat-object-metadatas.util';
 import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-with-flat-field-maps-to-flat-object-metadatas.util';
-import { removeFlatFieldMetadataFromFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/remove-flat-field-metadata-from-flat-object-metadatas.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
@@ -91,16 +90,18 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
         flatFieldMetadatas: flatFieldMetadatasToCreate,
       });
 
+    const existingFlatObjectMetadatas = Object.values(
+      existingFlatObjectMetadataMaps.byId,
+    ).map(fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata);
+
     const flatFieldMetadataValidationPromises = flatFieldMetadatasToCreate.map(
       (flatFieldMetadataToValidate) =>
         this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadata({
-          existingFlatObjectMetadatas:
-            removeFlatFieldMetadataFromFlatObjectMetadatas({
-              flatFieldMetadata: flatFieldMetadataToValidate,
-              flatObjectMetadatas: optimisticRenderedFlatObjectMetadatas,
-            }),
+          existingFlatObjectMetadatas,
           flatFieldMetadataToValidate,
           workspaceId,
+          othersFlatObjectMetadataToValidate:
+            optimisticRenderedFlatObjectMetadatas,
         }),
     );
 
@@ -119,9 +120,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
 
     const workspaceMigration = this.workspaceMigrationBuilderV2.build({
       objectMetadataFromToInputs: {
-        from: Object.values(existingFlatObjectMetadataMaps.byId).map(
-          fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata,
-        ),
+        from: existingFlatObjectMetadatas,
         to: optimisticRenderedFlatObjectMetadatas,
       },
       inferDeletionFromMissingObjectFieldIndex: false,
