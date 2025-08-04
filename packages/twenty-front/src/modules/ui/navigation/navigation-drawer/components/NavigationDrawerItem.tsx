@@ -11,6 +11,7 @@ import styled from '@emotion/styled';
 import { ReactNode, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
+import { slugify } from 'transliteration';
 import { Pill } from 'twenty-ui/components';
 import {
   AppTooltip,
@@ -271,14 +272,9 @@ export const NavigationDrawerItem = ({
     useRecoilState(isNavigationDrawerExpandedState);
 
   const navigationItemId = useMemo(() => {
-    const cleanLabel = label
-      .replace(/\s+/g, '-')
-      .toLowerCase()
-      .replace(/[^a-z0-9-]/g, '');
-    const cleanRoute = to
-      ? `-${to.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`
-      : '';
-    const baseId = `nav-item-${cleanLabel}${cleanRoute}`;
+    const slugifiedLabel = slugify(label);
+    const slugifiedRoute = to ? `-${slugify(to)}` : '';
+    const baseId = `nav-item-${slugifiedLabel}${slugifiedRoute}`;
     return baseId.length > 50 ? baseId.substring(0, 50) : baseId;
   }, [label, to]);
 
