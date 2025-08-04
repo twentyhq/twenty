@@ -676,7 +676,7 @@ export type DeleteWebhookDto = {
 
 export type DeleteWorkflowVersionStepInput = {
   /** Step to delete ID */
-  stepId: Scalars['UUID'];
+  stepId: Scalars['String'];
   /** Workflow version ID */
   workflowVersionId: Scalars['UUID'];
 };
