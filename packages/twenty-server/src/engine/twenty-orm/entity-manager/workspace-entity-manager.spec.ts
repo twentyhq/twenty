@@ -335,7 +335,7 @@ describe('WorkspaceEntityManager', () => {
         objectRecordsPermissions:
           mockPermissionOptions.objectRecordsPermissions,
         selectedColumns: [],
-        allFieldsSelected: false,
+        entireEntitySelected: false,
         updatedColumns: [],
       });
     });
@@ -370,7 +370,7 @@ describe('WorkspaceEntityManager', () => {
         objectRecordsPermissions:
           mockPermissionOptions.objectRecordsPermissions,
         selectedColumns: [],
-        allFieldsSelected: false,
+        entireEntitySelected: false,
         updatedColumns: [],
       });
     });

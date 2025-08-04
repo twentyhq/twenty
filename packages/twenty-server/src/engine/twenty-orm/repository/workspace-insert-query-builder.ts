@@ -168,7 +168,7 @@ export class WorkspaceInsertQueryBuilder<
     });
 
     return {
-      raw: afterResult,
+      raw: result.raw,
       generatedMaps: formattedResult,
       identifiers: result.identifiers,
     };
