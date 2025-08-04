@@ -7,14 +7,13 @@ sectionInfo: Discover how to use standard and custom objects in your workspace.
 ---
 
 ## Import data
-
 You can import data for any object into Twenty using a .csv, .xlsx, or .xls file. Each of the files you will upload needs to contains one type of object (for example, only People records). 
 You can use the Import to create or update records.
 
 ### Download a sample file to match the expected formatting
-- Go to a view of records of the object you're about to import. 
-- Click on the `⋮` icon on the top right and then select `Import records`.
-- Click on `Download sample file`.
+1. Go to a view of records of the object you're about to import. 
+2. Click on the `⋮` icon on the top right and then select `Import records`.
+3. Click on `Download sample file`.
 
 ### Prepare your csv
 Here are a few things to check ahead of uploading your file. 
@@ -26,19 +25,21 @@ Here are a few things to check ahead of uploading your file.
   - We are currently improving this: let us know if you need help in the meantime.
 
 ### Upload your file
-- Go to a view of records of the object you're about to import. 
-- Click on the `⋮` icon on the top right and then select `Import records`.
-- Click on `Select file`.
-- Validate the mapping of the fields. You don't have to import all of them, you can choose the "Do not map" option. You might need to also map the values of your select type and multi select type fields.
-- Click on `Next Steps` and `Review the rows with errors`. Cells with an issue are highlighted. You can either remove the row or update the cell directly from there.
-- Once you're done, click on `Confirm`
+1. Go to a view of records of the object you're about to import. 
+2. Click on the `⋮` icon on the top right and then select `Import records`.
+3. Click on `Select file`.
+4. Validate the mapping of the fields. You don't have to import all of them, you can choose the "Do not map" option. You might need to also map the values of your select type and multi select type fields.
+5. Click on `Next Steps` and `Review the rows with errors`. Cells with an issue are highlighted. You can either remove the row or update the cell directly from there.
+6. Once you're done, click on `Confirm`
 
 <img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}}/>
 
 
-### FAQ regarding the import
-- Duplicated email issue: make sure there is no record already in Twenty with this given email or twice the same email in your csv
+### Import FAQ
+- Duplicated email issue: make sure there is no record already in Twenty with this given email or twice the same email in your csv.
 - I cannot import relations: reach out to us, we will assist you. 
+- I want to migrate the IDs from my other system(s): we recommend creating a field with type Text. You can upload your ids there. 
+- I want to use the Import csv to update records: feel free to only match the id of your records and the field(s) to update. The remaining (unmapped) fields won't be changed.
 
 
 ## Export data
