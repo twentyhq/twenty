@@ -66,9 +66,9 @@ export const ActivityRichTextEditor = ({
       objectNameSingular: activityObjectNameSingular,
     });
 
-  const bodyV2FieldMetadataItemId = objectMetadataItemActivity.fields.find(
+  const bodyV2FieldMetadataItem = objectMetadataItemActivity.fields.find(
     (field) => field.name === 'bodyV2',
-  )?.id;
+  );
 
   const { deleteManyRecords: deleteAttachments } = useDeleteManyRecords({
     objectNameSingular: CoreObjectNameSingular.Attachment,
@@ -101,7 +101,7 @@ export const ActivityRichTextEditor = ({
   const isRecordFieldReadOnly = useIsRecordFieldReadOnly({
     recordId: activityId,
     objectMetadataId: objectMetadataItemActivity.id,
-    fieldMetadataId: bodyV2FieldMetadataItemId,
+    fieldMetadataId: bodyV2FieldMetadataItem?.id ?? '',
   });
 
   const persistBodyDebounced = useDebouncedCallback((blocknote: string) => {
