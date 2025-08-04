@@ -2915,6 +2915,11 @@ msgstr "Widoczność"
 msgid "Visible"
 msgstr "Widoczne"
 
+#. js-lingui-id: xvV2NJ
+#: src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.ts
+msgid "We are experiencing a temporary issue with our database. Please try again later."
+msgstr ""
+
 #. js-lingui-id: TRDppN
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Webhook"
