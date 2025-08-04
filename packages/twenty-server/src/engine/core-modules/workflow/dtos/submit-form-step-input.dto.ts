@@ -7,7 +7,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 @InputType()
 export class SubmitFormStepInput {
   @Field(() => UUIDScalarType, {
-    description: 'Workflow version ID',
+    description: 'Workflow step ID',
     nullable: false,
   })
   stepId: string;
