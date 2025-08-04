@@ -21,7 +21,7 @@ export type NavigationDrawerProps = {
 
 const StyledAnimatedContainer = styled(motion.div)`
   max-height: 100vh;
-  overflow: visible;
+  overflow: hidden;
 `;
 
 const StyledContainer = styled.div<{
