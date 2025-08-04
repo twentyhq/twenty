@@ -118,7 +118,10 @@ export class ConnectedAccountRefreshTokensService {
         );
       }
 
-      this.logger.log(error);
+      this.logger.log(
+        `Error while refreshing tokens on connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}`,
+        error,
+      );
       throw new ConnectedAccountRefreshAccessTokenException(
         `Error refreshing tokens for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}: ${error.message} ${error?.response?.data?.error_description}`,
         ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED,

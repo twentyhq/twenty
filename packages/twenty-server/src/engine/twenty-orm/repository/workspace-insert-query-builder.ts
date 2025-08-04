@@ -17,6 +17,7 @@ import { QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twent
 import { RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 import { RelationDisconnectQueryFieldsByEntityIndex } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
@@ -100,98 +101,102 @@ export class WorkspaceInsertQueryBuilder<
   }
 
   override async execute(): Promise<InsertResult> {
-    validateQueryIsPermittedOrThrow({
-      expressionMap: this.expressionMap,
-      objectRecordsPermissions: this.objectRecordsPermissions,
-      objectMetadataMaps: this.internalContext.objectMetadataMaps,
-      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
-      isFieldPermissionsEnabled:
-        this.featureFlagMap?.[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED],
-    });
+    try {
+      validateQueryIsPermittedOrThrow({
+        expressionMap: this.expressionMap,
+        objectRecordsPermissions: this.objectRecordsPermissions,
+        objectMetadataMaps: this.internalContext.objectMetadataMaps,
+        shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+        isFieldPermissionsEnabled:
+          this.featureFlagMap?.[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED],
+      });
 
-    const mainAliasTarget = this.getMainAliasTarget();
+      const mainAliasTarget = this.getMainAliasTarget();
 
-    const objectMetadata = getObjectMetadataFromEntityTarget(
-      mainAliasTarget,
-      this.internalContext,
-    );
-
-    if (isDefined(this.relationNestedConfig)) {
-      const nestedRelationQueryBuilder = new WorkspaceSelectQueryBuilder(
-        this as unknown as WorkspaceSelectQueryBuilder<T>,
-        this.objectRecordsPermissions,
+      const objectMetadata = getObjectMetadataFromEntityTarget(
+        mainAliasTarget,
         this.internalContext,
-        this.shouldBypassPermissionChecks,
-        this.authContext,
       );
 
-      const updatedValues =
-        await this.relationNestedQueries.processRelationNestedQueries({
-          entities: this.expressionMap.valuesSet as
-            | QueryDeepPartialEntityWithNestedRelationFields<T>
-            | QueryDeepPartialEntityWithNestedRelationFields<T>[],
-          relationNestedConfig: this.relationNestedConfig,
-          queryBuilder: nestedRelationQueryBuilder,
-        });
+      if (isDefined(this.relationNestedConfig)) {
+        const nestedRelationQueryBuilder = new WorkspaceSelectQueryBuilder(
+          this as unknown as WorkspaceSelectQueryBuilder<T>,
+          this.objectRecordsPermissions,
+          this.internalContext,
+          this.shouldBypassPermissionChecks,
+          this.authContext,
+        );
 
-      this.expressionMap.valuesSet = updatedValues;
+        const updatedValues =
+          await this.relationNestedQueries.processRelationNestedQueries({
+            entities: this.expressionMap.valuesSet as
+              | QueryDeepPartialEntityWithNestedRelationFields<T>
+              | QueryDeepPartialEntityWithNestedRelationFields<T>[],
+            relationNestedConfig: this.relationNestedConfig,
+            queryBuilder: nestedRelationQueryBuilder,
+          });
+
+        this.expressionMap.valuesSet = updatedValues;
+      }
+
+      const result = await super.execute();
+      const eventSelectQueryBuilder = (
+        this.connection.manager as WorkspaceEntityManager
+      ).createQueryBuilder(
+        mainAliasTarget,
+        this.expressionMap.mainAlias?.metadata.name ?? '',
+        undefined,
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      ) as WorkspaceSelectQueryBuilder<T>;
+
+      eventSelectQueryBuilder.whereInIds(
+        result.identifiers.map((identifier) => identifier.id),
+      );
+
+      const afterResult = await eventSelectQueryBuilder.getMany();
+
+      const formattedResultForEvent = formatResult<T[]>(
+        afterResult,
+        objectMetadata,
+        this.internalContext.objectMetadataMaps,
+      );
+
+      await this.internalContext.eventEmitterService.emitMutationEvent({
+        action: DatabaseEventAction.CREATED,
+        objectMetadataItem: objectMetadata,
+        workspaceId: this.internalContext.workspaceId,
+        entities: formattedResultForEvent,
+        authContext: this.authContext,
+      });
+
+      // TypeORM returns all entity columns for insertions
+      const resultWithoutInsertionExtraColumns = result.raw.map(
+        (rawResult: Record<string, string>) =>
+          Object.keys(rawResult)
+            .filter((key) => this.expressionMap.returning.includes(key))
+            .reduce((filtered: Record<string, string>, key) => {
+              filtered[key] = rawResult[key];
+
+              return filtered;
+            }, {}),
+      );
+
+      const formattedResult = formatResult<T[]>(
+        resultWithoutInsertionExtraColumns,
+        objectMetadata,
+        this.internalContext.objectMetadataMaps,
+      );
+
+      return {
+        raw: resultWithoutInsertionExtraColumns,
+        generatedMaps: formattedResult,
+        identifiers: result.identifiers,
+      };
+    } catch (error) {
+      throw computeTwentyORMException(error);
     }
-
-    const result = await super.execute();
-    const eventSelectQueryBuilder = (
-      this.connection.manager as WorkspaceEntityManager
-    ).createQueryBuilder(
-      mainAliasTarget,
-      this.expressionMap.mainAlias?.metadata.name ?? '',
-      undefined,
-      {
-        shouldBypassPermissionChecks: true,
-      },
-    ) as WorkspaceSelectQueryBuilder<T>;
-
-    eventSelectQueryBuilder.whereInIds(
-      result.identifiers.map((identifier) => identifier.id),
-    );
-
-    const afterResult = await eventSelectQueryBuilder.getMany();
-
-    const formattedResultForEvent = formatResult<T[]>(
-      afterResult,
-      objectMetadata,
-      this.internalContext.objectMetadataMaps,
-    );
-
-    await this.internalContext.eventEmitterService.emitMutationEvent({
-      action: DatabaseEventAction.CREATED,
-      objectMetadataItem: objectMetadata,
-      workspaceId: this.internalContext.workspaceId,
-      entities: formattedResultForEvent,
-      authContext: this.authContext,
-    });
-
-    // TypeORM returns all entity columns for insertions
-    const resultWithoutInsertionExtraColumns = result.raw.map(
-      (rawResult: Record<string, string>) =>
-        Object.keys(rawResult)
-          .filter((key) => this.expressionMap.returning.includes(key))
-          .reduce((filtered: Record<string, string>, key) => {
-            filtered[key] = rawResult[key];
-
-            return filtered;
-          }, {}),
-    );
-
-    const formattedResult = formatResult<T[]>(
-      resultWithoutInsertionExtraColumns,
-      objectMetadata,
-      this.internalContext.objectMetadataMaps,
-    );
-
-    return {
-      raw: resultWithoutInsertionExtraColumns,
-      generatedMaps: formattedResult,
-      identifiers: result.identifiers,
-    };
   }
 
   private getMainAliasTarget(): EntityTarget<T> {
