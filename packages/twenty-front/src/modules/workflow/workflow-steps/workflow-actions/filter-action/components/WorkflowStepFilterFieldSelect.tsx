@@ -93,7 +93,7 @@ export const WorkflowStepFilterFieldSelect = ({
             operand: getViewFilterOperands({
               filterType,
               subFieldName: compositeFieldSubFieldName,
-            })[0],
+            })?.[0],
           },
         });
       },
