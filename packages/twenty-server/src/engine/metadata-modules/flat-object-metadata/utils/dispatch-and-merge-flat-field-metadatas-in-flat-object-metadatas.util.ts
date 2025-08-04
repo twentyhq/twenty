@@ -1,7 +1,8 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { mergeTwoFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/merge-two-flat-field-metadatas.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { isDefined } from 'twenty-shared/utils';
 
 type DispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatasArgs = {
   flatObjectMetadatas: FlatObjectMetadata[];
@@ -16,6 +17,7 @@ export const dispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatas = ({
     flatFieldMetadatas.reduce((acc, flatFieldMetadata) => {
       const { objectMetadataId } = flatFieldMetadata;
       const occurrence = acc[objectMetadataId];
+
       if (isDefined(occurrence)) {
         return {
           ...acc,
@@ -31,6 +33,7 @@ export const dispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatas = ({
   return flatObjectMetadatas.map((flatObjectMetadata) => {
     const toMergeFlatFieldMetadatas =
       flatFieldMetadataGroupedByFlatObjectMetadataId[flatObjectMetadata.id];
+
     if (!isDefined(toMergeFlatFieldMetadatas)) {
       return flatObjectMetadata;
     }
