@@ -2,6 +2,7 @@ import { WorkflowDiagramStepNodeBase } from '@/workflow/workflow-diagram/compone
 import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeIcon';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getNodeVariantFromStepRunStatus } from '@/workflow/workflow-diagram/utils/getNodeVariantFromStepRunStatus';
+import React from 'react';
 
 export const WorkflowDiagramStepNodeReadonly = ({
   data,
@@ -14,6 +15,7 @@ export const WorkflowDiagramStepNodeReadonly = ({
       variant={getNodeVariantFromStepRunStatus(data.runStatus)}
       nodeType={data.nodeType}
       Icon={<WorkflowDiagramStepNodeIcon data={data} />}
+      displayHandle={false}
     />
   );
 };
