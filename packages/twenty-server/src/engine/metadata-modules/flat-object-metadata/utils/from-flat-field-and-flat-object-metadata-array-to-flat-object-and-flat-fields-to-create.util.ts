@@ -15,12 +15,12 @@ type FlatObjectAndFlatFieldsToCreateByFlatObjectId = Record<
 
 export const fromFlatFieldAndFlatObjectMetadataArrayToFlatObjectAndFlatFieldsToCreate =
   (
-    flatFieldAndFlatObjectArray: FlatFieldAndFlatObjectMetadata[],
+    FlatFieldAndFlatObjectMetadatas: FlatFieldAndFlatObjectMetadata[],
   ): FlatObjectAndFlatFieldsToCreate[] => {
     const initialAccumulator: FlatObjectAndFlatFieldsToCreateByFlatObjectId =
       {};
     const flatObjectAndFlatFieldsToCreateByFlatObjectId =
-      flatFieldAndFlatObjectArray.reduce(
+      FlatFieldAndFlatObjectMetadatas.reduce(
         (acc, { flatFieldMetadata, parentFlatObjectMetadata }) => {
           const occurrence = acc[parentFlatObjectMetadata.id];
 
