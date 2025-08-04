@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 import { MultipleMetadataValidationErrors } from 'src/engine/core-modules/error/multiple-metadata-validation-errors';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
@@ -82,10 +82,27 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
       existingFlatObjectMetadataMaps.byId,
     ).map(fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata);
 
-    let sequentiallyOptimisticallyRenderedFlatObjectMetadatas =
-      existingFlatObjectMetadatas;
+    const impactedObjectMetadataIds = Array.from(
+      new Set(
+        flatFieldMetadatasToCreate.map(
+          (flatFieldMetadata) => flatFieldMetadata.objectMetadataId,
+        ),
+      ),
+    );
+    const filterFlatObjectMetadatasByImpactedIds = (
+      flatObjectMetadatas: FlatObjectMetadata[],
+    ) =>
+      flatObjectMetadatas.filter((flatObjectMetadata) =>
+        impactedObjectMetadataIds.includes(flatObjectMetadata.id),
+      );
+    const impactedExistingFlatObjectMetadatas =
+      filterFlatObjectMetadatasByImpactedIds(existingFlatObjectMetadatas);
+
     const allValidationErrors: FailedFlatFieldMetadataValidationExceptions[] =
       [];
+    let sequentiallyOptimisticallyRenderedFlatObjectMetadatas = structuredClone(
+      existingFlatObjectMetadatas,
+    );
 
     for (const flatFieldMetadataToCreate of flatFieldMetadatasToCreate) {
       let othersFlatObjectMetadataToValidate: FlatObjectMetadata[] | undefined =
@@ -109,13 +126,14 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
                 FieldMetadataType.RELATION,
               ) &&
               relatedFlatFieldMetadata.relationTargetObjectMetadataId ===
-                flatFieldMetadataToCreate.objectMetadataId,
+                flatFieldMetadataToCreate.objectMetadataId &&
+              relatedFlatFieldMetadata.id !== flatFieldMetadataToCreate.id,
           );
 
         othersFlatObjectMetadataToValidate =
           dispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatas({
             flatFieldMetadatas: relatedRelationFlatFieldMetadataToCreate,
-            flatObjectMetadatas: existingFlatObjectMetadatas,
+            flatObjectMetadatas: impactedExistingFlatObjectMetadatas,
           });
       }
 
@@ -130,13 +148,17 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
           },
         );
 
+      if (validationErrors.length > 0) {
+        allValidationErrors.push(...validationErrors);
+        continue;
+      }
+
       sequentiallyOptimisticallyRenderedFlatObjectMetadatas =
         dispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatas({
           flatFieldMetadatas: [flatFieldMetadataToCreate],
           flatObjectMetadatas:
             sequentiallyOptimisticallyRenderedFlatObjectMetadatas,
         });
-      allValidationErrors.push(...validationErrors);
     }
 
     if (allValidationErrors.length > 0) {
@@ -146,26 +168,9 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
       );
     }
 
-    const impactedObjectMetadataIds = Array.from(
-      new Set(
-        flatFieldMetadatasToCreate.map(
-          (flatFieldMetadata) => flatFieldMetadata.objectMetadataId,
-        ),
-      ),
-    );
-
-    const filterFlatObjectMetadatasByImpactedIds = (
-      flatObjectMetadatas: FlatObjectMetadata[],
-    ) =>
-      flatObjectMetadatas.filter((flatObjectMetadata) =>
-        impactedObjectMetadataIds.includes(flatObjectMetadata.id),
-      );
-
     const workspaceMigration = this.workspaceMigrationBuilderV2.build({
       objectMetadataFromToInputs: {
-        from: filterFlatObjectMetadatasByImpactedIds(
-          existingFlatObjectMetadatas,
-        ),
+        from: impactedExistingFlatObjectMetadatas,
         to: filterFlatObjectMetadatasByImpactedIds(
           sequentiallyOptimisticallyRenderedFlatObjectMetadatas,
         ),
