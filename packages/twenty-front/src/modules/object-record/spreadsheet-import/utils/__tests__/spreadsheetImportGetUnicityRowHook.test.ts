@@ -23,7 +23,6 @@ describe('spreadsheetImportGetUnicityRowHook', () => {
     fieldName: 'employees',
   });
 
-
   const mockObjectMetadataItem: ObjectMetadataItem = {
     ...baseMockCompany,
     indexMetadatas: [

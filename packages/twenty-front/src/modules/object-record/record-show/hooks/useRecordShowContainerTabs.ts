@@ -265,16 +265,10 @@ export const useRecordShowContainerTabs = (
           (item) => item.nameSingular === targetObjectNameSingular,
         )?.id;
 
-        if (!isDefined(targetObjectMetadataId)) {
-          throw new Error(
-            `Object metadata could not be found for ${targetObjectNameSingular}`,
-          );
-        }
-
         const permissionHide =
           hide.ifNoReadPermission &&
           isDefined(targetObjectNameSingular) &&
-          !objectPermissionsByObjectMetadataId[targetObjectMetadataId]
+          !objectPermissionsByObjectMetadataId[targetObjectMetadataId ?? '']
             ?.canReadObjectRecords;
 
         const requiredObjectsInactive =
