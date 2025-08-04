@@ -342,11 +342,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
       }
 
-      if (
+      const shouldDeleteUniqueIndex =
         isDefined(isUniqueInput) &&
         !isUniqueInput &&
-        existingFieldMetadata.isUnique
-      ) {
+        existingFieldMetadata.isUnique;
+
+      if (shouldDeleteUniqueIndex) {
         await this.indexMetadataService.deleteIndexMetadata({
           workspaceId: fieldMetadataInput.workspaceId,
           objectMetadata: objectMetadataItemWithFieldMaps,

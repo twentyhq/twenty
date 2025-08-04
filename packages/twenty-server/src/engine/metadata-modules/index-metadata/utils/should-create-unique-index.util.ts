@@ -18,6 +18,12 @@ export const shouldCreateUniqueIndex = (
 ) => {
   if (isUnique !== true) return false;
 
+  if (field.isCustom === false)
+    throw new FieldMetadataException(
+      `Unique index cannot be created on standard field`,
+      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+    );
+
   if (
     [FieldMetadataType.MORPH_RELATION, FieldMetadataType.ACTOR].includes(
       field.type,
