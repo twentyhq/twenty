@@ -1,10 +1,10 @@
+import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import {
   WorkflowVersion,
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
-import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
-import { isDefined } from 'twenty-shared/utils';
 import { useMutation } from '@apollo/client';
+import { isDefined } from 'twenty-shared/utils';
 import {
   UpdateWorkflowVersionPositionsMutation,
   UpdateWorkflowVersionPositionsMutationVariables,
@@ -12,16 +12,16 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
-import { UPDATE_WORKFLOW_VERSION_POSITIONS } from '@/workflow/workflow-version/graphql/mutations/updateWorkflowVersionPositions';
+import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
+import { UPDATE_WORKFLOW_VERSION_POSITIONS } from '@/workflow/workflow-version/graphql/mutations/updateWorkflowVersionPositions';
 
 export const useTidyUpWorkflowVersion = ({
   workflow,
@@ -54,11 +54,15 @@ export const useTidyUpWorkflowVersion = ({
   const updateWorkflowVersionPosition = async (
     positions: { id: string; position: { x: number; y: number } }[],
   ) => {
-    if (!isDefined(workflow?.currentVersion)) {
-      throw new Error('Can not update an undefined workflow version.');
+    if (!isDefined(workflow)) {
+      throw new Error('Cannot find a workflow to update');
     }
 
     const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
+
+    if (!isDefined(workflowVersionId)) {
+      throw new Error('Cannot find a workflow version to update');
+    }
 
     await mutate({ variables: { input: { workflowVersionId, positions } } });
 
