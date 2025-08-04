@@ -11,6 +11,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
@@ -66,49 +67,59 @@ export class WorkspaceSelectQueryBuilder<
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   override async execute(): Promise<any> {
-    this.validatePermissions();
+    try {
+      this.validatePermissions();
 
-    const mainAliasTarget = this.getMainAliasTarget();
+      const mainAliasTarget = this.getMainAliasTarget();
 
-    const objectMetadata = getObjectMetadataFromEntityTarget(
-      mainAliasTarget,
-      this.internalContext,
-    );
+      const objectMetadata = getObjectMetadataFromEntityTarget(
+        mainAliasTarget,
+        this.internalContext,
+      );
 
-    const result = await super.execute();
+      const result = await super.execute();
 
-    const formattedResult = formatResult<T[]>(
-      result,
-      objectMetadata,
-      this.internalContext.objectMetadataMaps,
-    );
+      const formattedResult = formatResult<T[]>(
+        result,
+        objectMetadata,
+        this.internalContext.objectMetadataMaps,
+      );
 
-    return {
-      raw: result,
-      generatedMaps: formattedResult,
-      identifiers: result.identifiers,
-    };
+      return {
+        raw: result,
+        generatedMaps: formattedResult,
+        identifiers: result.identifiers,
+      };
+    } catch (error) {
+      throw computeTwentyORMException(error);
+    }
   }
 
   override async getMany(): Promise<T[]> {
-    this.validatePermissions();
+    try {
+      this.validatePermissions();
 
-    const mainAliasTarget = this.getMainAliasTarget();
+      const mainAliasTarget = this.getMainAliasTarget();
 
-    const objectMetadata = getObjectMetadataFromEntityTarget(
-      mainAliasTarget,
-      this.internalContext,
-    );
+      const objectMetadata = getObjectMetadataFromEntityTarget(
+        mainAliasTarget,
+        this.internalContext,
+      );
 
-    const result = await super.getMany();
+      await this.connection.createQueryRunner().query('SELECT pg_sleep(20);');
 
-    const formattedResult = formatResult<T[]>(
-      result,
-      objectMetadata,
-      this.internalContext.objectMetadataMaps,
-    );
+      const result = await super.getMany();
 
-    return formattedResult;
+      const formattedResult = formatResult<T[]>(
+        result,
+        objectMetadata,
+        this.internalContext.objectMetadataMaps,
+      );
+
+      return formattedResult;
+    } catch (error) {
+      throw computeTwentyORMException(error);
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
