@@ -547,473 +547,160 @@ describe('evaluateFilterConditions', () => {
       });
     });
 
-    describe('default filter operands', () => {
-      describe('unknown type filters', () => {
-        it('should handle Is operand with unknown type', () => {
-          const filter1 = createFilter(
-            ViewFilterOperand.Is,
-            'test',
-            'test',
-            'UNKNOWN_TYPE',
-          );
-          const filter2 = createFilter(
-            ViewFilterOperand.Is,
-            123,
-            '123',
-            'UNKNOWN_TYPE',
-          );
-          const filter3 = createFilter(
-            ViewFilterOperand.Is,
-            'test',
-            'different',
-            'UNKNOWN_TYPE',
-          );
+    describe('unknown type filters', () => {
+      it('should handle Is operand with unknown type', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.Is,
+          'test',
+          'test',
+          'unknown',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.Is,
+          'test',
+          'different',
+          'unknown',
+        );
 
-          expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true); // loose equality
-          expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
-        });
-
-        it('should handle IsNot operand with unknown type', () => {
-          const filter1 = createFilter(
-            ViewFilterOperand.IsNot,
-            'test',
-            'different',
-            'UNKNOWN_TYPE',
-          );
-          const filter2 = createFilter(
-            ViewFilterOperand.IsNot,
-            123,
-            '456',
-            'UNKNOWN_TYPE',
-          );
-          const filter3 = createFilter(
-            ViewFilterOperand.IsNot,
-            'test',
-            'test',
-            'UNKNOWN_TYPE',
-          );
-
-          expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
-        });
-
-        it('should handle IsEmpty operand with unknown type', () => {
-          const filter1 = createFilter(
-            ViewFilterOperand.IsEmpty,
-            null,
-            '',
-            'UNKNOWN_TYPE',
-          );
-          const filter2 = createFilter(
-            ViewFilterOperand.IsEmpty,
-            undefined,
-            '',
-            'UNKNOWN_TYPE',
-          );
-          const filter3 = createFilter(
-            ViewFilterOperand.IsEmpty,
-            '',
-            '',
-            'UNKNOWN_TYPE',
-          );
-          const filter4 = createFilter(
-            ViewFilterOperand.IsEmpty,
-            'not empty',
-            '',
-            'UNKNOWN_TYPE',
-          );
-
-          expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter3] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter4] })).toBe(false);
-        });
-
-        it('should handle IsNotEmpty operand with unknown type', () => {
-          const filter1 = createFilter(
-            ViewFilterOperand.IsNotEmpty,
-            'not empty',
-            '',
-            'UNKNOWN_TYPE',
-          );
-          const filter2 = createFilter(
-            ViewFilterOperand.IsNotEmpty,
-            123,
-            '',
-            'UNKNOWN_TYPE',
-          );
-          const filter3 = createFilter(
-            ViewFilterOperand.IsNotEmpty,
-            null,
-            '',
-            'UNKNOWN_TYPE',
-          );
-          const filter4 = createFilter(
-            ViewFilterOperand.IsNotEmpty,
-            '',
-            '',
-            'UNKNOWN_TYPE',
-          );
-
-          expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
-          expect(evaluateFilterConditions({ filters: [filter4] })).toBe(false);
-        });
-
-        it('should handle Contains operand with unknown type', () => {
-          const filter1 = createFilter(
-            ViewFilterOperand.Contains,
-            'Hello World',
-            'World',
-            'UNKNOWN_TYPE',
-          );
-          const filter2 = createFilter(
-            ViewFilterOperand.Contains,
-            ['apple', 'banana'],
-            ['apple'],
-            'UNKNOWN_TYPE',
-          );
-          const filter3 = createFilter(
-            ViewFilterOperand.Contains,
-            'Hello',
-            'World',
-            'UNKNOWN_TYPE',
-          );
-
-          expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
-        });
-
-        it('should handle DoesNotContain operand with unknown type', () => {
-          const filter1 = createFilter(
-            ViewFilterOperand.DoesNotContain,
-            'Hello',
-            'World',
-            'UNKNOWN_TYPE',
-          );
-          const filter2 = createFilter(
-            ViewFilterOperand.DoesNotContain,
-            ['apple', 'banana'],
-            ['grape'],
-            'UNKNOWN_TYPE',
-          );
-          const filter3 = createFilter(
-            ViewFilterOperand.DoesNotContain,
-            'Hello World',
-            'World',
-            'UNKNOWN_TYPE',
-          );
-
-          expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
-        });
-
-        it('should handle GreaterThanOrEqual operand with unknown type', () => {
-          const filter1 = createFilter(
-            ViewFilterOperand.GreaterThanOrEqual,
-            100,
-            50,
-            'UNKNOWN_TYPE',
-          );
-          const filter2 = createFilter(
-            ViewFilterOperand.GreaterThanOrEqual,
-            '100',
-            '50',
-            'UNKNOWN_TYPE',
-          );
-          const filter3 = createFilter(
-            ViewFilterOperand.GreaterThanOrEqual,
-            30,
-            50,
-            'UNKNOWN_TYPE',
-          );
-
-          expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
-        });
-
-        it('should handle LessThanOrEqual operand with unknown type', () => {
-          const filter1 = createFilter(
-            ViewFilterOperand.LessThanOrEqual,
-            30,
-            50,
-            'UNKNOWN_TYPE',
-          );
-          const filter2 = createFilter(
-            ViewFilterOperand.LessThanOrEqual,
-            '30',
-            '50',
-            'UNKNOWN_TYPE',
-          );
-          const filter3 = createFilter(
-            ViewFilterOperand.LessThanOrEqual,
-            100,
-            50,
-            'UNKNOWN_TYPE',
-          );
-
-          expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
-        });
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
       });
 
-      describe('string type filters', () => {
-        it('should handle string values with Is operand', () => {
-          const filter1 = createFilter(
-            ViewFilterOperand.Is,
-            'hello',
-            'hello',
-            'CUSTOM_STRING',
-          );
-          const filter2 = createFilter(
-            ViewFilterOperand.Is,
-            'hello',
-            'world',
-            'CUSTOM_STRING',
-          );
+      it('should handle IsNot operand with unknown type', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.IsNot,
+          'test',
+          'different',
+          'unknown',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.IsNot,
+          'test',
+          'test',
+          'unknown',
+        );
 
-          expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
-        });
-
-        it('should handle string values with Contains operand', () => {
-          const filter1 = createFilter(
-            ViewFilterOperand.Contains,
-            'Hello World',
-            'World',
-            'CUSTOM_STRING',
-          );
-          const filter2 = createFilter(
-            ViewFilterOperand.Contains,
-            'Hello',
-            'xyz',
-            'CUSTOM_STRING',
-          );
-
-          expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
-        });
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
       });
 
-      describe('number type filters', () => {
-        it('should handle number values with Is operand', () => {
-          const filter1 = createFilter(
-            ViewFilterOperand.Is,
-            42,
-            42,
-            'CUSTOM_NUMBER',
-          );
-          const filter2 = createFilter(
-            ViewFilterOperand.Is,
-            42,
-            '42',
-            'CUSTOM_NUMBER',
-          );
-          const filter3 = createFilter(
-            ViewFilterOperand.Is,
-            42,
-            24,
-            'CUSTOM_NUMBER',
-          );
+      it('should handle Contains operand with unknown type', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.Contains,
+          'Hello World',
+          'World',
+          'unknown',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.Contains,
+          'Hello',
+          'World',
+          'unknown',
+        );
 
-          expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true); // loose equality
-          expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
-        });
-
-        it('should handle number values with comparison operands', () => {
-          const filter1 = createFilter(
-            ViewFilterOperand.GreaterThanOrEqual,
-            100,
-            50,
-            'CUSTOM_NUMBER',
-          );
-          const filter2 = createFilter(
-            ViewFilterOperand.LessThanOrEqual,
-            25,
-            50,
-            'CUSTOM_NUMBER',
-          );
-
-          expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
-        });
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
       });
 
-      describe('array type filters', () => {
-        it('should handle array values with Contains operand', () => {
-          const filter1 = createFilter(
-            ViewFilterOperand.Contains,
-            ['apple', 'banana', 'cherry'],
-            ['apple'],
-            'CUSTOM_ARRAY',
-          );
-          const filter2 = createFilter(
-            ViewFilterOperand.Contains,
-            ['apple', 'banana'],
-            ['grape'],
-            'CUSTOM_ARRAY',
-          );
+      it('should handle DoesNotContain operand with unknown type', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          'Hello',
+          'World',
+          'unknown',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          'Hello World',
+          'World',
+          'unknown',
+        );
 
-          expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
-        });
-
-        it('should handle array values with IsEmpty operand', () => {
-          const filter1 = createFilter(
-            ViewFilterOperand.IsEmpty,
-            null,
-            '',
-            'CUSTOM_ARRAY',
-          );
-          const filter2 = createFilter(
-            ViewFilterOperand.IsEmpty,
-            [],
-            '',
-            'CUSTOM_ARRAY',
-          );
-          const filter3 = createFilter(
-            ViewFilterOperand.IsEmpty,
-            ['item'],
-            '',
-            'CUSTOM_ARRAY',
-          );
-
-          // Default filter only checks for null, undefined, or empty string - not empty arrays
-          expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
-          expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
-        });
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
       });
 
-      describe('object type filters', () => {
-        it('should handle object values with Is operand', () => {
-          const obj1 = { name: 'John', age: 30 };
-          const obj2 = { name: 'John', age: 30 };
-          const obj3 = { name: 'Jane', age: 25 };
+      it('should handle IsEmpty operand with unknown type', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.IsEmpty,
+          null,
+          '',
+          'unknown',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.IsEmpty,
+          'not empty',
+          '',
+          'unknown',
+        );
 
-          const filter1 = createFilter(
-            ViewFilterOperand.Is,
-            obj1,
-            obj1,
-            'CUSTOM_OBJECT',
-          );
-          const filter2 = createFilter(
-            ViewFilterOperand.Is,
-            obj1,
-            obj2,
-            'CUSTOM_OBJECT',
-          );
-          const filter3 = createFilter(
-            ViewFilterOperand.Is,
-            obj1,
-            obj3,
-            'CUSTOM_OBJECT',
-          );
-
-          expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true); // same reference
-          expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false); // different reference
-          expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
-        });
-
-        it('should handle object values with IsEmpty operand', () => {
-          const filter1 = createFilter(
-            ViewFilterOperand.IsEmpty,
-            null,
-            '',
-            'CUSTOM_OBJECT',
-          );
-          const filter2 = createFilter(
-            ViewFilterOperand.IsEmpty,
-            { name: 'John' },
-            '',
-            'CUSTOM_OBJECT',
-          );
-
-          expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
-        });
-
-        it('should handle object values with Contains operand', () => {
-          const obj = { name: 'John Doe', age: 30 };
-
-          const filter1 = createFilter(
-            ViewFilterOperand.Contains,
-            obj,
-            'Object',
-            'CUSTOM_OBJECT',
-          );
-          const filter2 = createFilter(
-            ViewFilterOperand.Contains,
-            obj,
-            'John',
-            'CUSTOM_OBJECT',
-          );
-
-          // Objects are converted to '[object Object]' string
-          expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-          expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
-        });
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
       });
 
-      describe('mixed type comparisons with default filter', () => {
-        it('should handle null and undefined values', () => {
-          const filter1 = createFilter(
-            ViewFilterOperand.Is,
-            null,
-            undefined,
-            'MIXED_TYPE',
-          );
-          const filter2 = createFilter(
-            ViewFilterOperand.Is,
-            null,
-            null,
-            'MIXED_TYPE',
-          );
+      it('should handle IsNotEmpty operand with unknown type', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.IsNotEmpty,
+          'not empty',
+          '',
+          'unknown',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.IsNotEmpty,
+          null,
+          '',
+          'unknown',
+        );
 
-          expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true); // null == undefined
-          expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
-        });
-
-        it('should handle boolean and string comparisons', () => {
-          const filter1 = createFilter(
-            ViewFilterOperand.Is,
-            true,
-            'true',
-            'MIXED_TYPE',
-          );
-          const filter2 = createFilter(
-            ViewFilterOperand.Is,
-            false,
-            '',
-            'MIXED_TYPE',
-          );
-
-          expect(evaluateFilterConditions({ filters: [filter1] })).toBe(false); // true != 'true' (loose equality)
-          expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true); // false == ''
-        });
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
       });
 
-      describe('error handling for default filter', () => {
-        it('should throw error for unsupported operand in default filter', () => {
-          const filter = createFilter(
-            'UNSUPPORTED_OPERAND' as ViewFilterOperand,
-            'value',
-            'value',
-            'UNKNOWN_TYPE',
-          );
+      it('should handle GreaterThanOrEqual operand with unknown type', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.GreaterThanOrEqual,
+          100,
+          50,
+          'unknown',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.GreaterThanOrEqual,
+          30,
+          50,
+          'unknown',
+        );
 
-          expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow(
-            'Operand UNSUPPORTED_OPERAND not supported for UNKNOWN_TYPE filter type',
-          );
-        });
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+      });
+
+      it('should handle LessThanOrEqual operand with unknown type', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.LessThanOrEqual,
+          30,
+          50,
+          'unknown',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.LessThanOrEqual,
+          100,
+          50,
+          'unknown',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+      });
+
+      it('should throw error for unsupported operand with unknown type', () => {
+        const filter = createFilter(
+          ViewFilterOperand.VectorSearch,
+          'test',
+          'search term',
+          'unknown',
+        );
+
+        expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow();
       });
     });
   });
