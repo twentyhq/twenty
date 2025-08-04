@@ -25,7 +25,7 @@ export type UpdateObjectAction = {
 
 export type DeleteObjectAction = {
   type: 'delete_object';
-  flatObjectMetadataWithoutFields: FlatObjectMetadataWithoutFields;
+  objectMetadataId: string;
 };
 
 export type WorkspaceMigrationObjectActionV2 =

@@ -3,10 +3,12 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource } from 'typeorm';
 
+import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
 import { WorkspaceMetadataMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-metadata-migration-runner/workspace-metadata-migration-runner-service';
+import { runWorkspaceMigrationActionOptimistically } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-optimistic-migration-runner';
 import { WorkspaceSchemaMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/workspace-schema-migration-runner.service';
 
 @Injectable()
@@ -16,6 +18,7 @@ export class WorkspaceMigrationRunnerV2Service {
     private readonly workspaceSchemaMigrationRunner: WorkspaceSchemaMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     @InjectDataSource('core')
     private readonly coreDataSource: DataSource,
   ) {}
@@ -23,19 +26,41 @@ export class WorkspaceMigrationRunnerV2Service {
   run = async (workspaceMigration: WorkspaceMigrationV2) => {
     const queryRunner = this.coreDataSource.createQueryRunner();
 
+    const { flatObjectMetadataMaps } =
+      await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
+        {
+          workspaceId: workspaceMigration.workspaceId,
+        },
+      );
+
     await queryRunner.connect();
     await queryRunner.startTransaction();
+    let sequentiallyOptimisticallyRenderedFlatObjectMetadataMaps =
+      structuredClone(flatObjectMetadataMaps);
+
     try {
-      await Promise.all([
-        this.workspaceMetadataMigrationRunner.runWorkspaceMetadataMigration({
-          queryRunner,
-          workspaceMigration,
-        }),
-        this.workspaceSchemaMigrationRunner.runWorkspaceSchemaMigration({
-          queryRunner,
-          workspaceMigration,
-        }),
-      ]);
+      for (const action of workspaceMigration.actions) {
+        await Promise.all([
+          this.workspaceMetadataMigrationRunner.runWorkspaceMetadataMigration({
+            flatObjectMetadataMaps:
+              sequentiallyOptimisticallyRenderedFlatObjectMetadataMaps,
+            queryRunner,
+            action,
+          }),
+          this.workspaceSchemaMigrationRunner.runWorkspaceSchemaMigration({
+            queryRunner,
+            flatObjectMetadataMaps:
+              sequentiallyOptimisticallyRenderedFlatObjectMetadataMaps,
+            action,
+          }),
+        ]);
+
+        sequentiallyOptimisticallyRenderedFlatObjectMetadataMaps =
+          runWorkspaceMigrationActionOptimistically({
+            action,
+            flatObjectMetadataMaps,
+          });
+      }
 
       await queryRunner.commitTransaction();
       const { workspaceId } = workspaceMigration;
