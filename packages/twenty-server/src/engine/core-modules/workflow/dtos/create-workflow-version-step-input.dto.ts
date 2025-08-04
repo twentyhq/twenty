@@ -18,7 +18,8 @@ export class CreateWorkflowVersionStepInput {
   })
   stepType: WorkflowActionType;
 
-  @Field(() => UUIDScalarType, {
+  // Typed String as it can be 'trigger'
+  @Field(() => String, {
     description: 'Parent step ID',
     nullable: true,
   })
