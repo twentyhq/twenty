@@ -9,7 +9,7 @@ import {
   FieldTextMetadata,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 export const fieldMetadataId = 'fieldMetadataId';
 

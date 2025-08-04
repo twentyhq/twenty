@@ -16,7 +16,7 @@ import { mapViewFilterGroupLogicalOperatorToRecordFilterGroupLogicalOperator } f
 import { act } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const mockObjectMetadataItemNameSingular = 'company';
 

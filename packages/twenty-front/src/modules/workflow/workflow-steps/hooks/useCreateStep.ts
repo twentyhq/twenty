@@ -52,6 +52,10 @@ export const useCreateStep = ({
     try {
       const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
 
+      if (!isDefined(workflowVersionId)) {
+        throw new Error("Couldn't get updatable workflow version");
+      }
+
       const workflowVersionStepChanges = (
         await createWorkflowVersionStep({
           workflowVersionId,

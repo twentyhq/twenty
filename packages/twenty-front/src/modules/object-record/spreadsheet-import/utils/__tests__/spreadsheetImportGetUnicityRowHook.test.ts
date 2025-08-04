@@ -1,34 +1,27 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { spreadsheetImportGetUnicityRowHook } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityRowHook';
 import { ImportedStructuredRow } from '@/spreadsheet-import/types';
-import { isDefined } from 'twenty-shared/utils';
 import { IndexType } from '~/generated-metadata/graphql';
 import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 
 describe('spreadsheetImportGetUnicityRowHook', () => {
   const baseMockCompany = getMockCompanyObjectMetadataItem();
 
-  const nameField = baseMockCompany.fields.find(
-    (field) => field.name === 'name',
-  );
+  const nameField = getMockFieldMetadataItemOrThrow({
+    objectMetadataItem: baseMockCompany,
+    fieldName: 'name',
+  });
 
-  const domainNameField = baseMockCompany.fields.find(
-    (field) => field.name === 'domainName',
-  );
+  const domainNameField = getMockFieldMetadataItemOrThrow({
+    objectMetadataItem: baseMockCompany,
+    fieldName: 'domainName',
+  });
 
-  const employeesField = baseMockCompany.fields.find(
-    (field) => field.name === 'employees',
-  );
-
-  if (
-    !isDefined(nameField) ||
-    !isDefined(domainNameField) ||
-    !isDefined(employeesField)
-  ) {
-    throw new Error(
-      'Name, domainName or employees field not found in company metadata',
-    );
-  }
+  const employeesField = getMockFieldMetadataItemOrThrow({
+    objectMetadataItem: baseMockCompany,
+    fieldName: 'employees',
+  });
 
   const mockObjectMetadataItem: ObjectMetadataItem = {
     ...baseMockCompany,

@@ -1,17 +1,12 @@
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { mockedViewsData } from './views';
 
-const companyObjectMetadata = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'company',
-);
+const companyObjectMetadata = getMockObjectMetadataItemOrThrow('company');
 
-const personObjectMetadata = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'person',
-);
+const personObjectMetadata = getMockObjectMetadataItemOrThrow('person');
 
-const opportunityObjectMetadata = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'opportunity',
-);
+const opportunityObjectMetadata =
+  getMockObjectMetadataItemOrThrow('opportunity');
 
 export const mockedViewFieldsData = [
   // Companies

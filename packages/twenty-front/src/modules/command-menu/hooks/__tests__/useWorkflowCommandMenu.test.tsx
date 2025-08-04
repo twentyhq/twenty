@@ -19,7 +19,7 @@ import { t } from '@lingui/core/macro';
 import { act } from 'react';
 import { IconBolt, IconSettingsAutomation, useIcons } from 'twenty-ui/display';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { useWorkflowCommandMenu } from '../useWorkflowCommandMenu';
 
 jest.mock('uuid', () => ({

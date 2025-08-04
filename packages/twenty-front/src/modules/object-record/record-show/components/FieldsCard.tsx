@@ -22,6 +22,7 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { useIsInRightDrawerOrThrow } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 type FieldsCardProps = {
   objectNameSingular: string;
@@ -98,6 +99,7 @@ export const FieldsCard = ({
         (objectNameSingular === CoreObjectNameSingular.Task &&
           fieldMetadataItem.name === 'taskTargets')
       ) &&
+      isDefined(fieldMetadataItem.relation?.targetObjectMetadata.id) &&
       getObjectPermissionsForObject(
         objectPermissionsByObjectMetadataId,
         fieldMetadataItem.relation?.targetObjectMetadata.id,

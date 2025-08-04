@@ -4,7 +4,7 @@ import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
 import { expect } from '@storybook/test';
 import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 describe('computeContextStoreFilters', () => {
   const personObjectMetadataItem = generatedMockObjectMetadataItems.find(

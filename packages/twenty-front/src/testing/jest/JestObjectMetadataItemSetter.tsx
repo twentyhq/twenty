@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 export const JestObjectMetadataItemSetter = ({
   children,
