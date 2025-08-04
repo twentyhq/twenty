@@ -62,7 +62,7 @@ export const SummaryCard = ({
 
   const isTitleReadOnly = useIsRecordFieldReadOnly({
     recordId: objectRecordId,
-    fieldMetadataId: labelIdentifierFieldMetadataItem?.id,
+    fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
     objectMetadataId: objectMetadataItem.id,
   });
 
