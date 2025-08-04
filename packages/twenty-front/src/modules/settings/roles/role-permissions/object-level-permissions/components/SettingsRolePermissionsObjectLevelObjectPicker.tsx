@@ -1,5 +1,4 @@
 /* eslint-disable @nx/workspace-no-navigate-prefer-link */
-import { isWorkflowRelatedObjectMetadata } from '@/object-metadata/utils/isWorkflowRelatedObjectMetadata';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
 import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
@@ -87,8 +86,7 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
         objectMetadataItem.labelPlural
           .toLowerCase()
           .includes(searchFilter.toLowerCase()) &&
-        !objectMetadataItemIdsWithPermission.includes(objectMetadataItem.id) &&
-        !isWorkflowRelatedObjectMetadata(objectMetadataItem.nameSingular),
+        !objectMetadataItemIdsWithPermission.includes(objectMetadataItem.id),
     );
 
   const standardObjects = filteredObjectMetadataItems.filter(
