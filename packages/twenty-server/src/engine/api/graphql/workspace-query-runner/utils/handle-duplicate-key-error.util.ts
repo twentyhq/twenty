@@ -48,9 +48,9 @@ export const handleDuplicateKeyError = (
 
     if (affectedColumns?.length === 1) {
       throw new UserInputError(
-        `Duplicate ${columnNames} with value ${duplicatedValues}. Please set a unique one.`,
+        `Duplicate ${columnNames} ${duplicatedValues ? `with value ${duplicatedValues}` : ''}. Please set a unique one.`,
         {
-          userFriendlyMessage: `This ${columnNames.toLowerCase()} with value ${duplicatedValues} is already taken. Please choose a different value.`,
+          userFriendlyMessage: `This ${columnNames.toLowerCase()} ${duplicatedValues ? `with value ${duplicatedValues}` : ''} is already taken. Please choose a different value.`,
         },
       );
     }
