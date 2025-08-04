@@ -142,10 +142,29 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
       );
     }
 
+    const impactedObjectMetadataIds = Array.from(
+      new Set(
+        flatFieldMetadatasToCreate.map(
+          (flatFieldMetadata) => flatFieldMetadata.objectMetadataId,
+        ),
+      ),
+    );
+
+    const filterFlatObjectMetadatasByImpactedIds = (
+      flatObjectMetadatas: FlatObjectMetadata[],
+    ) =>
+      flatObjectMetadatas.filter((flatObjectMetadata) =>
+        impactedObjectMetadataIds.includes(flatObjectMetadata.id),
+      );
+
     const workspaceMigration = this.workspaceMigrationBuilderV2.build({
       objectMetadataFromToInputs: {
-        from: existingFlatObjectMetadatas,
-        to: sequentiallyOptimisticallyRenderedFlatObjectMetadatas,
+        from: filterFlatObjectMetadatasByImpactedIds(
+          existingFlatObjectMetadatas,
+        ),
+        to: filterFlatObjectMetadatasByImpactedIds(
+          sequentiallyOptimisticallyRenderedFlatObjectMetadatas,
+        ),
       },
       inferDeletionFromMissingObjectFieldIndex: false,
       workspaceId,
