@@ -13,7 +13,7 @@ import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/
 import { ViewType } from '@/views/types/ViewType';
 import { expect } from '@storybook/test';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const mockPerson = {
   __typename: 'Person',

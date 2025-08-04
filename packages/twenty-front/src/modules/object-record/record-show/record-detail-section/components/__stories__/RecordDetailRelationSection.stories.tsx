@@ -12,8 +12,8 @@ import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { allMockPersonRecords } from '~/testing/mock-data/people';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { RecordDetailRelationSection } from '../RecordDetailRelationSection';
 
 const companiesMock = getCompaniesMock();

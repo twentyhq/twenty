@@ -46,6 +46,10 @@ export const useUpdateWorkflowVersionTrigger = ({
       };
     }
 
+    if (!isDefined(workflowVersionId)) {
+      throw new Error('Workflow version not found');
+    }
+
     await updateOneWorkflowVersion({
       idToUpdate: workflowVersionId,
       updateOneRecordInput: {

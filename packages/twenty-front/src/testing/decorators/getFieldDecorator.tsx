@@ -11,9 +11,10 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 import { mockedTasks } from '~/testing/mock-data/tasks';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const RecordMockSetterEffect = ({
   companies,
@@ -94,14 +95,13 @@ export const getFieldDecorator =
       (record as any)[fieldName] = fieldValue;
     }
 
-    const objectMetadataItem = generatedMockObjectMetadataItems.find(
-      (objectMetadataItem) =>
-        objectMetadataItem.nameSingular === objectNameSingular,
-    );
+    const objectMetadataItem =
+      getMockObjectMetadataItemOrThrow(objectNameSingular);
 
-    const fieldMetadataItem = objectMetadataItem?.fields.find(
-      (field) => field.name === fieldName,
-    );
+    const fieldMetadataItem = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem,
+      fieldName,
+    });
 
     if (!isDefined(objectMetadataItem)) {
       throw new CustomError(

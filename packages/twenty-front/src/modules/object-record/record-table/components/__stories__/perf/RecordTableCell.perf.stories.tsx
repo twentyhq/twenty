@@ -20,7 +20,7 @@ import { RecordTableRowContextProvider } from '@/object-record/record-table/cont
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { mockPerformance } from './mock';
 
 const RelationFieldValueSetterEffect = () => {

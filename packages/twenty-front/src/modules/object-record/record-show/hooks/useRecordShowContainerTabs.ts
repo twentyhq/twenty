@@ -265,6 +265,10 @@ export const useRecordShowContainerTabs = (
           (item) => item.nameSingular === targetObjectNameSingular,
         )?.id;
 
+        if (!isDefined(targetObjectMetadataId)) {
+          throw new Error('Target object metadata id not found');
+        }
+
         const permissionHide =
           hide.ifNoReadPermission &&
           isDefined(targetObjectNameSingular) &&

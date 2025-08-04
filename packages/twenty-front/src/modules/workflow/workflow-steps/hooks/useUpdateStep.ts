@@ -21,6 +21,10 @@ export const useUpdateStep = ({
 
     const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
 
+    if (!isDefined(workflowVersionId)) {
+      throw new Error('Workflow version not found');
+    }
+
     await updateWorkflowVersionStep({
       workflowVersionId,
       step: updatedStep,

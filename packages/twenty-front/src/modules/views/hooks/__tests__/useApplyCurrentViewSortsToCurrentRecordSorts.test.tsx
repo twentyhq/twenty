@@ -11,11 +11,11 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 
 import { View } from '@/views/types/View';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { mockedViewsData } from '~/testing/mock-data/views';
-import { useApplyCurrentViewSortsToCurrentRecordSorts } from '../useApplyCurrentViewSortsToCurrentRecordSorts';
 import { isDefined } from 'twenty-shared/utils';
+import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
+import { mockedViewsData } from '~/testing/mock-data/views';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { useApplyCurrentViewSortsToCurrentRecordSorts } from '../useApplyCurrentViewSortsToCurrentRecordSorts';
 
 const mockObjectMetadataItemNameSingular = 'company';
 

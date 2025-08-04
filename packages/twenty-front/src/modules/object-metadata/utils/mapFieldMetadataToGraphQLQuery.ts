@@ -39,6 +39,12 @@ export const mapFieldMetadataToGraphQLQuery = ({
 
   const fieldIsNonCompositeField = isNonCompositeField(fieldType);
 
+  if (!isDefined(fieldMetadata.relation?.targetObjectMetadata.id)) {
+    throw new Error(
+      `Target object metadata id not found with field metadata ${fieldMetadata.name}`,
+    );
+  }
+
   const objectPermission = getObjectPermissionsForObject(
     objectPermissionsByObjectMetadataId,
     fieldMetadata.relation?.targetObjectMetadata.id,

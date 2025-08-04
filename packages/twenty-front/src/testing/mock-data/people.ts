@@ -2,7 +2,7 @@ import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFr
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 export const peopleQueryResult = {
   people: {
@@ -1758,13 +1758,7 @@ export const getPeopleRecordConnectionMock = () => {
 };
 
 export const getMockPersonObjectMetadataItem = () => {
-  const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
-    (item) => item.nameSingular === 'person',
-  );
-
-  if (!personObjectMetadataItem) {
-    throw new Error('Person object metadata item not found');
-  }
+  const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 
   return personObjectMetadataItem;
 };

@@ -61,7 +61,7 @@ export const MainContextStoreProvider = () => {
 
   const indexViewId = useRecoilValue(
     prefetchIndexViewIdFromObjectMetadataItemFamilySelector({
-      objectMetadataItemId: objectMetadataItem?.id,
+      objectMetadataItemId: objectMetadataItem?.id ?? '',
     }),
   );
 

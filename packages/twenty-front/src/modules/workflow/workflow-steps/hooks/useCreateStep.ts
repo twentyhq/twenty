@@ -50,6 +50,10 @@ export const useCreateStep = ({
     try {
       const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
 
+      if (!isDefined(workflowVersionId)) {
+        throw new Error('Workflow version not found');
+      }
+
       const createdStep = (
         await createWorkflowVersionStep({
           workflowVersionId,
