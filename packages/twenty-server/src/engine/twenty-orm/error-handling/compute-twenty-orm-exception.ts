@@ -17,10 +17,12 @@ export const computeTwentyORMException = (error: Error) => {
         },
       );
     }
+
+    return new TwentyORMException(
+      'Unknown database query failed error',
+      TwentyORMExceptionCode.UNKNOWN_ERROR,
+    );
   }
 
-  return new TwentyORMException(
-    'Unknown database error',
-    TwentyORMExceptionCode.UNKNOWN_ERROR,
-  );
+  return error;
 };
