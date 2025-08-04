@@ -3,6 +3,7 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileMetadataService } from 'src/engine/core-modules/file/services/file-metadata.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -39,7 +40,7 @@ export class FileResolver {
   @Mutation(() => FileDTO)
   async deleteFile(
     @AuthWorkspace() { id: workspaceId }: Workspace,
-    @Args('fileId') fileId: string,
+    @Args('fileId', { type: () => UUIDScalarType }) fileId: string,
   ): Promise<FileDTO> {
     const deletedFile = await this.fileMetadataService.deleteFileById(
       fileId,
