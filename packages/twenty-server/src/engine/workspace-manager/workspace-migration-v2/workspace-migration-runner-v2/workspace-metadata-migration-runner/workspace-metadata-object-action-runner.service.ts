@@ -12,16 +12,20 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 import { RunnerMethodForActionType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/runner-method-for-action-type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
+import { WorkspaceMetadataFieldActionRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-metadata-migration-runner/workspace-metadata-field-action-runner.service';
 
 @Injectable()
 export class WorkspaceMetadataObjectActionRunnerService
   implements
     RunnerMethodForActionType<WorkspaceMigrationObjectActionTypeV2, 'metadata'>
 {
-  constructor(private readonly dataSourceService: DataSourceService) {}
+  constructor(
+    private readonly dataSourceService: DataSourceService,
+    private readonly workspaceMetadataFieldMigrationRunnerService: WorkspaceMetadataFieldActionRunnerService,
+  ) {}
 
   runDeleteObjectMetadataMigration = async ({
-    action: { flatObjectMetadataWithoutFields },
+    action: { objectMetadataId },
     queryRunner,
   }: WorkspaceMigrationActionRunnerArgs<DeleteObjectAction>) => {
     const objectMetadataRepository =
@@ -29,11 +33,11 @@ export class WorkspaceMetadataObjectActionRunnerService
         ObjectMetadataEntity,
       );
 
-    await objectMetadataRepository.delete(flatObjectMetadataWithoutFields.id);
+    await objectMetadataRepository.delete(objectMetadataId);
   };
 
   runCreateObjectMetadataMigration = async ({
-    action: { flatObjectMetadataWithoutFields },
+    action: { flatObjectMetadataWithoutFields, createFieldActions },
     queryRunner,
   }: WorkspaceMigrationActionRunnerArgs<CreateObjectAction>) => {
     const objectMetadataRepository =
@@ -49,8 +53,16 @@ export class WorkspaceMetadataObjectActionRunnerService
       ...flatObjectMetadataWithoutFields,
       dataSourceId: lastDataSourceMetadata.id,
       targetTableName: 'DEPRECATED',
-      // TODO call for each provided field too or pass fields here
     });
+
+    for (const createFieldAction of createFieldActions) {
+      await this.workspaceMetadataFieldMigrationRunnerService.runCreateFieldMetadataMigration(
+        {
+          action: createFieldAction,
+          queryRunner,
+        },
+      );
+    }
   };
 
   runUpdateObjectMetadataMigration = async ({
