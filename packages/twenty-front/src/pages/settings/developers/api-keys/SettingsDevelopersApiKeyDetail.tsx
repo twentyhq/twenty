@@ -156,11 +156,18 @@ export const SettingsDevelopersApiKeyDetail = () => {
     name: string,
     newExpiresAt: string | null,
   ) => {
-    if (!selectedRoleId) {
+    const adminRole = roles.find((role) => role.label === 'Admin');
+    const roleIdToUse = isApiKeyRolesEnabled ? selectedRoleId : adminRole?.id;
+
+    if (!roleIdToUse && isApiKeyRolesEnabled) {
       enqueueErrorSnackBar({
         message: t`A role must be selected for the API key`,
       });
       return;
+    }
+
+    if (!roleIdToUse) {
+      throw new Error('Admin role not found - this should never happen');
     }
 
     const { data: newApiKeyData } = await createApiKey({
@@ -168,7 +175,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         input: {
           name: name,
           expiresAt: newExpiresAt ?? '',
-          roleId: selectedRoleId,
+          roleId: roleIdToUse,
         },
       },
     });
