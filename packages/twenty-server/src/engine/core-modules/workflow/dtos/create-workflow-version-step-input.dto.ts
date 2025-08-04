@@ -17,13 +17,13 @@ export class CreateWorkflowVersionStepInput {
   })
   stepType: WorkflowActionType;
 
-  @Field(() => UUIDScalarType, {
+  @Field(() => String, {
     description: 'Parent step ID',
     nullable: true,
   })
   parentStepId?: string;
 
-  @Field(() => UUIDScalarType, {
+  @Field(() => String, {
     description: 'Next step ID',
     nullable: true,
   })
