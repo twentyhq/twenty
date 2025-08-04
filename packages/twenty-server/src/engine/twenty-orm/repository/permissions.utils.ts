@@ -252,10 +252,11 @@ const validateReadFieldPermissionOrThrow = ({
   columnNameToFieldMetadataIdMap: Record<string, string>;
   entireEntitySelected?: boolean;
 }) => {
-  if (
+  const noReadRestrictions =
     isEmpty(restrictedFields) ||
-    Object.values(restrictedFields).every((field) => field.canRead !== false)
-  ) {
+    Object.values(restrictedFields).every((field) => field.canRead !== false);
+
+  if (noReadRestrictions) {
     return;
   }
 
