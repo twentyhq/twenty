@@ -190,8 +190,8 @@ export class WorkspaceEntityManager extends EntityManager {
   override upsert<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
     entityOrEntities:
-      | QueryDeepPartialEntity<Entity>
-      | QueryDeepPartialEntity<Entity>[],
+      | QueryDeepPartialEntityWithNestedRelationFields<Entity>
+      | QueryDeepPartialEntityWithNestedRelationFields<Entity>[],
     conflictPathsOrOptions: string[] | UpsertOptions<Entity>,
     permissionOptions?: {
       shouldBypassPermissionChecks?: boolean;
@@ -209,7 +209,7 @@ export class WorkspaceEntityManager extends EntityManager {
     } else {
       options = conflictPathsOrOptions;
     }
-    let entities: QueryDeepPartialEntity<Entity>[];
+    let entities: QueryDeepPartialEntityWithNestedRelationFields<Entity>[];
 
     if (!Array.isArray(entityOrEntities)) {
       entities = [entityOrEntities];

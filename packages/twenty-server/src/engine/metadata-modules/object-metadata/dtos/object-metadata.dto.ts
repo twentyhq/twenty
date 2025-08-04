@@ -35,7 +35,7 @@ export class ObjectMetadataDTO {
   @IDField(() => UUIDScalarType)
   id: string;
 
-  @Field()
+  @Field(() => UUIDScalarType)
   dataSourceId: string;
 
   @Field()
@@ -86,10 +86,10 @@ export class ObjectMetadataDTO {
   @Field()
   updatedAt: Date;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => UUIDScalarType, { nullable: true })
   labelIdentifierFieldMetadataId?: string | null;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => UUIDScalarType, { nullable: true })
   imageIdentifierFieldMetadataId?: string | null;
 
   @Field()

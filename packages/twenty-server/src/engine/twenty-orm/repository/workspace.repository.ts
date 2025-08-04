@@ -622,7 +622,9 @@ export class WorkspaceRepository<
   }
 
   override async upsert(
-    entityOrEntities: QueryDeepPartialEntity<T> | QueryDeepPartialEntity<T>[],
+    entityOrEntities:
+      | QueryDeepPartialEntityWithNestedRelationFields<T>
+      | QueryDeepPartialEntityWithNestedRelationFields<T>[],
     conflictPathsOrOptions: string[] | UpsertOptions<T>,
     entityManager?: WorkspaceEntityManager,
     selectedColumns: string[] = [],

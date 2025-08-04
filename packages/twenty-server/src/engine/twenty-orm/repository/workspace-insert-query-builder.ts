@@ -29,6 +29,7 @@ import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 
 export class WorkspaceInsertQueryBuilder<
   T extends ObjectLiteral,
@@ -137,16 +138,17 @@ export class WorkspaceInsertQueryBuilder<
     }
 
     const result = await super.execute();
-    const eventSelectQueryBuilder = new WorkspaceSelectQueryBuilder(
-      this as unknown as WorkspaceSelectQueryBuilder<T>,
-      this.objectRecordsPermissions,
-      this.internalContext,
-      true,
-      this.authContext,
-      this.featureFlagMap,
-    );
+    const eventSelectQueryBuilder = (
+      this.connection.manager as WorkspaceEntityManager
+    ).createQueryBuilder(
+      mainAliasTarget,
+      this.expressionMap.mainAlias?.metadata.name ?? '',
+      undefined,
+      {
+        shouldBypassPermissionChecks: true,
+      },
+    ) as WorkspaceSelectQueryBuilder<T>;
 
-    eventSelectQueryBuilder.expressionMap.aliases = this.expressionMap.aliases;
     eventSelectQueryBuilder.whereInIds(
       result.identifiers.map((identifier) => identifier.id),
     );
