@@ -1139,8 +1139,8 @@ export type Mutation = {
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWebhook: Webhook;
-  createWorkflowVersionEdge: WorkflowVersionStepUpdates;
-  createWorkflowVersionStep: WorkflowVersionStepUpdates;
+  createWorkflowVersionEdge: WorkflowVersionStepChanges;
+  createWorkflowVersionStep: WorkflowVersionStepChanges;
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
@@ -1155,8 +1155,8 @@ export type Mutation = {
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
   deleteWebhook: Scalars['Boolean'];
-  deleteWorkflowVersionEdge: WorkflowVersionStepUpdates;
-  deleteWorkflowVersionStep: WorkflowVersionStepUpdates;
+  deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
+  deleteWorkflowVersionStep: WorkflowVersionStepChanges;
   deleteWorkspaceInvitation: Scalars['String'];
   disablePostgresProxy: PostgresCredentials;
   editSSOIdentityProvider: EditSsoOutput;
@@ -2933,8 +2933,8 @@ export type WorkflowVersion = {
   id: Scalars['UUID'];
 };
 
-export type WorkflowVersionStepUpdates = {
-  __typename?: 'WorkflowVersionStepUpdates';
+export type WorkflowVersionStepChanges = {
+  __typename?: 'WorkflowVersionStepChanges';
   createdStep?: Maybe<WorkflowAction>;
   deletedStepId?: Maybe<Scalars['String']>;
   stepsNextStepIds?: Maybe<Scalars['JSON']>;

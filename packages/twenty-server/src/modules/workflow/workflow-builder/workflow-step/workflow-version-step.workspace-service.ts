@@ -34,8 +34,8 @@ import {
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 import { WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
-import { WorkflowVersionStepUpdatesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-updates.dto';
-import { computeWorkflowVersionStepUpdates } from 'src/modules/workflow/workflow-builder/workflow-step/utils/compute-workflow-version-step-updates.util';
+import { WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
+import { computeWorkflowVersionStepChanges } from 'src/modules/workflow/workflow-builder/workflow-step/utils/compute-workflow-version-step-updates.util';
 
 const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
   outputSchema: {},
@@ -70,7 +70,7 @@ export class WorkflowVersionStepWorkspaceService {
   }: {
     workspaceId: string;
     input: CreateWorkflowVersionStepInput;
-  }): Promise<WorkflowVersionStepUpdatesDTO> {
+  }): Promise<WorkflowVersionStepChangesDTO> {
     const { workflowVersionId, stepType, parentStepId, nextStepId, position } =
       input;
 
@@ -124,7 +124,7 @@ export class WorkflowVersionStepWorkspaceService {
       steps: updatedSteps,
     });
 
-    return computeWorkflowVersionStepUpdates({
+    return computeWorkflowVersionStepChanges({
       createdStep: updatedInsertedStep,
       trigger: updatedTrigger,
       steps: updatedSteps,
@@ -197,7 +197,7 @@ export class WorkflowVersionStepWorkspaceService {
     workspaceId: string;
     workflowVersionId: string;
     stepIdToDelete: string;
-  }): Promise<WorkflowVersionStepUpdatesDTO> {
+  }): Promise<WorkflowVersionStepChangesDTO> {
     const workflowVersionRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
         workspaceId,
@@ -232,7 +232,7 @@ export class WorkflowVersionStepWorkspaceService {
         trigger: null,
       });
 
-      return computeWorkflowVersionStepUpdates({
+      return computeWorkflowVersionStepChanges({
         trigger: null,
         steps: workflowVersion?.steps,
         deletedStepId: stepIdToDelete,
@@ -269,7 +269,7 @@ export class WorkflowVersionStepWorkspaceService {
       workspaceId,
     });
 
-    return computeWorkflowVersionStepUpdates({
+    return computeWorkflowVersionStepChanges({
       ...workflowVersionUpdates,
       deletedStepId: stepIdToDelete,
     });
@@ -378,7 +378,7 @@ export class WorkflowVersionStepWorkspaceService {
     target: string;
     workflowVersionId: string;
     workspaceId: string;
-  }): Promise<WorkflowVersionStepUpdatesDTO> {
+  }): Promise<WorkflowVersionStepChangesDTO> {
     const workflowVersionRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
         workspaceId,
@@ -425,7 +425,7 @@ export class WorkflowVersionStepWorkspaceService {
       }
 
       if (trigger.nextStepIds?.includes(target)) {
-        return computeWorkflowVersionStepUpdates({
+        return computeWorkflowVersionStepChanges({
           trigger,
           steps,
         });
@@ -440,7 +440,7 @@ export class WorkflowVersionStepWorkspaceService {
         trigger: updatedTrigger,
       });
 
-      return computeWorkflowVersionStepUpdates({
+      return computeWorkflowVersionStepChanges({
         trigger: updatedTrigger,
         steps,
       });
@@ -456,7 +456,7 @@ export class WorkflowVersionStepWorkspaceService {
     }
 
     if (sourceStep.nextStepIds?.includes(target)) {
-      return computeWorkflowVersionStepUpdates({
+      return computeWorkflowVersionStepChanges({
         trigger,
         steps,
       });
@@ -479,7 +479,7 @@ export class WorkflowVersionStepWorkspaceService {
       steps: updatedSteps,
     });
 
-    return computeWorkflowVersionStepUpdates({
+    return computeWorkflowVersionStepChanges({
       trigger,
       steps: updatedSteps,
     });
@@ -495,7 +495,7 @@ export class WorkflowVersionStepWorkspaceService {
     target: string;
     workflowVersionId: string;
     workspaceId: string;
-  }): Promise<WorkflowVersionStepUpdatesDTO> {
+  }): Promise<WorkflowVersionStepChangesDTO> {
     const workflowVersionRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
         workspaceId,
@@ -542,7 +542,7 @@ export class WorkflowVersionStepWorkspaceService {
       }
 
       if (!trigger.nextStepIds?.includes(target)) {
-        return computeWorkflowVersionStepUpdates({
+        return computeWorkflowVersionStepChanges({
           trigger,
           steps,
         });
@@ -559,7 +559,7 @@ export class WorkflowVersionStepWorkspaceService {
         trigger: updatedTrigger,
       });
 
-      return computeWorkflowVersionStepUpdates({
+      return computeWorkflowVersionStepChanges({
         trigger: updatedTrigger,
         steps,
       });
@@ -575,7 +575,7 @@ export class WorkflowVersionStepWorkspaceService {
     }
 
     if (!sourceStep.nextStepIds?.includes(target)) {
-      return computeWorkflowVersionStepUpdates({
+      return computeWorkflowVersionStepChanges({
         trigger,
         steps,
       });
@@ -600,7 +600,7 @@ export class WorkflowVersionStepWorkspaceService {
       steps: updatedSteps,
     });
 
-    return computeWorkflowVersionStepUpdates({
+    return computeWorkflowVersionStepChanges({
       trigger,
       steps: updatedSteps,
     });

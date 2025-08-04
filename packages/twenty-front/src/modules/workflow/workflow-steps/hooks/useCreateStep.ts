@@ -52,7 +52,7 @@ export const useCreateStep = ({
     try {
       const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
 
-      const workflowVersionStepUpdates = (
+      const workflowVersionStepChanges = (
         await createWorkflowVersionStep({
           workflowVersionId,
           stepType: newStepType,
@@ -62,7 +62,7 @@ export const useCreateStep = ({
         })
       )?.data?.createWorkflowVersionStep;
 
-      const createdStep = workflowVersionStepUpdates?.createdStep;
+      const createdStep = workflowVersionStepChanges?.createdStep;
 
       if (!isDefined(createdStep)) {
         throw new Error("Couldn't create step");

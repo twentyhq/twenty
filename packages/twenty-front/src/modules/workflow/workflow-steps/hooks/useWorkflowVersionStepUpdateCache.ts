@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
 import {
   WorkflowAction,
-  WorkflowVersionStepUpdates,
+  WorkflowVersionStepChanges,
 } from '~/generated/graphql';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 
@@ -28,13 +28,13 @@ export const useWorkflowVersionStepUpdateCache = () => {
   });
 
   const updateCache = ({
-    workflowVersionStepUpdates,
+    workflowVersionStepChanges,
     workflowVersionId,
   }: {
-    workflowVersionStepUpdates: WorkflowVersionStepUpdates | undefined;
+    workflowVersionStepChanges: WorkflowVersionStepChanges | undefined;
     workflowVersionId: string;
   }) => {
-    if (!isDefined(workflowVersionStepUpdates)) {
+    if (!isDefined(workflowVersionStepChanges)) {
       return;
     }
 
@@ -45,7 +45,7 @@ export const useWorkflowVersionStepUpdateCache = () => {
     }
 
     const { triggerNextStepIds, stepsNextStepIds, createdStep, deletedStepId } =
-      workflowVersionStepUpdates;
+      workflowVersionStepChanges;
 
     const newCachedRecord = {
       ...cachedRecord,

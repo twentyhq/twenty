@@ -23,10 +23,10 @@ export const useDeleteWorkflowVersionEdge = () => {
   ) => {
     const result = await mutate({ variables: { input } });
 
-    const workflowVersionStepUpdates = result?.data?.deleteWorkflowVersionEdge;
+    const workflowVersionStepChanges = result?.data?.deleteWorkflowVersionEdge;
 
     updateCache({
-      workflowVersionStepUpdates,
+      workflowVersionStepChanges,
       workflowVersionId: input.workflowVersionId,
     });
 

@@ -27,10 +27,10 @@ export const useCreateWorkflowVersionStep = () => {
       variables: { input },
     });
 
-    const workflowVersionStepUpdates = result?.data?.createWorkflowVersionStep;
+    const workflowVersionStepChanges = result?.data?.createWorkflowVersionStep;
 
     updateCache({
-      workflowVersionStepUpdates,
+      workflowVersionStepChanges,
       workflowVersionId: input.workflowVersionId,
     });
 

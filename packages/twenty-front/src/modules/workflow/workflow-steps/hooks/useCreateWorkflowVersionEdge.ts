@@ -23,10 +23,10 @@ export const useCreateWorkflowVersionEdge = () => {
   ) => {
     const result = await mutate({ variables: { input } });
 
-    const workflowVersionStepUpdates = result?.data?.createWorkflowVersionEdge;
+    const workflowVersionStepChanges = result?.data?.createWorkflowVersionEdge;
 
     updateCache({
-      workflowVersionStepUpdates,
+      workflowVersionStepChanges,
       workflowVersionId: input.workflowVersionId,
     });
 

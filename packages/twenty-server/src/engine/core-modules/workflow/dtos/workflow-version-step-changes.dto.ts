@@ -4,8 +4,8 @@ import graphqlTypeJson from 'graphql-type-json';
 
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
 
-@ObjectType('WorkflowVersionStepUpdates')
-export class WorkflowVersionStepUpdatesDTO {
+@ObjectType('WorkflowVersionStepChanges')
+export class WorkflowVersionStepChangesDTO {
   @Field(() => [String], { nullable: true })
   triggerNextStepIds?: string[];
 

@@ -1,8 +1,8 @@
-import { computeWorkflowVersionStepUpdates } from 'src/modules/workflow/workflow-builder/workflow-step/utils/compute-workflow-version-step-updates.util';
+import { computeWorkflowVersionStepChanges } from 'src/modules/workflow/workflow-builder/workflow-step/utils/compute-workflow-version-step-updates.util';
 import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-describe('computeWorkflowVersionStepUpdates', () => {
+describe('computeWorkflowVersionStepChanges', () => {
   it('should compute next step ids', () => {
     const input = {
       trigger: { nextStepIds: ['1', '2'] } as WorkflowTrigger,
@@ -19,6 +19,6 @@ describe('computeWorkflowVersionStepUpdates', () => {
       deletedStepId: '5',
     };
 
-    expect(computeWorkflowVersionStepUpdates(input)).toEqual(expectedResult);
+    expect(computeWorkflowVersionStepChanges(input)).toEqual(expectedResult);
   });
 });
