@@ -84,8 +84,7 @@ export const RecordTableTr = forwardRef<
   HTMLTableRowElement,
   RecordTableTrProps
 >(({ children, recordId, focusIndex, isDragging = false, ...props }, ref) => {
-  const { objectMetadataItem, objectPermissions } =
-    useRecordTableContextOrThrow();
+  const { objectMetadataItem } = useRecordTableContextOrThrow();
 
   const currentRowSelected = useRecoilComponentFamilyValueV2(
     isRowSelectedComponentFamilyState,

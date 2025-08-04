@@ -3,7 +3,6 @@ import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShow
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordReadOnly';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
@@ -22,8 +21,6 @@ export const RecordTableCellPortalWrapper = ({
   const anchorElement = document.body.querySelector<HTMLAnchorElement>(
     `#record-table-cell-${position.column}-${position.row}`,
   );
-
-  const { objectPermissions } = useRecordTableContextOrThrow();
 
   const allRecordIds = useRecoilComponentValueV2(
     recordIndexAllRecordIdsComponentSelector,
