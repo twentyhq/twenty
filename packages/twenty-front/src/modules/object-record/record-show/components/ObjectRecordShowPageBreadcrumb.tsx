@@ -72,10 +72,6 @@ export const ObjectRecordShowPageBreadcrumb = ({
     recordId: objectRecordId,
     objectMetadataId: objectMetadataItem.id,
     fieldMetadataId: labelIdentifierFieldMetadataItem?.id,
-    objectNameSingular,
-    fieldName: labelIdentifierFieldMetadataItem?.name,
-    fieldType: labelIdentifierFieldMetadataItem?.type,
-    isCustom: objectMetadataItem?.isCustom,
   });
 
   const { navigateToIndexView, rankInView, totalCount } =

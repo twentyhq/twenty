@@ -24,11 +24,11 @@ export const RecordBoardCardDraggableContainer = ({
   recordId: string;
   rowIndex: number;
 }) => {
-  const { objectPermissions } = useContext(RecordBoardContext);
+  const { objectMetadataItem } = useContext(RecordBoardContext);
 
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId,
-    objectPermissions,
+    objectMetadataId: objectMetadataItem.id,
   });
 
   const { columnIndex } = useContext(RecordBoardColumnContext);

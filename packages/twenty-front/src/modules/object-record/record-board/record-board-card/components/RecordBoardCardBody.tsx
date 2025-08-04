@@ -9,7 +9,6 @@ import {
   RecordUpdateHook,
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
-import { isFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isFieldReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -43,15 +42,12 @@ export const RecordBoardCardBody = ({
       ...fieldDefinition,
       isRecordFieldReadOnly: isRecordFieldReadOnly({
         isRecordReadOnly,
-        isFieldReadOnly: isFieldReadOnly({
-          objectPermissions,
-          fieldMetadataId: fieldDefinition.fieldMetadataId,
-          fieldName: fieldDefinition.metadata.fieldName,
-          fieldType: fieldDefinition.type,
-          isCustom: fieldDefinition.metadata.isCustom,
-          objectNameSingular:
-            fieldDefinition.metadata.objectMetadataNameSingular,
-        }),
+        objectPermissions,
+        fieldMetadataId: fieldDefinition.fieldMetadataId,
+        fieldName: fieldDefinition.metadata.fieldName,
+        fieldType: fieldDefinition.type,
+        isCustom: fieldDefinition.metadata.isCustom,
+        objectNameSingular: fieldDefinition.metadata.objectMetadataNameSingular,
       }),
     }),
   );

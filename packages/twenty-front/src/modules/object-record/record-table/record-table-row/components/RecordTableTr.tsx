@@ -126,7 +126,7 @@ export const RecordTableTr = forwardRef<
 
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId,
-    objectPermissions,
+    objectMetadataId: objectMetadataItem.id,
   });
 
   return (

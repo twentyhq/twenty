@@ -64,8 +64,6 @@ export const SummaryCard = ({
     recordId: objectRecordId,
     fieldMetadataId: labelIdentifierFieldMetadataItem?.id,
     objectMetadataId: objectMetadataItem.id,
-    objectNameSingular,
-    fieldName: labelIdentifierFieldMetadataItem?.name,
   });
 
   return (

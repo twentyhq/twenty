@@ -39,7 +39,7 @@ export const RecordTableCellPortalWrapper = ({
 
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId: recordId ?? '',
-    objectPermissions,
+    objectMetadataId: objectMetadataItem.id,
   });
 
   if (!isDefined(anchorElement) || !isDefined(recordId)) {

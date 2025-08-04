@@ -26,12 +26,9 @@ import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { isFieldReadOnlyByPermissions } from '@/object-record/record-field/hooks/read-only/utils/isFieldReadOnlyByPermissions';
-import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
-import { useIsRecordDeleted } from '@/object-record/record-field/hooks/useIsRecordDeleted';
+import { useIsRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordFieldReadOnly';
 import { isInlineCellInEditModeFamilyState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeFamilyState';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
@@ -101,26 +98,14 @@ export const ActivityRichTextEditor = ({
     activityObjectNameSingular: activityObjectNameSingular,
   });
 
-  const objectPermissions = useObjectPermissionsForObject(
-    objectMetadataItemActivity.id,
-  );
-
-  const isRecordDeleted = useIsRecordDeleted({
+  const isRecordFieldReadOnly = useIsRecordFieldReadOnly({
     recordId: activityId,
-  });
-
-  const isFieldReadOnly = isFieldReadOnlyByPermissions({
-    objectPermissions,
+    objectMetadataId: objectMetadataItemActivity.id,
     fieldMetadataId: bodyV2FieldMetadataItemId,
   });
 
-  const isReadOnly = isRecordFieldReadOnly({
-    isRecordDeleted,
-    isFieldReadOnly,
-  });
-
   const persistBodyDebounced = useDebouncedCallback((blocknote: string) => {
-    if (isReadOnly === true) return;
+    if (isRecordFieldReadOnly === true) return;
 
     const input = {
       bodyV2: {
@@ -443,7 +428,7 @@ export const ActivityRichTextEditor = ({
         onBlur={handlerBlockEditorBlur}
         onChange={handleEditorChange}
         editor={editor}
-        readonly={isReadOnly}
+        readonly={isRecordFieldReadOnly}
       />
     </>
   );

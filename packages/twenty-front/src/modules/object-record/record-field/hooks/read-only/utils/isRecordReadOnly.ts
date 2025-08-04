@@ -2,10 +2,12 @@ import { ObjectPermission } from '~/generated/graphql';
 
 type IsObjectReadOnlyParams = {
   objectPermissions: ObjectPermission;
+  isRecordDeleted: boolean;
 };
 
-export const isObjectReadOnly = ({
+export const isRecordReadOnly = ({
   objectPermissions,
+  isRecordDeleted,
 }: IsObjectReadOnlyParams) => {
-  return !objectPermissions.canUpdateObjectRecords;
+  return isRecordDeleted || !objectPermissions.canUpdateObjectRecords;
 };

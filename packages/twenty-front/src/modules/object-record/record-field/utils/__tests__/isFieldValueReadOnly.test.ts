@@ -1,5 +1,5 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { isFieldReadOnlyBySystem } from '@/object-record/record-field/hooks/read-only/utils/isFieldReadOnlyBySystem';
+import { isFieldReadOnlyBySystem } from '@/object-record/record-field/hooks/read-only/utils/internal/isFieldReadOnlyBySystem';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 describe('isFieldReadOnlyBySystem', () => {

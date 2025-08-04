@@ -1,7 +1,6 @@
 import { useContext } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordReadOnly';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -37,13 +36,11 @@ export const RecordDetailRelationSectionDropdown = ({
   const isToOneObject = relationType === RelationType.MANY_TO_ONE;
   const isToManyObjects = relationType === RelationType.ONE_TO_MANY;
 
-  const objectPermissions = useObjectPermissionsForObject(
-    isToOneObject ? recordObjectMetadataItem.id : relationObjectMetadataItem.id,
-  );
-
   const isRecordReadOnlyFromRelatedRecordPerspective = useIsRecordReadOnly({
     recordId,
-    objectPermissions,
+    objectMetadataId: isToOneObject
+      ? recordObjectMetadataItem.id
+      : relationObjectMetadataItem.id,
   });
 
   if (

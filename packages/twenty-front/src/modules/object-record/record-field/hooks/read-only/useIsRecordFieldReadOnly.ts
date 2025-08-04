@@ -1,32 +1,53 @@
-import {
-  UseFieldIsReadOnlyParams,
-  useIsFieldReadOnly,
-} from '@/object-record/record-field/hooks/read-only/useIsFieldReadOnly';
+import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
-import { useIsRecordDeleted } from '@/object-record/record-field/hooks/useIsRecordDeleted';
+
+export type UseFieldIsReadOnlyParams = {
+  fieldMetadataId: string;
+  objectMetadataId: string;
+  recordId: string;
+};
 
 export const useIsRecordFieldReadOnly = ({
-  recordId,
   fieldMetadataId,
   objectMetadataId,
-  objectNameSingular,
-  fieldName,
-  fieldType,
-  isCustom,
-}: UseFieldIsReadOnlyParams & { recordId: string }) => {
-  const isRecordDeleted = useIsRecordDeleted({ recordId });
+  recordId,
+}: UseFieldIsReadOnlyParams) => {
+  const { objectMetadataItem } = useObjectMetadataItemById({
+    objectId: objectMetadataId,
+  });
 
-  const isFieldReadOnly = useIsFieldReadOnly({
-    fieldMetadataId,
+  const fieldMetadataItem = objectMetadataItem.fields.find(
+    (field) => field.id === fieldMetadataId,
+  );
+
+  if (!fieldMetadataItem) {
+    throw new Error(
+      `Could not load read only property for field ${fieldMetadataId}`,
+    );
+  }
+
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
+  const objectPermissions = getObjectPermissionsForObject(
+    objectPermissionsByObjectMetadataId,
     objectMetadataId,
-    objectNameSingular,
-    fieldName,
-    fieldType,
-    isCustom,
+  );
+
+  const isRecordReadOnly = useIsRecordReadOnly({
+    recordId,
+    objectMetadataId,
   });
 
   return isRecordFieldReadOnly({
-    isRecordDeleted,
-    isFieldReadOnly,
+    isRecordReadOnly,
+    objectPermissions,
+    fieldMetadataId,
+    objectNameSingular: objectMetadataItem.nameSingular,
+    fieldName: fieldMetadataItem.name,
+    fieldType: fieldMetadataItem.type,
+    isCustom: fieldMetadataItem.isCustom ?? false,
   });
 };

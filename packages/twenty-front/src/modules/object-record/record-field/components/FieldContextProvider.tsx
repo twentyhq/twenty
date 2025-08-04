@@ -57,10 +57,6 @@ export const FieldContextProvider = ({
     recordId: objectRecordId,
     fieldMetadataId: fieldMetadataItem?.id,
     objectMetadataId: objectMetadataItem.id,
-    objectNameSingular,
-    fieldName: fieldMetadataName,
-    fieldType: fieldMetadataItem?.type,
-    isCustom: objectMetadataItem.isCustom,
   });
 
   if (!fieldMetadataItem) {

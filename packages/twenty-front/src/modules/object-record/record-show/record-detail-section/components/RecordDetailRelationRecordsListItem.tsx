@@ -17,9 +17,8 @@ import {
   RecordUpdateHook,
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
-import { isFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isFieldReadOnly';
-import { isRecordFieldReadOnly as isRecordFieldReadOnlyFn } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
-import { useIsRecordDeleted } from '@/object-record/record-field/hooks/useIsRecordDeleted';
+import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordReadOnly';
+import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -108,8 +107,11 @@ export const RecordDetailRelationRecordsListItem = ({
   onClick,
   relationRecord,
 }: RecordDetailRelationRecordsListItemProps) => {
-  const { fieldDefinition, recordId, isRecordFieldReadOnly } =
-    useContext(FieldContext);
+  const {
+    fieldDefinition,
+    recordId,
+    isRecordFieldReadOnly: parentIsRecordFieldReadOnly,
+  } = useContext(FieldContext);
 
   const { openModal } = useModal();
 
@@ -238,8 +240,9 @@ export const RecordDetailRelationRecordsListItem = ({
     [isExpanded],
   );
 
-  const isRelationRecordDeleted = useIsRecordDeleted({
+  const isRelationRecordReadOnly = useIsRecordReadOnly({
     recordId: relationRecord.id,
+    objectMetadataId: relationObjectMetadataItem.id,
   });
 
   return (
@@ -256,7 +259,7 @@ export const RecordDetailRelationRecordsListItem = ({
             accent="tertiary"
           />
         </StyledClickableZone>
-        {!isRecordFieldReadOnly && (
+        {!parentIsRecordFieldReadOnly && (
           <Dropdown
             dropdownId={dropdownInstanceId}
             dropdownPlacement="right-start"
@@ -308,16 +311,14 @@ export const RecordDetailRelationRecordsListItem = ({
                     labelWidth: 90,
                   }),
                   useUpdateRecord: useUpdateOneObjectRecordMutation,
-                  isRecordFieldReadOnly: isRecordFieldReadOnlyFn({
-                    isRecordDeleted: isRelationRecordDeleted,
-                    isFieldReadOnly: isFieldReadOnly({
-                      objectPermissions: relationObjectPermissions,
-                      fieldMetadataId: fieldMetadataItem.id,
-                      objectNameSingular: relationObjectMetadataNameSingular,
-                      fieldName: fieldMetadataItem.name,
-                      fieldType: fieldMetadataItem.type,
-                      isCustom: relationObjectMetadataItem.isCustom,
-                    }),
+                  isRecordFieldReadOnly: isRecordFieldReadOnly({
+                    isRecordReadOnly: isRelationRecordReadOnly,
+                    objectPermissions: relationObjectPermissions,
+                    fieldMetadataId: fieldMetadataItem.id,
+                    objectNameSingular: relationObjectMetadataNameSingular,
+                    fieldName: fieldMetadataItem.name,
+                    fieldType: fieldMetadataItem.type,
+                    isCustom: relationObjectMetadataItem.isCustom,
                   }),
                 }}
               >

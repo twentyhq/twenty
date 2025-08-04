@@ -1,7 +1,6 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { isFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isFieldReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
 import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
@@ -26,15 +25,6 @@ export const RecordTableCellFieldContextGeneric = ({
   const { indexIdentifierUrl, objectPermissionsByObjectMetadataId } =
     useRecordIndexContextOrThrow();
   const { columnDefinition } = useContext(RecordTableCellContext);
-
-  const fieldReadOnly = isFieldReadOnly({
-    objectPermissions,
-    objectNameSingular: objectMetadataItem.nameSingular,
-    fieldName: columnDefinition.metadata.fieldName,
-    fieldType: columnDefinition.type,
-    isCustom: objectMetadataItem.isCustom,
-    fieldMetadataId: columnDefinition.fieldMetadataId,
-  });
 
   const updateRecord = useContext(RecordUpdateContext);
 
@@ -71,8 +61,13 @@ export const RecordTableCellFieldContextGeneric = ({
         }),
         displayedMaxRows: 1,
         isRecordFieldReadOnly: isRecordFieldReadOnly({
-          isFieldReadOnly: fieldReadOnly,
-          isRecordReadOnly,
+          isRecordReadOnly: isRecordReadOnly ?? false,
+          objectPermissions,
+          fieldMetadataId: columnDefinition.fieldMetadataId,
+          objectNameSingular: objectMetadataItem.nameSingular,
+          fieldName: columnDefinition.metadata.fieldName,
+          fieldType: columnDefinition.type,
+          isCustom: objectMetadataItem.isCustom,
         }),
         isForbidden: !hasObjectReadPermissions,
       }}
