@@ -37,8 +37,6 @@
     "@lingui/core": "^5.1.2",
     "@lingui/detect-locale": "^5.2.0",
     "@lingui/react": "^5.1.2",
-    "@nivo/calendar": "^0.87.0",
-    "@nivo/core": "^0.87.0",
     "@nivo/line": "^0.87.0",
     "@react-pdf/renderer": "^4.1.6",
     "@scalar/api-reference-react": "^0.4.36",
@@ -49,13 +47,11 @@
     "@tiptap/extension-paragraph": "^2.10.4",
     "@tiptap/extension-placeholder": "^2.10.4",
     "@tiptap/extension-text": "^2.10.4",
-    "@tiptap/extension-text-style": "^2.10.4",
     "@tiptap/react": "^2.10.4",
     "@xyflow/react": "^12.4.2",
-    "buffer": "^6.0.3",
-    "docx": "^9.1.0",
     "file-saver": "^2.0.5",
     "input-otp": "^1.4.2",
+    "monaco-editor-auto-typings": "^0.4.6",
     "react-markdown": "^10.1.0",
     "react-qr-code": "^2.0.18",
     "remark-gfm": "^4.0.1",
@@ -65,7 +61,7 @@
   },
   "devDependencies": {
     "@lingui/cli": "^5.1.2",
-    "@lingui/swc-plugin": "^5.1.0",
+    "@lingui/swc-plugin": "^5.5.2",
     "@lingui/vite-plugin": "^5.1.2",
     "@types/file-saver": "^2",
     "@typescript-eslint/eslint-plugin": "6.21.0",
@@ -88,7 +84,6 @@
     "eslint-plugin-storybook": "^0.6.15",
     "eslint-plugin-unicorn": "^51.0.1",
     "eslint-plugin-unused-imports": "^3.0.0",
-    "optionator": "^0.9.1",
     "rollup-plugin-visualizer": "^5.14.0"
   }
 }

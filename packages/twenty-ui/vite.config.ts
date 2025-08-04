@@ -68,10 +68,9 @@ export default defineConfig(({ command }) => {
     cacheDir: '../../node_modules/.vite/packages/twenty-ui',
     assetsInclude: ['src/**/*.svg'],
     plugins: [
-      react({
-        jsxImportSource: '@emotion/react',
-        plugins: [['@swc/plugin-emotion', {}]],
-      }),
+              react({
+          jsxImportSource: '@emotion/react',
+        }),
       tsconfigPaths({
         projects: ['tsconfig.json'],
       }),
