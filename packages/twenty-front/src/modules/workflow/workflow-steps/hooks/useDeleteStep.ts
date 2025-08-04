@@ -35,7 +35,7 @@ export const useDeleteStep = ({
     const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
 
     if (!isDefined(workflowVersionId)) {
-      throw new Error('Workflow version ID is undefined');
+      throw new Error('Could not find workflow version');
     }
 
     if (stepId === TRIGGER_STEP_ID) {
