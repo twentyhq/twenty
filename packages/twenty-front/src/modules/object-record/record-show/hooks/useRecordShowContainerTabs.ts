@@ -142,6 +142,38 @@ export const useRecordShowContainerTabs = (
           },
         },
       },
+      [CoreObjectNameSingular.Opportunity]: {
+        tabs: {
+          emails: {
+            title: 'Emails',
+            position: 600,
+            Icon: IconMail,
+            cards: [{ type: CardType.EmailCard }],
+            hide: {
+              ifMobile: false,
+              ifDesktop: false,
+              ifInRightDrawer: false,
+              ifFeaturesDisabled: [],
+              ifRequiredObjectsInactive: [],
+              ifRelationsMissing: [],
+            },
+          },
+          calendar: {
+            title: 'Calendar',
+            position: 700,
+            Icon: IconCalendarEvent,
+            cards: [{ type: CardType.CalendarCard }],
+            hide: {
+              ifMobile: false,
+              ifDesktop: false,
+              ifInRightDrawer: false,
+              ifFeaturesDisabled: [],
+              ifRequiredObjectsInactive: [],
+              ifRelationsMissing: [],
+            },
+          },
+        },
+      },
       [CoreObjectNameSingular.Workflow]: {
         hideSummaryAndFields: true,
         tabs: {

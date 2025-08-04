@@ -2017,8 +2017,10 @@ export type Query = {
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getSystemHealthStatus: SystemHealth;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
+  getTimelineCalendarEventsFromOpportunityId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
+  getTimelineThreadsFromOpportunityId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   index: Index;
   indexMetadatas: IndexConnection;
@@ -2151,6 +2153,13 @@ export type QueryGetTimelineCalendarEventsFromCompanyIdArgs = {
 };
 
 
+export type QueryGetTimelineCalendarEventsFromOpportunityIdArgs = {
+  opportunityId: Scalars['UUID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+};
+
+
 export type QueryGetTimelineCalendarEventsFromPersonIdArgs = {
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
@@ -2160,6 +2169,13 @@ export type QueryGetTimelineCalendarEventsFromPersonIdArgs = {
 
 export type QueryGetTimelineThreadsFromCompanyIdArgs = {
   companyId: Scalars['UUID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+};
+
+
+export type QueryGetTimelineThreadsFromOpportunityIdArgs = {
+  opportunityId: Scalars['UUID'];
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
 };
