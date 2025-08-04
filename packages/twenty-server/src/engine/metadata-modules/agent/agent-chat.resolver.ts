@@ -1,6 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import {
@@ -22,7 +23,7 @@ export class AgentChatResolver {
   @Query(() => [AgentChatThreadDTO])
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async agentChatThreads(
-    @Args('agentId') agentId: string,
+    @Args('agentId', { type: () => UUIDScalarType }) agentId: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
     return this.agentChatService.getThreadsForAgent(agentId, userWorkspaceId);
@@ -31,7 +32,7 @@ export class AgentChatResolver {
   @Query(() => AgentChatThreadDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async agentChatThread(
-    @Args('id') id: string,
+    @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
     return this.agentChatService.getThreadById(id, userWorkspaceId);
@@ -40,7 +41,7 @@ export class AgentChatResolver {
   @Query(() => [AgentChatMessageDTO])
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async agentChatMessages(
-    @Args('threadId') threadId: string,
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
     return this.agentChatService.getMessagesForThread(

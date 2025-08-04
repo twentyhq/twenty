@@ -2,6 +2,7 @@ import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
+import { useNavigationDrawerTooltip } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerTooltip';
 import { NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -11,9 +12,15 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { capitalize } from 'twenty-shared/utils';
 import { Pill } from 'twenty-ui/components';
-import { IconComponent, Label, TablerIconsProps } from 'twenty-ui/display';
+import {
+  AppTooltip,
+  IconComponent,
+  Label,
+  TablerIconsProps,
+  TooltipDelay,
+  TooltipPosition,
+} from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { TriggerEventType, useMouseDownNavigation } from 'twenty-ui/utilities';
 
@@ -24,7 +31,7 @@ export type NavigationDrawerItemIndentationLevel = 1 | 2;
 export type NavigationDrawerItemProps = {
   className?: string;
   label: string;
-  objectName?: string;
+  secondaryLabel?: string;
   indentationLevel?: NavigationDrawerItemIndentationLevel;
   subItemState?: NavigationDrawerSubItemState;
   to?: string;
@@ -33,6 +40,7 @@ export type NavigationDrawerItemProps = {
   active?: boolean;
   danger?: boolean;
   soon?: boolean;
+  isNew?: boolean;
   count?: number;
   keyboard?: string[];
   rightOptions?: ReactNode;
@@ -141,7 +149,7 @@ const StyledItemLabel = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-const StyledItemObjectName = styled.span`
+const StyledItemSecondaryLabel = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   font-weight: ${({ theme }) => theme.font.weight.regular};
 `;
@@ -239,7 +247,7 @@ const StyledRightOptionsVisbility = styled.div<{
 export const NavigationDrawerItem = ({
   className,
   label,
-  objectName,
+  secondaryLabel,
   indentationLevel = DEFAULT_INDENTATION_LEVEL,
   Icon,
   to,
@@ -247,6 +255,7 @@ export const NavigationDrawerItem = ({
   active,
   danger,
   soon,
+  isNew,
   count,
   keyboard,
   subItemState,
@@ -261,8 +270,13 @@ export const NavigationDrawerItem = ({
   const isSettingsPage = useIsSettingsPage();
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
+
+  const { navigationItemId } = useNavigationDrawerTooltip(label, to);
+
   const showBreadcrumb = indentationLevel === 2;
-  const showStyledSpacer = !!soon || !!count || !!keyboard || !!rightOptions;
+  const showStyledSpacer = Boolean(
+    soon || isNew || count || keyboard || rightOptions,
+  );
 
   const handleMobileNavigation = () => {
     if (isMobile) {
@@ -283,6 +297,7 @@ export const NavigationDrawerItem = ({
   return (
     <StyledNavigationDrawerItemContainer>
       <StyledItem
+        id={navigationItemId}
         className={`navigation-drawer-item ${className || ''}`}
         onClick={
           mouseUpNavigation ? onClick : handleMouseDownNavigationClickClick
@@ -292,7 +307,7 @@ export const NavigationDrawerItem = ({
         aria-selected={active}
         danger={danger}
         soon={soon}
-        as={to ? Link : undefined}
+        as={to ? Link : rightOptions ? 'div' : undefined}
         to={to ? to : undefined}
         indentationLevel={indentationLevel}
         isNavigationDrawerExpanded={isNavigationDrawerExpanded}
@@ -326,11 +341,11 @@ export const NavigationDrawerItem = ({
           <StyledLabelParent>
             <StyledEllipsisContainer>
               <StyledItemLabel>{label}</StyledItemLabel>
-              {objectName && (
-                <StyledItemObjectName>
+              {secondaryLabel && (
+                <StyledItemSecondaryLabel>
                   {' · '}
-                  {capitalize(objectName)}
-                </StyledItemObjectName>
+                  {secondaryLabel}
+                </StyledItemSecondaryLabel>
               )}
             </StyledEllipsisContainer>
           </StyledLabelParent>
@@ -340,6 +355,12 @@ export const NavigationDrawerItem = ({
           {soon && (
             <NavigationDrawerAnimatedCollapseWrapper>
               <Pill label="Soon" />
+            </NavigationDrawerAnimatedCollapseWrapper>
+          )}
+
+          {isNew && (
+            <NavigationDrawerAnimatedCollapseWrapper>
+              <Pill label="New" />
             </NavigationDrawerAnimatedCollapseWrapper>
           )}
 
@@ -378,6 +399,16 @@ export const NavigationDrawerItem = ({
           )}
         </StyledItemElementsContainer>
       </StyledItem>
+
+      {!isNavigationDrawerExpanded && !isMobile && (
+        <AppTooltip
+          anchorSelect={`#${navigationItemId}`}
+          content={label}
+          place={TooltipPosition.Right}
+          delay={TooltipDelay.noDelay}
+          positionStrategy="fixed"
+        />
+      )}
     </StyledNavigationDrawerItemContainer>
   );
 };

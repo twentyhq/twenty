@@ -3,11 +3,13 @@ import { ConfigVariableFilterContainer } from '@/settings/admin-panel/config-var
 import { ConfigVariableFilterDropdown } from '@/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown';
 import { SettingsAdminConfigVariablesTable } from '@/settings/admin-panel/config-variables/components/SettingsAdminConfigVariablesTable';
 import { ConfigVariableSourceOptions } from '@/settings/admin-panel/config-variables/constants/ConfigVariableSourceOptions';
-import { ConfigVariableGroupFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableGroupFilter';
-import { ConfigVariableSourceFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableSourceFilter';
+import { configVariableGroupFilterState } from '@/settings/admin-panel/config-variables/states/configVariableGroupFilterState';
+import { configVariableSourceFilterState } from '@/settings/admin-panel/config-variables/states/configVariableSourceFilterState';
+import { showHiddenGroupVariablesState } from '@/settings/admin-panel/config-variables/states/showHiddenGroupVariablesState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
+import { useRecoilState } from 'recoil';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import {
@@ -34,19 +36,17 @@ export const SettingsAdminConfigVariables = () => {
 
   const [search, setSearch] = useState('');
   const [showHiddenGroupVariables, setShowHiddenGroupVariables] =
-    useState(false);
-  const [sourceFilter, setSourceFilter] =
-    useState<ConfigVariableSourceFilter>('all');
-  const [groupFilter, setGroupFilter] =
-    useState<ConfigVariableGroupFilter>('all');
+    useRecoilState(showHiddenGroupVariablesState);
+  const [configVariableSourceFilter, setConfigVariableSourceFilter] =
+    useRecoilState(configVariableSourceFilterState);
+  const [configVariableGroupFilter, setConfigVariableGroupFilter] =
+    useRecoilState(configVariableGroupFilterState);
 
-  // Get all groups, not filtered by visibility
   const allGroups = useMemo(
     () => configVariables?.getConfigVariablesGrouped.groups ?? [],
     [configVariables],
   );
 
-  // Compute group options from all groups, not just visible ones
   const groupOptions = useMemo(
     () => [
       { value: 'all', label: 'All Groups' },
@@ -58,7 +58,6 @@ export const SettingsAdminConfigVariables = () => {
     [allGroups],
   );
 
-  // Flatten all variables for filtering, attaching isHiddenOnLoad and groupName from group
   const allVariables = useMemo(
     () =>
       configVariables?.getConfigVariablesGrouped.groups.flatMap((group) =>
@@ -71,31 +70,23 @@ export const SettingsAdminConfigVariables = () => {
     [configVariables],
   );
 
-  // Filtering logic
   const filteredVariables = useMemo(() => {
     const isSearching = search.trim().length > 0;
-    const hasSelectedSpecificGroup = groupFilter !== 'all';
+    const hasSelectedSpecificGroup = configVariableGroupFilter !== 'all';
 
     return allVariables.filter((v) => {
-      // Search filter
       const matchesSearch =
         v.name.toLowerCase().includes(search.toLowerCase()) ||
         (v.description?.toLowerCase() || '').includes(search.toLowerCase());
 
       if (isSearching && !matchesSearch) return false;
 
-      // Group filter
       const matchesGroup = hasSelectedSpecificGroup
-        ? v.groupName === groupFilter
+        ? v.groupName === configVariableGroupFilter
         : true;
 
       if (hasSelectedSpecificGroup && !matchesGroup) return false;
 
-      // Hidden filter - Only apply if:
-      // 1. User is not searching
-      // 2. Show hidden is off
-      // 3. Item is from a hidden group
-      // 4. No specific group is selected (if a specific group is selected, show all its variables)
       if (
         !isSearching &&
         !showHiddenGroupVariables &&
@@ -105,13 +96,12 @@ export const SettingsAdminConfigVariables = () => {
         return false;
       }
 
-      // Source filter
       let matchesSource = true;
-      if (sourceFilter === 'database')
+      if (configVariableSourceFilter === 'database')
         matchesSource = v.source === ConfigSource.DATABASE;
-      if (sourceFilter === 'environment')
+      if (configVariableSourceFilter === 'environment')
         matchesSource = v.source === ConfigSource.ENVIRONMENT;
-      if (sourceFilter === 'default')
+      if (configVariableSourceFilter === 'default')
         matchesSource = v.source === ConfigSource.DEFAULT;
 
       return matchesSource;
@@ -120,30 +110,31 @@ export const SettingsAdminConfigVariables = () => {
     allVariables,
     search,
     showHiddenGroupVariables,
-    sourceFilter,
-    groupFilter,
+    configVariableSourceFilter,
+    configVariableGroupFilter,
   ]);
 
-  // Build activeChips for current filters
   const activeChips = [];
-  if (sourceFilter !== 'all') {
+  if (configVariableSourceFilter !== 'all') {
     activeChips.push({
       label:
-        ConfigVariableSourceOptions.find((o) => o.value === sourceFilter)
-          ?.label || '',
-      onRemove: () => setSourceFilter('all'),
+        ConfigVariableSourceOptions.find(
+          (o) => o.value === configVariableSourceFilter,
+        )?.label || '',
+      onRemove: () => setConfigVariableSourceFilter('all'),
       variant: 'default' as const,
     });
   }
-  if (groupFilter !== 'all') {
+  if (configVariableGroupFilter !== 'all') {
     activeChips.push({
-      label: groupOptions.find((o) => o.value === groupFilter)?.label || '',
-      onRemove: () => setGroupFilter('all'),
+      label:
+        groupOptions.find((o) => o.value === configVariableGroupFilter)
+          ?.label || '',
+      onRemove: () => setConfigVariableGroupFilter('all'),
       variant: 'danger' as const,
     });
   }
 
-  // Group variables by groupName for rendering
   const groupedVariables = useMemo(() => {
     const groupMap = new Map();
     filteredVariables.forEach((v) => {
@@ -172,18 +163,17 @@ export const SettingsAdminConfigVariables = () => {
           <StyledControlsContainer>
             <ConfigVariableSearchInput value={search} onChange={setSearch} />
             <ConfigVariableFilterDropdown
-              sourceFilter={sourceFilter}
-              groupFilter={groupFilter}
+              sourceFilter={configVariableSourceFilter}
+              groupFilter={configVariableGroupFilter}
               groupOptions={groupOptions}
               showHiddenGroupVariables={showHiddenGroupVariables}
-              onSourceFilterChange={setSourceFilter}
-              onGroupFilterChange={setGroupFilter}
+              onSourceFilterChange={setConfigVariableSourceFilter}
+              onGroupFilterChange={setConfigVariableGroupFilter}
               onShowHiddenChange={setShowHiddenGroupVariables}
             />
           </StyledControlsContainer>
         </ConfigVariableFilterContainer>
       </Section>
-
       {groupedVariables.size === 0 && (
         <StyledTableContainer>
           <Section>
@@ -194,7 +184,6 @@ export const SettingsAdminConfigVariables = () => {
           </Section>
         </StyledTableContainer>
       )}
-
       {[...groupedVariables.entries()].map(([groupName, groupData]) => (
         <StyledTableContainer key={groupName}>
           <H2Title title={groupName} description={groupData.description} />

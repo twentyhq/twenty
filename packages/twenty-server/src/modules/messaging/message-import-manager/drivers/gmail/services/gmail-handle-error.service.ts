@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { parseGaxiosError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gaxios-error.util';
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { isAxiosTemporaryError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-axios-gaxios-error.util';
 import { parseGmailMessageListFetchError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-message-list-fetch-error.util';
 import { parseGmailMessagesImportError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-messages-import-error.util';
 
@@ -10,10 +14,11 @@ export class GmailHandleErrorService {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public handleGmailMessageListFetchError(error: any): void {
-    const gaxiosError = parseGaxiosError(error);
-
-    if (gaxiosError) {
-      throw gaxiosError;
+    if (isAxiosTemporaryError(error)) {
+      throw new MessageImportDriverException(
+        error.message,
+        MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+      );
     }
 
     throw parseGmailMessageListFetchError(error);
@@ -24,10 +29,11 @@ export class GmailHandleErrorService {
     error: any,
     messageExternalId: string,
   ): void {
-    const gaxiosError = parseGaxiosError(error);
-
-    if (gaxiosError) {
-      throw gaxiosError;
+    if (isAxiosTemporaryError(error)) {
+      throw new MessageImportDriverException(
+        error.message,
+        MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+      );
     }
 
     const gmailError = parseGmailMessagesImportError(error, messageExternalId);

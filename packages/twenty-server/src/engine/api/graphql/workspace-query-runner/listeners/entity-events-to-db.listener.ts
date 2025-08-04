@@ -63,7 +63,7 @@ export class EntityEventsToDbListener {
     batchEvent: WorkspaceEventBatch<T>,
     action: DatabaseEventAction,
   ) {
-    const filteredEvents = batchEvent.events.filter(
+    const auditLogsEvents = batchEvent.events.filter(
       (event) => event.objectMetadata?.isAuditLogged,
     );
 
@@ -91,20 +91,24 @@ export class EntityEventsToDbListener {
           retryLimit: 3,
         },
       ),
-      this.entityEventsToDbQueueService.add<WorkspaceEventBatch<T>>(
-        CreateAuditLogFromInternalEvent.name,
-        {
-          ...batchEvent,
-          events: filteredEvents,
-        },
-      ),
-      ...(action !== DatabaseEventAction.DESTROYED
+      ...(auditLogsEvents.length > 0
+        ? [
+            this.entityEventsToDbQueueService.add<WorkspaceEventBatch<T>>(
+              CreateAuditLogFromInternalEvent.name,
+              {
+                ...batchEvent,
+                events: auditLogsEvents,
+              },
+            ),
+          ]
+        : []),
+      ...(action !== DatabaseEventAction.DESTROYED && auditLogsEvents.length > 0
         ? [
             this.entityEventsToDbQueueService.add<
               WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>
             >(UpsertTimelineActivityFromInternalEvent.name, {
               ...batchEvent,
-              events: filteredEvents,
+              events: auditLogsEvents,
             }),
           ]
         : []),

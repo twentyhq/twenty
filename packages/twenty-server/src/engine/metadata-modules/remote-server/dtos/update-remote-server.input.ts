@@ -3,6 +3,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { IsOptional } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import {
   ForeignDataWrapperOptions,
   RemoteServerType,
@@ -14,7 +15,7 @@ import {
 
 @InputType()
 export class UpdateRemoteServerInput<T extends RemoteServerType> {
-  @Field(() => String)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @IsOptional()

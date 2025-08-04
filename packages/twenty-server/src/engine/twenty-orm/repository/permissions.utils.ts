@@ -15,7 +15,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { getFieldMetadataIdForColumnNameMap } from 'src/engine/twenty-orm/utils/get-field-metadata-id-for-column-name.util';
+import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
 
 const getTargetEntityAndOperationType = (expressionMap: QueryExpressionMap) => {
   const mainEntity = expressionMap.aliases[0].metadata.name;
@@ -43,14 +43,16 @@ export const validateOperationIsPermittedOrThrow = ({
   selectedColumns,
   isFieldPermissionsEnabled,
   allFieldsSelected,
+  updatedColumns,
 }: {
   entityName: string;
   operationType: OperationType;
   objectRecordsPermissions: ObjectRecordsPermissions;
   objectMetadataMaps: ObjectMetadataMaps;
-  selectedColumns: string[];
+  selectedColumns: string[] | '*';
   isFieldPermissionsEnabled?: boolean;
   allFieldsSelected: boolean;
+  updatedColumns: string[];
 }) => {
   const objectMetadataIdForEntity =
     objectMetadataMaps.idByNameSingular[entityName];
@@ -77,8 +79,8 @@ export const validateOperationIsPermittedOrThrow = ({
     return;
   }
 
-  const fieldMetadataIdForColumnNameMap = isFieldPermissionsEnabled
-    ? getFieldMetadataIdForColumnNameMap(objectMetadata)
+  const columnNameToFieldMetadataIdMap = isFieldPermissionsEnabled
+    ? getColumnNameToFieldMetadataIdMap(objectMetadata)
     : {};
 
   const permissionsForEntity =
@@ -97,7 +99,7 @@ export const validateOperationIsPermittedOrThrow = ({
         validateReadFieldPermissionOrThrow({
           restrictedFields: permissionsForEntity.restrictedFields,
           selectedColumns,
-          fieldMetadataIdForColumnNameMap,
+          columnNameToFieldMetadataIdMap,
           allFieldsSelected,
         });
       }
@@ -115,7 +117,15 @@ export const validateOperationIsPermittedOrThrow = ({
         validateReadFieldPermissionOrThrow({
           restrictedFields: permissionsForEntity.restrictedFields,
           selectedColumns,
-          fieldMetadataIdForColumnNameMap,
+          columnNameToFieldMetadataIdMap,
+        });
+      }
+
+      if (isFieldPermissionsEnabled && updatedColumns.length > 0) {
+        validateUpdateFieldPermissionOrThrow({
+          restrictedFields: permissionsForEntity.restrictedFields,
+          updatedColumns,
+          columnNameToFieldMetadataIdMap,
         });
       }
       break;
@@ -131,7 +141,7 @@ export const validateOperationIsPermittedOrThrow = ({
         validateReadFieldPermissionOrThrow({
           restrictedFields: permissionsForEntity.restrictedFields,
           selectedColumns,
-          fieldMetadataIdForColumnNameMap,
+          columnNameToFieldMetadataIdMap,
         });
       }
       break;
@@ -148,7 +158,7 @@ export const validateOperationIsPermittedOrThrow = ({
         validateReadFieldPermissionOrThrow({
           restrictedFields: permissionsForEntity.restrictedFields,
           selectedColumns,
-          fieldMetadataIdForColumnNameMap,
+          columnNameToFieldMetadataIdMap,
         });
       }
       break;
@@ -188,7 +198,8 @@ export const validateQueryIsPermittedOrThrow = ({
     (select) => select.selection === mainEntity,
   );
 
-  let selectedColumns: string[] = [];
+  let selectedColumns: string[] | '*' = [];
+  let updatedColumns: string[] = [];
 
   if (isFieldPermissionsEnabled) {
     selectedColumns = getSelectedColumnsFromExpressionMap({
@@ -196,6 +207,26 @@ export const validateQueryIsPermittedOrThrow = ({
       expressionMap,
       allFieldsSelected,
     });
+
+    if (operationType !== 'select') {
+      const valuesSet = expressionMap.valuesSet;
+
+      if (Array.isArray(valuesSet)) {
+        updatedColumns = valuesSet.reduce((acc, value) => {
+          const keys = Object.keys(value);
+
+          keys.forEach((key) => {
+            if (!acc.includes(key)) {
+              acc.push(key);
+            }
+          });
+
+          return acc;
+        }, []);
+      } else {
+        updatedColumns = Object.keys(valuesSet ?? {});
+      }
+    }
   }
 
   validateOperationIsPermittedOrThrow({
@@ -203,28 +234,33 @@ export const validateQueryIsPermittedOrThrow = ({
     operationType: operationType as OperationType,
     objectRecordsPermissions,
     objectMetadataMaps,
-    selectedColumns: selectedColumns,
+    selectedColumns,
     isFieldPermissionsEnabled,
     allFieldsSelected,
+    updatedColumns,
   });
 };
 
 const validateReadFieldPermissionOrThrow = ({
   restrictedFields,
   selectedColumns,
-  fieldMetadataIdForColumnNameMap,
+  columnNameToFieldMetadataIdMap,
   allFieldsSelected,
 }: {
   restrictedFields: RestrictedFields;
-  selectedColumns: string[];
-  fieldMetadataIdForColumnNameMap: Record<string, string>;
+  selectedColumns: string[] | '*';
+  columnNameToFieldMetadataIdMap: Record<string, string>;
   allFieldsSelected?: boolean;
 }) => {
-  if (isEmpty(restrictedFields)) {
+  const noReadRestrictions =
+    isEmpty(restrictedFields) ||
+    Object.values(restrictedFields).every((field) => field.canRead !== false);
+
+  if (noReadRestrictions) {
     return;
   }
 
-  if (allFieldsSelected) {
+  if (allFieldsSelected || selectedColumns === '*') {
     throw new PermissionsException(
       PermissionsExceptionMessage.PERMISSION_DENIED,
       PermissionsExceptionCode.PERMISSION_DENIED,
@@ -232,7 +268,7 @@ const validateReadFieldPermissionOrThrow = ({
   }
 
   for (const column of selectedColumns) {
-    const fieldMetadataId = fieldMetadataIdForColumnNameMap[column];
+    const fieldMetadataId = columnNameToFieldMetadataIdMap[column];
 
     if (!fieldMetadataId) {
       throw new InternalServerError(
@@ -241,6 +277,37 @@ const validateReadFieldPermissionOrThrow = ({
     }
 
     if (restrictedFields[fieldMetadataId]?.canRead === false) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+  }
+};
+
+const validateUpdateFieldPermissionOrThrow = ({
+  restrictedFields,
+  updatedColumns,
+  columnNameToFieldMetadataIdMap,
+}: {
+  restrictedFields: RestrictedFields;
+  updatedColumns: string[];
+  columnNameToFieldMetadataIdMap: Record<string, string>;
+}) => {
+  if (isEmpty(restrictedFields)) {
+    return;
+  }
+
+  for (const column of updatedColumns) {
+    const fieldMetadataId = columnNameToFieldMetadataIdMap[column];
+
+    if (!fieldMetadataId) {
+      throw new InternalServerError(
+        `Field metadata id not found for column name ${column}`,
+      );
+    }
+
+    if (restrictedFields[fieldMetadataId]?.canUpdate === false) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
@@ -258,7 +325,7 @@ const getSelectedColumnsFromExpressionMap = ({
   expressionMap: QueryExpressionMap;
   allFieldsSelected: boolean;
 }) => {
-  let selectedColumns: string[] = [];
+  let selectedColumns: string[] | '*' = [];
 
   if (
     ['update', 'insert', 'delete', 'soft-delete', 'restore'].includes(
@@ -270,7 +337,8 @@ const getSelectedColumnsFromExpressionMap = ({
         'Returning columns are not set for update query',
       );
     }
-    selectedColumns = [expressionMap.returning].flat();
+    selectedColumns =
+      expressionMap.returning === '*' ? '*' : [expressionMap.returning].flat();
   } else if (!allFieldsSelected) {
     selectedColumns = getSelectedColumnsFromExpressionMapSelects(
       expressionMap.selects,
