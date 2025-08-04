@@ -2234,8 +2234,8 @@ export enum RemoteTableStatus {
 }
 
 export type RemoveAgentHandoffInput = {
-  fromAgentId: Scalars['String'];
-  toAgentId: Scalars['String'];
+  fromAgentId: Scalars['UUID'];
+  toAgentId: Scalars['UUID'];
 };
 
 export type ResendEmailVerificationTokenOutput = {
