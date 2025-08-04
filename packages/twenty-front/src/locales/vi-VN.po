@@ -390,6 +390,11 @@ msgstr "Thêm đầu vào vào biểu mẫu của bạn"
 msgid "Add new"
 msgstr "Thêm mới"
 
+#. js-lingui-id: erHjaG
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
+msgid "Add node"
+msgstr ""
+
 #. js-lingui-id: dEO3Zx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
@@ -5907,6 +5912,11 @@ msgstr "Tuần này"
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
 msgstr "Điều này sẽ khôi phục giá trị cơ sở dữ liệu về giá trị mặc định của môi trường. Ghi đè cơ sở dữ liệu sẽ bị loại bỏ và hệ thống sẽ sử dụng các cài đặt môi trường."
+
+#. js-lingui-id: Vqn9Z1
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
+msgid "Tidy up workflow"
+msgstr ""
 
 #. js-lingui-id: n9nSNJ
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx

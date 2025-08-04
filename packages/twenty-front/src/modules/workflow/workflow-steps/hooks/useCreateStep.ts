@@ -36,10 +36,12 @@ export const useCreateStep = ({
     newStepType,
     parentStepId,
     nextStepId,
+    position,
   }: {
     newStepType: WorkflowStepType;
-    parentStepId: string;
+    parentStepId: string | undefined;
     nextStepId: string | undefined;
+    position?: { x: number; y: number };
   }) => {
     if (isLoading === true) {
       return;
@@ -51,17 +53,20 @@ export const useCreateStep = ({
       const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
 
       if (!isDefined(workflowVersionId)) {
-        throw new Error('Workflow version not found');
+        throw new Error("Couldn't get updatable workflow version");
       }
 
-      const createdStep = (
+      const workflowVersionStepChanges = (
         await createWorkflowVersionStep({
           workflowVersionId,
           stepType: newStepType,
           parentStepId,
           nextStepId,
+          position,
         })
       )?.data?.createWorkflowVersionStep;
+
+      const createdStep = workflowVersionStepChanges?.createdStep;
 
       if (!isDefined(createdStep)) {
         throw new Error("Couldn't create step");
