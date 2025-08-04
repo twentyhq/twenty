@@ -132,6 +132,7 @@ export const mockedUserData: MockedUser = {
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: true,
       canDestroyObjectRecords: true,
+      restrictedFields: {},
     })),
   },
   locale: 'en',
@@ -161,6 +162,7 @@ export const mockedLimitedPermissionsUserData: MockedUser = {
         canUpdateObjectRecords: true,
         canSoftDeleteObjectRecords: true,
         canDestroyObjectRecords: true,
+        restrictedFields: {},
       })),
   },
 };

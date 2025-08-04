@@ -46,6 +46,7 @@ export const FieldsCard = ({
   });
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  console.log(objectPermissionsByObjectMetadataId);
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular,
