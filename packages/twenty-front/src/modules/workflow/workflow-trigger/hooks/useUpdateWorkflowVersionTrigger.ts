@@ -28,7 +28,7 @@ export const useUpdateWorkflowVersionTrigger = ({
     options: { computeOutputSchema: boolean } = { computeOutputSchema: true },
   ) => {
     if (!isDefined(workflow.currentVersion)) {
-      throw new Error('Can not update an undefined workflow version.');
+      throw new Error('Cannot find current workflow version');
     }
 
     const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
