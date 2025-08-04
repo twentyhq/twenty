@@ -619,7 +619,7 @@ export type CreateWorkflowVersionEdgeInput = {
 
 export type CreateWorkflowVersionStepInput = {
   /** Next step ID */
-  nextStepId?: InputMaybe<Scalars['String']>;
+  nextStepId?: InputMaybe<Scalars['UUID']>;
   /** Parent step ID */
   parentStepId?: InputMaybe<Scalars['String']>;
   /** New step type */
@@ -2611,7 +2611,7 @@ export type StandardOverrides = {
 export type SubmitFormStepInput = {
   /** Form response in JSON format */
   response: Scalars['JSON'];
-  /** Workflow step ID */
+  /** Workflow step ID (can be "trigger" or a UUID) */
   stepId: Scalars['String'];
   /** Workflow run ID */
   workflowRunId: Scalars['UUID'];
