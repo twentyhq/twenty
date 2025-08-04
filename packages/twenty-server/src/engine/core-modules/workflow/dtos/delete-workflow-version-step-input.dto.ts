@@ -10,7 +10,7 @@ export class DeleteWorkflowVersionStepInput {
   })
   workflowVersionId: string;
 
-  @Field(() => UUIDScalarType, {
+  @Field(() => String, {
     description: 'Step to delete ID',
     nullable: false,
   })
