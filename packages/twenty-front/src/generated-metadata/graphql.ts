@@ -505,7 +505,7 @@ export type CreateApiKeyDto = {
   expiresAt: Scalars['String'];
   name: Scalars['String'];
   revokedAt?: InputMaybe<Scalars['String']>;
-  roleId: Scalars['String'];
+  roleId: Scalars['UUID'];
 };
 
 export type CreateAppTokenInput = {
@@ -1275,8 +1275,8 @@ export type MutationAssignRoleToAgentArgs = {
 
 
 export type MutationAssignRoleToApiKeyArgs = {
-  apiKeyId: Scalars['String'];
-  roleId: Scalars['String'];
+  apiKeyId: Scalars['UUID'];
+  roleId: Scalars['UUID'];
 };
 
 
@@ -3781,8 +3781,8 @@ export type ApiKeyFragmentFragment = { __typename?: 'ApiKey', id: any, name: str
 export type WebhookFragmentFragment = { __typename?: 'Webhook', id: any, targetUrl: string, operations: Array<string>, description?: string | null, secret: string };
 
 export type AssignRoleToApiKeyMutationVariables = Exact<{
-  apiKeyId: Scalars['String'];
-  roleId: Scalars['String'];
+  apiKeyId: Scalars['UUID'];
+  roleId: Scalars['UUID'];
 }>;
 
 
@@ -7720,7 +7720,7 @@ export type GetSystemHealthStatusQueryHookResult = ReturnType<typeof useGetSyste
 export type GetSystemHealthStatusLazyQueryHookResult = ReturnType<typeof useGetSystemHealthStatusLazyQuery>;
 export type GetSystemHealthStatusQueryResult = Apollo.QueryResult<GetSystemHealthStatusQuery, GetSystemHealthStatusQueryVariables>;
 export const AssignRoleToApiKeyDocument = gql`
-    mutation AssignRoleToApiKey($apiKeyId: String!, $roleId: String!) {
+    mutation AssignRoleToApiKey($apiKeyId: UUID!, $roleId: UUID!) {
   assignRoleToApiKey(apiKeyId: $apiKeyId, roleId: $roleId)
 }
     `;

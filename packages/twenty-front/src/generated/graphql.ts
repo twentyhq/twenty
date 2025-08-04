@@ -505,7 +505,7 @@ export type CreateApiKeyDto = {
   expiresAt: Scalars['String'];
   name: Scalars['String'];
   revokedAt?: InputMaybe<Scalars['String']>;
-  roleId: Scalars['String'];
+  roleId: Scalars['UUID'];
 };
 
 export type CreateApprovedAccessDomainInput = {
@@ -1226,8 +1226,8 @@ export type MutationAssignRoleToAgentArgs = {
 
 
 export type MutationAssignRoleToApiKeyArgs = {
-  apiKeyId: Scalars['String'];
-  roleId: Scalars['String'];
+  apiKeyId: Scalars['UUID'];
+  roleId: Scalars['UUID'];
 };
 
 
