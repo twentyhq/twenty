@@ -19,7 +19,7 @@ export const createUpsertFieldPermissionsOperation = (
 ) => ({
   query: gql`
       mutation UpsertFieldPermissions(
-        $roleId: String!
+        $roleId: UUID!
         $fieldPermissions: [FieldPermissionInput!]!
       ) {
         upsertFieldPermissions(

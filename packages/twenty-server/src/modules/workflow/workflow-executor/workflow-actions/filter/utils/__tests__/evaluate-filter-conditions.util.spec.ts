@@ -17,9 +17,10 @@ describe('evaluateFilterConditions', () => {
     operand: ViewFilterOperand,
     leftOperand: unknown,
     rightOperand: unknown,
+    type = 'TEXT',
   ): ResolvedFilter => ({
     id: 'filter1',
-    type: 'text',
+    type: type,
     label: 'Test Filter',
     rightOperand,
     operand,
@@ -46,46 +47,83 @@ describe('evaluateFilterConditions', () => {
   });
 
   describe('single filter operands', () => {
-    describe('Is operand', () => {
-      it('should return true when values are equal', () => {
-        const filter = createFilter(ViewFilterOperand.Is, 'John', 'John');
+    describe('Relation/UUID filter operands', () => {
+      it('should return true when values are equal (RELATION)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.Is,
+          'John',
+          'John',
+          'RELATION',
+        );
         const result = evaluateFilterConditions({ filters: [filter] });
 
         expect(result).toBe(true);
       });
 
-      it('should return true when values are loosely equal', () => {
-        const filter = createFilter(ViewFilterOperand.Is, '123', 123);
-        const result = evaluateFilterConditions({ filters: [filter] });
-
-        expect(result).toBe(true);
-      });
-
-      it('should return false when values are not equal', () => {
-        const filter = createFilter(ViewFilterOperand.Is, 'John', 'Jane');
+      it('should return false when values are not equal (RELATION)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.Is,
+          'John',
+          'Jane',
+          'RELATION',
+        );
         const result = evaluateFilterConditions({ filters: [filter] });
 
         expect(result).toBe(false);
       });
 
-      it('should return true when values are equal but different types', () => {
-        const filter = createFilter(ViewFilterOperand.Is, '123', 123);
+      it('should return false when values are equal (IsNot RELATION)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IsNot,
+          'John',
+          'John',
+          'RELATION',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
+      it('should return true when values are not equal (IsNot RELATION)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IsNot,
+          'John',
+          'Jane',
+          'RELATION',
+        );
         const result = evaluateFilterConditions({ filters: [filter] });
 
         expect(result).toBe(true);
       });
     });
 
-    describe('IsNot operand', () => {
-      it('should return false when values are equal', () => {
-        const filter = createFilter(ViewFilterOperand.IsNot, 'John', 'John');
+    describe('Boolean filter operands', () => {
+      it('should return true when boolean values are equal', () => {
+        const filter = createFilter(
+          ViewFilterOperand.Is,
+          true,
+          true,
+          'BOOLEAN',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should return false when boolean values are not equal', () => {
+        const filter = createFilter(
+          ViewFilterOperand.Is,
+          true,
+          false,
+          'BOOLEAN',
+        );
         const result = evaluateFilterConditions({ filters: [filter] });
 
         expect(result).toBe(false);
       });
 
-      it('should return true when values are not equal', () => {
-        const filter = createFilter(ViewFilterOperand.IsNot, 'John', 'Jane');
+      it('should handle truthy/falsy conversion', () => {
+        const filter = createFilter(ViewFilterOperand.Is, 1, true, 'BOOLEAN');
         const result = evaluateFilterConditions({ filters: [filter] });
 
         expect(result).toBe(true);
@@ -98,16 +136,19 @@ describe('evaluateFilterConditions', () => {
           ViewFilterOperand.GreaterThanOrEqual,
           25,
           25,
+          'NUMBER',
         );
         const filter2 = createFilter(
           ViewFilterOperand.GreaterThanOrEqual,
           30,
           25,
+          'NUMBER',
         );
         const filter3 = createFilter(
           ViewFilterOperand.GreaterThanOrEqual,
           20,
           25,
+          'NUMBER',
         );
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
@@ -116,9 +157,24 @@ describe('evaluateFilterConditions', () => {
       });
 
       it('should handle LessThanOrEqual operand correctly', () => {
-        const filter1 = createFilter(ViewFilterOperand.LessThanOrEqual, 25, 25);
-        const filter2 = createFilter(ViewFilterOperand.LessThanOrEqual, 20, 25);
-        const filter3 = createFilter(ViewFilterOperand.LessThanOrEqual, 30, 25);
+        const filter1 = createFilter(
+          ViewFilterOperand.LessThanOrEqual,
+          25,
+          25,
+          'NUMBER',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.LessThanOrEqual,
+          20,
+          25,
+          'NUMBER',
+        );
+        const filter3 = createFilter(
+          ViewFilterOperand.LessThanOrEqual,
+          30,
+          25,
+          'NUMBER',
+        );
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
@@ -132,11 +188,13 @@ describe('evaluateFilterConditions', () => {
           ViewFilterOperand.Contains,
           'Hello World',
           'World',
+          'TEXT',
         );
         const filter2 = createFilter(
           ViewFilterOperand.Contains,
           'Hello',
           'World',
+          'TEXT',
         );
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
@@ -148,11 +206,13 @@ describe('evaluateFilterConditions', () => {
           ViewFilterOperand.DoesNotContain,
           'Hello World',
           'World',
+          'TEXT',
         );
         const filter2 = createFilter(
           ViewFilterOperand.DoesNotContain,
           'Hello',
           'World',
+          'TEXT',
         );
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(false);
@@ -164,11 +224,13 @@ describe('evaluateFilterConditions', () => {
           ViewFilterOperand.Contains,
           ['apple', 'banana', 'cherry'],
           ['apple'],
+          'ARRAY',
         );
         const filter2 = createFilter(
           ViewFilterOperand.Contains,
           ['apple', 'banana', 'cherry'],
           ['grape'],
+          'ARRAY',
         );
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
@@ -180,11 +242,13 @@ describe('evaluateFilterConditions', () => {
           ViewFilterOperand.DoesNotContain,
           ['apple', 'banana', 'cherry'],
           ['apple'],
+          'ARRAY',
         );
         const filter2 = createFilter(
           ViewFilterOperand.DoesNotContain,
           ['apple', 'banana', 'cherry'],
           ['grape'],
+          'ARRAY',
         );
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(false);
@@ -194,14 +258,30 @@ describe('evaluateFilterConditions', () => {
 
     describe('empty operands', () => {
       it('should handle IsEmpty operand correctly', () => {
-        const filter1 = createFilter(ViewFilterOperand.IsEmpty, null, '');
-        const filter2 = createFilter(ViewFilterOperand.IsEmpty, undefined, '');
-        const filter3 = createFilter(ViewFilterOperand.IsEmpty, '', '');
-        const filter4 = createFilter(ViewFilterOperand.IsEmpty, [], '');
+        const filter1 = createFilter(
+          ViewFilterOperand.IsEmpty,
+          null,
+          '',
+          'TEXT',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.IsEmpty,
+          undefined,
+          '',
+          'TEXT',
+        );
+        const filter3 = createFilter(ViewFilterOperand.IsEmpty, '', '', 'TEXT');
+        const filter4 = createFilter(
+          ViewFilterOperand.IsEmpty,
+          [],
+          '',
+          'ARRAY',
+        );
         const filter5 = createFilter(
           ViewFilterOperand.IsEmpty,
           'not empty',
           '',
+          'TEXT',
         );
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
@@ -216,15 +296,32 @@ describe('evaluateFilterConditions', () => {
           ViewFilterOperand.IsNotEmpty,
           'not empty',
           '',
+          'TEXT',
         );
         const filter2 = createFilter(
           ViewFilterOperand.IsNotEmpty,
           ['item'],
           '',
+          'ARRAY',
         );
-        const filter3 = createFilter(ViewFilterOperand.IsNotEmpty, null, '');
-        const filter4 = createFilter(ViewFilterOperand.IsNotEmpty, '', '');
-        const filter5 = createFilter(ViewFilterOperand.IsNotEmpty, [], '');
+        const filter3 = createFilter(
+          ViewFilterOperand.IsNotEmpty,
+          null,
+          '',
+          'TEXT',
+        );
+        const filter4 = createFilter(
+          ViewFilterOperand.IsNotEmpty,
+          '',
+          '',
+          'TEXT',
+        );
+        const filter5 = createFilter(
+          ViewFilterOperand.IsNotEmpty,
+          [],
+          '',
+          'ARRAY',
+        );
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
@@ -235,21 +332,193 @@ describe('evaluateFilterConditions', () => {
     });
 
     describe('date operands', () => {
-      it('should handle date operands (returning false as placeholder)', () => {
-        const dateOperands = [
-          ViewFilterOperand.IsRelative,
+      const now = new Date();
+      const pastDate = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 1 day ago
+      const futureDate = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 1 day from now
+      const today = new Date();
+
+      it('should handle IsInPast operand correctly', () => {
+        const filter = createFilter(
           ViewFilterOperand.IsInPast,
+          pastDate,
+          null,
+          'DATE',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
+
+        const futureFilter = createFilter(
+          ViewFilterOperand.IsInPast,
+          futureDate,
+          null,
+          'DATE',
+        );
+
+        expect(evaluateFilterConditions({ filters: [futureFilter] })).toBe(
+          false,
+        );
+      });
+
+      it('should handle IsInFuture operand correctly', () => {
+        const filter = createFilter(
           ViewFilterOperand.IsInFuture,
+          futureDate,
+          null,
+          'DATE',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
+
+        const pastFilter = createFilter(
+          ViewFilterOperand.IsInFuture,
+          pastDate,
+          null,
+          'DATE',
+        );
+
+        expect(evaluateFilterConditions({ filters: [pastFilter] })).toBe(false);
+      });
+
+      it('should handle IsToday operand correctly', () => {
+        const filter = createFilter(
           ViewFilterOperand.IsToday,
+          today,
+          null,
+          'DATE',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
+
+        const pastFilter = createFilter(
+          ViewFilterOperand.IsToday,
+          pastDate,
+          null,
+          'DATE',
+        );
+
+        expect(evaluateFilterConditions({ filters: [pastFilter] })).toBe(false);
+      });
+
+      it('should handle IsBefore operand correctly', () => {
+        const filter = createFilter(
           ViewFilterOperand.IsBefore,
+          pastDate,
+          now,
+          'DATE',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
+
+        const futureFilter = createFilter(
+          ViewFilterOperand.IsBefore,
+          futureDate,
+          now,
+          'DATE',
+        );
+
+        expect(evaluateFilterConditions({ filters: [futureFilter] })).toBe(
+          false,
+        );
+      });
+
+      it('should handle IsAfter operand correctly', () => {
+        const filter = createFilter(
           ViewFilterOperand.IsAfter,
-        ];
+          futureDate,
+          now,
+          'DATE',
+        );
 
-        dateOperands.forEach((operand) => {
-          const filter = createFilter(operand, new Date(), new Date());
+        expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
 
-          expect(evaluateFilterConditions({ filters: [filter] })).toBe(false);
-        });
+        const pastFilter = createFilter(
+          ViewFilterOperand.IsAfter,
+          pastDate,
+          now,
+          'DATE',
+        );
+
+        expect(evaluateFilterConditions({ filters: [pastFilter] })).toBe(false);
+      });
+
+      it('should handle Is operand for dates correctly', () => {
+        const sameDate1 = new Date('2023-01-15');
+        const sameDate2 = new Date('2023-01-15');
+        const filter = createFilter(
+          ViewFilterOperand.Is,
+          sameDate1,
+          sameDate2,
+          'DATE',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
+
+        const differentFilter = createFilter(
+          ViewFilterOperand.Is,
+          sameDate1,
+          now,
+          'DATE',
+        );
+
+        expect(evaluateFilterConditions({ filters: [differentFilter] })).toBe(
+          false,
+        );
+      });
+
+      it('should handle date IsEmpty and IsNotEmpty operands', () => {
+        const emptyFilter = createFilter(
+          ViewFilterOperand.IsEmpty,
+          null,
+          null,
+          'DATE',
+        );
+
+        expect(evaluateFilterConditions({ filters: [emptyFilter] })).toBe(true);
+
+        const notEmptyFilter = createFilter(
+          ViewFilterOperand.IsNotEmpty,
+          now,
+          null,
+          'DATE',
+        );
+
+        expect(evaluateFilterConditions({ filters: [notEmptyFilter] })).toBe(
+          true,
+        );
+      });
+    });
+
+    describe('currency operands', () => {
+      it('should handle currency code operands', () => {
+        const filter: ResolvedFilter = {
+          id: 'filter1',
+          type: 'CURRENCY',
+          label: 'Currency Filter',
+          rightOperand: 'USD',
+          operand: ViewFilterOperand.Is,
+          displayValue: 'USD',
+          stepFilterGroupId: 'group1',
+          leftOperand: 'USD',
+          compositeFieldSubFieldName: 'currencyCode',
+        };
+
+        expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
+      });
+
+      it('should handle currency amount operands', () => {
+        const filter: ResolvedFilter = {
+          id: 'filter1',
+          type: 'CURRENCY',
+          label: 'Currency Filter',
+          rightOperand: 100,
+          operand: ViewFilterOperand.GreaterThanOrEqual,
+          displayValue: '100',
+          stepFilterGroupId: 'group1',
+          leftOperand: 150,
+          compositeFieldSubFieldName: 'amountMicros',
+        };
+
+        expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
       });
     });
 
@@ -259,9 +528,23 @@ describe('evaluateFilterConditions', () => {
           'unknown' as ViewFilterOperand,
           'value',
           'value',
+          'TEXT',
         );
 
         expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow();
+      });
+
+      it('should throw error for unsupported filter type', () => {
+        const filter = createFilter(
+          ViewFilterOperand.Contains,
+          'value',
+          'value',
+          'UNSUPPORTED_TYPE',
+        );
+
+        expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow(
+          'Filter type UNSUPPORTED_TYPE not supported',
+        );
       });
     });
   });
@@ -271,7 +554,7 @@ describe('evaluateFilterConditions', () => {
       const filters: ResolvedFilter[] = [
         {
           id: 'filter1',
-          type: 'text',
+          type: 'RELATION',
           label: 'Name Filter',
           rightOperand: 'John',
           operand: ViewFilterOperand.Is,
@@ -281,7 +564,7 @@ describe('evaluateFilterConditions', () => {
         },
         {
           id: 'filter2',
-          type: 'number',
+          type: 'NUMBER',
           label: 'Age Filter',
           rightOperand: 25,
           operand: ViewFilterOperand.GreaterThanOrEqual,
@@ -300,7 +583,7 @@ describe('evaluateFilterConditions', () => {
       const filters: ResolvedFilter[] = [
         {
           id: 'filter1',
-          type: 'text',
+          type: 'RELATION',
           label: 'Name Filter',
           rightOperand: 'John',
           operand: ViewFilterOperand.Is,
@@ -310,7 +593,7 @@ describe('evaluateFilterConditions', () => {
         },
         {
           id: 'filter2',
-          type: 'number',
+          type: 'NUMBER',
           label: 'Age Filter',
           rightOperand: 25,
           operand: ViewFilterOperand.GreaterThanOrEqual,
@@ -339,7 +622,7 @@ describe('evaluateFilterConditions', () => {
         const filters: ResolvedFilter[] = [
           {
             id: 'filter1',
-            type: 'text',
+            type: 'RELATION',
             label: 'Name Filter',
             rightOperand: 'John',
             operand: ViewFilterOperand.Is,
@@ -349,7 +632,7 @@ describe('evaluateFilterConditions', () => {
           },
           {
             id: 'filter2',
-            type: 'number',
+            type: 'NUMBER',
             label: 'Age Filter',
             rightOperand: 25,
             operand: ViewFilterOperand.GreaterThanOrEqual,
@@ -375,7 +658,7 @@ describe('evaluateFilterConditions', () => {
         const filters: ResolvedFilter[] = [
           {
             id: 'filter1',
-            type: 'text',
+            type: 'RELATION',
             label: 'Name Filter',
             rightOperand: 'John',
             operand: ViewFilterOperand.Is,
@@ -385,7 +668,7 @@ describe('evaluateFilterConditions', () => {
           },
           {
             id: 'filter2',
-            type: 'number',
+            type: 'NUMBER',
             label: 'Age Filter',
             rightOperand: 25,
             operand: ViewFilterOperand.GreaterThanOrEqual,
@@ -413,7 +696,7 @@ describe('evaluateFilterConditions', () => {
         const filters: ResolvedFilter[] = [
           {
             id: 'filter1',
-            type: 'text',
+            type: 'RELATION',
             label: 'Name Filter',
             rightOperand: 'John',
             operand: ViewFilterOperand.Is,
@@ -423,7 +706,7 @@ describe('evaluateFilterConditions', () => {
           },
           {
             id: 'filter2',
-            type: 'number',
+            type: 'NUMBER',
             label: 'Age Filter',
             rightOperand: 25,
             operand: ViewFilterOperand.GreaterThanOrEqual,
@@ -449,7 +732,7 @@ describe('evaluateFilterConditions', () => {
         const filters: ResolvedFilter[] = [
           {
             id: 'filter1',
-            type: 'text',
+            type: 'RELATION',
             label: 'Name Filter',
             rightOperand: 'John',
             operand: ViewFilterOperand.Is,
@@ -459,7 +742,7 @@ describe('evaluateFilterConditions', () => {
           },
           {
             id: 'filter2',
-            type: 'number',
+            type: 'NUMBER',
             label: 'Age Filter',
             rightOperand: 25,
             operand: ViewFilterOperand.GreaterThanOrEqual,
@@ -491,7 +774,7 @@ describe('evaluateFilterConditions', () => {
         const filters: ResolvedFilter[] = [
           {
             id: 'filter1',
-            type: 'text',
+            type: 'RELATION',
             label: 'Name Filter',
             rightOperand: 'John',
             operand: ViewFilterOperand.Is,
@@ -501,7 +784,7 @@ describe('evaluateFilterConditions', () => {
           },
           {
             id: 'filter2',
-            type: 'number',
+            type: 'NUMBER',
             label: 'Age Filter',
             rightOperand: 25,
             operand: ViewFilterOperand.GreaterThanOrEqual,
@@ -541,7 +824,7 @@ describe('evaluateFilterConditions', () => {
         const filters: ResolvedFilter[] = [
           {
             id: 'filter1',
-            type: 'text',
+            type: 'RELATION',
             label: 'Filter 1',
             rightOperand: 'John',
             operand: ViewFilterOperand.Is,
@@ -551,7 +834,7 @@ describe('evaluateFilterConditions', () => {
           },
           {
             id: 'filter2',
-            type: 'text',
+            type: 'RELATION',
             label: 'Filter 2',
             rightOperand: 'Smith',
             operand: ViewFilterOperand.Is,
@@ -561,7 +844,7 @@ describe('evaluateFilterConditions', () => {
           },
           {
             id: 'filter3',
-            type: 'number',
+            type: 'NUMBER',
             label: 'Filter 3',
             rightOperand: 25,
             operand: ViewFilterOperand.GreaterThanOrEqual,
@@ -604,7 +887,7 @@ describe('evaluateFilterConditions', () => {
         const filters: ResolvedFilter[] = [
           {
             id: 'filter1',
-            type: 'text',
+            type: 'RELATION',
             label: 'Name Filter',
             rightOperand: 'John',
             operand: ViewFilterOperand.Is,

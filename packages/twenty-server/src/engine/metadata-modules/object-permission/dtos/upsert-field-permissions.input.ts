@@ -9,11 +9,13 @@ import {
   IsUUID,
 } from 'class-validator';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
 @InputType()
 export class UpsertFieldPermissionsInput {
   @IsUUID()
   @IsNotEmpty()
-  @Field()
+  @Field(() => UUIDScalarType)
   roleId: string;
 
   @IsArray()
@@ -27,12 +29,12 @@ export class UpsertFieldPermissionsInput {
 export class FieldPermissionInput {
   @IsUUID()
   @IsNotEmpty()
-  @Field()
+  @Field(() => UUIDScalarType)
   objectMetadataId: string;
 
   @IsUUID()
   @IsNotEmpty()
-  @Field()
+  @Field(() => UUIDScalarType)
   fieldMetadataId: string;
 
   @IsBoolean()

@@ -28,7 +28,7 @@ export class FeatureFlag {
   @Column({ nullable: false, type: 'text' })
   key: FeatureFlagKey;
 
-  @Field()
+  @Field(() => UUIDScalarType)
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
