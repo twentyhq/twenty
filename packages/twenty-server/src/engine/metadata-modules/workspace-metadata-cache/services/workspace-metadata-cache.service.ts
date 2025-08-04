@@ -5,6 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
+import { fromObjectMetadataMapsToFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/from-flat-object-metadata-to-flat-object-metadata-with-flat-field-maps.util';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -33,6 +35,19 @@ export class WorkspaceMetadataCacheService {
     @InjectRepository(IndexMetadataEntity, 'core')
     private readonly indexMetadataRepository: Repository<IndexMetadataEntity>,
   ) {}
+
+  async getExistingOrRecomputeFlatObjectMetadataMaps({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<FlatObjectMetadataMaps> {
+    const { objectMetadataMaps } =
+      await this.getExistingOrRecomputeMetadataMaps({
+        workspaceId,
+      });
+
+    return fromObjectMetadataMapsToFlatObjectMetadataMaps(objectMetadataMaps);
+  }
 
   async getExistingOrRecomputeMetadataMaps({
     workspaceId,
