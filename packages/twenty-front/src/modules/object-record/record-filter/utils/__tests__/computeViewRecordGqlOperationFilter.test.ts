@@ -4,23 +4,21 @@ import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordF
 import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
 import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
 import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const companiesMock = getCompaniesMock();
 
-const companyMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'company',
-)!;
+const companyMockObjectMetadataItem =
+  getMockObjectMetadataItemOrThrow('company');
 
-const petMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'pet',
-)!;
+const petMockObjectMetadataItem = getMockObjectMetadataItemOrThrow('pet');
 
-const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'person',
-)!;
+const personMockObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 
 const mockFilterValueDependencies: RecordFilterValueDependencies = {
   currentWorkspaceMemberId: '32219445-f587-4c40-b2b1-6d3205ed96da',
@@ -35,10 +33,14 @@ describe('computeViewRecordGqlOperationFilter', () => {
         (field) => field.name === 'name',
       );
 
+    if (!isDefined(companyMockNameFieldMetadataId)) {
+      throw new Error('Company mock name field metadata ID is undefined');
+    }
+
     const nameFilter: RecordFilter = {
       id: 'company-name-filter',
       value: companiesMock[0].name,
-      fieldMetadataId: companyMockNameFieldMetadataId?.id,
+      fieldMetadataId: companyMockNameFieldMetadataId.id,
       displayValue: companiesMock[0].name,
       operand: RecordFilterOperand.Contains,
       type: 'TEXT',
@@ -65,15 +67,23 @@ describe('computeViewRecordGqlOperationFilter', () => {
         (field) => field.name === 'name',
       );
 
+    if (!isDefined(companyMockNameFieldMetadataId)) {
+      throw new Error('Company mock name field metadata ID is undefined');
+    }
+
     const companyMockEmployeesFieldMetadataId =
       companyMockObjectMetadataItem.fields.find(
         (field) => field.name === 'employees',
       );
 
+    if (!isDefined(companyMockEmployeesFieldMetadataId)) {
+      throw new Error('Company mock employees field metadata ID is undefined');
+    }
+
     const nameFilter: RecordFilter = {
       id: 'company-name-filter',
       value: companiesMock[0].name,
-      fieldMetadataId: companyMockNameFieldMetadataId?.id,
+      fieldMetadataId: companyMockNameFieldMetadataId.id,
       displayValue: companiesMock[0].name,
       operand: ViewFilterOperand.Contains,
       type: FieldMetadataType.TEXT,
@@ -83,7 +93,7 @@ describe('computeViewRecordGqlOperationFilter', () => {
     const employeesFilter: RecordFilter = {
       id: 'company-employees-filter',
       value: '1000',
-      fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
+      fieldMetadataId: companyMockEmployeesFieldMetadataId.id,
       displayValue: '1000',
       operand: ViewFilterOperand.GreaterThanOrEqual,
       type: FieldMetadataType.NUMBER,
@@ -121,10 +131,14 @@ describe('should work as expected for the different field types', () => {
         (field) => field.name === 'address',
       );
 
+    if (!isDefined(companyMockAddressFieldMetadataId)) {
+      throw new Error('Company mock address field metadata ID is undefined');
+    }
+
     const addressFilterContains: RecordFilter = {
       id: 'company-address-filter-contains',
       value: '123 Main St',
-      fieldMetadataId: companyMockAddressFieldMetadataId?.id,
+      fieldMetadataId: companyMockAddressFieldMetadataId.id,
       displayValue: '123 Main St',
       operand: ViewFilterOperand.Contains,
       type: FieldMetadataType.ADDRESS,
@@ -581,10 +595,14 @@ describe('should work as expected for the different field types', () => {
         (field) => field.name === 'phones',
       );
 
+    if (!isDefined(personMockPhonesFieldMetadataId)) {
+      throw new Error('Person mock phones field metadata ID is undefined');
+    }
+
     const phonesFilterContains: RecordFilter = {
       id: 'person-phones-filter-contains',
       value: '1234567890',
-      fieldMetadataId: personMockPhonesFieldMetadataId?.id,
+      fieldMetadataId: personMockPhonesFieldMetadataId.id,
       displayValue: '1234567890',
       operand: ViewFilterOperand.Contains,
       label: 'Phones',
@@ -594,7 +612,7 @@ describe('should work as expected for the different field types', () => {
     const phonesFilterDoesNotContain: RecordFilter = {
       id: 'person-phones-filter-does-not-contain',
       value: '1234567890',
-      fieldMetadataId: personMockPhonesFieldMetadataId?.id,
+      fieldMetadataId: personMockPhonesFieldMetadataId.id,
       displayValue: '1234567890',
       operand: ViewFilterOperand.DoesNotContain,
       label: 'Phones',
@@ -801,15 +819,15 @@ describe('should work as expected for the different field types', () => {
   });
 
   it('emails field type', () => {
-    const personMockEmailFieldMetadataId =
-      personMockObjectMetadataItem.fields.find(
-        (field) => field.name === 'emails',
-      );
+    const personMockEmailFieldMetadataId = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: personMockObjectMetadataItem,
+      fieldName: 'emails',
+    });
 
     const emailsFilterContains: RecordFilter = {
       id: 'person-emails-filter-contains',
       value: 'test@test.com',
-      fieldMetadataId: personMockEmailFieldMetadataId?.id,
+      fieldMetadataId: personMockEmailFieldMetadataId.id,
       displayValue: 'test@test.com',
       operand: ViewFilterOperand.Contains,
       label: 'Emails',
@@ -819,7 +837,7 @@ describe('should work as expected for the different field types', () => {
     const emailsFilterDoesNotContain: RecordFilter = {
       id: 'person-emails-filter-does-not-contain',
       value: 'test@test.com',
-      fieldMetadataId: personMockEmailFieldMetadataId?.id,
+      fieldMetadataId: personMockEmailFieldMetadataId.id,
       displayValue: 'test@test.com',
       operand: ViewFilterOperand.DoesNotContain,
       label: 'Emails',
@@ -1003,6 +1021,10 @@ describe('should work as expected for the different field types', () => {
         (field) => field.name === 'createdAt',
       );
 
+    if (!isDefined(companyMockDateFieldMetadataId)) {
+      throw new Error('Company mock date field metadata ID is undefined');
+    }
+
     const dateFilterIsAfter: RecordFilter = {
       id: 'company-date-filter-is-after',
       value: '2024-09-17T20:46:58.922Z',
@@ -1109,10 +1131,12 @@ describe('should work as expected for the different field types', () => {
   });
 
   it('number field type', () => {
-    const companyMockEmployeesFieldMetadataId =
-      companyMockObjectMetadataItem.fields.find(
-        (field) => field.name === 'employees',
-      );
+    const companyMockEmployeesFieldMetadataId = getMockFieldMetadataItemOrThrow(
+      {
+        objectMetadataItem: companyMockObjectMetadataItem,
+        fieldName: 'employees',
+      },
+    );
 
     const employeesFilterIsGreaterThan: RecordFilter = {
       id: 'company-employees-filter-is-greater-than',
@@ -1195,10 +1219,10 @@ describe('should work as expected for the different field types', () => {
   });
 
   it('currency amount micros sub field type', () => {
-    const companyMockARRFieldMetadataId =
-      companyMockObjectMetadataItem.fields.find(
-        (field) => field.name === 'annualRecurringRevenue',
-      );
+    const companyMockARRFieldMetadataId = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: companyMockObjectMetadataItem,
+      fieldName: 'annualRecurringRevenue',
+    });
 
     const ARRFilterIsGreaterThan: RecordFilter = {
       id: 'company-ARR-filter-is-greater-than',
@@ -1217,7 +1241,7 @@ describe('should work as expected for the different field types', () => {
     const ARRFilterIsLessThan: RecordFilter = {
       id: 'company-ARR-filter-is-less-than',
       value: '1000',
-      fieldMetadataId: companyMockARRFieldMetadataId?.id,
+      fieldMetadataId: companyMockARRFieldMetadataId.id,
       displayValue: '1000',
       operand: RecordFilterOperand.LessThanOrEqual,
       subFieldName: 'amountMicros' satisfies Extract<
@@ -1231,7 +1255,7 @@ describe('should work as expected for the different field types', () => {
     const ARRFilterIs: RecordFilter = {
       id: 'company-ARR-filter-is',
       value: '1000',
-      fieldMetadataId: companyMockARRFieldMetadataId?.id,
+      fieldMetadataId: companyMockARRFieldMetadataId.id,
       displayValue: '1000',
       operand: RecordFilterOperand.Is,
       subFieldName: 'amountMicros' satisfies Extract<
@@ -1245,7 +1269,7 @@ describe('should work as expected for the different field types', () => {
     const ARRFilterIsNot: RecordFilter = {
       id: 'company-ARR-filter-is-not',
       value: '1000',
-      fieldMetadataId: companyMockARRFieldMetadataId?.id,
+      fieldMetadataId: companyMockARRFieldMetadataId.id,
       displayValue: '1000',
       operand: RecordFilterOperand.IsNot,
       subFieldName: 'amountMicros' satisfies Extract<
@@ -1305,15 +1329,15 @@ describe('should work as expected for the different field types', () => {
   });
 
   it('currency currency code sub field type', () => {
-    const companyMockARRFieldMetadataId =
-      companyMockObjectMetadataItem.fields.find(
-        (field) => field.name === 'annualRecurringRevenue',
-      );
+    const companyMockARRFieldMetadataId = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: companyMockObjectMetadataItem,
+      fieldName: 'annualRecurringRevenue',
+    });
 
     const ARRFilterIn: RecordFilter = {
       id: 'company-ARR-filter-in',
       value: '["USD"]',
-      fieldMetadataId: companyMockARRFieldMetadataId?.id,
+      fieldMetadataId: companyMockARRFieldMetadataId.id,
       displayValue: 'USD',
       operand: RecordFilterOperand.Is,
       subFieldName: 'currencyCode' satisfies Extract<
@@ -1327,7 +1351,7 @@ describe('should work as expected for the different field types', () => {
     const ARRFilterNotIn: RecordFilter = {
       id: 'company-ARR-filter-not-in',
       value: '["USD"]',
-      fieldMetadataId: companyMockARRFieldMetadataId?.id,
+      fieldMetadataId: companyMockARRFieldMetadataId.id,
       displayValue: 'Not USD',
       operand: RecordFilterOperand.IsNot,
       subFieldName: 'currencyCode' satisfies Extract<

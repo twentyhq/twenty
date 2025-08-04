@@ -1,6 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import {
+  TwentyORMException,
+  TwentyORMExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CALENDAR_THROTTLE_MAX_ATTEMPTS } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-throttle-max-attempts';
 import {
@@ -31,7 +35,7 @@ export class CalendarEventImportErrorHandlerService {
   ) {}
 
   public async handleDriverException(
-    exception: CalendarEventImportDriverException,
+    exception: CalendarEventImportDriverException | TwentyORMException,
     syncStep: CalendarEventImportSyncStep,
     calendarChannel: Pick<
       CalendarChannelWorkspaceEntity,
@@ -47,6 +51,7 @@ export class CalendarEventImportErrorHandlerService {
           workspaceId,
         );
         break;
+      case TwentyORMExceptionCode.QUERY_READ_TIMEOUT:
       case CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR:
         await this.handleTemporaryException(
           syncStep,
@@ -158,7 +163,7 @@ export class CalendarEventImportErrorHandlerService {
   }
 
   private async handleUnknownException(
-    exception: CalendarEventImportDriverException,
+    exception: { message: string },
     calendarChannel: Pick<CalendarChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {

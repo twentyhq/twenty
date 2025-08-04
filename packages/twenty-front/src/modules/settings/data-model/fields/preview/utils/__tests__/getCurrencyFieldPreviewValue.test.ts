@@ -1,7 +1,7 @@
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getCurrencyFieldPreviewValue } from '../getCurrencyFieldPreviewValue';
 
 const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(

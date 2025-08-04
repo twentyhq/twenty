@@ -5,6 +5,7 @@ import { useWorkflowStepContextOrThrow } from '@/workflow/states/context/Workflo
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
+import { getViewFilterOperands } from '@/workflow/workflow-steps/workflow-actions/filter-action/utils/getStepFilterOperands';
 import { WorkflowVariablesDropdown } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdown';
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
 import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
@@ -89,6 +90,10 @@ export const WorkflowStepFilterFieldSelect = ({
             value: '',
             fieldMetadataId,
             compositeFieldSubFieldName,
+            operand: getViewFilterOperands({
+              filterType,
+              subFieldName: compositeFieldSubFieldName,
+            })?.[0],
           },
         });
       },

@@ -76,7 +76,7 @@ const RatingFieldInputWithContext = ({
           },
           recordId: recordId ?? '123',
           isLabelIdentifier: false,
-          isReadOnly: false,
+          isRecordFieldReadOnly: false,
         }}
       >
         <RatingFieldValueSetterEffect value={value} />

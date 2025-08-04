@@ -49,7 +49,7 @@ export const EventFieldDiffValue = ({
               },
               defaultValue: fieldMetadataItem.defaultValue,
             },
-            isReadOnly: false,
+            isRecordFieldReadOnly: false,
           }}
         >
           <FieldDisplay />

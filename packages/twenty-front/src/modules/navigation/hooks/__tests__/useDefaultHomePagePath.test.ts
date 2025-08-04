@@ -13,8 +13,8 @@ import { AppPath } from '@/types/AppPath';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
 import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { mockedUserData } from '~/testing/mock-data/users';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const renderHooks = ({
   withCurrentUser,

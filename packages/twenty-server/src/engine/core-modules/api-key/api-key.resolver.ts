@@ -8,6 +8,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import {
   ApiKeyException,
   ApiKeyExceptionCode,
@@ -108,8 +109,8 @@ export class ApiKeyResolver {
   @Mutation(() => Boolean)
   async assignRoleToApiKey(
     @AuthWorkspace() workspace: Workspace,
-    @Args('apiKeyId') apiKeyId: string,
-    @Args('roleId') roleId: string,
+    @Args('apiKeyId', { type: () => UUIDScalarType }) apiKeyId: string,
+    @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
   ): Promise<boolean> {
     try {
       await this.apiKeyRoleService.assignRoleToApiKey({

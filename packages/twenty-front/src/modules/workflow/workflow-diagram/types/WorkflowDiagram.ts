@@ -30,12 +30,24 @@ export type WorkflowDiagramStepNodeData =
       name: string;
       icon?: string;
       runStatus?: WorkflowRunStepStatus;
+      hasNextStepIds: boolean;
+      stepId: string;
+      position: {
+        x: number;
+        y: number;
+      };
     }
   | {
       nodeType: 'action';
       actionType: WorkflowActionType;
       name: string;
       runStatus?: WorkflowRunStepStatus;
+      hasNextStepIds: boolean;
+      stepId: string;
+      position: {
+        x: number;
+        y: number;
+      };
     };
 
 export type WorkflowRunDiagramStepNodeData = Exclude<
@@ -45,18 +57,16 @@ export type WorkflowRunDiagramStepNodeData = Exclude<
   runStatus: WorkflowRunStepStatus;
 };
 
-export type WorkflowDiagramCreateStepNodeData = {
-  nodeType: 'create-step';
-  parentNodeId: string;
-};
-
 export type WorkflowDiagramEmptyTriggerNodeData = {
   nodeType: 'empty-trigger';
+  position: {
+    x: number;
+    y: number;
+  };
 };
 
 export type WorkflowDiagramNodeData =
   | WorkflowDiagramStepNodeData
-  | WorkflowDiagramCreateStepNodeData
   | WorkflowDiagramEmptyTriggerNodeData;
 
 export type WorkflowRunDiagramNodeData = Exclude<
@@ -82,10 +92,7 @@ export type WorkflowDiagramEdgeData =
   | WorkflowDiagramFilterEdgeData
   | WorkflowDiagramDefaultEdgeData;
 
-export type WorkflowDiagramNodeType =
-  | 'default'
-  | 'empty-trigger'
-  | 'create-step';
+export type WorkflowDiagramNodeType = 'default' | 'empty-trigger';
 
 export type WorkflowDiagramEdgeType =
   | 'blank'

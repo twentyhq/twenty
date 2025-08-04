@@ -8,6 +8,8 @@ import {
   IsUUID,
 } from 'class-validator';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
 @InputType()
 export class CreateApiKeyDTO {
   @Field()
@@ -24,7 +26,7 @@ export class CreateApiKeyDTO {
   @IsDateString()
   revokedAt?: string;
 
-  @Field()
+  @Field(() => UUIDScalarType)
   @IsNotEmpty()
   @IsUUID()
   roleId: string;

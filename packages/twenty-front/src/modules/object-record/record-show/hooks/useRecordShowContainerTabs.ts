@@ -268,7 +268,7 @@ export const useRecordShowContainerTabs = (
         const permissionHide =
           hide.ifNoReadPermission &&
           isDefined(targetObjectNameSingular) &&
-          !objectPermissionsByObjectMetadataId[targetObjectMetadataId]
+          !objectPermissionsByObjectMetadataId[targetObjectMetadataId ?? '']
             ?.canReadObjectRecords;
 
         const requiredObjectsInactive =
