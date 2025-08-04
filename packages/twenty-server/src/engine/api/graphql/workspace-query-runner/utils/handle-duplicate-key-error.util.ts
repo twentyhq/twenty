@@ -5,17 +5,11 @@ import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-qu
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
-interface PostgreSQLError extends QueryFailedError {
-  detail?: string;
-}
-
 export const handleDuplicateKeyError = (
-  error: PostgreSQLError,
+  error: QueryFailedError,
   context: WorkspaceQueryRunnerOptions,
 ) => {
   const indexNameMatch = error.message.match(/"([^"]+)"/);
-
-  const duplicatedValues = error?.detail?.match(/=\(([^)]+)\)/)?.[1];
 
   if (indexNameMatch) {
     const indexName = indexNameMatch[1];
@@ -48,9 +42,9 @@ export const handleDuplicateKeyError = (
 
     if (affectedColumns?.length === 1) {
       throw new UserInputError(
-        `Duplicate ${columnNames} ${duplicatedValues ? `with value ${duplicatedValues}` : ''}. Please set a unique one.`,
+        `Duplicate ${columnNames}. Please set a unique one.`,
         {
-          userFriendlyMessage: `This ${columnNames.toLowerCase()} ${duplicatedValues ? `with value ${duplicatedValues}` : ''} is already taken. Please choose a different value.`,
+          userFriendlyMessage: `This ${columnNames.toLowerCase()} is already taken. Please choose a different value.`,
         },
       );
     }

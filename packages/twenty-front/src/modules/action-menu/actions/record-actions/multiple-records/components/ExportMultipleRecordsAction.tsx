@@ -3,10 +3,14 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useRecordIndexExportRecords } from '@/object-record/record-index/export/hooks/useRecordIndexExportRecords';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useLingui } from '@lingui/react/macro';
 
 export const ExportMultipleRecordsAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+  const { enqueueInfoSnackBar } = useSnackBar();
+  const { t } = useLingui();
 
   const contextStoreCurrentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
@@ -26,5 +30,16 @@ export const ExportMultipleRecordsAction = () => {
     filename: `${objectMetadataItem.nameSingular}.csv`,
   });
 
-  return <Action onClick={download} />;
+  const handleDownload = () => {
+    enqueueInfoSnackBar({
+      message: t`Export in progress. Please wait...`,
+      options: {
+        duration: 2000,
+      },
+    });
+
+    download();
+  };
+
+  return <Action onClick={handleDownload} />;
 };

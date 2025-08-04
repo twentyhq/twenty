@@ -9,9 +9,6 @@ export const PERSON_GQL_FIELDS = `
       firstName
       lastName
     }   
-    emails {
-      primaryEmail
-    }
     createdAt
     deletedAt
 `;
