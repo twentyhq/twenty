@@ -89,19 +89,12 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
   ): Promise<InsertResult> {
     const { objectMetadataItemWithFieldMaps } = executionArgs.options;
 
-    const selectedColumns = buildColumnsToSelect({
-      select: executionArgs.graphqlQuerySelectedFieldsResult.select,
-      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
-      objectMetadataItemWithFieldMaps,
-    });
-
     const conflictingFields = this.getConflictingFields(
       objectMetadataItemWithFieldMaps,
     );
     const existingRecords = await this.findExistingRecords(
       executionArgs,
       conflictingFields,
-      selectedColumns,
     );
 
     const { recordsToUpdate, recordsToInsert } = this.categorizeRecords(
@@ -187,7 +180,6 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       fullPath: string;
       column: string;
     }[],
-    selectedColumns: Record<string, boolean>,
   ): Promise<Partial<ObjectRecord>[]> {
     const { objectMetadataItemWithFieldMaps } = executionArgs.options;
     const queryBuilder = executionArgs.repository.createQueryBuilder(
@@ -203,12 +195,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       queryBuilder.orWhere(condition);
     });
 
-    return await queryBuilder
-      .setFindOptions({
-        select: selectedColumns,
-      })
-      .withDeleted()
-      .getMany();
+    return await queryBuilder.withDeleted().getMany();
   }
 
   private getValueFromPath(
@@ -271,11 +258,17 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       for (const field of conflictingFields) {
         const requestFieldValue = this.getValueFromPath(record, field.fullPath);
 
-        const existingRec = existingRecords.find(
-          (existingRecord) =>
-            isDefined(existingRecord[field.column]) &&
-            existingRecord[field.column] === requestFieldValue,
-        );
+        const existingRec = existingRecords.find((existingRecord) => {
+          const existingFieldValue = this.getValueFromPath(
+            existingRecord,
+            field.fullPath,
+          );
+
+          return (
+            isDefined(existingFieldValue) &&
+            existingFieldValue === requestFieldValue
+          );
+        });
 
         if (existingRec) {
           existingRecord = { ...record, id: existingRec.id };
