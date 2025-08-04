@@ -19,12 +19,19 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { UPDATE_WORKFLOW_VERSION_POSITIONS } from '@/workflow/workflow-version/graphql/mutations/updateWorkflowVersionPositions';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
+import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
 
 export const useTidyUpWorkflowVersion = ({
   workflow,
 }: {
   workflow?: WorkflowWithCurrentVersion;
 }) => {
+  const [workflowDiagram, setWorkflowDiagram] = useRecoilComponentStateV2(
+    workflowDiagramComponentState,
+  );
+
   const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -44,7 +51,7 @@ export const useTidyUpWorkflowVersion = ({
 
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
 
-  const tidyUpWorkflowVersion = async (
+  const updateWorkflowVersionPosition = async (
     positions: { id: string; position: { x: number; y: number } }[],
   ) => {
     if (!isDefined(workflow?.currentVersion)) {
@@ -101,6 +108,23 @@ export const useTidyUpWorkflowVersion = ({
       recordGqlFields,
       objectPermissionsByObjectMetadataId,
     });
+  };
+
+  const tidyUpWorkflowVersion = async () => {
+    if (!isDefined(workflowDiagram) || !isDefined(workflow?.currentVersion)) {
+      return;
+    }
+
+    const tidiedUpDiagram = getOrganizedDiagram(workflowDiagram);
+
+    const positions = tidiedUpDiagram.nodes.map((node) => ({
+      id: node.id,
+      position: node.position,
+    }));
+
+    await updateWorkflowVersionPosition(positions);
+
+    setWorkflowDiagram(tidiedUpDiagram);
   };
 
   return { tidyUpWorkflowVersion };

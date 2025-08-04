@@ -9,9 +9,9 @@ import { MenuItem } from 'twenty-ui/navigation';
 import { useLingui } from '@lingui/react/macro';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { useTidyUp } from '@/workflow/workflow-version/hooks/useTidyUp';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useCloseRightClickMenu';
+import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
 
 const StyledContainer = styled.div<{ x: number; y: number }>`
   background: ${({ theme }) => theme.background.primary};
@@ -47,10 +47,12 @@ export const WorkflowDiagramRightClickCommandMenu = () => {
     workflowVisualizerWorkflowId,
   );
 
-  const { tidyUp } = useTidyUp({ workflow: workflowWithCurrentVersion });
+  const { tidyUpWorkflowVersion } = useTidyUpWorkflowVersion({
+    workflow: workflowWithCurrentVersion,
+  });
 
   const handleReorderWorkflowDiagram = async () => {
-    await tidyUp();
+    await tidyUpWorkflowVersion();
     closeRightClickMenu();
   };
 
