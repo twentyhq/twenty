@@ -19,6 +19,13 @@ export const useGetObjectPermissionDerivedStates = ({
 
     const isObjectPermissionDefined = isDefined(objectPermission);
 
+    const objectPermissionHasOnlyNullPermissions =
+      isObjectPermissionDefined &&
+      !isDefined(objectPermission.canReadObjectRecords) &&
+      !isDefined(objectPermission.canUpdateObjectRecords) &&
+      !isDefined(objectPermission.canSoftDeleteObjectRecords) &&
+      !isDefined(objectPermission.canDestroyObjectRecords);
+
     const readIsRestrictedOnAllObjectsByDefault =
       settingsDraftRole.canReadAllObjectRecords === false;
 
@@ -114,10 +121,13 @@ export const useGetObjectPermissionDerivedStates = ({
         objectHasNoOverrideOnUpdate) ||
       (updateIsAllowedOnAllObjectsByDefault && objectHasUpdateRevoked);
 
-    const cannotAllowUpdateRestrict =
+    const cannotAllowFieldUpdateRestrict =
       objectReadIsRestricted || objectUpdateIsRestricted;
 
-    const cannotAllowReadRestrict = objectReadIsRestricted;
+    const cannotAllowFieldReadRestrict = objectReadIsRestricted;
+
+    const canRestrictFieldRead = !cannotAllowFieldReadRestrict;
+    const canRestrictFieldUpdate = !cannotAllowFieldUpdateRestrict;
 
     const fieldPermissionsForThisObject =
       settingsDraftRole.fieldPermissions?.filter(
@@ -144,26 +154,36 @@ export const useGetObjectPermissionDerivedStates = ({
 
     const thereAreFieldPermissionsButTheyShouldntBeTakenIntoAccountBecauseObjectPermissionsDontAllowIt =
       isThereAnyFieldPermissionThatRevokeRead &&
-      cannotAllowReadRestrict &&
+      cannotAllowFieldReadRestrict &&
       isThereAnyFieldPermissionThatRevokeUpdate &&
-      cannotAllowUpdateRestrict;
+      cannotAllowFieldUpdateRestrict;
 
-    const thereAreFieldPermissionsOnlyButTheyShouldBeTakenIntoAccount =
-      (isThereAnyFieldPermissionThatRevokeRead && !cannotAllowReadRestrict) ||
-      (isThereAnyFieldPermissionThatRevokeUpdate && !cannotAllowUpdateRestrict);
+    const objectHasNoOverrideButFieldPermissionsShouldBeTakenIntoAccount =
+      objectHasNoOverrideOnObjectPermission &&
+      ((isThereAnyFieldPermissionThatRevokeRead && canRestrictFieldRead) ||
+        (isThereAnyFieldPermissionThatRevokeUpdate && canRestrictFieldUpdate));
+
+    const objectHasOverrideOnObjectPermissions =
+      !objectHasNoOverrideOnObjectPermission;
 
     return {
       objectReadIsRestricted,
       objectUpdateIsRestricted,
-      cannotAllowUpdateRestrict,
-      cannotAllowReadRestrict,
-      objectHasUpdateGranted,
-      objectHasUpdateRevoked,
-      objectHasReadGranted,
+      cannotAllowFieldUpdateRestrict,
+      cannotAllowFieldReadRestrict,
       objectHasReadRevoked,
+      objectHasUpdateRevoked,
+      objectHasDeleteRevoked,
+      objectHasDestroyRevoked,
+      objectHasReadGranted,
+      objectHasUpdateGranted,
+      objectHasDeleteGranted,
+      objectHasDestroyGranted,
       objectHasNoOverrideOnObjectPermission,
       thereAreFieldPermissionsButTheyShouldntBeTakenIntoAccountBecauseObjectPermissionsDontAllowIt,
-      thereAreFieldPermissionsOnlyButTheyShouldBeTakenIntoAccount,
+      objectHasNoOverrideButFieldPermissionsShouldBeTakenIntoAccount,
+      objectPermissionHasOnlyNullPermissions,
+      objectHasOverrideOnObjectPermissions,
     };
   };
 

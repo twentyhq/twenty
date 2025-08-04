@@ -47,7 +47,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHead
       filterUserFacingFieldMetadataItems,
     );
 
-    const { cannotAllowReadRestrict, cannotAllowUpdateRestrict } =
+    const { cannotAllowFieldReadRestrict, cannotAllowFieldUpdateRestrict } =
       useObjectPermissionDerivedStates({
         roleId,
         objectMetadataItemId: objectMetadataItem.id,
@@ -176,7 +176,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHead
         <StyledSectionHeader>
           <Label>{t`All`}</Label>
           <div></div>
-          {cannotAllowReadRestrict ? (
+          {cannotAllowFieldReadRestrict ? (
             <div></div>
           ) : (
             <StyledCheckboxContainer>
@@ -188,7 +188,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHead
               />
             </StyledCheckboxContainer>
           )}
-          {cannotAllowUpdateRestrict ? (
+          {cannotAllowFieldUpdateRestrict ? (
             <div></div>
           ) : (
             <StyledCheckboxContainer>

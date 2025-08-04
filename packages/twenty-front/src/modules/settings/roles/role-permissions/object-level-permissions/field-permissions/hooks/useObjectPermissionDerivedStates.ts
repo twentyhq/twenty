@@ -15,26 +15,30 @@ export const useObjectPermissionDerivedStates = ({
   const {
     objectReadIsRestricted,
     objectUpdateIsRestricted,
-    cannotAllowUpdateRestrict,
-    cannotAllowReadRestrict,
+    cannotAllowFieldUpdateRestrict,
+    cannotAllowFieldReadRestrict,
     objectHasUpdateGranted,
     objectHasUpdateRevoked,
     objectHasReadGranted,
     objectHasReadRevoked,
     objectHasNoOverrideOnObjectPermission,
     thereAreFieldPermissionsButTheyShouldntBeTakenIntoAccountBecauseObjectPermissionsDontAllowIt,
+    objectHasNoOverrideButFieldPermissionsShouldBeTakenIntoAccount,
+    objectPermissionHasOnlyNullPermissions,
   } = getObjectPermissionDerivedStates(objectMetadataItemId);
 
   return {
     objectReadIsRestricted,
     objectUpdateIsRestricted,
-    cannotAllowUpdateRestrict,
-    cannotAllowReadRestrict,
+    cannotAllowFieldUpdateRestrict,
+    cannotAllowFieldReadRestrict,
     objectHasUpdateGranted,
     objectHasUpdateRevoked,
     objectHasReadGranted,
     objectHasReadRevoked,
     objectHasNoOverrideOnObjectPermission,
     thereAreFieldPermissionsButTheyShouldntBeTakenIntoAccountBecauseObjectPermissionsDontAllowIt,
+    objectHasNoOverrideButFieldPermissionsShouldBeTakenIntoAccount,
+    objectPermissionHasOnlyNullPermissions,
   };
 };

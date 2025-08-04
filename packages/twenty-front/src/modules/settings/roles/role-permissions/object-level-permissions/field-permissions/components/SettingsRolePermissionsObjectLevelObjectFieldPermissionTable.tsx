@@ -78,7 +78,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
         fieldPermission.objectMetadataId === objectMetadataItem.id,
     ) ?? [];
 
-  const { cannotAllowReadRestrict, cannotAllowUpdateRestrict } =
+  const { cannotAllowFieldReadRestrict, cannotAllowFieldUpdateRestrict } =
     useObjectPermissionDerivedStates({
       roleId,
       objectMetadataItemId: objectMetadataItem.id,
@@ -110,7 +110,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
           <TableHeader>
             <TableHeaderText>{t`Data type`}</TableHeaderText>
           </TableHeader>
-          {cannotAllowReadRestrict ? (
+          {cannotAllowFieldReadRestrict ? (
             <TableHeader></TableHeader>
           ) : (
             <TableHeader align="center">
@@ -121,7 +121,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
               />
             </TableHeader>
           )}
-          {cannotAllowUpdateRestrict ? (
+          {cannotAllowFieldUpdateRestrict ? (
             <TableHeader></TableHeader>
           ) : (
             <TableHeader>
