@@ -21,7 +21,7 @@ import { useRunWorkflowRunOpeningInCommandMenuSideEffects } from '@/workflow/hoo
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useRecoilCallback } from 'recoil';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 
@@ -164,13 +164,13 @@ export const useOpenRecordInCommandMenu = () => {
           theme,
         });
 
-        const capitalizedObjectNameSingular = capitalize(objectNameSingular);
+        const objectLabelSingular = objectMetadataItem.labelSingular;
 
         navigateCommandMenu({
           page: CommandMenuPages.ViewRecord,
           pageTitle: isNewRecord
-            ? t`New ${capitalizedObjectNameSingular}`
-            : capitalizedObjectNameSingular,
+            ? t`New ${objectLabelSingular}`
+            : objectLabelSingular,
           pageIcon: Icon,
           pageIconColor: IconColor,
           pageId: pageComponentInstanceId,

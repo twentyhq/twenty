@@ -103,4 +103,49 @@ export class WorkspacePermissionsCacheStorageService {
       `${WorkspaceCacheKeys.MetadataPermissionsUserWorkspaceRoleMap}:${workspaceId}`,
     );
   }
+
+  async setApiKeyRoleMap(
+    workspaceId: string,
+    apiKeyRoleMap: Record<string, string>,
+  ): Promise<void> {
+    await Promise.all([
+      this.cacheStorageService.set<Record<string, string>>(
+        `${WorkspaceCacheKeys.MetadataPermissionsApiKeyRoleMap}:${workspaceId}`,
+        apiKeyRoleMap,
+        TTL_INFINITE,
+      ),
+      this.setApiKeyRoleMapVersion(workspaceId),
+    ]);
+  }
+
+  async getApiKeyRoleMap(
+    workspaceId: string,
+  ): Promise<Record<string, string> | undefined> {
+    return this.cacheStorageService.get<Record<string, string>>(
+      `${WorkspaceCacheKeys.MetadataPermissionsApiKeyRoleMap}:${workspaceId}`,
+    );
+  }
+
+  async removeApiKeyRoleMap(workspaceId: string): Promise<void> {
+    await Promise.all([
+      this.cacheStorageService.del(
+        `${WorkspaceCacheKeys.MetadataPermissionsApiKeyRoleMap}:${workspaceId}`,
+      ),
+      this.cacheStorageService.del(
+        `${WorkspaceCacheKeys.MetadataPermissionsApiKeyRoleMapVersion}:${workspaceId}`,
+      ),
+    ]);
+  }
+
+  private async setApiKeyRoleMapVersion(workspaceId: string) {
+    const apiKeyRoleMapVersion = v4();
+
+    await this.cacheStorageService.set<string>(
+      `${WorkspaceCacheKeys.MetadataPermissionsApiKeyRoleMapVersion}:${workspaceId}`,
+      apiKeyRoleMapVersion,
+      TTL_INFINITE,
+    );
+
+    return apiKeyRoleMapVersion;
+  }
 }

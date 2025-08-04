@@ -11,7 +11,6 @@ import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { capitalize } from 'twenty-shared/utils';
 
 const StyledEditableTitleContainer = styled.div`
   align-items: center;
@@ -43,12 +42,12 @@ const StyledPaginationInformation = styled.span`
 export const ObjectRecordShowPageBreadcrumb = ({
   objectNameSingular,
   objectRecordId,
-  objectLabelPlural,
+  objectLabel,
   labelIdentifierFieldMetadataItem,
 }: {
   objectNameSingular: string;
   objectRecordId: string;
-  objectLabelPlural: string;
+  objectLabel: string;
   labelIdentifierFieldMetadataItem?: FieldMetadataItem;
 }) => {
   const { loading } = useFindOneRecord({
@@ -95,7 +94,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
         }}
       >
         {HeaderIcon && <HeaderIcon size={theme.icon.size.md} />}
-        {capitalize(objectLabelPlural)}
+        {objectLabel}
         <span>{' / '}</span>
       </StyledEditableTitlePrefix>
       <StyledTitle>

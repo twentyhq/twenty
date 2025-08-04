@@ -75,8 +75,9 @@ export class RoleResolver {
   @UseGuards(UserAuthGuard)
   async updateWorkspaceMemberRole(
     @AuthWorkspace() workspace: Workspace,
-    @Args('workspaceMemberId') workspaceMemberId: string,
-    @Args('roleId', { type: () => String }) roleId: string,
+    @Args('workspaceMemberId', { type: () => UUIDScalarType })
+    workspaceMemberId: string,
+    @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
     @AuthWorkspaceMemberId()
     updatorWorkspaceMemberId: string,
   ): Promise<WorkspaceMember> {
@@ -149,7 +150,7 @@ export class RoleResolver {
   @Mutation(() => String)
   async deleteOneRole(
     @AuthWorkspace() workspace: Workspace,
-    @Args('roleId') roleId: string,
+    @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
   ): Promise<string> {
     const deletedRoleId = await this.roleService.deleteRole(
       roleId,

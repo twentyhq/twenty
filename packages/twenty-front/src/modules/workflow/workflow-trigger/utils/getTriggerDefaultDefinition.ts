@@ -1,20 +1,26 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
+  WorkflowAction,
   WorkflowTrigger,
   WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
+import { isDefined } from 'twenty-shared/utils';
+import { getRootStepIds } from '@/workflow/workflow-trigger/utils/getRootStepIds';
 
+// TODO: This needs to be migrated to the server
 export const getTriggerDefaultDefinition = ({
   defaultLabel,
   type,
   activeNonSystemObjectMetadataItems,
+  steps,
 }: {
   defaultLabel: string;
   type: WorkflowTriggerType;
   activeNonSystemObjectMetadataItems: ObjectMetadataItem[];
+  steps?: WorkflowAction[] | null;
 }): WorkflowTrigger => {
   if (activeNonSystemObjectMetadataItems.length === 0) {
     throw new Error(
@@ -22,11 +28,19 @@ export const getTriggerDefaultDefinition = ({
     );
   }
 
+  const nextStepIds = isDefined(steps) ? getRootStepIds(steps) : [];
+
+  const baseTriggerDefinition = {
+    name: defaultLabel,
+    position: { x: 0, y: 0 },
+    nextStepIds,
+  };
+
   switch (type) {
     case 'DATABASE_EVENT': {
       return {
+        ...baseTriggerDefinition,
         type,
-        name: defaultLabel,
         settings: {
           eventName: `${activeNonSystemObjectMetadataItems[0].nameSingular}.${
             DATABASE_TRIGGER_TYPES.find(
@@ -39,8 +53,8 @@ export const getTriggerDefaultDefinition = ({
     }
     case 'MANUAL': {
       return {
+        ...baseTriggerDefinition,
         type,
-        name: defaultLabel,
         settings: getManualTriggerDefaultSettings({
           availability: 'WHEN_RECORD_SELECTED',
           activeNonSystemObjectMetadataItems,
@@ -49,8 +63,8 @@ export const getTriggerDefaultDefinition = ({
     }
     case 'CRON': {
       return {
+        ...baseTriggerDefinition,
         type,
-        name: defaultLabel,
         settings: {
           type: 'DAYS',
           schedule: { day: 1, hour: 0, minute: 0 },
@@ -60,8 +74,8 @@ export const getTriggerDefaultDefinition = ({
     }
     case 'WEBHOOK': {
       return {
+        ...baseTriggerDefinition,
         type,
-        name: defaultLabel,
         settings: {
           outputSchema: {},
           httpMethod: 'GET',

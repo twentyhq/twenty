@@ -67,6 +67,10 @@ export class EntityEventsToDbListener {
       (event) => event.objectMetadata?.isAuditLogged,
     );
 
+    if (filteredEvents.length === 0) {
+      return;
+    }
+
     const batchEventEventsForWebhook: ObjectRecordEventForWebhook[] =
       batchEvent.events.map((event) => ({
         ...event,

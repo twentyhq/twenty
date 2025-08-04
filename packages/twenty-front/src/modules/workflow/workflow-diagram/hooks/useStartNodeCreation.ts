@@ -2,15 +2,14 @@ import { useCallback } from 'react';
 
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { isDefined } from 'twenty-shared/utils';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 
 export const useStartNodeCreation = () => {
-  const setWorkflowInsertStepIds = useSetRecoilComponentStateV2(
-    workflowInsertStepIdsComponentState,
-  );
+  const [workflowInsertStepIds, setWorkflowInsertStepIds] =
+    useRecoilComponentStateV2(workflowInsertStepIdsComponentState);
 
   const { openStepSelectInCommandMenu } = useWorkflowCommandMenu();
 
@@ -26,11 +25,13 @@ export const useStartNodeCreation = () => {
     ({
       parentStepId,
       nextStepId,
+      position,
     }: {
       parentStepId: string | undefined;
       nextStepId: string | undefined;
+      position?: { x: number; y: number };
     }) => {
-      setWorkflowInsertStepIds({ parentStepId, nextStepId });
+      setWorkflowInsertStepIds({ parentStepId, nextStepId, position });
 
       if (isDefined(workflowVisualizerWorkflowId)) {
         openStepSelectInCommandMenu(workflowVisualizerWorkflowId);
@@ -44,7 +45,21 @@ export const useStartNodeCreation = () => {
     ],
   );
 
+  const isNodeCreationStarted = ({
+    parentStepId,
+    nextStepId,
+  }: {
+    parentStepId?: string;
+    nextStepId?: string;
+  }) => {
+    return (
+      workflowInsertStepIds.parentStepId === parentStepId &&
+      workflowInsertStepIds.nextStepId === nextStepId
+    );
+  };
+
   return {
     startNodeCreation,
+    isNodeCreationStarted,
   };
 };

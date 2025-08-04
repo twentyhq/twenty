@@ -9,9 +9,9 @@ import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 import { useFilteredOtherActions } from '@/workflow/workflow-steps/workflow-actions/hooks/useFilteredOtherActions';
-import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemCommand } from 'twenty-ui/navigation';
+import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useCloseRightClickMenu';
 
 export const CommandMenuWorkflowSelectActionContent = ({
   workflow,
@@ -25,28 +25,27 @@ export const CommandMenuWorkflowSelectActionContent = ({
   });
   const filteredOtherActions = useFilteredOtherActions();
 
+  const { closeRightClickMenu } = useCloseRightClickMenu();
+
   const [workflowInsertStepIds, setWorkflowInsertStepIds] =
     useRecoilComponentStateV2(workflowInsertStepIdsComponentState);
 
   const handleCreateStep = async (actionType: WorkflowActionType) => {
-    const { parentStepId, nextStepId } = workflowInsertStepIds;
-
-    if (!isDefined(parentStepId)) {
-      throw new Error(
-        'No parentStepId. Please select a parent step to create from.',
-      );
-    }
+    const { parentStepId, nextStepId, position } = workflowInsertStepIds;
 
     await createStep({
       newStepType: actionType,
       parentStepId,
       nextStepId,
+      position,
     });
 
     setWorkflowInsertStepIds({
       parentStepId: undefined,
       nextStepId: undefined,
+      position: undefined,
     });
+    closeRightClickMenu();
   };
 
   return (

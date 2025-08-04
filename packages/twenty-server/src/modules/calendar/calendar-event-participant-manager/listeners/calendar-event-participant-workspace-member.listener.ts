@@ -13,10 +13,6 @@ import {
   CalendarEventParticipantMatchParticipantJob,
   CalendarEventParticipantMatchParticipantJobData,
 } from 'src/modules/calendar/calendar-event-participant-manager/jobs/calendar-event-participant-match-participant.job';
-import {
-  CalendarEventParticipantUnmatchParticipantJob,
-  CalendarEventParticipantUnmatchParticipantJobData,
-} from 'src/modules/calendar/calendar-event-participant-manager/jobs/calendar-event-participant-unmatch-participant.job';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
@@ -41,9 +37,11 @@ export class CalendarEventParticipantWorkspaceMemberListener {
         CalendarEventParticipantMatchParticipantJob.name,
         {
           workspaceId: payload.workspaceId,
-          email: eventPayload.properties.after.userEmail,
-          workspaceMemberId: eventPayload.recordId,
-          isPrimaryEmail: true,
+          participantMatching: {
+            personIds: [],
+            personEmails: [],
+            workspaceMemberIds: [eventPayload.recordId],
+          },
         },
       );
     }
@@ -62,22 +60,15 @@ export class CalendarEventParticipantWorkspaceMemberListener {
           eventPayload.properties.after,
         ).includes('userEmail')
       ) {
-        await this.messageQueueService.add<CalendarEventParticipantUnmatchParticipantJobData>(
-          CalendarEventParticipantUnmatchParticipantJob.name,
-          {
-            workspaceId: payload.workspaceId,
-            email: eventPayload.properties.before.userEmail,
-            personId: eventPayload.recordId,
-          },
-        );
-
         await this.messageQueueService.add<CalendarEventParticipantMatchParticipantJobData>(
           CalendarEventParticipantMatchParticipantJob.name,
           {
             workspaceId: payload.workspaceId,
-            email: eventPayload.properties.after.userEmail,
-            workspaceMemberId: eventPayload.recordId,
-            isPrimaryEmail: true,
+            participantMatching: {
+              personIds: [],
+              personEmails: [],
+              workspaceMemberIds: [eventPayload.recordId],
+            },
           },
         );
       }

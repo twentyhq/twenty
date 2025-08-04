@@ -241,7 +241,7 @@ describe('Restricted fields', () => {
           .expect(400)
           .expect((res) => {
             expect(res.body.messages[0]).toContain(
-              'User does not have permission',
+              'Entity performing the request does not have permission',
             );
           });
       });
@@ -307,7 +307,7 @@ describe('Restricted fields', () => {
           .expect(400)
           .expect((res) => {
             expect(res.body.messages[0]).toContain(
-              'User does not have permission',
+              'Entity performing the request does not have permission',
             );
           });
       });
@@ -376,7 +376,7 @@ describe('Restricted fields', () => {
           .expect(400)
           .expect((res) => {
             expect(res.body.messages[0]).toContain(
-              'User does not have permission',
+              'Entity performing the request does not have permission',
             );
           });
       });

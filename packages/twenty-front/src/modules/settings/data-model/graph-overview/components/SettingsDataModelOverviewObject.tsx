@@ -14,7 +14,6 @@ import { ObjectFieldRowWithoutRelation } from '@/settings/data-model/graph-overv
 import { SettingsPath } from '@/types/SettingsPath';
 import '@xyflow/react/dist/style.css';
 import { useState } from 'react';
-import { capitalize } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp, useIcons } from 'twenty-ui/display';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -131,7 +130,7 @@ export const SettingsDataModelOverviewObject = ({
             })}
           >
             {Icon && <Icon size={theme.icon.size.md} />}
-            {capitalize(objectMetadataItem.namePlural)}
+            {objectMetadataItem.labelPlural}
           </StyledObjectLink>
           <StyledObjectInstanceCount> · {totalCount}</StyledObjectInstanceCount>
         </StyledObjectName>

@@ -41,7 +41,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
     return null;
   }
 
-  const objectLabel = objectMetadataItem.labelPlural;
+  const objectLabelPlural = objectMetadataItem.labelPlural;
 
   const updateObjectPermission = (
     permissionKey: SettingsRoleObjectPermissionKey,
@@ -85,7 +85,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
     [
       {
         key: 'canReadObjectRecords',
-        label: t`See ${objectLabel}`,
+        label: t`See ${objectLabelPlural}`,
         value: settingsDraftRoleObjectPermissions.canReadObjectRecords,
         setValue: (value: boolean | null) => {
           updateObjectPermission('canReadObjectRecords', value);
@@ -93,7 +93,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
       },
       {
         key: 'canUpdateObjectRecords',
-        label: t`Edit ${objectLabel}`,
+        label: t`Edit ${objectLabelPlural}`,
         value: settingsDraftRoleObjectPermissions.canUpdateObjectRecords,
         setValue: (value: boolean | null) => {
           updateObjectPermission('canUpdateObjectRecords', value);
@@ -101,7 +101,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
       },
       {
         key: 'canSoftDeleteObjectRecords',
-        label: t`Delete ${objectLabel}`,
+        label: t`Delete ${objectLabelPlural}`,
         value: settingsDraftRoleObjectPermissions.canSoftDeleteObjectRecords,
         setValue: (value: boolean | null) => {
           updateObjectPermission('canSoftDeleteObjectRecords', value);
@@ -109,7 +109,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
       },
       {
         key: 'canDestroyObjectRecords',
-        label: t`Destroy ${objectLabel}`,
+        label: t`Destroy ${objectLabelPlural}`,
         value: settingsDraftRoleObjectPermissions.canDestroyObjectRecords,
         setValue: (value: boolean | null) => {
           updateObjectPermission('canDestroyObjectRecords', value);

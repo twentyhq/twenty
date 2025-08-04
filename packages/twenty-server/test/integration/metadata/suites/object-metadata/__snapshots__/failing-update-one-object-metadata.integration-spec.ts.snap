@@ -32,11 +32,14 @@ exports[`Object metadata update should fail when labelIdentifier is not a uuid 1
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "GRAPHQL_VALIDATION_FAILED",
+      "http": {
+        "status": 400,
+      },
       "userFriendlyMessage": "An error occurred.",
     },
-    "message": "labelIdentifierFieldMetadataId must be a UUID",
-    "name": "UserInputError",
+    "message": "Invalid UUID",
+    "name": "ValidationError",
   },
 ]
 `;

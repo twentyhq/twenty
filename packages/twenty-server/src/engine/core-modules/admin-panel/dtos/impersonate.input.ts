@@ -1,16 +1,18 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsUUID } from 'class-validator';
+
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ArgsType()
 export class ImpersonateInput {
-  @Field(() => String)
+  @Field(() => UUIDScalarType)
   @IsNotEmpty()
-  @IsString()
+  @IsUUID()
   userId: string;
 
-  @Field(() => String)
+  @Field(() => UUIDScalarType)
   @IsNotEmpty()
-  @IsString()
+  @IsUUID()
   workspaceId: string;
 }

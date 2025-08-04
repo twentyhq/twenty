@@ -1,4 +1,6 @@
 import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
+import { getReadRestrictedFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getReadRestrictedFieldMetadataIdsFromObjectPermissions';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { RecordBoardColumnHeaderAggregateDropdownContext } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
 import { RecordBoardColumnHeaderAggregateDropdownFieldsContent } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownFieldsContent';
 import { RecordBoardColumnHeaderAggregateDropdownMenuContent } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent';
@@ -17,13 +19,27 @@ export const AggregateDropdownContent = () => {
       context: RecordBoardColumnHeaderAggregateDropdownContext,
     });
 
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
+  const restrictedFieldMetadataIds =
+    getReadRestrictedFieldMetadataIdsFromObjectPermissions({
+      objectPermissions: [
+        objectPermissionsByObjectMetadataId[objectMetadataItem.id],
+      ],
+      objectMetadataId: objectMetadataItem.id,
+    });
+
+  const readableFields = objectMetadataItem.fields.filter(
+    (field) => !restrictedFieldMetadataIds.includes(field.id),
+  );
+
   switch (currentContentId) {
     case 'countAggregateOperationsOptions': {
       const availableAggregations: AvailableFieldsForAggregateOperation =
-        getAvailableFieldsIdsForAggregationFromObjectFields(
-          objectMetadataItem.fields,
-          COUNT_AGGREGATE_OPERATION_OPTIONS,
-        );
+        getAvailableFieldsIdsForAggregationFromObjectFields({
+          fields: readableFields,
+          targetAggregateOperations: COUNT_AGGREGATE_OPERATION_OPTIONS,
+        });
       return (
         <RecordBoardColumnHeaderAggregateDropdownOptionsContent
           availableAggregations={availableAggregations}
@@ -33,10 +49,10 @@ export const AggregateDropdownContent = () => {
     }
     case 'percentAggregateOperationsOptions': {
       const availableAggregations: AvailableFieldsForAggregateOperation =
-        getAvailableFieldsIdsForAggregationFromObjectFields(
-          objectMetadataItem.fields,
-          PERCENT_AGGREGATE_OPERATION_OPTIONS,
-        );
+        getAvailableFieldsIdsForAggregationFromObjectFields({
+          fields: readableFields,
+          targetAggregateOperations: PERCENT_AGGREGATE_OPERATION_OPTIONS,
+        });
       return (
         <RecordBoardColumnHeaderAggregateDropdownOptionsContent
           availableAggregations={availableAggregations}
@@ -46,10 +62,13 @@ export const AggregateDropdownContent = () => {
     }
     case 'datesAggregateOperationOptions': {
       const datesAvailableAggregations: AvailableFieldsForAggregateOperation =
-        getAvailableFieldsIdsForAggregationFromObjectFields(
-          objectMetadataItem.fields,
-          [DateAggregateOperations.EARLIEST, DateAggregateOperations.LATEST],
-        );
+        getAvailableFieldsIdsForAggregationFromObjectFields({
+          fields: readableFields,
+          targetAggregateOperations: [
+            DateAggregateOperations.EARLIEST,
+            DateAggregateOperations.LATEST,
+          ],
+        });
       return (
         <RecordBoardColumnHeaderAggregateDropdownOptionsContent
           availableAggregations={datesAvailableAggregations}
@@ -59,10 +78,10 @@ export const AggregateDropdownContent = () => {
     }
     case 'moreAggregateOperationOptions': {
       const availableAggregationsWithoutDates: AvailableFieldsForAggregateOperation =
-        getAvailableFieldsIdsForAggregationFromObjectFields(
-          objectMetadataItem.fields,
-          NON_STANDARD_AGGREGATE_OPERATION_OPTIONS,
-        );
+        getAvailableFieldsIdsForAggregationFromObjectFields({
+          fields: readableFields,
+          targetAggregateOperations: NON_STANDARD_AGGREGATE_OPERATION_OPTIONS,
+        });
       return (
         <RecordBoardColumnHeaderAggregateDropdownOptionsContent
           availableAggregations={availableAggregationsWithoutDates}
