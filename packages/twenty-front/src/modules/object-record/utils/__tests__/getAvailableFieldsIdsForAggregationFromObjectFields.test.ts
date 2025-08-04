@@ -70,7 +70,6 @@ describe('getAvailableFieldsIdsForAggregationFromObjectFields', () => {
     const result = getAvailableFieldsIdsForAggregationFromObjectFields({
       fields: [],
       targetAggregateOperations: COUNT_AGGREGATE_OPERATION_OPTIONS,
-      restrictedFieldMetadataIds: [],
     });
 
     COUNT_AGGREGATE_OPERATION_OPTIONS.forEach((operation) => {
@@ -83,7 +82,6 @@ describe('getAvailableFieldsIdsForAggregationFromObjectFields', () => {
       const result = getAvailableFieldsIdsForAggregationFromObjectFields({
         fields: FIELDS_MOCKS as FieldMetadataItem[],
         targetAggregateOperations: COUNT_AGGREGATE_OPERATION_OPTIONS,
-        restrictedFieldMetadataIds: [],
       });
 
       expect(result.COUNT).toEqual(
@@ -112,7 +110,6 @@ describe('getAvailableFieldsIdsForAggregationFromObjectFields', () => {
       const result = getAvailableFieldsIdsForAggregationFromObjectFields({
         fields: FIELDS_MOCKS as FieldMetadataItem[],
         targetAggregateOperations: PERCENT_AGGREGATE_OPERATION_OPTIONS,
-        restrictedFieldMetadataIds: [],
       });
 
       PERCENT_AGGREGATE_OPERATION_OPTIONS.forEach((operation) => {
@@ -138,7 +135,6 @@ describe('getAvailableFieldsIdsForAggregationFromObjectFields', () => {
       const result = getAvailableFieldsIdsForAggregationFromObjectFields({
         fields: FIELDS_MOCKS as FieldMetadataItem[],
         targetAggregateOperations: NON_STANDARD_AGGREGATE_OPERATION_OPTIONS,
-        restrictedFieldMetadataIds: [],
       });
 
       COUNT_AGGREGATE_OPERATION_OPTIONS.forEach((operation) => {

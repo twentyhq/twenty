@@ -8,11 +8,9 @@ import { isDefined } from 'twenty-shared/utils';
 export const getAvailableFieldsIdsForAggregationFromObjectFields = ({
   fields,
   targetAggregateOperations,
-  restrictedFieldMetadataIds,
 }: {
   fields: FieldMetadataItem[];
   targetAggregateOperations: ExtendedAggregateOperations[];
-  restrictedFieldMetadataIds: string[];
 }): AvailableFieldsForAggregateOperation => {
   const aggregationMap = initializeAvailableFieldsForAggregateOperationMap(
     targetAggregateOperations,
@@ -28,9 +26,7 @@ export const getAvailableFieldsIdsForAggregationFromObjectFields = ({
           if (!isDefined(acc[typedAggregation])) {
             acc[typedAggregation] = [];
           }
-          if (!restrictedFieldMetadataIds.includes(field.id)) {
-            (acc[typedAggregation] as string[]).push(field.id);
-          }
+          (acc[typedAggregation] as string[]).push(field.id);
         }
       });
     }
