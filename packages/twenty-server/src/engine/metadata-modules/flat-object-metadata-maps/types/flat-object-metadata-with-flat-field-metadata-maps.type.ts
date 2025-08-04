@@ -7,5 +7,5 @@ export type FlatFieldMetadataMaps = {
   fieldIdByName: Partial<Record<string, string>>;
 };
 
-export type FlatObjectMetadataWithFlatFieldMetadataMaps = FlatObjectMetadata &
+export type FlatObjectMetadataWithFlatFieldMaps = FlatObjectMetadata &
   FlatFieldMetadataMaps;

@@ -22,6 +22,11 @@ type GetExistingOrRecomputeMetadataMapsResult = {
   metadataVersion: number;
 };
 
+type GetExistingOrRecomputeFlatObjectMetadataMapsResult = {
+  flatObjectMetadataMaps: FlatObjectMetadataMaps;
+  metadataVersion: number;
+};
+
 @Injectable()
 export class WorkspaceMetadataCacheService {
   logger = new Logger(WorkspaceMetadataCacheService.name);
@@ -40,13 +45,17 @@ export class WorkspaceMetadataCacheService {
     workspaceId,
   }: {
     workspaceId: string;
-  }): Promise<FlatObjectMetadataMaps> {
-    const { objectMetadataMaps } =
+  }): Promise<GetExistingOrRecomputeFlatObjectMetadataMapsResult> {
+    const { objectMetadataMaps, metadataVersion } =
       await this.getExistingOrRecomputeMetadataMaps({
         workspaceId,
       });
 
-    return fromObjectMetadataMapsToFlatObjectMetadataMaps(objectMetadataMaps);
+    return {
+      flatObjectMetadataMaps:
+        fromObjectMetadataMapsToFlatObjectMetadataMaps(objectMetadataMaps),
+      metadataVersion,
+    };
   }
 
   async getExistingOrRecomputeMetadataMaps({

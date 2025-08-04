@@ -8,18 +8,18 @@ export const fromArrayToUniqueKeyRecord = <T extends object>({
   array: T[];
   uniqueKey: StringPropertyKeys<T>;
 }) => {
-  return array.reduce<Record<string, T>>((acc, occurrence) => {
-    const currentUniqueKey = occurrence[uniqueKey] as string;
+  return array.reduce<Record<string, T>>((acc, value) => {
+    const uniqueKey = value[uniqueKey] as string;
 
-    if (isDefined(acc[currentUniqueKey])) {
+    if (isDefined(acc[uniqueKey])) {
       throw new Error(
-        `Should never occur, flat array contains twice the same unique key ${occurrence[uniqueKey]}`,
+        `Should never occur, flat array contains twice the same unique key ${value[uniqueKey]}`,
       );
     }
 
     return {
       ...acc,
-      [currentUniqueKey]: occurrence,
+      [uniqueKey]: value,
     };
   }, {});
 };

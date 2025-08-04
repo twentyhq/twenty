@@ -15,7 +15,7 @@ import {
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-and-its-flat-object-metadata.util';
 import { dispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/dispatch-and-merge-flat-field-metadatas-in-flat-object-metadatas.util';
-import { fromObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-maps-to-flat-object-metadatas.util';
+import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-with-flat-field-maps-to-flat-object-metadatas.util';
 import { removeFlatFieldMetadataFromFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/remove-flat-field-metadata-from-flat-object-metadatas.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
@@ -58,29 +58,36 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
 
     const workspaceId = fieldMetadataInputs[0].workspaceId;
 
-    const { objectMetadataMaps } =
-      await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
+    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
+      await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
         { workspaceId },
       );
-
-    const existingFlatObjectMetadatas =
-      fromObjectMetadataMapsToFlatObjectMetadatas(objectMetadataMaps);
 
     const flatFieldMetadatasToCreate = (
       await Promise.all(
         fieldMetadataInputs.map(
           async (fieldMetadataInput) =>
             await fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata({
-              existingFlatObjectMetadatas,
+              existingFlatObjectMetadataMaps,
               rawCreateFieldInput: fieldMetadataInput,
             }),
         ),
       )
     ).flat();
 
+    const impactedFlatObjectMetadatas = [
+      ...new Set(flatFieldMetadatasToCreate.map(({ id }) => id)),
+    ]
+      .map(
+        (objectMetadataId) =>
+          existingFlatObjectMetadataMaps.byId[objectMetadataId],
+      )
+      .filter(isDefined)
+      .map(fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata);
+
     const optimisticRenderedFlatObjectMetadatas =
       dispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatas({
-        flatObjectMetadatas: existingFlatObjectMetadatas,
+        flatObjectMetadatas: impactedFlatObjectMetadatas,
         flatFieldMetadatas: flatFieldMetadatasToCreate,
       });
 
@@ -112,7 +119,9 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
 
     const workspaceMigration = this.workspaceMigrationBuilderV2.build({
       objectMetadataFromToInputs: {
-        from: existingFlatObjectMetadatas,
+        from: Object.values(existingFlatObjectMetadataMaps.byId).map(
+          fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata,
+        ),
         to: optimisticRenderedFlatObjectMetadatas,
       },
       inferDeletionFromMissingObjectFieldIndex: false,
