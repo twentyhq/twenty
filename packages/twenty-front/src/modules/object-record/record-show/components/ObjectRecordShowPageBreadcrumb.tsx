@@ -70,7 +70,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
   const isLabelIdentifierReadOnly = useIsRecordFieldReadOnly({
     recordId: objectRecordId,
     objectMetadataId: objectMetadataItem.id,
-    fieldMetadataId: labelIdentifierFieldMetadataItem?.id,
+    fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
   });
 
   const { navigateToIndexView, rankInView, totalCount } =
