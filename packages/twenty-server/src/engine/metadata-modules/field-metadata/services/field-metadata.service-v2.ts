@@ -13,12 +13,16 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
+import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-and-its-flat-object-metadata.util';
+import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { dispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/dispatch-and-merge-flat-field-metadatas-in-flat-object-metadatas.util';
 import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-with-flat-field-maps-to-flat-object-metadatas.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 @Injectable()
 export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEntity> {
@@ -74,46 +78,66 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
       )
     ).flat();
 
-    const impactedFlatObjectMetadatas = [
-      ...new Set(flatFieldMetadatasToCreate.map(({ id }) => id)),
-    ]
-      .map(
-        (objectMetadataId) =>
-          existingFlatObjectMetadataMaps.byId[objectMetadataId],
-      )
-      .filter(isDefined)
-      .map(fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata);
-
-    const optimisticRenderedFlatObjectMetadatas =
-      dispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatas({
-        flatObjectMetadatas: impactedFlatObjectMetadatas,
-        flatFieldMetadatas: flatFieldMetadatasToCreate,
-      });
-
     const existingFlatObjectMetadatas = Object.values(
       existingFlatObjectMetadataMaps.byId,
     ).map(fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata);
 
-    const flatFieldMetadataValidationPromises = flatFieldMetadatasToCreate.map(
-      (flatFieldMetadataToValidate) =>
-        this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadata({
-          existingFlatObjectMetadatas,
-          flatFieldMetadataToValidate,
-          workspaceId,
-          othersFlatObjectMetadataToValidate:
-            optimisticRenderedFlatObjectMetadatas,
-        }),
-    );
+    let sequentiallyOptimisticallyRenderedFlatObjectMetadatas =
+      existingFlatObjectMetadatas;
+    let allValidationErrors: FailedFlatFieldMetadataValidationExceptions[] = [];
+    for (const flatFieldMetadataToCreate of flatFieldMetadatasToCreate) {
+      let othersFlatObjectMetadataToValidate: FlatObjectMetadata[] | undefined =
+        undefined;
+      if (
+        isFlatFieldMetadataEntityOfType(
+          flatFieldMetadataToCreate,
+          FieldMetadataType.RELATION,
+        ) ||
+        isFlatFieldMetadataEntityOfType(
+          flatFieldMetadataToCreate,
+          FieldMetadataType.MORPH_RELATION,
+        )
+      ) {
+        const relatedRelationFlatFieldMetadataToCreate =
+          flatFieldMetadatasToCreate.filter(
+            (relatedFlatFieldMetadata) =>
+              isFlatFieldMetadataEntityOfType(
+                relatedFlatFieldMetadata,
+                FieldMetadataType.RELATION,
+              ) &&
+              relatedFlatFieldMetadata.relationTargetObjectMetadataId ===
+                flatFieldMetadataToCreate.objectMetadataId,
+          );
+        othersFlatObjectMetadataToValidate =
+          dispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatas({
+            flatFieldMetadatas: relatedRelationFlatFieldMetadataToCreate,
+            flatObjectMetadatas: existingFlatObjectMetadatas,
+          });
+      }
 
-    const createdFlatFieldMetadataValidationResult = (
-      await Promise.all(flatFieldMetadataValidationPromises)
-    )
-      .flat()
-      .filter(isDefined);
+      const validationErrors =
+        await this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadata(
+          {
+            existingFlatObjectMetadatas:
+              sequentiallyOptimisticallyRenderedFlatObjectMetadatas,
+            flatFieldMetadataToValidate: flatFieldMetadataToCreate,
+            workspaceId,
+            othersFlatObjectMetadataToValidate,
+          },
+        );
 
-    if (createdFlatFieldMetadataValidationResult.length > 0) {
+      sequentiallyOptimisticallyRenderedFlatObjectMetadatas =
+        dispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatas({
+          flatFieldMetadatas: [flatFieldMetadataToCreate],
+          flatObjectMetadatas:
+            sequentiallyOptimisticallyRenderedFlatObjectMetadatas,
+        });
+      allValidationErrors.push(...validationErrors);
+    }
+
+    if (allValidationErrors.length > 0) {
       throw new MultipleMetadataValidationErrors(
-        createdFlatFieldMetadataValidationResult,
+        allValidationErrors,
         'Multiple validation errors occurred while creating field',
       );
     }
@@ -121,7 +145,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
     const workspaceMigration = this.workspaceMigrationBuilderV2.build({
       objectMetadataFromToInputs: {
         from: existingFlatObjectMetadatas,
-        to: optimisticRenderedFlatObjectMetadatas,
+        to: sequentiallyOptimisticallyRenderedFlatObjectMetadatas,
       },
       inferDeletionFromMissingObjectFieldIndex: false,
       workspaceId,

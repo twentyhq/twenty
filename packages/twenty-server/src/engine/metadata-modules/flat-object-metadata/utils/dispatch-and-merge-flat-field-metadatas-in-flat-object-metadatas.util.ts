@@ -12,6 +12,10 @@ export const dispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatas = ({
   flatFieldMetadatas,
   flatObjectMetadatas,
 }: DispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatasArgs): FlatObjectMetadata[] => {
+  if (flatFieldMetadatas.length === 0) {
+    return flatObjectMetadatas;
+  }
+
   const flatFieldMetadataGroupedByFlatObjectMetadataId =
     fromArrayToKeyRecordArray({
       array: flatFieldMetadatas,
