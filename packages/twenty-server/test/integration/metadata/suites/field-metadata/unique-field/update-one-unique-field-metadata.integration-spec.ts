@@ -6,7 +6,7 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('update one unique field metadata', () => {
-  let createdObjectMetadataId = '';
+  let createdObjectId = '';
 
   beforeEach(async () => {
     const {
@@ -23,12 +23,12 @@ describe('update one unique field metadata', () => {
       },
     });
 
-    createdObjectMetadataId = objectMetadataId;
+    createdObjectId = objectMetadataId;
   });
 
   afterEach(async () => {
     await deleteOneObjectMetadata({
-      input: { idToDelete: createdObjectMetadataId },
+      input: { idToDelete: createdObjectId },
     });
   });
 
@@ -38,7 +38,7 @@ describe('update one unique field metadata', () => {
         name: 'testField',
         label: 'Test Field',
         type: FieldMetadataType.TEXT,
-        objectMetadataId: createdObjectMetadataId,
+        objectMetadataId: createdObjectId,
         isUnique: false,
       },
       gqlFields: `
@@ -76,7 +76,7 @@ describe('update one unique field metadata', () => {
         name: 'uniqueTestField',
         label: 'Unique Test Field',
         type: FieldMetadataType.TEXT,
-        objectMetadataId: createdObjectMetadataId,
+        objectMetadataId: createdObjectId,
         isUnique: true,
       },
       gqlFields: `
@@ -114,7 +114,7 @@ describe('update one unique field metadata', () => {
         name: 'uniqueTestField',
         label: 'Unique Test Field',
         type: FieldMetadataType.TEXT,
-        objectMetadataId: createdObjectMetadataId,
+        objectMetadataId: createdObjectId,
         isUnique: true,
       },
       gqlFields: `
@@ -178,7 +178,7 @@ describe('update one unique field metadata', () => {
         name: 'fieldWithDefault',
         label: 'Field With Default',
         type: FieldMetadataType.TEXT,
-        objectMetadataId: createdObjectMetadataId,
+        objectMetadataId: createdObjectId,
         defaultValue: "'defaultValue'",
         isUnique: false,
       },
@@ -217,7 +217,7 @@ describe('update one unique field metadata', () => {
         name: 'uniqueTestField',
         label: 'Unique Test Field',
         type: FieldMetadataType.TEXT,
-        objectMetadataId: createdObjectMetadataId,
+        objectMetadataId: createdObjectId,
         isUnique: true,
       },
       gqlFields: `
@@ -255,7 +255,7 @@ describe('update one unique field metadata', () => {
         name: 'fullNameField',
         label: 'Full Name Field',
         type: FieldMetadataType.FULL_NAME,
-        objectMetadataId: createdObjectMetadataId,
+        objectMetadataId: createdObjectId,
         isUnique: false,
       },
       gqlFields: `
