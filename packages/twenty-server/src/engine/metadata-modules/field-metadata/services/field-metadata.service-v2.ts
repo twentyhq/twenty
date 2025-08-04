@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { MultipleMetadataValidationErrors } from 'src/engine/core-modules/error/multiple-metadata-validation-errors';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
@@ -22,7 +23,6 @@ import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 @Injectable()
 export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEntity> {
@@ -84,10 +84,13 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
 
     let sequentiallyOptimisticallyRenderedFlatObjectMetadatas =
       existingFlatObjectMetadatas;
-    let allValidationErrors: FailedFlatFieldMetadataValidationExceptions[] = [];
+    const allValidationErrors: FailedFlatFieldMetadataValidationExceptions[] =
+      [];
+
     for (const flatFieldMetadataToCreate of flatFieldMetadatasToCreate) {
       let othersFlatObjectMetadataToValidate: FlatObjectMetadata[] | undefined =
         undefined;
+
       if (
         isFlatFieldMetadataEntityOfType(
           flatFieldMetadataToCreate,
@@ -108,6 +111,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
               relatedFlatFieldMetadata.relationTargetObjectMetadataId ===
                 flatFieldMetadataToCreate.objectMetadataId,
           );
+
         othersFlatObjectMetadataToValidate =
           dispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatas({
             flatFieldMetadatas: relatedRelationFlatFieldMetadataToCreate,
