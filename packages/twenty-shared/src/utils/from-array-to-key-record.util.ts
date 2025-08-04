@@ -9,19 +9,19 @@ export const fromArrayToKeyRecordArray = <T extends object>({
   key: StringPropertyKeys<T>;
 }) => {
   return array.reduce<Record<string, T[]>>((acc, value) => {
-    const currentKey = value[key] as string;
-    const occurrence = acc[currentKey];
+    const computedKey = value[key] as string;
+    const occurrence = acc[computedKey];
 
     if (isDefined(occurrence)) {
       return {
         ...acc,
-        [currentKey]: [...occurrence, value],
+        [computedKey]: [...occurrence, value],
       };
     }
 
     return {
       ...acc,
-      [key]: [value],
+      [computedKey]: [value],
     };
   }, {});
 };

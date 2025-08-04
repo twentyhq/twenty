@@ -7,15 +7,12 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 export const fromObjectMetadataMapsToFlatObjectMetadatas = (
   objectMetadataMaps: ObjectMetadataMaps,
 ): FlatObjectMetadata[] => {
-  const objectMetadataIds = Object.values(objectMetadataMaps.byId).filter(
-    isDefined,
-  );
-
-  return objectMetadataIds.flatMap<FlatObjectMetadata>(
-    (objectMetadataItemWithFieldMaps) =>
+  return Object.values(objectMetadataMaps.byId)
+    .filter(isDefined)
+    .map((objectMetadataItemWithFieldMaps) =>
       fromObjectMetadataItemWithFieldMapsToFlatObjectMetadata({
         objectMetadataItemWithFieldMaps,
         objectMetadataMaps,
       }),
-  );
+    );
 };
