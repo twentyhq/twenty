@@ -45,7 +45,7 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
               )!,
               objectMetadataItem: mockedCompanyObjectMetadataItem,
             }),
-            isReadOnly: false,
+            isRecordFieldReadOnly: false,
           }}
         >
           <Story />

@@ -1,6 +1,6 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
+import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
@@ -26,8 +26,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
 }: RecordTableCellFieldContextLabelIdentifierProps) => {
   const { indexIdentifierUrl, objectPermissionsByObjectMetadataId } =
     useRecordIndexContextOrThrow();
-  const { recordId, isReadOnly: isTableRowReadOnly } =
-    useRecordTableRowContextOrThrow();
+  const { recordId, isRecordReadOnly } = useRecordTableRowContextOrThrow();
 
   const { columnDefinition } = useContext(RecordTableCellContext);
   const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
@@ -39,11 +38,6 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
   const isRecordTableScrolledLeftComponent = useRecoilComponentValueV2(
     isRecordTableScrolledLeftComponentState,
   );
-
-  const isFieldReadOnly = useIsFieldValueReadOnly({
-    fieldDefinition: columnDefinition,
-    isRecordReadOnly: isTableRowReadOnly ?? false,
-  });
 
   const objectPermissions = getObjectPermissionsForObject(
     objectPermissionsByObjectMetadataId,
@@ -75,7 +69,15 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
         isLabelIdentifier: true,
         isLabelIdentifierCompact,
         displayedMaxRows: 1,
-        isReadOnly: isFieldReadOnly,
+        isRecordFieldReadOnly: isRecordFieldReadOnly({
+          objectPermissions,
+          objectNameSingular: objectMetadataItem.nameSingular,
+          fieldName: columnDefinition.metadata.fieldName,
+          fieldType: columnDefinition.type,
+          isCustom: objectMetadataItem.isCustom,
+          fieldMetadataId: columnDefinition.fieldMetadataId,
+          isRecordReadOnly: isRecordReadOnly ?? false,
+        }),
         maxWidth: columnDefinition.size,
         onRecordChipClick: () => {
           activateRecordTableRow(rowIndex);

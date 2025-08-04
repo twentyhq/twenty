@@ -346,7 +346,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
           recordId,
           isLabelIdentifier: false,
           useUpdateRecord: useUpdateOneRecordMutation,
-          isReadOnly: false,
+          isRecordFieldReadOnly: false,
         }}
       >
         {children}
