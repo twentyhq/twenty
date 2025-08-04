@@ -7,7 +7,7 @@ export const SIGN_UP_IN_WORKSPACE = gql`
     $workspaceInviteHash: String
     $workspacePersonalInviteToken: String = null
     $captchaToken: String
-    $workspaceId: UUID
+    $workspaceId: UUID!
     $locale: String
     $verifyEmailRedirectPath: String
   ) {

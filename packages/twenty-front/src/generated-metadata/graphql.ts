@@ -3463,7 +3463,7 @@ export type SignUpInWorkspaceMutationVariables = Exact<{
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
   workspacePersonalInviteToken?: InputMaybe<Scalars['String']>;
   captchaToken?: InputMaybe<Scalars['String']>;
-  workspaceId?: InputMaybe<Scalars['UUID']>;
+  workspaceId: Scalars['UUID'];
   locale?: InputMaybe<Scalars['String']>;
   verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 }>;
@@ -5852,7 +5852,7 @@ export type SignUpInNewWorkspaceMutationHookResult = ReturnType<typeof useSignUp
 export type SignUpInNewWorkspaceMutationResult = Apollo.MutationResult<SignUpInNewWorkspaceMutation>;
 export type SignUpInNewWorkspaceMutationOptions = Apollo.BaseMutationOptions<SignUpInNewWorkspaceMutation, SignUpInNewWorkspaceMutationVariables>;
 export const SignUpInWorkspaceDocument = gql`
-    mutation SignUpInWorkspace($email: String!, $password: String!, $workspaceInviteHash: String, $workspacePersonalInviteToken: String = null, $captchaToken: String, $workspaceId: UUID, $locale: String, $verifyEmailRedirectPath: String) {
+    mutation SignUpInWorkspace($email: String!, $password: String!, $workspaceInviteHash: String, $workspacePersonalInviteToken: String = null, $captchaToken: String, $workspaceId: UUID!, $locale: String, $verifyEmailRedirectPath: String) {
   signUpInWorkspace(
     email: $email
     password: $password
