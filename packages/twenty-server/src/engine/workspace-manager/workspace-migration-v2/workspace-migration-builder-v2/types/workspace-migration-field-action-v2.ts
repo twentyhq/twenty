@@ -27,8 +27,8 @@ export type UpdateFieldAction = {
 
 export type DeleteFieldAction = {
   type: 'delete_field';
-  flatFieldMetadata: FlatFieldMetadata;
-  flatObjectMetadataWithoutFields: FlatObjectMetadataWithoutFields;
+  fieldMetadataId: string;
+  objectMetadataId: string;
 };
 
 export type WorkspaceMigrationFieldActionV2 =

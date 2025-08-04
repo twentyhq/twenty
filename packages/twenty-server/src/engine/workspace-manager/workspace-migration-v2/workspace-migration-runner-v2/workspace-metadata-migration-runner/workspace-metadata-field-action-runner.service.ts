@@ -25,10 +25,10 @@ export class WorkspaceMetadataFieldActionRunnerService
         FieldMetadataEntity,
       );
 
-    const { flatFieldMetadata } = action;
+    const { fieldMetadataId } = action;
 
     await fieldMetadataRepository.delete({
-      id: In([flatFieldMetadata.id]),
+      id: In([fieldMetadataId]),
     });
   };
 
@@ -43,7 +43,6 @@ export class WorkspaceMetadataFieldActionRunnerService
 
     const { flatFieldMetadata } = action;
 
-    // We need to defer here in case we create a relation the relationTargetFieldMetadataId might not already be created here
     await fieldMetadataRepository.save(flatFieldMetadata);
   };
   runUpdateFieldMetadataMigration = async ({
