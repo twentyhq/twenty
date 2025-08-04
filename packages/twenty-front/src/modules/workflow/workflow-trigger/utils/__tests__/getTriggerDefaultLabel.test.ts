@@ -1,6 +1,6 @@
 import { WorkflowTrigger } from '@/workflow/types/Workflow';
 import { DatabaseTriggerDefaultLabel } from '@/workflow/workflow-trigger/constants/DatabaseTriggerDefaultLabel';
-import { getTriggerDefaultLabel } from '../getTriggerLabel';
+import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
 
 describe('getTriggerDefaultLabel', () => {
   describe('DATABASE_EVENT triggers', () => {

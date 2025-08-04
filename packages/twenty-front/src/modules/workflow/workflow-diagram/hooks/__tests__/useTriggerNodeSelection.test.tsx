@@ -64,6 +64,8 @@ describe('useTriggerNodeSelection', () => {
     });
 
     expect(result.current.workflowDiagramTriggerNodeSelection).toBeUndefined();
+
+    expect(mockSetNodes).toHaveBeenCalled();
   });
 
   it('should not trigger update if state is not defined', () => {
