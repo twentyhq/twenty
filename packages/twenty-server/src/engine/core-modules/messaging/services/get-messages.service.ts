@@ -5,6 +5,7 @@ import { TimelineThreadsWithTotal } from 'src/engine/core-modules/messaging/dtos
 import { TimelineMessagingService } from 'src/engine/core-modules/messaging/services/timeline-messaging.service';
 import { formatThreads } from 'src/engine/core-modules/messaging/utils/format-threads.util';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @Injectable()
@@ -92,6 +93,43 @@ export class GetMessagesService {
     const messageThreads = await this.getMessagesFromPersonIds(
       workspaceMemberId,
       personIds,
+      page,
+      pageSize,
+    );
+
+    return messageThreads;
+  }
+
+  async getMessagesFromOpportunityId(
+    workspaceMemberId: string,
+    opportunityId: string,
+    page = 1,
+    pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
+  ): Promise<TimelineThreadsWithTotal> {
+    const opportunityRepository =
+      await this.twentyORMManager.getRepository<OpportunityWorkspaceEntity>(
+        'opportunity',
+      );
+
+    const opportunity = await opportunityRepository.findOne({
+      where: {
+        id: opportunityId,
+      },
+      select: {
+        companyId: true,
+      },
+    });
+
+    if (!opportunity?.companyId) {
+      return {
+        totalNumberOfThreads: 0,
+        timelineThreads: [],
+      };
+    }
+
+    const messageThreads = await this.getMessagesFromCompanyId(
+      workspaceMemberId,
+      opportunity.companyId,
       page,
       pageSize,
     );
