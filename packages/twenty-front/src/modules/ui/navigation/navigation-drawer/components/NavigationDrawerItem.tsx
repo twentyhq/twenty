@@ -186,6 +186,13 @@ const StyledKeyBoardShortcut = styled.span`
 const StyledNavigationDrawerItemContainer = styled.div`
   display: flex;
   width: 100%;
+
+  .navigation-tooltip-force-right {
+    /* Force tooltip to always stay on the right side */
+    max-width: 300px !important;
+    white-space: nowrap !important;
+    transform: translateX(0) !important;
+  }
 `;
 
 const StyledSpacer = styled.span`
@@ -427,9 +434,11 @@ export const NavigationDrawerItem = ({
           content={label}
           place={TooltipPosition.Right}
           delay={TooltipDelay.shortDelay}
-          offset={8}
+          offset={12}
           noArrow={false}
-          width="200px"
+          width="250px"
+          positionStrategy="fixed"
+          className="navigation-tooltip-force-right"
         />
       )}
     </StyledNavigationDrawerItemContainer>
