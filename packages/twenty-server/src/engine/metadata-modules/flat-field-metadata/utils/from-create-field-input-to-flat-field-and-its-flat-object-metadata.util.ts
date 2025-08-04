@@ -24,19 +24,11 @@ type FromCreateFieldInputToFlatObjectMetadata = {
   rawCreateFieldInput: CreateFieldInput;
   existingFlatObjectMetadatas: FlatObjectMetadata[];
 };
-export type FlatFieldAndItsFlatObjectMetadata<
-  T extends FieldMetadataType = FieldMetadataType,
-> = {
-  flatFieldMetadata: FlatFieldMetadata<T>;
-  parentFlatObjectMetadata: FlatObjectMetadata;
-};
 
 export const fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata = async ({
   existingFlatObjectMetadatas,
   rawCreateFieldInput,
-}: FromCreateFieldInputToFlatObjectMetadata): Promise<
-  FlatFieldAndItsFlatObjectMetadata[]
-> => {
+}: FromCreateFieldInputToFlatObjectMetadata): Promise<FlatFieldMetadata[]> => {
   if (rawCreateFieldInput.isRemoteCreation) {
     throw new FieldMetadataException(
       "Remote fields aren't supported",
@@ -86,15 +78,12 @@ export const fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata = async ({
     case FieldMetadataType.RATING: {
       return [
         {
-          flatFieldMetadata: {
-            ...commonFlatFieldMetadata,
-            type: createFieldInput.type,
-            settings: null,
-            defaultValue: commonFlatFieldMetadata.defaultValue as string, // Could this be improved ?
-            options: generateRatingOptions(),
-          } satisfies FlatFieldMetadata<typeof createFieldInput.type>,
-          parentFlatObjectMetadata,
-        },
+          ...commonFlatFieldMetadata,
+          type: createFieldInput.type,
+          settings: null,
+          defaultValue: commonFlatFieldMetadata.defaultValue as string, // Could this be improved ?
+          options: generateRatingOptions(),
+        } satisfies FlatFieldMetadata<typeof createFieldInput.type>,
       ];
     }
     case FieldMetadataType.SELECT:
@@ -110,15 +99,12 @@ export const fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata = async ({
 
       return [
         {
-          flatFieldMetadata: {
-            ...commonFlatFieldMetadata,
-            type: createFieldInput.type,
-            options,
-            defaultValue: commonFlatFieldMetadata.defaultValue as string, // Could this be improved ?
-            settings: null,
-          } satisfies FlatFieldMetadata<typeof createFieldInput.type>,
-          parentFlatObjectMetadata,
-        },
+          ...commonFlatFieldMetadata,
+          type: createFieldInput.type,
+          options,
+          defaultValue: commonFlatFieldMetadata.defaultValue as string, // Could this be improved ?
+          settings: null,
+        } satisfies FlatFieldMetadata<typeof createFieldInput.type>,
       ];
     }
     case FieldMetadataType.UUID:
@@ -143,11 +129,8 @@ export const fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata = async ({
     case FieldMetadataType.TS_VECTOR: {
       return [
         {
-          flatFieldMetadata: {
-            ...commonFlatFieldMetadata,
-            type: createFieldInput.type,
-          },
-          parentFlatObjectMetadata,
+          ...commonFlatFieldMetadata,
+          type: createFieldInput.type,
         },
       ];
     }

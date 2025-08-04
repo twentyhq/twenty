@@ -121,7 +121,7 @@ export const createCustomRoleWithObjectPermissions = async (options: {
     const upsertObjectPermissionsOperation = {
       query: gql`
         mutation UpsertObjectPermissions(
-          $roleId: String!
+          $roleId: UUID!
           $objectPermissions: [ObjectPermissionInput!]!
         ) {
           upsertObjectPermissions(

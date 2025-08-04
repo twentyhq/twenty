@@ -11,7 +11,6 @@ import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithC
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
-import { CREATE_STEP_NODE_WIDTH } from '@/workflow/workflow-diagram/constants/CreateStepNodeWidth';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useOpenWorkflowEditFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowEditFilterInCommandMenu';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
@@ -23,7 +22,6 @@ import {
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
-import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -31,7 +29,7 @@ import {
   BaseEdge,
   EdgeLabelRenderer,
   EdgeProps,
-  getStraightPath,
+  getBezierPath,
 } from '@xyflow/react';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -78,7 +76,9 @@ export const WorkflowDiagramFilterEdgeEditable = ({
   source,
   target,
   sourceY,
+  sourceX,
   targetY,
+  targetX,
   markerStart,
   markerEnd,
   data,
@@ -87,10 +87,10 @@ export const WorkflowDiagramFilterEdgeEditable = ({
 
   const theme = useTheme();
 
-  const [edgePath, labelX, labelY] = getStraightPath({
-    sourceX: CREATE_STEP_NODE_WIDTH,
+  const [edgePath, labelX, labelY] = getBezierPath({
+    sourceX,
     sourceY,
-    targetX: CREATE_STEP_NODE_WIDTH,
+    targetX,
     targetY,
   });
 
@@ -100,7 +100,7 @@ export const WorkflowDiagramFilterEdgeEditable = ({
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
 
   const { deleteStep } = useDeleteStep({ workflow });
-  const { startNodeCreation } = useStartNodeCreation();
+  const { startNodeCreation, isNodeCreationStarted } = useStartNodeCreation();
 
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
@@ -111,15 +111,10 @@ export const WorkflowDiagramFilterEdgeEditable = ({
     workflowDiagramPanOnDragComponentState,
   );
 
-  const workflowInsertStepIds = useRecoilComponentValueV2(
-    workflowInsertStepIdsComponentState,
-  );
-
-  const isEdgeSelected =
-    (workflowInsertStepIds.nextStepId === source &&
-      workflowInsertStepIds.parentStepId === target) ||
-    (isNonEmptyString(data.stepId) &&
-      workflowInsertStepIds.parentStepId === data.stepId);
+  const isEdgeSelected = isNodeCreationStarted({
+    parentStepId: data.stepId,
+    nextStepId: target,
+  });
 
   const workflowSelectedNode = useRecoilComponentValueV2(
     workflowSelectedNodeComponentState,

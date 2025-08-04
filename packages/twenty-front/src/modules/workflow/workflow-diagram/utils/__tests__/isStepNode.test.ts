@@ -11,6 +11,9 @@ describe('isStepNode', () => {
         triggerType: 'DATABASE_EVENT',
         name: 'Company Created',
         icon: 'IconPlus',
+        stepId: 'trigger',
+        hasNextStepIds: false,
+        position: { x: 0, y: 0 },
       },
     };
 
@@ -27,6 +30,9 @@ describe('isStepNode', () => {
         nodeType: 'action',
         actionType: 'CREATE_RECORD',
         name: 'Create Company',
+        stepId: 'action-1',
+        hasNextStepIds: false,
+        position: { x: 0, y: 0 },
       },
     };
 
@@ -35,27 +41,13 @@ describe('isStepNode', () => {
     expect(result).toBe(true);
   });
 
-  it('should return false for create-step node', () => {
-    const createStepNode: WorkflowDiagramNode = {
-      id: 'create-step-1',
-      position: { x: 0, y: 200 },
-      data: {
-        nodeType: 'create-step',
-        parentNodeId: 'action-1',
-      },
-    };
-
-    const result = isStepNode(createStepNode);
-
-    expect(result).toBe(false);
-  });
-
   it('should return false for empty-trigger node', () => {
     const emptyTriggerNode: WorkflowDiagramNode = {
       id: 'empty-trigger',
       position: { x: 0, y: 0 },
       data: {
         nodeType: 'empty-trigger',
+        position: { x: 0, y: 0 },
       },
     };
 
@@ -74,6 +66,9 @@ describe('isStepNode', () => {
         triggerType: 'MANUAL',
         name: 'Manual Trigger',
         icon: 'IconClick',
+        stepId: 'trigger-with-extra',
+        hasNextStepIds: false,
+        position: { x: 0, y: 0 },
       },
     };
 

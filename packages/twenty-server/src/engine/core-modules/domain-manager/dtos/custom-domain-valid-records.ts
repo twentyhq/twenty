@@ -1,5 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
 @ObjectType()
 class CustomDomainRecord {
   @Field(() => String)
@@ -20,7 +22,7 @@ class CustomDomainRecord {
 
 @ObjectType()
 export class CustomDomainValidRecords {
-  @Field(() => String)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @Field(() => String)

@@ -3,6 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'class-validator';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import {
+  TwentyORMException,
+  TwentyORMExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
@@ -36,7 +40,7 @@ export class MessageImportExceptionHandlerService {
   ) {}
 
   public async handleDriverException(
-    exception: MessageImportDriverException | Error,
+    exception: MessageImportDriverException | Error | TwentyORMException,
     syncStep: MessageImportSyncStep,
     messageChannel: Pick<
       MessageChannelWorkspaceEntity,
@@ -53,6 +57,7 @@ export class MessageImportExceptionHandlerService {
             workspaceId,
           );
           break;
+        case TwentyORMExceptionCode.QUERY_READ_TIMEOUT:
         case MessageImportDriverExceptionCode.TEMPORARY_ERROR:
         case MessageNetworkExceptionCode.ECONNABORTED:
         case MessageNetworkExceptionCode.ENOTFOUND:
@@ -102,7 +107,7 @@ export class MessageImportExceptionHandlerService {
       'id' | 'throttleFailureCount'
     >,
     workspaceId: string,
-    exception: MessageImportDriverException,
+    exception: { message: string },
   ): Promise<void> {
     if (
       messageChannel.throttleFailureCount >= MESSAGING_THROTTLE_MAX_ATTEMPTS
