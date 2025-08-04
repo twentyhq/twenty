@@ -405,7 +405,7 @@ export class WorkspaceEntityManager extends EntityManager {
         permissionOptions?.objectRecordsPermissions ?? {},
       objectMetadataMaps: this.internalContext.objectMetadataMaps,
       selectedColumns,
-      entireEntitySelected: false,
+      allFieldsSelected: false,
       updatedColumns,
       isFieldPermissionsEnabled:
         this.getFeatureFlagMap().IS_FIELDS_PERMISSIONS_ENABLED,

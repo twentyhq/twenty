@@ -169,7 +169,7 @@ export class WorkspaceInsertQueryBuilder<
 
     return {
       raw: result.raw,
-      generatedMaps: formattedResult,
+      generatedMaps: result.generatedMaps,
       identifiers: result.identifiers,
     };
   }

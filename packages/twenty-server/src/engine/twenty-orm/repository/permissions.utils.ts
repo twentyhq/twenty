@@ -42,7 +42,7 @@ export const validateOperationIsPermittedOrThrow = ({
   objectMetadataMaps,
   selectedColumns,
   isFieldPermissionsEnabled,
-  entireEntitySelected,
+  allFieldsSelected,
   updatedColumns,
 }: {
   entityName: string;
@@ -51,7 +51,7 @@ export const validateOperationIsPermittedOrThrow = ({
   objectMetadataMaps: ObjectMetadataMaps;
   selectedColumns: string[] | '*';
   isFieldPermissionsEnabled?: boolean;
-  entireEntitySelected: boolean;
+  allFieldsSelected: boolean;
   updatedColumns: string[];
 }) => {
   const objectMetadataIdForEntity =
@@ -100,7 +100,7 @@ export const validateOperationIsPermittedOrThrow = ({
           restrictedFields: permissionsForEntity.restrictedFields,
           selectedColumns,
           columnNameToFieldMetadataIdMap,
-          entireEntitySelected,
+          allFieldsSelected,
         });
       }
       break;
@@ -194,7 +194,7 @@ export const validateQueryIsPermittedOrThrow = ({
   const { mainEntity, operationType } =
     getTargetEntityAndOperationType(expressionMap);
 
-  const entireEntitySelected = expressionMap.selects.some(
+  const allFieldsSelected = expressionMap.selects.some(
     (select) => select.selection === mainEntity,
   );
 
@@ -205,7 +205,7 @@ export const validateQueryIsPermittedOrThrow = ({
     selectedColumns = getSelectedColumnsFromExpressionMap({
       operationType,
       expressionMap,
-      entireEntitySelected,
+      allFieldsSelected,
     });
 
     if (operationType !== 'select') {
@@ -236,7 +236,7 @@ export const validateQueryIsPermittedOrThrow = ({
     objectMetadataMaps,
     selectedColumns,
     isFieldPermissionsEnabled,
-    entireEntitySelected,
+    allFieldsSelected,
     updatedColumns,
   });
 };
@@ -245,12 +245,12 @@ const validateReadFieldPermissionOrThrow = ({
   restrictedFields,
   selectedColumns,
   columnNameToFieldMetadataIdMap,
-  entireEntitySelected,
+  allFieldsSelected,
 }: {
   restrictedFields: RestrictedFields;
   selectedColumns: string[] | '*';
   columnNameToFieldMetadataIdMap: Record<string, string>;
-  entireEntitySelected?: boolean;
+  allFieldsSelected?: boolean;
 }) => {
   const noReadRestrictions =
     isEmpty(restrictedFields) ||
@@ -260,7 +260,7 @@ const validateReadFieldPermissionOrThrow = ({
     return;
   }
 
-  if (entireEntitySelected || selectedColumns === '*') {
+  if (allFieldsSelected || selectedColumns === '*') {
     throw new PermissionsException(
       PermissionsExceptionMessage.PERMISSION_DENIED,
       PermissionsExceptionCode.PERMISSION_DENIED,
@@ -319,11 +319,11 @@ const validateUpdateFieldPermissionOrThrow = ({
 const getSelectedColumnsFromExpressionMap = ({
   operationType,
   expressionMap,
-  entireEntitySelected,
+  allFieldsSelected,
 }: {
   operationType: string;
   expressionMap: QueryExpressionMap;
-  entireEntitySelected: boolean;
+  allFieldsSelected: boolean;
 }) => {
   let selectedColumns: string[] | '*' = [];
 
@@ -339,7 +339,7 @@ const getSelectedColumnsFromExpressionMap = ({
     }
     selectedColumns =
       expressionMap.returning === '*' ? '*' : [expressionMap.returning].flat();
-  } else if (!entireEntitySelected) {
+  } else if (!allFieldsSelected) {
     selectedColumns = getSelectedColumnsFromExpressionMapSelects(
       expressionMap.selects,
     );
