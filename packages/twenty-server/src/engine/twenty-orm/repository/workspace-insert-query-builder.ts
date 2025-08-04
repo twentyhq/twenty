@@ -16,6 +16,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import { RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 import { RelationDisconnectQueryFieldsByEntityIndex } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
@@ -29,7 +30,6 @@ import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
-import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 
 export class WorkspaceInsertQueryBuilder<
   T extends ObjectLiteral,
@@ -155,7 +155,7 @@ export class WorkspaceInsertQueryBuilder<
 
     const afterResult = await eventSelectQueryBuilder.getMany();
 
-    const formattedResult = formatResult<T[]>(
+    const formattedResultForEvent = formatResult<T[]>(
       afterResult,
       objectMetadata,
       this.internalContext.objectMetadataMaps,
@@ -165,12 +165,30 @@ export class WorkspaceInsertQueryBuilder<
       action: DatabaseEventAction.CREATED,
       objectMetadataItem: objectMetadata,
       workspaceId: this.internalContext.workspaceId,
-      entities: formattedResult,
+      entities: formattedResultForEvent,
       authContext: this.authContext,
     });
 
+    // TypeORM returns all entity columns for insertions
+    const resultWithoutInsertionExtraColumns = result.raw.map(
+      (rawResult: Record<string, string>) =>
+        Object.keys(rawResult)
+          .filter((key) => this.expressionMap.returning.includes(key))
+          .reduce((filtered: Record<string, string>, key) => {
+            filtered[key] = rawResult[key];
+
+            return filtered;
+          }, {}),
+    );
+
+    const formattedResult = formatResult<T[]>(
+      resultWithoutInsertionExtraColumns,
+      objectMetadata,
+      this.internalContext.objectMetadataMaps,
+    );
+
     return {
-      raw: afterResult,
+      raw: resultWithoutInsertionExtraColumns,
       generatedMaps: formattedResult,
       identifiers: result.identifiers,
     };
