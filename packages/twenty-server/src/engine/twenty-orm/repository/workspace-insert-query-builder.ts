@@ -175,7 +175,11 @@ export class WorkspaceInsertQueryBuilder<
       const resultWithoutInsertionExtraColumns = result.raw.map(
         (rawResult: Record<string, string>) =>
           Object.keys(rawResult)
-            .filter((key) => this.expressionMap.returning.includes(key))
+            .filter(
+              (key) =>
+                this.expressionMap.returning.includes(key) ||
+                this.expressionMap.returning === '*',
+            )
             .reduce((filtered: Record<string, string>, key) => {
               filtered[key] = rawResult[key];
 
