@@ -2,6 +2,7 @@ import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
+import { useNavigationDrawerTooltip } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerTooltip';
 import { NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -12,7 +13,14 @@ import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { Pill } from 'twenty-ui/components';
-import { IconComponent, Label, TablerIconsProps } from 'twenty-ui/display';
+import {
+  AppTooltip,
+  IconComponent,
+  Label,
+  TablerIconsProps,
+  TooltipDelay,
+  TooltipPosition,
+} from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { TriggerEventType, useMouseDownNavigation } from 'twenty-ui/utilities';
 
@@ -263,6 +271,8 @@ export const NavigationDrawerItem = ({
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
 
+  const { navigationItemId } = useNavigationDrawerTooltip(label, to);
+
   const showBreadcrumb = indentationLevel === 2;
   const showStyledSpacer = Boolean(
     soon || isNew || count || keyboard || rightOptions,
@@ -287,6 +297,7 @@ export const NavigationDrawerItem = ({
   return (
     <StyledNavigationDrawerItemContainer>
       <StyledItem
+        id={navigationItemId}
         className={`navigation-drawer-item ${className || ''}`}
         onClick={
           mouseUpNavigation ? onClick : handleMouseDownNavigationClickClick
@@ -388,6 +399,16 @@ export const NavigationDrawerItem = ({
           )}
         </StyledItemElementsContainer>
       </StyledItem>
+
+      {!isNavigationDrawerExpanded && !isMobile && (
+        <AppTooltip
+          anchorSelect={`#${navigationItemId}`}
+          content={label}
+          place={TooltipPosition.Right}
+          delay={TooltipDelay.noDelay}
+          positionStrategy="fixed"
+        />
+      )}
     </StyledNavigationDrawerItemContainer>
   );
 };
