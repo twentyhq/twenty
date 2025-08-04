@@ -13,10 +13,12 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
-import { fromCreateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadata.util';
+import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
+import { fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-and-its-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-maps-to-flat-object-metadatas.util';
 import { mergeTwoFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/merge-two-flat-object-metadatas.util';
+import { getFieldMetadataEntityFromCachedObjectMetadataMaps } from 'src/engine/metadata-modules/utils/get-field-metadata-entity-from-cached-object-metadata-maps.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
@@ -66,29 +68,34 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
     const existingFlatObjectMetadatas =
       fromObjectMetadataMapsToFlatObjectMetadatas(objectMetadataMaps);
 
+    const flatFieldToCreateAndItsFlatObjectMetadataArray = await Promise.all(
+      fieldMetadataInputs.map(
+        async (fieldMetadataInput) =>
+          await fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata({
+            existingFlatObjectMetadatas,
+            rawCreateFieldInput: fieldMetadataInput,
+          }),
+      ),
+    );
+
     let flatObjectMetadatasWithNewFields: FlatObjectMetadata[] = [];
 
-    for (const fieldMetadataInput of fieldMetadataInputs) {
-      const createdFlatFieldsMetadataAndParentFlatObjectMetadata =
-        await fromCreateFieldInputToFlatFieldMetadata({
-          existingFlatObjectMetadatas,
-          rawCreateFieldInput: fieldMetadataInput,
-        });
-
+    for (const flatFieldMetadataAndParentPair of flatFieldToCreateAndItsFlatObjectMetadataArray) {
+      const flatFieldMetadataValidationPromises =
+        flatFieldMetadataAndParentPair.flatMap<
+          Promise<FailedFlatFieldMetadataValidationExceptions[]>
+        >(({ flatFieldMetadata: flatFieldMetadataToValidate }) =>
+          this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadata({
+            existingFlatObjectMetadatas,
+            flatFieldMetadataToValidate,
+            workspaceId,
+          }),
+        );
       const createdFlatFieldMetadataValidationResult = (
-        await Promise.all(
-          createdFlatFieldsMetadataAndParentFlatObjectMetadata.map(
-            ({ flatFieldMetadata: flatFieldMetadataToValidate }) =>
-              this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadata(
-                {
-                  existingFlatObjectMetadatas,
-                  flatFieldMetadataToValidate,
-                  workspaceId,
-                },
-              ),
-          ),
-        )
-      ).filter(isDefined);
+        await Promise.all(flatFieldMetadataValidationPromises)
+      )
+        .flat()
+        .filter(isDefined);
 
       if (createdFlatFieldMetadataValidationResult.length > 0) {
         const errors = createdFlatFieldMetadataValidationResult.flat();
@@ -100,7 +107,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
       }
 
       const updatedFlatObjectMetadatas =
-        createdFlatFieldsMetadataAndParentFlatObjectMetadata.map<FlatObjectMetadata>(
+        flatFieldMetadataAndParentPair.map<FlatObjectMetadata>(
           ({ flatFieldMetadata, parentFlatObjectMetadata }) => {
             return {
               ...parentFlatObjectMetadata,
@@ -129,11 +136,27 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
 
     await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
 
-    // const recomputedCache =
-    //   await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
-    //     { workspaceId },
-    //   );
+    const recomputedCache =
+      await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
+        { workspaceId },
+      );
 
-    return []; //TODO to retrieve from cache or directly from find
+    return flatFieldToCreateAndItsFlatObjectMetadataArray.flatMap<FieldMetadataEntity>(
+      (createdFlatFieldAndItsParentFlatObject) => {
+        return createdFlatFieldAndItsParentFlatObject
+          .map(
+            ({
+              flatFieldMetadata: { id: fieldMetadataId },
+              parentFlatObjectMetadata: { id: objectMetadataId },
+            }) =>
+              getFieldMetadataEntityFromCachedObjectMetadataMaps({
+                fieldMetadataId,
+                objectMetadataId,
+                objectMetadataMaps: recomputedCache.objectMetadataMaps,
+              }),
+          )
+          .filter(isDefined);
+      },
+    );
   }
 }

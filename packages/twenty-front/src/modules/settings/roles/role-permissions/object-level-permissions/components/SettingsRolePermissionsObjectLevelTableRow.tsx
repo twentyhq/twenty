@@ -49,7 +49,7 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
 
   const Icon = getIcon(objectMetadataItem.icon);
 
-  const objectLabel = objectMetadataItem.labelPlural;
+  const objectLabelPlural = objectMetadataItem.labelPlural;
 
   return (
     <TableRow
@@ -67,15 +67,15 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
             stroke={theme.icon.stroke.sm}
           />
         )}
-        <StyledNameLabel title={objectLabel}>
-          <OverflowingTextWithTooltip text={objectLabel} />
+        <StyledNameLabel title={objectLabelPlural}>
+          <OverflowingTextWithTooltip text={objectLabelPlural} />
         </StyledNameLabel>
       </StyledNameTableCell>
       <TableCell>
         <SettingsRolePermissionsObjectLevelOverrideCellContainer
           objectPermissions={objectPermission}
           roleId={roleId}
-          objectLabel={objectLabel}
+          objectLabel={objectLabelPlural}
         />
       </TableCell>
       <TableCell>

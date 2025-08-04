@@ -13,12 +13,8 @@ import {
   Repository,
 } from 'typeorm';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { fromCreateObjectInputToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata.util';
-import { fromObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-maps-to-flat-object-metadatas.util';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import {
@@ -50,8 +46,6 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
-import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
-import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
 import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
 
@@ -76,9 +70,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly indexMetadataService: IndexMetadataService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly workspaceMigrationBuilderV2: WorkspaceMigrationBuilderV2Service,
-    private readonly featureFlagService: FeatureFlagService,
-    private readonly workspaceMigrationRunnerV2Service: WorkspaceMigrationRunnerV2Service,
   ) {
     super(objectMetadataRepository);
   }
@@ -124,41 +115,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
           objectMetadataInput.workspaceId,
         );
-
-      const isWorkspaceMigrationV2Enabled =
-        await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-          objectMetadataInput.workspaceId,
-        );
-
-      if (isWorkspaceMigrationV2Enabled) {
-        const createdRawFlatObjectMetadata =
-          fromCreateObjectInputToFlatObjectMetadata(objectMetadataInput);
-        const existingFlatObjectMetadatas =
-          fromObjectMetadataMapsToFlatObjectMetadatas(objectMetadataMaps);
-        // @ts-expect-error TODO implement validateFlatObjectMetadataData
-        const createdFlatObjectMetadata = validateFlatObjectMetadataData({
-          existing:
-            // Here we assume that EVERYTHING is in cache and up to date, this is very critical, also race condition prone :thinking:
-            fromObjectMetadataMapsToFlatObjectMetadatas(objectMetadataMaps),
-          toValidate: [createdRawFlatObjectMetadata],
-        });
-
-        const workspaceMigration = this.workspaceMigrationBuilderV2.build({
-          objectMetadataFromToInputs: {
-            from: existingFlatObjectMetadatas,
-            to: [createdFlatObjectMetadata],
-          },
-          inferDeletionFromMissingObjectFieldIndex: false,
-          workspaceId: objectMetadataInput.workspaceId,
-        });
-
-        await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
-
-        // What to return exactly ? We now won't have access to the entity directly
-        // We could still retrieve it afterwards using a find on object metadata id or return a flat now
-        return createdFlatObjectMetadata;
-      }
 
       objectMetadataInput.labelSingular = capitalize(
         objectMetadataInput.labelSingular,

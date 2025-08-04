@@ -17,6 +17,11 @@ export const permissionGraphqlApiExceptionHandler = (
         userFriendlyMessage: 'User does not have permission.',
         subCode: error.code,
       });
+    case PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT:
+      throw new ForbiddenError(error.message, {
+        userFriendlyMessage: 'No valid authentication context found.',
+        subCode: error.code,
+      });
     case PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS:
       throw new ForbiddenError(error);
     case PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN:
@@ -56,6 +61,7 @@ export const permissionGraphqlApiExceptionHandler = (
     case PermissionsExceptionCode.METHOD_NOT_ALLOWED:
     case PermissionsExceptionCode.RAW_SQL_NOT_ALLOWED:
     case PermissionsExceptionCode.OBJECT_PERMISSION_NOT_FOUND:
+    case PermissionsExceptionCode.API_KEY_ROLE_NOT_FOUND:
     case PermissionsExceptionCode.JOIN_COLUMN_NAME_REQUIRED:
     case PermissionsExceptionCode.COMPOSITE_TYPE_NOT_FOUND:
       throw error;

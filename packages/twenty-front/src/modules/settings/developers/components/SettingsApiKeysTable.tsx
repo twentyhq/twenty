@@ -4,46 +4,48 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { useGetApiKeysQuery } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  useGetApiKeysQuery,
+} from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledTableBody = styled(TableBody)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    padding-top: ${({ theme }) => theme.spacing(3)};
-    display: flex;
-    justify-content: space-between;
-    scroll-behavior: smooth;
-  }
-`;
-
-const StyledTableRow = styled(TableRow)`
-  grid-template-columns: 312px auto 28px;
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    width: 95%;
-    grid-template-columns: 20fr 2fr;
-  }
 `;
 
 export const SettingsApiKeysTable = () => {
+  const isApiKeyRolesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
+  );
+
   const { data: apiKeysData } = useGetApiKeysQuery();
 
   const apiKeys = apiKeysData?.apiKeys;
 
+  const gridAutoColumns = isApiKeyRolesEnabled
+    ? '5fr 2fr 3fr 1fr'
+    : '5fr 3fr 1fr';
+
   return (
     <Table>
-      <StyledTableRow>
+      <TableRow gridAutoColumns={gridAutoColumns}>
         <TableHeader>
           <Trans>Name</Trans>
         </TableHeader>
+        {isApiKeyRolesEnabled && (
+          <TableHeader>
+            <Trans>Role</Trans>
+          </TableHeader>
+        )}
         <TableHeader>
           <Trans>Expiration</Trans>
         </TableHeader>
         <TableHeader></TableHeader>
-      </StyledTableRow>
+      </TableRow>
       {!!apiKeys?.length && (
         <StyledTableBody>
           {apiKeys.map((apiKey) => (

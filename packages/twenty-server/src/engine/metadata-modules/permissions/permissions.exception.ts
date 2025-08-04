@@ -23,6 +23,8 @@ export enum PermissionsExceptionCode {
   UNKNOWN_REQUIRED_PERMISSION = 'UNKNOWN_REQUIRED_PERMISSION',
   CANNOT_UPDATE_SELF_ROLE = 'CANNOT_UPDATE_SELF_ROLE',
   NO_ROLE_FOUND_FOR_USER_WORKSPACE = 'NO_ROLE_FOUND_FOR_USER_WORKSPACE',
+  API_KEY_ROLE_NOT_FOUND = 'API_KEY_ROLE_NOT_FOUND',
+  NO_AUTHENTICATION_CONTEXT = 'NO_AUTHENTICATION_CONTEXT',
   INVALID_ARG = 'INVALID_ARG_PERMISSIONS',
   ROLE_LABEL_ALREADY_EXISTS = 'ROLE_LABEL_ALREADY_EXISTS',
   DEFAULT_ROLE_NOT_FOUND = 'DEFAULT_ROLE_NOT_FOUND',
@@ -50,7 +52,7 @@ export enum PermissionsExceptionCode {
 }
 
 export enum PermissionsExceptionMessage {
-  PERMISSION_DENIED = 'User does not have permission',
+  PERMISSION_DENIED = 'Entity performing the request does not have permission',
   USER_WORKSPACE_NOT_FOUND = 'User workspace not found',
   ROLE_NOT_FOUND = 'Role not found',
   CANNOT_UNASSIGN_LAST_ADMIN = 'Cannot unassign admin role from last admin of the workspace',
@@ -58,6 +60,8 @@ export enum PermissionsExceptionMessage {
   UNKNOWN_OPERATION_NAME = 'Unknown operation name, cannot determine required permission',
   CANNOT_UPDATE_SELF_ROLE = 'Cannot update self role',
   NO_ROLE_FOUND_FOR_USER_WORKSPACE = 'No role found for userWorkspace',
+  API_KEY_ROLE_NOT_FOUND = 'API key has no role assigned',
+  NO_AUTHENTICATION_CONTEXT = 'No valid authentication context found',
   ROLE_LABEL_ALREADY_EXISTS = 'A role with this label already exists',
   DEFAULT_ROLE_NOT_FOUND = 'Default role not found',
   OBJECT_METADATA_NOT_FOUND = 'Object metadata not found',

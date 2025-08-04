@@ -5,10 +5,13 @@ import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/
 import { initializeAvailableFieldsForAggregateOperationMap } from '@/object-record/utils/initializeAvailableFieldsForAggregateOperationMap';
 import { isDefined } from 'twenty-shared/utils';
 
-export const getAvailableFieldsIdsForAggregationFromObjectFields = (
-  fields: FieldMetadataItem[],
-  targetAggregateOperations: ExtendedAggregateOperations[],
-): AvailableFieldsForAggregateOperation => {
+export const getAvailableFieldsIdsForAggregationFromObjectFields = ({
+  fields,
+  targetAggregateOperations,
+}: {
+  fields: FieldMetadataItem[];
+  targetAggregateOperations: ExtendedAggregateOperations[];
+}): AvailableFieldsForAggregateOperation => {
   const aggregationMap = initializeAvailableFieldsForAggregateOperationMap(
     targetAggregateOperations,
   );

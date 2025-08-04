@@ -47,16 +47,13 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       objectMetadataItemWithFieldMaps,
     );
 
-    const shouldBypassPermissionChecks = executionArgs.isExecutedByApiKey;
-
-    await this.processNestedRelationsIfNeeded(
+    await this.processNestedRelationsIfNeeded({
       executionArgs,
-      upsertedRecords,
+      records: upsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      shouldBypassPermissionChecks,
       roleId,
-    );
+    });
 
     return this.formatRecordsForResponse(
       upsertedRecords,
@@ -301,7 +298,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     repository,
     objectMetadataItemWithFieldMaps,
     result,
-    columnsToReturn,
+    columnsToReturn: _,
   }: {
     partialRecordsToUpdate: Partial<ObjectRecord>[];
     repository: WorkspaceRepository<ObjectLiteral>;
@@ -309,26 +306,21 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     result: InsertResult;
     columnsToReturn: string[];
   }): Promise<void> {
-    for (const partialRecordToUpdate of partialRecordsToUpdate) {
-      const recordId = partialRecordToUpdate.id as string;
-
-      // we should not update an existing record's createdBy value
-      const partialRecordToUpdateWithoutCreatedByUpdate =
-        this.getRecordWithoutCreatedBy(
-          partialRecordToUpdate,
-          objectMetadataItemWithFieldMaps,
-        );
-
-      await repository.update(
-        recordId,
-        partialRecordToUpdateWithoutCreatedByUpdate,
-        undefined,
-        columnsToReturn,
+    const partialRecordsToUpdateWithoutCreatedByUpdate =
+      partialRecordsToUpdate.map((record) =>
+        this.getRecordWithoutCreatedBy(record, objectMetadataItemWithFieldMaps),
       );
 
-      result.identifiers.push({ id: recordId });
-      result.generatedMaps.push({ id: recordId });
-    }
+    const savedRecords = await repository.save(
+      partialRecordsToUpdateWithoutCreatedByUpdate,
+    );
+
+    result.identifiers.push(
+      ...savedRecords.map((record) => ({ id: record.id })),
+    );
+    result.generatedMaps.push(
+      ...savedRecords.map((record) => ({ id: record.id })),
+    );
   }
 
   private async processRecordsToInsert({
@@ -383,14 +375,19 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     return upsertedRecords as ObjectRecord[];
   }
 
-  private async processNestedRelationsIfNeeded(
-    executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
-    upsertedRecords: ObjectRecord[],
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-    objectMetadataMaps: ObjectMetadataMaps,
-    shouldBypassPermissionChecks: boolean,
-    roleId?: string,
-  ): Promise<void> {
+  private async processNestedRelationsIfNeeded({
+    executionArgs,
+    records,
+    objectMetadataItemWithFieldMaps,
+    objectMetadataMaps,
+    roleId,
+  }: {
+    executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>;
+    records: ObjectRecord[];
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+    objectMetadataMaps: ObjectMetadataMaps;
+    roleId?: string;
+  }): Promise<void> {
     if (!executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       return;
     }
@@ -398,13 +395,13 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     await this.processNestedRelationsHelper.processNestedRelations({
       objectMetadataMaps,
       parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-      parentObjectRecords: upsertedRecords,
+      parentObjectRecords: records,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       limit: QUERY_MAX_RECORDS,
       authContext: executionArgs.options.authContext,
       workspaceDataSource: executionArgs.workspaceDataSource,
       roleId,
-      shouldBypassPermissionChecks,
+      shouldBypassPermissionChecks: executionArgs.shouldBypassPermissionChecks,
       selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
     });
   }

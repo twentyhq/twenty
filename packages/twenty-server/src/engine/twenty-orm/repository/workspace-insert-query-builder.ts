@@ -137,9 +137,24 @@ export class WorkspaceInsertQueryBuilder<
     }
 
     const result = await super.execute();
+    const eventSelectQueryBuilder = new WorkspaceSelectQueryBuilder(
+      this as unknown as WorkspaceSelectQueryBuilder<T>,
+      this.objectRecordsPermissions,
+      this.internalContext,
+      true,
+      this.authContext,
+      this.featureFlagMap,
+    );
+
+    eventSelectQueryBuilder.expressionMap.aliases = this.expressionMap.aliases;
+    eventSelectQueryBuilder.whereInIds(
+      result.identifiers.map((identifier) => identifier.id),
+    );
+
+    const afterResult = await eventSelectQueryBuilder.getMany();
 
     const formattedResult = formatResult<T[]>(
-      result.raw,
+      afterResult,
       objectMetadata,
       this.internalContext.objectMetadataMaps,
     );
@@ -153,7 +168,7 @@ export class WorkspaceInsertQueryBuilder<
     });
 
     return {
-      raw: result.raw,
+      raw: afterResult,
       generatedMaps: formattedResult,
       identifiers: result.identifiers,
     };

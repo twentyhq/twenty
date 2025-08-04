@@ -1,14 +1,8 @@
 import { GaxiosError } from 'gaxios';
 
-import {
-  MessageImportDriverException,
-  MessageImportDriverExceptionCode,
-} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MessageNetworkExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-network.exception';
 
-export const parseGaxiosError = (
-  error: GaxiosError,
-): MessageImportDriverException | undefined => {
+export const isAxiosTemporaryError = (error: GaxiosError): boolean => {
   const { code } = error;
 
   switch (code) {
@@ -18,12 +12,9 @@ export const parseGaxiosError = (
     case MessageNetworkExceptionCode.ETIMEDOUT:
     case MessageNetworkExceptionCode.ERR_NETWORK:
     case MessageNetworkExceptionCode.EHOSTUNREACH:
-      return new MessageImportDriverException(
-        error.message,
-        MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-      );
+      return true;
 
     default:
-      return undefined;
+      return false;
   }
 };
