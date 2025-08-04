@@ -106,8 +106,6 @@ export class WorkspaceSelectQueryBuilder<
         this.internalContext,
       );
 
-      await this.connection.createQueryRunner().query('SELECT pg_sleep(20);');
-
       const result = await super.getMany();
 
       const formattedResult = formatResult<T[]>(

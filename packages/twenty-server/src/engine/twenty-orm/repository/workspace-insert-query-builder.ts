@@ -17,6 +17,7 @@ import { QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twent
 import { RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 import { RelationDisconnectQueryFieldsByEntityIndex } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
@@ -30,7 +31,6 @@ import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
-import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 
 export class WorkspaceInsertQueryBuilder<
   T extends ObjectLiteral,
