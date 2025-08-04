@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -619,11 +619,9 @@ export type CreateWorkflowVersionEdgeInput = {
 
 export type CreateWorkflowVersionStepInput = {
   /** Next step ID */
-  nextStepId?: InputMaybe<Scalars['UUID']>;
+  nextStepId?: InputMaybe<Scalars['String']>;
   /** Parent step ID */
   parentStepId?: InputMaybe<Scalars['String']>;
-  /** Step position */
-  position?: InputMaybe<WorkflowStepPositionInput>;
   /** New step type */
   stepType: Scalars['String'];
   /** Workflow version ID */
@@ -712,7 +710,7 @@ export type DeleteWebhookDto = {
 
 export type DeleteWorkflowVersionStepInput = {
   /** Step to delete ID */
-  stepId: Scalars['UUID'];
+  stepId: Scalars['String'];
   /** Workflow version ID */
   workflowVersionId: Scalars['UUID'];
 };
@@ -2614,7 +2612,7 @@ export type SubmitFormStepInput = {
   /** Form response in JSON format */
   response: Scalars['JSON'];
   /** Workflow step ID */
-  stepId: Scalars['UUID'];
+  stepId: Scalars['String'];
   /** Workflow run ID */
   workflowRunId: Scalars['UUID'];
 };
