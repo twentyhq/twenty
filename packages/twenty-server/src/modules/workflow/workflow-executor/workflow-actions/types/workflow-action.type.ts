@@ -30,6 +30,10 @@ type BaseWorkflowAction = {
   name: string;
   type: WorkflowActionType;
   settings: WorkflowActionSettings;
+  position?: {
+    x: number;
+    y: number;
+  };
   valid: boolean;
   nextStepIds?: string[];
 };

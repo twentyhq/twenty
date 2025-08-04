@@ -34,6 +34,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-minor-and-major';
+import { AddNextStepIdsToWorkflowRunsTrigger } from 'src/database/commands/upgrade-version-command/1-3/1-3-add-next-step-ids-to-workflow-runs-trigger.command';
 
 const execPromise = promisify(exec);
 
@@ -157,6 +158,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 1.3 Commands
     protected readonly assignRolesToExistingApiKeysCommand: AssignRolesToExistingApiKeysCommand,
+    // protected readonly addNextStepIdsToWorkflowVersionTriggers: AddNextStepIdsToWorkflowVersionTriggers,
+    protected readonly addNextStepIdsToWorkflowRunsTrigger: AddNextStepIdsToWorkflowRunsTrigger,
   ) {
     super(
       workspaceRepository,
@@ -216,7 +219,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_130: VersionCommands = {
-      beforeSyncMetadata: [],
+      beforeSyncMetadata: [
+        this.addNextStepIdsToWorkflowVersionTriggers, // We add that command again because nextStepIds where not added on freshly created triggers. It will be done in 1.3
+        this.addNextStepIdsToWorkflowRunsTrigger,
+      ],
       afterSyncMetadata: [],
     };
 
