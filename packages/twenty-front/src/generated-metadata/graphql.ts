@@ -2613,8 +2613,8 @@ export type StandardOverrides = {
 export type SubmitFormStepInput = {
   /** Form response in JSON format */
   response: Scalars['JSON'];
-  /** Workflow step ID (can be "trigger" or a UUID) */
-  stepId: Scalars['String'];
+  /** Workflow step ID */
+  stepId: Scalars['UUID'];
   /** Workflow run ID */
   workflowRunId: Scalars['UUID'];
 };
