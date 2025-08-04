@@ -574,9 +574,9 @@ export type CreateWebhookDto = {
 
 export type CreateWorkflowVersionStepInput = {
   /** Next step ID */
-  nextStepId?: InputMaybe<Scalars['UUID']>;
+  nextStepId?: InputMaybe<Scalars['String']>;
   /** Parent step ID */
-  parentStepId?: InputMaybe<Scalars['UUID']>;
+  parentStepId?: InputMaybe<Scalars['String']>;
   /** New step type */
   stepType: Scalars['String'];
   /** Workflow version ID */
@@ -665,7 +665,7 @@ export type DeleteWebhookDto = {
 
 export type DeleteWorkflowVersionStepInput = {
   /** Step to delete ID */
-  stepId: Scalars['UUID'];
+  stepId: Scalars['String'];
   /** Workflow version ID */
   workflowVersionId: Scalars['UUID'];
 };
@@ -2430,7 +2430,7 @@ export type SubmitFormStepInput = {
   /** Form response in JSON format */
   response: Scalars['JSON'];
   /** Workflow step ID */
-  stepId: Scalars['UUID'];
+  stepId: Scalars['String'];
   /** Workflow run ID */
   workflowRunId: Scalars['UUID'];
 };
