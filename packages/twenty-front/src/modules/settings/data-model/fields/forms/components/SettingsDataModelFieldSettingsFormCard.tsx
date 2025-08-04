@@ -9,7 +9,8 @@ import { settingsDataModelFieldAddressFormSchema } from '@/settings/data-model/f
 import { SettingsDataModelFieldAddressSettingsFormCard } from '@/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressSettingsFormCard';
 import { settingsDataModelFieldBooleanFormSchema } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm';
 import { SettingsDataModelFieldBooleanSettingsFormCard } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanSettingsFormCard';
-import { settingsDataModelFieldtextFormSchema } from '@/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm';
+import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
+import { settingsDataModelFieldTextFormSchema } from '@/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm';
 import { SettingsDataModelFieldTextSettingsFormCard } from '@/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextSettingsFormCard';
 import { settingsDataModelFieldCurrencyFormSchema } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
 import { SettingsDataModelFieldCurrencySettingsFormCard } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencySettingsFormCard';
@@ -66,7 +67,7 @@ const numberFieldFormSchema = z
 
 const textFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.TEXT) })
-  .merge(settingsDataModelFieldtextFormSchema);
+  .merge(settingsDataModelFieldTextFormSchema);
 
 const addressFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.ADDRESS) })
@@ -144,6 +145,7 @@ const previewableTypes = [
   FieldMetadataType.RELATION,
   FieldMetadataType.SELECT,
   FieldMetadataType.TEXT,
+  FieldMetadataType.UUID,
 ];
 
 export const SettingsDataModelFieldSettingsFormCard = ({
@@ -247,6 +249,11 @@ export const SettingsDataModelFieldSettingsFormCard = ({
         <StyledFieldPreviewCard
           fieldMetadataItem={fieldMetadataItem}
           objectMetadataItem={objectMetadataItem}
+        />
+      }
+      form={
+        <SettingsDataModelFieldIsUniqueForm
+          fieldMetadataItem={fieldMetadataItem}
         />
       }
     />
