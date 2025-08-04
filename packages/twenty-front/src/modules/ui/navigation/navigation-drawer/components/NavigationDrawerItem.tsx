@@ -8,11 +8,18 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import isPropValid from '@emotion/is-prop-valid';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { Pill } from 'twenty-ui/components';
-import { IconComponent, Label, TablerIconsProps } from 'twenty-ui/display';
+import {
+  AppTooltip,
+  IconComponent,
+  Label,
+  TablerIconsProps,
+  TooltipDelay,
+  TooltipPosition,
+} from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { TriggerEventType, useMouseDownNavigation } from 'twenty-ui/utilities';
 
@@ -263,6 +270,18 @@ export const NavigationDrawerItem = ({
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
 
+  const navigationItemId = useMemo(() => {
+    const cleanLabel = label
+      .replace(/\s+/g, '-')
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, '');
+    const cleanRoute = to
+      ? `-${to.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`
+      : '';
+    const baseId = `nav-item-${cleanLabel}${cleanRoute}`;
+    return baseId.length > 50 ? baseId.substring(0, 50) : baseId;
+  }, [label, to]);
+
   const showBreadcrumb = indentationLevel === 2;
   const showStyledSpacer = Boolean(
     soon || isNew || count || keyboard || rightOptions,
@@ -287,6 +306,7 @@ export const NavigationDrawerItem = ({
   return (
     <StyledNavigationDrawerItemContainer>
       <StyledItem
+        id={navigationItemId}
         className={`navigation-drawer-item ${className || ''}`}
         onClick={
           mouseUpNavigation ? onClick : handleMouseDownNavigationClickClick
@@ -327,17 +347,33 @@ export const NavigationDrawerItem = ({
             </StyledIcon>
           )}
 
-          <StyledLabelParent>
-            <StyledEllipsisContainer>
-              <StyledItemLabel>{label}</StyledItemLabel>
-              {secondaryLabel && (
-                <StyledItemSecondaryLabel>
-                  {' · '}
-                  {secondaryLabel}
-                </StyledItemSecondaryLabel>
-              )}
-            </StyledEllipsisContainer>
-          </StyledLabelParent>
+          {isNavigationDrawerExpanded || isSettingsPage ? (
+            <StyledLabelParent>
+              <StyledEllipsisContainer>
+                <StyledItemLabel>{label}</StyledItemLabel>
+                {secondaryLabel && (
+                  <StyledItemSecondaryLabel>
+                    {' · '}
+                    {secondaryLabel}
+                  </StyledItemSecondaryLabel>
+                )}
+              </StyledEllipsisContainer>
+            </StyledLabelParent>
+          ) : (
+            <NavigationDrawerAnimatedCollapseWrapper>
+              <StyledLabelParent>
+                <StyledEllipsisContainer>
+                  <StyledItemLabel>{label}</StyledItemLabel>
+                  {secondaryLabel && (
+                    <StyledItemSecondaryLabel>
+                      {' · '}
+                      {secondaryLabel}
+                    </StyledItemSecondaryLabel>
+                  )}
+                </StyledEllipsisContainer>
+              </StyledLabelParent>
+            </NavigationDrawerAnimatedCollapseWrapper>
+          )}
 
           {showStyledSpacer && <StyledSpacer />}
 
@@ -388,6 +424,18 @@ export const NavigationDrawerItem = ({
           )}
         </StyledItemElementsContainer>
       </StyledItem>
+
+      {!isNavigationDrawerExpanded && !isMobile && (
+        <AppTooltip
+          anchorSelect={`#${navigationItemId}`}
+          content={label}
+          place={TooltipPosition.Right}
+          delay={TooltipDelay.shortDelay}
+          offset={8}
+          noArrow={false}
+          width="200px"
+        />
+      )}
     </StyledNavigationDrawerItemContainer>
   );
 };
