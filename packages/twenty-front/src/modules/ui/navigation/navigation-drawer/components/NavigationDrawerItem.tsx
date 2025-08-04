@@ -2,16 +2,16 @@ import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
+import { useNavigationDrawerTooltip } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerTooltip';
 import { NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import isPropValid from '@emotion/is-prop-valid';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ReactNode, useMemo } from 'react';
+import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { slugify } from 'transliteration';
 import { Pill } from 'twenty-ui/components';
 import {
   AppTooltip,
@@ -186,13 +186,6 @@ const StyledKeyBoardShortcut = styled.span`
 const StyledNavigationDrawerItemContainer = styled.div`
   display: flex;
   width: 100%;
-
-  .navigation-tooltip-force-right {
-    /* Force tooltip to always stay on the right side */
-    max-width: 300px !important;
-    white-space: nowrap !important;
-    transform: translateX(0) !important;
-  }
 `;
 
 const StyledSpacer = styled.span`
@@ -278,12 +271,7 @@ export const NavigationDrawerItem = ({
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
 
-  const navigationItemId = useMemo(() => {
-    const slugifiedLabel = slugify(label);
-    const slugifiedRoute = to ? `-${slugify(to)}` : '';
-    const baseId = `nav-item-${slugifiedLabel}${slugifiedRoute}`;
-    return baseId.length > 50 ? baseId.substring(0, 50) : baseId;
-  }, [label, to]);
+  const { navigationItemId } = useNavigationDrawerTooltip(label, to);
 
   const showBreadcrumb = indentationLevel === 2;
   const showStyledSpacer = Boolean(
@@ -350,33 +338,17 @@ export const NavigationDrawerItem = ({
             </StyledIcon>
           )}
 
-          {isNavigationDrawerExpanded || isSettingsPage ? (
-            <StyledLabelParent>
-              <StyledEllipsisContainer>
-                <StyledItemLabel>{label}</StyledItemLabel>
-                {secondaryLabel && (
-                  <StyledItemSecondaryLabel>
-                    {' · '}
-                    {secondaryLabel}
-                  </StyledItemSecondaryLabel>
-                )}
-              </StyledEllipsisContainer>
-            </StyledLabelParent>
-          ) : (
-            <NavigationDrawerAnimatedCollapseWrapper>
-              <StyledLabelParent>
-                <StyledEllipsisContainer>
-                  <StyledItemLabel>{label}</StyledItemLabel>
-                  {secondaryLabel && (
-                    <StyledItemSecondaryLabel>
-                      {' · '}
-                      {secondaryLabel}
-                    </StyledItemSecondaryLabel>
-                  )}
-                </StyledEllipsisContainer>
-              </StyledLabelParent>
-            </NavigationDrawerAnimatedCollapseWrapper>
-          )}
+          <StyledLabelParent>
+            <StyledEllipsisContainer>
+              <StyledItemLabel>{label}</StyledItemLabel>
+              {secondaryLabel && (
+                <StyledItemSecondaryLabel>
+                  {' · '}
+                  {secondaryLabel}
+                </StyledItemSecondaryLabel>
+              )}
+            </StyledEllipsisContainer>
+          </StyledLabelParent>
 
           {showStyledSpacer && <StyledSpacer />}
 
@@ -433,12 +405,8 @@ export const NavigationDrawerItem = ({
           anchorSelect={`#${navigationItemId}`}
           content={label}
           place={TooltipPosition.Right}
-          delay={TooltipDelay.shortDelay}
-          offset={12}
-          noArrow={false}
-          width="250px"
+          delay={TooltipDelay.noDelay}
           positionStrategy="fixed"
-          className="navigation-tooltip-force-right"
         />
       )}
     </StyledNavigationDrawerItemContainer>
