@@ -101,7 +101,7 @@ export const ActivityRichTextEditor = ({
   const isRecordFieldReadOnly = useIsRecordFieldReadOnly({
     recordId: activityId,
     objectMetadataId: objectMetadataItemActivity.id,
-    fieldMetadataId: bodyV2FieldMetadataItemId,
+    fieldMetadataId: bodyV2FieldMetadataItemId ?? '',
   });
 
   const persistBodyDebounced = useDebouncedCallback((blocknote: string) => {
