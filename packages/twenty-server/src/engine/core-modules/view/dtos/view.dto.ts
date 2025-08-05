@@ -5,6 +5,7 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
+import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 
 registerEnumType(ViewOpenRecordIn, { name: 'ViewOpenRecordIn' });
 
@@ -19,8 +20,8 @@ export class ViewDTO {
   @Field(() => UUIDScalarType, { nullable: false })
   objectMetadataId: string;
 
-  @Field({ nullable: false, defaultValue: 'table' })
-  type: string;
+  @Field(() => ViewType, { nullable: false, defaultValue: ViewType.TABLE })
+  type: ViewType;
 
   @Field({ nullable: true, defaultValue: 'INDEX' })
   key: string;
