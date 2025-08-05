@@ -85,6 +85,7 @@
     "graphiql": "^3.1.1",
     "graphql": "16.8.0",
     "graphql-fields": "^2.0.3",
+    "graphql-middleware": "^6.1.35",
     "graphql-rate-limit": "^3.3.0",
     "graphql-redis-subscriptions": "^2.7.0",
     "graphql-scalars": "^1.23.0",
