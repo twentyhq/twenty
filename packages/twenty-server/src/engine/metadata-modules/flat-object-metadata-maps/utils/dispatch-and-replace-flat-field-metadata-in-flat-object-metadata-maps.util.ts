@@ -19,7 +19,7 @@ export const dispatchAndReplaceFlatFieldMetadataInFlatObjectMetadataMaps = ({
     throw new Error('TOOD'); // TODO prastoin custom exception or swallow
   }
 
-  const flatObjectMetadataMapsWithFlatFieldMetadata =
+  const flatObjectMetadataMapsWithoutFlatFieldMetadataToReplace =
     deleteFieldFromFlatObjectMetadataMaps({
       fieldMetadataId: flatFieldMetadata.id,
       flatObjectMetadataMaps,
@@ -28,6 +28,7 @@ export const dispatchAndReplaceFlatFieldMetadataInFlatObjectMetadataMaps = ({
 
   return dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps({
     flatFieldMetadata,
-    flatObjectMetadataMaps: flatObjectMetadataMapsWithFlatFieldMetadata,
+    flatObjectMetadataMaps:
+      flatObjectMetadataMapsWithoutFlatFieldMetadataToReplace,
   });
 };
