@@ -1,4 +1,4 @@
-import { computeWorkflowVersionStepChanges } from 'src/modules/workflow/workflow-builder/workflow-step/utils/compute-workflow-version-step-updates.util';
+import { computeWorkflowVersionStepChanges } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-version-step-updates.util';
 import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
