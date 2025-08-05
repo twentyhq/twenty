@@ -53,6 +53,7 @@ import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagra
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
+import { useIsEdgeHovered } from '@/workflow/workflow-diagram/hooks/useIsEdgeHovered';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -187,6 +188,8 @@ export const WorkflowDiagramCanvasBase = ({
   const setWorkflowDiagramWaitingNodesDimensions = useSetRecoilComponentStateV2(
     workflowDiagramWaitingNodesDimensionsComponentState,
   );
+
+  const { setEdgeHovered, setNoEdgeHovered } = useIsEdgeHovered();
 
   const isWorkflowBranchEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
@@ -436,6 +439,17 @@ export const WorkflowDiagramCanvasBase = ({
     [handlePaneContextMenu],
   );
 
+  const onEdgeMouseEnter = useCallback(
+    (_: React.MouseEvent<Element, MouseEvent>, edge: WorkflowDiagramEdge) => {
+      setEdgeHovered(edge.id);
+    },
+    [setEdgeHovered],
+  );
+
+  const onEdgeMouseLeave = useCallback(() => {
+    setNoEdgeHovered();
+  }, [setNoEdgeHovered]);
+
   return (
     <StyledResetReactflowStyles ref={containerRef}>
       <WorkflowDiagramCustomMarkers />
@@ -449,6 +463,8 @@ export const WorkflowDiagramCanvasBase = ({
         edgeTypes={edgeTypes}
         nodes={nodes}
         edges={edges}
+        onEdgeMouseEnter={onEdgeMouseEnter}
+        onEdgeMouseLeave={onEdgeMouseLeave}
         onNodesChange={handleNodesChanges}
         onEdgesChange={handleEdgesChange}
         onConnect={isWorkflowBranchEnabled ? onConnect : undefined}
