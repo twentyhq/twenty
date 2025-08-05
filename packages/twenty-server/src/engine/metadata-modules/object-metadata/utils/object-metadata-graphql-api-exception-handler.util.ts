@@ -1,3 +1,5 @@
+import { QueryFailedError } from 'typeorm';
+
 import {
   ConflictError,
   ForbiddenError,
@@ -34,6 +36,31 @@ export const objectMetadataGraphqlApiExceptionHandler = (error: Error) => {
         const _exhaustiveCheck: never = error.code;
 
         throw error;
+      }
+    }
+  }
+
+  if (error instanceof QueryFailedError) {
+    if (
+      error.message.includes('duplicate key value violates unique constraint')
+    ) {
+      const constraintMatch = error.message.match(/"([^"]+)"/);
+      const constraintName = constraintMatch?.[1];
+
+      if (
+        constraintName ===
+        'IDX_FIELD_METADATA_NAME_OBJMID_WORKSPACE_ID_EXCEPT_MORPH_UNIQUE'
+      ) {
+        throw new ConflictError(
+          new ObjectMetadataException(
+            'Field name conflicts with a system field. Please choose a different name.',
+            ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+            {
+              userFriendlyMessage:
+                'Field name conflicts with a system field. Please choose a different name.',
+            },
+          ),
+        );
       }
     }
   }
