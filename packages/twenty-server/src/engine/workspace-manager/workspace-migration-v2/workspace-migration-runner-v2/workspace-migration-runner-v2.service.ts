@@ -58,7 +58,8 @@ export class WorkspaceMigrationRunnerV2Service {
         sequentiallyOptimisticallyRenderedFlatObjectMetadataMaps =
           applyWorkspaceMigrationActionOnFlatObjectMetadataMaps({
             action,
-            flatObjectMetadataMaps,
+            flatObjectMetadataMaps:
+              sequentiallyOptimisticallyRenderedFlatObjectMetadataMaps,
           });
       }
 

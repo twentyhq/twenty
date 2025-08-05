@@ -5,8 +5,6 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 export const fromFlatObjectMetadataToFlatObjectMetadataWithFlatFieldMaps = (
   flatObjectMetadata: FlatObjectMetadata,
 ): FlatObjectMetadataWithFlatFieldMaps => {
-  const fields = flatObjectMetadata.flatFieldMetadatas;
-
   const emptyFlatObjectMetadataWithFlatFieldMaps: FlatObjectMetadataWithFlatFieldMaps =
     {
       ...flatObjectMetadata,
@@ -15,7 +13,7 @@ export const fromFlatObjectMetadataToFlatObjectMetadataWithFlatFieldMaps = (
       fieldsById: {},
     };
 
-  return fields.reduce(
+  return flatObjectMetadata.flatFieldMetadatas.reduce(
     (flatObjectMetadataWithFlatFieldMaps, flatFieldMetadata) =>
       addFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMaps({
         flatFieldMetadata,

@@ -16,7 +16,7 @@ export const dispatchAndReplaceFlatFieldMetadataInFlatObjectMetadataMaps = ({
     flatObjectMetadataMaps.byId[flatFieldMetadata.objectMetadataId];
 
   if (!isDefined(flatObjectMetadataWithFlatFieldMaps)) {
-    throw new Error('TOOD'); // TODO prastoin custom exception or swallow
+    throw new Error('TODO'); // TODO prastoin custom exception or swallow
   }
 
   const flatObjectMetadataMapsWithoutFlatFieldMetadataToReplace =

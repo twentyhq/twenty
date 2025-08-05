@@ -20,7 +20,7 @@ export class WorkspaceMetadataObjectActionRunnerService
 {
   constructor(
     private readonly dataSourceService: DataSourceService,
-    private readonly workspaceMetadataFieldMigrationRunnerService: WorkspaceMetadataFieldActionRunnerService,
+    private readonly workspaceMetadataFieldActionRunnerService: WorkspaceMetadataFieldActionRunnerService,
   ) {}
 
   runDeleteObjectMetadataMigration = async ({
@@ -55,7 +55,7 @@ export class WorkspaceMetadataObjectActionRunnerService
     });
 
     for (const createFieldAction of createFieldActions) {
-      await this.workspaceMetadataFieldMigrationRunnerService.runCreateFieldMetadataMigration(
+      await this.workspaceMetadataFieldActionRunnerService.runCreateFieldMetadataMigration(
         {
           action: createFieldAction,
           queryRunner,

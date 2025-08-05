@@ -7,8 +7,8 @@ export const replaceFlatObjectMetadataInFlatObjectMetadataMaps = ({
   flatObjectMetadata,
   flatObjectMetadataMaps,
 }: {
-  flatObjectMetadataMaps: FlatObjectMetadataMaps;
   flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadataMaps: FlatObjectMetadataMaps;
 }) => {
   const flatObjectMetadataMapsWithoutFlatObjectMetadataToReplace =
     deleteObjectFromFlatObjectMetadataMaps({

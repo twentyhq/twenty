@@ -12,7 +12,7 @@ export const deleteObjectFromFlatObjectMetadataMaps = ({
 }: DeleteObjectFromFlatObjectMetadataMapsArgs): FlatObjectMetadataMaps => {
   const updatedIdByNameSingularEntries = Object.entries(
     flatObjectMetadataMaps.idByNameSingular,
-  ).filter(([id]) => id !== objectMetadataId);
+  ).filter(([_nameSingular, id]) => id !== objectMetadataId);
 
   return {
     byId: removePropertiesFromRecord(flatObjectMetadataMaps.byId, [

@@ -2,14 +2,14 @@ import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 
 import { FlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-with-flat-field-metadata-maps.type';
 
-type DeleteObjectFromFlatObjectMetadataMapsArgs = {
+type DeleteFieldFromFlatObjectMetadataMapsArgs = {
   fieldMetadataId: string;
   flatObjectMetadataWithFlatFieldMaps: FlatObjectMetadataWithFlatFieldMaps;
 };
 export const deleteFieldFromFlatObjectMetadataWithFlatFieldMaps = ({
   flatObjectMetadataWithFlatFieldMaps,
   fieldMetadataId: fieldMetadataIdToRemove,
-}: DeleteObjectFromFlatObjectMetadataMapsArgs): FlatObjectMetadataWithFlatFieldMaps => {
+}: DeleteFieldFromFlatObjectMetadataMapsArgs): FlatObjectMetadataWithFlatFieldMaps => {
   const flatFieldMetadataToRemove =
     flatObjectMetadataWithFlatFieldMaps.fieldsById[fieldMetadataIdToRemove];
 
@@ -25,7 +25,7 @@ export const deleteFieldFromFlatObjectMetadataWithFlatFieldMaps = ({
   } = flatObjectMetadataWithFlatFieldMaps;
   const updatedFieldIdByJoinColumnName = Object.entries(
     fieldIdByJoinColumnName,
-  ).filter(([fieldId]) => fieldId !== fieldMetadataIdToRemove);
+  ).filter(([_joinColumnName, fieldId]) => fieldId !== fieldMetadataIdToRemove);
 
   return {
     ...flatObjectMetadataWithFlatFieldMaps,
