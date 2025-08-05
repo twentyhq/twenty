@@ -1,7 +1,7 @@
-import { fromArrayToKeyRecordArray, isDefined } from 'twenty-shared/utils';
+import { fromArrayToValuesByKeyRecord, isDefined } from 'twenty-shared/utils';
 
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { mergeTwoFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/merge-two-flat-field-metadatas.util';
+import { mergeFlatFieldMetadatasInFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/merge-flat-field-metadatas-in-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type DispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatasArgs = {
@@ -17,7 +17,7 @@ export const dispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatas = ({
   }
 
   const flatFieldMetadataGroupedByFlatObjectMetadataId =
-    fromArrayToKeyRecordArray({
+    fromArrayToValuesByKeyRecord({
       array: flatFieldMetadatas,
       key: 'objectMetadataId',
     });
@@ -30,12 +30,9 @@ export const dispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatas = ({
       return flatObjectMetadata;
     }
 
-    return {
-      ...flatObjectMetadata,
-      flatFieldMetadatas: mergeTwoFlatFieldMetadatas({
-        destFlatFieldMetadatas: flatObjectMetadata.flatFieldMetadatas,
-        toMergeFlatFieldMetadatas,
-      }),
-    };
+    return mergeFlatFieldMetadatasInFlatObjectMetadata({
+      flatFieldMetadatas: toMergeFlatFieldMetadatas,
+      flatObjectMetadata,
+    });
   });
 };

@@ -17,6 +17,7 @@ import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/f
 import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-and-its-flat-object-metadata.util';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { mergeFlatFieldMetadatasInFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/merge-flat-field-metadatas-in-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { dispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/dispatch-and-merge-flat-field-metadatas-in-flat-object-metadatas.util';
 import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-with-flat-field-maps-to-flat-object-metadatas.util';
@@ -105,7 +106,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
     );
 
     for (const flatFieldMetadataToCreate of flatFieldMetadatasToCreate) {
-      let othersFlatObjectMetadataToValidate: FlatObjectMetadata[] | undefined =
+      let otherFlatObjectMetadataToValidate: FlatObjectMetadata | undefined =
         undefined;
 
       if (
@@ -118,23 +119,32 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
           FieldMetadataType.MORPH_RELATION,
         )
       ) {
-        const relatedRelationFlatFieldMetadataToCreate =
-          flatFieldMetadatasToCreate.filter(
+        const relatedFlatFieldMetadataToCreate =
+          flatFieldMetadatasToCreate.find(
             (relatedFlatFieldMetadata) =>
               isFlatFieldMetadataEntityOfType(
                 relatedFlatFieldMetadata,
                 FieldMetadataType.RELATION,
               ) &&
-              relatedFlatFieldMetadata.relationTargetObjectMetadataId ===
-                flatFieldMetadataToCreate.objectMetadataId &&
-              relatedFlatFieldMetadata.id !== flatFieldMetadataToCreate.id,
+              relatedFlatFieldMetadata.id ===
+                flatFieldMetadataToCreate.relationTargetFieldMetadataId,
           );
+        const relatedFlatObjectMetadata = isDefined(
+          relatedFlatFieldMetadataToCreate,
+        )
+          ? existingFlatObjectMetadataMaps.byId[
+              relatedFlatFieldMetadataToCreate.objectMetadataId
+            ]
+          : undefined;
 
-        othersFlatObjectMetadataToValidate =
-          dispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatas({
-            flatFieldMetadatas: relatedRelationFlatFieldMetadataToCreate,
-            flatObjectMetadatas: impactedExistingFlatObjectMetadatas,
-          });
+        otherFlatObjectMetadataToValidate =
+          isDefined(relatedFlatObjectMetadata) &&
+          isDefined(relatedFlatFieldMetadataToCreate)
+            ? mergeFlatFieldMetadatasInFlatObjectMetadata({
+                flatFieldMetadatas: [relatedFlatFieldMetadataToCreate],
+                flatObjectMetadata: relatedFlatObjectMetadata,
+              })
+            : undefined;
       }
 
       const validationErrors =
@@ -144,7 +154,11 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
               sequentiallyOptimisticallyRenderedFlatObjectMetadatas,
             flatFieldMetadataToValidate: flatFieldMetadataToCreate,
             workspaceId,
-            othersFlatObjectMetadataToValidate,
+            othersFlatObjectMetadataToValidate: isDefined(
+              otherFlatObjectMetadataToValidate,
+            )
+              ? [otherFlatObjectMetadataToValidate]
+              : undefined,
           },
         );
 

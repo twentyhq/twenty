@@ -11,8 +11,8 @@ export { assertUnreachable } from './assertUnreachable';
 export { deepMerge } from './deepMerge';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
-export { fromArrayToKeyRecordArray } from './from-array-to-key-record.util';
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
+export { fromArrayToValuesByKeyRecord } from './fromArrayToValuesByKeyRecord.util';
 export { getURLSafely } from './getURLSafely';
 export { getImageAbsoluteURI } from './image/getImageAbsoluteURI';
 export {
