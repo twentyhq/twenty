@@ -5,7 +5,6 @@ import {
   UpdateObjectAction,
   WorkspaceMigrationObjectActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
-import { fromFlatObjectMetadataToFlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/from-flat-object-metadata-to-flat-object-metadata-without-fields.util';
 import { getWorkspaceMigrationV2FieldCreateAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-field-actions';
 import {
   getWorkspaceMigrationV2ObjectCreateAction,
@@ -56,8 +55,7 @@ export const buildWorkspaceMigrationV2ObjectActions = ({
 
       return {
         type: 'update_object',
-        flatObjectMetadataWithoutFields:
-          fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(to),
+        objectMetadataId: to.id,
         updates: objectUpdatedProperties,
       };
     });
