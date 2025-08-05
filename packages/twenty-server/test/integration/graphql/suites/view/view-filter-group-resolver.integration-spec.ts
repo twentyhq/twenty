@@ -3,19 +3,21 @@ import { createViewFilterGroupOperationFactory } from 'test/integration/graphql/
 import { deleteViewFilterGroupOperationFactory } from 'test/integration/graphql/utils/delete-view-filter-group-operation-factory.util';
 import { findViewFilterGroupOperationFactory } from 'test/integration/graphql/utils/find-view-filter-group-operation-factory.util';
 import { findViewFilterGroupsOperationFactory } from 'test/integration/graphql/utils/find-view-filter-groups-operation-factory.util';
+import {
+  assertGraphQLErrorResponse,
+  assertGraphQLSuccessfulResponse,
+} from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateViewFilterGroupOperationFactory } from 'test/integration/graphql/utils/update-view-filter-group-operation-factory.util';
 import {
   createViewFilterGroupData,
   updateViewFilterGroupData,
 } from 'test/integration/graphql/utils/view-data-factory.util';
+import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
 import {
-  assertErrorResponse,
-  assertSuccessfulResponse,
   assertViewFilterGroupStructure,
   cleanupViewRecords,
-  createTestView,
-} from 'test/integration/graphql/utils/view-test.util';
+} from 'test/integration/utils/view-test.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
@@ -27,7 +29,7 @@ describe('View Filter Group Resolver', () => {
   beforeEach(async () => {
     await cleanupViewRecords();
 
-    const view = await createTestView({
+    const view = await createTestViewWithGraphQL({
       name: 'Test View for Groups',
     });
 
@@ -45,7 +47,7 @@ describe('View Filter Group Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getCoreViewFilterGroups).toEqual([]);
     });
 
@@ -62,7 +64,7 @@ describe('View Filter Group Resolver', () => {
       const getOperation = findViewFilterGroupsOperationFactory();
       const response = await makeGraphqlAPIRequest(getOperation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getCoreViewFilterGroups).toHaveLength(1);
       expect(response.body.data.getCoreViewFilterGroups[0]).toMatchObject({
         logicalOperator: ViewFilterGroupLogicalOperator.AND,
@@ -85,7 +87,7 @@ describe('View Filter Group Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(getOperation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getCoreViewFilterGroups).toHaveLength(1);
       assertViewFilterGroupStructure(
         response.body.data.getCoreViewFilterGroups[0],
@@ -121,7 +123,7 @@ describe('View Filter Group Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(getOperation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getCoreViewFilterGroups).toHaveLength(2);
 
       const parentGroup = response.body.data.getCoreViewFilterGroups.find(
@@ -150,7 +152,7 @@ describe('View Filter Group Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getCoreViewFilterGroup).toBeNull();
     });
 
@@ -170,7 +172,7 @@ describe('View Filter Group Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(getOperation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       assertViewFilterGroupStructure(
         response.body.data.getCoreViewFilterGroup,
         {
@@ -192,7 +194,7 @@ describe('View Filter Group Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       assertViewFilterGroupStructure(
         response.body.data.createCoreViewFilterGroup,
         {
@@ -211,7 +213,7 @@ describe('View Filter Group Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       assertViewFilterGroupStructure(
         response.body.data.createCoreViewFilterGroup,
         {
@@ -229,7 +231,7 @@ describe('View Filter Group Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       assertViewFilterGroupStructure(
         response.body.data.createCoreViewFilterGroup,
         {
@@ -257,7 +259,7 @@ describe('View Filter Group Resolver', () => {
       });
       const childResponse = await makeGraphqlAPIRequest(childOperation);
 
-      assertSuccessfulResponse(childResponse);
+      assertGraphQLSuccessfulResponse(childResponse);
       assertViewFilterGroupStructure(
         childResponse.body.data.createCoreViewFilterGroup,
         {
@@ -289,7 +291,7 @@ describe('View Filter Group Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(updateOperation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.updateCoreViewFilterGroup).toMatchObject({
         id: filterGroupId,
         logicalOperator: ViewFilterGroupLogicalOperator.OR,
@@ -324,7 +326,7 @@ describe('View Filter Group Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(updateOperation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.updateCoreViewFilterGroup).toMatchObject({
         id: childId,
         parentViewFilterGroupId: parentId,
@@ -341,7 +343,7 @@ describe('View Filter Group Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertErrorResponse(
+      assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
         ViewFilterGroupExceptionMessage.VIEW_FILTER_GROUP_NOT_FOUND,
@@ -366,7 +368,7 @@ describe('View Filter Group Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(deleteOperation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.deleteCoreViewFilterGroup).toBe(true);
 
       const getOperation = findViewFilterGroupOperationFactory({
@@ -383,7 +385,7 @@ describe('View Filter Group Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertErrorResponse(
+      assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
         ViewFilterGroupExceptionMessage.VIEW_FILTER_GROUP_NOT_FOUND,

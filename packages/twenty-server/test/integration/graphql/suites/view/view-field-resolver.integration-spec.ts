@@ -5,19 +5,21 @@ import {
 import { createViewFieldOperationFactory } from 'test/integration/graphql/utils/create-view-field-operation-factory.util';
 import { deleteViewFieldOperationFactory } from 'test/integration/graphql/utils/delete-view-field-operation-factory.util';
 import { findViewFieldsOperationFactory } from 'test/integration/graphql/utils/find-view-fields-operation-factory.util';
+import {
+  assertGraphQLErrorResponse,
+  assertGraphQLSuccessfulResponse,
+} from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateViewFieldOperationFactory } from 'test/integration/graphql/utils/update-view-field-operation-factory.util';
 import {
   createViewFieldData,
   updateViewFieldData,
 } from 'test/integration/graphql/utils/view-data-factory.util';
+import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
 import {
-  assertErrorResponse,
-  assertSuccessfulResponse,
   assertViewFieldStructure,
   cleanupViewRecords,
-  createTestView,
-} from 'test/integration/graphql/utils/view-test.util';
+} from 'test/integration/utils/view-test.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ViewFieldExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-field.exception';
@@ -28,7 +30,7 @@ describe('View Field Resolver', () => {
   beforeEach(async () => {
     await cleanupViewRecords();
 
-    const view = await createTestView({
+    const view = await createTestViewWithGraphQL({
       name: 'Test View for Groups',
     });
 
@@ -44,7 +46,7 @@ describe('View Field Resolver', () => {
       const operation = findViewFieldsOperationFactory({ viewId: testViewId });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getCoreViewFields).toEqual([]);
     });
 
@@ -65,7 +67,7 @@ describe('View Field Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(getOperation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getCoreViewFields).toHaveLength(1);
       assertViewFieldStructure(response.body.data.getCoreViewFields[0], {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
@@ -88,7 +90,7 @@ describe('View Field Resolver', () => {
       const operation = createViewFieldOperationFactory({ data: fieldData });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       assertViewFieldStructure(response.body.data.createCoreViewField, {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         position: 1,
@@ -110,7 +112,7 @@ describe('View Field Resolver', () => {
       const operation = createViewFieldOperationFactory({ data: fieldData });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       assertViewFieldStructure(response.body.data.createCoreViewField, {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         position: 2,
@@ -145,7 +147,7 @@ describe('View Field Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(updateOperation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.updateCoreViewField).toMatchObject({
         id: viewField.id,
         position: 5,
@@ -160,7 +162,7 @@ describe('View Field Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertErrorResponse(
+      assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
         ViewFieldExceptionMessage.VIEW_FIELD_NOT_FOUND,
@@ -182,7 +184,7 @@ describe('View Field Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(deleteOperation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.deleteCoreViewField).toBe(true);
     });
 
@@ -192,7 +194,7 @@ describe('View Field Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertErrorResponse(
+      assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
         ViewFieldExceptionMessage.VIEW_FIELD_NOT_FOUND,

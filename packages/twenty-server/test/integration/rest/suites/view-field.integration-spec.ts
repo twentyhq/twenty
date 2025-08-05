@@ -5,14 +5,18 @@ import {
 } from 'test/integration/constants/test-view-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
-  assertErrorResponse,
-  assertSuccessfulResponse,
+  assertRestApiErrorResponse,
+  assertRestApiSuccessfulResponse,
+} from 'test/integration/rest/utils/rest-test-assertions.util';
+import {
+  createTestViewFieldWithRestApi,
+  createTestViewWithRestApi,
+  deleteTestViewFieldWithRestApi,
+} from 'test/integration/rest/utils/view-rest-api.util';
+import {
   assertViewFieldStructure,
   cleanupViewRecords,
-  createTestView,
-  createTestViewField,
-  deleteTestViewField,
-} from 'test/integration/rest/utils/view-test.util';
+} from 'test/integration/utils/view-test.util';
 
 import { ViewFieldExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-field.exception';
 
@@ -20,7 +24,7 @@ describe('View Field REST API', () => {
   beforeEach(async () => {
     await cleanupViewRecords();
 
-    await createTestView({
+    await createTestViewWithRestApi({
       name: 'Test View for Fields',
     });
   });
@@ -37,7 +41,7 @@ describe('View Field REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(response.body).toEqual([]);
     });
 
@@ -48,12 +52,12 @@ describe('View Field REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(Array.isArray(response.body)).toBe(true);
     });
 
     it('should return view fields for a specific view after creating one', async () => {
-      const viewField = await createTestViewField({
+      const viewField = await createTestViewFieldWithRestApi({
         position: 0,
         isVisible: true,
         size: 150,
@@ -65,7 +69,7 @@ describe('View Field REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(Array.isArray(response.body)).toBe(true);
       expect(response.body).toHaveLength(1);
 
@@ -80,13 +84,13 @@ describe('View Field REST API', () => {
         size: 150,
       });
 
-      await deleteTestViewField(viewField.id);
+      await deleteTestViewFieldWithRestApi(viewField.id);
     });
   });
 
   describe('POST /metadata/viewFields', () => {
     it('should create a new view field', async () => {
-      const viewField = await createTestViewField({
+      const viewField = await createTestViewFieldWithRestApi({
         position: 1,
         isVisible: true,
         size: 200,
@@ -100,11 +104,11 @@ describe('View Field REST API', () => {
         size: 200,
       });
 
-      await deleteTestViewField(viewField.id);
+      await deleteTestViewFieldWithRestApi(viewField.id);
     });
 
     it('should create a hidden view field', async () => {
-      const hiddenField = await createTestViewField({
+      const hiddenField = await createTestViewFieldWithRestApi({
         position: 2,
         isVisible: false,
         size: 100,
@@ -118,13 +122,13 @@ describe('View Field REST API', () => {
         size: 100,
       });
 
-      await deleteTestViewField(hiddenField.id);
+      await deleteTestViewFieldWithRestApi(hiddenField.id);
     });
   });
 
   describe('GET /metadata/viewFields/:id', () => {
     it('should return a view field by id', async () => {
-      const viewField = await createTestViewField({
+      const viewField = await createTestViewFieldWithRestApi({
         position: 0,
         isVisible: true,
         size: 150,
@@ -136,14 +140,14 @@ describe('View Field REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       assertViewFieldStructure(response.body, {
         id: viewField.id,
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         viewId: TEST_VIEW_1_ID,
       });
 
-      await deleteTestViewField(viewField.id);
+      await deleteTestViewFieldWithRestApi(viewField.id);
     });
 
     it('should return empty object for non-existent view field', async () => {
@@ -153,14 +157,14 @@ describe('View Field REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(response.body).toEqual({});
     });
   });
 
   describe('PATCH /metadata/viewFields/:id', () => {
     it('should update an existing view field', async () => {
-      const viewField = await createTestViewField({
+      const viewField = await createTestViewFieldWithRestApi({
         position: 0,
         isVisible: true,
         size: 150,
@@ -179,7 +183,7 @@ describe('View Field REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       assertViewFieldStructure(response.body, {
         id: viewField.id,
         position: 5,
@@ -189,7 +193,7 @@ describe('View Field REST API', () => {
         viewId: TEST_VIEW_1_ID,
       });
 
-      await deleteTestViewField(viewField.id);
+      await deleteTestViewFieldWithRestApi(viewField.id);
     });
 
     it('should return 404 error when updating non-existent view field', async () => {
@@ -206,7 +210,7 @@ describe('View Field REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertErrorResponse(
+      assertRestApiErrorResponse(
         response,
         404,
         ViewFieldExceptionMessage.VIEW_FIELD_NOT_FOUND,
@@ -216,7 +220,7 @@ describe('View Field REST API', () => {
 
   describe('DELETE /metadata/viewFields/:id', () => {
     it('should delete an existing view field', async () => {
-      const viewField = await createTestViewField({
+      const viewField = await createTestViewFieldWithRestApi({
         position: 0,
         isVisible: true,
         size: 150,
@@ -228,7 +232,7 @@ describe('View Field REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(deleteResponse);
+      assertRestApiSuccessfulResponse(deleteResponse);
       expect(deleteResponse.body.success).toBe(true);
 
       const getResponse = await makeRestAPIRequest({
@@ -237,7 +241,7 @@ describe('View Field REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(getResponse);
+      assertRestApiSuccessfulResponse(getResponse);
       expect(getResponse.body).toEqual({});
     });
 
@@ -248,7 +252,7 @@ describe('View Field REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertErrorResponse(
+      assertRestApiErrorResponse(
         response,
         404,
         ViewFieldExceptionMessage.VIEW_FIELD_NOT_FOUND,

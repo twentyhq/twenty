@@ -5,16 +5,18 @@ import {
 import { createViewFilterOperationFactory } from 'test/integration/graphql/utils/create-view-filter-operation-factory.util';
 import { deleteViewFilterOperationFactory } from 'test/integration/graphql/utils/delete-view-filter-operation-factory.util';
 import { findViewFiltersOperationFactory } from 'test/integration/graphql/utils/find-view-filters-operation-factory.util';
+import {
+  assertGraphQLErrorResponse,
+  assertGraphQLSuccessfulResponse,
+} from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateViewFilterOperationFactory } from 'test/integration/graphql/utils/update-view-filter-operation-factory.util';
 import { createViewFilterData } from 'test/integration/graphql/utils/view-data-factory.util';
+import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
 import {
-  assertErrorResponse,
-  assertSuccessfulResponse,
   assertViewFilterStructure,
   cleanupViewRecords,
-  createTestView,
-} from 'test/integration/graphql/utils/view-test.util';
+} from 'test/integration/utils/view-test.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ViewFilterExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-filter.exception';
@@ -25,7 +27,7 @@ describe('View Filter Resolver', () => {
   beforeEach(async () => {
     await cleanupViewRecords();
 
-    const view = await createTestView({
+    const view = await createTestViewWithGraphQL({
       name: 'Test View for Groups',
     });
 
@@ -41,7 +43,7 @@ describe('View Filter Resolver', () => {
       const operation = findViewFiltersOperationFactory({ viewId: testViewId });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getCoreViewFilters).toEqual([]);
     });
 
@@ -61,7 +63,7 @@ describe('View Filter Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(getOperation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getCoreViewFilters).toHaveLength(1);
       assertViewFilterStructure(response.body.data.getCoreViewFilters[0], {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
@@ -82,7 +84,7 @@ describe('View Filter Resolver', () => {
       const operation = createViewFilterOperationFactory({ data: filterData });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       assertViewFilterStructure(response.body.data.createCoreViewFilter, {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         operand: 'Equals',
@@ -100,7 +102,7 @@ describe('View Filter Resolver', () => {
       const operation = createViewFilterOperationFactory({ data: filterData });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       assertViewFilterStructure(response.body.data.createCoreViewFilter, {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         operand: 'GreaterThan',
@@ -119,7 +121,7 @@ describe('View Filter Resolver', () => {
 
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       assertViewFilterStructure(response.body.data.createCoreViewFilter, {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         operand: 'Is',
@@ -152,7 +154,7 @@ describe('View Filter Resolver', () => {
 
       const response = await makeGraphqlAPIRequest(updateOperation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       assertViewFilterStructure(response.body.data.updateCoreViewFilter, {
         id: viewFilterId,
         operand: 'DoesNotContain',
@@ -166,7 +168,7 @@ describe('View Filter Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertErrorResponse(
+      assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
         ViewFilterExceptionMessage.VIEW_FILTER_NOT_FOUND,
@@ -193,7 +195,7 @@ describe('View Filter Resolver', () => {
 
       const response = await makeGraphqlAPIRequest(deleteOperation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.deleteCoreViewFilter).toBe(true);
     });
 
@@ -203,7 +205,7 @@ describe('View Filter Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertErrorResponse(
+      assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
         ViewFilterExceptionMessage.VIEW_FILTER_NOT_FOUND,

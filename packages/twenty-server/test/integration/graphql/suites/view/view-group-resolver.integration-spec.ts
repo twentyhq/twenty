@@ -5,19 +5,21 @@ import {
 import { createViewGroupOperationFactory } from 'test/integration/graphql/utils/create-view-group-operation-factory.util';
 import { deleteViewGroupOperationFactory } from 'test/integration/graphql/utils/delete-view-group-operation-factory.util';
 import { findViewGroupsOperationFactory } from 'test/integration/graphql/utils/find-view-groups-operation-factory.util';
+import {
+  assertGraphQLErrorResponse,
+  assertGraphQLSuccessfulResponse,
+} from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateViewGroupOperationFactory } from 'test/integration/graphql/utils/update-view-group-operation-factory.util';
 import {
   createViewGroupData,
   updateViewGroupData,
 } from 'test/integration/graphql/utils/view-data-factory.util';
+import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
 import {
-  assertErrorResponse,
-  assertSuccessfulResponse,
   assertViewGroupStructure,
   cleanupViewRecords,
-  createTestView,
-} from 'test/integration/graphql/utils/view-test.util';
+} from 'test/integration/utils/view-test.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ViewGroupExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-group.exception';
@@ -28,7 +30,7 @@ describe('View Group Resolver', () => {
   beforeEach(async () => {
     await cleanupViewRecords();
 
-    const view = await createTestView({
+    const view = await createTestViewWithGraphQL({
       name: 'Test View for Groups',
     });
 
@@ -44,7 +46,7 @@ describe('View Group Resolver', () => {
       const operation = findViewGroupsOperationFactory({ viewId: testViewId });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getCoreViewGroups).toEqual([]);
     });
 
@@ -65,7 +67,7 @@ describe('View Group Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(getOperation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getCoreViewGroups).toHaveLength(1);
       assertViewGroupStructure(response.body.data.getCoreViewGroups[0], {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
@@ -90,7 +92,7 @@ describe('View Group Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       assertViewGroupStructure(response.body.data.createCoreViewGroup, {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         isVisible: false,
@@ -112,7 +114,7 @@ describe('View Group Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       assertViewGroupStructure(response.body.data.createCoreViewGroup, {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         isVisible: true,
@@ -146,7 +148,7 @@ describe('View Group Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(updateOperation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.updateCoreViewGroup).toMatchObject({
         id: viewGroup.id,
         isVisible: false,
@@ -161,7 +163,7 @@ describe('View Group Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertErrorResponse(
+      assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
         ViewGroupExceptionMessage.VIEW_GROUP_NOT_FOUND,
@@ -187,7 +189,7 @@ describe('View Group Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(deleteOperation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.deleteCoreViewGroup).toBe(true);
     });
 
@@ -197,7 +199,7 @@ describe('View Group Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertErrorResponse(
+      assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
         ViewGroupExceptionMessage.VIEW_GROUP_NOT_FOUND,
