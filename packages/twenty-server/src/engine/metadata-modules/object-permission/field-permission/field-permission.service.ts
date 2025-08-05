@@ -91,7 +91,23 @@ export class FieldPermissionService {
       workspaceId,
     }));
 
-    await this.fieldPermissionsRepository.upsert(fieldPermissions, {
+    const existingFieldPermissionsToDelete = existingFieldPermissions.filter(
+      (existingFieldPermissionToFilter) =>
+        fieldPermissionsToDeleteIds.includes(
+          existingFieldPermissionToFilter.id,
+        ),
+    );
+
+    const fieldPermissionsToUpsert = fieldPermissions.filter(
+      (fieldPermissionToUpsert) =>
+        !existingFieldPermissionsToDelete.some(
+          (existingFieldPermissionToDelete) =>
+            existingFieldPermissionToDelete.fieldMetadataId ===
+            fieldPermissionToUpsert.fieldMetadataId,
+        ),
+    );
+
+    await this.fieldPermissionsRepository.upsert(fieldPermissionsToUpsert, {
       conflictPaths: ['fieldMetadataId', 'roleId'],
     });
 
@@ -180,33 +196,6 @@ export class FieldPermissionService {
       throw new PermissionsException(
         PermissionsExceptionMessage.OBJECT_PERMISSION_NOT_FOUND,
         PermissionsExceptionCode.OBJECT_PERMISSION_NOT_FOUND,
-      );
-    }
-
-    if (rolePermissionOnObject.canRead === false) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.FIELD_RESTRICTION_ONLY_ALLOWED_ON_READABLE_OBJECT,
-        PermissionsExceptionCode.FIELD_RESTRICTION_ONLY_ALLOWED_ON_READABLE_OBJECT,
-      );
-    }
-
-    if (
-      rolePermissionOnObject.canUpdate === false &&
-      fieldPermission.canUpdateFieldValue === false
-    ) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT,
-        PermissionsExceptionCode.FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT,
-      );
-    }
-
-    if (
-      fieldPermission.canUpdateFieldValue === null &&
-      fieldPermission.canReadFieldValue === null
-    ) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.EMPTY_FIELD_PERMISSION_NOT_ALLOWED,
-        PermissionsExceptionCode.EMPTY_FIELD_PERMISSION_NOT_ALLOWED,
       );
     }
   }
