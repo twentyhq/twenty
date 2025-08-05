@@ -1,3 +1,5 @@
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -31,7 +33,8 @@ import {
   EdgeProps,
   getBezierPath,
 } from '@xyflow/react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconDotsVertical,
@@ -98,9 +101,14 @@ export const WorkflowDiagramFilterEdgeEditable = ({
     workflowVisualizerWorkflowIdComponentState,
   );
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
+  const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const { deleteStep } = useDeleteStep({ workflow });
   const { startNodeCreation, isNodeCreationStarted } = useStartNodeCreation();
+
+  const setCommandMenuNavigationStack = useSetRecoilState(
+    commandMenuNavigationStackState,
+  );
 
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
@@ -142,6 +150,10 @@ export const WorkflowDiagramFilterEdgeEditable = ({
   };
 
   const handleFilterButtonClick = () => {
+    if (!isInRightDrawer) {
+      setCommandMenuNavigationStack([]);
+    }
+
     openWorkflowEditFilterInCommandMenu({
       stepId: data.stepId,
       stepName: data.name,

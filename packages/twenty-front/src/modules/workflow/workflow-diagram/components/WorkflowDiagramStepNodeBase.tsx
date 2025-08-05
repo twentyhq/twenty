@@ -148,6 +148,7 @@ export const WorkflowDiagramStepNodeBase = ({
   RightFloatingElement,
   BottomHoverFloatingElement,
   displayHandle = true,
+  onClick,
   onMouseEnter,
   onMouseLeave,
 }: {
@@ -158,6 +159,7 @@ export const WorkflowDiagramStepNodeBase = ({
   RightFloatingElement?: React.ReactNode;
   BottomHoverFloatingElement?: React.ReactNode;
   displayHandle?: boolean;
+  onClick?: () => void;
   onMouseEnter?: (event: MouseEvent<HTMLDivElement>) => void;
   onMouseLeave?: (event: MouseEvent<HTMLDivElement>) => void;
 }) => {
@@ -165,6 +167,7 @@ export const WorkflowDiagramStepNodeBase = ({
     <StyledStepNodeContainer
       className="workflow-node-container"
       data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
+      onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >

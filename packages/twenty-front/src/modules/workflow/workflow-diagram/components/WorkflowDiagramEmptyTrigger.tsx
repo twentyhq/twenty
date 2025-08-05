@@ -1,5 +1,13 @@
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowDiagramStepNodeBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeBase';
 import styled from '@emotion/styled';
+import { useContext } from 'react';
+import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledStepNodeLabelIconContainer = styled.div`
   align-items: center;
@@ -11,12 +19,37 @@ const StyledStepNodeLabelIconContainer = styled.div`
 `;
 
 export const WorkflowDiagramEmptyTrigger = () => {
+  const { openWorkflowTriggerTypeInCommandMenu } = useWorkflowCommandMenu();
+
+  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
+    workflowVisualizerWorkflowIdComponentState,
+  );
+
+  const { isInRightDrawer } = useContext(ActionMenuContext);
+
+  const setCommandMenuNavigationStack = useSetRecoilState(
+    commandMenuNavigationStackState,
+  );
+
   return (
     <WorkflowDiagramStepNodeBase
       name="Add a Trigger"
       nodeType="trigger"
       variant="empty"
       Icon={<StyledStepNodeLabelIconContainer />}
+      onClick={() => {
+        console.log('Empty trigger clicked');
+
+        if (!isInRightDrawer) {
+          setCommandMenuNavigationStack([]);
+        }
+
+        if (!isDefined(workflowVisualizerWorkflowId)) {
+          return;
+        }
+
+        openWorkflowTriggerTypeInCommandMenu(workflowVisualizerWorkflowId);
+      }}
     />
   );
 };

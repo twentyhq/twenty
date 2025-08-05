@@ -38,11 +38,13 @@ export const WorkflowDiagramStepNodeEditableContent = ({
   selected,
   variant,
   onDelete,
+  onClick,
 }: {
   data: WorkflowDiagramStepNodeData;
   variant: WorkflowDiagramNodeVariant;
   selected: boolean;
   onDelete: () => void;
+  onClick?: () => void;
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -58,6 +60,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
     <WorkflowDiagramStepNodeBase
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onClick={onClick}
       name={data.name}
       variant={variant}
       nodeType={data.nodeType}

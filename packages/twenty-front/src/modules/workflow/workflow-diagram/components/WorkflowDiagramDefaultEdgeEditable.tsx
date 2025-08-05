@@ -1,3 +1,5 @@
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -17,7 +19,8 @@ import {
   EdgeProps,
   getBezierPath,
 } from '@xyflow/react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter, IconPlus } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
@@ -39,6 +42,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
   markerEnd,
 }: WorkflowDiagramDefaultEdgeEditableProps) => {
   const theme = useTheme();
+  const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -65,6 +69,10 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     workflowInsertStepIds.nextStepId === target &&
     workflowInsertStepIds.parentStepId === source;
 
+  const setCommandMenuNavigationStack = useSetRecoilState(
+    commandMenuNavigationStackState,
+  );
+
   const { openWorkflowEditFilterInCommandMenu } =
     useOpenWorkflowEditFilterInCommandMenu();
 
@@ -77,6 +85,10 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
 
     if (!isDefined(createdStep)) {
       return;
+    }
+
+    if (!isInRightDrawer) {
+      setCommandMenuNavigationStack([]);
     }
 
     openWorkflowEditFilterInCommandMenu({

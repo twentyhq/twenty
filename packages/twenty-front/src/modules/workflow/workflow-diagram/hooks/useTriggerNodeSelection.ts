@@ -8,6 +8,9 @@ import { useReactFlow } from '@xyflow/react';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+/**
+ * @deprecated To remove
+ */
 export const useTriggerNodeSelection = () => {
   const reactflow = useReactFlow<WorkflowDiagramNode, WorkflowDiagramEdge>();
 
