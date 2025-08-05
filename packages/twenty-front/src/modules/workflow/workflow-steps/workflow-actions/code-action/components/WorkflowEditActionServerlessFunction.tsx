@@ -1,6 +1,7 @@
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
 import {
@@ -60,12 +61,14 @@ import { CodeEditor, LightIconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
 
+const CODE_EDITOR_MIN_HEIGHT = 343;
+
 const StyledCodeEditorContainer = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
   flex: 1;
-  min-height: 343px;
+  min-height: ${CODE_EDITOR_MIN_HEIGHT}px;
   overflow: hidden;
 `;
 
@@ -80,7 +83,7 @@ const StyledFullScreenOverlay = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100vh;
-  z-index: 9999;
+  z-index: ${RootStackingContextZIndices.Dialog};
 `;
 
 const StyledFullScreenHeader = styled(PageHeader)`
@@ -385,6 +388,14 @@ export const WorkflowEditActionServerlessFunction = ({
 
   const testLogsTextAreaId = `${serverlessFunctionId}-test-logs`;
 
+  const getCodeEditorOptions = (includeLineNumbersConfig = true) => ({
+    readOnly: actionOptions.readonly,
+    domReadOnly: actionOptions.readonly,
+    scrollBeyondLastLine: false,
+    padding: { top: 4, bottom: 4 },
+    ...(includeLineNumbersConfig && { lineNumbersMinChars: 2 }),
+  });
+
   const handleEnterFullScreen = () => {
     setIsFullScreen(true);
     // Focus the overlay after it's rendered
@@ -433,13 +444,7 @@ export const WorkflowEditActionServerlessFunction = ({
         onChange={handleCodeChange}
         onMount={handleEditorDidMount}
         setMarkers={getWrongExportedFunctionMarkers}
-        options={{
-          readOnly: actionOptions.readonly,
-          domReadOnly: actionOptions.readonly,
-          scrollBeyondLastLine: false,
-          padding: { top: 4, bottom: 4 },
-          lineNumbersMinChars: 2,
-        }}
+        options={getCodeEditorOptions()}
       />
     </StyledCodeEditorContainer>
   );
@@ -469,12 +474,7 @@ export const WorkflowEditActionServerlessFunction = ({
           onChange={handleCodeChange}
           onMount={handleEditorDidMount}
           setMarkers={getWrongExportedFunctionMarkers}
-          options={{
-            readOnly: actionOptions.readonly,
-            domReadOnly: actionOptions.readonly,
-            scrollBeyondLastLine: false,
-            padding: { top: 4, bottom: 4 },
-          }}
+          options={getCodeEditorOptions(false)}
         />
       </div>
     </StyledFullScreenContent>
