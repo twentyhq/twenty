@@ -1,5 +1,5 @@
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSortRecords';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -19,7 +19,7 @@ export const useSaveRecordSortsToViewSorts = () => {
 
   const { currentView } = useGetCurrentViewOnly();
 
-  const currentRecordSortsCallbackState = useRecoilComponentCallbackStateV2(
+  const currentRecordSortsCallbackState = useRecoilComponentCallbackState(
     currentRecordSortsComponentState,
   );
 

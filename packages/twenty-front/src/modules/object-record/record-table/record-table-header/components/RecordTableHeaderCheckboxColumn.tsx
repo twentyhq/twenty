@@ -7,8 +7,8 @@ import { isRecordTableInitialLoadingComponentState } from '@/object-record/recor
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { Checkbox } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
@@ -34,7 +34,7 @@ const StyledColumnHeaderCell = styled.th<{
 `;
 
 export const RecordTableHeaderCheckboxColumn = () => {
-  const allRowsSelectedStatus = useRecoilComponentValueV2(
+  const allRowsSelectedStatus = useRecoilComponentValue(
     allRowsSelectedStatusComponentSelector,
   );
   const { selectAllRows, resetTableRowSelection, setHasUserSelectedAllRows } =
@@ -45,12 +45,12 @@ export const RecordTableHeaderCheckboxColumn = () => {
 
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const isRecordTableInitialLoading = useRecoilComponentValueV2(
+  const isRecordTableInitialLoading = useRecoilComponentValue(
     isRecordTableInitialLoadingComponentState,
     recordTableId,
   );
 
-  const allRecordIds = useRecoilComponentValueV2(
+  const allRecordIds = useRecoilComponentValue(
     recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );
@@ -68,12 +68,12 @@ export const RecordTableHeaderCheckboxColumn = () => {
     }
   };
 
-  const isFirstRowActive = useRecoilComponentFamilyValueV2(
+  const isFirstRowActive = useRecoilComponentFamilyValue(
     isRecordTableRowActiveComponentFamilyState,
     0,
   );
 
-  const isFirstRowFocused = useRecoilComponentFamilyValueV2(
+  const isFirstRowFocused = useRecoilComponentFamilyValue(
     isRecordTableRowFocusedComponentFamilyState,
     0,
   );

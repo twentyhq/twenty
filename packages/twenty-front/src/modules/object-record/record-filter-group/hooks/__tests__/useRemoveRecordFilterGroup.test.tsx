@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { act } from 'react';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { useRemoveRecordFilterGroup } from '../useRemoveRecordFilterGroup';
@@ -17,7 +17,7 @@ describe('useRemoveRecordFilterGroup', () => {
   it('should remove an existing record filter group', () => {
     const { result } = renderHook(
       () => {
-        const currentRecordFilterGroups = useRecoilComponentValueV2(
+        const currentRecordFilterGroups = useRecoilComponentValue(
           currentRecordFilterGroupsComponentState,
         );
 
@@ -60,7 +60,7 @@ describe('useRemoveRecordFilterGroup', () => {
   it('should not modify record filter groups when trying to remove a non-existent record filter group', () => {
     const { result } = renderHook(
       () => {
-        const currentRecordFilterGroups = useRecoilComponentValueV2(
+        const currentRecordFilterGroups = useRecoilComponentValue(
           currentRecordFilterGroupsComponentState,
         );
 

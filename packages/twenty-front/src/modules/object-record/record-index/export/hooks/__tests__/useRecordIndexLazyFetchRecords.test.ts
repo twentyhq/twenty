@@ -9,7 +9,7 @@ import {
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { ViewType } from '@/views/types/ViewType';
 import { expect } from '@storybook/test';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
@@ -161,7 +161,7 @@ describe('useRecordData', () => {
       const { result } = renderHook(
         () => {
           const [recordGroupFieldMetadata, setRecordGroupFieldMetadata] =
-            useRecoilComponentStateV2(
+            useRecoilComponentState(
               recordGroupFieldMetadataComponentState,
               recordIndexId,
             );
@@ -254,7 +254,7 @@ describe('useRecordData', () => {
       const { result } = renderHook(
         () => {
           const [recordGroupFieldMetadata, setRecordGroupFieldMetadata] =
-            useRecoilComponentStateV2(
+            useRecoilComponentState(
               recordGroupFieldMetadataComponentState,
               recordIndexId,
             );

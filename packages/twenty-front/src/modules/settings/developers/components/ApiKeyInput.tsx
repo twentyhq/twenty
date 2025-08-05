@@ -1,5 +1,5 @@
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import styled from '@emotion/styled';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { useLingui } from '@lingui/react/macro';
 import { IconCopy } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -23,7 +23,11 @@ export const ApiKeyInput = ({ apiKey }: ApiKeyInputProps) => {
   return (
     <StyledContainer>
       <StyledLinkContainer>
-        <TextInput instanceId="api-key-display" value={apiKey} fullWidth />
+        <SettingsTextInput
+          instanceId="api-key-display"
+          value={apiKey}
+          fullWidth
+        />
       </StyledLinkContainer>
       <Button
         Icon={IconCopy}

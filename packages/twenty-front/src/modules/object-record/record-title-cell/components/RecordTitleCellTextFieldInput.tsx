@@ -5,7 +5,7 @@ import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
@@ -67,7 +67,7 @@ export const RecordTitleCellTextFieldInput = ({
   };
 
   return (
-    <TextInputV2
+    <TextInput
       ref={wrapperRef}
       autoGrow
       sizeVariant={sizeVariant}

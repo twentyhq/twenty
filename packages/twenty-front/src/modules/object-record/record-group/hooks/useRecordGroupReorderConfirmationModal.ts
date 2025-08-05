@@ -7,8 +7,8 @@ import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyO
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { ViewType } from '@/views/types/ViewType';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useState } from 'react';
@@ -47,11 +47,11 @@ export const useRecordGroupReorderConfirmationModal = ({
       toIndex: result.destination.index - 1,
     });
   };
-  const isDragableSortRecordGroup = useRecoilComponentValueV2(
+  const isDragableSortRecordGroup = useRecoilComponentValue(
     recordIndexRecordGroupIsDraggableSortComponentSelector,
   );
 
-  const setRecordGroupSort = useSetRecoilComponentStateV2(
+  const setRecordGroupSort = useSetRecoilComponentState(
     recordIndexRecordGroupSortComponentState,
   );
   const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();

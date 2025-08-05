@@ -6,8 +6,8 @@ import { useCloseRecordTableCellInGroup } from '@/object-record/record-table/rec
 import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import {
   OpenTableCellArgs,
-  useOpenRecordTableCellV2,
-} from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
+  useOpenRecordTableCell,
+} from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
 import { useTriggerActionMenuDropdown } from '@/object-record/record-table/record-table-cell/hooks/useTriggerActionMenuDropdown';
 import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
@@ -23,7 +23,7 @@ export const RecordTableRecordGroupBodyContextProvider = ({
 }: RecordTableRecordGroupBodyContextProviderProps) => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const { openTableCell } = useOpenRecordTableCellV2(recordTableId);
+  const { openTableCell } = useOpenRecordTableCell(recordTableId);
 
   const handleOpenTableCell = (args: OpenTableCellArgs) => {
     openTableCell(args);

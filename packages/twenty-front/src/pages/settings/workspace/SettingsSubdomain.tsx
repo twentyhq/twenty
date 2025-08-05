@@ -1,11 +1,11 @@
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useRecoilValue } from 'recoil';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
@@ -37,7 +37,7 @@ export const SettingsSubdomain = () => {
           control={control}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <>
-              <TextInputV2
+              <TextInput
                 value={value}
                 type="text"
                 onChange={onChange}

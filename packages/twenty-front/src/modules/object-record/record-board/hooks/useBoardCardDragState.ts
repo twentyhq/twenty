@@ -2,25 +2,25 @@ import { draggedRecordIdsComponentState } from '@/object-record/record-board/sta
 import { isMultiDragActiveComponentState } from '@/object-record/record-board/states/isMultiDragActiveComponentState';
 import { originalSelectionComponentState } from '@/object-record/record-board/states/originalSelectionComponentState';
 import { primaryDraggedRecordIdComponentState } from '@/object-record/record-board/states/primaryDraggedRecordIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const useBoardCardDragState = (recordBoardId?: string) => {
-  const isDragging = useRecoilComponentValueV2(
+  const isDragging = useRecoilComponentValue(
     isMultiDragActiveComponentState,
     recordBoardId,
   );
 
-  const draggedRecordIds = useRecoilComponentValueV2(
+  const draggedRecordIds = useRecoilComponentValue(
     draggedRecordIdsComponentState,
     recordBoardId,
   );
 
-  const primaryDraggedRecordId = useRecoilComponentValueV2(
+  const primaryDraggedRecordId = useRecoilComponentValue(
     primaryDraggedRecordIdComponentState,
     recordBoardId,
   );
 
-  const originalSelection = useRecoilComponentValueV2(
+  const originalSelection = useRecoilComponentValue(
     originalSelectionComponentState,
     recordBoardId,
   );

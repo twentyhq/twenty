@@ -1,5 +1,5 @@
-import { ComponentFamilyStateKeyV2 } from '@/ui/utilities/state/component-state/types/ComponentFamilyStateKeyV2';
-import { ComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/types/ComponentFamilyStateV2';
+import { ComponentFamilyState } from '@/ui/utilities/state/component-state/types/ComponentFamilyState';
+import { ComponentFamilyStateKey } from '@/ui/utilities/state/component-state/types/ComponentFamilyStateKey';
 import { ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import {
@@ -20,7 +20,7 @@ type CreateComponentFamilyStateArgs<
   defaultValue:
     | ValueType
     | ((
-        param: ComponentFamilyStateKeyV2<FamilyKey>,
+        param: ComponentFamilyStateKey<FamilyKey>,
       ) =>
         | ValueType
         | RecoilValue<ValueType>
@@ -31,11 +31,11 @@ type CreateComponentFamilyStateArgs<
   effects?:
     | AtomEffect<ValueType>[]
     | ((
-        param: ComponentFamilyStateKeyV2<FamilyKey>,
+        param: ComponentFamilyStateKey<FamilyKey>,
       ) => ReadonlyArray<AtomEffect<ValueType>>);
 };
 
-export const createComponentFamilyStateV2 = <
+export const createComponentFamilyState = <
   ValueType,
   FamilyKey extends SerializableParam,
 >({
@@ -43,10 +43,10 @@ export const createComponentFamilyStateV2 = <
   effects,
   defaultValue,
   componentInstanceContext,
-}: CreateComponentFamilyStateArgs<
+}: CreateComponentFamilyStateArgs<ValueType, FamilyKey>): ComponentFamilyState<
   ValueType,
   FamilyKey
->): ComponentFamilyStateV2<ValueType, FamilyKey> => {
+> => {
   if (isDefined(componentInstanceContext)) {
     globalComponentInstanceContextMap.set(key, componentInstanceContext);
   }
@@ -54,10 +54,10 @@ export const createComponentFamilyStateV2 = <
   return {
     type: 'ComponentFamilyState',
     key,
-    atomFamily: atomFamily<ValueType, ComponentFamilyStateKeyV2<FamilyKey>>({
+    atomFamily: atomFamily<ValueType, ComponentFamilyStateKey<FamilyKey>>({
       key,
       default: defaultValue,
       effects,
     }),
-  } satisfies ComponentFamilyStateV2<ValueType, FamilyKey>;
+  } satisfies ComponentFamilyState<ValueType, FamilyKey>;
 };

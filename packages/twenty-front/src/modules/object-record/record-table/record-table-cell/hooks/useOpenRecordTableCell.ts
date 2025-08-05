@@ -1,6 +1,6 @@
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
-import { useInitDraftValueV2 } from '@/object-record/record-field/hooks/useInitDraftValueV2';
+import { useInitDraftValue } from '@/object-record/record-field/hooks/useInitDraftValue';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
@@ -29,8 +29,8 @@ import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/use
 import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 
 export type OpenTableCellArgs = {
@@ -45,13 +45,12 @@ export type OpenTableCellArgs = {
   isNavigating: boolean;
 };
 
-export const useOpenRecordTableCellV2 = (recordTableId: string) => {
-  const clickOutsideListenerIsActivatedState =
-    useRecoilComponentCallbackStateV2(
-      clickOutsideListenerIsActivatedComponentState,
-      RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
-    );
-  const setCurrentTableCellInEditModePosition = useSetRecoilComponentStateV2(
+export const useOpenRecordTableCell = (recordTableId: string) => {
+  const clickOutsideListenerIsActivatedState = useRecoilComponentCallbackState(
+    clickOutsideListenerIsActivatedComponentState,
+    RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
+  );
+  const setCurrentTableCellInEditModePosition = useSetRecoilComponentState(
     recordTableCellEditModePositionComponentState,
     recordTableId,
   );
@@ -63,7 +62,7 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
     FOCUS_CLICK_OUTSIDE_LISTENER_ID,
   );
 
-  const initDraftValue = useInitDraftValueV2();
+  const initDraftValue = useInitDraftValue();
 
   const setViewableRecordId = useSetRecoilState(viewableRecordIdState);
   const setViewableRecordNameSingular = useSetRecoilState(
@@ -80,7 +79,7 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
 
   const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
 
-  const setIsRowFocusActive = useSetRecoilComponentStateV2(
+  const setIsRowFocusActive = useSetRecoilComponentState(
     isRecordTableRowFocusActiveComponentState,
     recordTableId,
   );

@@ -4,7 +4,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { buildValueFromFilter } from '@/object-record/record-table/utils/buildRecordInputFromFilter';
 
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -14,7 +14,7 @@ export const useBuildRecordInputFromFilters = ({
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   // we might need to build a recoil callback for better performance
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useRecoilComponentValue(
     currentRecordFiltersComponentState,
   );
 

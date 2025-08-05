@@ -14,7 +14,7 @@ import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -34,11 +34,11 @@ const StyledRightDrawerRecord = styled.div<{
 export const CommandMenuRecordPage = () => {
   const isMobile = useIsMobile();
 
-  const viewableRecordNameSingular = useRecoilComponentValueV2(
+  const viewableRecordNameSingular = useRecoilComponentValue(
     viewableRecordNameSingularComponentState,
   );
 
-  const viewableRecordId = useRecoilComponentValueV2(
+  const viewableRecordId = useRecoilComponentValue(
     viewableRecordIdComponentState,
   );
 

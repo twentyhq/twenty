@@ -1,17 +1,25 @@
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { currentAIChatThreadComponentState } from '@/ai/states/currentAIChatThreadComponentState';
-import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { STREAM_CHAT_QUERY } from '@/ai/rest-api/agent-chat-apollo.api';
 import { AgentChatMessageRole } from '@/ai/constants/agent-chat-message-role';
+import { STREAM_CHAT_QUERY } from '@/ai/rest-api/agent-chat-apollo.api';
+import {
+  AIChatObjectMetadataAndRecordContext,
+  agentChatObjectMetadataAndRecordContextState,
+} from '@/ai/states/agentChatObjectMetadataAndRecordContextState';
 import { agentChatSelectedFilesComponentState } from '@/ai/states/agentChatSelectedFilesComponentState';
 import { agentChatUploadedFilesComponentState } from '@/ai/states/agentChatUploadedFilesComponentState';
+import { currentAIChatThreadComponentState } from '@/ai/states/currentAIChatThreadComponentState';
+import { isAgentChatCurrentContextActiveState } from '@/ai/states/isAgentChatCurrentContextActiveState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { useGetObjectMetadataItemById } from '@/object-metadata/hooks/useGetObjectMetadataItemById';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useApolloClient } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -24,14 +32,6 @@ import { agentChatInputState } from '../states/agentChatInputState';
 import { agentChatMessagesComponentState } from '../states/agentChatMessagesComponentState';
 import { agentStreamingMessageState } from '../states/agentStreamingMessageState';
 import { parseAgentStreamingChunk } from '../utils/parseAgentStreamingChunk';
-import {
-  agentChatObjectMetadataAndRecordContextState,
-  AIChatObjectMetadataAndRecordContext,
-} from '@/ai/states/agentChatObjectMetadataAndRecordContextState';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useGetObjectMetadataItemById } from '@/object-metadata/hooks/useGetObjectMetadataItemById';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isAgentChatCurrentContextActiveState } from '@/ai/states/isAgentChatCurrentContextActiveState';
 
 type OptimisticMessage = AgentChatMessage & {
   isPending: boolean;
@@ -42,33 +42,33 @@ export const useAgentChat = (agentId: string, records?: ObjectRecord[]) => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const { getObjectMetadataItemById } = useGetObjectMetadataItemById();
 
-  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 
-  const isAgentChatCurrentContextActive = useRecoilComponentValueV2(
+  const isAgentChatCurrentContextActive = useRecoilComponentValue(
     isAgentChatCurrentContextActiveState,
     agentId,
   );
 
-  const agentChatSelectedFiles = useRecoilComponentValueV2(
+  const agentChatSelectedFiles = useRecoilComponentValue(
     agentChatSelectedFilesComponentState,
     agentId,
   );
 
-  const [agentChatContext, setAgentChatContext] = useRecoilComponentStateV2(
+  const [agentChatContext, setAgentChatContext] = useRecoilComponentState(
     agentChatObjectMetadataAndRecordContextState,
     agentId,
   );
 
-  const [currentThreadId, setCurrentThreadId] = useRecoilComponentStateV2(
+  const [currentThreadId, setCurrentThreadId] = useRecoilComponentState(
     currentAIChatThreadComponentState,
     agentId,
   );
   const [agentChatUploadedFiles, setAgentChatUploadedFiles] =
-    useRecoilComponentStateV2(agentChatUploadedFilesComponentState, agentId);
+    useRecoilComponentState(agentChatUploadedFilesComponentState, agentId);
 
-  const [agentChatMessages, setAgentChatMessages] = useRecoilComponentStateV2(
+  const [agentChatMessages, setAgentChatMessages] = useRecoilComponentState(
     agentChatMessagesComponentState,
     agentId,
   );

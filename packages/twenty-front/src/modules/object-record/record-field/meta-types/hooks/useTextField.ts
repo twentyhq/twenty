@@ -9,7 +9,7 @@ import { assertFieldMetadata } from '@/object-record/record-field/types/guards/a
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { isFieldTextValue } from '@/object-record/record-field/types/guards/isFieldTextValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useTextField = () => {
@@ -29,7 +29,7 @@ export const useTextField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldTextValue>();
 
-  const draftValue = useRecoilComponentValueV2(
+  const draftValue = useRecoilComponentValue(
     recordFieldInputDraftValueComponentState,
   );
 

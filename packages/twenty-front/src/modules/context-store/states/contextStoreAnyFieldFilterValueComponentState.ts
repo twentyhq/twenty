@@ -1,8 +1,8 @@
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
 export const contextStoreAnyFieldFilterValueComponentState =
-  createComponentStateV2<string>({
+  createComponentState<string>({
     key: 'contextStoreAnyFieldFilterValueComponentState',
     defaultValue: '',
     componentInstanceContext: ContextStoreComponentInstanceContext,

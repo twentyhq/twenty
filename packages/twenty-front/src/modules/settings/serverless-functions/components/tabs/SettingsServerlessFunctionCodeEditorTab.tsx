@@ -5,7 +5,7 @@ import {
 import { SETTINGS_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/settings/serverless-functions/constants/SettingsServerlessFunctionTabListComponentId';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import {
   H2Title,
@@ -39,7 +39,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
   onChange: (filePath: string, value: string) => void;
   setIsCodeValid: (isCodeValid: boolean) => void;
 }) => {
-  const activeTabId = useRecoilComponentValueV2(
+  const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,
     SETTINGS_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID,
   );

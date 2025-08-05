@@ -10,9 +10,9 @@ import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-tab
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useRecoilComponentFamilyCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -25,27 +25,27 @@ export const useSetRecordTableData = ({
   recordTableId,
 }: useSetRecordTableDataProps) => {
   const recordIndexRecordIdsByGroupFamilyState =
-    useRecoilComponentFamilyCallbackStateV2(
+    useRecoilComponentFamilyCallbackState(
       recordIndexRecordIdsByGroupComponentFamilyState,
       recordTableId,
     );
 
-  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackStateV2(
+  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackState(
     recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );
 
-  const isRowSelectedFamilyState = useRecoilComponentFamilyCallbackStateV2(
+  const isRowSelectedFamilyState = useRecoilComponentFamilyCallbackState(
     isRowSelectedComponentFamilyState,
     recordTableId,
   );
 
-  const hasUserSelectedAllRowsState = useRecoilComponentCallbackStateV2(
+  const hasUserSelectedAllRowsState = useRecoilComponentCallbackState(
     hasUserSelectedAllRowsComponentState,
     recordTableId,
   );
 
-  const setRecordTableHoverPosition = useSetRecoilComponentStateV2(
+  const setRecordTableHoverPosition = useSetRecoilComponentState(
     recordTableHoverPositionComponentState,
     recordTableId,
   );

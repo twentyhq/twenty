@@ -1,12 +1,12 @@
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { ComponentStateV2 } from '@/ui/utilities/state/component-state/types/ComponentStateV2';
+import { ComponentState } from '@/ui/utilities/state/component-state/types/ComponentState';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import { useRecoilState } from 'recoil';
+import { SetterOrUpdater, useSetRecoilState } from 'recoil';
 
-export const useRecoilComponentStateV2 = <StateType>(
-  componentState: ComponentStateV2<StateType>,
+export const useSetRecoilComponentState = <ValueType>(
+  componentState: ComponentState<ValueType>,
   instanceIdFromProps?: string,
-) => {
+): SetterOrUpdater<ValueType> => {
   const componentInstanceContext = globalComponentInstanceContextMap.get(
     componentState.key,
   );
@@ -22,5 +22,5 @@ export const useRecoilComponentStateV2 = <StateType>(
     instanceIdFromProps,
   );
 
-  return useRecoilState(componentState.atomFamily({ instanceId }));
+  return useSetRecoilState(componentState.atomFamily({ instanceId }));
 };

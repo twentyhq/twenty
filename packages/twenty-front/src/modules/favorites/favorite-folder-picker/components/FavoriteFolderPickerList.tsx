@@ -2,7 +2,7 @@ import { favoriteFolderPickerCheckedComponentState } from '@/favorites/favorite-
 import { favoriteFolderSearchFilterComponentState } from '@/favorites/favorite-folder-picker/states/favoriteFoldersSearchFilterComponentState';
 import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import styled from '@emotion/styled';
 import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
 
@@ -26,11 +26,11 @@ export const FavoriteFolderPickerList = ({
   folders,
   toggleFolderSelection,
 }: FavoriteFolderPickerListProps) => {
-  const [favoriteFoldersSearchFilter] = useRecoilComponentStateV2(
+  const [favoriteFoldersSearchFilter] = useRecoilComponentState(
     favoriteFolderSearchFilterComponentState,
   );
 
-  const [favoriteFolderPickerChecked] = useRecoilComponentStateV2(
+  const [favoriteFolderPickerChecked] = useRecoilComponentState(
     favoriteFolderPickerCheckedComponentState,
   );
 

@@ -9,7 +9,7 @@ import { computeDraftValueFromFieldValue } from '@/object-record/record-field/ut
 import { computeDraftValueFromString } from '@/object-record/record-field/utils/computeDraftValueFromString';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
-export const useInitDraftValueV2 = <FieldValue>() => {
+export const useInitDraftValue = <FieldValue>() => {
   return useRecoilCallback(
     ({ set, snapshot }) =>
       ({

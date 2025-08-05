@@ -11,7 +11,7 @@ import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/f
 import { getDisplayFormatLabel } from '@/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel';
 import { getDisplayFormatSelectDescription } from '@/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription';
 import { Select } from '@/ui/input/components/Select';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconSlash } from 'twenty-ui/display';
@@ -34,7 +34,7 @@ export const settingsDataModelFieldDateFormSchema = z.object({
   settings: fieldDateSettings.optional(),
 });
 
-const StyledTextInput = styled(TextInput)`
+const StyledTextInput = styled(SettingsTextInput)`
   padding: ${({ theme }) => theme.spacing(4)};
   padding-top: 0;
 `;

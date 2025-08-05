@@ -3,7 +3,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -108,7 +108,7 @@ export const SettingsAgentHandoffTable = ({
   return (
     <>
       <StyledSearchContainer>
-        <TextInputV2
+        <TextInput
           value={searchFilter}
           onChange={setSearchFilter}
           placeholder={t`Search handoffs...`}

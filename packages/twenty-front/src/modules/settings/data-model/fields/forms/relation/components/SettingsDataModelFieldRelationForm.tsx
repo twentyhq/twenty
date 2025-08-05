@@ -12,7 +12,7 @@ import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import { useRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/relation/hooks/useRelationSettingsFormInitialValues';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useLingui } from '@lingui/react/macro';
 import { useIcons } from 'twenty-ui/display';
@@ -186,7 +186,7 @@ export const SettingsDataModelFieldRelationForm = ({
           control={control}
           defaultValue={initialRelationFieldMetadataItem.label}
           render={({ field: { onChange, value } }) => (
-            <TextInput
+            <SettingsTextInput
               instanceId="relation-field-label"
               disabled={disableFieldEdition}
               placeholder={t`Field name`}

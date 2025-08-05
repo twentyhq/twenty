@@ -1,9 +1,9 @@
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { RecordPickerSearchQuery } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerSearchQuery';
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
 export const singleRecordPickerSearchQueryComponentState =
-  createComponentStateV2<RecordPickerSearchQuery | null>({
+  createComponentState<RecordPickerSearchQuery | null>({
     key: 'singleRecordPickerSearchQueryComponentState',
     defaultValue: null,
     componentInstanceContext: SingleRecordPickerComponentInstanceContext,

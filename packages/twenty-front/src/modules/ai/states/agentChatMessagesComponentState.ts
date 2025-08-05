@@ -1,11 +1,11 @@
 import { createComponentInstanceContext } from '@/ui/utilities/state/component-state/utils/createComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 import { AgentChatMessage } from '~/generated-metadata/graphql';
 
 export const AgentChatMessagesComponentInstanceContext =
   createComponentInstanceContext();
 
-export const agentChatMessagesComponentState = createComponentStateV2<
+export const agentChatMessagesComponentState = createComponentState<
   AgentChatMessage[]
 >({
   key: 'agentChatMessagesComponentState',

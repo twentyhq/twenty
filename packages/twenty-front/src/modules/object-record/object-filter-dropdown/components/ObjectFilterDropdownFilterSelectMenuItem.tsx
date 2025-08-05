@@ -3,22 +3,22 @@ import { FILTER_FIELD_LIST_ID } from '@/object-record/object-filter-dropdown/con
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
-export type ObjectFilterDropdownFilterSelectMenuItemV2Props = {
+export type ObjectFilterDropdownFilterSelectMenuItemProps = {
   fieldMetadataItemToSelect: FieldMetadataItem;
   onClick: (selectedFieldMetadataItem: FieldMetadataItem) => void;
 };
 
-export const ObjectFilterDropdownFilterSelectMenuItemV2 = ({
+export const ObjectFilterDropdownFilterSelectMenuItem = ({
   fieldMetadataItemToSelect,
   onClick,
-}: ObjectFilterDropdownFilterSelectMenuItemV2Props) => {
+}: ObjectFilterDropdownFilterSelectMenuItemProps) => {
   const { resetSelectedItem } = useSelectableList(FILTER_FIELD_LIST_ID);
 
-  const isSelectedItem = useRecoilComponentFamilyValueV2(
+  const isSelectedItem = useRecoilComponentFamilyValue(
     isSelectedItemIdComponentFamilySelector,
     fieldMetadataItemToSelect.id,
   );

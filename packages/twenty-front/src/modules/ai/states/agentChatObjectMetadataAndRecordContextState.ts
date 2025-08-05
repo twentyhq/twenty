@@ -1,5 +1,5 @@
 import { AgentChatMessagesComponentInstanceContext } from '@/ai/states/agentChatMessagesComponentState';
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
 export type AIChatObjectMetadataAndRecordContext = {
   type: 'objectMetadataId' | 'recordId';
@@ -7,7 +7,7 @@ export type AIChatObjectMetadataAndRecordContext = {
 };
 
 export const agentChatObjectMetadataAndRecordContextState =
-  createComponentStateV2<Array<AIChatObjectMetadataAndRecordContext>>({
+  createComponentState<Array<AIChatObjectMetadataAndRecordContext>>({
     defaultValue: [],
     key: 'agentChatObjectMetadataAndRecordContextState',
     componentInstanceContext: AgentChatMessagesComponentInstanceContext,

@@ -1,4 +1,4 @@
-export type ComponentStateTypeV2 =
+export type ComponentStateType =
   | 'ComponentState'
   | 'ComponentFamilyState'
   | 'ComponentSelector'
