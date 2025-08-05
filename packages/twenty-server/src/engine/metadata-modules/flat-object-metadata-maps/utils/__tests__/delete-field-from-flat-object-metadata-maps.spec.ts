@@ -71,7 +71,7 @@ describe('deleteFieldFromFlatObjectMetadataMaps', () => {
         },
       },
       {
-        title: 'should delete species field from pet object',
+        title: 'should delete species custom relation from pet object',
         context: {
           input: {
             flatObjectMetadataMaps:
