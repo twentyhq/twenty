@@ -37,14 +37,14 @@ export const useMergeManyRecordsMutation = ({
     return { mergeManyRecordsMutation: EMPTY_MUTATION };
   }
 
-  const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
+  const capitalizedObjectName = capitalize(objectMetadataItem.namePlural);
 
   const mutationResponseField = getMergeManyRecordsMutationResponseField(
     objectMetadataItem.namePlural,
   );
 
   const mergeManyRecordsMutation = gql`
-    mutation merge${capitalizedObjectName}s($ids: [UUID!]!, $conflictPriorityIndex: Int!, $dryRun: Boolean) {
+    mutation Merge${capitalizedObjectName}($ids: [UUID!]!, $conflictPriorityIndex: Int!, $dryRun: Boolean) {
       ${mutationResponseField}(ids: $ids, conflictPriorityIndex: $conflictPriorityIndex, dryRun: $dryRun) ${mapObjectMetadataToGraphQLQuery(
         {
           objectMetadataItems,

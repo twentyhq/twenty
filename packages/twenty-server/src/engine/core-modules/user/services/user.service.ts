@@ -122,6 +122,10 @@ export class UserService extends TypeOrmQueryService<User> {
               throw new PermissionsException(
                 PermissionsExceptionMessage.CANNOT_DELETE_LAST_ADMIN_USER,
                 PermissionsExceptionCode.CANNOT_DELETE_LAST_ADMIN_USER,
+                {
+                  userFriendlyMessage:
+                    'Cannot delete account: you are the only admin. Assign another admin or delete the workspace(s) first.',
+                },
               );
             }
             throw error;

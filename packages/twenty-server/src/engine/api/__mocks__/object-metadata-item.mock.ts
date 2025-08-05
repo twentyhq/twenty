@@ -141,10 +141,12 @@ export const fieldRelationMock = getMockFieldMetadataEntity({
     nameSingular: 'relationTargetObject',
     namePlural: 'relationTargetObjects',
   } as ObjectMetadataEntity,
+  relationTargetObjectMetadataId: 'relationTargetObjectId',
   relationTargetFieldMetadata: {
     id: 'relationTargetFieldId',
     name: 'relationTargetField',
   } as FieldMetadataEntity,
+  relationTargetFieldMetadataId: 'relationTargetFieldId',
   isLabelSyncedWithName: true,
   createdAt: new Date(),
   updatedAt: new Date(),

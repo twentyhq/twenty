@@ -37,7 +37,7 @@ function evaluateFilter(filter: ResolvedFilter): boolean {
     case 'CURRENCY':
       return evaluateCurrencyFilter(filter);
     default:
-      throw new Error(`Filter type ${filter.type} not supported`);
+      return evaluateDefaultFilter(filter);
   }
 }
 
@@ -255,6 +255,44 @@ function evaluateNumberFilter(filter: ResolvedFilter): boolean {
     default:
       throw new Error(
         `Operand ${filter.operand} not supported for number filter`,
+      );
+  }
+}
+
+function evaluateDefaultFilter(filter: ResolvedFilter): boolean {
+  const leftValue = filter.leftOperand;
+  const rightValue = filter.rightOperand;
+
+  switch (filter.operand) {
+    case ViewFilterOperand.Is:
+      return leftValue == rightValue;
+    case ViewFilterOperand.IsNot:
+      return leftValue != rightValue;
+    case ViewFilterOperand.IsEmpty:
+      return (
+        leftValue === null ||
+        leftValue === undefined ||
+        leftValue === '' ||
+        (Array.isArray(leftValue) && leftValue.length === 0)
+      );
+    case ViewFilterOperand.IsNotEmpty:
+      return (
+        leftValue !== null &&
+        leftValue !== undefined &&
+        leftValue !== '' &&
+        (!Array.isArray(leftValue) || leftValue.length > 0)
+      );
+    case ViewFilterOperand.Contains:
+      return contains(leftValue, rightValue);
+    case ViewFilterOperand.DoesNotContain:
+      return !contains(leftValue, rightValue);
+    case ViewFilterOperand.GreaterThanOrEqual:
+      return Number(leftValue) >= Number(rightValue);
+    case ViewFilterOperand.LessThanOrEqual:
+      return Number(leftValue) <= Number(rightValue);
+    default:
+      throw new Error(
+        `Operand ${filter.operand} not supported for ${filter.type} filter type`,
       );
   }
 }

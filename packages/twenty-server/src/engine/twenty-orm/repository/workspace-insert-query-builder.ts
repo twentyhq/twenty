@@ -172,16 +172,21 @@ export class WorkspaceInsertQueryBuilder<
       });
 
       // TypeORM returns all entity columns for insertions
-      const resultWithoutInsertionExtraColumns = result.raw.map(
-        (rawResult: Record<string, string>) =>
-          Object.keys(rawResult)
-            .filter((key) => this.expressionMap.returning.includes(key))
-            .reduce((filtered: Record<string, string>, key) => {
-              filtered[key] = rawResult[key];
+      const resultWithoutInsertionExtraColumns = !isDefined(result.raw)
+        ? []
+        : result.raw.map((rawResult: Record<string, string>) =>
+            Object.keys(rawResult)
+              .filter(
+                (key) =>
+                  this.expressionMap.returning.includes(key) ||
+                  this.expressionMap.returning === '*',
+              )
+              .reduce((filtered: Record<string, string>, key) => {
+                filtered[key] = rawResult[key];
 
-              return filtered;
-            }, {}),
-      );
+                return filtered;
+              }, {}),
+          );
 
       const formattedResult = formatResult<T[]>(
         resultWithoutInsertionExtraColumns,
