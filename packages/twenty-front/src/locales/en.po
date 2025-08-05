@@ -307,11 +307,6 @@ msgstr "Actions permissions"
 msgid "Actions users can perform on all objects"
 msgstr "Actions users can perform on all objects"
 
-#. js-lingui-id: xnXGwA
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "Actions users can perform on specific objects"
-msgstr "Actions users can perform on specific objects"
-
 #. js-lingui-id: N4ZcCd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 msgid "Actions users can perform on this object"
@@ -400,6 +395,11 @@ msgstr "Add object"
 msgid "Add object permission"
 msgstr "Add object permission"
 
+#. js-lingui-id: oLB/Qu
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+msgid "Add object rule"
+msgstr "Add object rule"
+
 #. js-lingui-id: Dl5lVI
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Add option"
@@ -414,11 +414,6 @@ msgstr "Add or remove users"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Add Output Field"
 msgstr "Add Output Field"
-
-#. js-lingui-id: O8tK4v
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "Add rule"
-msgstr "Add rule"
 
 #. js-lingui-id: sgXUv+
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard.tsx
@@ -4128,10 +4123,10 @@ msgstr "No output available"
 msgid "No payment method found. Please update your billing details."
 msgstr "No payment method found. Please update your billing details."
 
-#. js-lingui-id: CfOZmU
+#. js-lingui-id: kSCxfd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "No permissions found"
-msgstr "No permissions found"
+msgid "No permissions have been set for individual objects."
+msgstr "No permissions have been set for individual objects."
 
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -4257,7 +4252,6 @@ msgstr "Number type"
 
 #. js-lingui-id: W0i24j
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
 msgstr "Object"
@@ -4269,7 +4263,7 @@ msgstr "Object destination"
 
 #. js-lingui-id: YJgmMZ
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 msgid "Object-Level"
 msgstr "Object-Level"
 

@@ -312,11 +312,6 @@ msgstr ""
 msgid "Actions users can perform on all objects"
 msgstr "Accions que els usuaris poden realitzar en tots els objectes"
 
-#. js-lingui-id: xnXGwA
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "Actions users can perform on specific objects"
-msgstr "Accions que els usuaris poden realitzar en objectes específics"
-
 #. js-lingui-id: N4ZcCd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 msgid "Actions users can perform on this object"
@@ -405,6 +400,11 @@ msgstr "Afegeix objecte"
 msgid "Add object permission"
 msgstr "Afegiu permís de l'objecte"
 
+#. js-lingui-id: oLB/Qu
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+msgid "Add object rule"
+msgstr ""
+
 #. js-lingui-id: Dl5lVI
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Add option"
@@ -419,11 +419,6 @@ msgstr "Afegeix o elimina usuaris"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Add Output Field"
 msgstr "Afegeix camp de sortida"
-
-#. js-lingui-id: O8tK4v
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "Add rule"
-msgstr "Afegeix regla"
 
 #. js-lingui-id: sgXUv+
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard.tsx
@@ -4133,10 +4128,10 @@ msgstr "No hi ha resultat disponible"
 msgid "No payment method found. Please update your billing details."
 msgstr "No s'ha trobat cap mètode de pagament. Si us plau actualitzi les seves dades de facturació."
 
-#. js-lingui-id: CfOZmU
+#. js-lingui-id: kSCxfd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "No permissions found"
-msgstr "No s'han trobat permisos"
+msgid "No permissions have been set for individual objects."
+msgstr ""
 
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -4262,7 +4257,6 @@ msgstr "Tipus de número"
 
 #. js-lingui-id: W0i24j
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
 msgstr "Objecte"
@@ -4274,7 +4268,7 @@ msgstr "Destinació de l'objecte"
 
 #. js-lingui-id: YJgmMZ
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 msgid "Object-Level"
 msgstr "Nivell d'objecte"
 
