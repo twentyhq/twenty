@@ -38152,6 +38152,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"immer@npm:^10.1.1":
+  version: 10.1.1
+  resolution: "immer@npm:10.1.1"
+  checksum: 10c0/b749e10d137ccae91788f41bd57e9387f32ea6d6ea8fd7eb47b23fd7766681575efc7f86ceef7fe24c3bc9d61e38ff5d2f49c2663b2b0c056e280a4510923653
+  languageName: node
+  linkType: hard
+
 "immer@npm:^9.0.6":
   version: 9.0.21
   resolution: "immer@npm:9.0.21"
@@ -55155,6 +55162,7 @@ __metadata:
     http-server: "npm:^14.1.1"
     iframe-resizer-react: "npm:^1.1.0"
     imapflow: "npm:^1.0.186"
+    immer: "npm:^10.1.1"
     jest: "npm:29.7.0"
     jest-environment-jsdom: "npm:30.0.0-beta.3"
     jest-environment-node: "npm:^29.4.1"
