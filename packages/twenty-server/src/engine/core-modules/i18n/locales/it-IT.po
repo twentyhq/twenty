@@ -2585,6 +2585,11 @@ msgstr "L'utente non fa parte dello spazio di lavoro"
 msgid "User time zone"
 msgstr "Fuso orario utente"
 
+#. js-lingui-id: VkcC68
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "User was not created with email/password"
+msgstr ""
+
 #. js-lingui-id: 43zCwQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred date format"
