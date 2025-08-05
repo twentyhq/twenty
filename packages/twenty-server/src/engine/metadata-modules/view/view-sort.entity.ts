@@ -11,7 +11,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -24,10 +23,14 @@ registerEnumType(ViewSortDirection, { name: 'ViewSortDirection' });
 
 @Entity({ name: 'viewSort', schema: 'core' })
 @Index('IDX_VIEW_SORT_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
-@Unique('IDX_VIEW_SORT_FIELD_METADATA_ID_VIEW_ID_UNIQUE', [
-  'fieldMetadataId',
-  'viewId',
-])
+@Index(
+  'IDX_VIEW_SORT_FIELD_METADATA_ID_VIEW_ID_UNIQUE',
+  ['fieldMetadataId', 'viewId'],
+  {
+    unique: true,
+    where: '"deletedAt" IS NULL',
+  },
+)
 export class ViewSort {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
