@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 import { HttpRequestExecutionResult } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult';
@@ -10,7 +11,7 @@ import type { HttpRequestTestData } from '@/workflow/workflow-steps/workflow-act
 const meta: Meta<typeof HttpRequestExecutionResult> = {
   title: 'Modules/Workflow/Actions/HttpRequest/ExecutionResult',
   component: HttpRequestExecutionResult,
-  decorators: [ComponentDecorator, SnackBarDecorator],
+  decorators: [ComponentDecorator, SnackBarDecorator, I18nFrontDecorator],
   parameters: {
     layout: 'fullscreen',
   },
