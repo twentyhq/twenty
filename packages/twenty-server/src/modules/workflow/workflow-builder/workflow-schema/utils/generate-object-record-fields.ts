@@ -52,7 +52,6 @@ export const generateObjectRecordFields = ({
           isLeaf: false,
           icon: field.icon ?? undefined,
           label: field.label,
-          type: field.type,
           fieldMetadataId: field.id,
           value: generateFakeObjectRecord({
             objectMetadataInfo: {
@@ -60,7 +59,6 @@ export const generateObjectRecordFields = ({
               objectMetadataMaps: objectMetadataInfo.objectMetadataMaps,
             },
             depth: depth + 1,
-            relationFieldName: field.name,
           }),
         };
       }
