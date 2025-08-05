@@ -1,17 +1,21 @@
+import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import {
   WorkflowActionType,
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
+import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useCloseRightClickMenu';
+import { useOpenWorkflowEditFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowEditFilterInCommandMenu';
 import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
 import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 import { useFilteredOtherActions } from '@/workflow/workflow-steps/workflow-actions/hooks/useFilteredOtherActions';
+import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemCommand } from 'twenty-ui/navigation';
-import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useCloseRightClickMenu';
 
 export const CommandMenuWorkflowSelectActionContent = ({
   workflow,
@@ -30,15 +34,26 @@ export const CommandMenuWorkflowSelectActionContent = ({
   const [workflowInsertStepIds, setWorkflowInsertStepIds] =
     useRecoilComponentStateV2(workflowInsertStepIdsComponentState);
 
+  const setCommandMenuNavigationStack = useSetRecoilState(
+    commandMenuNavigationStackState,
+  );
+
+  const { openWorkflowEditFilterInCommandMenu } =
+    useOpenWorkflowEditFilterInCommandMenu();
+
   const handleCreateStep = async (actionType: WorkflowActionType) => {
     const { parentStepId, nextStepId, position } = workflowInsertStepIds;
 
-    await createStep({
+    const createdStep = await createStep({
       newStepType: actionType,
       parentStepId,
       nextStepId,
       position,
     });
+
+    if (!isDefined(createdStep)) {
+      return;
+    }
 
     setWorkflowInsertStepIds({
       parentStepId: undefined,
@@ -46,6 +61,13 @@ export const CommandMenuWorkflowSelectActionContent = ({
       position: undefined,
     });
     closeRightClickMenu();
+
+    setCommandMenuNavigationStack([]);
+
+    openWorkflowEditFilterInCommandMenu({
+      stepId: createdStep.id,
+      stepName: createdStep.name,
+    });
   };
 
   return (
