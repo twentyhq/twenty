@@ -1,6 +1,7 @@
 import {
   assertUnreachable,
   fromArrayToValuesByKeyRecord,
+  isDefined,
 } from 'twenty-shared/utils';
 
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
@@ -9,6 +10,7 @@ import { deleteFieldFromFlatObjectMetadataMaps } from 'src/engine/metadata-modul
 import { deleteObjectFromFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-object-from-flat-object-metadata-maps.util';
 import { dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/dispatch-and-add-flat-field-metadata-in-flat-object-metadata-maps.util';
 import { dispatchAndReplaceFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/dispatch-and-replace-flat-field-metadata-in-flat-object-metadata-maps.util';
+import { replaceFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps.util';
 import { WorkspaceMigrationRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-runner-args.type';
 
 export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = ({
@@ -42,7 +44,24 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = ({
       });
     }
     case 'update_object': {
-      return flatObjectMetadataMaps;
+      const existingFlatObjectMetadata =
+        flatObjectMetadataMaps.byId[action.flatObjectMetadataWithoutFields.id];
+
+      if (!isDefined(existingFlatObjectMetadata)) {
+        throw new Error('TODO'); // TODO prastoin handle custom exception
+      }
+      const updatedFlatObjectMetadata = {
+        ...existingFlatObjectMetadata,
+        ...fromArrayToValuesByKeyRecord({
+          array: action.updates,
+          key: 'property',
+        }),
+      };
+
+      return replaceFlatObjectMetadataInFlatObjectMetadataMaps({
+        flatObjectMetadata: updatedFlatObjectMetadata,
+        flatObjectMetadataMaps,
+      });
     }
     case 'create_field': {
       return dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps({
@@ -58,6 +77,7 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = ({
           key: 'property',
         }),
       };
+
       return dispatchAndReplaceFlatFieldMetadataInFlatObjectMetadataMaps({
         flatFieldMetadata: updatedFlatFieldMetadata,
         flatObjectMetadataMaps,
