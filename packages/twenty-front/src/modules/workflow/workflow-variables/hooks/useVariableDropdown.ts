@@ -1,9 +1,15 @@
+import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { workflowDiagramTriggerNodeSelectionComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramTriggerNodeSelectionComponentState';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { useState } from 'react';
+import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
 import {
   BaseOutputSchema,
   LinkOutputSchema,
@@ -34,8 +40,16 @@ export const useVariableDropdown = ({
   onSelect,
   onBack,
 }: UseVariableDropdownProps): UseVariableDropdownReturn => {
+  const { getIcon } = useIcons();
+
   const [currentPath, setCurrentPath] = useState<string[]>([]);
   const [searchInputValue, setSearchInputValue] = useState('');
+
+  const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
+
+  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
+    workflowVisualizerWorkflowIdComponentState,
+  );
 
   const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
     workflowSelectedNodeComponentState,
@@ -44,8 +58,11 @@ export const useVariableDropdown = ({
     activeTabIdComponentState,
     'workflow-serverless-function-tab-list-component-id',
   );
-  const setWorkflowDiagramTriggerNodeSelection = useSetRecoilComponentStateV2(
-    workflowDiagramTriggerNodeSelectionComponentState,
+  const setWorkflowDiagram = useSetRecoilComponentStateV2(
+    workflowDiagramComponentState,
+  );
+  const setCommandMenuNavigationStack = useSetRecoilState(
+    commandMenuNavigationStackState,
   );
 
   const getDisplayedSubStepFields = () => {
@@ -77,8 +94,34 @@ export const useVariableDropdown = ({
     const handleSelectLinkOutputSchema = (
       linkOutputSchema: LinkOutputSchema,
     ) => {
+      if (!isDefined(workflowVisualizerWorkflowId)) {
+        throw new Error('Workflow ID must be configured');
+      }
+
       setWorkflowSelectedNode(step.id);
-      setWorkflowDiagramTriggerNodeSelection(step.id);
+
+      setWorkflowDiagram((diagram) => {
+        if (!isDefined(diagram)) {
+          throw new Error('Workflow diagram must be defined');
+        }
+
+        return {
+          ...diagram,
+          nodes: diagram.nodes.map((node) => ({
+            ...node,
+            selected: node.id === step.id,
+          })),
+        };
+      });
+
+      setCommandMenuNavigationStack([]);
+
+      openWorkflowEditStepInCommandMenu(
+        workflowVisualizerWorkflowId,
+        step.name,
+        getIcon(step.icon),
+      );
+
       if (isDefined(linkOutputSchema.link.tab)) {
         setActiveTabId(linkOutputSchema.link.tab);
       }

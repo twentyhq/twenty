@@ -136,8 +136,6 @@ export const WorkflowDiagramCanvasEditable = ({
         nodesConnectable
         onDeleteEdge={onDeleteEdge}
       />
-
-      <WorkflowDiagramCanvasEditableEffect />
     </ReactFlowProvider>
   );
 };
