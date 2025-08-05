@@ -91,6 +91,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     startNodeCreation({
       parentStepId: source,
       nextStepId: target,
+      position: { x: labelX, y: labelY },
     });
   };
 
