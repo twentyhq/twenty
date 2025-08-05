@@ -14,8 +14,24 @@ const mockTheme = {
     color: { secondary: 'rgb(102, 102, 102)' },
   },
   border: {
-    color: { medium: 'rgb(204, 204, 204)' },
-    radius: { md: '4px' },
+    color: {
+      strong: 'rgb(204, 204, 204)',
+      medium: 'rgb(204, 204, 204)',
+      light: 'rgb(204, 204, 204)',
+      secondaryInverted: 'rgb(204, 204, 204)',
+      inverted: 'rgb(204, 204, 204)',
+      danger: 'rgb(204, 204, 204)',
+      blue: 'rgb(204, 204, 204)',
+    },
+    radius: {
+      xs: '2px',
+      sm: '4px',
+      md: '8px',
+      xl: '20px',
+      xxl: '40px',
+      pill: '999px',
+      rounded: '100%',
+    },
   },
 };
 
@@ -24,7 +40,7 @@ describe('FormFieldInputRowContainer', () => {
     props: { multiline?: boolean; maxHeight?: number } = {},
   ) => {
     return render(
-      <ThemeProvider theme={mockTheme}>
+      <ThemeProvider theme={mockTheme as any}>
         <FormFieldInputRowContainer
           multiline={props.multiline}
           maxHeight={props.maxHeight}
@@ -172,7 +188,7 @@ describe('FormFieldInputRowContainer', () => {
 
     // Switch to multiline
     rerender(
-      <ThemeProvider theme={mockTheme}>
+      <ThemeProvider theme={mockTheme as any}>
         <FormFieldInputRowContainer multiline={true}>
           <div data-testid="child-content">Test Content</div>
         </FormFieldInputRowContainer>

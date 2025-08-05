@@ -35,12 +35,15 @@ jest.mock(
 describe('GenericExecutionResult', () => {
   const defaultProps = {
     result: 'Test result output',
-    language: 'json' as const,
+    language: 'json' as 'plaintext' | 'json',
     height: '200px',
     status: {
       isSuccess: false,
       isError: false,
     },
+    isTesting: false,
+    loadingMessage: 'Processing...',
+    idleMessage: 'Output',
   };
 
   const renderComponent = (props: Partial<typeof defaultProps> = {}) => {
@@ -152,7 +155,7 @@ describe('GenericExecutionResult', () => {
   });
 
   it('should handle different heights', () => {
-    const { container } = renderComponent({ height: 400 });
+    const { container } = renderComponent({ height: '400px' });
 
     // The height is passed to CodeEditor, so we can't directly test it
     // but we can verify the component renders without errors

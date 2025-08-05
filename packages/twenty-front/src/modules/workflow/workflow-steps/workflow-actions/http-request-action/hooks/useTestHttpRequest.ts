@@ -1,8 +1,8 @@
 import { HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/http-request-action/states/httpRequestTestDataFamilyState';
-import { substituteWorkflowVariables } from '@/workflow/workflow-variables/utils/substituteWorkflowVariables';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
+import { resolveInput } from 'twenty-shared/utils';
 
 export const useTestHttpRequest = (actionId: string) => {
   const [isTesting, setIsTesting] = useState(false);
@@ -19,15 +19,15 @@ export const useTestHttpRequest = (actionId: string) => {
 
     try {
       // Substitute variables in the request configuration
-      const substitutedUrl = substituteWorkflowVariables(
+      const substitutedUrl = resolveInput(
         httpRequestFormData.url,
         variableValues,
       );
-      const substitutedHeaders = substituteWorkflowVariables(
+      const substitutedHeaders = resolveInput(
         httpRequestFormData.headers,
         variableValues,
       );
-      const substitutedBody = substituteWorkflowVariables(
+      const substitutedBody = resolveInput(
         httpRequestFormData.body,
         variableValues,
       );
@@ -36,7 +36,7 @@ export const useTestHttpRequest = (actionId: string) => {
         method: httpRequestFormData.method,
         headers: {
           'Content-Type': 'application/json',
-          ...substitutedHeaders,
+          ...(substitutedHeaders as Record<string, string>),
         },
       };
 
@@ -50,7 +50,7 @@ export const useTestHttpRequest = (actionId: string) => {
         }
       }
 
-      const response = await fetch(substitutedUrl, requestOptions);
+      const response = await fetch(substitutedUrl as string, requestOptions);
       const duration = Date.now() - startTime;
 
       let responseData: string;

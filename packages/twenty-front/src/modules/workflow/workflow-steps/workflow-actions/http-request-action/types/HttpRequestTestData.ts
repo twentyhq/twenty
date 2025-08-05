@@ -11,12 +11,3 @@ export type HttpRequestTestData = {
   language: 'plaintext' | 'json';
   height: number;
 };
-
-export const DEFAULT_HTTP_REQUEST_OUTPUT_VALUE = {
-  data: 'Configure your request above, then press "Test"',
-  status: undefined,
-  statusText: undefined,
-  headers: {},
-  duration: undefined,
-  error: undefined,
-};

@@ -53,7 +53,9 @@ export const SingleLine: Story = {
     // Test that the component renders in single line mode
     expect(container).toBeInTheDocument();
     expect(
-      canvas.getByText('Single line container with fixed height'),
+      canvas.getByText(
+        'This is the content inside the FormFieldInputRowContainer.',
+      ),
     ).toBeVisible();
   },
 };
@@ -70,7 +72,7 @@ export const MultilineDefault: Story = {
     expect(container).toBeInTheDocument();
     expect(
       canvas.getByText(
-        'It allows unlimited text with default height constraints.',
+        'This is the content inside the FormFieldInputRowContainer.',
       ),
     ).toBeVisible();
   },
@@ -87,7 +89,11 @@ export const MultilineWithCustomMaxHeight100: Story = {
 
     // Test that the component renders with custom maxHeight
     expect(container).toBeInTheDocument();
-    expect(canvas.getByText('Custom max height of 100px')).toBeVisible();
+    expect(
+      canvas.getByText(
+        'This is the content inside the FormFieldInputRowContainer.',
+      ),
+    ).toBeVisible();
   },
 };
 
@@ -102,7 +108,11 @@ export const MultilineWithCustomMaxHeight200: Story = {
 
     // Test that the component renders with custom maxHeight of 200px
     expect(container).toBeInTheDocument();
-    expect(canvas.getByText('Custom max height of 200px')).toBeVisible();
+    expect(
+      canvas.getByText(
+        'This is the content inside the FormFieldInputRowContainer.',
+      ),
+    ).toBeVisible();
   },
 };
 
@@ -132,7 +142,11 @@ export const MultilineWithSmallMaxHeight: Story = {
 
     // Test that the component renders with small maxHeight
     expect(container).toBeInTheDocument();
-    expect(canvas.getByText('Constrained height scenario')).toBeVisible();
+    expect(
+      canvas.getByText(
+        'This content will be constrained by the small max height',
+      ),
+    ).toBeVisible();
   },
 };
 
@@ -174,7 +188,9 @@ export const MultilineWithLargeMaxHeight: Story = {
 
     // Test that the component renders with large maxHeight
     expect(container).toBeInTheDocument();
-    expect(canvas.getByText('Large content area')).toBeVisible();
+    expect(
+      canvas.getByText('This container has a large max height of 400px'),
+    ).toBeVisible();
   },
 };
 
@@ -189,7 +205,11 @@ export const SingleLineIgnoresMaxHeight: Story = {
 
     // Should maintain fixed height regardless of maxHeight prop in single line mode
     expect(container).toBeInTheDocument();
-    expect(canvas.getByText('Single line ignores maxHeight')).toBeVisible();
+    expect(
+      canvas.getByText(
+        'This is the content inside the FormFieldInputRowContainer.',
+      ),
+    ).toBeVisible();
   },
 };
 

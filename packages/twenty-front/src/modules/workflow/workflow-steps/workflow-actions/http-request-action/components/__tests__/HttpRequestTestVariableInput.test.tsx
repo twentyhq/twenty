@@ -1,6 +1,8 @@
+/* eslint-disable @nx/workspace-no-hardcoded-colors */
+
+import { ThemeProvider } from '@emotion/react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
-import { ThemeProvider } from '@emotion/react';
 
 import { HttpRequestTestVariableInput } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestTestVariableInput';
 import { HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
@@ -8,7 +10,6 @@ import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workfl
 
 import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
 
-// Mock the getWorkflowVariablesUsedInStep utility
 jest.mock(
   '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep',
   () => ({
@@ -16,7 +17,6 @@ jest.mock(
   }),
 );
 
-// Mock the FormTextFieldInput component
 jest.mock(
   '@/object-record/record-field/form-types/components/FormTextFieldInput',
   () => ({
@@ -31,13 +31,13 @@ jest.mock(
         placeholder={placeholder}
         readOnly={readonly}
         defaultValue={defaultValue}
+        data-testid-default-value={defaultValue}
         onChange={(e) => onChange && onChange(e.target.value)}
       />
     ),
   }),
 );
 
-// Mock the FormFieldInputContainer component
 jest.mock(
   '@/object-record/record-field/form-types/components/FormFieldInputContainer',
   () => ({
@@ -47,7 +47,6 @@ jest.mock(
   }),
 );
 
-// Mock the InputLabel component
 jest.mock('@/ui/input/components/InputLabel', () => ({
   InputLabel: ({ children }: any) => (
     <label data-testid="input-label">{children}</label>
@@ -78,14 +77,29 @@ describe('HttpRequestTestVariableInput', () => {
   const mockTheme = {
     spacing: jest.fn((multiplier: number) => `${multiplier * 4}px`),
     border: {
-      // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
-      color: { medium: 'rgb(221, 221, 221)' }, // Mock color for testing
-      radius: { md: '8px' },
+      color: {
+        strong: 'rgb(221, 221, 221)',
+        medium: 'rgb(221, 221, 221)', // Mock color for testing
+        light: 'rgb(221, 221, 221)',
+        secondaryInverted: 'rgb(221, 221, 221)',
+        inverted: 'rgb(221, 221, 221)',
+        danger: 'rgb(221, 221, 221)',
+        blue: 'rgb(221, 221, 221)',
+      },
+      radius: {
+        xs: '2px',
+        sm: '4px',
+        md: '8px',
+        xl: '20px',
+        xxl: '40px',
+        pill: '999px',
+        rounded: '100%',
+      },
     },
     font: {
       size: { sm: '12px' },
       weight: { medium: '500' },
-      // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
+
       color: { primary: 'rgb(51, 51, 51)' }, // Mock color for testing
     },
   };
@@ -99,7 +113,7 @@ describe('HttpRequestTestVariableInput', () => {
     readonly = false,
   ) => {
     return render(
-      <ThemeProvider theme={mockTheme}>
+      <ThemeProvider theme={mockTheme as any}>
         <RecoilRoot
           initializeState={({ set }) => {
             set(httpRequestTestDataFamilyState(actionId), {
@@ -158,7 +172,7 @@ describe('HttpRequestTestVariableInput', () => {
 
     renderComponent();
 
-    expect(screen.getByText('Variable:')).toBeInTheDocument();
+    expect(screen.getAllByText('Variable:').length).toBe(2);
     expect(screen.getByText('{{user.id}}')).toBeInTheDocument();
     expect(screen.getByText('{{auth.token}}')).toBeInTheDocument();
   });
@@ -185,34 +199,36 @@ describe('HttpRequestTestVariableInput', () => {
     mockGetWorkflowVariablesUsedInStep.mockReturnValue(new Set(['user.id']));
 
     render(
-      <RecoilRoot
-        initializeState={({ set }) => {
-          set(httpRequestTestDataFamilyState(actionId), {
-            language: 'plaintext',
-            height: 400,
-            variableValues: {
-              'user.id': '12345',
-            },
-            output: {
-              data: 'Configure your request above, then press "Test"',
-              status: undefined,
-              statusText: undefined,
-              headers: {},
-              duration: undefined,
-              error: undefined,
-            },
-          });
-        }}
-      >
-        <HttpRequestTestVariableInput
-          httpRequestFormData={mockHttpRequestFormData}
-          actionId={actionId}
-        />
-      </RecoilRoot>,
+      <ThemeProvider theme={mockTheme as any}>
+        <RecoilRoot
+          initializeState={({ set }) => {
+            set(httpRequestTestDataFamilyState(actionId), {
+              language: 'plaintext',
+              height: 400,
+              variableValues: {
+                'user.id': '12345',
+              },
+              output: {
+                data: 'Configure your request above, then press "Test"',
+                status: undefined,
+                statusText: undefined,
+                headers: {},
+                duration: undefined,
+                error: undefined,
+              },
+            });
+          }}
+        >
+          <HttpRequestTestVariableInput
+            httpRequestFormData={mockHttpRequestFormData}
+            actionId={actionId}
+          />
+        </RecoilRoot>
+      </ThemeProvider>,
     );
 
     const input = screen.getByTestId('form-text-field-input');
-    expect(input).toHaveAttribute('defaultValue', '12345');
+    expect(input).toHaveAttribute('data-testid-default-value', '12345');
   });
 
   it('should handle empty variable values', () => {
@@ -221,7 +237,7 @@ describe('HttpRequestTestVariableInput', () => {
     renderComponent();
 
     const input = screen.getByTestId('form-text-field-input');
-    expect(input).toHaveAttribute('defaultValue', '');
+    expect(input).toHaveAttribute('data-testid-default-value', '');
   });
 
   it('should update variable values on input change', () => {
@@ -234,7 +250,7 @@ describe('HttpRequestTestVariableInput', () => {
 
     // Note: We can't easily test the Recoil state update in this test setup,
     // but we can verify that the onChange handler is called correctly
-    expect(input.value).toBe('67890');
+    expect((input as HTMLInputElement).value).toBe('67890');
   });
 
   it('should handle multiple variables correctly', () => {

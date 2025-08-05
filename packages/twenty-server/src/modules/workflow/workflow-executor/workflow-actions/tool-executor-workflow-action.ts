@@ -7,8 +7,8 @@ import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-
 import { ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
-import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { resolveInput } from 'twenty-shared/utils';
 
 @Injectable()
 export class ToolExecutorWorkflowAction implements WorkflowAction {

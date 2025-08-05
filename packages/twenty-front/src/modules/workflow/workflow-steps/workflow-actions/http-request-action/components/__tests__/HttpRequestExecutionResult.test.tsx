@@ -4,7 +4,6 @@ import { RecoilRoot } from 'recoil';
 import { HttpRequestExecutionResult } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult';
 import type { HttpRequestTestData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/types/HttpRequestTestData';
 
-// Mock the GenericExecutionResult component
 jest.mock('@/workflow/components/GenericExecutionResult', () => ({
   GenericExecutionResult: ({
     result,
