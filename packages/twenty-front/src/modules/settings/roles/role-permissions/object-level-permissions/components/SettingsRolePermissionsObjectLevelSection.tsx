@@ -81,14 +81,18 @@ export const SettingsRolePermissionsObjectLevelSection = ({
     });
   };
 
-  const hasPermissions = isDefined(filteredObjectPermissions) && filteredObjectPermissions?.length > 0;
+  const hasObjectPermissions =
+    isDefined(filteredObjectPermissions) &&
+    filteredObjectPermissions?.length > 0;
 
   return (
     <Section>
       <Table>
-        <SettingsRolePermissionsObjectLevelTableHeader showPermissionsLabel={hasPermissions} />
+        <SettingsRolePermissionsObjectLevelTableHeader
+          showPermissionsLabel={hasObjectPermissions}
+        />
         <StyledTableRows>
-          {hasPermissions ? (
+          {hasObjectPermissions ? (
             filteredObjectPermissions?.map((objectPermission) => (
               <SettingsRolePermissionsObjectLevelTableRow
                 key={objectPermission.objectMetadataId}
