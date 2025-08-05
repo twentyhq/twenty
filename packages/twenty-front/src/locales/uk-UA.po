@@ -312,11 +312,6 @@ msgstr ""
 msgid "Actions users can perform on all objects"
 msgstr "Дії, які користувачі можуть виконувати на всіх об'єктах"
 
-#. js-lingui-id: xnXGwA
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "Actions users can perform on specific objects"
-msgstr "Дії, які користувачі можуть виконувати на певних об'єктах"
-
 #. js-lingui-id: N4ZcCd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 msgid "Actions users can perform on this object"
@@ -405,6 +400,11 @@ msgstr "Додати об'єкт"
 msgid "Add object permission"
 msgstr "Додати дозвіл на об'єкт"
 
+#. js-lingui-id: oLB/Qu
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+msgid "Add object rule"
+msgstr ""
+
 #. js-lingui-id: Dl5lVI
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Add option"
@@ -419,11 +419,6 @@ msgstr "Додати або вилучити користувачів"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Add Output Field"
 msgstr "Додати поле результату"
-
-#. js-lingui-id: O8tK4v
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "Add rule"
-msgstr "Додати правило"
 
 #. js-lingui-id: sgXUv+
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard.tsx
@@ -4133,10 +4128,10 @@ msgstr "Немає доступних результатів"
 msgid "No payment method found. Please update your billing details."
 msgstr "Спосіб оплати не знайдено. Будь ласка, оновіть свої платіжні дані."
 
-#. js-lingui-id: CfOZmU
+#. js-lingui-id: kSCxfd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "No permissions found"
-msgstr "Дозволи не знайдені"
+msgid "No permissions have been set for individual objects."
+msgstr ""
 
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -4262,7 +4257,6 @@ msgstr "Тип числа"
 
 #. js-lingui-id: W0i24j
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
 msgstr "Об'єкт"
@@ -4274,7 +4268,7 @@ msgstr "Об'єкт призначення"
 
 #. js-lingui-id: YJgmMZ
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 msgid "Object-Level"
 msgstr "Рівень об'єкта"
 
