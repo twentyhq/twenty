@@ -23,8 +23,8 @@ import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/stan
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
-import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-step/utils/insert-step';
-import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-step/utils/remove-step';
+import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
+import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/remove-step';
 import { BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
   WorkflowAction,
@@ -35,7 +35,7 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 import { WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
 import { WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
-import { computeWorkflowVersionStepChanges } from 'src/modules/workflow/workflow-builder/workflow-step/utils/compute-workflow-version-step-updates.util';
+import { computeWorkflowVersionStepChanges } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/compute-workflow-version-step-updates.util';
 
 const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
   outputSchema: {},
