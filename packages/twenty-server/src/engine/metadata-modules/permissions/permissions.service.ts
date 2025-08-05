@@ -53,6 +53,10 @@ export class PermissionsService {
       throw new PermissionsException(
         PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
         PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+        {
+          userFriendlyMessage:
+            'Your role in this workspace could not be found. Please contact your workspace administrator.',
+        },
       );
     }
 
@@ -162,6 +166,10 @@ export class PermissionsService {
         throw new PermissionsException(
           PermissionsExceptionMessage.API_KEY_ROLE_NOT_FOUND,
           PermissionsExceptionCode.API_KEY_ROLE_NOT_FOUND,
+          {
+            userFriendlyMessage:
+              'The API key does not have a valid role assigned. Please check your API key configuration.',
+          },
         );
       }
 
@@ -180,6 +188,10 @@ export class PermissionsService {
         throw new PermissionsException(
           PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
           PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+          {
+            userFriendlyMessage:
+              'Your role in this workspace could not be found. Please contact your workspace administrator.',
+          },
         );
       }
 
@@ -189,6 +201,10 @@ export class PermissionsService {
     throw new PermissionsException(
       PermissionsExceptionMessage.NO_AUTHENTICATION_CONTEXT,
       PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
+      {
+        userFriendlyMessage:
+          'Authentication is required to access this feature. Please sign in and try again.',
+      },
     );
   }
 
