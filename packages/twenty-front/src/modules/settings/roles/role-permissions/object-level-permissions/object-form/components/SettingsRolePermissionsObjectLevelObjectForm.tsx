@@ -1,5 +1,6 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsRolePermissionsObjectLevelObjectFieldPermissionTable } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable';
 import { SettingsRolePermissionsObjectLevelObjectFormObjectLevel } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -67,6 +68,10 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
     >
       <SettingsPageContainer>
         <SettingsRolePermissionsObjectLevelObjectFormObjectLevel
+          objectMetadataItem={objectMetadataItem}
+          roleId={roleId}
+        />
+        <SettingsRolePermissionsObjectLevelObjectFieldPermissionTable
           objectMetadataItem={objectMetadataItem}
           roleId={roleId}
         />

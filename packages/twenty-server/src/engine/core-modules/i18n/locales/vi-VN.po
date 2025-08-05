@@ -2585,6 +2585,11 @@ msgstr "Người dùng không phải là một phần của không gian làm vi�
 msgid "User time zone"
 msgstr "Múi giờ người dùng"
 
+#. js-lingui-id: VkcC68
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "User was not created with email/password"
+msgstr ""
+
 #. js-lingui-id: 43zCwQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred date format"

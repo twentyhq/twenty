@@ -57,14 +57,11 @@ export class SignInUpService {
     private readonly userService: UserService,
   ) {}
 
-  async computeParamsForNewUser(
-    newUserParams: SignInUpNewUserPayload,
+  async computePartialUserFromUserPayload(
+    newUserPayload: SignInUpNewUserPayload,
     authParams: AuthProviderWithPasswordType['authParams'],
-  ) {
-    if (!newUserParams.firstName) newUserParams.firstName = '';
-    if (!newUserParams.lastName) newUserParams.lastName = '';
-
-    if (!newUserParams?.email) {
+  ): Promise<PartialUserWithPicture> {
+    if (!newUserPayload?.email) {
       throw new AuthException(
         'Email is required',
         AuthExceptionCode.INVALID_INPUT,
@@ -74,11 +71,22 @@ export class SignInUpService {
       );
     }
 
+    const partialNewUser: PartialUserWithPicture = {
+      email: newUserPayload.email,
+      firstName: newUserPayload.firstName ?? '',
+      lastName: newUserPayload.lastName ?? '',
+      picture: newUserPayload.picture ?? '',
+      locale: newUserPayload.locale ?? 'en',
+      isEmailVerified: newUserPayload.isEmailAlreadyVerified,
+    };
+
     if (authParams.provider === AuthProviderEnum.Password) {
-      newUserParams.passwordHash = await this.generateHash(authParams.password);
+      partialNewUser.passwordHash = await this.generateHash(
+        authParams.password,
+      );
     }
 
-    return newUserParams as PartialUserWithPicture;
+    return partialNewUser;
   }
 
   async signInUp(
@@ -428,7 +436,7 @@ export class SignInUpService {
     authParams: AuthProviderWithPasswordType['authParams'],
   ) {
     return this.saveNewUser(
-      await this.computeParamsForNewUser(newUserParams, authParams),
+      await this.computePartialUserFromUserPayload(newUserParams, authParams),
       await this.setDefaultImpersonateAndAccessFullAdminPanel(),
     );
   }
