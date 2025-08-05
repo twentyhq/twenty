@@ -58,6 +58,14 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
     nextStepId: target,
   });
 
+  const handleAddNodeButtonClick = () => {
+    startNodeCreation({
+      parentStepId: source,
+      nextStepId: target,
+      position: { x: labelX, y: labelY },
+    });
+  };
+
   return (
     <>
       <BaseEdge
@@ -83,12 +91,7 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
               iconButtons={[
                 {
                   Icon: IconPlus,
-                  onClick: () => {
-                    startNodeCreation({
-                      parentStepId: source,
-                      nextStepId: target,
-                    });
-                  },
+                  onClick: handleAddNodeButtonClick,
                 },
               ]}
             />

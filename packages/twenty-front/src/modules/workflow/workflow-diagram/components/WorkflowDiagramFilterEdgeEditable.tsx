@@ -148,6 +148,17 @@ export const WorkflowDiagramFilterEdgeEditable = ({
     });
   };
 
+  const handleAddNodeButtonClick = () => {
+    closeDropdown(dropdownId);
+    setHovered(false);
+
+    startNodeCreation({
+      parentStepId: data.stepId,
+      nextStepId: target,
+      position: { x: labelX, y: labelY },
+    });
+  };
+
   return (
     <>
       <BaseEdge
@@ -250,15 +261,7 @@ export const WorkflowDiagramFilterEdgeEditable = ({
                     <MenuItem
                       text="Add Node"
                       LeftIcon={IconPlus}
-                      onClick={() => {
-                        closeDropdown(dropdownId);
-                        setHovered(false);
-
-                        startNodeCreation({
-                          parentStepId: data.stepId,
-                          nextStepId: target,
-                        });
-                      }}
+                      onClick={handleAddNodeButtonClick}
                     />
                   </DropdownMenuItemsContainer>
                 </DropdownContent>

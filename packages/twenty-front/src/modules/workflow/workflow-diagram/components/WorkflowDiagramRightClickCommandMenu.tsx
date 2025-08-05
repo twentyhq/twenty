@@ -12,6 +12,7 @@ import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithC
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useCloseRightClickMenu';
 import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
+import { useWorkflowDiagramScreenToFlowPosition } from '@/workflow/workflow-diagram/hooks/useWorkflowDiagramScreenToFlowPosition';
 
 const StyledContainer = styled.div<{ x: number; y: number }>`
   background: ${({ theme }) => theme.background.primary};
@@ -30,6 +31,9 @@ const StyledContainer = styled.div<{ x: number; y: number }>`
 export const WorkflowDiagramRightClickCommandMenu = () => {
   const { t } = useLingui();
   const rightClickCommandMenuRef = useRef<HTMLDivElement>(null);
+
+  const { workflowDiagramScreenToFlowPosition } =
+    useWorkflowDiagramScreenToFlowPosition();
 
   const { startNodeCreation } = useStartNodeCreation();
 
@@ -57,10 +61,13 @@ export const WorkflowDiagramRightClickCommandMenu = () => {
   };
 
   const addNode = () => {
+    const position = workflowDiagramScreenToFlowPosition(
+      workflowDiagramRightClickMenuPosition,
+    );
     startNodeCreation({
       parentStepId: undefined,
       nextStepId: undefined,
-      position: workflowDiagramRightClickMenuPosition,
+      position,
     });
   };
 
