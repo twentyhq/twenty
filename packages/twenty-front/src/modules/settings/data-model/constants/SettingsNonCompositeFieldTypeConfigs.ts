@@ -40,7 +40,7 @@ export type SettingsFieldTypeConfig<T> = {
 };
 
 type SettingsNonCompositeFieldTypeConfigArray = Record<
-  Exclude<SettingsNonCompositeFieldType, 'UUID'>,
+  SettingsNonCompositeFieldType,
   SettingsFieldTypeConfig<any>
 >;
 
