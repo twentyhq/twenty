@@ -14,7 +14,7 @@ export const deleteFieldFromFlatObjectMetadataWithFlatFieldMaps = ({
     flatObjectMetadataWithFlatFieldMaps.fieldsById[fieldMetadataIdToRemove];
 
   if (!isDefined(flatFieldMetadataToRemove)) {
-    throw new Error('TODO'); // Create specific exception
+    throw new Error('TODO'); // TODO prastoin Create specific exception or swallow
   }
 
   const {
