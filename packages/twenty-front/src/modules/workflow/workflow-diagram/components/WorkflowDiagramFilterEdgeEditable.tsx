@@ -31,7 +31,6 @@ import {
   EdgeProps,
   getBezierPath,
 } from '@xyflow/react';
-import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconDotsVertical,

@@ -53,7 +53,6 @@ import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagra
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
-import { workflowHoveredEdgeIdComponentState } from '@/workflow/workflow-diagram/states/workflowHoveredEdgeIdComponentState';
 import { useIsEdgeHovered } from '@/workflow/workflow-diagram/hooks/useIsEdgeHovered';
 
 const StyledResetReactflowStyles = styled.div`
@@ -188,10 +187,6 @@ export const WorkflowDiagramCanvasBase = ({
     );
   const setWorkflowDiagramWaitingNodesDimensions = useSetRecoilComponentStateV2(
     workflowDiagramWaitingNodesDimensionsComponentState,
-  );
-
-  const setWorkflowHoveredEdgeId = useSetRecoilComponentStateV2(
-    workflowHoveredEdgeIdComponentState,
   );
 
   const { setEdgeHovered, setNoEdgeHovered } = useIsEdgeHovered();
