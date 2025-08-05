@@ -22,19 +22,19 @@ import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/s
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
+  applyEdgeChanges,
+  applyNodeChanges,
   Background,
+  Connection,
   EdgeChange,
   EdgeProps,
   FitViewOptions,
   NodeChange,
   NodeProps,
-  ReactFlow,
-  applyEdgeChanges,
-  applyNodeChanges,
-  useReactFlow,
-  Connection,
-  OnNodeDrag,
   OnBeforeDelete,
+  OnNodeDrag,
+  ReactFlow,
+  useReactFlow,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, {
@@ -277,11 +277,9 @@ export const WorkflowDiagramCanvasBase = ({
 
         let visibleRightDrawerWidth = 0;
         if (rightDrawerState === 'normal' && !isInRightDrawer) {
-          const rightDrawerWidth = Number(
+          visibleRightDrawerWidth = Number(
             THEME_COMMON.rightDrawerWidth.replace('px', ''),
           );
-
-          visibleRightDrawerWidth = rightDrawerWidth;
         }
 
         const flowBounds = reactflow.getNodesBounds(nodes);
