@@ -88,7 +88,7 @@ const NumberFieldInputWithContext = ({
           },
           recordId: '123',
           isLabelIdentifier: false,
-          isReadOnly: false,
+          isRecordFieldReadOnly: false,
         }}
       >
         {isReady && <StorybookFieldInputDropdownFocusIdSetterEffect />}

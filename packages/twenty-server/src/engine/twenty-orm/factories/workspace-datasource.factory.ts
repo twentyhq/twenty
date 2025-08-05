@@ -63,15 +63,15 @@ export class WorkspaceDatasourceFactory {
     );
 
     if (isPoolSharingEnabled) {
-      this.logger.debug(
-        `PromiseMemoizer Event: A WorkspaceDataSource (using shared pool) is being cleared. Actual pool closure managed by PgPoolSharedService. Not calling dataSource.destroy().`,
+      this.logger.log(
+        `PromiseMemoizer Event: A WorkspaceDataSource for workspace ${dataSource.internalContext.workspaceId} is being cleared. Actual pool closure managed by PgPoolSharedService. Not calling dataSource.destroy().`,
       );
       // We should NOT call dataSource.destroy() here, because that would end
       // the shared pool, potentially affecting other active users of that pool.
       // The PgPoolSharedService is responsible for the lifecycle of shared pools.
     } else {
-      this.logger.debug(
-        `PromiseMemoizer Event: A WorkspaceDataSource (using dedicated pool) is being cleared. Calling safelyDestroyDataSource.`,
+      this.logger.log(
+        `PromiseMemoizer Event: A WorkspaceDataSource for workspace ${dataSource.internalContext.workspaceId} is being cleared. Calling safelyDestroyDataSource.`,
       );
       await this.safelyDestroyDataSource(dataSource);
     }

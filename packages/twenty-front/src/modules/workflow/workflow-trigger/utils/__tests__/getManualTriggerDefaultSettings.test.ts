@@ -1,6 +1,6 @@
 import { WorkflowManualTriggerAvailability } from '@/workflow/types/Workflow';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getManualTriggerDefaultSettings } from '../getManualTriggerDefaultSettings';
 
 it('returns settings for a manual trigger that can be activated from any where', () => {

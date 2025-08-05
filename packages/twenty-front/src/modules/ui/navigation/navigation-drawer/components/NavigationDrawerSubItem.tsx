@@ -8,7 +8,7 @@ type NavigationDrawerSubItemProps = NavigationDrawerItemProps;
 export const NavigationDrawerSubItem = ({
   className,
   label,
-  objectName,
+  secondaryLabel,
   Icon,
   to,
   onClick,
@@ -26,7 +26,7 @@ export const NavigationDrawerSubItem = ({
     <NavigationDrawerItem
       className={className}
       label={label}
-      objectName={objectName}
+      secondaryLabel={secondaryLabel}
       indentationLevel={2}
       subItemState={subItemState}
       Icon={Icon}

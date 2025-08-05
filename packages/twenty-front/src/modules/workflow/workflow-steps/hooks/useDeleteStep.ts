@@ -10,6 +10,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { assertWorkflowWithCurrentVersionIsDefined } from '@/workflow/utils/assertWorkflowWithCurrentVersionIsDefined';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useDeleteStep = ({
   workflow,
@@ -32,6 +33,10 @@ export const useDeleteStep = ({
     closeCommandMenu();
 
     const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
+
+    if (!isDefined(workflowVersionId)) {
+      throw new Error('Could not find workflow version');
+    }
 
     if (stepId === TRIGGER_STEP_ID) {
       await updateOneWorkflowVersion({

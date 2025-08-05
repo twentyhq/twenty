@@ -12,7 +12,7 @@ import {
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 type MockedUser = Pick<
   User,
@@ -66,6 +66,10 @@ export const mockCurrentWorkspace: Workspace = {
     },
     {
       key: FeatureFlagKey.IS_POSTGRESQL_INTEGRATION_ENABLED,
+      value: true,
+    },
+    {
+      key: FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
       value: true,
     },
   ],
@@ -132,6 +136,7 @@ export const mockedUserData: MockedUser = {
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: true,
       canDestroyObjectRecords: true,
+      restrictedFields: {},
     })),
   },
   locale: 'en',
@@ -161,6 +166,7 @@ export const mockedLimitedPermissionsUserData: MockedUser = {
         canUpdateObjectRecords: true,
         canSoftDeleteObjectRecords: true,
         canDestroyObjectRecords: true,
+        restrictedFields: {},
       })),
   },
 };

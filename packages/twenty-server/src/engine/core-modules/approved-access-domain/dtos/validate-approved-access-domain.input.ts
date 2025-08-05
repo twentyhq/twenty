@@ -1,6 +1,8 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
 export class ValidateApprovedAccessDomainInput {
@@ -9,8 +11,8 @@ export class ValidateApprovedAccessDomainInput {
   @IsNotEmpty()
   validationToken: string;
 
-  @Field(() => String)
-  @IsString()
+  @Field(() => UUIDScalarType)
+  @IsUUID()
   @IsNotEmpty()
   approvedAccessDomainId: string;
 }

@@ -1,6 +1,7 @@
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { ZodHelperLiteral } from '@/object-record/record-field/types/ZodHelperLiteral';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { AllowedAddressSubField } from 'twenty-shared/src/types/AddressFieldsType';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
@@ -114,7 +115,9 @@ export type FieldRatingMetadata = BaseFieldMetadata & {
 
 export type FieldAddressMetadata = BaseFieldMetadata & {
   placeHolder: string;
-  settings?: null;
+  settings?: {
+    subFields?: AllowedAddressSubField[] | null;
+  };
 };
 
 export type FieldRawJsonMetadata = BaseFieldMetadata & {

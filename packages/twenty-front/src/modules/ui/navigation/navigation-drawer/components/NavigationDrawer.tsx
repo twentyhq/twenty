@@ -8,10 +8,10 @@ import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/N
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { isNavigationDrawerExpandedState } from '../../states/isNavigationDrawerExpanded';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 export type NavigationDrawerProps = {
   children?: ReactNode;

@@ -47,16 +47,13 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       objectMetadataItemWithFieldMaps,
     );
 
-    const shouldBypassPermissionChecks = executionArgs.isExecutedByApiKey;
-
-    await this.processNestedRelationsIfNeeded(
+    await this.processNestedRelationsIfNeeded({
       executionArgs,
-      upsertedRecords,
+      records: upsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      shouldBypassPermissionChecks,
       roleId,
-    );
+    });
 
     return this.formatRecordsForResponse(
       upsertedRecords,
@@ -92,19 +89,12 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
   ): Promise<InsertResult> {
     const { objectMetadataItemWithFieldMaps } = executionArgs.options;
 
-    const selectedColumns = buildColumnsToSelect({
-      select: executionArgs.graphqlQuerySelectedFieldsResult.select,
-      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
-      objectMetadataItemWithFieldMaps,
-    });
-
     const conflictingFields = this.getConflictingFields(
       objectMetadataItemWithFieldMaps,
     );
     const existingRecords = await this.findExistingRecords(
       executionArgs,
       conflictingFields,
-      selectedColumns,
     );
 
     const { recordsToUpdate, recordsToInsert } = this.categorizeRecords(
@@ -190,7 +180,6 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       fullPath: string;
       column: string;
     }[],
-    selectedColumns: Record<string, boolean>,
   ): Promise<Partial<ObjectRecord>[]> {
     const { objectMetadataItemWithFieldMaps } = executionArgs.options;
     const queryBuilder = executionArgs.repository.createQueryBuilder(
@@ -206,12 +195,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       queryBuilder.orWhere(condition);
     });
 
-    return await queryBuilder
-      .setFindOptions({
-        select: selectedColumns,
-      })
-      .withDeleted()
-      .getMany();
+    return await queryBuilder.withDeleted().getMany();
   }
 
   private getValueFromPath(
@@ -274,11 +258,17 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       for (const field of conflictingFields) {
         const requestFieldValue = this.getValueFromPath(record, field.fullPath);
 
-        const existingRec = existingRecords.find(
-          (existingRecord) =>
-            isDefined(existingRecord[field.column]) &&
-            existingRecord[field.column] === requestFieldValue,
-        );
+        const existingRec = existingRecords.find((existingRecord) => {
+          const existingFieldValue = this.getValueFromPath(
+            existingRecord,
+            field.fullPath,
+          );
+
+          return (
+            isDefined(existingFieldValue) &&
+            existingFieldValue === requestFieldValue
+          );
+        });
 
         if (existingRec) {
           existingRecord = { ...record, id: existingRec.id };
@@ -301,7 +291,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     repository,
     objectMetadataItemWithFieldMaps,
     result,
-    columnsToReturn,
+    columnsToReturn: _,
   }: {
     partialRecordsToUpdate: Partial<ObjectRecord>[];
     repository: WorkspaceRepository<ObjectLiteral>;
@@ -309,26 +299,21 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     result: InsertResult;
     columnsToReturn: string[];
   }): Promise<void> {
-    for (const partialRecordToUpdate of partialRecordsToUpdate) {
-      const recordId = partialRecordToUpdate.id as string;
-
-      // we should not update an existing record's createdBy value
-      const partialRecordToUpdateWithoutCreatedByUpdate =
-        this.getRecordWithoutCreatedBy(
-          partialRecordToUpdate,
-          objectMetadataItemWithFieldMaps,
-        );
-
-      await repository.update(
-        recordId,
-        partialRecordToUpdateWithoutCreatedByUpdate,
-        undefined,
-        columnsToReturn,
+    const partialRecordsToUpdateWithoutCreatedByUpdate =
+      partialRecordsToUpdate.map((record) =>
+        this.getRecordWithoutCreatedBy(record, objectMetadataItemWithFieldMaps),
       );
 
-      result.identifiers.push({ id: recordId });
-      result.generatedMaps.push({ id: recordId });
-    }
+    const savedRecords = await repository.save(
+      partialRecordsToUpdateWithoutCreatedByUpdate,
+    );
+
+    result.identifiers.push(
+      ...savedRecords.map((record) => ({ id: record.id })),
+    );
+    result.generatedMaps.push(
+      ...savedRecords.map((record) => ({ id: record.id })),
+    );
   }
 
   private async processRecordsToInsert({
@@ -383,14 +368,19 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     return upsertedRecords as ObjectRecord[];
   }
 
-  private async processNestedRelationsIfNeeded(
-    executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
-    upsertedRecords: ObjectRecord[],
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-    objectMetadataMaps: ObjectMetadataMaps,
-    shouldBypassPermissionChecks: boolean,
-    roleId?: string,
-  ): Promise<void> {
+  private async processNestedRelationsIfNeeded({
+    executionArgs,
+    records,
+    objectMetadataItemWithFieldMaps,
+    objectMetadataMaps,
+    roleId,
+  }: {
+    executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>;
+    records: ObjectRecord[];
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+    objectMetadataMaps: ObjectMetadataMaps;
+    roleId?: string;
+  }): Promise<void> {
     if (!executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       return;
     }
@@ -398,13 +388,13 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     await this.processNestedRelationsHelper.processNestedRelations({
       objectMetadataMaps,
       parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-      parentObjectRecords: upsertedRecords,
+      parentObjectRecords: records,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       limit: QUERY_MAX_RECORDS,
       authContext: executionArgs.options.authContext,
       workspaceDataSource: executionArgs.workspaceDataSource,
       roleId,
-      shouldBypassPermissionChecks,
+      shouldBypassPermissionChecks: executionArgs.shouldBypassPermissionChecks,
       selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
     });
   }

@@ -9,7 +9,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -20,10 +19,14 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'viewField', schema: 'core' })
 @Index('IDX_VIEW_FIELD_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
-@Unique('IDX_VIEW_FIELD_FIELD_METADATA_ID_VIEW_ID_UNIQUE', [
-  'fieldMetadataId',
-  'viewId',
-])
+@Index(
+  'IDX_VIEW_FIELD_FIELD_METADATA_ID_VIEW_ID_UNIQUE',
+  ['fieldMetadataId', 'viewId'],
+  {
+    unique: true,
+    where: '"deletedAt" IS NULL',
+  },
+)
 export class ViewField {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')

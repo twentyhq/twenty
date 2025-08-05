@@ -36,6 +36,19 @@ class GetTimelineCalendarEventsFromCompanyIdArgs {
   pageSize: number;
 }
 
+@ArgsType()
+class GetTimelineCalendarEventsFromOpportunityIdArgs {
+  @Field(() => UUIDScalarType)
+  opportunityId: string;
+
+  @Field(() => Int)
+  page: number;
+
+  @Field(() => Int)
+  @Max(TIMELINE_CALENDAR_EVENTS_MAX_PAGE_SIZE)
+  pageSize: number;
+}
+
 @UseGuards(WorkspaceAuthGuard)
 @Resolver(() => TimelineCalendarEventsWithTotal)
 export class TimelineCalendarEventResolver {
@@ -73,6 +86,29 @@ export class TimelineCalendarEventResolver {
         page,
         pageSize,
       });
+
+    return timelineCalendarEvents;
+  }
+
+  @Query(() => TimelineCalendarEventsWithTotal)
+  async getTimelineCalendarEventsFromOpportunityId(
+    @Args()
+    {
+      opportunityId,
+      page,
+      pageSize,
+    }: GetTimelineCalendarEventsFromOpportunityIdArgs,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+  ) {
+    const timelineCalendarEvents =
+      await this.timelineCalendarEventService.getCalendarEventsFromOpportunityId(
+        {
+          currentWorkspaceMemberId: workspaceMemberId,
+          opportunityId,
+          page,
+          pageSize,
+        },
+      );
 
     return timelineCalendarEvents;
   }

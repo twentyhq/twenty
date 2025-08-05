@@ -134,6 +134,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
               options={options}
               value={value}
               withSearchInput={label === t`Record label`}
+              disabled={!objectMetadataItem.isCustom}
               callToActionButton={
                 label === t`Record label`
                   ? {

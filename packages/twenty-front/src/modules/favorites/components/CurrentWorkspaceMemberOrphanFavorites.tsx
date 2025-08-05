@@ -1,11 +1,11 @@
 import { FavoriteIcon } from '@/favorites/components/FavoriteIcon';
+import { FavoriteNavigationDrawerItem } from '@/favorites/components/FavoriteNavigationDrawerItem';
 import { FavoritesDroppable } from '@/favorites/components/FavoritesDroppable';
 import { FavoritesDragContext } from '@/favorites/contexts/FavoritesDragContext';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatchingFavorite';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -42,7 +42,8 @@ export const CurrentWorkspaceMemberOrphanFavorites = () => {
             isInsideScrollableContainer={true}
             itemComponent={
               <StyledOrphanFavoritesContainer>
-                <NavigationDrawerItem
+                <FavoriteNavigationDrawerItem
+                  favorite={favorite}
                   label={favorite.labelIdentifier}
                   Icon={() => <FavoriteIcon favorite={favorite} />}
                   active={isLocationMatchingFavorite(
@@ -58,7 +59,6 @@ export const CurrentWorkspaceMemberOrphanFavorites = () => {
                       accent="tertiary"
                     />
                   }
-                  objectName={favorite.objectNameSingular}
                   isDragging={isDragging}
                   triggerEvent="CLICK"
                 />

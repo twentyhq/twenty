@@ -14,12 +14,12 @@ import {
   allMockCompanyRecordsWithRelation,
   findMockCompanyWithRelationRecord,
 } from '~/testing/mock-data/companiesWithRelations';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import {
   allMockPersonRecords,
   getMockPersonObjectMetadataItem,
   getMockPersonRecord,
 } from '~/testing/mock-data/people';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
 const mockRefetchAggregateQueries = jest.fn();

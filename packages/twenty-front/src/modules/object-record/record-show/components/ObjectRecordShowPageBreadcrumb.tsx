@@ -2,7 +2,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
+import { useIsRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordFieldReadOnly';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
@@ -11,7 +11,6 @@ import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { capitalize } from 'twenty-shared/utils';
 
 const StyledEditableTitleContainer = styled.div`
   align-items: center;
@@ -43,12 +42,12 @@ const StyledPaginationInformation = styled.span`
 export const ObjectRecordShowPageBreadcrumb = ({
   objectNameSingular,
   objectRecordId,
-  objectLabelPlural,
+  objectLabel,
   labelIdentifierFieldMetadataItem,
 }: {
   objectNameSingular: string;
   objectRecordId: string;
-  objectLabelPlural: string;
+  objectLabel: string;
   labelIdentifierFieldMetadataItem?: FieldMetadataItem;
 }) => {
   const { loading } = useFindOneRecord({
@@ -68,9 +67,10 @@ export const ObjectRecordShowPageBreadcrumb = ({
     objectRecordId,
   });
 
-  const isRecordReadOnly = useIsRecordReadOnly({
+  const isLabelIdentifierReadOnly = useIsRecordFieldReadOnly({
     recordId: objectRecordId,
     objectMetadataId: objectMetadataItem.id,
+    fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
   });
 
   const { navigateToIndexView, rankInView, totalCount } =
@@ -95,7 +95,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
         }}
       >
         {HeaderIcon && <HeaderIcon size={theme.icon.size.md} />}
-        {capitalize(objectLabelPlural)}
+        {objectLabel}
         <span>{' / '}</span>
       </StyledEditableTitlePrefix>
       <StyledTitle>
@@ -119,7 +119,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
             useUpdateRecord: useUpdateOneObjectRecordMutation,
             isCentered: false,
             isDisplayModeFixHeight: true,
-            isReadOnly: isRecordReadOnly,
+            isRecordFieldReadOnly: isLabelIdentifierReadOnly,
           }}
         >
           <RecordTitleCell

@@ -4,66 +4,80 @@ import styled from '@emotion/styled';
 import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import {
-  IconChevronRight,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { IconChevronRight } from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { ApiKey } from '~/generated-metadata/graphql';
+import { ApiKey, FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
-  grid-template-columns: 312px auto 28px;
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: 100%;
-    grid-template-columns: 12fr 4fr;
   }
 `;
 
-const StyledNameTableCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.primary};
-  gap: ${({ theme }) => theme.spacing(2)};
+const StyledTruncatedCell = styled(TableCell)`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
 `;
 
-const StyledIconTableCell = styled(TableCell)`
-  justify-content: center;
-  padding-right: ${({ theme }) => theme.spacing(1)};
-  padding-left: 0;
+const StyledEllipsisLabel = styled.div`
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 `;
 
-const StyledIconChevronRight = styled(IconChevronRight)`
-  color: ${({ theme }) => theme.font.color.tertiary};
-`;
+type ApiKeyType = Pick<ApiKey, 'id' | 'name' | 'expiresAt' | 'revokedAt'> & {
+  role?: { id: string; label: string; icon?: string | null } | null;
+};
+
+type SettingsApiKeysFieldItemTableRowProps = {
+  apiKey: ApiKeyType;
+  to: string;
+};
 
 export const SettingsApiKeysFieldItemTableRow = ({
   apiKey,
   to,
-}: {
-  apiKey: Pick<ApiKey, 'id' | 'name' | 'expiresAt' | 'revokedAt'>;
-  to: string;
-}) => {
+}: SettingsApiKeysFieldItemTableRowProps) => {
   const theme = useTheme();
   const formattedExpiration = formatExpiration(apiKey.expiresAt || null);
 
+  const isApiKeyRolesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
+  );
+
+  const gridColumns = isApiKeyRolesEnabled ? '5fr 2fr 3fr 1fr' : '5fr 3fr 1fr';
+
   return (
-    <StyledApisFieldTableRow to={to}>
-      <StyledNameTableCell>
-        <OverflowingTextWithTooltip text={apiKey.name} />
-      </StyledNameTableCell>
-      <TableCell
+    <StyledApisFieldTableRow gridAutoColumns={gridColumns} to={to}>
+      <StyledTruncatedCell color={theme.font.color.primary}>
+        <StyledEllipsisLabel>{apiKey.name}</StyledEllipsisLabel>
+      </StyledTruncatedCell>
+
+      {isApiKeyRolesEnabled && (
+        <StyledTruncatedCell color={theme.font.color.tertiary}>
+          <StyledEllipsisLabel>{apiKey.role?.label || '-'}</StyledEllipsisLabel>
+        </StyledTruncatedCell>
+      )}
+
+      <StyledTruncatedCell
         color={
           formattedExpiration === 'Expired'
             ? theme.font.color.danger
             : theme.font.color.tertiary
         }
       >
-        {formattedExpiration}
-      </TableCell>
-      <StyledIconTableCell>
-        <StyledIconChevronRight
+        <StyledEllipsisLabel>{formattedExpiration}</StyledEllipsisLabel>
+      </StyledTruncatedCell>
+
+      <TableCell align="right">
+        <IconChevronRight
           size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
+          color={theme.font.color.tertiary}
         />
-      </StyledIconTableCell>
+      </TableCell>
     </StyledApisFieldTableRow>
   );
 };

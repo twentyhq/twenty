@@ -36,7 +36,7 @@ type WorkflowEditActionFindRecordsProps = {
 };
 
 type FindRecordsFormData = {
-  objectName: string;
+  objectNameSingular: string;
   filter?: FindRecordsActionFilter;
   limit?: number;
 };
@@ -65,14 +65,14 @@ export const WorkflowEditActionFindRecords = ({
     }));
 
   const [formData, setFormData] = useState<FindRecordsFormData>({
-    objectName: action.settings.input.objectName,
+    objectNameSingular: action.settings.input.objectName,
     limit: action.settings.input.limit,
     filter: action.settings.input.filter as FindRecordsActionFilter,
   });
   const isFormDisabled = actionOptions.readonly;
 
   const selectedObjectMetadataItem = activeNonSystemObjectMetadataItems.find(
-    (item) => item.nameSingular === formData.objectName,
+    (item) => item.nameSingular === formData.objectNameSingular,
   );
 
   const selectedObjectMetadataItemNameSingular =
@@ -87,7 +87,7 @@ export const WorkflowEditActionFindRecords = ({
       }
 
       const {
-        objectName: updatedObjectName,
+        objectNameSingular: updatedObjectName,
         limit: updatedLimit,
         filter: updatedFilter,
       } = formData;
@@ -118,7 +118,7 @@ export const WorkflowEditActionFindRecords = ({
       action,
       defaultTitle: 'Search Records',
     });
-  const instanceId = `workflow-edit-action-record-find-records-${action.id}-${formData.objectName}`;
+  const instanceId = `workflow-edit-action-record-find-records-${action.id}-${formData.objectNameSingular}`;
 
   return (
     <>
@@ -148,9 +148,9 @@ export const WorkflowEditActionFindRecords = ({
           value={selectedObjectMetadataItemNameSingular}
           emptyOption={{ label: 'Select an option', value: '' }}
           options={availableMetadata}
-          onChange={(objectName) => {
+          onChange={(objectNameSingular) => {
             const newFormData: FindRecordsFormData = {
-              objectName,
+              objectNameSingular,
               limit: 1,
             };
 

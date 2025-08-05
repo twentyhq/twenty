@@ -1,4 +1,8 @@
-import { FieldMetadataType, IsExactly } from 'twenty-shared/types';
+import {
+  AllowedAddressSubField,
+  FieldMetadataType,
+  IsExactly,
+} from 'twenty-shared/types';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -40,14 +44,18 @@ export type FieldMetadataRelationSettings = {
   onDelete?: RelationOnDeleteAction;
   joinColumnName?: string | null;
 };
+export type FieldMetadataAddressSettings = {
+  subFields?: AllowedAddressSubField[];
+};
 
 type FieldMetadataSettingsMapping = {
-  [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings;
-  [FieldMetadataType.DATE]: FieldMetadataDateSettings;
-  [FieldMetadataType.DATE_TIME]: FieldMetadataDateTimeSettings;
-  [FieldMetadataType.TEXT]: FieldMetadataTextSettings;
+  [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings | null;
+  [FieldMetadataType.DATE]: FieldMetadataDateSettings | null;
+  [FieldMetadataType.DATE_TIME]: FieldMetadataDateTimeSettings | null;
+  [FieldMetadataType.TEXT]: FieldMetadataTextSettings | null;
   [FieldMetadataType.RELATION]: FieldMetadataRelationSettings;
-  [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings;
+  [FieldMetadataType.ADDRESS]: FieldMetadataAddressSettings | null;
+  [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings | null; // TODO Should not be null
 };
 
 export type AllFieldMetadataSettings =
@@ -59,5 +67,5 @@ export type FieldMetadataSettings<
   IsExactly<T, FieldMetadataType> extends true
     ? null | AllFieldMetadataSettings // Could be improved to be | unknown
     : T extends keyof FieldMetadataSettingsMapping
-      ? FieldMetadataSettingsMapping[T] | null
+      ? FieldMetadataSettingsMapping[T]
       : never | null;

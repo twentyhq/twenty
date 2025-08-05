@@ -221,10 +221,11 @@ export const useMultipleRecordPickerPerformSearch = () => {
             ({ recordId, objectNameSingular }) => ({
               isMatchingSearchFilter: true,
               isSelected: true,
-              objectMetadataId: searchableObjectMetadataItems.find(
-                (objectMetadata) =>
-                  objectMetadata.nameSingular === objectNameSingular,
-              )?.id,
+              objectMetadataId:
+                searchableObjectMetadataItems.find(
+                  (objectMetadata) =>
+                    objectMetadata.nameSingular === objectNameSingular,
+                )?.id ?? '',
               recordId,
             }),
           ),
@@ -232,10 +233,11 @@ export const useMultipleRecordPickerPerformSearch = () => {
             ({ recordId, objectNameSingular }) => ({
               isMatchingSearchFilter: true,
               isSelected: false,
-              objectMetadataId: searchableObjectMetadataItems.find(
-                (objectMetadata) =>
-                  objectMetadata.nameSingular === objectNameSingular,
-              )?.id,
+              objectMetadataId:
+                searchableObjectMetadataItems.find(
+                  (objectMetadata) =>
+                    objectMetadata.nameSingular === objectNameSingular,
+                )?.id ?? '',
               recordId,
             }),
           ),

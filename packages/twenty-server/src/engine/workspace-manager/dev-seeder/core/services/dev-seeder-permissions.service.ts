@@ -4,16 +4,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
+import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
+import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
 
 @Injectable()
 export class DevSeederPermissionsService {
@@ -22,17 +25,52 @@ export class DevSeederPermissionsService {
   constructor(
     private readonly roleService: RoleService,
     private readonly userRoleService: UserRoleService,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
     private readonly objectPermissionService: ObjectPermissionService,
     @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly typeORMService: TypeORMService,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
   public async initPermissions(workspaceId: string) {
     const adminRole = await this.roleService.createAdminRole({
       workspaceId,
     });
+
+    const dataSource = this.typeORMService.getMainDataSource();
+
+    if (dataSource) {
+      try {
+        await dataSource
+          .createQueryBuilder()
+          .insert()
+          .into('core.roleTargets', ['roleId', 'apiKeyId', 'workspaceId'])
+          .orIgnore()
+          .values([
+            {
+              roleId: adminRole.id,
+              apiKeyId: API_KEY_DATA_SEED_IDS.ID_1,
+              workspaceId: workspaceId,
+            },
+          ])
+          .execute();
+
+        await this.workspacePermissionsCacheService.recomputeApiKeyRoleMapCache(
+          {
+            workspaceId,
+          },
+        );
+        await this.workspacePermissionsCacheService.recomputeUserWorkspaceRoleMapCache(
+          {
+            workspaceId,
+          },
+        );
+      } catch (error) {
+        this.logger.error(
+          `Could not assign role to test API key: ${error.message}`,
+        );
+      }
+    }
 
     let adminUserWorkspaceId: string | undefined;
     let memberUserWorkspaceIds: string[] = [];
@@ -45,7 +83,6 @@ export class DevSeederPermissionsService {
       memberUserWorkspaceIds = [USER_WORKSPACE_DATA_SEED_IDS.JONY];
       guestUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.PHIL;
 
-      // Create guest role only in this workspace
       const guestRole = await this.roleService.createGuestRole({
         workspaceId,
       });
@@ -85,10 +122,13 @@ export class DevSeederPermissionsService {
       workspaceId,
     });
 
-    await this.workspaceRepository.update(workspaceId, {
-      defaultRoleId: memberRole.id,
-      activationStatus: WorkspaceActivationStatus.ACTIVE,
-    });
+    await this.typeORMService
+      .getMainDataSource()
+      ?.getRepository(Workspace)
+      .update(workspaceId, {
+        defaultRoleId: memberRole.id,
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      });
 
     if (memberUserWorkspaceIds) {
       for (const memberUserWorkspaceId of memberUserWorkspaceIds) {

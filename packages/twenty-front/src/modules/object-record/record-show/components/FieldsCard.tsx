@@ -8,9 +8,9 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
+import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordReadOnly';
+import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { isFieldValueReadOnly } from '@/object-record/record-field/utils/isFieldValueReadOnly';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
@@ -22,10 +22,12 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { useIsInRightDrawerOrThrow } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 type FieldsCardProps = {
   objectNameSingular: string;
   objectRecordId: string;
+  showDuplicatesSection?: boolean;
 };
 
 const INPUT_ID_PREFIX = 'fields-card';
@@ -33,6 +35,7 @@ const INPUT_ID_PREFIX = 'fields-card';
 export const FieldsCard = ({
   objectNameSingular,
   objectRecordId,
+  showDuplicatesSection = true,
 }: FieldsCardProps) => {
   const { recordLoading, labelIdentifierFieldMetadataItem, isPrefetchLoading } =
     useRecordShowContainerData({
@@ -96,6 +99,7 @@ export const FieldsCard = ({
         (objectNameSingular === CoreObjectNameSingular.Task &&
           fieldMetadataItem.name === 'taskTargets')
       ) &&
+      isDefined(fieldMetadataItem.relation?.targetObjectMetadata.id) &&
       getObjectPermissionsForObject(
         objectPermissionsByObjectMetadataId,
         fieldMetadataItem.relation?.targetObjectMetadata.id,
@@ -131,12 +135,17 @@ export const FieldsCard = ({
                     }),
                     useUpdateRecord: useUpdateOneObjectRecordMutation,
                     isDisplayModeFixHeight: true,
-                    isReadOnly: isFieldValueReadOnly({
+                    isRecordFieldReadOnly: isRecordFieldReadOnly({
+                      isRecordReadOnly,
+                      objectPermissions:
+                        objectPermissionsByObjectMetadataId[
+                          objectMetadataItem.id
+                        ],
+                      fieldMetadataId: fieldMetadataItem.id,
                       objectNameSingular,
                       fieldName: fieldMetadataItem.name,
                       fieldType: fieldMetadataItem.type,
                       isCustom: fieldMetadataItem.isCustom ?? false,
-                      isRecordReadOnly,
                     }),
                   }}
                 >
@@ -176,12 +185,17 @@ export const FieldsCard = ({
                   }),
                   useUpdateRecord: useUpdateOneObjectRecordMutation,
                   isDisplayModeFixHeight: true,
-                  isReadOnly: isFieldValueReadOnly({
+                  isRecordFieldReadOnly: isRecordFieldReadOnly({
+                    isRecordReadOnly,
+                    objectPermissions:
+                      objectPermissionsByObjectMetadataId[
+                        objectMetadataItem.id
+                      ],
+                    fieldMetadataId: fieldMetadataItem.id,
                     objectNameSingular,
                     fieldName: fieldMetadataItem.name,
                     fieldType: fieldMetadataItem.type,
                     isCustom: fieldMetadataItem.isCustom ?? false,
-                    isRecordReadOnly,
                   }),
                 }}
               >
@@ -204,10 +218,12 @@ export const FieldsCard = ({
           </>
         )}
       </PropertyBox>
-      <RecordDetailDuplicatesSection
-        objectRecordId={objectRecordId}
-        objectNameSingular={objectNameSingular}
-      />
+      {showDuplicatesSection && (
+        <RecordDetailDuplicatesSection
+          objectRecordId={objectRecordId}
+          objectNameSingular={objectNameSingular}
+        />
+      )}
       {boxedRelationFieldMetadataItems?.map((fieldMetadataItem, index) => (
         <FieldContext.Provider
           key={objectRecordId + fieldMetadataItem.id}
@@ -221,7 +237,16 @@ export const FieldsCard = ({
             }),
             useUpdateRecord: useUpdateOneObjectRecordMutation,
             isDisplayModeFixHeight: true,
-            isReadOnly: isRecordReadOnly,
+            isRecordFieldReadOnly: isRecordFieldReadOnly({
+              isRecordReadOnly,
+              objectPermissions:
+                objectPermissionsByObjectMetadataId[objectMetadataItem.id],
+              fieldMetadataId: fieldMetadataItem.id,
+              objectNameSingular,
+              fieldName: fieldMetadataItem.name,
+              fieldType: fieldMetadataItem.type,
+              isCustom: fieldMetadataItem.isCustom ?? false,
+            }),
           }}
         >
           <RecordDetailRelationSection

@@ -42,7 +42,7 @@ export const useShouldActionBeRegisteredParams = ({
     useRecoilValue(recordStoreFamilyState(recordId ?? '')) || undefined;
 
   const objectPermissions = useObjectPermissionsForObject(
-    objectMetadataItem?.id,
+    objectMetadataItem?.id ?? '',
   );
 
   const isNoteOrTask =

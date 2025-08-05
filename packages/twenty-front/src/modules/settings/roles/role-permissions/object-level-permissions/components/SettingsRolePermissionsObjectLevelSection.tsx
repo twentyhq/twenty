@@ -12,7 +12,7 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title, IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -81,17 +81,18 @@ export const SettingsRolePermissionsObjectLevelSection = ({
     });
   };
 
+  const hasObjectPermissions =
+    isDefined(filteredObjectPermissions) &&
+    filteredObjectPermissions?.length > 0;
+
   return (
     <Section>
-      <H2Title
-        title={t`Object-Level`}
-        description={t`Actions users can perform on specific objects`}
-      />
       <Table>
-        <SettingsRolePermissionsObjectLevelTableHeader />
+        <SettingsRolePermissionsObjectLevelTableHeader
+          showPermissionsLabel={hasObjectPermissions}
+        />
         <StyledTableRows>
-          {isDefined(filteredObjectPermissions) &&
-          filteredObjectPermissions?.length > 0 ? (
+          {hasObjectPermissions ? (
             filteredObjectPermissions?.map((objectPermission) => (
               <SettingsRolePermissionsObjectLevelTableRow
                 key={objectPermission.objectMetadataId}
@@ -103,14 +104,16 @@ export const SettingsRolePermissionsObjectLevelSection = ({
               />
             ))
           ) : (
-            <StyledNoOverride>{t`No permissions found`}</StyledNoOverride>
+            <StyledNoOverride>
+              {t`No permissions have been set for individual objects.`}
+            </StyledNoOverride>
           )}
         </StyledTableRows>
       </Table>
       <StyledCreateObjectOverrideSection>
         <Button
           Icon={IconPlus}
-          title={t`Add rule`}
+          title={t`Add object rule`}
           variant="secondary"
           size="small"
           disabled={!isEditable || allObjectsHaveSetPermission}

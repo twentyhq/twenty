@@ -127,7 +127,7 @@ type UseExportTableDataOptions = Omit<UseRecordDataOptions, 'callback'> & {
 export const useRecordIndexExportRecords = ({
   delayMs,
   filename,
-  maximumRequests = 100,
+  maximumRequests = 1000,
   objectMetadataItem,
   pageSize = EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE,
   recordIndexId,
