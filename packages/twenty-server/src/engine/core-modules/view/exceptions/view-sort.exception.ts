@@ -7,7 +7,7 @@ export class ViewSortException extends CustomException {
     code: ViewSortExceptionCode,
     { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
   ) {
-    super(message, code, userFriendlyMessage);
+    super(message, code, { userFriendlyMessage });
   }
 }
 
