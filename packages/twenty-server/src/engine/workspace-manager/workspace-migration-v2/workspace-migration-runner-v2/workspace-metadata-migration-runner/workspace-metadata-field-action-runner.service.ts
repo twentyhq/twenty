@@ -1,8 +1,6 @@
 import { In } from 'typeorm';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import {
   CreateFieldAction,
   DeleteFieldAction,
@@ -11,6 +9,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { RunnerMethodForActionType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/runner-method-for-action-type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
+import { fromArrayToValuesByKeyRecord } from 'twenty-shared/utils';
 
 export class WorkspaceMetadataFieldActionRunnerService
   implements
@@ -55,14 +54,10 @@ export class WorkspaceMetadataFieldActionRunnerService
       );
 
     const { flatFieldMetadata, updates } = action;
-    const update = updates.reduce<
-      Partial<Pick<FlatFieldMetadata, FlatFieldMetadataPropertiesToCompare>>
-    >((acc, { property, to }) => {
-      return {
-        ...acc,
-        [property]: to,
-      };
-    }, {});
+    const update = fromArrayToValuesByKeyRecord({
+      array: updates,
+      key: 'property',
+    });
 
     await fieldMetadataRepository.update(flatFieldMetadata.id, update);
   };
