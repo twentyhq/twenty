@@ -24,7 +24,6 @@ export const useDownloadFakeRecords = () => {
         case FieldMetadataType.RATING:
         case FieldMetadataType.ARRAY:
         case FieldMetadataType.RAW_JSON:
-        case FieldMetadataType.UUID:
         case FieldMetadataType.DATE_TIME:
         case FieldMetadataType.DATE:
         case FieldMetadataType.BOOLEAN:
@@ -81,7 +80,7 @@ export const useDownloadFakeRecords = () => {
           headerRow.push(`${field.label} (ID)`);
 
           const exampleValues =
-            SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS[FieldMetadataType.UUID]
+            SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS[FieldMetadataType.NUMBER]
               .exampleValues;
 
           bodyRows.forEach((_, index) => {
