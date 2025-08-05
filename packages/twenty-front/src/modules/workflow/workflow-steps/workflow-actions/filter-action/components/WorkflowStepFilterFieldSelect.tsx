@@ -44,9 +44,10 @@ export const WorkflowStepFilterFieldSelect = ({
 
   const { getFieldMetadataItemById } = useGetFieldMetadataItemById();
 
-  const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep(
-    {},
-  );
+  const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
+    shouldDisplayRecordFields: true,
+    shouldDisplayRecordObjects: true,
+  });
 
   const noAvailableVariables = availableVariablesInWorkflowStep.length === 0;
 
@@ -157,6 +158,8 @@ export const WorkflowStepFilterFieldSelect = ({
           textAccent={isSelectedFieldNotFound ? 'placeholder' : 'default'}
         />
       }
+      shouldDisplayRecordFields={true}
+      shouldDisplayRecordObjects={true}
     />
   );
 };

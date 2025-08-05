@@ -222,7 +222,8 @@ export const FormSingleRecordPicker = ({
             instanceId={variablesDropdownId}
             disabled={disabled}
             onVariableSelect={handleVariableTagInsert}
-            objectNameSingularToSelect={objectNameSingular}
+            shouldDisplayRecordObjects={true}
+            shouldDisplayRecordFields={false}
           />
         )}
       </FormFieldInputRowContainer>

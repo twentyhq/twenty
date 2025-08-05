@@ -9,24 +9,31 @@ import { isLinkOutputSchema } from '@/workflow/workflow-variables/utils/isLinkOu
 import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
 import { isDefined } from 'twenty-shared/utils';
 
-const isValidRecordOutputSchema = (
-  outputSchema: RecordOutputSchema,
-  objectNameSingularToSelect?: string,
-): boolean => {
-  if (isDefined(objectNameSingularToSelect)) {
-    return (
-      isDefined(outputSchema.object) &&
-      outputSchema.object.nameSingular === objectNameSingularToSelect
-    );
+const isValidRecordOutputSchema = ({
+  shouldDisplayRecordFields,
+  shouldDisplayRecordObjects,
+  outputSchema,
+}: {
+  shouldDisplayRecordFields: boolean;
+  shouldDisplayRecordObjects: boolean;
+  outputSchema: RecordOutputSchema;
+}): boolean => {
+  if (shouldDisplayRecordObjects && !shouldDisplayRecordFields) {
+    return isDefined(outputSchema.object);
   }
 
   return true;
 };
 
-const filterRecordOutputSchema = (
-  outputSchema: RecordOutputSchema,
-  objectNameSingularToSelect: string,
-): RecordOutputSchema | undefined => {
+const filterRecordOutputSchema = ({
+  outputSchema,
+  shouldDisplayRecordFields,
+  shouldDisplayRecordObjects,
+}: {
+  outputSchema: RecordOutputSchema;
+  shouldDisplayRecordFields: boolean;
+  shouldDisplayRecordObjects: boolean;
+}): RecordOutputSchema | undefined => {
   const filteredFields: BaseOutputSchema = {};
   let hasValidFields = false;
 
@@ -42,8 +49,9 @@ const filterRecordOutputSchema = (
     }
 
     const validSubSchema = filterOutputSchema(
+      shouldDisplayRecordFields,
+      shouldDisplayRecordObjects,
       field.value,
-      objectNameSingularToSelect,
     );
     if (isDefined(validSubSchema)) {
       filteredFields[key] = {
@@ -54,7 +62,13 @@ const filterRecordOutputSchema = (
     }
   }
 
-  if (isValidRecordOutputSchema(outputSchema, objectNameSingularToSelect)) {
+  if (
+    isValidRecordOutputSchema({
+      shouldDisplayRecordFields,
+      shouldDisplayRecordObjects,
+      outputSchema,
+    })
+  ) {
     return {
       ...outputSchema,
       fields: filteredFields,
@@ -69,10 +83,15 @@ const filterRecordOutputSchema = (
   return undefined;
 };
 
-const filterBaseOutputSchema = (
-  outputSchema: BaseOutputSchema,
-  objectNameSingularToSelect: string,
-): BaseOutputSchema | undefined => {
+const filterBaseOutputSchema = ({
+  outputSchema,
+  shouldDisplayRecordFields,
+  shouldDisplayRecordObjects,
+}: {
+  outputSchema: BaseOutputSchema;
+  shouldDisplayRecordFields: boolean;
+  shouldDisplayRecordObjects: boolean;
+}): BaseOutputSchema | undefined => {
   const filteredSchema: BaseOutputSchema = {};
   let hasValidFields = false;
 
@@ -88,8 +107,9 @@ const filterBaseOutputSchema = (
     }
 
     const validSubSchema = filterOutputSchema(
+      shouldDisplayRecordFields,
+      shouldDisplayRecordObjects,
       field.value,
-      objectNameSingularToSelect,
     );
     if (isDefined(validSubSchema)) {
       filteredSchema[key] = {
@@ -108,19 +128,32 @@ const filterBaseOutputSchema = (
 };
 
 export const filterOutputSchema = (
+  shouldDisplayRecordFields: boolean,
+  shouldDisplayRecordObjects: boolean,
   outputSchema?: OutputSchema,
-  objectNameSingularToSelect?: string,
 ): OutputSchema | undefined => {
-  if (!objectNameSingularToSelect || !outputSchema) {
+  if (
+    !shouldDisplayRecordObjects ||
+    shouldDisplayRecordFields ||
+    !outputSchema
+  ) {
     return outputSchema;
   }
 
   if (isLinkOutputSchema(outputSchema)) {
     return outputSchema;
   } else if (isRecordOutputSchema(outputSchema)) {
-    return filterRecordOutputSchema(outputSchema, objectNameSingularToSelect);
+    return filterRecordOutputSchema({
+      outputSchema,
+      shouldDisplayRecordFields,
+      shouldDisplayRecordObjects,
+    });
   } else if (isBaseOutputSchema(outputSchema)) {
-    return filterBaseOutputSchema(outputSchema, objectNameSingularToSelect);
+    return filterBaseOutputSchema({
+      outputSchema,
+      shouldDisplayRecordFields,
+      shouldDisplayRecordObjects,
+    });
   }
 
   return undefined;

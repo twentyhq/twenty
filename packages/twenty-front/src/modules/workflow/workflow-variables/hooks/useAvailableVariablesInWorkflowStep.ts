@@ -13,9 +13,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { isEmptyObject } from '~/utils/isEmptyObject';
 
 export const useAvailableVariablesInWorkflowStep = ({
-  objectNameSingularToSelect,
+  shouldDisplayRecordFields,
+  shouldDisplayRecordObjects,
 }: {
-  objectNameSingularToSelect?: string;
+  shouldDisplayRecordFields: boolean;
+  shouldDisplayRecordObjects: boolean;
 }): StepOutputSchema[] => {
   const workflowSelectedNode = useWorkflowSelectedNodeOrThrow();
   const flow = useFlowOrThrow();
@@ -35,9 +37,11 @@ export const useAvailableVariablesInWorkflowStep = ({
 
   const availableVariablesInWorkflowStep = availableStepsOutputSchema
     .map((stepOutputSchema) => {
+      console.log('stepOutputSchema', stepOutputSchema.outputSchema);
       const outputSchema = filterOutputSchema(
+        shouldDisplayRecordFields,
+        shouldDisplayRecordObjects,
         stepOutputSchema.outputSchema,
-        objectNameSingularToSelect,
       ) as OutputSchema;
 
       if (!isDefined(outputSchema) || isEmptyObject(outputSchema)) {

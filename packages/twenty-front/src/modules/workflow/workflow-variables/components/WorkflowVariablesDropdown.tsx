@@ -2,9 +2,13 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+<<<<<<< HEAD
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+=======
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { WorkflowVariablesDropdownAllItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownAllItems';
+>>>>>>> 391a908998 (Handle relation fields in filters)
 import { WorkflowVariablesDropdownFieldItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownFieldItems';
-import { WorkflowVariablesDropdownObjectItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownObjectItems';
 import { WorkflowVariablesDropdownWorkflowStepItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownWorkflowStepItems';
 import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/workflow-variables/constants/SearchVariablesDropdownId';
 
@@ -35,14 +39,16 @@ export const WorkflowVariablesDropdown = ({
   instanceId,
   onVariableSelect,
   disabled,
-  objectNameSingularToSelect,
+  shouldDisplayRecordFields,
+  shouldDisplayRecordObjects,
   multiline,
   clickableComponent,
 }: {
   instanceId: string;
   onVariableSelect: (variableName: string) => void;
+  shouldDisplayRecordFields: boolean;
+  shouldDisplayRecordObjects: boolean;
   disabled?: boolean;
-  objectNameSingularToSelect?: string;
   multiline?: boolean;
   clickableComponent?: React.ReactNode;
 }) => {
@@ -55,7 +61,8 @@ export const WorkflowVariablesDropdown = ({
   );
   const { closeDropdown } = useCloseDropdown();
   const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
-    objectNameSingularToSelect,
+    shouldDisplayRecordFields,
+    shouldDisplayRecordObjects,
   });
 
   const noAvailableVariables = availableVariablesInWorkflowStep.length === 0;
@@ -120,8 +127,8 @@ export const WorkflowVariablesDropdown = ({
             steps={availableVariablesInWorkflowStep}
             onSelect={handleStepSelect}
           />
-        ) : isDefined(objectNameSingularToSelect) ? (
-          <WorkflowVariablesDropdownObjectItems
+        ) : shouldDisplayRecordObjects ? (
+          <WorkflowVariablesDropdownAllItems
             step={selectedStep}
             onSelect={handleSubItemSelect}
             onBack={handleBack}
