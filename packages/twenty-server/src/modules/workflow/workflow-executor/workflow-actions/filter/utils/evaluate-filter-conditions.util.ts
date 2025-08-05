@@ -269,9 +269,19 @@ function evaluateDefaultFilter(filter: ResolvedFilter): boolean {
     case ViewFilterOperand.IsNot:
       return leftValue != rightValue;
     case ViewFilterOperand.IsEmpty:
-      return leftValue === null || leftValue === undefined || leftValue === '';
+      return (
+        leftValue === null ||
+        leftValue === undefined ||
+        leftValue === '' ||
+        (Array.isArray(leftValue) && leftValue.length === 0)
+      );
     case ViewFilterOperand.IsNotEmpty:
-      return leftValue !== null && leftValue !== undefined && leftValue !== '';
+      return (
+        leftValue !== null &&
+        leftValue !== undefined &&
+        leftValue !== '' &&
+        (!Array.isArray(leftValue) || leftValue.length > 0)
+      );
     case ViewFilterOperand.Contains:
       return contains(leftValue, rightValue);
     case ViewFilterOperand.DoesNotContain:

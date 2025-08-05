@@ -561,9 +561,23 @@ describe('evaluateFilterConditions', () => {
           'different',
           'unknown',
         );
+        const filter3 = createFilter(
+          ViewFilterOperand.Is,
+          null,
+          null,
+          'unknown',
+        );
+        const filter4 = createFilter(
+          ViewFilterOperand.Is,
+          undefined,
+          undefined,
+          'unknown',
+        );
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter4] })).toBe(true);
       });
 
       it('should handle IsNot operand with unknown type', () => {
@@ -579,9 +593,23 @@ describe('evaluateFilterConditions', () => {
           'test',
           'unknown',
         );
+        const filter3 = createFilter(
+          ViewFilterOperand.IsNot,
+          null,
+          null,
+          'unknown',
+        );
+        const filter4 = createFilter(
+          ViewFilterOperand.IsNot,
+          undefined,
+          undefined,
+          'unknown',
+        );
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter4] })).toBe(false);
       });
 
       it('should handle Contains operand with unknown type', () => {
@@ -597,9 +625,37 @@ describe('evaluateFilterConditions', () => {
           'World',
           'unknown',
         );
+        const filter3 = createFilter(
+          ViewFilterOperand.Contains,
+          [1, 2, 3],
+          2,
+          'unknown',
+        );
+        const filter4 = createFilter(
+          ViewFilterOperand.Contains,
+          [1, 2, 3],
+          4,
+          'unknown',
+        );
+        const filter5 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          null,
+          null,
+          'unknown',
+        );
+        const filter6 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          undefined,
+          undefined,
+          'unknown',
+        );
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter4] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter5] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter6] })).toBe(false);
       });
 
       it('should handle DoesNotContain operand with unknown type', () => {
@@ -615,9 +671,37 @@ describe('evaluateFilterConditions', () => {
           'World',
           'unknown',
         );
+        const filter3 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          [1, 2, 3],
+          2,
+          'unknown',
+        );
+        const filter4 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          [1, 2, 3],
+          4,
+          'unknown',
+        );
+        const filter5 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          null,
+          null,
+          'unknown',
+        );
+        const filter6 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          undefined,
+          undefined,
+          'unknown',
+        );
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter4] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter5] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter6] })).toBe(false);
       });
 
       it('should handle IsEmpty operand with unknown type', () => {
@@ -633,9 +717,30 @@ describe('evaluateFilterConditions', () => {
           '',
           'unknown',
         );
+        const filter3 = createFilter(
+          ViewFilterOperand.IsEmpty,
+          '',
+          '',
+          'unknown',
+        );
+        const filter4 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          [],
+          '',
+          'unknown',
+        );
+        const filter5 = createFilter(
+          ViewFilterOperand.IsEmpty,
+          undefined,
+          undefined,
+          'unknown',
+        );
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter4] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter5] })).toBe(true);
       });
 
       it('should handle IsNotEmpty operand with unknown type', () => {
@@ -651,9 +756,30 @@ describe('evaluateFilterConditions', () => {
           '',
           'unknown',
         );
+        const filter3 = createFilter(
+          ViewFilterOperand.IsNotEmpty,
+          [],
+          '',
+          'unknown',
+        );
+        const filter4 = createFilter(
+          ViewFilterOperand.IsNotEmpty,
+          '',
+          '',
+          'unknown',
+        );
+        const filter5 = createFilter(
+          ViewFilterOperand.IsNotEmpty,
+          undefined,
+          undefined,
+          'unknown',
+        );
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter4] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter5] })).toBe(false);
       });
 
       it('should handle GreaterThanOrEqual operand with unknown type', () => {
@@ -669,9 +795,24 @@ describe('evaluateFilterConditions', () => {
           50,
           'unknown',
         );
+        // strings are converted to numbers
+        const filter3 = createFilter(
+          ViewFilterOperand.GreaterThanOrEqual,
+          '1234',
+          '123',
+          'unknown',
+        );
+        const filter4 = createFilter(
+          ViewFilterOperand.GreaterThanOrEqual,
+          undefined,
+          undefined,
+          'unknown',
+        );
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter4] })).toBe(false);
       });
 
       it('should handle LessThanOrEqual operand with unknown type', () => {
@@ -687,9 +828,23 @@ describe('evaluateFilterConditions', () => {
           50,
           'unknown',
         );
+        const filter3 = createFilter(
+          ViewFilterOperand.LessThanOrEqual,
+          '1234',
+          '123',
+          'unknown',
+        );
+        const filter4 = createFilter(
+          ViewFilterOperand.LessThanOrEqual,
+          undefined,
+          undefined,
+          'unknown',
+        );
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter4] })).toBe(false);
       });
 
       it('should throw error for unsupported operand with unknown type', () => {
