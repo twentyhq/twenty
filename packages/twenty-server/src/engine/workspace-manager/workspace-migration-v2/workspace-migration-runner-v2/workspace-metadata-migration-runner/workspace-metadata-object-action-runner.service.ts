@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { FlatObjectMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-object-metadata/utils/compare-two-flat-object-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   CreateObjectAction,
@@ -12,6 +10,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 import { RunnerMethodForActionType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/runner-method-for-action-type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
+import { applyWorkspaceMigrationUpdateActionUpdates } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/apply-workspace-migration-update-action-updates.util';
 import { WorkspaceMetadataFieldActionRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-metadata-migration-runner/workspace-metadata-field-action-runner.service';
 
 @Injectable()
@@ -66,7 +65,7 @@ export class WorkspaceMetadataObjectActionRunnerService
   };
 
   runUpdateObjectMetadataMigration = async ({
-    action: { flatObjectMetadataWithoutFields, updates },
+    action,
     queryRunner,
   }: WorkspaceMigrationActionRunnerArgs<UpdateObjectAction>) => {
     const objectMetadataRepository =
@@ -74,18 +73,9 @@ export class WorkspaceMetadataObjectActionRunnerService
         ObjectMetadataEntity,
       );
 
-    const update = updates.reduce<
-      Partial<Pick<FlatObjectMetadata, FlatObjectMetadataPropertiesToCompare>>
-    >((acc, { property, to }) => {
-      return {
-        ...acc,
-        [property]: to,
-      };
-    }, {});
-
-    await objectMetadataRepository.save({
-      ...flatObjectMetadataWithoutFields, // could be stricter
-      ...update,
-    });
+    await objectMetadataRepository.update(
+      action.objectMetadataId,
+      applyWorkspaceMigrationUpdateActionUpdates(action),
+    );
   };
 }

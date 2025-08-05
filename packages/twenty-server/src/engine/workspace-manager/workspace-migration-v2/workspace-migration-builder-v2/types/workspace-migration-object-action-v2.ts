@@ -13,7 +13,7 @@ export type CreateObjectAction = {
 
 export type UpdateObjectAction = {
   type: 'update_object';
-  flatObjectMetadataWithoutFields: FlatObjectMetadataWithoutFields;
+  objectMetadataId: string;
   updates: Array<
     {
       [P in FlatObjectMetadataPropertiesToCompare]: {
