@@ -9,11 +9,11 @@ import {
   EdgeProps,
   getBezierPath,
 } from '@xyflow/react';
-import { useState } from 'react';
 import { IconPlus } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
+import { useIsEdgeHovered } from '@/workflow/workflow-diagram/hooks/useIsEdgeHovered';
 
 const StyledIconButtonGroup = styled(IconButtonGroup)`
   pointer-events: all;
@@ -23,6 +23,7 @@ type WorkflowDiagramFilteringDisabledEdgeEditableProps =
   EdgeProps<WorkflowDiagramEdge>;
 
 export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
+  id,
   markerStart,
   markerEnd,
   source,
@@ -34,22 +35,14 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
 }: WorkflowDiagramFilteringDisabledEdgeEditableProps) => {
   const theme = useTheme();
 
+  const { isEdgeHovered } = useIsEdgeHovered();
+
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
     sourceY,
     targetX,
     targetY,
   });
-
-  const [hovered, setHovered] = useState(false);
-
-  const handleMouseEnter = () => {
-    setHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setHovered(false);
-  };
 
   const { startNodeCreation, isNodeCreationStarted } = useStartNodeCreation();
 
@@ -80,11 +73,9 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
           data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
           labelX={labelX}
           labelY={labelY}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
         >
           <WorkflowDiagramEdgeV2VisibilityContainer
-            shouldDisplay={hovered || forceDisplayAddButton}
+            shouldDisplay={isEdgeHovered(id) || forceDisplayAddButton}
           >
             <StyledIconButtonGroup
               className="nodrag nopan"
