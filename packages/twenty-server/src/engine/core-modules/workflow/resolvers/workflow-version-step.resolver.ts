@@ -18,10 +18,9 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-step/workflow-version-step.workspace-service';
+import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
-import { CreateWorkflowVersionEdgeInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-edge-input.dto';
 import { WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
 
 @Resolver()
@@ -35,7 +34,7 @@ import { WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/
   PermissionsGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
-export class WorkflowStepResolver {
+export class WorkflowVersionStepResolver {
   constructor(
     private readonly workflowVersionStepWorkspaceService: WorkflowVersionStepWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
@@ -122,33 +121,5 @@ export class WorkflowStepResolver {
     });
 
     return step;
-  }
-
-  @Mutation(() => WorkflowVersionStepChangesDTO)
-  async createWorkflowVersionEdge(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
-    @Args('input')
-    { source, target, workflowVersionId }: CreateWorkflowVersionEdgeInput,
-  ): Promise<WorkflowVersionStepChangesDTO> {
-    return this.workflowVersionStepWorkspaceService.createWorkflowVersionEdge({
-      source,
-      target,
-      workflowVersionId,
-      workspaceId,
-    });
-  }
-
-  @Mutation(() => WorkflowVersionStepChangesDTO)
-  async deleteWorkflowVersionEdge(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
-    @Args('input')
-    { source, target, workflowVersionId }: CreateWorkflowVersionEdgeInput,
-  ): Promise<WorkflowVersionStepChangesDTO> {
-    return this.workflowVersionStepWorkspaceService.deleteWorkflowVersionEdge({
-      source,
-      target,
-      workflowVersionId,
-      workspaceId,
-    });
   }
 }
