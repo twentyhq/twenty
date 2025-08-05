@@ -10,7 +10,7 @@ import {
   WorkflowDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
-import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
+import { OnSelectionChangeParams } from '@xyflow/react';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
@@ -66,9 +66,9 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
     ],
   );
 
-  useOnSelectionChange({
-    onChange: handleSelectionChange,
-  });
+  // useOnSelectionChange({
+  //   onChange: handleSelectionChange,
+  // });
 
   useTriggerNodeSelection();
 

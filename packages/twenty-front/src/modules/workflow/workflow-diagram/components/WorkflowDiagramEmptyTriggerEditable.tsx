@@ -18,7 +18,7 @@ const StyledStepNodeLabelIconContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(3)};
 `;
 
-export const WorkflowDiagramEmptyTrigger = () => {
+export const WorkflowDiagramEmptyTriggerEditable = () => {
   const { openWorkflowTriggerTypeInCommandMenu } = useWorkflowCommandMenu();
 
   const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
@@ -38,8 +38,6 @@ export const WorkflowDiagramEmptyTrigger = () => {
       variant="empty"
       Icon={<StyledStepNodeLabelIconContainer />}
       onClick={() => {
-        console.log('Empty trigger clicked');
-
         if (!isInRightDrawer) {
           setCommandMenuNavigationStack([]);
         }
