@@ -13,6 +13,8 @@ export const SettingsRolePermissionsObjectLevelTableHeader = ({
   <TableRow gridAutoColumns={OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS}>
     <TableHeader>{t`Object-Level`}</TableHeader>
     <TableHeader>{showPermissionsLabel ? t`Permissions` : ''}</TableHeader>
+    <TableHeader>{showPermissionsLabel ? t`See Fields` : ''}</TableHeader>
+    <TableHeader>{showPermissionsLabel ? t`Edit Fields` : ''}</TableHeader>
     <TableHeader></TableHeader>
   </TableRow>
 );
