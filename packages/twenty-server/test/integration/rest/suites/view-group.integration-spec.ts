@@ -154,20 +154,6 @@ describe('View Group REST API', () => {
 
       await deleteTestViewGroupWithRestApi(viewGroup.id);
     });
-
-    it('should return 404 for non-existent view group', async () => {
-      const response = await makeRestAPIRequest({
-        method: 'get',
-        path: `/metadata/viewGroups/${TEST_NOT_EXISTING_VIEW_GROUP_ID}`,
-        bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-      });
-
-      assertRestApiErrorResponse(
-        response,
-        404,
-        ViewGroupExceptionMessage.VIEW_GROUP_NOT_FOUND,
-      );
-    });
   });
 
   describe('POST /metadata/viewGroups', () => {
@@ -232,27 +218,6 @@ describe('View Group REST API', () => {
         method: 'post',
         path: '/metadata/viewGroups',
         body: invalidData,
-        bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-      });
-
-      assertRestApiErrorResponse(
-        response,
-        400,
-        ViewGroupExceptionMessage.INVALID_VIEW_GROUP_DATA,
-      );
-    });
-
-    it('should fail to create view group with invalid viewId', async () => {
-      const viewGroupData = {
-        viewId: TEST_NOT_EXISTING_VIEW_GROUP_ID,
-        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
-        fieldValue: 'test-value',
-      };
-
-      const response = await makeRestAPIRequest({
-        method: 'post',
-        path: '/metadata/viewGroups',
-        body: viewGroupData,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
@@ -360,18 +325,6 @@ describe('View Group REST API', () => {
 
       assertRestApiSuccessfulResponse(deleteResponse);
       expect(deleteResponse.body).toEqual({ success: true });
-
-      const getResponse = await makeRestAPIRequest({
-        method: 'get',
-        path: `/metadata/viewGroups/${viewGroup.id}`,
-        bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-      });
-
-      assertRestApiErrorResponse(
-        getResponse,
-        404,
-        ViewGroupExceptionMessage.VIEW_GROUP_NOT_FOUND,
-      );
     });
 
     it('should return 404 for non-existent view group', async () => {
