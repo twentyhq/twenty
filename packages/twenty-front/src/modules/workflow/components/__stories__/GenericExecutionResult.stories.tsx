@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { GenericExecutionResult } from '@/workflow/components/GenericExecutionResult';
@@ -36,7 +35,6 @@ export const Idle: Story = {
       isError: false,
     },
   },
-
 };
 
 export const Success: Story = {
@@ -47,7 +45,6 @@ export const Success: Story = {
       successMessage: '200 OK - 156ms',
     },
   },
-
 };
 
 export const SuccessWithAdditionalInfo: Story = {
@@ -59,7 +56,6 @@ export const SuccessWithAdditionalInfo: Story = {
       additionalInfo: '5 headers received',
     },
   },
-
 };
 
 export const Error: Story = {
@@ -75,7 +71,6 @@ export const Error: Story = {
       errorMessage: '500 Internal Server Error - 89ms',
     },
   },
-
 };
 
 export const ErrorWithAdditionalInfo: Story = {
@@ -89,7 +84,6 @@ export const ErrorWithAdditionalInfo: Story = {
       additionalInfo: 'Connection timeout after 30 seconds',
     },
   },
-
 };
 
 export const Loading: Story = {
@@ -97,7 +91,6 @@ export const Loading: Story = {
     isTesting: true,
     loadingMessage: 'Executing function...',
   },
-
 };
 
 export const CustomIdleMessage: Story = {
@@ -108,7 +101,6 @@ export const CustomIdleMessage: Story = {
       isError: false,
     },
   },
-
 };
 
 export const PlaintextContent: Story = {
@@ -122,7 +114,6 @@ export const PlaintextContent: Story = {
       successMessage: 'Text processed successfully',
     },
   },
-
 };
 
 export const LargeResult: Story = {
@@ -156,7 +147,6 @@ export const LargeResult: Story = {
       additionalInfo: '20 users retrieved',
     },
   },
-
 };
 
 export const EmptyResult: Story = {
@@ -168,7 +158,6 @@ export const EmptyResult: Story = {
       successMessage: '204 No Content - 45ms',
     },
   },
-
 };
 
 export const HttpRequestResponse: Story = {
@@ -201,5 +190,4 @@ export const HttpRequestResponse: Story = {
     idleMessage: 'Response',
     loadingMessage: 'Sending request...',
   },
-
 };

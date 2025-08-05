@@ -3,8 +3,8 @@ import { ThemeProvider } from '@emotion/react';
 import { render } from '@testing-library/react';
 
 import {
-    FormFieldInputRowContainer,
-    LINE_HEIGHT,
+  FormFieldInputRowContainer,
+  LINE_HEIGHT,
 } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 
 const mockTheme = {

@@ -71,22 +71,24 @@ describe('HttpRequestTestVariableInput', () => {
   const actionId = 'test-action-id';
 
   const mockGetWorkflowVariablesUsedInStep =
-  getWorkflowVariablesUsedInStep as jest.MockedFunction<
-    typeof getWorkflowVariablesUsedInStep
-  >;
+    getWorkflowVariablesUsedInStep as jest.MockedFunction<
+      typeof getWorkflowVariablesUsedInStep
+    >;
 
-const mockTheme = {
-  spacing: jest.fn((multiplier: number) => `${multiplier * 4}px`),
-  border: {
-    color: { medium: 'rgb(221, 221, 221)' },
-    radius: { md: '8px' },
-  },
-  font: {
-    size: { sm: '12px' },
-    weight: { medium: '500' },
-    color: { primary: 'rgb(51, 51, 51)' },
-  },
-};
+  const mockTheme = {
+    spacing: jest.fn((multiplier: number) => `${multiplier * 4}px`),
+    border: {
+      // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
+      color: { medium: 'rgb(221, 221, 221)' }, // Mock color for testing
+      radius: { md: '8px' },
+    },
+    font: {
+      size: { sm: '12px' },
+      weight: { medium: '500' },
+      // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
+      color: { primary: 'rgb(51, 51, 51)' }, // Mock color for testing
+    },
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();

@@ -3,8 +3,8 @@ import { render, screen } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
 import {
-    ExecutionStatus,
-    GenericExecutionResult,
+  ExecutionStatus,
+  GenericExecutionResult,
 } from '@/workflow/components/GenericExecutionResult';
 
 const mockTheme = {

@@ -1,12 +1,12 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import {
-    FormFieldInputRowContainer,
-    LINE_HEIGHT,
+  FormFieldInputRowContainer,
+  LINE_HEIGHT,
 } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 
 const meta: Meta<typeof FormFieldInputRowContainer> = {
@@ -52,7 +52,9 @@ export const SingleLine: Story = {
 
     // Test that the component renders in single line mode
     expect(container).toBeInTheDocument();
-    expect(canvas.getByText('Single line container with fixed height')).toBeVisible();
+    expect(
+      canvas.getByText('Single line container with fixed height'),
+    ).toBeVisible();
   },
 };
 
@@ -66,7 +68,11 @@ export const MultilineDefault: Story = {
 
     // Test that the component renders and has the proper structure
     expect(container).toBeInTheDocument();
-    expect(canvas.getByText('It allows unlimited text with default height constraints.')).toBeVisible();
+    expect(
+      canvas.getByText(
+        'It allows unlimited text with default height constraints.',
+      ),
+    ).toBeVisible();
   },
 };
 
@@ -263,7 +269,11 @@ export const MultilineWithScrollableContent: Story = {
 
     // Test that the component renders with overflow scenario
     expect(container).toBeInTheDocument();
-    expect(canvas.getByText('Line 1: This content is intentionally taller than the container\'s maxHeight')).toBeVisible();
+    expect(
+      canvas.getByText(
+        "Line 1: This content is intentionally taller than the container's maxHeight",
+      ),
+    ).toBeVisible();
   },
 };
 
