@@ -1,12 +1,14 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+
 import { GenericExecutionResult } from '@/workflow/components/GenericExecutionResult';
 
 const meta: Meta<typeof GenericExecutionResult> = {
-  title: 'Modules/Workflow/Components/GenericExecutionResult',
+  title: 'Modules/Workflow/Components/ExecutionResult',
   component: GenericExecutionResult,
-  decorators: [ComponentDecorator],
+  decorators: [ComponentDecorator, SnackBarDecorator],
   args: {
     result: JSON.stringify(
       { message: 'Hello World', status: 'success' },

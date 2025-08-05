@@ -6,8 +6,7 @@ import { HttpRequestTestVariableInput } from '@/workflow/workflow-steps/workflow
 import { HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 
 const meta: Meta<typeof HttpRequestTestVariableInput> = {
-  title:
-    'Modules/Workflow/WorkflowActions/HttpRequest/HttpRequestTestVariableInput',
+  title: 'Modules/Workflow/Actions/HttpRequest/TestVariableInput',
   component: HttpRequestTestVariableInput,
   decorators: [ComponentDecorator],
   parameters: {

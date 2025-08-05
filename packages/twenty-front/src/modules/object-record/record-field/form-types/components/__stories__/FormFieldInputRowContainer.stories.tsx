@@ -5,13 +5,12 @@ import { expect, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import {
-  FormFieldInputRowContainer,
-  LINE_HEIGHT,
+    FormFieldInputRowContainer,
+    LINE_HEIGHT,
 } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 
 const meta: Meta<typeof FormFieldInputRowContainer> = {
-  title:
-    'Modules/ObjectRecord/RecordField/FormTypes/FormFieldInputRowContainer',
+  title: 'Modules/ObjectRecord/RecordField/FormTypes/InputRowContainer',
   component: FormFieldInputRowContainer,
   decorators: [ComponentDecorator],
   parameters: {

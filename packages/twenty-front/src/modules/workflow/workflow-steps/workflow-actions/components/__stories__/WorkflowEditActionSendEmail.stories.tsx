@@ -11,8 +11,8 @@ import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorato
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
-  getMockedConnectedAccount,
-  mockedConnectedAccounts,
+    getMockedConnectedAccount,
+    mockedConnectedAccounts,
 } from '~/testing/mock-data/connected-accounts';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 import { WorkflowEditActionSendEmail } from '../WorkflowEditActionSendEmail';
@@ -66,7 +66,7 @@ const CONFIGURED_ACTION: WorkflowSendEmailAction = {
 };
 
 const meta: Meta<typeof WorkflowEditActionSendEmail> = {
-  title: 'Modules/Workflow/WorkflowEditActionSendEmail',
+  title: 'Modules/Workflow/Actions/SendEmail/EditAction',
   component: WorkflowEditActionSendEmail,
   parameters: {
     msw: {
