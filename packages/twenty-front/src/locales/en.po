@@ -1209,6 +1209,11 @@ msgstr "Close command menu"
 msgid "Code"
 msgstr "Code"
 
+#. js-lingui-id: /8PmQ9
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
+msgid "Code Editor"
+msgstr "Code Editor"
+
 #. js-lingui-id: H86f9p
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
@@ -2532,6 +2537,11 @@ msgstr "Exit Settings"
 #: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Expand"
 msgstr "Expand"
+
+#. js-lingui-id: Y7w75u
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowServerlessFunctionCodeEditor.tsx
+msgid "Expand to Full Screen"
+msgstr "Expand to Full Screen"
 
 #. js-lingui-id: bKBhgb
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -6110,6 +6120,11 @@ msgstr "Untitled"
 #: src/modules/settings/roles/role/components/SettingsRoleCreateEffect.tsx
 msgid "Untitled role"
 msgstr "Untitled role"
+
+#. js-lingui-id: p1M9l4
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
+msgid "Untitled Workflow"
+msgstr "Untitled Workflow"
 
 #. js-lingui-id: Y8zko3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts

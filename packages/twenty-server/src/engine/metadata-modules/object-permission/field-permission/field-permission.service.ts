@@ -5,6 +5,11 @@ import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
+import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { isFieldMetadataTypeRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-relation.util';
 import { UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import {
@@ -22,6 +27,8 @@ export class FieldPermissionService {
   constructor(
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
+    @InjectRepository(FieldMetadataEntity, 'core')
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(FieldPermissionEntity, 'core')
     private readonly fieldPermissionsRepository: Repository<FieldPermissionEntity>,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
@@ -107,13 +114,39 @@ export class FieldPermissionService {
         ),
     );
 
-    await this.fieldPermissionsRepository.upsert(fieldPermissionsToUpsert, {
-      conflictPaths: ['fieldMetadataId', 'roleId'],
-    });
+    const fieldMetadatasForFieldPermissions =
+      await this.fieldMetadataRepository.find({
+        where: {
+          id: In(fieldPermissions.map((fp) => fp.fieldMetadataId)),
+        },
+      });
+
+    const relatedFieldPermissionsToUpsert =
+      this.computeFieldPermissionForRelationTargetFieldMetadata({
+        fieldPermissions: fieldPermissionsToUpsert,
+        fieldMetadatasForFieldPermissions,
+      });
+
+    await this.fieldPermissionsRepository.upsert(
+      [...fieldPermissionsToUpsert, ...relatedFieldPermissionsToUpsert],
+      {
+        conflictPaths: ['fieldMetadataId', 'roleId'],
+      },
+    );
 
     if (fieldPermissionsToDeleteIds.length > 0) {
+      const relatedFieldPermissionToDeleteIds =
+        this.getRelatedFieldPermissionsToDeleteIds({
+          allFieldPermissions: existingFieldPermissions,
+          fieldPermissionsToDelete: existingFieldPermissionsToDelete,
+          fieldMetadatas: fieldMetadatasForFieldPermissions,
+        });
+
       await this.fieldPermissionsRepository.delete({
-        id: In(fieldPermissionsToDeleteIds),
+        id: In([
+          ...fieldPermissionsToDeleteIds,
+          ...relatedFieldPermissionToDeleteIds,
+        ]),
       });
     }
 
@@ -266,5 +299,104 @@ export class FieldPermissionService {
         fieldPermissionsToDeleteIds.push(existingFieldPermission.id);
       }
     }
+  }
+
+  private getRelatedFieldPermissionsToDeleteIds({
+    allFieldPermissions,
+    fieldPermissionsToDelete,
+    fieldMetadatas,
+  }: {
+    allFieldPermissions: FieldPermissionEntity[];
+    fieldPermissionsToDelete: FieldPermissionEntity[];
+    fieldMetadatas: FieldMetadataEntity[];
+  }) {
+    const fieldMetadatasForFieldPermissionsToDelete = fieldMetadatas.filter(
+      (fieldMetadata) =>
+        fieldPermissionsToDelete.some(
+          (existingFieldPermissionToDelete) =>
+            existingFieldPermissionToDelete.fieldMetadataId ===
+            fieldMetadata.id,
+        ),
+    );
+
+    const relationTargetFieldMetadataIds: string[] = [];
+
+    for (const fieldMetadataForFieldPermissionToDelete of fieldMetadatasForFieldPermissionsToDelete) {
+      if (
+        isFieldMetadataTypeRelation(fieldMetadataForFieldPermissionToDelete)
+      ) {
+        if (
+          fieldMetadataForFieldPermissionToDelete.settings?.relationType ===
+            RelationType.ONE_TO_MANY ||
+          fieldMetadataForFieldPermissionToDelete.settings?.relationType ===
+            RelationType.MANY_TO_ONE
+        ) {
+          relationTargetFieldMetadataIds.push(
+            fieldMetadataForFieldPermissionToDelete.relationTargetFieldMetadataId,
+          );
+        }
+      }
+    }
+
+    const fieldPermissionsForRelationTargetFieldMetadataIds =
+      allFieldPermissions
+        .filter((fieldPermission) =>
+          relationTargetFieldMetadataIds.includes(
+            fieldPermission.fieldMetadataId,
+          ),
+        )
+        .map((fieldPermission) => fieldPermission.id);
+
+    return fieldPermissionsForRelationTargetFieldMetadataIds;
+  }
+
+  private computeFieldPermissionForRelationTargetFieldMetadata({
+    fieldPermissions,
+    fieldMetadatasForFieldPermissions,
+  }: {
+    fieldPermissions: UpsertFieldPermissionsInput['fieldPermissions'];
+    fieldMetadatasForFieldPermissions: FieldMetadataEntity[];
+  }) {
+    return fieldPermissions
+      .map((fieldPermission) => {
+        const fieldMetadata = fieldMetadatasForFieldPermissions.find(
+          (fm) => fm.id === fieldPermission.fieldMetadataId,
+        );
+
+        if (!isDefined(fieldMetadata)) {
+          throw new InternalServerError(
+            'Field metadata not found for field permission',
+          );
+        }
+
+        if (isFieldMetadataTypeRelation(fieldMetadata)) {
+          if (
+            fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY ||
+            fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE
+          ) {
+            const fieldPermissionInputHasFieldPermissionOnRelationTargetFieldMetadata =
+              fieldPermissions.filter(
+                (fieldPermissionInput) =>
+                  fieldPermissionInput.fieldMetadataId ===
+                  fieldMetadata.relationTargetFieldMetadataId,
+              ).length > 0;
+
+            if (
+              fieldPermissionInputHasFieldPermissionOnRelationTargetFieldMetadata
+            ) {
+              return;
+            }
+
+            return {
+              ...fieldPermission,
+              objectMetadataId: fieldMetadata.relationTargetObjectMetadataId,
+              fieldMetadataId: fieldMetadata.relationTargetFieldMetadataId,
+            };
+          }
+        }
+
+        return null;
+      })
+      .filter(isDefined);
   }
 }
