@@ -31,7 +31,6 @@ import {
   EdgeProps,
   getBezierPath,
 } from '@xyflow/react';
-import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconDotsVertical,
@@ -41,6 +40,7 @@ import {
 } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
+import { useIsEdgeHovered } from '@/workflow/workflow-diagram/hooks/useIsEdgeHovered';
 
 type WorkflowDiagramFilterEdgeEditableProps = EdgeProps<WorkflowDiagramEdge>;
 
@@ -73,6 +73,7 @@ const StyledConfiguredFilterContainer = styled.div`
 `;
 
 export const WorkflowDiagramFilterEdgeEditable = ({
+  id,
   source,
   target,
   sourceY,
@@ -105,7 +106,7 @@ export const WorkflowDiagramFilterEdgeEditable = ({
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
 
-  const [hovered, setHovered] = useState(false);
+  const { isEdgeHovered } = useIsEdgeHovered();
 
   const setWorkflowDiagramPanOnDrag = useSetRecoilComponentStateV2(
     workflowDiagramPanOnDragComponentState,
@@ -133,14 +134,6 @@ export const WorkflowDiagramFilterEdgeEditable = ({
   const { openWorkflowEditFilterInCommandMenu } =
     useOpenWorkflowEditFilterInCommandMenu();
 
-  const handleMouseEnter = () => {
-    setHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setHovered(false);
-  };
-
   const handleFilterButtonClick = () => {
     openWorkflowEditFilterInCommandMenu({
       stepId: data.stepId,
@@ -150,7 +143,6 @@ export const WorkflowDiagramFilterEdgeEditable = ({
 
   const handleAddNodeButtonClick = () => {
     closeDropdown(dropdownId);
-    setHovered(false);
 
     startNodeCreation({
       parentStepId: data.stepId,
@@ -173,12 +165,10 @@ export const WorkflowDiagramFilterEdgeEditable = ({
           data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
           labelX={labelX}
           labelY={labelY}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
         >
           <WorkflowDiagramEdgeV2VisibilityContainer shouldDisplay>
             <StyledConfiguredFilterContainer>
-              {hovered || isDropdownOpen || isEdgeSelected ? (
+              {isEdgeHovered(id) || isDropdownOpen || isEdgeSelected ? (
                 <StyledIconButtonGroup
                   className="nodrag nopan"
                   iconButtons={[
@@ -237,7 +227,6 @@ export const WorkflowDiagramFilterEdgeEditable = ({
                       LeftIcon={IconFilter}
                       onClick={() => {
                         closeDropdown(dropdownId);
-                        setHovered(false);
 
                         handleFilterButtonClick();
                       }}
@@ -247,7 +236,6 @@ export const WorkflowDiagramFilterEdgeEditable = ({
                       LeftIcon={IconFilterX}
                       onClick={() => {
                         closeDropdown(dropdownId);
-                        setHovered(false);
 
                         if (!isDefined(data.stepId)) {
                           throw new Error(
