@@ -47,7 +47,7 @@ import { useLingui } from '@lingui/react/macro';
 import { Monaco } from '@monaco-editor/react';
 import { editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
@@ -371,27 +371,6 @@ export const WorkflowEditActionServerlessFunction = ({
 
   const testLogsTextAreaId = `${serverlessFunctionId}-test-logs`;
 
-  const codeEditorOptionsWithLineNumbers = useMemo(
-    () => ({
-      readOnly: actionOptions.readonly,
-      domReadOnly: actionOptions.readonly,
-      scrollBeyondLastLine: false,
-      padding: { top: 4, bottom: 4 },
-      lineNumbersMinChars: 2,
-    }),
-    [actionOptions.readonly],
-  );
-
-  const codeEditorOptionsWithoutLineNumbers = useMemo(
-    () => ({
-      readOnly: actionOptions.readonly,
-      domReadOnly: actionOptions.readonly,
-      scrollBeyondLastLine: false,
-      padding: { top: 4, bottom: 4 },
-    }),
-    [actionOptions.readonly],
-  );
-
   const handleEnterFullScreen = () => {
     setIsFullScreen(true);
     setTimeout(() => {
@@ -446,7 +425,12 @@ export const WorkflowEditActionServerlessFunction = ({
                 onChange={handleCodeChange}
                 onMount={handleEditorDidMount}
                 setMarkers={getWrongExportedFunctionMarkers}
-                options={codeEditorOptionsWithoutLineNumbers}
+                options={{
+                  readOnly: actionOptions.readonly,
+                  domReadOnly: actionOptions.readonly,
+                  scrollBeyondLastLine: false,
+                  padding: { top: 4, bottom: 4 },
+                }}
               />
             </StyledFullScreenCodeEditorContainer>
           </StyledFullScreenContent>
@@ -488,7 +472,13 @@ export const WorkflowEditActionServerlessFunction = ({
                 value={formValues.code?.[INDEX_FILE_PATH]}
                 onChange={handleCodeChange}
                 onMount={handleEditorDidMount}
-                options={codeEditorOptionsWithLineNumbers}
+                options={{
+                  readOnly: actionOptions.readonly,
+                  domReadOnly: actionOptions.readonly,
+                  scrollBeyondLastLine: false,
+                  padding: { top: 4, bottom: 4 },
+                  lineNumbersMinChars: 2,
+                }}
                 readonly={actionOptions.readonly}
                 onEnterFullScreen={handleEnterFullScreen}
               />
