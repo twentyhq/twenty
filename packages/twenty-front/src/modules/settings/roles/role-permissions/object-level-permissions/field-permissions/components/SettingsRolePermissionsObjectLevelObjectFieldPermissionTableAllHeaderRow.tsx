@@ -1,22 +1,23 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { filterUserFacingFieldMetadataItems } from '@/object-metadata/utils/filterUserFacingFieldMetadataItems';
+import { FIELD_LEVEL_PERMISSION_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/constants/FieldLevelPermissionTableGridTemplateColumns';
 import { useObjectPermissionDerivedStates } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useObjectPermissionDerivedStates';
-import { useUpsertFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useUpsertFieldPermissionInDraftRole';
+import { useRemoveReadOverrideOnAllFieldsOfObject } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRemoveReadOverrideOnAllFieldsOfObject';
+import { useRemoveUpdateOverrideOnAllFieldsOfObject } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRemoveUpdateOverrideOnAllFieldsOfObject';
+import { useRestrictReadOnAllFieldsOfObject } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRestrictReadOnAllFieldsOfObject';
+import { useRestrictUpdateOnAllFieldsOfObject } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRestrictUpdateOnAllFieldsOfObject';
 import { OverridableCheckbox } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/OverridableCheckbox';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 import { Label } from 'twenty-ui/display';
-import { v4 } from 'uuid';
 
 const StyledSectionHeader = styled.div`
   align-items: center;
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   display: grid;
-  grid-template-columns: 180px 1fr 60px 60px;
+  grid-template-columns: ${FIELD_LEVEL_PERMISSION_TABLE_GRID_TEMPLATE_COLUMNS};
 
   height: ${({ theme }) => theme.spacing(6)};
 
@@ -43,18 +44,11 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHead
       settingsDraftRoleFamilyState(roleId),
     );
 
-    const restrictableFieldMetadataItems = objectMetadataItem.fields.filter(
-      filterUserFacingFieldMetadataItems,
-    );
-
     const { cannotAllowFieldReadRestrict, cannotAllowFieldUpdateRestrict } =
       useObjectPermissionDerivedStates({
         roleId,
         objectMetadataItemId: objectMetadataItem.id,
       });
-
-    const { upsertFieldPermissionInDraftRole } =
-      useUpsertFieldPermissionInDraftRole(roleId);
 
     const fieldPermissionsForThisObject =
       settingsDraftRole.fieldPermissions?.filter(
@@ -70,104 +64,31 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHead
       (fieldPermission) => fieldPermission.canUpdateFieldValue === false,
     );
 
+    const { restrictReadOnAllFieldsOfObject } =
+      useRestrictReadOnAllFieldsOfObject({ roleId });
+
+    const { removeReadOverrideOnAllFieldsOfObject } =
+      useRemoveReadOverrideOnAllFieldsOfObject({ roleId });
+
+    const { removeUpdateOverrideOnAllFieldsOfObject } =
+      useRemoveUpdateOverrideOnAllFieldsOfObject({ roleId });
+
+    const { restrictUpdateOnAllFieldsOfObject } =
+      useRestrictUpdateOnAllFieldsOfObject({ roleId });
+
     const handleReadAllChange = () => {
       if (hasAnyRestrictionOnRead) {
-        for (const fieldPermissionToChange of fieldPermissionsForThisObject) {
-          upsertFieldPermissionInDraftRole({
-            ...fieldPermissionToChange,
-            canReadFieldValue: null,
-          });
-        }
+        removeReadOverrideOnAllFieldsOfObject(objectMetadataItem);
       } else {
-        if (fieldPermissionsForThisObject.length === 0) {
-          for (const fieldMetadataItem of restrictableFieldMetadataItems) {
-            upsertFieldPermissionInDraftRole({
-              fieldMetadataId: fieldMetadataItem.id,
-              objectMetadataId: objectMetadataItem.id,
-              canUpdateFieldValue: false,
-              canReadFieldValue: false,
-              id: v4(),
-              roleId,
-            });
-          }
-        } else {
-          for (const fieldMetadataItem of restrictableFieldMetadataItems) {
-            const foundFieldPermission = fieldPermissionsForThisObject.find(
-              (fieldPermissionToFind) =>
-                fieldPermissionToFind.fieldMetadataId === fieldMetadataItem.id,
-            );
-
-            if (isDefined(foundFieldPermission)) {
-              upsertFieldPermissionInDraftRole({
-                ...foundFieldPermission,
-                canReadFieldValue: false,
-                canUpdateFieldValue: false,
-              });
-            } else {
-              upsertFieldPermissionInDraftRole({
-                fieldMetadataId: fieldMetadataItem.id,
-                objectMetadataId: objectMetadataItem.id,
-                canReadFieldValue: false,
-                canUpdateFieldValue: false,
-                id: v4(),
-                roleId,
-              });
-            }
-          }
-        }
+        restrictReadOnAllFieldsOfObject(objectMetadataItem);
       }
     };
 
     const handleUpdateAllChange = () => {
       if (hasAnyRestrictionOnUpdate) {
-        for (const fieldPermissionToChange of fieldPermissionsForThisObject) {
-          upsertFieldPermissionInDraftRole({
-            ...fieldPermissionToChange,
-            canUpdateFieldValue: null,
-            canReadFieldValue: null,
-          });
-        }
+        removeUpdateOverrideOnAllFieldsOfObject(objectMetadataItem);
       } else {
-        const shouldCreateUpdatePermissionForAllFields =
-          fieldPermissionsForThisObject.length === 0;
-
-        if (shouldCreateUpdatePermissionForAllFields) {
-          for (const fieldMetadataItem of restrictableFieldMetadataItems) {
-            upsertFieldPermissionInDraftRole({
-              fieldMetadataId: fieldMetadataItem.id,
-              objectMetadataId: objectMetadataItem.id,
-              canUpdateFieldValue: false,
-              canReadFieldValue: null,
-              id: v4(),
-              roleId,
-            });
-          }
-        } else {
-          for (const fieldMetadataItem of restrictableFieldMetadataItems) {
-            const alreadyExistingFieldPermission =
-              fieldPermissionsForThisObject.find(
-                (fieldPermissionToFind) =>
-                  fieldPermissionToFind.fieldMetadataId ===
-                  fieldMetadataItem.id,
-              );
-
-            if (isDefined(alreadyExistingFieldPermission)) {
-              upsertFieldPermissionInDraftRole({
-                ...alreadyExistingFieldPermission,
-                canUpdateFieldValue: false,
-              });
-            } else {
-              upsertFieldPermissionInDraftRole({
-                fieldMetadataId: fieldMetadataItem.id,
-                objectMetadataId: objectMetadataItem.id,
-                canUpdateFieldValue: false,
-                canReadFieldValue: null,
-                id: v4(),
-                roleId,
-              });
-            }
-          }
-        }
+        restrictUpdateOnAllFieldsOfObject(objectMetadataItem);
       }
     };
 

@@ -15,15 +15,15 @@ export const useFilterObjectMetadataItemsWithPermissionOverride = ({
   const filterObjectMetadataItemsWithPermissionOverride = useCallback(
     (objectMetadataItem: ObjectMetadataItem) => {
       const {
-        objectHasNoOverrideOnObjectPermission,
+        objectHasOverrideOnObjectPermissions,
         objectHasNoOverrideButFieldPermissionsShouldBeTakenIntoAccount,
       } = getObjectPermissionDerivedStates(objectMetadataItem.id);
 
-      const shouldBeTaken =
+      const hasOverride =
         objectHasNoOverrideButFieldPermissionsShouldBeTakenIntoAccount ||
-        !objectHasNoOverrideOnObjectPermission;
+        objectHasOverrideOnObjectPermissions;
 
-      return shouldBeTaken;
+      return hasOverride;
     },
     [getObjectPermissionDerivedStates],
   );

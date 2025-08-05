@@ -114,12 +114,12 @@ export const useGetObjectPermissionDerivedStates = ({
 
     const objectReadIsRestricted =
       (readIsRestrictedOnAllObjectsByDefault && objectHasNoOverrideOnRead) ||
-      (readIsAllowedOnAllObjectsByDefault && objectHasReadRevoked);
+      objectHasReadRevoked;
 
     const objectUpdateIsRestricted =
       (updateIsRestrictedOnAllObjectsByDefault &&
         objectHasNoOverrideOnUpdate) ||
-      (updateIsAllowedOnAllObjectsByDefault && objectHasUpdateRevoked);
+      objectHasUpdateRevoked;
 
     const cannotAllowFieldUpdateRestrict =
       objectReadIsRestricted || objectUpdateIsRestricted;
