@@ -9,18 +9,13 @@ import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStart
 import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  BaseEdge,
-  EdgeLabelRenderer,
-  EdgeProps,
-  getBezierPath,
-} from '@xyflow/react';
+import { useIsEdgeHovered } from '@/workflow/workflow-diagram/hooks/useIsEdgeHovered';
+import { EdgeLabelRenderer, EdgeProps, getBezierPath } from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter, IconPlus } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
-import { useIsEdgeHovered } from '@/workflow/workflow-diagram/hooks/useIsEdgeHovered';
+import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseEdge';
 
 type WorkflowDiagramDefaultEdgeEditableProps = EdgeProps<WorkflowDiagramEdge>;
 
@@ -30,6 +25,7 @@ const StyledIconButtonGroup = styled(IconButtonGroup)`
 
 export const WorkflowDiagramDefaultEdgeEditable = ({
   id,
+  selected,
   source,
   target,
   sourceX,
@@ -39,8 +35,6 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
   markerStart,
   markerEnd,
 }: WorkflowDiagramDefaultEdgeEditableProps) => {
-  const theme = useTheme();
-
   const { isEdgeHovered } = useIsEdgeHovered();
 
   const [edgePath, labelX, labelY] = getBezierPath({
@@ -97,11 +91,11 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
 
   return (
     <>
-      <BaseEdge
+      <WorkflowDiagramBaseEdge
+        selected={selected}
+        path={edgePath}
         markerStart={markerStart}
         markerEnd={markerEnd}
-        path={edgePath}
-        style={{ stroke: theme.border.color.strong }}
       />
 
       <EdgeLabelRenderer>

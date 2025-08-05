@@ -22,15 +22,10 @@ import {
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
-import { css, useTheme } from '@emotion/react';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  BaseEdge,
-  EdgeLabelRenderer,
-  EdgeProps,
-  getBezierPath,
-} from '@xyflow/react';
+import { EdgeLabelRenderer, EdgeProps, getBezierPath } from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconDotsVertical,
@@ -41,6 +36,7 @@ import {
 import { IconButtonGroup } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useIsEdgeHovered } from '@/workflow/workflow-diagram/hooks/useIsEdgeHovered';
+import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseEdge';
 
 type WorkflowDiagramFilterEdgeEditableProps = EdgeProps<WorkflowDiagramEdge>;
 
@@ -74,6 +70,7 @@ const StyledConfiguredFilterContainer = styled.div`
 
 export const WorkflowDiagramFilterEdgeEditable = ({
   id,
+  selected,
   source,
   target,
   sourceY,
@@ -85,8 +82,6 @@ export const WorkflowDiagramFilterEdgeEditable = ({
   data,
 }: WorkflowDiagramFilterEdgeEditableProps) => {
   assertFilterEdgeDataOrThrow(data);
-
-  const theme = useTheme();
 
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -153,11 +148,11 @@ export const WorkflowDiagramFilterEdgeEditable = ({
 
   return (
     <>
-      <BaseEdge
+      <WorkflowDiagramBaseEdge
+        selected={selected}
+        path={edgePath}
         markerStart={markerStart}
         markerEnd={markerEnd}
-        path={edgePath}
-        style={{ stroke: theme.border.color.strong }}
       />
 
       <EdgeLabelRenderer>

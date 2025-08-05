@@ -1,19 +1,14 @@
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  BaseEdge,
-  EdgeLabelRenderer,
-  EdgeProps,
-  getBezierPath,
-} from '@xyflow/react';
+import { EdgeLabelRenderer, EdgeProps, getBezierPath } from '@xyflow/react';
 import { IconPlus } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
 import { useIsEdgeHovered } from '@/workflow/workflow-diagram/hooks/useIsEdgeHovered';
+import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseEdge';
 
 const StyledIconButtonGroup = styled(IconButtonGroup)`
   pointer-events: all;
@@ -24,6 +19,7 @@ type WorkflowDiagramFilteringDisabledEdgeEditableProps =
 
 export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
   id,
+  selected,
   markerStart,
   markerEnd,
   source,
@@ -33,8 +29,6 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
   targetX,
   targetY,
 }: WorkflowDiagramFilteringDisabledEdgeEditableProps) => {
-  const theme = useTheme();
-
   const { isEdgeHovered } = useIsEdgeHovered();
 
   const [edgePath, labelX, labelY] = getBezierPath({
@@ -61,11 +55,11 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
 
   return (
     <>
-      <BaseEdge
+      <WorkflowDiagramBaseEdge
+        selected={selected}
+        path={edgePath}
         markerStart={markerStart}
         markerEnd={markerEnd}
-        path={edgePath}
-        style={{ stroke: theme.border.color.strong }}
       />
 
       <EdgeLabelRenderer>
