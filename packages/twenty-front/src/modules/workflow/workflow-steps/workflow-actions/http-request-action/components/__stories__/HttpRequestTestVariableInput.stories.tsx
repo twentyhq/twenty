@@ -1,0 +1,303 @@
+import { Meta, StoryObj } from '@storybook/react';
+import { expect, userEvent, within } from '@storybook/test';
+import { ComponentDecorator } from 'twenty-ui/testing';
+
+import { HttpRequestTestVariableInput } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestTestVariableInput';
+import { HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
+
+// Mock the getWorkflowVariablesUsedInStep utility for stories
+const mockGetWorkflowVariablesUsedInStep = jest.fn();
+
+jest.mock(
+  '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep',
+  () => ({
+    getWorkflowVariablesUsedInStep: mockGetWorkflowVariablesUsedInStep,
+  }),
+);
+
+const meta: Meta<typeof HttpRequestTestVariableInput> = {
+  title:
+    'Modules/Workflow/WorkflowActions/HttpRequest/HttpRequestTestVariableInput',
+  component: HttpRequestTestVariableInput,
+  decorators: [ComponentDecorator],
+  parameters: {
+    layout: 'padded',
+  },
+};
+
+export default meta;
+type Story = StoryObj<typeof HttpRequestTestVariableInput>;
+
+const formDataWithVariables: HttpRequestFormData = {
+  url: 'https://api.example.com/users/{{user.id}}',
+  method: 'POST',
+  headers: {
+    Authorization: 'Bearer {{auth.token}}',
+    'Content-Type': 'application/json',
+  },
+  body: {
+    name: '{{user.name}}',
+    email: '{{contact.email}}',
+  },
+};
+
+const formDataWithManyVariables: HttpRequestFormData = {
+  url: 'https://{{api.host}}/{{api.version}}/{{endpoint.path}}',
+  method: 'PUT',
+  headers: {
+    Authorization: 'Bearer {{auth.token}}',
+    'X-User-ID': '{{user.id}}',
+    'X-Request-ID': '{{request.id}}',
+    'Content-Type': 'application/json',
+  },
+  body: {
+    userData: {
+      name: '{{user.name}}',
+      email: '{{user.email}}',
+      department: '{{user.department}}',
+    },
+    metadata: {
+      timestamp: '{{current.timestamp}}',
+      source: '{{app.name}}',
+    },
+  },
+};
+
+const formDataWithNoVariables: HttpRequestFormData = {
+  url: 'https://api.example.com/status',
+  method: 'GET',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: {},
+};
+
+export const WithVariables: Story = {
+  args: {
+    httpRequestFormData: formDataWithVariables,
+    actionId: 'test-action-1',
+    readonly: false,
+  },
+  beforeEach: () => {
+    mockGetWorkflowVariablesUsedInStep.mockReturnValue(
+      new Set(['user.id', 'auth.token', 'user.name', 'contact.email']),
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Test Variables')).toBeVisible();
+    expect(await canvas.findByText('{{user.id}}')).toBeVisible();
+    expect(await canvas.findByText('{{auth.token}}')).toBeVisible();
+    expect(await canvas.findByText('{{user.name}}')).toBeVisible();
+    expect(await canvas.findByText('{{contact.email}}')).toBeVisible();
+
+    // Should have 4 input fields
+    const inputs = canvas.getAllByPlaceholderText('Enter test value');
+    expect(inputs).toHaveLength(4);
+  },
+};
+
+export const WithManyVariables: Story = {
+  args: {
+    httpRequestFormData: formDataWithManyVariables,
+    actionId: 'test-action-2',
+    readonly: false,
+  },
+  beforeEach: () => {
+    mockGetWorkflowVariablesUsedInStep.mockReturnValue(
+      new Set([
+        'api.host',
+        'api.version',
+        'endpoint.path',
+        'auth.token',
+        'user.id',
+        'request.id',
+        'user.name',
+        'user.email',
+        'user.department',
+        'current.timestamp',
+        'app.name',
+      ]),
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Test Variables')).toBeVisible();
+
+    // Should have 11 input fields
+    const inputs = canvas.getAllByPlaceholderText('Enter test value');
+    expect(inputs).toHaveLength(11);
+
+    // Check some of the variable labels
+    expect(await canvas.findByText('{{api.host}}')).toBeVisible();
+    expect(await canvas.findByText('{{user.name}}')).toBeVisible();
+    expect(await canvas.findByText('{{current.timestamp}}')).toBeVisible();
+  },
+};
+
+export const NoVariables: Story = {
+  args: {
+    httpRequestFormData: formDataWithNoVariables,
+    actionId: 'test-action-3',
+    readonly: false,
+  },
+  beforeEach: () => {
+    mockGetWorkflowVariablesUsedInStep.mockReturnValue(new Set());
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // Should not render anything when there are no variables
+    expect(canvas.queryByText('Test Variables')).not.toBeInTheDocument();
+  },
+};
+
+export const ReadonlyMode: Story = {
+  args: {
+    httpRequestFormData: formDataWithVariables,
+    actionId: 'test-action-4',
+    readonly: true,
+  },
+  beforeEach: () => {
+    mockGetWorkflowVariablesUsedInStep.mockReturnValue(
+      new Set(['user.id', 'auth.token', 'user.name']),
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Test Variables')).toBeVisible();
+
+    // All inputs should be readonly
+    const inputs = canvas.getAllByPlaceholderText('Enter test value');
+    inputs.forEach((input) => {
+      expect(input).toHaveAttribute('readonly');
+    });
+  },
+};
+
+export const WithPrefilledValues: Story = {
+  args: {
+    httpRequestFormData: formDataWithVariables,
+    actionId: 'test-action-5',
+    readonly: false,
+  },
+  beforeEach: () => {
+    mockGetWorkflowVariablesUsedInStep.mockReturnValue(
+      new Set(['user.id', 'auth.token', 'user.name']),
+    );
+  },
+  parameters: {
+    recoilInitializer: ({ set: _set }: any) => {
+      // This would need to be implemented with the actual Recoil decorator
+      // to pre-fill the state with values
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Test Variables')).toBeVisible();
+
+    // Test user interaction
+    const userIdInput =
+      canvas.getByDisplayValue('') ||
+      canvas.getAllByPlaceholderText('Enter test value')[0];
+    await userEvent.type(userIdInput, '12345');
+
+    const tokenInput = canvas.getAllByPlaceholderText('Enter test value')[1];
+    await userEvent.type(tokenInput, 'abc123xyz');
+
+    const nameInput = canvas.getAllByPlaceholderText('Enter test value')[2];
+    await userEvent.type(nameInput, 'John Doe');
+  },
+};
+
+export const SingleVariable: Story = {
+  args: {
+    httpRequestFormData: {
+      url: 'https://api.example.com/users/{{user.id}}',
+      method: 'GET',
+      headers: {},
+      body: {},
+    },
+    actionId: 'test-action-6',
+    readonly: false,
+  },
+  beforeEach: () => {
+    mockGetWorkflowVariablesUsedInStep.mockReturnValue(new Set(['user.id']));
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Test Variables')).toBeVisible();
+    expect(await canvas.findByText('{{user.id}}')).toBeVisible();
+
+    // Should have only 1 input field
+    const inputs = canvas.getAllByPlaceholderText('Enter test value');
+    expect(inputs).toHaveLength(1);
+  },
+};
+
+export const ComplexNestedVariables: Story = {
+  args: {
+    httpRequestFormData: {
+      url: 'https://api.example.com/{{resource.type}}/{{resource.id}}',
+      method: 'PATCH',
+      headers: {
+        Authorization: 'Bearer {{auth.jwt}}',
+        'X-Trace-ID': '{{trace.id}}',
+      },
+      body: {
+        operation: 'update',
+        data: {
+          profile: {
+            firstName: '{{user.profile.firstName}}',
+            lastName: '{{user.profile.lastName}}',
+            settings: {
+              theme: '{{user.preferences.theme}}',
+              notifications: '{{user.preferences.notifications}}',
+            },
+          },
+          audit: {
+            updatedBy: '{{current.user.id}}',
+            updatedAt: '{{current.timestamp}}',
+          },
+        },
+      },
+    },
+    actionId: 'test-action-7',
+    readonly: false,
+  },
+  beforeEach: () => {
+    mockGetWorkflowVariablesUsedInStep.mockReturnValue(
+      new Set([
+        'resource.type',
+        'resource.id',
+        'auth.jwt',
+        'trace.id',
+        'user.profile.firstName',
+        'user.profile.lastName',
+        'user.preferences.theme',
+        'user.preferences.notifications',
+        'current.user.id',
+        'current.timestamp',
+      ]),
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Test Variables')).toBeVisible();
+
+    // Should have 10 input fields for all the nested variables
+    const inputs = canvas.getAllByPlaceholderText('Enter test value');
+    expect(inputs).toHaveLength(10);
+
+    // Check some complex variable paths
+    expect(await canvas.findByText('{{user.profile.firstName}}')).toBeVisible();
+    expect(await canvas.findByText('{{user.preferences.theme}}')).toBeVisible();
+    expect(await canvas.findByText('{{current.timestamp}}')).toBeVisible();
+  },
+};
