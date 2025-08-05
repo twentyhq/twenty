@@ -13,12 +13,13 @@ import { View } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
+import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 
 export const createViewData = (overrides: Partial<View> = {}) => ({
   name: 'Test View',
   objectMetadataId: TEST_OBJECT_METADATA_1_ID,
   icon: 'IconTable',
-  type: 'table',
+  type: ViewType.TABLE,
   key: 'INDEX',
   position: 0,
   isCompact: false,
@@ -28,7 +29,7 @@ export const createViewData = (overrides: Partial<View> = {}) => ({
 
 export const updateViewData = (overrides: Partial<View> = {}) => ({
   name: 'Updated View',
-  type: 'kanban',
+  type: ViewType.KANBAN,
   isCompact: true,
   ...overrides,
 });

@@ -4,6 +4,8 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
+import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import {
   ViewException,
   ViewExceptionCode,
@@ -21,11 +23,15 @@ describe('ViewService', () => {
     name: 'Test View',
     objectMetadataId: 'object-id',
     workspaceId: 'workspace-id',
-    type: 'table',
+    type: ViewType.TABLE,
     icon: 'test-icon',
     position: 0,
     isCompact: false,
     key: 'INDEX',
+    openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
+    kanbanAggregateOperation: null,
+    kanbanAggregateOperationFieldMetadataId: null,
+    anyFieldFilterValue: null,
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: null,
@@ -139,7 +145,7 @@ describe('ViewService', () => {
       name: 'Test View',
       workspaceId: 'workspace-id',
       objectMetadataId: 'object-id',
-      type: 'table',
+      type: ViewType.TABLE,
       icon: 'test-icon',
     };
 

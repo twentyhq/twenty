@@ -25,6 +25,7 @@ import {
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
+import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { ViewExceptionMessage } from 'src/engine/core-modules/view/exceptions/view.exception';
 
 describe('View Resolver', () => {
@@ -128,7 +129,7 @@ describe('View Resolver', () => {
         name: 'Kanban View',
         objectMetadataId: TEST_OBJECT_METADATA_1_ID,
         icon: 'IconDeal',
-        type: 'kanban',
+        type: ViewType.KANBAN,
         key: 'OPPORTUNITIES',
         position: 1,
         isCompact: true,
@@ -166,7 +167,7 @@ describe('View Resolver', () => {
         name: input.name,
         objectMetadataId: input.objectMetadataId,
         icon: input.icon,
-        type: 'table',
+        type: ViewType.TABLE,
         key: 'INDEX',
         position: 0,
         isCompact: false,
@@ -179,13 +180,13 @@ describe('View Resolver', () => {
     it('should update an existing view', async () => {
       const view = await createTestViewWithGraphQL({
         name: 'Original View',
-        type: 'table',
+        type: ViewType.TABLE,
         isCompact: false,
       });
 
       const updateInput = updateViewData({
         name: 'Updated View',
-        type: 'kanban',
+        type: ViewType.KANBAN,
         isCompact: true,
       });
 

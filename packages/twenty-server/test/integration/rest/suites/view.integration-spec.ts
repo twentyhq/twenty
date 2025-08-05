@@ -18,6 +18,7 @@ import {
 } from 'test/integration/utils/view-test.util';
 
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
+import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { ViewExceptionMessage } from 'src/engine/core-modules/view/exceptions/view.exception';
 
 describe('View REST API', () => {
@@ -63,7 +64,7 @@ describe('View REST API', () => {
       const view = await createTestViewWithRestApi({
         name: viewName,
         icon: 'IconTable',
-        type: 'table',
+        type: ViewType.TABLE,
         key: 'INDEX',
         position: 0,
         isCompact: false,
@@ -74,7 +75,7 @@ describe('View REST API', () => {
         name: viewName,
         objectMetadataId: TEST_OBJECT_METADATA_1_ID,
         icon: 'IconTable',
-        type: 'table',
+        type: ViewType.TABLE,
         key: 'INDEX',
         position: 0,
         isCompact: false,
@@ -87,7 +88,7 @@ describe('View REST API', () => {
       const kanbanView = await createTestViewWithRestApi({
         name: viewName,
         icon: 'IconKanban',
-        type: 'kanban',
+        type: ViewType.KANBAN,
         key: 'KANBAN',
         position: 1,
         isCompact: true,
@@ -96,7 +97,7 @@ describe('View REST API', () => {
 
       assertViewStructure(kanbanView, {
         name: viewName,
-        type: 'kanban',
+        type: ViewType.KANBAN,
         isCompact: true,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
       });
@@ -111,7 +112,7 @@ describe('View REST API', () => {
       const view = await createTestViewWithRestApi({
         name: viewName,
         icon: 'IconTable',
-        type: 'table',
+        type: ViewType.TABLE,
         key: 'INDEX',
         position: 0,
         isCompact: false,
@@ -150,7 +151,7 @@ describe('View REST API', () => {
       const view = await createTestViewWithRestApi({
         name: viewName,
         icon: 'IconTable',
-        type: 'table',
+        type: ViewType.TABLE,
         key: 'INDEX',
         position: 0,
         isCompact: false,
@@ -160,7 +161,7 @@ describe('View REST API', () => {
       const updatedName = generateRecordName('Updated View');
       const updateData = {
         name: updatedName,
-        type: 'kanban',
+        type: ViewType.KANBAN,
         isCompact: true,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
       };
@@ -176,7 +177,7 @@ describe('View REST API', () => {
       assertViewStructure(response.body, {
         id: view.id,
         name: updatedName,
-        type: 'kanban',
+        type: ViewType.KANBAN,
         isCompact: true,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
         objectMetadataId: TEST_OBJECT_METADATA_1_ID,
@@ -186,7 +187,7 @@ describe('View REST API', () => {
     it('should return 404 error when updating non-existent view', async () => {
       const updateData = {
         name: 'Updated View',
-        type: 'kanban',
+        type: ViewType.KANBAN,
       };
 
       const response = await makeRestAPIRequest({
@@ -210,7 +211,7 @@ describe('View REST API', () => {
       const view = await createTestViewWithRestApi({
         name: viewName,
         icon: 'IconTable',
-        type: 'table',
+        type: ViewType.TABLE,
         key: 'INDEX',
         position: 0,
         isCompact: false,
