@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import { resolveInput } from 'twenty-shared/utils';
 
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -9,16 +10,15 @@ import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing
 import { AgentExecutionService } from 'src/engine/metadata-modules/agent/agent-execution.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import {
-    AgentException,
-    AgentExceptionCode,
+  AgentException,
+  AgentExceptionCode,
 } from 'src/engine/metadata-modules/agent/agent.exception';
 import {
-    WorkflowStepExecutorException,
-    WorkflowStepExecutorExceptionCode,
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
-import { resolveInput } from 'twenty-shared/utils';
 
 import { isWorkflowAiAgentAction } from './guards/is-workflow-ai-agent-action.guard';
 

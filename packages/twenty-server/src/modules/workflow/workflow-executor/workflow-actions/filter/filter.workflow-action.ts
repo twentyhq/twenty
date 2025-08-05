@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
+import { resolveInput } from 'twenty-shared/utils';
+
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import {
-    WorkflowStepExecutorException,
-    WorkflowStepExecutorExceptionCode,
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { isWorkflowFilterAction } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/guards/is-workflow-filter-action.guard';
 import { evaluateFilterConditions } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-filter-conditions.util';
-import { resolveInput } from 'twenty-shared/utils';
 
 @Injectable()
 export class FilterWorkflowAction implements WorkflowAction {
