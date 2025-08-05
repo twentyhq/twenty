@@ -235,6 +235,11 @@ msgstr "확인 이메일이 전송되었습니다"
 msgid "Ability to edit all settings"
 msgstr "모든 설정을 편집할 수 있는 권한"
 
+#. js-lingui-id: wTKqOI
+#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
+msgid "Ability to interact with this object's fields."
+msgstr ""
+
 #. js-lingui-id: ssjjFt
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Abort"
@@ -563,6 +568,9 @@ msgid "AI Response Schema"
 msgstr "AI 응답 스키마"
 
 #. js-lingui-id: N40H+G
+#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "All"
 msgstr "전체"
@@ -1724,6 +1732,7 @@ msgstr "데이터 모델"
 #. js-lingui-id: r+cVRP
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "Data type"
 msgstr "데이터 유형"
 
@@ -2146,6 +2155,7 @@ msgstr "가장 빠른 날짜"
 
 #. js-lingui-id: ePK91l
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
@@ -2180,6 +2190,7 @@ msgid "Edit field values"
 msgstr "필드 값 수정"
 
 #. js-lingui-id: oKQ7ls
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
 msgid "Edit Fields"
 msgstr "필드 수정"
@@ -2724,6 +2735,11 @@ msgstr "필드"
 #: src/testing/mock-data/tableData.ts
 msgid "Fields Count"
 msgstr "필드 수"
+
+#. js-lingui-id: 5UU7Q6
+#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
+msgid "Fields Permissions"
+msgstr ""
 
 #. js-lingui-id: uTDtiS
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -3866,6 +3882,7 @@ msgstr "유효한 이메일의 배열이어야 합니다"
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
@@ -4010,6 +4027,12 @@ msgstr "다음 단계"
 #. js-lingui-id: ulck7h
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Ninth"
+msgstr ""
+
+#. js-lingui-id: 1UzENP
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
+msgid "No"
 msgstr ""
 
 #. js-lingui-id: vhsJG1
@@ -4937,6 +4960,7 @@ msgstr "''{commandMenuSearch}''으로 검색..."
 
 #. js-lingui-id: l1/uy2
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "Search a field..."
 msgstr "필드 검색..."
 
@@ -5069,6 +5093,11 @@ msgstr "보안"
 msgid "see"
 msgstr "보기"
 
+#. js-lingui-id: h+8V38
+#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
+msgid "See"
+msgstr ""
+
 #. js-lingui-id: aOvXdk
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 msgid "See {objectLabelPlural}"
@@ -5094,6 +5123,11 @@ msgstr "삭제된 실행 보기"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See deleted workflows"
 msgstr "삭제된 워크플로 보기"
+
+#. js-lingui-id: oGROXc
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
+msgid "See Fields"
+msgstr ""
 
 #. js-lingui-id: irbH/8
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -5452,6 +5486,12 @@ msgstr "SMTP 서버"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "smtp.example.com"
 msgstr "smtp.example.com"
+
+#. js-lingui-id: zfjcH5
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
+msgid "Some"
+msgstr ""
 
 #. js-lingui-id: f6Hub0
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
