@@ -9,8 +9,7 @@ import {
   FieldRatingValue,
   FieldRelationValue,
   FieldSelectValue,
-  FieldTextValue,
-  FieldUUidValue,
+  FieldTextValue
 } from '@/object-record/record-field/types/FieldMetadata';
 import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateValue';
 import { SettingsFieldTypeCategoryType } from '@/settings/data-model/types/SettingsFieldTypeCategoryType';
@@ -27,8 +26,7 @@ import {
   IllustrationIconTag,
   IllustrationIconTags,
   IllustrationIconText,
-  IllustrationIconToggle,
-  IllustrationIconUid,
+  IllustrationIconToggle
 } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -42,23 +40,13 @@ export type SettingsFieldTypeConfig<T> = {
 };
 
 type SettingsNonCompositeFieldTypeConfigArray = Record<
-  SettingsNonCompositeFieldType,
+  Exclude<SettingsNonCompositeFieldType, 'UUID'>,
   SettingsFieldTypeConfig<any>
 >;
 
 // TODO: can we derive this from backend definitions ?
 export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFieldTypeConfigArray =
   {
-    [FieldMetadataType.UUID]: {
-      label: 'Unique ID',
-      Icon: IllustrationIconUid,
-      exampleValues: [
-        '00000000-0000-0000-0000-000000000000',
-        '00000000-0000-0000-0000-000000000001',
-        '00000000-0000-0000-0000-000000000002',
-      ],
-      category: 'Advanced',
-    } as const satisfies SettingsFieldTypeConfig<FieldUUidValue>,
     [FieldMetadataType.TEXT]: {
       label: 'Text',
       Icon: IllustrationIconText,
