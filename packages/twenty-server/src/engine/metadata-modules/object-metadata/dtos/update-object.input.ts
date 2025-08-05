@@ -61,12 +61,12 @@ export class UpdateObjectPayload {
 
   @IsUUID()
   @IsOptional()
-  @Field({ nullable: true })
+  @Field(() => UUIDScalarType, { nullable: true })
   labelIdentifierFieldMetadataId?: string;
 
   @IsUUID()
   @IsOptional()
-  @Field({ nullable: true })
+  @Field(() => UUIDScalarType, { nullable: true })
   imageIdentifierFieldMetadataId?: string;
 
   @IsBoolean()

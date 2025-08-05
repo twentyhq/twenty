@@ -68,7 +68,12 @@ export const WORKFLOW_VERSION_DATA_SEEDS: WorkflowVersionDataSeed[] = [
     trigger: JSON.stringify({
       name: 'Launch manually',
       type: 'MANUAL',
+      position: {
+        x: 0,
+        y: 0,
+      },
       settings: { outputSchema: {} },
+      nextStepIds: ['6e089bc9-aabd-435f-865f-f31c01c8f4a7'],
     }),
     steps: JSON.stringify([
       {
@@ -76,6 +81,10 @@ export const WORKFLOW_VERSION_DATA_SEEDS: WorkflowVersionDataSeed[] = [
         name: 'Quick Lead Form',
         type: 'FORM',
         valid: false,
+        position: {
+          x: 0,
+          y: 141,
+        },
         settings: {
           input: [
             {
@@ -172,6 +181,10 @@ export const WORKFLOW_VERSION_DATA_SEEDS: WorkflowVersionDataSeed[] = [
         name: 'Create Company',
         type: 'CREATE_RECORD',
         valid: false,
+        position: {
+          x: 0.5,
+          y: 282,
+        },
         settings: {
           input: {
             objectName: 'company',
@@ -500,6 +513,10 @@ export const WORKFLOW_VERSION_DATA_SEEDS: WorkflowVersionDataSeed[] = [
         name: 'Create Person',
         type: 'CREATE_RECORD',
         valid: false,
+        position: {
+          x: 8.5,
+          y: 423,
+        },
         settings: {
           input: {
             objectName: 'person',

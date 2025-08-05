@@ -150,7 +150,7 @@ export const SettingsDataModelFieldPreview = ({
                 },
                 defaultValue: fieldMetadataItem.defaultValue,
               },
-              isReadOnly: false,
+              isRecordFieldReadOnly: false,
               disableChipClick: true,
             }}
           >

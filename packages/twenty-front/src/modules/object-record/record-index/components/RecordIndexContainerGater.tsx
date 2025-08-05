@@ -24,7 +24,6 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
-import { capitalize } from 'twenty-shared/utils';
 import { NotFound } from '~/pages/not-found/NotFound';
 
 const StyledIndexContainer = styled.div`
@@ -102,9 +101,7 @@ export const RecordIndexContainerGater = () => {
                     instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
                   }}
                 >
-                  <PageTitle
-                    title={`${capitalize(objectMetadataItem.namePlural)}`}
-                  />
+                  <PageTitle title={objectMetadataItem.labelPlural} />
                   <RecordIndexPageHeader />
                   <PageBody>
                     <StyledIndexContainer

@@ -58,7 +58,7 @@ export const CalendarEventParticipantsAvatarGroup = ({
               : participant.displayName
           }
           placeholderColorSeed={
-            participant.workspaceMemberId || participant.personId
+            participant.workspaceMemberId || participant.personId || ''
           }
           type="rounded"
         />

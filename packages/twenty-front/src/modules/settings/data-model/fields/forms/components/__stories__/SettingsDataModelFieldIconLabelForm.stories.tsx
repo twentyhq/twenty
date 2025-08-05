@@ -4,10 +4,10 @@ import { Meta, StoryObj } from '@storybook/react';
 import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { SettingsDataModelFieldIconLabelForm } from '../SettingsDataModelFieldIconLabelForm';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { SettingsDataModelFieldIconLabelForm } from '../SettingsDataModelFieldIconLabelForm';
 
 const StyledContainer = styled.div`
   flex: 1;

@@ -8,7 +8,7 @@ export const useLoadMockedObjectMetadataItems = () => {
     ({ set, snapshot }) =>
       async () => {
         const { generatedMockObjectMetadataItems } = await import(
-          '~/testing/mock-data/generatedMockObjectMetadataItems'
+          '~/testing/utils/generatedMockObjectMetadataItems'
         );
 
         if (

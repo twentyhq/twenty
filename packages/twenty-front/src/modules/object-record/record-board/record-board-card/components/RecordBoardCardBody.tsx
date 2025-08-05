@@ -9,10 +9,10 @@ import {
   RecordUpdateHook,
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
+import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
-import { isFieldValueReadOnly } from '@/object-record/record-field/utils/isFieldValueReadOnly';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useContext } from 'react';
@@ -24,7 +24,7 @@ export const RecordBoardCardBody = ({
 }) => {
   const { recordId, isRecordReadOnly } = useContext(RecordBoardCardContext);
 
-  const { updateOneRecord } = useContext(RecordBoardContext);
+  const { updateOneRecord, objectPermissions } = useContext(RecordBoardContext);
 
   const useUpdateOneRecordHook: RecordUpdateHook = () => {
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {
@@ -37,23 +37,32 @@ export const RecordBoardCardBody = ({
     return [updateEntity, { loading: false }];
   };
 
+  const fieldDefinitionsWithReadOnly = fieldDefinitions.map(
+    (fieldDefinition) => ({
+      ...fieldDefinition,
+      isRecordFieldReadOnly: isRecordFieldReadOnly({
+        isRecordReadOnly,
+        objectPermissions,
+        fieldMetadataId: fieldDefinition.fieldMetadataId,
+        fieldName: fieldDefinition.metadata.fieldName,
+        fieldType: fieldDefinition.type,
+        isCustom: fieldDefinition.metadata.isCustom,
+        objectNameSingular:
+          fieldDefinition.metadata.objectMetadataNameSingular ?? '',
+      }),
+    }),
+  );
+
   return (
     <RecordBoardCardBodyContainer>
-      {fieldDefinitions.map((fieldDefinition) => (
+      {fieldDefinitionsWithReadOnly.map((fieldDefinition) => (
         <StopPropagationContainer key={fieldDefinition.fieldMetadataId}>
           <FieldContext.Provider
             value={{
               recordId,
               maxWidth: 156,
               isLabelIdentifier: false,
-              isReadOnly: isFieldValueReadOnly({
-                objectNameSingular:
-                  fieldDefinition.metadata.objectMetadataNameSingular,
-                fieldName: fieldDefinition.metadata.fieldName,
-                fieldType: fieldDefinition.type,
-                isRecordReadOnly,
-                isCustom: fieldDefinition.metadata.isCustom,
-              }),
+              isRecordFieldReadOnly: fieldDefinition.isRecordFieldReadOnly,
               fieldDefinition: {
                 disableTooltip: false,
                 fieldMetadataId: fieldDefinition.fieldMetadataId,

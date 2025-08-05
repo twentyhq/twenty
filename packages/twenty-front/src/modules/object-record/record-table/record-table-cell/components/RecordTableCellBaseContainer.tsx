@@ -59,8 +59,11 @@ export const RecordTableCellBaseContainer = ({
 }: {
   children: ReactNode;
 }) => {
-  const { isReadOnly, fieldDefinition, isLabelIdentifier } =
-    useContext(FieldContext);
+  const {
+    isRecordFieldReadOnly: isReadOnly,
+    fieldDefinition,
+    isLabelIdentifier,
+  } = useContext(FieldContext);
   const { setIsFocused } = useFieldFocus();
   const { openTableCell } = useOpenRecordTableCellFromCell();
   const { theme } = useContext(ThemeContext);

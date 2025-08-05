@@ -13,6 +13,7 @@ import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/works
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
@@ -62,43 +63,47 @@ export class WorkspaceSoftDeleteQueryBuilder<
   }
 
   override async execute(): Promise<UpdateResult> {
-    validateQueryIsPermittedOrThrow({
-      expressionMap: this.expressionMap,
-      objectRecordsPermissions: this.objectRecordsPermissions,
-      objectMetadataMaps: this.internalContext.objectMetadataMaps,
-      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
-      isFieldPermissionsEnabled:
-        this.featureFlagMap?.[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED],
-    });
+    try {
+      validateQueryIsPermittedOrThrow({
+        expressionMap: this.expressionMap,
+        objectRecordsPermissions: this.objectRecordsPermissions,
+        objectMetadataMaps: this.internalContext.objectMetadataMaps,
+        shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+        isFieldPermissionsEnabled:
+          this.featureFlagMap?.[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED],
+      });
 
-    const mainAliasTarget = this.getMainAliasTarget();
+      const mainAliasTarget = this.getMainAliasTarget();
 
-    const objectMetadata = getObjectMetadataFromEntityTarget(
-      mainAliasTarget,
-      this.internalContext,
-    );
+      const objectMetadata = getObjectMetadataFromEntityTarget(
+        mainAliasTarget,
+        this.internalContext,
+      );
 
-    const after = await super.execute();
+      const after = await super.execute();
 
-    const formattedAfter = formatResult<T[]>(
-      after.raw,
-      objectMetadata,
-      this.internalContext.objectMetadataMaps,
-    );
+      const formattedAfter = formatResult<T[]>(
+        after.raw,
+        objectMetadata,
+        this.internalContext.objectMetadataMaps,
+      );
 
-    await this.internalContext.eventEmitterService.emitMutationEvent({
-      action: DatabaseEventAction.DELETED,
-      objectMetadataItem: objectMetadata,
-      workspaceId: this.internalContext.workspaceId,
-      entities: formattedAfter,
-      authContext: this.authContext,
-    });
+      await this.internalContext.eventEmitterService.emitMutationEvent({
+        action: DatabaseEventAction.DELETED,
+        objectMetadataItem: objectMetadata,
+        workspaceId: this.internalContext.workspaceId,
+        entities: formattedAfter,
+        authContext: this.authContext,
+      });
 
-    return {
-      raw: after.raw,
-      generatedMaps: formattedAfter,
-      affected: after.affected,
-    };
+      return {
+        raw: after.raw,
+        generatedMaps: formattedAfter,
+        affected: after.affected,
+      };
+    } catch (error) {
+      throw computeTwentyORMException(error);
+    }
   }
 
   override select(): WorkspaceSelectQueryBuilder<T> {

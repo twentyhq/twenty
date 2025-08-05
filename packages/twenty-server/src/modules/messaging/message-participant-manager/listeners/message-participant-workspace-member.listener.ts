@@ -18,10 +18,6 @@ import {
   MessageParticipantMatchParticipantJob,
   MessageParticipantMatchParticipantJobData,
 } from 'src/modules/messaging/message-participant-manager/jobs/message-participant-match-participant.job';
-import {
-  MessageParticipantUnmatchParticipantJob,
-  MessageParticipantUnmatchParticipantJobData,
-} from 'src/modules/messaging/message-participant-manager/jobs/message-participant-unmatch-participant.job';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
@@ -59,9 +55,11 @@ export class MessageParticipantWorkspaceMemberListener {
         MessageParticipantMatchParticipantJob.name,
         {
           workspaceId: payload.workspaceId,
-          email: eventPayload.properties.after.userEmail,
-          workspaceMemberId: eventPayload.recordId,
-          isPrimaryEmail: true,
+          participantMatching: {
+            personIds: [],
+            personEmails: [],
+            workspaceMemberIds: [eventPayload.recordId],
+          },
         },
       );
     }
@@ -80,22 +78,15 @@ export class MessageParticipantWorkspaceMemberListener {
           eventPayload.properties.after,
         ).includes('userEmail')
       ) {
-        await this.messageQueueService.add<MessageParticipantUnmatchParticipantJobData>(
-          MessageParticipantUnmatchParticipantJob.name,
-          {
-            workspaceId: payload.workspaceId,
-            email: eventPayload.properties.before.userEmail,
-            personId: eventPayload.recordId,
-          },
-        );
-
         await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
           MessageParticipantMatchParticipantJob.name,
           {
             workspaceId: payload.workspaceId,
-            email: eventPayload.properties.after.userEmail,
-            workspaceMemberId: eventPayload.recordId,
-            isPrimaryEmail: true,
+            participantMatching: {
+              personIds: [],
+              personEmails: [],
+              workspaceMemberIds: [eventPayload.recordId],
+            },
           },
         );
       }

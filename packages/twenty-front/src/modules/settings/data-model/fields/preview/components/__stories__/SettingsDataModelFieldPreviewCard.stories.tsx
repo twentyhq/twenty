@@ -6,9 +6,9 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { SettingsDataModelFieldPreviewCard } from '../SettingsDataModelFieldPreviewCard';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { SettingsDataModelFieldPreviewCard } from '../SettingsDataModelFieldPreviewCard';
 
 const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'company',

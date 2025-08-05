@@ -72,7 +72,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           description: agent.description,
           icon: agent.icon || 'IconRobot',
           modelId: agent.modelId,
-          role: agent.roleId,
+          role: agent.roleId ?? undefined,
           prompt: agent.prompt,
           isCustom: agent.isCustom,
         });
@@ -204,7 +204,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
             ) : (
               <StyledContentContainer>
                 {isAskAIAgent ? (
-                  <SettingsAgentHandoffSection agentId={agent?.id} />
+                  <SettingsAgentHandoffSection agentId={agent?.id ?? ''} />
                 ) : (
                   <>
                     <SettingsAIAgentForm
