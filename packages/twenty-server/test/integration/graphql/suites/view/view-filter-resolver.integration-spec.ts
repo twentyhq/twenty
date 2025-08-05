@@ -17,6 +17,7 @@ import {
   assertViewFilterStructure,
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
+import { ViewFilterOperand } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ViewFilterExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-filter.exception';
@@ -28,7 +29,7 @@ describe('View Filter Resolver', () => {
     await cleanupViewRecords();
 
     const view = await createTestViewWithGraphQL({
-      name: 'Test View for Groups',
+      name: 'Test View for Filters',
     });
 
     testViewId = view.id;
@@ -49,7 +50,7 @@ describe('View Filter Resolver', () => {
 
     it('should return view filters for a specific view', async () => {
       const filterData = createViewFilterData(testViewId, {
-        operand: 'Contains',
+        operand: ViewFilterOperand.Contains,
         value: 'test',
       });
       const createOperation = createViewFilterOperationFactory({
@@ -67,7 +68,7 @@ describe('View Filter Resolver', () => {
       expect(response.body.data.getCoreViewFilters).toHaveLength(1);
       assertViewFilterStructure(response.body.data.getCoreViewFilters[0], {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
-        operand: 'Contains',
+        operand: ViewFilterOperand.Contains,
         value: 'test',
         viewId: testViewId,
       });
@@ -77,7 +78,7 @@ describe('View Filter Resolver', () => {
   describe('createCoreViewFilter', () => {
     it('should create a new view filter with string value', async () => {
       const filterData = createViewFilterData(testViewId, {
-        operand: 'Equals',
+        operand: ViewFilterOperand.Is,
         value: 'test value',
       });
 
@@ -87,7 +88,7 @@ describe('View Filter Resolver', () => {
       assertGraphQLSuccessfulResponse(response);
       assertViewFilterStructure(response.body.data.createCoreViewFilter, {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
-        operand: 'Equals',
+        operand: ViewFilterOperand.Is,
         value: 'test value',
         viewId: testViewId,
       });
@@ -95,7 +96,7 @@ describe('View Filter Resolver', () => {
 
     it('should create a view filter with numeric value', async () => {
       const filterData = createViewFilterData(testViewId, {
-        operand: 'GreaterThan',
+        operand: ViewFilterOperand.GreaterThanOrEqual,
         value: '100',
       });
 
@@ -105,7 +106,7 @@ describe('View Filter Resolver', () => {
       assertGraphQLSuccessfulResponse(response);
       assertViewFilterStructure(response.body.data.createCoreViewFilter, {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
-        operand: 'GreaterThan',
+        operand: ViewFilterOperand.GreaterThanOrEqual,
         value: '100',
         viewId: testViewId,
       });
@@ -114,7 +115,7 @@ describe('View Filter Resolver', () => {
     it('should create a view filter with boolean value', async () => {
       const operation = createViewFilterOperationFactory({
         data: createViewFilterData(testViewId, {
-          operand: 'Is',
+          operand: ViewFilterOperand.Is,
           value: 'true',
         }),
       });
@@ -124,7 +125,7 @@ describe('View Filter Resolver', () => {
       assertGraphQLSuccessfulResponse(response);
       assertViewFilterStructure(response.body.data.createCoreViewFilter, {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
-        operand: 'Is',
+        operand: ViewFilterOperand.Is,
         value: 'true',
         viewId: testViewId,
       });
@@ -135,7 +136,7 @@ describe('View Filter Resolver', () => {
     it('should update an existing view filter', async () => {
       const createOperation = createViewFilterOperationFactory({
         data: createViewFilterData(testViewId, {
-          operand: 'Contains',
+          operand: ViewFilterOperand.Contains,
           value: 'original',
         }),
       });
@@ -147,7 +148,7 @@ describe('View Filter Resolver', () => {
       const updateOperation = updateViewFilterOperationFactory({
         viewFilterId: viewFilterId,
         data: {
-          operand: 'DoesNotContain',
+          operand: ViewFilterOperand.DoesNotContain,
           value: 'updated',
         },
       });
@@ -157,7 +158,7 @@ describe('View Filter Resolver', () => {
       assertGraphQLSuccessfulResponse(response);
       assertViewFilterStructure(response.body.data.updateCoreViewFilter, {
         id: viewFilterId,
-        operand: 'DoesNotContain',
+        operand: ViewFilterOperand.DoesNotContain,
         value: 'updated',
       });
     });
@@ -180,7 +181,7 @@ describe('View Filter Resolver', () => {
     it('should delete an existing view filter', async () => {
       const createOperation = createViewFilterOperationFactory({
         data: createViewFilterData(testViewId, {
-          operand: 'Contains',
+          operand: ViewFilterOperand.Contains,
           value: 'to delete',
         }),
       });

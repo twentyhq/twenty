@@ -1,9 +1,11 @@
 import gql from 'graphql-tag';
 import { VIEW_GQL_FIELDS } from 'test/integration/constants/view-gql-fields.constants';
 
+import { View } from 'src/engine/core-modules/view/entities/view.entity';
+
 type CreateViewOperationFactoryParams = {
   gqlFields?: string;
-  data?: object;
+  data?: Partial<View>;
 };
 
 export const createViewOperationFactory = ({

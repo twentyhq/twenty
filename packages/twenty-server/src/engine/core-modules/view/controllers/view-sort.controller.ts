@@ -30,7 +30,6 @@ export class ViewSortController {
   constructor(private readonly viewSortService: ViewSortService) {}
 
   @Get()
-  @UseGuards(WorkspaceAuthGuard)
   async findMany(
     @AuthWorkspace() workspace: Workspace,
     @Query('viewId') viewId?: string,
@@ -43,7 +42,6 @@ export class ViewSortController {
   }
 
   @Get(':id')
-  @UseGuards(WorkspaceAuthGuard)
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
@@ -52,7 +50,6 @@ export class ViewSortController {
   }
 
   @Post()
-  @UseGuards(WorkspaceAuthGuard)
   async create(
     @Body() input: CreateViewSortInput,
     @AuthWorkspace() workspace: Workspace,
@@ -64,7 +61,6 @@ export class ViewSortController {
   }
 
   @Patch(':id')
-  @UseGuards(WorkspaceAuthGuard)
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewSortInput,
@@ -80,7 +76,6 @@ export class ViewSortController {
   }
 
   @Delete(':id')
-  @UseGuards(WorkspaceAuthGuard)
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,

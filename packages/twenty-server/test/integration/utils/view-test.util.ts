@@ -4,6 +4,7 @@ import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.en
 import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
 import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewFilterGroupLogicalOperator } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
 
 export const cleanupViewRecords = async (): Promise<void> => {
   // @ts-expect-error legacy noImplicitAny
@@ -96,7 +97,11 @@ export const assertViewGroupStructure = (
 export const assertViewFilterGroupStructure = (
   viewFilterGroup: ViewFilterGroup,
   expectedFields?: Partial<ViewFilterGroup>,
-  validLogicalOperators: string[] = ['AND', 'OR', 'NOT'],
+  validLogicalOperators: string[] = [
+    ViewFilterGroupLogicalOperator.AND,
+    ViewFilterGroupLogicalOperator.OR,
+    ViewFilterGroupLogicalOperator.NOT,
+  ],
 ) => {
   expect(viewFilterGroup).toBeDefined();
   expect(viewFilterGroup.id).toBeDefined();

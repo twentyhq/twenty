@@ -30,7 +30,6 @@ export class ViewFieldController {
   constructor(private readonly viewFieldService: ViewFieldService) {}
 
   @Get()
-  @UseGuards(WorkspaceAuthGuard)
   async findMany(
     @AuthWorkspace() workspace: Workspace,
     @Query('viewId') viewId?: string,
@@ -43,7 +42,6 @@ export class ViewFieldController {
   }
 
   @Get(':id')
-  @UseGuards(WorkspaceAuthGuard)
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
@@ -52,7 +50,6 @@ export class ViewFieldController {
   }
 
   @Patch(':id')
-  @UseGuards(WorkspaceAuthGuard)
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewFieldInput,
@@ -68,7 +65,6 @@ export class ViewFieldController {
   }
 
   @Post()
-  @UseGuards(WorkspaceAuthGuard)
   async create(
     @Body() input: CreateViewFieldInput,
     @AuthWorkspace() workspace: Workspace,
@@ -80,7 +76,6 @@ export class ViewFieldController {
   }
 
   @Delete(':id')
-  @UseGuards(WorkspaceAuthGuard)
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,

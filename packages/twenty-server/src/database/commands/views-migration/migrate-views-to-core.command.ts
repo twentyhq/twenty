@@ -1,6 +1,7 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
+import { ViewFilterOperand } from 'twenty-shared/types';
 import { DataSource, QueryRunner, Repository } from 'typeorm';
 
 import {
@@ -315,7 +316,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         id: filter.id,
         fieldMetadataId: filter.fieldMetadataId,
         viewId: filter.viewId,
-        operand: filter.operand,
+        operand: filter.operand as ViewFilterOperand,
         value: transformViewFilterWorkspaceValueToCoreValue(filter.value),
         viewFilterGroupId: filter.viewFilterGroupId,
         workspaceId,

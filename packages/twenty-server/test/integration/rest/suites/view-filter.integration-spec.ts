@@ -17,6 +17,7 @@ import {
   assertViewFilterStructure,
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
+import { ViewFilterOperand } from 'twenty-shared/types';
 
 import { ViewFilterExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-filter.exception';
 
@@ -58,7 +59,7 @@ describe('View Filter REST API', () => {
 
     it('should return view filters for a specific view after creating one', async () => {
       const viewFilter = await createTestViewFilterWithRestApi({
-        operand: 'Contains',
+        operand: ViewFilterOperand.Contains,
         value: 'test',
       });
 
@@ -78,7 +79,7 @@ describe('View Filter REST API', () => {
         id: viewFilter.id,
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         viewId: TEST_VIEW_1_ID,
-        operand: 'Contains',
+        operand: ViewFilterOperand.Contains,
         value: 'test',
       });
 
@@ -89,14 +90,14 @@ describe('View Filter REST API', () => {
   describe('POST /metadata/viewFilters', () => {
     it('should create a new view filter with string value', async () => {
       const viewFilter = await createTestViewFilterWithRestApi({
-        operand: 'Equals',
+        operand: ViewFilterOperand.Is,
         value: 'test value',
       });
 
       assertViewFilterStructure(viewFilter, {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         viewId: TEST_VIEW_1_ID,
-        operand: 'Equals',
+        operand: ViewFilterOperand.Is,
         value: 'test value',
       });
 
@@ -105,14 +106,14 @@ describe('View Filter REST API', () => {
 
     it('should create a view filter with numeric value', async () => {
       const numericFilter = await createTestViewFilterWithRestApi({
-        operand: 'GreaterThan',
+        operand: ViewFilterOperand.GreaterThanOrEqual,
         value: '100',
       });
 
       assertViewFilterStructure(numericFilter, {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         viewId: TEST_VIEW_1_ID,
-        operand: 'GreaterThan',
+        operand: ViewFilterOperand.GreaterThanOrEqual,
         value: '100',
       });
 
@@ -121,14 +122,14 @@ describe('View Filter REST API', () => {
 
     it('should create a view filter with boolean value', async () => {
       const booleanFilter = await createTestViewFilterWithRestApi({
-        operand: 'Is',
+        operand: ViewFilterOperand.Is,
         value: 'true',
       });
 
       assertViewFilterStructure(booleanFilter, {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         viewId: TEST_VIEW_1_ID,
-        operand: 'Is',
+        operand: ViewFilterOperand.Is,
         value: 'true',
       });
 
@@ -139,7 +140,7 @@ describe('View Filter REST API', () => {
   describe('GET /metadata/viewFilters/:id', () => {
     it('should return a view filter by id', async () => {
       const viewFilter = await createTestViewFilterWithRestApi({
-        operand: 'Contains',
+        operand: ViewFilterOperand.Contains,
         value: 'test',
       });
 
@@ -154,7 +155,7 @@ describe('View Filter REST API', () => {
         id: viewFilter.id,
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         viewId: TEST_VIEW_1_ID,
-        operand: 'Contains',
+        operand: ViewFilterOperand.Contains,
         value: 'test',
       });
 
@@ -176,12 +177,12 @@ describe('View Filter REST API', () => {
   describe('PATCH /metadata/viewFilters/:id', () => {
     it('should update an existing view filter', async () => {
       const viewFilter = await createTestViewFilterWithRestApi({
-        operand: 'Contains',
+        operand: ViewFilterOperand.Contains,
         value: 'original',
       });
 
       const updateData = {
-        operand: 'DoesNotContain',
+        operand: ViewFilterOperand.DoesNotContain,
         value: 'updated',
       };
 
@@ -195,7 +196,7 @@ describe('View Filter REST API', () => {
       assertRestApiSuccessfulResponse(response);
       assertViewFilterStructure(response.body, {
         id: viewFilter.id,
-        operand: 'DoesNotContain',
+        operand: ViewFilterOperand.DoesNotContain,
         value: 'updated',
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         viewId: TEST_VIEW_1_ID,
@@ -206,7 +207,7 @@ describe('View Filter REST API', () => {
 
     it('should return 404 error when updating non-existent view filter', async () => {
       const updateData = {
-        operand: 'DoesNotContain',
+        operand: ViewFilterOperand.DoesNotContain,
         value: 'updated',
       };
 
@@ -228,7 +229,7 @@ describe('View Filter REST API', () => {
   describe('DELETE /metadata/viewFilters/:id', () => {
     it('should delete an existing view filter', async () => {
       const viewFilter = await createTestViewFilterWithRestApi({
-        operand: 'Contains',
+        operand: ViewFilterOperand.Contains,
         value: 'to delete',
       });
 

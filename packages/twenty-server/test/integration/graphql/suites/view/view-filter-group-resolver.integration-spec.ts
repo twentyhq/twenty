@@ -30,7 +30,7 @@ describe('View Filter Group Resolver', () => {
     await cleanupViewRecords();
 
     const view = await createTestViewWithGraphQL({
-      name: 'Test View for Groups',
+      name: 'Test View for Filter Groups',
     });
 
     testViewId = view.id;

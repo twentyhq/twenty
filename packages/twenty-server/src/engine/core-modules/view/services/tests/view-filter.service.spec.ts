@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { ViewFilterOperand } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
 import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
@@ -21,7 +22,7 @@ describe('ViewFilterService', () => {
     fieldMetadataId: 'field-id',
     viewId: 'view-id',
     workspaceId: 'workspace-id',
-    operand: 'contains',
+    operand: ViewFilterOperand.Contains,
     value: 'test',
     positionInViewFilterGroup: 0,
     createdAt: new Date(),
@@ -140,7 +141,7 @@ describe('ViewFilterService', () => {
       fieldMetadataId: 'field-id',
       viewId: 'view-id',
       workspaceId: 'workspace-id',
-      operand: 'contains',
+      operand: ViewFilterOperand.Contains,
       value: 'test',
       positionInViewFilterGroup: 0,
     };

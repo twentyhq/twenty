@@ -31,7 +31,7 @@ describe('View Field Resolver', () => {
     await cleanupViewRecords();
 
     const view = await createTestViewWithGraphQL({
-      name: 'Test View for Groups',
+      name: 'Test View for Fields',
     });
 
     testViewId = view.id;

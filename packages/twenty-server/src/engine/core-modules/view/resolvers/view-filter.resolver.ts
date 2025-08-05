@@ -14,11 +14,11 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @Resolver(() => ViewFilterDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
+@UseGuards(WorkspaceAuthGuard)
 export class ViewFilterResolver {
   constructor(private readonly viewFilterService: ViewFilterService) {}
 
   @Query(() => [ViewFilterDTO])
-  @UseGuards(WorkspaceAuthGuard)
   async getCoreViewFilters(
     @AuthWorkspace() workspace: Workspace,
     @Args('viewId', { type: () => String, nullable: true })
@@ -32,7 +32,6 @@ export class ViewFilterResolver {
   }
 
   @Query(() => ViewFilterDTO, { nullable: true })
-  @UseGuards(WorkspaceAuthGuard)
   async getCoreViewFilter(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
@@ -41,7 +40,6 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => ViewFilterDTO)
-  @UseGuards(WorkspaceAuthGuard)
   async createCoreViewFilter(
     @Args('input') input: CreateViewFilterInput,
     @AuthWorkspace() workspace: Workspace,
@@ -53,7 +51,6 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => ViewFilterDTO)
-  @UseGuards(WorkspaceAuthGuard)
   async updateCoreViewFilter(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewFilterInput,
@@ -63,7 +60,6 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(WorkspaceAuthGuard)
   async deleteCoreViewFilter(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,

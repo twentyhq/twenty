@@ -14,11 +14,11 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @Resolver(() => ViewSortDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
+@UseGuards(WorkspaceAuthGuard)
 export class ViewSortResolver {
   constructor(private readonly viewSortService: ViewSortService) {}
 
   @Query(() => [ViewSortDTO])
-  @UseGuards(WorkspaceAuthGuard)
   async getCoreViewSorts(
     @AuthWorkspace() workspace: Workspace,
     @Args('viewId', { type: () => String, nullable: true })
@@ -32,7 +32,6 @@ export class ViewSortResolver {
   }
 
   @Query(() => ViewSortDTO, { nullable: true })
-  @UseGuards(WorkspaceAuthGuard)
   async getCoreViewSort(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
@@ -41,7 +40,6 @@ export class ViewSortResolver {
   }
 
   @Mutation(() => ViewSortDTO)
-  @UseGuards(WorkspaceAuthGuard)
   async createCoreViewSort(
     @Args('input') input: CreateViewSortInput,
     @AuthWorkspace() workspace: Workspace,
@@ -53,7 +51,6 @@ export class ViewSortResolver {
   }
 
   @Mutation(() => ViewSortDTO)
-  @UseGuards(WorkspaceAuthGuard)
   async updateCoreViewSort(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewSortInput,
@@ -63,7 +60,6 @@ export class ViewSortResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(WorkspaceAuthGuard)
   async deleteCoreViewSort(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,

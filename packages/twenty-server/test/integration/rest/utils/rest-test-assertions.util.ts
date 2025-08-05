@@ -1,10 +1,14 @@
-export interface RestResponse {
+export interface RestResponse<T = Record<string, unknown>> {
   status: number;
-  body: any;
+  body: T & {
+    error?: string;
+    errors?: string[] | Record<string, unknown>[];
+    message?: string;
+  };
 }
 
-export const assertRestApiSuccessfulResponse = (
-  response: RestResponse,
+export const assertRestApiSuccessfulResponse = <T = Record<string, unknown>>(
+  response: RestResponse<T>,
   expectedStatus = 200,
 ) => {
   expect(response.status).toBe(expectedStatus);
@@ -17,8 +21,8 @@ export const assertRestApiSuccessfulResponse = (
   }
 };
 
-export const assertRestApiErrorResponse = (
-  response: RestResponse,
+export const assertRestApiErrorResponse = <T = Record<string, unknown>>(
+  response: RestResponse<T>,
   expectedStatus = 400,
   expectedErrorMessage?: string,
 ) => {

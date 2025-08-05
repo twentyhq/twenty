@@ -536,7 +536,7 @@ export type CoreViewFilter = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   fieldMetadataId: Scalars['UUID'];
   id: Scalars['UUID'];
-  operand: Scalars['String'];
+  operand: ViewFilterOperand;
   positionInViewFilterGroup?: Maybe<Scalars['Float']>;
   subFieldName?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
@@ -724,7 +724,7 @@ export type CreateViewFilterGroupInput = {
 
 export type CreateViewFilterInput = {
   fieldMetadataId: Scalars['UUID'];
-  operand?: InputMaybe<Scalars['String']>;
+  operand?: InputMaybe<ViewFilterOperand>;
   positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
   subFieldName?: InputMaybe<Scalars['String']>;
   value: Scalars['JSONObject'];
@@ -3252,7 +3252,7 @@ export type UpdateViewFilterGroupInput = {
 
 export type UpdateViewFilterInput = {
   fieldMetadataId?: InputMaybe<Scalars['UUID']>;
-  operand?: InputMaybe<Scalars['String']>;
+  operand?: InputMaybe<ViewFilterOperand>;
   positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
   subFieldName?: InputMaybe<Scalars['String']>;
   value?: InputMaybe<Scalars['JSONObject']>;
@@ -3457,6 +3457,25 @@ export enum ViewFilterGroupLogicalOperator {
   AND = 'AND',
   NOT = 'NOT',
   OR = 'OR'
+}
+
+export enum ViewFilterOperand {
+  Contains = 'Contains',
+  DoesNotContain = 'DoesNotContain',
+  GreaterThanOrEqual = 'GreaterThanOrEqual',
+  Is = 'Is',
+  IsAfter = 'IsAfter',
+  IsBefore = 'IsBefore',
+  IsEmpty = 'IsEmpty',
+  IsInFuture = 'IsInFuture',
+  IsInPast = 'IsInPast',
+  IsNot = 'IsNot',
+  IsNotEmpty = 'IsNotEmpty',
+  IsNotNull = 'IsNotNull',
+  IsRelative = 'IsRelative',
+  IsToday = 'IsToday',
+  LessThanOrEqual = 'LessThanOrEqual',
+  VectorSearch = 'VectorSearch'
 }
 
 export enum ViewOpenRecordIn {

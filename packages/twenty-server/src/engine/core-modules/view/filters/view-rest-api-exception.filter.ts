@@ -33,10 +33,11 @@ export class ViewRestApiExceptionFilter implements ExceptionFilter {
           400,
         );
       default:
+        // TODO: change to 500 when we have input validation
         return this.httpExceptionHandlerService.handleError(
           exception as CustomException,
           response,
-          500,
+          400,
         );
     }
   }
