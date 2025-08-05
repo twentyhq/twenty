@@ -7,7 +7,7 @@ export class ViewFilterException extends CustomException {
     code: ViewFilterExceptionCode,
     { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
   ) {
-    super(message, code, userFriendlyMessage);
+    super(message, code, { userFriendlyMessage });
   }
 }
 

@@ -7,7 +7,7 @@ export class ViewException extends CustomException {
     code: ViewExceptionCode,
     { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
   ) {
-    super(message, code, userFriendlyMessage);
+    super(message, code, { userFriendlyMessage });
   }
 }
 
