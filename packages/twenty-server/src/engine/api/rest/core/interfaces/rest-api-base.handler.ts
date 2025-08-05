@@ -24,6 +24,7 @@ import {
   MAX_DEPTH,
 } from 'src/engine/api/rest/input-factories/depth-input.factory';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
+import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -44,7 +45,6 @@ import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/format-result.util';
-import { getFieldMetadataIdToColumnNamesMap } from 'src/engine/twenty-orm/utils/get-field-metadata-id-to-column-names-map.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export interface PageInfo {
@@ -310,7 +310,7 @@ export abstract class RestApiBaseHandler {
     let selectOptions = undefined;
 
     if (!isEmpty(restrictedFields)) {
-      selectOptions = this.getAllSelectableFields({
+      selectOptions = getAllSelectableFields({
         restrictedFields,
         objectMetadata,
       });
@@ -353,36 +353,6 @@ export abstract class RestApiBaseHandler {
       workspaceMemberId: request.workspaceMemberId,
       userWorkspaceId: request.userWorkspaceId,
     };
-  }
-
-  public getAllSelectableFields({
-    restrictedFields,
-    objectMetadata,
-  }: {
-    restrictedFields: RestrictedFields;
-    objectMetadata: { objectMetadataMapItem: ObjectMetadataItemWithFieldMaps };
-  }) {
-    const restrictedFieldsIds = Object.entries(restrictedFields)
-      .filter(([_, value]) => value.canRead === false)
-      .map(([key]) => key);
-
-    const fieldMetadataIdToColumnNamesMap = getFieldMetadataIdToColumnNamesMap(
-      objectMetadata.objectMetadataMapItem,
-    );
-
-    const restrictedFieldsColumnNames: string[] = restrictedFieldsIds
-      .map((fieldId) => fieldMetadataIdToColumnNamesMap.get(fieldId))
-      .filter(isDefined)
-      .flat();
-
-    const allColumnNames = [...fieldMetadataIdToColumnNamesMap.values()].flat();
-
-    return Object.fromEntries(
-      allColumnNames.map((columnName) => [
-        columnName,
-        !restrictedFieldsColumnNames.includes(columnName),
-      ]),
-    );
   }
 
   public formatResult<T>({
