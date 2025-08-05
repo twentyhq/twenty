@@ -12,6 +12,7 @@ import {
 import { validateRelationCreationPayloadOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/validate-relation-creation-payload.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
+import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
@@ -39,11 +40,11 @@ const computeFieldMetadataRelationSettingsForRelationType = ({
 
 type FromRelationCreateFieldInputToFlatFieldMetadataArgs = {
   createFieldInput: CreateFieldInput;
-  existingFlatObjectMetadatas: FlatObjectMetadata[];
+  existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
   sourceParentFlatObjectMetadata: FlatObjectMetadata;
 };
 export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
-  existingFlatObjectMetadatas,
+  existingFlatObjectMetadataMaps,
   sourceParentFlatObjectMetadata,
   createFieldInput,
 }: FromRelationCreateFieldInputToFlatFieldMetadataArgs): Promise<
@@ -59,10 +60,10 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
   }
   await validateRelationCreationPayloadOrThrow(relationCreationPayload);
 
-  const targetParentFlatObjectMetadata = existingFlatObjectMetadatas.find(
-    (existingFlatObject) =>
-      existingFlatObject.id === relationCreationPayload.targetObjectMetadataId,
-  );
+  const targetParentFlatObjectMetadata =
+    existingFlatObjectMetadataMaps.byId[
+      relationCreationPayload.targetObjectMetadataId
+    ];
 
   if (!isDefined(targetParentFlatObjectMetadata)) {
     throw new FieldMetadataException(

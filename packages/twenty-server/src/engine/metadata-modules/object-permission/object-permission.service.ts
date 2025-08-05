@@ -65,6 +65,10 @@ export class ObjectPermissionService {
           throw new PermissionsException(
             'Object metadata id not found',
             PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
+            {
+              userFriendlyMessage:
+                'The object you are trying to set permissions for could not be found. It may have been deleted.',
+            },
           );
         }
 
@@ -72,6 +76,10 @@ export class ObjectPermissionService {
           throw new PermissionsException(
             PermissionsExceptionMessage.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT,
             PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT,
+            {
+              userFriendlyMessage:
+                'You cannot set permissions on system objects as they are managed by the platform.',
+            },
           );
         }
       });
@@ -174,6 +182,10 @@ export class ObjectPermissionService {
           throw new PermissionsException(
             PermissionsExceptionMessage.CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT,
             PermissionsExceptionCode.CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT,
+            {
+              userFriendlyMessage:
+                'You cannot grant edit permissions without also granting read permissions. Please enable read access first.',
+            },
           );
         }
       }
@@ -203,6 +215,10 @@ export class ObjectPermissionService {
         throw new PermissionsException(
           PermissionsExceptionMessage.ROLE_NOT_FOUND,
           PermissionsExceptionCode.ROLE_NOT_FOUND,
+          {
+            userFriendlyMessage:
+              'The role you are trying to modify could not be found. It may have been deleted or you may not have access to it.',
+          },
         );
       }
 
@@ -217,6 +233,10 @@ export class ObjectPermissionService {
         throw new PermissionsException(
           PermissionsExceptionMessage.OBJECT_METADATA_NOT_FOUND,
           PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
+          {
+            userFriendlyMessage:
+              'One or more objects you are trying to set permissions for could not be found. They may have been deleted.',
+          },
         );
       }
     }
@@ -241,6 +261,10 @@ export class ObjectPermissionService {
       throw new PermissionsException(
         PermissionsExceptionMessage.ROLE_NOT_FOUND,
         PermissionsExceptionCode.ROLE_NOT_FOUND,
+        {
+          userFriendlyMessage:
+            'The role you are trying to modify could not be found. It may have been deleted or you may not have access to it.',
+        },
       );
     }
 
@@ -252,6 +276,10 @@ export class ObjectPermissionService {
       throw new PermissionsException(
         PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
         PermissionsExceptionCode.ROLE_NOT_EDITABLE,
+        {
+          userFriendlyMessage:
+            'This role cannot be modified because it is a system role. Only custom roles can be edited.',
+        },
       );
     }
   }

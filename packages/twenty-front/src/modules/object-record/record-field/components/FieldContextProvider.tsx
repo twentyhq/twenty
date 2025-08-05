@@ -55,7 +55,7 @@ export const FieldContextProvider = ({
 
   const isRecordFieldReadOnly = useIsRecordFieldReadOnly({
     recordId: objectRecordId,
-    fieldMetadataId: fieldMetadataItem?.id,
+    fieldMetadataId: fieldMetadataItem?.id ?? '',
     objectMetadataId: objectMetadataItem.id,
   });
 

@@ -1,3 +1,4 @@
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { objectPermissionKeyToHumanReadable } from '@/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText';
 import { PermissionIcon } from '@/settings/roles/role-permissions/objects-permissions/components/PermissionIcon';
 import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING } from '@/settings/roles/role-permissions/objects-permissions/constants/settingsRoleObjectLevelPermissionToRoleObjectPermissionMapping';
@@ -8,21 +9,20 @@ import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/display';
-import { ObjectPermission } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   display: flex;
 `;
 
 type SettingsRolePermissionsObjectLevelOverrideCellProps = {
-  objectPermissions: ObjectPermission;
+  objectMetadataItem: ObjectMetadataItem;
   objectPermissionKey: SettingsRoleObjectPermissionKey;
   roleId: string;
   objectLabel: string;
 };
 
 export const SettingsRolePermissionsObjectLevelOverrideCell = ({
-  objectPermissions,
+  objectMetadataItem,
   objectPermissionKey,
   roleId,
   objectLabel,
@@ -36,7 +36,12 @@ export const SettingsRolePermissionsObjectLevelOverrideCell = ({
   const permissionMappings =
     SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING;
 
-  const permissionValue = objectPermissions[objectPermissionKey];
+  const objectPermission = settingsDraftRole.objectPermissions?.find(
+    (objectPermission) =>
+      objectPermission.objectMetadataId === objectMetadataItem.id,
+  );
+
+  const permissionValue = objectPermission?.[objectPermissionKey];
 
   const isOverridden = (
     objectPermissionKey: SettingsRoleObjectPermissionKey,
@@ -56,7 +61,7 @@ export const SettingsRolePermissionsObjectLevelOverrideCell = ({
   const humanReadableAction =
     objectPermissionKeyToHumanReadable(objectPermissionKey);
 
-  const containerId = `object-level-permission-override-${roleId}-${objectPermissionKey}`;
+  const containerId = `object-level-permission-override-${roleId}-${objectPermissionKey}-${objectMetadataItem.id}`;
 
   return (
     <>

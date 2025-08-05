@@ -17,10 +17,10 @@ import {
   EdgeProps,
   getBezierPath,
 } from '@xyflow/react';
-import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter, IconPlus } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
+import { useIsEdgeHovered } from '@/workflow/workflow-diagram/hooks/useIsEdgeHovered';
 
 type WorkflowDiagramDefaultEdgeEditableProps = EdgeProps<WorkflowDiagramEdge>;
 
@@ -29,6 +29,7 @@ const StyledIconButtonGroup = styled(IconButtonGroup)`
 `;
 
 export const WorkflowDiagramDefaultEdgeEditable = ({
+  id,
   source,
   target,
   sourceX,
@@ -39,6 +40,8 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
   markerEnd,
 }: WorkflowDiagramDefaultEdgeEditableProps) => {
   const theme = useTheme();
+
+  const { isEdgeHovered } = useIsEdgeHovered();
 
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -53,9 +56,8 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
 
   const { createStep } = useCreateStep({ workflow });
-  const { startNodeCreation } = useStartNodeCreation();
 
-  const [hovered, setHovered] = useState(false);
+  const { startNodeCreation } = useStartNodeCreation();
 
   const workflowInsertStepIds = useRecoilComponentValueV2(
     workflowInsertStepIdsComponentState,
@@ -83,14 +85,13 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
       stepId: createdStep.id,
       stepName: createdStep.name,
     });
-
-    setHovered(false);
   };
 
   const handleNodeButtonClick = () => {
     startNodeCreation({
       parentStepId: source,
       nextStepId: target,
+      position: { x: labelX, y: labelY },
     });
   };
 
@@ -108,11 +109,9 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
           data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
           labelX={labelX}
           labelY={labelY}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
         >
           <WorkflowDiagramEdgeV2VisibilityContainer
-            shouldDisplay={isSelected || hovered}
+            shouldDisplay={isSelected || isEdgeHovered(id)}
           >
             <StyledIconButtonGroup
               className="nodrag nopan"

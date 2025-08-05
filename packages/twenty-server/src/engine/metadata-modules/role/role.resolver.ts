@@ -85,6 +85,10 @@ export class RoleResolver {
       throw new PermissionsException(
         PermissionsExceptionMessage.CANNOT_UPDATE_SELF_ROLE,
         PermissionsExceptionCode.CANNOT_UPDATE_SELF_ROLE,
+        {
+          userFriendlyMessage:
+            'You cannot change your own role. Please ask another administrator to update your role.',
+        },
       );
     }
 

@@ -534,17 +534,386 @@ describe('evaluateFilterConditions', () => {
         expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow();
       });
 
-      it('should throw error for unsupported filter type', () => {
+      it('should handle unsupported filter type with default filter logic', () => {
         const filter = createFilter(
           ViewFilterOperand.Contains,
-          'value',
-          'value',
+          'Hello World',
+          'World',
           'UNSUPPORTED_TYPE',
         );
 
-        expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow(
-          'Filter type UNSUPPORTED_TYPE not supported',
+        // Unsupported types fall through to default filter logic
+        expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
+      });
+    });
+
+    describe('unknown type filters', () => {
+      it('should handle Is operand with unknown type', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.Is,
+          'test',
+          'test',
+          'unknown',
         );
+        const filter2 = createFilter(
+          ViewFilterOperand.Is,
+          'test',
+          'different',
+          'unknown',
+        );
+        const filter3 = createFilter(
+          ViewFilterOperand.Is,
+          null,
+          null,
+          'unknown',
+        );
+        const filter4 = createFilter(
+          ViewFilterOperand.Is,
+          undefined,
+          undefined,
+          'unknown',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter4] })).toBe(true);
+      });
+
+      it('should handle IsNot operand with unknown type', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.IsNot,
+          'test',
+          'different',
+          'unknown',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.IsNot,
+          'test',
+          'test',
+          'unknown',
+        );
+        const filter3 = createFilter(
+          ViewFilterOperand.IsNot,
+          null,
+          null,
+          'unknown',
+        );
+        const filter4 = createFilter(
+          ViewFilterOperand.IsNot,
+          undefined,
+          undefined,
+          'unknown',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter4] })).toBe(false);
+      });
+
+      it('should handle Contains operand with unknown type', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.Contains,
+          'Hello World',
+          'World',
+          'unknown',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.Contains,
+          'Hello',
+          'World',
+          'unknown',
+        );
+        const filter3 = createFilter(
+          ViewFilterOperand.Contains,
+          [1, 2, 3],
+          2,
+          'unknown',
+        );
+        const filter4 = createFilter(
+          ViewFilterOperand.Contains,
+          [1, 2, 3],
+          4,
+          'unknown',
+        );
+        const filter5 = createFilter(
+          ViewFilterOperand.Contains,
+          null,
+          null,
+          'unknown',
+        );
+        const filter6 = createFilter(
+          ViewFilterOperand.Contains,
+          undefined,
+          undefined,
+          'unknown',
+        );
+        const filter7 = createFilter(
+          ViewFilterOperand.Contains,
+          'Hello World',
+          undefined,
+          'unknown',
+        );
+
+        const filter8 = createFilter(
+          ViewFilterOperand.Contains,
+          'Hello World',
+          null,
+          'unknown',
+        );
+        const filter9 = createFilter(
+          ViewFilterOperand.Contains,
+          [1, 2, 3],
+          null,
+          'unknown',
+        );
+        const filter10 = createFilter(
+          ViewFilterOperand.Contains,
+          [1, 2, 3],
+          undefined,
+          'unknown',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter4] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter5] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter6] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter7] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter8] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter9] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter10] })).toBe(false);
+      });
+
+      it('should handle DoesNotContain operand with unknown type', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          'Hello',
+          'World',
+          'unknown',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          'Hello World',
+          'World',
+          'unknown',
+        );
+        const filter3 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          [1, 2, 3],
+          2,
+          'unknown',
+        );
+        const filter4 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          [1, 2, 3],
+          4,
+          'unknown',
+        );
+        const filter5 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          null,
+          null,
+          'unknown',
+        );
+        const filter6 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          undefined,
+          undefined,
+          'unknown',
+        );
+        const filter7 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          'Hello World',
+          undefined,
+          'unknown',
+        );
+
+        const filter8 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          'Hello World',
+          null,
+          'unknown',
+        );
+        const filter9 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          [1, 2, 3],
+          null,
+          'unknown',
+        );
+        const filter10 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          [1, 2, 3],
+          undefined,
+          'unknown',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter4] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter5] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter6] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter7] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter8] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter9] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter10] })).toBe(true);
+      });
+
+      it('should handle IsEmpty operand with unknown type', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.IsEmpty,
+          null,
+          '',
+          'unknown',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.IsEmpty,
+          'not empty',
+          '',
+          'unknown',
+        );
+        const filter3 = createFilter(
+          ViewFilterOperand.IsEmpty,
+          '',
+          '',
+          'unknown',
+        );
+        const filter4 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          [],
+          '',
+          'unknown',
+        );
+        const filter5 = createFilter(
+          ViewFilterOperand.IsEmpty,
+          undefined,
+          undefined,
+          'unknown',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter4] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter5] })).toBe(true);
+      });
+
+      it('should handle IsNotEmpty operand with unknown type', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.IsNotEmpty,
+          'not empty',
+          '',
+          'unknown',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.IsNotEmpty,
+          null,
+          '',
+          'unknown',
+        );
+        const filter3 = createFilter(
+          ViewFilterOperand.IsNotEmpty,
+          [],
+          '',
+          'unknown',
+        );
+        const filter4 = createFilter(
+          ViewFilterOperand.IsNotEmpty,
+          '',
+          '',
+          'unknown',
+        );
+        const filter5 = createFilter(
+          ViewFilterOperand.IsNotEmpty,
+          undefined,
+          undefined,
+          'unknown',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter4] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter5] })).toBe(false);
+      });
+
+      it('should handle GreaterThanOrEqual operand with unknown type', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.GreaterThanOrEqual,
+          100,
+          50,
+          'unknown',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.GreaterThanOrEqual,
+          30,
+          50,
+          'unknown',
+        );
+        // strings are converted to numbers
+        const filter3 = createFilter(
+          ViewFilterOperand.GreaterThanOrEqual,
+          '1234',
+          '123',
+          'unknown',
+        );
+        const filter4 = createFilter(
+          ViewFilterOperand.GreaterThanOrEqual,
+          undefined,
+          undefined,
+          'unknown',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter4] })).toBe(false);
+      });
+
+      it('should handle LessThanOrEqual operand with unknown type', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.LessThanOrEqual,
+          30,
+          50,
+          'unknown',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.LessThanOrEqual,
+          100,
+          50,
+          'unknown',
+        );
+        const filter3 = createFilter(
+          ViewFilterOperand.LessThanOrEqual,
+          '1234',
+          '123',
+          'unknown',
+        );
+        const filter4 = createFilter(
+          ViewFilterOperand.LessThanOrEqual,
+          undefined,
+          undefined,
+          'unknown',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter4] })).toBe(false);
+      });
+
+      it('should throw error for unsupported operand with unknown type', () => {
+        const filter = createFilter(
+          ViewFilterOperand.VectorSearch,
+          'test',
+          'search term',
+          'unknown',
+        );
+
+        expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow();
       });
     });
   });
