@@ -1,4 +1,4 @@
-import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock.js';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 import { NOTE_FLAT_FIELDS_MOCK } from './note-flat-fields.mock';
 
