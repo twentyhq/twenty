@@ -16,6 +16,11 @@ import { sanitizeString } from 'src/modules/messaging/message-import-manager/uti
 
 type AddressType = 'from' | 'to' | 'cc' | 'bcc';
 
+type ConnectedAccountType = Pick<
+  ConnectedAccountWorkspaceEntity,
+  'id' | 'provider' | 'handle' | 'handleAliases' | 'connectionParameters'
+>;
+
 @Injectable()
 export class ImapGetMessagesService {
   private readonly logger = new Logger(ImapGetMessagesService.name);
@@ -24,36 +29,40 @@ export class ImapGetMessagesService {
 
   async getMessages(
     messageIds: string[],
-    connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'id' | 'provider' | 'handle' | 'handleAliases' | 'connectionParameters'
-    >,
+    connectedAccount: ConnectedAccountType,
   ): Promise<MessageWithParticipants[]> {
     if (!messageIds.length) {
       return [];
     }
 
-    const { messageIdsByBatch, batchResults } =
-      await this.fetchByBatchService.fetchAllByBatches(
-        messageIds,
-        connectedAccount,
-      );
+    const { batchResults } = await this.fetchByBatchService.fetchAllByBatches(
+      messageIds,
+      connectedAccount,
+    );
 
     this.logger.log(`IMAP fetch completed`);
 
-    const messages = batchResults.flatMap((batchResult, index) => {
-      return this.formatBatchResultAsMessages(
-        messageIdsByBatch[index],
-        batchResult,
-        connectedAccount,
-      );
-    });
+    const messages = this.formatBatchResponsesAsMessages(
+      batchResults,
+      connectedAccount,
+    );
 
     return messages;
   }
 
-  private formatBatchResultAsMessages(
-    messageIds: string[],
+  public formatBatchResponsesAsMessages(
+    batchResults: MessageFetchResult[][],
+    connectedAccount: Pick<
+      ConnectedAccountWorkspaceEntity,
+      'handle' | 'handleAliases'
+    >,
+  ): MessageWithParticipants[] {
+    return batchResults.flatMap((batchResult) => {
+      return this.formatBatchResponseAsMessages(batchResult, connectedAccount);
+    });
+  }
+
+  private formatBatchResponseAsMessages(
     batchResults: MessageFetchResult[],
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
