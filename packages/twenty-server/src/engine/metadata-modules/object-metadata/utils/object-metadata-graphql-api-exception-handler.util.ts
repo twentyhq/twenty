@@ -51,15 +51,13 @@ export const objectMetadataGraphqlApiExceptionHandler = (error: Error) => {
         constraintName ===
         'IDX_FIELD_METADATA_NAME_OBJMID_WORKSPACE_ID_EXCEPT_MORPH_UNIQUE'
       ) {
-        throw new ConflictError(
-          new ObjectMetadataException(
-            'Field name conflicts with a system field. Please choose a different name.',
-            ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-            {
-              userFriendlyMessage:
-                'Field name conflicts with a system field. Please choose a different name.',
-            },
-          ),
+        throw new ObjectMetadataException(
+          'Field name conflicts with a system field. Please choose a different name.',
+          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+          {
+            userFriendlyMessage:
+              'Field name conflicts with a system field. Please choose a different name.',
+          },
         );
       }
     }
