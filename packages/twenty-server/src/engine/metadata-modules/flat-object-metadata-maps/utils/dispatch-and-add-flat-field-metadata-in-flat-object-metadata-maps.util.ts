@@ -10,12 +10,12 @@ export const dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps = ({
 }: {
   flatFieldMetadata: FlatFieldMetadata;
   flatObjectMetadataMaps: FlatObjectMetadataMaps;
-}): FlatObjectMetadataMaps => {
+}): FlatObjectMetadataMaps | undefined => {
   const flatObjectMetadataWithFlatFieldMaps =
     flatObjectMetadataMaps.byId[flatFieldMetadata.objectMetadataId];
 
   if (!isDefined(flatObjectMetadataWithFlatFieldMaps)) {
-    throw new Error('TOOD'); // TODO prastoin custom exception or swallow
+    return undefined;
   }
 
   return {

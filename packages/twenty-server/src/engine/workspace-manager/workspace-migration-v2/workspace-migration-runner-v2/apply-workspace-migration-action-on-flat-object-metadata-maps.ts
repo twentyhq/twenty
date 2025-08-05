@@ -11,6 +11,10 @@ import { findFlatObjectdMetadataInFlatObjectMetadataMaps } from 'src/engine/meta
 import { replaceFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps.util';
 import { WorkspaceMigrationRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-runner-args.type';
 import { applyWorkspaceMigrationUpdateActionUpdates } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/apply-workspace-migration-update-action-updates.util';
+import {
+  WorkspaceMigrationRunnerException,
+  WorkspaceMigrationRunnerExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner.exception';
 
 export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = ({
   action,
@@ -51,7 +55,10 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = ({
         });
 
       if (!isDefined(existingFlatObjectMetadata)) {
-        throw new Error('TODO'); // TODO prastoin handle custom exception
+        throw new WorkspaceMigrationRunnerException(
+          `Workspace migration failed: Object metadata not found in cache`,
+          WorkspaceMigrationRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        );
       }
       const updatedFlatObjectMetadata = {
         ...existingFlatObjectMetadata,
@@ -64,10 +71,20 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = ({
       });
     }
     case 'create_field': {
-      return dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps({
-        flatFieldMetadata: action.flatFieldMetadata,
-        flatObjectMetadataMaps,
-      });
+      const updatedFlatObjectMetadataMaps =
+        dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps({
+          flatFieldMetadata: action.flatFieldMetadata,
+          flatObjectMetadataMaps,
+        });
+
+      if (!isDefined(updatedFlatObjectMetadataMaps)) {
+        throw new WorkspaceMigrationRunnerException(
+          `Workspace migration failed: dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps failed`,
+          WorkspaceMigrationRunnerExceptionCode.FIELD_METADATA_NOT_FOUND,
+        );
+      }
+
+      return updatedFlatObjectMetadataMaps;
     }
     case 'update_field': {
       const { fieldMetadataId, objectMetadataId } = action;
@@ -79,7 +96,10 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = ({
         });
 
       if (!isDefined(existingFlatFieldMetadata)) {
-        throw new Error('TODO'); // TODO prastoin handle custom exception
+        throw new WorkspaceMigrationRunnerException(
+          `Workspace migration failed: Field metadata not found in cache`,
+          WorkspaceMigrationRunnerExceptionCode.FIELD_METADATA_NOT_FOUND,
+        );
       }
 
       const updatedFlatFieldMetadata = {
@@ -87,10 +107,20 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = ({
         ...applyWorkspaceMigrationUpdateActionUpdates(action),
       };
 
-      return dispatchAndReplaceFlatFieldMetadataInFlatObjectMetadataMaps({
-        flatFieldMetadata: updatedFlatFieldMetadata,
-        flatObjectMetadataMaps,
-      });
+      const updatedFlatObjectMetadataMaps =
+        dispatchAndReplaceFlatFieldMetadataInFlatObjectMetadataMaps({
+          flatFieldMetadata: updatedFlatFieldMetadata,
+          flatObjectMetadataMaps,
+        });
+
+      if (!isDefined(updatedFlatObjectMetadataMaps)) {
+        throw new WorkspaceMigrationRunnerException(
+          `Workspace migration failed: dispatchAndReplaceFlatFieldMetadataInFlatObjectMetadataMaps failed`,
+          WorkspaceMigrationRunnerExceptionCode.FIELD_METADATA_NOT_FOUND,
+        );
+      }
+
+      return updatedFlatObjectMetadataMaps;
     }
     case 'delete_field': {
       return deleteFieldFromFlatObjectMetadataMaps({
