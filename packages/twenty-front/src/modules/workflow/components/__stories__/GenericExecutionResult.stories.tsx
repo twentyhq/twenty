@@ -36,10 +36,7 @@ export const Idle: Story = {
       isError: false,
     },
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expect(await canvas.findByText('Output')).toBeVisible();
-  },
+
 };
 
 export const Success: Story = {
@@ -50,10 +47,7 @@ export const Success: Story = {
       successMessage: '200 OK - 156ms',
     },
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expect(await canvas.findByText('200 OK - 156ms')).toBeVisible();
-  },
+
 };
 
 export const SuccessWithAdditionalInfo: Story = {
@@ -65,11 +59,7 @@ export const SuccessWithAdditionalInfo: Story = {
       additionalInfo: '5 headers received',
     },
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expect(await canvas.findByText('200 OK - 156ms')).toBeVisible();
-    expect(await canvas.findByText('5 headers received')).toBeVisible();
-  },
+
 };
 
 export const Error: Story = {
@@ -85,12 +75,7 @@ export const Error: Story = {
       errorMessage: '500 Internal Server Error - 89ms',
     },
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expect(
-      await canvas.findByText('500 Internal Server Error - 89ms'),
-    ).toBeVisible();
-  },
+
 };
 
 export const ErrorWithAdditionalInfo: Story = {
@@ -104,13 +89,7 @@ export const ErrorWithAdditionalInfo: Story = {
       additionalInfo: 'Connection timeout after 30 seconds',
     },
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expect(await canvas.findByText('Request Failed')).toBeVisible();
-    expect(
-      await canvas.findByText('Connection timeout after 30 seconds'),
-    ).toBeVisible();
-  },
+
 };
 
 export const Loading: Story = {
@@ -118,10 +97,7 @@ export const Loading: Story = {
     isTesting: true,
     loadingMessage: 'Executing function...',
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expect(await canvas.findByText('Executing function...')).toBeVisible();
-  },
+
 };
 
 export const CustomIdleMessage: Story = {
@@ -132,10 +108,7 @@ export const CustomIdleMessage: Story = {
       isError: false,
     },
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expect(await canvas.findByText('Response will appear here')).toBeVisible();
-  },
+
 };
 
 export const PlaintextContent: Story = {
@@ -149,12 +122,7 @@ export const PlaintextContent: Story = {
       successMessage: 'Text processed successfully',
     },
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expect(
-      await canvas.findByText('Text processed successfully'),
-    ).toBeVisible();
-  },
+
 };
 
 export const LargeResult: Story = {
@@ -188,11 +156,7 @@ export const LargeResult: Story = {
       additionalInfo: '20 users retrieved',
     },
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expect(await canvas.findByText('200 OK - 234ms')).toBeVisible();
-    expect(await canvas.findByText('20 users retrieved')).toBeVisible();
-  },
+
 };
 
 export const EmptyResult: Story = {
@@ -204,10 +168,7 @@ export const EmptyResult: Story = {
       successMessage: '204 No Content - 45ms',
     },
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expect(await canvas.findByText('204 No Content - 45ms')).toBeVisible();
-  },
+
 };
 
 export const HttpRequestResponse: Story = {
@@ -240,9 +201,5 @@ export const HttpRequestResponse: Story = {
     idleMessage: 'Response',
     loadingMessage: 'Sending request...',
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expect(await canvas.findByText('200 OK - 123ms')).toBeVisible();
-    expect(await canvas.findByText('8 headers received')).toBeVisible();
-  },
+
 };

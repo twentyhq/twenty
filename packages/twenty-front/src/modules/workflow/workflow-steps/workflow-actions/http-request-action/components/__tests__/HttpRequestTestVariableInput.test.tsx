@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
+import { ThemeProvider } from '@emotion/react';
 
 import { HttpRequestTestVariableInput } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestTestVariableInput';
 import { HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
@@ -70,9 +71,22 @@ describe('HttpRequestTestVariableInput', () => {
   const actionId = 'test-action-id';
 
   const mockGetWorkflowVariablesUsedInStep =
-    getWorkflowVariablesUsedInStep as jest.MockedFunction<
-      typeof getWorkflowVariablesUsedInStep
-    >;
+  getWorkflowVariablesUsedInStep as jest.MockedFunction<
+    typeof getWorkflowVariablesUsedInStep
+  >;
+
+const mockTheme = {
+  spacing: jest.fn((multiplier: number) => `${multiplier * 4}px`),
+  border: {
+    color: { medium: 'rgb(221, 221, 221)' },
+    radius: { md: '8px' },
+  },
+  font: {
+    size: { sm: '12px' },
+    weight: { medium: '500' },
+    color: { primary: 'rgb(51, 51, 51)' },
+  },
+};
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -83,29 +97,31 @@ describe('HttpRequestTestVariableInput', () => {
     readonly = false,
   ) => {
     return render(
-      <RecoilRoot
-        initializeState={({ set }) => {
-          set(httpRequestTestDataFamilyState(actionId), {
-            language: 'plaintext',
-            height: 400,
-            variableValues: {},
-            output: {
-              data: 'Configure your request above, then press "Test"',
-              status: undefined,
-              statusText: undefined,
-              headers: {},
-              duration: undefined,
-              error: undefined,
-            },
-          });
-        }}
-      >
-        <HttpRequestTestVariableInput
-          httpRequestFormData={httpRequestFormData}
-          actionId={actionId}
-          readonly={readonly}
-        />
-      </RecoilRoot>,
+      <ThemeProvider theme={mockTheme}>
+        <RecoilRoot
+          initializeState={({ set }) => {
+            set(httpRequestTestDataFamilyState(actionId), {
+              language: 'plaintext',
+              height: 400,
+              variableValues: {},
+              output: {
+                data: 'Configure your request above, then press "Test"',
+                status: undefined,
+                statusText: undefined,
+                headers: {},
+                duration: undefined,
+                error: undefined,
+              },
+            });
+          }}
+        >
+          <HttpRequestTestVariableInput
+            httpRequestFormData={httpRequestFormData}
+            actionId={actionId}
+            readonly={readonly}
+          />
+        </RecoilRoot>
+      </ThemeProvider>,
     );
   };
 

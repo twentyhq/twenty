@@ -5,16 +5,6 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { HttpRequestTestVariableInput } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestTestVariableInput';
 import { HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 
-// Mock the getWorkflowVariablesUsedInStep utility for stories
-const mockGetWorkflowVariablesUsedInStep = jest.fn();
-
-jest.mock(
-  '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep',
-  () => ({
-    getWorkflowVariablesUsedInStep: mockGetWorkflowVariablesUsedInStep,
-  }),
-);
-
 const meta: Meta<typeof HttpRequestTestVariableInput> = {
   title:
     'Modules/Workflow/WorkflowActions/HttpRequest/HttpRequestTestVariableInput',
@@ -78,11 +68,7 @@ export const WithVariables: Story = {
     actionId: 'test-action-1',
     readonly: false,
   },
-  beforeEach: () => {
-    mockGetWorkflowVariablesUsedInStep.mockReturnValue(
-      new Set(['user.id', 'auth.token', 'user.name', 'contact.email']),
-    );
-  },
+
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -104,23 +90,7 @@ export const WithManyVariables: Story = {
     actionId: 'test-action-2',
     readonly: false,
   },
-  beforeEach: () => {
-    mockGetWorkflowVariablesUsedInStep.mockReturnValue(
-      new Set([
-        'api.host',
-        'api.version',
-        'endpoint.path',
-        'auth.token',
-        'user.id',
-        'request.id',
-        'user.name',
-        'user.email',
-        'user.department',
-        'current.timestamp',
-        'app.name',
-      ]),
-    );
-  },
+
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -143,9 +113,7 @@ export const NoVariables: Story = {
     actionId: 'test-action-3',
     readonly: false,
   },
-  beforeEach: () => {
-    mockGetWorkflowVariablesUsedInStep.mockReturnValue(new Set());
-  },
+
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -160,11 +128,7 @@ export const ReadonlyMode: Story = {
     actionId: 'test-action-4',
     readonly: true,
   },
-  beforeEach: () => {
-    mockGetWorkflowVariablesUsedInStep.mockReturnValue(
-      new Set(['user.id', 'auth.token', 'user.name']),
-    );
-  },
+
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -184,11 +148,7 @@ export const WithPrefilledValues: Story = {
     actionId: 'test-action-5',
     readonly: false,
   },
-  beforeEach: () => {
-    mockGetWorkflowVariablesUsedInStep.mockReturnValue(
-      new Set(['user.id', 'auth.token', 'user.name']),
-    );
-  },
+
   parameters: {
     recoilInitializer: ({ set: _set }: any) => {
       // This would need to be implemented with the actual Recoil decorator
@@ -225,9 +185,7 @@ export const SingleVariable: Story = {
     actionId: 'test-action-6',
     readonly: false,
   },
-  beforeEach: () => {
-    mockGetWorkflowVariablesUsedInStep.mockReturnValue(new Set(['user.id']));
-  },
+
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -270,22 +228,7 @@ export const ComplexNestedVariables: Story = {
     actionId: 'test-action-7',
     readonly: false,
   },
-  beforeEach: () => {
-    mockGetWorkflowVariablesUsedInStep.mockReturnValue(
-      new Set([
-        'resource.type',
-        'resource.id',
-        'auth.jwt',
-        'trace.id',
-        'user.profile.firstName',
-        'user.profile.lastName',
-        'user.preferences.theme',
-        'user.preferences.notifications',
-        'current.user.id',
-        'current.timestamp',
-      ]),
-    );
-  },
+
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
