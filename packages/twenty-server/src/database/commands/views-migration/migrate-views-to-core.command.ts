@@ -19,6 +19,7 @@ import { View } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
+import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
@@ -248,7 +249,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
       id: workspaceView.id,
       name: workspaceView.name,
       objectMetadataId: workspaceView.objectMetadataId,
-      type: workspaceView.type,
+      type: workspaceView.type === 'table' ? ViewType.TABLE : ViewType.KANBAN,
       key: workspaceView.key,
       icon: workspaceView.icon,
       position: workspaceView.position,

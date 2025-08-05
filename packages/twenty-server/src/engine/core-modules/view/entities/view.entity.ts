@@ -23,9 +23,11 @@ import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.en
 import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
 import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
+import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 registerEnumType(ViewOpenRecordIn, { name: 'ViewOpenRecordIn' });
+registerEnumType(ViewType, { name: 'ViewType' });
 
 @Entity({ name: 'view', schema: 'core' })
 @Index('IDX_VIEW_WORKSPACE_ID_OBJECT_METADATA_ID', [
@@ -43,8 +45,13 @@ export class View {
   @Column({ nullable: false, type: 'uuid' })
   objectMetadataId: string;
 
-  @Column({ nullable: false, default: 'table' })
-  type: string;
+  @Column({
+    type: 'enum',
+    enum: ViewType,
+    nullable: false,
+    default: ViewType.TABLE,
+  })
+  type: ViewType;
 
   @Column({ nullable: true, type: 'text', default: 'INDEX' })
   key: string;
