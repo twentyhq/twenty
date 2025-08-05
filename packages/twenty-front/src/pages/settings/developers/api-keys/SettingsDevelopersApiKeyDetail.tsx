@@ -245,7 +245,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               children: t`APIs`,
               href: getSettingsPath(SettingsPath.APIs),
             },
-            { children: t`${apiKeyName}` },
+            { children: apiKey?.name },
           ]}
         >
           <SettingsPageContainer>
