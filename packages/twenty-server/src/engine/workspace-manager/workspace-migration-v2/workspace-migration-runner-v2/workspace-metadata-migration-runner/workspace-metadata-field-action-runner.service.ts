@@ -1,5 +1,4 @@
 import { In } from 'typeorm';
-import { fromArrayToValuesByKeyRecord } from 'twenty-shared/utils';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -10,6 +9,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { RunnerMethodForActionType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/runner-method-for-action-type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
+import { applyWorkspaceMigrationUpdateActionUpdates } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/apply-workspace-migration-update-action-updates.util';
 
 export class WorkspaceMetadataFieldActionRunnerService
   implements
@@ -53,12 +53,11 @@ export class WorkspaceMetadataFieldActionRunnerService
         FieldMetadataEntity,
       );
 
-    const { flatFieldMetadata, updates } = action;
-    const update = fromArrayToValuesByKeyRecord({
-      array: updates,
-      key: 'property',
-    });
+    const { fieldMetadataId } = action;
 
-    await fieldMetadataRepository.update(flatFieldMetadata.id, update);
+    await fieldMetadataRepository.update(
+      fieldMetadataId,
+      applyWorkspaceMigrationUpdateActionUpdates(action),
+    );
   };
 }

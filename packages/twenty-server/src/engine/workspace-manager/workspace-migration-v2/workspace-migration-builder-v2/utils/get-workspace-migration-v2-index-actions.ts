@@ -15,5 +15,5 @@ export const getWorkspaceMigrationV2DeleteIndexAction = (
   flatIndexMetadata: FlatIndexMetadata,
 ): DeleteIndexAction => ({
   type: 'delete_index',
-  flatIndexMetadata,
+  flatIndexMetadataId: flatIndexMetadata.id,
 });
