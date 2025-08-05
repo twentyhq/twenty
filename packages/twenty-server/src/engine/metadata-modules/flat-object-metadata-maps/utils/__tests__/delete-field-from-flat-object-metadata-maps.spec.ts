@@ -3,10 +3,9 @@ import { PET_FLAT_OBJECT_MOCK } from 'src/codegen/pet-flat-object.mock';
 import { ROCKET_FLAT_OBJECT_MOCK } from 'src/codegen/rocket-flat-object.mock';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
-import { mergeFlatFieldMetadatasInFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/merge-flat-field-metadatas-in-flat-object-metadata.util';
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { addFlatObjectMetadataToFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps.util';
 import { deleteFieldFromFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps.util';
+import { dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/dispatch-and-add-flat-field-metadata-in-flat-object-metadata-maps.util';
 import { fromFlatObjectMetadatasToFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadatas-to-flat-object-metadata-maps.util';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import {
@@ -14,10 +13,11 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 type DeleteFieldFromFlatObjectMetadataMapsTestCase = {
   input: {
-    flatObjectMetadataMaps: FlatObjectMetadataMaps;
+    flatObjectMetadataMaps: FlatObjectMetadataMaps | undefined;
     fieldMetadataId: string;
     objectMetadataId: string;
   };
@@ -75,13 +75,8 @@ describe('deleteFieldFromFlatObjectMetadataMaps', () => {
         context: {
           input: {
             flatObjectMetadataMaps:
-              addFlatObjectMetadataToFlatObjectMetadataMaps({
-                flatObjectMetadata: mergeFlatFieldMetadatasInFlatObjectMetadata(
-                  {
-                    flatFieldMetadatas: [newCustomRelationFlatFieldMetadata],
-                    flatObjectMetadata: PET_FLAT_OBJECT_MOCK,
-                  },
-                ),
+              dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps({
+                flatFieldMetadata: newCustomRelationFlatFieldMetadata,
                 flatObjectMetadataMaps:
                   FLAT_OBJECT_METADATA_MAPS_MOCKS_WITH_ROCKET_AND_PET,
               }),
@@ -95,9 +90,25 @@ describe('deleteFieldFromFlatObjectMetadataMaps', () => {
 
   const filteredTestCases = eachTestingContextFilter(testCases);
 
-  it.each(filteredTestCases)('$title', ({ context: { input, expected } }) => {
-    const result = deleteFieldFromFlatObjectMetadataMaps(input);
+  it.each(filteredTestCases)(
+    '$title',
+    ({
+      context: {
+        input: { fieldMetadataId, objectMetadataId, flatObjectMetadataMaps },
+        expected,
+      },
+    }) => {
+      expect(flatObjectMetadataMaps).toBeDefined();
+      if (!isDefined(flatObjectMetadataMaps)) {
+        throw new Error('Should never occur, typescript assertions');
+      }
+      const result = deleteFieldFromFlatObjectMetadataMaps({
+        fieldMetadataId,
+        flatObjectMetadataMaps,
+        objectMetadataId,
+      });
 
-    expect(result).toEqual(expected);
-  });
+      expect(result).toEqual(expected);
+    },
+  );
 });
