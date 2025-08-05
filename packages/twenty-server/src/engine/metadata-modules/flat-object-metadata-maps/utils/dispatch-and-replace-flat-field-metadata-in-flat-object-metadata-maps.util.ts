@@ -11,12 +11,12 @@ export const dispatchAndReplaceFlatFieldMetadataInFlatObjectMetadataMaps = ({
 }: {
   flatFieldMetadata: FlatFieldMetadata;
   flatObjectMetadataMaps: FlatObjectMetadataMaps;
-}): FlatObjectMetadataMaps => {
+}): FlatObjectMetadataMaps | undefined => {
   const flatObjectMetadataWithFlatFieldMaps =
     flatObjectMetadataMaps.byId[flatFieldMetadata.objectMetadataId];
 
   if (!isDefined(flatObjectMetadataWithFlatFieldMaps)) {
-    throw new Error('TODO'); // TODO prastoin custom exception or swallow
+    return undefined;
   }
 
   const flatObjectMetadataMapsWithoutFlatFieldMetadataToReplace =
