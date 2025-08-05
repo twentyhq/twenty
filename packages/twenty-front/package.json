@@ -37,7 +37,6 @@
     "@lingui/core": "^5.1.2",
     "@lingui/detect-locale": "^5.2.0",
     "@lingui/react": "^5.1.2",
-    "@nivo/calendar": "^0.87.0",
     "@nivo/core": "^0.87.0",
     "@nivo/line": "^0.87.0",
     "@react-pdf/renderer": "^4.1.6",

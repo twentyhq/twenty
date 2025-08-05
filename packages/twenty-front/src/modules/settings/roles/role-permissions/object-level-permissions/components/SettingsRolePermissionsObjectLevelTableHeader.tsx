@@ -3,12 +3,16 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { t } from '@lingui/core/macro';
 
-export const SettingsRolePermissionsObjectLevelTableHeader = () => (
+type SettingsRolePermissionsObjectLevelTableHeaderProps = {
+  showPermissionsLabel?: boolean;
+};
+
+export const SettingsRolePermissionsObjectLevelTableHeader = ({
+  showPermissionsLabel = true,
+}: SettingsRolePermissionsObjectLevelTableHeaderProps) => (
   <TableRow gridAutoColumns={OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS}>
-    <TableHeader>{t`Object`}</TableHeader>
-    <TableHeader>{t`Permissions`}</TableHeader>
-    <TableHeader>{t`See Fields`}</TableHeader>
-    <TableHeader>{t`Edit Fields`}</TableHeader>
+    <TableHeader>{t`Object-Level`}</TableHeader>
+    <TableHeader>{showPermissionsLabel ? t`Permissions` : ''}</TableHeader>
     <TableHeader></TableHeader>
   </TableRow>
 );

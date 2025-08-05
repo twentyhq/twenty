@@ -7,25 +7,19 @@ import { isFieldRichText } from '@/object-record/record-field/types/guards/isFie
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-type isFieldValueReadOnlyParams = {
-  objectNameSingular?: string;
+export type IsFieldReadOnlyBySystemParams = {
+  objectNameSingular: string;
   fieldName?: string;
   fieldType?: FieldMetadataType;
-  isRecordReadOnly?: boolean;
   isCustom?: boolean;
 };
 
-export const isFieldValueReadOnly = ({
+export const isFieldReadOnlyBySystem = ({
   objectNameSingular,
   fieldName,
   fieldType,
   isCustom,
-  isRecordReadOnly = false,
-}: isFieldValueReadOnlyParams) => {
-  if (isRecordReadOnly) {
-    return true;
-  }
-
+}: IsFieldReadOnlyBySystemParams) => {
   if (
     isWorkflowRunJsonField({
       objectMetadataNameSingular: objectNameSingular,

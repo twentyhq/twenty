@@ -8,8 +8,8 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { prefetchFavoritesState } from '@/prefetch/states/prefetchFavoritesState';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { mockedViewsData } from '~/testing/mock-data/views';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import {
   initialFavorites,
   mockWorkspaceMember,

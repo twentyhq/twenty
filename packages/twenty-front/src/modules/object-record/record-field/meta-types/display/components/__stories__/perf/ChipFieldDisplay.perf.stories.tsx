@@ -9,8 +9,8 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const meta: Meta = {
   title: 'UI/Data/Field/Display/ChipFieldDisplay',

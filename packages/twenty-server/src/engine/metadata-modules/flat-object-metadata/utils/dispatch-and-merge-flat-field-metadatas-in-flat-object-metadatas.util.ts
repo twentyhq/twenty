@@ -1,7 +1,7 @@
-import { isDefined } from 'twenty-shared/utils';
+import { fromArrayToValuesByKeyRecord, isDefined } from 'twenty-shared/utils';
 
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { mergeTwoFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/merge-two-flat-field-metadatas.util';
+import { mergeFlatFieldMetadatasInFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/merge-flat-field-metadatas-in-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type DispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatasArgs = {
@@ -12,23 +12,15 @@ export const dispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatas = ({
   flatFieldMetadatas,
   flatObjectMetadatas,
 }: DispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatasArgs): FlatObjectMetadata[] => {
-  const initialAccumulator: Record<string, FlatFieldMetadata[]> = {};
+  if (flatFieldMetadatas.length === 0) {
+    return flatObjectMetadatas;
+  }
+
   const flatFieldMetadataGroupedByFlatObjectMetadataId =
-    flatFieldMetadatas.reduce((acc, flatFieldMetadata) => {
-      const { objectMetadataId } = flatFieldMetadata;
-      const occurrence = acc[objectMetadataId];
-
-      if (isDefined(occurrence)) {
-        return {
-          ...acc,
-          [objectMetadataId]: [...occurrence, flatFieldMetadata],
-        };
-      }
-
-      return {
-        [flatFieldMetadata.objectMetadataId]: [flatFieldMetadata],
-      };
-    }, initialAccumulator);
+    fromArrayToValuesByKeyRecord({
+      array: flatFieldMetadatas,
+      key: 'objectMetadataId',
+    });
 
   return flatObjectMetadatas.map((flatObjectMetadata) => {
     const toMergeFlatFieldMetadatas =
@@ -38,12 +30,9 @@ export const dispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatas = ({
       return flatObjectMetadata;
     }
 
-    return {
-      ...flatObjectMetadata,
-      flatFieldMetadatas: mergeTwoFlatFieldMetadatas({
-        destFlatFieldMetadatas: flatObjectMetadata.flatFieldMetadatas,
-        toMergeFlatFieldMetadatas,
-      }),
-    };
+    return mergeFlatFieldMetadatasInFlatObjectMetadata({
+      flatFieldMetadatas: toMergeFlatFieldMetadatas,
+      flatObjectMetadata,
+    });
   });
 };
