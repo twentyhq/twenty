@@ -9,8 +9,8 @@ import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorato
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
-    getWorkflowNodeIdMock,
-    MOCKED_STEP_ID,
+  getWorkflowNodeIdMock,
+  MOCKED_STEP_ID,
 } from '~/testing/mock-data/workflow';
 import { WorkflowEditActionHttpRequest } from '../WorkflowEditActionHttpRequest';
 

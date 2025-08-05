@@ -11,8 +11,8 @@ import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorato
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
-    getMockedConnectedAccount,
-    mockedConnectedAccounts,
+  getMockedConnectedAccount,
+  mockedConnectedAccounts,
 } from '~/testing/mock-data/connected-accounts';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 import { WorkflowEditActionSendEmail } from '../WorkflowEditActionSendEmail';

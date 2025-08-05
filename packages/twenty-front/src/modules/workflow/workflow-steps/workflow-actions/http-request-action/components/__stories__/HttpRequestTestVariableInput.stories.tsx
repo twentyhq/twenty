@@ -159,7 +159,6 @@ export const WithPrefilledValues: Story = {
 
     expect(await canvas.findByText('Test Variables')).toBeVisible();
 
-    // Test user interaction
     const userIdInput =
       canvas.getByDisplayValue('') ||
       canvas.getAllByPlaceholderText('Enter test value')[0];

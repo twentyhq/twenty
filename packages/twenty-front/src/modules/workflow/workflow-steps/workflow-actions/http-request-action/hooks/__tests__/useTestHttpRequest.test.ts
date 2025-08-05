@@ -2,11 +2,34 @@ import { HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/
 import { act, renderHook } from '@testing-library/react';
 import React from 'react';
 import { RecoilRoot } from 'recoil';
+import { resolveInput } from 'twenty-shared/utils';
 import { useTestHttpRequest } from '../useTestHttpRequest';
 
 // Mock the resolveInput function
 jest.mock('twenty-shared/utils', () => ({
-  resolveInput: jest.fn((input) => input), // Simple passthrough by default
+  resolveInput: jest.fn((input, context) => {
+    // For testing purposes, we'll actually do the replacement for simple cases
+    if (typeof input === 'string') {
+      return input.replace(/{{([^}]+)}}/g, (match, path) => {
+        const parts = path.split('.');
+        let current = context;
+        for (const part of parts) {
+          if (
+            current !== null &&
+            current !== undefined &&
+            typeof current === 'object' &&
+            part in current
+          ) {
+            current = (current as any)[part];
+          } else {
+            return 'undefined';
+          }
+        }
+        return current;
+      });
+    }
+    return input;
+  }),
 }));
 
 // Mock fetch
@@ -16,11 +39,11 @@ const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
 
 describe('useTestHttpRequest', () => {
   const actionId = 'test-action-id';
-  
+
   const mockFormData: HttpRequestFormData = {
     url: 'https://api.example.com/users',
     method: 'GET',
-    headers: { 'Authorization': 'Bearer {{token}}' },
+    headers: { Authorization: 'Bearer {{token}}' },
     body: undefined,
   };
 
@@ -28,7 +51,7 @@ describe('useTestHttpRequest', () => {
     token: 'test-token-123',
   };
 
-  const wrapper = ({ children }: { children: React.ReactNode }) => 
+  const wrapper = ({ children }: { children: React.ReactNode }) =>
     React.createElement(RecoilRoot, null, children);
 
   beforeEach(() => {
@@ -36,8 +59,8 @@ describe('useTestHttpRequest', () => {
   });
 
   it('should initialize with correct default values', () => {
-    const { result } = renderHook(() => useTestHttpRequest(actionId), { 
-      wrapper 
+    const { result } = renderHook(() => useTestHttpRequest(actionId), {
+      wrapper,
     });
 
     expect(result.current.isTesting).toBe(false);
@@ -55,8 +78,8 @@ describe('useTestHttpRequest', () => {
 
     mockFetch.mockResolvedValueOnce(mockResponse as any);
 
-    const { result } = renderHook(() => useTestHttpRequest(actionId), { 
-      wrapper 
+    const { result } = renderHook(() => useTestHttpRequest(actionId), {
+      wrapper,
     });
 
     await act(async () => {
@@ -69,14 +92,16 @@ describe('useTestHttpRequest', () => {
         method: 'GET',
         headers: expect.objectContaining({
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer {{token}}',
+          Authorization: 'Bearer {{token}}',
         }),
-      })
+      }),
     );
 
     expect(result.current.isTesting).toBe(false);
     expect(result.current.httpRequestTestData.output?.status).toBe(200);
-    expect(result.current.httpRequestTestData.output?.data).toBe('{\n  "id": 1,\n  "name": "John"\n}');
+    expect(result.current.httpRequestTestData.output?.data).toBe(
+      '{\n  "id": 1,\n  "name": "John"\n}',
+    );
     expect(result.current.httpRequestTestData.output?.error).toBeUndefined();
   });
 
@@ -96,8 +121,8 @@ describe('useTestHttpRequest', () => {
 
     mockFetch.mockResolvedValueOnce(mockResponse as any);
 
-    const { result } = renderHook(() => useTestHttpRequest(actionId), { 
-      wrapper 
+    const { result } = renderHook(() => useTestHttpRequest(actionId), {
+      wrapper,
     });
 
     await act(async () => {
@@ -109,7 +134,7 @@ describe('useTestHttpRequest', () => {
       expect.objectContaining({
         method: 'POST',
         body: JSON.stringify({ name: 'Jane', email: 'jane@example.com' }),
-      })
+      }),
     );
 
     expect(result.current.httpRequestTestData.output?.status).toBe(201);
@@ -125,15 +150,17 @@ describe('useTestHttpRequest', () => {
 
     mockFetch.mockResolvedValueOnce(mockResponse as any);
 
-    const { result } = renderHook(() => useTestHttpRequest(actionId), { 
-      wrapper 
+    const { result } = renderHook(() => useTestHttpRequest(actionId), {
+      wrapper,
     });
 
     await act(async () => {
       await result.current.testHttpRequest(mockFormData, mockVariableValues);
     });
 
-    expect(result.current.httpRequestTestData.output?.data).toBe('Plain text response');
+    expect(result.current.httpRequestTestData.output?.data).toBe(
+      'Plain text response',
+    );
     expect(result.current.httpRequestTestData.language).toBe('plaintext');
   });
 
@@ -141,8 +168,8 @@ describe('useTestHttpRequest', () => {
     const errorMessage = 'Network error';
     mockFetch.mockRejectedValueOnce(new Error(errorMessage));
 
-    const { result } = renderHook(() => useTestHttpRequest(actionId), { 
-      wrapper 
+    const { result } = renderHook(() => useTestHttpRequest(actionId), {
+      wrapper,
     });
 
     await act(async () => {
@@ -164,8 +191,8 @@ describe('useTestHttpRequest', () => {
 
     mockFetch.mockReturnValueOnce(mockPromise as any);
 
-    const { result } = renderHook(() => useTestHttpRequest(actionId), { 
-      wrapper 
+    const { result } = renderHook(() => useTestHttpRequest(actionId), {
+      wrapper,
     });
 
     // Start the request
@@ -189,5 +216,59 @@ describe('useTestHttpRequest', () => {
 
     // Should no longer be testing
     expect(result.current.isTesting).toBe(false);
+  });
+
+  it('should convert flat variable paths to nested context for proper substitution', async () => {
+    const formDataWithNestedVariables: HttpRequestFormData = {
+      url: 'https://api.example.com/users',
+      method: 'POST',
+      headers: { Authorization: 'Bearer {{auth.token}}' },
+      body: { name: '{{trigger.properties.after.name}}' },
+    };
+
+    const flatVariableValues = {
+      'auth.token': 'test-token-123',
+      'trigger.properties.after.name': 'Yo',
+    };
+
+    const mockResponse = {
+      status: 201,
+      statusText: 'Created',
+      json: jest.fn().mockResolvedValue({ success: true }),
+      headers: new Map([['content-type', 'application/json']]),
+    };
+
+    mockFetch.mockResolvedValueOnce(mockResponse as any);
+
+    const { result } = renderHook(() => useTestHttpRequest(actionId), {
+      wrapper,
+    });
+
+    await act(async () => {
+      await result.current.testHttpRequest(
+        formDataWithNestedVariables,
+        flatVariableValues,
+      );
+    });
+
+    // The mocked resolveInput should have been called with nested context
+    expect(resolveInput).toHaveBeenCalledWith('https://api.example.com/users', {
+      auth: { token: 'test-token-123' },
+      trigger: { properties: { after: { name: 'Yo' } } },
+    });
+    expect(resolveInput).toHaveBeenCalledWith(
+      { Authorization: 'Bearer {{auth.token}}' },
+      {
+        auth: { token: 'test-token-123' },
+        trigger: { properties: { after: { name: 'Yo' } } },
+      },
+    );
+    expect(resolveInput).toHaveBeenCalledWith(
+      { name: '{{trigger.properties.after.name}}' },
+      {
+        auth: { token: 'test-token-123' },
+        trigger: { properties: { after: { name: 'Yo' } } },
+      },
+    );
   });
 });

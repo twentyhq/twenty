@@ -4,6 +4,29 @@ import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { resolveInput } from 'twenty-shared/utils';
 
+const convertFlatVariablesToNestedContext = (flatVariables: {
+  [variablePath: string]: any;
+}): Record<string, unknown> => {
+  const result: Record<string, unknown> = {};
+
+  for (const [key, value] of Object.entries(flatVariables)) {
+    const parts = key.split('.');
+    let current = result;
+
+    for (let i = 0; i < parts.length - 1; i++) {
+      const part = parts[i];
+      if (!(part in current)) {
+        current[part] = {};
+      }
+      current = current[part] as Record<string, unknown>;
+    }
+
+    current[parts[parts.length - 1]] = value;
+  }
+
+  return result;
+};
+
 export const useTestHttpRequest = (actionId: string) => {
   const [isTesting, setIsTesting] = useState(false);
   const [httpRequestTestData, setHttpRequestTestData] = useRecoilState(
@@ -18,18 +41,19 @@ export const useTestHttpRequest = (actionId: string) => {
     const startTime = Date.now();
 
     try {
-      // Substitute variables in the request configuration
+      const nestedVariableContext =
+        convertFlatVariablesToNestedContext(variableValues);
       const substitutedUrl = resolveInput(
         httpRequestFormData.url,
-        variableValues,
+        nestedVariableContext,
       );
       const substitutedHeaders = resolveInput(
         httpRequestFormData.headers,
-        variableValues,
+        nestedVariableContext,
       );
       const substitutedBody = resolveInput(
         httpRequestFormData.body,
-        variableValues,
+        nestedVariableContext,
       );
 
       const requestOptions: RequestInit = {

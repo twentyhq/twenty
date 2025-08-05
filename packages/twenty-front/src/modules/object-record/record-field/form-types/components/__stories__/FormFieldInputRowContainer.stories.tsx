@@ -5,8 +5,8 @@ import { expect, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import {
-    FormFieldInputRowContainer,
-    LINE_HEIGHT,
+  FormFieldInputRowContainer,
+  LINE_HEIGHT,
 } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 
 const meta: Meta<typeof FormFieldInputRowContainer> = {
@@ -49,7 +49,6 @@ export const SingleLine: Story = {
     const canvas = within(canvasElement);
     const container = canvasElement.firstChild as HTMLElement;
 
-    // Test that the component renders in single line mode
     expect(container).toBeInTheDocument();
     expect(
       canvas.getByText(
@@ -67,7 +66,6 @@ export const MultilineDefault: Story = {
     const canvas = within(canvasElement);
     const container = canvasElement.firstChild as HTMLElement;
 
-    // Test that the component renders and has the proper structure
     expect(container).toBeInTheDocument();
     expect(
       canvas.getByText(
@@ -86,7 +84,6 @@ export const MultilineWithCustomMaxHeight100: Story = {
     const canvas = within(canvasElement);
     const container = canvasElement.firstChild as HTMLElement;
 
-    // Test that the component renders with custom maxHeight
     expect(container).toBeInTheDocument();
     expect(
       canvas.getByText(
@@ -105,7 +102,6 @@ export const MultilineWithCustomMaxHeight200: Story = {
     const canvas = within(canvasElement);
     const container = canvasElement.firstChild as HTMLElement;
 
-    // Test that the component renders with custom maxHeight of 200px
     expect(container).toBeInTheDocument();
     expect(
       canvas.getByText(
@@ -139,7 +135,6 @@ export const MultilineWithSmallMaxHeight: Story = {
     const canvas = within(canvasElement);
     const container = canvasElement.firstChild as HTMLElement;
 
-    // Test that the component renders with small maxHeight
     expect(container).toBeInTheDocument();
     expect(
       canvas.getByText(
@@ -185,7 +180,6 @@ export const MultilineWithLargeMaxHeight: Story = {
     const canvas = within(canvasElement);
     const container = canvasElement.firstChild as HTMLElement;
 
-    // Test that the component renders with large maxHeight
     expect(container).toBeInTheDocument();
     expect(
       canvas.getByText('This container has a large max height of 400px'),
@@ -286,7 +280,6 @@ export const MultilineWithScrollableContent: Story = {
     const canvas = within(canvasElement);
     const container = canvasElement.firstChild as HTMLElement;
 
-    // Test that the component renders with overflow scenario
     expect(container).toBeInTheDocument();
     expect(
       canvas.getByText(
