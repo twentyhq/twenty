@@ -44,6 +44,7 @@
     "cloudflare": "^4.5.0",
     "connect-redis": "^7.1.1",
     "express-session": "^1.18.1",
+    "graphql-middleware": "^6.1.35",
     "handlebars": "^4.7.8",
     "jsdom": "~22.1.0",
     "jwt-decode": "^4.0.0",
