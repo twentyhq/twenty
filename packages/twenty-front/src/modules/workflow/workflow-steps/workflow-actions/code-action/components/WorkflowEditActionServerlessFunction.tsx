@@ -33,6 +33,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowEditActionServerlessFunctionFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunctionFields';
+import { WorkflowServerlessFunctionCodeEditor } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowServerlessFunctionCodeEditor';
 import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/code-action/constants/WorkflowServerlessFunctionTabListComponentId';
 import { WorkflowServerlessFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowServerlessFunctionTabId';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
@@ -46,18 +47,13 @@ import { useLingui } from '@lingui/react/macro';
 import { Monaco } from '@monaco-editor/react';
 import { editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconCode,
-  IconMaximize,
-  IconPlayerPlay,
-  useIcons,
-} from 'twenty-ui/display';
-import { CodeEditor, LightIconButton } from 'twenty-ui/input';
+import { IconCode, IconPlayerPlay, useIcons } from 'twenty-ui/display';
+import { CodeEditor } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -101,27 +97,14 @@ const StyledFullScreenContent = styled.div`
     `0 ${theme.spacing(3)} ${theme.spacing(3)} ${theme.spacing(3)}`};
 `;
 
-const StyledHorizontalFieldsContainer = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(3)};
-  flex-wrap: wrap;
-
-  > * {
-    flex: 1;
-    min-width: 200px;
-  }
-`;
-
-const StyledFullScreenButtonContainer = styled.div`
-  position: absolute;
-  top: ${({ theme }) => theme.spacing(2)};
-  right: ${({ theme }) => theme.spacing(2)};
-  z-index: 1;
-`;
-
 const StyledTabList = styled(TabList)`
   background-color: ${({ theme }) => theme.background.secondary};
   padding-left: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledFullScreenCodeEditorContainer = styled.div`
+  flex: 1;
+  min-height: 0;
 `;
 
 type WorkflowEditActionServerlessFunctionProps = {
@@ -388,17 +371,29 @@ export const WorkflowEditActionServerlessFunction = ({
 
   const testLogsTextAreaId = `${serverlessFunctionId}-test-logs`;
 
-  const getCodeEditorOptions = (includeLineNumbersConfig = true) => ({
-    readOnly: actionOptions.readonly,
-    domReadOnly: actionOptions.readonly,
-    scrollBeyondLastLine: false,
-    padding: { top: 4, bottom: 4 },
-    ...(includeLineNumbersConfig && { lineNumbersMinChars: 2 }),
-  });
+  const codeEditorOptionsWithLineNumbers = useMemo(
+    () => ({
+      readOnly: actionOptions.readonly,
+      domReadOnly: actionOptions.readonly,
+      scrollBeyondLastLine: false,
+      padding: { top: 4, bottom: 4 },
+      lineNumbersMinChars: 2,
+    }),
+    [actionOptions.readonly],
+  );
+
+  const codeEditorOptionsWithoutLineNumbers = useMemo(
+    () => ({
+      readOnly: actionOptions.readonly,
+      domReadOnly: actionOptions.readonly,
+      scrollBeyondLastLine: false,
+      padding: { top: 4, bottom: 4 },
+    }),
+    [actionOptions.readonly],
+  );
 
   const handleEnterFullScreen = () => {
     setIsFullScreen(true);
-    // Focus the overlay after it's rendered
     setTimeout(() => {
       if (isDefined(fullScreenOverlayRef.current)) {
         fullScreenOverlayRef.current.focus();
@@ -424,62 +419,6 @@ export const WorkflowEditActionServerlessFunction = ({
     },
   ];
 
-  const renderCodeEditor = (fullScreenMode = false) => (
-    <StyledCodeEditorContainer>
-      {!actionOptions.readonly && !fullScreenMode && (
-        <StyledFullScreenButtonContainer>
-          <LightIconButton
-            Icon={IconMaximize}
-            onClick={handleEnterFullScreen}
-            title={t`Expand to Full Screen`}
-            size="small"
-            accent="tertiary"
-          />
-        </StyledFullScreenButtonContainer>
-      )}
-      <CodeEditor
-        height="100%"
-        value={formValues.code?.[INDEX_FILE_PATH]}
-        language={'typescript'}
-        onChange={handleCodeChange}
-        onMount={handleEditorDidMount}
-        setMarkers={getWrongExportedFunctionMarkers}
-        options={getCodeEditorOptions()}
-      />
-    </StyledCodeEditorContainer>
-  );
-
-  const renderHorizontalFields = () => (
-    <StyledHorizontalFieldsContainer data-globally-prevent-click-outside="true">
-      <WorkflowEditActionServerlessFunctionFields
-        functionInput={functionInput}
-        VariablePicker={WorkflowVariablePicker}
-        onInputChange={handleInputChange}
-        readonly={actionOptions.readonly}
-      />
-    </StyledHorizontalFieldsContainer>
-  );
-
-  const renderFullScreenContent = () => (
-    <StyledFullScreenContent>
-      {renderHorizontalFields()}
-      <div
-        style={{ flex: 1, minHeight: 0 }}
-        data-globally-prevent-click-outside="true"
-      >
-        <CodeEditor
-          height="100%"
-          value={formValues.code?.[INDEX_FILE_PATH]}
-          language={'typescript'}
-          onChange={handleCodeChange}
-          onMount={handleEditorDidMount}
-          setMarkers={getWrongExportedFunctionMarkers}
-          options={getCodeEditorOptions(false)}
-        />
-      </div>
-    </StyledFullScreenContent>
-  );
-
   const fullScreenOverlay = isFullScreen
     ? createPortal(
         <StyledFullScreenOverlay
@@ -492,7 +431,25 @@ export const WorkflowEditActionServerlessFunction = ({
             hasClosePageButton={!isMobile}
             onClosePage={handleExitFullScreen}
           />
-          {renderFullScreenContent()}
+          <StyledFullScreenContent data-globally-prevent-click-outside="true">
+            <WorkflowEditActionServerlessFunctionFields
+              functionInput={functionInput}
+              VariablePicker={WorkflowVariablePicker}
+              onInputChange={handleInputChange}
+              readonly={actionOptions.readonly}
+            />
+            <StyledFullScreenCodeEditorContainer>
+              <CodeEditor
+                height="100%"
+                value={formValues.code?.[INDEX_FILE_PATH]}
+                language={'typescript'}
+                onChange={handleCodeChange}
+                onMount={handleEditorDidMount}
+                setMarkers={getWrongExportedFunctionMarkers}
+                options={codeEditorOptionsWithoutLineNumbers}
+              />
+            </StyledFullScreenCodeEditorContainer>
+          </StyledFullScreenContent>
         </StyledFullScreenOverlay>,
         document.body,
       )
@@ -527,7 +484,14 @@ export const WorkflowEditActionServerlessFunction = ({
                 onInputChange={handleInputChange}
                 readonly={actionOptions.readonly}
               />
-              {renderCodeEditor()}
+              <WorkflowServerlessFunctionCodeEditor
+                value={formValues.code?.[INDEX_FILE_PATH]}
+                onChange={handleCodeChange}
+                onMount={handleEditorDidMount}
+                options={codeEditorOptionsWithLineNumbers}
+                readonly={actionOptions.readonly}
+                onEnterFullScreen={handleEnterFullScreen}
+              />
             </>
           )}
           {activeTabId === WorkflowServerlessFunctionTabId.TEST && (
