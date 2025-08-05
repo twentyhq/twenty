@@ -5,6 +5,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowDiagramStepNodeBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeBase';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,6 +20,8 @@ const StyledStepNodeLabelIconContainer = styled.div`
 `;
 
 export const WorkflowDiagramEmptyTriggerEditable = () => {
+  const { t } = useLingui();
+
   const { openWorkflowTriggerTypeInCommandMenu } = useWorkflowCommandMenu();
 
   const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
@@ -33,7 +36,7 @@ export const WorkflowDiagramEmptyTriggerEditable = () => {
 
   return (
     <WorkflowDiagramStepNodeBase
-      name="Add a Trigger"
+      name={t`Add a Trigger`}
       nodeType="trigger"
       variant="empty"
       Icon={<StyledStepNodeLabelIconContainer />}

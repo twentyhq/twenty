@@ -44,10 +44,7 @@ export const WorkflowDiagramStepNodeEditable = ({
     workflowSelectedNodeComponentState,
   );
 
-  const {
-    openWorkflowTriggerTypeInCommandMenu,
-    openWorkflowEditStepInCommandMenu,
-  } = useWorkflowCommandMenu();
+  const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
 

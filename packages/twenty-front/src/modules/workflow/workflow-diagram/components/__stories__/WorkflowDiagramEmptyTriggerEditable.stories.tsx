@@ -1,13 +1,13 @@
 import { Meta, StoryObj } from '@storybook/react';
 
 import '@xyflow/react/dist/style.css';
-import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
-import { WorkflowDiagramEmptyTrigger } from '../WorkflowDiagramEmptyTrigger';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
+import { WorkflowDiagramEmptyTriggerEditable } from '../WorkflowDiagramEmptyTriggerEditable';
 
-const meta: Meta<typeof WorkflowDiagramEmptyTrigger> = {
-  title: 'Modules/Workflow/WorkflowDiagramEmptyTrigger',
-  component: WorkflowDiagramEmptyTrigger,
+const meta: Meta<typeof WorkflowDiagramEmptyTriggerEditable> = {
+  title: 'Modules/Workflow/WorkflowDiagramEmptyTriggerEditable',
+  component: WorkflowDiagramEmptyTriggerEditable,
   args: {
     data: {
       nodeType: 'empty-trigger',
@@ -16,7 +16,7 @@ const meta: Meta<typeof WorkflowDiagramEmptyTrigger> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof WorkflowDiagramEmptyTrigger>;
+type Story = StoryObj<typeof WorkflowDiagramEmptyTriggerEditable>;
 
 export const Default: Story = {
   decorators: [
