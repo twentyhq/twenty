@@ -23,6 +23,7 @@ export type SignInUpNewUserPayload = {
   picture?: string | null;
   passwordHash?: string | null;
   locale?: keyof typeof APP_LOCALES | null;
+  isEmailAlreadyVerified?: boolean;
 };
 
 export type PartialUserWithPicture = {
