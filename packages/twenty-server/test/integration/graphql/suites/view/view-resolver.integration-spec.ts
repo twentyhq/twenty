@@ -7,23 +7,25 @@ import { createViewOperationFactory } from 'test/integration/graphql/utils/creat
 import { deleteViewOperationFactory } from 'test/integration/graphql/utils/delete-view-operation-factory.util';
 import { findViewOperationFactory } from 'test/integration/graphql/utils/find-view-operation-factory.util';
 import { findViewsOperationFactory } from 'test/integration/graphql/utils/find-views-operation-factory.util';
+import {
+  assertGraphQLErrorResponse,
+  assertGraphQLSuccessfulResponse,
+} from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateViewOperationFactory } from 'test/integration/graphql/utils/update-view-operation-factory.util';
 import {
   createViewData,
   updateViewData,
 } from 'test/integration/graphql/utils/view-data-factory.util';
+import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
 import {
-  assertErrorResponse,
-  assertSuccessfulResponse,
   assertViewStructure,
   cleanupViewRecords,
-  createTestView,
-} from 'test/integration/graphql/utils/view-test.util';
+} from 'test/integration/utils/view-test.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
-import { ViewExceptionMessage } from 'src/modules/view/views.exception';
+import { ViewExceptionMessage } from 'src/engine/core-modules/view/exceptions/view.exception';
 
 describe('View Resolver', () => {
   beforeEach(async () => {
@@ -39,14 +41,14 @@ describe('View Resolver', () => {
       const operation = findViewsOperationFactory();
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getCoreViews).toEqual([]);
     });
 
     it('should return all views for workspace when no objectMetadataId provided', async () => {
       const viewName = 'Test View';
 
-      await createTestView({
+      await createTestViewWithGraphQL({
         name: viewName,
       });
 
@@ -57,7 +59,7 @@ describe('View Resolver', () => {
       const operation = findViewsOperationFactory();
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getCoreViews).toHaveLength(1);
       expect(response.body.data.getCoreViews[0]).toMatchObject(viewData);
     });
@@ -67,11 +69,11 @@ describe('View Resolver', () => {
       const object2ViewName = 'View for Object 2';
 
       await Promise.all([
-        createTestView({
+        createTestViewWithGraphQL({
           name: object1ViewName,
           objectMetadataId: TEST_OBJECT_METADATA_1_ID,
         }),
-        createTestView({
+        createTestViewWithGraphQL({
           name: object2ViewName,
           objectMetadataId: TEST_OBJECT_METADATA_2_ID,
         }),
@@ -82,7 +84,7 @@ describe('View Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getCoreViews).toHaveLength(1);
       expect(response.body.data.getCoreViews[0]).toMatchObject({
         name: object1ViewName,
@@ -97,21 +99,21 @@ describe('View Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getCoreView).toBeNull();
     });
 
     it('should return view when it exists', async () => {
       const viewName = 'Test View for Get';
 
-      const view = await createTestView({
+      const view = await createTestViewWithGraphQL({
         name: viewName,
       });
 
       const operation = findViewOperationFactory({ viewId: view.id });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       assertViewStructure(response.body.data.getCoreView, {
         id: view.id,
         name: viewName,
@@ -136,7 +138,7 @@ describe('View Resolver', () => {
       const operation = createViewOperationFactory({ data: input });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       assertViewStructure(response.body.data.createCoreView, {
         name: input.name,
         objectMetadataId: input.objectMetadataId,
@@ -159,7 +161,7 @@ describe('View Resolver', () => {
       const operation = createViewOperationFactory({ data: input });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       assertViewStructure(response.body.data.createCoreView, {
         name: input.name,
         objectMetadataId: input.objectMetadataId,
@@ -175,7 +177,7 @@ describe('View Resolver', () => {
 
   describe('updateCoreView', () => {
     it('should update an existing view', async () => {
-      const view = await createTestView({
+      const view = await createTestViewWithGraphQL({
         name: 'Original View',
         type: 'table',
         isCompact: false,
@@ -193,7 +195,7 @@ describe('View Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.updateCoreView).toMatchObject({
         id: view.id,
         ...updateInput,
@@ -207,7 +209,7 @@ describe('View Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertErrorResponse(
+      assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
         ViewExceptionMessage.VIEW_NOT_FOUND,
@@ -217,14 +219,14 @@ describe('View Resolver', () => {
 
   describe('deleteCoreView', () => {
     it('should delete an existing view', async () => {
-      const view = await createTestView({
+      const view = await createTestViewWithGraphQL({
         name: 'View to Delete',
       });
 
       const deleteOperation = deleteViewOperationFactory({ viewId: view.id });
       const deleteResponse = await makeGraphqlAPIRequest(deleteOperation);
 
-      assertSuccessfulResponse(deleteResponse);
+      assertGraphQLSuccessfulResponse(deleteResponse);
       expect(deleteResponse.body.data.deleteCoreView).toBe(true);
 
       const getOperation = findViewOperationFactory({ viewId: view.id });
@@ -239,7 +241,7 @@ describe('View Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertErrorResponse(
+      assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
         ViewExceptionMessage.VIEW_NOT_FOUND,

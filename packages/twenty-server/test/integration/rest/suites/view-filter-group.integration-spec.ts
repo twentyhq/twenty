@@ -4,15 +4,19 @@ import {
 } from 'test/integration/constants/test-view-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
-  assertErrorResponse,
-  assertSuccessfulResponse,
+  assertRestApiErrorResponse,
+  assertRestApiSuccessfulResponse,
+} from 'test/integration/rest/utils/rest-test-assertions.util';
+import {
+  createTestViewFilterGroupWithRestApi,
+  createTestViewWithRestApi,
+  deleteTestViewFilterGroupWithRestApi,
+} from 'test/integration/rest/utils/view-rest-api.util';
+import { generateRecordName } from 'test/integration/utils/generate-record-name';
+import {
   assertViewFilterGroupStructure,
   cleanupViewRecords,
-  createTestView,
-  createTestViewFilterGroup,
-  deleteTestViewFilterGroup,
-} from 'test/integration/rest/utils/view-test.util';
-import { generateRecordName } from 'test/integration/utils/generate-record-name';
+} from 'test/integration/utils/view-test.util';
 
 import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
 import { ViewFilterGroupExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';
@@ -21,7 +25,7 @@ describe('View Filter Group REST API', () => {
   beforeEach(async () => {
     await cleanupViewRecords();
 
-    await createTestView({
+    await createTestViewWithRestApi({
       name: generateRecordName('Test View for Filter Groups'),
     });
   });
@@ -38,7 +42,7 @@ describe('View Filter Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(response.body).toEqual([]);
     });
 
@@ -49,12 +53,12 @@ describe('View Filter Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(Array.isArray(response.body)).toBe(true);
     });
 
     it('should return view filter groups for a specific view after creating one', async () => {
-      const viewFilterGroup = await createTestViewFilterGroup({
+      const viewFilterGroup = await createTestViewFilterGroupWithRestApi({
         logicalOperator: ViewFilterGroupLogicalOperator.AND,
       });
 
@@ -64,7 +68,7 @@ describe('View Filter Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(Array.isArray(response.body)).toBe(true);
       expect(response.body).toHaveLength(1);
 
@@ -76,7 +80,7 @@ describe('View Filter Group REST API', () => {
         logicalOperator: ViewFilterGroupLogicalOperator.AND,
       });
 
-      await deleteTestViewFilterGroup(viewFilterGroup.id);
+      await deleteTestViewFilterGroupWithRestApi(viewFilterGroup.id);
     });
 
     it('should return nested filter groups with parent relationships', async () => {
@@ -115,7 +119,7 @@ describe('View Filter Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(Array.isArray(response.body)).toBe(true);
       expect(response.body).toHaveLength(2);
 
@@ -140,7 +144,7 @@ describe('View Filter Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(deleteChildResponse);
+      assertRestApiSuccessfulResponse(deleteChildResponse);
 
       const deleteParentResponse = await makeRestAPIRequest({
         method: 'delete',
@@ -148,13 +152,13 @@ describe('View Filter Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(deleteParentResponse);
+      assertRestApiSuccessfulResponse(deleteParentResponse);
     });
   });
 
   describe('POST /metadata/viewFilterGroups', () => {
     it('should create a new filter group with AND operator', async () => {
-      const viewFilterGroup = await createTestViewFilterGroup({
+      const viewFilterGroup = await createTestViewFilterGroupWithRestApi({
         logicalOperator: ViewFilterGroupLogicalOperator.AND,
       });
 
@@ -166,7 +170,7 @@ describe('View Filter Group REST API', () => {
     });
 
     it('should create a filter group with OR operator', async () => {
-      const orGroup = await createTestViewFilterGroup({
+      const orGroup = await createTestViewFilterGroupWithRestApi({
         logicalOperator: ViewFilterGroupLogicalOperator.OR,
       });
 
@@ -176,7 +180,7 @@ describe('View Filter Group REST API', () => {
       });
       expect(orGroup.parentViewFilterGroupId).toBeNull();
 
-      await deleteTestViewFilterGroup(orGroup.id);
+      await deleteTestViewFilterGroupWithRestApi(orGroup.id);
     });
 
     it('should create a filter group with NOT operator', async () => {
@@ -192,7 +196,7 @@ describe('View Filter Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(notGroupResponse, 201);
+      assertRestApiSuccessfulResponse(notGroupResponse, 201);
 
       const notGroupId = notGroupResponse.body.id;
 
@@ -231,7 +235,7 @@ describe('View Filter Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(childGroupResponse, 201);
+      assertRestApiSuccessfulResponse(childGroupResponse, 201);
     });
   });
 
@@ -257,7 +261,7 @@ describe('View Filter Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(response.body).toBeDefined();
       expect(response.body.id).toBe(viewFilterGroupId);
       expect(response.body.viewId).toBe(TEST_VIEW_1_ID);
@@ -271,7 +275,7 @@ describe('View Filter Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(response.body).toEqual({});
     });
   });
@@ -303,7 +307,7 @@ describe('View Filter Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(response.body).toBeDefined();
       expect(response.body.id).toBe(viewFilterGroupId);
       expect(response.body.logicalOperator).toBe('OR');
@@ -350,7 +354,7 @@ describe('View Filter Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(response.body).toBeDefined();
       expect(response.body.id).toBe(childId);
       expect(response.body.parentViewFilterGroupId).toBe(parentId);
@@ -371,7 +375,7 @@ describe('View Filter Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertErrorResponse(
+      assertRestApiErrorResponse(
         response,
         404,
         ViewFilterGroupExceptionMessage.VIEW_FILTER_GROUP_NOT_FOUND,
@@ -401,7 +405,7 @@ describe('View Filter Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(deleteResponse);
+      assertRestApiSuccessfulResponse(deleteResponse);
       expect(deleteResponse.body).toBeDefined();
       expect(deleteResponse.body.success).toBe(true);
 
@@ -411,7 +415,7 @@ describe('View Filter Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(response.body).toEqual({});
     });
 
@@ -422,7 +426,7 @@ describe('View Filter Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertErrorResponse(
+      assertRestApiErrorResponse(
         response,
         404,
         ViewFilterGroupExceptionMessage.VIEW_FILTER_GROUP_NOT_FOUND,

@@ -5,14 +5,18 @@ import {
 } from 'test/integration/constants/test-view-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
-  assertErrorResponse,
-  assertSuccessfulResponse,
+  assertRestApiErrorResponse,
+  assertRestApiSuccessfulResponse,
+} from 'test/integration/rest/utils/rest-test-assertions.util';
+import {
+  createTestViewSortWithRestApi,
+  createTestViewWithRestApi,
+} from 'test/integration/rest/utils/view-rest-api.util';
+import { generateRecordName } from 'test/integration/utils/generate-record-name';
+import {
   assertViewSortStructure,
   cleanupViewRecords,
-  createTestView,
-  createTestViewSort,
-} from 'test/integration/rest/utils/view-test.util';
-import { generateRecordName } from 'test/integration/utils/generate-record-name';
+} from 'test/integration/utils/view-test.util';
 
 import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
 import { ViewSortExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-sort.exception';
@@ -21,7 +25,7 @@ describe('View Sort REST API', () => {
   beforeEach(async () => {
     await cleanupViewRecords();
 
-    await createTestView({
+    await createTestViewWithRestApi({
       name: generateRecordName('Test View for Sorts'),
     });
   });
@@ -38,7 +42,7 @@ describe('View Sort REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(response.body).toEqual([]);
     });
 
@@ -49,12 +53,12 @@ describe('View Sort REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(Array.isArray(response.body)).toBe(true);
     });
 
     it('should return view sorts for a specific view after creating one', async () => {
-      const viewSort = await createTestViewSort({
+      const viewSort = await createTestViewSortWithRestApi({
         direction: ViewSortDirection.ASC,
       });
 
@@ -64,7 +68,7 @@ describe('View Sort REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(Array.isArray(response.body)).toBe(true);
       expect(response.body).toHaveLength(1);
 
@@ -81,7 +85,7 @@ describe('View Sort REST API', () => {
 
   describe('POST /metadata/viewSorts', () => {
     it('should create a new view sort with ASC direction', async () => {
-      const viewSort = await createTestViewSort({
+      const viewSort = await createTestViewSortWithRestApi({
         direction: ViewSortDirection.ASC,
       });
 
@@ -93,7 +97,7 @@ describe('View Sort REST API', () => {
     });
 
     it('should create a view sort with DESC direction', async () => {
-      const descSort = await createTestViewSort({
+      const descSort = await createTestViewSortWithRestApi({
         direction: ViewSortDirection.DESC,
       });
 
@@ -107,7 +111,7 @@ describe('View Sort REST API', () => {
 
   describe('GET /metadata/viewSorts/:id', () => {
     it('should return a view sort by id', async () => {
-      const viewSort = await createTestViewSort({
+      const viewSort = await createTestViewSortWithRestApi({
         direction: ViewSortDirection.ASC,
       });
 
@@ -117,7 +121,7 @@ describe('View Sort REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       assertViewSortStructure(response.body, {
         id: viewSort.id,
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
@@ -133,14 +137,14 @@ describe('View Sort REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(response.body).toEqual({});
     });
   });
 
   describe('PATCH /metadata/viewSorts/:id', () => {
     it('should update an existing view sort', async () => {
-      const viewSort = await createTestViewSort({
+      const viewSort = await createTestViewSortWithRestApi({
         direction: ViewSortDirection.ASC,
       });
 
@@ -155,7 +159,7 @@ describe('View Sort REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       assertViewSortStructure(response.body, {
         id: viewSort.id,
         direction: ViewSortDirection.DESC,
@@ -176,7 +180,7 @@ describe('View Sort REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertErrorResponse(
+      assertRestApiErrorResponse(
         response,
         404,
         ViewSortExceptionMessage.VIEW_SORT_NOT_FOUND,
@@ -186,7 +190,7 @@ describe('View Sort REST API', () => {
 
   describe('DELETE /metadata/viewSorts/:id', () => {
     it('should delete an existing view sort', async () => {
-      const viewSort = await createTestViewSort({
+      const viewSort = await createTestViewSortWithRestApi({
         direction: ViewSortDirection.ASC,
       });
 
@@ -196,7 +200,7 @@ describe('View Sort REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(deleteResponse);
+      assertRestApiSuccessfulResponse(deleteResponse);
       expect(deleteResponse.body.success).toBe(true);
 
       const getResponse = await makeRestAPIRequest({
@@ -205,7 +209,7 @@ describe('View Sort REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(getResponse);
+      assertRestApiSuccessfulResponse(getResponse);
       expect(getResponse.body).toEqual({});
     });
 
@@ -216,7 +220,7 @@ describe('View Sort REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertErrorResponse(
+      assertRestApiErrorResponse(
         response,
         404,
         ViewSortExceptionMessage.VIEW_SORT_NOT_FOUND,

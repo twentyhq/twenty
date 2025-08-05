@@ -5,19 +5,21 @@ import {
 import { createViewSortOperationFactory } from 'test/integration/graphql/utils/create-view-sort-operation-factory.util';
 import { deleteViewSortOperationFactory } from 'test/integration/graphql/utils/delete-view-sort-operation-factory.util';
 import { findViewSortsOperationFactory } from 'test/integration/graphql/utils/find-view-sorts-operation-factory.util';
+import {
+  assertGraphQLErrorResponse,
+  assertGraphQLSuccessfulResponse,
+} from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateViewSortOperationFactory } from 'test/integration/graphql/utils/update-view-sort-operation-factory.util';
 import {
   createViewSortData,
   updateViewSortData,
 } from 'test/integration/graphql/utils/view-data-factory.util';
+import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
 import {
-  assertErrorResponse,
-  assertSuccessfulResponse,
   assertViewSortStructure,
   cleanupViewRecords,
-  createTestView,
-} from 'test/integration/graphql/utils/view-test.util';
+} from 'test/integration/utils/view-test.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
@@ -29,7 +31,7 @@ describe('View Sort Resolver', () => {
   beforeEach(async () => {
     await cleanupViewRecords();
 
-    const view = await createTestView({
+    const view = await createTestViewWithGraphQL({
       name: 'Test View for Sorts',
     });
 
@@ -45,7 +47,7 @@ describe('View Sort Resolver', () => {
       const operation = findViewSortsOperationFactory({ viewId: testViewId });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getCoreViewSorts).toEqual([]);
     });
 
@@ -64,7 +66,7 @@ describe('View Sort Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(getOperation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getCoreViewSorts).toHaveLength(1);
       assertViewSortStructure(response.body.data.getCoreViewSorts[0], {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
@@ -83,7 +85,7 @@ describe('View Sort Resolver', () => {
       const operation = createViewSortOperationFactory({ data: sortData });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       assertViewSortStructure(response.body.data.createCoreViewSort, {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         direction: ViewSortDirection.ASC,
@@ -99,7 +101,7 @@ describe('View Sort Resolver', () => {
       const operation = createViewSortOperationFactory({ data: sortData });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       assertViewSortStructure(response.body.data.createCoreViewSort, {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         direction: ViewSortDirection.DESC,
@@ -128,7 +130,7 @@ describe('View Sort Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(updateOperation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.updateCoreViewSort).toMatchObject({
         id: viewSort.id,
         direction: 'DESC',
@@ -141,7 +143,7 @@ describe('View Sort Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertErrorResponse(
+      assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
         ViewSortExceptionMessage.VIEW_SORT_NOT_FOUND,
@@ -163,7 +165,7 @@ describe('View Sort Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(deleteOperation);
 
-      assertSuccessfulResponse(response);
+      assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.deleteCoreViewSort).toBe(true);
     });
 
@@ -173,7 +175,7 @@ describe('View Sort Resolver', () => {
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertErrorResponse(
+      assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
         ViewSortExceptionMessage.VIEW_SORT_NOT_FOUND,

@@ -4,14 +4,18 @@ import {
 } from 'test/integration/constants/test-view-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
-  assertErrorResponse,
-  assertSuccessfulResponse,
+  assertRestApiErrorResponse,
+  assertRestApiSuccessfulResponse,
+} from 'test/integration/rest/utils/rest-test-assertions.util';
+import {
+  createTestViewWithRestApi,
+  deleteTestViewWithRestApi,
+} from 'test/integration/rest/utils/view-rest-api.util';
+import { generateRecordName } from 'test/integration/utils/generate-record-name';
+import {
   assertViewStructure,
   cleanupViewRecords,
-  createTestView,
-  deleteTestView,
-} from 'test/integration/rest/utils/view-test.util';
-import { generateRecordName } from 'test/integration/utils/generate-record-name';
+} from 'test/integration/utils/view-test.util';
 
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewExceptionMessage } from 'src/engine/core-modules/view/exceptions/view.exception';
@@ -33,7 +37,7 @@ describe('View REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(Array.isArray(response.body)).toBe(true);
     });
 
@@ -44,7 +48,7 @@ describe('View REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(Array.isArray(response.body)).toBe(true);
 
       if (response.body.length > 0) {
@@ -56,7 +60,7 @@ describe('View REST API', () => {
   describe('POST /metadata/views', () => {
     it('should create a new view', async () => {
       const viewName = generateRecordName('Test View');
-      const view = await createTestView({
+      const view = await createTestViewWithRestApi({
         name: viewName,
         icon: 'IconTable',
         type: 'table',
@@ -80,7 +84,7 @@ describe('View REST API', () => {
 
     it('should create a kanban view', async () => {
       const viewName = generateRecordName('Test Kanban View');
-      const kanbanView = await createTestView({
+      const kanbanView = await createTestViewWithRestApi({
         name: viewName,
         icon: 'IconKanban',
         type: 'kanban',
@@ -97,14 +101,14 @@ describe('View REST API', () => {
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
       });
 
-      await deleteTestView(kanbanView.id);
+      await deleteTestViewWithRestApi(kanbanView.id);
     });
   });
 
   describe('GET /metadata/views/:id', () => {
     it('should return a view by id', async () => {
       const viewName = generateRecordName('Test View for Get');
-      const view = await createTestView({
+      const view = await createTestViewWithRestApi({
         name: viewName,
         icon: 'IconTable',
         type: 'table',
@@ -120,7 +124,7 @@ describe('View REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       assertViewStructure(response.body, {
         id: view.id,
         name: viewName,
@@ -135,7 +139,7 @@ describe('View REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(response.body).toEqual({});
     });
   });
@@ -143,7 +147,7 @@ describe('View REST API', () => {
   describe('PATCH /metadata/views/:id', () => {
     it('should update an existing view', async () => {
       const viewName = generateRecordName('Test View for Update');
-      const view = await createTestView({
+      const view = await createTestViewWithRestApi({
         name: viewName,
         icon: 'IconTable',
         type: 'table',
@@ -168,7 +172,7 @@ describe('View REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       assertViewStructure(response.body, {
         id: view.id,
         name: updatedName,
@@ -192,14 +196,18 @@ describe('View REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertErrorResponse(response, 404, ViewExceptionMessage.VIEW_NOT_FOUND);
+      assertRestApiErrorResponse(
+        response,
+        404,
+        ViewExceptionMessage.VIEW_NOT_FOUND,
+      );
     });
   });
 
   describe('DELETE /metadata/views/:id', () => {
     it('should delete an existing view', async () => {
       const viewName = generateRecordName('Test View for Delete');
-      const view = await createTestView({
+      const view = await createTestViewWithRestApi({
         name: viewName,
         icon: 'IconTable',
         type: 'table',
@@ -215,7 +223,7 @@ describe('View REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(deleteResponse);
+      assertRestApiSuccessfulResponse(deleteResponse);
       expect(deleteResponse.body.success).toBe(true);
 
       const getResponse = await makeRestAPIRequest({
@@ -224,7 +232,7 @@ describe('View REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(getResponse);
+      assertRestApiSuccessfulResponse(getResponse);
       expect(getResponse.body).toEqual({});
     });
 
@@ -235,7 +243,11 @@ describe('View REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertErrorResponse(response, 404, ViewExceptionMessage.VIEW_NOT_FOUND);
+      assertRestApiErrorResponse(
+        response,
+        404,
+        ViewExceptionMessage.VIEW_NOT_FOUND,
+      );
     });
   });
 });

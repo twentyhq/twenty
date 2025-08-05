@@ -5,14 +5,18 @@ import {
 } from 'test/integration/constants/test-view-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
-  assertErrorResponse,
-  assertSuccessfulResponse,
+  assertRestApiErrorResponse,
+  assertRestApiSuccessfulResponse,
+} from 'test/integration/rest/utils/rest-test-assertions.util';
+import {
+  createTestViewFilterWithRestApi,
+  createTestViewWithRestApi,
+  deleteTestViewFilterWithRestApi,
+} from 'test/integration/rest/utils/view-rest-api.util';
+import {
   assertViewFilterStructure,
   cleanupViewRecords,
-  createTestView,
-  createTestViewFilter,
-  deleteTestViewFilter,
-} from 'test/integration/rest/utils/view-test.util';
+} from 'test/integration/utils/view-test.util';
 
 import { ViewFilterExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-filter.exception';
 
@@ -20,7 +24,7 @@ describe('View Filter REST API', () => {
   beforeEach(async () => {
     await cleanupViewRecords();
 
-    await createTestView({
+    await createTestViewWithRestApi({
       name: 'Test View for Filters',
     });
   });
@@ -37,7 +41,7 @@ describe('View Filter REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(response.body).toEqual([]);
     });
 
@@ -48,12 +52,12 @@ describe('View Filter REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(Array.isArray(response.body)).toBe(true);
     });
 
     it('should return view filters for a specific view after creating one', async () => {
-      const viewFilter = await createTestViewFilter({
+      const viewFilter = await createTestViewFilterWithRestApi({
         operand: 'Contains',
         value: 'test',
       });
@@ -64,7 +68,7 @@ describe('View Filter REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(Array.isArray(response.body)).toBe(true);
       expect(response.body).toHaveLength(1);
 
@@ -78,13 +82,13 @@ describe('View Filter REST API', () => {
         value: 'test',
       });
 
-      await deleteTestViewFilter(viewFilter.id);
+      await deleteTestViewFilterWithRestApi(viewFilter.id);
     });
   });
 
   describe('POST /metadata/viewFilters', () => {
     it('should create a new view filter with string value', async () => {
-      const viewFilter = await createTestViewFilter({
+      const viewFilter = await createTestViewFilterWithRestApi({
         operand: 'Equals',
         value: 'test value',
       });
@@ -96,11 +100,11 @@ describe('View Filter REST API', () => {
         value: 'test value',
       });
 
-      await deleteTestViewFilter(viewFilter.id);
+      await deleteTestViewFilterWithRestApi(viewFilter.id);
     });
 
     it('should create a view filter with numeric value', async () => {
-      const numericFilter = await createTestViewFilter({
+      const numericFilter = await createTestViewFilterWithRestApi({
         operand: 'GreaterThan',
         value: '100',
       });
@@ -112,11 +116,11 @@ describe('View Filter REST API', () => {
         value: '100',
       });
 
-      await deleteTestViewFilter(numericFilter.id);
+      await deleteTestViewFilterWithRestApi(numericFilter.id);
     });
 
     it('should create a view filter with boolean value', async () => {
-      const booleanFilter = await createTestViewFilter({
+      const booleanFilter = await createTestViewFilterWithRestApi({
         operand: 'Is',
         value: 'true',
       });
@@ -128,13 +132,13 @@ describe('View Filter REST API', () => {
         value: 'true',
       });
 
-      await deleteTestViewFilter(booleanFilter.id);
+      await deleteTestViewFilterWithRestApi(booleanFilter.id);
     });
   });
 
   describe('GET /metadata/viewFilters/:id', () => {
     it('should return a view filter by id', async () => {
-      const viewFilter = await createTestViewFilter({
+      const viewFilter = await createTestViewFilterWithRestApi({
         operand: 'Contains',
         value: 'test',
       });
@@ -145,7 +149,7 @@ describe('View Filter REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       assertViewFilterStructure(response.body, {
         id: viewFilter.id,
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
@@ -154,7 +158,7 @@ describe('View Filter REST API', () => {
         value: 'test',
       });
 
-      await deleteTestViewFilter(viewFilter.id);
+      await deleteTestViewFilterWithRestApi(viewFilter.id);
     });
 
     it('should return empty object for non-existent view filter', async () => {
@@ -164,14 +168,14 @@ describe('View Filter REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       expect(response.body).toEqual({});
     });
   });
 
   describe('PATCH /metadata/viewFilters/:id', () => {
     it('should update an existing view filter', async () => {
-      const viewFilter = await createTestViewFilter({
+      const viewFilter = await createTestViewFilterWithRestApi({
         operand: 'Contains',
         value: 'original',
       });
@@ -188,7 +192,7 @@ describe('View Filter REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(response);
+      assertRestApiSuccessfulResponse(response);
       assertViewFilterStructure(response.body, {
         id: viewFilter.id,
         operand: 'DoesNotContain',
@@ -197,7 +201,7 @@ describe('View Filter REST API', () => {
         viewId: TEST_VIEW_1_ID,
       });
 
-      await deleteTestViewFilter(viewFilter.id);
+      await deleteTestViewFilterWithRestApi(viewFilter.id);
     });
 
     it('should return 404 error when updating non-existent view filter', async () => {
@@ -213,7 +217,7 @@ describe('View Filter REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertErrorResponse(
+      assertRestApiErrorResponse(
         response,
         404,
         ViewFilterExceptionMessage.VIEW_FILTER_NOT_FOUND,
@@ -223,7 +227,7 @@ describe('View Filter REST API', () => {
 
   describe('DELETE /metadata/viewFilters/:id', () => {
     it('should delete an existing view filter', async () => {
-      const viewFilter = await createTestViewFilter({
+      const viewFilter = await createTestViewFilterWithRestApi({
         operand: 'Contains',
         value: 'to delete',
       });
@@ -234,7 +238,7 @@ describe('View Filter REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(deleteResponse);
+      assertRestApiSuccessfulResponse(deleteResponse);
       expect(deleteResponse.body.success).toBe(true);
 
       const getResponse = await makeRestAPIRequest({
@@ -243,7 +247,7 @@ describe('View Filter REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertSuccessfulResponse(getResponse);
+      assertRestApiSuccessfulResponse(getResponse);
       expect(getResponse.body).toEqual({});
     });
 
@@ -254,7 +258,7 @@ describe('View Filter REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertErrorResponse(
+      assertRestApiErrorResponse(
         response,
         404,
         ViewFilterExceptionMessage.VIEW_FILTER_NOT_FOUND,
