@@ -15,7 +15,7 @@ export const addFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMaps = ({
   flatFieldMetadata: FlatFieldMetadata;
   flatObjectMetadataWithFlatFieldMaps: FlatObjectMetadataWithFlatFieldMaps;
 }): FlatObjectMetadataWithFlatFieldMaps => {
-  let udpatedFieldIdByJoinColumnName:
+  let updatedFieldIdByJoinColumnName:
     | FlatFieldMetadataMaps['fieldIdByJoinColumnName']
     | undefined = undefined;
 
@@ -30,7 +30,7 @@ export const addFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMaps = ({
     )
   ) {
     if (isDefined(flatFieldMetadata.settings?.joinColumnName)) {
-      udpatedFieldIdByJoinColumnName = {
+      updatedFieldIdByJoinColumnName = {
         [flatFieldMetadata.settings.joinColumnName]: flatFieldMetadata.id,
       };
     }
@@ -40,7 +40,7 @@ export const addFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMaps = ({
     ...flatObjectMetadataWithFlatFieldMaps,
     fieldIdByJoinColumnName: {
       ...flatObjectMetadataWithFlatFieldMaps.fieldIdByJoinColumnName,
-      ...udpatedFieldIdByJoinColumnName,
+      ...updatedFieldIdByJoinColumnName,
     },
     fieldIdByName: {
       ...flatObjectMetadataWithFlatFieldMaps.fieldIdByName,

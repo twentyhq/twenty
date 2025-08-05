@@ -20,6 +20,7 @@ export const dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps = ({
 
   return {
     byId: {
+      ...flatObjectMetadataMaps.byId,
       [flatFieldMetadata.objectMetadataId]:
         addFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMaps({
           flatFieldMetadata,
