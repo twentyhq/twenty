@@ -12,6 +12,8 @@ import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.en
 import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
 import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
+import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 
 export const createTestViewWithRestApi = async (
   overrides: Partial<View> = {},
@@ -21,11 +23,11 @@ export const createTestViewWithRestApi = async (
     name: generateRecordName('Test View'),
     objectMetadataId: TEST_OBJECT_METADATA_1_ID,
     icon: 'IconTable',
-    type: 'table',
+    type: ViewType.TABLE,
     key: 'INDEX',
     position: 0,
     isCompact: false,
-    openRecordIn: 'SIDE_PANEL',
+    openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
     ...overrides,
   };
 
