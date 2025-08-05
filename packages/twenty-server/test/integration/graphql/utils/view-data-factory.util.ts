@@ -2,6 +2,7 @@ import {
   TEST_FIELD_METADATA_1_ID,
   TEST_OBJECT_METADATA_1_ID,
 } from 'test/integration/constants/test-view-ids.constants';
+import { ViewFilterOperand } from 'twenty-shared/types';
 
 import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
@@ -9,7 +10,9 @@ import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.en
 import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
 import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
-import { ViewFilterGroupLogicalOperator } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
+import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
+import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
+import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
 
 export const createViewData = (overrides: Partial<View> = {}) => ({
   name: 'Test View',
@@ -19,7 +22,7 @@ export const createViewData = (overrides: Partial<View> = {}) => ({
   key: 'INDEX',
   position: 0,
   isCompact: false,
-  openRecordIn: 'SIDE_PANEL',
+  openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
   ...overrides,
 });
 
@@ -55,12 +58,12 @@ export const createViewSortData = (
 ) => ({
   viewId,
   fieldMetadataId: TEST_FIELD_METADATA_1_ID,
-  direction: 'ASC',
+  direction: ViewSortDirection.ASC,
   ...overrides,
 });
 
 export const updateViewSortData = (overrides: Partial<ViewSort> = {}) => ({
-  direction: 'DESC',
+  direction: ViewSortDirection.DESC,
   ...overrides,
 });
 
@@ -70,13 +73,13 @@ export const createViewFilterData = (
 ) => ({
   viewId,
   fieldMetadataId: TEST_FIELD_METADATA_1_ID,
-  operand: 'Is',
+  operand: ViewFilterOperand.Is,
   value: 'test-value',
   ...overrides,
 });
 
 export const updateViewFilterData = (overrides: Partial<ViewFilter> = {}) => ({
-  operand: 'IsNot',
+  operand: ViewFilterOperand.IsNot,
   value: 'updated-value',
   ...overrides,
 });

@@ -238,7 +238,7 @@ describe('View Group REST API', () => {
       assertRestApiErrorResponse(
         response,
         400,
-        ViewGroupExceptionMessage.VIEW_GROUP_NOT_FOUND,
+        ViewGroupExceptionMessage.INVALID_VIEW_GROUP_DATA,
       );
     });
 
@@ -259,7 +259,7 @@ describe('View Group REST API', () => {
       assertRestApiErrorResponse(
         response,
         400,
-        ViewGroupExceptionMessage.VIEW_GROUP_NOT_FOUND,
+        ViewGroupExceptionMessage.INVALID_VIEW_GROUP_DATA,
       );
     });
   });
@@ -375,11 +375,17 @@ describe('View Group REST API', () => {
     });
 
     it('should return 404 for non-existent view group', async () => {
-      await makeRestAPIRequest({
+      const response = await makeRestAPIRequest({
         method: 'delete',
         path: `/metadata/viewGroups/${TEST_NOT_EXISTING_VIEW_GROUP_ID}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-      }).expect(404);
+      });
+
+      assertRestApiErrorResponse(
+        response,
+        404,
+        ViewGroupExceptionMessage.VIEW_GROUP_NOT_FOUND,
+      );
     });
 
     it('should return success even when group is already deleted', async () => {

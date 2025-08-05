@@ -46,7 +46,6 @@ export class ViewController {
   }
 
   @Get(':id')
-  @UseGuards(WorkspaceAuthGuard)
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
@@ -55,7 +54,6 @@ export class ViewController {
   }
 
   @Post()
-  @UseGuards(WorkspaceAuthGuard)
   async create(
     @Body() input: CreateViewInput,
     @AuthWorkspace() workspace: Workspace,
@@ -67,7 +65,6 @@ export class ViewController {
   }
 
   @Patch(':id')
-  @UseGuards(WorkspaceAuthGuard)
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewInput,
@@ -79,7 +76,6 @@ export class ViewController {
   }
 
   @Delete(':id')
-  @UseGuards(WorkspaceAuthGuard)
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,

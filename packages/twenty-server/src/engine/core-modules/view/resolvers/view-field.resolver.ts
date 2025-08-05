@@ -15,11 +15,11 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @Resolver(() => ViewFieldDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
+@UseGuards(WorkspaceAuthGuard)
 export class ViewFieldResolver {
   constructor(private readonly viewFieldService: ViewFieldService) {}
 
   @Query(() => [ViewFieldDTO])
-  @UseGuards(WorkspaceAuthGuard)
   async getCoreViewFields(
     @Args('viewId', { type: () => String }) viewId: string,
     @AuthWorkspace() workspace: Workspace,
@@ -28,7 +28,6 @@ export class ViewFieldResolver {
   }
 
   @Query(() => ViewFieldDTO, { nullable: true })
-  @UseGuards(WorkspaceAuthGuard)
   async getCoreViewField(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
@@ -37,7 +36,6 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => ViewFieldDTO)
-  @UseGuards(WorkspaceAuthGuard)
   async updateCoreViewField(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewFieldInput,
@@ -47,7 +45,6 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => ViewFieldDTO)
-  @UseGuards(WorkspaceAuthGuard)
   async createCoreViewField(
     @Args('input') input: CreateViewFieldInput,
     @AuthWorkspace() workspace: Workspace,
@@ -59,7 +56,6 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(WorkspaceAuthGuard)
   async deleteCoreViewField(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,

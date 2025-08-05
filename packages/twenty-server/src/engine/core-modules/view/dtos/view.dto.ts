@@ -7,7 +7,6 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 
 registerEnumType(ViewOpenRecordIn, { name: 'ViewOpenRecordIn' });
-registerEnumType(AggregateOperations, { name: 'AggregateOperations' });
 
 @ObjectType('CoreView')
 export class ViewDTO {

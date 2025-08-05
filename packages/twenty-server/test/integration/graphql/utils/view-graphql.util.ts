@@ -27,7 +27,7 @@ export const createTestViewWithGraphQL = async (
   }
 
   if (!response.body.data) {
-    throw new Error('No data returned from createTestView');
+    throw new Error('No data returned from createTestViewWithGraphQL');
   }
 
   return response.body.data.createCoreView;

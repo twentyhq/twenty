@@ -32,7 +32,6 @@ export class ViewFilterGroupController {
   ) {}
 
   @Get()
-  @UseGuards(WorkspaceAuthGuard)
   async findMany(
     @AuthWorkspace() workspace: Workspace,
     @Query('viewId') viewId?: string,
@@ -45,7 +44,6 @@ export class ViewFilterGroupController {
   }
 
   @Get(':id')
-  @UseGuards(WorkspaceAuthGuard)
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
@@ -54,7 +52,6 @@ export class ViewFilterGroupController {
   }
 
   @Post()
-  @UseGuards(WorkspaceAuthGuard)
   async create(
     @Body() input: CreateViewFilterGroupInput,
     @AuthWorkspace() workspace: Workspace,
@@ -66,7 +63,6 @@ export class ViewFilterGroupController {
   }
 
   @Patch(':id')
-  @UseGuards(WorkspaceAuthGuard)
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewFilterGroupInput,
@@ -82,7 +78,6 @@ export class ViewFilterGroupController {
   }
 
   @Delete(':id')
-  @UseGuards(WorkspaceAuthGuard)
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,

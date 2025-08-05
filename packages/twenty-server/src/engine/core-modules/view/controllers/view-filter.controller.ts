@@ -30,7 +30,6 @@ export class ViewFilterController {
   constructor(private readonly viewFilterService: ViewFilterService) {}
 
   @Get()
-  @UseGuards(WorkspaceAuthGuard)
   async findMany(
     @AuthWorkspace() workspace: Workspace,
     @Query('viewId') viewId?: string,
@@ -43,7 +42,6 @@ export class ViewFilterController {
   }
 
   @Get(':id')
-  @UseGuards(WorkspaceAuthGuard)
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
@@ -52,7 +50,6 @@ export class ViewFilterController {
   }
 
   @Post()
-  @UseGuards(WorkspaceAuthGuard)
   async create(
     @Body() input: CreateViewFilterInput,
     @AuthWorkspace() workspace: Workspace,
@@ -64,7 +61,6 @@ export class ViewFilterController {
   }
 
   @Patch(':id')
-  @UseGuards(WorkspaceAuthGuard)
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewFilterInput,
@@ -80,7 +76,6 @@ export class ViewFilterController {
   }
 
   @Delete(':id')
-  @UseGuards(WorkspaceAuthGuard)
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,

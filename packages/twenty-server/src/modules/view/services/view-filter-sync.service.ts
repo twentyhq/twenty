@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -54,7 +55,7 @@ export class ViewFilterSyncService {
       id: workspaceViewFilter.id,
       fieldMetadataId: workspaceViewFilter.fieldMetadataId,
       viewId: workspaceViewFilter.viewId,
-      operand: workspaceViewFilter.operand,
+      operand: workspaceViewFilter.operand as ViewFilterOperand,
       value: transformViewFilterWorkspaceValueToCoreValue(
         workspaceViewFilter.value,
       ),

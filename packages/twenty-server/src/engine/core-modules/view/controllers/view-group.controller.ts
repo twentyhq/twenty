@@ -30,7 +30,6 @@ export class ViewGroupController {
   constructor(private readonly viewGroupService: ViewGroupService) {}
 
   @Get()
-  @UseGuards(WorkspaceAuthGuard)
   async findMany(
     @AuthWorkspace() workspace: Workspace,
     @Query('viewId') viewId?: string,
@@ -43,7 +42,6 @@ export class ViewGroupController {
   }
 
   @Get(':id')
-  @UseGuards(WorkspaceAuthGuard)
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
@@ -52,7 +50,6 @@ export class ViewGroupController {
   }
 
   @Post()
-  @UseGuards(WorkspaceAuthGuard)
   async create(
     @Body() input: CreateViewGroupInput,
     @AuthWorkspace() workspace: Workspace,
@@ -64,7 +61,6 @@ export class ViewGroupController {
   }
 
   @Patch(':id')
-  @UseGuards(WorkspaceAuthGuard)
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewGroupInput,
@@ -80,7 +76,6 @@ export class ViewGroupController {
   }
 
   @Delete(':id')
-  @UseGuards(WorkspaceAuthGuard)
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
