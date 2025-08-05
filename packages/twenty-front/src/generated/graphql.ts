@@ -510,7 +510,7 @@ export type CoreView = {
   objectMetadataId: Scalars['UUID'];
   openRecordIn: ViewOpenRecordIn;
   position: Scalars['Float'];
-  type: Scalars['String'];
+  type: ViewType;
   updatedAt: Scalars['DateTime'];
   workspaceId: Scalars['UUID'];
 };
@@ -715,7 +715,7 @@ export type CreateViewInput = {
   objectMetadataId: Scalars['UUID'];
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
   position?: InputMaybe<Scalars['Float']>;
-  type?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<ViewType>;
 };
 
 export type CreateViewSortInput = {
@@ -3118,7 +3118,7 @@ export type UpdateViewInput = {
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
   position?: InputMaybe<Scalars['Float']>;
-  type?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<ViewType>;
 };
 
 export type UpdateViewSortInput = {
@@ -3315,6 +3315,11 @@ export enum ViewOpenRecordIn {
 export enum ViewSortDirection {
   ASC = 'ASC',
   DESC = 'DESC'
+}
+
+export enum ViewType {
+  KANBAN = 'KANBAN',
+  TABLE = 'TABLE'
 }
 
 export type Webhook = {
