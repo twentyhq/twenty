@@ -1,6 +1,12 @@
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
+import { PageHeader } from '@/ui/layout/page/components/PageHeader';
+import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
+import {
+  Breadcrumb,
+  BreadcrumbProps,
+} from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -20,6 +26,8 @@ import { TextArea } from '@/ui/input/components/TextArea';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
@@ -32,19 +40,80 @@ import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-ac
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
+
 import { Monaco } from '@monaco-editor/react';
 import { editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useRecoilState } from 'recoil';
+import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCode, IconPlayerPlay, useIcons } from 'twenty-ui/display';
-import { CodeEditor } from 'twenty-ui/input';
+import {
+  IconCode,
+  IconMaximize,
+  IconPlayerPlay,
+  useIcons,
+} from 'twenty-ui/display';
+import { CodeEditor, LightIconButton } from 'twenty-ui/input';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
 
 const StyledCodeEditorContainer = styled.div`
   display: flex;
   flex-direction: column;
+  position: relative;
+  flex: 1;
+  min-height: 343px;
+  overflow: hidden;
+`;
+
+const StyledFullScreenOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: ${({ theme }) => theme.background.noisy};
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  z-index: 9999;
+`;
+
+const StyledFullScreenHeader = styled(PageHeader)`
+  padding-left: ${({ theme }) => theme.spacing(3)};
+`;
+
+const StyledFullScreenContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(3)};
+  height: calc(
+    100% - ${PAGE_BAR_MIN_HEIGHT}px - ${({ theme }) => theme.spacing(2 * 2 + 5)}
+  );
+  padding: ${({ theme }) =>
+    `0 ${theme.spacing(3)} ${theme.spacing(3)} ${theme.spacing(3)}`};
+`;
+
+const StyledHorizontalFieldsContainer = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(3)};
+  flex-wrap: wrap;
+
+  > * {
+    flex: 1;
+    min-width: 200px;
+  }
+`;
+
+const StyledFullScreenButtonContainer = styled.div`
+  position: absolute;
+  top: ${({ theme }) => theme.spacing(2)};
+  right: ${({ theme }) => theme.spacing(2)};
+  z-index: 1;
 `;
 
 const StyledTabList = styled(TabList)`
@@ -73,7 +142,12 @@ export const WorkflowEditActionServerlessFunction = ({
   actionOptions,
 }: WorkflowEditActionServerlessFunctionProps) => {
   const { getIcon } = useIcons();
+  const { t } = useLingui();
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const isMobile = useIsMobile();
+  const fullScreenOverlayRef = useRef<HTMLDivElement>(null);
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
+  const fullScreenFocusId = `code-editor-fullscreen-${serverlessFunctionId}`;
   const activeTabId = useRecoilComponentValueV2(
     activeTabIdComponentState,
     WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID,
@@ -280,6 +354,28 @@ export const WorkflowEditActionServerlessFunction = ({
     setFunctionInput(action.settings.input.serverlessFunctionInput);
   }, [action]);
 
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: () => {
+      if (isFullScreen) {
+        handleExitFullScreen();
+      }
+    },
+    focusId: fullScreenFocusId,
+    dependencies: [isFullScreen],
+  });
+
+  useListenClickOutside({
+    refs: [fullScreenOverlayRef],
+    callback: () => {
+      if (isFullScreen) {
+        handleExitFullScreen();
+      }
+    },
+    listenerId: `full-screen-overlay-${serverlessFunctionId}`,
+    enabled: isFullScreen,
+  });
+
   const headerTitle = isDefined(action.name)
     ? action.name
     : 'Code - Serverless Function';
@@ -288,6 +384,119 @@ export const WorkflowEditActionServerlessFunction = ({
   const headerType = useActionHeaderTypeOrThrow(action.type);
 
   const testLogsTextAreaId = `${serverlessFunctionId}-test-logs`;
+
+  const handleEnterFullScreen = () => {
+    setIsFullScreen(true);
+    // Focus the overlay after it's rendered
+    setTimeout(() => {
+      if (isDefined(fullScreenOverlayRef.current)) {
+        fullScreenOverlayRef.current.focus();
+      }
+    }, 0);
+  };
+
+  const handleExitFullScreen = () => {
+    setIsFullScreen(false);
+  };
+
+  const breadcrumbLinks: BreadcrumbProps['links'] = [
+    {
+      children: workflow?.name?.trim() || t`Untitled Workflow`,
+      href: '#',
+    },
+    {
+      children: headerTitle,
+      href: '#',
+    },
+    {
+      children: t`Code Editor`,
+    },
+  ];
+
+  const renderCodeEditor = (fullScreenMode = false) => (
+    <StyledCodeEditorContainer>
+      {!actionOptions.readonly && !fullScreenMode && (
+        <StyledFullScreenButtonContainer>
+          <LightIconButton
+            Icon={IconMaximize}
+            onClick={handleEnterFullScreen}
+            title={t`Expand to Full Screen`}
+            size="small"
+            accent="tertiary"
+          />
+        </StyledFullScreenButtonContainer>
+      )}
+      <CodeEditor
+        height="100%"
+        value={formValues.code?.[INDEX_FILE_PATH]}
+        language={'typescript'}
+        onChange={handleCodeChange}
+        onMount={handleEditorDidMount}
+        setMarkers={getWrongExportedFunctionMarkers}
+        options={{
+          readOnly: actionOptions.readonly,
+          domReadOnly: actionOptions.readonly,
+          scrollBeyondLastLine: false,
+          padding: { top: 4, bottom: 4 },
+          lineNumbersMinChars: 2,
+        }}
+      />
+    </StyledCodeEditorContainer>
+  );
+
+  const renderHorizontalFields = () => (
+    <StyledHorizontalFieldsContainer data-globally-prevent-click-outside="true">
+      <WorkflowEditActionServerlessFunctionFields
+        functionInput={functionInput}
+        VariablePicker={WorkflowVariablePicker}
+        onInputChange={handleInputChange}
+        readonly={actionOptions.readonly}
+      />
+    </StyledHorizontalFieldsContainer>
+  );
+
+  const renderFullScreenContent = () => (
+    <StyledFullScreenContent>
+      {renderHorizontalFields()}
+      <div
+        style={{ flex: 1, minHeight: 0 }}
+        data-globally-prevent-click-outside="true"
+      >
+        <CodeEditor
+          height="100%"
+          value={formValues.code?.[INDEX_FILE_PATH]}
+          language={'typescript'}
+          onChange={handleCodeChange}
+          onMount={handleEditorDidMount}
+          setMarkers={getWrongExportedFunctionMarkers}
+          options={{
+            readOnly: actionOptions.readonly,
+            domReadOnly: actionOptions.readonly,
+            scrollBeyondLastLine: false,
+            padding: { top: 4, bottom: 4 },
+          }}
+        />
+      </div>
+    </StyledFullScreenContent>
+  );
+
+  const fullScreenOverlay = isFullScreen
+    ? createPortal(
+        <StyledFullScreenOverlay
+          ref={fullScreenOverlayRef}
+          data-globally-prevent-click-outside="true"
+          tabIndex={-1}
+        >
+          <StyledFullScreenHeader
+            title={<Breadcrumb links={breadcrumbLinks} />}
+            hasClosePageButton={!isMobile}
+            onClosePage={handleExitFullScreen}
+          />
+          {renderFullScreenContent()}
+        </StyledFullScreenOverlay>,
+        document.body,
+      )
+    : null;
 
   return (
     !loading && (
@@ -318,20 +527,7 @@ export const WorkflowEditActionServerlessFunction = ({
                 onInputChange={handleInputChange}
                 readonly={actionOptions.readonly}
               />
-              <StyledCodeEditorContainer>
-                <CodeEditor
-                  height={343}
-                  value={formValues.code?.[INDEX_FILE_PATH]}
-                  language={'typescript'}
-                  onChange={handleCodeChange}
-                  onMount={handleEditorDidMount}
-                  setMarkers={getWrongExportedFunctionMarkers}
-                  options={{
-                    readOnly: actionOptions.readonly,
-                    domReadOnly: actionOptions.readonly,
-                  }}
-                />
-              </StyledCodeEditorContainer>
+              {renderCodeEditor()}
             </>
           )}
           {activeTabId === WorkflowServerlessFunctionTabId.TEST && (
@@ -375,6 +571,7 @@ export const WorkflowEditActionServerlessFunction = ({
             ]}
           />
         )}
+        {fullScreenOverlay}
       </>
     )
   );
