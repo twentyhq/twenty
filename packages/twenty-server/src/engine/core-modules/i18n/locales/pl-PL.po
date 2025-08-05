@@ -2153,7 +2153,7 @@ msgid "Statuses cannot be set manually."
 msgstr "Statusy nie mogą być ustawiane ręcznie."
 
 #. js-lingui-id: u+rv4L
-#: src/modules/workflow/workflow-builder/workflow-step/workflow-version-step.workspace-service.ts
+#: src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service.ts
 msgid "Step is not a form"
 msgstr "Krok nie jest formularzem"
 
