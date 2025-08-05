@@ -121,34 +121,31 @@ export class FieldPermissionService {
         },
       });
 
-    const duplicatedFieldPermissionForOneToManyRelations =
-      this.getDuplicatedFieldPermissionForOneToManyRelations({
+    const relatedFieldPermissionsToUpsert =
+      this.computeFieldPermissionForRelationTargetFieldMetadata({
         fieldPermissions: fieldPermissionsToUpsert,
         fieldMetadatasForFieldPermissions,
       });
 
     await this.fieldPermissionsRepository.upsert(
-      [
-        ...fieldPermissionsToUpsert,
-        ...duplicatedFieldPermissionForOneToManyRelations,
-      ],
+      [...fieldPermissionsToUpsert, ...relatedFieldPermissionsToUpsert],
       {
         conflictPaths: ['fieldMetadataId', 'roleId'],
       },
     );
 
     if (fieldPermissionsToDeleteIds.length > 0) {
-      const fieldPermissionsForRelationTargetFieldMetadataIds =
-        this.getDuplicatedFieldPermissionsIdsForRelationFieldPermissions({
+      const relatedFieldPermissionToDeleteIds =
+        this.getRelatedFieldPermissionsToDeleteIds({
           allFieldPermissions: existingFieldPermissions,
-          potentialRelationFieldPermissions: existingFieldPermissionsToDelete,
+          fieldPermissionsToDelete: existingFieldPermissionsToDelete,
           fieldMetadatas: fieldMetadatasForFieldPermissions,
         });
 
       await this.fieldPermissionsRepository.delete({
         id: In([
           ...fieldPermissionsToDeleteIds,
-          ...fieldPermissionsForRelationTargetFieldMetadataIds,
+          ...relatedFieldPermissionToDeleteIds,
         ]),
       });
     }
@@ -304,18 +301,18 @@ export class FieldPermissionService {
     }
   }
 
-  private getDuplicatedFieldPermissionsIdsForRelationFieldPermissions({
+  private getRelatedFieldPermissionsToDeleteIds({
     allFieldPermissions,
-    potentialRelationFieldPermissions,
+    fieldPermissionsToDelete,
     fieldMetadatas,
   }: {
     allFieldPermissions: FieldPermissionEntity[];
-    potentialRelationFieldPermissions: FieldPermissionEntity[];
+    fieldPermissionsToDelete: FieldPermissionEntity[];
     fieldMetadatas: FieldMetadataEntity[];
   }) {
     const fieldMetadatasForFieldPermissionsToDelete = fieldMetadatas.filter(
       (fieldMetadata) =>
-        potentialRelationFieldPermissions.some(
+        fieldPermissionsToDelete.some(
           (existingFieldPermissionToDelete) =>
             existingFieldPermissionToDelete.fieldMetadataId ===
             fieldMetadata.id,
@@ -353,7 +350,7 @@ export class FieldPermissionService {
     return fieldPermissionsForRelationTargetFieldMetadataIds;
   }
 
-  private getDuplicatedFieldPermissionForOneToManyRelations({
+  private computeFieldPermissionForRelationTargetFieldMetadata({
     fieldPermissions,
     fieldMetadatasForFieldPermissions,
   }: {
