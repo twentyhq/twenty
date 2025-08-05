@@ -8,13 +8,14 @@ import {
   FlatObjectMetadataWithFlatFieldMaps,
 } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-with-flat-field-metadata-maps.type';
 
+export type AddFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMapsArgs = {
+  flatFieldMetadata: FlatFieldMetadata;
+  flatObjectMetadataWithFlatFieldMaps: FlatObjectMetadataWithFlatFieldMaps;
+};
 export const addFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMaps = ({
   flatFieldMetadata,
   flatObjectMetadataWithFlatFieldMaps,
-}: {
-  flatFieldMetadata: FlatFieldMetadata;
-  flatObjectMetadataWithFlatFieldMaps: FlatObjectMetadataWithFlatFieldMaps;
-}): FlatObjectMetadataWithFlatFieldMaps => {
+}: AddFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMapsArgs): FlatObjectMetadataWithFlatFieldMaps => {
   let updatedFieldIdByJoinColumnName:
     | FlatFieldMetadataMaps['fieldIdByJoinColumnName']
     | undefined = undefined;

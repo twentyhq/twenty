@@ -4,13 +4,16 @@ import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metada
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { addFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-to-flat-object-metadata-with-flat-field-maps.util';
 
+export type DispatchAndAddFlatFieldMetadataInFlatObjectMetadataMapsArgs = {
+  flatFieldMetadata: FlatFieldMetadata;
+  flatObjectMetadataMaps: FlatObjectMetadataMaps;
+};
 export const dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps = ({
   flatFieldMetadata,
   flatObjectMetadataMaps,
-}: {
-  flatFieldMetadata: FlatFieldMetadata;
-  flatObjectMetadataMaps: FlatObjectMetadataMaps;
-}): FlatObjectMetadataMaps | undefined => {
+}: DispatchAndAddFlatFieldMetadataInFlatObjectMetadataMapsArgs):
+  | FlatObjectMetadataMaps
+  | undefined => {
   const flatObjectMetadataWithFlatFieldMaps =
     flatObjectMetadataMaps.byId[flatFieldMetadata.objectMetadataId];
 
