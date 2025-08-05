@@ -16,65 +16,63 @@ export class WorkspaceSchemaMigrationRunnerService {
   ) {}
 
   runWorkspaceSchemaMigration = async ({
-    workspaceMigration,
+    action,
     queryRunner,
   }: WorkspaceMigrationRunnerArgs) => {
-    for (const action of workspaceMigration.actions) {
-      switch (action.type) {
-        case 'delete_object': {
-          await this.workspaceSchemaObjectMigrationRunnerService.runDeleteObjectSchemaMigration(
-            { action, queryRunner },
-          );
-          break;
-        }
-        case 'create_object': {
-          await this.workspaceSchemaObjectMigrationRunnerService.runCreateObjectSchemaMigration(
-            { action, queryRunner },
-          );
-          break;
-        }
-        case 'update_object': {
-          await this.workspaceSchemaObjectMigrationRunnerService.runUpdateObjectSchemaMigration(
-            { action, queryRunner },
-          );
-          break;
-        }
-        case 'create_field': {
-          await this.workspaceSchemaFieldMigrationRunnerService.runCreateFieldSchemaMigration(
-            { action, queryRunner },
-          );
-          break;
-        }
-        case 'update_field': {
-          await this.workspaceSchemaFieldMigrationRunnerService.runUpdateFieldSchemaMigration(
-            { action, queryRunner },
-          );
-          break;
-        }
-        case 'delete_field': {
-          await this.workspaceSchemaFieldMigrationRunnerService.runDeleteFieldSchemaMigration(
-            { action, queryRunner },
-          );
-          break;
-        }
-        case 'create_index': {
-          await this.workspaceSchemaIndexMigrationRunnerService.runCreateIndexSchemaMigration(
-            { action, queryRunner },
-          );
-          break;
-        }
-        case 'delete_index': {
-          await this.workspaceSchemaIndexMigrationRunnerService.runDeleteIndexSchemaMigration(
-            { action, queryRunner },
-          );
-          break;
-        }
-        default: {
-          assertUnreachable(
-            action,
-            'Should never occur, encountered an unsupported workspace migration action type',
-          );
-        }
+    switch (action.type) {
+      case 'delete_object': {
+        await this.workspaceSchemaObjectMigrationRunnerService.runDeleteObjectSchemaMigration(
+          { action, queryRunner },
+        );
+        break;
+      }
+      case 'create_object': {
+        await this.workspaceSchemaObjectMigrationRunnerService.runCreateObjectSchemaMigration(
+          { action, queryRunner },
+        );
+        break;
+      }
+      case 'update_object': {
+        await this.workspaceSchemaObjectMigrationRunnerService.runUpdateObjectSchemaMigration(
+          { action, queryRunner },
+        );
+        break;
+      }
+      case 'create_field': {
+        await this.workspaceSchemaFieldMigrationRunnerService.runCreateFieldSchemaMigration(
+          { action, queryRunner },
+        );
+        break;
+      }
+      case 'update_field': {
+        await this.workspaceSchemaFieldMigrationRunnerService.runUpdateFieldSchemaMigration(
+          { action, queryRunner },
+        );
+        break;
+      }
+      case 'delete_field': {
+        await this.workspaceSchemaFieldMigrationRunnerService.runDeleteFieldSchemaMigration(
+          { action, queryRunner },
+        );
+        break;
+      }
+      case 'create_index': {
+        await this.workspaceSchemaIndexMigrationRunnerService.runCreateIndexSchemaMigration(
+          { action, queryRunner },
+        );
+        break;
+      }
+      case 'delete_index': {
+        await this.workspaceSchemaIndexMigrationRunnerService.runDeleteIndexSchemaMigration(
+          { action, queryRunner },
+        );
+        break;
+      }
+      default: {
+        assertUnreachable(
+          action,
+          'Should never occur, encountered an unsupported workspace migration action type',
+        );
       }
     }
   };
