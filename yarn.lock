@@ -55149,6 +55149,7 @@ __metadata:
     graphiql: "npm:^3.1.1"
     graphql: "npm:16.8.0"
     graphql-fields: "npm:^2.0.3"
+    graphql-middleware: "npm:^6.1.35"
     graphql-rate-limit: "npm:^3.3.0"
     graphql-redis-subscriptions: "npm:^2.7.0"
     graphql-scalars: "npm:^1.23.0"
