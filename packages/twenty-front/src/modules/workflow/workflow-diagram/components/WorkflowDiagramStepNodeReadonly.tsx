@@ -5,12 +5,15 @@ import { getNodeVariantFromStepRunStatus } from '@/workflow/workflow-diagram/uti
 import React from 'react';
 
 export const WorkflowDiagramStepNodeReadonly = ({
+  id,
   data,
 }: {
+  id: string;
   data: WorkflowDiagramStepNodeData;
 }) => {
   return (
     <WorkflowDiagramStepNodeBase
+      id={id}
       name={data.name}
       variant={getNodeVariantFromStepRunStatus(data.runStatus)}
       nodeType={data.nodeType}

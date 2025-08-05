@@ -35,7 +35,7 @@ import {
 } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
-import { useIsEdgeHovered } from '@/workflow/workflow-diagram/hooks/useIsEdgeHovered';
+import { useEdgeHovered } from '@/workflow/workflow-diagram/hooks/useEdgeHovered';
 import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseEdge';
 
 type WorkflowDiagramFilterEdgeEditableProps = EdgeProps<WorkflowDiagramEdge>;
@@ -70,7 +70,6 @@ const StyledConfiguredFilterContainer = styled.div`
 
 export const WorkflowDiagramFilterEdgeEditable = ({
   id,
-  selected,
   source,
   target,
   sourceY,
@@ -101,7 +100,7 @@ export const WorkflowDiagramFilterEdgeEditable = ({
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
 
-  const { isEdgeHovered } = useIsEdgeHovered();
+  const { isEdgeHovered } = useEdgeHovered();
 
   const setWorkflowDiagramPanOnDrag = useSetRecoilComponentStateV2(
     workflowDiagramPanOnDragComponentState,
@@ -149,7 +148,8 @@ export const WorkflowDiagramFilterEdgeEditable = ({
   return (
     <>
       <WorkflowDiagramBaseEdge
-        selected={selected}
+        source={source}
+        target={target}
         path={edgePath}
         markerStart={markerStart}
         markerEnd={markerEnd}

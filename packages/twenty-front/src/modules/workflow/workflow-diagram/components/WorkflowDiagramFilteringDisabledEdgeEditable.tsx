@@ -7,7 +7,7 @@ import { IconPlus } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
-import { useIsEdgeHovered } from '@/workflow/workflow-diagram/hooks/useIsEdgeHovered';
+import { useEdgeHovered } from '@/workflow/workflow-diagram/hooks/useEdgeHovered';
 import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseEdge';
 
 const StyledIconButtonGroup = styled(IconButtonGroup)`
@@ -19,7 +19,6 @@ type WorkflowDiagramFilteringDisabledEdgeEditableProps =
 
 export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
   id,
-  selected,
   markerStart,
   markerEnd,
   source,
@@ -29,7 +28,7 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
   targetX,
   targetY,
 }: WorkflowDiagramFilteringDisabledEdgeEditableProps) => {
-  const { isEdgeHovered } = useIsEdgeHovered();
+  const { isEdgeHovered } = useEdgeHovered();
 
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -56,7 +55,8 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
   return (
     <>
       <WorkflowDiagramBaseEdge
-        selected={selected}
+        source={source}
+        target={target}
         path={edgePath}
         markerStart={markerStart}
         markerEnd={markerEnd}

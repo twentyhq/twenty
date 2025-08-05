@@ -35,6 +35,7 @@ import {
   Connection,
   OnNodeDrag,
   OnBeforeDelete,
+  OnSelectionChangeParams,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, {
@@ -53,7 +54,8 @@ import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagra
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
-import { useIsEdgeHovered } from '@/workflow/workflow-diagram/hooks/useIsEdgeHovered';
+import { useEdgeHovered } from '@/workflow/workflow-diagram/hooks/useEdgeHovered';
+import { useEdgeSelected } from '@/workflow/workflow-diagram/hooks/useEdgeSelected';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -189,7 +191,9 @@ export const WorkflowDiagramCanvasBase = ({
     workflowDiagramWaitingNodesDimensionsComponentState,
   );
 
-  const { setEdgeHovered, setNoEdgeHovered } = useIsEdgeHovered();
+  const { setEdgeHovered, setNoEdgeHovered } = useEdgeHovered();
+
+  const { setEdgeSelected, clearEdgeSelection } = useEdgeSelected();
 
   const isWorkflowBranchEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
@@ -231,6 +235,9 @@ export const WorkflowDiagramCanvasBase = ({
   useListenToSidePanelClosing(() => {
     reactflow.setNodes((nodes) =>
       nodes.map((node) => ({ ...node, selected: false })),
+    );
+    reactflow.setEdges((edges) =>
+      edges.map((edge) => ({ ...edge, selected: false })),
     );
     setWorkflowInsertStepIds({
       parentStepId: undefined,
@@ -450,6 +457,23 @@ export const WorkflowDiagramCanvasBase = ({
     setNoEdgeHovered();
   }, [setNoEdgeHovered]);
 
+  const onSelectionChange = useCallback(
+    (params: OnSelectionChangeParams) => {
+      const selectedEdge = params.edges?.[0];
+
+      if (!isDefined(selectedEdge)) {
+        clearEdgeSelection();
+        return;
+      }
+
+      setEdgeSelected({
+        source: selectedEdge.source,
+        target: selectedEdge.target,
+      });
+    },
+    [setEdgeSelected, clearEdgeSelection],
+  );
+
   return (
     <StyledResetReactflowStyles ref={containerRef}>
       <WorkflowDiagramCustomMarkers />
@@ -467,6 +491,7 @@ export const WorkflowDiagramCanvasBase = ({
         onEdgeMouseLeave={onEdgeMouseLeave}
         onNodesChange={handleNodesChanges}
         onEdgesChange={handleEdgesChange}
+        onSelectionChange={onSelectionChange}
         onConnect={isWorkflowBranchEnabled ? onConnect : undefined}
         onNodeDragStop={isWorkflowBranchEnabled ? onNodeDragStop : undefined}
         onBeforeDelete={

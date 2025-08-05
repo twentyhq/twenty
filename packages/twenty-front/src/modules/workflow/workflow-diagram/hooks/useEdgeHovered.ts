@@ -1,7 +1,7 @@
 import { workflowHoveredEdgeIdComponentState } from '@/workflow/workflow-diagram/states/workflowHoveredEdgeIdComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 
-export const useIsEdgeHovered = () => {
+export const useEdgeHovered = () => {
   const [workflowHoveredEdgeId, setWorkflowHoveredEdgeId] =
     useRecoilComponentStateV2(workflowHoveredEdgeIdComponentState);
 
@@ -17,5 +17,9 @@ export const useIsEdgeHovered = () => {
     setWorkflowHoveredEdgeId(undefined);
   };
 
-  return { isEdgeHovered, setEdgeHovered, setNoEdgeHovered };
+  return {
+    isEdgeHovered,
+    setEdgeHovered,
+    setNoEdgeHovered,
+  };
 };
