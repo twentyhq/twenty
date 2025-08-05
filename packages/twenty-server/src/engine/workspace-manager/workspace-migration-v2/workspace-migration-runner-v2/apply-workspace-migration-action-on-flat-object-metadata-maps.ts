@@ -6,7 +6,7 @@ import { deleteFieldFromFlatObjectMetadataMaps } from 'src/engine/metadata-modul
 import { deleteObjectFromFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-object-from-flat-object-metadata-maps.util';
 import { WorkspaceMigrationRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-runner-args.type';
 
-export const runWorkspaceMigrationActionOptimistically = ({
+export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = ({
   action,
   flatObjectMetadataMaps,
 }: Omit<

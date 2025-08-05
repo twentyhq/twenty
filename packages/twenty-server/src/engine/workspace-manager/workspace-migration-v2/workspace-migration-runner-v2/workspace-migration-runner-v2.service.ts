@@ -8,7 +8,7 @@ import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/wor
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
 import { WorkspaceMetadataMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-metadata-migration-runner/workspace-metadata-migration-runner-service';
-import { runWorkspaceMigrationActionOptimistically } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-optimistic-migration-runner';
+import { applyWorkspaceMigrationActionOnFlatObjectMetadataMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-optimistic-migration-runner';
 import { WorkspaceSchemaMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/workspace-schema-migration-runner.service';
 
 @Injectable()
@@ -56,7 +56,7 @@ export class WorkspaceMigrationRunnerV2Service {
         ]);
 
         sequentiallyOptimisticallyRenderedFlatObjectMetadataMaps =
-          runWorkspaceMigrationActionOptimistically({
+          applyWorkspaceMigrationActionOnFlatObjectMetadataMaps({
             action,
             flatObjectMetadataMaps,
           });
