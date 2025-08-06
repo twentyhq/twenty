@@ -50,7 +50,7 @@ describe('View Filter Resolver', () => {
 
     it('should return view filters for a specific view', async () => {
       const filterData = createViewFilterData(testViewId, {
-        operand: ViewFilterOperand.IS,
+        operand: ViewFilterOperand.CONTAINS,
         value: 'test',
       });
       const createOperation = createViewFilterOperationFactory({
