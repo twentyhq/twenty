@@ -89,6 +89,9 @@ export class I18nService implements OnModuleInit {
       // Also deprecate i18n.middleware.ts
       i18n.load(locale, messages);
     });
+
+    // TODO: deprecate this line which is legacy as soon as we only use the i18nInstancesMap
+    i18n.activate(SOURCE_LOCALE);
   }
 
   getI18nInstance(locale: keyof typeof APP_LOCALES) {
