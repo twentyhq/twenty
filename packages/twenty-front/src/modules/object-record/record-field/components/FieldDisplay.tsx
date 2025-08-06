@@ -51,8 +51,12 @@ import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldUuid } from '../types/guards/isFieldUuid';
 
 export const FieldDisplay = () => {
-  const { fieldDefinition, isLabelIdentifier, isForbidden } =
-    useContext(FieldContext);
+  const {
+    fieldDefinition,
+    isLabelIdentifier,
+    isForbidden,
+    isRecordFieldReadOnly,
+  } = useContext(FieldContext);
 
   const isChipDisplay = isFieldIdentifierDisplay(
     fieldDefinition,
@@ -61,6 +65,10 @@ export const FieldDisplay = () => {
 
   if (isDefined(isForbidden) && isForbidden) {
     return <ForbiddenFieldDisplay />;
+  }
+
+  if (isFieldRating(fieldDefinition)) {
+    console.log('stop');
   }
 
   return isChipDisplay ? (
@@ -96,7 +104,7 @@ export const FieldDisplay = () => {
   ) : isFieldBoolean(fieldDefinition) ? (
     <BooleanFieldDisplay />
   ) : isFieldRating(fieldDefinition) ? (
-    <RatingFieldDisplay />
+    <RatingFieldDisplay readonly={isRecordFieldReadOnly} />
   ) : isFieldRichText(fieldDefinition) ? (
     <RichTextFieldDisplay />
   ) : isFieldRichTextV2(fieldDefinition) ? (
