@@ -38,9 +38,9 @@ import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-sel
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { ViewType } from '@/views/types/ViewType';
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
@@ -96,7 +96,7 @@ export const RecordBoard = () => {
     toggleClickOutside(true);
   };
 
-  const visibleRecordGroupIds = useRecoilComponentFamilyValueV2(
+  const visibleRecordGroupIds = useRecoilComponentFamilyValue(
     visibleRecordGroupIdsComponentFamilySelector,
     ViewType.Kanban,
   );
@@ -104,15 +104,14 @@ export const RecordBoard = () => {
   const { resetRecordSelection, setRecordAsSelected } =
     useRecordBoardSelection(recordBoardId);
 
-  const currentRecordSorts = useRecoilComponentValueV2(
+  const currentRecordSorts = useRecoilComponentValue(
     currentRecordSortsComponentState,
   );
 
-  const recordBoardSelectedRecordIdsSelector =
-    useRecoilComponentCallbackStateV2(
-      recordBoardSelectedRecordIdsComponentSelector,
-      recordBoardId,
-    );
+  const recordBoardSelectedRecordIdsSelector = useRecoilComponentCallbackState(
+    recordBoardSelectedRecordIdsComponentSelector,
+    recordBoardId,
+  );
 
   const startDrag = useStartBoardCardDrag(recordBoardId);
   const endDrag = useEndBoardCardDrag(recordBoardId);

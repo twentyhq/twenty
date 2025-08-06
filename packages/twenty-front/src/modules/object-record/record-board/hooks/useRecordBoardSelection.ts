@@ -7,7 +7,7 @@ import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/r
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
 export const useRecordBoardSelection = (recordBoardId?: string) => {
@@ -16,17 +16,15 @@ export const useRecordBoardSelection = (recordBoardId?: string) => {
     recordBoardId,
   );
 
-  const isRecordBoardCardSelectedFamilyState =
-    useRecoilComponentCallbackStateV2(
-      isRecordBoardCardSelectedComponentFamilyState,
-      recordBoardId,
-    );
+  const isRecordBoardCardSelectedFamilyState = useRecoilComponentCallbackState(
+    isRecordBoardCardSelectedComponentFamilyState,
+    recordBoardId,
+  );
 
-  const recordBoardSelectedRecordIdsSelector =
-    useRecoilComponentCallbackStateV2(
-      recordBoardSelectedRecordIdsComponentSelector,
-      recordBoardId,
-    );
+  const recordBoardSelectedRecordIdsSelector = useRecoilComponentCallbackState(
+    recordBoardSelectedRecordIdsComponentSelector,
+    recordBoardId,
+  );
 
   const { closeDropdown } = useCloseDropdown();
 

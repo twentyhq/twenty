@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { act } from 'react';
 import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -18,7 +18,7 @@ describe('useRemoveRecordFilter', () => {
   it('should remove an existing record filter', () => {
     const { result } = renderHook(
       () => {
-        const currentRecordFilters = useRecoilComponentValueV2(
+        const currentRecordFilters = useRecoilComponentValue(
           currentRecordFiltersComponentState,
         );
 
@@ -65,7 +65,7 @@ describe('useRemoveRecordFilter', () => {
   it('should not modify filters when trying to remove a non-existent filter', () => {
     const { result } = renderHook(
       () => {
-        const currentRecordFilters = useRecoilComponentValueV2(
+        const currentRecordFilters = useRecoilComponentValue(
           currentRecordFiltersComponentState,
         );
         const { upsertRecordFilter } = useUpsertRecordFilter();

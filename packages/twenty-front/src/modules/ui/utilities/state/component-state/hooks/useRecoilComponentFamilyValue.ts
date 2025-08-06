@@ -1,29 +1,29 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { ComponentFamilyReadOnlySelectorV2 } from '@/ui/utilities/state/component-state/types/ComponentFamilyReadOnlySelectorV2';
-import { ComponentFamilySelectorV2 } from '@/ui/utilities/state/component-state/types/ComponentFamilySelectorV2';
-import { ComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/types/ComponentFamilyStateV2';
+import { ComponentFamilyReadOnlySelector } from '@/ui/utilities/state/component-state/types/ComponentFamilyReadOnlySelector';
+import { ComponentFamilySelector } from '@/ui/utilities/state/component-state/types/ComponentFamilySelector';
+import { ComponentFamilyState } from '@/ui/utilities/state/component-state/types/ComponentFamilyState';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { SerializableParam, useRecoilValue } from 'recoil';
 
-export const useRecoilComponentFamilyValueV2 = <
+export const useRecoilComponentFamilyValue = <
   StateType,
   FamilyKey extends SerializableParam,
 >(
-  componentStateV2:
-    | ComponentFamilyStateV2<StateType, FamilyKey>
-    | ComponentFamilySelectorV2<StateType, FamilyKey>
-    | ComponentFamilyReadOnlySelectorV2<StateType, FamilyKey>,
+  componentState:
+    | ComponentFamilyState<StateType, FamilyKey>
+    | ComponentFamilySelector<StateType, FamilyKey>
+    | ComponentFamilyReadOnlySelector<StateType, FamilyKey>,
   familyKey: FamilyKey,
   instanceIdFromProps?: string,
 ): StateType => {
   const instanceContext = globalComponentInstanceContextMap.get(
-    componentStateV2.key,
+    componentState.key,
   );
 
   if (!instanceContext) {
     throw new Error(
-      `Instance context for key "${componentStateV2.key}" is not defined`,
+      `Instance context for key "${componentState.key}" is not defined`,
     );
   }
 
@@ -32,20 +32,20 @@ export const useRecoilComponentFamilyValueV2 = <
     instanceIdFromProps,
   );
 
-  switch (componentStateV2.type) {
+  switch (componentState.type) {
     case 'ComponentFamilyState': {
       return useRecoilValue(
-        componentStateV2.atomFamily({ familyKey, instanceId }),
+        componentState.atomFamily({ familyKey, instanceId }),
       );
     }
     case 'ComponentFamilySelector': {
       return useRecoilValue(
-        componentStateV2.selectorFamily({ familyKey, instanceId }),
+        componentState.selectorFamily({ familyKey, instanceId }),
       );
     }
     case 'ComponentFamilyReadOnlySelector': {
       return useRecoilValue(
-        componentStateV2.selectorFamily({ familyKey, instanceId }),
+        componentState.selectorFamily({ familyKey, instanceId }),
       );
     }
   }

@@ -16,7 +16,7 @@ import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/con
 import { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
@@ -77,7 +77,7 @@ export const ShowPageSubContainer = ({
     pageId: commandMenuPageComponentInstance?.instanceId,
     targetObjectId: targetableObject.id,
   });
-  const activeTabId = useRecoilComponentValueV2(
+  const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,
     tabListComponentId,
   );

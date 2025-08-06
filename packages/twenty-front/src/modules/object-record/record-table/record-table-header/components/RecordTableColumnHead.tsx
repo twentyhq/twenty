@@ -4,10 +4,10 @@ import styled from '@emotion/styled';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
 
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { ColumnDefinition } from '../../types/ColumnDefinition';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useIcons } from 'twenty-ui/display';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { ColumnDefinition } from '../../types/ColumnDefinition';
 
 type RecordTableColumnHeadProps = {
   column: ColumnDefinition<FieldMetadata>;
@@ -56,7 +56,7 @@ export const RecordTableColumnHead = ({
   const { getIcon } = useIcons();
   const Icon = getIcon(column.iconName);
 
-  const isRecordTableScrolledLeft = useRecoilComponentValueV2(
+  const isRecordTableScrolledLeft = useRecoilComponentValue(
     isRecordTableScrolledLeftComponentState,
   );
 

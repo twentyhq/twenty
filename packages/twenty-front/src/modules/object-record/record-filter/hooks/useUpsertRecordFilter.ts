@@ -1,13 +1,13 @@
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 export const useUpsertRecordFilter = () => {
-  const currentRecordFiltersCallbackState = useRecoilComponentCallbackStateV2(
+  const currentRecordFiltersCallbackState = useRecoilComponentCallbackState(
     currentRecordFiltersComponentState,
   );
 

@@ -10,7 +10,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -20,27 +20,27 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const isRowFocusedState = useRecoilComponentCallbackStateV2(
+  const isRowFocusedState = useRecoilComponentCallbackState(
     isRecordTableRowFocusedComponentFamilyState,
     recordTableIdFromContext,
   );
 
-  const focusedRowIndexState = useRecoilComponentCallbackStateV2(
+  const focusedRowIndexState = useRecoilComponentCallbackState(
     focusedRecordTableRowIndexComponentState,
     recordTableIdFromContext,
   );
 
-  const isRowFocusActiveState = useRecoilComponentCallbackStateV2(
+  const isRowFocusActiveState = useRecoilComponentCallbackState(
     isRecordTableRowFocusActiveComponentState,
     recordTableIdFromContext,
   );
 
-  const focusedCellPositionState = useRecoilComponentCallbackStateV2(
+  const focusedCellPositionState = useRecoilComponentCallbackState(
     recordTableFocusPositionComponentState,
     recordTableIdFromContext,
   );
 
-  const isRecordTableCellFocusActiveState = useRecoilComponentCallbackStateV2(
+  const isRecordTableCellFocusActiveState = useRecoilComponentCallbackState(
     isRecordTableCellFocusActiveComponentState,
     recordTableIdFromContext,
   );

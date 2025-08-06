@@ -2,7 +2,7 @@ import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { isSlashMenuOpenComponentState } from '@/ui/input/editor/states/isSlashMenuOpenComponentState';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 
 export type BlockEditorDropdownFocusEffectProps = {
@@ -12,7 +12,7 @@ export type BlockEditorDropdownFocusEffectProps = {
 export const BlockEditorDropdownFocusEffect = ({
   editor,
 }: BlockEditorDropdownFocusEffectProps) => {
-  const isSlashMenuOpenState = useRecoilComponentCallbackStateV2(
+  const isSlashMenuOpenState = useRecoilComponentCallbackState(
     isSlashMenuOpenComponentState,
   );
 

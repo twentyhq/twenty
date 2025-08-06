@@ -4,8 +4,8 @@ import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsO
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
 import { SettingsDataModelObjectAboutFormValues } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
 import { IconPicker } from '@/ui/input/components/IconPicker';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -153,7 +153,7 @@ export const SettingsDataModelObjectAboutForm = ({
           control={control}
           defaultValue={objectMetadataItem?.labelSingular ?? ''}
           render={({ field: { onChange, value }, formState: { errors } }) => (
-            <TextInput
+            <SettingsTextInput
               instanceId={labelSingularTextInputId}
               // TODO we should discuss on how to notify user about form validation schema issue, from now just displaying red borders
               noErrorHelper={true}
@@ -185,7 +185,7 @@ export const SettingsDataModelObjectAboutForm = ({
           control={control}
           defaultValue={objectMetadataItem?.labelPlural ?? ''}
           render={({ field: { onChange, value }, formState: { errors } }) => (
-            <TextInput
+            <SettingsTextInput
               instanceId={labelPluralTextInputId}
               // TODO we should discuss on how to notify user about form validation schema issue, from now just displaying red borders
               noErrorHelper={true}
@@ -270,7 +270,7 @@ export const SettingsDataModelObjectAboutForm = ({
                         formState: { errors },
                       }) => (
                         <>
-                          <TextInput
+                          <SettingsTextInput
                             instanceId={`${objectMetadataItem?.id}-${fieldName}`}
                             label={label}
                             placeholder={placeholder}

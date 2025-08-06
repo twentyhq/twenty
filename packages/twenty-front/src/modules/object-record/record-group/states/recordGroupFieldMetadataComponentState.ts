@@ -1,8 +1,8 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
-export const recordGroupFieldMetadataComponentState = createComponentStateV2<
+export const recordGroupFieldMetadataComponentState = createComponentState<
   FieldMetadataItem | undefined
 >({
   key: 'recordGroupFieldMetadataComponentState',

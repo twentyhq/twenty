@@ -1,10 +1,10 @@
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
-import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
+import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
 export const recordIndexRecordGroupIsDraggableSortComponentSelector =
-  createComponentSelectorV2<boolean>({
+  createComponentSelector<boolean>({
     key: 'recordIndexRecordGroupIsDraggableSortComponentSelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:

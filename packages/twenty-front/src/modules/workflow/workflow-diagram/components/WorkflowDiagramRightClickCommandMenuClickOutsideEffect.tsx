@@ -1,15 +1,15 @@
+import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { WORKFLOW_DIAGRAM_RIGHT_CLICK_MENU_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramRightClickMenuClickOutsideId';
 import { workflowDiagramRightClickMenuPositionState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuPositionState';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
 
 export const WorkflowDiagramRightClickCommandMenuClickOutsideEffect = ({
   rightClickCommandMenuRef,
 }: {
   rightClickCommandMenuRef: React.RefObject<HTMLDivElement>;
 }) => {
-  const setWorkflowDiagramRightClickMenuPosition = useSetRecoilComponentStateV2(
+  const setWorkflowDiagramRightClickMenuPosition = useSetRecoilComponentState(
     workflowDiagramRightClickMenuPositionState,
   );
 

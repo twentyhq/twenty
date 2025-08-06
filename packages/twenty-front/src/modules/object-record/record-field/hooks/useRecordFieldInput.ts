@@ -1,9 +1,9 @@
 import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/states/recordFieldInputDraftValueComponentState';
 import { FieldInputDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 export const useRecordFieldInput = <FieldValue>() => {
-  const setDraftValue = useSetRecoilComponentStateV2(
+  const setDraftValue = useSetRecoilComponentState(
     recordFieldInputDraftValueComponentState,
   );
 

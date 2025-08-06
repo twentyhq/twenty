@@ -1,6 +1,6 @@
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextInput } from '@/ui/input/components/TextInput';
 
 type AdvancedFilterDropdownTextInputProps = {
   recordFilter: RecordFilter;
@@ -17,7 +17,7 @@ export const AdvancedFilterDropdownTextInput = ({
   };
 
   return (
-    <TextInputV2
+    <TextInput
       value={recordFilter.value}
       onChange={handleChange}
       placeholder="Enter value"

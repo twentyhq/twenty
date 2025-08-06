@@ -12,13 +12,13 @@ import { RecordTableRecordGroupStickyEffect } from '@/object-record/record-table
 import { useAggregateRecordsForRecordTableSection } from '@/object-record/record-table/record-table-section/hooks/useAggregateRecordsForRecordTableSection';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
-import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { AnimatedLightIconButton } from 'twenty-ui/input';
-import { IconChevronDown } from 'twenty-ui/display';
 import { Tag } from 'twenty-ui/components';
+import { IconChevronDown } from 'twenty-ui/display';
+import { AnimatedLightIconButton } from 'twenty-ui/input';
 
 const StyledTrContainer = styled.tr`
   cursor: pointer;
@@ -57,7 +57,7 @@ export const RecordTableRecordGroupSection = () => {
 
   const currentRecordGroupId = useCurrentRecordGroupId();
 
-  const visibleColumns = useRecoilComponentValueV2(
+  const visibleColumns = useRecoilComponentValue(
     visibleTableColumnsComponentSelector,
   );
 
@@ -69,7 +69,7 @@ export const RecordTableRecordGroupSection = () => {
   const [
     isRecordGroupTableSectionToggled,
     setIsRecordGroupTableSectionToggled,
-  ] = useRecoilComponentFamilyStateV2(
+  ] = useRecoilComponentFamilyState(
     isRecordGroupTableSectionToggledComponentState,
     currentRecordGroupId,
   );

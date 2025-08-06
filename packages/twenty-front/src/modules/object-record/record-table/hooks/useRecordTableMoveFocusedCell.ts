@@ -7,17 +7,17 @@ import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record
 import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { numberOfTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/numberOfTableColumnsComponentSelector';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 
 export const useRecordTableMoveFocusedCell = (recordTableId?: string) => {
   const { focusRecordTableCell } = useFocusRecordTableCell(recordTableId);
 
-  const focusPositionState = useRecoilComponentCallbackStateV2(
+  const focusPositionState = useRecoilComponentCallbackState(
     recordTableFocusPositionComponentState,
     recordTableId,
   );
 
-  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackStateV2(
+  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackState(
     recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );
@@ -64,7 +64,7 @@ export const useRecordTableMoveFocusedCell = (recordTableId?: string) => {
     [recordIndexAllRecordIdsSelector, focusRecordTableCell, focusPositionState],
   );
 
-  const numberOfTableColumnsSelector = useRecoilComponentCallbackStateV2(
+  const numberOfTableColumnsSelector = useRecoilComponentCallbackState(
     numberOfTableColumnsComponentSelector,
     recordTableId,
   );

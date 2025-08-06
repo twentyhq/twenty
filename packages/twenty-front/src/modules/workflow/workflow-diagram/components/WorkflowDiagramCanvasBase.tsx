@@ -1,11 +1,13 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
 import { useListenToSidePanelClosing } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelClosing';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
+import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu';
+import { useIsEdgeHovered } from '@/workflow/workflow-diagram/hooks/useIsEdgeHovered';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
@@ -18,23 +20,25 @@ import {
   WorkflowDiagramNode,
   WorkflowDiagramNodeType,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
   Background,
+  Connection,
   EdgeChange,
   EdgeProps,
   FitViewOptions,
   NodeChange,
   NodeProps,
+  OnBeforeDelete,
+  OnNodeDrag,
   ReactFlow,
   applyEdgeChanges,
   applyNodeChanges,
   useReactFlow,
-  Connection,
-  OnNodeDrag,
-  OnBeforeDelete,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, {
@@ -49,11 +53,7 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
 import { THEME_COMMON } from 'twenty-ui/theme';
-import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated/graphql';
-import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
-import { useIsEdgeHovered } from '@/workflow/workflow-diagram/hooks/useIsEdgeHovered';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -163,29 +163,29 @@ export const WorkflowDiagramCanvasBase = ({
 
   const reactflow = useReactFlow();
 
-  const workflowDiagram = useRecoilComponentValueV2(
+  const workflowDiagram = useRecoilComponentValue(
     workflowDiagramComponentState,
   );
-  const workflowDiagramPanOnDrag = useRecoilComponentValueV2(
+  const workflowDiagramPanOnDrag = useRecoilComponentValue(
     workflowDiagramPanOnDragComponentState,
   );
-  const workflowDiagramState = useRecoilComponentCallbackStateV2(
+  const workflowDiagramState = useRecoilComponentCallbackState(
     workflowDiagramComponentState,
   );
-  const setWorkflowDiagram = useSetRecoilComponentStateV2(
+  const setWorkflowDiagram = useSetRecoilComponentState(
     workflowDiagramComponentState,
   );
-  const setWorkflowInsertStepIds = useSetRecoilComponentStateV2(
+  const setWorkflowInsertStepIds = useSetRecoilComponentState(
     workflowInsertStepIdsComponentState,
   );
-  const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
+  const setWorkflowSelectedNode = useSetRecoilComponentState(
     workflowSelectedNodeComponentState,
   );
   const workflowDiagramWaitingNodesDimensionsState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       workflowDiagramWaitingNodesDimensionsComponentState,
     );
-  const setWorkflowDiagramWaitingNodesDimensions = useSetRecoilComponentStateV2(
+  const setWorkflowDiagramWaitingNodesDimensions = useSetRecoilComponentState(
     workflowDiagramWaitingNodesDimensionsComponentState,
   );
 

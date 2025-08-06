@@ -18,9 +18,9 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 import { IconComponent } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
@@ -63,7 +63,7 @@ export const SingleRecordPickerMenuItems = ({
     selectableListComponentInstanceId,
   );
 
-  const isSelectedSelectNoneButton = useRecoilComponentFamilyValueV2(
+  const isSelectedSelectNoneButton = useRecoilComponentFamilyValue(
     isSelectedItemIdComponentFamilySelector,
     selectableListComponentInstanceId,
     'select-none',
@@ -80,15 +80,15 @@ export const SingleRecordPickerMenuItems = ({
   });
 
   const selectableItemIds = recordsInDropdown.map((entity) => entity.id);
-  const [selectedRecordId, setSelectedRecordId] = useRecoilComponentStateV2(
+  const [selectedRecordId, setSelectedRecordId] = useRecoilComponentState(
     singleRecordPickerSelectedIdComponentState,
   );
 
-  const singleRecordPickerShouldShowSkeleton = useRecoilComponentValueV2(
+  const singleRecordPickerShouldShowSkeleton = useRecoilComponentValue(
     singleRecordPickerShouldShowSkeletonComponentState,
   );
 
-  const singleRecordPickerShouldShowInitialLoading = useRecoilComponentValueV2(
+  const singleRecordPickerShouldShowInitialLoading = useRecoilComponentValue(
     singleRecordPickerShouldShowInitialLoadingComponentState,
   );
 

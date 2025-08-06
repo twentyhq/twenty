@@ -5,7 +5,7 @@ import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/re
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilValue } from 'recoil';
 
 const StyledColumn = styled.div`
@@ -35,7 +35,7 @@ export const RecordBoardColumn = ({
     recordGroupDefinitionFamilyState(recordBoardColumnId),
   );
 
-  const recordIdsByGroup = useRecoilComponentFamilyValueV2(
+  const recordIdsByGroup = useRecoilComponentFamilyValue(
     recordIndexRecordIdsByGroupComponentFamilyState,
     recordBoardColumnId,
   );

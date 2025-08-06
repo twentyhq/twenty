@@ -2,14 +2,14 @@ import { useEffect } from 'react';
 
 import { focusedRecordBoardCardIndexesComponentState } from '@/object-record/record-board/states/focusedRecordBoardCardIndexesComponentState';
 import { isRecordBoardCardFocusActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCardFocusActiveComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const RecordBoardScrollToFocusedCardEffect = () => {
-  const focusedCardIndexes = useRecoilComponentValueV2(
+  const focusedCardIndexes = useRecoilComponentValue(
     focusedRecordBoardCardIndexesComponentState,
   );
 
-  const isFocusActive = useRecoilComponentValueV2(
+  const isFocusActive = useRecoilComponentValue(
     isRecordBoardCardFocusActiveComponentState,
   );
 

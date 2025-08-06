@@ -1,17 +1,17 @@
 /* @license Enterprise */
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
-import { SettingsCustomDomainRecords } from '~/pages/settings/workspace/SettingsCustomDomainRecords';
-import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
 import { useRecoilValue } from 'recoil';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useCheckCustomDomainValidRecords } from '~/pages/settings/workspace/hooks/useCheckCustomDomainValidRecords';
-import { Button, ButtonGroup } from 'twenty-ui/input';
 import { H2Title, IconReload, IconTrash } from 'twenty-ui/display';
+import { Button, ButtonGroup } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { CheckCustomDomainValidRecordsEffect } from '~/pages/settings/workspace/CheckCustomDomainValidRecordsEffect';
+import { SettingsCustomDomainRecords } from '~/pages/settings/workspace/SettingsCustomDomainRecords';
+import { useCheckCustomDomainValidRecords } from '~/pages/settings/workspace/hooks/useCheckCustomDomainValidRecords';
+import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
 
 const StyledDomainFormWrapper = styled.div`
   display: flex;
@@ -68,7 +68,7 @@ export const SettingsCustomDomain = () => {
           name="customDomain"
           control={control}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
-            <TextInputV2
+            <TextInput
               value={value}
               type="text"
               onChange={onChange}

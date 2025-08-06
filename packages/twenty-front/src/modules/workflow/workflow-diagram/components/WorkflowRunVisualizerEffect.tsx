@@ -1,7 +1,7 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
@@ -35,31 +35,31 @@ export const WorkflowRunVisualizerEffect = ({
   const workflowRun = useWorkflowRun({ workflowRunId });
   const workflowVersion = useWorkflowVersion(workflowRun?.workflowVersionId);
 
-  const setWorkflowRunId = useSetRecoilComponentStateV2(
+  const setWorkflowRunId = useSetRecoilComponentState(
     workflowVisualizerWorkflowRunIdComponentState,
   );
-  const workflowVisualizerWorkflowIdState = useRecoilComponentCallbackStateV2(
+  const workflowVisualizerWorkflowIdState = useRecoilComponentCallbackState(
     workflowVisualizerWorkflowIdComponentState,
   );
-  const setWorkflowVisualizerWorkflowId = useSetRecoilComponentStateV2(
+  const setWorkflowVisualizerWorkflowId = useSetRecoilComponentState(
     workflowVisualizerWorkflowIdComponentState,
   );
 
-  const flowState = useRecoilComponentCallbackStateV2(flowComponentState);
-  const workflowDiagramState = useRecoilComponentCallbackStateV2(
+  const flowState = useRecoilComponentCallbackState(flowComponentState);
+  const workflowDiagramState = useRecoilComponentCallbackState(
     workflowDiagramComponentState,
   );
-  const workflowDiagramStatusState = useRecoilComponentCallbackStateV2(
+  const workflowDiagramStatusState = useRecoilComponentCallbackState(
     workflowDiagramStatusComponentState,
   );
-  const workflowRunStepToOpenByDefaultState = useRecoilComponentCallbackStateV2(
+  const workflowRunStepToOpenByDefaultState = useRecoilComponentCallbackState(
     workflowRunStepToOpenByDefaultComponentState,
   );
-  const workflowSelectedNodeState = useRecoilComponentCallbackStateV2(
+  const workflowSelectedNodeState = useRecoilComponentCallbackState(
     workflowSelectedNodeComponentState,
   );
   const workflowRunDiagramAutomaticallyOpenedStepsState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       workflowRunDiagramAutomaticallyOpenedStepsComponentState,
     );
 

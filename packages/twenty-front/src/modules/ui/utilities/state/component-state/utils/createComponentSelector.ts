@@ -2,39 +2,39 @@
 import { selectorFamily } from 'recoil';
 
 import { ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
-import { ComponentReadOnlySelectorV2 } from '@/ui/utilities/state/component-state/types/ComponentReadOnlySelectorV2';
-import { ComponentSelectorV2 } from '@/ui/utilities/state/component-state/types/ComponentSelectorV2';
-import { ComponentStateKeyV2 } from '@/ui/utilities/state/component-state/types/ComponentStateKeyV2';
+import { ComponentReadOnlySelector } from '@/ui/utilities/state/component-state/types/ComponentReadOnlySelector';
+import { ComponentSelector } from '@/ui/utilities/state/component-state/types/ComponentSelector';
+import { ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { SelectorGetter } from '@/ui/utilities/state/types/SelectorGetter';
 import { SelectorSetter } from '@/ui/utilities/state/types/SelectorSetter';
 import { isDefined } from 'twenty-shared/utils';
 
-export function createComponentSelectorV2<ValueType>(options: {
+export function createComponentSelector<ValueType>(options: {
   key: string;
-  get: SelectorGetter<ValueType, ComponentStateKeyV2>;
+  get: SelectorGetter<ValueType, ComponentStateKey>;
   set?: never;
   componentInstanceContext: ComponentInstanceStateContext<any> | null;
-}): ComponentReadOnlySelectorV2<ValueType>;
+}): ComponentReadOnlySelector<ValueType>;
 
-export function createComponentSelectorV2<ValueType>(options: {
+export function createComponentSelector<ValueType>(options: {
   key: string;
-  get: SelectorGetter<ValueType, ComponentStateKeyV2>;
-  set: SelectorSetter<ValueType, ComponentStateKeyV2>;
+  get: SelectorGetter<ValueType, ComponentStateKey>;
+  set: SelectorSetter<ValueType, ComponentStateKey>;
   componentInstanceContext: ComponentInstanceStateContext<any> | null;
-}): ComponentSelectorV2<ValueType>;
+}): ComponentSelector<ValueType>;
 
-export function createComponentSelectorV2<ValueType>({
+export function createComponentSelector<ValueType>({
   key,
   get,
   set,
   componentInstanceContext,
 }: {
   key: string;
-  get: SelectorGetter<ValueType, ComponentStateKeyV2>;
-  set?: SelectorSetter<ValueType, ComponentStateKeyV2>;
+  get: SelectorGetter<ValueType, ComponentStateKey>;
+  set?: SelectorSetter<ValueType, ComponentStateKey>;
   componentInstanceContext: ComponentInstanceStateContext<any> | null;
-}): ComponentSelectorV2<ValueType> | ComponentReadOnlySelectorV2<ValueType> {
+}): ComponentSelector<ValueType> | ComponentReadOnlySelector<ValueType> {
   if (isDefined(componentInstanceContext)) {
     globalComponentInstanceContextMap.set(key, componentInstanceContext);
   }
@@ -43,20 +43,20 @@ export function createComponentSelectorV2<ValueType>({
     return {
       type: 'ComponentSelector',
       key,
-      selectorFamily: selectorFamily<ValueType, ComponentStateKeyV2>({
+      selectorFamily: selectorFamily<ValueType, ComponentStateKey>({
         key,
         get,
         set,
       }),
-    } satisfies ComponentSelectorV2<ValueType>;
+    } satisfies ComponentSelector<ValueType>;
   } else {
     return {
       type: 'ComponentReadOnlySelector',
       key,
-      selectorFamily: selectorFamily<ValueType, ComponentStateKeyV2>({
+      selectorFamily: selectorFamily<ValueType, ComponentStateKey>({
         key,
         get,
       }),
-    } satisfies ComponentReadOnlySelectorV2<ValueType>;
+    } satisfies ComponentReadOnlySelector<ValueType>;
   }
 }
