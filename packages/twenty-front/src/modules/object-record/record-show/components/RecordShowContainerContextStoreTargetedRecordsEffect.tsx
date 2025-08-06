@@ -1,6 +1,6 @@
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useEffect } from 'react';
 
 export const RecordShowContainerContextStoreTargetedRecordsEffect = ({
@@ -8,11 +8,11 @@ export const RecordShowContainerContextStoreTargetedRecordsEffect = ({
 }: {
   recordId: string;
 }) => {
-  const setContextStoreTargetedRecordsRule = useSetRecoilComponentStateV2(
+  const setContextStoreTargetedRecordsRule = useSetRecoilComponentState(
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentStateV2(
+  const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentState(
     contextStoreNumberOfSelectedRecordsComponentState,
   );
 

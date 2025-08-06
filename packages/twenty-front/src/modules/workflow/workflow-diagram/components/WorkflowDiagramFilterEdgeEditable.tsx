@@ -7,13 +7,14 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
+import { useIsEdgeHovered } from '@/workflow/workflow-diagram/hooks/useIsEdgeHovered';
 import { useOpenWorkflowEditFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowEditFilterInCommandMenu';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
@@ -33,7 +34,7 @@ import {
   EdgeProps,
   getBezierPath,
 } from '@xyflow/react';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -76,6 +77,7 @@ const StyledConfiguredFilterContainer = styled.div`
 `;
 
 export const WorkflowDiagramFilterEdgeEditable = ({
+  id,
   source,
   target,
   sourceY,
@@ -97,7 +99,7 @@ export const WorkflowDiagramFilterEdgeEditable = ({
     targetY,
   });
 
-  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
+  const workflowVisualizerWorkflowId = useRecoilComponentValue(
     workflowVisualizerWorkflowIdComponentState,
   );
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
@@ -113,9 +115,9 @@ export const WorkflowDiagramFilterEdgeEditable = ({
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
 
-  const [hovered, setHovered] = useState(false);
+  const { isEdgeHovered } = useIsEdgeHovered();
 
-  const setWorkflowDiagramPanOnDrag = useSetRecoilComponentStateV2(
+  const setWorkflowDiagramPanOnDrag = useSetRecoilComponentState(
     workflowDiagramPanOnDragComponentState,
   );
 
@@ -124,7 +126,7 @@ export const WorkflowDiagramFilterEdgeEditable = ({
     nextStepId: target,
   });
 
-  const workflowSelectedNode = useRecoilComponentValueV2(
+  const workflowSelectedNode = useRecoilComponentValue(
     workflowSelectedNodeComponentState,
   );
 
@@ -133,21 +135,13 @@ export const WorkflowDiagramFilterEdgeEditable = ({
 
   const dropdownId = `${WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}-${source}-${target}`;
 
-  const isDropdownOpen = useRecoilComponentValueV2(
+  const isDropdownOpen = useRecoilComponentValue(
     isDropdownOpenComponentState,
     dropdownId,
   );
 
   const { openWorkflowEditFilterInCommandMenu } =
     useOpenWorkflowEditFilterInCommandMenu();
-
-  const handleMouseEnter = () => {
-    setHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setHovered(false);
-  };
 
   const handleFilterButtonClick = () => {
     if (!isInRightDrawer) {
@@ -162,7 +156,6 @@ export const WorkflowDiagramFilterEdgeEditable = ({
 
   const handleAddNodeButtonClick = () => {
     closeDropdown(dropdownId);
-    setHovered(false);
 
     startNodeCreation({
       parentStepId: data.stepId,
@@ -185,12 +178,10 @@ export const WorkflowDiagramFilterEdgeEditable = ({
           data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
           labelX={labelX}
           labelY={labelY}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
         >
           <WorkflowDiagramEdgeV2VisibilityContainer shouldDisplay>
             <StyledConfiguredFilterContainer>
-              {hovered || isDropdownOpen || isEdgeSelected ? (
+              {isEdgeHovered(id) || isDropdownOpen || isEdgeSelected ? (
                 <StyledIconButtonGroup
                   className="nodrag nopan"
                   iconButtons={[
@@ -249,7 +240,6 @@ export const WorkflowDiagramFilterEdgeEditable = ({
                       LeftIcon={IconFilter}
                       onClick={() => {
                         closeDropdown(dropdownId);
-                        setHovered(false);
 
                         handleFilterButtonClick();
                       }}
@@ -259,7 +249,6 @@ export const WorkflowDiagramFilterEdgeEditable = ({
                       LeftIcon={IconFilterX}
                       onClick={() => {
                         closeDropdown(dropdownId);
-                        setHovered(false);
 
                         if (!isDefined(data.stepId)) {
                           throw new Error(

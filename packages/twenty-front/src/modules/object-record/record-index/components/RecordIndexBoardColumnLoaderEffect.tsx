@@ -6,7 +6,7 @@ import { isRecordBoardFetchingRecordsByColumnFamilyState } from '@/object-record
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { useLoadRecordIndexBoardColumn } from '@/object-record/record-index/hooks/useLoadRecordIndexBoardColumn';
 import { isRecordIndexBoardColumnLoadingFamilyState } from '@/object-record/states/isRecordBoardColumnLoadingFamilyState';
-import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
+import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
 
 export const RecordIndexBoardColumnLoaderEffect = ({
   objectNameSingular,
@@ -19,7 +19,7 @@ export const RecordIndexBoardColumnLoaderEffect = ({
   kanbanFieldMetadataItem: FieldMetadataItem;
   columnId: string;
 }) => {
-  const [shouldFetchMore, setShouldFetchMore] = useRecoilComponentFamilyStateV2(
+  const [shouldFetchMore, setShouldFetchMore] = useRecoilComponentFamilyState(
     recordBoardShouldFetchMoreInColumnComponentFamilyState,
     columnId,
     recordBoardId,

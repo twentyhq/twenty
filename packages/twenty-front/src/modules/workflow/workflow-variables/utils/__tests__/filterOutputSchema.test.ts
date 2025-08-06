@@ -3,189 +3,226 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { filterOutputSchema } from '../filterOutputSchema';
 
 describe('filterOutputSchema', () => {
-  describe('edge cases', () => {
-    it('should return the input schema when objectNameSingularToSelect is undefined', () => {
-      const inputSchema: OutputSchema = {
-        _outputSchemaType: 'RECORD',
-        object: {
-          nameSingular: 'person',
-          fieldIdName: 'id',
-          isLeaf: true,
-          value: 'Fake value',
-          objectMetadataId: '123',
-        },
-        fields: {},
-      };
+  const createRecordSchema = (
+    nameSingular: string,
+    fields = {},
+  ): OutputSchema => ({
+    _outputSchemaType: 'RECORD',
+    object: {
+      nameSingular,
+      fieldIdName: 'id',
+      isLeaf: true,
+      value: 'Fake value',
+      objectMetadataId: '123',
+    },
+    fields,
+  });
 
-      expect(filterOutputSchema(inputSchema, undefined)).toBe(inputSchema);
+  const createBaseSchema = (fields = {}): OutputSchema => ({
+    ...fields,
+  });
+
+  describe('shouldDisplayRecordFields only (true, false)', () => {
+    describe('record schema', () => {
+      it('should return the input schema unchanged', () => {
+        const inputSchema = createRecordSchema('person', {
+          name: { isLeaf: true, value: 'string' },
+          id: { isLeaf: true, type: FieldMetadataType.UUID },
+        });
+
+        expect(
+          filterOutputSchema({
+            shouldDisplayRecordFields: true,
+            shouldDisplayRecordObjects: false,
+            outputSchema: inputSchema,
+          }),
+        ).toBe(inputSchema);
+      });
+
+      it('should return undefined when input schema is undefined', () => {
+        expect(
+          filterOutputSchema({
+            shouldDisplayRecordFields: true,
+            shouldDisplayRecordObjects: false,
+            outputSchema: undefined,
+          }),
+        ).toBeUndefined();
+      });
     });
 
-    it('should return undefined when input schema is undefined', () => {
-      expect(filterOutputSchema(undefined, 'person')).toBeUndefined();
+    describe('base schema', () => {
+      it('should return the input schema unchanged', () => {
+        const inputSchema = createBaseSchema({
+          field1: { isLeaf: true, value: 'string' },
+          field2: { isLeaf: true, type: FieldMetadataType.NUMBER },
+        });
+
+        expect(
+          filterOutputSchema({
+            shouldDisplayRecordFields: true,
+            shouldDisplayRecordObjects: false,
+            outputSchema: inputSchema,
+          }),
+        ).toBe(inputSchema);
+      });
     });
   });
 
-  describe('record output schema', () => {
-    const createRecordSchema = (
-      nameSingular: string,
-      fields = {},
-    ): OutputSchema => ({
-      _outputSchemaType: 'RECORD',
-      object: {
-        nameSingular,
-        fieldIdName: 'id',
-        isLeaf: true,
-        value: 'Fake value',
-        objectMetadataId: '123',
-      },
-      fields,
-    });
-
-    it('should keep a matching record schema', () => {
-      const inputSchema = createRecordSchema('person');
-
-      expect(filterOutputSchema(inputSchema, 'person')).toEqual(inputSchema);
-    });
-
-    it('should filter out a non-matching record schema with no valid fields', () => {
-      const inputSchema = createRecordSchema('company');
-
-      expect(filterOutputSchema(inputSchema, 'person')).toBeUndefined();
-    });
-
-    it('should keep valid nested records while filtering out invalid ones', () => {
-      const inputSchema = createRecordSchema('company', {
-        employee: {
-          isLeaf: false,
-          value: createRecordSchema('person', {
-            manager: {
-              isLeaf: false,
-              value: createRecordSchema('person'),
-            },
-          }),
-        },
-        department: {
-          isLeaf: false,
-          value: createRecordSchema('department'),
-        },
-      });
-
-      const expectedSchema = {
-        _outputSchemaType: 'RECORD',
-        fields: {
+  describe('shouldDisplayRecordObjects only (false, true)', () => {
+    describe('record schema', () => {
+      it('should keep record schema with object and filter compatible fields', () => {
+        const inputSchema = createRecordSchema('person', {
+          name: { isLeaf: true, value: 'string' },
+          id: { isLeaf: true, type: FieldMetadataType.UUID },
           employee: {
             isLeaf: false,
-            value: createRecordSchema('person', {
-              manager: {
-                isLeaf: false,
-                value: createRecordSchema('person'),
-              },
-            }),
+            value: createRecordSchema('employee'),
           },
-        },
-      };
+        });
 
-      expect(filterOutputSchema(inputSchema, 'person')).toEqual(expectedSchema);
-    });
-
-    it('should ignore leaf fields that are field metadata types', () => {
-      const inputSchema = createRecordSchema('company', {
-        name: { isLeaf: true, value: 'string' },
-        id: { isLeaf: true, type: FieldMetadataType.UUID },
-        employee: {
-          isLeaf: false,
-          value: createRecordSchema('person'),
-        },
-      });
-
-      const expectedSchema = {
-        _outputSchemaType: 'RECORD',
-        fields: {
+        const expectedSchema = createRecordSchema('person', {
           name: { isLeaf: true, value: 'string' },
           employee: {
             isLeaf: false,
+            value: createRecordSchema('employee'),
+          },
+        });
+
+        expect(
+          filterOutputSchema({
+            shouldDisplayRecordFields: false,
+            shouldDisplayRecordObjects: true,
+            outputSchema: inputSchema,
+          }),
+        ).toEqual(expectedSchema);
+      });
+
+      it('should return undefined for record schema without object and no valid fields', () => {
+        const inputSchema = {
+          _outputSchemaType: 'RECORD',
+          fields: {
+            invalidField: { isLeaf: true, type: FieldMetadataType.NUMBER },
+          },
+        } as any;
+
+        expect(
+          filterOutputSchema({
+            shouldDisplayRecordFields: false,
+            shouldDisplayRecordObjects: true,
+            outputSchema: inputSchema,
+          }),
+        ).toBeUndefined();
+      });
+    });
+
+    describe('base schema', () => {
+      it('should keep base schema with valid nested records', () => {
+        const inputSchema = createBaseSchema({
+          field1: {
+            isLeaf: false,
             value: createRecordSchema('person'),
           },
-        },
-      };
+          field2: { isLeaf: true, type: FieldMetadataType.NUMBER },
+        });
 
-      expect(filterOutputSchema(inputSchema, 'person')).toEqual(expectedSchema);
+        const expectedSchema = {
+          field1: {
+            isLeaf: false,
+            value: createRecordSchema('person'),
+          },
+        };
+
+        expect(
+          filterOutputSchema({
+            shouldDisplayRecordFields: false,
+            shouldDisplayRecordObjects: true,
+            outputSchema: inputSchema,
+          }),
+        ).toEqual(expectedSchema);
+      });
+
+      it('should return undefined for base schema with no valid records', () => {
+        const inputSchema = createBaseSchema({
+          field1: { isLeaf: true, type: FieldMetadataType.NUMBER },
+          field2: { isLeaf: true, type: FieldMetadataType.BOOLEAN },
+        });
+
+        expect(
+          filterOutputSchema({
+            shouldDisplayRecordFields: false,
+            shouldDisplayRecordObjects: true,
+            outputSchema: inputSchema,
+          }),
+        ).toBeUndefined();
+      });
     });
   });
 
-  describe('base output schema', () => {
-    const createBaseSchema = (fields = {}): OutputSchema => ({
-      ...fields,
+  describe('both shouldDisplayRecordFields and shouldDisplayRecordObjects (true, true)', () => {
+    it('should return the input schema unchanged for record schema', () => {
+      const inputSchema = createRecordSchema('person', {
+        name: { isLeaf: true, value: 'string' },
+        id: { isLeaf: true, type: FieldMetadataType.UUID },
+      });
+
+      expect(
+        filterOutputSchema({
+          shouldDisplayRecordFields: true,
+          shouldDisplayRecordObjects: true,
+          outputSchema: inputSchema,
+        }),
+      ).toBe(inputSchema);
     });
 
-    it('should filter out base schema with no valid records', () => {
+    it('should return the input schema unchanged for base schema', () => {
       const inputSchema = createBaseSchema({
-        field1: {
-          isLeaf: true,
-          type: FieldMetadataType.TEXT,
-          value: 'string',
-        },
+        field1: { isLeaf: true, value: 'string' },
+        field2: { isLeaf: true, type: FieldMetadataType.NUMBER },
       });
 
-      expect(filterOutputSchema(inputSchema, 'person')).toBeUndefined();
+      expect(
+        filterOutputSchema({
+          shouldDisplayRecordFields: true,
+          shouldDisplayRecordObjects: true,
+          outputSchema: inputSchema,
+        }),
+      ).toBe(inputSchema);
     });
 
-    it('should keep base schema with valid nested records', () => {
-      const inputSchema = createBaseSchema({
-        field1: {
-          isLeaf: false,
-          value: {
-            _outputSchemaType: 'RECORD',
-            object: { nameSingular: 'person' },
-            fields: {},
-          },
-        },
+    it('should return undefined when input schema is undefined', () => {
+      expect(
+        filterOutputSchema({
+          shouldDisplayRecordFields: true,
+          shouldDisplayRecordObjects: true,
+          outputSchema: undefined,
+        }),
+      ).toBeUndefined();
+    });
+  });
+
+  describe('both shouldDisplayRecordFields and shouldDisplayRecordObjects false (false, false)', () => {
+    it('should return the input schema unchanged', () => {
+      const inputSchema = createRecordSchema('person', {
+        name: { isLeaf: true, value: 'string' },
       });
 
-      expect(filterOutputSchema(inputSchema, 'person')).toEqual({
-        field1: {
-          isLeaf: false,
-          value: {
-            _outputSchemaType: 'RECORD',
-            object: { nameSingular: 'person' },
-            fields: {},
-          },
-        },
-      });
+      expect(
+        filterOutputSchema({
+          shouldDisplayRecordFields: false,
+          shouldDisplayRecordObjects: false,
+          outputSchema: inputSchema,
+        }),
+      ).toBe(inputSchema);
     });
 
-    it('should handle deeply nested valid records', () => {
-      const inputSchema = createBaseSchema({
-        level1: {
-          isLeaf: false,
-          value: createBaseSchema({
-            level2: {
-              isLeaf: false,
-              value: {
-                _outputSchemaType: 'RECORD',
-                object: { nameSingular: 'person' },
-                fields: {},
-              },
-            },
-          }),
-        },
-      });
-
-      expect(filterOutputSchema(inputSchema, 'person')).toEqual({
-        level1: {
-          isLeaf: false,
-          value: {
-            level2: {
-              isLeaf: false,
-              value: {
-                _outputSchemaType: 'RECORD',
-                object: { nameSingular: 'person' },
-                fields: {},
-              },
-            },
-          },
-        },
-      });
+    it('should return undefined when input schema is undefined', () => {
+      expect(
+        filterOutputSchema({
+          shouldDisplayRecordFields: false,
+          shouldDisplayRecordObjects: false,
+          outputSchema: undefined,
+        }),
+      ).toBeUndefined();
     });
   });
 });

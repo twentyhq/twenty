@@ -5,7 +5,7 @@ import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { IconPlus } from 'twenty-ui/display';
@@ -15,7 +15,7 @@ export const RecordTableRecordGroupSectionAddNew = () => {
 
   const currentRecordGroupId = useCurrentRecordGroupId();
 
-  const recordIds = useRecoilComponentValueV2(
+  const recordIds = useRecoilComponentValue(
     recordIndexAllRecordIdsComponentSelector,
   );
 

@@ -2153,7 +2153,7 @@ msgid "Statuses cannot be set manually."
 msgstr "Οι καταστάσεις δεν μπορούν να οριστούν με το χέρι."
 
 #. js-lingui-id: u+rv4L
-#: src/modules/workflow/workflow-builder/workflow-step/workflow-version-step.workspace-service.ts
+#: src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service.ts
 msgid "Step is not a form"
 msgstr "Το βήμα δεν είναι φόρμα"
 
@@ -2584,6 +2584,11 @@ msgstr "Ο χρήστης δεν αποτελεί μέρος του χώρου �
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User time zone"
 msgstr "Ζώνη ώρας χρήστη"
+
+#. js-lingui-id: VkcC68
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "User was not created with email/password"
+msgstr ""
 
 #. js-lingui-id: 43zCwQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts

@@ -1,16 +1,16 @@
 import { useRemoveRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useRemoveRecordFilterGroup';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRemoveRootRecordFilterGroupIfEmpty = () => {
   const currentRecordFilterGroupsCallbackState =
-    useRecoilComponentCallbackStateV2(currentRecordFilterGroupsComponentState);
+    useRecoilComponentCallbackState(currentRecordFilterGroupsComponentState);
 
-  const currentRecordFiltersCallbackState = useRecoilComponentCallbackStateV2(
+  const currentRecordFiltersCallbackState = useRecoilComponentCallbackState(
     currentRecordFiltersComponentState,
   );
 

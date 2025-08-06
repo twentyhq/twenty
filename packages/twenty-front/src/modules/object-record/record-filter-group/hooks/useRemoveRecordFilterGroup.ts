@@ -1,13 +1,13 @@
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 export const useRemoveRecordFilterGroup = () => {
   const currentRecordFilterGroupsCallbackState =
-    useRecoilComponentCallbackStateV2(currentRecordFilterGroupsComponentState);
+    useRecoilComponentCallbackState(currentRecordFilterGroupsComponentState);
 
   const { onUpdate } = useContext(AdvancedFilterContext);
 

@@ -1,9 +1,9 @@
 import { ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
-import { ComponentStateKeyV2 } from '@/ui/utilities/state/component-state/types/ComponentStateKeyV2';
+import { ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
 import { createContext } from 'react';
 
 export const createComponentInstanceContext = <
-  T extends ComponentStateKeyV2 = ComponentStateKeyV2,
+  T extends ComponentStateKey = ComponentStateKey,
 >(
   initialValue?: T,
 ) => {

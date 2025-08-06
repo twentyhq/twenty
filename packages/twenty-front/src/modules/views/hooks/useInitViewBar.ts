@@ -1,14 +1,14 @@
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { availableFieldDefinitionsComponentState } from '@/views/states/availableFieldDefinitionsComponentState';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
 
 export const useInitViewBar = (viewBarInstanceId?: string) => {
-  const setAvailableFieldDefinitions = useSetRecoilComponentStateV2(
+  const setAvailableFieldDefinitions = useSetRecoilComponentState(
     availableFieldDefinitionsComponentState,
     viewBarInstanceId,
   );
 
-  const setViewObjectMetadataId = useSetRecoilComponentStateV2(
+  const setViewObjectMetadataId = useSetRecoilComponentState(
     viewObjectMetadataIdComponentState,
     viewBarInstanceId,
   );

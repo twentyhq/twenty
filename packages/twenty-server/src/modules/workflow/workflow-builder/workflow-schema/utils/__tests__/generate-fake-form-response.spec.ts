@@ -56,92 +56,84 @@ describe('generateFakeFormResponse', () => {
       objectMetadataMaps: mockObjectMetadataMaps,
     });
 
-    expect(result).toMatchInlineSnapshot(`
-{
-  "age": {
-    "fieldMetadataId": undefined,
-    "icon": undefined,
-    "isLeaf": true,
-    "label": "Age",
-    "type": "NUMBER",
-    "value": 20,
-  },
-  "company": {
-    "isLeaf": false,
-    "label": "Company",
-    "value": {
-      "_outputSchemaType": "RECORD",
-      "fields": {
-        "domainName": {
-          "fieldMetadataId": "domainNameFieldMetadataId",
-          "icon": "test-field-icon",
-          "isLeaf": false,
-          "label": "Domain Name",
-          "type": "LINKS",
-          "value": {
-            "primaryLinkLabel": {
-              "fieldMetadataId": "domainNameFieldMetadataId",
-              "isCompositeSubField": true,
-              "isLeaf": true,
-              "label": "Primary Link Label",
-              "type": "TEXT",
-              "value": "My text",
+    expect(result).toEqual({
+      age: {
+        isLeaf: true,
+        label: 'Age',
+        type: 'NUMBER',
+        value: 20,
+      },
+      company: {
+        isLeaf: false,
+        label: 'Company',
+        value: {
+          _outputSchemaType: 'RECORD',
+          fields: {
+            domainName: {
+              fieldMetadataId: 'domainNameFieldMetadataId',
+              icon: 'test-field-icon',
+              isLeaf: false,
+              label: 'Domain Name',
+              type: 'LINKS',
+              value: {
+                primaryLinkLabel: {
+                  fieldMetadataId: 'domainNameFieldMetadataId',
+                  isCompositeSubField: true,
+                  isLeaf: true,
+                  label: 'Primary Link Label',
+                  type: 'TEXT',
+                  value: 'My text',
+                },
+                primaryLinkUrl: {
+                  fieldMetadataId: 'domainNameFieldMetadataId',
+                  isCompositeSubField: true,
+                  isLeaf: true,
+                  label: 'Primary Link Url',
+                  type: 'TEXT',
+                  value: 'My text',
+                },
+                secondaryLinks: {
+                  fieldMetadataId: 'domainNameFieldMetadataId',
+                  isCompositeSubField: true,
+                  isLeaf: true,
+                  label: 'Secondary Links',
+                  type: 'RAW_JSON',
+                  value: null,
+                },
+              },
             },
-            "primaryLinkUrl": {
-              "fieldMetadataId": "domainNameFieldMetadataId",
-              "isCompositeSubField": true,
-              "isLeaf": true,
-              "label": "Primary Link Url",
-              "type": "TEXT",
-              "value": "My text",
-            },
-            "secondaryLinks": {
-              "fieldMetadataId": "domainNameFieldMetadataId",
-              "isCompositeSubField": true,
-              "isLeaf": true,
-              "label": "Secondary Links",
-              "type": "RAW_JSON",
-              "value": null,
+            name: {
+              fieldMetadataId: 'nameFieldMetadataId',
+              icon: 'test-field-icon',
+              isLeaf: true,
+              label: 'Name',
+              type: 'TEXT',
+              value: 'My text',
             },
           },
-        },
-        "name": {
-          "fieldMetadataId": "nameFieldMetadataId",
-          "icon": "test-field-icon",
-          "isLeaf": true,
-          "label": "Name",
-          "type": "TEXT",
-          "value": "My text",
+          object: {
+            fieldIdName: 'id',
+            icon: 'test-company-icon',
+            isLeaf: true,
+            label: 'Company',
+            nameSingular: 'company',
+            objectMetadataId: '20202020-c03c-45d6-a4b0-04afe1357c5c',
+            value: 'A company',
+          },
         },
       },
-      "object": {
-        "fieldIdName": "id",
-        "icon": "test-company-icon",
-        "isLeaf": true,
-        "label": "Company",
-        "nameSingular": "company",
-        "objectMetadataId": "20202020-c03c-45d6-a4b0-04afe1357c5c",
-        "value": "A company",
+      date: {
+        isLeaf: true,
+        label: 'Date',
+        type: 'DATE',
+        value: 'mm/dd/yyyy',
       },
-    },
-  },
-  "date": {
-    "fieldMetadataId": undefined,
-    "icon": undefined,
-    "isLeaf": true,
-    "label": "Date",
-    "type": "DATE",
-    "value": "mm/dd/yyyy",
-  },
-  "name": {
-    "fieldMetadataId": undefined,
-    "icon": undefined,
-    "isLeaf": true,
-    "label": "Name",
-    "type": "TEXT",
-    "value": "My text",
-  },
-}
-`);
+      name: {
+        isLeaf: true,
+        label: 'Name',
+        type: 'TEXT',
+        value: 'My text',
+      },
+    });
   });
 });

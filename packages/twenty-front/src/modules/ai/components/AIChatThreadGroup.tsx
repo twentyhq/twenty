@@ -1,6 +1,6 @@
 import { currentAIChatThreadComponentState } from '@/ai/states/currentAIChatThreadComponentState';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -77,7 +77,7 @@ export const AIChatThreadGroup = ({
 }) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const [, setCurrentThreadId] = useRecoilComponentStateV2(
+  const [, setCurrentThreadId] = useRecoilComponentState(
     currentAIChatThreadComponentState,
     agentId,
   );

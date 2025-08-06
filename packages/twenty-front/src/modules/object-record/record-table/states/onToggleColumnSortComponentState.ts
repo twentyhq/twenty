@@ -1,7 +1,7 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
-export const onToggleColumnSortComponentState = createComponentStateV2<
+export const onToggleColumnSortComponentState = createComponentState<
   ((fieldMetadataId: string) => void) | undefined
 >({
   key: 'onToggleColumnSortComponentState',

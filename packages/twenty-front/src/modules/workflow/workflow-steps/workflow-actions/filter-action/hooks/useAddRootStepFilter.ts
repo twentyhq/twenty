@@ -1,5 +1,5 @@
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/currentStepFilterGroupsComponentState';
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/currentStepFiltersComponentState';
@@ -19,21 +19,21 @@ export const useAddRootStepFilter = () => {
   const { stepId, onFilterSettingsUpdate } = useContext(
     WorkflowStepFilterContext,
   );
-  const currentStepFilterGroupsCallbackState =
-    useRecoilComponentCallbackStateV2(currentStepFilterGroupsComponentState);
+  const currentStepFilterGroupsCallbackState = useRecoilComponentCallbackState(
+    currentStepFilterGroupsComponentState,
+  );
 
-  const currentStepFiltersCallbackState = useRecoilComponentCallbackStateV2(
+  const currentStepFiltersCallbackState = useRecoilComponentCallbackState(
     currentStepFiltersComponentState,
   );
 
-  const setHasInitializedCurrentStepFilters =
-    useSetRecoilComponentFamilyStateV2(
-      hasInitializedCurrentStepFiltersComponentFamilyState,
-      { stepId },
-    );
+  const setHasInitializedCurrentStepFilters = useSetRecoilComponentFamilyState(
+    hasInitializedCurrentStepFiltersComponentFamilyState,
+    { stepId },
+  );
 
   const setHasInitializedCurrentStepFilterGroups =
-    useSetRecoilComponentFamilyStateV2(
+    useSetRecoilComponentFamilyState(
       hasInitializedCurrentStepFilterGroupsComponentFamilyState,
       { stepId },
     );

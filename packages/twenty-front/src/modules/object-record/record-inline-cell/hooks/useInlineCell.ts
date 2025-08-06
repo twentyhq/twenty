@@ -3,7 +3,7 @@ import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 
-import { useInitDraftValueV2 } from '@/object-record/record-field/hooks/useInitDraftValueV2';
+import { useInitDraftValue } from '@/object-record/record-field/hooks/useInitDraftValue';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
@@ -33,7 +33,7 @@ export const useInlineCell = (
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
-  const initFieldInputDraftValue = useInitDraftValueV2();
+  const initFieldInputDraftValue = useInitDraftValue();
 
   const closeInlineCell = () => {
     onCloseEditMode?.();

@@ -5,12 +5,10 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 
 import { dialogInternalComponentState } from '@/ui/feedback/dialog-manager/states/dialogInternalComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const DialogManagerEffect = () => {
-  const dialogInternal = useRecoilComponentValueV2(
-    dialogInternalComponentState,
-  );
+  const dialogInternal = useRecoilComponentValue(dialogInternalComponentState);
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 

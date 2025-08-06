@@ -1,5 +1,5 @@
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
@@ -23,16 +23,16 @@ export const WorkflowDiagramEffect = ({
 }: {
   workflowWithCurrentVersion: WorkflowWithCurrentVersion | undefined;
 }) => {
-  const workflowDiagramState = useRecoilComponentCallbackStateV2(
+  const workflowDiagramState = useRecoilComponentCallbackState(
     workflowDiagramComponentState,
   );
-  const setWorkflowDiagram = useSetRecoilComponentStateV2(
+  const setWorkflowDiagram = useSetRecoilComponentState(
     workflowDiagramComponentState,
   );
-  const setFlow = useSetRecoilComponentStateV2(flowComponentState);
+  const setFlow = useSetRecoilComponentState(flowComponentState);
   const { populateStepsOutputSchema } = useStepsOutputSchema();
 
-  const workflowLastCreatedStepIdState = useRecoilComponentCallbackStateV2(
+  const workflowLastCreatedStepIdState = useRecoilComponentCallbackState(
     workflowLastCreatedStepIdComponentState,
   );
 

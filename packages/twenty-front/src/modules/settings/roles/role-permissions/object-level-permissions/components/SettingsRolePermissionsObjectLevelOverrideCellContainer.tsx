@@ -1,7 +1,7 @@
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING } from '@/settings/roles/role-permissions/objects-permissions/constants/settingsRoleObjectLevelPermissionToRoleObjectPermissionMapping';
 import { SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/settingsRoleObjectPermissionIconConfig';
 import styled from '@emotion/styled';
-import { ObjectPermission } from '~/generated/graphql';
 import { SettingsRolePermissionsObjectLevelOverrideCell } from './SettingsRolePermissionsObjectLevelOverrideCell';
 
 const StyledSettingsRolePermissionsObjectLevelOverrideCell = styled.div`
@@ -10,13 +10,13 @@ const StyledSettingsRolePermissionsObjectLevelOverrideCell = styled.div`
 `;
 
 type SettingsRolePermissionsObjectLevelOverrideCellContainerProps = {
-  objectPermissions: ObjectPermission;
+  objectMetadataItem: ObjectMetadataItem;
   roleId: string;
   objectLabel: string;
 };
 
 export const SettingsRolePermissionsObjectLevelOverrideCellContainer = ({
-  objectPermissions,
+  objectMetadataItem,
   roleId,
   objectLabel,
 }: SettingsRolePermissionsObjectLevelOverrideCellContainerProps) => {
@@ -31,7 +31,7 @@ export const SettingsRolePermissionsObjectLevelOverrideCellContainer = ({
         return (
           <SettingsRolePermissionsObjectLevelOverrideCell
             key={permissionKey}
-            objectPermissions={objectPermissions}
+            objectMetadataItem={objectMetadataItem}
             objectPermissionKey={permissionKey}
             roleId={roleId}
             objectLabel={objectLabel}

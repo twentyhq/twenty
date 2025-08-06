@@ -5,7 +5,7 @@ import { RecoilRoot } from 'recoil';
 import { useSingleRecordPickerSearch } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerSearch';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 const instanceId = 'instanceId';
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -19,7 +19,7 @@ describe('useSingleRecordPickerRecords', () => {
     const { result } = renderHook(
       () => {
         const recordSelectSearchHook = useSingleRecordPickerSearch(instanceId);
-        const internallyStoredFilter = useRecoilComponentValueV2(
+        const internallyStoredFilter = useRecoilComponentValue(
           singleRecordPickerSearchFilterComponentState,
           instanceId,
         );

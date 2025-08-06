@@ -8,7 +8,7 @@ import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/r
 import { useResetFocusStackToRecordIndex } from '@/object-record/record-index/hooks/useResetFocusStackToRecordIndex';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const RecordBoardBodyEscapeHotkeyEffect = () => {
   const { recordBoardId } = useContext(RecordBoardContext);
@@ -17,7 +17,7 @@ export const RecordBoardBodyEscapeHotkeyEffect = () => {
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
   const { resetFocusStackToRecordIndex } = useResetFocusStackToRecordIndex();
 
-  const selectedRecordIds = useRecoilComponentValueV2(
+  const selectedRecordIds = useRecoilComponentValue(
     recordBoardSelectedRecordIdsComponentSelector,
     recordBoardId,
   );

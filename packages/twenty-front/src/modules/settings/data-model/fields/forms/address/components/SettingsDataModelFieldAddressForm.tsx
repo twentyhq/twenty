@@ -1,3 +1,4 @@
+import { Separator } from '@/settings/components/Separator';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -120,6 +121,7 @@ export const SettingsDataModelFieldAddressForm = ({
           );
         }}
       />
+      <Separator />
       <Controller
         name="settings.subFields"
         defaultValue={initialDisplaySubFields}
@@ -150,6 +152,7 @@ export const SettingsDataModelFieldAddressForm = ({
                   },
                   Icon: IconRefresh,
                 }}
+                selectSizeVariant="small"
               />
             </SettingsOptionCardContentSelect>
           );

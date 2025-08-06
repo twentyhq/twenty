@@ -4,7 +4,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -31,7 +31,7 @@ export const ActionDropdownItem = ({
     SelectableListComponentInstanceContext,
   );
 
-  const isSelected = useRecoilComponentFamilyValueV2(
+  const isSelected = useRecoilComponentFamilyValue(
     isSelectedItemIdComponentFamilySelector,
     action.key,
     selectableListInstanceId,

@@ -13,8 +13,8 @@ import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/typ
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilCallback } from 'recoil';
 
 type MultipleRecordPickerMenuItemsProps = {
@@ -33,13 +33,13 @@ export const MultipleRecordPickerMenuItems = ({
   const selectableListComponentInstanceId =
     getMultipleRecordPickerSelectableListId(componentInstanceId);
 
-  const pickableRecordIds = useRecoilComponentValueV2(
+  const pickableRecordIds = useRecoilComponentValue(
     multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector,
     componentInstanceId,
   );
 
   const multipleRecordPickerPickableMorphItemsState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       multipleRecordPickerPickableMorphItemsComponentState,
       componentInstanceId,
     );
@@ -69,12 +69,11 @@ export const MultipleRecordPickerMenuItems = ({
     [multipleRecordPickerPickableMorphItemsState],
   );
 
-  const multipleRecordPickerShouldShowInitialLoading =
-    useRecoilComponentValueV2(
-      multipleRecordPickerShouldShowInitialLoadingComponentState,
-    );
+  const multipleRecordPickerShouldShowInitialLoading = useRecoilComponentValue(
+    multipleRecordPickerShouldShowInitialLoadingComponentState,
+  );
 
-  const multipleRecordPickerShouldShowSkeleton = useRecoilComponentValueV2(
+  const multipleRecordPickerShouldShowSkeleton = useRecoilComponentValue(
     multipleRecordPickerShouldShowSkeletonComponentState,
   );
 

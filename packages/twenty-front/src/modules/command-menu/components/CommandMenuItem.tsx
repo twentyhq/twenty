@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { ReactNode } from 'react';
 import { IconArrowUpRight, IconComponent } from 'twenty-ui/display';
 import { MenuItemCommand } from 'twenty-ui/navigation';
@@ -34,7 +34,7 @@ export const CommandMenuItem = ({
     Icon = IconArrowUpRight;
   }
 
-  const isSelectedItemId = useRecoilComponentFamilyValueV2(
+  const isSelectedItemId = useRecoilComponentFamilyValue(
     isSelectedItemIdComponentFamilySelector,
     id,
   );

@@ -7,7 +7,7 @@ import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 const dropdownId = 'test-dropdown-id';
 const outsideDropdownId = 'test-dropdown-id-outside';
@@ -31,12 +31,12 @@ describe('useCloseDropdown', () => {
   it('should close dropdown from inside component instance context', async () => {
     const { result } = renderHook(
       () => {
-        const isOutsideDropdownOpen = useRecoilComponentValueV2(
+        const isOutsideDropdownOpen = useRecoilComponentValue(
           isDropdownOpenComponentState,
           outsideDropdownId,
         );
 
-        const isInsideDropdownOpen = useRecoilComponentValueV2(
+        const isInsideDropdownOpen = useRecoilComponentValue(
           isDropdownOpenComponentState,
         );
 
@@ -73,12 +73,12 @@ describe('useCloseDropdown', () => {
   it('should close dropdown from outside component instance context', async () => {
     const { result } = renderHook(
       () => {
-        const isOutsideDropdownOpen = useRecoilComponentValueV2(
+        const isOutsideDropdownOpen = useRecoilComponentValue(
           isDropdownOpenComponentState,
           outsideDropdownId,
         );
 
-        const isInsideDropdownOpen = useRecoilComponentValueV2(
+        const isInsideDropdownOpen = useRecoilComponentValue(
           isDropdownOpenComponentState,
         );
 

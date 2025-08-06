@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Entity } from '@microsoft/microsoft-graph-types';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { ObjectLiteral } from 'typeorm';
+import { resolveInput } from 'twenty-shared/utils';
 
 import {
   ObjectRecordFilter,
@@ -24,7 +25,6 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
-import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 import {
   RecordCRUDActionException,
   RecordCRUDActionExceptionCode,

@@ -98,6 +98,7 @@
     "hex-rgb": "^5.0.0",
     "iframe-resizer-react": "^1.1.0",
     "imapflow": "^1.0.186",
+    "immer": "^10.1.1",
     "jest-mock-extended": "^3.0.4",
     "js-cookie": "^3.0.5",
     "json-2-csv": "^5.4.0",

@@ -2153,7 +2153,7 @@ msgid "Statuses cannot be set manually."
 msgstr "'Trạng thái không thể được đặt thủ công.'"
 
 #. js-lingui-id: u+rv4L
-#: src/modules/workflow/workflow-builder/workflow-step/workflow-version-step.workspace-service.ts
+#: src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service.ts
 msgid "Step is not a form"
 msgstr "Bước không phải là một biểu mẫu"
 
@@ -2584,6 +2584,11 @@ msgstr "Người dùng không phải là một phần của không gian làm vi�
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User time zone"
 msgstr "Múi giờ người dùng"
+
+#. js-lingui-id: VkcC68
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "User was not created with email/password"
+msgstr ""
 
 #. js-lingui-id: 43zCwQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts

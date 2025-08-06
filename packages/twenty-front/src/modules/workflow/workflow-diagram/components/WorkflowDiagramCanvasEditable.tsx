@@ -1,4 +1,4 @@
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { WorkflowDiagramBlankEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramBlankEdge';
 import { WorkflowDiagramCanvasBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasBase';
@@ -31,11 +31,11 @@ export const WorkflowDiagramCanvasEditable = ({
     workflowVersionStatus: workflowWithCurrentVersion.currentVersion.status,
   });
 
-  const setWorkflowDiagram = useSetRecoilComponentStateV2(
+  const setWorkflowDiagram = useSetRecoilComponentState(
     workflowDiagramComponentState,
   );
 
-  const setWorkflowDiagramRightClickMenuPosition = useSetRecoilComponentStateV2(
+  const setWorkflowDiagramRightClickMenuPosition = useSetRecoilComponentState(
     workflowDiagramRightClickMenuPositionState,
   );
 
@@ -133,6 +133,7 @@ export const WorkflowDiagramCanvasEditable = ({
         onNodeDragStop={onNodeDragStop}
         handlePaneContextMenu={handlePaneContextMenu}
         nodesConnectable
+        nodesDraggable
         onDeleteEdge={onDeleteEdge}
       />
     </ReactFlowProvider>
