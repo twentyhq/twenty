@@ -190,6 +190,10 @@ export class FieldPermissionService {
       throw new PermissionsException(
         PermissionsExceptionMessage.ONLY_FIELD_RESTRICTION_ALLOWED,
         PermissionsExceptionCode.ONLY_FIELD_RESTRICTION_ALLOWED,
+        {
+          userFriendlyMessage:
+            'Field permissions can only be used to restrict access, not to grant additional permissions.',
+        },
       );
     }
 
@@ -200,6 +204,10 @@ export class FieldPermissionService {
       throw new PermissionsException(
         PermissionsExceptionMessage.OBJECT_METADATA_NOT_FOUND,
         PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        {
+          userFriendlyMessage:
+            'The object you are trying to set permissions for could not be found. It may have been deleted.',
+        },
       );
     }
 
@@ -207,6 +215,10 @@ export class FieldPermissionService {
       throw new PermissionsException(
         PermissionsExceptionMessage.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT,
         PermissionsExceptionCode.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT,
+        {
+          userFriendlyMessage:
+            'You cannot set field permissions on system objects as they are managed by the platform.',
+        },
       );
     }
 
@@ -219,6 +231,10 @@ export class FieldPermissionService {
       throw new PermissionsException(
         PermissionsExceptionMessage.FIELD_METADATA_NOT_FOUND,
         PermissionsExceptionCode.FIELD_METADATA_NOT_FOUND,
+        {
+          userFriendlyMessage:
+            'The field you are trying to set permissions for could not be found. It may have been deleted.',
+        },
       );
     }
 
@@ -229,6 +245,10 @@ export class FieldPermissionService {
       throw new PermissionsException(
         PermissionsExceptionMessage.OBJECT_PERMISSION_NOT_FOUND,
         PermissionsExceptionCode.OBJECT_PERMISSION_NOT_FOUND,
+        {
+          userFriendlyMessage:
+            'No permissions are set for this role on the selected object. Please set object permissions first.',
+        },
       );
     }
   }
@@ -252,6 +272,10 @@ export class FieldPermissionService {
       throw new PermissionsException(
         PermissionsExceptionMessage.ROLE_NOT_FOUND,
         PermissionsExceptionCode.ROLE_NOT_FOUND,
+        {
+          userFriendlyMessage:
+            'The role you are trying to modify could not be found. It may have been deleted or you may not have access to it.',
+        },
       );
     }
 
@@ -263,6 +287,10 @@ export class FieldPermissionService {
       throw new PermissionsException(
         PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
         PermissionsExceptionCode.ROLE_NOT_EDITABLE,
+        {
+          userFriendlyMessage:
+            'This role cannot be modified because it is a system role. Only custom roles can be edited.',
+        },
       );
     }
   }
