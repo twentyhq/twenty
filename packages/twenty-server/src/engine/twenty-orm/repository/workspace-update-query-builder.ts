@@ -287,13 +287,13 @@ export class WorkspaceUpdateQueryBuilder<
       });
 
       const formattedResults = formatResult<T[]>(
-        results.map((result) => result.raw),
+        results.flatMap((result) => result.raw),
         objectMetadata,
         this.internalContext.objectMetadataMaps,
       );
 
       return {
-        raw: results.map((result) => result.raw),
+        raw: results.flatMap((result) => result.raw),
         generatedMaps: formattedResults,
         affected: results.length,
       };

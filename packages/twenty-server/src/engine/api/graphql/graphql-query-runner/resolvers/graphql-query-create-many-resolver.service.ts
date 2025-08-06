@@ -117,13 +117,15 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       objectMetadataItemWithFieldMaps,
     });
 
-    await this.processRecordsToUpdate({
-      partialRecordsToUpdate: recordsToUpdate,
-      repository: executionArgs.repository,
-      objectMetadataItemWithFieldMaps,
-      result,
-      columnsToReturn,
-    });
+    if (recordsToUpdate.length > 0) {
+      await this.processRecordsToUpdate({
+        partialRecordsToUpdate: recordsToUpdate,
+        repository: executionArgs.repository,
+        objectMetadataItemWithFieldMaps,
+        result,
+        columnsToReturn,
+      });
+    }
 
     await this.processRecordsToInsert({
       recordsToInsert,
