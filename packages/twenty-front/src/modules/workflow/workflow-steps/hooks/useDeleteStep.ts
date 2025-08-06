@@ -1,13 +1,8 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useDeleteWorkflowVersionStep } from '@/workflow/hooks/useDeleteWorkflowVersionStep';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
-import {
-  WorkflowVersion,
-  WorkflowWithCurrentVersion,
-} from '@/workflow/types/Workflow';
+import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { assertWorkflowWithCurrentVersionIsDefined } from '@/workflow/utils/assertWorkflowWithCurrentVersionIsDefined';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,10 +12,6 @@ export const useDeleteStep = ({
   workflow: WorkflowWithCurrentVersion | undefined;
 }) => {
   const { deleteWorkflowVersionStep } = useDeleteWorkflowVersionStep();
-  const { updateOneRecord: updateOneWorkflowVersion } =
-    useUpdateOneRecord<WorkflowVersion>({
-      objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-    });
   const { deleteStepsOutputSchema } = useStepsOutputSchema();
 
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
