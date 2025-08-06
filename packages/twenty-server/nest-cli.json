@@ -29,6 +29,10 @@
       {
         "include": "**/database/clickHouse/migrations/*.sql",
         "outDir": "dist/src"
+      },
+      {
+        "include": "**/workspace-sync-metadata/standard-permissions/roles/*.json",
+        "outDir": "dist/src"
       }
     ],
     "watchAssets": true
