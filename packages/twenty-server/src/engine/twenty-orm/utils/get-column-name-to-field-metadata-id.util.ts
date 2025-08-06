@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -34,12 +36,17 @@ export function getColumnNameToFieldMetadataIdMap(
     },
     processRelationField: ({
       fieldMetadataId,
-      columnName,
+      joinColumnName,
+      connectFieldName,
     }: {
       fieldMetadataId: string;
-      columnName: string;
+      joinColumnName: string;
+      connectFieldName?: string;
     }) => {
-      columnNameToFieldMetadataIdMap[columnName] = fieldMetadataId;
+      columnNameToFieldMetadataIdMap[joinColumnName] = fieldMetadataId;
+      if (isDefined(connectFieldName)) {
+        columnNameToFieldMetadataIdMap[connectFieldName] = fieldMetadataId;
+      }
     },
     processSimpleField: ({
       fieldMetadataId,

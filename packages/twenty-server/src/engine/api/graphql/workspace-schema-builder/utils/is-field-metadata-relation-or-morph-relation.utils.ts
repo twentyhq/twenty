@@ -5,7 +5,11 @@ import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-
 
 export const isFieldMetadataRelationOrMorphRelation = (
   fieldMetadata: FieldMetadataEntity<FieldMetadataType>,
-) => {
+): fieldMetadata is FieldMetadataEntity &
+  (
+    | FieldMetadataEntity<FieldMetadataType.RELATION>
+    | FieldMetadataEntity<FieldMetadataType.MORPH_RELATION>
+  ) => {
   return (
     isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION) ||
     isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.MORPH_RELATION)
