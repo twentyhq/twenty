@@ -236,7 +236,10 @@ export class WorkspaceUpdateQueryBuilder<
       const results: UpdateResult[] = [];
 
       for (const input of this.manyInputs) {
-        this.expressionMap.valuesSet = input.partialEntity;
+        this.expressionMap.valuesSet = formatData(
+          input.partialEntity,
+          objectMetadata,
+        );
         this.where({ id: input.criteria });
 
         const nestedRelationQueryBuilder = new WorkspaceSelectQueryBuilder(
