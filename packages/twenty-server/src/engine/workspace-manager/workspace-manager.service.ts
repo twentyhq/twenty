@@ -12,6 +12,8 @@ import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-s
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
+import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
@@ -88,15 +90,7 @@ export class WorkspaceManagerService {
       `Metadata creation took ${dataSourceMetadataCreationEnd - dataSourceMetadataCreationStart}ms`,
     );
 
-    const permissionsEnabledStart = performance.now();
-
-    await this.initPermissions({ workspaceId, userId });
-
-    const permissionsEnabledEnd = performance.now();
-
-    this.logger.log(
-      `Permissions enabled took ${permissionsEnabledEnd - permissionsEnabledStart}ms`,
-    );
+    await this.setupDefaultRoles(workspaceId, userId);
 
     if (featureFlags[FeatureFlagKey.IS_AI_ENABLED]) {
       const defaultAgentEnabledStart = performance.now();
@@ -176,39 +170,6 @@ export class WorkspaceManagerService {
     this.logger.log(`workspace ${workspaceId} schema deleted`);
   }
 
-  private async initPermissions({
-    workspaceId,
-    userId,
-  }: {
-    workspaceId: string;
-    userId: string;
-  }) {
-    const adminRole = await this.roleService.createAdminRole({
-      workspaceId,
-    });
-
-    const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
-      where: {
-        workspaceId,
-        userId,
-      },
-    });
-
-    await this.userRoleService.assignRoleToUserWorkspace({
-      workspaceId,
-      userWorkspaceId: userWorkspace.id,
-      roleId: adminRole.id,
-    });
-
-    const memberRole = await this.roleService.createMemberRole({
-      workspaceId,
-    });
-
-    await this.workspaceRepository.update(workspaceId, {
-      defaultRoleId: memberRole.id,
-    });
-  }
-
   private async initDefaultAgent(workspaceId: string) {
     const agent = await this.agentService.createOneAgent(
       {
@@ -225,5 +186,36 @@ export class WorkspaceManagerService {
     await this.workspaceRepository.update(workspaceId, {
       defaultAgentId: agent.id,
     });
+  }
+
+  private async setupDefaultRoles(
+    workspaceId: string,
+    userId: string,
+  ): Promise<void> {
+    const memberRole = await this.roleRepository.findOne({
+      where: { label: MEMBER_ROLE_LABEL, workspaceId },
+    });
+
+    if (memberRole) {
+      await this.workspaceRepository.update(workspaceId, {
+        defaultRoleId: memberRole.id,
+      });
+    }
+
+    const adminRole = await this.roleRepository.findOne({
+      where: { label: ADMIN_ROLE_LABEL, workspaceId },
+    });
+
+    if (adminRole) {
+      const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
+        where: { workspaceId, userId },
+      });
+
+      await this.userRoleService.assignRoleToUserWorkspace({
+        workspaceId,
+        userWorkspaceId: userWorkspace.id,
+        roleId: adminRole.id,
+      });
+    }
   }
 }

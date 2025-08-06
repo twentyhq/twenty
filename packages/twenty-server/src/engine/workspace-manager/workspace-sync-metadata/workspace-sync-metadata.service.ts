@@ -17,6 +17,7 @@ import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/
 import { WorkspaceSyncIndexMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-index-metadata.service';
 import { WorkspaceSyncObjectMetadataIdentifiersService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata-identifiers.service';
 import { WorkspaceSyncObjectMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata.service';
+import { WorkspaceSyncPermissionService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-permission.service';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
 
 interface SynchronizeOptions {
@@ -38,6 +39,7 @@ export class WorkspaceSyncMetadataService {
     private readonly workspaceSyncObjectMetadataIdentifiersService: WorkspaceSyncObjectMetadataIdentifiersService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceSyncPermissionService: WorkspaceSyncPermissionService,
   ) {}
 
   /**
@@ -159,6 +161,17 @@ export class WorkspaceSyncMetadataService {
 
       this.logger.log(
         `Workspace object metadata identifiers took ${workspaceObjectMetadataIdentifiersEnd - workspaceObjectMetadataIdentifiersStart}ms`,
+      );
+
+      // 6 - Sync standard permission
+      const workspacePermissionMigrationsStart = performance.now();
+
+      await this.workspaceSyncPermissionService.synchronize(context, manager);
+
+      const workspacePermissionMigrationsEnd = performance.now();
+
+      this.logger.log(
+        `Workspace permission migrations took ${workspacePermissionMigrationsEnd - workspacePermissionMigrationsStart}ms`,
       );
 
       const workspaceMigrationsSaveStart = performance.now();
