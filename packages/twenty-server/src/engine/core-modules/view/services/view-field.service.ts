@@ -149,4 +149,19 @@ export class ViewFieldService {
 
     return viewField;
   }
+
+  async destroy(id: string, workspaceId: string): Promise<boolean> {
+    const viewField = await this.findById(id, workspaceId);
+
+    if (!isDefined(viewField)) {
+      throw new ViewFieldException(
+        ViewFieldExceptionMessage.VIEW_FIELD_NOT_FOUND,
+        ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
+      );
+    }
+
+    await this.viewFieldRepository.delete(id);
+
+    return true;
+  }
 }

@@ -149,4 +149,19 @@ export class ViewFilterService {
 
     return viewFilter;
   }
+
+  async destroy(id: string, workspaceId: string): Promise<boolean> {
+    const viewFilter = await this.findById(id, workspaceId);
+
+    if (!isDefined(viewFilter)) {
+      throw new ViewFilterException(
+        ViewFilterExceptionMessage.VIEW_FILTER_NOT_FOUND,
+        ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
+      );
+    }
+
+    await this.viewFilterRepository.delete(id);
+
+    return true;
+  }
 }
