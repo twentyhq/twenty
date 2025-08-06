@@ -78,6 +78,7 @@ describe('MessagingMessageListFetchService', () => {
           provide: CacheStorageNamespace.ModuleMessaging,
           useValue: {
             setAdd: jest.fn().mockResolvedValue(undefined),
+            del: jest.fn().mockResolvedValue(undefined),
           },
         },
         {

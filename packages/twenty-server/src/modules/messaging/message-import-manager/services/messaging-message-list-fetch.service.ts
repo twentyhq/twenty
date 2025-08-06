@@ -138,6 +138,10 @@ export class MessagingMessageListFetchService {
       }
 
       if (totalMessageCount === 0) {
+        await this.messageChannelSyncStatusService.markAsCompletedAndScheduleMessageListFetch(
+          [messageChannel.id],
+        );
+
         return;
       }
 
