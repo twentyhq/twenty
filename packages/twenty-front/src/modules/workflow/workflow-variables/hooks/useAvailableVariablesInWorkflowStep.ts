@@ -37,7 +37,6 @@ export const useAvailableVariablesInWorkflowStep = ({
 
   const availableVariablesInWorkflowStep = availableStepsOutputSchema
     .map((stepOutputSchema) => {
-      console.log('stepOutputSchema', stepOutputSchema.outputSchema);
       const outputSchema = filterOutputSchema(
         shouldDisplayRecordFields,
         shouldDisplayRecordObjects,
