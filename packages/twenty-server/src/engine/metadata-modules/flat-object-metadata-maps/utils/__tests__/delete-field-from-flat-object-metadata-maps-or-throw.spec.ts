@@ -25,7 +25,7 @@ type DeleteFieldFromFlatObjectMetadataMapsTestCase = {
   expected?: FlatObjectMetadataMaps;
 };
 
-describe('deleteFieldFromFlatObjectMetadataMaps', () => {
+describe('deleteFieldFromFlatObjectMetadataMapsOrThrow', () => {
   const testCases: EachTestingContext<DeleteFieldFromFlatObjectMetadataMapsTestCase>[] =
     [
       {

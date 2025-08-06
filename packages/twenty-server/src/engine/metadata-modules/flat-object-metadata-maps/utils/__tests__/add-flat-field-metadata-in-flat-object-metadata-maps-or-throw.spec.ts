@@ -21,7 +21,7 @@ type DispatchAndAddFlatFieldMetadataInFlatObjectMetadataMapsTestCase = {
   shouldThrow?: true;
 };
 
-describe('dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps', () => {
+describe('dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMapsOrThrow', () => {
   const testCases: EachTestingContext<DispatchAndAddFlatFieldMetadataInFlatObjectMetadataMapsTestCase>[] =
     [
       {
