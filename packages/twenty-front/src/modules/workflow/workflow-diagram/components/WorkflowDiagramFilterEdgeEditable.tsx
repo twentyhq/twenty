@@ -37,6 +37,7 @@ import { IconButtonGroup } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useEdgeHovered } from '@/workflow/workflow-diagram/hooks/useEdgeHovered';
 import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseEdge';
+import { WorkflowDiagramEdgeButtonGroup } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeButtonGroup';
 
 type WorkflowDiagramFilterEdgeEditableProps = EdgeProps<WorkflowDiagramEdge>;
 
@@ -106,7 +107,7 @@ export const WorkflowDiagramFilterEdgeEditable = ({
     workflowDiagramPanOnDragComponentState,
   );
 
-  const isEdgeSelected = isNodeCreationStarted({
+  const nodeCreationStarted = isNodeCreationStarted({
     parentStepId: data.stepId,
     nextStepId: target,
   });
@@ -163,9 +164,8 @@ export const WorkflowDiagramFilterEdgeEditable = ({
         >
           <WorkflowDiagramEdgeV2VisibilityContainer shouldDisplay>
             <StyledConfiguredFilterContainer>
-              {isEdgeHovered(id) || isDropdownOpen || isEdgeSelected ? (
-                <StyledIconButtonGroup
-                  className="nodrag nopan"
+              {isEdgeHovered(id) || isDropdownOpen || nodeCreationStarted ? (
+                <WorkflowDiagramEdgeButtonGroup
                   iconButtons={[
                     {
                       Icon: IconFilter,

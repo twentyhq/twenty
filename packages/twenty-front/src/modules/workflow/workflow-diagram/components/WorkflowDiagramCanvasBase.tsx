@@ -459,6 +459,10 @@ export const WorkflowDiagramCanvasBase = ({
 
   const onSelectionChange = useCallback(
     (params: OnSelectionChangeParams) => {
+      if (!isWorkflowBranchEnabled) {
+        return;
+      }
+
       const selectedEdge = params.edges?.[0];
 
       if (!isDefined(selectedEdge)) {

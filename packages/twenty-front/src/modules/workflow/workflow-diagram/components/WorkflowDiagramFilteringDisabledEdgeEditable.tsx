@@ -1,18 +1,13 @@
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import styled from '@emotion/styled';
 import { EdgeLabelRenderer, EdgeProps, getBezierPath } from '@xyflow/react';
 import { IconPlus } from 'twenty-ui/display';
-import { IconButtonGroup } from 'twenty-ui/input';
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
 import { useEdgeHovered } from '@/workflow/workflow-diagram/hooks/useEdgeHovered';
 import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseEdge';
-
-const StyledIconButtonGroup = styled(IconButtonGroup)`
-  pointer-events: all;
-`;
+import { WorkflowDiagramEdgeButtonGroup } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeButtonGroup';
 
 type WorkflowDiagramFilteringDisabledEdgeEditableProps =
   EdgeProps<WorkflowDiagramEdge>;
@@ -39,7 +34,7 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
 
   const { startNodeCreation, isNodeCreationStarted } = useStartNodeCreation();
 
-  const forceDisplayAddButton = isNodeCreationStarted({
+  const nodeCreationStarted = isNodeCreationStarted({
     parentStepId: source,
     nextStepId: target,
   });
@@ -69,16 +64,16 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
           labelY={labelY}
         >
           <WorkflowDiagramEdgeV2VisibilityContainer
-            shouldDisplay={isEdgeHovered(id) || forceDisplayAddButton}
+            shouldDisplay={isEdgeHovered(id) || nodeCreationStarted}
           >
-            <StyledIconButtonGroup
-              className="nodrag nopan"
+            <WorkflowDiagramEdgeButtonGroup
               iconButtons={[
                 {
                   Icon: IconPlus,
                   onClick: handleAddNodeButtonClick,
                 },
               ]}
+              selected={nodeCreationStarted}
             />
           </WorkflowDiagramEdgeV2VisibilityContainer>
         </WorkflowDiagramEdgeV2Container>

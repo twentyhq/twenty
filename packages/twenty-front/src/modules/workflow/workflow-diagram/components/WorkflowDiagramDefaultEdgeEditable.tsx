@@ -8,20 +8,14 @@ import { useOpenWorkflowEditFilterInCommandMenu } from '@/workflow/workflow-diag
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
-import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
-import styled from '@emotion/styled';
 import { useEdgeHovered } from '@/workflow/workflow-diagram/hooks/useEdgeHovered';
 import { EdgeLabelRenderer, EdgeProps, getBezierPath } from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter, IconPlus } from 'twenty-ui/display';
-import { IconButtonGroup } from 'twenty-ui/input';
 import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseEdge';
+import { WorkflowDiagramEdgeButtonGroup } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeButtonGroup';
 
 type WorkflowDiagramDefaultEdgeEditableProps = EdgeProps<WorkflowDiagramEdge>;
-
-const StyledIconButtonGroup = styled(IconButtonGroup)`
-  pointer-events: all;
-`;
 
 export const WorkflowDiagramDefaultEdgeEditable = ({
   id,
@@ -50,15 +44,12 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
 
   const { createStep } = useCreateStep({ workflow });
 
-  const { startNodeCreation } = useStartNodeCreation();
+  const { startNodeCreation, isNodeCreationStarted } = useStartNodeCreation();
 
-  const workflowInsertStepIds = useRecoilComponentValueV2(
-    workflowInsertStepIdsComponentState,
-  );
-
-  const isSelected =
-    workflowInsertStepIds.nextStepId === target &&
-    workflowInsertStepIds.parentStepId === source;
+  const nodeCreationStarted = isNodeCreationStarted({
+    parentStepId: source,
+    nextStepId: target,
+  });
 
   const { openWorkflowEditFilterInCommandMenu } =
     useOpenWorkflowEditFilterInCommandMenu();
@@ -105,10 +96,9 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
           labelY={labelY}
         >
           <WorkflowDiagramEdgeV2VisibilityContainer
-            shouldDisplay={isSelected || isEdgeHovered(id)}
+            shouldDisplay={nodeCreationStarted || isEdgeHovered(id)}
           >
-            <StyledIconButtonGroup
-              className="nodrag nopan"
+            <WorkflowDiagramEdgeButtonGroup
               iconButtons={[
                 {
                   Icon: IconFilter,
@@ -119,6 +109,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
                   onClick: handleNodeButtonClick,
                 },
               ]}
+              selected={nodeCreationStarted}
             />
           </WorkflowDiagramEdgeV2VisibilityContainer>
         </WorkflowDiagramEdgeV2Container>
