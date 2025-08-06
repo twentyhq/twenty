@@ -17,7 +17,7 @@ import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/
 import { WorkspaceSyncIndexMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-index-metadata.service';
 import { WorkspaceSyncObjectMetadataIdentifiersService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata-identifiers.service';
 import { WorkspaceSyncObjectMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata.service';
-import { WorkspaceSyncPermissionService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-permission.service';
+import { WorkspaceSyncRoleService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-role.service';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
 
 interface SynchronizeOptions {
@@ -39,7 +39,7 @@ export class WorkspaceSyncMetadataService {
     private readonly workspaceSyncObjectMetadataIdentifiersService: WorkspaceSyncObjectMetadataIdentifiersService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly workspaceSyncPermissionService: WorkspaceSyncPermissionService,
+    private readonly workspaceSyncRoleService: WorkspaceSyncRoleService,
   ) {}
 
   /**
@@ -163,15 +163,15 @@ export class WorkspaceSyncMetadataService {
         `Workspace object metadata identifiers took ${workspaceObjectMetadataIdentifiersEnd - workspaceObjectMetadataIdentifiersStart}ms`,
       );
 
-      // 6 - Sync standard permission
-      const workspacePermissionMigrationsStart = performance.now();
+      // 6 - Sync standard roles
+      const workspaceRoleMigrationsStart = performance.now();
 
-      await this.workspaceSyncPermissionService.synchronize(context, manager);
+      await this.workspaceSyncRoleService.synchronize(context, manager);
 
-      const workspacePermissionMigrationsEnd = performance.now();
+      const workspaceRoleMigrationsEnd = performance.now();
 
       this.logger.log(
-        `Workspace permission migrations took ${workspacePermissionMigrationsEnd - workspacePermissionMigrationsStart}ms`,
+        `Workspace role migrations took ${workspaceRoleMigrationsEnd - workspaceRoleMigrationsStart}ms`,
       );
 
       const workspaceMigrationsSaveStart = performance.now();

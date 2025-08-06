@@ -31,7 +31,7 @@
         "outDir": "dist/src"
       },
       {
-        "include": "**/workspace-sync-metadata/standard-permissions/roles/*.json",
+        "include": "**/workspace-sync-metadata/standard-roles/roles/*.json",
         "outDir": "dist/src"
       }
     ],

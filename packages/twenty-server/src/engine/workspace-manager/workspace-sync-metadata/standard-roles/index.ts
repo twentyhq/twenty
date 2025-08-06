@@ -4,9 +4,9 @@ import memberRole from './roles/member-role.json';
 import { StandardRoleDefinition } from './types/standard-role-definition.interface';
 
 export const standardRoleDefinitions: StandardRoleDefinition[] = [
-  adminRole,
-  memberRole,
-  guestRole,
+  adminRole as StandardRoleDefinition,
+  memberRole as StandardRoleDefinition,
+  guestRole as StandardRoleDefinition,
 ];
 
 export * from './types/standard-role-definition.interface';

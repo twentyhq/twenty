@@ -1,43 +1,42 @@
 import { Injectable } from '@nestjs/common';
 
-import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
-
+import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/comparator-action.enum';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { ComputedPermission } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-permission.factory';
+import { ComputedRole } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-role.factory';
 
-export interface PermissionComparatorResult {
+export interface RoleComparatorResult {
   action: ComparatorAction;
-  object: ComputedPermission;
+  object: ComputedRole;
 }
 
 @Injectable()
-export class WorkspacePermissionComparator {
+export class WorkspaceRoleComparator {
   compare(
-    standardPermissions: ComputedPermission[],
+    standardRoles: ComputedRole[],
     existingRoles: RoleEntity[],
-  ): PermissionComparatorResult[] {
-    const results: PermissionComparatorResult[] = [];
+  ): RoleComparatorResult[] {
+    const results: RoleComparatorResult[] = [];
 
-    for (const standardPermission of standardPermissions) {
+    for (const standardRole of standardRoles) {
       const existingRole = existingRoles.find(
-        (role) => role.id === standardPermission.roleId,
+        (role) => role.id === standardRole.roleId,
       );
 
       if (!existingRole) {
         results.push({
           action: ComparatorAction.CREATE,
-          object: standardPermission,
+          object: standardRole,
         });
       } else {
         const needsUpdate = this.rolePropertiesDiffer(
           existingRole,
-          standardPermission,
+          standardRole,
         );
 
         if (needsUpdate) {
           results.push({
             action: ComparatorAction.UPDATE,
-            object: standardPermission,
+            object: standardRole,
           });
         }
       }
@@ -48,7 +47,7 @@ export class WorkspacePermissionComparator {
 
   private rolePropertiesDiffer(
     existing: RoleEntity,
-    standard: ComputedPermission,
+    standard: ComputedRole,
   ): boolean {
     return (
       existing.label !== standard.label ||
