@@ -117,6 +117,7 @@ export const WorkflowDiagramCanvasBase = ({
   onNodeDragStop,
   handlePaneContextMenu,
   nodesConnectable = false,
+  nodesDraggable = false,
 }: {
   nodeTypes: Partial<
     Record<
@@ -149,6 +150,7 @@ export const WorkflowDiagramCanvasBase = ({
   onDeleteEdge?: (edge: WorkflowDiagramEdge) => void;
   onNodeDragStop?: OnNodeDrag<WorkflowDiagramNode>;
   nodesConnectable?: boolean;
+  nodesDraggable?: boolean;
   handlePaneContextMenu?: ({
     x,
     y,
@@ -476,6 +478,7 @@ export const WorkflowDiagramCanvasBase = ({
         proOptions={{ hideAttribution: true }}
         multiSelectionKeyCode={null}
         nodesFocusable={false}
+        nodesDraggable={isWorkflowBranchEnabled ? nodesDraggable : false}
         edgesFocusable={
           isWorkflowBranchEnabled ? isDefined(onDeleteEdge) : false
         }

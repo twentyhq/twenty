@@ -134,6 +134,7 @@ export const WorkflowDiagramCanvasEditable = ({
         onNodeDragStop={onNodeDragStop}
         handlePaneContextMenu={handlePaneContextMenu}
         nodesConnectable
+        nodesDraggable
         onDeleteEdge={onDeleteEdge}
       />
 
