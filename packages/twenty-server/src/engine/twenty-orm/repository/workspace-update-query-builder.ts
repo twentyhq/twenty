@@ -386,6 +386,15 @@ export class WorkspaceUpdateQueryBuilder<
       partialEntity: QueryDeepPartialEntity<T>;
     }[],
   ): this {
+    const mainAliasTarget = this.getMainAliasTarget();
+
+    this.relationNestedConfig =
+      this.relationNestedQueries.prepareNestedRelationQueries(
+        inputs.map(
+          (input) => input.partialEntity,
+        ) as QueryDeepPartialEntityWithNestedRelationFields<T>[],
+        mainAliasTarget,
+      );
     this.manyInputs = inputs;
 
     return this;
