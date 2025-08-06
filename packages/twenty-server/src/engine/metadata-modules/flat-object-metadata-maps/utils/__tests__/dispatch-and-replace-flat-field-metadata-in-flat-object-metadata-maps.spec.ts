@@ -1,0 +1,37 @@
+import { isDefined } from 'twenty-shared/utils';
+
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
+import { deleteFieldFromFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps.util';
+import { dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/dispatch-and-add-flat-field-metadata-in-flat-object-metadata-maps.util';
+
+export type DispatchAndReplaceFlatFieldMetadataInFlatObjectMetadataMapsArgs = {
+  flatFieldMetadata: FlatFieldMetadata;
+  flatObjectMetadataMaps: FlatObjectMetadataMaps;
+};
+export const dispatchAndReplaceFlatFieldMetadataInFlatObjectMetadataMaps = ({
+  flatFieldMetadata,
+  flatObjectMetadataMaps,
+}: DispatchAndReplaceFlatFieldMetadataInFlatObjectMetadataMapsArgs):
+  | FlatObjectMetadataMaps
+  | undefined => {
+  const flatObjectMetadataWithFlatFieldMaps =
+    flatObjectMetadataMaps.byId[flatFieldMetadata.objectMetadataId];
+
+  if (!isDefined(flatObjectMetadataWithFlatFieldMaps)) {
+    return undefined;
+  }
+
+  const flatObjectMetadataMapsWithoutFlatFieldMetadataToReplace =
+    deleteFieldFromFlatObjectMetadataMaps({
+      fieldMetadataId: flatFieldMetadata.id,
+      flatObjectMetadataMaps,
+      objectMetadataId: flatFieldMetadata.objectMetadataId,
+    });
+
+  return dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps({
+    flatFieldMetadata,
+    flatObjectMetadataMaps:
+      flatObjectMetadataMapsWithoutFlatFieldMetadataToReplace,
+  });
+};

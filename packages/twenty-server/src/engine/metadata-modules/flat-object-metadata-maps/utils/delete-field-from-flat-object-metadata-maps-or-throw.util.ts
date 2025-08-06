@@ -7,7 +7,7 @@ import {
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { deleteFieldFromFlatObjectMetadataWithFlatFieldMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-with-flat-field-maps-or-throw.util';
 
-type DeleteFieldFromFlatObjectMetadataMapsArgs = {
+type DeleteFieldFromFlatObjectMetadataMapsOrThrowArgs = {
   fieldMetadataId: string;
   objectMetadataId: string;
   flatObjectMetadataMaps: FlatObjectMetadataMaps;
@@ -16,7 +16,7 @@ export const deleteFieldFromFlatObjectMetadataMapsOrThrow = ({
   flatObjectMetadataMaps,
   fieldMetadataId,
   objectMetadataId,
-}: DeleteFieldFromFlatObjectMetadataMapsArgs): FlatObjectMetadataMaps => {
+}: DeleteFieldFromFlatObjectMetadataMapsOrThrowArgs): FlatObjectMetadataMaps => {
   const flatObjectMetadataWithFlatFieldMaps =
     flatObjectMetadataMaps.byId[objectMetadataId];
 
