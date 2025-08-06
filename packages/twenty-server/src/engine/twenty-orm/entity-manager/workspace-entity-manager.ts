@@ -1244,6 +1244,10 @@ export class WorkspaceEntityManager extends EntityManager {
     objectMetadataItem: ObjectMetadataItemWithFieldMaps;
     permissionOptionsFromArgs: PermissionOptions | undefined;
   }): Entity[] {
+    if (permissionOptionsFromArgs?.shouldBypassPermissionChecks === true) {
+      return formattedResult;
+    }
+
     const restrictedFields =
       permissionOptionsFromArgs?.objectRecordsPermissions?.[
         objectMetadataItem.id
