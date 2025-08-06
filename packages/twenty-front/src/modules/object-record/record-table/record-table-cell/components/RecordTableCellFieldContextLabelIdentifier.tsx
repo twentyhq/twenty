@@ -11,7 +11,7 @@ import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/co
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ReactNode, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -35,7 +35,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
   const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
 
   const isMobile = useIsMobile();
-  const isRecordTableScrolledLeftComponent = useRecoilComponentValueV2(
+  const isRecordTableScrolledLeftComponent = useRecoilComponentValue(
     isRecordTableScrolledLeftComponentState,
   );
 

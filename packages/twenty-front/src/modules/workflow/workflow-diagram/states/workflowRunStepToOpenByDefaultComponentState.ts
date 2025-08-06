@@ -1,9 +1,9 @@
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { WorkflowRunDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 
 export const workflowRunStepToOpenByDefaultComponentState =
-  createComponentStateV2<
+  createComponentState<
     | {
         id: string;
         data: WorkflowRunDiagramStepNodeData;

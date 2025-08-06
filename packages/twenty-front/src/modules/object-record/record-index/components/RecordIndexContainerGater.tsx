@@ -20,7 +20,7 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
@@ -33,7 +33,7 @@ const StyledIndexContainer = styled.div`
 `;
 
 export const RecordIndexContainerGater = () => {
-  const contextStoreCurrentViewId = useRecoilComponentValueV2(
+  const contextStoreCurrentViewId = useRecoilComponentValue(
     contextStoreCurrentViewIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );

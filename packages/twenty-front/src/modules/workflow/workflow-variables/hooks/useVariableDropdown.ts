@@ -1,5 +1,5 @@
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { workflowDiagramTriggerNodeSelectionComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramTriggerNodeSelectionComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { useState } from 'react';
@@ -37,14 +37,14 @@ export const useVariableDropdown = ({
   const [currentPath, setCurrentPath] = useState<string[]>([]);
   const [searchInputValue, setSearchInputValue] = useState('');
 
-  const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
+  const setWorkflowSelectedNode = useSetRecoilComponentState(
     workflowSelectedNodeComponentState,
   );
-  const setActiveTabId = useSetRecoilComponentStateV2(
+  const setActiveTabId = useSetRecoilComponentState(
     activeTabIdComponentState,
     'workflow-serverless-function-tab-list-component-id',
   );
-  const setWorkflowDiagramTriggerNodeSelection = useSetRecoilComponentStateV2(
+  const setWorkflowDiagramTriggerNodeSelection = useSetRecoilComponentState(
     workflowDiagramTriggerNodeSelectionComponentState,
   );
 

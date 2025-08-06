@@ -6,7 +6,7 @@ import { SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID } from '@/geo-map/constants/select
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { TEXT_INPUT_CLICK_OUTSIDE_ID } from '@/ui/input/components/constants/TextInputClickOutsideId';
 import { CountrySelect } from '@/ui/input/components/internal/country/components/CountrySelect';
 import { SELECT_COUNTRY_DROPDOWN_ID } from '@/ui/input/components/internal/country/constants/SelectCountryDropdownId';
@@ -305,7 +305,7 @@ export const AddressInput = ({
     <StyledAddressContainer ref={wrapperRef}>
       {isFieldInputInSubFieldsAddress('addressStreet1') &&
         renderInputWithAutocomplete(
-          <TextInputV2
+          <TextInput
             autoFocus
             value={internalValue.addressStreet1 ?? ''}
             ref={inputRefs.addressStreet1}
@@ -323,7 +323,7 @@ export const AddressInput = ({
           'addressStreet1',
         )}
       {isFieldInputInSubFieldsAddress('addressStreet2') && (
-        <TextInputV2
+        <TextInput
           value={internalValue.addressStreet2 ?? ''}
           ref={inputRefs.addressStreet2}
           label="Address 2"
@@ -335,7 +335,7 @@ export const AddressInput = ({
       <StyledHalfRowContainer>
         {isFieldInputInSubFieldsAddress('addressCity') &&
           renderInputWithAutocomplete(
-            <TextInputV2
+            <TextInput
               value={internalValue.addressCity ?? ''}
               ref={inputRefs.addressCity}
               label="City"
@@ -352,7 +352,7 @@ export const AddressInput = ({
             'addressCity',
           )}
         {isFieldInputInSubFieldsAddress('addressState') && (
-          <TextInputV2
+          <TextInput
             value={internalValue.addressState ?? ''}
             ref={inputRefs.addressState}
             label="State"
@@ -364,7 +364,7 @@ export const AddressInput = ({
       </StyledHalfRowContainer>
       <StyledHalfRowContainer>
         {isFieldInputInSubFieldsAddress('addressPostcode') && (
-          <TextInputV2
+          <TextInput
             value={internalValue.addressPostcode ?? ''}
             ref={inputRefs.addressPostcode}
             label="Post Code"

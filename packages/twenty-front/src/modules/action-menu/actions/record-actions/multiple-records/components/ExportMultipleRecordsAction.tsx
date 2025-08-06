@@ -5,13 +5,13 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useRecordIndexExportRecords } from '@/object-record/record-index/export/hooks/useRecordIndexExportRecords';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useContext, useMemo } from 'react';
 
 export const ExportMultipleRecordsAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const contextStoreCurrentViewId = useRecoilComponentValueV2(
+  const contextStoreCurrentViewId = useRecoilComponentValue(
     contextStoreCurrentViewIdComponentState,
   );
 

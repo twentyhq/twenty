@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useGetRecordIndexTotalCount } from '@/views/hooks/internal/useGetRecordIndexTotalCount';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewPickerContentCreateMode } from '@/views/view-picker/components/ViewPickerContentCreateMode';
@@ -52,7 +52,7 @@ export const ViewPickerDropdown = () => {
 
   const { totalCount } = useGetRecordIndexTotalCount();
 
-  const isDropdownOpen = useRecoilComponentValueV2(
+  const isDropdownOpen = useRecoilComponentValue(
     isDropdownOpenComponentState,
     VIEW_PICKER_DROPDOWN_ID,
   );

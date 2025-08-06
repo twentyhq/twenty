@@ -1,6 +1,6 @@
 import { ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
-import { ComponentStateKeyV2 } from '@/ui/utilities/state/component-state/types/ComponentStateKeyV2';
-import { ComponentStateV2 } from '@/ui/utilities/state/component-state/types/ComponentStateV2';
+import { ComponentState } from '@/ui/utilities/state/component-state/types/ComponentState';
+import { ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { AtomEffect, atomFamily } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,12 +12,12 @@ type CreateComponentInstanceStateArgs<ValueType> = {
   effects?: AtomEffect<ValueType>[];
 };
 
-export const createComponentStateV2 = <ValueType>({
+export const createComponentState = <ValueType>({
   key,
   defaultValue,
   componentInstanceContext,
   effects,
-}: CreateComponentInstanceStateArgs<ValueType>): ComponentStateV2<ValueType> => {
+}: CreateComponentInstanceStateArgs<ValueType>): ComponentState<ValueType> => {
   if (isDefined(componentInstanceContext)) {
     globalComponentInstanceContextMap.set(key, componentInstanceContext);
   }
@@ -25,10 +25,10 @@ export const createComponentStateV2 = <ValueType>({
   return {
     type: 'ComponentState',
     key,
-    atomFamily: atomFamily<ValueType, ComponentStateKeyV2>({
+    atomFamily: atomFamily<ValueType, ComponentStateKey>({
       key,
       default: defaultValue,
       effects: effects,
     }),
-  } satisfies ComponentStateV2<ValueType>;
+  } satisfies ComponentState<ValueType>;
 };

@@ -2,13 +2,13 @@ import { FavoriteFolderPicker } from '@/favorites/favorite-folder-picker/compone
 import { FavoriteFolderPickerEffect } from '@/favorites/favorite-folder-picker/components/FavoriteFolderPickerEffect';
 import { FavoriteFolderPickerInstanceContext } from '@/favorites/favorite-folder-picker/states/context/FavoriteFolderPickerInstanceContext';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useRecoilValue } from 'recoil';
 
 export const ViewPickerFavoriteFoldersDropdown = () => {
-  const [viewPickerReferenceViewId] = useRecoilComponentStateV2(
+  const [viewPickerReferenceViewId] = useRecoilComponentState(
     viewPickerReferenceViewIdComponentState,
   );
 

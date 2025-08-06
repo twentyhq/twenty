@@ -34,7 +34,7 @@ import { AppPath } from '@/types/AppPath';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 import { AnalyticsType } from '~/generated/graphql';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
@@ -63,12 +63,12 @@ export const PageChangeEffect = () => {
   const objectNamePlural =
     useParams().objectNamePlural ?? CoreObjectNamePlural.Person;
 
-  const contextStoreCurrentViewId = useRecoilComponentValueV2(
+  const contextStoreCurrentViewId = useRecoilComponentValue(
     contextStoreCurrentViewIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const contextStoreCurrentViewType = useRecoilComponentValueV2(
+  const contextStoreCurrentViewType = useRecoilComponentValue(
     contextStoreCurrentViewTypeComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );

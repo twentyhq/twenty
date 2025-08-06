@@ -5,7 +5,7 @@ import { calendarBookingPageIdState } from '@/client-config/states/calendarBooki
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import styled from '@emotion/styled';
@@ -181,7 +181,7 @@ export const InviteTeam = () => {
               field: { onChange, onBlur, value },
               fieldState: { error },
             }) => (
-              <TextInputV2
+              <TextInput
                 autoFocus={index === 0}
                 type="email"
                 value={value}

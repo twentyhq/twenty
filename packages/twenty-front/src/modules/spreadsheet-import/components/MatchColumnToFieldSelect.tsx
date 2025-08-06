@@ -38,7 +38,7 @@ export const MatchColumnToFieldSelect = ({
   placeholder,
   columnIndex,
 }: MatchColumnToFieldSelectProps) => {
-  const dropdownId = `match-column-select-v2-dropdown-${columnIndex}`;
+  const dropdownId = `match-column-select-dropdown-${columnIndex}`;
   const { closeDropdown } = useCloseDropdown();
   const [selectedFieldMetadataItem, setSelectedFieldMetadataItem] =
     useState<FieldMetadataItem | null>(null);

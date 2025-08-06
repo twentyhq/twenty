@@ -5,7 +5,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { TableCellPosition } from '../../types/TableCellPosition';
 import { useSetIsRecordTableCellFocusActive } from './useSetIsRecordTableCellFocusActive';
@@ -16,7 +16,7 @@ export const useFocusRecordTableCell = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const focusPositionState = useRecoilComponentCallbackStateV2(
+  const focusPositionState = useRecoilComponentCallbackState(
     recordTableFocusPositionComponentState,
     recordTableIdFromProps,
   );

@@ -3,25 +3,25 @@ import styled from '@emotion/styled';
 import { IconHistory, IconMessageCirclePlus } from 'twenty-ui/display';
 
 import { DropZone } from '@/activities/files/components/DropZone';
+import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
 import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
 
 import { AIChatEmptyState } from '@/ai/components/AIChatEmptyState';
 import { AIChatMessage } from '@/ai/components/AIChatMessage';
+import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
+import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
+import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
+import { SendMessageWithRecordsContextButton } from '@/ai/components/internal/SendMessageWithRecordsContextButton';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { Button } from 'twenty-ui/input';
 import { useAgentChat } from '../hooks/useAgentChat';
-import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
-import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { SendMessageWithRecordsContextButton } from '@/ai/components/internal/SendMessageWithRecordsContextButton';
-import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
   background: ${({ theme }) => theme.background.primary};
@@ -67,7 +67,7 @@ export const AIChatTab = ({
 }) => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
-  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 

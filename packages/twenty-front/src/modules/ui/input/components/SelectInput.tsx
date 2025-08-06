@@ -7,7 +7,7 @@ import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-l
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TagColor } from 'twenty-ui/components';
@@ -41,7 +41,7 @@ export const SelectInput = ({
     SelectableListComponentInstanceContext,
   );
 
-  const selectedItemId = useRecoilComponentValueV2(
+  const selectedItemId = useRecoilComponentValue(
     selectedItemIdComponentState,
     selectableListInstanceId,
   );

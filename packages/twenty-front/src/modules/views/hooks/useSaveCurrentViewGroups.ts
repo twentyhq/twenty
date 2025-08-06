@@ -1,13 +1,13 @@
 import { useRecoilCallback } from 'recoil';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroupRecords';
 import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
 import { ViewGroup } from '@/views/types/ViewGroup';
+import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveCurrentViewGroups = () => {
   const { createViewGroupRecords, updateViewGroupRecords } =
@@ -15,7 +15,7 @@ export const useSaveCurrentViewGroups = () => {
 
   const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
 
-  const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
+  const currentViewIdCallbackState = useRecoilComponentCallbackState(
     contextStoreCurrentViewIdComponentState,
   );
 

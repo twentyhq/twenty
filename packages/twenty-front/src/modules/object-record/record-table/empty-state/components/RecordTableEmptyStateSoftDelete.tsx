@@ -4,7 +4,7 @@ import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRe
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableEmptyStateDisplay } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateDisplay';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,7 +14,7 @@ export const RecordTableEmptyStateSoftDelete = () => {
   const { objectMetadataItem, objectNameSingular, recordTableId } =
     useRecordTableContextOrThrow();
 
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useRecoilComponentValue(
     currentRecordFiltersComponentState,
   );
 

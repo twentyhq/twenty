@@ -2,7 +2,7 @@ import { RecordBoardColumnHeader } from '@/object-record/record-board/record-boa
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -19,7 +19,7 @@ export const RecordBoardColumnHeaderWrapper = ({
     recordGroupDefinitionFamilyState(columnId),
   );
 
-  const recordIdsByGroup = useRecoilComponentFamilyValueV2(
+  const recordIdsByGroup = useRecoilComponentFamilyValue(
     recordIndexRecordIdsByGroupComponentFamilyState,
     columnId,
   );

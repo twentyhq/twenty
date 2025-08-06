@@ -1,8 +1,8 @@
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
-import { createComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentFamilyStateV2';
+import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
 
 export const hasInitializedCurrentRecordSortsComponentFamilyState =
-  createComponentFamilyStateV2<boolean, { viewId?: string }>({
+  createComponentFamilyState<boolean, { viewId?: string }>({
     key: 'hasInitializedCurrentRecordSortsComponentFamilyState',
     defaultValue: false,
     componentInstanceContext: RecordSortsComponentInstanceContext,

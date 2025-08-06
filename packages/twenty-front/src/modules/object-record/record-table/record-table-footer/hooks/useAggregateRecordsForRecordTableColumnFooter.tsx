@@ -13,7 +13,7 @@ import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/rec
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -26,11 +26,11 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   const { objectMetadataItem } = useRecordTableContextOrThrow();
   const { recordGroupFilter } = useRecordGroupFilter(objectMetadataItem.fields);
 
-  const currentRecordFilterGroups = useRecoilComponentValueV2(
+  const currentRecordFilterGroups = useRecoilComponentValue(
     currentRecordFilterGroupsComponentState,
   );
 
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useRecoilComponentValue(
     currentRecordFiltersComponentState,
   );
 
@@ -87,7 +87,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
         }
       : {};
 
-  const anyFieldFilterValue = useRecoilComponentValueV2(
+  const anyFieldFilterValue = useRecoilComponentValue(
     anyFieldFilterValueComponentState,
   );
 

@@ -11,7 +11,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
@@ -43,7 +43,7 @@ export const FavoriteFolderPicker = ({
     objectNameSingular,
   });
 
-  const [favoriteFoldersSearchFilter] = useRecoilComponentStateV2(
+  const [favoriteFoldersSearchFilter] = useRecoilComponentState(
     favoriteFolderSearchFilterComponentState,
   );
 

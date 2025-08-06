@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 import { isDefined } from 'twenty-shared/utils';
@@ -43,7 +43,7 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
         const { applyViewFiltersToCurrentRecordFilters } =
           useApplyViewFiltersToCurrentRecordFilters();
 
-        const currentFilters = useRecoilComponentValueV2(
+        const currentFilters = useRecoilComponentValue(
           currentRecordFiltersComponentState,
         );
 
@@ -84,7 +84,7 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
         const { applyViewFiltersToCurrentRecordFilters } =
           useApplyViewFiltersToCurrentRecordFilters();
 
-        const currentFilters = useRecoilComponentValueV2(
+        const currentFilters = useRecoilComponentValue(
           currentRecordFiltersComponentState,
         );
 

@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -51,7 +51,7 @@ export const SettingsSSOOIDCForm = () => {
         <StyledInputsContainer>
           <StyledContainer>
             <StyledLinkContainer>
-              <TextInput
+              <SettingsTextInput
                 instanceId="sso-oidc-authorized-uri"
                 readOnly={true}
                 label={t`Authorized URI`}
@@ -75,7 +75,7 @@ export const SettingsSSOOIDCForm = () => {
           </StyledContainer>
           <StyledContainer>
             <StyledLinkContainer>
-              <TextInput
+              <SettingsTextInput
                 instanceId="sso-oidc-redirection-uri"
                 readOnly={true}
                 label={t`Redirection URI`}
@@ -109,7 +109,7 @@ export const SettingsSSOOIDCForm = () => {
             name="clientID"
             control={control}
             render={({ field: { onChange, value } }) => (
-              <TextInput
+              <SettingsTextInput
                 instanceId="sso-oidc-client-id"
                 autoComplete="off"
                 label={t`Client ID`}
@@ -124,7 +124,7 @@ export const SettingsSSOOIDCForm = () => {
             name="clientSecret"
             control={control}
             render={({ field: { onChange, value } }) => (
-              <TextInput
+              <SettingsTextInput
                 instanceId="sso-oidc-client-secret"
                 autoComplete="off"
                 type="password"
@@ -140,7 +140,7 @@ export const SettingsSSOOIDCForm = () => {
             name="issuer"
             control={control}
             render={({ field: { onChange, value } }) => (
-              <TextInput
+              <SettingsTextInput
                 instanceId="sso-oidc-issuer"
                 autoComplete="off"
                 label={t`Issuer URI`}

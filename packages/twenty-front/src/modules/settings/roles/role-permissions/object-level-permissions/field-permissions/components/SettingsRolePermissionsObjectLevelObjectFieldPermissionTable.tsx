@@ -6,7 +6,7 @@ import { SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow } from 
 import { useObjectPermissionDerivedStates } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useObjectPermissionDerivedStates';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { OrderBy } from '@/types/OrderBy';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -26,7 +26,7 @@ import { turnOrderByIntoSort } from '~/utils/turnOrderByIntoSort';
 export const SETTINGS_ROLE_PERMISSION_OBJECT_LEVEL_FIELD_PERMISSION_TABLE_ID =
   'settings-role-permissions-object-level-object-field-permission';
 
-const StyledSearchInput = styled(TextInput)`
+const StyledSearchInput = styled(SettingsTextInput)`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;

@@ -3,7 +3,7 @@ import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/re
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilCallback } from 'recoil';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -13,7 +13,7 @@ export const MultipleRecordPickerSearchInput = () => {
   );
 
   const [recordPickerSearchFilter, setRecordPickerSearchFilter] =
-    useRecoilComponentStateV2(multipleRecordPickerSearchFilterComponentState);
+    useRecoilComponentState(multipleRecordPickerSearchFilterComponentState);
 
   const { performSearch } = useMultipleRecordPickerPerformSearch();
 

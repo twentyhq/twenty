@@ -4,7 +4,7 @@ import { RecordTableCell } from '@/object-record/record-table/record-table-cell/
 import { RecordTableCellWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellWrapper';
 import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
 export const RecordTableCellsVisible = () => {
@@ -12,7 +12,7 @@ export const RecordTableCellsVisible = () => {
 
   const { isDragging } = useRecordTableRowDraggableContextOrThrow();
 
-  const visibleTableColumns = useRecoilComponentValueV2(
+  const visibleTableColumns = useRecoilComponentValue(
     visibleTableColumnsComponentSelector,
   );
 

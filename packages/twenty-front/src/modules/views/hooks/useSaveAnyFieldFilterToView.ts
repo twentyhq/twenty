@@ -1,5 +1,5 @@
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useUpdateView } from '@/views/hooks/useUpdateView';
 import { useRecoilCallback } from 'recoil';
@@ -10,7 +10,7 @@ export const useSaveAnyFieldFilterToView = () => {
 
   const { currentView } = useGetCurrentViewOnly();
 
-  const anyFieldFilterValueCallbackState = useRecoilComponentCallbackStateV2(
+  const anyFieldFilterValueCallbackState = useRecoilComponentCallbackState(
     anyFieldFilterValueComponentState,
   );
 

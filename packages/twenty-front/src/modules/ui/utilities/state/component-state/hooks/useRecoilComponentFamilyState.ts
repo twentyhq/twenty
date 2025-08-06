@@ -1,16 +1,16 @@
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { ComponentFamilySelectorV2 } from '@/ui/utilities/state/component-state/types/ComponentFamilySelectorV2';
-import { ComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/types/ComponentFamilyStateV2';
+import { ComponentFamilySelector } from '@/ui/utilities/state/component-state/types/ComponentFamilySelector';
+import { ComponentFamilyState } from '@/ui/utilities/state/component-state/types/ComponentFamilyState';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { SerializableParam, useRecoilState } from 'recoil';
 
-export const useRecoilComponentFamilyStateV2 = <
+export const useRecoilComponentFamilyState = <
   StateType,
   FamilyKey extends SerializableParam,
 >(
   componentState:
-    | ComponentFamilyStateV2<StateType, FamilyKey>
-    | ComponentFamilySelectorV2<StateType, FamilyKey>,
+    | ComponentFamilyState<StateType, FamilyKey>
+    | ComponentFamilySelector<StateType, FamilyKey>,
   familyKey: FamilyKey,
   instanceIdFromProps?: string,
 ) => {

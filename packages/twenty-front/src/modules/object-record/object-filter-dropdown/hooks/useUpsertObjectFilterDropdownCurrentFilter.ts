@@ -1,12 +1,12 @@
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 
 export const useUpsertObjectFilterDropdownCurrentFilter = () => {
   const objectFilterDropdownCurrentRecordFilterCallbackState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       objectFilterDropdownCurrentRecordFilterComponentState,
     );
 

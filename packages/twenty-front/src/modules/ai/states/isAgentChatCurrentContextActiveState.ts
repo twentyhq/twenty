@@ -1,11 +1,11 @@
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 import { createComponentInstanceContext } from '@/ui/utilities/state/component-state/utils/createComponentInstanceContext';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
 export const IsAgentChatCurrentContextActiveInstanceContext =
   createComponentInstanceContext();
 
 export const isAgentChatCurrentContextActiveState =
-  createComponentStateV2<boolean>({
+  createComponentState<boolean>({
     defaultValue: true,
     key: 'isAgentChatCurrentContextActiveState',
     componentInstanceContext: IsAgentChatCurrentContextActiveInstanceContext,

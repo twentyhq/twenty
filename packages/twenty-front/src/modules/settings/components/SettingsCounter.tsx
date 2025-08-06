@@ -1,4 +1,4 @@
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import styled from '@emotion/styled';
 import { IconMinus, IconPlus } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
@@ -20,7 +20,7 @@ const StyledCounterContainer = styled.div`
   width: ${({ theme }) => theme.spacing(30)};
 `;
 
-const StyledTextInput = styled(TextInput)`
+const StyledTextInput = styled(SettingsTextInput)`
   width: ${({ theme }) => theme.spacing(16)};
   input {
     width: ${({ theme }) => theme.spacing(16)};

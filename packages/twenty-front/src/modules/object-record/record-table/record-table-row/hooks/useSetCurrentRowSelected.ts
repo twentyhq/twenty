@@ -4,22 +4,22 @@ import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { lastSelectedRowIndexComponentState } from '@/object-record/record-table/record-table-row/states/lastSelectedRowIndexComponentState';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSetCurrentRowSelected = () => {
   const { recordId, rowIndex } = useRecordTableRowContextOrThrow();
-  const isRowSelectedFamilyState = useRecoilComponentCallbackStateV2(
+  const isRowSelectedFamilyState = useRecoilComponentCallbackState(
     isRowSelectedComponentFamilyState,
   );
 
-  const recordIndexAllRecordIdsState = useRecoilComponentCallbackStateV2(
+  const recordIndexAllRecordIdsState = useRecoilComponentCallbackState(
     recordIndexAllRecordIdsComponentSelector,
   );
 
   const lastSelectedRowIndexComponentCallbackState =
-    useRecoilComponentCallbackStateV2(lastSelectedRowIndexComponentState);
+    useRecoilComponentCallbackState(lastSelectedRowIndexComponentState);
 
   const setCurrentRowSelected = useRecoilCallback(
     ({ set, snapshot }) =>

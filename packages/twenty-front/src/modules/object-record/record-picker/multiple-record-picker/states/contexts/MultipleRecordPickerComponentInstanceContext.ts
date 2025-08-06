@@ -1,7 +1,7 @@
-import { ComponentStateKeyV2 } from '@/ui/utilities/state/component-state/types/ComponentStateKeyV2';
+import { ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
 import { createComponentInstanceContext } from '@/ui/utilities/state/component-state/utils/createComponentInstanceContext';
 
-type MultipleRecordPickerComponentInstanceContextProps = ComponentStateKeyV2;
+type MultipleRecordPickerComponentInstanceContextProps = ComponentStateKey;
 
 export const MultipleRecordPickerComponentInstanceContext =
   createComponentInstanceContext<MultipleRecordPickerComponentInstanceContextProps>();

@@ -1,69 +1,69 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { ComponentFamilyReadOnlySelectorV2 } from '@/ui/utilities/state/component-state/types/ComponentFamilyReadOnlySelectorV2';
-import { ComponentFamilySelectorV2 } from '@/ui/utilities/state/component-state/types/ComponentFamilySelectorV2';
-import { ComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/types/ComponentFamilyStateV2';
-import { ComponentReadOnlySelectorV2 } from '@/ui/utilities/state/component-state/types/ComponentReadOnlySelectorV2';
-import { ComponentSelectorV2 } from '@/ui/utilities/state/component-state/types/ComponentSelectorV2';
-import { ComponentStateV2 } from '@/ui/utilities/state/component-state/types/ComponentStateV2';
+import { ComponentFamilyReadOnlySelector } from '@/ui/utilities/state/component-state/types/ComponentFamilyReadOnlySelector';
+import { ComponentFamilySelector } from '@/ui/utilities/state/component-state/types/ComponentFamilySelector';
+import { ComponentFamilyState } from '@/ui/utilities/state/component-state/types/ComponentFamilyState';
+import { ComponentReadOnlySelector } from '@/ui/utilities/state/component-state/types/ComponentReadOnlySelector';
+import { ComponentSelector } from '@/ui/utilities/state/component-state/types/ComponentSelector';
+import { ComponentState } from '@/ui/utilities/state/component-state/types/ComponentState';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { RecoilState, RecoilValueReadOnly, SerializableParam } from 'recoil';
 
-export function useRecoilComponentCallbackStateV2<ValueType>(
-  componentState: ComponentStateV2<ValueType>,
+export function useRecoilComponentCallbackState<ValueType>(
+  componentState: ComponentState<ValueType>,
   instanceIdFromProps?: string,
 ): RecoilState<ValueType>;
-export function useRecoilComponentCallbackStateV2<ValueType>(
-  componentSelector: ComponentSelectorV2<ValueType>,
+export function useRecoilComponentCallbackState<ValueType>(
+  componentSelector: ComponentSelector<ValueType>,
   instanceIdFromProps?: string,
 ): RecoilState<ValueType>;
-export function useRecoilComponentCallbackStateV2<ValueType>(
-  componentReadOnlySelector: ComponentReadOnlySelectorV2<ValueType>,
+export function useRecoilComponentCallbackState<ValueType>(
+  componentReadOnlySelector: ComponentReadOnlySelector<ValueType>,
   instanceIdFromProps?: string,
 ): RecoilValueReadOnly<ValueType>;
-export function useRecoilComponentCallbackStateV2<
+export function useRecoilComponentCallbackState<
   ValueType,
   FamilyKey extends SerializableParam,
 >(
-  componentFamilyState: ComponentFamilyStateV2<ValueType, FamilyKey>,
+  componentFamilyState: ComponentFamilyState<ValueType, FamilyKey>,
   instanceIdFromProps?: string,
 ): (familyKey: FamilyKey) => RecoilState<ValueType>;
-export function useRecoilComponentCallbackStateV2<
+export function useRecoilComponentCallbackState<
   ValueType,
   FamilyKey extends SerializableParam,
 >(
-  componentFamilySelector: ComponentFamilySelectorV2<ValueType, FamilyKey>,
+  componentFamilySelector: ComponentFamilySelector<ValueType, FamilyKey>,
   instanceIdFromProps?: string,
 ): (familyKey: FamilyKey) => RecoilState<ValueType>;
-export function useRecoilComponentCallbackStateV2<
+export function useRecoilComponentCallbackState<
   ValueType,
   FamilyKey extends SerializableParam,
 >(
-  componentFamilyReadOnlySelector: ComponentFamilyReadOnlySelectorV2<
+  componentFamilyReadOnlySelector: ComponentFamilyReadOnlySelector<
     ValueType,
     FamilyKey
   >,
   instanceIdFromProps?: string,
 ): (familyKey: FamilyKey) => RecoilValueReadOnly<ValueType>;
-export function useRecoilComponentCallbackStateV2<
+export function useRecoilComponentCallbackState<
   ValueType,
   FamilyKey extends SerializableParam,
 >(
-  componentFamilyState: ComponentFamilyStateV2<ValueType, FamilyKey>,
+  componentFamilyState: ComponentFamilyState<ValueType, FamilyKey>,
   instanceIdFromProps?: string,
 ): (familyKey: FamilyKey) => RecoilState<ValueType>;
-export function useRecoilComponentCallbackStateV2<
-  ComponentState extends
-    | ComponentStateV2<ValueType>
-    | ComponentSelectorV2<ValueType>
-    | ComponentReadOnlySelectorV2<ValueType>
-    | ComponentFamilyStateV2<ValueType, FamilyKey>
-    | ComponentFamilySelectorV2<ValueType, FamilyKey>
-    | ComponentFamilyReadOnlySelectorV2<ValueType, FamilyKey>,
+export function useRecoilComponentCallbackState<
+  InferedComponentState extends
+    | ComponentState<ValueType>
+    | ComponentSelector<ValueType>
+    | ComponentReadOnlySelector<ValueType>
+    | ComponentFamilyState<ValueType, FamilyKey>
+    | ComponentFamilySelector<ValueType, FamilyKey>
+    | ComponentFamilyReadOnlySelector<ValueType, FamilyKey>,
   ValueType,
   FamilyKey extends SerializableParam = never,
 >(
-  componentState: ComponentState,
+  componentState: InferedComponentState,
   instanceIdFromProps?: string,
 ):
   | RecoilState<ValueType>

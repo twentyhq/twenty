@@ -12,8 +12,8 @@ import { singleRecordPickerSelectedIdComponentState } from '@/object-record/reco
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { isDefined } from 'twenty-shared/utils';
 import { IconForbid } from 'twenty-ui/display';
 
@@ -57,15 +57,15 @@ export const RelationToOneFieldInput = ({
       recordId,
     });
 
-  const layoutDirection = useRecoilComponentValueV2(
+  const layoutDirection = useRecoilComponentValue(
     recordFieldInputLayoutDirectionComponentState,
   );
 
-  const isLoading = useRecoilComponentValueV2(
+  const isLoading = useRecoilComponentValue(
     recordFieldInputLayoutDirectionLoadingComponentState,
   );
 
-  const setSingleRecordPickerSelectedId = useSetRecoilComponentStateV2(
+  const setSingleRecordPickerSelectedId = useSetRecoilComponentState(
     singleRecordPickerSelectedIdComponentState,
     instanceId,
   );

@@ -1,6 +1,6 @@
 import { RecordTableCellPortalWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalWrapper';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
@@ -12,7 +12,7 @@ import { RecordTableCellEditButton } from '@/object-record/record-table/record-t
 import { RecordTableCellEditMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellEditMode';
 import { RecordTableCellFieldInput } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldInput';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useContext } from 'react';
 import { BORDER_COMMON } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -45,7 +45,7 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
 `;
 
 const RecordTableCellHoveredPortalContent = () => {
-  const hoverPosition = useRecoilComponentValueV2(
+  const hoverPosition = useRecoilComponentValue(
     recordTableHoverPositionComponentState,
   );
 
@@ -62,7 +62,7 @@ const RecordTableCellHoveredPortalContent = () => {
 
   const { rowIndex } = useRecordTableRowContextOrThrow();
 
-  const isRowActive = useRecoilComponentFamilyValueV2(
+  const isRowActive = useRecoilComponentFamilyValue(
     isRecordTableRowActiveComponentFamilyState,
     rowIndex,
   );
@@ -95,7 +95,7 @@ const StyledRecordTableCellHoveredPortal = styled.div`
 `;
 
 export const RecordTableCellHoveredPortal = () => {
-  const hoverPosition = useRecoilComponentValueV2(
+  const hoverPosition = useRecoilComponentValue(
     recordTableHoverPositionComponentState,
   );
 

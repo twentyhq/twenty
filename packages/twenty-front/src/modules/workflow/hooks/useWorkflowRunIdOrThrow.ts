@@ -1,9 +1,9 @@
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useWorkflowRunIdOrThrow = () => {
-  const workflowRunId = useRecoilComponentValueV2(
+  const workflowRunId = useRecoilComponentValue(
     workflowVisualizerWorkflowRunIdComponentState,
   );
 

@@ -18,7 +18,7 @@ import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/cons
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 
 type ObjectFilterDropdownFilterInputProps = {
@@ -30,12 +30,12 @@ export const ObjectFilterDropdownFilterInput = ({
   filterDropdownId,
   recordFilterId,
 }: ObjectFilterDropdownFilterInputProps) => {
-  const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
+  const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
     filterDropdownId,
   );
 
-  const selectedOperandInDropdown = useRecoilComponentValueV2(
+  const selectedOperandInDropdown = useRecoilComponentValue(
     selectedOperandInDropdownComponentState,
     filterDropdownId,
   );
