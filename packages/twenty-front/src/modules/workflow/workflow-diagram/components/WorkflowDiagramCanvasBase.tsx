@@ -39,6 +39,7 @@ import {
   OnNodeDrag,
   OnBeforeDelete,
   OnSelectionChangeParams,
+  useOnSelectionChange,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, {
@@ -458,12 +459,12 @@ export const WorkflowDiagramCanvasBase = ({
   }, [setNoEdgeHovered]);
 
   const onSelectionChange = useCallback(
-    (params: OnSelectionChangeParams) => {
+    ({ edges }: OnSelectionChangeParams) => {
       if (!isWorkflowBranchEnabled) {
         return;
       }
 
-      const selectedEdge = params.edges?.[0];
+      const selectedEdge = edges?.[0];
 
       if (!isDefined(selectedEdge)) {
         clearEdgeSelection();
@@ -477,6 +478,12 @@ export const WorkflowDiagramCanvasBase = ({
     },
     [isWorkflowBranchEnabled, setEdgeSelected, clearEdgeSelection],
   );
+
+  // Using the hook as using the <ReactFlow 'onSelectionChange' props breaks
+  // the click outside behavior
+  useOnSelectionChange({
+    onChange: onSelectionChange,
+  });
 
   return (
     <StyledResetReactflowStyles ref={containerRef}>
@@ -495,7 +502,6 @@ export const WorkflowDiagramCanvasBase = ({
         onEdgeMouseLeave={onEdgeMouseLeave}
         onNodesChange={handleNodesChanges}
         onEdgesChange={handleEdgesChange}
-        onSelectionChange={onSelectionChange}
         onConnect={isWorkflowBranchEnabled ? onConnect : undefined}
         onNodeDragStop={isWorkflowBranchEnabled ? onNodeDragStop : undefined}
         onBeforeDelete={
