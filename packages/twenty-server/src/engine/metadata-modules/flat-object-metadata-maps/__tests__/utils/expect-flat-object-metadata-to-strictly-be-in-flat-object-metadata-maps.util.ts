@@ -1,8 +1,9 @@
+import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util';
+
 import { expectFlatFieldMetadataToBeInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/__tests__/utils/expect-flat-field-metadata-to-be-in-flat-object-metadata-maps.util';
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { deleteFieldFromFlatObjectMetadataWithFlatFieldMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-with-flat-field-maps-or-throw.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util';
 
 type ExpectFlatObjectMetadataToBeInFlatObjectMetadataMapsArgs = {
   flatObjectMetadataMaps: FlatObjectMetadataMaps;
@@ -15,6 +16,7 @@ export const expectFlatObjectdMetadataToStrictlyBeInFlatObjectMetadataMaps = ({
   const { id: objectMetadataId } = flatObjectMetadata;
   const flatObjectMetadataWithFlatFieldMaps =
     flatObjectMetadataMaps.byId[objectMetadataId];
+
   expect(
     flatObjectMetadataMaps.idByNameSingular[flatObjectMetadata.nameSingular],
   ).toEqual(objectMetadataId);

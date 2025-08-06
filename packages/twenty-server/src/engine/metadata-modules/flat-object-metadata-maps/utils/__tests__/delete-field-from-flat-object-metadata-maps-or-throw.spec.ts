@@ -3,6 +3,7 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -13,7 +14,6 @@ import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
 import { PET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/pet-flat-object.mock';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
-import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util';
 
 type DeleteFieldFromFlatObjectMetadataMapsTestCase = {
   input: {
@@ -105,6 +105,7 @@ describe('deleteFieldFromFlatObjectMetadataMapsOrThrow', () => {
           flatObjectMetadataMaps,
           objectMetadataId,
         });
+
         expect(result).toEqual(expected);
       }
     },

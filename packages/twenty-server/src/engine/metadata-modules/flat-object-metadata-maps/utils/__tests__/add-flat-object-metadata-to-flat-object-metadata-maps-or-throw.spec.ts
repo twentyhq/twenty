@@ -2,6 +2,7 @@ import {
   EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
+import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util';
 
 import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata-maps/mocks/flat-object-metadata-maps.mock';
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
@@ -10,7 +11,6 @@ import { PET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-me
 import { ROCKET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/rocket-flat-object.mock';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromFlatObjectMetadatasToFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadatas-to-flat-object-metadata-maps.util';
-import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util';
 
 type AddFlatObjectMetadataToFlatObjectMetadataMapsTestCase = {
   input: {
@@ -77,6 +77,7 @@ describe('addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow', () => {
             flatObjectMetadata,
             flatObjectMetadataMaps,
           });
+
         expect(updatedFlatObjectMetadataMaps).toEqual(expected);
       }
     },

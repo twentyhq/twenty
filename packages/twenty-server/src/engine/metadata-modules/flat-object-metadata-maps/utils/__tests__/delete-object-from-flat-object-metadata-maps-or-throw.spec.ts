@@ -62,6 +62,7 @@ describe('deleteObjectFromFlatObjectMetadataMapsOrThrow', () => {
       } else {
         const updatedFlatObjectMetadataMaps =
           deleteObjectFromFlatObjectMetadataMapsOrThrow(input);
+
         expect(updatedFlatObjectMetadataMaps).toEqual(expected);
       }
     },
