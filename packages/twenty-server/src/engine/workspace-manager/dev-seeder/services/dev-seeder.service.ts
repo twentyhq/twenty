@@ -66,12 +66,12 @@ export class DevSeederService {
       featureFlags,
     });
 
-    await this.devSeederPermissionsService.initPermissions(workspaceId);
-
     await this.devSeederMetadataService.seed({
       dataSourceMetadata,
       workspaceId,
     });
+
+    await this.devSeederPermissionsService.initPermissions(workspaceId);
 
     await this.devSeederDataService.seed({
       schemaName: dataSourceMetadata.schema,
