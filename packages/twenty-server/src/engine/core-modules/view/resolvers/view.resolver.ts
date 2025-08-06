@@ -71,4 +71,14 @@ export class ViewResolver {
 
     return isDefined(deletedView);
   }
+
+  @Mutation(() => Boolean)
+  async destroyCoreView(
+    @Args('id', { type: () => String }) id: string,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<boolean> {
+    const deletedView = await this.viewService.destroy(id, workspace.id);
+
+    return isDefined(deletedView);
+  }
 }

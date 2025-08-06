@@ -73,4 +73,17 @@ export class ViewFilterGroupResolver {
 
     return isDefined(deletedViewFilterGroup);
   }
+
+  @Mutation(() => Boolean)
+  async destroyCoreViewFilterGroup(
+    @Args('id', { type: () => String }) id: string,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<boolean> {
+    const deletedViewFilterGroup = await this.viewFilterGroupService.destroy(
+      id,
+      workspace.id,
+    );
+
+    return isDefined(deletedViewFilterGroup);
+  }
 }

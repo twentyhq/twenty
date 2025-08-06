@@ -71,4 +71,17 @@ export class ViewGroupResolver {
 
     return isDefined(deletedViewGroup);
   }
+
+  @Mutation(() => Boolean)
+  async destroyCoreViewGroup(
+    @Args('id', { type: () => String }) id: string,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<boolean> {
+    const deletedViewGroup = await this.viewGroupService.destroy(
+      id,
+      workspace.id,
+    );
+
+    return isDefined(deletedViewGroup);
+  }
 }
