@@ -180,7 +180,7 @@ export const WorkflowDiagramStepNodeBase = ({
           type="target"
           position={Position.Top}
           isVisible={displayHandle}
-          selected={handlesSelectedState.topHandle}
+          selected={handlesSelectedState.targetHandle}
         />
       )}
 
@@ -204,7 +204,7 @@ export const WorkflowDiagramStepNodeBase = ({
         type="source"
         position={Position.Bottom}
         isVisible={displayHandle}
-        selected={handlesSelectedState.bottomHandle}
+        selected={handlesSelectedState.sourceHandle}
       />
     </StyledStepNodeContainer>
   );

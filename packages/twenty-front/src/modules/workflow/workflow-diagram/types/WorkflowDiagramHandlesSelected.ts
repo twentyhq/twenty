@@ -1,4 +1,4 @@
 export type WorkflowDiagramHandlesSelected = {
-  topHandle: boolean;
-  bottomHandle: boolean;
+  targetHandle: boolean;
+  sourceHandle: boolean;
 };

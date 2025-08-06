@@ -18,8 +18,8 @@ export const useEdgeSelected = () => {
     id: string,
   ): WorkflowDiagramHandlesSelected => {
     return {
-      topHandle: workflowSelectedEdge?.target === id,
-      bottomHandle: workflowSelectedEdge?.source === id,
+      targetHandle: workflowSelectedEdge?.target === id,
+      sourceHandle: workflowSelectedEdge?.source === id,
     };
   };
 
