@@ -37,10 +37,8 @@ import { messages as zhHantMessages } from 'src/engine/core-modules/i18n/locales
 
 @Injectable()
 export class I18nService implements OnModuleInit {
-  private i18nMap: Record<keyof typeof APP_LOCALES, I18n> = {} as Record<
-    keyof typeof APP_LOCALES,
-    I18n
-  >;
+  private i18nInstancesMap: Record<keyof typeof APP_LOCALES, I18n> =
+    {} as Record<keyof typeof APP_LOCALES, I18n>;
 
   async loadTranslations() {
     const messagesByLocale: Record<keyof typeof APP_LOCALES, Messages> = {
@@ -85,28 +83,28 @@ export class I18nService implements OnModuleInit {
       localeI18n.load(locale, messages);
       localeI18n.activate(locale);
 
-      this.i18nMap[locale] = localeI18n;
+      this.i18nInstancesMap[locale] = localeI18n;
     });
   }
 
-  getI18n(locale: keyof typeof APP_LOCALES) {
-    return this.i18nMap[locale];
+  getI18nInstance(locale: keyof typeof APP_LOCALES) {
+    return this.i18nInstancesMap[locale];
   }
 
-  getTranslation({
-    id,
+  translateMessage({
+    messageId,
     values,
     locale = SOURCE_LOCALE,
     options,
   }: {
-    id: string;
+    messageId: string;
     values?: Record<string, string>;
     locale?: keyof typeof APP_LOCALES;
     options?: MessageOptions;
   }) {
-    const i18n = this.i18nMap[locale];
+    const i18n = this.getI18nInstance(locale);
 
-    return i18n._(id, values, options);
+    return i18n._(messageId, values, options);
   }
 
   async onModuleInit() {

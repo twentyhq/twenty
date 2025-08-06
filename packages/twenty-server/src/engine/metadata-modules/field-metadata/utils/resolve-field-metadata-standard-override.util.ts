@@ -13,7 +13,7 @@ export const resolveFieldMetadataStandardOverride = (
   >,
   labelKey: 'label' | 'description' | 'icon',
   locale: keyof typeof APP_LOCALES | undefined,
-  i18n: I18n,
+  i18nInstance: I18n,
 ): string => {
   if (fieldMetadata.isCustom) {
     return fieldMetadata[labelKey] ?? '';
@@ -45,7 +45,7 @@ export const resolveFieldMetadataStandardOverride = (
 
   const messageId = generateMessageId(fieldMetadata[labelKey] ?? '');
 
-  const translatedMessage = i18n._(messageId);
+  const translatedMessage = i18nInstance._(messageId);
 
   if (translatedMessage === messageId) {
     return fieldMetadata[labelKey] ?? '';

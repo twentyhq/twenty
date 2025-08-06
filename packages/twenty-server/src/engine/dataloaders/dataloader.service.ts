@@ -193,7 +193,9 @@ export class DataloaderService {
     return new DataLoader<FieldMetadataLoaderPayload, FieldMetadataDTO[]>(
       async (dataLoaderParams: FieldMetadataLoaderPayload[]) => {
         const locale = dataLoaderParams[0].locale;
-        const i18n = this.i18nService.getI18n(locale ?? SOURCE_LOCALE);
+        const i18nInstance = this.i18nService.getI18nInstance(
+          locale ?? SOURCE_LOCALE,
+        );
         const workspaceId = dataLoaderParams[0].workspaceId;
         const objectMetadataIds = dataLoaderParams.map(
           (dataLoaderParam) => dataLoaderParam.objectMetadata.id,
@@ -236,7 +238,7 @@ export class DataloaderService {
                   },
                   field,
                   dataLoaderParams[0].locale,
-                  i18n,
+                  i18nInstance,
                 ),
               }),
               {},
