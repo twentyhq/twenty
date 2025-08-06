@@ -5,7 +5,6 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
-import { getNonReadableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonReadableFieldMetadataIdsFromObjectPermissions';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -57,20 +56,11 @@ export const FieldsCard = ({
 
   const { isInRightDrawer } = useIsInRightDrawerOrThrow();
 
-  const nonReadableFieldMetadataIds =
-    getNonReadableFieldMetadataIdsFromObjectPermissions({
-      objectPermissions: [
-        objectPermissionsByObjectMetadataId[objectMetadataItem.id],
-      ],
-      objectMetadataId: objectMetadataItem.id,
-    });
-
-  const availableFieldMetadataItems = objectMetadataItem.fields
+  const availableFieldMetadataItems = objectMetadataItem.readableFields
     .filter(
       (fieldMetadataItem) =>
         isFieldCellSupported(fieldMetadataItem, objectMetadataItems) &&
-        fieldMetadataItem.id !== labelIdentifierFieldMetadataItem?.id &&
-        !nonReadableFieldMetadataIds.includes(fieldMetadataItem.id),
+        fieldMetadataItem.id !== labelIdentifierFieldMetadataItem?.id,
     )
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>
       fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
