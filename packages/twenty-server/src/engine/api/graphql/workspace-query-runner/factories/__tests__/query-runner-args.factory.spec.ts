@@ -14,17 +14,19 @@ describe('QueryRunnerArgsFactory', () => {
   const recordPositionService = {
     overridePositionOnRecords: jest
       .fn()
-      .mockImplementation(({ records }: { records: any[] }) => {
-        return Promise.resolve(
-          records.map((record: any) => ({
-            ...record,
-            position:
-              record.position === 'last' || !record.position
-                ? 2
-                : record.position,
-          })),
-        );
-      }),
+      .mockImplementation(
+        ({ partialRecordInputs }: { partialRecordInputs: any[] }) => {
+          return Promise.resolve(
+            partialRecordInputs.map((record: any) => ({
+              ...record,
+              position:
+                record.position === 'last' || !record.position
+                  ? 2
+                  : record.position,
+            })),
+          );
+        },
+      ),
   };
   const workspaceId = 'workspaceId';
   const options = {
@@ -106,9 +108,10 @@ describe('QueryRunnerArgsFactory', () => {
       );
 
       const expectedArgs = {
-        records: [{ position: 'last', testNumber: 1 }],
+        partialRecordInputs: [{ position: 'last', testNumber: 1 }],
         objectMetadata: { isCustom: true, nameSingular: 'testNumber' },
         workspaceId,
+        shouldBackfillPositionIfUndefined: true,
       };
 
       expect(
@@ -133,9 +136,10 @@ describe('QueryRunnerArgsFactory', () => {
       );
 
       const expectedArgs = {
-        records: [{ testNumber: 1 }],
+        partialRecordInputs: [{ testNumber: 1 }],
         objectMetadata: { isCustom: true, nameSingular: 'testNumber' },
         workspaceId,
+        shouldBackfillPositionIfUndefined: true,
       };
 
       expect(

@@ -310,7 +310,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     repository,
     objectMetadataItemWithFieldMaps,
     result,
-    columnsToReturn: _,
+    columnsToReturn,
   }: {
     partialRecordsToUpdate: PartialObjectRecordWithId[];
     repository: WorkspaceRepository<ObjectLiteral>;
@@ -328,6 +328,8 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
         criteria: record.id,
         partialEntity: record,
       })),
+      undefined,
+      columnsToReturn,
     );
 
     result.identifiers.push(
