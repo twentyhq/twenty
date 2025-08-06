@@ -5,7 +5,7 @@ import { getFieldMetadataType } from 'src/engine/api/graphql/workspace-schema-bu
 describe('getFieldMetadataType', () => {
   it.each([
     ['uuid', FieldMetadataType.UUID],
-    ['timestamptz', FieldMetadataType.DATE_TIME],
+    ['timestamptz(3)', FieldMetadataType.DATE_TIME],
   ])(
     'should return correct FieldMetadataType for type %s',
     (type, expectedMetadataType) => {
