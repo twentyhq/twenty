@@ -157,16 +157,16 @@ export class QueryRunnerArgsFactory {
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
-    const overriddenPositionRecords =
-      await this.recordPositionService.overridePositionOnRecords({
-        partialRecordInputs,
-        workspaceId: workspace.id,
-        objectMetadata: {
-          isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
-          nameSingular: options.objectMetadataItemWithFieldMaps.nameSingular,
-        },
-        shouldBackfillPositionIfUndefined: shouldBackfillPosition,
-      });
+    const overriddenPositionRecords = shouldBackfillPosition
+      ? await this.recordPositionService.overridePositionOnRecords({
+          partialRecordInputs,
+          workspaceId: workspace.id,
+          objectMetadata: {
+            isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
+            nameSingular: options.objectMetadataItemWithFieldMaps.nameSingular,
+          },
+        })
+      : partialRecordInputs;
 
     for (const record of overriddenPositionRecords) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

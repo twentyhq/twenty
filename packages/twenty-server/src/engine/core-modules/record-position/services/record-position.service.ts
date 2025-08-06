@@ -52,12 +52,10 @@ export class RecordPositionService {
     partialRecordInputs,
     workspaceId,
     objectMetadata,
-    shouldBackfillPositionIfUndefined,
   }: {
     partialRecordInputs: Partial<ObjectRecord>[];
     workspaceId: string;
     objectMetadata: { isCustom: boolean; nameSingular: string };
-    shouldBackfillPositionIfUndefined: boolean;
   }): Promise<Partial<ObjectRecord>[]> {
     const recordsWithFirstPosition: Partial<ObjectRecord>[] = [];
     const recordsWithLastPosition: Partial<ObjectRecord>[] = [];
@@ -69,8 +67,6 @@ export class RecordPositionService {
       } else if (typeof partialRecordInput.position === 'number') {
         recordsWithPosition.push(partialRecordInput);
       } else if (partialRecordInput.position === 'first') {
-        recordsWithFirstPosition.push(partialRecordInput);
-      } else if (shouldBackfillPositionIfUndefined) {
         recordsWithFirstPosition.push(partialRecordInput);
       }
     }
