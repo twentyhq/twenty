@@ -593,6 +593,7 @@ export type CreateRoleInput = {
   icon?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
   label: Scalars['String'];
+  standardId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type CreateServerlessFunctionInput = {
@@ -2461,6 +2462,7 @@ export type Role = {
   label: Scalars['String'];
   objectPermissions?: Maybe<Array<ObjectPermission>>;
   permissionFlags?: Maybe<Array<PermissionFlag>>;
+  standardId?: Maybe<Scalars['UUID']>;
   workspaceMembers: Array<WorkspaceMember>;
 };
 
@@ -2879,6 +2881,7 @@ export type UpdateRolePayload = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
   label?: InputMaybe<Scalars['String']>;
+  standardId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateServerlessFunctionInput = {
