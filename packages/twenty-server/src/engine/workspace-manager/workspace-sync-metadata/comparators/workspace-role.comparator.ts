@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/comparator-action.enum';
+import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
+
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { ComputedRole } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-role.factory';
 
