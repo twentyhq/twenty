@@ -35,22 +35,21 @@ export class WorkspaceMigrationRunnerV2Service {
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    let optimisticFlatObjectMetadataMaps =
-      structuredClone(flatObjectMetadataMaps);
+    let optimisticFlatObjectMetadataMaps = structuredClone(
+      flatObjectMetadataMaps,
+    );
 
     try {
       for (const action of workspaceMigration.actions) {
         await Promise.all([
           this.workspaceMetadataMigrationRunner.runWorkspaceMetadataMigration({
-            flatObjectMetadataMaps:
-              optimisticFlatObjectMetadataMaps,
+            flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
             queryRunner,
             action,
           }),
           this.workspaceSchemaMigrationRunner.runWorkspaceSchemaMigration({
             queryRunner,
-            flatObjectMetadataMaps:
-              optimisticFlatObjectMetadataMaps,
+            flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
             action,
           }),
         ]);
@@ -58,8 +57,7 @@ export class WorkspaceMigrationRunnerV2Service {
         optimisticFlatObjectMetadataMaps =
           applyWorkspaceMigrationActionOnFlatObjectMetadataMaps({
             action,
-            flatObjectMetadataMaps:
-              optimisticFlatObjectMetadataMaps,
+            flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
           });
       }
 

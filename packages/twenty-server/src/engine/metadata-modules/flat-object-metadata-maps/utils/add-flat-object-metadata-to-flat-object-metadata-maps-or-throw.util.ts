@@ -1,7 +1,8 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromFlatObjectMetadataToFlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-flat-object-metadata-with-flat-field-maps.util';
-import { isDefined } from 'twenty-shared/utils';
 
 type AddFlatObjectMetadataToFlatObjectMetadataMapsOrThrowArgs = {
   flatObjectMetadata: FlatObjectMetadata;

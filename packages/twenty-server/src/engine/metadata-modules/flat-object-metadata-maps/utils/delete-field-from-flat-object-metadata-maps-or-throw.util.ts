@@ -25,10 +25,11 @@ export const deleteFieldFromFlatObjectMetadataMapsOrThrow = ({
   return {
     byId: {
       ...flatObjectMetadataMaps.byId,
-      [objectMetadataId]: deleteFieldFromFlatObjectMetadataWithFlatFieldMapsOrThrow({
-        fieldMetadataId,
-        flatObjectMetadataWithFlatFieldMaps,
-      }),
+      [objectMetadataId]:
+        deleteFieldFromFlatObjectMetadataWithFlatFieldMapsOrThrow({
+          fieldMetadataId,
+          flatObjectMetadataWithFlatFieldMaps,
+        }),
     },
     idByNameSingular: flatObjectMetadataMaps.idByNameSingular,
   };
