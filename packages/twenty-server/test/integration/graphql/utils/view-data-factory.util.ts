@@ -2,7 +2,6 @@ import {
   TEST_FIELD_METADATA_1_ID,
   TEST_OBJECT_METADATA_1_ID,
 } from 'test/integration/constants/test-view-ids.constants';
-import { ViewFilterOperand } from 'twenty-shared/types';
 
 import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
@@ -11,6 +10,7 @@ import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.enti
 import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
+import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
@@ -74,13 +74,13 @@ export const createViewFilterData = (
 ) => ({
   viewId,
   fieldMetadataId: TEST_FIELD_METADATA_1_ID,
-  operand: ViewFilterOperand.Is,
+  operand: ViewFilterOperand.IS,
   value: 'test-value',
   ...overrides,
 });
 
 export const updateViewFilterData = (overrides: Partial<ViewFilter> = {}) => ({
-  operand: ViewFilterOperand.IsNot,
+  operand: ViewFilterOperand.IS_NOT,
   value: 'updated-value',
   ...overrides,
 });

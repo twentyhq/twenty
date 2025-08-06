@@ -1,7 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
-import { ViewFilterOperand } from 'twenty-shared/types';
 import {
   Column,
   CreateDateColumn,
@@ -17,6 +16,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import { ViewFilterValue } from 'src/engine/core-modules/view/types/view-filter-value.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -39,7 +39,7 @@ export class ViewFilter {
     nullable: false,
     type: 'enum',
     enum: ViewFilterOperand,
-    default: ViewFilterOperand.Contains,
+    default: ViewFilterOperand.CONTAINS,
   })
   operand: ViewFilterOperand;
 
