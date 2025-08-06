@@ -7,6 +7,7 @@ import { getPositionWordLabel } from '../utils/getPositionWordLabel';
 
 const StyledSection = styled(Section)`
   margin: ${({ theme }) => theme.spacing(4)};
+  width: auto;
 `;
 
 export const MergeSettingsTab = () => {
