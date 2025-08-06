@@ -5,8 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
-import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -70,6 +68,19 @@ export class RoleService {
     });
   }
 
+  public async getRoleByStandardId(
+    standardId: string,
+    workspaceId: string,
+  ): Promise<RoleEntity | null> {
+    return this.roleRepository.findOne({
+      where: {
+        standardId,
+        workspaceId,
+      },
+      relations: ['roleTargets', 'permissionFlags'],
+    });
+  }
+
   public async createRole({
     input,
     workspaceId,
@@ -81,6 +92,7 @@ export class RoleService {
 
     const role = await this.roleRepository.save({
       id: input.id,
+      standardId: input.standardId,
       label: input.label,
       description: input.description,
       icon: input.icon,
@@ -147,26 +159,6 @@ export class RoleService {
     return { ...existingRole, ...updatedRole };
   }
 
-  public async createAdminRole({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<RoleEntity> {
-    return this.roleRepository.save({
-      label: ADMIN_ROLE_LABEL,
-      description: 'Admin role',
-      icon: 'IconUserCog',
-      canUpdateAllSettings: true,
-      canAccessAllTools: true,
-      canReadAllObjectRecords: true,
-      canUpdateAllObjectRecords: true,
-      canSoftDeleteAllObjectRecords: true,
-      canDestroyAllObjectRecords: true,
-      isEditable: false,
-      workspaceId,
-    });
-  }
-
   public async deleteRole(
     roleId: string,
     workspaceId: string,
@@ -212,26 +204,6 @@ export class RoleService {
     });
 
     return roleId;
-  }
-
-  public async createMemberRole({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<RoleEntity> {
-    return this.roleRepository.save({
-      label: MEMBER_ROLE_LABEL,
-      description: 'Member role',
-      icon: 'IconUser',
-      canUpdateAllSettings: false,
-      canAccessAllTools: false,
-      canReadAllObjectRecords: true,
-      canUpdateAllObjectRecords: true,
-      canSoftDeleteAllObjectRecords: true,
-      canDestroyAllObjectRecords: true,
-      isEditable: true,
-      workspaceId,
-    });
   }
 
   // Only used for dev seeding and testing

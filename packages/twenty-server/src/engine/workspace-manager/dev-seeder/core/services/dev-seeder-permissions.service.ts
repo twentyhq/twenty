@@ -17,6 +17,7 @@ import {
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
+import { STANDARD_ROLE_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-role-ids';
 
 @Injectable()
 export class DevSeederPermissionsService {
@@ -33,23 +34,27 @@ export class DevSeederPermissionsService {
   ) {}
 
   public async initPermissions(workspaceId: string) {
-    const adminRole = await this.roleService.getRoleByLabel(
-      'Admin',
+    const adminRole = await this.roleService.getRoleByStandardId(
+      STANDARD_ROLE_IDS.admin,
       workspaceId,
     );
-    const memberRole = await this.roleService.getRoleByLabel(
-      'Member',
+    const memberRole = await this.roleService.getRoleByStandardId(
+      STANDARD_ROLE_IDS.member,
       workspaceId,
     );
-    const guestRole = await this.roleService.getRoleByLabel(
-      'Guest',
+    let guestRole = await this.roleService.getRoleByStandardId(
+      STANDARD_ROLE_IDS.guest,
       workspaceId,
     );
 
-    if (!adminRole || !memberRole || !guestRole) {
+    if (!adminRole || !memberRole) {
       throw new Error(
         'Required roles not found. Make sure the permission sync has run.',
       );
+    }
+
+    if (!guestRole) {
+      guestRole = await this.roleService.createGuestRole({ workspaceId });
     }
 
     const dataSource = this.typeORMService.getMainDataSource();
