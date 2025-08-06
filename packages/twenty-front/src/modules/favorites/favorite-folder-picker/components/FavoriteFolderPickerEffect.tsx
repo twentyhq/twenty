@@ -9,9 +9,9 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { usePrefetchedFavoritesFoldersData } from '@/favorites/hooks/usePrefetchedFavoritesFoldersData';
 import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { isDefined } from 'twenty-shared/utils';
 
 type FavoriteFolderPickerEffectProps = {
@@ -22,16 +22,16 @@ export const FavoriteFolderPickerEffect = ({
   record,
 }: FavoriteFolderPickerEffectProps) => {
   const [favoriteFolderIdsPicker, setFavoriteFolderIdsPicker] =
-    useRecoilComponentStateV2(favoriteFolderIdsPickerComponentState);
+    useRecoilComponentState(favoriteFolderIdsPickerComponentState);
 
-  const favoriteFolderPickerFamilyState = useRecoilComponentCallbackStateV2(
+  const favoriteFolderPickerFamilyState = useRecoilComponentCallbackState(
     favoriteFolderPickerComponentFamilyState,
   );
 
   const { favoriteFolders } = usePrefetchedFavoritesFoldersData();
 
   const { sortedFavorites: favorites } = useFavorites();
-  const setCheckedState = useSetRecoilComponentStateV2(
+  const setCheckedState = useSetRecoilComponentState(
     favoriteFolderPickerCheckedComponentState,
   );
 

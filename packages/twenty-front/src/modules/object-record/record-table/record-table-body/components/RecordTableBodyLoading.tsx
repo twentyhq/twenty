@@ -5,10 +5,10 @@ import { RecordTableCellGrip } from '@/object-record/record-table/record-table-c
 import { RecordTableCellLoading } from '@/object-record/record-table/record-table-cell/components/RecordTableCellLoading';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const RecordTableBodyLoading = () => {
-  const visibleTableColumns = useRecoilComponentValueV2(
+  const visibleTableColumns = useRecoilComponentValue(
     visibleTableColumnsComponentSelector,
   );
 

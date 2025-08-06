@@ -6,7 +6,7 @@ import { useOpenEmailThreadInCommandMenu } from '@/command-menu/hooks/useOpenEma
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { IconMail } from 'twenty-ui/display';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -46,7 +46,7 @@ const renderHooks = () => {
       const { openEmailThreadInCommandMenu } =
         useOpenEmailThreadInCommandMenu();
 
-      const viewableRecordId = useRecoilComponentValueV2(
+      const viewableRecordId = useRecoilComponentValue(
         viewableRecordIdComponentState,
         'mocked-uuid',
       );

@@ -5,8 +5,8 @@ import { RecoilRoot } from 'recoil';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 const selectableListComponentInstanceId = 'testId';
 const testArr = [['1'], ['2'], ['3']];
@@ -16,12 +16,12 @@ describe('useSelectableList', () => {
   it('Should setSelectableItemIds', async () => {
     const { result } = renderHook(
       () => {
-        const setSelectableItemIds = useSetRecoilComponentStateV2(
+        const setSelectableItemIds = useSetRecoilComponentState(
           selectableItemIdsComponentState,
           selectableListComponentInstanceId,
         );
 
-        const selectableItemIds = useRecoilComponentValueV2(
+        const selectableItemIds = useRecoilComponentValue(
           selectableItemIdsComponentState,
           selectableListComponentInstanceId,
         );
@@ -52,11 +52,11 @@ describe('useSelectableList', () => {
           selectableListComponentInstanceId,
         );
 
-        const selectedItemId = useRecoilComponentValueV2(
+        const selectedItemId = useRecoilComponentValue(
           selectedItemIdComponentState,
           selectableListComponentInstanceId,
         );
-        const setSelectedItemId = useSetRecoilComponentStateV2(
+        const setSelectedItemId = useSetRecoilComponentState(
           selectedItemIdComponentState,
           selectableListComponentInstanceId,
         );

@@ -14,7 +14,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { IconApps, IconComponent, useIcons } from 'twenty-ui/display';
 import {
@@ -87,7 +87,7 @@ const IconPickerIcon = ({
   Icon,
   focusedIconKey,
 }: IconPickerIconProps) => {
-  const isSelectedItemId = useRecoilComponentValueV2(
+  const isSelectedItemId = useRecoilComponentValue(
     selectedItemIdComponentState,
     iconKey,
   );
@@ -200,7 +200,7 @@ export const IconPicker = ({
   const selectableListInstanceId = 'icon-list';
 
   const focusedIconKey =
-    useRecoilComponentValueV2(
+    useRecoilComponentValue(
       selectedItemIdComponentState,
       selectableListInstanceId,
     ) ?? undefined;

@@ -1,9 +1,9 @@
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
-import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
+import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
 
 export const multipleRecordPickerPickableMorphItemsLengthComponentSelector =
-  createComponentSelectorV2({
+  createComponentSelector({
     key: 'multipleRecordPickerPickableMorphItemsLengthComponentSelector',
     componentInstanceContext: MultipleRecordPickerComponentInstanceContext,
     get:

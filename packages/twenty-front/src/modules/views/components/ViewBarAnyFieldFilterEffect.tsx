@@ -2,16 +2,16 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
-import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { hasInitializedAnyFieldFilterComponentFamilyState } from '@/views/states/hasInitializedAnyFieldFilterComponentFamilyState';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ViewBarAnyFieldFilterEffect = () => {
-  const currentViewId = useRecoilComponentValueV2(
+  const currentViewId = useRecoilComponentValue(
     contextStoreCurrentViewIdComponentState,
   );
 
@@ -24,14 +24,14 @@ export const ViewBarAnyFieldFilterEffect = () => {
   );
 
   const [hasInitializedAnyFieldFilter, setHasInitializedAnyFieldFilter] =
-    useRecoilComponentFamilyStateV2(
+    useRecoilComponentFamilyState(
       hasInitializedAnyFieldFilterComponentFamilyState,
       {
         viewId: currentViewId ?? undefined,
       },
     );
 
-  const setAnyFieldFilterValue = useSetRecoilComponentStateV2(
+  const setAnyFieldFilterValue = useSetRecoilComponentState(
     anyFieldFilterValueComponentState,
   );
 

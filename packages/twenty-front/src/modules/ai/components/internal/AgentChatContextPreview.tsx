@@ -1,14 +1,14 @@
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { agentChatUploadedFilesComponentState } from '@/ai/states/agentChatUploadedFilesComponentState';
-import styled from '@emotion/styled';
-import { AgentChatFilePreview } from './AgentChatFilePreview';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useLingui } from '@lingui/react/macro';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { agentChatSelectedFilesComponentState } from '@/ai/states/agentChatSelectedFilesComponentState';
-import { useDeleteFileMutation } from '~/generated-metadata/graphql';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { AgentChatContextRecordPreview } from '@/ai/components/internal/AgentChatContextRecordPreview';
+import { agentChatSelectedFilesComponentState } from '@/ai/states/agentChatSelectedFilesComponentState';
+import { agentChatUploadedFilesComponentState } from '@/ai/states/agentChatUploadedFilesComponentState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
+import { useDeleteFileMutation } from '~/generated-metadata/graphql';
+import { AgentChatFilePreview } from './AgentChatFilePreview';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -27,9 +27,9 @@ const StyledPreviewsContainer = styled.div`
 export const AgentChatContextPreview = ({ agentId }: { agentId: string }) => {
   const { t } = useLingui();
   const [agentChatSelectedFiles, setAgentChatSelectedFiles] =
-    useRecoilComponentStateV2(agentChatSelectedFilesComponentState, agentId);
+    useRecoilComponentState(agentChatSelectedFilesComponentState, agentId);
   const [agentChatUploadedFiles, setAgentChatUploadedFiles] =
-    useRecoilComponentStateV2(agentChatUploadedFilesComponentState, agentId);
+    useRecoilComponentState(agentChatUploadedFilesComponentState, agentId);
 
   const { enqueueErrorSnackBar } = useSnackBar();
 
@@ -52,7 +52,7 @@ export const AgentChatContextPreview = ({ agentId }: { agentId: string }) => {
     }
   };
 
-  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 

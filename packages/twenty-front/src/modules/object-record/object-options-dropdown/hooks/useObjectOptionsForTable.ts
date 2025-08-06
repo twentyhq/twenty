@@ -4,18 +4,18 @@ import { useCallback } from 'react';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 export const useObjectOptionsForTable = (
   recordTableId: string,
   objectMetadataId: string,
 ) => {
-  const hiddenTableColumns = useRecoilComponentValueV2(
+  const hiddenTableColumns = useRecoilComponentValue(
     hiddenTableColumnsComponentSelector,
     recordTableId,
   );
-  const visibleTableColumns = useRecoilComponentValueV2(
+  const visibleTableColumns = useRecoilComponentValue(
     visibleTableColumnsComponentSelector,
     recordTableId,
   );

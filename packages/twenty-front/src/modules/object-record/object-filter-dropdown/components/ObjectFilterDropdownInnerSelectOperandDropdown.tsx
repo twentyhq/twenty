@@ -10,7 +10,7 @@ import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordF
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { DropdownMenuInnerSelect } from '@/ui/layout/dropdown/components/DropdownMenuInnerSelect';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 import { SelectOption } from 'twenty-ui/input';
 
@@ -18,15 +18,15 @@ const OBJECT_FILTER_DROPDOWN_INNER_SELECT_OPERAND_DROPDOWN_ID =
   'object-filter-dropdown-inner-select-operand-dropdown';
 
 export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
-  const selectedOperandInDropdown = useRecoilComponentValueV2(
+  const selectedOperandInDropdown = useRecoilComponentValue(
     selectedOperandInDropdownComponentState,
   );
 
-  const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
+  const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
-  const subFieldNameUsedInDropdown = useRecoilComponentValueV2(
+  const subFieldNameUsedInDropdown = useRecoilComponentValue(
     subFieldNameUsedInDropdownComponentState,
   );
 

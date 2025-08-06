@@ -5,7 +5,7 @@ import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas
 import { PlaygroundTypes } from '@/settings/playground/types/PlaygroundTypes';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
@@ -116,7 +116,7 @@ export const PlaygroundSetupForm = () => {
         name="apiKeyForPlayground"
         control={control}
         render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <TextInput
+          <SettingsTextInput
             instanceId="playground-api-key"
             label={t`API Key`}
             placeholder="Enter your API key"

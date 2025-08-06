@@ -1,8 +1,9 @@
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import {
   WorkflowActionType,
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
+import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useCloseRightClickMenu';
 import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
 import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
@@ -11,7 +12,6 @@ import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/const
 import { useFilteredOtherActions } from '@/workflow/workflow-steps/workflow-actions/hooks/useFilteredOtherActions';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemCommand } from 'twenty-ui/navigation';
-import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useCloseRightClickMenu';
 
 export const CommandMenuWorkflowSelectActionContent = ({
   workflow,
@@ -28,7 +28,7 @@ export const CommandMenuWorkflowSelectActionContent = ({
   const { closeRightClickMenu } = useCloseRightClickMenu();
 
   const [workflowInsertStepIds, setWorkflowInsertStepIds] =
-    useRecoilComponentStateV2(workflowInsertStepIdsComponentState);
+    useRecoilComponentState(workflowInsertStepIdsComponentState);
 
   const handleCreateStep = async (actionType: WorkflowActionType) => {
     const { parentStepId, nextStepId, position } = workflowInsertStepIds;

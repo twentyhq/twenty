@@ -6,13 +6,13 @@ import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRe
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const HideDeletedRecordsNoSelectionRecordAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const currentViewId = useRecoilComponentValueV2(
+  const currentViewId = useRecoilComponentValue(
     contextStoreCurrentViewIdComponentState,
   );
 
@@ -32,7 +32,7 @@ export const HideDeletedRecordsNoSelectionRecordAction = () => {
 
   const { checkIsSoftDeleteFilter } = useCheckIsSoftDeleteFilter();
 
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useRecoilComponentValue(
     currentRecordFiltersComponentState,
     recordIndexId,
   );

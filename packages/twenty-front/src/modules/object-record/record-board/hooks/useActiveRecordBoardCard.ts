@@ -1,17 +1,17 @@
 import { activeRecordBoardCardIndexesComponentState } from '@/object-record/record-board/states/activeRecordBoardCardIndexesComponentState';
 import { isRecordBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState';
 import { BoardCardIndexes } from '@/object-record/record-board/types/BoardCardIndexes';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useActiveRecordBoardCard = (recordBoardId?: string) => {
-  const isCardActiveState = useRecoilComponentCallbackStateV2(
+  const isCardActiveState = useRecoilComponentCallbackState(
     isRecordBoardCardActiveComponentFamilyState,
     recordBoardId,
   );
 
-  const activeBoardCardIndexesState = useRecoilComponentCallbackStateV2(
+  const activeBoardCardIndexesState = useRecoilComponentCallbackState(
     activeRecordBoardCardIndexesComponentState,
     recordBoardId,
   );

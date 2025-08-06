@@ -18,7 +18,7 @@ import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dro
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 type AdvancedFilterDropdownFilterInputProps = {
@@ -30,7 +30,7 @@ export const AdvancedFilterDropdownFilterInput = ({
   filterDropdownId,
   recordFilter,
 }: AdvancedFilterDropdownFilterInputProps) => {
-  const subFieldNameUsedInDropdown = useRecoilComponentValueV2(
+  const subFieldNameUsedInDropdown = useRecoilComponentValue(
     subFieldNameUsedInDropdownComponentState,
   );
 

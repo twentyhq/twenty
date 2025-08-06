@@ -10,8 +10,8 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -26,11 +26,11 @@ export const RecordTableBodyDragDropContextProvider = ({
     objectNameSingular,
   });
 
-  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackStateV2(
+  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackState(
     recordIndexAllRecordIdsComponentSelector,
   );
 
-  const currentRecordSorts = useRecoilComponentValueV2(
+  const currentRecordSorts = useRecoilComponentValue(
     currentRecordSortsComponentState,
   );
 

@@ -6,7 +6,7 @@ import { FormNumberFieldInput } from '@/object-record/record-field/form-types/co
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useContext } from 'react';
 import { JsonValue } from 'type-fest';
@@ -18,7 +18,7 @@ export const WorkflowAdvancedFilterValueFormCompositeFieldInput = ({
   recordFilter: RecordFilter;
   onChange: (newValue: JsonValue) => void;
 }) => {
-  const subFieldNameUsedInDropdown = useRecoilComponentValueV2(
+  const subFieldNameUsedInDropdown = useRecoilComponentValue(
     subFieldNameUsedInDropdownComponentState,
   );
 

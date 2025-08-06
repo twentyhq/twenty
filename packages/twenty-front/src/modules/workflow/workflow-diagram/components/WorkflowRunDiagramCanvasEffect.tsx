@@ -1,5 +1,5 @@
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -19,13 +19,13 @@ export const WorkflowRunDiagramCanvasEffect = () => {
 
   const workflowRunId = useWorkflowRunIdOrThrow();
 
-  const workflowVisualizerWorkflowIdState = useRecoilComponentCallbackStateV2(
+  const workflowVisualizerWorkflowIdState = useRecoilComponentCallbackState(
     workflowVisualizerWorkflowIdComponentState,
   );
-  const workflowDiagramStatusState = useRecoilComponentCallbackStateV2(
+  const workflowDiagramStatusState = useRecoilComponentCallbackState(
     workflowDiagramStatusComponentState,
   );
-  const workflowSelectedNodeState = useRecoilComponentCallbackStateV2(
+  const workflowSelectedNodeState = useRecoilComponentCallbackState(
     workflowSelectedNodeComponentState,
   );
 

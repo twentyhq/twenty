@@ -1,4 +1,4 @@
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useTriggerNodeSelection } from '@/workflow/workflow-diagram/hooks/useTriggerNodeSelection';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { workflowDiagramTriggerNodeSelectionComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramTriggerNodeSelectionComponentState';
@@ -41,7 +41,7 @@ describe('useTriggerNodeSelection', () => {
         const [
           workflowDiagramTriggerNodeSelection,
           setWorkflowDiagramTriggerNodeSelection,
-        ] = useRecoilComponentStateV2(
+        ] = useRecoilComponentState(
           workflowDiagramTriggerNodeSelectionComponentState,
         );
 

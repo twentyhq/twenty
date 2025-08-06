@@ -2,19 +2,19 @@ import { objectFilterDropdownSearchInputComponentState } from '@/object-record/o
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const useFilterDropdownSelectableFieldMetadataItems = () => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
 
-  const objectFilterDropdownSearchInput = useRecoilComponentValueV2(
+  const objectFilterDropdownSearchInput = useRecoilComponentValue(
     objectFilterDropdownSearchInputComponentState,
   );
 
   const { filterableFieldMetadataItems } =
     useFilterableFieldMetadataItemsInRecordIndexContext();
 
-  const visibleTableColumns = useRecoilComponentValueV2(
+  const visibleTableColumns = useRecoilComponentValue(
     visibleTableColumnsComponentSelector,
     recordIndexId,
   );

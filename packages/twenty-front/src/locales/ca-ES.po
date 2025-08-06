@@ -382,6 +382,7 @@ msgstr "Afegeix elements d'entrada al teu formulari"
 
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
+#: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
 msgid "Add new"
 msgstr "Afegeix nou"
 
@@ -4510,7 +4511,7 @@ msgid "Phone number copied to clipboard"
 msgstr "Número de telèfon copiat al porta-retalls"
 
 #. js-lingui-id: FdlpPK
-#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownObjectItems.tsx
+#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownAllItems.tsx
 msgid "Pick a {nameSingular} record"
 msgstr "Tria un registre de {nameSingular}"
 

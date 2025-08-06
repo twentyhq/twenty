@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
-import { isValidUuid } from 'twenty-shared/utils';
+import { isValidUuid, resolveInput } from 'twenty-shared/utils';
 
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -13,7 +13,6 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
-import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 import {
   RecordCRUDActionException,
   RecordCRUDActionExceptionCode,

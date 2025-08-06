@@ -382,6 +382,7 @@ msgstr "添加输入到您的表单"
 
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
+#: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
 msgid "Add new"
 msgstr "添加新"
 
@@ -4510,7 +4511,7 @@ msgid "Phone number copied to clipboard"
 msgstr "电话号码已复制到剪贴板"
 
 #. js-lingui-id: FdlpPK
-#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownObjectItems.tsx
+#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownAllItems.tsx
 msgid "Pick a {nameSingular} record"
 msgstr "选择一个 {nameSingular} 记录"
 

@@ -5,8 +5,8 @@ import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { EMPTY_TRIGGER_STEP_ID } from '@/workflow/workflow-diagram/constants/EmptyTriggerStepId';
 import { useTriggerNodeSelection } from '@/workflow/workflow-diagram/hooks/useTriggerNodeSelection';
@@ -28,7 +28,7 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
     openWorkflowEditStepInCommandMenu,
   } = useWorkflowCommandMenu();
 
-  const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
+  const setWorkflowSelectedNode = useSetRecoilComponentState(
     workflowSelectedNodeComponentState,
   );
 
@@ -38,7 +38,7 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
-  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
+  const workflowVisualizerWorkflowId = useRecoilComponentValue(
     workflowVisualizerWorkflowIdComponentState,
   );
 

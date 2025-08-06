@@ -5,26 +5,26 @@ import { draggedRecordIdsComponentState } from '@/object-record/record-board/sta
 import { isMultiDragActiveComponentState } from '@/object-record/record-board/states/isMultiDragActiveComponentState';
 import { originalSelectionComponentState } from '@/object-record/record-board/states/originalSelectionComponentState';
 import { primaryDraggedRecordIdComponentState } from '@/object-record/record-board/states/primaryDraggedRecordIdComponentState';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getDragOperationType } from '../utils/getDragOperationType';
 
 export const useStartBoardCardDrag = (recordBoardId?: string) => {
-  const isMultiDragActiveState = useRecoilComponentCallbackStateV2(
+  const isMultiDragActiveState = useRecoilComponentCallbackState(
     isMultiDragActiveComponentState,
     recordBoardId,
   );
 
-  const draggedRecordIdsState = useRecoilComponentCallbackStateV2(
+  const draggedRecordIdsState = useRecoilComponentCallbackState(
     draggedRecordIdsComponentState,
     recordBoardId,
   );
 
-  const primaryDraggedRecordIdState = useRecoilComponentCallbackStateV2(
+  const primaryDraggedRecordIdState = useRecoilComponentCallbackState(
     primaryDraggedRecordIdComponentState,
     recordBoardId,
   );
 
-  const originalSelectionState = useRecoilComponentCallbackStateV2(
+  const originalSelectionState = useRecoilComponentCallbackState(
     originalSelectionComponentState,
     recordBoardId,
   );

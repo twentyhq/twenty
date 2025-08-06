@@ -5,8 +5,8 @@ import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/
 import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
 import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyStateV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,7 +19,7 @@ export const WorkflowFindRecordsAddFilterButton = ({
   defaultFieldMetadataItem: FieldMetadataItem;
 }) => {
   const { readonly } = useContext(AdvancedFilterContext);
-  const rootRecordFilterGroup = useRecoilComponentValueV2(
+  const rootRecordFilterGroup = useRecoilComponentValue(
     rootLevelRecordFilterGroupComponentSelector,
   );
 
@@ -31,7 +31,7 @@ export const WorkflowFindRecordsAddFilterButton = ({
     useCreateEmptyRecordFilterFromFieldMetadataItem();
 
   const setHasInitializedCurrentRecordFilters =
-    useSetRecoilComponentFamilyStateV2(
+    useSetRecoilComponentFamilyState(
       hasInitializedCurrentRecordFiltersComponentFamilyState,
       {},
     );

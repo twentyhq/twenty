@@ -1,8 +1,8 @@
 import { ClickOutsideListenerComponentInstanceContext } from '@/ui/utilities/pointer-event/states/contexts/ClickOutsideListenerComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
 export const clickOutsideListenerMouseDownHappenedComponentState =
-  createComponentStateV2<boolean>({
+  createComponentState<boolean>({
     key: 'clickOutsideListenerMouseDownHappenedComponentState',
     defaultValue: false,
     componentInstanceContext: ClickOutsideListenerComponentInstanceContext,

@@ -1,4 +1,4 @@
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { assertWorkflowWithCurrentVersionIsDefined } from '@/workflow/utils/assertWorkflowWithCurrentVersionIsDefined';
@@ -15,7 +15,7 @@ export const WorkflowDiagramStepNodeEditable = ({
   data: WorkflowDiagramStepNodeData;
   selected?: boolean;
 }) => {
-  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
+  const workflowVisualizerWorkflowId = useRecoilComponentValue(
     workflowVisualizerWorkflowIdComponentState,
   );
 

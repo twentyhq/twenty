@@ -8,9 +8,11 @@ type IndexMetadataRelationProperties = ExtractRecordTypeOrmRelationProperties<
   MetadataEntitiesRelationTarget
 >;
 
+// TODO prastoin refactor FlatIndexMetadata to not be a Partial extension of IndexMetadataEntity
 export type FlatIndexMetadata = Partial<
   Omit<IndexMetadataEntity, IndexMetadataRelationProperties>
 > & {
+  id: string;
   flatIndexFieldMetadatas: FlatIndexFieldMetadata[];
   uniqueIdentifier: string;
 };

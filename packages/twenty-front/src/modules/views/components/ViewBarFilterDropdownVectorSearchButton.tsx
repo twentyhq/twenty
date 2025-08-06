@@ -1,8 +1,8 @@
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconSearch } from 'twenty-ui/display';
@@ -23,20 +23,20 @@ const StyledSearchText = styled.span`
 
 export const ViewBarFilterDropdownVectorSearchButton = () => {
   const { t } = useLingui();
-  const [, setVectorSearchInputValue] = useRecoilComponentStateV2(
+  const [, setVectorSearchInputValue] = useRecoilComponentState(
     vectorSearchInputComponentState,
   );
   const { setVectorSearchInputValueFromExistingFilter } =
     useSetVectorSearchInputValueFromExistingFilter();
 
-  const objectFilterDropdownSearchInput = useRecoilComponentValueV2(
+  const objectFilterDropdownSearchInput = useRecoilComponentValue(
     objectFilterDropdownSearchInputComponentState,
   );
 
   const { applyVectorSearchFilter } = useVectorSearchFilterActions();
   const { openVectorSearchFilter } = useOpenVectorSearchFilter();
 
-  const isSelected = useRecoilComponentFamilyValueV2(
+  const isSelected = useRecoilComponentFamilyValue(
     isSelectedItemIdComponentFamilySelector,
     VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.SEARCH,
   );

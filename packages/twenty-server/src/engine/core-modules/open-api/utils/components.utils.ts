@@ -384,6 +384,117 @@ export const computeMetadataSchemaComponents = (
 
           return schemas;
         }
+        case 'webhook': {
+          schemas[`${capitalize(item.nameSingular)}`] = {
+            type: 'object',
+            description: `A webhook`,
+            properties: {
+              targetUrl: { type: 'string' },
+              operations: {
+                type: 'array',
+                items: { type: 'string' },
+                default: ['*.*'],
+              },
+              description: { type: 'string' },
+              secret: { type: 'string' },
+            },
+            required: ['targetUrl'],
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForUpdate`] = {
+            type: 'object',
+            description: `A webhook for update`,
+            properties: {
+              targetUrl: { type: 'string' },
+              operations: {
+                type: 'array',
+                items: { type: 'string' },
+              },
+              description: { type: 'string' },
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForResponse`] = {
+            type: 'object',
+            description: `A webhook`,
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              targetUrl: { type: 'string' },
+              operations: {
+                type: 'array',
+                items: { type: 'string' },
+              },
+              description: { type: 'string' },
+              workspaceId: { type: 'string', format: 'uuid' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
+              deletedAt: { type: 'string', format: 'date-time' },
+            },
+          };
+          schemas[`${capitalize(item.namePlural)}ForResponse`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`,
+            },
+          };
+
+          return schemas;
+        }
+        case 'apiKey': {
+          schemas[`${capitalize(item.nameSingular)}`] = {
+            type: 'object',
+            description: `An API key`,
+            properties: {
+              name: { type: 'string' },
+              expiresAt: { type: 'string', format: 'date-time' },
+            },
+            required: ['name', 'expiresAt'],
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForUpdate`] = {
+            type: 'object',
+            description: `An API key for update`,
+            properties: {
+              name: { type: 'string' },
+              expiresAt: { type: 'string', format: 'date-time' },
+              revokedAt: { type: 'string', format: 'date-time' },
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForResponse`] = {
+            type: 'object',
+            description: `An API key`,
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              name: { type: 'string' },
+              expiresAt: { type: 'string', format: 'date-time' },
+              revokedAt: { type: 'string', format: 'date-time' },
+              workspaceId: { type: 'string', format: 'uuid' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
+            },
+          };
+          schemas[`${capitalize(item.namePlural)}ForResponse`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`,
+            },
+          };
+
+          return schemas;
+        }
       }
 
       return schemas;

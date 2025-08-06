@@ -12,7 +12,7 @@ import { getNumberOfCardsPerColumnForSkeletonLoading } from '@/object-record/rec
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
 import { isRecordIndexBoardColumnLoadingFamilyState } from '@/object-record/states/isRecordBoardColumnLoadingFamilyState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 const StyledColumnCardsContainer = styled.div`
   display: flex;
@@ -52,13 +52,13 @@ export const RecordBoardColumnCardsContainer = ({
     isRecordIndexBoardColumnLoadingFamilyState(columnId),
   );
 
-  const visibleFieldDefinitions = useRecoilComponentValueV2(
+  const visibleFieldDefinitions = useRecoilComponentValue(
     recordBoardVisibleFieldDefinitionsComponentSelector,
   );
 
   const numberOfFields = visibleFieldDefinitions.length;
 
-  const isCompactModeActive = useRecoilComponentValueV2(
+  const isCompactModeActive = useRecoilComponentValue(
     isRecordBoardCompactModeActiveComponentState,
   );
 

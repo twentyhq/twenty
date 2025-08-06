@@ -2,15 +2,15 @@ import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-
 import { useObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useObjectFilterDropdownFilterValue';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const AdvancedFilterDropdownNumberInput = () => {
-  const selectedOperandInDropdown = useRecoilComponentValueV2(
+  const selectedOperandInDropdown = useRecoilComponentValue(
     selectedOperandInDropdownComponentState,
   );
 
-  const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
+  const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
@@ -29,7 +29,7 @@ export const AdvancedFilterDropdownNumberInput = () => {
   }
 
   return (
-    <TextInputV2
+    <TextInput
       value={objectFilterDropdownFilterValue}
       onChange={handleChange}
       placeholder="Enter value"

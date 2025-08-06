@@ -7,7 +7,7 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/states/recordFieldInputDraftValueComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { FieldContext } from '../../contexts/FieldContext';
 import { usePersistField } from '../../hooks/usePersistField';
 import { FieldAddressValue } from '../../types/FieldMetadata';
@@ -44,7 +44,7 @@ export const useAddressField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldAddressValue>();
 
-  const draftValue = useRecoilComponentValueV2(
+  const draftValue = useRecoilComponentValue(
     recordFieldInputDraftValueComponentState,
   );
 

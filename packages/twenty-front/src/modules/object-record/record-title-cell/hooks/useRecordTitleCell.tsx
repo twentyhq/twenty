@@ -1,6 +1,6 @@
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
-import { useInitDraftValueV2 } from '@/object-record/record-field/hooks/useInitDraftValueV2';
+import { useInitDraftValue } from '@/object-record/record-field/hooks/useInitDraftValue';
 import { isInlineCellInEditModeFamilyState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeFamilyState';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
@@ -55,7 +55,7 @@ export const useRecordTitleCell = () => {
     [goBackToPreviousDropdownFocusId, removeFocusItemFromFocusStackById],
   );
 
-  const initFieldInputDraftValue = useInitDraftValueV2();
+  const initFieldInputDraftValue = useInitDraftValue();
 
   const openRecordTitleCell = useRecoilCallback(
     ({ set }) =>

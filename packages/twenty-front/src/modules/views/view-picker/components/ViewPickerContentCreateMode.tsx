@@ -4,16 +4,16 @@ import { Key } from 'ts-key-enum';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { ViewPickerCreateButton } from '@/views/view-picker/components/ViewPickerCreateButton';
@@ -50,30 +50,31 @@ export const ViewPickerContentCreateMode = () => {
   const { viewPickerMode, setViewPickerMode } = useViewPickerMode();
   const [hasManuallySelectedIcon, setHasManuallySelectedIcon] = useState(false);
 
-  const viewObjectMetadataId = useRecoilComponentValueV2(
+  const viewObjectMetadataId = useRecoilComponentValue(
     viewObjectMetadataIdComponentState,
   );
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: viewObjectMetadataId ?? '',
   });
 
-  const [viewPickerInputName, setViewPickerInputName] =
-    useRecoilComponentStateV2(viewPickerInputNameComponentState);
+  const [viewPickerInputName, setViewPickerInputName] = useRecoilComponentState(
+    viewPickerInputNameComponentState,
+  );
 
   const [viewPickerSelectedIcon, setViewPickerSelectedIcon] =
-    useRecoilComponentStateV2(viewPickerSelectedIconComponentState);
+    useRecoilComponentState(viewPickerSelectedIconComponentState);
 
-  const viewPickerIsPersisting = useRecoilComponentValueV2(
+  const viewPickerIsPersisting = useRecoilComponentValue(
     viewPickerIsPersistingComponentState,
   );
-  const setViewPickerIsDirty = useSetRecoilComponentStateV2(
+  const setViewPickerIsDirty = useSetRecoilComponentState(
     viewPickerIsDirtyComponentState,
   );
 
   const [viewPickerKanbanFieldMetadataId, setViewPickerKanbanFieldMetadataId] =
-    useRecoilComponentStateV2(viewPickerKanbanFieldMetadataIdComponentState);
+    useRecoilComponentState(viewPickerKanbanFieldMetadataIdComponentState);
 
-  const [viewPickerType, setViewPickerType] = useRecoilComponentStateV2(
+  const [viewPickerType, setViewPickerType] = useRecoilComponentState(
     viewPickerTypeComponentState,
   );
 
@@ -145,7 +146,7 @@ export const ViewPickerContentCreateMode = () => {
       <DropdownMenuItemsContainer>
         <ViewPickerIconAndNameContainer>
           <IconPicker onChange={onIconChange} selectedIconKey={selectedIcon} />
-          <TextInputV2
+          <TextInput
             value={viewPickerInputName}
             onChange={(value) => {
               setViewPickerIsDirty(true);

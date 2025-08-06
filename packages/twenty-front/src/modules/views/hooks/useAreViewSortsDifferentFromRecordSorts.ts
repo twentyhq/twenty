@@ -1,5 +1,5 @@
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { getViewSortsToCreate } from '@/views/utils/getViewSortsToCreate';
 import { getViewSortsToDelete } from '@/views/utils/getViewSortsToDelete';
@@ -9,7 +9,7 @@ import { useMemo } from 'react';
 
 export const useAreViewSortsDifferentFromRecordSorts = () => {
   const { currentView } = useGetCurrentViewOnly();
-  const currentRecordSorts = useRecoilComponentValueV2(
+  const currentRecordSorts = useRecoilComponentValue(
     currentRecordSortsComponentState,
   );
 
