@@ -5,7 +5,7 @@ import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailab
 
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
-import { getReadRestrictedFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getReadRestrictedFieldMetadataIdsFromObjectPermissions';
+import { getNonReadableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonReadableFieldMetadataIdsFromObjectPermissions';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useRecoilValue } from 'recoil';
@@ -41,7 +41,7 @@ export const useColumnDefinitionsFromFieldMetadata = (
 
   if (isFieldsPermissionsEnabled) {
     restrictedFieldMetadataIds =
-      getReadRestrictedFieldMetadataIdsFromObjectPermissions({
+      getNonReadableFieldMetadataIdsFromObjectPermissions({
         objectPermissions: [
           objectPermissionsByObjectMetadataId[objectMetadataItem.id],
         ],

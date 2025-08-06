@@ -2,7 +2,7 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { filterSortableFieldMetadataItems } from '@/object-metadata/utils/filterSortableFieldMetadataItems';
-import { getReadRestrictedFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getReadRestrictedFieldMetadataIdsFromObjectPermissions';
+import { getNonReadableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonReadableFieldMetadataIdsFromObjectPermissions';
 import { checkIfFeatureFlagIsEnabledOnWorkspace } from '@/workspace/utils/checkIfFeatureFlagIsEnabledOnWorkspace';
 import { selectorFamily } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -34,7 +34,7 @@ export const availableFieldMetadataItemsForSortFamilySelector = selectorFamily({
         const currentUserWorkspace = get(currentUserWorkspaceState);
 
         restrictedFieldMetadataIds =
-          getReadRestrictedFieldMetadataIdsFromObjectPermissions({
+          getNonReadableFieldMetadataIdsFromObjectPermissions({
             objectPermissions: currentUserWorkspace?.objectPermissions,
             objectMetadataId: objectMetadataItem.id,
           });

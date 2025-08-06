@@ -5,6 +5,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { getNonReadableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonReadableFieldMetadataIdsFromObjectPermissions';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -21,8 +22,8 @@ import { RecordDetailRelationSection } from '@/object-record/record-show/record-
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { useIsInRightDrawerOrThrow } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type FieldsCardProps = {
   objectNameSingular: string;
@@ -56,11 +57,20 @@ export const FieldsCard = ({
 
   const { isInRightDrawer } = useIsInRightDrawerOrThrow();
 
+  const nonReadableFieldMetadataIds =
+    getNonReadableFieldMetadataIdsFromObjectPermissions({
+      objectPermissions: [
+        objectPermissionsByObjectMetadataId[objectMetadataItem.id],
+      ],
+      objectMetadataId: objectMetadataItem.id,
+    });
+
   const availableFieldMetadataItems = objectMetadataItem.fields
     .filter(
       (fieldMetadataItem) =>
         isFieldCellSupported(fieldMetadataItem, objectMetadataItems) &&
-        fieldMetadataItem.id !== labelIdentifierFieldMetadataItem?.id,
+        fieldMetadataItem.id !== labelIdentifierFieldMetadataItem?.id &&
+        !nonReadableFieldMetadataIds.includes(fieldMetadataItem.id),
     )
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>
       fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),

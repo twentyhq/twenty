@@ -1,5 +1,5 @@
 import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
-import { getReadRestrictedFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getReadRestrictedFieldMetadataIdsFromObjectPermissions';
+import { getNonReadableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonReadableFieldMetadataIdsFromObjectPermissions';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { RecordBoardColumnHeaderAggregateDropdownContext } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
 import { RecordBoardColumnHeaderAggregateDropdownFieldsContent } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownFieldsContent';
@@ -22,7 +22,7 @@ export const AggregateDropdownContent = () => {
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const restrictedFieldMetadataIds =
-    getReadRestrictedFieldMetadataIdsFromObjectPermissions({
+    getNonReadableFieldMetadataIdsFromObjectPermissions({
       objectPermissions: [
         objectPermissionsByObjectMetadataId[objectMetadataItem.id],
       ],
