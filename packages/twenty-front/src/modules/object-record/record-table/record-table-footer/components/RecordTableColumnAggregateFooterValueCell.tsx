@@ -1,5 +1,5 @@
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
-import { RECORD_TABLE_TD_WIDTH } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
+import { TABLE_CELL_CHECKBOX_MIN_WIDTH } from '@/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { RecordTableColumnAggregateFooterValue } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue';
 import { hasAggregateOperationForViewFieldFamilySelector } from '@/object-record/record-table/record-table-footer/states/hasAggregateOperationForViewFieldFamilySelector';
@@ -35,10 +35,10 @@ const StyledCell = styled.div<{ isUnfolded: boolean; isFirstCell: boolean }>`
         : theme.background.transparent.light};
   }
 
-  ${({ isFirstCell }) =>
+  ${({ isFirstCell, theme }) =>
     isFirstCell &&
     `
-    padding-left: ${RECORD_TABLE_TD_WIDTH};
+    padding-left: calc(${TABLE_CELL_CHECKBOX_MIN_WIDTH} + ${theme.spacing(1)});
   `}
 `;
 

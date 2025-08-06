@@ -49,7 +49,7 @@ const DEFAULT_ACTION = {
 } satisfies WorkflowUpdateRecordAction;
 
 const meta: Meta<typeof WorkflowEditActionUpdateRecord> = {
-  title: 'Modules/Workflow/WorkflowEditActionUpdateRecord',
+  title: 'Modules/Workflow/Actions/UpdateRecord/EditAction',
   component: WorkflowEditActionUpdateRecord,
   parameters: {
     msw: graphqlMocks,

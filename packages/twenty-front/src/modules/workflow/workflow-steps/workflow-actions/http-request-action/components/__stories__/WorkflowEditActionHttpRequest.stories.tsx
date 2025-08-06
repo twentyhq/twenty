@@ -1,7 +1,7 @@
 import { WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, waitFor, within } from '@storybook/test';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
@@ -69,7 +69,7 @@ const CONFIGURED_ACTION: WorkflowHttpRequestAction = {
 };
 
 const meta: Meta<typeof WorkflowEditActionHttpRequest> = {
-  title: 'Modules/Workflow/WorkflowEditActionHttpRequest',
+  title: 'Modules/Workflow/Actions/HttpRequest/EditAction',
   component: WorkflowEditActionHttpRequest,
   parameters: {
     msw: graphqlMocks,
@@ -80,7 +80,7 @@ const meta: Meta<typeof WorkflowEditActionHttpRequest> = {
   decorators: [
     WorkflowStepActionDrawerDecorator,
     WorkflowStepDecorator,
-    ComponentDecorator,
+    ComponentWithRouterDecorator,
     SnackBarDecorator,
     WorkspaceDecorator,
     I18nFrontDecorator,

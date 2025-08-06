@@ -1,4 +1,4 @@
-import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
+import { resolveInput } from './variable-resolver';
 
 describe('resolveInput', () => {
   const context = {

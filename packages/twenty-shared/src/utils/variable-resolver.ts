@@ -1,6 +1,12 @@
-import { isNil, isString } from '@nestjs/common/utils/shared.utils';
-
 import Handlebars from 'handlebars';
+
+const isNil = (value: any): value is null | undefined => {
+  return value === null || value === undefined;
+};
+
+const isString = (value: any): value is string => {
+  return typeof value === 'string';
+};
 
 const VARIABLE_PATTERN = RegExp('\\{\\{(.*?)\\}\\}', 'g');
 
