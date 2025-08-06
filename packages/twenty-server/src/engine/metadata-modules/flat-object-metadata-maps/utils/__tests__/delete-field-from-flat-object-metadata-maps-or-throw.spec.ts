@@ -13,8 +13,6 @@ import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
 import { PET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/pet-flat-object.mock';
-import { ROCKET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/rocket-flat-object.mock';
-import { fromFlatObjectMetadatasToFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadatas-to-flat-object-metadata-maps.util';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 
 type DeleteFieldFromFlatObjectMetadataMapsTestCase = {
@@ -26,26 +24,6 @@ type DeleteFieldFromFlatObjectMetadataMapsTestCase = {
   shouldThrow?: true;
   expected?: FlatObjectMetadataMaps;
 };
-
-const FLAT_OBJECT_METADATA_MAPS_MOCKS_WITH_ROCKET_AND_PET =
-  fromFlatObjectMetadatasToFlatObjectMetadataMaps([
-    PET_FLAT_OBJECT_MOCK,
-    ROCKET_FLAT_OBJECT_MOCK,
-  ]);
-const fieldMetadataToRemoveId = 'field-metadata-id';
-const newCustomRelationFlatFieldMetadata = getFlatFieldMetadataMock({
-  objectMetadataId: PET_FLAT_OBJECT_MOCK.id,
-  type: FieldMetadataType.RELATION,
-  uniqueIdentifier: fieldMetadataToRemoveId,
-  id: fieldMetadataToRemoveId,
-  settings: {
-    relationType: RelationType.MANY_TO_ONE,
-    joinColumnName: 'whateverId',
-    onDelete: RelationOnDeleteAction.CASCADE,
-  },
-  relationTargetObjectMetadataId: PET_FLAT_OBJECT_MOCK.id,
-  relationTargetFieldMetadataId: 'does-not-matter',
-});
 
 describe('deleteFieldFromFlatObjectMetadataMaps', () => {
   const testCases: EachTestingContext<DeleteFieldFromFlatObjectMetadataMapsTestCase>[] =
@@ -78,14 +56,25 @@ describe('deleteFieldFromFlatObjectMetadataMaps', () => {
           input: {
             flatObjectMetadataMaps:
               addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
-                flatFieldMetadata: newCustomRelationFlatFieldMetadata,
-                flatObjectMetadataMaps:
-                  FLAT_OBJECT_METADATA_MAPS_MOCKS_WITH_ROCKET_AND_PET,
+                flatFieldMetadata: getFlatFieldMetadataMock({
+                  objectMetadataId: PET_FLAT_OBJECT_MOCK.id,
+                  type: FieldMetadataType.RELATION,
+                  uniqueIdentifier: 'field-metadata-id',
+                  id: 'field-metadata-id',
+                  settings: {
+                    relationType: RelationType.MANY_TO_ONE,
+                    joinColumnName: 'whateverId',
+                    onDelete: RelationOnDeleteAction.CASCADE,
+                  },
+                  relationTargetObjectMetadataId: PET_FLAT_OBJECT_MOCK.id,
+                  relationTargetFieldMetadataId: 'does-not-matter',
+                }),
+                flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
               }),
-            fieldMetadataId: fieldMetadataToRemoveId,
+            fieldMetadataId: 'field-metadata-id',
             objectMetadataId: PET_FLAT_OBJECT_MOCK.id,
           },
-          expected: FLAT_OBJECT_METADATA_MAPS_MOCKS_WITH_ROCKET_AND_PET,
+          expected: FLAT_OBJECT_METADATA_MAPS_MOCKS,
         },
       },
     ];
