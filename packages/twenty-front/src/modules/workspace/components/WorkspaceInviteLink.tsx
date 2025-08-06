@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useLingui } from '@lingui/react/macro';
 import { IconLink } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -31,7 +31,7 @@ export const WorkspaceInviteLink = ({
   return (
     <StyledContainer data-chromatic="ignore">
       <StyledLinkContainer>
-        <TextInput
+        <SettingsTextInput
           instanceId="workspace-invite-link"
           value={inviteLink}
           disabled

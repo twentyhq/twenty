@@ -12,7 +12,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { ApolloError } from '@apollo/client';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -28,7 +28,7 @@ const SERVERLESS_FUNCTION_DETAIL_ID = 'serverless-function-detail';
 export const SettingsServerlessFunctionDetail = () => {
   const { serverlessFunctionId = '' } = useParams();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
-  const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
+  const [activeTabId, setActiveTabId] = useRecoilComponentState(
     activeTabIdComponentState,
     SERVERLESS_FUNCTION_DETAIL_ID,
   );

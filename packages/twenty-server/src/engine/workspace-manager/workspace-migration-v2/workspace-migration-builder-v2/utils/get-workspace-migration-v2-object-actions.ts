@@ -23,6 +23,5 @@ export const getWorkspaceMigrationV2ObjectDeleteAction = (
   flatObjectMetadata: FlatObjectMetadata,
 ): DeleteObjectAction => ({
   type: 'delete_object',
-  flatObjectMetadataWithoutFields:
-    fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(flatObjectMetadata),
+  objectMetadataId: flatObjectMetadata.id,
 });

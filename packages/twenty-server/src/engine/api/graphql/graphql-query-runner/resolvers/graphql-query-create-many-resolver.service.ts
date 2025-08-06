@@ -20,6 +20,7 @@ import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/g
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
+import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -195,7 +196,24 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       queryBuilder.orWhere(condition);
     });
 
-    return await queryBuilder.withDeleted().getMany();
+    const restrictedFields =
+      executionArgs.repository.objectRecordsPermissions?.[
+        objectMetadataItemWithFieldMaps.id
+      ]?.restrictedFields;
+
+    const selectOptions = getAllSelectableFields({
+      restrictedFields: restrictedFields ?? {},
+      objectMetadata: {
+        objectMetadataMapItem: objectMetadataItemWithFieldMaps,
+      },
+    });
+
+    return await queryBuilder
+      .withDeleted()
+      .setFindOptions({
+        select: selectOptions,
+      })
+      .getMany();
   }
 
   private getValueFromPath(

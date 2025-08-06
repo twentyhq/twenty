@@ -1,10 +1,10 @@
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
-export const selectableItemIdsComponentState = createComponentStateV2<
-  string[][]
->({
-  key: 'selectableItemIdsComponentState',
-  defaultValue: [[]],
-  componentInstanceContext: SelectableListComponentInstanceContext,
-});
+export const selectableItemIdsComponentState = createComponentState<string[][]>(
+  {
+    key: 'selectableItemIdsComponentState',
+    defaultValue: [[]],
+    componentInstanceContext: SelectableListComponentInstanceContext,
+  },
+);

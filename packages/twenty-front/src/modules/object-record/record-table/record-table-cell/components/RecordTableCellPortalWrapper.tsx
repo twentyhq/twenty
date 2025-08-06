@@ -7,7 +7,7 @@ import { RecordTableRowContextProvider } from '@/object-record/record-table/cont
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import ReactDOM from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -22,13 +22,13 @@ export const RecordTableCellPortalWrapper = ({
     `#record-table-cell-${position.column}-${position.row}`,
   );
 
-  const allRecordIds = useRecoilComponentValueV2(
+  const allRecordIds = useRecoilComponentValue(
     recordIndexAllRecordIdsComponentSelector,
   );
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const visibleTableColumns = useRecoilComponentValueV2(
+  const visibleTableColumns = useRecoilComponentValue(
     visibleTableColumnsComponentSelector,
   );
 

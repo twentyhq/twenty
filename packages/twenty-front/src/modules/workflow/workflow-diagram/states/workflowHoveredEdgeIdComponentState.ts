@@ -1,7 +1,7 @@
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
-export const workflowHoveredEdgeIdComponentState = createComponentStateV2<
+export const workflowHoveredEdgeIdComponentState = createComponentState<
   string | undefined
 >({
   key: 'workflowHoveredEdgeIdComponentState',

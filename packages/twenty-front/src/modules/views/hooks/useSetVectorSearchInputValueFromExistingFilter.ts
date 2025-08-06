@@ -1,10 +1,10 @@
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { vectorSearchInputComponentState } from '@/views/states/vectorSearchInputComponentState';
 import { isDefined } from 'twenty-shared/utils';
 import { useVectorSearchFilterState } from './useVectorSearchFilterState';
 
 export const useSetVectorSearchInputValueFromExistingFilter = () => {
-  const [, setVectorSearchInputValue] = useRecoilComponentStateV2(
+  const [, setVectorSearchInputValue] = useRecoilComponentState(
     vectorSearchInputComponentState,
   );
   const { getExistingVectorSearchFilter } = useVectorSearchFilterState();

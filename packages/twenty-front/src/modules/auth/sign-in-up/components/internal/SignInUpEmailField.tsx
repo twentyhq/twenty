@@ -1,5 +1,5 @@
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -40,7 +40,7 @@ export const SignInUpEmailField = ({
           fieldState: { error },
         }) => (
           <StyledInputContainer>
-            <TextInput
+            <SettingsTextInput
               instanceId="sign-in-up-email"
               autoFocus
               value={value}

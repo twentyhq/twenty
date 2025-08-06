@@ -13,7 +13,7 @@ import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { ViewBarFilterDropdown } from '@/views/components/ViewBarFilterDropdown';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
@@ -46,7 +46,7 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
       )!;
       const instanceId = companyObjectMetadataItem.id;
 
-      const setTableColumns = useSetRecoilComponentStateV2(
+      const setTableColumns = useSetRecoilComponentState(
         tableColumnsComponentState,
         instanceId,
       );
@@ -76,7 +76,7 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
 
       setPrefetchViews([mockView]);
 
-      const setCurrentViewId = useSetRecoilComponentStateV2(
+      const setCurrentViewId = useSetRecoilComponentState(
         contextStoreCurrentViewIdComponentState,
         MAIN_CONTEXT_STORE_INSTANCE_ID,
       );

@@ -5,14 +5,14 @@ import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDraw
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 import { useMergeRecordsSettings } from '@/object-record/record-merge/hooks/useMergeRecordsSettings';
 import { MergeRecordsTabId } from '@/object-record/record-merge/types/MergeRecordsTabId';
 import { useMergeRecordsContainerTabs } from '../hooks/useMergeRecordsContainerTabs';
 import { MergePreviewTab } from './MergePreviewTab';
-import { MergeRecordsFooter } from './MergeRecordsFooter';
 import { MergeRecordTab } from './MergeRecordTab';
+import { MergeRecordsFooter } from './MergeRecordsFooter';
 import { MergeSettingsTab } from './MergeSettingsTab';
 
 const StyledShowPageRightContainer = styled.div`
@@ -47,7 +47,7 @@ export const MergeRecordsContainer = ({
 }: MergeRecordsContainerProps) => {
   const { selectedRecords } = useMergeRecordsSettings();
 
-  const activeTabId = useRecoilComponentValueV2(
+  const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,
     componentInstanceId,
   );

@@ -1,5 +1,5 @@
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { WorkflowFilterAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { FilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
@@ -49,7 +49,7 @@ export const WorkflowEditActionFilterBody = ({
   action,
   actionOptions,
 }: WorkflowEditActionFilterBodyProps) => {
-  const rootStepFilterGroup = useRecoilComponentValueV2(
+  const rootStepFilterGroup = useRecoilComponentValue(
     rootLevelStepFilterGroupComponentSelector,
   );
 

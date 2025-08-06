@@ -5,7 +5,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,7 +17,7 @@ export const WorkflowAdvancedFilterRecordFilterOperandSelect = ({
   recordFilterId,
 }: WorkflowAdvancedFilterRecordFilterOperandSelectProps) => {
   const { readonly } = useContext(AdvancedFilterContext);
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useRecoilComponentValue(
     currentRecordFiltersComponentState,
   );
 

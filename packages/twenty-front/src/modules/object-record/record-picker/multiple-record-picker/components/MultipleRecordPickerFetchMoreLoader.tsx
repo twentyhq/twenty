@@ -10,8 +10,8 @@ import { multipleRecordPickerShouldShowInitialLoadingComponentState } from '@/ob
 import { multipleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowSkeletonComponentState';
 import { multipleRecordPickerPaginationSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPaginationSelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -36,35 +36,32 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
   const [
     multipleRecordPickerIsFetchingMore,
     setMultipleRecordPickerIsFetchingMore,
-  ] = useRecoilComponentStateV2(
-    multipleRecordPickerIsFetchingMoreComponentState,
-  );
+  ] = useRecoilComponentState(multipleRecordPickerIsFetchingMoreComponentState);
 
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     MultipleRecordPickerComponentInstanceContext,
   );
 
-  const paginationState = useRecoilComponentValueV2(
+  const paginationState = useRecoilComponentValue(
     multipleRecordPickerPaginationSelector,
     componentInstanceId,
   );
 
-  const isLoading = useRecoilComponentValueV2(
+  const isLoading = useRecoilComponentValue(
     multipleRecordPickerIsLoadingComponentState,
     componentInstanceId,
   );
 
-  const searchFilter = useRecoilComponentValueV2(
+  const searchFilter = useRecoilComponentValue(
     multipleRecordPickerSearchFilterComponentState,
     componentInstanceId,
   );
 
-  const multipleRecordPickerShouldShowInitialLoading =
-    useRecoilComponentValueV2(
-      multipleRecordPickerShouldShowInitialLoadingComponentState,
-    );
+  const multipleRecordPickerShouldShowInitialLoading = useRecoilComponentValue(
+    multipleRecordPickerShouldShowInitialLoadingComponentState,
+  );
 
-  const multipleRecordPickerShouldShowSkeleton = useRecoilComponentValueV2(
+  const multipleRecordPickerShouldShowSkeleton = useRecoilComponentValue(
     multipleRecordPickerShouldShowSkeletonComponentState,
   );
 

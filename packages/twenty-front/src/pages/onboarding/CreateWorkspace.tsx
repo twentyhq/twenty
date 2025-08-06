@@ -14,7 +14,7 @@ import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefres
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { ApolloError } from '@apollo/client';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -215,7 +215,7 @@ export const CreateWorkspace = () => {
                   field: { onChange, onBlur, value },
                   fieldState: { error },
                 }) => (
-                  <TextInputV2
+                  <TextInput
                     autoFocus
                     value={value}
                     placeholder="Apple"

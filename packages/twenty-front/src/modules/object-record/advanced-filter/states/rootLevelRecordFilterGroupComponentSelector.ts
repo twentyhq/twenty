@@ -1,10 +1,10 @@
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
+import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
 import { isDefined } from 'twenty-shared/utils';
 
 export const rootLevelRecordFilterGroupComponentSelector =
-  createComponentSelectorV2({
+  createComponentSelector({
     key: 'rootLevelRecordFilterGroupComponentSelector',
     get:
       ({ instanceId }) =>

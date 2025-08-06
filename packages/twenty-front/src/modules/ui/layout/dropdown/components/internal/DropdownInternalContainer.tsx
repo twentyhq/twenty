@@ -11,8 +11,8 @@ import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
 import {
   FloatingPortal,
@@ -70,25 +70,23 @@ export const DropdownInternalContainer = ({
   excludedClickOutsideIds,
   isDropdownInModal = false,
 }: DropdownInternalContainerProps) => {
-  const isDropdownOpen = useRecoilComponentValueV2(
-    isDropdownOpenComponentState,
-  );
+  const isDropdownOpen = useRecoilComponentValue(isDropdownOpenComponentState);
 
   const { closeDropdown } = useCloseDropdown();
 
   const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
 
-  const dropdownMaxHeight = useRecoilComponentValueV2(
+  const dropdownMaxHeight = useRecoilComponentValue(
     dropdownMaxHeightComponentState,
     dropdownId,
   );
 
-  const dropdownMaxWidth = useRecoilComponentValueV2(
+  const dropdownMaxWidth = useRecoilComponentValue(
     dropdownMaxWidthComponentState,
     dropdownId,
   );
 
-  const setDropdownPlacement = useSetRecoilComponentStateV2(
+  const setDropdownPlacement = useSetRecoilComponentState(
     dropdownPlacementComponentState,
     dropdownId,
   );

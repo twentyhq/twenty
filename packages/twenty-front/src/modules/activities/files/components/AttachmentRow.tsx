@@ -9,7 +9,7 @@ import {
   FieldContext,
   GenericFieldContextType,
 } from '@/object-record/record-field/contexts/FieldContext';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
@@ -164,7 +164,7 @@ export const AttachmentRow = ({
         <StyledLeftContent>
           <FileIcon fileType={attachment.type} />
           {isEditing ? (
-            <TextInput
+            <SettingsTextInput
               instanceId={`attachment-${attachment.id}-name`}
               value={attachmentFileName}
               onChange={handleOnChange}

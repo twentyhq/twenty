@@ -382,6 +382,7 @@ msgstr "Voeg invoervelden toe aan uw formulier"
 
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
+#: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
 msgid "Add new"
 msgstr "Nieuwe toevoegen"
 
@@ -4510,7 +4511,7 @@ msgid "Phone number copied to clipboard"
 msgstr "Telefoonnummer gekopieerd naar klembord"
 
 #. js-lingui-id: FdlpPK
-#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownObjectItems.tsx
+#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownAllItems.tsx
 msgid "Pick a {nameSingular} record"
 msgstr "Kies een {nameSingular} record"
 

@@ -1,4 +1,4 @@
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -95,7 +95,7 @@ export const NavigationDrawerInput = ({
   };
 
   return (
-    <TextInputV2
+    <TextInput
       className={className}
       LeftIcon={Icon}
       ref={inputRef}

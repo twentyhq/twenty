@@ -9,8 +9,8 @@ import { dropdownMaxWidthComponentState } from '@/ui/layout/dropdown/states/inte
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
 import {
   Placement,
@@ -78,7 +78,7 @@ export const Dropdown = ({
   isDropdownInModal = false,
   disableClickForClickableComponent = false,
 }: DropdownProps) => {
-  const isDropdownOpen = useRecoilComponentValueV2(
+  const isDropdownOpen = useRecoilComponentValue(
     isDropdownOpenComponentState,
     dropdownId,
   );
@@ -97,12 +97,12 @@ export const Dropdown = ({
       ]
     : [];
 
-  const setDropdownMaxHeight = useSetRecoilComponentStateV2(
+  const setDropdownMaxHeight = useSetRecoilComponentState(
     dropdownMaxHeightComponentState,
     dropdownId,
   );
 
-  const setDropdownMaxWidth = useSetRecoilComponentStateV2(
+  const setDropdownMaxWidth = useSetRecoilComponentState(
     dropdownMaxWidthComponentState,
     dropdownId,
   );

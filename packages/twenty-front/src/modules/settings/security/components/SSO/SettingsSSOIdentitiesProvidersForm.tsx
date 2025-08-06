@@ -5,7 +5,7 @@ import { SettingsRadioCardContainer } from '@/settings/components/SettingsRadioC
 import { SettingsSSOOIDCForm } from '@/settings/security/components/SSO/SettingsSSOOIDCForm';
 import { SettingsSSOSAMLForm } from '@/settings/security/components/SSO/SettingsSSOSAMLForm';
 import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { ReactElement, useMemo } from 'react';
@@ -87,7 +87,7 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
             name="name"
             control={control}
             render={({ field: { onChange, value } }) => (
-              <TextInput
+              <SettingsTextInput
                 instanceId="sso-identity-provider-name"
                 autoComplete="off"
                 label={t`Name`}

@@ -1,5 +1,5 @@
 import { EnvironmentVariable } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariablesSection';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -46,7 +46,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
   return editMode ? (
     <StyledEditModeTableRow>
       <TableCell>
-        <TextInputV2
+        <TextInput
           autoFocus
           value={editedEnvVariable.key}
           onChange={(newKey) =>
@@ -57,7 +57,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
         />
       </TableCell>
       <TableCell>
-        <TextInputV2
+        <TextInput
           value={editedEnvVariable.value}
           onChange={(newValue) =>
             setEditedEnvVariable({ ...editedEnvVariable, value: newValue })

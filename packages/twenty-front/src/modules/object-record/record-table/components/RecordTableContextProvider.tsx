@@ -5,7 +5,7 @@ import { RecordTableContextProvider as RecordTableContextInternalProvider } from
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 type RecordTableContextProviderProps = {
   viewBarId: string;
@@ -28,7 +28,7 @@ export const RecordTableContextProvider = ({
     objectMetadataItem.id,
   );
 
-  const visibleTableColumns = useRecoilComponentValueV2(
+  const visibleTableColumns = useRecoilComponentValue(
     visibleTableColumnsComponentSelector,
     recordTableId,
   );

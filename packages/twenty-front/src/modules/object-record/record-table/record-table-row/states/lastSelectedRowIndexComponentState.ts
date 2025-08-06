@@ -1,7 +1,7 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
-export const lastSelectedRowIndexComponentState = createComponentStateV2<
+export const lastSelectedRowIndexComponentState = createComponentState<
   number | null | undefined
 >({
   key: 'record-table/last-selected-row-index',

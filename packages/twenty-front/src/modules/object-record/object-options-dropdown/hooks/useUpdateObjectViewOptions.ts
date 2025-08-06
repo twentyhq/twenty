@@ -1,5 +1,5 @@
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
@@ -13,11 +13,11 @@ export const useUpdateObjectViewOptions = () => {
     recordIndexOpenRecordInState,
   );
 
-  const setRecordIndexViewName = useSetRecoilComponentStateV2(
+  const setRecordIndexViewName = useSetRecoilComponentState(
     viewPickerInputNameComponentState,
   );
 
-  const setRecordIndexViewIcon = useSetRecoilComponentStateV2(
+  const setRecordIndexViewIcon = useSetRecoilComponentState(
     viewPickerSelectedIconComponentState,
   );
 

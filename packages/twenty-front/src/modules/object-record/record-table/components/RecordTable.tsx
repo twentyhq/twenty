@@ -14,7 +14,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const RecordTable = () => {
   const { recordTableId, objectNameSingular, objectMetadataItem } =
@@ -30,17 +30,17 @@ export const RecordTable = () => {
     RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
   );
 
-  const isRecordTableInitialLoading = useRecoilComponentValueV2(
+  const isRecordTableInitialLoading = useRecoilComponentValue(
     isRecordTableInitialLoadingComponentState,
     recordTableId,
   );
 
-  const allRecordIds = useRecoilComponentValueV2(
+  const allRecordIds = useRecoilComponentValue(
     recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );
 
-  const hasRecordGroups = useRecoilComponentValueV2(
+  const hasRecordGroups = useRecoilComponentValue(
     hasRecordGroupsComponentSelector,
     recordTableId,
   );

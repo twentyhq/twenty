@@ -1,6 +1,6 @@
 import { ServerlessFunctionNewFormValues } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
@@ -25,7 +25,7 @@ export const SettingsServerlessFunctionNewForm = ({
     <Section>
       <H2Title title="About" description="Name and set your function" />
       <StyledInputsContainer>
-        <TextInput
+        <SettingsTextInput
           instanceId={nameTextInputId}
           placeholder="Name"
           fullWidth

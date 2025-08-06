@@ -1,7 +1,7 @@
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
 import { RecordTableBodyDroppableContextProvider } from '@/object-record/record-table/record-table-body/contexts/RecordTableBodyDroppableContext';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { Droppable } from '@hello-pangea/dnd';
 import { ReactNode, useState } from 'react';
 import { v4 } from 'uuid';
@@ -20,7 +20,7 @@ export const RecordTableBodyDroppable = ({
   const [v4Persistable] = useState(v4());
   const recordTableBodyId = `record-table-body${recordGroupId ? '-' + recordGroupId : ''}`;
 
-  const setRecordTableHoverPosition = useSetRecoilComponentStateV2(
+  const setRecordTableHoverPosition = useSetRecoilComponentState(
     recordTableHoverPositionComponentState,
   );
 

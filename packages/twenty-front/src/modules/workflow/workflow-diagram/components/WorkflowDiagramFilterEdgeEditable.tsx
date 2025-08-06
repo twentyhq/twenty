@@ -5,8 +5,8 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
@@ -95,7 +95,7 @@ export const WorkflowDiagramFilterEdgeEditable = ({
     targetY,
   });
 
-  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
+  const workflowVisualizerWorkflowId = useRecoilComponentValue(
     workflowVisualizerWorkflowIdComponentState,
   );
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
@@ -108,7 +108,7 @@ export const WorkflowDiagramFilterEdgeEditable = ({
 
   const { isEdgeHovered } = useIsEdgeHovered();
 
-  const setWorkflowDiagramPanOnDrag = useSetRecoilComponentStateV2(
+  const setWorkflowDiagramPanOnDrag = useSetRecoilComponentState(
     workflowDiagramPanOnDragComponentState,
   );
 
@@ -117,7 +117,7 @@ export const WorkflowDiagramFilterEdgeEditable = ({
     nextStepId: target,
   });
 
-  const workflowSelectedNode = useRecoilComponentValueV2(
+  const workflowSelectedNode = useRecoilComponentValue(
     workflowSelectedNodeComponentState,
   );
 
@@ -126,7 +126,7 @@ export const WorkflowDiagramFilterEdgeEditable = ({
 
   const dropdownId = `${WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}-${source}-${target}`;
 
-  const isDropdownOpen = useRecoilComponentValueV2(
+  const isDropdownOpen = useRecoilComponentValue(
     isDropdownOpenComponentState,
     dropdownId,
   );

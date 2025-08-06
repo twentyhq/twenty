@@ -4,8 +4,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { isDefined } from 'twenty-shared/utils';
 import { useGetRolesQuery } from '~/generated-metadata/graphql';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
@@ -75,7 +75,7 @@ export const SettingsAIAgentForm = ({
           />
 
           <StyledNameContainer>
-            <TextInput
+            <SettingsTextInput
               instanceId="agent-label-input"
               placeholder={t`Enter agent name*`}
               value={formValues.label}

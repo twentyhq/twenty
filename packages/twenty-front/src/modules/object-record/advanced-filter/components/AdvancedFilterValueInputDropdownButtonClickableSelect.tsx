@@ -2,7 +2,7 @@ import { useGetFieldMetadataItemById } from '@/object-metadata/hooks/useGetField
 import { getAdvancedFilterInputPlaceholderText } from '@/object-record/advanced-filter/utils/getAdvancedFilterInputPlacedholderText';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 import { isNonEmptyString } from '@sniptt/guards';
 
@@ -34,7 +34,7 @@ type AdvancedFilterValueInputDropdownButtonClickableSelectProps = {
 export const AdvancedFilterValueInputDropdownButtonClickableSelect = ({
   recordFilterId,
 }: AdvancedFilterValueInputDropdownButtonClickableSelectProps) => {
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useRecoilComponentValue(
     currentRecordFiltersComponentState,
   );
 
