@@ -104,4 +104,78 @@ export class StripeCheckoutService {
         : 'if_required',
     });
   }
+
+  async createDirectSubscription({
+    user,
+    workspaceId,
+    stripeSubscriptionLineItems,
+    stripeCustomerId,
+    plan = BillingPlanKey.PRO,
+    requirePaymentMethod = false,
+    withTrialPeriod,
+  }: {
+    user: User;
+    workspaceId: string;
+    stripeSubscriptionLineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
+    stripeCustomerId?: string;
+    plan?: BillingPlanKey;
+    requirePaymentMethod?: boolean;
+    withTrialPeriod: boolean;
+  }): Promise<Stripe.Subscription> {
+    if (!isDefined(stripeCustomerId)) {
+      const customer = await this.stripe.customers.create({
+        email: user.email,
+        metadata: {
+          workspaceId,
+        },
+      });
+
+      await this.billingCustomerRepository.save({
+        stripeCustomerId: customer.id,
+        workspaceId,
+      });
+
+      stripeCustomerId = customer.id;
+    }
+
+    // Convert checkout session line items to subscription items format
+    const subscriptionItems: Stripe.SubscriptionCreateParams.Item[] =
+      stripeSubscriptionLineItems.map((lineItem) => ({
+        price: lineItem.price as string,
+        quantity: lineItem.quantity,
+      }));
+
+    const subscriptionParams: Stripe.SubscriptionCreateParams = {
+      customer: stripeCustomerId,
+      items: subscriptionItems,
+      metadata: {
+        workspaceId,
+        plan,
+      },
+      ...(withTrialPeriod
+        ? {
+            trial_period_days: this.twentyConfigService.get(
+              requirePaymentMethod
+                ? 'BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS'
+                : 'BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS',
+            ),
+            trial_settings: {
+              end_behavior: {
+                missing_payment_method: 'create_invoice',
+              },
+            },
+          }
+        : {}),
+      automatic_tax: { enabled: !!requirePaymentMethod },
+      collection_method: requirePaymentMethod
+        ? 'charge_automatically'
+        : 'send_invoice',
+    };
+
+    if (!requirePaymentMethod) {
+      subscriptionParams.days_until_due = 30;
+    }
+
+    return await this.stripe.subscriptions.create(subscriptionParams);
+  }
 }
