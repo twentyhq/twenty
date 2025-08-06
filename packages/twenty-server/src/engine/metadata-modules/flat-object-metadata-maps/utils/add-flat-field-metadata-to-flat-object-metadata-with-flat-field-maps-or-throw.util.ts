@@ -16,10 +16,11 @@ export const addFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMapsOrThrow =
     flatFieldMetadata: FlatFieldMetadata;
     flatObjectMetadataWithFlatFieldMaps: FlatObjectMetadataWithFlatFieldMaps;
   }): FlatObjectMetadataWithFlatFieldMaps => {
-    const flatFieldMetadataToAddAlreadyExists = isDefined(
-      flatObjectMetadataWithFlatFieldMaps.fieldsById[flatFieldMetadata.id],
-    );
-    if (flatFieldMetadataToAddAlreadyExists) {
+    if (
+      isDefined(
+        flatObjectMetadataWithFlatFieldMaps.fieldsById[flatFieldMetadata.id],
+      )
+    ) {
       throw new Error(
         'addFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMaps added flatFieldMetadata already exists',
       );

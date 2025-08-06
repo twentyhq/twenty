@@ -1,15 +1,21 @@
-import { removePropertiesFromRecord } from 'twenty-shared/utils';
+import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 
-type DeleteObjectFromFlatObjectMetadataMapsArgs = {
+type DeleteObjectFromFlatObjectMetadataMapsOrThrowArgs = {
   objectMetadataId: string;
   flatObjectMetadataMaps: FlatObjectMetadataMaps;
 };
-export const deleteObjectFromFlatObjectMetadataMaps = ({
+export const deleteObjectFromFlatObjectMetadataMapsOrThrow = ({
   flatObjectMetadataMaps,
   objectMetadataId,
-}: DeleteObjectFromFlatObjectMetadataMapsArgs): FlatObjectMetadataMaps => {
+}: DeleteObjectFromFlatObjectMetadataMapsOrThrowArgs): FlatObjectMetadataMaps => {
+  if (!isDefined(flatObjectMetadataMaps.byId[objectMetadataId])) {
+    throw new Error(
+      'deleteObjectFromFlatObjectMetadataMapsOrThrow: object to delete does not exist',
+    );
+  }
+
   const updatedIdByNameSingularEntries = Object.entries(
     flatObjectMetadataMaps.idByNameSingular,
   ).filter(([_nameSingular, id]) => id !== objectMetadataId);

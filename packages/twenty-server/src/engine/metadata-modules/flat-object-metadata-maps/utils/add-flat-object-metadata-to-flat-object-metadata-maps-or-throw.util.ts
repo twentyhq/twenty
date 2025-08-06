@@ -1,15 +1,22 @@
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromFlatObjectMetadataToFlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-flat-object-metadata-with-flat-field-maps.util';
+import { isDefined } from 'twenty-shared/utils';
 
-type AddFlatObjectMetadataToFlatObjectMetadataMapsArgs = {
+type AddFlatObjectMetadataToFlatObjectMetadataMapsOrThrowArgs = {
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps: FlatObjectMetadataMaps;
 };
-export const addFlatObjectMetadataToFlatObjectMetadataMaps = ({
+export const addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow = ({
   flatObjectMetadata,
   flatObjectMetadataMaps,
-}: AddFlatObjectMetadataToFlatObjectMetadataMapsArgs): FlatObjectMetadataMaps => {
+}: AddFlatObjectMetadataToFlatObjectMetadataMapsOrThrowArgs): FlatObjectMetadataMaps => {
+  if (isDefined(flatObjectMetadataMaps.byId[flatObjectMetadata.id])) {
+    throw new Error(
+      'addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow: flat object metadata to add already exists',
+    );
+  }
+
   return {
     byId: {
       ...flatObjectMetadataMaps.byId,
