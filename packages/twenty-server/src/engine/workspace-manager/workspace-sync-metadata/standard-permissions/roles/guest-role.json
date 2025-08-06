@@ -1,0 +1,12 @@
+{
+  "label": "Guest",
+  "description": "Guest role",
+  "icon": "IconUser",
+  "isEditable": false,
+  "canUpdateAllSettings": false,
+  "canAccessAllTools": false,
+  "canReadAllObjectRecords": true,
+  "canUpdateAllObjectRecords": false,
+  "canSoftDeleteAllObjectRecords": false,
+  "canDestroyAllObjectRecords": false
+}

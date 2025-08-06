@@ -1,0 +1,12 @@
+{
+  "label": "Member",
+  "description": "Member role",
+  "icon": "IconUser",
+  "isEditable": true,
+  "canUpdateAllSettings": false,
+  "canAccessAllTools": false,
+  "canReadAllObjectRecords": true,
+  "canUpdateAllObjectRecords": true,
+  "canSoftDeleteAllObjectRecords": true,
+  "canDestroyAllObjectRecords": true
+}
