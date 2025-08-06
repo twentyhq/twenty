@@ -30,11 +30,23 @@ describe('filterOutputSchema', () => {
           id: { isLeaf: true, type: FieldMetadataType.UUID },
         });
 
-        expect(filterOutputSchema(true, false, inputSchema)).toBe(inputSchema);
+        expect(
+          filterOutputSchema({
+            shouldDisplayRecordFields: true,
+            shouldDisplayRecordObjects: false,
+            outputSchema: inputSchema,
+          }),
+        ).toBe(inputSchema);
       });
 
       it('should return undefined when input schema is undefined', () => {
-        expect(filterOutputSchema(true, false, undefined)).toBeUndefined();
+        expect(
+          filterOutputSchema({
+            shouldDisplayRecordFields: true,
+            shouldDisplayRecordObjects: false,
+            outputSchema: undefined,
+          }),
+        ).toBeUndefined();
       });
     });
 
@@ -45,7 +57,13 @@ describe('filterOutputSchema', () => {
           field2: { isLeaf: true, type: FieldMetadataType.NUMBER },
         });
 
-        expect(filterOutputSchema(true, false, inputSchema)).toBe(inputSchema);
+        expect(
+          filterOutputSchema({
+            shouldDisplayRecordFields: true,
+            shouldDisplayRecordObjects: false,
+            outputSchema: inputSchema,
+          }),
+        ).toBe(inputSchema);
       });
     });
   });
@@ -70,9 +88,13 @@ describe('filterOutputSchema', () => {
           },
         });
 
-        expect(filterOutputSchema(false, true, inputSchema)).toEqual(
-          expectedSchema,
-        );
+        expect(
+          filterOutputSchema({
+            shouldDisplayRecordFields: false,
+            shouldDisplayRecordObjects: true,
+            outputSchema: inputSchema,
+          }),
+        ).toEqual(expectedSchema);
       });
 
       it('should return undefined for record schema without object and no valid fields', () => {
@@ -83,7 +105,13 @@ describe('filterOutputSchema', () => {
           },
         } as any;
 
-        expect(filterOutputSchema(false, true, inputSchema)).toBeUndefined();
+        expect(
+          filterOutputSchema({
+            shouldDisplayRecordFields: false,
+            shouldDisplayRecordObjects: true,
+            outputSchema: inputSchema,
+          }),
+        ).toBeUndefined();
       });
     });
 
@@ -104,9 +132,13 @@ describe('filterOutputSchema', () => {
           },
         };
 
-        expect(filterOutputSchema(false, true, inputSchema)).toEqual(
-          expectedSchema,
-        );
+        expect(
+          filterOutputSchema({
+            shouldDisplayRecordFields: false,
+            shouldDisplayRecordObjects: true,
+            outputSchema: inputSchema,
+          }),
+        ).toEqual(expectedSchema);
       });
 
       it('should return undefined for base schema with no valid records', () => {
@@ -115,7 +147,13 @@ describe('filterOutputSchema', () => {
           field2: { isLeaf: true, type: FieldMetadataType.BOOLEAN },
         });
 
-        expect(filterOutputSchema(false, true, inputSchema)).toBeUndefined();
+        expect(
+          filterOutputSchema({
+            shouldDisplayRecordFields: false,
+            shouldDisplayRecordObjects: true,
+            outputSchema: inputSchema,
+          }),
+        ).toBeUndefined();
       });
     });
   });
@@ -127,7 +165,13 @@ describe('filterOutputSchema', () => {
         id: { isLeaf: true, type: FieldMetadataType.UUID },
       });
 
-      expect(filterOutputSchema(true, true, inputSchema)).toBe(inputSchema);
+      expect(
+        filterOutputSchema({
+          shouldDisplayRecordFields: true,
+          shouldDisplayRecordObjects: true,
+          outputSchema: inputSchema,
+        }),
+      ).toBe(inputSchema);
     });
 
     it('should return the input schema unchanged for base schema', () => {
@@ -136,11 +180,23 @@ describe('filterOutputSchema', () => {
         field2: { isLeaf: true, type: FieldMetadataType.NUMBER },
       });
 
-      expect(filterOutputSchema(true, true, inputSchema)).toBe(inputSchema);
+      expect(
+        filterOutputSchema({
+          shouldDisplayRecordFields: true,
+          shouldDisplayRecordObjects: true,
+          outputSchema: inputSchema,
+        }),
+      ).toBe(inputSchema);
     });
 
     it('should return undefined when input schema is undefined', () => {
-      expect(filterOutputSchema(true, true, undefined)).toBeUndefined();
+      expect(
+        filterOutputSchema({
+          shouldDisplayRecordFields: true,
+          shouldDisplayRecordObjects: true,
+          outputSchema: undefined,
+        }),
+      ).toBeUndefined();
     });
   });
 
@@ -150,11 +206,23 @@ describe('filterOutputSchema', () => {
         name: { isLeaf: true, value: 'string' },
       });
 
-      expect(filterOutputSchema(false, false, inputSchema)).toBe(inputSchema);
+      expect(
+        filterOutputSchema({
+          shouldDisplayRecordFields: false,
+          shouldDisplayRecordObjects: false,
+          outputSchema: inputSchema,
+        }),
+      ).toBe(inputSchema);
     });
 
     it('should return undefined when input schema is undefined', () => {
-      expect(filterOutputSchema(false, false, undefined)).toBeUndefined();
+      expect(
+        filterOutputSchema({
+          shouldDisplayRecordFields: false,
+          shouldDisplayRecordObjects: false,
+          outputSchema: undefined,
+        }),
+      ).toBeUndefined();
     });
   });
 });

@@ -37,11 +37,11 @@ export const useAvailableVariablesInWorkflowStep = ({
 
   const availableVariablesInWorkflowStep = availableStepsOutputSchema
     .map((stepOutputSchema) => {
-      const outputSchema = filterOutputSchema(
+      const outputSchema = filterOutputSchema({
         shouldDisplayRecordFields,
         shouldDisplayRecordObjects,
-        stepOutputSchema.outputSchema,
-      ) as OutputSchema;
+        outputSchema: stepOutputSchema.outputSchema,
+      }) as OutputSchema;
 
       if (!isDefined(outputSchema) || isEmptyObject(outputSchema)) {
         return undefined;

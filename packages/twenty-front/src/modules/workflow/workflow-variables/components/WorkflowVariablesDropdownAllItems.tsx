@@ -9,6 +9,7 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
+import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
 import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
 import { useLingui } from '@lingui/react/macro';
 import {
@@ -69,10 +70,18 @@ export const WorkflowVariablesDropdownAllItems = ({
       shouldEnableSelectRelationObject ?? false;
 
     if (isRelationField && isRelationObjectSelectable) {
-      onSelect(`{{${step.id}.${[...currentPath].join('.')}}}`);
+      onSelect(
+        getVariableTemplateFromPath({
+          stepId: step.id,
+          path: currentPath,
+        }),
+      );
     } else {
       onSelect(
-        `{{${step.id}.${[...currentPath, currentSubStep.object.fieldIdName].join('.')}}}`,
+        getVariableTemplateFromPath({
+          stepId: step.id,
+          path: [...currentPath, currentSubStep.object.fieldIdName],
+        }),
       );
     }
   };
@@ -99,7 +108,6 @@ export const WorkflowVariablesDropdownAllItems = ({
             Icon={IconChevronLeft}
           />
         }
-        style={{ position: 'fixed' }}
       >
         <OverflowingTextWithTooltip
           text={getStepHeaderLabel(step, currentPath)}

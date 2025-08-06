@@ -48,11 +48,12 @@ const filterRecordOutputSchema = ({
       continue;
     }
 
-    const validSubSchema = filterOutputSchema(
+    const validSubSchema = filterOutputSchema({
+      outputSchema: field.value,
       shouldDisplayRecordFields,
       shouldDisplayRecordObjects,
-      field.value,
-    );
+    });
+
     if (isDefined(validSubSchema)) {
       filteredFields[key] = {
         ...field,
@@ -106,11 +107,11 @@ const filterBaseOutputSchema = ({
       continue;
     }
 
-    const validSubSchema = filterOutputSchema(
+    const validSubSchema = filterOutputSchema({
       shouldDisplayRecordFields,
       shouldDisplayRecordObjects,
-      field.value,
-    );
+      outputSchema: field.value,
+    });
     if (isDefined(validSubSchema)) {
       filteredSchema[key] = {
         ...field,
@@ -127,11 +128,15 @@ const filterBaseOutputSchema = ({
   return undefined;
 };
 
-export const filterOutputSchema = (
-  shouldDisplayRecordFields: boolean,
-  shouldDisplayRecordObjects: boolean,
-  outputSchema?: OutputSchema,
-): OutputSchema | undefined => {
+export const filterOutputSchema = ({
+  shouldDisplayRecordFields,
+  shouldDisplayRecordObjects,
+  outputSchema,
+}: {
+  shouldDisplayRecordFields: boolean;
+  shouldDisplayRecordObjects: boolean;
+  outputSchema?: OutputSchema;
+}): OutputSchema | undefined => {
   if (
     !shouldDisplayRecordObjects ||
     shouldDisplayRecordFields ||
