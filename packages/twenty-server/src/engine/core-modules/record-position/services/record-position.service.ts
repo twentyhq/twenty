@@ -49,25 +49,29 @@ export class RecordPositionService {
   }
 
   async overridePositionOnRecords({
-    records,
+    partialRecordInputs,
     workspaceId,
     objectMetadata,
+    shouldBackfillPositionIfUndefined,
   }: {
-    records: Partial<ObjectRecord>[];
+    partialRecordInputs: Partial<ObjectRecord>[];
     workspaceId: string;
     objectMetadata: { isCustom: boolean; nameSingular: string };
+    shouldBackfillPositionIfUndefined: boolean;
   }): Promise<Partial<ObjectRecord>[]> {
     const recordsWithFirstPosition: Partial<ObjectRecord>[] = [];
     const recordsWithLastPosition: Partial<ObjectRecord>[] = [];
     const recordsWithPosition: Partial<ObjectRecord>[] = [];
 
-    for (const record of records) {
-      if (record.position === 'last') {
-        recordsWithLastPosition.push(record);
-      } else if (typeof record.position === 'number') {
-        recordsWithPosition.push(record);
-      } else {
-        recordsWithFirstPosition.push(record);
+    for (const partialRecordInput of partialRecordInputs) {
+      if (partialRecordInput.position === 'last') {
+        recordsWithLastPosition.push(partialRecordInput);
+      } else if (typeof partialRecordInput.position === 'number') {
+        recordsWithPosition.push(partialRecordInput);
+      } else if (partialRecordInput.position === 'first') {
+        recordsWithFirstPosition.push(partialRecordInput);
+      } else if (shouldBackfillPositionIfUndefined) {
+        recordsWithFirstPosition.push(partialRecordInput);
       }
     }
 

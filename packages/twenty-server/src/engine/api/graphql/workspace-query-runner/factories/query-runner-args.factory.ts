@@ -79,10 +79,13 @@ export class QueryRunnerArgsFactory {
             (args as UpdateManyResolverArgs).filter,
             options.objectMetadataItemWithFieldMaps,
           ),
-          data: await this.overrideDataByFieldMetadata(
-            [(args as UpdateManyResolverArgs).data],
-            options,
-          ),
+          data: (
+            await this.overrideDataByFieldMetadata(
+              [(args as UpdateManyResolverArgs).data],
+              options,
+              false,
+            )
+          )[0],
         } satisfies UpdateManyResolverArgs;
       case ResolverArgsType.FindOne:
         return {
@@ -140,10 +143,11 @@ export class QueryRunnerArgsFactory {
   }
 
   private async overrideDataByFieldMetadata(
-    records: Partial<ObjectRecord>[] | undefined,
+    partialRecordInputs: Partial<ObjectRecord>[] | undefined,
     options: WorkspaceQueryRunnerOptions,
+    shouldBackfillPosition = true,
   ): Promise<Partial<ObjectRecord>[]> {
-    if (!isDefined(records)) {
+    if (!isDefined(partialRecordInputs)) {
       return [];
     }
 
@@ -155,12 +159,13 @@ export class QueryRunnerArgsFactory {
 
     const overriddenPositionRecords =
       await this.recordPositionService.overridePositionOnRecords({
-        records,
+        partialRecordInputs,
         workspaceId: workspace.id,
         objectMetadata: {
           isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
           nameSingular: options.objectMetadataItemWithFieldMaps.nameSingular,
         },
+        shouldBackfillPositionIfUndefined: shouldBackfillPosition,
       });
 
     for (const record of overriddenPositionRecords) {
