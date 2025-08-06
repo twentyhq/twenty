@@ -29,12 +29,6 @@ export const availableFieldMetadataItemsForFilterFamilySelector =
           currentWorkspace,
         );
 
-        const isFieldsPermissionsEnabled =
-          checkIfFeatureFlagIsEnabledOnWorkspace(
-            FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED,
-            currentWorkspace,
-          );
-
         const filterFilterableFieldMetadataItems =
           getFilterFilterableFieldMetadataItems({
             isJsonFilterEnabled: isJsonFeatureFlagEnabled,
@@ -42,15 +36,13 @@ export const availableFieldMetadataItemsForFilterFamilySelector =
 
         let restrictedFieldMetadataIds: string[] = [];
 
-        if (isFieldsPermissionsEnabled) {
-          const currentUserWorkspace = get(currentUserWorkspaceState);
+        const currentUserWorkspace = get(currentUserWorkspaceState);
 
-          restrictedFieldMetadataIds =
-            getReadRestrictedFieldMetadataIdsFromObjectPermissions({
-              objectPermissions: currentUserWorkspace?.objectPermissions,
-              objectMetadataId: objectMetadataItem.id,
-            });
-        }
+        restrictedFieldMetadataIds =
+          getReadRestrictedFieldMetadataIdsFromObjectPermissions({
+            objectPermissions: currentUserWorkspace?.objectPermissions,
+            objectMetadataId: objectMetadataItem.id,
+          });
 
         const availableFieldMetadataItemsForFilter = objectMetadataItem.fields
           .filter(filterFilterableFieldMetadataItems)

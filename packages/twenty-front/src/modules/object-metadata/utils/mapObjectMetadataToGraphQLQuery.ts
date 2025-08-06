@@ -19,7 +19,6 @@ type MapObjectMetadataToGraphQLQueryArgs = {
   computeReferences?: boolean;
   isRootLevel?: boolean;
   objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
-  isFieldsPermissionsEnabled?: boolean;
 };
 
 export const mapObjectMetadataToGraphQLQuery = ({
@@ -29,7 +28,6 @@ export const mapObjectMetadataToGraphQLQuery = ({
   computeReferences = false,
   isRootLevel = true,
   objectPermissionsByObjectMetadataId,
-  isFieldsPermissionsEnabled = false,
 }: MapObjectMetadataToGraphQLQueryArgs): string => {
   if (
     !isRootLevel &&
@@ -46,9 +44,6 @@ export const mapObjectMetadataToGraphQLQuery = ({
   }
 
   const filterReadableFields = (field: FieldMetadataItem) => {
-    if (isFieldsPermissionsEnabled !== true) {
-      return true;
-    }
     const objectPermission = getObjectPermissionsForObject(
       objectPermissionsByObjectMetadataId,
       objectMetadataItem.id,
@@ -115,7 +110,6 @@ export const mapObjectMetadataToGraphQLQuery = ({
         relationRecordGqlFields,
         computeReferences,
         objectPermissionsByObjectMetadataId,
-        isFieldsPermissionsEnabled,
       });
     })
     .filter((field) => field !== '')

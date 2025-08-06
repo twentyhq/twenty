@@ -2,14 +2,10 @@ import gql from 'graphql-tag';
 import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
 import { TEST_PERSON_1_ID } from 'test/integration/constants/test-person-ids.constants';
 import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { upsertFieldPermissions } from 'test/integration/graphql/utils/upsert-field-permissions.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
-
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 
 describe('Restricted fields', () => {
   let personCity: string;
@@ -143,26 +139,6 @@ describe('Restricted fields', () => {
   });
 
   describe('With Feature flag enabled', () => {
-    beforeAll(async () => {
-      const enablePermissionsQuery = updateFeatureFlagFactory(
-        SEED_APPLE_WORKSPACE_ID,
-        'IS_FIELDS_PERMISSIONS_ENABLED',
-        true,
-      );
-
-      await makeGraphqlAPIRequest(enablePermissionsQuery);
-    });
-
-    afterAll(async () => {
-      const disablePermissionsQuery = updateFeatureFlagFactory(
-        SEED_APPLE_WORKSPACE_ID,
-        'IS_FIELDS_PERMISSIONS_ENABLED',
-        false,
-      );
-
-      await makeGraphqlAPIRequest(disablePermissionsQuery);
-    });
-
     it('should hide fields when user has restricted read permissions - findOne', async () => {
       await makeRestAPIRequest({
         method: 'get',
@@ -419,45 +395,6 @@ describe('Restricted fields', () => {
             expect(createdPeople[1].emails).toBeUndefined(); // No reading rights on emails
           });
       });
-    });
-  });
-
-  describe('With feature flag disabled', () => {
-    it('should query all fields despite field permission restriction', async () => {
-      await makeRestAPIRequest({
-        method: 'get',
-        path: `/people/${TEST_PERSON_1_ID}`,
-        bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      })
-        .expect(200)
-        .expect((res) => {
-          const person = res.body.data.person;
-
-          expect(person).toBeDefined();
-          expect(person.id).toBeDefined();
-          expect(person.emails).toBeDefined();
-        });
-    });
-
-    it('should allow updates despite field permission restriction', async () => {
-      await makeRestAPIRequest({
-        method: 'patch',
-        path: `/people/${TEST_PERSON_1_ID}`,
-        bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-        body: {
-          phones: {
-            primaryPhoneNumber: '111222333',
-            primaryPhoneCountryCode: 'US',
-            primaryPhoneCallingCode: '+1',
-          },
-        },
-      })
-        .expect(200)
-        .expect((res) => {
-          const updatedPerson = res.body.data.updatePerson;
-
-          expect(updatedPerson.phones.primaryPhoneNumber).toBe('111222333');
-        });
     });
   });
 });
