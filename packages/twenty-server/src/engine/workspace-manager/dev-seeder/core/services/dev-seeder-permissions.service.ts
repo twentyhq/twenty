@@ -33,9 +33,24 @@ export class DevSeederPermissionsService {
   ) {}
 
   public async initPermissions(workspaceId: string) {
-    const adminRole = await this.roleService.createAdminRole({
+    const adminRole = await this.roleService.getRoleByLabel(
+      'Admin',
       workspaceId,
-    });
+    );
+    const memberRole = await this.roleService.getRoleByLabel(
+      'Member',
+      workspaceId,
+    );
+    const guestRole = await this.roleService.getRoleByLabel(
+      'Guest',
+      workspaceId,
+    );
+
+    if (!adminRole || !memberRole || !guestRole) {
+      throw new Error(
+        'Required roles not found. Make sure the permission sync has run.',
+      );
+    }
 
     const dataSource = this.typeORMService.getMainDataSource();
 
@@ -83,10 +98,6 @@ export class DevSeederPermissionsService {
       memberUserWorkspaceIds = [USER_WORKSPACE_DATA_SEED_IDS.JONY];
       guestUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.PHIL;
 
-      const guestRole = await this.roleService.createGuestRole({
-        workspaceId,
-      });
-
       await this.userRoleService.assignRoleToUserWorkspace({
         workspaceId,
         userWorkspaceId: guestUserWorkspaceId,
@@ -117,10 +128,6 @@ export class DevSeederPermissionsService {
         roleId: adminRole.id,
       });
     }
-
-    const memberRole = await this.roleService.createMemberRole({
-      workspaceId,
-    });
 
     await this.typeORMService
       .getMainDataSource()

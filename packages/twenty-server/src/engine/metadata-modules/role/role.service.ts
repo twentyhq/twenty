@@ -57,6 +57,19 @@ export class RoleService {
     });
   }
 
+  public async getRoleByLabel(
+    label: string,
+    workspaceId: string,
+  ): Promise<RoleEntity | null> {
+    return this.roleRepository.findOne({
+      where: {
+        label,
+        workspaceId,
+      },
+      relations: ['roleTargets', 'permissionFlags'],
+    });
+  }
+
   public async createRole({
     input,
     workspaceId,
