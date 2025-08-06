@@ -11,6 +11,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { expectFlatFieldMetadataToBeInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/__tests__/utils/expect-flat-field-metadata-to-be-in-flat-object-metadata-maps.util';
+import { jestExpectToBeDefined } from 'src/engine/metadata-modules/flat-object-metadata-maps/__tests__/utils/expect-to-be-defined.util';
 import {
   DispatchAndAddFlatFieldMetadataInFlatObjectMetadataMapsArgs,
   dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps,
@@ -78,10 +79,7 @@ describe('dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps', () => {
             flatFieldMetadata: newCustomRelationFlatFieldMetadata,
           },
           expected: (flatObjectMetadataMaps) => {
-            expect(flatObjectMetadataMaps).toBeDefined();
-            if (!isDefined(flatObjectMetadataMaps)) {
-              throw new Error('Should never occur, typecheck');
-            }
+            jestExpectToBeDefined(flatObjectMetadataMaps);
             expectFlatFieldMetadataToBeInFlatObjectMetadataMaps({
               flatFieldMetadata: newCustomRelationFlatFieldMetadata,
               flatObjectMetadataMaps,
