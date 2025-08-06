@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { ViewFilterOperand } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
 import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
+import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import {
   ViewFilterException,
   ViewFilterExceptionCode,
@@ -22,7 +22,7 @@ describe('ViewFilterService', () => {
     fieldMetadataId: 'field-id',
     viewId: 'view-id',
     workspaceId: 'workspace-id',
-    operand: ViewFilterOperand.Contains,
+    operand: ViewFilterOperand.CONTAINS,
     value: 'test',
     positionInViewFilterGroup: 0,
     createdAt: new Date(),
@@ -141,7 +141,7 @@ describe('ViewFilterService', () => {
       fieldMetadataId: 'field-id',
       viewId: 'view-id',
       workspaceId: 'workspace-id',
-      operand: ViewFilterOperand.Contains,
+      operand: ViewFilterOperand.CONTAINS,
       value: 'test',
       positionInViewFilterGroup: 0,
     };
