@@ -6,7 +6,7 @@ type DeleteFieldFromFlatObjectMetadataMapsArgs = {
   fieldMetadataId: string;
   flatObjectMetadataWithFlatFieldMaps: FlatObjectMetadataWithFlatFieldMaps;
 };
-export const deleteFieldFromFlatObjectMetadataWithFlatFieldMaps = ({
+export const deleteFieldFromFlatObjectMetadataWithFlatFieldMapsOrThrow = ({
   flatObjectMetadataWithFlatFieldMaps,
   fieldMetadataId: fieldMetadataIdToRemove,
 }: DeleteFieldFromFlatObjectMetadataMapsArgs): FlatObjectMetadataWithFlatFieldMaps => {
@@ -14,7 +14,9 @@ export const deleteFieldFromFlatObjectMetadataWithFlatFieldMaps = ({
     flatObjectMetadataWithFlatFieldMaps.fieldsById[fieldMetadataIdToRemove];
 
   if (!isDefined(flatFieldMetadataToRemove)) {
-    return flatObjectMetadataWithFlatFieldMaps;
+    throw new Error(
+      'deleteFieldFromFlatObjectMetadataWithFlatFieldMapsOrThrow: flat field metadata to delete not found',
+    );
   }
 
   const {

@@ -2,10 +2,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { deleteFieldFromFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps.util';
-import { dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/dispatch-and-add-flat-field-metadata-in-flat-object-metadata-maps.util';
+import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
+import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/dispatch-and-add-flat-field-metadata-in-flat-object-metadata-maps.util';
 
-export const dispatchAndReplaceFlatFieldMetadataInFlatObjectMetadataMaps = ({
+export const updateFlatFieldMetadataInFlatObjectMetadataMapsOrThrow = ({
   flatFieldMetadata,
   flatObjectMetadataMaps,
 }: {
@@ -16,17 +16,19 @@ export const dispatchAndReplaceFlatFieldMetadataInFlatObjectMetadataMaps = ({
     flatObjectMetadataMaps.byId[flatFieldMetadata.objectMetadataId];
 
   if (!isDefined(flatObjectMetadataWithFlatFieldMaps)) {
-    return undefined;
+    throw new Error(
+      'updateFlatFieldMetadataInFlatObjectMetadataMapsOrThrow: updated flat field metadata parent object metadata not found',
+    );
   }
 
   const flatObjectMetadataMapsWithoutFlatFieldMetadataToReplace =
-    deleteFieldFromFlatObjectMetadataMaps({
+    deleteFieldFromFlatObjectMetadataMapsOrThrow({
       fieldMetadataId: flatFieldMetadata.id,
       flatObjectMetadataMaps,
       objectMetadataId: flatFieldMetadata.objectMetadataId,
     });
 
-  return dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps({
+  return addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
     flatFieldMetadata,
     flatObjectMetadataMaps:
       flatObjectMetadataMapsWithoutFlatFieldMetadataToReplace,

@@ -2,9 +2,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { addFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-to-flat-object-metadata-with-flat-field-maps.util';
+import { addFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-to-flat-object-metadata-with-flat-field-maps-or-throw.util';
 
-export const dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps = ({
+export const addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow = ({
   flatFieldMetadata,
   flatObjectMetadataMaps,
 }: {
@@ -15,14 +15,16 @@ export const dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps = ({
     flatObjectMetadataMaps.byId[flatFieldMetadata.objectMetadataId];
 
   if (!isDefined(flatObjectMetadataWithFlatFieldMaps)) {
-    return undefined;
+    throw new Error(
+      'addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow field parent object metadata not found',
+    );
   }
 
   return {
     byId: {
       ...flatObjectMetadataMaps.byId,
       [flatFieldMetadata.objectMetadataId]:
-        addFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMaps({
+        addFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMapsOrThrow({
           flatFieldMetadata,
           flatObjectMetadataWithFlatFieldMaps,
         }),

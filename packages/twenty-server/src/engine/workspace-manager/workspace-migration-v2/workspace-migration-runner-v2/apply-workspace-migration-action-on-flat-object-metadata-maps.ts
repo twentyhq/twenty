@@ -2,10 +2,10 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { addFlatObjectMetadataToFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps.util';
-import { deleteFieldFromFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps.util';
+import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
 import { deleteObjectFromFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-object-from-flat-object-metadata-maps.util';
-import { dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/dispatch-and-add-flat-field-metadata-in-flat-object-metadata-maps.util';
-import { dispatchAndReplaceFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/dispatch-and-replace-flat-field-metadata-in-flat-object-metadata-maps.util';
+import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/dispatch-and-add-flat-field-metadata-in-flat-object-metadata-maps.util';
+import { updateFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/dispatch-and-replace-flat-field-metadata-in-flat-object-metadata-maps.util';
 import { findFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps.util';
 import { findFlatObjectdMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
 import { replaceFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps.util';
@@ -72,7 +72,7 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = ({
     }
     case 'create_field': {
       const updatedFlatObjectMetadataMaps =
-        dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps({
+        addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
           flatFieldMetadata: action.flatFieldMetadata,
           flatObjectMetadataMaps,
         });
@@ -108,7 +108,7 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = ({
       };
 
       const updatedFlatObjectMetadataMaps =
-        dispatchAndReplaceFlatFieldMetadataInFlatObjectMetadataMaps({
+        updateFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
           flatFieldMetadata: updatedFlatFieldMetadata,
           flatObjectMetadataMaps,
         });
@@ -123,7 +123,7 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = ({
       return updatedFlatObjectMetadataMaps;
     }
     case 'delete_field': {
-      return deleteFieldFromFlatObjectMetadataMaps({
+      return deleteFieldFromFlatObjectMetadataMapsOrThrow({
         fieldMetadataId: action.fieldMetadataId,
         flatObjectMetadataMaps,
         objectMetadataId: action.objectMetadataId,
