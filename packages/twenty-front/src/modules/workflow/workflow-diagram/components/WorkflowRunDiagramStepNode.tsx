@@ -3,12 +3,12 @@ import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandM
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
-import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
 import { WorkflowDiagramStepNodeBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeBase';
 import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeIcon';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
-import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { WorkflowRunDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getNodeVariantFromStepRunStatus } from '@/workflow/workflow-diagram/utils/getNodeVariantFromStepRunStatus';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { useContext } from 'react';
@@ -16,27 +16,25 @@ import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
-export const WorkflowDiagramStepNodeReadonly = ({
+export const WorkflowRunDiagramStepNode = ({
   id,
   data,
 }: {
   id: string;
-  data: WorkflowDiagramStepNodeData;
+  data: WorkflowRunDiagramStepNodeData;
 }) => {
   const { getIcon } = useIcons();
 
-  const workflowVisualizerWorkflowId = useRecoilComponentValue(
+  const workflowId = useRecoilComponentValue(
     workflowVisualizerWorkflowIdComponentState,
   );
-  const workflowVisualizerWorkflowVersionId = useRecoilComponentValue(
-    workflowVisualizerWorkflowVersionIdComponentState,
-  );
+  const workflowRunId = useWorkflowRunIdOrThrow();
 
   const setWorkflowSelectedNode = useSetRecoilComponentState(
     workflowSelectedNodeComponentState,
   );
 
-  const { openWorkflowViewStepInCommandMenu } = useWorkflowCommandMenu();
+  const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
@@ -53,11 +51,8 @@ export const WorkflowDiagramStepNodeReadonly = ({
       Icon={<WorkflowDiagramStepNodeIcon data={data} />}
       displayHandle={false}
       onClick={() => {
-        if (
-          !isDefined(workflowVisualizerWorkflowId) ||
-          !isDefined(workflowVisualizerWorkflowVersionId)
-        ) {
-          throw new Error('Workflow ID and Version ID must be defined');
+        if (!isDefined(workflowId)) {
+          throw new Error('Workflow ID must be defined');
         }
 
         if (!isInRightDrawer) {
@@ -66,11 +61,13 @@ export const WorkflowDiagramStepNodeReadonly = ({
 
         setWorkflowSelectedNode(id);
 
-        openWorkflowViewStepInCommandMenu({
-          workflowId: workflowVisualizerWorkflowId,
-          workflowVersionId: workflowVisualizerWorkflowVersionId,
+        openWorkflowRunViewStepInCommandMenu({
+          workflowId,
+          workflowRunId,
           title: data.name,
           icon: getIcon(getWorkflowNodeIconKey(data)),
+          workflowSelectedNode: id,
+          stepExecutionStatus: data.runStatus,
         });
       }}
     />

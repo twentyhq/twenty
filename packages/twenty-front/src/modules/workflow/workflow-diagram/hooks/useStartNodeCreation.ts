@@ -1,13 +1,17 @@
-import { useCallback } from 'react';
-
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
+import { useCallback, useContext } from 'react';
+import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useStartNodeCreation = () => {
+  const { isInRightDrawer } = useContext(ActionMenuContext);
+
   const [workflowInsertStepIds, setWorkflowInsertStepIds] =
     useRecoilComponentState(workflowInsertStepIdsComponentState);
 
@@ -15,6 +19,10 @@ export const useStartNodeCreation = () => {
 
   const workflowVisualizerWorkflowId = useRecoilComponentValue(
     workflowVisualizerWorkflowIdComponentState,
+  );
+
+  const setCommandMenuNavigationStack = useSetRecoilState(
+    commandMenuNavigationStackState,
   );
 
   /**
@@ -33,15 +41,22 @@ export const useStartNodeCreation = () => {
     }) => {
       setWorkflowInsertStepIds({ parentStepId, nextStepId, position });
 
-      if (isDefined(workflowVisualizerWorkflowId)) {
-        openStepSelectInCommandMenu(workflowVisualizerWorkflowId);
+      if (!isDefined(workflowVisualizerWorkflowId)) {
         return;
       }
+
+      if (!isInRightDrawer) {
+        setCommandMenuNavigationStack([]);
+      }
+
+      openStepSelectInCommandMenu(workflowVisualizerWorkflowId);
     },
     [
       setWorkflowInsertStepIds,
       workflowVisualizerWorkflowId,
+      isInRightDrawer,
       openStepSelectInCommandMenu,
+      setCommandMenuNavigationStack,
     ],
   );
 

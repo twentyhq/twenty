@@ -6,24 +6,27 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
 import { WorkflowDiagramStepNodeBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeBase';
-import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeIcon';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
-import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { getNodeVariantFromStepRunStatus } from '@/workflow/workflow-diagram/utils/getNodeVariantFromStepRunStatus';
-import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
+import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
+import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
-export const WorkflowDiagramStepNodeReadonly = ({
-  id,
-  data,
-}: {
-  id: string;
-  data: WorkflowDiagramStepNodeData;
-}) => {
+const StyledStepNodeLabelIconContainer = styled.div`
+  align-items: center;
+  background: ${({ theme }) => theme.background.transparent.light};
+  border-radius: ${({ theme }) => theme.spacing(1)};
+  display: flex;
+  justify-content: center;
+  padding: ${({ theme }) => theme.spacing(3)};
+`;
+
+export const WorkflowDiagramEmptyTriggerReadonly = () => {
   const { getIcon } = useIcons();
+  const { t } = useLingui();
 
   const workflowVisualizerWorkflowId = useRecoilComponentValue(
     workflowVisualizerWorkflowIdComponentState,
@@ -32,13 +35,13 @@ export const WorkflowDiagramStepNodeReadonly = ({
     workflowVisualizerWorkflowVersionIdComponentState,
   );
 
-  const setWorkflowSelectedNode = useSetRecoilComponentState(
-    workflowSelectedNodeComponentState,
-  );
+  const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const { openWorkflowViewStepInCommandMenu } = useWorkflowCommandMenu();
 
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const setWorkflowSelectedNode = useSetRecoilComponentState(
+    workflowSelectedNodeComponentState,
+  );
 
   const setCommandMenuNavigationStack = useSetRecoilState(
     commandMenuNavigationStackState,
@@ -46,31 +49,32 @@ export const WorkflowDiagramStepNodeReadonly = ({
 
   return (
     <WorkflowDiagramStepNodeBase
-      id={id}
-      name={data.name}
-      variant={getNodeVariantFromStepRunStatus(data.runStatus)}
-      nodeType={data.nodeType}
-      Icon={<WorkflowDiagramStepNodeIcon data={data} />}
-      displayHandle={false}
+      id="trigger"
+      name={t`Add a Trigger`}
+      nodeType="trigger"
+      variant="empty"
+      Icon={<StyledStepNodeLabelIconContainer />}
       onClick={() => {
         if (
           !isDefined(workflowVisualizerWorkflowId) ||
           !isDefined(workflowVisualizerWorkflowVersionId)
         ) {
-          throw new Error('Workflow ID and Version ID must be defined');
+          throw new Error(
+            'Workflow ID and Version ID must be defined to open the command menu.',
+          );
         }
 
         if (!isInRightDrawer) {
           setCommandMenuNavigationStack([]);
         }
 
-        setWorkflowSelectedNode(id);
+        setWorkflowSelectedNode(TRIGGER_STEP_ID);
 
         openWorkflowViewStepInCommandMenu({
           workflowId: workflowVisualizerWorkflowId,
           workflowVersionId: workflowVisualizerWorkflowVersionId,
-          title: data.name,
-          icon: getIcon(getWorkflowNodeIconKey(data)),
+          title: t`Add a Trigger`,
+          icon: getIcon(null),
         });
       }}
     />
