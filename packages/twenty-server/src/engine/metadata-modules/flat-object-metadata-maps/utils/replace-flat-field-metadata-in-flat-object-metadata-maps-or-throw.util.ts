@@ -10,9 +10,7 @@ type ReplaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrowArgs = {
 export const replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow = ({
   flatFieldMetadata,
   flatObjectMetadataMaps,
-}: ReplaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrowArgs):
-  | FlatObjectMetadataMaps
-  | undefined => {
+}: ReplaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrowArgs): FlatObjectMetadataMaps => {
   const flatObjectMetadataMapsWithoutFlatFieldMetadataToReplace =
     deleteFieldFromFlatObjectMetadataMapsOrThrow({
       fieldMetadataId: flatFieldMetadata.id,
