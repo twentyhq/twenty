@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, Not, Repository } from 'typeorm';
 
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -14,6 +13,7 @@ import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { STANDARD_ROLE_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-role-ids';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export class UserRoleService {
@@ -198,7 +198,7 @@ export class UserRoleService {
       );
     }
 
-    if (roleOfUserWorkspace.label === ADMIN_ROLE_LABEL) {
+    if (roleOfUserWorkspace.standardId === STANDARD_ROLE_IDS.admin) {
       const adminRole = roleOfUserWorkspace;
 
       await this.validateMoreThanOneWorkspaceMemberHasAdminRoleOrThrow({
@@ -256,7 +256,7 @@ export class UserRoleService {
       };
     }
 
-    if (!(currentRole?.label === ADMIN_ROLE_LABEL)) {
+    if (!(currentRole?.standardId === STANDARD_ROLE_IDS.admin)) {
       return;
     }
 
