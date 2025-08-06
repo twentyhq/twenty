@@ -44,6 +44,7 @@ export const WorkflowRunDiagramStepNode = ({
 
   return (
     <WorkflowDiagramStepNodeBase
+      id={id}
       name={data.name}
       variant={getNodeVariantFromStepRunStatus(data.runStatus)}
       nodeType={data.nodeType}

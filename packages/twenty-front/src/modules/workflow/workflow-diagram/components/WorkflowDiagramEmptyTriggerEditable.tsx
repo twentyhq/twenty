@@ -36,6 +36,7 @@ export const WorkflowDiagramEmptyTriggerEditable = () => {
 
   return (
     <WorkflowDiagramStepNodeBase
+      id="trigger"
       name={t`Add a Trigger`}
       nodeType="trigger"
       variant="empty"

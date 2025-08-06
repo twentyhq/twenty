@@ -2,6 +2,7 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { WorkflowDiagramBlankEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramBlankEdge';
 import { WorkflowDiagramCanvasBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasBase';
+import { WorkflowDiagramCanvasEditableEffect } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect';
 import { WorkflowDiagramDefaultEdgeEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramDefaultEdgeEditable';
 import { WorkflowDiagramEmptyTriggerEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerEditable';
 import { WorkflowDiagramFilterEdgeEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable';
@@ -136,6 +137,8 @@ export const WorkflowDiagramCanvasEditable = ({
         nodesDraggable
         onDeleteEdge={onDeleteEdge}
       />
+
+      <WorkflowDiagramCanvasEditableEffect />
     </ReactFlowProvider>
   );
 };

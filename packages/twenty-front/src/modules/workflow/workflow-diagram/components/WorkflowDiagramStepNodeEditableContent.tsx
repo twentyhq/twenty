@@ -1,13 +1,13 @@
+import { WorkflowDiagramCreateStepElement } from '@/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement';
 import { WorkflowDiagramStepNodeBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeBase';
 import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeIcon';
+import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
-import { FloatingIconButton } from 'twenty-ui/input';
-import { IconTrash } from 'twenty-ui/display';
-import { WorkflowDiagramCreateStepElement } from '@/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement';
-import React, { useState } from 'react';
 import styled from '@emotion/styled';
-import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
+import { useState } from 'react';
+import { IconTrash } from 'twenty-ui/display';
+import { FloatingIconButton } from 'twenty-ui/input';
 
 const StyledDeleteButtonContainer = styled.div`
   display: flex;
@@ -34,12 +34,14 @@ const StyledAddStepButtonContainer = styled.div<{
 `;
 
 export const WorkflowDiagramStepNodeEditableContent = ({
+  id,
   data,
   selected,
   variant,
   onDelete,
   onClick,
 }: {
+  id: string;
   data: WorkflowDiagramStepNodeData;
   variant: WorkflowDiagramNodeVariant;
   selected: boolean;
@@ -61,6 +63,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
+      id={id}
       name={data.name}
       variant={variant}
       nodeType={data.nodeType}

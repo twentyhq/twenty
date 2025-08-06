@@ -1,6 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 
+import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import '@xyflow/react/dist/style.css';
+import { RecoilRoot } from 'recoil';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { WorkflowDiagramEmptyTriggerEditable } from '../WorkflowDiagramEmptyTriggerEditable';
@@ -22,7 +24,13 @@ export const Default: Story = {
   decorators: [
     (Story) => (
       <div style={{ position: 'relative' }}>
-        <Story />
+        <RecoilRoot>
+          <WorkflowVisualizerComponentInstanceContext.Provider
+            value={{ instanceId: 'workflow-visualizer-instance-id' }}
+          >
+            <Story />
+          </WorkflowVisualizerComponentInstanceContext.Provider>
+        </RecoilRoot>
       </div>
     ),
     ReactflowDecorator,
@@ -34,7 +42,13 @@ export const Selected: Story = {
   decorators: [
     (Story) => (
       <div className="selectable selected" style={{ position: 'relative' }}>
-        <Story />
+        <RecoilRoot>
+          <WorkflowVisualizerComponentInstanceContext.Provider
+            value={{ instanceId: 'workflow-visualizer-instance-id' }}
+          >
+            <Story />
+          </WorkflowVisualizerComponentInstanceContext.Provider>
+        </RecoilRoot>
       </div>
     ),
     ReactflowDecorator,
