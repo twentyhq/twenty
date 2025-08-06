@@ -24,6 +24,8 @@ export const WorkflowStepFilterFieldSelect = ({
   stepFilter,
 }: WorkflowStepFilterFieldSelectProps) => {
   const { readonly } = useContext(WorkflowStepFilterContext);
+  const shouldDisplayRecordFields = true;
+  const shouldDisplayRecordObjects = true;
 
   const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
 
@@ -44,9 +46,10 @@ export const WorkflowStepFilterFieldSelect = ({
 
   const { getFieldMetadataItemById } = useGetFieldMetadataItemById();
 
-  const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep(
-    {},
-  );
+  const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
+    shouldDisplayRecordFields,
+    shouldDisplayRecordObjects,
+  });
 
   const noAvailableVariables = availableVariablesInWorkflowStep.length === 0;
 
@@ -157,6 +160,9 @@ export const WorkflowStepFilterFieldSelect = ({
           textAccent={isSelectedFieldNotFound ? 'placeholder' : 'default'}
         />
       }
+      shouldDisplayRecordFields={shouldDisplayRecordFields}
+      shouldDisplayRecordObjects={shouldDisplayRecordObjects}
+      shouldEnableSelectRelationObject={true}
     />
   );
 };

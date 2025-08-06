@@ -41,7 +41,8 @@ export const WorkflowVariablePicker: VariablePickerComponent = ({
   disabled,
   multiline,
   onVariableSelect,
-  objectNameSingularToSelect,
+  shouldDisplayRecordObjects = false,
+  shouldDisplayRecordFields = true,
 }) => {
   return (
     <StyledSearchVariablesDropdownContainer
@@ -52,7 +53,8 @@ export const WorkflowVariablePicker: VariablePickerComponent = ({
         instanceId={instanceId}
         onVariableSelect={onVariableSelect}
         disabled={disabled}
-        objectNameSingularToSelect={objectNameSingularToSelect}
+        shouldDisplayRecordObjects={shouldDisplayRecordObjects}
+        shouldDisplayRecordFields={shouldDisplayRecordFields}
         multiline={multiline}
       />
     </StyledSearchVariablesDropdownContainer>
