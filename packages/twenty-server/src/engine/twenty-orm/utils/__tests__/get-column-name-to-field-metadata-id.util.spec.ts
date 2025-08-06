@@ -226,8 +226,9 @@ describe('getColumnNameToFieldMetadataIdMap', () => {
       );
 
       expect(result['companyId']).toBe('field-1');
+      expect(result['company']).toBe('field-1');
       expect(result['name']).toBe('field-2');
-      expect(Object.keys(result)).toHaveLength(2);
+      expect(Object.keys(result)).toHaveLength(3);
     });
 
     it('should skip ONE_TO_MANY relation field types', () => {
