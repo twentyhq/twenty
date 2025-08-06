@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 export type RecordPositionServiceCreateArgs = {
@@ -44,6 +46,58 @@ export class RecordPositionService {
     return recordWithMaxPosition !== null
       ? recordWithMaxPosition + index + 1
       : 1;
+  }
+
+  async overridePositionOnRecords({
+    records,
+    workspaceId,
+    objectMetadata,
+  }: {
+    records: Partial<ObjectRecord>[];
+    workspaceId: string;
+    objectMetadata: { isCustom: boolean; nameSingular: string };
+  }): Promise<Partial<ObjectRecord>[]> {
+    const recordsWithFirstPosition: Partial<ObjectRecord>[] = [];
+    const recordsWithLastPosition: Partial<ObjectRecord>[] = [];
+    const recordsWithPosition: Partial<ObjectRecord>[] = [];
+
+    for (const record of records) {
+      if (record.position === 'last') {
+        recordsWithLastPosition.push(record);
+      } else if (typeof record.position === 'number') {
+        recordsWithPosition.push(record);
+      } else {
+        recordsWithFirstPosition.push(record);
+      }
+    }
+
+    if (recordsWithFirstPosition.length > 0) {
+      const minPosition = Math.min(
+        ...recordsWithPosition.map((record) => record.position),
+        (await this.findMinPosition(objectMetadata, workspaceId)) || 1,
+      );
+
+      for (const [index, record] of recordsWithFirstPosition.entries()) {
+        record.position = minPosition - index - 1;
+      }
+    }
+
+    if (recordsWithLastPosition.length > 0) {
+      const maxPosition = Math.max(
+        ...recordsWithPosition.map((record) => record.position),
+        (await this.findMaxPosition(objectMetadata, workspaceId)) || 1,
+      );
+
+      for (const [index, record] of recordsWithLastPosition.entries()) {
+        record.position = maxPosition + index + 1;
+      }
+    }
+
+    return [
+      ...recordsWithFirstPosition,
+      ...recordsWithLastPosition,
+      ...recordsWithPosition,
+    ];
   }
 
   async findByPosition(

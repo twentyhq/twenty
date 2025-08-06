@@ -27,11 +27,6 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
-type ArgPositionBackfillInput = {
-  argIndex?: number;
-  shouldBackfillPosition: boolean;
-};
-
 @Injectable()
 export class QueryRunnerArgsFactory {
   constructor(
@@ -47,50 +42,35 @@ export class QueryRunnerArgsFactory {
     const fieldMetadataMapByNameByName =
       options.objectMetadataItemWithFieldMaps.fieldsById;
 
-    const shouldBackfillPosition = Object.values(
-      options.objectMetadataItemWithFieldMaps.fieldsById,
-    ).some(
-      (field) =>
-        field.type === FieldMetadataType.POSITION && field.name === 'position',
-    );
-
     switch (resolverArgsType) {
       case ResolverArgsType.CreateOne:
         return {
           ...args,
-          data: await this.overrideDataByFieldMetadata(
-            (args as CreateOneResolverArgs).data,
-            options,
-            {
-              argIndex: 0,
-              shouldBackfillPosition,
-            },
-          ),
+          data: (
+            await this.overrideDataByFieldMetadata(
+              [(args as CreateOneResolverArgs).data],
+              options,
+            )
+          )[0],
         } satisfies CreateOneResolverArgs;
       case ResolverArgsType.CreateMany:
         return {
           ...args,
-          data: await Promise.all(
-            (args as CreateManyResolverArgs).data?.map((arg, index) =>
-              this.overrideDataByFieldMetadata(arg, options, {
-                argIndex: index,
-                shouldBackfillPosition,
-              }),
-            ) ?? [],
+          data: await this.overrideDataByFieldMetadata(
+            (args as CreateManyResolverArgs).data,
+            options,
           ),
         } satisfies CreateManyResolverArgs;
       case ResolverArgsType.UpdateOne:
         return {
           ...args,
           id: (args as UpdateOneResolverArgs).id,
-          data: await this.overrideDataByFieldMetadata(
-            (args as UpdateOneResolverArgs).data,
-            options,
-            {
-              argIndex: 0,
-              shouldBackfillPosition: false,
-            },
-          ),
+          data: (
+            await this.overrideDataByFieldMetadata(
+              [(args as UpdateOneResolverArgs).data],
+              options,
+            )
+          )[0],
         } satisfies UpdateOneResolverArgs;
       case ResolverArgsType.UpdateMany:
         return {
@@ -100,12 +80,8 @@ export class QueryRunnerArgsFactory {
             options.objectMetadataItemWithFieldMaps,
           ),
           data: await this.overrideDataByFieldMetadata(
-            (args as UpdateManyResolverArgs).data,
+            [(args as UpdateManyResolverArgs).data],
             options,
-            {
-              argIndex: 0,
-              shouldBackfillPosition: false,
-            },
           ),
         } satisfies UpdateManyResolverArgs;
       case ResolverArgsType.FindOne:
@@ -137,13 +113,9 @@ export class QueryRunnerArgsFactory {
               ),
             ) ?? [],
           )) as string[],
-          data: await Promise.all(
-            (args as FindDuplicatesResolverArgs).data?.map((arg, index) =>
-              this.overrideDataByFieldMetadata(arg, options, {
-                argIndex: index,
-                shouldBackfillPosition,
-              }),
-            ) ?? [],
+          data: await this.overrideDataByFieldMetadata(
+            (args as FindDuplicatesResolverArgs).data,
+            options,
           ),
         } satisfies FindDuplicatesResolverArgs;
       case ResolverArgsType.MergeMany:
@@ -168,97 +140,67 @@ export class QueryRunnerArgsFactory {
   }
 
   private async overrideDataByFieldMetadata(
-    data: Partial<ObjectRecord> | undefined,
+    records: Partial<ObjectRecord>[] | undefined,
     options: WorkspaceQueryRunnerOptions,
-    argPositionBackfillInput: ArgPositionBackfillInput,
-  ): Promise<Partial<ObjectRecord>> {
-    if (!isDefined(data)) {
-      return Promise.resolve({});
+  ): Promise<Partial<ObjectRecord>[]> {
+    if (!isDefined(records)) {
+      return [];
     }
+
+    const allOverriddenRecords: Partial<ObjectRecord>[] = [];
 
     const workspace = options.authContext.workspace;
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
-    let isFieldPositionPresent = false;
+    const overriddenPositionRecords =
+      await this.recordPositionService.overridePositionOnRecords({
+        records,
+        workspaceId: workspace.id,
+        objectMetadata: {
+          isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
+          nameSingular: options.objectMetadataItemWithFieldMaps.nameSingular,
+        },
+      });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const createArgByArgKeyPromises: Promise<[string, any]>[] = Object.entries(
-      data,
+    for (const record of overriddenPositionRecords) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ).map(async ([key, value]): Promise<[string, any]> => {
-      const fieldMetadataId =
-        options.objectMetadataItemWithFieldMaps.fieldIdByName[key];
-      const fieldMetadata =
-        options.objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
+      const createArgByArgKey: [string, any][] = await Promise.all(
+        Object.entries(record).map(async ([key, value]) => {
+          const fieldMetadataId =
+            options.objectMetadataItemWithFieldMaps.fieldIdByName[key];
+          const fieldMetadata =
+            options.objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
 
-      if (!fieldMetadata) {
-        return [key, value];
-      }
+          if (!fieldMetadata) {
+            return [key, value];
+          }
 
-      switch (fieldMetadata.type) {
-        case FieldMetadataType.POSITION: {
-          isFieldPositionPresent = true;
+          switch (fieldMetadata.type) {
+            case FieldMetadataType.NUMBER:
+            case FieldMetadataType.RICH_TEXT:
+            case FieldMetadataType.PHONES:
+            case FieldMetadataType.RICH_TEXT_V2:
+            case FieldMetadataType.LINKS:
+            case FieldMetadataType.EMAILS: {
+              const transformedValue =
+                await this.recordInputTransformerService.transformFieldValue(
+                  fieldMetadata.type,
+                  value,
+                );
 
-          const newValue = await this.recordPositionService.buildRecordPosition(
-            {
-              value,
-              workspaceId: workspace.id,
-              objectMetadata: {
-                isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
-                nameSingular:
-                  options.objectMetadataItemWithFieldMaps.nameSingular,
-              },
-              index: argPositionBackfillInput.argIndex,
-            },
-          );
+              return [key, transformedValue];
+            }
+            default:
+              return [key, value];
+          }
+        }),
+      );
 
-          return [key, newValue];
-        }
-        case FieldMetadataType.NUMBER:
-        case FieldMetadataType.RICH_TEXT:
-        case FieldMetadataType.PHONES:
-        case FieldMetadataType.RICH_TEXT_V2:
-        case FieldMetadataType.LINKS:
-        case FieldMetadataType.EMAILS: {
-          const transformedValue =
-            await this.recordInputTransformerService.transformFieldValue(
-              fieldMetadata.type,
-              value,
-            );
-
-          return [key, transformedValue];
-        }
-        default:
-          return [key, value];
-      }
-    });
-
-    const newArgEntries = await Promise.all(createArgByArgKeyPromises);
-
-    if (
-      !isFieldPositionPresent &&
-      argPositionBackfillInput.shouldBackfillPosition
-    ) {
-      return Object.fromEntries([
-        ...newArgEntries,
-        [
-          'position',
-          await this.recordPositionService.buildRecordPosition({
-            value: 'first',
-            workspaceId: workspace.id,
-            objectMetadata: {
-              isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
-              nameSingular:
-                options.objectMetadataItemWithFieldMaps.nameSingular,
-            },
-            index: argPositionBackfillInput.argIndex,
-          }),
-        ],
-      ]);
+      allOverriddenRecords.push(Object.fromEntries(createArgByArgKey));
     }
 
-    return Object.fromEntries(newArgEntries);
+    return allOverriddenRecords;
   }
 
   private overrideFilterByFieldMetadata(
