@@ -18,6 +18,7 @@ export type Scalars = {
   DateTime: string;
   JSON: any;
   JSONObject: any;
+  RawJSONScalar: any;
   UUID: any;
   Upload: any;
 };
@@ -540,7 +541,7 @@ export type CoreViewFilter = {
   positionInViewFilterGroup?: Maybe<Scalars['Float']>;
   subFieldName?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
-  value: Scalars['JSONObject'];
+  value: Scalars['RawJSONScalar'];
   viewFilterGroupId?: Maybe<Scalars['UUID']>;
   viewId: Scalars['UUID'];
   workspaceId: Scalars['UUID'];
@@ -691,7 +692,7 @@ export type CreateViewFilterInput = {
   operand?: InputMaybe<ViewFilterOperand>;
   positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
   subFieldName?: InputMaybe<Scalars['String']>;
-  value: Scalars['JSONObject'];
+  value: Scalars['RawJSONScalar'];
   viewFilterGroupId?: InputMaybe<Scalars['UUID']>;
   viewId: Scalars['UUID'];
 };
@@ -3094,7 +3095,7 @@ export type UpdateViewFilterInput = {
   operand?: InputMaybe<ViewFilterOperand>;
   positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
   subFieldName?: InputMaybe<Scalars['String']>;
-  value?: InputMaybe<Scalars['JSONObject']>;
+  value?: InputMaybe<Scalars['RawJSONScalar']>;
   viewFilterGroupId?: InputMaybe<Scalars['UUID']>;
   viewId?: InputMaybe<Scalars['UUID']>;
 };
