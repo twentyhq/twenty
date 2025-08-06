@@ -1,6 +1,6 @@
 import {
-    EachTestingContext,
-    eachTestingContextFilter,
+  EachTestingContext,
+  eachTestingContextFilter,
 } from 'twenty-shared/testing';
 
 import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata-maps/mocks/flat-object-metadata-maps.mock';
@@ -10,15 +10,16 @@ import { ROCKET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object
 import { fromFlatObjectMetadatasToFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadatas-to-flat-object-metadata-maps.util';
 import { isDefined } from 'twenty-shared/utils';
 
+// TODO
 type DeleteObjectFromFlatObjectMetadataMapsTestCase = {
   input: {
-    flatObjectMetadataMaps: ReturnType<typeof fromFlatObjectMetadatasToFlatObjectMetadataMaps>;
+    flatObjectMetadataMaps: ReturnType<
+      typeof fromFlatObjectMetadatasToFlatObjectMetadataMaps
+    >;
     objectMetadataId: string;
   };
   expected:
-    | ((
-        arg: ReturnType<typeof deleteObjectFromFlatObjectMetadataMaps>,
-      ) => void)
+    | ((arg: ReturnType<typeof deleteObjectFromFlatObjectMetadataMaps>) => void)
     | undefined;
 };
 

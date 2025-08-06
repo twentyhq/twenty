@@ -10,8 +10,8 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { jestExpectToBeDefined } from 'src/engine/metadata-modules/flat-object-metadata-maps/__tests__/utils/expect-to-be-defined.util';
 import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata-maps/mocks/flat-object-metadata-maps.mock';
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { deleteFieldFromFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps.util';
-import { dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/dispatch-and-add-flat-field-metadata-in-flat-object-metadata-maps.util';
+import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
+import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
 import { PET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/pet-flat-object.mock';
 import { ROCKET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/rocket-flat-object.mock';
 import { fromFlatObjectMetadatasToFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadatas-to-flat-object-metadata-maps.util';
@@ -23,7 +23,8 @@ type DeleteFieldFromFlatObjectMetadataMapsTestCase = {
     fieldMetadataId: string;
     objectMetadataId: string;
   };
-  expected: FlatObjectMetadataMaps;
+  shouldThrow?: true;
+  expected?: FlatObjectMetadataMaps;
 };
 
 const FLAT_OBJECT_METADATA_MAPS_MOCKS_WITH_ROCKET_AND_PET =
@@ -50,26 +51,25 @@ describe('deleteFieldFromFlatObjectMetadataMaps', () => {
   const testCases: EachTestingContext<DeleteFieldFromFlatObjectMetadataMapsTestCase>[] =
     [
       {
-        title: 'should return same maps when object metadata id does not exist',
+        title: 'should throw when object metadata id does not exist',
         context: {
           input: {
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
             fieldMetadataId: 'field-1',
             objectMetadataId: 'non-existent',
           },
-          expected: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+          shouldThrow: true,
         },
       },
       {
-        title:
-          'should return same maps when field metadata id does not exist in object',
+        title: 'should throw when field metadata id does not exist in object',
         context: {
           input: {
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
             fieldMetadataId: 'non-existent-field',
             objectMetadataId: PET_FLAT_OBJECT_MOCK.id,
           },
-          expected: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+          shouldThrow: true,
         },
       },
       {
@@ -77,7 +77,7 @@ describe('deleteFieldFromFlatObjectMetadataMaps', () => {
         context: {
           input: {
             flatObjectMetadataMaps:
-              dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps({
+              addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
                 flatFieldMetadata: newCustomRelationFlatFieldMetadata,
                 flatObjectMetadataMaps:
                   FLAT_OBJECT_METADATA_MAPS_MOCKS_WITH_ROCKET_AND_PET,
@@ -98,16 +98,26 @@ describe('deleteFieldFromFlatObjectMetadataMaps', () => {
       context: {
         input: { fieldMetadataId, objectMetadataId, flatObjectMetadataMaps },
         expected,
+        shouldThrow = false,
       },
     }) => {
       jestExpectToBeDefined(flatObjectMetadataMaps);
-      const result = deleteFieldFromFlatObjectMetadataMaps({
-        fieldMetadataId,
-        flatObjectMetadataMaps,
-        objectMetadataId,
-      });
-
-      expect(result).toEqual(expected);
+      if (shouldThrow) {
+        expect(() =>
+          deleteFieldFromFlatObjectMetadataMapsOrThrow({
+            fieldMetadataId,
+            flatObjectMetadataMaps,
+            objectMetadataId,
+          }),
+        ).toThrowErrorMatchingSnapshot();
+      } else {
+        const result = deleteFieldFromFlatObjectMetadataMapsOrThrow({
+          fieldMetadataId,
+          flatObjectMetadataMaps,
+          objectMetadataId,
+        });
+        expect(result).toEqual(expected);
+      }
     },
   );
 });

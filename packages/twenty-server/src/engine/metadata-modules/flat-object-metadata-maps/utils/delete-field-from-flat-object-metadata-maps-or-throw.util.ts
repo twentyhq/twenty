@@ -22,7 +22,7 @@ export const deleteFieldFromFlatObjectMetadataMapsOrThrow = ({
 
   if (!isDefined(flatObjectMetadataWithFlatFieldMaps)) {
     throw new FlatObjectMetadataMapsException(
-      'deleteFieldFromFlatObjectMetadataMapsOrThrow: flat field metadata to delete parent flat object metadata not found',
+      'deleteFieldFromFlatObjectMetadataMapsOrThrow: field metadata to delete parent flat object metadata not found',
       FlatObjectMetadataMapsExceptionCode.OBJECT_METADATA_NOT_FOUND,
     );
   }
