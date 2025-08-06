@@ -42,7 +42,6 @@ export class TimelineActivityRepository {
     });
 
     const payloadsToInsert: TimelineActivityPayload[] = [];
-    const payloadsToUpdate: TimelineActivityPayload[] = [];
 
     for (const payload of payloadsWithDiff) {
       const recentTimelineActivity = recentTimelineActivities.find(
@@ -55,17 +54,14 @@ export class TimelineActivityRepository {
       );
 
       if (recentTimelineActivity) {
-        payloadsToUpdate.push({
-          ...payload,
-          properties: objectRecordDiffMerge(
-            recentTimelineActivity[0].properties,
-            payload.properties,
-          ),
-        });
+        const mergedProperties = objectRecordDiffMerge(
+          recentTimelineActivity.properties,
+          payload.properties,
+        );
 
         await this.updateTimelineActivity({
           id: recentTimelineActivity.id,
-          properties: payload.properties,
+          properties: mergedProperties,
           workspaceMemberId: payload.workspaceMemberId,
           workspaceId,
         });
@@ -98,7 +94,7 @@ export class TimelineActivityRepository {
     const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
 
     const whereConditions: Record<string, unknown> = {
-      [objectSingularName + 'Id']: In(
+      [`${objectSingularName}Id`]: In(
         payloads.map((payload) => payload.recordId),
       ),
       name: In(payloads.map((payload) => payload.name)),

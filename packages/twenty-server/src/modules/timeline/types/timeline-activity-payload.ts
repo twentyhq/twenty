@@ -6,4 +6,5 @@ export type TimelineActivityPayload = {
   workspaceMemberId?: string;
   name: string;
   recordId: string;
+  overrideObjectSingularName?: string;
 };

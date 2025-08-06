@@ -48,29 +48,33 @@ export class UpsertTimelineActivityFromInternalEvent {
       }
     }
 
-    const filteredEvents = workspaceEventBatch.events.filter((event) => {
-      return (
-        !event.objectMetadata.isSystem ||
-        event.objectMetadata.nameSingular === 'noteTarget' ||
-        event.objectMetadata.nameSingular === 'taskTarget'
-      );
-    });
+    const filteredEvents = workspaceEventBatch.events
+      .filter((event) => {
+        return (
+          !event.objectMetadata.isSystem ||
+          event.objectMetadata.nameSingular === 'noteTarget' ||
+          event.objectMetadata.nameSingular === 'taskTarget'
+        );
+      })
+      .map((event) => {
+        if ('diff' in event.properties && event.properties.diff) {
+          return {
+            ...event,
+            properties: {
+              diff: event.properties.diff,
+            },
+          };
+        }
+
+        return event;
+      });
 
     if (filteredEvents.length === 0) {
       return;
     }
 
     await this.timelineActivityService.upsertEvents({
-      events: filteredEvents.map((event) =>
-        'diff' in event.properties && event.properties.diff
-          ? {
-              ...event,
-              properties: {
-                diff: event.properties.diff,
-              },
-            }
-          : event,
-      ),
+      events: filteredEvents,
       eventName: workspaceEventBatch.name,
       workspaceId: workspaceEventBatch.workspaceId,
     });

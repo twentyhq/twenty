@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+
 import { ObjectRecordBaseEvent } from 'src/engine/core-modules/event-emitter/types/object-record.base.event';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -39,22 +41,42 @@ export class TimelineActivityService {
   }: EventsWithNameAndWorkspaceId) {
     const { objectSingularName } = parseEventNameOrThrow(eventName);
 
-    const timelineActivities =
+    const timelineActivitiesPayloads =
       await this.transformEventsToTimelineActivityPayloads({
         events,
         workspaceId,
         eventName,
       });
 
-    if (!timelineActivities || timelineActivities.length === 0) {
+    if (
+      !timelineActivitiesPayloads ||
+      timelineActivitiesPayloads.length === 0
+    ) {
       return;
     }
 
-    this.timelineActivityRepository.upsertTimelineActivities({
-      payloads: timelineActivities,
-      objectSingularName,
-      workspaceId,
-    });
+    const payloadsByObjectSingularName = timelineActivitiesPayloads.reduce(
+      (acc, payload) => {
+        const computedObjectSingularName =
+          payload.overrideObjectSingularName ?? objectSingularName;
+
+        acc[computedObjectSingularName] = [
+          ...(acc[computedObjectSingularName] || []),
+          payload,
+        ];
+
+        return acc;
+      },
+      {} as Record<string, TimelineActivityPayload[]>,
+    );
+
+    for (const objectSingularName in payloadsByObjectSingularName) {
+      this.timelineActivityRepository.upsertTimelineActivities({
+        objectSingularName,
+        workspaceId,
+        payloads: payloadsByObjectSingularName[objectSingularName],
+      });
+    }
   }
 
   private async transformEventsToTimelineActivityPayloads({
@@ -137,6 +159,8 @@ export class TimelineActivityService {
   }: EventsWithNameAndWorkspaceId & { activityType: ActivityType }): Promise<
     TimelineActivityPayload[]
   > {
+    const { action } = parseEventNameOrThrow(eventName);
+
     const activityTargetRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
@@ -148,43 +172,22 @@ export class TimelineActivityService {
 
     const activityTargets = await activityTargetRepository.find({
       where: {
-        [activityType + 'Id']: In(events.map((event) => event.recordId)),
+        [`${activityType}Id`]: In(events.map((event) => event.recordId)),
       },
     });
 
-    const activityRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        activityType,
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
-
-    const activities = await activityRepository.find({
-      where: {
-        id: In(events.map((event) => event.recordId)),
-      },
-    });
-
-    if (activityTargets.length === 0 || activities.length === 0) {
+    if (activityTargets.length === 0) {
       return [];
     }
 
     return events
       .flatMap((event) => {
         const correspondingActivityTargets = activityTargets.filter(
-          (activityTarget) => activityTarget.id === event.recordId,
+          (activityTarget) =>
+            activityTarget[`${activityType}Id`] === event.recordId,
         );
 
-        const correspondingActivity = activities.find(
-          (activity) => activity.id === event.recordId,
-        );
-
-        if (
-          correspondingActivityTargets.length === 0 ||
-          !isDefined(correspondingActivity)
-        ) {
+        if (correspondingActivityTargets.length === 0) {
           return;
         }
 
@@ -202,16 +205,23 @@ export class TimelineActivityService {
             return;
           }
 
+          const activityTitle = (event.properties.after as ObjectRecord)?.title;
+          const activityId = event.recordId;
+
+          if (!isDefined(activityTitle)) {
+            return;
+          }
+
           return {
-            name: 'linked-' + eventName,
+            name: `linked-${activityType}.${action}`,
             workspaceMemberId: event.workspaceMemberId ?? '',
-            recordId: activityTarget[targetColumn[0]],
-            linkedRecordCachedName: correspondingActivity.title,
-            linkedRecordId: correspondingActivity.id,
+            recordId: activityTarget[targetColumn.replace(/Id$/, '')],
+            linkedRecordCachedName: activityTitle,
+            linkedRecordId: activityId,
             linkedObjectMetadataId: event.objectMetadata.id,
             properties: event.properties,
-            objectSingularName: event.objectMetadata.nameSingular,
-          };
+            overrideObjectSingularName: event.objectMetadata.nameSingular,
+          } satisfies TimelineActivityPayload;
         });
       })
       .filter(isDefined);
@@ -225,24 +235,7 @@ export class TimelineActivityService {
   }: EventsWithNameAndWorkspaceId & { activityType: ActivityType }): Promise<
     TimelineActivityPayload[]
   > {
-    const activityTargetRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        this.targetObjects[activityType],
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
-
-    const activityTargets = await activityTargetRepository.find({
-      where: {
-        id: In(events.map((event) => event.recordId)),
-      },
-    });
-
-    if (activityTargets.length === 0) {
-      return [];
-    }
+    const { action } = parseEventNameOrThrow(eventName);
 
     const activityRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
@@ -256,7 +249,14 @@ export class TimelineActivityService {
     const activities = await activityRepository.find({
       where: {
         id: In(
-          activityTargets.map((activityTarget) => activityTarget.activityId),
+          events
+            .map((event) =>
+              this.extractActivityIdFromActivityTargetEvent(
+                event,
+                activityType,
+              ),
+            )
+            .filter(isDefined),
         ),
       },
     });
@@ -267,15 +267,13 @@ export class TimelineActivityService {
 
     return events
       .map((event) => {
-        const activityTarget = activityTargets.find(
-          (activityTarget) => activityTarget.id === event.recordId,
-        );
-
         const activity = activities.find(
-          (activity) => activity.id === activityTarget?.activityId,
+          (activity) =>
+            activity.id ===
+            this.extractActivityIdFromActivityTargetEvent(event, activityType),
         );
 
-        if (!isDefined(activityTarget) || !isDefined(activity)) {
+        if (!isDefined(activity)) {
           return;
         }
 
@@ -287,7 +285,11 @@ export class TimelineActivityService {
           return;
         }
 
-        const targetColumnName = Object.entries(activityTarget).find(
+        if (!isDefined(event.properties.after)) {
+          return;
+        }
+
+        const targetColumnName = Object.entries(event.properties.after).find(
           ([columnName, columnValue]: [string, string]) =>
             columnName !== activityType + 'Id' &&
             columnName.endsWith('Id') &&
@@ -298,17 +300,32 @@ export class TimelineActivityService {
           return;
         }
 
+        const recordId = (event.properties.after as ObjectRecord)[
+          targetColumnName
+        ];
+
         return {
-          name: 'linked-' + eventName,
-          objectSingularName: targetColumnName.replace(/Id$/, ''),
-          recordId: activityTarget[targetColumnName],
+          name: `linked-${activityType}.${action}`,
+          overrideObjectSingularName: targetColumnName.replace(/Id$/, ''),
+          recordId,
           linkedRecordCachedName: activity.title,
           linkedRecordId: activity.id,
           linkedObjectMetadataId: activityObjectMetadataId,
           workspaceMemberId: event.workspaceMemberId,
           properties: {},
-        };
+        } satisfies TimelineActivityPayload;
       })
       .filter(isDefined);
+  }
+
+  private extractActivityIdFromActivityTargetEvent(
+    event: ObjectRecordBaseEvent,
+    activityType: ActivityType,
+  ): string | undefined {
+    const activityId = (event.properties.after as ObjectRecord)?.[
+      `${activityType}Id`
+    ];
+
+    return activityId;
   }
 }

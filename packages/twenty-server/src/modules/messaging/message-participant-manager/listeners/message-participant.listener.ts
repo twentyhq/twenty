@@ -28,17 +28,16 @@ export class MessageParticipantListener {
       participants: MessageParticipantWorkspaceEntity[];
     }>,
   ): Promise<void> {
-    // TODO: Refactor to insertTimelineActivitiesForObject once
-    for (const eventPayload of batchEvent.events) {
-      const messageParticipants = eventPayload.participants ?? [];
+    const messageObjectMetadata =
+      await this.objectMetadataRepository.findOneOrFail({
+        where: {
+          nameSingular: 'message',
+          workspaceId: batchEvent.workspaceId,
+        },
+      });
 
-      const messageObjectMetadata =
-        await this.objectMetadataRepository.findOneOrFail({
-          where: {
-            nameSingular: 'message',
-            workspaceId: batchEvent.workspaceId,
-          },
-        });
+    const timelineActivityPayloads = batchEvent.events.flatMap((event) => {
+      const messageParticipants = event.participants ?? [];
 
       const messageParticipantsWithPersonId = messageParticipants.filter(
         (participant) => isDefined(participant.personId),
@@ -48,28 +47,30 @@ export class MessageParticipantListener {
         return;
       }
 
-      await this.timelineActivityRepository.upsertTimelineActivities({
-        objectSingularName: 'person',
-        workspaceId: batchEvent.workspaceId,
-        payloads: messageParticipants
-          .map((participant) => {
-            if (!isDefined(participant.personId)) {
-              return;
-            }
+      return messageParticipantsWithPersonId
+        .map((participant) => {
+          if (!isDefined(participant.personId)) {
+            return;
+          }
 
-            return {
-              name: 'message.linked',
-              properties: {},
-              objectSingularName: 'person',
-              recordId: participant.personId,
-              workspaceMemberId: eventPayload.workspaceMemberId,
-              linkedObjectMetadataId: messageObjectMetadata.id,
-              linkedRecordId: participant.messageId,
-              linkedRecordCachedName: '',
-            };
-          })
-          .filter(isDefined),
-      });
-    }
+          return {
+            name: 'message.linked',
+            properties: {},
+            objectSingularName: 'person',
+            recordId: participant.personId,
+            workspaceMemberId: event.workspaceMemberId,
+            linkedObjectMetadataId: messageObjectMetadata.id,
+            linkedRecordId: participant.messageId,
+            linkedRecordCachedName: '',
+          };
+        })
+        .filter(isDefined);
+    });
+
+    await this.timelineActivityRepository.upsertTimelineActivities({
+      objectSingularName: 'person',
+      workspaceId: batchEvent.workspaceId,
+      payloads: timelineActivityPayloads.filter(isDefined),
+    });
   }
 }

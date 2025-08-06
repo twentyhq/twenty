@@ -16,6 +16,10 @@ import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
 } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
+
+const MAX_MESSAGE_COUNT_FOR_QUICK_IMPORT = 100;
+const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
+
 @Injectable()
 export class MessagingMessageListFetchService {
   constructor(
@@ -42,6 +46,15 @@ export class MessagingMessageListFetchService {
         await this.messagingGetMessageListService.getMessageLists(
           messageChannel,
         );
+
+      await this.cacheStorage.del(
+        `messages-to-import:${workspaceId}:${messageChannel.id}`,
+      );
+
+      const totalMessageCount = messageLists.reduce(
+        (acc, messageList) => acc + messageList.messageExternalIds.length,
+        0,
+      );
 
       for (const messageList of messageLists) {
         if (messageList.messageExternalIds.length === 0) {
@@ -111,6 +124,7 @@ export class MessagingMessageListFetchService {
           await this.cacheStorage.setAdd(
             `messages-to-import:${workspaceId}:${messageChannel.id}`,
             messageExternalIdsToImport,
+            ONE_WEEK_IN_MILLISECONDS,
           );
         }
 
@@ -119,6 +133,9 @@ export class MessagingMessageListFetchService {
           nextSyncCursor,
           folderId,
         );
+      }
+
+      if (totalMessageCount < MAX_MESSAGE_COUNT_FOR_QUICK_IMPORT) {
       }
 
       await this.messageChannelSyncStatusService.scheduleMessagesImport([
