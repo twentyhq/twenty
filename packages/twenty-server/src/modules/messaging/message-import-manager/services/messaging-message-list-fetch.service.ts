@@ -8,7 +8,10 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessageChannelSyncStage,
+  MessageChannelWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
@@ -151,7 +154,10 @@ export class MessagingMessageListFetchService {
 
       if (totalMessageCount < MAX_MESSAGE_COUNT_FOR_QUICK_IMPORT) {
         await this.messagingMessagesImportService.processMessageBatchImport(
-          messageChannel,
+          {
+            ...messageChannel,
+            syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
+          },
           messageChannel.connectedAccount,
           workspaceId,
         );
