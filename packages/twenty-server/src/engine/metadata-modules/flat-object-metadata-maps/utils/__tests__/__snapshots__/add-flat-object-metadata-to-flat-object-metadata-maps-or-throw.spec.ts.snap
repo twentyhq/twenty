@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow should throw when object metadata to add already exists 1`] = `"addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow: flat object metadata to add already exists"`;

@@ -554,6 +554,7 @@ export class WorkspaceRepository<
       entity,
       selectedColumns,
       permissionOptions,
+      this.authContext,
     );
   }
 

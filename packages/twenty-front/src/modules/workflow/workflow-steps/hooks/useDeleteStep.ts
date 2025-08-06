@@ -30,8 +30,6 @@ export const useDeleteStep = ({
   const deleteStep = async (stepId: string) => {
     assertWorkflowWithCurrentVersionIsDefined(workflow);
 
-    closeCommandMenu();
-
     const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
 
     if (!isDefined(workflowVersionId)) {
@@ -51,6 +49,9 @@ export const useDeleteStep = ({
         stepId,
       });
     }
+
+    closeCommandMenu();
+
     deleteStepOutputSchema({
       stepId,
       workflowVersionId,

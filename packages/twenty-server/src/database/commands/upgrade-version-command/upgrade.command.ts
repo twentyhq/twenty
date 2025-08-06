@@ -30,6 +30,7 @@ import { AddNextStepIdsToWorkflowVersionTriggers } from 'src/database/commands/u
 import { RemoveWorkflowRunsWithoutState } from 'src/database/commands/upgrade-version-command/1-2/1-2-remove-workflow-runs-without-state.command';
 import { AddNextStepIdsToWorkflowRunsTrigger } from 'src/database/commands/upgrade-version-command/1-3/1-3-add-next-step-ids-to-workflow-runs-trigger.command';
 import { AssignRolesToExistingApiKeysCommand } from 'src/database/commands/upgrade-version-command/1-3/1-3-assign-roles-to-existing-api-keys.command';
+import { UpdateTimestampColumnTypeInWorkspaceSchemaCommand } from 'src/database/commands/upgrade-version-command/1-3/1-3-update-timestamp-column-type-in-workspace-schema.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -158,8 +159,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 1.3 Commands
     protected readonly assignRolesToExistingApiKeysCommand: AssignRolesToExistingApiKeysCommand,
-    // protected readonly addNextStepIdsToWorkflowVersionTriggers: AddNextStepIdsToWorkflowVersionTriggers,
     protected readonly addNextStepIdsToWorkflowRunsTrigger: AddNextStepIdsToWorkflowRunsTrigger,
+    protected readonly updateTimestampColumnTypeInWorkspaceSchemaCommand: UpdateTimestampColumnTypeInWorkspaceSchemaCommand,
   ) {
     super(
       workspaceRepository,
@@ -223,6 +224,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.addNextStepIdsToWorkflowVersionTriggers, // We add that command again because nextStepIds where not added on freshly created triggers. It will be done in 1.3
         this.addNextStepIdsToWorkflowRunsTrigger,
         this.assignRolesToExistingApiKeysCommand,
+        this.updateTimestampColumnTypeInWorkspaceSchemaCommand,
       ],
       afterSyncMetadata: [],
     };
