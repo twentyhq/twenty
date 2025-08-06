@@ -4,6 +4,7 @@ import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-
 import '@xyflow/react/dist/style.css';
 import { RecoilRoot } from 'recoil';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { WorkflowDiagramEmptyTriggerEditable } from '../WorkflowDiagramEmptyTriggerEditable';
 
@@ -15,6 +16,7 @@ const meta: Meta<typeof WorkflowDiagramEmptyTriggerEditable> = {
       nodeType: 'empty-trigger',
     },
   },
+  decorators: [I18nFrontDecorator],
 };
 
 export default meta;
