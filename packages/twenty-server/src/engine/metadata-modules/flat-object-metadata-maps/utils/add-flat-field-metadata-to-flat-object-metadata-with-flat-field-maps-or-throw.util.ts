@@ -3,7 +3,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { FlatObjectMetadataMapsException, FlatObjectMetadataMapsExceptionCode } from 'src/engine/metadata-modules/flat-object-metadata-maps/flat-object-metadata-maps.exception';
+import {
+  FlatObjectMetadataMapsException,
+  FlatObjectMetadataMapsExceptionCode,
+} from 'src/engine/metadata-modules/flat-object-metadata-maps/flat-object-metadata-maps.exception';
 import {
   FlatFieldMetadataMaps,
   FlatObjectMetadataWithFlatFieldMaps,
