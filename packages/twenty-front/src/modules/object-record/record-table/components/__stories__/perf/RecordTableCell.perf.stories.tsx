@@ -45,7 +45,7 @@ const RelationFieldValueSetterEffect = () => {
 };
 
 const meta: Meta = {
-  title: 'RecordIndex/Table/RecordTableCell',
+  title: 'Modules/ObjectRecord/RecordTable/RecordTableCell',
   decorators: [
     MemoryRouterDecorator,
     ChipGeneratorsDecorator,
