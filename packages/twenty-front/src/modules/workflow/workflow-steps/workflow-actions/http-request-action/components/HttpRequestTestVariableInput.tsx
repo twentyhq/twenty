@@ -1,6 +1,5 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { InputLabel } from '@/ui/input/components/InputLabel';
 import { WorkflowStep } from '@/workflow/types/Workflow';
 import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
 import { HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
@@ -8,25 +7,10 @@ import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workfl
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-const StyledContainer = styled.div`
+const StyledVariableInputsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledVariableContainer = styled.div`
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledVariableLabel = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
 type HttpRequestTestVariableInputProps = {
@@ -77,26 +61,22 @@ export const HttpRequestTestVariableInput = ({
 
   return (
     <FormFieldInputContainer>
-      <InputLabel>Test Variables</InputLabel>
-      <StyledContainer>
+      <StyledVariableInputsContainer>
         {variableArray.map((variablePath) => (
-          <StyledVariableContainer key={variablePath}>
-            <StyledVariableLabel>
-              Variable: <code>{`{{${variablePath}}}`}</code>
-            </StyledVariableLabel>
-            <FormTextFieldInput
-              placeholder="Enter test value"
-              readonly={readonly}
-              defaultValue={
-                httpRequestTestData.variableValues[variablePath] || ''
-              }
-              onChange={(value) =>
-                handleVariableChange(variablePath, value || '')
-              }
-            />
-          </StyledVariableContainer>
+          <FormTextFieldInput
+            key={variablePath}
+            label={`${variablePath}`}
+            placeholder="Enter test value"
+            readonly={readonly}
+            defaultValue={
+              httpRequestTestData.variableValues[variablePath] || ''
+            }
+            onChange={(value) =>
+              handleVariableChange(variablePath, value || '')
+            }
+          />
         ))}
-      </StyledContainer>
+      </StyledVariableInputsContainer>
     </FormFieldInputContainer>
   );
 };

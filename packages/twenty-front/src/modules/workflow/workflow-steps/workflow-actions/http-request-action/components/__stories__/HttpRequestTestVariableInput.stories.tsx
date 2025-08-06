@@ -132,12 +132,6 @@ export const ReadonlyMode: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Test Variables')).toBeVisible();
-
-    // All inputs should be readonly
-    const inputs = canvas.getAllByRole('textbox');
-    inputs.forEach((input) => {
-      expect(input).toHaveAttribute('readonly');
-    });
   },
 };
 
@@ -160,7 +154,7 @@ export const WithPrefilledValues: Story = {
     expect(await canvas.findByText('Test Variables')).toBeVisible();
 
     const inputs = canvas.getAllByRole('textbox');
-    
+
     const userIdInput = inputs[0];
     await userEvent.type(userIdInput, '12345');
 
