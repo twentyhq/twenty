@@ -1,4 +1,4 @@
-import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-step/utils/remove-step';
+import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/remove-step';
 import {
   WorkflowAction,
   WorkflowActionType,
