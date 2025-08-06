@@ -7,8 +7,8 @@ import { isRowVisibleComponentFamilyState } from '@/object-record/record-table/r
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { ReactNode, forwardRef } from 'react';
 
@@ -86,36 +86,36 @@ export const RecordTableTr = forwardRef<
 >(({ children, recordId, focusIndex, isDragging = false, ...props }, ref) => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
-  const currentRowSelected = useRecoilComponentFamilyValueV2(
+  const currentRowSelected = useRecoilComponentFamilyValue(
     isRowSelectedComponentFamilyState,
     recordId,
   );
 
-  const isRowVisible = useRecoilComponentFamilyValueV2(
+  const isRowVisible = useRecoilComponentFamilyValue(
     isRowVisibleComponentFamilyState,
     recordId,
   );
 
-  const isActive = useRecoilComponentFamilyValueV2(
+  const isActive = useRecoilComponentFamilyValue(
     isRecordTableRowActiveComponentFamilyState,
     focusIndex,
   );
 
-  const isNextRowActive = useRecoilComponentFamilyValueV2(
+  const isNextRowActive = useRecoilComponentFamilyValue(
     isRecordTableRowActiveComponentFamilyState,
     focusIndex + 1,
   );
 
-  const isFocused = useRecoilComponentFamilyValueV2(
+  const isFocused = useRecoilComponentFamilyValue(
     isRecordTableRowFocusedComponentFamilyState,
     focusIndex,
   );
 
-  const isRowFocusActive = useRecoilComponentValueV2(
+  const isRowFocusActive = useRecoilComponentValue(
     isRecordTableRowFocusActiveComponentState,
   );
 
-  const isNextRowFocused = useRecoilComponentFamilyValueV2(
+  const isNextRowFocused = useRecoilComponentFamilyValue(
     isRecordTableRowFocusedComponentFamilyState,
     focusIndex + 1,
   );

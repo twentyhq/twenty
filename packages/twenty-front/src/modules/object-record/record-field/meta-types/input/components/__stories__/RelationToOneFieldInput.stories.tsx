@@ -19,7 +19,7 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 import {
@@ -32,11 +32,10 @@ const RelationWorkspaceSetterEffect = () => {
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
   );
-  const setRecordFieldInputLayoutDirectionLoading =
-    useSetRecoilComponentStateV2(
-      recordFieldInputLayoutDirectionLoadingComponentState,
-      'relation-to-one-field-input-123-Relation',
-    );
+  const setRecordFieldInputLayoutDirectionLoading = useSetRecoilComponentState(
+    recordFieldInputLayoutDirectionLoadingComponentState,
+    'relation-to-one-field-input-123-Relation',
+  );
 
   useEffect(() => {
     setCurrentWorkspace(mockCurrentWorkspace);

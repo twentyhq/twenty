@@ -1,6 +1,6 @@
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -45,7 +45,7 @@ export const SignInUpPasswordField = ({
           fieldState: { error },
         }) => (
           <StyledInputContainer>
-            <TextInput
+            <SettingsTextInput
               instanceId="sign-in-up-password"
               autoFocus
               value={value}

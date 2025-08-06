@@ -4,7 +4,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { View } from '@/views/types/View';
 import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDeleteViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
@@ -40,7 +40,7 @@ export const ViewPickerOptionDropdown = ({
   const { getIcon } = useIcons();
   const [isHovered, setIsHovered] = useState(false);
   const { deleteViewFromCurrentState } = useDeleteViewFromCurrentState();
-  const setViewPickerReferenceViewId = useSetRecoilComponentStateV2(
+  const setViewPickerReferenceViewId = useSetRecoilComponentState(
     viewPickerReferenceViewIdComponentState,
   );
   const { setViewPickerMode } = useViewPickerMode();

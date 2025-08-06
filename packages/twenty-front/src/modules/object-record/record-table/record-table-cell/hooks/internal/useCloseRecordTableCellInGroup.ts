@@ -8,7 +8,7 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCloseCurrentTableCellInEditMode } from '@/object-record/record-table/hooks/internal/useCloseCurrentTableCellInEditMode';
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 
 export const useCloseRecordTableCellInGroup = () => {
   const { recordTableId } = useRecordTableContextOrThrow();
@@ -22,11 +22,10 @@ export const useCloseRecordTableCellInGroup = () => {
   const closeCurrentTableCellInEditMode =
     useCloseCurrentTableCellInEditMode(recordTableId);
 
-  const clickOutsideListenerIsActivatedState =
-    useRecoilComponentCallbackStateV2(
-      clickOutsideListenerIsActivatedComponentState,
-      RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
-    );
+  const clickOutsideListenerIsActivatedState = useRecoilComponentCallbackState(
+    clickOutsideListenerIsActivatedComponentState,
+    RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
+  );
 
   const closeTableCellInGroup = useRecoilCallback(
     ({ set }) =>

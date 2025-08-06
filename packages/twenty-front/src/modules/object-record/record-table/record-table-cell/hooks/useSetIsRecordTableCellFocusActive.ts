@@ -1,10 +1,10 @@
 import { isRecordTableCellFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 
 export const useSetIsRecordTableCellFocusActive = (recordTableId?: string) => {
-  const isRecordTableFocusActiveState = useRecoilComponentCallbackStateV2(
+  const isRecordTableFocusActiveState = useRecoilComponentCallbackState(
     isRecordTableCellFocusActiveComponentState,
     recordTableId,
   );

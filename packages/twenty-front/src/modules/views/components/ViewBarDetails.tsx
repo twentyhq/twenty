@@ -4,7 +4,7 @@ import { ReactNode, useMemo } from 'react';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { AdvancedFilterDropdownButton } from '@/views/components/AdvancedFilterDropdownButton';
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
 import { EditableSortChip } from '@/views/components/EditableSortChip';
@@ -106,25 +106,25 @@ export const ViewBarDetails = ({
   viewBarId,
   objectNamePlural,
 }: ViewBarDetailsProps) => {
-  const isViewBarExpanded = useRecoilComponentValueV2(
+  const isViewBarExpanded = useRecoilComponentValue(
     isViewBarExpandedComponentState,
   );
 
   const { hasFiltersQueryParams } = useViewFromQueryParams();
 
-  const currentRecordFilterGroups = useRecoilComponentValueV2(
+  const currentRecordFilterGroups = useRecoilComponentValue(
     currentRecordFilterGroupsComponentState,
   );
 
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useRecoilComponentValue(
     currentRecordFiltersComponentState,
   );
 
-  const currentRecordSorts = useRecoilComponentValueV2(
+  const currentRecordSorts = useRecoilComponentValue(
     currentRecordSortsComponentState,
   );
 
-  const anyFieldFilterValue = useRecoilComponentValueV2(
+  const anyFieldFilterValue = useRecoilComponentValue(
     anyFieldFilterValueComponentState,
   );
 
@@ -185,7 +185,7 @@ export const ViewBarDetails = ({
   const shouldShowAdvancedFilterDropdownButton =
     currentRecordFilterGroups.length > 0;
 
-  const isAnyFieldSearchDropdownOpen = useRecoilComponentValueV2(
+  const isAnyFieldSearchDropdownOpen = useRecoilComponentValue(
     isDropdownOpenComponentState,
     ANY_FIELD_SEARCH_DROPDOWN_ID,
   );

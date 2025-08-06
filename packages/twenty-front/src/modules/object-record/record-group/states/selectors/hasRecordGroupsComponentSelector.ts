@@ -1,10 +1,10 @@
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 
-import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
+import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
 export const hasRecordGroupsComponentSelector =
-  createComponentSelectorV2<boolean>({
+  createComponentSelector<boolean>({
     key: 'hasRecordGroupsComponentSelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:

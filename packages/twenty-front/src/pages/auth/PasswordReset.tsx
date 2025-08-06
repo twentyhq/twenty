@@ -8,7 +8,7 @@ import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { ApolloError } from '@apollo/client';
 import { useTheme } from '@emotion/react';
@@ -204,7 +204,7 @@ export const PasswordReset = () => {
                   }}
                 >
                   <StyledInputContainer>
-                    <TextInputV2
+                    <TextInput
                       autoFocus
                       value={email}
                       placeholder={t`Email`}
@@ -230,7 +230,7 @@ export const PasswordReset = () => {
                       fieldState: { error },
                     }) => (
                       <StyledInputContainer>
-                        <TextInputV2
+                        <TextInput
                           autoFocus
                           value={value}
                           type="password"

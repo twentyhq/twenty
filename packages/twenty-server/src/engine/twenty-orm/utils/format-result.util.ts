@@ -121,13 +121,11 @@ export function formatResult<T>(
 
   // This is a temporary fix to handle a bug in the frontend where the date gets returned in the wrong timezone,
   //   thus returning the wrong date.
-  //
   // In short, for example :
   //   - DB stores `2025-01-01`
   //   - TypeORM .returning() returns `2024-12-31T23:00:00.000Z`
   //   - we shift +1h (or whatever the timezone offset is on the server)
   //   - we return `2025-01-01T00:00:00.000Z`
-  //
   // See this PR for more details: https://github.com/twentyhq/twenty/pull/9700
   const serverOffsetInMillisecondsToCounterActTypeORMAutomaticTimezoneShift =
     new Date().getTimezoneOffset() * 60 * 1000;

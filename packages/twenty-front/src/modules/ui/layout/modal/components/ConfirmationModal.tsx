@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { ReactNode, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
 import { Modal, ModalVariants } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -129,7 +129,7 @@ export const ConfirmationModal = ({
       </StyledSection>
       {confirmationValue && (
         <Section>
-          <TextInput
+          <SettingsTextInput
             instanceId="confirmation-modal-input"
             dataTestId="confirmation-modal-input"
             value={inputConfirmationValue}

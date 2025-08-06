@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
 export const settingsIntegrationPostgreSQLConnectionFormSchema = z.object({
   dbname: z.string().min(1),
@@ -128,7 +128,7 @@ export const SettingsIntegrationDatabaseConnectionForm = ({
           control={control}
           render={({ field: { onChange, value } }) => {
             return (
-              <TextInput
+              <SettingsTextInput
                 instanceId={`${databaseKey}-${name}`}
                 autoComplete="new-password" // Disable autocomplete
                 label={label}

@@ -6,7 +6,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { View } from '@/views/types/View';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
@@ -70,7 +70,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         const { applyCurrentViewFiltersToCurrentRecordFilters } =
           useApplyCurrentViewFiltersToCurrentRecordFilters();
 
-        const currentFilters = useRecoilComponentValueV2(
+        const currentFilters = useRecoilComponentValue(
           currentRecordFiltersComponentState,
         );
 
@@ -118,7 +118,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         const { applyCurrentViewFiltersToCurrentRecordFilters } =
           useApplyCurrentViewFiltersToCurrentRecordFilters();
 
-        const currentFilters = useRecoilComponentValueV2(
+        const currentFilters = useRecoilComponentValue(
           currentRecordFiltersComponentState,
         );
 
@@ -159,7 +159,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         const { applyCurrentViewFiltersToCurrentRecordFilters } =
           useApplyCurrentViewFiltersToCurrentRecordFilters();
 
-        const currentFilters = useRecoilComponentValueV2(
+        const currentFilters = useRecoilComponentValue(
           currentRecordFiltersComponentState,
         );
 

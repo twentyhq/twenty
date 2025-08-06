@@ -40,13 +40,12 @@ export function getFieldMetadataIdToColumnNamesMap(
     },
     processRelationField: ({
       fieldMetadataId,
-      columnName,
+      joinColumnName,
     }: {
       fieldMetadataId: string;
-      fieldMetadata: FieldMetadataEntity;
-      columnName: string;
+      joinColumnName: string;
     }) => {
-      fieldMetadataToColumnNamesMap.set(fieldMetadataId, [columnName]); // TODO test
+      fieldMetadataToColumnNamesMap.set(fieldMetadataId, [joinColumnName]);
     },
     processSimpleField: ({
       fieldMetadataId,

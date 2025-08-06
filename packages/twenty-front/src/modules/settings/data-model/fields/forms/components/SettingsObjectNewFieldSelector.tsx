@@ -10,7 +10,7 @@ import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields
 import { FieldType } from '@/settings/data-model/types/FieldType';
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { SettingsPath } from '@/types/SettingsPath';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -58,7 +58,7 @@ const StyledCardContainer = styled.div`
   width: calc(50% - ${({ theme }) => theme.spacing(1)});
 `;
 
-const StyledSearchInput = styled(TextInput)`
+const StyledSearchInput = styled(SettingsTextInput)`
   width: 100%;
 `;
 

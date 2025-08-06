@@ -7,6 +7,7 @@ import { getPositionWordLabel } from '../utils/getPositionWordLabel';
 
 const StyledSection = styled(Section)`
   margin: ${({ theme }) => theme.spacing(4)};
+  width: auto;
 `;
 
 export const MergeSettingsTab = () => {
@@ -23,6 +24,10 @@ export const MergeSettingsTab = () => {
   const handleSelectionChange = (index: number) => {
     updatePriorityRecordIndex(index);
   };
+
+  if (selectedRecords.length === 0) {
+    return null;
+  }
 
   return (
     <StyledSection>

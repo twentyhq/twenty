@@ -12,7 +12,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useContext } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
@@ -23,7 +23,7 @@ export const useShouldActionBeRegisteredParams = ({
 }): ShouldBeRegisteredFunctionParams => {
   const { sortedFavorites: favorites } = useFavorites();
 
-  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+  const contextStoreTargetedRecordsRule = useRecoilComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
 
@@ -51,19 +51,19 @@ export const useShouldActionBeRegisteredParams = ({
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
-  const isSoftDeleteFilterActive = useRecoilComponentValueV2(
+  const isSoftDeleteFilterActive = useRecoilComponentValue(
     isSoftDeleteFilterActiveComponentState,
   );
 
   const isShowPage =
-    useRecoilComponentValueV2(contextStoreCurrentViewTypeComponentState) ===
+    useRecoilComponentValue(contextStoreCurrentViewTypeComponentState) ===
     ContextStoreViewType.ShowPage;
 
-  const numberOfSelectedRecords = useRecoilComponentValueV2(
+  const numberOfSelectedRecords = useRecoilComponentValue(
     contextStoreNumberOfSelectedRecordsComponentState,
   );
 
-  const contextStoreCurrentViewType = useRecoilComponentValueV2(
+  const contextStoreCurrentViewType = useRecoilComponentValue(
     contextStoreCurrentViewTypeComponentState,
   );
 

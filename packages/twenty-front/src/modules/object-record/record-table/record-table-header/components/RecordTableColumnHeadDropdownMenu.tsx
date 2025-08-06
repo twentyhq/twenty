@@ -8,7 +8,7 @@ import { visibleTableColumnsComponentSelector } from '@/object-record/record-tab
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import {
@@ -40,7 +40,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const { toggleScrollXWrapper, toggleScrollYWrapper } =
     useToggleScrollWrapper();
 
-  const visibleTableColumns = useRecoilComponentValueV2(
+  const visibleTableColumns = useRecoilComponentValue(
     visibleTableColumnsComponentSelector,
   );
 
@@ -86,7 +86,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
     handleColumnVisibilityChange(column);
   };
 
-  const onToggleColumnSort = useRecoilComponentValueV2(
+  const onToggleColumnSort = useRecoilComponentValue(
     onToggleColumnSortComponentState,
   );
 

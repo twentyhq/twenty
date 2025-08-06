@@ -1,9 +1,9 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { PositionType } from '@/action-menu/types/PositionType';
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
 export const recordIndexActionMenuDropdownPositionComponentState =
-  createComponentStateV2<PositionType>({
+  createComponentState<PositionType>({
     key: 'recordIndexActionMenuDropdownPositionComponentState',
     defaultValue: {
       x: null,

@@ -11,7 +11,7 @@ import { RecordTableComponentInstanceContext } from '@/object-record/record-tabl
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
 type useRecordTableProps = {
@@ -26,16 +26,16 @@ export const useTableColumns = (props: useRecordTableProps) => {
 
   const { setTableColumns } = useSetTableColumns();
 
-  const availableTableColumns = useRecoilComponentValueV2(
+  const availableTableColumns = useRecoilComponentValue(
     availableTableColumnsComponentState,
     props?.recordTableId,
   );
 
-  const tableColumns = useRecoilComponentValueV2(
+  const tableColumns = useRecoilComponentValue(
     tableColumnsComponentState,
     props?.recordTableId,
   );
-  const visibleTableColumns = useRecoilComponentValueV2(
+  const visibleTableColumns = useRecoilComponentValue(
     visibleTableColumnsComponentSelector,
     props?.recordTableId,
   );

@@ -1,10 +1,10 @@
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
 import { Placement } from '@floating-ui/react';
 
 export const dropdownPlacementComponentState =
-  createComponentStateV2<Placement | null>({
+  createComponentState<Placement | null>({
     key: 'dropdownPlacementComponentState',
     componentInstanceContext: DropdownComponentInstanceContext,
     defaultValue: null,

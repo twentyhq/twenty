@@ -30,9 +30,9 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { IconX, useIcons } from 'twenty-ui/display';
@@ -43,7 +43,7 @@ export const ObjectSortDropdownButton = () => {
   const { resetRecordSortDropdownSearchInput } =
     useResetRecordSortDropdownSearchInput();
 
-  const setObjectSortDropdownSearchInput = useSetRecoilComponentStateV2(
+  const setObjectSortDropdownSearchInput = useSetRecoilComponentState(
     objectSortDropdownSearchInputComponentState,
   );
 
@@ -51,7 +51,7 @@ export const ObjectSortDropdownButton = () => {
 
   const { recordIndexId, objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const objectSortDropdownSearchInput = useRecoilComponentValueV2(
+  const objectSortDropdownSearchInput = useRecoilComponentValue(
     objectSortDropdownSearchInputComponentState,
   );
 
@@ -63,14 +63,14 @@ export const ObjectSortDropdownButton = () => {
 
   const { getIcon } = useIcons();
 
-  const visibleTableColumns = useRecoilComponentValueV2(
+  const visibleTableColumns = useRecoilComponentValue(
     visibleTableColumnsComponentSelector,
     recordIndexId,
   );
   const visibleColumnsFieldMetadataIds = visibleTableColumns.map(
     (column) => column.fieldMetadataId,
   );
-  const hiddenTableColumns = useRecoilComponentValueV2(
+  const hiddenTableColumns = useRecoilComponentValue(
     hiddenTableColumnsComponentSelector,
     recordIndexId,
   );
@@ -132,9 +132,9 @@ export const ObjectSortDropdownButton = () => {
   };
 
   const [selectedRecordSortDirection, setSelectedRecordSortDirection] =
-    useRecoilComponentStateV2(selectedRecordSortDirectionComponentState);
+    useRecoilComponentState(selectedRecordSortDirectionComponentState);
 
-  const setIsRecordSortDirectionMenuUnfolded = useSetRecoilComponentStateV2(
+  const setIsRecordSortDirectionMenuUnfolded = useSetRecoilComponentState(
     isRecordSortDirectionDropdownMenuUnfoldedComponentState,
   );
 
@@ -143,7 +143,7 @@ export const ObjectSortDropdownButton = () => {
     setIsRecordSortDirectionMenuUnfolded(false);
   };
 
-  const isDropdownOpen = useRecoilComponentValueV2(
+  const isDropdownOpen = useRecoilComponentValue(
     isDropdownOpenComponentState,
     OBJECT_SORT_DROPDOWN_ID,
   );
@@ -155,12 +155,12 @@ export const ObjectSortDropdownButton = () => {
     ...hiddenFieldMetadataItems.map((item) => item.id),
   ];
 
-  const selectedItemId = useRecoilComponentValueV2(
+  const selectedItemId = useRecoilComponentValue(
     selectedItemIdComponentState,
     OBJECT_SORT_DROPDOWN_ID,
   );
 
-  const setSelectedItemId = useSetRecoilComponentStateV2(
+  const setSelectedItemId = useSetRecoilComponentState(
     selectedItemIdComponentState,
     OBJECT_SORT_DROPDOWN_ID,
   );

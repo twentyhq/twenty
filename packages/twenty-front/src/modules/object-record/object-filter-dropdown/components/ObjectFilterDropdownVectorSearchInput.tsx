@@ -1,5 +1,5 @@
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useVectorSearchFilterActions } from '@/views/hooks/useVectorSearchFilterActions';
 import { vectorSearchInputComponentState } from '@/views/states/vectorSearchInputComponentState';
 import { useLingui } from '@lingui/react/macro';
@@ -9,7 +9,7 @@ export const ObjectFilterDropdownVectorSearchInput = () => {
   const { t } = useLingui();
 
   const [vectorSearchInputValue, setVectorSearchInputValue] =
-    useRecoilComponentStateV2(vectorSearchInputComponentState);
+    useRecoilComponentState(vectorSearchInputComponentState);
 
   const { applyVectorSearchFilter } = useVectorSearchFilterActions();
 

@@ -66,7 +66,7 @@ const CONFIGURED_ACTION: WorkflowSendEmailAction = {
 };
 
 const meta: Meta<typeof WorkflowEditActionSendEmail> = {
-  title: 'Modules/Workflow/WorkflowEditActionSendEmail',
+  title: 'Modules/Workflow/Actions/SendEmail/EditAction',
   component: WorkflowEditActionSendEmail,
   parameters: {
     msw: {

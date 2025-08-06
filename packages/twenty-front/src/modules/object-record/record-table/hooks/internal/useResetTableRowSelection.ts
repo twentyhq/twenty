@@ -8,7 +8,7 @@ import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { lastSelectedRowIndexComponentState } from '../../record-table-row/states/lastSelectedRowIndexComponentState';
 
@@ -18,23 +18,23 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackStateV2(
+  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackState(
     recordIndexAllRecordIdsComponentSelector,
     recordTableIdFromContext,
   );
 
-  const isRowSelectedFamilyState = useRecoilComponentCallbackStateV2(
+  const isRowSelectedFamilyState = useRecoilComponentCallbackState(
     isRowSelectedComponentFamilyState,
     recordTableIdFromContext,
   );
 
-  const hasUserSelectedAllRowsState = useRecoilComponentCallbackStateV2(
+  const hasUserSelectedAllRowsState = useRecoilComponentCallbackState(
     hasUserSelectedAllRowsComponentState,
     recordTableIdFromContext,
   );
 
   const lastSelectedRowIndexComponentCallbackState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       lastSelectedRowIndexComponentState,
       recordTableIdFromContext,
     );

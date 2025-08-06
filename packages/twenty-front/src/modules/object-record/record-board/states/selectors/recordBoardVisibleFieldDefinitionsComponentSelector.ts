@@ -1,9 +1,9 @@
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { recordBoardFieldDefinitionsComponentState } from '@/object-record/record-board/states/recordBoardFieldDefinitionsComponentState';
-import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
+import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
 
 export const recordBoardVisibleFieldDefinitionsComponentSelector =
-  createComponentSelectorV2({
+  createComponentSelector({
     key: 'recordBoardVisibleFieldDefinitionsComponentSelector',
     get:
       ({ instanceId }) =>

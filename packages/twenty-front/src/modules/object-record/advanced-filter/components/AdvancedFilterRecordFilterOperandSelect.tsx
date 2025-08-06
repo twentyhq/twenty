@@ -3,7 +3,7 @@ import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/ge
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -18,7 +18,7 @@ type AdvancedFilterRecordFilterOperandSelectProps = {
 export const AdvancedFilterRecordFilterOperandSelect = ({
   recordFilterId,
 }: AdvancedFilterRecordFilterOperandSelectProps) => {
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useRecoilComponentValue(
     currentRecordFiltersComponentState,
   );
 

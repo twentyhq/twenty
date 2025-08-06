@@ -6,14 +6,14 @@ import { RecordTableBodyDroppable } from '@/object-record/record-table/record-ta
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
 import { RecordTableCellPortals } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortals';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const RecordTableNoRecordGroupBody = () => {
-  const allRecordIds = useRecoilComponentValueV2(
+  const allRecordIds = useRecoilComponentValue(
     recordIndexAllRecordIdsComponentSelector,
   );
 
-  const isRecordTableInitialLoading = useRecoilComponentValueV2(
+  const isRecordTableInitialLoading = useRecoilComponentValue(
     isRecordTableInitialLoadingComponentState,
   );
 

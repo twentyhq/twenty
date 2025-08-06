@@ -14,7 +14,7 @@ import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewType } from '@/views/types/ViewType';
 
 export const sleep = (ms: number) =>
@@ -52,7 +52,7 @@ export const useRecordIndexLazyFetchRecords = ({
     viewBarId: recordIndexId,
   });
 
-  const recordGroupFieldMetadata = useRecoilComponentValueV2(
+  const recordGroupFieldMetadata = useRecoilComponentValue(
     recordGroupFieldMetadataComponentState,
     recordIndexId,
   );
@@ -60,20 +60,20 @@ export const useRecordIndexLazyFetchRecords = ({
   const hiddenKanbanFieldColumn = hiddenBoardFields.find(
     (column) => column.metadata.fieldName === recordGroupFieldMetadata?.name,
   );
-  const columns = useRecoilComponentValueV2(
+  const columns = useRecoilComponentValue(
     visibleTableColumnsComponentSelector,
     recordIndexId,
   );
 
-  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+  const contextStoreTargetedRecordsRule = useRecoilComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const contextStoreFilters = useRecoilComponentValueV2(
+  const contextStoreFilters = useRecoilComponentValue(
     contextStoreFiltersComponentState,
   );
 
-  const contextStoreAnyFieldFilterValue = useRecoilComponentValueV2(
+  const contextStoreAnyFieldFilterValue = useRecoilComponentValue(
     contextStoreAnyFieldFilterValueComponentState,
   );
 

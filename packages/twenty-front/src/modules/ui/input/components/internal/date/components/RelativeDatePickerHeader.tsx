@@ -1,5 +1,5 @@
 import { Select } from '@/ui/input/components/Select';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { RELATIVE_DATE_DIRECTION_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateDirectionSelectOptions';
 import { RELATIVE_DATE_UNITS_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateUnitSelectOptions';
 import {
@@ -71,7 +71,7 @@ export const RelativeDatePickerHeader = (
         options={RELATIVE_DATE_DIRECTION_SELECT_OPTIONS}
         fullWidth
       />
-      <TextInput
+      <SettingsTextInput
         instanceId="relative-date-picker-amount"
         width={50}
         value={textInputValue}

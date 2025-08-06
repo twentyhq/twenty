@@ -6,22 +6,22 @@ import { BoardCardIndexes } from '@/object-record/record-board/types/BoardCardIn
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useFocusedRecordBoardCard = (recordBoardId?: string) => {
-  const isCardFocusedState = useRecoilComponentCallbackStateV2(
+  const isCardFocusedState = useRecoilComponentCallbackState(
     isRecordBoardCardFocusedComponentFamilyState,
     recordBoardId,
   );
 
-  const focusedBoardCardIndexesState = useRecoilComponentCallbackStateV2(
+  const focusedBoardCardIndexesState = useRecoilComponentCallbackState(
     focusedRecordBoardCardIndexesComponentState,
     recordBoardId,
   );
 
-  const isCardFocusActiveState = useRecoilComponentCallbackStateV2(
+  const isCardFocusActiveState = useRecoilComponentCallbackState(
     isRecordBoardCardFocusActiveComponentState,
     recordBoardId,
   );

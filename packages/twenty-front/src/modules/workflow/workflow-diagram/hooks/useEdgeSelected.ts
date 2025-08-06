@@ -1,10 +1,10 @@
 import { workflowSelectedEdgeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedEdgeComponentState';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { WorkflowDiagramHandlesSelected } from '@/workflow/workflow-diagram/types/WorkflowDiagramHandlesSelected';
 
 export const useEdgeSelected = () => {
   const [workflowSelectedEdge, setWorkflowSelectedEdge] =
-    useRecoilComponentStateV2(workflowSelectedEdgeComponentState);
+    useRecoilComponentState(workflowSelectedEdgeComponentState);
 
   const isEdgeSelected = ({
     source,

@@ -7,7 +7,7 @@ import { MultipleSelectDropdown } from '@/object-record/select/components/Multip
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -19,15 +19,15 @@ export const ObjectFilterDropdownSourceSelect = ({
 }: {
   dropdownId: string;
 }) => {
-  const objectFilterDropdownSearchInput = useRecoilComponentValueV2(
+  const objectFilterDropdownSearchInput = useRecoilComponentValue(
     objectFilterDropdownSearchInputComponentState,
   );
 
-  const fieldMetadataItemUsedInFilterDropdown = useRecoilComponentValueV2(
+  const fieldMetadataItemUsedInFilterDropdown = useRecoilComponentValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
-  const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValueV2(
+  const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValue(
     objectFilterDropdownCurrentRecordFilterComponentState,
   );
 
