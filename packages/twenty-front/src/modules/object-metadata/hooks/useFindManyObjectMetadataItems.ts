@@ -8,6 +8,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '../graphql/queries';
 import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '../utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
 
@@ -17,6 +18,8 @@ export const useFindManyObjectMetadataItems = ({
   skip?: boolean;
 } = {}) => {
   const { enqueueErrorSnackBar } = useSnackBar();
+
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const { data, loading, error, refetch } = useQuery<
     ObjectMetadataItemsQuery,
@@ -34,8 +37,9 @@ export const useFindManyObjectMetadataItems = ({
   const objectMetadataItems = useMemo(() => {
     return mapPaginatedObjectMetadataItemsToObjectMetadataItems({
       pagedObjectMetadataItems: data,
+      objectPermissionsByObjectMetadataId,
     });
-  }, [data]);
+  }, [data, objectPermissionsByObjectMetadataId]);
 
   return {
     objectMetadataItems,

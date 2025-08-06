@@ -16,6 +16,8 @@ export const generatedMockObjectMetadataItems: ObjectMetadataItem[] =
     return {
       ...objectWithoutFieldsList,
       fields: fieldsList,
+      readableFields: fieldsList,
+      updatableFields: fieldsList,
       labelIdentifierFieldMetadataId,
       indexMetadatas: indexMetadataList.map((index) => ({
         ...index,
