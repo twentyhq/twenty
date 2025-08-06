@@ -8,10 +8,10 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 import { ComputedRole } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-role.factory';
 
-export interface RoleComparatorResult {
+type RoleComparatorResult = {
   action: ComparatorAction;
   object: ComputedRole;
-}
+};
 
 const rolePropertiesToIgnore = [
   'id',
