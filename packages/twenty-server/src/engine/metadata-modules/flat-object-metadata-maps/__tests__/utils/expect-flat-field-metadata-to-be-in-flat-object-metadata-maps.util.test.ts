@@ -1,4 +1,4 @@
-import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util';
+import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 

@@ -1,8 +1,8 @@
+import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
 import {
   EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
-import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util';
 
 import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata-maps/mocks/flat-object-metadata-maps.mock';
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';

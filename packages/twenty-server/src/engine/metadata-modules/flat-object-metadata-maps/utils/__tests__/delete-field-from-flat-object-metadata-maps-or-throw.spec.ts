@@ -1,9 +1,9 @@
+import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
 import {
   EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
