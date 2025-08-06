@@ -3,6 +3,7 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 
+import { jestExpectToBeDefined } from 'src/engine/metadata-modules/flat-object-metadata-maps/__tests__/utils/expect-to-be-defined.util';
 import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata-maps/mocks/flat-object-metadata-maps.mock';
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
@@ -55,14 +56,27 @@ describe('addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow', () => {
 
   it.each(filteredTestCases)(
     '$title',
-    ({ context: { input, expected, shouldThrow = false } }) => {
+    ({
+      context: {
+        input: { flatObjectMetadata, flatObjectMetadataMaps },
+        shouldThrow = false,
+        expected,
+      },
+    }) => {
       if (shouldThrow) {
         expect(() =>
-          addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow(input),
+          addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+          }),
         ).toThrowErrorMatchingSnapshot();
       } else {
+        jestExpectToBeDefined(expected);
         const updatedFlatObjectMetadataMaps =
-          addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow(input);
+          addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+          });
         expect(updatedFlatObjectMetadataMaps).toEqual(expected);
       }
     },
