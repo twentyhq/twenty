@@ -236,7 +236,10 @@ export class WorkspaceUpdateQueryBuilder<
       const results: UpdateResult[] = [];
 
       for (const input of this.manyInputs) {
-        this.expressionMap.valuesSet = input.partialEntity;
+        this.expressionMap.valuesSet = formatData(
+          input.partialEntity,
+          objectMetadata,
+        );
         this.where({ id: input.criteria });
 
         const nestedRelationQueryBuilder = new WorkspaceSelectQueryBuilder(
@@ -284,13 +287,13 @@ export class WorkspaceUpdateQueryBuilder<
       });
 
       const formattedResults = formatResult<T[]>(
-        results.map((result) => result.raw),
+        results.flatMap((result) => result.raw),
         objectMetadata,
         this.internalContext.objectMetadataMaps,
       );
 
       return {
-        raw: results.map((result) => result.raw),
+        raw: results.flatMap((result) => result.raw),
         generatedMaps: formattedResults,
         affected: results.length,
       };
@@ -383,6 +386,15 @@ export class WorkspaceUpdateQueryBuilder<
       partialEntity: QueryDeepPartialEntity<T>;
     }[],
   ): this {
+    const mainAliasTarget = this.getMainAliasTarget();
+
+    this.relationNestedConfig =
+      this.relationNestedQueries.prepareNestedRelationQueries(
+        inputs.map(
+          (input) => input.partialEntity,
+        ) as QueryDeepPartialEntityWithNestedRelationFields<T>[],
+        mainAliasTarget,
+      );
     this.manyInputs = inputs;
 
     return this;

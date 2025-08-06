@@ -6,16 +6,27 @@ import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-qu
 import { ResolverArgsType } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
-import {
-  RecordPositionService,
-  RecordPositionServiceCreateArgs,
-} from 'src/engine/core-modules/record-position/services/record-position.service';
+import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
 describe('QueryRunnerArgsFactory', () => {
   const recordPositionService = {
-    buildRecordPosition: jest.fn().mockResolvedValue(2),
+    overridePositionOnRecords: jest
+      .fn()
+      .mockImplementation(
+        ({ partialRecordInputs }: { partialRecordInputs: any[] }) => {
+          return Promise.resolve(
+            partialRecordInputs.map((record: any) => ({
+              ...record,
+              position:
+                record.position === 'last' || !record.position
+                  ? 2
+                  : record.position,
+            })),
+          );
+        },
+      ),
   };
   const workspaceId = 'workspaceId';
   const options = {
@@ -96,16 +107,24 @@ describe('QueryRunnerArgsFactory', () => {
         ResolverArgsType.CreateMany,
       );
 
-      const expectedArgs: RecordPositionServiceCreateArgs = {
-        value: 'last',
-        objectMetadata: { isCustom: true, nameSingular: 'testNumber' },
+      const expectedArgs = {
+        partialRecordInputs: [{ position: 'last', testNumber: 1 }],
+        objectMetadata: {
+          isCustom: true,
+          nameSingular: 'testNumber',
+          fieldIdByName: {
+            position: 'position-id',
+            testNumber: 'testNumber-id',
+            otherField: 'otherField-id',
+          },
+        },
         workspaceId,
-        index: 0,
+        shouldBackfillPositionIfUndefined: true,
       };
 
-      expect(recordPositionService.buildRecordPosition).toHaveBeenCalledWith(
-        expectedArgs,
-      );
+      expect(
+        recordPositionService.overridePositionOnRecords,
+      ).toHaveBeenCalledWith(expectedArgs);
       expect(result).toEqual({
         id: 'uuid',
         data: [{ position: 2, testNumber: 1 }],
@@ -124,16 +143,24 @@ describe('QueryRunnerArgsFactory', () => {
         ResolverArgsType.CreateMany,
       );
 
-      const expectedArgs: RecordPositionServiceCreateArgs = {
-        value: 'first',
-        objectMetadata: { isCustom: true, nameSingular: 'testNumber' },
+      const expectedArgs = {
+        partialRecordInputs: [{ testNumber: 1 }],
+        objectMetadata: {
+          isCustom: true,
+          nameSingular: 'testNumber',
+          fieldIdByName: {
+            position: 'position-id',
+            testNumber: 'testNumber-id',
+            otherField: 'otherField-id',
+          },
+        },
         workspaceId,
-        index: 0,
+        shouldBackfillPositionIfUndefined: true,
       };
 
-      expect(recordPositionService.buildRecordPosition).toHaveBeenCalledWith(
-        expectedArgs,
-      );
+      expect(
+        recordPositionService.overridePositionOnRecords,
+      ).toHaveBeenCalledWith(expectedArgs);
       expect(result).toEqual({
         id: 'uuid',
         data: [{ position: 2, testNumber: 1 }],
