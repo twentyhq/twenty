@@ -38,7 +38,7 @@ const StyledCell = styled.div<{ isUnfolded: boolean; isFirstCell: boolean }>`
   ${({ isFirstCell }) =>
     isFirstCell &&
     `
-    padding-left: ${RECORD_TABLE_TD_WIDTH};
+    padding-left: calc(${RECORD_TABLE_TD_WIDTH} - 4px);
   `}
 `;
 

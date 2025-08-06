@@ -17,7 +17,7 @@ export const HttpRequestExecutionResult = ({
   const isSuccess =
     httpRequestTestData.output.status !== undefined &&
     httpRequestTestData.output.status >= 200 &&
-    httpRequestTestData.output.status < 300;
+    httpRequestTestData.output.status < 400;
 
   const isError =
     httpRequestTestData.output.error !== undefined ||

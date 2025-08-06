@@ -142,13 +142,6 @@ export const WithPrefilledValues: Story = {
     actionId: 'test-action-5',
     readonly: false,
   },
-
-  parameters: {
-    recoilInitializer: ({ set: _set }: any) => {
-      // This would need to be implemented with the actual Recoil decorator
-      // to pre-fill the state with values
-    },
-  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

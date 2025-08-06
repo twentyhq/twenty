@@ -27,6 +27,31 @@ jest.mock('twenty-shared/utils', () => ({
         }
         return current;
       });
+    } else if (typeof input === 'object' && input !== null) {
+      // Handle object replacement recursively
+      const result = { ...input };
+      for (const [key, value] of Object.entries(input)) {
+        if (typeof value === 'string') {
+          result[key] = value.replace(/{{([^}]+)}}/g, (match, path) => {
+            const parts = path.split('.');
+            let current = context;
+            for (const part of parts) {
+              if (
+                current !== null &&
+                current !== undefined &&
+                typeof current === 'object' &&
+                part in current
+              ) {
+                current = (current as any)[part];
+              } else {
+                return 'undefined';
+              }
+            }
+            return current;
+          });
+        }
+      }
+      return result;
     }
     return input;
   }),
@@ -92,7 +117,7 @@ describe('useTestHttpRequest', () => {
         method: 'GET',
         headers: expect.objectContaining({
           'Content-Type': 'application/json',
-          Authorization: 'Bearer {{token}}',
+          Authorization: 'Bearer test-token-123',
         }),
       }),
     );
