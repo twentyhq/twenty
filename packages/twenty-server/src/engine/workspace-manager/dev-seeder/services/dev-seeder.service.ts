@@ -71,8 +71,6 @@ export class DevSeederService {
       workspaceId,
     });
 
-    await this.devSeederPermissionsService.initPermissions(workspaceId);
-
     await this.devSeederDataService.seed({
       schemaName: dataSourceMetadata.schema,
       workspaceId,
