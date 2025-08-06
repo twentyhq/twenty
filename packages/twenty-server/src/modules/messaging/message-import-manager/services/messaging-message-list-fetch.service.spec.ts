@@ -13,6 +13,7 @@ import { MessagingCursorService } from 'src/modules/messaging/message-import-man
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import { MessageImportExceptionHandlerService } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service';
+import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 
 describe('MessagingMessageListFetchService', () => {
   let messagingMessageListFetchService: MessagingMessageListFetchService;
@@ -120,6 +121,12 @@ describe('MessagingMessageListFetchService', () => {
           },
         },
         {
+          provide: MessagingMessagesImportService,
+          useValue: {
+            processMessageBatchImport: jest.fn().mockResolvedValue(undefined),
+          },
+        },
+        {
           provide: MessageChannelSyncStatusService,
           useValue: {
             markAsMessagesListFetchOngoing: jest
@@ -148,6 +155,7 @@ describe('MessagingMessageListFetchService', () => {
           provide: CacheStorageService,
           useValue: {
             setAdd: jest.fn().mockResolvedValue(undefined),
+            del: jest.fn().mockResolvedValue(undefined),
           },
         },
         {
@@ -169,6 +177,7 @@ describe('MessagingMessageListFetchService', () => {
       module.get<MessagingMessageListFetchService>(
         MessagingMessageListFetchService,
       );
+
     messagingGetMessageListService = module.get<MessagingGetMessageListService>(
       MessagingGetMessageListService,
     );
