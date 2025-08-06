@@ -1,7 +1,10 @@
 name: GraphQL and OpenAPI Breaking Changes Detection
 
 on:
-  pull_request:
+  # Using pull_request_target instead of pull_request to have access to secrets for external contributors
+  # Security note: This is safe because we're only analyzing API schemas and posting comments,
+  # not running untrusted code from the PR
+  pull_request_target:
     types: [opened, synchronize, edited]
     branches:
       - main
@@ -18,6 +21,7 @@ permissions:
   contents: read
   pull-requests: write
   checks: write
+  issues: write
 
 jobs:
   changed-files-check:
@@ -581,6 +585,7 @@ jobs:
         if: always()
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
             let hasChanges = false;
