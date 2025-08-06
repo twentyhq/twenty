@@ -327,11 +327,11 @@ const getSelectedColumnsFromExpressionMap = ({
 }) => {
   let selectedColumns: string[] | '*' = [];
 
-  if (
-    ['update', 'insert', 'delete', 'soft-delete', 'restore'].includes(
-      operationType,
-    )
-  ) {
+  if (operationType === 'delete' || operationType === 'soft-delete') {
+    return [];
+  }
+
+  if (['update', 'insert', 'restore'].includes(operationType)) {
     if (isEmpty(expressionMap.returning)) {
       throw new InternalServerError(
         'Returning columns are not set for update query',
