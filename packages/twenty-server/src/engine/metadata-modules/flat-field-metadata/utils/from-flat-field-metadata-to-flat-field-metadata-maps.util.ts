@@ -4,7 +4,7 @@ import { fromObjectMetadataItemWithFieldMapsToFlatObjectMetadata } from 'src/eng
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
-type FromObjectMetadataItemWithFieldMapsToFlatObjectWithFlatFieldMetadataMapsArgs =
+export type FromObjectMetadataItemWithFieldMapsToFlatObjectWithFlatFieldMetadataMapsArgs =
   {
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
     objectMetadataMaps: ObjectMetadataMaps;
