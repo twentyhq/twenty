@@ -52,51 +52,62 @@ export class RecordPositionService {
     partialRecordInputs,
     workspaceId,
     objectMetadata,
+    shouldBackfillPositionIfUndefined,
   }: {
     partialRecordInputs: Partial<ObjectRecord>[];
     workspaceId: string;
     objectMetadata: { isCustom: boolean; nameSingular: string };
+    shouldBackfillPositionIfUndefined: boolean;
   }): Promise<Partial<ObjectRecord>[]> {
-    const recordsWithFirstPosition: Partial<ObjectRecord>[] = [];
-    const recordsWithLastPosition: Partial<ObjectRecord>[] = [];
-    const recordsWithPosition: Partial<ObjectRecord>[] = [];
+    const recordsThatNeedFirstPosition: Partial<ObjectRecord>[] = [];
+    const recordsThatNeedLastPosition: Partial<ObjectRecord>[] = [];
+    const recordsWithExistingNumberPosition: Partial<ObjectRecord>[] = [];
+    const recordsThatShouldNotBeUpdated: Partial<ObjectRecord>[] = [];
 
     for (const partialRecordInput of partialRecordInputs) {
       if (partialRecordInput.position === 'last') {
-        recordsWithLastPosition.push(partialRecordInput);
+        recordsThatNeedLastPosition.push(partialRecordInput);
       } else if (typeof partialRecordInput.position === 'number') {
-        recordsWithPosition.push(partialRecordInput);
+        recordsWithExistingNumberPosition.push(partialRecordInput);
+      } else if (partialRecordInput.position === 'first') {
+        recordsThatNeedFirstPosition.push(partialRecordInput);
+      } else if (
+        partialRecordInput.position === undefined &&
+        shouldBackfillPositionIfUndefined
+      ) {
+        recordsThatNeedFirstPosition.push(partialRecordInput);
       } else {
-        recordsWithFirstPosition.push(partialRecordInput);
+        recordsThatShouldNotBeUpdated.push(partialRecordInput);
       }
     }
 
-    if (recordsWithFirstPosition.length > 0) {
+    if (recordsThatNeedFirstPosition.length > 0) {
       const minPosition = Math.min(
-        ...recordsWithPosition.map((record) => record.position),
+        ...recordsWithExistingNumberPosition.map((record) => record.position),
         (await this.findMinPosition(objectMetadata, workspaceId)) || 1,
       );
 
-      for (const [index, record] of recordsWithFirstPosition.entries()) {
+      for (const [index, record] of recordsThatNeedFirstPosition.entries()) {
         record.position = minPosition - index - 1;
       }
     }
 
-    if (recordsWithLastPosition.length > 0) {
+    if (recordsThatNeedLastPosition.length > 0) {
       const maxPosition = Math.max(
-        ...recordsWithPosition.map((record) => record.position),
+        ...recordsThatNeedLastPosition.map((record) => record.position),
         (await this.findMaxPosition(objectMetadata, workspaceId)) || 1,
       );
 
-      for (const [index, record] of recordsWithLastPosition.entries()) {
+      for (const [index, record] of recordsThatNeedLastPosition.entries()) {
         record.position = maxPosition + index + 1;
       }
     }
 
     return [
-      ...recordsWithFirstPosition,
-      ...recordsWithLastPosition,
-      ...recordsWithPosition,
+      ...recordsThatNeedFirstPosition,
+      ...recordsThatNeedLastPosition,
+      ...recordsWithExistingNumberPosition,
+      ...recordsThatShouldNotBeUpdated,
     ];
   }
 

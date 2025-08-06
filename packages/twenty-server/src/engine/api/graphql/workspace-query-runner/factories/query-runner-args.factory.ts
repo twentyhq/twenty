@@ -145,7 +145,7 @@ export class QueryRunnerArgsFactory {
   private async overrideDataByFieldMetadata(
     partialRecordInputs: Partial<ObjectRecord>[] | undefined,
     options: WorkspaceQueryRunnerOptions,
-    shouldBackfillPosition = true,
+    shouldBackfillPositionIfUndefined = true,
   ): Promise<Partial<ObjectRecord>[]> {
     if (!isDefined(partialRecordInputs)) {
       return [];
@@ -157,16 +157,16 @@ export class QueryRunnerArgsFactory {
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
-    const overriddenPositionRecords = shouldBackfillPosition
-      ? await this.recordPositionService.overridePositionOnRecords({
-          partialRecordInputs,
-          workspaceId: workspace.id,
-          objectMetadata: {
-            isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
-            nameSingular: options.objectMetadataItemWithFieldMaps.nameSingular,
-          },
-        })
-      : partialRecordInputs;
+    const overriddenPositionRecords =
+      await this.recordPositionService.overridePositionOnRecords({
+        partialRecordInputs,
+        workspaceId: workspace.id,
+        objectMetadata: {
+          isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
+          nameSingular: options.objectMetadataItemWithFieldMaps.nameSingular,
+        },
+        shouldBackfillPositionIfUndefined,
+      });
 
     for (const record of overriddenPositionRecords) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
