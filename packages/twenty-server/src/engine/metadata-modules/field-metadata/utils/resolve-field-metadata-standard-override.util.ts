@@ -1,4 +1,4 @@
-import { i18n } from '@lingui/core';
+import { setupI18n } from '@lingui/core';
 import { isNonEmptyString } from '@sniptt/guards';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
@@ -43,6 +43,9 @@ export const resolveFieldMetadataStandardOverride = (
   }
 
   const messageId = generateMessageId(fieldMetadata[labelKey] ?? '');
+  const i18n = setupI18n();
+
+  i18n.activate(locale ?? SOURCE_LOCALE);
   const translatedMessage = i18n._(messageId);
 
   if (translatedMessage === messageId) {
