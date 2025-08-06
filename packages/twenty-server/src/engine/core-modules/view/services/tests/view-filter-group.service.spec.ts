@@ -41,6 +41,7 @@ describe('ViewFilterGroupService', () => {
             create: jest.fn(),
             save: jest.fn(),
             softDelete: jest.fn(),
+            delete: jest.fn(),
           },
         },
       ],
@@ -327,6 +328,29 @@ describe('ViewFilterGroupService', () => {
           ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
         ),
       );
+    });
+  });
+
+  describe('destroy', () => {
+    it('should destroy a view filter group successfully', async () => {
+      const id = 'view-filter-group-id';
+      const workspaceId = 'workspace-id';
+
+      jest
+        .spyOn(viewFilterGroupService, 'findById')
+        .mockResolvedValue(mockViewFilterGroup);
+      jest
+        .spyOn(viewFilterGroupRepository, 'delete')
+        .mockResolvedValue({} as any);
+
+      const result = await viewFilterGroupService.destroy(id, workspaceId);
+
+      expect(viewFilterGroupService.findById).toHaveBeenCalledWith(
+        id,
+        workspaceId,
+      );
+      expect(viewFilterGroupRepository.delete).toHaveBeenCalledWith(id);
+      expect(result).toEqual(true);
     });
   });
 });
