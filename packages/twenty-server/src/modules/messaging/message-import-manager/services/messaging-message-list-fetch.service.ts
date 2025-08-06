@@ -31,6 +31,7 @@ export class MessagingMessageListFetchService {
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
     private readonly messagingMessageCleanerService: MessagingMessageCleanerService,
     private readonly messagingCursorService: MessagingCursorService,
+    private readonly messagingMessagesImportService: MessagingMessagesImportService,
   ) {}
 
   public async processMessageListFetch(
@@ -135,12 +136,17 @@ export class MessagingMessageListFetchService {
         );
       }
 
-      if (totalMessageCount < MAX_MESSAGE_COUNT_FOR_QUICK_IMPORT) {
-      }
-
       await this.messageChannelSyncStatusService.scheduleMessagesImport([
         messageChannel.id,
       ]);
+
+      if (totalMessageCount < MAX_MESSAGE_COUNT_FOR_QUICK_IMPORT) {
+        await this.messagingMessagesImportService.processMessageBatchImport(
+          messageChannel,
+          messageChannel.connectedAccount,
+          workspaceId,
+        );
+      }
     } catch (error) {
       await this.messageImportErrorHandlerService.handleDriverException(
         error,
