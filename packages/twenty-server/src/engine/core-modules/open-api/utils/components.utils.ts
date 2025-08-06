@@ -393,6 +393,7 @@ export const computeMetadataSchemaComponents = (
               operations: {
                 type: 'array',
                 items: { type: 'string' },
+                default: ['*.*'],
               },
               description: { type: 'string' },
               secret: { type: 'string' },
@@ -414,6 +415,7 @@ export const computeMetadataSchemaComponents = (
               operations: {
                 type: 'array',
                 items: { type: 'string' },
+                default: [],
               },
               description: { type: 'string' },
               secret: { type: 'string' },
