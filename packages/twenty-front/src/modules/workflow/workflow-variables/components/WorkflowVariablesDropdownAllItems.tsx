@@ -3,14 +3,15 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
-import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
-import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
-import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
 
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { t } from '@lingui/core/macro';
+import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
+import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
+import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
+import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
+import { useLingui } from '@lingui/react/macro';
 import {
   IconChevronLeft,
   OverflowingTextWithTooltip,
@@ -19,25 +20,28 @@ import {
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { useVariableDropdown } from '../hooks/useVariableDropdown';
 
-type WorkflowVariablesDropdownObjectItemsProps = {
+type WorkflowVariablesDropdownAllItemsProps = {
   step: StepOutputSchema;
   onSelect: (value: string) => void;
   onBack: () => void;
+  shouldEnableSelectRelationObject?: boolean;
 };
 
-export const WorkflowVariablesDropdownObjectItems = ({
+export const WorkflowVariablesDropdownAllItems = ({
   step,
   onSelect,
   onBack,
-}: WorkflowVariablesDropdownObjectItemsProps) => {
+  shouldEnableSelectRelationObject,
+}: WorkflowVariablesDropdownAllItemsProps) => {
+  const { t } = useLingui();
   const { getIcon } = useIcons();
   const {
-    currentPath,
-    filteredOptions,
     searchInputValue,
     setSearchInputValue,
     handleSelectField,
     goBack,
+    filteredOptions,
+    currentPath,
   } = useVariableDropdown({
     step,
     onSelect,
@@ -61,9 +65,25 @@ export const WorkflowVariablesDropdownObjectItems = ({
       return;
     }
 
-    onSelect(
-      `{{${step.id}.${[...currentPath, currentSubStep.object.fieldIdName].join('.')}}}`,
-    );
+    const isRelationField = currentSubStep.object.isRelationField ?? false;
+    const isRelationObjectSelectable =
+      shouldEnableSelectRelationObject ?? false;
+
+    if (isRelationField && isRelationObjectSelectable) {
+      onSelect(
+        getVariableTemplateFromPath({
+          stepId: step.id,
+          path: currentPath,
+        }),
+      );
+    } else {
+      onSelect(
+        getVariableTemplateFromPath({
+          stepId: step.id,
+          path: [...currentPath, currentSubStep.object.fieldIdName],
+        }),
+      );
+    }
   };
 
   const displayedSubStepObject = getDisplayedSubStepObject();
@@ -118,17 +138,17 @@ export const WorkflowVariablesDropdownObjectItems = ({
         {filteredOptions.length > 0 && shouldDisplayObject && (
           <DropdownMenuSeparator />
         )}
-        {filteredOptions.map(([key, option]) => (
+        {filteredOptions.map(([key, subStep]) => (
           <MenuItemSelect
             key={key}
             selected={false}
             focused={false}
             onClick={() => handleSelectField(key)}
-            text={option.label || key}
-            hasSubMenu={!option.isLeaf}
-            LeftIcon={option.icon ? getIcon(option.icon) : undefined}
+            text={subStep.label || key}
+            hasSubMenu={!subStep.isLeaf}
+            LeftIcon={subStep.icon ? getIcon(subStep.icon) : undefined}
             contextualText={
-              option.isLeaf ? option?.value?.toString() : undefined
+              subStep.isLeaf ? subStep?.value?.toString() : undefined
             }
           />
         ))}

@@ -95,6 +95,223 @@ describe('evaluateFilterConditions', () => {
 
         expect(result).toBe(true);
       });
+
+      // Enhanced relation filter tests with object id extraction
+      it('should extract id from left operand object for relation comparison', () => {
+        const uuid1 = '550e8400-e29b-41d4-a716-446655440000';
+        const leftObject = { id: uuid1, name: 'John Doe' };
+        const rightValue = uuid1;
+
+        const filter = createFilter(
+          ViewFilterOperand.Is,
+          leftObject,
+          rightValue,
+          'RELATION',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should extract id from right operand object for relation comparison', () => {
+        const uuid1 = '550e8400-e29b-41d4-a716-446655440000';
+        const leftValue = uuid1;
+        const rightObject = { id: uuid1, name: 'John Doe' };
+
+        const filter = createFilter(
+          ViewFilterOperand.Is,
+          leftValue,
+          rightObject,
+          'RELATION',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should extract id from both operands when they are objects for relation comparison', () => {
+        const uuid1 = '550e8400-e29b-41d4-a716-446655440000';
+        const leftObject = { id: uuid1, name: 'John Doe' };
+        const rightObject = { id: uuid1, title: 'Admin' };
+
+        const filter = createFilter(
+          ViewFilterOperand.Is,
+          leftObject,
+          rightObject,
+          'RELATION',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should return false when extracted ids do not match for relation comparison', () => {
+        const uuid1 = '550e8400-e29b-41d4-a716-446655440000';
+        const uuid2 = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
+        const leftObject = { id: uuid1, name: 'John Doe' };
+        const rightObject = { id: uuid2, name: 'Jane Smith' };
+
+        const filter = createFilter(
+          ViewFilterOperand.Is,
+          leftObject,
+          rightObject,
+          'RELATION',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
+      it('should handle IsNot with object id extraction for relation comparison', () => {
+        const uuid1 = '550e8400-e29b-41d4-a716-446655440000';
+        const uuid2 = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
+        const leftObject = { id: uuid1, name: 'John Doe' };
+        const rightObject = { id: uuid2, name: 'Jane Smith' };
+
+        const filter = createFilter(
+          ViewFilterOperand.IsNot,
+          leftObject,
+          rightObject,
+          'RELATION',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should handle objects without id property for relation comparison', () => {
+        const leftObject = { name: 'John Doe' };
+        const rightObject = { name: 'John Doe' };
+
+        const filter = createFilter(
+          ViewFilterOperand.Is,
+          leftObject,
+          rightObject,
+          'RELATION',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false); // Objects are different references
+      });
+
+      it('should throw error for unsupported relation filter operand', () => {
+        const uuid1 = '550e8400-e29b-41d4-a716-446655440000';
+        const uuid2 = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
+        const filter = createFilter(
+          ViewFilterOperand.Contains,
+          uuid1,
+          uuid2,
+          'RELATION',
+        );
+
+        expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow(
+          'Operand contains not supported for relation filter',
+        );
+      });
+    });
+
+    describe('UUID filter operands', () => {
+      const uuid1 = '550e8400-e29b-41d4-a716-446655440000';
+      const uuid2 = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
+
+      it('should return true when UUIDs are equal (Is)', () => {
+        const filter = createFilter(ViewFilterOperand.Is, uuid1, uuid1, 'UUID');
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should return false when UUIDs are not equal (Is)', () => {
+        const filter = createFilter(ViewFilterOperand.Is, uuid1, uuid2, 'UUID');
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
+      it('should return false when UUIDs are equal (IsNot)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IsNot,
+          uuid1,
+          uuid1,
+          'UUID',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
+      it('should return true when UUIDs are not equal (IsNot)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IsNot,
+          uuid1,
+          uuid2,
+          'UUID',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should handle null/undefined UUIDs with Is operand', () => {
+        const filter1 = createFilter(ViewFilterOperand.Is, null, null, 'UUID');
+        const filter2 = createFilter(
+          ViewFilterOperand.Is,
+          undefined,
+          undefined,
+          'UUID',
+        );
+        const filter3 = createFilter(ViewFilterOperand.Is, uuid1, null, 'UUID');
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
+      });
+
+      it('should handle null/undefined UUIDs with IsNot operand', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.IsNot,
+          null,
+          null,
+          'UUID',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.IsNot,
+          undefined,
+          undefined,
+          'UUID',
+        );
+        const filter3 = createFilter(
+          ViewFilterOperand.IsNot,
+          uuid1,
+          null,
+          'UUID',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(true);
+      });
+
+      it('should handle empty string UUIDs', () => {
+        const filter1 = createFilter(ViewFilterOperand.Is, '', '', 'UUID');
+        const filter2 = createFilter(ViewFilterOperand.Is, uuid1, '', 'UUID');
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+      });
+
+      it('should throw error for unsupported UUID filter operand', () => {
+        const filter = createFilter(
+          ViewFilterOperand.Contains,
+          uuid1,
+          uuid2,
+          'UUID',
+        );
+
+        expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow(
+          'Operand contains not supported for uuid filter',
+        );
+      });
     });
 
     describe('Boolean filter operands', () => {
