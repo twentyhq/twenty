@@ -3,22 +3,22 @@ import { Injectable } from '@nestjs/common';
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { ComputedPermissionMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-permission.factory';
+import { ComputedPermission } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-permission.factory';
 
 export interface PermissionComparatorResult {
   action: ComparatorAction;
-  object: ComputedPermissionMetadata;
+  object: ComputedPermission;
 }
 
 @Injectable()
 export class WorkspacePermissionComparator {
   compare(
-    standardPermissionMetadata: ComputedPermissionMetadata[],
+    standardPermissions: ComputedPermission[],
     existingRoles: RoleEntity[],
   ): PermissionComparatorResult[] {
     const results: PermissionComparatorResult[] = [];
 
-    for (const standardPermission of standardPermissionMetadata) {
+    for (const standardPermission of standardPermissions) {
       const existingRole = existingRoles.find(
         (role) => role.id === standardPermission.roleId,
       );
@@ -48,7 +48,7 @@ export class WorkspacePermissionComparator {
 
   private rolePropertiesDiffer(
     existing: RoleEntity,
-    standard: ComputedPermissionMetadata,
+    standard: ComputedPermission,
   ): boolean {
     return (
       existing.label !== standard.label ||
