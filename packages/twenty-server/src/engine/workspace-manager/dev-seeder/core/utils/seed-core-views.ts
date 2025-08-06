@@ -1,12 +1,14 @@
+import { ViewFilterOperand as SharedViewFilterOperand } from 'twenty-shared/types';
 import { DataSource, QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
+import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
+import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
-import { ViewField } from 'src/engine/metadata-modules/view/view-field.entity';
-import { ViewFilter } from 'src/engine/metadata-modules/view/view-filter.entity';
-import { ViewGroup } from 'src/engine/metadata-modules/view/view-group.entity';
-import { View } from 'src/engine/metadata-modules/view/view.entity';
 import { ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
 import { customAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view';
@@ -20,6 +22,7 @@ import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects
 import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view';
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
+import { convertViewFilterOperandToCoreOperand } from 'src/modules/view/utils/convert-view-filter-operand-to-core-operand.util';
 
 export const seedCoreViews = async (
   dataSource: DataSource,
@@ -97,7 +100,7 @@ const createCoreViews = async (
       id,
       name,
       objectMetadataId,
-      type,
+      type: type === 'kanban' ? ViewType.KANBAN : ViewType.TABLE,
       key: key || undefined,
       position,
       icon,
@@ -139,7 +142,9 @@ const createCoreViews = async (
         (filter) => ({
           fieldMetadataId: filter.fieldMetadataId,
           viewId: viewDefinition.id,
-          operand: filter.operand,
+          operand: convertViewFilterOperandToCoreOperand(
+            filter.operand as SharedViewFilterOperand,
+          ),
           value: filter.value,
           workspaceId,
         }),
