@@ -11,7 +11,6 @@ import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/g
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
 import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronLeft,
   OverflowingTextWithTooltip,
@@ -24,12 +23,14 @@ type WorkflowVariablesDropdownAllItemsProps = {
   step: StepOutputSchema;
   onSelect: (value: string) => void;
   onBack: () => void;
+  shouldEnableSelectRelationObject?: boolean;
 };
 
 export const WorkflowVariablesDropdownAllItems = ({
   step,
   onSelect,
   onBack,
+  shouldEnableSelectRelationObject,
 }: WorkflowVariablesDropdownAllItemsProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
@@ -63,9 +64,11 @@ export const WorkflowVariablesDropdownAllItems = ({
       return;
     }
 
-    const isRelationField = currentSubStep.object.isRelationField;
+    const isRelationField = currentSubStep.object.isRelationField ?? false;
+    const isRelationObjectSelectable =
+      shouldEnableSelectRelationObject ?? false;
 
-    if (isDefined(isRelationField) && isRelationField) {
+    if (isRelationField && isRelationObjectSelectable) {
       onSelect(`{{${step.id}.${[...currentPath].join('.')}}}`);
     } else {
       onSelect(

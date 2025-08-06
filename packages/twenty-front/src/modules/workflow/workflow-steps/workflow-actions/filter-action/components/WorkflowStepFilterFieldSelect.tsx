@@ -162,6 +162,7 @@ export const WorkflowStepFilterFieldSelect = ({
       }
       shouldDisplayRecordFields={shouldDisplayRecordFields}
       shouldDisplayRecordObjects={shouldDisplayRecordObjects}
+      shouldEnableSelectRelationObject={true}
     />
   );
 };
