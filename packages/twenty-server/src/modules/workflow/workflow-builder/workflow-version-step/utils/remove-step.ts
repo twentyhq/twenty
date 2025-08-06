@@ -1,6 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import {
+  WorkflowAction,
+  WorkflowActionType,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 const computeUpdatedNextStepIds = ({
@@ -25,7 +28,7 @@ const computeUpdatedNextStepIds = ({
   ];
 };
 
-export const removeStep = ({
+const removeRegularStep = ({
   existingTrigger,
   existingSteps,
   stepIdToDelete,
@@ -35,9 +38,28 @@ export const removeStep = ({
   existingSteps: WorkflowAction[];
   stepIdToDelete: string;
   stepToDeleteChildrenIds?: string[];
-}): { steps: WorkflowAction[]; trigger: WorkflowTrigger | null } => {
+}): {
+  updatedSteps: WorkflowAction[];
+  updatedTrigger: WorkflowTrigger | null;
+  removedStepIds: string[];
+} => {
+  const stepIdsToRemove = [stepIdToDelete];
+  let stepIdsToRemoveChildrenIds = stepToDeleteChildrenIds || [];
+
+  // if step is a filter, remove the filter and use the filter's next step ids
+  stepToDeleteChildrenIds?.forEach((id) => {
+    const step = existingSteps.find((step) => step.id === id);
+
+    if (step?.type === WorkflowActionType.FILTER) {
+      stepIdsToRemove.push(step.id);
+      stepIdsToRemoveChildrenIds = stepIdsToRemoveChildrenIds
+        ?.filter((id) => id !== step.id)
+        .concat(step.nextStepIds || []);
+    }
+  });
+
   const updatedSteps = existingSteps
-    .filter((step) => step.id !== stepIdToDelete)
+    .filter((step) => !stepIdsToRemove.includes(step.id))
     .map((step) => {
       if (step.nextStepIds?.includes(stepIdToDelete)) {
         return {
@@ -45,7 +67,7 @@ export const removeStep = ({
           nextStepIds: computeUpdatedNextStepIds({
             existingNextStepIds: step.nextStepIds,
             stepIdToDelete,
-            stepToDeleteChildrenIds,
+            stepToDeleteChildrenIds: stepIdsToRemoveChildrenIds,
           }),
         };
       }
@@ -62,11 +84,69 @@ export const removeStep = ({
         nextStepIds: computeUpdatedNextStepIds({
           existingNextStepIds: existingTrigger.nextStepIds,
           stepIdToDelete,
-          stepToDeleteChildrenIds,
+          stepToDeleteChildrenIds: stepIdsToRemoveChildrenIds,
         }),
       };
     }
   }
 
-  return { trigger: updatedTrigger, steps: updatedSteps };
+  return {
+    updatedTrigger,
+    updatedSteps,
+    removedStepIds: stepIdsToRemove,
+  };
+};
+
+const removeTrigger = ({
+  existingSteps,
+  triggerChildrenIds,
+}: {
+  existingSteps: WorkflowAction[];
+  triggerChildrenIds?: string[];
+}) => {
+  const stepIdsToRemove: string[] = [];
+
+  triggerChildrenIds?.forEach((id) => {
+    const step = existingSteps.find((step) => step.id === id);
+
+    if (step?.type === WorkflowActionType.FILTER) {
+      stepIdsToRemove.push(step.id);
+    }
+  });
+
+  const updatedSteps = existingSteps.filter(
+    (step) => !stepIdsToRemove.includes(step.id),
+  );
+
+  return {
+    updatedSteps,
+    updatedTrigger: null,
+    removedStepIds: ['trigger', ...stepIdsToRemove],
+  };
+};
+
+export const removeStep = ({
+  existingTrigger,
+  existingSteps,
+  stepIdToDelete,
+  stepToDeleteChildrenIds,
+}: {
+  existingTrigger: WorkflowTrigger | null;
+  existingSteps: WorkflowAction[];
+  stepIdToDelete: string;
+  stepToDeleteChildrenIds?: string[];
+}) => {
+  if (stepIdToDelete === 'trigger') {
+    return removeTrigger({
+      existingSteps,
+      triggerChildrenIds: stepToDeleteChildrenIds,
+    });
+  } else {
+    return removeRegularStep({
+      existingTrigger,
+      existingSteps,
+      stepIdToDelete,
+      stepToDeleteChildrenIds,
+    });
+  }
 };

@@ -9,7 +9,6 @@ import {
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { assertWorkflowWithCurrentVersionIsDefined } from '@/workflow/utils/assertWorkflowWithCurrentVersionIsDefined';
-import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useDeleteStep = ({
@@ -22,7 +21,7 @@ export const useDeleteStep = ({
     useUpdateOneRecord<WorkflowVersion>({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
-  const { deleteStepOutputSchema } = useStepsOutputSchema();
+  const { deleteStepsOutputSchema } = useStepsOutputSchema();
 
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
   const { closeCommandMenu } = useCommandMenu();
@@ -36,24 +35,15 @@ export const useDeleteStep = ({
       throw new Error('Could not find workflow version');
     }
 
-    if (stepId === TRIGGER_STEP_ID) {
-      await updateOneWorkflowVersion({
-        idToUpdate: workflowVersionId,
-        updateOneRecordInput: {
-          trigger: null,
-        },
-      });
-    } else {
-      await deleteWorkflowVersionStep({
-        workflowVersionId,
-        stepId,
-      });
-    }
+    const workflowVersionStepChanges = await deleteWorkflowVersionStep({
+      workflowVersionId,
+      stepId,
+    });
 
     closeCommandMenu();
 
-    deleteStepOutputSchema({
-      stepId,
+    deleteStepsOutputSchema({
+      stepIds: workflowVersionStepChanges?.deletedStepIds || [],
       workflowVersionId,
     });
   };
