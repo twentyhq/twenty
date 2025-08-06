@@ -1,5 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  FlatObjectMetadataMapsException,
+  FlatObjectMetadataMapsExceptionCode,
+} from 'src/engine/metadata-modules/flat-object-metadata-maps/flat-object-metadata-maps.exception';
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { deleteFieldFromFlatObjectMetadataWithFlatFieldMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-with-flat-field-maps-or-throw.util';
 
@@ -17,8 +21,9 @@ export const deleteFieldFromFlatObjectMetadataMapsOrThrow = ({
     flatObjectMetadataMaps.byId[objectMetadataId];
 
   if (!isDefined(flatObjectMetadataWithFlatFieldMaps)) {
-    throw new Error(
+    throw new FlatObjectMetadataMapsException(
       'deleteFieldFromFlatObjectMetadataMapsOrThrow: flat field metadata to delete parent flat object metadata not found',
+      FlatObjectMetadataMapsExceptionCode.OBJECT_METADATA_NOT_FOUND,
     );
   }
 

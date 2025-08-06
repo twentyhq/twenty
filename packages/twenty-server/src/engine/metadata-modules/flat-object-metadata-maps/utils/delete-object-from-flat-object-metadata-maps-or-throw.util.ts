@@ -1,5 +1,9 @@
 import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 
+import {
+  FlatObjectMetadataMapsException,
+  FlatObjectMetadataMapsExceptionCode,
+} from 'src/engine/metadata-modules/flat-object-metadata-maps/flat-object-metadata-maps.exception';
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 
 type DeleteObjectFromFlatObjectMetadataMapsOrThrowArgs = {
@@ -11,8 +15,9 @@ export const deleteObjectFromFlatObjectMetadataMapsOrThrow = ({
   objectMetadataId,
 }: DeleteObjectFromFlatObjectMetadataMapsOrThrowArgs): FlatObjectMetadataMaps => {
   if (!isDefined(flatObjectMetadataMaps.byId[objectMetadataId])) {
-    throw new Error(
-      'deleteObjectFromFlatObjectMetadataMapsOrThrow: object to delete does not exist',
+    throw new FlatObjectMetadataMapsException(
+      'deleteObjectFromFlatObjectMetadataMapsOrThrow: object to delete not found',
+      FlatObjectMetadataMapsExceptionCode.OBJECT_METADATA_NOT_FOUND,
     );
   }
 

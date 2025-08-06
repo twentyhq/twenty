@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { FlatObjectMetadataMapsException, FlatObjectMetadataMapsExceptionCode } from 'src/engine/metadata-modules/flat-object-metadata-maps/flat-object-metadata-maps.exception';
 import {
   FlatFieldMetadataMaps,
   FlatObjectMetadataWithFlatFieldMaps,
@@ -21,8 +22,9 @@ export const addFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMapsOrThrow =
         flatObjectMetadataWithFlatFieldMaps.fieldsById[flatFieldMetadata.id],
       )
     ) {
-      throw new Error(
+      throw new FlatObjectMetadataMapsException(
         'addFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMaps added flatFieldMetadata already exists',
+        FlatObjectMetadataMapsExceptionCode.FIELD_METADATA_ALREADY_EXISTS,
       );
     }
 
