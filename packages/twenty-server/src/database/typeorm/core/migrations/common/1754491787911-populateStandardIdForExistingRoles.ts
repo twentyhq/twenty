@@ -1,9 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class PopulateStandardIdForExistingRoles1754479077000
+export class PopulateStandardIdForExistingRoles1754491787911
   implements MigrationInterface
 {
-  name = 'PopulateStandardIdForExistingRoles1754479077000';
+  name = 'PopulateStandardIdForExistingRoles1754491787911';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
