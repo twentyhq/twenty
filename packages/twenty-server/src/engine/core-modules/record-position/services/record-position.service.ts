@@ -66,7 +66,7 @@ export class RecordPositionService {
         recordsWithLastPosition.push(partialRecordInput);
       } else if (typeof partialRecordInput.position === 'number') {
         recordsWithPosition.push(partialRecordInput);
-      } else if (partialRecordInput.position === 'first') {
+      } else {
         recordsWithFirstPosition.push(partialRecordInput);
       }
     }
