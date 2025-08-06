@@ -14,7 +14,8 @@ export const useContextStoreObjectMetadataItem = (
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const objectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItem) => objectMetadataItem.id === objectMetadataItemId,
+    (objectMetadataItemToFind) =>
+      objectMetadataItemToFind.id === objectMetadataItemId,
   );
 
   return { objectMetadataItem };
