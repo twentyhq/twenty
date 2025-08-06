@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
-import { i18n } from '@lingui/core';
+import { I18n, MessageOptions, Messages, setupI18n } from '@lingui/core';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { messages as afMessages } from 'src/engine/core-modules/i18n/locales/generated/af-ZA';
@@ -37,9 +37,13 @@ import { messages as zhHantMessages } from 'src/engine/core-modules/i18n/locales
 
 @Injectable()
 export class I18nService implements OnModuleInit {
+  private i18nMap: Record<keyof typeof APP_LOCALES, I18n> = {} as Record<
+    keyof typeof APP_LOCALES,
+    I18n
+  >;
+
   async loadTranslations() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const messages: Record<keyof typeof APP_LOCALES, any> = {
+    const messagesByLocale: Record<keyof typeof APP_LOCALES, Messages> = {
       en: enMessages,
       'pseudo-en': pseudoEnMessages,
       'af-ZA': afMessages,
@@ -73,14 +77,36 @@ export class I18nService implements OnModuleInit {
       'zh-TW': zhHantMessages,
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (Object.entries(messages) as [keyof typeof APP_LOCALES, any][]).forEach(
-      ([locale, message]) => {
-        i18n.load(locale, message);
-      },
-    );
+    (
+      Object.entries(messagesByLocale) as [keyof typeof APP_LOCALES, Messages][]
+    ).forEach(([locale, messages]) => {
+      const localeI18n = setupI18n();
 
-    i18n.activate(SOURCE_LOCALE);
+      localeI18n.load(locale, messages);
+      localeI18n.activate(locale);
+
+      this.i18nMap[locale] = localeI18n;
+    });
+  }
+
+  getI18n(locale: keyof typeof APP_LOCALES) {
+    return this.i18nMap[locale];
+  }
+
+  getTranslation({
+    id,
+    values,
+    locale = SOURCE_LOCALE,
+    options,
+  }: {
+    id: string;
+    values?: Record<string, string>;
+    locale?: keyof typeof APP_LOCALES;
+    options?: MessageOptions;
+  }) {
+    const i18n = this.i18nMap[locale];
+
+    return i18n._(id, values, options);
   }
 
   async onModuleInit() {
