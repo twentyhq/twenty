@@ -24,6 +24,10 @@ export const MergeSettingsTab = () => {
     updatePriorityRecordIndex(index);
   };
 
+  if (selectedRecords.length === 0) {
+    return null;
+  }
+
   return (
     <StyledSection>
       <Select

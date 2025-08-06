@@ -1,4 +1,4 @@
-import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-step/utils/insert-step';
+import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
 import {
   WorkflowAction,
   WorkflowActionType,

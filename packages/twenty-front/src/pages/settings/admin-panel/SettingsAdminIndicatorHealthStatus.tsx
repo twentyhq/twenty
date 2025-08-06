@@ -61,7 +61,7 @@ export const SettingsAdminIndicatorHealthStatus = () => {
         <SettingsAdminIndicatorHealthContext.Provider
           value={{
             indicatorHealth: {
-              id: data?.getIndicatorHealthStatus?.id ?? '',
+              id: data?.getIndicatorHealthStatus?.id ?? HealthIndicatorId.app,
               label: data?.getIndicatorHealthStatus?.label ?? '',
               description: data?.getIndicatorHealthStatus?.description ?? '',
               errorMessage: data?.getIndicatorHealthStatus?.errorMessage,

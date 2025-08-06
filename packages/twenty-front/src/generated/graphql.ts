@@ -31,7 +31,7 @@ export type AdminPanelHealthServiceData = {
   description: Scalars['String'];
   details?: Maybe<Scalars['String']>;
   errorMessage?: Maybe<Scalars['String']>;
-  id: Scalars['UUID'];
+  id: HealthIndicatorId;
   label: Scalars['String'];
   queues?: Maybe<Array<AdminPanelWorkerQueueHealth>>;
   status: AdminPanelHealthServiceStatus;
@@ -2301,6 +2301,7 @@ export type Role = {
   canUpdateAllObjectRecords: Scalars['Boolean'];
   canUpdateAllSettings: Scalars['Boolean'];
   description?: Maybe<Scalars['String']>;
+  fieldPermissions?: Maybe<Array<FieldPermission>>;
   icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   isEditable: Scalars['Boolean'];

@@ -2153,7 +2153,7 @@ msgid "Statuses cannot be set manually."
 msgstr "Los estados no se pueden establecer manualmente."
 
 #. js-lingui-id: u+rv4L
-#: src/modules/workflow/workflow-builder/workflow-step/workflow-version-step.workspace-service.ts
+#: src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service.ts
 msgid "Step is not a form"
 msgstr "El paso no es un formulario"
 
@@ -2584,6 +2584,11 @@ msgstr "El usuario no es parte del espacio de trabajo"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User time zone"
 msgstr "Zona horaria del usuario"
+
+#. js-lingui-id: VkcC68
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "User was not created with email/password"
+msgstr ""
 
 #. js-lingui-id: 43zCwQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
