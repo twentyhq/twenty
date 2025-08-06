@@ -35,7 +35,7 @@ export class WorkspaceMigrationRunnerV2Service {
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    let sequentiallyOptimisticallyRenderedFlatObjectMetadataMaps =
+    let optimisticFlatObjectMetadataMaps =
       structuredClone(flatObjectMetadataMaps);
 
     try {
@@ -43,23 +43,23 @@ export class WorkspaceMigrationRunnerV2Service {
         await Promise.all([
           this.workspaceMetadataMigrationRunner.runWorkspaceMetadataMigration({
             flatObjectMetadataMaps:
-              sequentiallyOptimisticallyRenderedFlatObjectMetadataMaps,
+              optimisticFlatObjectMetadataMaps,
             queryRunner,
             action,
           }),
           this.workspaceSchemaMigrationRunner.runWorkspaceSchemaMigration({
             queryRunner,
             flatObjectMetadataMaps:
-              sequentiallyOptimisticallyRenderedFlatObjectMetadataMaps,
+              optimisticFlatObjectMetadataMaps,
             action,
           }),
         ]);
 
-        sequentiallyOptimisticallyRenderedFlatObjectMetadataMaps =
+        optimisticFlatObjectMetadataMaps =
           applyWorkspaceMigrationActionOnFlatObjectMetadataMaps({
             action,
             flatObjectMetadataMaps:
-              sequentiallyOptimisticallyRenderedFlatObjectMetadataMaps,
+              optimisticFlatObjectMetadataMaps,
           });
       }
 
