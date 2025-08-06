@@ -16,6 +16,7 @@ import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
 } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
+import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 
 const MAX_MESSAGE_COUNT_FOR_QUICK_IMPORT = 100;
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
@@ -134,6 +135,10 @@ export class MessagingMessageListFetchService {
           nextSyncCursor,
           folderId,
         );
+      }
+
+      if (totalMessageCount === 0) {
+        return;
       }
 
       await this.messageChannelSyncStatusService.scheduleMessagesImport([

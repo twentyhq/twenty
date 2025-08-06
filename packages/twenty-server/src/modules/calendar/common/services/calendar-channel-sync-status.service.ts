@@ -27,9 +27,7 @@ export class CalendarChannelSyncStatusService {
     private readonly metricsService: MetricsService,
   ) {}
 
-  public async scheduleFullCalendarEventListFetch(
-    calendarChannelIds: string[],
-  ) {
+  public async scheduleCalendarEventListFetch(calendarChannelIds: string[]) {
     if (!calendarChannelIds.length) {
       return;
     }
@@ -42,24 +40,6 @@ export class CalendarChannelSyncStatusService {
     await calendarChannelRepository.update(calendarChannelIds, {
       syncStage:
         CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING,
-    });
-  }
-
-  public async schedulePartialCalendarEventListFetch(
-    calendarChannelIds: string[],
-  ) {
-    if (!calendarChannelIds.length) {
-      return;
-    }
-
-    const calendarChannelRepository =
-      await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
-        'calendarChannel',
-      );
-
-    await calendarChannelRepository.update(calendarChannelIds, {
-      syncStage:
-        CalendarChannelSyncStage.PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING,
     });
   }
 
@@ -82,7 +62,7 @@ export class CalendarChannelSyncStatusService {
     });
   }
 
-  public async resetAndScheduleFullCalendarEventListFetch(
+  public async resetAndScheduleCalendarEventListFetch(
     calendarChannelIds: string[],
     workspaceId: string,
   ) {
@@ -107,7 +87,7 @@ export class CalendarChannelSyncStatusService {
       throttleFailureCount: 0,
     });
 
-    await this.scheduleFullCalendarEventListFetch(calendarChannelIds);
+    await this.scheduleCalendarEventListFetch(calendarChannelIds);
   }
 
   public async resetSyncStageStartedAt(calendarChannelIds: string[]) {
@@ -156,7 +136,7 @@ export class CalendarChannelSyncStatusService {
     });
   }
 
-  public async markAsCompletedAndSchedulePartialCalendarEventListFetch(
+  public async markAsCompletedAndScheduleCalendarEventListFetch(
     calendarChannelIds: string[],
   ) {
     if (!calendarChannelIds.length) {
@@ -177,7 +157,7 @@ export class CalendarChannelSyncStatusService {
       syncedAt: new Date().toISOString(),
     });
 
-    await this.schedulePartialCalendarEventListFetch(calendarChannelIds);
+    await this.scheduleCalendarEventListFetch(calendarChannelIds);
 
     await this.metricsService.batchIncrementCounter({
       key: MetricsKeys.CalendarEventSyncJobActive,

@@ -205,7 +205,7 @@ export class CalendarEventImportErrorHandlerService {
       return;
     }
 
-    await this.calendarChannelSyncStatusService.resetAndScheduleFullCalendarEventListFetch(
+    await this.calendarChannelSyncStatusService.resetAndScheduleCalendarEventListFetch(
       [calendarChannel.id],
       workspaceId,
     );
