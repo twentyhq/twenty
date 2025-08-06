@@ -4,11 +4,11 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
-import { GenericExecutionResult } from '@/workflow/components/GenericExecutionResult';
+import { WorkflowExecutionResult } from '@/workflow/components/WorkflowExecutionResult';
 
-const meta: Meta<typeof GenericExecutionResult> = {
+const meta: Meta<typeof WorkflowExecutionResult> = {
   title: 'Modules/Workflow/Components/ExecutionResult',
-  component: GenericExecutionResult,
+  component: WorkflowExecutionResult,
   decorators: [ComponentDecorator, SnackBarDecorator, I18nFrontDecorator],
   args: {
     result: JSON.stringify(
@@ -29,7 +29,7 @@ const meta: Meta<typeof GenericExecutionResult> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof GenericExecutionResult>;
+type Story = StoryObj<typeof WorkflowExecutionResult>;
 
 export const Idle: Story = {
   args: {

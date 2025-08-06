@@ -57,7 +57,7 @@ export type ExecutionStatus = {
   additionalInfo?: string;
 };
 
-type GenericExecutionResultProps = {
+type WorkflowExecutionResultProps = {
   result: string;
   language: 'plaintext' | 'json';
   height?: string | number;
@@ -67,7 +67,7 @@ type GenericExecutionResultProps = {
   idleMessage?: string;
 };
 
-export const GenericExecutionResult = ({
+export const WorkflowExecutionResult = ({
   result,
   language,
   height = '100%',
@@ -75,7 +75,7 @@ export const GenericExecutionResult = ({
   isTesting = false,
   loadingMessage = 'Processing...',
   idleMessage = 'Output',
-}: GenericExecutionResultProps) => {
+}: WorkflowExecutionResultProps) => {
   const theme = useTheme();
 
   const SuccessLeftNode = (
