@@ -1,4 +1,4 @@
-import { isString } from '@sniptt/guards';
+import { isObject, isString } from '@sniptt/guards';
 import {
   StepFilter,
   StepFilterGroup,
@@ -32,6 +32,7 @@ function evaluateFilter(filter: ResolvedFilter): boolean {
     case 'BOOLEAN':
       return evaluateBooleanFilter(filter);
     case 'UUID':
+      return evaluateUuidFilter(filter);
     case 'RELATION':
       return evaluateRelationFilter(filter);
     case 'CURRENCY':
@@ -193,12 +194,36 @@ function evaluateDateFilter(filter: ResolvedFilter): boolean {
   }
 }
 
-function evaluateRelationFilter(filter: ResolvedFilter): boolean {
+function evaluateUuidFilter(filter: ResolvedFilter): boolean {
   switch (filter.operand) {
     case ViewFilterOperand.Is:
       return filter.leftOperand === filter.rightOperand;
     case ViewFilterOperand.IsNot:
       return filter.leftOperand !== filter.rightOperand;
+    default:
+      throw new Error(
+        `Operand ${filter.operand} not supported for uuid filter`,
+      );
+  }
+}
+
+function evaluateRelationFilter(filter: ResolvedFilter): boolean {
+  // compare only the ids. If the left operand is the relation object, get the id
+  const leftValue =
+    isObject(filter.leftOperand) && 'id' in filter.leftOperand
+      ? filter.leftOperand.id
+      : filter.leftOperand;
+
+  const rightValue =
+    isObject(filter.rightOperand) && 'id' in filter.rightOperand
+      ? filter.rightOperand.id
+      : filter.rightOperand;
+
+  switch (filter.operand) {
+    case ViewFilterOperand.Is:
+      return leftValue === rightValue;
+    case ViewFilterOperand.IsNot:
+      return leftValue !== rightValue;
     default:
       throw new Error(
         `Operand ${filter.operand} not supported for relation filter`,

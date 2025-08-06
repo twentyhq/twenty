@@ -4511,7 +4511,7 @@ msgid "Phone number copied to clipboard"
 msgstr "電話號碼已複製到剪貼板"
 
 #. js-lingui-id: FdlpPK
-#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownObjectItems.tsx
+#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownAllItems.tsx
 msgid "Pick a {nameSingular} record"
 msgstr "選擇一個{nameSingular}記錄"
 

@@ -2,6 +2,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { workflowDiagramTriggerNodeSelectionComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramTriggerNodeSelectionComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
+import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -70,7 +71,12 @@ export const useVariableDropdown = ({
         setCurrentPath([...currentPath, key]);
         setSearchInputValue('');
       } else {
-        onSelect(`{{${step.id}.${[...currentPath, key].join('.')}}}`);
+        onSelect(
+          getVariableTemplateFromPath({
+            stepId: step.id,
+            path: [...currentPath, key],
+          }),
+        );
       }
     };
 

@@ -30,6 +30,7 @@ export const WorkflowDiagramStepNodeEditable = ({
 
   return (
     <WorkflowDiagramStepNodeEditableContent
+      id={id}
       data={data}
       variant="default"
       selected={selected ?? false}

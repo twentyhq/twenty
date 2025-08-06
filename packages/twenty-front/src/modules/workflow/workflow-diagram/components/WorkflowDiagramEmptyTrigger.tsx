@@ -13,6 +13,7 @@ const StyledStepNodeLabelIconContainer = styled.div`
 export const WorkflowDiagramEmptyTrigger = () => {
   return (
     <WorkflowDiagramStepNodeBase
+      id={'trigger'}
       name="Add a Trigger"
       nodeType="trigger"
       variant="empty"

@@ -22,15 +22,10 @@ import {
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
-import { css, useTheme } from '@emotion/react';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  BaseEdge,
-  EdgeLabelRenderer,
-  EdgeProps,
-  getBezierPath,
-} from '@xyflow/react';
+import { EdgeLabelRenderer, EdgeProps, getBezierPath } from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconDotsVertical,
@@ -40,7 +35,9 @@ import {
 } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
-import { useIsEdgeHovered } from '@/workflow/workflow-diagram/hooks/useIsEdgeHovered';
+import { useEdgeHovered } from '@/workflow/workflow-diagram/hooks/useEdgeHovered';
+import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseEdge';
+import { WorkflowDiagramEdgeButtonGroup } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeButtonGroup';
 
 type WorkflowDiagramFilterEdgeEditableProps = EdgeProps<WorkflowDiagramEdge>;
 
@@ -86,8 +83,6 @@ export const WorkflowDiagramFilterEdgeEditable = ({
 }: WorkflowDiagramFilterEdgeEditableProps) => {
   assertFilterEdgeDataOrThrow(data);
 
-  const theme = useTheme();
-
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
     sourceY,
@@ -106,13 +101,13 @@ export const WorkflowDiagramFilterEdgeEditable = ({
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
 
-  const { isEdgeHovered } = useIsEdgeHovered();
+  const { isEdgeHovered } = useEdgeHovered();
 
   const setWorkflowDiagramPanOnDrag = useSetRecoilComponentState(
     workflowDiagramPanOnDragComponentState,
   );
 
-  const isEdgeSelected = isNodeCreationStarted({
+  const nodeCreationStarted = isNodeCreationStarted({
     parentStepId: data.stepId,
     nextStepId: target,
   });
@@ -153,11 +148,12 @@ export const WorkflowDiagramFilterEdgeEditable = ({
 
   return (
     <>
-      <BaseEdge
+      <WorkflowDiagramBaseEdge
+        source={source}
+        target={target}
+        path={edgePath}
         markerStart={markerStart}
         markerEnd={markerEnd}
-        path={edgePath}
-        style={{ stroke: theme.border.color.strong }}
       />
 
       <EdgeLabelRenderer>
@@ -168,9 +164,8 @@ export const WorkflowDiagramFilterEdgeEditable = ({
         >
           <WorkflowDiagramEdgeV2VisibilityContainer shouldDisplay>
             <StyledConfiguredFilterContainer>
-              {isEdgeHovered(id) || isDropdownOpen || isEdgeSelected ? (
-                <StyledIconButtonGroup
-                  className="nodrag nopan"
+              {isEdgeHovered(id) || isDropdownOpen || nodeCreationStarted ? (
+                <WorkflowDiagramEdgeButtonGroup
                   iconButtons={[
                     {
                       Icon: IconFilter,

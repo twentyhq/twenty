@@ -149,6 +149,7 @@ describe('transformFilterNodesAsEdges', () => {
       type: 'filter--editable',
       source: 'A',
       target: 'C',
+      deletable: false,
       data: {
         edgeType: 'filter',
         stepId: 'B',
@@ -274,6 +275,7 @@ describe('transformFilterNodesAsEdges', () => {
       type: 'filter--editable',
       source: 'A',
       target: 'C',
+      deletable: false,
       data: {
         edgeType: 'filter',
         name: 'Filter B1',
@@ -291,6 +293,7 @@ describe('transformFilterNodesAsEdges', () => {
       type: 'filter--editable',
       source: 'C',
       target: 'D',
+      deletable: false,
       data: {
         edgeType: 'filter',
         name: 'Filter B2',
@@ -462,6 +465,7 @@ describe('transformFilterNodesAsEdges', () => {
         type: 'filter--editable',
         source: 'trigger',
         target: 'C',
+        deletable: false,
         data: {
           edgeType: 'filter',
           name: 'Filter B',
