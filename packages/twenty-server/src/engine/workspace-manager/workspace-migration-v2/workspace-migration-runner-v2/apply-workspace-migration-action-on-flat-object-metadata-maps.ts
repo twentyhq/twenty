@@ -1,16 +1,16 @@
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { addFlatObjectMetadataToFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps.util';
+import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
+import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
-import { deleteObjectFromFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-object-from-flat-object-metadata-maps.util';
-import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/dispatch-and-add-flat-field-metadata-in-flat-object-metadata-maps.util';
-import { updateFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/dispatch-and-replace-flat-field-metadata-in-flat-object-metadata-maps.util';
+import { deleteObjectFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-object-from-flat-object-metadata-maps-or-throw.util';
 import { findFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps.util';
 import { findFlatObjectdMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
-import { replaceFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps.util';
+import { replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
+import { replaceFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { WorkspaceMigrationRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-runner-args.type';
-import { applyWorkspaceMigrationUpdateActionUpdates } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/apply-workspace-migration-update-action-updates.util';
+import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
 import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
@@ -25,7 +25,7 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = ({
 >): FlatObjectMetadataMaps => {
   switch (action.type) {
     case 'delete_object': {
-      return deleteObjectFromFlatObjectMetadataMaps({
+      return deleteObjectFromFlatObjectMetadataMapsOrThrow({
         flatObjectMetadataMaps,
         objectMetadataId: action.objectMetadataId,
       });
@@ -37,7 +37,7 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = ({
         (createFieldAction) => createFieldAction.flatFieldMetadata,
       );
 
-      return addFlatObjectMetadataToFlatObjectMetadataMaps({
+      return addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
         flatObjectMetadata: {
           ...flatObjectMetadataWithoutFields,
           flatIndexMetadatas: [],
@@ -62,7 +62,7 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = ({
       }
       const updatedFlatObjectMetadata = {
         ...existingFlatObjectMetadata,
-        ...applyWorkspaceMigrationUpdateActionUpdates(action),
+        ...fromWorkspaceMigrationUpdateActionToPartialEntity(action),
       };
 
       return replaceFlatObjectMetadataInFlatObjectMetadataMaps({
@@ -104,11 +104,11 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = ({
 
       const updatedFlatFieldMetadata = {
         ...existingFlatFieldMetadata,
-        ...applyWorkspaceMigrationUpdateActionUpdates(action),
+        ...fromWorkspaceMigrationUpdateActionToPartialEntity(action),
       };
 
       const updatedFlatObjectMetadataMaps =
-        updateFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
+        replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
           flatFieldMetadata: updatedFlatFieldMetadata,
           flatObjectMetadataMaps,
         });

@@ -9,7 +9,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { RunnerMethodForActionType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/runner-method-for-action-type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
-import { applyWorkspaceMigrationUpdateActionUpdates } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/apply-workspace-migration-update-action-updates.util';
+import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
 
 export class WorkspaceMetadataFieldActionRunnerService
   implements
@@ -57,7 +57,7 @@ export class WorkspaceMetadataFieldActionRunnerService
 
     await fieldMetadataRepository.update(
       fieldMetadataId,
-      applyWorkspaceMigrationUpdateActionUpdates(action),
+      fromWorkspaceMigrationUpdateActionToPartialEntity(action),
     );
   };
 }
