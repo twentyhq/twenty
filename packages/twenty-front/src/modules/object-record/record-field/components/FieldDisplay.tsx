@@ -67,10 +67,6 @@ export const FieldDisplay = () => {
     return <ForbiddenFieldDisplay />;
   }
 
-  if (isFieldRating(fieldDefinition)) {
-    console.log('stop');
-  }
-
   return isChipDisplay ? (
     <ChipFieldDisplay />
   ) : isFieldRelationToOneObject(fieldDefinition) ? (

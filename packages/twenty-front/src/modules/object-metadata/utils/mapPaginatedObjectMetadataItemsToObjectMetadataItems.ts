@@ -16,25 +16,22 @@ export const mapPaginatedObjectMetadataItemsToObjectMetadataItems = ({
   pagedObjectMetadataItems: ObjectMetadataItemsQuery | undefined;
   objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
 }) => {
-  const nonReadableFieldMetadataIds = (objectMetadataId: string) => {
-    const objectPermissions =
-      objectPermissionsByObjectMetadataId[objectMetadataId];
-    return getNonReadableFieldMetadataIdsFromObjectPermissions({
-      objectPermissions: [objectPermissions],
-      objectMetadataId,
-    });
-  };
-
-  const nonUpdatableFieldMetadataIds = (objectMetadataId: string) => {
-    const objectPermissions =
-      objectPermissionsByObjectMetadataId[objectMetadataId];
-    return getNonUpdatableFieldMetadataIdsFromObjectPermissions({
-      objectPermissions: objectPermissions,
-    });
-  };
-
   const formattedObjects: ObjectMetadataItem[] =
     pagedObjectMetadataItems?.objects.edges.map((object) => {
+      const objectPermissions =
+        objectPermissionsByObjectMetadataId[object.node.id];
+
+      const nonReadableFieldMetadataIds =
+        getNonReadableFieldMetadataIdsFromObjectPermissions({
+          objectPermissions: [objectPermissions],
+          objectMetadataId: object.node.id,
+        });
+
+      const nonUpdatableFieldMetadataIds =
+        getNonUpdatableFieldMetadataIdsFromObjectPermissions({
+          objectPermissions: objectPermissions,
+        });
+
       const labelIdentifierFieldMetadataId =
         objectMetadataItemSchema.shape.labelIdentifierFieldMetadataId.parse(
           object.node.labelIdentifierFieldMetadataId,
@@ -47,12 +44,10 @@ export const mapPaginatedObjectMetadataItemsToObjectMetadataItems = ({
         ...objectWithoutFieldsList,
         fields: fieldsList,
         readableFields: fieldsList.filter(
-          (field) =>
-            !nonReadableFieldMetadataIds(object.node.id).includes(field.id),
+          (field) => !nonReadableFieldMetadataIds.includes(field.id),
         ),
         updatableFields: fieldsList.filter(
-          (field) =>
-            !nonUpdatableFieldMetadataIds(object.node.id).includes(field.id),
+          (field) => !nonUpdatableFieldMetadataIds.includes(field.id),
         ),
         labelIdentifierFieldMetadataId,
         indexMetadatas: indexMetadataList.map(
