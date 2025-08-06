@@ -19,6 +19,9 @@ import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWor
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
+import { useEdgeSelected } from '@/workflow/workflow-diagram/hooks/useEdgeSelected';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const WorkflowDiagramCanvasEditableEffect = () => {
   const { getIcon } = useIcons();
@@ -27,6 +30,12 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
     openWorkflowTriggerTypeInCommandMenu,
     openWorkflowEditStepInCommandMenu,
   } = useWorkflowCommandMenu();
+
+  const { setEdgeSelected, clearEdgeSelection } = useEdgeSelected();
+
+  const isWorkflowBranchEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
+  );
 
   const setWorkflowSelectedNode = useSetRecoilComponentState(
     workflowSelectedNodeComponentState,
@@ -42,7 +51,7 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
     workflowVisualizerWorkflowIdComponentState,
   );
 
-  const handleSelectionChange = useCallback(
+  const handleSelectedNodes = useCallback(
     ({ nodes }: OnSelectionChangeParams) => {
       const selectedNode = nodes[0] as WorkflowDiagramNode | undefined;
 
@@ -87,6 +96,35 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       getIcon,
       setWorkflowSelectedNode,
     ],
+  );
+
+  const handleSelectedEdges = useCallback(
+    ({ edges }: OnSelectionChangeParams) => {
+      if (!isWorkflowBranchEnabled) {
+        return;
+      }
+
+      const selectedEdge = edges?.[0];
+
+      if (!isDefined(selectedEdge)) {
+        clearEdgeSelection();
+        return;
+      }
+
+      setEdgeSelected({
+        source: selectedEdge.source,
+        target: selectedEdge.target,
+      });
+    },
+    [isWorkflowBranchEnabled, setEdgeSelected, clearEdgeSelection],
+  );
+
+  const handleSelectionChange = useCallback(
+    (onSelectionChangeParams: OnSelectionChangeParams) => {
+      handleSelectedNodes(onSelectionChangeParams);
+      handleSelectedEdges(onSelectionChangeParams);
+    },
+    [handleSelectedNodes, handleSelectedEdges],
   );
 
   useOnSelectionChange({

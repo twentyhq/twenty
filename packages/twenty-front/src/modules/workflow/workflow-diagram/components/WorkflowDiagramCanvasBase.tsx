@@ -38,8 +38,6 @@ import {
   Connection,
   OnNodeDrag,
   OnBeforeDelete,
-  OnSelectionChangeParams,
-  useOnSelectionChange,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, {
@@ -56,7 +54,6 @@ import { Tag, TagColor } from 'twenty-ui/components';
 import { THEME_COMMON } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { useEdgeHovered } from '@/workflow/workflow-diagram/hooks/useEdgeHovered';
-import { useEdgeSelected } from '@/workflow/workflow-diagram/hooks/useEdgeSelected';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -193,8 +190,6 @@ export const WorkflowDiagramCanvasBase = ({
   );
 
   const { setEdgeHovered, setNoEdgeHovered } = useEdgeHovered();
-
-  const { setEdgeSelected, clearEdgeSelection } = useEdgeSelected();
 
   const isWorkflowBranchEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
@@ -457,33 +452,6 @@ export const WorkflowDiagramCanvasBase = ({
   const onEdgeMouseLeave = useCallback(() => {
     setNoEdgeHovered();
   }, [setNoEdgeHovered]);
-
-  const onSelectionChange = useCallback(
-    ({ edges }: OnSelectionChangeParams) => {
-      if (!isWorkflowBranchEnabled) {
-        return;
-      }
-
-      const selectedEdge = edges?.[0];
-
-      if (!isDefined(selectedEdge)) {
-        clearEdgeSelection();
-        return;
-      }
-
-      setEdgeSelected({
-        source: selectedEdge.source,
-        target: selectedEdge.target,
-      });
-    },
-    [isWorkflowBranchEnabled, setEdgeSelected, clearEdgeSelection],
-  );
-
-  // Using the hook as using the <ReactFlow 'onSelectionChange' props breaks
-  // the click outside behavior
-  useOnSelectionChange({
-    onChange: onSelectionChange,
-  });
 
   return (
     <StyledResetReactflowStyles ref={containerRef}>
