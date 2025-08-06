@@ -238,14 +238,6 @@ export class DevSeederPermissionsService {
       throw new Error('Company linkedin link field metadata not found');
     }
 
-    const companyPeopleFieldMetadata = companyObjectMetadata.fields.find(
-      (field) => field.name === 'people',
-    );
-
-    if (!companyPeopleFieldMetadata) {
-      throw new Error('Company people field metadata not found');
-    }
-
     const readOnlyOnPersonCityFieldPermission = {
       objectMetadataId: personObjectMetadata.id,
       fieldMetadataId: personCityFieldMetadata.id,
