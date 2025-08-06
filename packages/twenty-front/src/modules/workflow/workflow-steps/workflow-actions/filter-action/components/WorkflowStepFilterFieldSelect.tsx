@@ -15,6 +15,7 @@ import { useContext } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type WorkflowStepFilterFieldSelectProps = {
   stepFilter: StepFilter;
@@ -163,6 +164,7 @@ export const WorkflowStepFilterFieldSelect = ({
       shouldDisplayRecordFields={shouldDisplayRecordFields}
       shouldDisplayRecordObjects={shouldDisplayRecordObjects}
       shouldEnableSelectRelationObject={true}
+      typesToFilter={[FieldMetadataType.ACTOR, FieldMetadataType.RICH_TEXT_V2]}
     />
   );
 };

@@ -1,3 +1,4 @@
+import { InputSchemaPropertyType } from '@/workflow/types/InputSchema';
 import {
   BaseOutputSchema,
   OutputSchema,
@@ -128,20 +129,63 @@ const filterBaseOutputSchema = ({
   return undefined;
 };
 
+const filterRecordOutputSchemaFieldsByType = ({
+  outputSchema,
+  typesToFilter,
+}: {
+  outputSchema: RecordOutputSchema;
+  typesToFilter?: InputSchemaPropertyType[];
+}) => {
+  if (!isDefined(typesToFilter)) {
+    return outputSchema.fields;
+  }
+
+  const filteredFields: BaseOutputSchema = {};
+
+  for (const key in outputSchema.fields) {
+    const field = outputSchema.fields[key];
+
+    if (!isDefined(field.type)) {
+      filteredFields[key] = field;
+      continue;
+    }
+
+    if (typesToFilter.includes(field.type)) {
+      continue;
+    }
+
+    filteredFields[key] = field;
+  }
+
+  return {
+    ...outputSchema,
+    fields: filteredFields,
+  };
+};
+
 export const filterOutputSchema = ({
   shouldDisplayRecordFields,
   shouldDisplayRecordObjects,
   outputSchema,
+  typesToFilter,
 }: {
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
   outputSchema?: OutputSchema;
+  typesToFilter?: InputSchemaPropertyType[];
 }): OutputSchema | undefined => {
-  if (
-    !shouldDisplayRecordObjects ||
-    shouldDisplayRecordFields ||
-    !outputSchema
-  ) {
+  if (!isDefined(outputSchema)) {
+    return undefined;
+  }
+
+  if (!shouldDisplayRecordObjects || shouldDisplayRecordFields) {
+    if (isRecordOutputSchema(outputSchema)) {
+      return filterRecordOutputSchemaFieldsByType({
+        outputSchema,
+        typesToFilter,
+      });
+    }
+
     return outputSchema;
   }
 
