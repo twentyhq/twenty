@@ -1,4 +1,6 @@
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { getNonUpdatableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonUpdatableFieldMetadataIdsFromObjectPermissions';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { spreadsheetImportFilterAvailableFieldMetadataItems } from '@/object-record/spreadsheet-import/utils/spreadsheetImportFilterAvailableFieldMetadataItems';
 import { getCompositeSubFieldLabelWithFieldLabel } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetCompositeSubFieldLabelWithFieldLabel';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
@@ -10,9 +12,20 @@ import { FieldMetadataType } from 'twenty-shared/types';
 export const useDownloadFakeRecords = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
+  const nonUpdatableFieldsIds =
+    getNonUpdatableFieldMetadataIdsFromObjectPermissions({
+      objectPermissions,
+    });
+
   const availableFieldMetadataItems =
     spreadsheetImportFilterAvailableFieldMetadataItems(
-      objectMetadataItem.fields,
+      objectMetadataItem.fields.filter(
+        (field) => !nonUpdatableFieldsIds.includes(field.id),
+      ),
     );
 
   const buildTableWithFakeRecords = () => {

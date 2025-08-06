@@ -1,5 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { getNonUpdatableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonUpdatableFieldMetadataIdsFromObjectPermissions';
 import { useBatchCreateManyRecords } from '@/object-record/hooks/useBatchCreateManyRecords';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useBuildSpreadsheetImportFields } from '@/object-record/spreadsheet-import/hooks/useBuildSpreadSheetImportFields';
 import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
 import { spreadsheetImportFilterAvailableFieldMetadataItems } from '@/object-record/spreadsheet-import/utils/spreadsheetImportFilterAvailableFieldMetadataItems';
@@ -36,6 +38,15 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
     abortController,
   });
 
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
+  const nonUpdatableFieldsIds =
+    getNonUpdatableFieldMetadataIdsFromObjectPermissions({
+      objectPermissions,
+    });
+
   const openObjectRecordsSpreadsheetImportDialog = (
     options?: Omit<
       SpreadsheetImportDialogOptions,
@@ -44,7 +55,9 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
   ) => {
     const availableFieldMetadataItemsToImport =
       spreadsheetImportFilterAvailableFieldMetadataItems(
-        objectMetadataItem.fields,
+        objectMetadataItem.fields.filter(
+          (field) => !nonUpdatableFieldsIds.includes(field.id),
+        ),
       );
 
     const spreadsheetImportFields = buildSpreadsheetImportFields(
