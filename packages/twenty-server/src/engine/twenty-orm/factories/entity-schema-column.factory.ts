@@ -90,6 +90,8 @@ export class EntitySchemaColumnFactory {
       entitySchemaColumnMap[key] = {
         name: key,
         type: columnType as ColumnType,
+        precision:
+          fieldMetadata.type === FieldMetadataType.DATE_TIME ? 3 : undefined,
         // TODO: We should double check that
         primary: key === 'id',
         nullable: fieldMetadata.isNullable ?? false,
