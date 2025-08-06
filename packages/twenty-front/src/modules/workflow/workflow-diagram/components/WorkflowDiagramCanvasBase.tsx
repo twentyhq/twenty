@@ -7,7 +7,6 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu';
-import { useIsEdgeHovered } from '@/workflow/workflow-diagram/hooks/useIsEdgeHovered';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
@@ -27,18 +26,18 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
   Background,
-  Connection,
   EdgeChange,
   EdgeProps,
   FitViewOptions,
   NodeChange,
   NodeProps,
-  OnBeforeDelete,
-  OnNodeDrag,
   ReactFlow,
   applyEdgeChanges,
   applyNodeChanges,
   useReactFlow,
+  Connection,
+  OnNodeDrag,
+  OnBeforeDelete,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, {
@@ -54,6 +53,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
 import { THEME_COMMON } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated/graphql';
+import { useEdgeHovered } from '@/workflow/workflow-diagram/hooks/useEdgeHovered';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -191,7 +191,7 @@ export const WorkflowDiagramCanvasBase = ({
     workflowDiagramWaitingNodesDimensionsComponentState,
   );
 
-  const { setEdgeHovered, setNoEdgeHovered } = useIsEdgeHovered();
+  const { setEdgeHovered, setNoEdgeHovered } = useEdgeHovered();
 
   const isWorkflowBranchEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
@@ -233,6 +233,9 @@ export const WorkflowDiagramCanvasBase = ({
   useListenToSidePanelClosing(() => {
     reactflow.setNodes((nodes) =>
       nodes.map((node) => ({ ...node, selected: false })),
+    );
+    reactflow.setEdges((edges) =>
+      edges.map((edge) => ({ ...edge, selected: false })),
     );
     setWorkflowInsertStepIds({
       parentStepId: undefined,

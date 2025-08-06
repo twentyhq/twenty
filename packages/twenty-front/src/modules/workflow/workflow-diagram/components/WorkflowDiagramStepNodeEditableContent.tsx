@@ -34,11 +34,13 @@ const StyledAddStepButtonContainer = styled.div<{
 `;
 
 export const WorkflowDiagramStepNodeEditableContent = ({
+  id,
   data,
   selected,
   variant,
   onDelete,
 }: {
+  id: string;
   data: WorkflowDiagramStepNodeData;
   variant: WorkflowDiagramNodeVariant;
   selected: boolean;
@@ -58,6 +60,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
     <WorkflowDiagramStepNodeBase
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      id={id}
       name={data.name}
       variant={variant}
       nodeType={data.nodeType}

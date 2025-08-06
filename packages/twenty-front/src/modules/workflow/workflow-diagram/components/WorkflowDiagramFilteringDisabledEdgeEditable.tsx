@@ -1,23 +1,13 @@
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import {
-  BaseEdge,
-  EdgeLabelRenderer,
-  EdgeProps,
-  getBezierPath,
-} from '@xyflow/react';
+import { EdgeLabelRenderer, EdgeProps, getBezierPath } from '@xyflow/react';
 import { IconPlus } from 'twenty-ui/display';
-import { IconButtonGroup } from 'twenty-ui/input';
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
-import { useIsEdgeHovered } from '@/workflow/workflow-diagram/hooks/useIsEdgeHovered';
-
-const StyledIconButtonGroup = styled(IconButtonGroup)`
-  pointer-events: all;
-`;
+import { useEdgeHovered } from '@/workflow/workflow-diagram/hooks/useEdgeHovered';
+import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseEdge';
+import { WorkflowDiagramEdgeButtonGroup } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeButtonGroup';
 
 type WorkflowDiagramFilteringDisabledEdgeEditableProps =
   EdgeProps<WorkflowDiagramEdge>;
@@ -33,9 +23,7 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
   targetX,
   targetY,
 }: WorkflowDiagramFilteringDisabledEdgeEditableProps) => {
-  const theme = useTheme();
-
-  const { isEdgeHovered } = useIsEdgeHovered();
+  const { isEdgeHovered } = useEdgeHovered();
 
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -46,7 +34,7 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
 
   const { startNodeCreation, isNodeCreationStarted } = useStartNodeCreation();
 
-  const forceDisplayAddButton = isNodeCreationStarted({
+  const nodeCreationStarted = isNodeCreationStarted({
     parentStepId: source,
     nextStepId: target,
   });
@@ -61,11 +49,12 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
 
   return (
     <>
-      <BaseEdge
+      <WorkflowDiagramBaseEdge
+        source={source}
+        target={target}
+        path={edgePath}
         markerStart={markerStart}
         markerEnd={markerEnd}
-        path={edgePath}
-        style={{ stroke: theme.border.color.strong }}
       />
 
       <EdgeLabelRenderer>
@@ -75,16 +64,16 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
           labelY={labelY}
         >
           <WorkflowDiagramEdgeV2VisibilityContainer
-            shouldDisplay={isEdgeHovered(id) || forceDisplayAddButton}
+            shouldDisplay={isEdgeHovered(id) || nodeCreationStarted}
           >
-            <StyledIconButtonGroup
-              className="nodrag nopan"
+            <WorkflowDiagramEdgeButtonGroup
               iconButtons={[
                 {
                   Icon: IconPlus,
                   onClick: handleAddNodeButtonClick,
                 },
               ]}
+              selected={nodeCreationStarted}
             />
           </WorkflowDiagramEdgeV2VisibilityContainer>
         </WorkflowDiagramEdgeV2Container>

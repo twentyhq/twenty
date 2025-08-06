@@ -4,6 +4,8 @@ import '@xyflow/react/dist/style.css';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { WorkflowDiagramEmptyTrigger } from '../WorkflowDiagramEmptyTrigger';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { RecoilRoot } from 'recoil';
+import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
 const meta: Meta<typeof WorkflowDiagramEmptyTrigger> = {
   title: 'Modules/Workflow/WorkflowDiagramEmptyTrigger',
@@ -22,7 +24,13 @@ export const Default: Story = {
   decorators: [
     (Story) => (
       <div style={{ position: 'relative' }}>
-        <Story />
+        <RecoilRoot>
+          <WorkflowVisualizerComponentInstanceContext.Provider
+            value={{ instanceId: 'workflow-visualizer-instance-id' }}
+          >
+            <Story />
+          </WorkflowVisualizerComponentInstanceContext.Provider>
+        </RecoilRoot>
       </div>
     ),
     ReactflowDecorator,
@@ -34,7 +42,13 @@ export const Selected: Story = {
   decorators: [
     (Story) => (
       <div className="selectable selected" style={{ position: 'relative' }}>
-        <Story />
+        <RecoilRoot>
+          <WorkflowVisualizerComponentInstanceContext.Provider
+            value={{ instanceId: 'workflow-visualizer-instance-id' }}
+          >
+            <Story />
+          </WorkflowVisualizerComponentInstanceContext.Provider>
+        </RecoilRoot>
       </div>
     ),
     ReactflowDecorator,

@@ -11,6 +11,7 @@ import { Label, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { WorkflowDiagramBaseHandle } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseHandle';
 import { Position } from '@xyflow/react';
+import { useEdgeSelected } from '@/workflow/workflow-diagram/hooks/useEdgeSelected';
 
 const StyledStepNodeContainer = styled.div`
   display: flex;
@@ -141,6 +142,7 @@ const StyledStepNodeLabel = styled.div<{
 `;
 
 export const WorkflowDiagramStepNodeBase = ({
+  id,
   nodeType,
   name,
   variant,
@@ -151,6 +153,7 @@ export const WorkflowDiagramStepNodeBase = ({
   onMouseEnter,
   onMouseLeave,
 }: {
+  id: string;
   nodeType: WorkflowDiagramStepNodeData['nodeType'];
   name: string;
   variant: WorkflowDiagramNodeVariant;
@@ -161,6 +164,10 @@ export const WorkflowDiagramStepNodeBase = ({
   onMouseEnter?: (event: MouseEvent<HTMLDivElement>) => void;
   onMouseLeave?: (event: MouseEvent<HTMLDivElement>) => void;
 }) => {
+  const { getNodeHandlesSelectedState } = useEdgeSelected();
+
+  const handlesSelectedState = getNodeHandlesSelectedState(id);
+
   return (
     <StyledStepNodeContainer
       className="workflow-node-container"
@@ -173,6 +180,7 @@ export const WorkflowDiagramStepNodeBase = ({
           type="target"
           position={Position.Top}
           isVisible={displayHandle}
+          selected={handlesSelectedState.targetHandle}
         />
       )}
 
@@ -196,6 +204,7 @@ export const WorkflowDiagramStepNodeBase = ({
         type="source"
         position={Position.Bottom}
         isVisible={displayHandle}
+        selected={handlesSelectedState.sourceHandle}
       />
     </StyledStepNodeContainer>
   );
