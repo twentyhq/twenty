@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { ActivityType } from '@microsoft/microsoft-graph-types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 

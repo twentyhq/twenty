@@ -47,7 +47,7 @@ export class TimelineActivityRepository {
     for (const payload of payloadsWithDiff) {
       const recentTimelineActivity = recentTimelineActivities.find(
         (timelineActivity) =>
-          timelineActivity.recordId === payload.recordId &&
+          timelineActivity[`${objectSingularName}Id`] === payload.recordId &&
           timelineActivity.workspaceMemberId === payload.workspaceMemberId &&
           (!isDefined(payload.linkedRecordId) ||
             timelineActivity.linkedRecordId === payload.linkedRecordId) &&
