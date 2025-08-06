@@ -28,8 +28,11 @@ export const useAggregateRecordsQuery = ({
 
   const apolloCoreClient = useApolloCoreClient();
   const availableAggregations = useMemo(
-    () => getAvailableAggregationsFromObjectFields(objectMetadataItem.fields),
-    [objectMetadataItem.fields],
+    () =>
+      getAvailableAggregationsFromObjectFields(
+        objectMetadataItem.readableFields,
+      ),
+    [objectMetadataItem.readableFields],
   );
 
   const recordGqlFields: RecordGqlFields = {};

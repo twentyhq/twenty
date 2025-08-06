@@ -14,12 +14,12 @@ export const useSearchRecordGroupField = () => {
     const searchInputLowerCase =
       recordGroupFieldSearchInput.toLocaleLowerCase();
 
-    return objectMetadataItem.fields.filter(
+    return objectMetadataItem.readableFields.filter(
       (field) =>
         field.type === FieldMetadataType.SELECT &&
         field.label.toLocaleLowerCase().includes(searchInputLowerCase),
     );
-  }, [objectMetadataItem.fields, recordGroupFieldSearchInput]);
+  }, [objectMetadataItem.readableFields, recordGroupFieldSearchInput]);
 
   return {
     recordGroupFieldSearchInput,

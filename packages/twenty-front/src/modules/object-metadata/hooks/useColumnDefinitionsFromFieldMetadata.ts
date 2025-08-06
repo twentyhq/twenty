@@ -15,7 +15,7 @@ import { formatFieldMetadataItemAsColumnDefinition } from '../utils/formatFieldM
 export const useColumnDefinitionsFromFieldMetadata = (
   objectMetadataItem: ObjectMetadataItem,
 ) => {
-  const activeFieldMetadataItems = objectMetadataItem.fields.filter(
+  const activeFieldMetadataItems = objectMetadataItem.readableFields.filter(
     ({ isActive, isSystem }) => isActive && !isSystem,
   );
 

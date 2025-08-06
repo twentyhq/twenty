@@ -1,9 +1,9 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export const getActiveFieldMetadataItems = (
-  objectMetadataItem: Pick<ObjectMetadataItem, 'fields'>,
+  objectMetadataItem: Pick<ObjectMetadataItem, 'readableFields'>,
 ) =>
-  objectMetadataItem.fields.filter(
+  objectMetadataItem.readableFields.filter(
     (fieldMetadataItem) =>
       fieldMetadataItem.isActive && !fieldMetadataItem.isSystem,
   );
