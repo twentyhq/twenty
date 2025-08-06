@@ -69,6 +69,7 @@ export class QueryRunnerArgsFactory {
             await this.overrideDataByFieldMetadata(
               [(args as UpdateOneResolverArgs).data],
               options,
+              false,
             )
           )[0],
         } satisfies UpdateOneResolverArgs;
@@ -119,6 +120,7 @@ export class QueryRunnerArgsFactory {
           data: await this.overrideDataByFieldMetadata(
             (args as FindDuplicatesResolverArgs).data,
             options,
+            false,
           ),
         } satisfies FindDuplicatesResolverArgs;
       case ResolverArgsType.MergeMany:

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -82,9 +84,14 @@ export class RecordPositionService {
     }
 
     if (recordsThatNeedFirstPosition.length > 0) {
+      const existingRecordMinPosition = await this.findMinPosition(
+        objectMetadata,
+        workspaceId,
+      );
+
       const minPosition = Math.min(
         ...recordsWithExistingNumberPosition.map((record) => record.position),
-        (await this.findMinPosition(objectMetadata, workspaceId)) || 1,
+        isDefined(existingRecordMinPosition) ? existingRecordMinPosition : 1,
       );
 
       for (const [index, record] of recordsThatNeedFirstPosition.entries()) {
@@ -93,9 +100,14 @@ export class RecordPositionService {
     }
 
     if (recordsThatNeedLastPosition.length > 0) {
+      const existingRecordMaxPosition = await this.findMaxPosition(
+        objectMetadata,
+        workspaceId,
+      );
+
       const maxPosition = Math.max(
         ...recordsThatNeedLastPosition.map((record) => record.position),
-        (await this.findMaxPosition(objectMetadata, workspaceId)) || 1,
+        isDefined(existingRecordMaxPosition) ? existingRecordMaxPosition : 1,
       );
 
       for (const [index, record] of recordsThatNeedLastPosition.entries()) {
@@ -165,7 +177,7 @@ export class RecordPositionService {
         },
       );
 
-    return repository.minimum('position');
+    return await repository.minimum('position');
   }
 
   private async findMaxPosition(
@@ -181,6 +193,6 @@ export class RecordPositionService {
         },
       );
 
-    return repository.maximum('position');
+    return await repository.maximum('position');
   }
 }
