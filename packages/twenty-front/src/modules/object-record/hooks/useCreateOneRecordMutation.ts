@@ -11,7 +11,6 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { capitalize } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCreateOneRecordMutation = ({
@@ -36,8 +35,6 @@ export const useCreateOneRecordMutation = ({
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const featureFlags = useFeatureFlagsMap();
-  const isFieldsPermissionsEnabled =
-    featureFlags[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
 
   if (isUndefinedOrNull(objectMetadataItem)) {
     return { createOneRecordMutation: EMPTY_MUTATION };
@@ -56,7 +53,6 @@ export const useCreateOneRecordMutation = ({
         objectMetadataItem,
         recordGqlFields: appliedRecordGqlFields,
         objectPermissionsByObjectMetadataId,
-        isFieldsPermissionsEnabled,
       })}
     }
   `;
