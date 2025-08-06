@@ -2,13 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 
+import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceRoleComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-role.comparator';
 import { StandardRoleFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-role.factory';
 import { standardRoleDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles';
-import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/comparator-action.enum';
 
 @Injectable()
 export class WorkspaceSyncRoleService {
@@ -32,18 +32,16 @@ export class WorkspaceSyncRoleService {
       relations: ['permissionFlags'],
     });
 
-    const standardRoleMetadataCollection =
-      this.standardRoleFactory.create(
-        standardRoleDefinitions,
-        context,
-        originalRoleCollection,
-      );
+    const standardRoleMetadataCollection = this.standardRoleFactory.create(
+      standardRoleDefinitions,
+      context,
+      originalRoleCollection,
+    );
 
-    const roleComparatorResults =
-      this.workspaceRoleComparator.compare(
-        standardRoleMetadataCollection,
-        originalRoleCollection,
-      );
+    const roleComparatorResults = this.workspaceRoleComparator.compare(
+      standardRoleMetadataCollection,
+      originalRoleCollection,
+    );
 
     for (const roleComparatorResult of roleComparatorResults) {
       if (roleComparatorResult.action === ComparatorAction.CREATE) {
@@ -58,7 +56,8 @@ export class WorkspaceSyncRoleService {
           canAccessAllTools: roleToCreate.canAccessAllTools,
           canReadAllObjectRecords: roleToCreate.canReadAllObjectRecords,
           canUpdateAllObjectRecords: roleToCreate.canUpdateAllObjectRecords,
-          canSoftDeleteAllObjectRecords: roleToCreate.canSoftDeleteAllObjectRecords,
+          canSoftDeleteAllObjectRecords:
+            roleToCreate.canSoftDeleteAllObjectRecords,
           canDestroyAllObjectRecords: roleToCreate.canDestroyAllObjectRecords,
           workspaceId: context.workspaceId,
         });
@@ -78,7 +77,8 @@ export class WorkspaceSyncRoleService {
             canAccessAllTools: roleToUpdate.canAccessAllTools,
             canReadAllObjectRecords: roleToUpdate.canReadAllObjectRecords,
             canUpdateAllObjectRecords: roleToUpdate.canUpdateAllObjectRecords,
-            canSoftDeleteAllObjectRecords: roleToUpdate.canSoftDeleteAllObjectRecords,
+            canSoftDeleteAllObjectRecords:
+              roleToUpdate.canSoftDeleteAllObjectRecords,
             canDestroyAllObjectRecords: roleToUpdate.canDestroyAllObjectRecords,
           },
         );
