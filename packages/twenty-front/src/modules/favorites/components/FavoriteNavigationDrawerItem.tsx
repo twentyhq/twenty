@@ -28,7 +28,7 @@ export const FavoriteNavigationDrawerItem = ({
   triggerEvent,
 }: FavoriteNavigationDrawerItemProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: favorite.objectNameSingular || '',
+    objectNameSingular: favorite.objectNameSingular,
   });
 
   if (!favorite.objectNameSingular) {

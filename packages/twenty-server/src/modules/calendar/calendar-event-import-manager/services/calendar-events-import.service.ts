@@ -61,7 +61,7 @@ export class CalendarEventsImportService {
         );
 
         if (!eventIdsToFetch || eventIdsToFetch.length === 0) {
-          await this.calendarChannelSyncStatusService.markAsCompletedAndSchedulePartialCalendarEventListFetch(
+          await this.calendarChannelSyncStatusService.markAsCompletedAndScheduleCalendarEventListFetch(
             [calendarChannel.id],
           );
 
@@ -82,7 +82,7 @@ export class CalendarEventsImportService {
       }
 
       if (!calendarEvents || calendarEvents?.length === 0) {
-        await this.calendarChannelSyncStatusService.schedulePartialCalendarEventListFetch(
+        await this.calendarChannelSyncStatusService.scheduleCalendarEventListFetch(
           [calendarChannel.id],
         );
       }
@@ -134,7 +134,7 @@ export class CalendarEventsImportService {
         workspaceId,
       );
 
-      await this.calendarChannelSyncStatusService.markAsCompletedAndSchedulePartialCalendarEventListFetch(
+      await this.calendarChannelSyncStatusService.markAsCompletedAndScheduleCalendarEventListFetch(
         [calendarChannel.id],
       );
     } catch (error) {

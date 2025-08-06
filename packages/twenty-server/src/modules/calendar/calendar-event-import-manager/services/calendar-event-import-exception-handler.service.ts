@@ -130,13 +130,13 @@ export class CalendarEventImportErrorHandlerService {
 
     switch (syncStep) {
       case CalendarEventImportSyncStep.FULL_CALENDAR_EVENT_LIST_FETCH:
-        await this.calendarChannelSyncStatusService.scheduleFullCalendarEventListFetch(
+        await this.calendarChannelSyncStatusService.scheduleCalendarEventListFetch(
           [calendarChannel.id],
         );
         break;
 
       case CalendarEventImportSyncStep.PARTIAL_CALENDAR_EVENT_LIST_FETCH:
-        await this.calendarChannelSyncStatusService.schedulePartialCalendarEventListFetch(
+        await this.calendarChannelSyncStatusService.scheduleCalendarEventListFetch(
           [calendarChannel.id],
         );
         break;
@@ -205,7 +205,7 @@ export class CalendarEventImportErrorHandlerService {
       return;
     }
 
-    await this.calendarChannelSyncStatusService.resetAndScheduleFullCalendarEventListFetch(
+    await this.calendarChannelSyncStatusService.resetAndScheduleCalendarEventListFetch(
       [calendarChannel.id],
       workspaceId,
     );

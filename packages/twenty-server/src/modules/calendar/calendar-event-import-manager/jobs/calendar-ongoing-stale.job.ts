@@ -54,7 +54,7 @@ export class CalendarOngoingStaleJob {
 
         switch (calendarChannel.syncStage) {
           case CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_ONGOING:
-            await this.calendarChannelSyncStatusService.schedulePartialCalendarEventListFetch(
+            await this.calendarChannelSyncStatusService.scheduleCalendarEventListFetch(
               [calendarChannel.id],
             );
             break;
