@@ -78,7 +78,7 @@ export const WithVariables: Story = {
     expect(await canvas.findByText('{{contact.email}}')).toBeVisible();
 
     // Should have 4 input fields
-    const inputs = canvas.getAllByPlaceholderText('Enter test value');
+    const inputs = canvas.getAllByRole('textbox');
     expect(inputs).toHaveLength(4);
   },
 };
@@ -96,7 +96,7 @@ export const WithManyVariables: Story = {
     expect(await canvas.findByText('Test Variables')).toBeVisible();
 
     // Should have 11 input fields
-    const inputs = canvas.getAllByPlaceholderText('Enter test value');
+    const inputs = canvas.getAllByRole('textbox');
     expect(inputs).toHaveLength(11);
 
     // Check some of the variable labels
@@ -134,7 +134,7 @@ export const ReadonlyMode: Story = {
     expect(await canvas.findByText('Test Variables')).toBeVisible();
 
     // All inputs should be readonly
-    const inputs = canvas.getAllByPlaceholderText('Enter test value');
+    const inputs = canvas.getAllByRole('textbox');
     inputs.forEach((input) => {
       expect(input).toHaveAttribute('readonly');
     });
@@ -159,15 +159,15 @@ export const WithPrefilledValues: Story = {
 
     expect(await canvas.findByText('Test Variables')).toBeVisible();
 
-    const userIdInput =
-      canvas.getByDisplayValue('') ||
-      canvas.getAllByPlaceholderText('Enter test value')[0];
+    const inputs = canvas.getAllByRole('textbox');
+    
+    const userIdInput = inputs[0];
     await userEvent.type(userIdInput, '12345');
 
-    const tokenInput = canvas.getAllByPlaceholderText('Enter test value')[1];
+    const tokenInput = inputs[1];
     await userEvent.type(tokenInput, 'abc123xyz');
 
-    const nameInput = canvas.getAllByPlaceholderText('Enter test value')[2];
+    const nameInput = inputs[2];
     await userEvent.type(nameInput, 'John Doe');
   },
 };
@@ -191,7 +191,7 @@ export const SingleVariable: Story = {
     expect(await canvas.findByText('{{user.id}}')).toBeVisible();
 
     // Should have only 1 input field
-    const inputs = canvas.getAllByPlaceholderText('Enter test value');
+    const inputs = canvas.getAllByRole('textbox');
     expect(inputs).toHaveLength(1);
   },
 };
@@ -233,7 +233,7 @@ export const ComplexNestedVariables: Story = {
     expect(await canvas.findByText('Test Variables')).toBeVisible();
 
     // Should have 10 input fields for all the nested variables
-    const inputs = canvas.getAllByPlaceholderText('Enter test value');
+    const inputs = canvas.getAllByRole('textbox');
     expect(inputs).toHaveLength(10);
 
     // Check some complex variable paths
