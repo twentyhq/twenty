@@ -80,12 +80,6 @@ export function processFieldMetadataForColumnNameMapping(
         const { joinColumnName, fieldMetadataName } =
           extractGraphQLRelationFieldNames(fieldMetadata);
 
-        if (!joinColumnName) {
-          throw new PermissionsException(
-            `Join column name is required for relation field metadata ${fieldMetadata.name}`,
-            PermissionsExceptionCode.JOIN_COLUMN_NAME_REQUIRED,
-          );
-        }
         processor.processRelationField({
           fieldMetadataId,
           fieldMetadata,
