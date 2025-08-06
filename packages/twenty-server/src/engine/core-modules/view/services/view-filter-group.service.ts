@@ -161,4 +161,19 @@ export class ViewFilterGroupService {
 
     return viewFilterGroup;
   }
+
+  async destroy(id: string, workspaceId: string): Promise<boolean> {
+    const viewFilterGroup = await this.findById(id, workspaceId);
+
+    if (!isDefined(viewFilterGroup)) {
+      throw new ViewFilterGroupException(
+        ViewFilterGroupExceptionMessage.VIEW_FILTER_GROUP_NOT_FOUND,
+        ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
+      );
+    }
+
+    await this.viewFilterGroupRepository.delete(id);
+
+    return true;
+  }
 }

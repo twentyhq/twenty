@@ -144,4 +144,19 @@ export class ViewSortService {
 
     return viewSort;
   }
+
+  async destroy(id: string, workspaceId: string): Promise<boolean> {
+    const viewSort = await this.findById(id, workspaceId);
+
+    if (!isDefined(viewSort)) {
+      throw new ViewSortException(
+        ViewSortExceptionMessage.VIEW_SORT_NOT_FOUND,
+        ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
+      );
+    }
+
+    await this.viewSortRepository.delete(id);
+
+    return true;
+  }
 }

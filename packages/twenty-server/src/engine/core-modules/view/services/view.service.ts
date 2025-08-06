@@ -156,4 +156,19 @@ export class ViewService {
 
     return view;
   }
+
+  async destroy(id: string, workspaceId: string): Promise<boolean> {
+    const view = await this.findById(id, workspaceId);
+
+    if (!isDefined(view)) {
+      throw new ViewException(
+        ViewExceptionMessage.VIEW_NOT_FOUND,
+        ViewExceptionCode.VIEW_NOT_FOUND,
+      );
+    }
+
+    await this.viewRepository.delete(id);
+
+    return true;
+  }
 }
