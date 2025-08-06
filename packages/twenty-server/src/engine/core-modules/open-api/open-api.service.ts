@@ -188,6 +188,14 @@ export class OpenApiService {
         nameSingular: 'field',
         namePlural: 'fields',
       },
+      {
+        nameSingular: 'webhook',
+        namePlural: 'webhooks',
+      },
+      {
+        nameSingular: 'apiKey',
+        namePlural: 'apiKeys',
+      },
     ];
 
     schema.paths = metadata.reduce((path, item) => {
