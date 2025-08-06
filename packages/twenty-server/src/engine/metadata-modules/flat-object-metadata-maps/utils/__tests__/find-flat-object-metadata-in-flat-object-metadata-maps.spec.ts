@@ -5,18 +5,18 @@ import {
 
 import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata-maps/mocks/flat-object-metadata-maps.mock';
 import {
-  FindFlatObjectdMetadataInFlatObjectMetadataMapsArgs,
-  findFlatObjectdMetadataInFlatObjectMetadataMaps,
+  FindFlatObjectMetadataInFlatObjectMetadataMapsArgs,
+  findFlatObjectMetadataInFlatObjectMetadataMaps,
 } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
 import { PET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/pet-flat-object.mock';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type FindFlatObjectMetadataInFlatObjectMetadataMapsTestCase = {
-  input: FindFlatObjectdMetadataInFlatObjectMetadataMapsArgs;
+  input: FindFlatObjectMetadataInFlatObjectMetadataMapsArgs;
   expected?: FlatObjectMetadata;
 };
 
-describe('findFlatObjectdMetadataInFlatObjectMetadataMaps', () => {
+describe('findFlatObjectMetadataInFlatObjectMetadataMaps', () => {
   const testCases: EachTestingContext<FindFlatObjectMetadataInFlatObjectMetadataMapsTestCase>[] =
     [
       {
@@ -50,7 +50,7 @@ describe('findFlatObjectdMetadataInFlatObjectMetadataMaps', () => {
         expected,
       },
     }) => {
-      const result = findFlatObjectdMetadataInFlatObjectMetadataMaps({
+      const result = findFlatObjectMetadataInFlatObjectMetadataMaps({
         objectMetadataId,
         flatObjectMetadataMaps,
       });

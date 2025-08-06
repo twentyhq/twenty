@@ -11,19 +11,19 @@ import { PET_FLAT_FIELDS_MOCK } from 'src/engine/metadata-modules/flat-field-met
 import { expectFlatFieldMetadataToBeInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/__tests__/utils/expect-flat-field-metadata-to-be-in-flat-object-metadata-maps.util';
 import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata-maps/mocks/flat-object-metadata-maps.mock';
 import {
-  DispatchAndAddFlatFieldMetadataInFlatObjectMetadataMapsOrThrowArgs,
+  AddFlatFieldMetadataInFlatObjectMetadataMapsOrThrowArgs,
   addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow,
 } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { PET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/pet-flat-object.mock';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 
-type DispatchAndAddFlatFieldMetadataInFlatObjectMetadataMapsTestCase = {
-  input: DispatchAndAddFlatFieldMetadataInFlatObjectMetadataMapsOrThrowArgs;
+type AddFlatFieldMetadataInFlatObjectMetadataMapsOrThrowArgsTestCase = {
+  input: AddFlatFieldMetadataInFlatObjectMetadataMapsOrThrowArgs;
   shouldThrow?: true;
 };
 
-describe('dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMapsOrThrow', () => {
-  const testCases: EachTestingContext<DispatchAndAddFlatFieldMetadataInFlatObjectMetadataMapsTestCase>[] =
+describe('addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow', () => {
+  const testCases: EachTestingContext<AddFlatFieldMetadataInFlatObjectMetadataMapsOrThrowArgsTestCase>[] =
     [
       {
         title:

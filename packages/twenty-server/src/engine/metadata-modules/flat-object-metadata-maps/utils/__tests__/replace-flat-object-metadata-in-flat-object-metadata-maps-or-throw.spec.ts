@@ -3,7 +3,7 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 
-import { expectFlatObjectdMetadataToStrictlyBeInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/__tests__/utils/expect-flat-object-metadata-to-strictly-be-in-flat-object-metadata-maps.util';
+import { expectFlatObjectMetadataToStrictlyBeInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/__tests__/utils/expect-flat-object-metadata-to-strictly-be-in-flat-object-metadata-maps.util';
 import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata-maps/mocks/flat-object-metadata-maps.mock';
 import {
   ReplaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrowArgs,
@@ -76,7 +76,7 @@ describe('replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow', () => {
             flatObjectMetadataMaps,
           });
 
-        expectFlatObjectdMetadataToStrictlyBeInFlatObjectMetadataMaps({
+        expectFlatObjectMetadataToStrictlyBeInFlatObjectMetadataMaps({
           flatObjectMetadata,
           flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
         });

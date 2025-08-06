@@ -9,7 +9,7 @@ type ExpectFlatObjectMetadataToBeInFlatObjectMetadataMapsArgs = {
   flatObjectMetadataMaps: FlatObjectMetadataMaps;
   flatObjectMetadata: FlatObjectMetadata;
 };
-export const expectFlatObjectdMetadataToStrictlyBeInFlatObjectMetadataMaps = ({
+export const expectFlatObjectMetadataToStrictlyBeInFlatObjectMetadataMaps = ({
   flatObjectMetadataMaps,
   flatObjectMetadata,
 }: ExpectFlatObjectMetadataToBeInFlatObjectMetadataMapsArgs) => {
