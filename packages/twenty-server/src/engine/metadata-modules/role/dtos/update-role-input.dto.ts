@@ -12,6 +12,11 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 
 @InputType()
 export class UpdateRolePayload {
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  standardId?: string;
+
   @IsString()
   @IsOptional()
   @Field({ nullable: true })

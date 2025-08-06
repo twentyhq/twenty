@@ -21,7 +21,7 @@ export class StandardRoleFactory {
 
     for (const roleDefinition of roleDefinitions) {
       const existingRole = existingRoles.find(
-        (role) => role.label === roleDefinition.label,
+        (role) => role.standardId === roleDefinition.standardId,
       );
 
       if (existingRole) {

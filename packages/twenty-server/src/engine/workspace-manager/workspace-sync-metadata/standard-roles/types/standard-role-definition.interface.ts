@@ -10,4 +10,6 @@ export type StandardRoleDefinition = Omit<
   | 'roleTargets'
   | 'objectPermissions'
   | 'fieldPermissions'
->;
+> & {
+  standardId: string;
+};

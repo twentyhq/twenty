@@ -48,6 +48,7 @@ export class WorkspaceSyncRoleService {
         const roleToCreate = roleComparatorResult.object;
 
         await roleRepository.save({
+          standardId: roleToCreate.standardId,
           label: roleToCreate.label,
           description: roleToCreate.description,
           icon: roleToCreate.icon,
@@ -69,6 +70,7 @@ export class WorkspaceSyncRoleService {
         await roleRepository.update(
           { id: roleToUpdate.roleId },
           {
+            standardId: roleToUpdate.standardId,
             label: roleToUpdate.label,
             description: roleToUpdate.description,
             icon: roleToUpdate.icon,

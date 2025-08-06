@@ -12,8 +12,6 @@ import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-s
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
-import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
@@ -21,6 +19,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
+import { STANDARD_ROLE_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-role-ids';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 @Injectable()
@@ -193,7 +192,7 @@ export class WorkspaceManagerService {
     userId: string,
   ): Promise<void> {
     const memberRole = await this.roleRepository.findOne({
-      where: { label: MEMBER_ROLE_LABEL, workspaceId },
+      where: { standardId: STANDARD_ROLE_IDS.member, workspaceId },
     });
 
     if (memberRole) {
@@ -203,7 +202,7 @@ export class WorkspaceManagerService {
     }
 
     const adminRole = await this.roleRepository.findOne({
-      where: { label: ADMIN_ROLE_LABEL, workspaceId },
+      where: { standardId: STANDARD_ROLE_IDS.admin, workspaceId },
     });
 
     if (adminRole) {

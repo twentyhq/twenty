@@ -4,6 +4,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 export const fromRoleEntityToRoleDto = (role: RoleEntity): RoleDTO => {
   return {
     id: role.id,
+    standardId: role.standardId,
     label: role.label,
     canUpdateAllSettings: role.canUpdateAllSettings,
     canAccessAllTools: role.canAccessAllTools,
