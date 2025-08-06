@@ -1,7 +1,6 @@
 import { ROCKET_FLAT_FIELDS_MOCK } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/rocket-flat-fields.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
-
 export const ROCKET_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   id: 'd78ec657-74a4-4652-a350-1f44ff62970a',
   standardId: null,

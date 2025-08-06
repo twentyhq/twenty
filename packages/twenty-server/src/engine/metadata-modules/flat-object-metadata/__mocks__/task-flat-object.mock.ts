@@ -1,7 +1,6 @@
 import { TASK_FLAT_FIELDS_MOCK } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/task-flat-fields.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
-
 export const TASK_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   id: '3186920d-2a15-4b5f-96c7-2bf6567024b0',
   standardId: '20202020-1ba1-48ba-bc83-ef7e5990ed10',

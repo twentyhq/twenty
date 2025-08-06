@@ -1,7 +1,6 @@
 import { PET_FLAT_FIELDS_MOCK } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/pet-flat-fields.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
-
 export const PET_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   id: 'd34e0f07-1b8c-4de0-938e-599cf05e1f7f',
   standardId: null,
