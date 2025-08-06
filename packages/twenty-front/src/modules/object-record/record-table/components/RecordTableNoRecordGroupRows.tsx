@@ -1,4 +1,5 @@
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { RecordTableAddNew } from '@/object-record/record-table/components/RecordTableAddNew';
 import { RecordTableBodyDroppablePlaceholder } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppablePlaceholder';
 import { RecordTableBodyFetchMoreLoader } from '@/object-record/record-table/record-table-body/components/RecordTableBodyFetchMoreLoader';
 import { RecordTableAggregateFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooter';
@@ -27,6 +28,7 @@ export const RecordTableNoRecordGroupRows = () => {
           />
         );
       })}
+      <RecordTableAddNew />
       <RecordTableBodyFetchMoreLoader />
       <RecordTableBodyDroppablePlaceholder />
       {!isRecordTableInitialLoading && allRecordIds.length > 0 && (
