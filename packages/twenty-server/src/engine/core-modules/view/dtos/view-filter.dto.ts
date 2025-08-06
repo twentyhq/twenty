@@ -2,9 +2,9 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
-import { ViewFilterOperand } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import { ViewFilterValue } from 'src/engine/core-modules/view/types/view-filter-value.type';
 
 @ObjectType('CoreViewFilter')
@@ -15,7 +15,7 @@ export class ViewFilterDTO {
   @Field(() => UUIDScalarType, { nullable: false })
   fieldMetadataId: string;
 
-  @Field({ nullable: false, defaultValue: 'Contains' })
+  @Field({ nullable: false, defaultValue: ViewFilterOperand.CONTAINS })
   operand: ViewFilterOperand;
 
   @Field(() => GraphQLJSONObject, { nullable: false })

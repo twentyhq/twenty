@@ -42,7 +42,6 @@ export const VIEW_FILTER_GQL_FIELDS = `
     fieldMetadataId
     operand
     value
-    displayValue
     viewId
     createdAt
     updatedAt

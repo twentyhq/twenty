@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { ViewFilterOperand } from 'twenty-shared/types';
+import { ViewFilterOperand as SharedViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
 import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
+import { convertViewFilterOperandToCoreOperand } from 'src/modules/view/utils/convert-view-filter-operand-to-core-operand.util';
 import { transformViewFilterWorkspaceValueToCoreValue } from 'src/modules/view/utils/transform-view-filter-workspace-value-to-core-value';
 
 @Injectable()
@@ -34,6 +35,10 @@ export class ViewFilterSyncService {
           updateData[key] = transformViewFilterWorkspaceValueToCoreValue(
             diffValue.after,
           );
+        } else if (key === 'operand' && diffValue.after) {
+          updateData[key] = convertViewFilterOperandToCoreOperand(
+            diffValue.after as SharedViewFilterOperand,
+          );
         } else {
           updateData[key] = diffValue.after;
         }
@@ -55,7 +60,9 @@ export class ViewFilterSyncService {
       id: workspaceViewFilter.id,
       fieldMetadataId: workspaceViewFilter.fieldMetadataId,
       viewId: workspaceViewFilter.viewId,
-      operand: workspaceViewFilter.operand as ViewFilterOperand,
+      operand: convertViewFilterOperandToCoreOperand(
+        workspaceViewFilter.operand as SharedViewFilterOperand,
+      ),
       value: transformViewFilterWorkspaceValueToCoreValue(
         workspaceViewFilter.value,
       ),
