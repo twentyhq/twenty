@@ -8,7 +8,6 @@ import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { capitalize } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useFindOneRecordQuery = ({
   objectNameSingular,
@@ -28,8 +27,6 @@ export const useFindOneRecordQuery = ({
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const featureFlags = useFeatureFlagsMap();
-  const isFieldsPermissionsEnabled =
-    featureFlags[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
 
   const findOneRecordQuery = gql`
       query FindOne${capitalize(
@@ -54,7 +51,6 @@ export const useFindOneRecordQuery = ({
           objectMetadataItem,
           recordGqlFields,
           objectPermissionsByObjectMetadataId,
-          isFieldsPermissionsEnabled,
         })}
       },
   `;

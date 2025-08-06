@@ -409,8 +409,6 @@ export class WorkspaceEntityManager extends EntityManager {
       selectedColumns,
       allFieldsSelected: false,
       updatedColumns,
-      isFieldPermissionsEnabled:
-        this.getFeatureFlagMap().IS_FIELDS_PERMISSIONS_ENABLED,
     });
   }
 
@@ -1213,14 +1211,11 @@ export class WorkspaceEntityManager extends EntityManager {
         entities: createdEntities,
       });
 
-      const isFieldPermissionsEnabled =
-        this.getFeatureFlagMap().IS_FIELDS_PERMISSIONS_ENABLED;
-
       const permissionCheckApplies =
         permissionOptionsFromArgs?.shouldBypassPermissionChecks !== true &&
         objectMetadataItem.isSystem !== true;
 
-      if (isFieldPermissionsEnabled && permissionCheckApplies) {
+      if (permissionCheckApplies) {
         formattedResult = this.getFormattedResultWithoutNonReadableFields({
           formattedResult,
           objectMetadataItem,

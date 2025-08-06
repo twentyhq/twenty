@@ -16,7 +16,6 @@ import { getCombinedFindManyRecordsQueryFilteringPart } from '@/object-record/mu
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useRecoilValue } from 'recoil';
 import { capitalize } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const usePerformCombinedFindManyRecords = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -25,8 +24,6 @@ export const usePerformCombinedFindManyRecords = () => {
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const featureFlags = useFeatureFlagsMap();
-  const isFieldsPermissionsEnabled =
-    featureFlags[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
 
   const generateCombinedFindManyRecordsQuery = (
     operationSignatures: RecordGqlOperationSignature[],
@@ -104,7 +101,6 @@ export const usePerformCombinedFindManyRecords = () => {
                   objectMetadataItem,
                 }),
               objectPermissionsByObjectMetadataId,
-              isFieldsPermissionsEnabled,
             })}
             cursor
           }

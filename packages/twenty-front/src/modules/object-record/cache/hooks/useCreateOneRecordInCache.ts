@@ -13,7 +13,6 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { capitalize } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useCreateOneRecordInCache = <T extends ObjectRecord>({
   objectMetadataItem,
@@ -28,8 +27,6 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
 
   const apolloCoreClient = useApolloCoreClient();
   const featureFlags = useFeatureFlagsMap();
-  const isFieldsPermissionsEnabled =
-    featureFlags[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
 
   return (record: ObjectRecord) => {
     const prefilledRecord = prefillRecord({
@@ -51,7 +48,6 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
             computeReferences: true,
             recordGqlFields,
             objectPermissionsByObjectMetadataId,
-            isFieldsPermissionsEnabled,
           })}
         `;
 

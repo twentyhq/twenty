@@ -30,7 +30,6 @@ export const mapObjectMetadataToGraphQLQuery = ({
   computeReferences = false,
   isRootLevel = true,
   objectPermissionsByObjectMetadataId,
-  isFieldsPermissionsEnabled = false,
 }: MapObjectMetadataToGraphQLQueryArgs): string => {
   if (
     !isRootLevel &&
@@ -103,7 +102,6 @@ export const mapObjectMetadataToGraphQLQuery = ({
         relationRecordGqlFields,
         computeReferences,
         objectPermissionsByObjectMetadataId,
-        isFieldsPermissionsEnabled,
       });
     })
     .filter((field) => field !== '')
