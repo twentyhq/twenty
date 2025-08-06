@@ -1,8 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { GraphQLJSONObject } from 'graphql-type-json';
-
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { RawJSONScalar } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/raw-json.scalar';
 import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import { ViewFilterValue } from 'src/engine/core-modules/view/types/view-filter-value.type';
 
@@ -14,7 +13,7 @@ export class CreateViewFilterInput {
   @Field({ nullable: true, defaultValue: ViewFilterOperand.CONTAINS })
   operand?: ViewFilterOperand;
 
-  @Field(() => GraphQLJSONObject, { nullable: false })
+  @Field(() => RawJSONScalar, { nullable: false })
   value: ViewFilterValue;
 
   @Field(() => UUIDScalarType, { nullable: true })

@@ -59,7 +59,7 @@ describe('View Filter REST API', () => {
 
     it('should return view filters for a specific view after creating one', async () => {
       const viewFilter = await createTestViewFilterWithRestApi({
-        operand: ViewFilterOperand.IS,
+        operand: ViewFilterOperand.CONTAINS,
         value: 'test',
       });
 
