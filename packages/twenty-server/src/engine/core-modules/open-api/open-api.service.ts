@@ -170,15 +170,12 @@ export class OpenApiService {
       this.twentyConfigService.get('SERVER_URL'),
       `${request.protocol}://${request.get('host')}`,
     );
-
     const schema = baseSchema('metadata', baseUrl);
-
     const workspace = await this.getWorkspaceFromRequest(request);
 
     if (!isDefined(workspace)) {
       return schema;
     }
-
     const metadata = [
       {
         nameSingular: 'object',
