@@ -475,7 +475,7 @@ export const WorkflowDiagramCanvasBase = ({
         target: selectedEdge.target,
       });
     },
-    [setEdgeSelected, clearEdgeSelection],
+    [isWorkflowBranchEnabled, setEdgeSelected, clearEdgeSelection],
   );
 
   return (
