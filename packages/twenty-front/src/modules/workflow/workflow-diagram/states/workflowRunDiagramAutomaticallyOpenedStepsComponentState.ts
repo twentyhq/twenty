@@ -2,7 +2,7 @@ import { createComponentStateV2 } from '@/ui/utilities/state/component-state/uti
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
 export const workflowRunDiagramAutomaticallyOpenedStepsComponentState =
-  createComponentStateV2<string[]>({
+  createComponentStateV2<{ stepId: string; isInRightDrawer: boolean }[]>({
     key: 'workflowRunDiagramAutomaticallyOpenedStepsComponentState',
     defaultValue: [],
     componentInstanceContext: WorkflowVisualizerComponentInstanceContext,
