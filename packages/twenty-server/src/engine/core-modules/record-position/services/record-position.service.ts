@@ -58,13 +58,23 @@ export class RecordPositionService {
   }: {
     partialRecordInputs: Partial<ObjectRecord>[];
     workspaceId: string;
-    objectMetadata: { isCustom: boolean; nameSingular: string };
+    objectMetadata: {
+      isCustom: boolean;
+      nameSingular: string;
+      fieldIdByName: Record<string, string>;
+    };
     shouldBackfillPositionIfUndefined: boolean;
   }): Promise<Partial<ObjectRecord>[]> {
     const recordsThatNeedFirstPosition: Partial<ObjectRecord>[] = [];
     const recordsThatNeedLastPosition: Partial<ObjectRecord>[] = [];
     const recordsWithExistingNumberPosition: Partial<ObjectRecord>[] = [];
     const recordsThatShouldNotBeUpdated: Partial<ObjectRecord>[] = [];
+
+    const positionFieldId = objectMetadata.fieldIdByName['position'];
+
+    if (!isDefined(positionFieldId)) {
+      return partialRecordInputs;
+    }
 
     for (const partialRecordInput of partialRecordInputs) {
       if (partialRecordInput.position === 'last') {

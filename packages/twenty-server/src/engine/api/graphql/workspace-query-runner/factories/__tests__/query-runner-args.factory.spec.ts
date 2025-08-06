@@ -109,7 +109,15 @@ describe('QueryRunnerArgsFactory', () => {
 
       const expectedArgs = {
         partialRecordInputs: [{ position: 'last', testNumber: 1 }],
-        objectMetadata: { isCustom: true, nameSingular: 'testNumber' },
+        objectMetadata: {
+          isCustom: true,
+          nameSingular: 'testNumber',
+          fieldIdByName: {
+            position: 'position-id',
+            testNumber: 'testNumber-id',
+            otherField: 'otherField-id',
+          },
+        },
         workspaceId,
         shouldBackfillPositionIfUndefined: true,
       };
@@ -137,7 +145,15 @@ describe('QueryRunnerArgsFactory', () => {
 
       const expectedArgs = {
         partialRecordInputs: [{ testNumber: 1 }],
-        objectMetadata: { isCustom: true, nameSingular: 'testNumber' },
+        objectMetadata: {
+          isCustom: true,
+          nameSingular: 'testNumber',
+          fieldIdByName: {
+            position: 'position-id',
+            testNumber: 'testNumber-id',
+            otherField: 'otherField-id',
+          },
+        },
         workspaceId,
         shouldBackfillPositionIfUndefined: true,
       };

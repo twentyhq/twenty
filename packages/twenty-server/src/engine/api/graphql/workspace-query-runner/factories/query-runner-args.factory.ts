@@ -166,6 +166,7 @@ export class QueryRunnerArgsFactory {
         objectMetadata: {
           isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
           nameSingular: options.objectMetadataItemWithFieldMaps.nameSingular,
+          fieldIdByName: options.objectMetadataItemWithFieldMaps.fieldIdByName,
         },
         shouldBackfillPositionIfUndefined,
       });
