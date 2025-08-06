@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { ObjectRecordNonDestructiveEvent } from 'src/engine/core-modules/event-emitter/types/object-record-non-destructive-event';
@@ -29,7 +30,10 @@ export class UpsertTimelineActivityFromInternalEvent {
         },
       );
 
-    const userIds = workspaceEventBatch.events.map((event) => event.userId);
+    const userIds = workspaceEventBatch.events
+      .map((event) => event.userId)
+      .filter(isDefined);
+
     const workspaceMembers = await workspaceMemberRepository.findBy({
       userId: In(userIds),
     });
@@ -44,8 +48,6 @@ export class UpsertTimelineActivityFromInternalEvent {
       }
     }
 
-    // Temporary
-    // We ignore every that is not a LinkedObject or a Business Object
     const filteredEvents = workspaceEventBatch.events.filter((event) => {
       return (
         !event.objectMetadata.isSystem ||
@@ -53,6 +55,10 @@ export class UpsertTimelineActivityFromInternalEvent {
         event.objectMetadata.nameSingular === 'taskTarget'
       );
     });
+
+    if (filteredEvents.length === 0) {
+      return;
+    }
 
     await this.timelineActivityService.upsertEvents({
       events: filteredEvents.map((event) =>
