@@ -26,10 +26,12 @@ export const getAllSelectableFields = ({
 
   const allColumnNames = [...fieldMetadataIdToColumnNamesMap.values()].flat();
 
+  const restrictedFieldsColumnNamesSet = new Set(restrictedFieldsColumnNames);
+
   return Object.fromEntries(
     allColumnNames.map((columnName) => [
       columnName,
-      !restrictedFieldsColumnNames.includes(columnName),
+      !restrictedFieldsColumnNamesSet.has(columnName),
     ]),
   );
 };
