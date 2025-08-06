@@ -27,7 +27,7 @@ export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
     case FieldMetadataType.BOOLEAN:
       return 'boolean';
     case FieldMetadataType.DATE_TIME:
-      return 'timestamptz(3)';
+      return 'timestamptz';
     case FieldMetadataType.DATE:
       return 'date';
     case FieldMetadataType.RATING:
