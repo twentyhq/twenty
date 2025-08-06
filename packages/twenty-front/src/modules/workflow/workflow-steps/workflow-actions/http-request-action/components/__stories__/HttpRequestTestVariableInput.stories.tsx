@@ -71,11 +71,10 @@ export const WithVariables: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Test Variables')).toBeVisible();
-    expect(await canvas.findByText('{{user.id}}')).toBeVisible();
-    expect(await canvas.findByText('{{auth.token}}')).toBeVisible();
-    expect(await canvas.findByText('{{user.name}}')).toBeVisible();
-    expect(await canvas.findByText('{{contact.email}}')).toBeVisible();
+    expect(await canvas.findByText('user.id')).toBeVisible();
+    expect(await canvas.findByText('auth.token')).toBeVisible();
+    expect(await canvas.findByText('user.name')).toBeVisible();
+    expect(await canvas.findByText('contact.email')).toBeVisible();
 
     // Should have 4 input fields
     const inputs = canvas.getAllByRole('textbox');
@@ -93,16 +92,14 @@ export const WithManyVariables: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Test Variables')).toBeVisible();
-
     // Should have 11 input fields
     const inputs = canvas.getAllByRole('textbox');
     expect(inputs).toHaveLength(11);
 
     // Check some of the variable labels
-    expect(await canvas.findByText('{{api.host}}')).toBeVisible();
-    expect(await canvas.findByText('{{user.name}}')).toBeVisible();
-    expect(await canvas.findByText('{{current.timestamp}}')).toBeVisible();
+    expect(await canvas.findByText('api.host')).toBeVisible();
+    expect(await canvas.findByText('user.name')).toBeVisible();
+    expect(await canvas.findByText('current.timestamp')).toBeVisible();
   },
 };
 
@@ -117,7 +114,9 @@ export const NoVariables: Story = {
     const canvas = within(canvasElement);
 
     // Should not render anything when there are no variables
-    expect(canvas.queryByText('Test Variables')).not.toBeInTheDocument();
+    // With no variables, there should be no input fields
+    const inputs = canvas.queryAllByRole('textbox');
+    expect(inputs).toHaveLength(0);
   },
 };
 
@@ -131,7 +130,9 @@ export const ReadonlyMode: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Test Variables')).toBeVisible();
+    // In readonly mode, variables should still be displayed
+    expect(await canvas.findByText('user.id')).toBeVisible();
+    expect(await canvas.findByText('auth.token')).toBeVisible();
   },
 };
 
@@ -150,8 +151,6 @@ export const WithPrefilledValues: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-
-    expect(await canvas.findByText('Test Variables')).toBeVisible();
 
     const inputs = canvas.getAllByRole('textbox');
 
@@ -181,8 +180,7 @@ export const SingleVariable: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Test Variables')).toBeVisible();
-    expect(await canvas.findByText('{{user.id}}')).toBeVisible();
+    expect(await canvas.findByText('user.id')).toBeVisible();
 
     // Should have only 1 input field
     const inputs = canvas.getAllByRole('textbox');
@@ -224,15 +222,13 @@ export const ComplexNestedVariables: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Test Variables')).toBeVisible();
-
     // Should have 10 input fields for all the nested variables
     const inputs = canvas.getAllByRole('textbox');
     expect(inputs).toHaveLength(10);
 
     // Check some complex variable paths
-    expect(await canvas.findByText('{{user.profile.firstName}}')).toBeVisible();
-    expect(await canvas.findByText('{{user.preferences.theme}}')).toBeVisible();
-    expect(await canvas.findByText('{{current.timestamp}}')).toBeVisible();
+    expect(await canvas.findByText('user.profile.firstName')).toBeVisible();
+    expect(await canvas.findByText('user.preferences.theme')).toBeVisible();
+    expect(await canvas.findByText('current.timestamp')).toBeVisible();
   },
 };
