@@ -1,13 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AdminPanelWorkerQueueHealth } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-worker-queue-health.dto';
 import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum';
+import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
 
 @ObjectType()
 export class AdminPanelHealthServiceData {
-  @Field(() => UUIDScalarType)
-  id: string;
+  @Field(() => HealthIndicatorId)
+  id: HealthIndicatorId;
 
   @Field(() => String)
   label: string;

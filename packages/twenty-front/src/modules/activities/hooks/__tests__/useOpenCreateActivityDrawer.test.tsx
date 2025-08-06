@@ -9,8 +9,8 @@ import { viewableRecordIdState } from '@/object-record/record-right-drawer/state
 import gql from 'graphql-tag';
 import pick from 'lodash.pick';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { mockedTasks } from '~/testing/mock-data/tasks';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const mockedDate = '2024-03-15T12:00:00.000Z';
 const toISOStringMock = jest.fn(() => mockedDate);

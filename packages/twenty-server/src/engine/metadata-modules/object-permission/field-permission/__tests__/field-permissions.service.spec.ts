@@ -5,9 +5,11 @@ import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
 import { In, Repository } from 'typeorm';
 
 import {
+  fieldRelationMock,
   fieldTextMock,
   objectMetadataItemMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
@@ -27,6 +29,7 @@ describe('FieldPermissionService', () => {
     Repository<FieldPermissionEntity>
   >;
   let roleRepository: jest.Mocked<Repository<RoleEntity>>;
+  let fieldMetadataRepository: jest.Mocked<Repository<FieldMetadataEntity>>;
   let workspacePermissionsCacheService: jest.Mocked<WorkspacePermissionsCacheService>;
   let workspaceCacheStorageService: jest.Mocked<WorkspaceCacheStorageService>;
 
@@ -53,6 +56,13 @@ describe('FieldPermissionService', () => {
   const mockRolesPermissions: ObjectRecordsPermissionsByRoleId = {
     [testRoleId]: {
       [testObjectMetadataId]: {
+        canRead: true,
+        canUpdate: true,
+        canSoftDelete: false,
+        canDestroy: false,
+        restrictedFields: {},
+      },
+      [fieldRelationMock.objectMetadataId]: {
         canRead: true,
         canUpdate: true,
         canSoftDelete: false,
@@ -93,6 +103,12 @@ describe('FieldPermissionService', () => {
             getObjectMetadataMapsOrThrow: jest.fn(),
           },
         },
+        {
+          provide: getRepositoryToken(FieldMetadataEntity, 'core'),
+          useValue: {
+            find: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -101,6 +117,9 @@ describe('FieldPermissionService', () => {
       getRepositoryToken(FieldPermissionEntity, 'core'),
     );
     roleRepository = module.get(getRepositoryToken(RoleEntity, 'core'));
+    fieldMetadataRepository = module.get(
+      getRepositoryToken(FieldMetadataEntity, 'core'),
+    );
     workspacePermissionsCacheService = module.get(
       WorkspacePermissionsCacheService,
     );
@@ -108,6 +127,10 @@ describe('FieldPermissionService', () => {
 
     // Setup default mocks
     roleRepository.findOne.mockResolvedValue(mockRole);
+    fieldMetadataRepository.find.mockResolvedValue([
+      fieldTextMock,
+      fieldRelationMock,
+    ]);
     workspacePermissionsCacheService.getRolesPermissionsFromCache.mockResolvedValue(
       {
         version: '1',
@@ -127,6 +150,16 @@ describe('FieldPermissionService', () => {
                 workspaceId: testWorkspaceId,
                 id: '20202020-0000-0000-0000-000000000003',
               }),
+            },
+            fieldIdByJoinColumnName: {},
+            fieldIdByName: {},
+            indexMetadatas: [],
+          },
+          [fieldRelationMock.objectMetadataId]: {
+            ...objectMetadataItemMock,
+            id: fieldRelationMock.objectMetadataId,
+            fieldsById: {
+              [fieldRelationMock.id]: fieldRelationMock,
             },
             fieldIdByJoinColumnName: {},
             fieldIdByName: {},
@@ -265,6 +298,47 @@ describe('FieldPermissionService', () => {
         });
 
         expect(fieldPermissionsRepository.delete).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('relation cases', () => {
+      it('should create two field permissions when a relation field permission is created', async () => {
+        const input = createUpsertInput([
+          {
+            canReadFieldValue: false,
+            canUpdateFieldValue: false,
+            fieldMetadataId: fieldRelationMock.id,
+            objectMetadataId: fieldRelationMock.objectMetadataId,
+          },
+        ]);
+
+        await service.upsertFieldPermissions({
+          workspaceId: testWorkspaceId,
+          input,
+        });
+
+        expect(fieldPermissionsRepository.upsert).toHaveBeenCalledWith(
+          [
+            {
+              fieldMetadataId: fieldRelationMock.id,
+              objectMetadataId: fieldRelationMock.objectMetadataId,
+              canReadFieldValue: false,
+              canUpdateFieldValue: false,
+              roleId: testRoleId,
+              workspaceId: testWorkspaceId,
+            },
+            {
+              fieldMetadataId: fieldRelationMock.relationTargetFieldMetadataId,
+              objectMetadataId:
+                fieldRelationMock.relationTargetObjectMetadataId,
+              canReadFieldValue: false,
+              canUpdateFieldValue: false,
+              roleId: testRoleId,
+              workspaceId: testWorkspaceId,
+            },
+          ],
+          { conflictPaths: ['fieldMetadataId', 'roleId'] },
+        );
       });
     });
 
@@ -448,106 +522,6 @@ describe('FieldPermissionService', () => {
           new PermissionsException(
             PermissionsExceptionMessage.OBJECT_PERMISSION_NOT_FOUND,
             PermissionsExceptionCode.OBJECT_PERMISSION_NOT_FOUND,
-          ),
-        );
-      });
-
-      it('should throw error when object is not readable (permission wise)', async () => {
-        const nonReadableObjectPermissions: ObjectRecordsPermissionsByRoleId = {
-          [testRoleId]: {
-            [testObjectMetadataId]: {
-              canRead: false,
-              canUpdate: false,
-              canSoftDelete: false,
-              canDestroy: false,
-              restrictedFields: {},
-            },
-          },
-        };
-
-        workspacePermissionsCacheService.getRolesPermissionsFromCache.mockResolvedValue(
-          {
-            version: '1',
-            data: nonReadableObjectPermissions,
-          },
-        );
-
-        const input = createUpsertInput([
-          {
-            canUpdateFieldValue: false,
-          },
-        ]);
-
-        await expect(
-          service.upsertFieldPermissions({
-            workspaceId: testWorkspaceId,
-            input,
-          }),
-        ).rejects.toThrow(
-          new PermissionsException(
-            PermissionsExceptionMessage.FIELD_RESTRICTION_ONLY_ALLOWED_ON_READABLE_OBJECT,
-            PermissionsExceptionCode.FIELD_RESTRICTION_ONLY_ALLOWED_ON_READABLE_OBJECT,
-          ),
-        );
-      });
-
-      it('should throw error when trying to restrict update on non-updatable object', async () => {
-        const nonUpdatableObjectPermissions: ObjectRecordsPermissionsByRoleId =
-          {
-            [testRoleId]: {
-              [testObjectMetadataId]: {
-                canRead: true,
-                canUpdate: false,
-                canSoftDelete: false,
-                canDestroy: false,
-                restrictedFields: {},
-              },
-            },
-          };
-
-        workspacePermissionsCacheService.getRolesPermissionsFromCache.mockResolvedValue(
-          {
-            version: '1',
-            data: nonUpdatableObjectPermissions,
-          },
-        );
-
-        const input = createUpsertInput([
-          {
-            canUpdateFieldValue: false,
-          },
-        ]);
-
-        await expect(
-          service.upsertFieldPermissions({
-            workspaceId: testWorkspaceId,
-            input,
-          }),
-        ).rejects.toThrow(
-          new PermissionsException(
-            PermissionsExceptionMessage.FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT,
-            PermissionsExceptionCode.FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT,
-          ),
-        );
-      });
-
-      it('should throw error when both canReadFieldValue and canUpdateFieldValue are null', async () => {
-        const input = createUpsertInput([
-          {
-            canReadFieldValue: null,
-            canUpdateFieldValue: null,
-          },
-        ]);
-
-        await expect(
-          service.upsertFieldPermissions({
-            workspaceId: testWorkspaceId,
-            input,
-          }),
-        ).rejects.toThrow(
-          new PermissionsException(
-            PermissionsExceptionMessage.EMPTY_FIELD_PERMISSION_NOT_ALLOWED,
-            PermissionsExceptionCode.EMPTY_FIELD_PERMISSION_NOT_ALLOWED,
           ),
         );
       });

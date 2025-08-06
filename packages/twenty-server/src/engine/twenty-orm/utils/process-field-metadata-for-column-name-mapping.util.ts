@@ -2,6 +2,7 @@ import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interf
 import { FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { extractGraphQLRelationFieldNames } from 'src/engine/api/graphql/workspace-schema-builder/utils/extract-graphql-relation-field-names.util';
 import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/workspace-schema-builder/utils/is-field-metadata-relation-or-morph-relation.utils';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -26,11 +27,13 @@ export type ColumnNameProcessor = {
   processRelationField: ({
     fieldMetadataId,
     fieldMetadata,
-    columnName,
+    joinColumnName,
+    connectFieldName,
   }: {
     fieldMetadataId: string;
     fieldMetadata: FieldMetadataEntity;
-    columnName: string;
+    joinColumnName: string;
+    connectFieldName?: string;
   }) => void;
   processSimpleField: ({
     fieldMetadataId,
@@ -73,18 +76,15 @@ export function processFieldMetadataForColumnNameMapping(
         if (fieldMetadataSettings?.relationType === RelationType.ONE_TO_MANY) {
           continue;
         }
-        const columnName = fieldMetadataSettings?.joinColumnName;
 
-        if (!columnName) {
-          throw new PermissionsException(
-            `Join column name is required for relation field metadata ${fieldMetadata.name}`,
-            PermissionsExceptionCode.JOIN_COLUMN_NAME_REQUIRED,
-          );
-        }
+        const { joinColumnName, fieldMetadataName } =
+          extractGraphQLRelationFieldNames(fieldMetadata);
+
         processor.processRelationField({
           fieldMetadataId,
           fieldMetadata,
-          columnName,
+          joinColumnName,
+          connectFieldName: fieldMetadataName,
         });
       } else {
         const columnName = computeColumnName(fieldMetadata);

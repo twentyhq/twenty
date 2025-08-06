@@ -1,3 +1,4 @@
+import { FIELD_PERMISSION_FRAGMENT } from '@/settings/roles/graphql/fragments/fieldPermissionFragment';
 import { OBJECT_PERMISSION_FRAGMENT } from '@/settings/roles/graphql/fragments/objectPermissionFragment';
 import { PERMISSION_FLAG_FRAGMENT } from '@/settings/roles/graphql/fragments/permissionFlagFragment';
 import { ROLE_FRAGMENT } from '@/settings/roles/graphql/fragments/roleFragment';
@@ -9,6 +10,7 @@ export const GET_ROLES = gql`
   ${ROLE_FRAGMENT}
   ${PERMISSION_FLAG_FRAGMENT}
   ${OBJECT_PERMISSION_FRAGMENT}
+  ${FIELD_PERMISSION_FRAGMENT}
   query GetRoles {
     getRoles {
       ...RoleFragment
@@ -20,6 +22,9 @@ export const GET_ROLES = gql`
       }
       objectPermissions {
         ...ObjectPermissionFragment
+      }
+      fieldPermissions {
+        ...FieldPermissionFragment
       }
     }
   }

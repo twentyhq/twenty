@@ -47,7 +47,7 @@ const meta: Meta = {
           fieldDefinition: {
             ...relationFromManyFieldDisplayMock.fieldDefinition,
           } as unknown as FieldDefinition<FieldMetadata>,
-          isReadOnly: false,
+          isRecordFieldReadOnly: false,
         }}
       >
         <RelationFieldValueSetterEffect />

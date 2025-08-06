@@ -20,6 +20,7 @@ import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/g
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
+import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -89,19 +90,12 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
   ): Promise<InsertResult> {
     const { objectMetadataItemWithFieldMaps } = executionArgs.options;
 
-    const selectedColumns = buildColumnsToSelect({
-      select: executionArgs.graphqlQuerySelectedFieldsResult.select,
-      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
-      objectMetadataItemWithFieldMaps,
-    });
-
     const conflictingFields = this.getConflictingFields(
       objectMetadataItemWithFieldMaps,
     );
     const existingRecords = await this.findExistingRecords(
       executionArgs,
       conflictingFields,
-      selectedColumns,
     );
 
     const { recordsToUpdate, recordsToInsert } = this.categorizeRecords(
@@ -187,7 +181,6 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       fullPath: string;
       column: string;
     }[],
-    selectedColumns: Record<string, boolean>,
   ): Promise<Partial<ObjectRecord>[]> {
     const { objectMetadataItemWithFieldMaps } = executionArgs.options;
     const queryBuilder = executionArgs.repository.createQueryBuilder(
@@ -203,11 +196,23 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       queryBuilder.orWhere(condition);
     });
 
+    const restrictedFields =
+      executionArgs.repository.objectRecordsPermissions?.[
+        objectMetadataItemWithFieldMaps.id
+      ]?.restrictedFields;
+
+    const selectOptions = getAllSelectableFields({
+      restrictedFields: restrictedFields ?? {},
+      objectMetadata: {
+        objectMetadataMapItem: objectMetadataItemWithFieldMaps,
+      },
+    });
+
     return await queryBuilder
-      .setFindOptions({
-        select: selectedColumns,
-      })
       .withDeleted()
+      .setFindOptions({
+        select: selectOptions,
+      })
       .getMany();
   }
 
@@ -271,11 +276,17 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       for (const field of conflictingFields) {
         const requestFieldValue = this.getValueFromPath(record, field.fullPath);
 
-        const existingRec = existingRecords.find(
-          (existingRecord) =>
-            isDefined(existingRecord[field.column]) &&
-            existingRecord[field.column] === requestFieldValue,
-        );
+        const existingRec = existingRecords.find((existingRecord) => {
+          const existingFieldValue = this.getValueFromPath(
+            existingRecord,
+            field.fullPath,
+          );
+
+          return (
+            isDefined(existingFieldValue) &&
+            existingFieldValue === requestFieldValue
+          );
+        });
 
         if (existingRec) {
           existingRecord = { ...record, id: existingRec.id };

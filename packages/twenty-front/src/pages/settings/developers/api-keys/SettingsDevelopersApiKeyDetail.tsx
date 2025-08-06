@@ -166,7 +166,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       return;
     }
 
-    if (!roleIdToUse) {
+    if (!isDefined(roleIdToUse)) {
       throw new Error('Admin role not found - this should never happen');
     }
 
@@ -245,7 +245,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               children: t`APIs`,
               href: getSettingsPath(SettingsPath.APIs),
             },
-            { children: t`${apiKeyName}` },
+            { children: apiKey?.name },
           ]}
         >
           <SettingsPageContainer>

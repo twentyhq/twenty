@@ -14,7 +14,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -36,10 +35,14 @@ registerEnumType(PermissionsOnAllObjectRecords, {
 
 @Entity({ name: 'userWorkspace', schema: 'core' })
 @ObjectType()
-@Unique('IDX_USER_WORKSPACE_USER_ID_WORKSPACE_ID_UNIQUE', [
-  'userId',
-  'workspaceId',
-])
+@Index(
+  'IDX_USER_WORKSPACE_USER_ID_WORKSPACE_ID_UNIQUE',
+  ['userId', 'workspaceId'],
+  {
+    unique: true,
+    where: '"deletedAt" IS NULL',
+  },
+)
 @Index('IDX_USER_WORKSPACE_USER_ID', ['userId'])
 @Index('IDX_USER_WORKSPACE_WORKSPACE_ID', ['workspaceId'])
 export class UserWorkspace {

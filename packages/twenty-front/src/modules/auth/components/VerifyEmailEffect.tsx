@@ -5,6 +5,7 @@ import { ApolloError } from '@apollo/client';
 
 import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
+import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
@@ -15,7 +16,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { EmailVerificationSent } from '../sign-in-up/components/EmailVerificationSent';
-import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 
 export const VerifyEmailEffect = () => {
   const {
@@ -90,7 +90,7 @@ export const VerifyEmailEffect = () => {
           setVerifyEmailRedirectPath(verifyEmailRedirectPath);
         }
 
-        return verifyLoginToken(loginToken.token);
+        await verifyLoginToken(loginToken.token);
       } catch (error) {
         enqueueErrorSnackBar({
           ...(error instanceof ApolloError

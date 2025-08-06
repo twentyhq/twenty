@@ -49,7 +49,7 @@ export const validateOperationIsPermittedOrThrow = ({
   operationType: OperationType;
   objectRecordsPermissions: ObjectRecordsPermissions;
   objectMetadataMaps: ObjectMetadataMaps;
-  selectedColumns: string[];
+  selectedColumns: string[] | '*';
   isFieldPermissionsEnabled?: boolean;
   allFieldsSelected: boolean;
   updatedColumns: string[];
@@ -198,7 +198,7 @@ export const validateQueryIsPermittedOrThrow = ({
     (select) => select.selection === mainEntity,
   );
 
-  let selectedColumns: string[] = [];
+  let selectedColumns: string[] | '*' = [];
   let updatedColumns: string[] = [];
 
   if (isFieldPermissionsEnabled) {
@@ -248,15 +248,19 @@ const validateReadFieldPermissionOrThrow = ({
   allFieldsSelected,
 }: {
   restrictedFields: RestrictedFields;
-  selectedColumns: string[];
+  selectedColumns: string[] | '*';
   columnNameToFieldMetadataIdMap: Record<string, string>;
   allFieldsSelected?: boolean;
 }) => {
-  if (isEmpty(restrictedFields)) {
+  const noReadRestrictions =
+    isEmpty(restrictedFields) ||
+    Object.values(restrictedFields).every((field) => field.canRead !== false);
+
+  if (noReadRestrictions) {
     return;
   }
 
-  if (allFieldsSelected) {
+  if (allFieldsSelected || selectedColumns === '*') {
     throw new PermissionsException(
       PermissionsExceptionMessage.PERMISSION_DENIED,
       PermissionsExceptionCode.PERMISSION_DENIED,
@@ -321,7 +325,7 @@ const getSelectedColumnsFromExpressionMap = ({
   expressionMap: QueryExpressionMap;
   allFieldsSelected: boolean;
 }) => {
-  let selectedColumns: string[] = [];
+  let selectedColumns: string[] | '*' = [];
 
   if (
     ['update', 'insert', 'delete', 'soft-delete', 'restore'].includes(
@@ -333,7 +337,8 @@ const getSelectedColumnsFromExpressionMap = ({
         'Returning columns are not set for update query',
       );
     }
-    selectedColumns = [expressionMap.returning].flat();
+    selectedColumns =
+      expressionMap.returning === '*' ? '*' : [expressionMap.returning].flat();
   } else if (!allFieldsSelected) {
     selectedColumns = getSelectedColumnsFromExpressionMapSelects(
       expressionMap.selects,

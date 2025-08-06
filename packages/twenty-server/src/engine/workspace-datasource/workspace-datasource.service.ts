@@ -80,6 +80,10 @@ export class WorkspaceDataSourceService {
     throw new PermissionsException(
       'Method not allowed as permissions are not handled at datasource level.',
       PermissionsExceptionCode.METHOD_NOT_ALLOWED,
+      {
+        userFriendlyMessage:
+          'This operation is not allowed. Please try a different approach or contact support if you need assistance.',
+      },
     );
   }
 }

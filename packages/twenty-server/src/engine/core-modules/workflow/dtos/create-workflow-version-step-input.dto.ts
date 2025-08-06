@@ -2,6 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
 
 @InputType()
 export class CreateWorkflowVersionStepInput {
@@ -17,7 +18,8 @@ export class CreateWorkflowVersionStepInput {
   })
   stepType: WorkflowActionType;
 
-  @Field(() => UUIDScalarType, {
+  // Typed String as it can be 'trigger'
+  @Field(() => String, {
     description: 'Parent step ID',
     nullable: true,
   })
@@ -28,4 +30,10 @@ export class CreateWorkflowVersionStepInput {
     nullable: true,
   })
   nextStepId?: string;
+
+  @Field(() => WorkflowStepPositionInput, {
+    description: 'Step position',
+    nullable: true,
+  })
+  position?: WorkflowStepPositionInput;
 }

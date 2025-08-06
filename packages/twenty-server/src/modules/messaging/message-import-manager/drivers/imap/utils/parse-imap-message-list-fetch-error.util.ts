@@ -57,7 +57,7 @@ export const parseImapMessageListFetchError = (
   }
 
   return new MessageImportDriverException(
-    `Unknown IMAP message list fetch error: ${errorMessage}`,
+    `Unknown IMAP message list fetch error: code: ${error.code} | responseText: ${error.responseText} | executedCommand: ${error.executedCommand}`,
     MessageImportDriverExceptionCode.UNKNOWN,
   );
 };

@@ -28,6 +28,7 @@ import { MigrateWorkflowRunStatesCommand } from 'src/database/commands/upgrade-v
 import { AddEnqueuedStatusToWorkflowRunV2Command } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-enqueued-status-to-workflow-run-v2.command';
 import { AddNextStepIdsToWorkflowVersionTriggers } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-next-step-ids-to-workflow-version-triggers.command';
 import { RemoveWorkflowRunsWithoutState } from 'src/database/commands/upgrade-version-command/1-2/1-2-remove-workflow-runs-without-state.command';
+import { AddNextStepIdsToWorkflowRunsTrigger } from 'src/database/commands/upgrade-version-command/1-3/1-3-add-next-step-ids-to-workflow-runs-trigger.command';
 import { AssignRolesToExistingApiKeysCommand } from 'src/database/commands/upgrade-version-command/1-3/1-3-assign-roles-to-existing-api-keys.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -157,6 +158,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 1.3 Commands
     protected readonly assignRolesToExistingApiKeysCommand: AssignRolesToExistingApiKeysCommand,
+    // protected readonly addNextStepIdsToWorkflowVersionTriggers: AddNextStepIdsToWorkflowVersionTriggers,
+    protected readonly addNextStepIdsToWorkflowRunsTrigger: AddNextStepIdsToWorkflowRunsTrigger,
   ) {
     super(
       workspaceRepository,
@@ -216,7 +219,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_130: VersionCommands = {
-      beforeSyncMetadata: [],
+      beforeSyncMetadata: [
+        this.addNextStepIdsToWorkflowVersionTriggers, // We add that command again because nextStepIds where not added on freshly created triggers. It will be done in 1.3
+        this.addNextStepIdsToWorkflowRunsTrigger,
+        this.assignRolesToExistingApiKeysCommand,
+      ],
       afterSyncMetadata: [],
     };
 
