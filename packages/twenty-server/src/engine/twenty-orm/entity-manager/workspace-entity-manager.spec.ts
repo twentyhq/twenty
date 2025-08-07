@@ -331,8 +331,7 @@ describe('WorkspaceEntityManager', () => {
         isFieldPermissionsEnabled: true,
         operationType: 'update',
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
+        objectsPermissions: mockPermissionOptions.objectRecordsPermissions,
         selectedColumns: [],
         allFieldsSelected: false,
         updatedColumns: [],
@@ -366,8 +365,7 @@ describe('WorkspaceEntityManager', () => {
         operationType: 'delete',
         isFieldPermissionsEnabled: true,
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
+        objectsPermissions: mockPermissionOptions.objectRecordsPermissions,
         selectedColumns: [],
         allFieldsSelected: false,
         updatedColumns: [],
