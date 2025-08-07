@@ -4,13 +4,11 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
 import {
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
@@ -32,9 +30,7 @@ export class MessagingMessageListFetchJob {
     private readonly messagingMessageListFetchService: MessagingMessageListFetchService,
     private readonly messagingMonitoringService: MessagingMonitoringService,
     private readonly twentyORMManager: TwentyORMManager,
-    private readonly connectedAccountRefreshTokensService: ConnectedAccountRefreshTokensService,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
-    private readonly messagingAccountAuthenticationService: MessagingAccountAuthenticationService,
   ) {}
 
   @Process(MessagingMessageListFetchJob.name)
