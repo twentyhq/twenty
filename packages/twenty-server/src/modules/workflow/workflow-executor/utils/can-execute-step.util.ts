@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
-import { StepStatus, WorkflowRunStepInfos } from 'twenty-shared/workflow';
+import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 
 export const canExecuteStep = ({

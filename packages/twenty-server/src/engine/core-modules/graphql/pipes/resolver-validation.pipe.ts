@@ -1,12 +1,12 @@
 import {
-  ArgumentMetadata,
+  type ArgumentMetadata,
   Injectable,
-  PipeTransform,
-  Type,
+  type PipeTransform,
+  type Type,
 } from '@nestjs/common';
 
 import { plainToInstance } from 'class-transformer';
-import { ValidationError, validate } from 'class-validator';
+import { type ValidationError, validate } from 'class-validator';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 

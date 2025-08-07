@@ -1,18 +1,18 @@
-import { ObjectsPermissionsDeprecated } from 'twenty-shared/types';
+import { type ObjectsPermissionsDeprecated } from 'twenty-shared/types';
 import {
-  DeepPartial,
-  FindManyOptions,
-  FindOneOptions,
-  FindOptionsWhere,
-  ObjectLiteral,
-  QueryRunner,
+  type DeepPartial,
+  type FindManyOptions,
+  type FindOneOptions,
+  type FindOptionsWhere,
+  type ObjectLiteral,
+  type QueryRunner,
 } from 'typeorm';
 
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
-import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
+import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 describe('WorkspaceRepository', () => {

@@ -1,7 +1,7 @@
 import { GraphQLScalarType } from 'graphql';
-import { Maybe } from 'graphql-yoga';
-import { ObjMap } from 'graphql/jsutils/ObjMap';
-import { ASTNode, Kind, ValueNode } from 'graphql/language';
+import { type Maybe } from 'graphql-yoga';
+import { type ObjMap } from 'graphql/jsutils/ObjMap';
+import { type ASTNode, Kind, type ValueNode } from 'graphql/language';
 
 import { ValidationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 

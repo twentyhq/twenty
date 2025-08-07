@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { SendMailOptions } from 'nodemailer';
+import { type SendMailOptions } from 'nodemailer';
 
-import { EmailDriverInterface } from 'src/engine/core-modules/email/drivers/interfaces/email-driver.interface';
+import { type EmailDriverInterface } from 'src/engine/core-modules/email/drivers/interfaces/email-driver.interface';
 
 import { EmailDriverFactory } from 'src/engine/core-modules/email/email-driver.factory';
 

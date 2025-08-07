@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapMessageLocatorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-locator.service';
 import {
   ImapMessageProcessorService,
-  MessageFetchResult,
+  type MessageFetchResult,
 } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-processor.service';
 
 type ConnectedAccount = Pick<

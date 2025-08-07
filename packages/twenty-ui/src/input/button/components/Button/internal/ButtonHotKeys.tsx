@@ -1,5 +1,9 @@
 import { getOsShortcutSeparator } from '@ui/utilities';
-import { ButtonAccent, ButtonSize, ButtonVariant } from '@ui/input';
+import {
+  type ButtonAccent,
+  type ButtonSize,
+  type ButtonVariant,
+} from '@ui/input';
 import styled from '@emotion/styled';
 
 const StyledSeparator = styled.div<{

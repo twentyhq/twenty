@@ -1,5 +1,5 @@
 import { plainToInstance } from 'class-transformer';
-import { validateOrReject, ValidationError } from 'class-validator';
+import { validateOrReject, type ValidationError } from 'class-validator';
 
 import {
   FieldMetadataException,

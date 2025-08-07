@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
-  CountryCallingCode,
+  type CountryCallingCode,
   parsePhoneNumberWithError,
 } from 'libphonenumber-js';
 import {
@@ -17,8 +17,8 @@ import {
   RecordTransformerExceptionCode,
 } from 'src/engine/core-modules/record-transformer/record-transformer.exception';
 import {
-  AdditionalPhoneMetadata,
-  PhonesMetadata,
+  type AdditionalPhoneMetadata,
+  type PhonesMetadata,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
 
 export type PhonesFieldGraphQLInput =

@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddIndexMetadataWorkspaceObjectCompositeIndex1748843862307
   implements MigrationInterface

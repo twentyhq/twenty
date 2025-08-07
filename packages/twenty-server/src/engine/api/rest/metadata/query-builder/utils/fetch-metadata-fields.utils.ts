@@ -1,5 +1,5 @@
 import { hasSelectAllFieldsSelector } from 'src/engine/api/rest/metadata/query-builder/utils/has-select-all-fields-selector.util';
-import { Selectors } from 'src/engine/api/rest/metadata/types/metadata-query.type';
+import { type Selectors } from 'src/engine/api/rest/metadata/types/metadata-query.type';
 
 export const fetchMetadataFields = (
   objectNamePlural: string,

@@ -1,7 +1,7 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable, type NestMiddleware } from '@nestjs/common';
 
 import { i18n } from '@lingui/core';
-import { NextFunction, Request, Response } from 'express';
+import { type NextFunction, type Request, type Response } from 'express';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 
 // TODO: this should be deprecated as singleton pattern won't work: user will keep changing locales for eachothers

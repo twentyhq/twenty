@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
-import { Request } from 'express';
-import { JSONSchema7 } from 'json-schema';
+import { type Request } from 'express';
+import { type JSONSchema7 } from 'json-schema';
 
 import { CreateToolsService } from 'src/engine/api/mcp/services/tools/create.tools.service';
 import { DeleteToolsService } from 'src/engine/api/mcp/services/tools/delete.tools.service';
@@ -13,7 +13,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class MCPMetadataService {

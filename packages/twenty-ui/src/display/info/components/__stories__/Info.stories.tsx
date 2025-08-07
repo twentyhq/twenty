@@ -1,11 +1,11 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import {
   CatalogDecorator,
-  CatalogStory,
+  type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
 
-import { Info, InfoAccent } from '../Info';
+import { Info, type InfoAccent } from '../Info';
 
 const meta: Meta<typeof Info> = {
   title: 'UI/Display/Info',

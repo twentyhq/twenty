@@ -1,8 +1,8 @@
-import { Scope, SetMetadata } from '@nestjs/common';
+import { type Scope, SetMetadata } from '@nestjs/common';
 import { SCOPE_OPTIONS_METADATA } from '@nestjs/common/constants';
 
 import {
-  MessageQueue,
+  type MessageQueue,
   PROCESSOR_METADATA,
 } from 'src/engine/core-modules/message-queue/message-queue.constants';
 

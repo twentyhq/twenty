@@ -2,7 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { ClickHouseClient, createClient } from '@clickhouse/client';
+import { type ClickHouseClient, createClient } from '@clickhouse/client';
 import { config } from 'dotenv';
 
 config({

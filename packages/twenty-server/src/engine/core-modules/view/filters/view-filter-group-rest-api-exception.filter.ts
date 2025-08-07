@@ -1,13 +1,17 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+import {
+  type ArgumentsHost,
+  Catch,
+  type ExceptionFilter,
+} from '@nestjs/common';
 
-import { Response } from 'express';
+import { type Response } from 'express';
 
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import {
   ViewFilterGroupException,
   ViewFilterGroupExceptionCode,
 } from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';
-import { CustomException } from 'src/utils/custom-exception';
+import { type CustomException } from 'src/utils/custom-exception';
 
 @Catch(ViewFilterGroupException)
 export class ViewFilterGroupRestApiExceptionFilter implements ExceptionFilter {

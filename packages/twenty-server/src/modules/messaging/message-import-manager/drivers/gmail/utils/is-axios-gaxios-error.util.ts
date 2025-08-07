@@ -1,4 +1,4 @@
-import { GaxiosError } from 'gaxios';
+import { type GaxiosError } from 'gaxios';
 
 import { MessageNetworkExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-network.exception';
 

@@ -1,26 +1,29 @@
-import { Expect, HasAllProperties } from 'twenty-shared/testing';
-import { FieldMetadataType, NullablePartial } from 'twenty-shared/types';
-import { Relation as TypeOrmRelation } from 'typeorm';
+import { type Expect, type HasAllProperties } from 'twenty-shared/testing';
+import {
+  type FieldMetadataType,
+  type NullablePartial,
+} from 'twenty-shared/types';
+import { type Relation as TypeOrmRelation } from 'typeorm';
 
 import {
-  FieldMetadataDefaultValueForAnyType,
-  FieldMetadataDefaultValueForType,
+  type FieldMetadataDefaultValueForAnyType,
+  type FieldMetadataDefaultValueForType,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import {
-  AllFieldMetadataSettings,
-  FieldMetadataDateSettings,
-  FieldMetadataDateTimeSettings,
-  FieldMetadataNumberSettings,
-  FieldMetadataRelationSettings,
-  FieldMetadataTextSettings,
+  type AllFieldMetadataSettings,
+  type FieldMetadataDateSettings,
+  type FieldMetadataDateTimeSettings,
+  type FieldMetadataNumberSettings,
+  type FieldMetadataRelationSettings,
+  type FieldMetadataTextSettings,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import {
-  FieldMetadataComplexOption,
-  FieldMetadataDefaultOption,
+  type FieldMetadataComplexOption,
+  type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 type DefinedRelationRecord = {
   relationTargetFieldMetadataId: string;

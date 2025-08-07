@@ -1,6 +1,6 @@
-import { PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
+import { type PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { type WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 export const fetchTableColumns = async (
   workspaceDataSourceService: WorkspaceDataSourceService,

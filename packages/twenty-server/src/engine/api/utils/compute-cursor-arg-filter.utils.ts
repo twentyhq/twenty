@@ -1,16 +1,16 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  ObjectRecordCursor,
-  ObjectRecordCursorLeafCompositeValue,
-  ObjectRecordCursorLeafScalarValue,
-  ObjectRecordFilter,
-  ObjectRecordOrderBy,
+  type ObjectRecordCursor,
+  type ObjectRecordCursorLeafCompositeValue,
+  type ObjectRecordCursorLeafScalarValue,
+  type ObjectRecordFilter,
+  type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { buildCursorCumulativeWhereCondition } from 'src/engine/api/utils/build-cursor-cumulative-where-conditions.utils';
 import { buildCursorWhereCondition } from 'src/engine/api/utils/build-cursor-where-condition.utils';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export const computeCursorArgFilter = (
   cursor: ObjectRecordCursor,

@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { ViewFilterOperand as SharedViewFilterOperand } from 'twenty-shared/types';
+import { type ViewFilterOperand as SharedViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
+import { type ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
 import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
-import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
+import { type ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
 import { convertViewFilterOperandToCoreOperand } from 'src/modules/view/utils/convert-view-filter-operand-to-core-operand.util';
 import { transformViewFilterWorkspaceValueToCoreValue } from 'src/modules/view/utils/transform-view-filter-workspace-value-to-core-value';
 

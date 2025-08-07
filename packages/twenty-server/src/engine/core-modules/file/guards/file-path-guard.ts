@@ -1,7 +1,11 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  type CanActivate,
+  type ExecutionContext,
+  Injectable,
+} from '@nestjs/common';
 
 import {
-  FileTokenJwtPayload,
+  type FileTokenJwtPayload,
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { extractFileInfoFromRequest } from 'src/engine/core-modules/file/utils/extract-file-info-from-request.utils';

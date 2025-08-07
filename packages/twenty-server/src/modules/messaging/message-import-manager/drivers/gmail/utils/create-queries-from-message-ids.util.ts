@@ -1,4 +1,4 @@
-import { MessageQuery } from 'src/modules/messaging/message-import-manager/types/message-or-thread-query';
+import { type MessageQuery } from 'src/modules/messaging/message-import-manager/types/message-or-thread-query';
 
 export const createQueriesFromMessageIds = (
   messageExternalIds: string[],

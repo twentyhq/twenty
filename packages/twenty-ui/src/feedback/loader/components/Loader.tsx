@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { ThemeColor } from '@ui/theme';
+import { type ThemeColor } from '@ui/theme';
 import { motion } from 'framer-motion';
 
 const StyledLoaderContainer = styled.div<{

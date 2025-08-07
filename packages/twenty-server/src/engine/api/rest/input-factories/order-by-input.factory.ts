@@ -1,15 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { Request } from 'express';
+import { type Request } from 'express';
 
 import {
-  ObjectRecordOrderBy,
+  type ObjectRecordOrderBy,
   OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { checkFields } from 'src/engine/api/rest/core/query-builder/utils/check-fields.utils';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 export const DEFAULT_ORDER_DIRECTION = OrderByDirection.AscNullsFirst;
 

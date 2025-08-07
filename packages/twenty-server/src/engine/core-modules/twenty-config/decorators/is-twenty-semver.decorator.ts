@@ -1,9 +1,9 @@
 import {
   registerDecorator,
-  ValidationArguments,
-  ValidationOptions,
+  type ValidationArguments,
+  type ValidationOptions,
   ValidatorConstraint,
-  ValidatorConstraintInterface,
+  type ValidatorConstraintInterface,
 } from 'class-validator';
 import semver from 'semver';
 

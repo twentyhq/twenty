@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddHostnameToWorkspace1737997028359 implements MigrationInterface {
   name = 'AddHostnameToWorkspace1737997028359';

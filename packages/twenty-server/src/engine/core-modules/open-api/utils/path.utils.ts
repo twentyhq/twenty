@@ -1,4 +1,4 @@
-import { OpenAPIV3_1 } from 'openapi-types';
+import { type OpenAPIV3_1 } from 'openapi-types';
 import { capitalize } from 'twenty-shared/utils';
 
 import {
@@ -17,7 +17,7 @@ import {
   getJsonResponse,
   getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 export const computeBatchPath = (
   item: ObjectMetadataEntity,

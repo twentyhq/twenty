@@ -4,10 +4,10 @@ import { capitalize } from 'twenty-shared/utils';
 
 import { fetchMetadataFields } from 'src/engine/api/rest/metadata/query-builder/utils/fetch-metadata-fields.utils';
 import {
-  ObjectName,
-  Singular,
+  type ObjectName,
+  type Singular,
 } from 'src/engine/api/rest/metadata/types/metadata-entity.type';
-import { Selectors } from 'src/engine/api/rest/metadata/types/metadata-query.type';
+import { type Selectors } from 'src/engine/api/rest/metadata/types/metadata-query.type';
 
 @Injectable()
 export class CreateMetadataQueryFactory {

@@ -1,7 +1,7 @@
-import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
-import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { type RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { type BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 
 export type ConnectWhereValue = string | Record<string, string>;
 

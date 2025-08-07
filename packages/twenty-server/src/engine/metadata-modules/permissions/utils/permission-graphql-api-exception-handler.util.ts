@@ -4,7 +4,7 @@ import {
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-  PermissionsException,
+  type PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 

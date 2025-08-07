@@ -1,4 +1,4 @@
-import { Catch, ExceptionFilter } from '@nestjs/common';
+import { Catch, type ExceptionFilter } from '@nestjs/common';
 
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { permissionGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util';

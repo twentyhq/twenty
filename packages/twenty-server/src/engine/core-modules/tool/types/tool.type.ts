@@ -1,9 +1,9 @@
-import { JSONSchema7 } from 'json-schema';
-import { ZodType } from 'zod';
+import { type JSONSchema7 } from 'json-schema';
+import { type ZodType } from 'zod';
 
-import { ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
-import { ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { type PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
 export type Tool = {
   description: string;

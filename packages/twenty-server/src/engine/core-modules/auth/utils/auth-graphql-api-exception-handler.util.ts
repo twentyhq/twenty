@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 
 import {
-  AuthException,
+  type AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import {

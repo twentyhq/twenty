@@ -4,7 +4,7 @@ import {
 } from './two-factor-authentication.exception';
 import { twoFactorAuthenticationMethodsValidator } from './two-factor-authentication.validation';
 
-import { TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
+import { type TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
 import { OTPStatus } from './strategies/otp/otp.constants';
 
 describe('twoFactorAuthenticationMethodsValidator', () => {

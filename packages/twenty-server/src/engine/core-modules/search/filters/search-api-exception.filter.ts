@@ -1,4 +1,4 @@
-import { Catch, ExceptionFilter } from '@nestjs/common';
+import { Catch, type ExceptionFilter } from '@nestjs/common';
 
 import {
   SearchException,

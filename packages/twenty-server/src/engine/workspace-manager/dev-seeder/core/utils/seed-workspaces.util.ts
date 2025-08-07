@@ -1,7 +1,7 @@
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { DataSource } from 'typeorm';
+import { type DataSource } from 'typeorm';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
 
 const tableName = 'workspace';

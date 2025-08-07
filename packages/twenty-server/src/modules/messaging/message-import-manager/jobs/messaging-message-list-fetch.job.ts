@@ -7,7 +7,7 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
 import {
   MessageChannelSyncStage,
-  MessageChannelWorkspaceEntity,
+  type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessageImportExceptionHandlerService,

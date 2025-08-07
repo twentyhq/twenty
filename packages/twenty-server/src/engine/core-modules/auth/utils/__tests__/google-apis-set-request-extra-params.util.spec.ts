@@ -1,4 +1,4 @@
-import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api-request.type';
+import { type GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api-request.type';
 import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
 import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';

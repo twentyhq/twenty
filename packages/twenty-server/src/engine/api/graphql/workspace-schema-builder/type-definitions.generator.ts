@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
+import { type CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
 import { CompositeEnumTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-enum-type-definition.factory';
 import { CompositeInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-input-type-definition.factory';
@@ -10,7 +10,7 @@ import { ExtendObjectTypeDefinitionV2Factory } from 'src/engine/api/graphql/work
 import { RelationConnectInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/relation-connect-input-type-definition.factory';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 import { ConnectionTypeDefinitionFactory } from './factories/connection-type-definition.factory';
 import { EdgeTypeDefinitionFactory } from './factories/edge-type-definition.factory';
@@ -22,7 +22,7 @@ import {
   ObjectTypeDefinitionFactory,
   ObjectTypeDefinitionKind,
 } from './factories/object-type-definition.factory';
-import { WorkspaceBuildSchemaOptions } from './interfaces/workspace-build-schema-options.interface';
+import { type WorkspaceBuildSchemaOptions } from './interfaces/workspace-build-schema-options.interface';
 import { TypeDefinitionsStorage } from './storages/type-definitions.storage';
 import { objectContainsRelationField } from './utils/object-contains-relation-field';
 

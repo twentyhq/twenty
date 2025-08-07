@@ -14,9 +14,9 @@ import {
   SSOExceptionCode,
 } from 'src/engine/core-modules/sso/sso.exception';
 import {
-  OIDCConfiguration,
-  SAMLConfiguration,
-  SSOConfiguration,
+  type OIDCConfiguration,
+  type SAMLConfiguration,
+  type SSOConfiguration,
 } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
 import {
   IdentityProviderType,

@@ -3,7 +3,7 @@ import {
   isLabelIdentifierFieldMetadataTypes,
 } from 'twenty-shared/utils';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,

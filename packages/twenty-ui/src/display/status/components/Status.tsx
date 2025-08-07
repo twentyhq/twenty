@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { ThemeColor } from '@ui/theme';
+import { type ThemeColor } from '@ui/theme';
 import { themeColorSchema } from '@ui/theme/utils/themeColorSchema';
 
 import { Loader } from '@ui/feedback/loader/components/Loader';

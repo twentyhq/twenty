@@ -3,8 +3,8 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 
-import { Request } from 'express';
-import { Strategy, StrategyOptions, TokenSet } from 'openid-client';
+import { type Request } from 'express';
+import { Strategy, type StrategyOptions, type TokenSet } from 'openid-client';
 
 import {
   AuthException,

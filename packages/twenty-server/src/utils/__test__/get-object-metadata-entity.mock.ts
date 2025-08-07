@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 export type GetMockObjectMetadataEntityOverride =
   Partial<ObjectMetadataEntity> &

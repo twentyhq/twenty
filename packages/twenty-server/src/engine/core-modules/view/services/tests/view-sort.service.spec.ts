@@ -1,7 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
 import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';

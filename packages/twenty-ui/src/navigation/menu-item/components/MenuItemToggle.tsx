@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { IconComponent } from '@ui/display';
-import { Toggle, ToggleSize } from '@ui/input';
+import { type IconComponent } from '@ui/display';
+import { Toggle, type ToggleSize } from '@ui/input';
 import { useId } from 'react';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {

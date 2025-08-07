@@ -7,10 +7,10 @@ import { transformLinksValue } from 'src/engine/core-modules/record-transformer/
 import { transformPhonesValue } from 'src/engine/core-modules/record-transformer/utils/transform-phones-value.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import {
-  RichTextV2Metadata,
+  type RichTextV2Metadata,
   richTextV2ValueSchema,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 @Injectable()
 export class RecordInputTransformerService {

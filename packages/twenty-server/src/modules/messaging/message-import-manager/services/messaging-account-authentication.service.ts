@@ -6,9 +6,9 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { ConnectedAccountRefreshAccessTokenExceptionCode } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
 import {
   ConnectedAccountRefreshTokensService,
-  ConnectedAccountTokens,
+  type ConnectedAccountTokens,
 } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,

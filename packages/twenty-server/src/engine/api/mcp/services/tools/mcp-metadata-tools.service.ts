@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
-import { Request } from 'express';
-import { JSONSchema7 } from 'json-schema';
+import { type Request } from 'express';
+import { type JSONSchema7 } from 'json-schema';
 
-import { RequestContext } from 'src/engine/api/rest/types/RequestContext';
+import { type RequestContext } from 'src/engine/api/rest/types/RequestContext';
 import {
   RestApiService,
   GraphqlApiType,
 } from 'src/engine/api/rest/rest-api.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { getServerUrl } from 'src/utils/get-server-url';
-import { Query } from 'src/engine/api/rest/core/types/query.type';
+import { type Query } from 'src/engine/api/rest/core/types/query.type';
 
 @Injectable()
 export class MCPMetadataToolsService {

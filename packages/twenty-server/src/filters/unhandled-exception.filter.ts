@@ -1,11 +1,11 @@
 import {
-  ArgumentsHost,
+  type ArgumentsHost,
   Catch,
-  ExceptionFilter,
+  type ExceptionFilter,
   HttpException,
 } from '@nestjs/common';
 
-import { Response } from 'express';
+import { type Response } from 'express';
 
 // In case of exception in middleware run before the CORS middleware (eg: JSON Middleware that checks the request body),
 // the CORS headers are missing in the response.

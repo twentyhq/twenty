@@ -1,12 +1,12 @@
 import { Logger } from '@nestjs/common';
 
 import {
-  MessageQueueJobData,
-  MessageQueueJob,
+  type MessageQueueJobData,
+  type MessageQueueJob,
 } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
-import { MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
+import { type MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 export class SyncDriver implements MessageQueueDriver {
   private readonly logger = new Logger(SyncDriver.name);

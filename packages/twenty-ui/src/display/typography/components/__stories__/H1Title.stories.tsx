@@ -1,8 +1,8 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 import { CatalogDecorator } from '@ui/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '@ui/testing/decorators/ComponentDecorator';
-import { CatalogStory } from '@ui/testing/types/CatalogStory';
+import { type CatalogStory } from '@ui/testing/types/CatalogStory';
 
 import { H1Title, H1TitleFontColor } from '../H1Title';
 

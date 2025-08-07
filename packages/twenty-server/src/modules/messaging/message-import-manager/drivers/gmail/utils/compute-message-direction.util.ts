@@ -1,4 +1,4 @@
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 
 export const computeMessageDirection = (
