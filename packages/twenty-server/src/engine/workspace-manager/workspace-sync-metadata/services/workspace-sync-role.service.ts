@@ -70,6 +70,12 @@ export class WorkspaceSyncRoleService {
 
         await roleRepository.update({ id: roleToUpdate.id }, flatRoleData);
       }
+
+      if (roleComparatorResult.action === ComparatorAction.DELETE) {
+        const roleToDelete = roleComparatorResult.object;
+
+        await roleRepository.delete({ id: roleToDelete.id });
+      }
     }
   }
 }

@@ -8,10 +8,15 @@ import { FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
-type RoleComparatorResult = {
-  action: ComparatorAction;
-  object: FlatRole;
-};
+type RoleComparatorResult =
+  | {
+      action: ComparatorAction.CREATE | ComparatorAction.UPDATE;
+      object: FlatRole;
+    }
+  | {
+      action: ComparatorAction.DELETE;
+      object: RoleEntity;
+    };
 
 const rolePropertiesToIgnore = [
   'id',
@@ -86,6 +91,20 @@ export class WorkspaceRoleComparator {
             results.push({
               action: ComparatorAction.UPDATE,
               object: standardRole,
+            });
+          }
+          break;
+        }
+        case 'REMOVE': {
+          const uniqueIdentifier = difference.path[0];
+          const existingRole = existingRoles.find(
+            (role) => (role.standardId || role.id) === uniqueIdentifier,
+          );
+
+          if (existingRole && difference.path.length === 1) {
+            results.push({
+              action: ComparatorAction.DELETE,
+              object: existingRole,
             });
           }
           break;
