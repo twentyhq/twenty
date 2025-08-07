@@ -9,12 +9,14 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -71,4 +73,16 @@ export class ViewFilterGroup {
   })
   @JoinColumn({ name: 'viewId' })
   view: Relation<View>;
+
+  @OneToMany(() => ViewFilter, (viewFilter) => viewFilter.viewFilterGroup)
+  viewFilters: Relation<ViewFilter>[];
+
+  @ManyToOne(() => ViewFilterGroup, (viewFilterGroup) => viewFilterGroup.childViewFilterGroups, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'parentViewFilterGroupId' })
+  parentViewFilterGroup: Relation<ViewFilterGroup>;
+
+  @OneToMany(() => ViewFilterGroup, (viewFilterGroup) => viewFilterGroup.parentViewFilterGroup)
+  childViewFilterGroups: Relation<ViewFilterGroup>[];
 }

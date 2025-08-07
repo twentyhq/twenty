@@ -15,6 +15,7 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import { ViewFilterValue } from 'src/engine/core-modules/view/types/view-filter-value.type';
@@ -82,4 +83,10 @@ export class ViewFilter {
   })
   @JoinColumn({ name: 'viewId' })
   view: Relation<View>;
+
+  @ManyToOne(() => ViewFilterGroup, (viewFilterGroup) => viewFilterGroup.viewFilters, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'viewFilterGroupId' })
+  viewFilterGroup: Relation<ViewFilterGroup>;
 }
