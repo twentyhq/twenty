@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { t } from '@lingui/core/macro';
+import { Request } from 'express';
 import { Strategy } from 'passport-jwt';
 import { Repository } from 'typeorm';
 
@@ -40,8 +41,11 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     private readonly apiKeyRepository: Repository<ApiKey>,
   ) {
     const jwtFromRequestFunction = jwtWrapperService.extractJwtFromRequest();
-    // @ts-expect-error legacy noImplicitAny
-    const secretOrKeyProviderFunction = async (_request, rawJwtToken, done) => {
+    const secretOrKeyProviderFunction = async (
+      _request: Request,
+      rawJwtToken: string,
+      done: (error: any, secret?: string | null) => void,
+    ) => {
       try {
         const decodedToken = jwtWrapperService.decode<
           | FileTokenJwtPayload

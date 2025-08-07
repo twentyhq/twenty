@@ -1,10 +1,10 @@
-import * as Sentry from '@sentry/node';
 import {
-  handleStreamOrSingleExecutionResult,
-  Plugin,
-  getDocumentString,
+    getDocumentString,
+    handleStreamOrSingleExecutionResult,
+    Plugin,
 } from '@envelop/core';
-import { OperationDefinitionNode, Kind, print } from 'graphql';
+import * as Sentry from '@sentry/node';
+import { Kind, OperationDefinitionNode, print } from 'graphql';
 
 import { GraphQLContext } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
 
@@ -15,8 +15,7 @@ export const useSentryTracing = <
     onExecute({ args }) {
       const transactionName = args.operationName || 'Anonymous Operation';
       const rootOperation = args.document.definitions.find(
-        // @ts-expect-error legacy noImplicitAny
-        (o) => o.kind === Kind.OPERATION_DEFINITION,
+        (o): o is OperationDefinitionNode => o.kind === Kind.OPERATION_DEFINITION,
       ) as OperationDefinitionNode;
       const operationType = rootOperation.operation;
 

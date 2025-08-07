@@ -70,8 +70,7 @@ export class S3Driver implements StorageDriver {
     await this.s3Client.send(command);
   }
 
-  // @ts-expect-error legacy noImplicitAny
-  private async emptyS3Directory(folderPath) {
+  private async emptyS3Directory(folderPath: string) {
     this.logger.log(`${folderPath} - emptying folder`);
 
     const listParams = {

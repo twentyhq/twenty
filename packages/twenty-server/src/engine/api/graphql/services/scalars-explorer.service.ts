@@ -9,8 +9,7 @@ export class ScalarsExplorerService {
   private scalarImplementations: Record<string, GraphQLScalarType>;
 
   constructor() {
-    this.scalarImplementations = scalars.reduce((acc, scalar) => {
-      // @ts-expect-error legacy noImplicitAny
+    this.scalarImplementations = scalars.reduce((acc: Record<string, GraphQLScalarType>, scalar) => {
       acc[scalar.name] = scalar;
 
       return acc;

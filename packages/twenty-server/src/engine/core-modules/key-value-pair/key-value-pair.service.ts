@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 
 import {
-  KeyValuePair,
-  KeyValuePairType,
+    KeyValuePair,
+    KeyValuePairType,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 
 export class KeyValuePairService<
@@ -73,10 +73,9 @@ export class KeyValuePairService<
     };
 
     const conflictPaths = Object.keys(upsertData).filter(
-      (key) =>
+      (key): key is keyof typeof upsertData =>
         ['userId', 'workspaceId', 'key'].includes(key) &&
-        // @ts-expect-error legacy noImplicitAny
-        upsertData[key] !== undefined,
+        upsertData[key as keyof typeof upsertData] !== undefined,
     );
 
     const indexPredicate = !userId

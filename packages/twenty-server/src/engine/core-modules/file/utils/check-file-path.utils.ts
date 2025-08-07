@@ -1,12 +1,12 @@
 import { BadRequestException } from '@nestjs/common';
 
 import {
-  AllowedFolders,
-  FileFolder,
+    AllowedFolders,
+    FileFolder,
 } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { kebabCase } from 'src/utils/kebab-case';
 import { settings } from 'src/engine/constants/settings';
+import { kebabCase } from 'src/utils/kebab-case';
 
 export const checkFilePath = (filePath: string): string => {
   const allowedFolders = Object.values(FileFolder).map((value) =>
@@ -23,8 +23,7 @@ export const checkFilePath = (filePath: string): string => {
   if (
     folder !== kebabCase(FileFolder.ServerlessFunction) &&
     size &&
-    // @ts-expect-error legacy noImplicitAny
-    !settings.storage.imageCropSizes[folder]?.includes(size)
+    !settings.storage.imageCropSizes[folder as keyof typeof settings.storage.imageCropSizes]?.includes(size)
   ) {
     throw new BadRequestException(`Size ${size} is not allowed`);
   }

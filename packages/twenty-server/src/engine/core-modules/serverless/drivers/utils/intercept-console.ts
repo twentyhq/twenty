@@ -15,9 +15,8 @@ export class ConsoleListener {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   intercept(callback: (type: string, message: any[]) => void) {
     Object.keys(this.originalConsole).forEach((method) => {
-      // @ts-expect-error legacy noImplicitAny
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      console[method] = (...args: any[]) => {
+      (console as any)[method] = (...args: any[]) => {
         callback(method, args);
       };
     });
@@ -25,11 +24,10 @@ export class ConsoleListener {
 
   release() {
     Object.keys(this.originalConsole).forEach((method) => {
-      // @ts-expect-error legacy noImplicitAny
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      console[method] = (...args: any[]) => {
-        // @ts-expect-error legacy noImplicitAny
-        this.originalConsole[method](...args);
+      (console as any)[method] = (...args: any[]) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (this.originalConsole as any)[method](...args);
       };
     });
   }
