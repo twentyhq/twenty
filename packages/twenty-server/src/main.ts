@@ -7,7 +7,7 @@ import bytes from 'bytes';
 import { useContainer } from 'class-validator';
 import session from 'express-session';
 import { graphqlUploadExpress } from 'graphql-upload';
-
+// drop
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
