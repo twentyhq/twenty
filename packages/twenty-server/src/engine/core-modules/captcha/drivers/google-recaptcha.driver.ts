@@ -4,16 +4,15 @@ import { CaptchaDriver } from 'src/engine/core-modules/captcha/drivers/interface
 import { CaptchaServerResponse } from 'src/engine/core-modules/captcha/drivers/interfaces/captcha-server-response';
 
 import {
-  CaptchaDriverOptions,
-  CaptchaValidateResult,
+    CaptchaDriverOptions,
+    CaptchaValidateResult,
 } from 'src/engine/core-modules/captcha/interfaces';
 
 export class GoogleRecaptchaDriver implements CaptchaDriver {
-  private readonly siteKey: string;
   private readonly secretKey: string;
   private readonly httpService: AxiosInstance;
-  constructor(private options: CaptchaDriverOptions) {
-    this.siteKey = options.siteKey;
+  constructor(options: CaptchaDriverOptions) {
+    // siteKey is not needed for server-side validation
     this.secretKey = options.secretKey;
     this.httpService = axios.create({
       baseURL: 'https://www.google.com/recaptcha/api/siteverify',

@@ -1,10 +1,11 @@
 import { Catch, ExceptionFilter } from '@nestjs/common';
 
 import {
-  AuditException,
-  AuditExceptionCode,
+    AuditException,
+    AuditExceptionCode,
 } from 'src/engine/core-modules/audit/audit.exception';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 @Catch(AuditException)
 export class AuditExceptionFilter implements ExceptionFilter {
@@ -13,11 +14,8 @@ export class AuditExceptionFilter implements ExceptionFilter {
       case AuditExceptionCode.INVALID_TYPE:
       case AuditExceptionCode.INVALID_INPUT:
         throw new UserInputError(exception);
-      default: {
-        const _exhaustiveCheck: never = exception.code;
-
-        throw exception;
-      }
+      default:
+        return assertUnreachable(exception.code);
     }
   }
 }

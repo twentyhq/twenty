@@ -26,7 +26,7 @@ export async function GET() {
     const formattedReleasesNotes = visibleReleasesNotes.map((releaseNote) => {
       const updatedContent = releaseNote.content.replace(
         /!\[(.*?)\]\((\/images\/.*?)\)/g,
-        (match, altText, imagePath) => {
+        (_match, altText, imagePath) => {
           return `![${altText}](https://twenty.com${imagePath})`;
         },
       );

@@ -2,6 +2,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 export const getAuthExceptionRestStatus = (exception: AuthException) => {
   switch (exception.code) {
@@ -31,10 +32,7 @@ export const getAuthExceptionRestStatus = (exception: AuthException) => {
     case AuthExceptionCode.INTERNAL_SERVER_ERROR:
     case AuthExceptionCode.USER_WORKSPACE_NOT_FOUND:
       return 500;
-    default: {
-      const _exhaustiveCheck: never = exception.code;
-
-      return 500;
-    }
+    default:
+      return assertUnreachable(exception.code);
   }
 };

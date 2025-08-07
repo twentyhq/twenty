@@ -2,8 +2,8 @@ import { Bundle, ZObject } from 'zapier-platform-core';
 
 import handleQueryParams from '../../utils/handleQueryParams';
 import requestDb, {
-  requestDbViaRestApi,
-  requestSchema,
+    requestDbViaRestApi,
+    requestSchema,
 } from '../../utils/requestDb';
 
 export enum DatabaseEventAction {
@@ -42,7 +42,7 @@ export const performUnsubscribe = async (z: ZObject, bundle: Bundle) => {
   return result.data.deleteWebhook;
 };
 
-export const perform = (z: ZObject, bundle: Bundle) => {
+export const perform = (_z: ZObject, bundle: Bundle) => {
   const data = {
     record: bundle.cleanedRequest.record,
     ...(bundle.cleanedRequest.updatedFields && {

@@ -1,12 +1,13 @@
 import {
-  ConflictError,
-  NotFoundError,
-  UserInputError,
+    ConflictError,
+    NotFoundError,
+    UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-  RemoteTableException,
-  RemoteTableExceptionCode,
+    RemoteTableException,
+    RemoteTableExceptionCode,
 } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.exception';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 export const remoteTableGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof RemoteTableException) {
@@ -20,11 +21,8 @@ export const remoteTableGraphqlApiExceptionHandler = (error: Error) => {
         throw new UserInputError(error.message);
       case RemoteTableExceptionCode.REMOTE_TABLE_ALREADY_EXISTS:
         throw new ConflictError(error.message);
-      default: {
-        const _exhaustiveCheck: never = error.code;
-
-        throw error;
-      }
+      default:
+        return assertUnreachable(error.code);
     }
   }
 

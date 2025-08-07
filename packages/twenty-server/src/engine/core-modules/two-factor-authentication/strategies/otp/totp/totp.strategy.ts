@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { authenticator } from 'otplib';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
@@ -22,8 +22,6 @@ import {
 @Injectable()
 export class TotpStrategy implements OTPAuthenticationStrategyInterface {
   public readonly name = TwoFactorAuthenticationStrategy.TOTP;
-
-  private readonly logger = new Logger(TotpStrategy.name);
 
   constructor(options?: TOTPStrategyConfig) {
     let result: SafeParseReturnType<unknown, TOTPStrategyConfig> | undefined;

@@ -1,12 +1,13 @@
 import {
-  ConflictError,
-  ForbiddenError,
-  NotFoundError,
+    ConflictError,
+    ForbiddenError,
+    NotFoundError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-  ServerlessFunctionException,
-  ServerlessFunctionExceptionCode,
+    ServerlessFunctionException,
+    ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const serverlessFunctionGraphQLApiExceptionHandler = (error: any) => {
@@ -23,11 +24,8 @@ export const serverlessFunctionGraphQLApiExceptionHandler = (error: any) => {
         throw new ForbiddenError(error);
       case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CODE_UNCHANGED:
         throw error;
-      default: {
-        const _exhaustiveCheck: never = error.code;
-
-        throw error;
-      }
+      default:
+        return assertUnreachable(error.code);
     }
   }
   throw error;

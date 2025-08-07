@@ -1,19 +1,18 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_INSTANCE_TOKEN } from 'src/engine/core-modules/twenty-config/constants/config-variables-instance-tokens.constants';
 import { ConfigVariablesMetadataMap } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
 import {
-  ConfigVariableException,
-  ConfigVariableExceptionCode,
+    ConfigVariableException,
+    ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { typeTransformers } from 'src/engine/core-modules/twenty-config/utils/type-transformers.registry';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 @Injectable()
 export class ConfigValueConverterService {
-  private readonly logger = new Logger(ConfigValueConverterService.name);
 
   constructor(
     @Inject(CONFIG_VARIABLES_INSTANCE_TOKEN)

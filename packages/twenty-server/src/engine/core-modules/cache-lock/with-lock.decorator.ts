@@ -11,7 +11,7 @@ export const WithLock = (
 ): MethodDecorator => {
   const injectCacheLockService = Inject(CacheLockService);
 
-  return function (target, propertyKey, descriptor: PropertyDescriptor) {
+  return function (target, _propertyKey, descriptor: PropertyDescriptor) {
     injectCacheLockService(target, 'cacheLockService');
 
     const originalMethod = descriptor.value;

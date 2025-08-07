@@ -21,7 +21,7 @@ export class FlushCacheCommand extends CommandRunner {
   }
 
   async run(
-    passedParams: string[],
+    _passedParams: string[],
     options?: Record<string, unknown>,
   ): Promise<void> {
     const pattern = (options?.pattern as string) || '*';

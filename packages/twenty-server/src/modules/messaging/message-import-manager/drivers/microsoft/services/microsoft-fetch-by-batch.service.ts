@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
@@ -12,7 +12,6 @@ import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-impo
 
 @Injectable()
 export class MicrosoftFetchByBatchService {
-  private readonly logger = new Logger(MicrosoftFetchByBatchService.name);
   constructor(
     private readonly microsoftClientProvider: MicrosoftClientProvider,
     private readonly microsoftHandleErrorService: MicrosoftHandleErrorService,

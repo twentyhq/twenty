@@ -93,7 +93,7 @@ describe('publicFeatureFlagValidator', () => {
     it('should maintain type assertion after validation', () => {
       const publicFlag = mockPublicFeatureFlag;
 
-      const testTypeAssertion = (flag: FeatureFlagKey) => {
+      const testTypeAssertion = (flag: FeatureFlagKey): boolean => {
         publicFeatureFlagValidator.assertIsPublicFeatureFlag(
           flag,
           mockException,

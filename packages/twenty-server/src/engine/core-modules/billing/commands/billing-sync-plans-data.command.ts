@@ -7,8 +7,8 @@ import Stripe from 'stripe';
 import { Repository } from 'typeorm';
 
 import {
-  MigrationCommandOptions,
-  MigrationCommandRunner,
+    MigrationCommandOptions,
+    MigrationCommandRunner,
 } from 'src/database/commands/command-runners/migration.command-runner';
 import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
@@ -136,7 +136,7 @@ export class BillingSyncPlansDataCommand extends MigrationCommandRunner {
   }
 
   override async runMigrationCommand(
-    passedParams: string[],
+    _passedParams: string[],
     options: MigrationCommandOptions,
   ): Promise<void> {
     const billingMeters = await this.stripeBillingMeterService.getAllMeters();

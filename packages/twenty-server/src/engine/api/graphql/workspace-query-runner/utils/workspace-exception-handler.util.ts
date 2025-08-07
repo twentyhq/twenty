@@ -8,6 +8,7 @@ import {
   TimeoutError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 export const workspaceExceptionHandler = (
   error: WorkspaceQueryRunnerException,
@@ -26,10 +27,7 @@ export const workspaceExceptionHandler = (
       throw new TimeoutError(error);
     case WorkspaceQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR:
       throw error;
-    default: {
-      const _exhaustiveCheck: never = error.code;
-
-      throw error;
-    }
+    default:
+      return assertUnreachable(error.code);
   }
 };

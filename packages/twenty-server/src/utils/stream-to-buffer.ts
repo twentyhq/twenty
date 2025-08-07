@@ -1,10 +1,10 @@
 import { Readable } from 'stream';
 
 export const streamToBuffer = async (stream: Readable): Promise<Buffer> => {
-  const chunks: Uint8Array[] = [];
+  const chunks: Buffer[] = [];
 
   for await (const chunk of stream) {
-    chunks.push(chunk);
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
   }
 
   return Buffer.concat(chunks);

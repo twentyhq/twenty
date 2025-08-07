@@ -5,10 +5,10 @@ import { DataSource, EntityManager, In, Repository } from 'typeorm';
 
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
-  ApiKeyException,
-  ApiKeyExceptionCode,
+    ApiKeyException,
+    ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/api-key.exception';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -22,8 +22,6 @@ export class ApiKeyRoleService {
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(ApiKey, 'core')
     private readonly apiKeyRepository: Repository<ApiKey>,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,

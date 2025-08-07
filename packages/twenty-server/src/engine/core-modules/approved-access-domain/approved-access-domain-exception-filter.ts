@@ -1,10 +1,11 @@
 import { Catch, ExceptionFilter } from '@nestjs/common';
 
 import {
-  ApprovedAccessDomainException,
-  ApprovedAccessDomainExceptionCode,
+    ApprovedAccessDomainException,
+    ApprovedAccessDomainExceptionCode,
 } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.exception';
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 @Catch(ApprovedAccessDomainException)
 export class ApprovedAccessDomainExceptionFilter implements ExceptionFilter {
@@ -18,11 +19,8 @@ export class ApprovedAccessDomainExceptionFilter implements ExceptionFilter {
       case ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_VALIDATED:
       case ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_MUST_BE_A_COMPANY_DOMAIN:
         throw new ForbiddenError(exception);
-      default: {
-        const _exhaustiveCheck: never = exception.code;
-
-        throw exception;
-      }
+      default:
+        return assertUnreachable(exception.code);
     }
   }
 }

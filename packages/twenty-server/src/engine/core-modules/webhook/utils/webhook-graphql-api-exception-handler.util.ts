@@ -1,11 +1,12 @@
 import {
-  NotFoundError,
-  UserInputError,
+    NotFoundError,
+    UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-  WebhookException,
-  WebhookExceptionCode,
+    WebhookException,
+    WebhookExceptionCode,
 } from 'src/engine/core-modules/webhook/webhook.exception';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 export const webhookGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof WebhookException) {
@@ -16,11 +17,8 @@ export const webhookGraphqlApiExceptionHandler = (error: Error) => {
         throw new UserInputError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
-      default: {
-        const _exhaustiveCheck: never = error.code;
-
-        throw error;
-      }
+      default:
+        return assertUnreachable(error.code);
     }
   }
 

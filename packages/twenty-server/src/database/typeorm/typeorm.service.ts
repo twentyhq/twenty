@@ -1,8 +1,8 @@
 import {
-  Injectable,
-  Logger,
-  OnModuleDestroy,
-  OnModuleInit,
+    Injectable,
+    Logger,
+    OnModuleDestroy,
+    OnModuleInit,
 } from '@nestjs/common';
 
 import { DataSource } from 'typeorm';
@@ -14,7 +14,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
   private mainDataSource: DataSource;
   private readonly logger = new Logger(TypeORMService.name);
 
-  constructor(private readonly twentyConfigService: TwentyConfigService) {
+  constructor(twentyConfigService: TwentyConfigService) {
     const isJest = process.argv.some((arg) => arg.includes('jest'));
 
     this.mainDataSource = new DataSource({

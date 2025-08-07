@@ -6,6 +6,7 @@ import {
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 export const graphqlQueryRunnerExceptionHandler = (
   error: GraphqlQueryRunnerException,
@@ -30,10 +31,7 @@ export const graphqlQueryRunnerExceptionHandler = (
     case GraphqlQueryRunnerExceptionCode.INVALID_POST_HOOK_PAYLOAD:
     case GraphqlQueryRunnerExceptionCode.MISSING_SYSTEM_FIELD:
       throw error;
-    default: {
-      const _exhaustiveCheck: never = error.code;
-
-      throw error;
-    }
+    default:
+      return assertUnreachable(error.code);
   }
 };

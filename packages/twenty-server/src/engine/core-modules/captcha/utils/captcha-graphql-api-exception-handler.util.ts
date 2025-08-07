@@ -1,8 +1,9 @@
 import {
-  CaptchaException,
-  CaptchaExceptionCode,
+    CaptchaException,
+    CaptchaExceptionCode,
 } from 'src/engine/core-modules/captcha/captcha.exception';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 export const captchaGraphqlApiExceptionHandler = (
   exception: CaptchaException,
@@ -11,10 +12,7 @@ export const captchaGraphqlApiExceptionHandler = (
     case CaptchaExceptionCode.INVALID_CAPTCHA:
       throw new UserInputError(exception);
 
-    default: {
-      const _exhaustiveCheck: never = exception.code;
-
-      throw exception;
-    }
+    default:
+      return assertUnreachable(exception.code);
   }
 };

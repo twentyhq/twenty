@@ -2,8 +2,8 @@ import * as Sentry from '@sentry/node';
 
 export function SentryCronMonitor(monitorSlug: string, schedule: string) {
   return function (
-    target: object,
-    propertyKey: string,
+    _target: object,
+    _propertyKey: string,
     descriptor: PropertyDescriptor,
   ) {
     const originalMethod = descriptor.value;

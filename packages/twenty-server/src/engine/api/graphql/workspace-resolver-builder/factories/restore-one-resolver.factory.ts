@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { WorkspaceResolverBuilderFactoryInterface } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolver-builder-factory.interface';
 import {
-  Resolver,
-  RestoreOneResolverArgs,
+    Resolver,
+    RestoreOneResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
@@ -26,7 +26,7 @@ export class RestoreOneResolverFactory
   ): Resolver<RestoreOneResolverArgs> {
     const internalContext = context;
 
-    return async (_source, args, context, info) => {
+    return async (_source, args, _context, info) => {
       const options: WorkspaceQueryRunnerOptions = {
         authContext: internalContext.authContext,
         info,

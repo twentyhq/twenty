@@ -1,14 +1,15 @@
 import { Catch, ExceptionFilter } from '@nestjs/common';
 
 import {
-  ForbiddenError,
-  NotFoundError,
-  UserInputError,
+    ForbiddenError,
+    NotFoundError,
+    UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-  ConfigVariableException,
-  ConfigVariableExceptionCode,
+    ConfigVariableException,
+    ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 @Catch(ConfigVariableException)
 export class ConfigVariableGraphqlApiExceptionFilter
@@ -26,11 +27,8 @@ export class ConfigVariableGraphqlApiExceptionFilter
       case ConfigVariableExceptionCode.INTERNAL_ERROR:
       case ConfigVariableExceptionCode.UNSUPPORTED_CONFIG_TYPE:
         throw exception;
-      default: {
-        const _exhaustiveCheck: never = exception.code;
-
-        throw exception;
-      }
+      default:
+        return assertUnreachable(exception.code);
     }
   }
 }

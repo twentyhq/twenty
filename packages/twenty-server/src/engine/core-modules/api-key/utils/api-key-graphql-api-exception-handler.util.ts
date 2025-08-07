@@ -7,6 +7,7 @@ import {
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 export const apiKeyGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof ApiKeyException) {
@@ -25,11 +26,8 @@ export const apiKeyGraphqlApiExceptionHandler = (error: Error) => {
         throw new ForbiddenError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
-      default: {
-        const _exhaustiveCheck: never = error.code;
-
-        throw error;
-      }
+      default:
+        return assertUnreachable(error.code);
     }
   }
 

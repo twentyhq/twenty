@@ -1,10 +1,28 @@
 import pick from 'lodash.pick';
 
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
+import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { isDefined } from 'twenty-shared/utils';
+
+const isRecordGqlConnection = (value: unknown): value is RecordGqlConnection => {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'edges' in value &&
+    Array.isArray((value as Record<string, unknown>).edges)
+  );
+};
+
+const isRecordGqlNode = (value: unknown): value is RecordGqlNode => {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'id' in value &&
+    '__typename' in value
+  );
+};
 
 export const getRecordFromRecordNode = <T extends ObjectRecord>({
   recordNode,
@@ -22,12 +40,18 @@ export const getRecordFromRecordNode = <T extends ObjectRecord>({
           return [fieldName, value];
         }
 
-        return isDefined(value.edges)
-          ? [
-              fieldName,
-              getRecordsFromRecordConnection({ recordConnection: value }),
-            ]
-          : [fieldName, getRecordFromRecordNode<T>({ recordNode: value })];
+        if (isRecordGqlConnection(value)) {
+          return [
+            fieldName,
+            getRecordsFromRecordConnection({ recordConnection: value }),
+          ];
+        }
+
+        if (isRecordGqlNode(value)) {
+          return [fieldName, getRecordFromRecordNode({ recordNode: value })];
+        }
+
+        return [fieldName, value];
       }),
     ),
     // Only adds `id` and `__typename` if they exist.

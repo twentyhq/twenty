@@ -24,7 +24,7 @@ export async function getReleases(baseUrl?: string): Promise<ReleaseNote[]> {
     if (baseUrl) {
       updatedContent = content.replace(
         /!\[(.*?)\]\((?!http)(.*?)\)/g,
-        (match: string, alt: string, src: string) => {
+        (_match: string, alt: string, src: string) => {
           // Check if src is a relative path (not starting with http:// or https://)
           if (!src.startsWith('/')) {
             src = `${baseUrl}/${src}`;

@@ -83,7 +83,7 @@ type MorphRelationFieldMetadata =
   FieldMetadataEntity<FieldMetadataType.MORPH_RELATION>;
 
 // eslint-disable-next-line unused-imports/no-unused-vars, @typescript-eslint/no-unused-vars
-type RelationAssertions = [
+type _RelationAssertions = [
   Expect<HasAllProperties<UUIDFieldMetadata, NotDefinedRelationRecord>>,
   Expect<HasAllProperties<TextFieldMetadata, NotDefinedRelationRecord>>,
   Expect<HasAllProperties<NumberFieldMetadata, NotDefinedRelationRecord>>,
@@ -120,7 +120,7 @@ type NotDefinedSettings = {
 };
 
 // eslint-disable-next-line unused-imports/no-unused-vars, @typescript-eslint/no-unused-vars
-type SettingsAssertions = [
+type _SettingsAssertions = [
   Expect<HasAllProperties<CurrencyFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<FullNameFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<RatingFieldMetadata, NotDefinedSettings>>,
@@ -184,7 +184,7 @@ type SettingsAssertions = [
 ];
 
 // eslint-disable-next-line unused-imports/no-unused-vars, @typescript-eslint/no-unused-vars
-type DefaultValueAssertions = [
+type _DefaultValueAssertions = [
   Expect<
     HasAllProperties<
       UUIDFieldMetadata,
@@ -352,7 +352,7 @@ type NotDefinedOptions = {
 };
 
 // eslint-disable-next-line unused-imports/no-unused-vars, @typescript-eslint/no-unused-vars
-type OptionsAssertions = [
+type _OptionsAssertions = [
   Expect<
     HasAllProperties<
       RatingFieldMetadata,

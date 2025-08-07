@@ -1,12 +1,13 @@
 import {
-  ConflictError,
-  ForbiddenError,
-  NotFoundError,
+    ConflictError,
+    ForbiddenError,
+    NotFoundError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-  WorkspaceException,
-  WorkspaceExceptionCode,
+    WorkspaceException,
+    WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 export const workspaceGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof WorkspaceException) {
@@ -20,11 +21,8 @@ export const workspaceGraphqlApiExceptionHandler = (error: Error) => {
       case WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED:
       case WorkspaceExceptionCode.WORKSPACE_CUSTOM_DOMAIN_DISABLED:
         throw new ForbiddenError(error);
-      default: {
-        const _exhaustiveCheck: never = error.code;
-
-        throw error;
-      }
+      default:
+        return assertUnreachable(error.code);
     }
   }
 
