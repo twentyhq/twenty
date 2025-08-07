@@ -1,32 +1,32 @@
 import { DragStart } from '@hello-pangea/dnd';
 import { useRecoilCallback } from 'recoil';
 
-import { draggedRecordIdsComponentState } from '@/object-record/record-drag/board/states/draggedRecordIdsComponentState';
-import { isMultiDragActiveComponentState } from '@/object-record/record-drag/board/states/isMultiDragActiveComponentState';
-import { originalSelectionComponentState } from '@/object-record/record-drag/board/states/originalSelectionComponentState';
-import { primaryDraggedRecordIdComponentState } from '@/object-record/record-drag/board/states/primaryDraggedRecordIdComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getDragOperationType } from '@/object-record/record-drag/shared/utils/getDragOperationType';
+import { draggedRecordIdsTableComponentState } from '@/object-record/record-drag/table/states/draggedRecordIdsTableComponentState';
+import { isMultiDragActiveTableComponentState } from '@/object-record/record-drag/table/states/isMultiDragActiveTableComponentState';
+import { originalSelectionTableComponentState } from '@/object-record/record-drag/table/states/originalSelectionTableComponentState';
+import { primaryDraggedRecordIdTableComponentState } from '@/object-record/record-drag/table/states/primaryDraggedRecordIdTableComponentState';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 
-export const useStartBoardCardDrag = (recordBoardId?: string) => {
+export const useStartTableRowDrag = (recordTableId?: string) => {
   const isMultiDragActiveState = useRecoilComponentCallbackState(
-    isMultiDragActiveComponentState,
-    recordBoardId,
+    isMultiDragActiveTableComponentState,
+    recordTableId,
   );
 
   const draggedRecordIdsState = useRecoilComponentCallbackState(
-    draggedRecordIdsComponentState,
-    recordBoardId,
+    draggedRecordIdsTableComponentState,
+    recordTableId,
   );
 
   const primaryDraggedRecordIdState = useRecoilComponentCallbackState(
-    primaryDraggedRecordIdComponentState,
-    recordBoardId,
+    primaryDraggedRecordIdTableComponentState,
+    recordTableId,
   );
 
   const originalSelectionState = useRecoilComponentCallbackState(
-    originalSelectionComponentState,
-    recordBoardId,
+    originalSelectionTableComponentState,
+    recordTableId,
   );
 
   return useRecoilCallback(

@@ -27,7 +27,7 @@ export const useEndBoardCardDrag = (recordBoardId?: string) => {
     recordBoardId,
   );
 
-  return useRecoilCallback(
+  const endDrag = useRecoilCallback(
     ({ set }) =>
       () => {
         set(isMultiDragActiveState, false);
@@ -42,4 +42,6 @@ export const useEndBoardCardDrag = (recordBoardId?: string) => {
       originalSelectionState,
     ],
   );
+
+  return { endDrag };
 };

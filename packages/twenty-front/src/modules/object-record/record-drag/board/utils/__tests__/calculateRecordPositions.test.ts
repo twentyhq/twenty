@@ -1,10 +1,10 @@
-import { calculateRecordPositions } from '../calculateRecordPositions';
+import { calculateRecordPositions } from '@/object-record/record-drag/board/utils/calculateRecordPositions';
 
-import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
+import { getDraggedRecordPosition } from '@/object-record/record-drag/shared/utils/getDraggedRecordPosition';
 import { getIndexNeighboursElementsFromArray } from '~/utils/array/getIndexNeighboursElementsFromArray';
 
 jest.mock(
-  '@/object-record/record-board/utils/getDraggedRecordPosition',
+  '@/object-record/record-drag/shared/utils/getDraggedRecordPosition',
   () => ({
     getDraggedRecordPosition: jest.fn(),
   }),

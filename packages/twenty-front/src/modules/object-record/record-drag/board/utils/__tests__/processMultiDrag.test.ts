@@ -1,11 +1,14 @@
+import { processMultiDrag } from '@/object-record/record-drag/board/utils/processMultiDrag';
 import { DropResult } from '@hello-pangea/dnd';
-import { processMultiDrag } from '../processMultiDrag';
 
-import { calculateRecordPositions } from '../calculateRecordPositions';
+import { calculateRecordPositions } from '@/object-record/record-drag/board/utils/calculateRecordPositions';
 
-jest.mock('../calculateRecordPositions', () => ({
-  calculateRecordPositions: jest.fn(),
-}));
+jest.mock(
+  '@/object-record/record-drag/board/utils/calculateRecordPositions',
+  () => ({
+    calculateRecordPositions: jest.fn(),
+  }),
+);
 
 const mockCalculateRecordPositions = calculateRecordPositions as jest.Mock;
 

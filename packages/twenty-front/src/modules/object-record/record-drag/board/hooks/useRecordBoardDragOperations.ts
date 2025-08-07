@@ -8,8 +8,8 @@ import { DropResult } from '@hello-pangea/dnd';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { getDragOperationType } from '@/object-record/record-drag/shared/utils/getDragOperationType';
-import { processMultiDrag } from '../utils/processMultiDrag';
-import { processSingleDrag } from '../utils/processSingleDrag';
+import { processMultiDrag } from '@/object-record/record-drag/board/utils/processMultiDrag';
+import { processSingleDrag } from '@/object-record/record-drag/board/utils/processSingleDrag';
 
 export const useRecordBoardDragOperations = () => {
   const { updateOneRecord, selectFieldMetadataItem } =

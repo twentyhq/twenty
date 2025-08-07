@@ -1,34 +1,29 @@
 import { getDraggedRecordPosition } from '@/object-record/record-drag/shared/utils/getDraggedRecordPosition';
 import { getIndexNeighboursElementsFromArray } from '~/utils/array/getIndexNeighboursElementsFromArray';
 
-export type RecordPositionData = {
-  recordId: string;
-  position?: number;
-};
+import { RecordPositionData } from '@/object-record/record-drag/shared/types/dragTypes';
 
 type PositionCalculationContext = {
-  destinationRecordIds: string[];
+  allRecordIds: string[];
   recordsToMove: string[];
   destinationIndex: number;
   recordPositionData: RecordPositionData[];
 };
 
-export const calculateRecordPositions = ({
-  destinationRecordIds,
+export const calculateTableRowPositions = ({
+  allRecordIds,
   recordsToMove,
   destinationIndex,
   recordPositionData,
 }: PositionCalculationContext): Record<string, number> => {
-  const otherRecordIdsInDestinationColumn = destinationRecordIds.filter(
+  const otherRecordIds = allRecordIds.filter(
     (recordId: string) => !recordsToMove.includes(recordId),
   );
 
   const filteredRecordIds =
     recordsToMove.length === 1
-      ? otherRecordIdsInDestinationColumn
-      : destinationRecordIds.filter(
-          (recordId) => recordId !== recordsToMove[0],
-        );
+      ? otherRecordIds
+      : allRecordIds.filter((recordId) => recordId !== recordsToMove[0]);
 
   const { before: recordBeforeId, after: recordAfterId } =
     getIndexNeighboursElementsFromArray({

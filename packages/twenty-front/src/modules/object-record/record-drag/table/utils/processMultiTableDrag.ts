@@ -1,8 +1,9 @@
 import { DropResult } from '@hello-pangea/dnd';
+import { calculateTableRowPositions } from '@/object-record/record-drag/table/utils/calculateTableRowPositions';
 import {
-  calculateTableRowPositions,
   RecordPositionData,
-} from './calculateTableRowPositions';
+  MultiDragResult,
+} from '@/object-record/record-drag/shared/types/dragTypes';
 
 type MultiTableDragContext = {
   result: DropResult;
@@ -11,19 +12,12 @@ type MultiTableDragContext = {
   allRecordIds: string[];
 };
 
-type MultiTableDragResult = {
-  recordUpdates: Array<{
-    recordId: string;
-    position: number;
-  }>;
-};
-
 export const processMultiTableDrag = ({
   result,
   selectedRecordIds,
   recordPositionData,
   allRecordIds,
-}: MultiTableDragContext): MultiTableDragResult => {
+}: MultiTableDragContext): MultiDragResult => {
   if (!result.destination) {
     throw new Error('Destination is required for drag operation');
   }

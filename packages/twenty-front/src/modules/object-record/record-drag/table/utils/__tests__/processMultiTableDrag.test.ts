@@ -1,4 +1,4 @@
-import { processMultiTableDrag } from '../processMultiTableDrag';
+import { processMultiTableDrag } from '@/object-record/record-drag/table/utils/processMultiTableDrag';
 
 const createMockDropResult = (
   sourceIndex: number,

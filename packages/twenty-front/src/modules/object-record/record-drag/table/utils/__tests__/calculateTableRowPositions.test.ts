@@ -1,4 +1,4 @@
-import { calculateTableRowPositions } from '../calculateTableRowPositions';
+import { calculateTableRowPositions } from '@/object-record/record-drag/table/utils/calculateTableRowPositions';
 
 describe('calculateTableRowPositions', () => {
   const mockRecordPositionData = [
