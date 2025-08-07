@@ -33,7 +33,7 @@ export class CloudflareSecretMatchGuard implements CanActivate {
       }
 
       return false;
-    } catch (err) {
+    } catch {
       return false;
     }
   }

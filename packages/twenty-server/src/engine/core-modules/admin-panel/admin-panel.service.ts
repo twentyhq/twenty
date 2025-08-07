@@ -223,7 +223,7 @@ export class AdminPanelService {
       const latestVersion = versions[0];
 
       return { currentVersion, latestVersion };
-    } catch (error) {
+    } catch {
       return { currentVersion, latestVersion: 'latest' };
     }
   }

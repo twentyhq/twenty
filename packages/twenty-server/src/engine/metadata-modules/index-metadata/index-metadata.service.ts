@@ -93,7 +93,7 @@ export class IndexMetadataService {
         ...(isDefined(indexType) ? { indexType } : {}),
         isCustom,
       });
-    } catch (error) {
+    } catch {
       throw new Error(
         `Failed to create index ${indexName} on object metadata ${objectMetadata.nameSingular}`,
       );

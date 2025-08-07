@@ -247,7 +247,7 @@ export class PermissionsService {
       return permissionFlags.some(
         (permissionFlag) => permissionFlag.flag === flag,
       );
-    } catch (error) {
+    } catch {
       return false;
     }
   }

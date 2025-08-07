@@ -3,10 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import Cloudflare from 'cloudflare';
+import { CustomHostnameCreateParams } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { CustomHostnameCreateParams } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
 
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
+import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-deactivated';
 import {
   DomainManagerException,
   DomainManagerExceptionCode,
@@ -16,9 +19,6 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { domainManagerValidator } from 'src/engine/core-modules/domain-manager/validator/cloudflare.validate';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
-import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-deactivated';
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 
 @Injectable()
 export class CustomDomainService {
@@ -156,7 +156,7 @@ export class CustomDomainService {
           zone_id: this.twentyConfigService.get('CLOUDFLARE_ZONE_ID'),
         });
       }
-    } catch (err) {
+    } catch {
       return;
     }
   }

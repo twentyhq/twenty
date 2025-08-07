@@ -184,7 +184,7 @@ export class CreateCompanyService {
         name: data.name ?? getCompanyNameFromDomainName(domainName ?? ''),
         city: data.city,
       };
-    } catch (e) {
+    } catch {
       return {
         name: getCompanyNameFromDomainName(domainName ?? ''),
         city: '',

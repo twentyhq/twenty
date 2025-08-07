@@ -565,7 +565,7 @@ export abstract class RestApiBaseHandler {
   private parseCursor = (cursor: string) => {
     try {
       return JSON.parse(Buffer.from(cursor ?? '', 'base64').toString());
-    } catch (error) {
+    } catch {
       throw new BadRequestException(`Invalid cursor: ${cursor}`);
     }
   };

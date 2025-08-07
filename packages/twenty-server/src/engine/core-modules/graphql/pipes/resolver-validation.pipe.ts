@@ -15,7 +15,7 @@ const safeClassValidatorValidateWrapper = async (
 ): Promise<ValidationError[]> => {
   try {
     return await validate(object);
-  } catch (error) {
+  } catch {
     return [];
   }
 };

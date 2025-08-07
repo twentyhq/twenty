@@ -77,7 +77,7 @@ export class OIDCAuthStrategy extends PassportStrategy(
         identityProviderId: state.identityProviderId,
         workspaceInviteHash: state.workspaceInviteHash,
       };
-    } catch (err) {
+    } catch {
       throw new AuthException('Invalid state', AuthExceptionCode.INVALID_INPUT);
     }
   }

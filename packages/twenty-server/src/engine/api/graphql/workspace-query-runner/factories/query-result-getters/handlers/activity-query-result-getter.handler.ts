@@ -31,7 +31,7 @@ export class ActivityQueryResultGetterHandler
 
     try {
       blocknote = JSON.parse(blocknoteJson);
-    } catch (error) {
+    } catch {
       blocknote = [];
       // TODO: Remove this once we have removed the old rich text
       // eslint-disable-next-line no-console

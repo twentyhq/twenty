@@ -241,7 +241,7 @@ export class WorkspaceResolver {
         ...agent,
         roleId: agent.roleId ?? undefined,
       };
-    } catch (error) {
+    } catch {
       // If agent is not found, return null instead of throwing
       return null;
     }
@@ -275,7 +275,7 @@ export class WorkspaceResolver {
           url: workspace.logo,
           workspaceId: workspace.id,
         });
-      } catch (e) {
+      } catch {
         return workspace.logo;
       }
     }
@@ -360,7 +360,7 @@ export class WorkspaceResolver {
             url: workspace.logo,
             workspaceId: workspace.id,
           });
-        } catch (e) {
+        } catch {
           workspaceLogoWithToken = workspace.logo;
         }
       }

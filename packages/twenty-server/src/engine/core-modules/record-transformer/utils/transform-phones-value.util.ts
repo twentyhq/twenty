@@ -89,7 +89,7 @@ const parsePhoneNumberExceptionWrapper = ({
         : callingCode,
       defaultCountry: countryCode,
     });
-  } catch (error) {
+  } catch {
     throw new RecordTransformerException(
       `Provided phone number is invalid ${number}`,
       RecordTransformerExceptionCode.INVALID_PHONE_NUMBER,

@@ -411,7 +411,7 @@ export class CalDAVClient {
           events: allEvents,
           newSyncToken,
         });
-      } catch (error) {
+      } catch {
         results.set(calendar.url, {
           events: [],
           newSyncToken: options.syncCursor?.syncTokens[calendar.url],
@@ -486,7 +486,7 @@ export class CalDAVClient {
       const event = events[0] as ical.VEvent;
 
       return event.start < endDate && event.end > startDate;
-    } catch (error) {
+    } catch {
       return true;
     }
   }

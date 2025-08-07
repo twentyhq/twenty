@@ -25,7 +25,7 @@ export const useSettingsAgentFormState = (mode: 'create' | 'edit') => {
     try {
       settingsAIAgentFormSchema.parse(formValues);
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   };

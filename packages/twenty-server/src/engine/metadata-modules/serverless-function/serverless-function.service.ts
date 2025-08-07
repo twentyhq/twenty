@@ -407,7 +407,7 @@ export class ServerlessFunctionService {
         this.twentyConfigService.get('SERVERLESS_FUNCTION_EXEC_THROTTLE_LIMIT'),
         this.twentyConfigService.get('SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL'),
       );
-    } catch (error) {
+    } catch {
       throw new ServerlessFunctionException(
         'Serverless function execution rate limit exceeded',
         ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_EXECUTION_LIMIT_REACHED,

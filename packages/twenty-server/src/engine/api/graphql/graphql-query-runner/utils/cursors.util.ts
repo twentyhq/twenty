@@ -17,7 +17,7 @@ export interface CursorData {
 export const decodeCursor = <T = CursorData>(cursor: string): T => {
   try {
     return JSON.parse(Buffer.from(cursor, 'base64').toString());
-  } catch (err) {
+  } catch {
     throw new GraphqlQueryRunnerException(
       `Invalid cursor: ${cursor}`,
       GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,

@@ -104,7 +104,7 @@ function contains(leftValue: unknown, rightValue: unknown): boolean {
       } else {
         return leftValue.includes(parsedRightValue);
       }
-    } catch (error) {
+    } catch {
       return leftValue.includes(rightValue);
     }
   }

@@ -30,7 +30,7 @@ export class IsX509CertificateConstraint
       const cert = new crypto.X509Certificate(der);
 
       return cert instanceof crypto.X509Certificate;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

@@ -95,7 +95,7 @@ export class ForeignTableService {
       await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
         workspaceId,
       );
-    } catch (exception) {
+    } catch {
       this.workspaceMigrationService.deleteById(workspaceMigration.id);
 
       throw new ForeignTableException(
@@ -138,7 +138,7 @@ export class ForeignTableService {
         status: RemoteTableStatus.SYNCED,
         schemaPendingUpdates: [],
       };
-    } catch (exception) {
+    } catch {
       this.workspaceMigrationService.deleteById(workspaceMigration.id);
 
       throw new ForeignTableException(

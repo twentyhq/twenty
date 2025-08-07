@@ -62,7 +62,7 @@ export class OpenApiService {
       workspaceValidator.assertIsDefinedOrThrow(workspace);
 
       return workspace;
-    } catch (e) {
+    } catch {
       return null;
     }
   }

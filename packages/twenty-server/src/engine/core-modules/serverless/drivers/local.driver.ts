@@ -10,15 +10,15 @@ import {
 } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { COMMON_LAYER_NAME } from 'src/engine/core-modules/serverless/drivers/constants/common-layer-name';
-import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
-import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/serverless-tmpdir-folder';
-import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
-import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
+import { COMMON_LAYER_NAME } from 'src/engine/core-modules/serverless/drivers/constants/common-layer-name';
+import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
+import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/serverless-tmpdir-folder';
+import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
 import { ConsoleListener } from 'src/engine/core-modules/serverless/drivers/utils/intercept-console';
+import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
+import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -41,7 +41,7 @@ export class LocalDriver implements ServerlessDriver {
 
     try {
       await fs.access(inMemoryLastVersionLayerFolderPath);
-    } catch (e) {
+    } catch {
       await copyAndBuildDependencies(inMemoryLastVersionLayerFolderPath);
     }
   }

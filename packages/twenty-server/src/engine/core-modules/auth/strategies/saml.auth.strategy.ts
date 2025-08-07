@@ -14,11 +14,11 @@ import { AuthenticateOptions } from '@node-saml/passport-saml/lib/types';
 import { isEmail } from 'class-validator';
 import { Request } from 'express';
 
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 
 export type SAMLRequest = Omit<
   Request,
@@ -102,7 +102,7 @@ export class SamlAuthStrategy extends PassportStrategy(
       }
 
       throw new Error();
-    } catch (err) {
+    } catch {
       throw new AuthException('Invalid state', AuthExceptionCode.INVALID_INPUT);
     }
   }

@@ -33,7 +33,7 @@ export const absoluteUrlSchema = z.string().transform((value, ctx) => {
     });
 
     return z.NEVER;
-  } catch (error) {
+  } catch {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'domain is not a valid url',
