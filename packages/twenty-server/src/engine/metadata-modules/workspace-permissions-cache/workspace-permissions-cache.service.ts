@@ -2,9 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
-  ObjectRecordsPermissions,
-  ObjectRecordsPermissionsByRoleId,
-  RestrictedFields,
+  ObjectsPermissionsByRoleIdDeprecated,
+  ObjectsPermissionsDeprecated,
+  RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';
@@ -51,7 +51,9 @@ export class WorkspacePermissionsCacheService {
     workspaceId: string;
     roleIds?: string[];
   }): Promise<void> {
-    let currentRolesPermissions: ObjectRecordsPermissionsByRoleId | undefined;
+    let currentRolesPermissions:
+      | ObjectsPermissionsByRoleIdDeprecated
+      | undefined;
 
     if (roleIds) {
       currentRolesPermissions =
@@ -103,8 +105,11 @@ export class WorkspacePermissionsCacheService {
     workspaceId,
   }: {
     workspaceId: string;
-  }): Promise<CacheResult<string, ObjectRecordsPermissionsByRoleId>> {
-    return getFromCacheWithRecompute<string, ObjectRecordsPermissionsByRoleId>({
+  }): Promise<CacheResult<string, ObjectsPermissionsByRoleIdDeprecated>> {
+    return getFromCacheWithRecompute<
+      string,
+      ObjectsPermissionsByRoleIdDeprecated
+    >({
       workspaceId,
       getCacheData: () =>
         this.workspacePermissionsCacheStorageService.getRolesPermissions(
@@ -166,7 +171,7 @@ export class WorkspacePermissionsCacheService {
   }: {
     workspaceId: string;
     roleIds?: string[];
-  }): Promise<ObjectRecordsPermissionsByRoleId> {
+  }): Promise<ObjectsPermissionsByRoleIdDeprecated> {
     let roles: RoleEntity[] = [];
 
     const workspaceFeatureFlagsMap =
@@ -192,10 +197,10 @@ export class WorkspacePermissionsCacheService {
     const workspaceObjectMetadataCollection =
       await this.getWorkspaceObjectMetadataCollection(workspaceId);
 
-    const permissionsByRoleId: ObjectRecordsPermissionsByRoleId = {};
+    const permissionsByRoleId: ObjectsPermissionsByRoleIdDeprecated = {};
 
     for (const role of roles) {
-      const objectRecordsPermissions: ObjectRecordsPermissions = {};
+      const objectRecordsPermissions: ObjectsPermissionsDeprecated = {};
 
       for (const objectMetadata of workspaceObjectMetadataCollection) {
         const { id: objectMetadataId, isSystem, standardId } = objectMetadata;
@@ -204,7 +209,7 @@ export class WorkspacePermissionsCacheService {
         let canUpdate = role.canUpdateAllObjectRecords;
         let canSoftDelete = role.canSoftDeleteAllObjectRecords;
         let canDestroy = role.canDestroyAllObjectRecords;
-        const restrictedFields: RestrictedFields = {};
+        const restrictedFields: RestrictedFieldsPermissions = {};
 
         if (
           standardId &&

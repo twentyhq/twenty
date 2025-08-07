@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
+import { ObjectsPermissionsByRoleIdDeprecated } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
@@ -176,7 +176,7 @@ export class FieldPermissionService {
   }: {
     fieldPermission: UpsertFieldPermissionsInput['fieldPermissions'][0];
     objectMetadataMapsById: ObjectMetadataMaps['byId'];
-    rolesPermissions: ObjectRecordsPermissionsByRoleId;
+    rolesPermissions: ObjectsPermissionsByRoleIdDeprecated;
     role: RoleEntity;
   }) {
     if (

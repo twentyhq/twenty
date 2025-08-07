@@ -1,3 +1,4 @@
+import { hasSelectAllFieldsSelector } from 'src/engine/api/rest/metadata/query-builder/utils/has-select-all-fields-selector.util';
 import { Selectors } from 'src/engine/api/rest/metadata/types/metadata-query.type';
 
 export const fetchMetadataFields = (
@@ -41,7 +42,9 @@ export const fetchMetadataFields = (
     }
   `;
 
-  const fieldsSelection = selector?.fields?.join('\n') ?? defaultFields;
+  const fieldsSelection = hasSelectAllFieldsSelector(selector)
+    ? defaultFields
+    : (selector?.fields?.join('\n') ?? defaultFields);
 
   switch (objectNamePlural) {
     case 'objects': {

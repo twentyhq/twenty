@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
+import { ObjectsPermissionsByRoleIdDeprecated } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { EntitySchema, Repository } from 'typeorm';
 
@@ -256,8 +256,11 @@ export class WorkspaceDatasourceFactory {
     workspaceId,
   }: {
     workspaceId: string;
-  }): Promise<CacheResult<string, ObjectRecordsPermissionsByRoleId>> {
-    return getFromCacheWithRecompute<string, ObjectRecordsPermissionsByRoleId>({
+  }): Promise<CacheResult<string, ObjectsPermissionsByRoleIdDeprecated>> {
+    return getFromCacheWithRecompute<
+      string,
+      ObjectsPermissionsByRoleIdDeprecated
+    >({
       workspaceId,
       getCacheData: () =>
         this.workspacePermissionsCacheStorageService.getRolesPermissions(
@@ -310,7 +313,7 @@ export class WorkspaceDatasourceFactory {
   }: {
     workspaceDataSource: WorkspaceDataSource;
     cachedRolesPermissionsVersion: string;
-    cachedRolesPermissions: ObjectRecordsPermissionsByRoleId;
+    cachedRolesPermissions: ObjectsPermissionsByRoleIdDeprecated;
   }): Promise<void> {
     this.updateWorkspaceDataSourceIfNeeded({
       workspaceDataSource,

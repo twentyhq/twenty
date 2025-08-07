@@ -11,6 +11,29 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem');
 jest.mock('@/object-record/utils/generateAggregateQuery');
 
+const fields = [
+  {
+    id: '20202020-fed9-4ce5-9502-02a8efaf46e1',
+    name: 'amount',
+    label: 'Amount',
+    type: FieldMetadataType.NUMBER,
+    isCustom: false,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  } as FieldMetadataItem,
+  {
+    id: '20202020-dd4a-4ea4-bb7b-1c7300491b65',
+    name: 'name',
+    label: 'Name',
+    type: FieldMetadataType.TEXT,
+    isCustom: false,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  } as FieldMetadataItem,
+];
+
 const mockObjectMetadataItem: ObjectMetadataItem = {
   nameSingular: 'company',
   namePlural: 'companies',
@@ -23,28 +46,9 @@ const mockObjectMetadataItem: ObjectMetadataItem = {
   isActive: true,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
-  fields: [
-    {
-      id: '20202020-fed9-4ce5-9502-02a8efaf46e1',
-      name: 'amount',
-      label: 'Amount',
-      type: FieldMetadataType.NUMBER,
-      isCustom: false,
-      isActive: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    } as FieldMetadataItem,
-    {
-      id: '20202020-dd4a-4ea4-bb7b-1c7300491b65',
-      name: 'name',
-      label: 'Name',
-      type: FieldMetadataType.TEXT,
-      isCustom: false,
-      isActive: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    } as FieldMetadataItem,
-  ],
+  fields,
+  readableFields: fields,
+  updatableFields: fields,
   indexMetadatas: [],
   isLabelSyncedWithName: true,
   isRemote: false,
@@ -118,19 +122,19 @@ describe('useAggregateRecordsQuery', () => {
     );
   });
 
-  it('should throw error for invalid aggregation operation', () => {
-    expect(() =>
-      renderHook(
-        () =>
-          useAggregateRecordsQuery({
-            objectNameSingular: 'company',
-            recordGqlFieldsAggregate: {
-              name: [AggregateOperations.SUM],
-            },
-          }),
-        { wrapper: Wrapper },
-      ),
-    ).toThrow();
+  it('should early return for invalid aggregation operation', () => {
+    const { result } = renderHook(
+      () =>
+        useAggregateRecordsQuery({
+          objectNameSingular: 'company',
+          recordGqlFieldsAggregate: {
+            name: [AggregateOperations.SUM],
+          },
+        }),
+      { wrapper: Wrapper },
+    );
+
+    expect(result.current.gqlFieldToFieldMap).toEqual({});
   });
 
   it('should handle multiple aggregations', () => {
