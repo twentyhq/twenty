@@ -76,6 +76,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Configure git for merge operations
+        run: |
+          # Set git identity for merge operations (required for manual workflow runs)
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@twenty.com'
+
       - name: Try to merge main into current branch
         id: merge_attempt
         run: |
@@ -751,7 +757,27 @@ jobs:
                 }
               }
             } catch (error) {
-              console.log('Could not post comment:', error);
+              console.log('Failed to post PR comment:', error.message || error);
+              
+              // Check if this is a 403 Forbidden error (typical for fork PRs)
+              if (error.status === 403 || error.message?.includes('403') || error.message?.includes('Forbidden')) {
+                console.log('🚨 Comment posting failed with 403 Forbidden - likely a fork PR');
+                console.log('📋 This is expected for external fork PRs due to GitHub security restrictions');
+                console.log('📝 Breaking change details are available in workflow artifacts');
+                console.log('');
+                console.log('If this PR contains breaking changes:');
+                console.log('1. Add "breaking" to your PR title');
+                console.log('2. Add "BREAKING CHANGE: <description>" to your commit message');
+                console.log('');
+                console.log('⚠️ Failing CI to ensure breaking changes are properly acknowledged');
+                
+                // Exit with failure for fork PRs that can't post comments
+                // This way fork PRs with breaking changes will fail CI appropriately
+                process.exit(1);
+              } else {
+                console.log('⚠️ Unexpected error posting comment - continuing workflow');
+                // For other errors, don't fail the workflow
+              }
             }
 
       - name: Cleanup servers
@@ -763,6 +789,7 @@ jobs:
           if [ -f /tmp/main-server.pid ]; then
             kill $(cat /tmp/main-server.pid) || true
           fi
+
 
       - name: Upload API specifications and diffs
         if: always()
