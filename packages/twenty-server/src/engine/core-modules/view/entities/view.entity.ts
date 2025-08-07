@@ -48,6 +48,7 @@ export class View {
   @Column({
     type: 'enum',
     enum: ViewType,
+    enumName: 'ViewType',
     nullable: false,
     default: ViewType.TABLE,
   })
@@ -76,8 +77,10 @@ export class View {
 
   @Column({
     type: 'enum',
+    enumName: 'AggregateOperations',
     enum: AggregateOperations,
     nullable: true,
+    default: null,
   })
   kanbanAggregateOperation?: AggregateOperations | null;
 

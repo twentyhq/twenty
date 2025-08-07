@@ -49,6 +49,7 @@ export class ViewField {
     enumName: 'AggregateOperations',
     enum: AggregateOperations,
     nullable: true,
+    default: null,
   })
   aggregateOperation?: AggregateOperations | null;
 
