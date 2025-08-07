@@ -42,10 +42,8 @@ export const useColumnDefinitionsFromFieldMetadata = (
   if (isFieldsPermissionsEnabled) {
     restrictedFieldMetadataIds =
       getNonReadableFieldMetadataIdsFromObjectPermissions({
-        objectPermissions: [
+        objectPermissions:
           objectPermissionsByObjectMetadataId[objectMetadataItem.id],
-        ],
-        objectMetadataId: objectMetadataItem.id,
       });
   }
 

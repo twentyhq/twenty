@@ -3,19 +3,22 @@ import { IndexMetadataItem } from '@/object-metadata/types/IndexMetadataItem';
 import { getNonReadableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonReadableFieldMetadataIdsFromObjectPermissions';
 import { getNonUpdatableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonUpdatableFieldMetadataIdsFromObjectPermissions';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
-import {
-  ObjectMetadataItemsQuery,
-  ObjectPermission,
-} from '~/generated-metadata/graphql';
+import { ObjectPermissions } from 'twenty-shared/types';
+import { ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
+
+type mapPaginatedObjectMetadataItemsToObjectMetadataItemsArgs = {
+  pagedObjectMetadataItems: ObjectMetadataItemsQuery | undefined;
+  objectPermissionsByObjectMetadataId: Record<
+    string,
+    ObjectPermissions & { objectMetadataId: string }
+  >;
+};
 
 export const mapPaginatedObjectMetadataItemsToObjectMetadataItems = ({
   pagedObjectMetadataItems,
   objectPermissionsByObjectMetadataId,
-}: {
-  pagedObjectMetadataItems: ObjectMetadataItemsQuery | undefined;
-  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
-}) => {
+}: mapPaginatedObjectMetadataItemsToObjectMetadataItemsArgs) => {
   const formattedObjects: ObjectMetadataItem[] =
     pagedObjectMetadataItems?.objects.edges.map((object) => {
       const objectPermissions =
@@ -23,8 +26,7 @@ export const mapPaginatedObjectMetadataItemsToObjectMetadataItems = ({
 
       const nonReadableFieldMetadataIds =
         getNonReadableFieldMetadataIdsFromObjectPermissions({
-          objectPermissions: [objectPermissions],
-          objectMetadataId: object.node.id,
+          objectPermissions: objectPermissions,
         });
 
       const nonUpdatableFieldMetadataIds =

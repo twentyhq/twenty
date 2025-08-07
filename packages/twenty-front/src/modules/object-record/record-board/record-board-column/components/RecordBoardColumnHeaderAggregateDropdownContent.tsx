@@ -23,10 +23,8 @@ export const AggregateDropdownContent = () => {
 
   const restrictedFieldMetadataIds =
     getNonReadableFieldMetadataIdsFromObjectPermissions({
-      objectPermissions: [
+      objectPermissions:
         objectPermissionsByObjectMetadataId[objectMetadataItem.id],
-      ],
-      objectMetadataId: objectMetadataItem.id,
     });
 
   const readableFields = objectMetadataItem.fields.filter(

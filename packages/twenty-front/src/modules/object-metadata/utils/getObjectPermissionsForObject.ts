@@ -1,10 +1,13 @@
+import { ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ObjectPermission } from '~/generated/graphql';
 
 export const getObjectPermissionsForObject = (
-  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>,
+  objectPermissionsByObjectMetadataId: Record<
+    string,
+    ObjectPermissions & { objectMetadataId: string }
+  >,
   objectMetadataId: string,
-): ObjectPermission => {
+): ObjectPermissions & { objectMetadataId: string } => {
   const objectPermissions =
     objectPermissionsByObjectMetadataId[objectMetadataId];
 

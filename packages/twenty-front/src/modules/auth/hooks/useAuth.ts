@@ -81,6 +81,7 @@ import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { loginTokenState } from '../states/loginTokenState';
+import { ObjectPermissions } from 'twenty-shared/types';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -241,7 +242,13 @@ export const useAuth = () => {
     }
 
     if (isDefined(user.currentUserWorkspace)) {
-      setCurrentUserWorkspace(user.currentUserWorkspace);
+      setCurrentUserWorkspace({
+        ...user.currentUserWorkspace,
+        objectPermissions:
+          (user.currentUserWorkspace.objectPermissions as Array<
+            ObjectPermissions & { objectMetadataId: string }
+          >) ?? [],
+      });
     }
 
     if (isDefined(user.workspaceMember)) {

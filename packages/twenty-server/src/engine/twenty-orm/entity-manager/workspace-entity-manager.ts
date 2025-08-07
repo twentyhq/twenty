@@ -402,8 +402,7 @@ export class WorkspaceEntityManager extends EntityManager {
     validateOperationIsPermittedOrThrow({
       entityName,
       operationType,
-      objectRecordsPermissions:
-        permissionOptions?.objectRecordsPermissions ?? {},
+      objectsPermissions: permissionOptions?.objectRecordsPermissions ?? {},
       objectMetadataMaps: this.internalContext.objectMetadataMaps,
       selectedColumns,
       allFieldsSelected: false,

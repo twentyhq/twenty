@@ -1,9 +1,9 @@
 import { RestrictedFieldsPermissions } from '@/types/RestrictedFieldsPermissions';
 
 export type ObjectPermissions = {
-  canRead: boolean;
-  canUpdate: boolean;
-  canSoftDelete: boolean;
-  canDestroy: boolean;
+  canReadObjectRecords: boolean;
+  canUpdateObjectRecords: boolean;
+  canSoftDeleteObjectRecords: boolean;
+  canDestroyObjectRecords: boolean;
   restrictedFields: RestrictedFieldsPermissions;
 };
