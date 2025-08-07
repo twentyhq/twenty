@@ -11,13 +11,13 @@ import { InMemoryTestingCacheInstance } from '~/testing/cache/inMemoryTestingCac
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 import {
-    allMockCompanyRecordsWithRelation,
-    findMockCompanyWithRelationRecord,
+  allMockCompanyRecordsWithRelation,
+  findMockCompanyWithRelationRecord,
 } from '~/testing/mock-data/companiesWithRelations';
 import {
-    allMockPersonRecords,
-    getMockPersonObjectMetadataItem,
-    getMockPersonRecord,
+  allMockPersonRecords,
+  getMockPersonObjectMetadataItem,
+  getMockPersonRecord,
 } from '~/testing/mock-data/people';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 

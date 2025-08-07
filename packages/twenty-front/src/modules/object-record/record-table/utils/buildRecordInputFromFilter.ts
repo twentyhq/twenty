@@ -3,8 +3,8 @@ import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataIt
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 
 import {
-    RecordFilter,
-    RecordFilterToRecordInputOperand,
+  RecordFilter,
+  RecordFilterToRecordInputOperand,
 } from '@/object-record/record-filter/types/RecordFilter';
 import { FILTER_OPERANDS_MAP } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';

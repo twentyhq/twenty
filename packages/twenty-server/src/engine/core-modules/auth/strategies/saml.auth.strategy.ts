@@ -4,19 +4,19 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 
 import {
-    MultiSamlStrategy,
-    MultiStrategyConfig,
-    PassportSamlConfig,
-    SamlConfig,
-    VerifyWithRequest,
+  MultiSamlStrategy,
+  MultiStrategyConfig,
+  PassportSamlConfig,
+  SamlConfig,
+  VerifyWithRequest,
 } from '@node-saml/passport-saml';
 import { AuthenticateOptions } from '@node-saml/passport-saml/lib/types';
 import { isEmail } from 'class-validator';
 import { Request } from 'express';
 
 import {
-    AuthException,
-    AuthExceptionCode,
+  AuthException,
+  AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 

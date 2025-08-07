@@ -25,13 +25,13 @@ import { H2Title, IconRepeat, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
-    FeatureFlagKey,
-    useAssignRoleToApiKeyMutation,
-    useCreateApiKeyMutation,
-    useGenerateApiKeyTokenMutation,
-    useGetApiKeyQuery,
-    useGetRolesQuery,
-    useRevokeApiKeyMutation,
+  FeatureFlagKey,
+  useAssignRoleToApiKeyMutation,
+  useCreateApiKeyMutation,
+  useGenerateApiKeyTokenMutation,
+  useGetApiKeyQuery,
+  useGetRolesQuery,
+  useRevokeApiKeyMutation,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';

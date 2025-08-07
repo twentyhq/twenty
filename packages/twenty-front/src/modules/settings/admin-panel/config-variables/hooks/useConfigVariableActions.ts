@@ -6,9 +6,9 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfigVariableValue } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-    useCreateDatabaseConfigVariableMutation,
-    useDeleteDatabaseConfigVariableMutation,
-    useUpdateDatabaseConfigVariableMutation,
+  useCreateDatabaseConfigVariableMutation,
+  useDeleteDatabaseConfigVariableMutation,
+  useUpdateDatabaseConfigVariableMutation,
 } from '~/generated-metadata/graphql';
 
 export const useConfigVariableActions = (variableName: string) => {

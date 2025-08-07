@@ -3,13 +3,13 @@ import styled from '@emotion/styled';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import {
-    OTPFormValues,
-    useTwoFactorAuthenticationForm,
+  OTPFormValues,
+  useTwoFactorAuthenticationForm,
 } from '@/auth/sign-in-up/hooks/useTwoFactorAuthenticationForm';
 import { loginTokenState } from '@/auth/states/loginTokenState';
 import {
-    SignInUpStep,
-    signInUpStepState,
+  SignInUpStep,
+  signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { AppPath } from '@/types/AppPath';

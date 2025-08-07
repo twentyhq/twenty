@@ -11,9 +11,9 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
-    IconSearch,
-    IconTrash,
-    OverflowingTextWithTooltip,
+  IconSearch,
+  IconTrash,
+  OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { useRemoveAgentHandoffMutation } from '~/generated-metadata/graphql';
