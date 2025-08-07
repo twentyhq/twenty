@@ -29,7 +29,9 @@ export class RestApiDeleteOneHandler extends RestApiBaseHandler {
       select: selectOptions,
     });
 
-    await repository.delete(recordId);
+    const columnsToReturnForDelete: string[] = [];
+
+    await repository.delete(recordId, undefined, columnsToReturnForDelete);
 
     return this.formatResult({
       operation: 'delete',

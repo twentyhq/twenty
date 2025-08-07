@@ -279,6 +279,37 @@ describe('UserWorkspaceService', () => {
         pictureUrl: undefined,
       });
 
+      expect(userWorkspaceRepository.save).toHaveBeenCalledWith(userWorkspace);
+      expect(result).toEqual(userWorkspace);
+    });
+
+    it("should create a user workspace without a default avatar url if it's a new user with an empty picture url", async () => {
+      const userId = 'user-id';
+      const workspaceId = 'workspace-id';
+      const userWorkspace = { userId, workspaceId } as UserWorkspace;
+
+      jest
+        .spyOn(userWorkspaceRepository, 'create')
+        .mockReturnValue(userWorkspace);
+      jest
+        .spyOn(userWorkspaceRepository, 'save')
+        .mockResolvedValue(userWorkspace);
+
+      const uploadImageFromUrlSpy = jest
+        .spyOn(fileUploadService, 'uploadImageFromUrl')
+        .mockResolvedValue({
+          files: [{ path: 'path/to/file', token: 'token' }],
+        } as SignedFilesResult);
+
+      const result = await service.create({
+        userId,
+        workspaceId,
+        isExistingUser: false,
+        pictureUrl: '',
+      });
+
+      expect(uploadImageFromUrlSpy).not.toHaveBeenCalled();
+
       expect(userWorkspaceRepository.create).toHaveBeenCalledWith({
         userId,
         workspaceId,

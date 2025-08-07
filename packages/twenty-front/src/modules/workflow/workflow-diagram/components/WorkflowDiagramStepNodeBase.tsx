@@ -11,6 +11,7 @@ import { Label, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { WorkflowDiagramBaseHandle } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseHandle';
 import { Position } from '@xyflow/react';
+import { useEdgeSelected } from '@/workflow/workflow-diagram/hooks/useEdgeSelected';
 
 const StyledStepNodeContainer = styled.div`
   display: flex;
@@ -141,6 +142,7 @@ const StyledStepNodeLabel = styled.div<{
 `;
 
 export const WorkflowDiagramStepNodeBase = ({
+  id,
   nodeType,
   name,
   variant,
@@ -148,9 +150,11 @@ export const WorkflowDiagramStepNodeBase = ({
   RightFloatingElement,
   BottomHoverFloatingElement,
   displayHandle = true,
+  onClick,
   onMouseEnter,
   onMouseLeave,
 }: {
+  id: string;
   nodeType: WorkflowDiagramStepNodeData['nodeType'];
   name: string;
   variant: WorkflowDiagramNodeVariant;
@@ -158,13 +162,19 @@ export const WorkflowDiagramStepNodeBase = ({
   RightFloatingElement?: React.ReactNode;
   BottomHoverFloatingElement?: React.ReactNode;
   displayHandle?: boolean;
+  onClick?: () => void;
   onMouseEnter?: (event: MouseEvent<HTMLDivElement>) => void;
   onMouseLeave?: (event: MouseEvent<HTMLDivElement>) => void;
 }) => {
+  const { getNodeHandlesSelectedState } = useEdgeSelected();
+
+  const handlesSelectedState = getNodeHandlesSelectedState(id);
+
   return (
     <StyledStepNodeContainer
       className="workflow-node-container"
       data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
+      onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
@@ -173,6 +183,7 @@ export const WorkflowDiagramStepNodeBase = ({
           type="target"
           position={Position.Top}
           isVisible={displayHandle}
+          selected={handlesSelectedState.targetHandle}
         />
       )}
 
@@ -196,6 +207,7 @@ export const WorkflowDiagramStepNodeBase = ({
         type="source"
         position={Position.Bottom}
         isVisible={displayHandle}
+        selected={handlesSelectedState.sourceHandle}
       />
     </StyledStepNodeContainer>
   );

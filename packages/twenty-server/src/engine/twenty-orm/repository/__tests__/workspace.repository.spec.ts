@@ -248,6 +248,7 @@ describe('WorkspaceRepository', () => {
           shouldBypassPermissionChecks: false,
           objectRecordsPermissions: mockObjectRecordsPermissions,
         },
+        undefined,
       );
       expect(result).toEqual(expectedResult);
     });
@@ -273,6 +274,7 @@ describe('WorkspaceRepository', () => {
           shouldBypassPermissionChecks: false,
           objectRecordsPermissions: mockObjectRecordsPermissions,
         },
+        undefined,
       );
     });
 

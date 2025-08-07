@@ -11,7 +11,7 @@ import { getAppPath } from '~/utils/navigation/getAppPath';
 
 export type ProcessedFavorite = Favorite & {
   Icon?: string;
-  objectNameSingular?: string;
+  objectNameSingular: string;
 };
 
 export const sortFavorites = (
@@ -24,7 +24,7 @@ export const sortFavorites = (
   hasLinkToShowPage: boolean,
   views: Pick<View, 'id' | 'name' | 'objectMetadataId' | 'icon'>[],
   objectMetadataItems: ObjectMetadataItem[],
-) => {
+): ProcessedFavorite[] => {
   return favorites
     .map((favorite) => {
       if (
@@ -36,7 +36,8 @@ export const sortFavorites = (
         if (!isDefined(view)) {
           return {
             ...favorite,
-          } as ProcessedFavorite;
+            objectNameSingular: 'view',
+          };
         }
 
         const { namePlural } = getObjectMetadataNamePluralFromViewId(

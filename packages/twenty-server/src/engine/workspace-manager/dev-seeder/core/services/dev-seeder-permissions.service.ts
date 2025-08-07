@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -30,6 +31,7 @@ export class DevSeederPermissionsService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly typeORMService: TypeORMService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly fieldPermissionService: FieldPermissionService,
   ) {}
 
   public async initPermissions(workspaceId: string) {
@@ -175,6 +177,28 @@ export class DevSeederPermissionsService {
         },
       });
 
+    const personObjectMetadata =
+      await this.objectMetadataRepository.findOneOrFail({
+        where: {
+          nameSingular: 'person',
+          workspaceId,
+        },
+        relations: {
+          fields: true,
+        },
+      });
+
+    const companyObjectMetadata =
+      await this.objectMetadataRepository.findOneOrFail({
+        where: {
+          nameSingular: 'company',
+          workspaceId,
+        },
+        relations: {
+          fields: true,
+        },
+      });
+
     await this.objectPermissionService.upsertObjectPermissions({
       workspaceId,
       input: {
@@ -194,6 +218,47 @@ export class DevSeederPermissionsService {
             canSoftDeleteObjectRecords: false,
             canDestroyObjectRecords: false,
           },
+        ],
+      },
+    });
+
+    const personCityFieldMetadata = personObjectMetadata.fields.find(
+      (field) => field.name === 'city',
+    );
+
+    if (!personCityFieldMetadata) {
+      throw new Error('Person city field metadata not found');
+    }
+
+    const companyLinkedinLinkFieldMetadata = companyObjectMetadata.fields.find(
+      (field) => field.name === 'linkedinLink',
+    );
+
+    if (!companyLinkedinLinkFieldMetadata) {
+      throw new Error('Company linkedin link field metadata not found');
+    }
+
+    const readOnlyOnPersonCityFieldPermission = {
+      objectMetadataId: personObjectMetadata.id,
+      fieldMetadataId: personCityFieldMetadata.id,
+      canReadFieldValue: null,
+      canUpdateFieldValue: false,
+    };
+
+    const noReadOnCompanyLinkedinLinkFieldPermission = {
+      objectMetadataId: companyObjectMetadata.id,
+      fieldMetadataId: companyLinkedinLinkFieldMetadata.id,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    };
+
+    await this.fieldPermissionService.upsertFieldPermissions({
+      workspaceId,
+      input: {
+        roleId: customRole.id,
+        fieldPermissions: [
+          readOnlyOnPersonCityFieldPermission,
+          noReadOnCompanyLinkedinLinkFieldPermission,
         ],
       },
     });

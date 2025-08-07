@@ -251,4 +251,10 @@ export class WorkspaceInsertQueryBuilder<
       TwentyORMExceptionCode.METHOD_NOT_ALLOWED,
     );
   }
+
+  setAuthContext(authContext: AuthContext): WorkspaceInsertQueryBuilder<T> {
+    this.authContext = authContext;
+
+    return this;
+  }
 }

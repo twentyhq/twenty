@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AddNextStepIdsToWorkflowRunsTrigger } from 'src/database/commands/upgrade-version-command/1-3/1-3-add-next-step-ids-to-workflow-runs-trigger.command';
 import { AssignRolesToExistingApiKeysCommand } from 'src/database/commands/upgrade-version-command/1-3/1-3-assign-roles-to-existing-api-keys.command';
+import { UpdateTimestampColumnTypeInWorkspaceSchemaCommand } from 'src/database/commands/upgrade-version-command/1-3/1-3-update-timestamp-column-type-in-workspace-schema.command';
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -41,10 +42,12 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
   providers: [
     AssignRolesToExistingApiKeysCommand,
     AddNextStepIdsToWorkflowRunsTrigger,
+    UpdateTimestampColumnTypeInWorkspaceSchemaCommand,
   ],
   exports: [
     AssignRolesToExistingApiKeysCommand,
     AddNextStepIdsToWorkflowRunsTrigger,
+    UpdateTimestampColumnTypeInWorkspaceSchemaCommand,
   ],
 })
 export class V1_3_UpgradeVersionCommandModule {}

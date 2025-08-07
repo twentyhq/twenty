@@ -8,7 +8,10 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessageChannelSyncStage,
+  MessageChannelWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
@@ -16,6 +19,11 @@ import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
 } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
+import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
+
+const MAX_MESSAGE_COUNT_FOR_QUICK_IMPORT = 100;
+const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
+
 @Injectable()
 export class MessagingMessageListFetchService {
   constructor(
@@ -27,6 +35,7 @@ export class MessagingMessageListFetchService {
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
     private readonly messagingMessageCleanerService: MessagingMessageCleanerService,
     private readonly messagingCursorService: MessagingCursorService,
+    private readonly messagingMessagesImportService: MessagingMessagesImportService,
   ) {}
 
   public async processMessageListFetch(
@@ -42,6 +51,15 @@ export class MessagingMessageListFetchService {
         await this.messagingGetMessageListService.getMessageLists(
           messageChannel,
         );
+
+      await this.cacheStorage.del(
+        `messages-to-import:${workspaceId}:${messageChannel.id}`,
+      );
+
+      const totalMessageCount = messageLists.reduce(
+        (acc, messageList) => acc + messageList.messageExternalIds.length,
+        0,
+      );
 
       for (const messageList of messageLists) {
         if (messageList.messageExternalIds.length === 0) {
@@ -111,6 +129,7 @@ export class MessagingMessageListFetchService {
           await this.cacheStorage.setAdd(
             `messages-to-import:${workspaceId}:${messageChannel.id}`,
             messageExternalIdsToImport,
+            ONE_WEEK_IN_MILLISECONDS,
           );
         }
 
@@ -121,9 +140,28 @@ export class MessagingMessageListFetchService {
         );
       }
 
+      if (totalMessageCount === 0) {
+        await this.messageChannelSyncStatusService.markAsCompletedAndScheduleMessageListFetch(
+          [messageChannel.id],
+        );
+
+        return;
+      }
+
       await this.messageChannelSyncStatusService.scheduleMessagesImport([
         messageChannel.id,
       ]);
+
+      if (totalMessageCount < MAX_MESSAGE_COUNT_FOR_QUICK_IMPORT) {
+        await this.messagingMessagesImportService.processMessageBatchImport(
+          {
+            ...messageChannel,
+            syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
+          },
+          messageChannel.connectedAccount,
+          workspaceId,
+        );
+      }
     } catch (error) {
       await this.messageImportErrorHandlerService.handleDriverException(
         error,

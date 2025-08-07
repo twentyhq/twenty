@@ -53,6 +53,7 @@ export const transformFilterNodesAsEdges = <
         type: defaultFilterEdgeType,
         id: `${incomingEdge.source}-${outgoingEdge.target}-filter-${filterNode.id}`,
         target: outgoingEdge.target,
+        deletable: false,
         data: {
           ...incomingEdge.data,
           edgeType: 'filter',
