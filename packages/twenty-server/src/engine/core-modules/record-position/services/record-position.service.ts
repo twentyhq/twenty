@@ -93,15 +93,15 @@ export class RecordPositionService {
       }
     }
 
+    const numericPositions = recordsWithExistingNumberPosition
+      .map((record) => record.position)
+      .filter((pos): pos is number => typeof pos === 'number' && !isNaN(pos));
+
     if (recordsThatNeedFirstPosition.length > 0) {
       const existingRecordMinPosition = await this.findMinPosition(
         objectMetadata,
         workspaceId,
       );
-
-      const numericPositions = recordsWithExistingNumberPosition
-        .map((record) => record.position)
-        .filter((pos): pos is number => typeof pos === 'number' && !isNaN(pos));
 
       const minPosition =
         numericPositions.length > 0
@@ -125,10 +125,6 @@ export class RecordPositionService {
         objectMetadata,
         workspaceId,
       );
-
-      const numericPositions = recordsWithExistingNumberPosition
-        .map((record) => record.position)
-        .filter((pos): pos is number => typeof pos === 'number' && !isNaN(pos));
 
       const maxPosition =
         numericPositions.length > 0
