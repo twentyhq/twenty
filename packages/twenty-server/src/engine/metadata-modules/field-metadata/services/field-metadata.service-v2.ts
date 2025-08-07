@@ -84,9 +84,11 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
           relatedFlatFieldMetadata.id ===
             flatFieldMetadataToCreate.relationTargetFieldMetadataId,
       );
+
       if (!isDefined(relatedFlatFieldMetadataToCreate)) {
         return undefined;
       }
+
       return addFlatFieldMetadataInFlatObjectMetadataMaps({
         flatFieldMetadata: relatedFlatFieldMetadataToCreate,
         flatObjectMetadataMaps,

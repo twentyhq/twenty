@@ -56,6 +56,7 @@ export const validateRelationFlatFieldMetadata = async ({
 
   const targetRelationFlatFieldMetadata =
     targetRelationFlatObjectMetadata?.fieldsById[relationTargetFieldMetadataId];
+
   if (
     isDefined(targetRelationFlatObjectMetadata) &&
     !isDefined(targetRelationFlatFieldMetadata)
