@@ -171,7 +171,7 @@ export class MessagingMessageListFetchService {
             },
           });
 
-        if (!firstMessageChannelMessageAssociation) {
+        if (!isDefined(firstMessageChannelMessageAssociation)) {
           this.logger.log(
             `messageChannelId: ${messageChannel.id} Full sync: No message channel message associations found`,
           );
