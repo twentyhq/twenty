@@ -15,20 +15,18 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
       title:
         'It should build an update_object action with all object updated fields',
       context: {
-        input: () => {
-          return {
-            fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
-            toFlatObjectMetadataMaps:
-              replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
-                flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
-                flatObjectMetadata: getFlatObjectMetadataMock({
-                  ...PET_FLAT_OBJECT_MOCK,
-                  nameSingular: 'prastouin',
-                  namePlural: 'prastoins',
-                  isLabelSyncedWithName: false,
-                }),
+        input: {
+          fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+          toFlatObjectMetadataMaps:
+            replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
+              flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+              flatObjectMetadata: getFlatObjectMetadataMock({
+                ...PET_FLAT_OBJECT_MOCK,
+                nameSingular: 'prastouin',
+                namePlural: 'prastoins',
+                isLabelSyncedWithName: false,
               }),
-          };
+            }),
         },
         expectedActionsTypeCounter: {
           updateObject: 1,
@@ -38,18 +36,16 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
     {
       title: 'It should build a create_object action',
       context: {
-        input: () => {
-          return {
-            fromFlatObjectMetadataMaps:
-              fromFlatObjectMetadatasToFlatObjectMetadataMaps([
-                PET_FLAT_OBJECT_MOCK,
-              ]),
-            toFlatObjectMetadataMaps:
-              fromFlatObjectMetadatasToFlatObjectMetadataMaps([
-                PET_FLAT_OBJECT_MOCK,
-                ROCKET_FLAT_OBJECT_MOCK,
-              ]),
-          };
+        input: {
+          fromFlatObjectMetadataMaps:
+            fromFlatObjectMetadatasToFlatObjectMetadataMaps([
+              PET_FLAT_OBJECT_MOCK,
+            ]),
+          toFlatObjectMetadataMaps:
+            fromFlatObjectMetadatasToFlatObjectMetadataMaps([
+              PET_FLAT_OBJECT_MOCK,
+              ROCKET_FLAT_OBJECT_MOCK,
+            ]),
         },
         expectedActionsTypeCounter: {
           createObject: 1,
@@ -60,22 +56,20 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
       title:
         'It should build a create_object and create_index actions for each of this fieldMetadata',
       context: {
-        input: () => {
-          return {
-            fromFlatObjectMetadataMaps: { byId: {}, idByNameSingular: {} },
-            toFlatObjectMetadataMaps:
-              fromFlatObjectMetadatasToFlatObjectMetadataMaps([
-                {
-                  ...ROCKET_FLAT_OBJECT_MOCK,
-                  flatIndexMetadatas: [
-                    getFlatIndexMetadataMock({
-                      objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
-                      uniqueIdentifier: 'field-metadata-unique-identifier-1',
-                    }),
-                  ],
-                },
-              ]),
-          };
+        input: {
+          fromFlatObjectMetadataMaps: { byId: {}, idByNameSingular: {} },
+          toFlatObjectMetadataMaps:
+            fromFlatObjectMetadatasToFlatObjectMetadataMaps([
+              {
+                ...ROCKET_FLAT_OBJECT_MOCK,
+                flatIndexMetadatas: [
+                  getFlatIndexMetadataMock({
+                    objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
+                    uniqueIdentifier: 'field-metadata-unique-identifier-1',
+                  }),
+                ],
+              },
+            ]),
         },
 
         expectedActionsTypeCounter: {
@@ -88,30 +82,26 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
     {
       title: 'It should build a delete_object action',
       context: {
-        input: () => {
-          return {
-            fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
-            toFlatObjectMetadataMaps:
-              deleteObjectFromFlatObjectMetadataMapsOrThrow({
-                flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
-                objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
-              }),
-          };
+        input: {
+          fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+          toFlatObjectMetadataMaps:
+            deleteObjectFromFlatObjectMetadataMapsOrThrow({
+              flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+              objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
+            }),
         },
         expectedActionsTypeCounter: {
           deleteObject: 1,
-          deleteField: COMPANY_FLAT_OBJECT_MOCK.flatFieldMetadatas.length
+          deleteField: COMPANY_FLAT_OBJECT_MOCK.flatFieldMetadatas.length,
         },
       },
     },
     {
       title: 'It should not infer any actions as from and to are identical',
       context: {
-        input: () => {
-          return {
-            fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
-            toFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
-          };
+        input: {
+          fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+          toFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
         },
       },
     },

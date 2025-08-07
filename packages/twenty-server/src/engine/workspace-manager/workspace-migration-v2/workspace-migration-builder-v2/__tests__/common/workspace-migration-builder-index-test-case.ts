@@ -1,37 +1,32 @@
-import { faker } from '@faker-js/faker';
 
 import { getFlatIndexMetadataMock } from 'src/engine/metadata-modules/flat-index-metadata/__mocks__/get-flat-index-metadata.mock';
+import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata-maps/mocks/flat-object-metadata-maps.mock';
+import { replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+import { NOTE_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/note-flat-object.mock';
 import { type WorkspaceMigrationBuilderTestCase } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/types/workspace-migration-builder-test-case.type';
-
-// Should test more things such as flatFieldIndex diffing
-const objectMetadataId = faker.string.uuid();
 
 export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBuilderTestCase[] =
   [
     {
+      only: true,
       title: 'It should build an create_index action',
       context: {
-        input: () => {
-          const flatIndexMetadata = getFlatIndexMetadataMock({
-            uniqueIdentifier: 'field-metadata-unique-identifier-1',
-            objectMetadataId,
-          });
-          const flatObjectMetadata = getFlatObjectMetadataMock({
-            uniqueIdentifier: 'object-metadata-unique-identifier-1',
-            isLabelSyncedWithName: true,
-            flatIndexMetadatas: [],
-          });
-
-          return {
-            fromFlatObjectMetadataMaps: [flatObjectMetadata],
-            toFlatObjectMetadataMaps: [
-              {
-                ...flatObjectMetadata,
-                flatIndexMetadatas: [flatIndexMetadata],
-              },
-            ],
-          };
+        input: {
+          fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+          toFlatObjectMetadataMaps:
+            replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
+              flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+              flatObjectMetadata: getFlatObjectMetadataMock({
+                ...NOTE_FLAT_OBJECT_MOCK,
+                flatIndexMetadatas: [
+                  getFlatIndexMetadataMock({
+                    objectMetadataId: NOTE_FLAT_OBJECT_MOCK.id,
+                    uniqueIdentifier: 'field-metadata-unique-identifier-1',
+                  }),
+                ],
+              }),
+            }),
         },
         expectedActionsTypeCounter: {
           createIndex: 1,
@@ -44,30 +39,37 @@ export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBui
       context: {
         input: () => {
           const flatIndexMetadata = getFlatIndexMetadataMock({
+            objectMetadataId: NOTE_FLAT_OBJECT_MOCK.id,
             uniqueIdentifier: 'field-metadata-unique-identifier-1',
-            objectMetadataId,
           });
-          const flatObjectMetadata = getFlatObjectMetadataMock({
-            uniqueIdentifier: 'object-metadata-unique-identifier-1',
-            isLabelSyncedWithName: true,
-            flatIndexMetadatas: [flatIndexMetadata],
-          });
-
-          return {
-            fromFlatObjectMetadataMaps: [flatObjectMetadata],
-            toFlatObjectMetadataMaps: [
-              {
-                ...flatObjectMetadata,
+          const fromFlatObjectMetadataMaps =
+            replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
+              flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+              flatObjectMetadata: getFlatObjectMetadataMock({
+                ...NOTE_FLAT_OBJECT_MOCK,
+                flatIndexMetadatas: [flatIndexMetadata],
+              }),
+            });
+          const toFlatObjectMetadataMaps =
+            replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
+              flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+              flatObjectMetadata: getFlatObjectMetadataMock({
+                ...NOTE_FLAT_OBJECT_MOCK,
                 flatIndexMetadatas: [
                   {
                     ...flatIndexMetadata,
                     name: 'new index name',
                     isUnique: false,
                     indexWhereClause: 'new index where clause',
+                    uniqueIdentifier: 'field-metadata-unique-identifier-1',
                   },
                 ],
-              },
-            ],
+              }),
+            });
+
+          return {
+            fromFlatObjectMetadataMaps,
+            toFlatObjectMetadataMaps,
           };
         },
         expectedActionsTypeCounter: {
@@ -79,26 +81,21 @@ export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBui
     {
       title: 'It should build a delete_index action',
       context: {
-        input: () => {
-          const flatIndexMetadata = getFlatIndexMetadataMock({
-            uniqueIdentifier: 'field-metadata-unique-identifier-1',
-            objectMetadataId,
-          });
-          const flatObjectMetadata = getFlatObjectMetadataMock({
-            uniqueIdentifier: 'object-metadata-unique-identifier-1',
-            isLabelSyncedWithName: true,
-            flatIndexMetadatas: [flatIndexMetadata],
-          });
-
-          return {
-            fromFlatObjectMetadataMaps: [flatObjectMetadata],
-            toFlatObjectMetadataMaps: [
-              {
-                ...flatObjectMetadata,
-                flatIndexMetadatas: [],
-              },
-            ],
-          };
+        input: {
+          fromFlatObjectMetadataMaps:
+            replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
+              flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+              flatObjectMetadata: getFlatObjectMetadataMock({
+                ...NOTE_FLAT_OBJECT_MOCK,
+                flatIndexMetadatas: [
+                  getFlatIndexMetadataMock({
+                    objectMetadataId: NOTE_FLAT_OBJECT_MOCK.id,
+                    uniqueIdentifier: 'field-metadata-unique-identifier-1',
+                  }),
+                ],
+              }),
+            }),
+          toFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
         },
         expectedActionsTypeCounter: {
           deleteIndex: 1,
@@ -109,21 +106,9 @@ export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBui
       title:
         'It should not infer any actions as from and to indexes are identical',
       context: {
-        input: () => {
-          const flatIndexMetadata = getFlatIndexMetadataMock({
-            uniqueIdentifier: 'field-metadata-unique-identifier-1',
-            objectMetadataId,
-          });
-          const flatObjectMetadata = getFlatObjectMetadataMock({
-            uniqueIdentifier: 'object-metadata-unique-identifier-1',
-            isLabelSyncedWithName: true,
-            flatIndexMetadatas: [flatIndexMetadata],
-          });
-
-          return {
-            fromFlatObjectMetadataMaps: [flatObjectMetadata],
-            toFlatObjectMetadataMaps: [flatObjectMetadata],
-          };
+        input: {
+          fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+          toFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
         },
       },
     },
