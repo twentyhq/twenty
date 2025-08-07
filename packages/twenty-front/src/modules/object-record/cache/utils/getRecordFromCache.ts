@@ -59,7 +59,7 @@ export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
     id: cachedRecordId,
     fragment: cacheReadFragment,
     returnPartialData: true,
-  }) as T & { __typename: string } | null;
+  }) as (T & { __typename: string }) | null;
 
   if (isUndefinedOrNull(record) || isEmptyObject(record)) {
     return null;

@@ -14,15 +14,11 @@ import { WorkflowDiagramStepNodeEditableContent } from '../WorkflowDiagramStepNo
 
 type ComponentState = 'default' | 'hover' | 'selected';
 
-type WrapperProps = ComponentProps<
+type StoryProps = ComponentProps<
   typeof WorkflowDiagramStepNodeEditableContent
 > & { state: ComponentState };
 
-const Wrapper = (_props: WrapperProps) => {
-  return <div></div>;
-};
-
-const meta: Meta<WrapperProps> = {
+const meta: Meta<StoryProps> = {
   title: 'Modules/Workflow/WorkflowDiagramStepNodeEditableContent',
   component: WorkflowDiagramStepNodeEditableContent,
   parameters: {
@@ -32,7 +28,7 @@ const meta: Meta<WrapperProps> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Wrapper>;
+type Story = StoryObj<StoryProps>;
 
 const ALL_STEPS = [
   {
@@ -125,7 +121,9 @@ const ALL_STEPS = [
   },
 ] satisfies WorkflowDiagramStepNodeData[];
 
-export const Catalog: CatalogStory<Story, typeof Wrapper> = {
+type StoryComponentType = React.ComponentType<StoryProps>;
+
+export const Catalog: CatalogStory<Story, StoryComponentType> = {
   args: {
     onDelete: fn(),
   },

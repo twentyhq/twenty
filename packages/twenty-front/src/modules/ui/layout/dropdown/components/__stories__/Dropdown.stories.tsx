@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
-import { Decorator, Meta, StoryObj, ReactRenderer } from '@storybook/react';
+import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, waitFor, within } from '@storybook/test';
 // Remove conflicting import - PlayFunction should come from @storybook/react
-import { ComponentProps, useState } from 'react';
+import { useState } from 'react';
 
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 
