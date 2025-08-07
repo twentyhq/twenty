@@ -8,6 +8,7 @@ import {
 import { DataSource } from 'typeorm';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { injectDatasourceGuards } from 'src/database/typeorm/utils/injectDatasourceGuards';
 
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
@@ -36,6 +37,8 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         query_timeout: 10000,
       },
     });
+
+    injectDatasourceGuards(this.mainDataSource);
   }
 
   public getMainDataSource(): DataSource {
