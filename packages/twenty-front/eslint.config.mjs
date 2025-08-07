@@ -1,7 +1,7 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { globalConfig } from '../../eslint.config.global.mjs';
-import { reactConfig } from '../../eslint.config.react.mjs';
+import { globalConfig } from "twenty/eslint.config.global.mjs";
+import { reactConfig } from "twenty/eslint.config.react.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
