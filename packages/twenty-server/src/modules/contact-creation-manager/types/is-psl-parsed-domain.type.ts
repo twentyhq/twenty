@@ -1,4 +1,4 @@
-import { type ParsedDomain, parse } from 'psl';
+import { type ParsedDomain, type parse } from 'psl';
 import { isDefined } from 'twenty-shared/utils';
 
 export const isParsedDomain = (
