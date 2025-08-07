@@ -11,8 +11,7 @@ import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modul
 import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-flat-field-metadata-name-availability.validator';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { mergeTwoFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/merge-two-flat-object-metadatas.util';
+import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
@@ -27,8 +26,8 @@ import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/
 export type ValidateOneFieldMetadataArgs<
   T extends FieldMetadataType = FieldMetadataType,
 > = {
-  existingFlatObjectMetadatas: FlatObjectMetadata[];
-  othersFlatObjectMetadataToValidate?: FlatObjectMetadata[];
+  existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+  otherFlatObjectMetadataMapsToValidate?: FlatObjectMetadataMaps;
   flatFieldMetadataToValidate: FlatFieldMetadata<T>;
   workspaceId: string;
 };
@@ -42,32 +41,27 @@ export class FlatFieldMetadataValidatorService {
   async validateOneFlatFieldMetadata<
     T extends FieldMetadataType = FieldMetadataType,
   >({
-    existingFlatObjectMetadatas,
+    existingFlatObjectMetadataMaps,
     flatFieldMetadataToValidate,
-    othersFlatObjectMetadataToValidate,
+    otherFlatObjectMetadataMapsToValidate,
     workspaceId,
   }: ValidateOneFieldMetadataArgs<T>): Promise<
     FailedFlatFieldMetadataValidationExceptions[]
   > {
     const errors: FailedFlatFieldMetadataValidationExceptions[] = [];
 
-    const allFlatObjectMetadata = isDefined(othersFlatObjectMetadataToValidate)
-      ? mergeTwoFlatObjectMetadatas({
-          destFlatObjectMetadatas: existingFlatObjectMetadatas,
-          toMergeFlatObjectMetadatas: othersFlatObjectMetadataToValidate,
-        })
-      : existingFlatObjectMetadatas;
-
-    const parentFlatObjectMetadata = allFlatObjectMetadata.find(
-      (existingFlatObjectMetadata) =>
-        existingFlatObjectMetadata.id ===
-        flatFieldMetadataToValidate.objectMetadataId,
-    );
+    const parentFlatObjectMetadata =
+      otherFlatObjectMetadataMapsToValidate?.byId[
+        flatFieldMetadataToValidate.objectMetadataId
+      ] ??
+      existingFlatObjectMetadataMaps.byId[
+        flatFieldMetadataToValidate.objectMetadataId
+      ];
 
     if (!isDefined(parentFlatObjectMetadata)) {
       errors.push(
         new FieldMetadataException(
-          isDefined(othersFlatObjectMetadataToValidate)
+          isDefined(otherFlatObjectMetadataMapsToValidate)
             ? 'Object metadata not found in both existing and about to be created object metadatas'
             : 'Object metadata not found',
           FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
@@ -139,10 +133,10 @@ export class FlatFieldMetadataValidatorService {
     } else {
       const fieldMetadataTypeValidatorExceptions =
         await fieldMetadataTypeValidator({
-          existingFlatObjectMetadatas,
+          existingFlatObjectMetadataMaps,
           flatFieldMetadataToValidate,
           workspaceId,
-          othersFlatObjectMetadataToValidate,
+          otherFlatObjectMetadataMapsToValidate,
         });
 
       errors.push(...fieldMetadataTypeValidatorExceptions);
