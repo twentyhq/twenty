@@ -135,6 +135,7 @@ describe('WorkspaceEntityManager', () => {
         IS_RELATION_CONNECT_ENABLED: false,
         IS_FIELDS_PERMISSIONS_ENABLED: false,
         IS_CORE_VIEW_SYNCING_ENABLED: false,
+        IS_CORE_VIEW_ENABLED: false,
         IS_TWO_FACTOR_AUTHENTICATION_ENABLED: false,
         IS_WORKSPACE_MIGRATION_V2_ENABLED: false,
         IS_API_KEY_ROLES_ENABLED: false,

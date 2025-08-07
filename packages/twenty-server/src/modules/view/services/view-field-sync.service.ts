@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
-import { ViewField } from 'src/engine/metadata-modules/view/view-field.entity';
+import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 
 @Injectable()

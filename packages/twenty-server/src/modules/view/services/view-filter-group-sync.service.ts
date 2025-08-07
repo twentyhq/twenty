@@ -5,8 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
-import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view/enums/view-filter-group-logical-operator';
-import { ViewFilterGroup } from 'src/engine/metadata-modules/view/view-filter-group.entity';
+import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
+import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
 import { ViewFilterGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
 
 @Injectable()

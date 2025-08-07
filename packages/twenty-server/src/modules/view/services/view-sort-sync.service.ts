@@ -5,8 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
-import { ViewSortDirection } from 'src/engine/metadata-modules/view/enums/view-sort-direction';
-import { ViewSort } from 'src/engine/metadata-modules/view/view-sort.entity';
+import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
+import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
 import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 
 @Injectable()
