@@ -1,8 +1,8 @@
 import {
-    EntityTarget,
-    InstanceChecker,
-    ObjectLiteral,
-    SaveOptions,
+  EntityTarget,
+  InstanceChecker,
+  ObjectLiteral,
+  SaveOptions,
 } from 'typeorm';
 
 import { DeepPartialWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/deep-partial-entity-with-nested-relation-fields.type';
