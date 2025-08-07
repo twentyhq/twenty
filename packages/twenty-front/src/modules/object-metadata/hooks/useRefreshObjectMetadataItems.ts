@@ -1,44 +1,93 @@
-import { useMutation } from '@apollo/client';
-
+import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
+import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '@/object-metadata/utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
+import { FetchPolicy, useApolloClient } from '@apollo/client';
+import { useRecoilCallback } from 'recoil';
+import { ObjectPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
-  CreateFieldInput,
-  CreateOneFieldMetadataItemMutation,
-  CreateOneFieldMetadataItemMutationVariables,
+  ObjectMetadataItemsQuery,
+  useGetCurrentUserLazyQuery,
 } from '~/generated-metadata/graphql';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-import { CREATE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
+export const useRefreshObjectMetadataItems = (
+  fetchPolicy: FetchPolicy = 'network-only',
+) => {
+  const [getCurrentUser] = useGetCurrentUserLazyQuery();
 
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
-import { useRefreshCachedViews } from '@/views/hooks/useRefreshViews';
+  const client = useApolloClient();
+  const refreshObjectMetadataItems = async () => {
+    const objectMetadataItemsResult =
+      await client.query<ObjectMetadataItemsQuery>({
+        query: FIND_MANY_OBJECT_METADATA_ITEMS,
+        variables: {},
+        fetchPolicy,
+      });
 
-export const useCreateOneFieldMetadataItem = () => {
-  const { refreshObjectMetadataItems } =
-    useRefreshObjectMetadataItems('network-only');
-
-  const [mutate] = useMutation<
-    CreateOneFieldMetadataItemMutation,
-    CreateOneFieldMetadataItemMutationVariables
-  >(CREATE_ONE_FIELD_METADATA_ITEM);
-
-  const { refreshCachedViews } = useRefreshCachedViews();
-
-  const createOneFieldMetadataItem = async (input: CreateFieldInput) => {
-    const result = await mutate({
-      variables: {
-        input: {
-          field: input,
-        },
-      },
+    const currentUserResult = await getCurrentUser({
+      fetchPolicy: 'network-only',
     });
 
-    await refreshObjectMetadataItems();
+    if (isDefined(currentUserResult.error)) {
+      throw new Error(currentUserResult.error.message);
+    }
 
-    await refreshCachedViews();
+    const user = currentUserResult.data?.currentUser;
 
-    return result;
+    if (!isDefined(user?.currentUserWorkspace?.objectPermissions)) {
+      return {
+        objectMetadataItems: [],
+        currentUser: user,
+      };
+    }
+
+    const objectPermissionsByObjectMetadataId =
+      user.currentUserWorkspace.objectPermissions.reduce(
+        (acc, objectPermission) => {
+          acc[objectPermission.objectMetadataId] =
+            objectPermission as ObjectPermissions & {
+              objectMetadataId: string;
+            };
+          return acc;
+        },
+        {} as Record<string, ObjectPermissions & { objectMetadataId: string }>,
+      );
+
+    const objectMetadataItems =
+      mapPaginatedObjectMetadataItemsToObjectMetadataItems({
+        pagedObjectMetadataItems: objectMetadataItemsResult.data,
+        objectPermissionsByObjectMetadataId,
+      });
+
+    replaceObjectMetadataItemIfDifferent(objectMetadataItems);
+
+    return {
+      objectMetadataItems,
+      currentUser: user,
+    };
   };
 
+  const replaceObjectMetadataItemIfDifferent = useRecoilCallback(
+    ({ set, snapshot }) =>
+      (toSetObjectMetadataItems: ObjectMetadataItem[]) => {
+        if (
+          !isDeeplyEqual(
+            snapshot.getLoadable(objectMetadataItemsState).getValue(),
+            toSetObjectMetadataItems,
+          ) &&
+          toSetObjectMetadataItems.length > 0
+        ) {
+          set(objectMetadataItemsState, toSetObjectMetadataItems);
+          set(isAppWaitingForFreshObjectMetadataState, false);
+        }
+      },
+    [],
+  );
+
   return {
-    createOneFieldMetadataItem,
+    refreshObjectMetadataItems,
   };
 };
