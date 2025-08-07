@@ -15,6 +15,7 @@ import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects
 import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view';
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
+import { MKT_ALL_VIEWS } from 'src/mkt-core/enums/mkt-prefill-views';
 
 export const prefillViews = async (
   entityManager: WorkspaceEntityManager,
@@ -41,6 +42,7 @@ export const prefillViews = async (
     workflowsAllView(objectMetadataItems),
     workflowVersionsAllView(objectMetadataItems),
     workflowRunsAllView(objectMetadataItems),
+    ...MKT_ALL_VIEWS.map(item => item(objectMetadataItems)),
     ...customViews,
   ];
 

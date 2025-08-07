@@ -14,6 +14,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-seeder.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { CalendarEventImportManagerModule } from 'src/modules/calendar/calendar-event-import-manager/calendar-event-import-manager.module';
@@ -21,6 +22,7 @@ import { MessagingImportManagerModule } from 'src/modules/messaging/message-impo
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
 
 import { DataSeedWorkspaceCommand } from './data-seed-dev-workspace.command';
+import {MKT_DATABASE_COMMAND_MODULES} from 'src/mkt-core/enums/mkt-database-command.module';
 
 @Module({
   imports: [
@@ -41,6 +43,7 @@ import { DataSeedWorkspaceCommand } from './data-seed-dev-workspace.command';
     DevSeederModule,
     WorkspaceManagerModule,
     DataSourceModule,
+    WorkspaceDataSourceModule,
     WorkspaceCacheStorageModule,
     ApiKeyModule,
     FeatureFlagModule,
@@ -50,6 +53,7 @@ import { DataSeedWorkspaceCommand } from './data-seed-dev-workspace.command';
     MigrateViewsToCoreCommand,
     ConfirmationQuestion,
     CronRegisterAllCommand,
+    ...MKT_DATABASE_COMMAND_MODULES,
   ],
 })
 export class DatabaseCommandModule {}

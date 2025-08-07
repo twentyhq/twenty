@@ -94,6 +94,7 @@ import {
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
 import { prefillViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-views';
 import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
+import { MKT_RECORD_SEEDS_CONFIGS } from 'src/mkt-core/enums/mkt-dev-seeder-data.config';
 
 const RECORD_SEEDS_CONFIGS = [
   {
@@ -206,6 +207,7 @@ const RECORD_SEEDS_CONFIGS = [
     pgColumns: TASK_TARGET_DATA_SEED_COLUMNS,
     recordSeeds: TASK_TARGET_DATA_SEEDS,
   },
+  ...MKT_RECORD_SEEDS_CONFIGS,
 ];
 
 @Injectable()

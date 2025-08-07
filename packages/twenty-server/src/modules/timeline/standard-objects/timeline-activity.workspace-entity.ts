@@ -27,6 +27,7 @@ import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { TimelineActivityMktEntity } from 'src/mkt-core/mkt-entities-extends/timeline-activity.mkt-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.timelineActivity,
@@ -38,7 +39,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
-export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
+export class TimelineActivityWorkspaceEntity extends TimelineActivityMktEntity {
   @WorkspaceField({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.happensAt,
     type: FieldMetadataType.DATE_TIME,
