@@ -13,7 +13,7 @@ import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { STANDARD_ROLE_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-role-ids';
+import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export class UserRoleService {
@@ -198,7 +198,7 @@ export class UserRoleService {
       );
     }
 
-    if (roleOfUserWorkspace.standardId === STANDARD_ROLE_IDS.admin) {
+    if (roleOfUserWorkspace.standardId === ADMIN_ROLE.standardId) {
       const adminRole = roleOfUserWorkspace;
 
       await this.validateMoreThanOneWorkspaceMemberHasAdminRoleOrThrow({
@@ -256,7 +256,7 @@ export class UserRoleService {
       };
     }
 
-    if (!(currentRole?.standardId === STANDARD_ROLE_IDS.admin)) {
+    if (!(currentRole?.standardId === ADMIN_ROLE.standardId)) {
       return;
     }
 

@@ -19,7 +19,8 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
-import { STANDARD_ROLE_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-role-ids';
+import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
+import { MEMBER_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/member-role';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 @Injectable()
@@ -192,7 +193,7 @@ export class WorkspaceManagerService {
     userId: string,
   ): Promise<void> {
     const memberRole = await this.roleRepository.findOne({
-      where: { standardId: STANDARD_ROLE_IDS.member, workspaceId },
+      where: { standardId: MEMBER_ROLE.standardId, workspaceId },
     });
 
     if (memberRole) {
@@ -202,7 +203,7 @@ export class WorkspaceManagerService {
     }
 
     const adminRole = await this.roleRepository.findOne({
-      where: { standardId: STANDARD_ROLE_IDS.admin, workspaceId },
+      where: { standardId: ADMIN_ROLE.standardId, workspaceId },
     });
 
     if (adminRole) {

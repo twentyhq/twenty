@@ -17,7 +17,8 @@ import {
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
-import { STANDARD_ROLE_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-role-ids';
+import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
+import { MEMBER_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/member-role';
 
 @Injectable()
 export class DevSeederPermissionsService {
@@ -35,11 +36,11 @@ export class DevSeederPermissionsService {
 
   public async initPermissions(workspaceId: string) {
     const adminRole = await this.roleService.getRoleByStandardId(
-      STANDARD_ROLE_IDS.admin,
+      ADMIN_ROLE.standardId,
       workspaceId,
     );
     const memberRole = await this.roleService.getRoleByStandardId(
-      STANDARD_ROLE_IDS.member,
+      MEMBER_ROLE.standardId,
       workspaceId,
     );
 

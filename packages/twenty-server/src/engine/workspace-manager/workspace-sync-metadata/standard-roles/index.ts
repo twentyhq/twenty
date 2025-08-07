@@ -1,8 +1,8 @@
-import { adminRole } from './roles/admin-role';
-import { memberRole } from './roles/member-role';
+import { ADMIN_ROLE } from './roles/admin-role';
+import { MEMBER_ROLE } from './roles/member-role';
 import { StandardRoleDefinition } from './types/standard-role-definition.interface';
 
 export const standardRoleDefinitions = [
-  adminRole,
-  memberRole,
+  ADMIN_ROLE,
+  MEMBER_ROLE,
 ] as const satisfies StandardRoleDefinition[];

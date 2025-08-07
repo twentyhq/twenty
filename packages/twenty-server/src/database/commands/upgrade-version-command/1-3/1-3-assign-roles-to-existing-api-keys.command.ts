@@ -17,7 +17,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { STANDARD_ROLE_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-role-ids';
+import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 
 @Command({
   name: 'upgrade:1-3:assign-roles-to-existing-api-keys',
@@ -217,7 +217,7 @@ export class AssignRolesToExistingApiKeysCommand extends ActiveOrSuspendedWorksp
     const adminRole = await this.roleRepository.findOne({
       where: {
         workspaceId,
-        standardId: STANDARD_ROLE_IDS.admin,
+        standardId: ADMIN_ROLE.standardId,
       },
     });
 

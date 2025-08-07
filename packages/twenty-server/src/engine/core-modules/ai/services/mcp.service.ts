@@ -13,7 +13,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { STANDARD_ROLE_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-role-ids';
+import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 
 @Injectable()
 export class McpService {
@@ -60,7 +60,7 @@ export class McpService {
       const roles = await this.roleRepository.find({
         where: {
           workspaceId,
-          standardId: STANDARD_ROLE_IDS.admin,
+          standardId: ADMIN_ROLE.standardId,
         },
       });
 
