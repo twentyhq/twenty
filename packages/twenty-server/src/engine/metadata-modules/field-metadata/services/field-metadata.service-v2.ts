@@ -20,6 +20,7 @@ import { fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata } from 'src/eng
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
+import { addFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-with-flat-field-maps-to-flat-object-metadatas.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
@@ -85,7 +86,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
       if (!isDefined(relatedFlatFieldMetadataToCreate)) {
         return undefined;
       }
-      return addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
+      return addFlatFieldMetadataInFlatObjectMetadataMaps({
         flatFieldMetadata: relatedFlatFieldMetadataToCreate,
         flatObjectMetadataMaps,
       });
@@ -151,12 +152,18 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
         continue;
       }
 
-      // handle gracefully avoid global try catch by creating a non throwing tool
-      optimisticFlatObjectMetadataMaps =
-        addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
-          flatFieldMetadata: flatFieldMetadataToCreate,
-          flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
-        });
+      try {
+        optimisticFlatObjectMetadataMaps =
+          addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
+            flatFieldMetadata: flatFieldMetadataToCreate,
+            flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+          });
+      } catch (e) {
+        throw new FieldMetadataException(
+          'Optimistic cache manipulation failed, should never occur',
+          FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+        );
+      }
     }
 
     if (allValidationErrors.length > 0) {
@@ -192,6 +199,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
       inferDeletionFromMissingObjectFieldIndex: false,
       workspaceId,
     });
+    ///
 
     await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
 
