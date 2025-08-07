@@ -8,15 +8,15 @@ import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/wor
 
 const computeUpdatedNextStepIds = ({
   existingNextStepIds,
-  stepIdToDelete,
+  stepIdsToRemove,
   stepToDeleteChildrenIds,
 }: {
   existingNextStepIds: string[];
-  stepIdToDelete: string;
+  stepIdsToRemove: string[];
   stepToDeleteChildrenIds?: string[];
 }): string[] => {
   const filteredNextStepIds = isDefined(existingNextStepIds)
-    ? existingNextStepIds.filter((id) => id !== stepIdToDelete)
+    ? existingNextStepIds.filter((id) => !stepIdsToRemove.includes(id))
     : [];
 
   return [
@@ -44,31 +44,44 @@ const removeRegularStep = ({
   removedStepIds: string[];
 } => {
   const stepIdsToRemove = [stepIdToDelete];
-  const stepIdsToRemoveChildrenIds =
-    stepToDeleteChildrenIds
-      ?.map((id) => {
-        const step = existingSteps.find((step) => step.id === id);
+  let stepIdsToRemoveChildrenIds = stepToDeleteChildrenIds ?? [];
 
-        if (step?.type === WorkflowActionType.FILTER) {
-          stepIdsToRemove.push(step.id);
+  stepToDeleteChildrenIds?.forEach((id) => {
+    const step = existingSteps.find((step) => step.id === id);
 
-          return step.nextStepIds;
-        }
+    if (step?.type === WorkflowActionType.FILTER) {
+      stepIdsToRemove.push(step.id);
+      stepIdsToRemoveChildrenIds = stepIdsToRemoveChildrenIds
+        .filter((id) => id !== step.id)
+        .concat(step.nextStepIds ?? []);
+    }
+  });
 
-        return id;
-      })
-      .filter(isDefined)
-      .flat() ?? [];
+  // we need to make sure no filters will be without children
+  if (
+    !isDefined(stepToDeleteChildrenIds) ||
+    stepToDeleteChildrenIds.length === 0
+  ) {
+    const stepToRemoveParentSteps = existingSteps.filter((step) =>
+      step.nextStepIds?.includes(stepIdToDelete),
+    );
+
+    stepToRemoveParentSteps.forEach((step) => {
+      if (step.type === WorkflowActionType.FILTER) {
+        stepIdsToRemove.push(step.id);
+      }
+    });
+  }
 
   const updatedSteps = existingSteps
     .filter((step) => !stepIdsToRemove.includes(step.id))
     .map((step) => {
-      if (step.nextStepIds?.includes(stepIdToDelete)) {
+      if (step.nextStepIds?.some((id) => stepIdsToRemove.includes(id))) {
         return {
           ...step,
           nextStepIds: computeUpdatedNextStepIds({
             existingNextStepIds: step.nextStepIds,
-            stepIdToDelete,
+            stepIdsToRemove,
             stepToDeleteChildrenIds: stepIdsToRemoveChildrenIds,
           }),
         };
@@ -80,12 +93,14 @@ const removeRegularStep = ({
   let updatedTrigger = existingTrigger;
 
   if (isDefined(existingTrigger)) {
-    if (existingTrigger.nextStepIds?.includes(stepIdToDelete)) {
+    if (
+      existingTrigger.nextStepIds?.some((id) => stepIdsToRemove.includes(id))
+    ) {
       updatedTrigger = {
         ...existingTrigger,
         nextStepIds: computeUpdatedNextStepIds({
           existingNextStepIds: existingTrigger.nextStepIds,
-          stepIdToDelete,
+          stepIdsToRemove,
           stepToDeleteChildrenIds: stepIdsToRemoveChildrenIds,
         }),
       };

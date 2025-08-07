@@ -194,4 +194,52 @@ describe('removeStep', () => {
     expect(result.updatedTrigger).toEqual(null);
     expect(result.updatedSteps).toEqual([step2, step3]);
   });
+
+  it('should remove filter step if it has no children', () => {
+    const step1 = {
+      id: '1',
+      name: 'Step 1',
+      type: WorkflowActionType.FILTER,
+      nextStepIds: ['2'],
+    } as WorkflowAction;
+    const step2 = createMockAction('2', ['3']);
+    const step3 = {
+      id: '3',
+      name: 'Step 3',
+      type: WorkflowActionType.FILTER,
+      nextStepIds: ['4'],
+    } as WorkflowAction;
+    const step4 = createMockAction('4');
+
+    const result = removeStep({
+      existingTrigger: mockTrigger,
+      existingSteps: [step1, step2, step3, step4],
+      stepIdToDelete: '4',
+    });
+
+    expect(result.updatedTrigger).toEqual(mockTrigger);
+    expect(result.updatedSteps).toEqual([step1, { ...step2, nextStepIds: [] }]);
+  });
+
+  it('should remove filter step if it is the last step', () => {
+    const step1 = {
+      id: '1',
+      name: 'Step 1',
+      type: WorkflowActionType.FILTER,
+      nextStepIds: ['2'],
+    } as WorkflowAction;
+    const step2 = createMockAction('2');
+
+    const result = removeStep({
+      existingTrigger: mockTrigger,
+      existingSteps: [step1, step2],
+      stepIdToDelete: '2',
+    });
+
+    expect(result.updatedTrigger).toEqual({
+      ...mockTrigger,
+      nextStepIds: [],
+    });
+    expect(result.updatedSteps).toEqual([]);
+  });
 });
