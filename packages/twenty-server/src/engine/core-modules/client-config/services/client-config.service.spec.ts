@@ -66,6 +66,7 @@ describe('ClientConfigService', () => {
             AUTH_MICROSOFT_ENABLED: false,
             SIGN_IN_PREFILLED: false,
             IS_MULTIWORKSPACE_ENABLED: true,
+            IS_WORKSPACE_CREATION_LIMITED_TO_ADMINS: false,
             IS_EMAIL_VERIFICATION_REQUIRED: true,
             DEFAULT_SUBDOMAIN: 'app',
             NODE_ENV: NodeEnvironment.DEVELOPMENT,

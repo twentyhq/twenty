@@ -2,8 +2,10 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
+import { isWorkspaceCreationLimitedToAdminsState } from '@/client-config/states/isWorkspaceCreationLimitedToAdminsState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { AppPath } from '@/types/AppPath';
@@ -53,6 +55,10 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { t } = useLingui();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
+  const isWorkspaceCreationLimitedToAdmins = useRecoilValue(
+    isWorkspaceCreationLimitedToAdminsState,
+  );
+  const currentUser = useRecoilValue(currentUserState);
   const availableWorkspaces = useRecoilValue(availableWorkspacesState);
   const availableWorkspacesCount =
     countAvailableWorkspaces(availableWorkspaces);
@@ -94,6 +100,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
     });
   };
 
+  const workspaceCreationEnabled =
+    !isWorkspaceCreationLimitedToAdmins || currentUser?.canAccessFullAdminPanel;
+
   return (
     <DropdownContent>
       <DropdownMenuHeader
@@ -108,27 +117,29 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           />
         }
         EndComponent={
-          <Dropdown
-            clickableComponent={
-              <LightIconButton
-                Icon={IconDotsVertical}
-                size="small"
-                accent="tertiary"
-              />
-            }
-            dropdownId={'multi-workspace-dropdown-context-menu'}
-            dropdownComponents={
-              <DropdownContent>
-                <DropdownMenuItemsContainer>
-                  <MenuItem
-                    LeftIcon={IconPlus}
-                    text={t`Create Workspace`}
-                    onClick={createWorkspace}
-                  />
-                </DropdownMenuItemsContainer>
-              </DropdownContent>
-            }
-          />
+          workspaceCreationEnabled && (
+            <Dropdown
+              clickableComponent={
+                <LightIconButton
+                  Icon={IconDotsVertical}
+                  size="small"
+                  accent="tertiary"
+                />
+              }
+              dropdownId={'multi-workspace-dropdown-context-menu'}
+              dropdownComponents={
+                <DropdownContent>
+                  <DropdownMenuItemsContainer>
+                    <MenuItem
+                      LeftIcon={IconPlus}
+                      text={t`Create Workspace`}
+                      onClick={createWorkspace}
+                    />
+                  </DropdownMenuItemsContainer>
+                </DropdownContent>
+              }
+            />
+          )
         }
       >
         {currentWorkspace?.displayName}

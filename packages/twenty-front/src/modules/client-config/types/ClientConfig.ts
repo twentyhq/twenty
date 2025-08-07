@@ -31,6 +31,7 @@ export type ClientConfig = {
   isMicrosoftCalendarEnabled: boolean;
   isMicrosoftMessagingEnabled: boolean;
   isMultiWorkspaceEnabled: boolean;
+  isWorkspaceCreationLimitedToAdmins: boolean;
   isImapSmtpCaldavEnabled: boolean;
   publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;

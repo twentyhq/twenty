@@ -10,12 +10,13 @@ import {
 } from '@/auth/states/signInUpStepState';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
+import { isWorkspaceCreationLimitedToAdminsState } from '@/client-config/states/isWorkspaceCreationLimitedToAdminsState';
 import { useBuildSearchParamsFromUrlSyncedStates } from '@/domain-manager/hooks/useBuildSearchParamsFromUrlSyncedStates';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { buildAppPathWithQueryParams } from '~/utils/buildAppPathWithQueryParams';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { useAuth } from '../../hooks/useAuth';
@@ -26,6 +27,10 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
+
+  const isWorkspaceCreationLimitedToAdmins = useRecoilValue(
+    isWorkspaceCreationLimitedToAdminsState,
+  );
 
   const location = useLocation();
 
@@ -69,6 +74,16 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         enqueueErrorSnackBar({ apolloError: error });
       },
       onCompleted: (data) => {
+        if (
+          isWorkspaceCreationLimitedToAdmins &&
+          !data?.checkUserExists.exists
+        ) {
+          enqueueErrorSnackBar({
+            message: 'Workspace creation is limited to admins',
+          });
+          return;
+        }
+
         setSignInUpMode(
           data?.checkUserExists.exists
             ? SignInUpMode.SignIn
@@ -82,8 +97,9 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     form,
     checkUserExistsQuery,
     enqueueErrorSnackBar,
-    setSignInUpStep,
+    isWorkspaceCreationLimitedToAdmins,
     setSignInUpMode,
+    setSignInUpStep,
   ]);
 
   const submitCredentials: SubmitHandler<Form> = useCallback(

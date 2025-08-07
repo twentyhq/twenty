@@ -5,6 +5,7 @@ export const mockedClientConfig: ClientConfig = {
   aiModels: [],
   signInPrefilled: true,
   isMultiWorkspaceEnabled: false,
+  isWorkspaceCreationLimitedToAdmins: false,
   isEmailVerificationRequired: false,
   authProviders: {
     google: true,

@@ -20,6 +20,7 @@ import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpC
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { isWorkspaceCreationLimitedToAdminsState } from '@/client-config/states/isWorkspaceCreationLimitedToAdminsState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
@@ -39,6 +40,9 @@ export const ClientConfigProviderEffect = () => {
   );
   const setIsMultiWorkspaceEnabled = useSetRecoilState(
     isMultiWorkspaceEnabledState,
+  );
+  const setIsWorkspaceCreationLimitedToAdmins = useSetRecoilState(
+    isWorkspaceCreationLimitedToAdminsState,
   );
   const setIsEmailVerificationRequired = useSetRecoilState(
     isEmailVerificationRequiredState,
@@ -148,6 +152,9 @@ export const ClientConfigProviderEffect = () => {
     setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
     setIsDeveloperDefaultSignInPrefilled(data?.clientConfig.signInPrefilled);
     setIsMultiWorkspaceEnabled(data?.clientConfig.isMultiWorkspaceEnabled);
+    setIsWorkspaceCreationLimitedToAdmins(
+      data?.clientConfig.isWorkspaceCreationLimitedToAdmins,
+    );
     setIsEmailVerificationRequired(
       data?.clientConfig.isEmailVerificationRequired,
     );

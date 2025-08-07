@@ -1046,6 +1046,15 @@ export class ConfigVariables {
   IS_MULTIWORKSPACE_ENABLED = false;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
+    description: 'Enable or disable workspace creation by users',
+    type: ConfigVariableType.BOOLEAN,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  IS_WORKSPACE_CREATION_LIMITED_TO_ADMINS = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
     description:
       'Number of inactive days before sending a deletion warning for workspaces. Used in the workspace deletion cron job to determine when to send warning emails.',

@@ -39,6 +39,15 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestController {
           @Get()
+          @UseGuards(ApiKeyGuard)
+          testMethod() {}
+        }
+      `,
+    },
+    {
+      code: `
+        class TestController {
+          @Get()
           @UseGuards(CaptchaGuard, PublicEndpoint)
           testMethod() {}
         }
@@ -65,6 +74,15 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         @UseGuards(PublicEndpoint)
+        class TestController {
+          @Get()
+          testMethod() {}
+        }
+      `,
+    },
+    {
+      code: `
+        @UseGuards(ApiKeyGuard)
         class TestController {
           @Get()
           testMethod() {}
