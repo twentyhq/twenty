@@ -53,7 +53,6 @@ describe('addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow', () => {
         },
       },
       {
-        only: true,
         title: 'should add a new relation field to pet object',
         context: {
           input: {
