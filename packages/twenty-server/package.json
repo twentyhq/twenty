@@ -92,7 +92,7 @@
     "rimraf": "^5.0.5",
     "twenty-emails": "workspace:*",
     "twenty-shared": "workspace:*",
-    "typescript": "5.3.3"
+    "typescript": "5.8.2"
   },
   "engines": {
     "node": "^24.0.0",
