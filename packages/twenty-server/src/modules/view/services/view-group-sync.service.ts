@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
-import { ViewGroup } from 'src/engine/metadata-modules/view/view-group.entity';
+import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
 import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 
 @Injectable()

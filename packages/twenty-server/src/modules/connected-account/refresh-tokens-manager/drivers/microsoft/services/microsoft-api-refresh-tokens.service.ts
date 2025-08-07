@@ -4,6 +4,7 @@ import axios from 'axios';
 import { z } from 'zod';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { ConnectedAccountTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 
 export type MicrosoftTokens = {
   accessToken: string;
@@ -22,7 +23,7 @@ interface MicrosoftRefreshTokenResponse {
 export class MicrosoftAPIRefreshAccessTokenService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  async refreshTokens(refreshToken: string): Promise<MicrosoftTokens> {
+  async refreshTokens(refreshToken: string): Promise<ConnectedAccountTokens> {
     const response = await axios.post<MicrosoftRefreshTokenResponse>(
       'https://login.microsoftonline.com/common/oauth2/v2.0/token',
       new URLSearchParams({

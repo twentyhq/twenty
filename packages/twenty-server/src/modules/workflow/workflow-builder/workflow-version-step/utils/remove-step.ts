@@ -8,15 +8,15 @@ import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/wor
 
 const computeUpdatedNextStepIds = ({
   existingNextStepIds,
-  stepIdToDelete,
+  stepIdToRemove,
   stepToDeleteChildrenIds,
 }: {
   existingNextStepIds: string[];
-  stepIdToDelete: string;
+  stepIdToRemove: string;
   stepToDeleteChildrenIds?: string[];
 }): string[] => {
   const filteredNextStepIds = isDefined(existingNextStepIds)
-    ? existingNextStepIds.filter((id) => id !== stepIdToDelete)
+    ? existingNextStepIds.filter((id) => id !== stepIdToRemove)
     : [];
 
   return [
@@ -26,6 +26,60 @@ const computeUpdatedNextStepIds = ({
       ...(stepToDeleteChildrenIds || []),
     ]),
   ];
+};
+
+const removeOneStep = ({
+  existingTrigger,
+  existingSteps,
+  stepIdToDelete,
+  stepToDeleteChildrenIds,
+}: {
+  existingTrigger: WorkflowTrigger | null;
+  existingSteps: WorkflowAction[];
+  stepIdToDelete: string;
+  stepToDeleteChildrenIds?: string[];
+}): {
+  updatedSteps: WorkflowAction[];
+  updatedTrigger: WorkflowTrigger | null;
+  removedStepIds: string[];
+} => {
+  const updatedSteps = existingSteps
+    .filter((step) => step.id !== stepIdToDelete)
+    .map((step) => {
+      if (step.nextStepIds?.includes(stepIdToDelete)) {
+        return {
+          ...step,
+          nextStepIds: computeUpdatedNextStepIds({
+            existingNextStepIds: step.nextStepIds,
+            stepIdToRemove: stepIdToDelete,
+            stepToDeleteChildrenIds: stepToDeleteChildrenIds,
+          }),
+        };
+      }
+
+      return step;
+    });
+
+  let updatedTrigger = existingTrigger;
+
+  if (isDefined(existingTrigger)) {
+    if (existingTrigger.nextStepIds?.includes(stepIdToDelete)) {
+      updatedTrigger = {
+        ...existingTrigger,
+        nextStepIds: computeUpdatedNextStepIds({
+          existingNextStepIds: existingTrigger.nextStepIds,
+          stepIdToRemove: stepIdToDelete,
+          stepToDeleteChildrenIds,
+        }),
+      };
+    }
+  }
+
+  return {
+    updatedSteps,
+    updatedTrigger,
+    removedStepIds: [stepIdToDelete],
+  };
 };
 
 const removeRegularStep = ({
@@ -43,59 +97,66 @@ const removeRegularStep = ({
   updatedTrigger: WorkflowTrigger | null;
   removedStepIds: string[];
 } => {
-  const stepIdsToRemove = [stepIdToDelete];
-  const stepIdsToRemoveChildrenIds =
-    stepToDeleteChildrenIds
-      ?.map((id) => {
-        const step = existingSteps.find((step) => step.id === id);
+  let { updatedSteps, updatedTrigger, removedStepIds } = removeOneStep({
+    existingTrigger,
+    existingSteps,
+    stepIdToDelete,
+    stepToDeleteChildrenIds,
+  });
 
-        if (step?.type === WorkflowActionType.FILTER) {
-          stepIdsToRemove.push(step.id);
+  for (const stepId of stepToDeleteChildrenIds ?? []) {
+    const step = existingSteps.find((step) => step.id === stepId);
 
-          return step.nextStepIds;
-        }
+    if (step?.type === WorkflowActionType.FILTER) {
+      const {
+        updatedSteps: stepsAfterRemovingChildFilter,
+        updatedTrigger: triggerAfterRemovingChildFilter,
+        removedStepIds: removedStepIdsAfterRemovingChildFilter,
+      } = removeOneStep({
+        existingTrigger: updatedTrigger,
+        existingSteps: updatedSteps,
+        stepIdToDelete: stepId,
+        stepToDeleteChildrenIds: step.nextStepIds,
+      });
 
-        return id;
-      })
-      .filter(isDefined)
-      .flat() ?? [];
+      updatedSteps = stepsAfterRemovingChildFilter;
+      updatedTrigger = triggerAfterRemovingChildFilter;
+      removedStepIds = [
+        ...removedStepIds,
+        ...removedStepIdsAfterRemovingChildFilter,
+      ];
+    }
+  }
 
-  const updatedSteps = existingSteps
-    .filter((step) => !stepIdsToRemove.includes(step.id))
-    .map((step) => {
-      if (step.nextStepIds?.includes(stepIdToDelete)) {
-        return {
-          ...step,
-          nextStepIds: computeUpdatedNextStepIds({
-            existingNextStepIds: step.nextStepIds,
-            stepIdToDelete,
-            stepToDeleteChildrenIds: stepIdsToRemoveChildrenIds,
-          }),
-        };
-      }
+  for (const step of updatedSteps) {
+    if (
+      step?.type === WorkflowActionType.FILTER &&
+      (!isDefined(step?.nextStepIds) || step.nextStepIds?.length === 0)
+    ) {
+      const {
+        updatedSteps: stepsAfterRemovingFilterWithoutChildren,
+        updatedTrigger: triggerAfterRemovingFilterWithoutChildren,
+        removedStepIds: removedStepIdsAfterRemovingFilterWithoutChildren,
+      } = removeOneStep({
+        existingTrigger: updatedTrigger,
+        existingSteps: updatedSteps,
+        stepIdToDelete: step.id,
+        stepToDeleteChildrenIds: step.nextStepIds,
+      });
 
-      return step;
-    });
-
-  let updatedTrigger = existingTrigger;
-
-  if (isDefined(existingTrigger)) {
-    if (existingTrigger.nextStepIds?.includes(stepIdToDelete)) {
-      updatedTrigger = {
-        ...existingTrigger,
-        nextStepIds: computeUpdatedNextStepIds({
-          existingNextStepIds: existingTrigger.nextStepIds,
-          stepIdToDelete,
-          stepToDeleteChildrenIds: stepIdsToRemoveChildrenIds,
-        }),
-      };
+      updatedSteps = stepsAfterRemovingFilterWithoutChildren;
+      updatedTrigger = triggerAfterRemovingFilterWithoutChildren;
+      removedStepIds = [
+        ...removedStepIds,
+        ...removedStepIdsAfterRemovingFilterWithoutChildren,
+      ];
     }
   }
 
   return {
-    updatedTrigger,
     updatedSteps,
-    removedStepIds: stepIdsToRemove,
+    updatedTrigger,
+    removedStepIds,
   };
 };
 

@@ -1,4 +1,4 @@
-import { ObjectRecordsPermissions } from 'twenty-shared/types';
+import { ObjectsPermissionsDeprecated } from 'twenty-shared/types';
 import { EntityTarget, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -27,14 +27,14 @@ import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/g
 export class WorkspaceSelectQueryBuilder<
   T extends ObjectLiteral,
 > extends SelectQueryBuilder<T> {
-  objectRecordsPermissions: ObjectRecordsPermissions;
+  objectRecordsPermissions: ObjectsPermissionsDeprecated;
   shouldBypassPermissionChecks: boolean;
   internalContext: WorkspaceInternalContext;
   authContext?: AuthContext;
   featureFlagMap?: FeatureFlagMap;
   constructor(
     queryBuilder: SelectQueryBuilder<T>,
-    objectRecordsPermissions: ObjectRecordsPermissions,
+    objectRecordsPermissions: ObjectsPermissionsDeprecated,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
     authContext?: AuthContext,
@@ -322,7 +322,7 @@ export class WorkspaceSelectQueryBuilder<
 
     validateQueryIsPermittedOrThrow({
       expressionMap: this.expressionMap,
-      objectRecordsPermissions: this.objectRecordsPermissions,
+      objectsPermissions: this.objectRecordsPermissions,
       objectMetadataMaps: this.internalContext.objectMetadataMaps,
       shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
       isFieldPermissionsEnabled,

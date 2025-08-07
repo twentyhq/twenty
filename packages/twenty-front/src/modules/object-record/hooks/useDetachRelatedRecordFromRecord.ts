@@ -21,7 +21,7 @@ export const useDetachRelatedRecordFromRecord = ({
     objectNameSingular: recordObjectNameSingular,
   });
 
-  const fieldOnObject = objectMetadataItem.fields.find((field) => {
+  const fieldOnObject = objectMetadataItem.readableFields.find((field) => {
     return field.name === fieldNameOnRecordObject;
   });
 

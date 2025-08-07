@@ -15,6 +15,7 @@ module.exports = {
     'vite.config.ts',
     'setupTests.ts',
     '**/__mocks__/**',
+    'src/testing/mock-data/**',
   ],
   overrides: [
     {

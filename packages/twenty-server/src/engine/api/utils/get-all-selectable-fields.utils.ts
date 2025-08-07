@@ -1,16 +1,18 @@
-import { RestrictedFields } from 'twenty-shared/types';
+import { RestrictedFieldsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getFieldMetadataIdToColumnNamesMap } from 'src/engine/twenty-orm/utils/get-field-metadata-id-to-column-names-map.util';
 
+type GetAllSelectableFieldsArgs = {
+  restrictedFields: RestrictedFieldsPermissions;
+  objectMetadata: { objectMetadataMapItem: ObjectMetadataItemWithFieldMaps };
+};
+
 export const getAllSelectableFields = ({
   restrictedFields,
   objectMetadata,
-}: {
-  restrictedFields: RestrictedFields;
-  objectMetadata: { objectMetadataMapItem: ObjectMetadataItemWithFieldMaps };
-}) => {
+}: GetAllSelectableFieldsArgs) => {
   const restrictedFieldsIds = Object.entries(restrictedFields)
     .filter(([_, value]) => value.canRead === false)
     .map(([key]) => key);

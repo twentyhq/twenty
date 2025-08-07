@@ -1,4 +1,4 @@
-import { ObjectRecordsPermissions } from 'twenty-shared/types';
+import { ObjectsPermissionsDeprecated } from 'twenty-shared/types';
 import {
   DeleteQueryBuilder,
   DeleteResult,
@@ -29,14 +29,14 @@ import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/g
 export class WorkspaceDeleteQueryBuilder<
   T extends ObjectLiteral,
 > extends DeleteQueryBuilder<T> {
-  private objectRecordsPermissions: ObjectRecordsPermissions;
+  private objectRecordsPermissions: ObjectsPermissionsDeprecated;
   private shouldBypassPermissionChecks: boolean;
   private internalContext: WorkspaceInternalContext;
   private authContext?: AuthContext;
   private featureFlagMap?: FeatureFlagMap;
   constructor(
     queryBuilder: DeleteQueryBuilder<T>,
-    objectRecordsPermissions: ObjectRecordsPermissions,
+    objectRecordsPermissions: ObjectsPermissionsDeprecated,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
     authContext?: AuthContext,
@@ -66,7 +66,7 @@ export class WorkspaceDeleteQueryBuilder<
     try {
       validateQueryIsPermittedOrThrow({
         expressionMap: this.expressionMap,
-        objectRecordsPermissions: this.objectRecordsPermissions,
+        objectsPermissions: this.objectRecordsPermissions,
         objectMetadataMaps: this.internalContext.objectMetadataMaps,
         shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
         isFieldPermissionsEnabled:

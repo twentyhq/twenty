@@ -75,7 +75,10 @@ describe('MessagingMessagesImportService', () => {
       {
         provide: ConnectedAccountRefreshTokensService,
         useValue: {
-          refreshAndSaveTokens: jest.fn().mockResolvedValue('new-access-token'),
+          refreshAndSaveTokens: jest.fn().mockResolvedValue({
+            accessToken: 'new-access-token',
+            refreshToken: 'new-refresh-token',
+          }),
         },
       },
       {
@@ -211,15 +214,23 @@ describe('MessagingMessagesImportService', () => {
     expect(
       messageChannelSyncStatusService.markAsMessagesImportOngoing,
     ).toHaveBeenCalledWith([mockMessageChannel.id]);
+
     expect(
       connectedAccountRefreshTokensService.refreshAndSaveTokens,
     ).toHaveBeenCalledWith(mockConnectedAccount, workspaceId);
-    expect(emailAliasManagerService.refreshHandleAliases).toHaveBeenCalledWith(
-      mockConnectedAccount,
-    );
+
+    expect(emailAliasManagerService.refreshHandleAliases).toHaveBeenCalledWith({
+      ...mockConnectedAccount,
+      accessToken: 'new-access-token',
+      refreshToken: 'new-refresh-token',
+    });
     expect(messagingGetMessagesService.getMessages).toHaveBeenCalledWith(
       ['message-id-1', 'message-id-2'],
-      mockConnectedAccount,
+      {
+        ...mockConnectedAccount,
+        accessToken: 'new-access-token',
+        refreshToken: 'new-refresh-token',
+      },
     );
     expect(
       saveMessagesService.saveMessagesAndEnqueueContactCreation,

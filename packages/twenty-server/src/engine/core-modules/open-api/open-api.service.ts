@@ -196,6 +196,30 @@ export class OpenApiService {
         nameSingular: 'apiKey',
         namePlural: 'apiKeys',
       },
+      {
+        nameSingular: 'view',
+        namePlural: 'views',
+      },
+      {
+        nameSingular: 'viewField',
+        namePlural: 'viewFields',
+      },
+      {
+        nameSingular: 'viewFilter',
+        namePlural: 'viewFilters',
+      },
+      {
+        nameSingular: 'viewSort',
+        namePlural: 'viewSorts',
+      },
+      {
+        nameSingular: 'viewGroup',
+        namePlural: 'viewGroups',
+      },
+      {
+        nameSingular: 'viewFilterGroup',
+        namePlural: 'viewFilterGroups',
+      },
     ];
 
     schema.paths = metadata.reduce((path, item) => {

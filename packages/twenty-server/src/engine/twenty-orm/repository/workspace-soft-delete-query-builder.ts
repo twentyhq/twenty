@@ -1,4 +1,4 @@
-import { ObjectRecordsPermissions } from 'twenty-shared/types';
+import { ObjectsPermissionsDeprecated } from 'twenty-shared/types';
 import {
   EntityTarget,
   InsertQueryBuilder,
@@ -28,7 +28,7 @@ import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/g
 export class WorkspaceSoftDeleteQueryBuilder<
   T extends ObjectLiteral,
 > extends SoftDeleteQueryBuilder<T> {
-  private objectRecordsPermissions: ObjectRecordsPermissions;
+  private objectRecordsPermissions: ObjectsPermissionsDeprecated;
   private shouldBypassPermissionChecks: boolean;
   private internalContext: WorkspaceInternalContext;
   private authContext?: AuthContext;
@@ -36,7 +36,7 @@ export class WorkspaceSoftDeleteQueryBuilder<
 
   constructor(
     queryBuilder: SoftDeleteQueryBuilder<T>,
-    objectRecordsPermissions: ObjectRecordsPermissions,
+    objectRecordsPermissions: ObjectsPermissionsDeprecated,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
     authContext?: AuthContext,
@@ -66,7 +66,7 @@ export class WorkspaceSoftDeleteQueryBuilder<
     try {
       validateQueryIsPermittedOrThrow({
         expressionMap: this.expressionMap,
-        objectRecordsPermissions: this.objectRecordsPermissions,
+        objectsPermissions: this.objectRecordsPermissions,
         objectMetadataMaps: this.internalContext.objectMetadataMaps,
         shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
         isFieldPermissionsEnabled:

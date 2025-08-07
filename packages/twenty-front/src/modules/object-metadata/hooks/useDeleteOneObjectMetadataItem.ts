@@ -7,7 +7,7 @@ import {
 
 import { DELETE_ONE_OBJECT_METADATA_ITEM } from '../graphql/mutations';
 
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
+import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 
 export const useDeleteOneObjectMetadataItem = () => {
   const [mutate] = useMutation<

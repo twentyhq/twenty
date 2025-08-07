@@ -1,6 +1,7 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
+import { ViewFilterOperand as SharedViewFilterOperand } from 'twenty-shared/types';
 import { DataSource, QueryRunner, Repository } from 'typeorm';
 
 import {
@@ -9,16 +10,17 @@ import {
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
+import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
+import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
+import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
+import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
+import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
+import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view/enums/view-filter-group-logical-operator';
-import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
-import { ViewSortDirection } from 'src/engine/metadata-modules/view/enums/view-sort-direction';
-import { ViewField } from 'src/engine/metadata-modules/view/view-field.entity';
-import { ViewFilterGroup } from 'src/engine/metadata-modules/view/view-filter-group.entity';
-import { ViewFilter } from 'src/engine/metadata-modules/view/view-filter.entity';
-import { ViewGroup } from 'src/engine/metadata-modules/view/view-group.entity';
-import { ViewSort } from 'src/engine/metadata-modules/view/view-sort.entity';
-import { View } from 'src/engine/metadata-modules/view/view.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 import { ViewFilterGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
@@ -26,6 +28,7 @@ import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/vie
 import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
+import { convertViewFilterOperandToCoreOperand } from 'src/modules/view/utils/convert-view-filter-operand-to-core-operand.util';
 import { transformViewFilterWorkspaceValueToCoreValue } from 'src/modules/view/utils/transform-view-filter-workspace-value-to-core-value';
 
 @Command({
@@ -247,7 +250,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
       id: workspaceView.id,
       name: workspaceView.name,
       objectMetadataId: workspaceView.objectMetadataId,
-      type: workspaceView.type,
+      type: workspaceView.type === 'table' ? ViewType.TABLE : ViewType.KANBAN,
       key: workspaceView.key,
       icon: workspaceView.icon,
       position: workspaceView.position,
@@ -315,7 +318,9 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         id: filter.id,
         fieldMetadataId: filter.fieldMetadataId,
         viewId: filter.viewId,
-        operand: filter.operand,
+        operand: convertViewFilterOperandToCoreOperand(
+          filter.operand as SharedViewFilterOperand,
+        ),
         value: transformViewFilterWorkspaceValueToCoreValue(filter.value),
         viewFilterGroupId: filter.viewFilterGroupId,
         workspaceId,
