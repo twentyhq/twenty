@@ -902,6 +902,15 @@ export class ConfigVariables {
   APP_SECRET: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
+    description: 'Regex pattern to validate allowed request origins for CORS',
+    isEnvOnly: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  ALLOWED_REQUEST_ORIGIN_REGEX?: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RateLimiting,
     description: 'Maximum number of records affected by mutations',
     type: ConfigVariableType.NUMBER,

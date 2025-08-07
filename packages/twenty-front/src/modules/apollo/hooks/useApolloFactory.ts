@@ -14,6 +14,7 @@ import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { appVersionState } from '@/client-config/states/appVersionState';
+import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from 'twenty-shared/utils';
@@ -29,6 +30,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
     currentWorkspaceState,
   );
   const appVersion = useRecoilValue(appVersionState);
+  const clientConfigApiStatus = useRecoilValue(clientConfigApiStatusState);
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
@@ -60,6 +62,8 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
       currentWorkspaceMember: currentWorkspaceMember,
       currentWorkspace: currentWorkspace,
       appVersion,
+      isCorsCredentialsEnabled: 
+        clientConfigApiStatus.data?.clientConfig?.isCorsCredentialsEnabled ?? false,
       onTokenPairChange: (tokenPair) => {
         setTokenPair(tokenPair);
       },
@@ -102,6 +106,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
     setCurrentWorkspace,
     setPreviousUrl,
     enqueueErrorSnackBar,
+    clientConfigApiStatus.data?.clientConfig?.isCorsCredentialsEnabled,
   ]);
 
   useUpdateEffect(() => {
