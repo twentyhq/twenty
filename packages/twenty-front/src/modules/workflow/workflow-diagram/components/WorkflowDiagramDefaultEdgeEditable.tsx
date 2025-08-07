@@ -13,6 +13,7 @@ import { useOpenWorkflowEditFilterInCommandMenu } from '@/workflow/workflow-diag
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
+import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { EdgeLabelRenderer, EdgeProps, getBezierPath } from '@xyflow/react';
 import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
@@ -85,7 +86,15 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     });
   };
 
+  const isEdgeParentNodeIsAnEmptyTrigger =
+    source === TRIGGER_STEP_ID && !isDefined(workflow?.currentVersion?.trigger);
+  const canCreateNode = !isEdgeParentNodeIsAnEmptyTrigger;
+
   const handleNodeButtonClick = () => {
+    if (!canCreateNode) {
+      return;
+    }
+
     startNodeCreation({
       parentStepId: source,
       nextStepId: target,
@@ -110,7 +119,9 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
           labelY={labelY}
         >
           <WorkflowDiagramEdgeV2VisibilityContainer
-            shouldDisplay={nodeCreationStarted || isEdgeHovered(id)}
+            shouldDisplay={
+              nodeCreationStarted || (isEdgeHovered(id) && canCreateNode)
+            }
           >
             <WorkflowDiagramEdgeButtonGroup
               iconButtons={[
