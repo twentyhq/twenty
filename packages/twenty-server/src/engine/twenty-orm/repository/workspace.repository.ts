@@ -348,6 +348,7 @@ export class WorkspaceRepository<
       | ObjectId[]
       | FindOptionsWhere<T>,
     entityManager?: WorkspaceEntityManager,
+    selectedColumns?: string[] | '*',
   ): Promise<DeleteResult> {
     const manager = entityManager || this.manager;
 
@@ -360,7 +361,12 @@ export class WorkspaceRepository<
       objectRecordsPermissions: this.objectRecordsPermissions,
     };
 
-    return manager.delete(this.target, criteria, permissionOptions);
+    return manager.delete(
+      this.target,
+      criteria,
+      permissionOptions,
+      selectedColumns,
+    );
   }
 
   override softRemove<U extends DeepPartial<T>>(
@@ -431,6 +437,7 @@ export class WorkspaceRepository<
       | ObjectId[]
       | FindOptionsWhere<T>,
     entityManager?: WorkspaceEntityManager,
+    selectedColumns?: string[],
   ): Promise<UpdateResult> {
     const manager = entityManager || this.manager;
 
@@ -443,7 +450,12 @@ export class WorkspaceRepository<
       objectRecordsPermissions: this.objectRecordsPermissions,
     };
 
-    return manager.softDelete(this.target, criteria, permissionOptions);
+    return manager.softDelete(
+      this.target,
+      criteria,
+      permissionOptions,
+      selectedColumns,
+    );
   }
 
   /**
@@ -517,6 +529,7 @@ export class WorkspaceRepository<
       | ObjectId[]
       | FindOptionsWhere<T>,
     entityManager?: WorkspaceEntityManager,
+    selectedColumns?: string[],
   ): Promise<UpdateResult> {
     const manager = entityManager || this.manager;
 
@@ -529,7 +542,12 @@ export class WorkspaceRepository<
       objectRecordsPermissions: this.objectRecordsPermissions,
     };
 
-    return manager.restore(this.target, criteria, permissionOptions);
+    return manager.restore(
+      this.target,
+      criteria,
+      permissionOptions,
+      selectedColumns,
+    );
   }
 
   /**

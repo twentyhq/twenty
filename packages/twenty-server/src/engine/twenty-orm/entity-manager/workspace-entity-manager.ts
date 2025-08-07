@@ -583,6 +583,7 @@ export class WorkspaceEntityManager extends EntityManager {
     targetOrEntity: EntityTarget<Entity>,
     criteria: unknown,
     permissionOptions?: PermissionOptions,
+    selectedColumns: string[] | '*' = '*',
   ): Promise<DeleteResult> {
     if (
       criteria === undefined ||
@@ -611,6 +612,7 @@ export class WorkspaceEntityManager extends EntityManager {
         .delete()
         .from(targetOrEntity)
         .whereInIds(criteria)
+        .returning(selectedColumns)
         .execute();
     } else {
       return this.createQueryBuilder(
@@ -622,6 +624,7 @@ export class WorkspaceEntityManager extends EntityManager {
         .delete()
         .from(targetOrEntity)
         .where(criteria)
+        .returning(selectedColumns)
         .execute();
     }
   }
@@ -630,6 +633,7 @@ export class WorkspaceEntityManager extends EntityManager {
     targetOrEntity: EntityTarget<Entity>,
     criteria: unknown,
     permissionOptions?: PermissionOptions,
+    selectedColumns: string[] | '*' = '*',
   ): Promise<UpdateResult> {
     // if user passed empty criteria or empty list of criterias, then throw an error
     if (
@@ -659,6 +663,7 @@ export class WorkspaceEntityManager extends EntityManager {
         .softDelete()
         .from(targetOrEntity)
         .whereInIds(criteria)
+        .returning(selectedColumns)
         .execute();
     } else {
       return this.createQueryBuilder(
@@ -670,6 +675,7 @@ export class WorkspaceEntityManager extends EntityManager {
         .softDelete()
         .from(targetOrEntity)
         .where(criteria)
+        .returning(selectedColumns)
         .execute();
     }
   }
@@ -678,6 +684,7 @@ export class WorkspaceEntityManager extends EntityManager {
     targetOrEntity: EntityTarget<Entity>,
     criteria: unknown,
     permissionOptions?: PermissionOptions,
+    selectedColumns: string[] | '*' = '*',
   ): Promise<UpdateResult> {
     // if user passed empty criteria or empty list of criterias, then throw an error
     if (
@@ -707,6 +714,7 @@ export class WorkspaceEntityManager extends EntityManager {
         .restore()
         .from(targetOrEntity)
         .whereInIds(criteria)
+        .returning(selectedColumns)
         .execute();
     } else {
       return this.createQueryBuilder(
@@ -718,6 +726,7 @@ export class WorkspaceEntityManager extends EntityManager {
         .restore()
         .from(targetOrEntity)
         .where(criteria)
+        .returning(selectedColumns)
         .execute();
     }
   }
@@ -1237,6 +1246,10 @@ export class WorkspaceEntityManager extends EntityManager {
     objectMetadataItem: ObjectMetadataItemWithFieldMaps;
     permissionOptionsFromArgs: PermissionOptions | undefined;
   }): Entity[] {
+    if (permissionOptionsFromArgs?.shouldBypassPermissionChecks === true) {
+      return formattedResult;
+    }
+
     const restrictedFields =
       permissionOptionsFromArgs?.objectRecordsPermissions?.[
         objectMetadataItem.id
