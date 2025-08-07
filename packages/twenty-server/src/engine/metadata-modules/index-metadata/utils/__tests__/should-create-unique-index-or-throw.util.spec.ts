@@ -4,26 +4,9 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataException } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { shouldCreateUniqueIndex } from 'src/engine/metadata-modules/index-metadata/utils/should-create-unique-index.util';
+import { shouldCreateUniqueIndexOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/should-create-unique-index-or-throw.util';
 
 describe('shouldCreateUniqueIndex', () => {
-  it('should return false if field to create is not unique', () => {
-    const field = {
-      name: 'testField',
-      label: 'Test Field',
-      type: FieldMetadataType.TEXT,
-      objectMetadataId: 'test-object-id',
-    } as CreateFieldInput;
-
-    const result = shouldCreateUniqueIndex(false, field);
-
-    expect(result).toBe(false);
-
-    const resultUndefined = shouldCreateUniqueIndex(undefined, field);
-
-    expect(resultUndefined).toBe(false);
-  });
-
   it('should return true if field to create is unique and if field type enable unicity', () => {
     const field = {
       name: 'testField',
@@ -32,7 +15,7 @@ describe('shouldCreateUniqueIndex', () => {
       objectMetadataId: 'test-object-id',
     } as CreateFieldInput;
 
-    const result = shouldCreateUniqueIndex(true, field);
+    const result = shouldCreateUniqueIndexOrThrow(field);
 
     expect(result).toBe(true);
   });
@@ -45,10 +28,10 @@ describe('shouldCreateUniqueIndex', () => {
       objectMetadataId: 'test-object-id',
     } as CreateFieldInput;
 
-    expect(() => shouldCreateUniqueIndex(true, field)).toThrow(
+    expect(() => shouldCreateUniqueIndexOrThrow(field)).toThrow(
       FieldMetadataException,
     );
-    expect(() => shouldCreateUniqueIndex(true, field)).toThrow(
+    expect(() => shouldCreateUniqueIndexOrThrow(field)).toThrow(
       'Unique index cannot be created for field testField of type MORPH_RELATION',
     );
   });
@@ -64,10 +47,10 @@ describe('shouldCreateUniqueIndex', () => {
       },
     } as CreateFieldInput;
 
-    expect(() => shouldCreateUniqueIndex(true, field)).toThrow(
+    expect(() => shouldCreateUniqueIndexOrThrow(field)).toThrow(
       FieldMetadataException,
     );
-    expect(() => shouldCreateUniqueIndex(true, field)).toThrow(
+    expect(() => shouldCreateUniqueIndexOrThrow(field)).toThrow(
       'Unique index cannot be created for field testField of type RELATION',
     );
   });
@@ -80,10 +63,10 @@ describe('shouldCreateUniqueIndex', () => {
       objectMetadataId: 'test-object-id',
     } as CreateFieldInput;
 
-    expect(() => shouldCreateUniqueIndex(true, field)).toThrow(
+    expect(() => shouldCreateUniqueIndexOrThrow(field)).toThrow(
       FieldMetadataException,
     );
-    expect(() => shouldCreateUniqueIndex(true, field)).toThrow(
+    expect(() => shouldCreateUniqueIndexOrThrow(field)).toThrow(
       'Unique index cannot be created for field testField of type FULL_NAME',
     );
   });
@@ -96,10 +79,10 @@ describe('shouldCreateUniqueIndex', () => {
       objectMetadataId: 'test-object-id',
     } as CreateFieldInput;
 
-    expect(() => shouldCreateUniqueIndex(true, field)).toThrow(
+    expect(() => shouldCreateUniqueIndexOrThrow(field)).toThrow(
       FieldMetadataException,
     );
-    expect(() => shouldCreateUniqueIndex(true, field)).toThrow(
+    expect(() => shouldCreateUniqueIndexOrThrow(field)).toThrow(
       'Unique index cannot be created for field testField of type ADDRESS',
     );
   });

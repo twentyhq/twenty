@@ -1,10 +1,10 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { validateUniqueFieldDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/validate-unique-field-default-value.util';
+import { isValidUniqueFieldDefaultValueCombination } from 'src/engine/metadata-modules/field-metadata/utils/is-valid-unique-input.util';
 
-describe('validateUniqueFieldDefaultValue', () => {
+describe('isValidUniqueFieldDefaultValueCombination', () => {
   it('should return true if the field has a custom default value and is not unique', () => {
-    const result = validateUniqueFieldDefaultValue(
+    const result = isValidUniqueFieldDefaultValueCombination(
       "'custom value'",
       false,
       FieldMetadataType.TEXT,
@@ -12,18 +12,9 @@ describe('validateUniqueFieldDefaultValue', () => {
 
     expect(result).toBe(true);
   });
-  it('should return true if the field has no custom default value and is unique', () => {
-    const result = validateUniqueFieldDefaultValue(
-      undefined,
-      true,
-      FieldMetadataType.TEXT,
-    );
-
-    expect(result).toBe(true);
-  });
 
   it('should return true if the field has standard default value and is unique', () => {
-    const result = validateUniqueFieldDefaultValue(
+    const result = isValidUniqueFieldDefaultValueCombination(
       "''",
       true,
       FieldMetadataType.TEXT,
@@ -33,7 +24,7 @@ describe('validateUniqueFieldDefaultValue', () => {
   });
 
   it('should return false if the field has custom default value and is unique', () => {
-    const result = validateUniqueFieldDefaultValue(
+    const result = isValidUniqueFieldDefaultValueCombination(
       "'custom value'",
       true,
       FieldMetadataType.TEXT,

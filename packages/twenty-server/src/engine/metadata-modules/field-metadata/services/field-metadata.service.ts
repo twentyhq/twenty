@@ -46,12 +46,12 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { isFieldMetadataTypeMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-morph-relation.util';
 import { isFieldMetadataTypeRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-relation.util';
 import { isSelectOrMultiSelectFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/is-select-or-multi-select-field-metadata.util';
+import { isValidUniqueFieldDefaultValueCombination } from 'src/engine/metadata-modules/field-metadata/utils/is-valid-unique-input.util';
 import { prepareCustomFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/utils/prepare-custom-field-metadata-for-options.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
-import { validateUniqueFieldDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/validate-unique-field-default-value.util';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { computeUniqueIndexWhereClause } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-index-where-clause.util';
-import { shouldCreateUniqueIndex } from 'src/engine/metadata-modules/index-metadata/utils/should-create-unique-index.util';
+import { shouldCreateUniqueIndexOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/should-create-unique-index-or-throw.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -170,22 +170,14 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       );
     }
 
-    const isUniqueInput = fieldMetadataInput.isUnique;
-
     if (
-      !validateUniqueFieldDefaultValue(
-        fieldMetadataInput.defaultValue,
-        isUniqueInput,
-        existingFieldMetadata.type,
-      ) ||
-      !validateUniqueFieldDefaultValue(
-        fieldMetadataInput.defaultValue,
-        existingFieldMetadata.isUnique ?? false,
-        existingFieldMetadata.type,
-      ) ||
-      !validateUniqueFieldDefaultValue(
-        existingFieldMetadata.defaultValue,
-        isUniqueInput ?? false,
+      !isValidUniqueFieldDefaultValueCombination(
+        isDefined(fieldMetadataInput.defaultValue)
+          ? fieldMetadataInput.defaultValue
+          : existingFieldMetadata.defaultValue,
+        isDefined(fieldMetadataInput.isUnique)
+          ? fieldMetadataInput.isUnique
+          : (existingFieldMetadata.isUnique ?? false),
         existingFieldMetadata.type,
       )
     ) {
@@ -288,6 +280,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         [];
       const shouldUpdateUniqueIndex =
         isDefined(fieldMetadataInput.name) &&
+        fieldMetadataInput.name !== existingFieldMetadata.name &&
         existingFieldMetadata.isUnique === true;
 
       if (shouldUpdateUniqueIndex) {
@@ -301,24 +294,30 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             },
           );
 
-        if (isDefined(recomputedIndexPayload)) {
-          const { updatedIndex, previousName } = recomputedIndexPayload;
-
-          workspaceMigrationsOnCustomUniqueIndex.push(
-            this.indexMetadataService.createIndexRecomputeMigrationActions(
-              objectMetadataItemWithFieldMaps,
-              {
-                indexMetadata: updatedIndex,
-                previousName,
-                newName: updatedIndex.name,
-              },
-            ),
+        if (!isDefined(recomputedIndexPayload)) {
+          throw new FieldMetadataException(
+            'Unique index not found for unique field',
+            FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
           );
         }
+
+        const { updatedIndex, previousName } = recomputedIndexPayload;
+
+        workspaceMigrationsOnCustomUniqueIndex.push(
+          this.indexMetadataService.createIndexRecomputeMigrationActions(
+            objectMetadataItemWithFieldMaps,
+            {
+              indexMetadata: updatedIndex,
+              previousName,
+              newName: updatedIndex.name,
+            },
+          ),
+        );
       }
 
       if (
-        shouldCreateUniqueIndex(isUniqueInput, updatedFieldMetadata) &&
+        fieldMetadataInput.isUnique === true &&
+        shouldCreateUniqueIndexOrThrow(updatedFieldMetadata) &&
         !existingFieldMetadata.isUnique
       ) {
         await this.indexMetadataService.createIndexMetadata({
@@ -343,8 +342,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       }
 
       const shouldDeleteUniqueIndex =
-        isDefined(isUniqueInput) &&
-        !isUniqueInput &&
+        isDefined(fieldMetadataInput.isUnique) &&
+        !fieldMetadataInput.isUnique &&
         existingFieldMetadata.isUnique;
 
       if (shouldDeleteUniqueIndex) {
@@ -359,7 +358,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           this.indexMetadataService.computeIndexDeletionMigration({
             objectMetadata: objectMetadataItemWithFieldMaps,
             fieldMetadataToIndex: [updatedFieldMetadata],
-            isUnique: isUniqueInput,
+            isUnique: fieldMetadataInput.isUnique ?? false,
           }),
         );
       }
@@ -778,14 +777,21 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           migrationActions.push(...fieldMigrationActions);
 
           if (fieldMetadataInput.isUnique) {
+            if (createdFieldMetadataItems.length > 1) {
+              throw new FieldMetadataException(
+                'Unique field cannot have be Relation or Morph Relation',
+                FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+              );
+            }
+
             const uniqueIndexMigration =
-              await this.createUniqueIndexForNewField(
-                createdFieldMetadataItems,
+              await this.createUniqueIndexForNewField({
+                createdFieldMetadataItem: createdFieldMetadataItems[0],
                 objectMetadata,
                 fieldMetadataInput,
                 workspaceId,
                 queryRunner,
-              );
+              });
 
             migrationActions.push(
               ...(isDefined(uniqueIndexMigration)
@@ -833,17 +839,24 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
   }
 
-  private async createUniqueIndexForNewField(
-    createdFieldMetadataItems: FieldMetadataEntity[],
-    objectMetadata: ObjectMetadataItemWithFieldMaps,
-    fieldMetadataInput: CreateFieldInput,
-    workspaceId: string,
-    queryRunner: QueryRunner,
-  ) {
+  private async createUniqueIndexForNewField({
+    createdFieldMetadataItem,
+    objectMetadata,
+    fieldMetadataInput,
+    workspaceId,
+    queryRunner,
+  }: {
+    createdFieldMetadataItem: FieldMetadataEntity;
+    objectMetadata: ObjectMetadataItemWithFieldMaps;
+    fieldMetadataInput: CreateFieldInput;
+    workspaceId: string;
+    queryRunner: QueryRunner;
+  }) {
     if (
-      !validateUniqueFieldDefaultValue(
+      isDefined(fieldMetadataInput.defaultValue) &&
+      !isValidUniqueFieldDefaultValueCombination(
         fieldMetadataInput.defaultValue,
-        fieldMetadataInput.isUnique,
+        fieldMetadataInput.isUnique ?? false,
         fieldMetadataInput.type,
       )
     )
@@ -853,39 +866,26 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       );
 
     if (
-      !shouldCreateUniqueIndex(fieldMetadataInput.isUnique, fieldMetadataInput)
+      fieldMetadataInput.isUnique !== true ||
+      !shouldCreateUniqueIndexOrThrow(fieldMetadataInput)
     )
       return;
-
-    const [initialCreatedField, ...emptyFields] =
-      createdFieldMetadataItems.filter(
-        (fieldMetadata) =>
-          fieldMetadata.name === fieldMetadataInput.name &&
-          fieldMetadata.objectMetadataId === objectMetadata.id,
-      );
-
-    if (emptyFields.length > 0 || !isDefined(initialCreatedField)) {
-      throw new FieldMetadataException(
-        'Name and objectMetadataId should be unique for a field metadata (morph relation excepted)',
-        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
 
     await this.indexMetadataService.createIndexMetadata({
       workspaceId,
       objectMetadata,
-      fieldMetadataToIndex: [initialCreatedField],
+      fieldMetadataToIndex: [createdFieldMetadataItem],
       isUnique: true,
       isCustom: true,
-      indexWhereClause: computeUniqueIndexWhereClause(initialCreatedField),
+      indexWhereClause: computeUniqueIndexWhereClause(createdFieldMetadataItem),
       queryRunner,
     });
 
     return this.indexMetadataService.computeIndexCreationMigration({
       objectMetadata,
-      fieldMetadataToIndex: [initialCreatedField],
+      fieldMetadataToIndex: [createdFieldMetadataItem],
       isUnique: true,
-      indexWhereClause: computeUniqueIndexWhereClause(initialCreatedField),
+      indexWhereClause: computeUniqueIndexWhereClause(createdFieldMetadataItem),
     });
   }
 
