@@ -237,7 +237,9 @@ export class MessagingMessageListFetchService {
         }
       }
 
-      this.logger.log(``);
+      this.logger.log(
+        `messageChannelId: ${messageChannel.id} launching workspace thread cleanup`,
+      );
 
       await this.messagingMessageCleanerService.cleanWorkspaceThreads(
         workspaceId,
