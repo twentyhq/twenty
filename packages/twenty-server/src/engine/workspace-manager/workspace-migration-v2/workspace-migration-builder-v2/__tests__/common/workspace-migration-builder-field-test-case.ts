@@ -48,8 +48,8 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
         });
 
         return {
-          from: [flatObjectMetadata],
-          to: [
+          fromFlatObjectMetadataMaps: [flatObjectMetadata],
+          toFlatObjectMetadataMaps: [
             {
               ...flatObjectMetadata,
               flatFieldMetadatas: [createdFlatRelationFieldMetadata],
@@ -85,8 +85,8 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
         });
 
         return {
-          from: [flatObjectMetadata],
-          to: [
+          fromFlatObjectMetadataMaps: [flatObjectMetadata],
+          toFlatObjectMetadataMaps: [
             {
               ...flatObjectMetadata,
               flatFieldMetadatas: [
@@ -132,8 +132,8 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
         });
 
         return {
-          from: [flatObjectMetadata],
-          to: [
+          fromFlatObjectMetadataMaps: [flatObjectMetadata],
+          toFlatObjectMetadataMaps: [
             {
               ...flatObjectMetadata,
               flatFieldMetadatas: [
@@ -176,8 +176,8 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
         });
 
         return {
-          from: [flatObjectMetadata],
-          to: [
+          fromFlatObjectMetadataMaps: [flatObjectMetadata],
+          toFlatObjectMetadataMaps: [
             {
               ...flatObjectMetadata,
               flatFieldMetadatas: [flatFieldMetadata],
@@ -207,8 +207,8 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
         });
 
         return {
-          from: [flatObjectMetadata],
-          to: [
+          fromFlatObjectMetadataMaps: [flatObjectMetadata],
+          toFlatObjectMetadataMaps: [
             {
               ...flatObjectMetadata,
               flatFieldMetadatas: [
@@ -247,8 +247,8 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
         });
 
         return {
-          from: [flatObjectMetadata],
-          to: [
+          fromFlatObjectMetadataMaps: [flatObjectMetadata],
+          toFlatObjectMetadataMaps: [
             {
               ...flatObjectMetadata,
               flatFieldMetadatas: basicFlatFieldMetadatas,
@@ -287,7 +287,7 @@ export const WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES: WorkspaceMigrationBui
 
           return {
             from,
-            to: from,
+            toFlatObjectMetadataMaps: from,
           };
         },
       },

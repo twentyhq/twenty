@@ -29,7 +29,6 @@ import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadat
 import { extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/extract-flat-object-metadata-maps-out-of-flat-object-metadata-maps-or-throw.util';
 import { extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/extract-flat-object-metadata-maps-out-of-flat-object-metadata-maps.util';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFielId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
-import { fromFlatObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-maps-to-flat-object-metadatas.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
@@ -115,22 +114,16 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
         objectMetadataIds: [flatFieldMetadataToDelete.objectMetadataId],
       });
-    const toImpactedFlatObjectMetadataMaps =
+    const toFlatObjectMetadataMaps =
       deleteFieldFromFlatObjectMetadataMapsOrThrow({
         fieldMetadataId: flatFieldMetadataToDelete.id,
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
         objectMetadataId: flatFieldMetadataToDelete.objectMetadataId,
       });
-
     const workspaceMigration = this.workspaceMigrationBuilderV2.build({
-      objectMetadataFromToInputs: {
-        from: fromFlatObjectMetadataMapsToFlatObjectMetadatas(
-          fromFlatObjectMetadataMaps,
-        ),
-        to: fromFlatObjectMetadataMapsToFlatObjectMetadatas(
-          toImpactedFlatObjectMetadataMaps,
-        ),
-      },
+      fromFlatObjectMetadataMaps,
+      toFlatObjectMetadataMaps,
+      inferDeletionFromMissingObjectFieldIndex: true,
       workspaceId,
     });
 
@@ -275,25 +268,19 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
     );
 
     try {
-      const fromImpactedFlatObjectMetadataMaps =
+      const fromFlatObjectMetadataMaps =
         extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow({
           flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
           objectMetadataIds: impactedObjectMetadataIds,
         });
-      const toImpactedFlatObjectMetadataMaps =
+      const toFlatObjectMetadataMaps =
         extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow({
           flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
           objectMetadataIds: impactedObjectMetadataIds,
         });
       const workspaceMigration = this.workspaceMigrationBuilderV2.build({
-        objectMetadataFromToInputs: {
-          from: fromFlatObjectMetadataMapsToFlatObjectMetadatas(
-            fromImpactedFlatObjectMetadataMaps,
-          ),
-          to: fromFlatObjectMetadataMapsToFlatObjectMetadatas(
-            toImpactedFlatObjectMetadataMaps,
-          ),
-        },
+        fromFlatObjectMetadataMaps,
+        toFlatObjectMetadataMaps,
         inferDeletionFromMissingObjectFieldIndex: false,
         workspaceId,
       });

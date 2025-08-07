@@ -24,8 +24,8 @@ export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBui
           });
 
           return {
-            from: [flatObjectMetadata],
-            to: [
+            fromFlatObjectMetadataMaps: [flatObjectMetadata],
+            toFlatObjectMetadataMaps: [
               {
                 ...flatObjectMetadata,
                 flatIndexMetadatas: [flatIndexMetadata],
@@ -54,8 +54,8 @@ export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBui
           });
 
           return {
-            from: [flatObjectMetadata],
-            to: [
+            fromFlatObjectMetadataMaps: [flatObjectMetadata],
+            toFlatObjectMetadataMaps: [
               {
                 ...flatObjectMetadata,
                 flatIndexMetadatas: [
@@ -91,8 +91,8 @@ export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBui
           });
 
           return {
-            from: [flatObjectMetadata],
-            to: [
+            fromFlatObjectMetadataMaps: [flatObjectMetadata],
+            toFlatObjectMetadataMaps: [
               {
                 ...flatObjectMetadata,
                 flatIndexMetadatas: [],
@@ -121,8 +121,8 @@ export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBui
           });
 
           return {
-            from: [flatObjectMetadata],
-            to: [flatObjectMetadata],
+            fromFlatObjectMetadataMaps: [flatObjectMetadata],
+            toFlatObjectMetadataMaps: [flatObjectMetadata],
           };
         },
       },

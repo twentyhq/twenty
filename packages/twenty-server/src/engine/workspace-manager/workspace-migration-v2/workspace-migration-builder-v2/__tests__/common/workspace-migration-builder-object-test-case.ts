@@ -21,8 +21,8 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
           });
 
           return {
-            from: [flatObjectMetadata],
-            to: [
+            fromFlatObjectMetadataMaps: [flatObjectMetadata],
+            toFlatObjectMetadataMaps: [
               {
                 ...flatObjectMetadata,
                 nameSingular: 'prastouin',
@@ -49,8 +49,8 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
           });
 
           return {
-            from: [],
-            to: [flatObjectMetadata],
+            fromFlatObjectMetadataMaps: [],
+            toFlatObjectMetadataMaps: [flatObjectMetadata],
           };
         },
         expectedActionsTypeCounter: {
@@ -88,8 +88,8 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
           });
 
           return {
-            from: [],
-            to: [flatObjectMetadata],
+            fromFlatObjectMetadataMaps: [],
+            toFlatObjectMetadataMaps: [flatObjectMetadata],
           };
         },
 
@@ -112,8 +112,8 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
           });
 
           return {
-            from: [flatObjectMetadata],
-            to: [],
+            fromFlatObjectMetadataMaps: [flatObjectMetadata],
+            toFlatObjectMetadataMaps: [],
           };
         },
         expectedActionsTypeCounter: {
@@ -131,7 +131,7 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
 
           return {
             from,
-            to: from,
+            toFlatObjectMetadataMaps: from,
           };
         },
       },
