@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { OAuth2Client } from 'google-auth-library';
+import { type OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';

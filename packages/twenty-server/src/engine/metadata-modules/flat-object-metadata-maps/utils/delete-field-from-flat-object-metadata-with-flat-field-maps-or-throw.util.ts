@@ -4,7 +4,7 @@ import {
   FlatObjectMetadataMapsException,
   FlatObjectMetadataMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-object-metadata-maps/flat-object-metadata-maps.exception';
-import { FlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-with-flat-field-metadata-maps.type';
+import { type FlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-with-flat-field-metadata-maps.type';
 
 type DeleteFieldFromFlatObjectMetadataMapsOrThrowArgs = {
   fieldMetadataId: string;

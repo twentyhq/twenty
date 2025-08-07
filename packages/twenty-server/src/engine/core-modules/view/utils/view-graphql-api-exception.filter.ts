@@ -1,4 +1,4 @@
-import { Catch, ExceptionFilter } from '@nestjs/common';
+import { Catch, type ExceptionFilter } from '@nestjs/common';
 
 import { ViewFieldException } from 'src/engine/core-modules/view/exceptions/view-field.exception';
 import { ViewFilterGroupException } from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';

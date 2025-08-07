@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class MorphIndexUpdate1751558024634 implements MigrationInterface {
   name = 'MorphIndexUpdate1751558024634';

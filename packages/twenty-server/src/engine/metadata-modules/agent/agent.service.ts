@@ -6,8 +6,8 @@ import { Repository } from 'typeorm';
 
 import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
 import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.service';
-import { CreateAgentInput } from 'src/engine/metadata-modules/agent/dtos/create-agent.input';
-import { UpdateAgentInput } from 'src/engine/metadata-modules/agent/dtos/update-agent.input';
+import { type CreateAgentInput } from 'src/engine/metadata-modules/agent/dtos/create-agent.input';
+import { type UpdateAgentInput } from 'src/engine/metadata-modules/agent/dtos/update-agent.input';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label.util';
 

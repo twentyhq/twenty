@@ -1,6 +1,10 @@
 /* @license Enterprise */
 
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  type CanActivate,
+  type ExecutionContext,
+  Injectable,
+} from '@nestjs/common';
 
 import { timingSafeEqual } from 'crypto';
 

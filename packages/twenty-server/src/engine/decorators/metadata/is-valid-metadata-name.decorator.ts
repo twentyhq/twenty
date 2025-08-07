@@ -1,7 +1,7 @@
 import {
   registerDecorator,
-  ValidationOptions,
-  ValidationArguments,
+  type ValidationOptions,
+  type ValidationArguments,
 } from 'class-validator';
 
 export function IsValidMetadataName(validationOptions?: ValidationOptions) {

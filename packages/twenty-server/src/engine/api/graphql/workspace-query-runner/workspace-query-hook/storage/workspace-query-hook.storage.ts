@@ -1,16 +1,16 @@
 // hook-registry.service.ts
 import { Injectable } from '@nestjs/common';
-import { Module } from '@nestjs/core/injector/module';
+import { type Module } from '@nestjs/core/injector/module';
 
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  WorkspacePostQueryHookInstance,
-  WorkspacePreQueryHookInstance,
+  type WorkspacePostQueryHookInstance,
+  type WorkspacePreQueryHookInstance,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
-import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { type WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { WorkspaceQueryHookKey } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
+import { type WorkspaceQueryHookKey } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 
 interface WorkspaceQueryHookData<T> {
   instance: T;

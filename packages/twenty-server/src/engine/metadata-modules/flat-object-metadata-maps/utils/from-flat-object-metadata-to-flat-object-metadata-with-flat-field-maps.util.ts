@@ -1,8 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { fromObjectMetadataItemWithFieldMapsToFlatObjectWithFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-flat-field-metadata-maps.util';
-import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 export const fromObjectMetadataMapsToFlatObjectMetadataMaps = (
   objectMetadataMaps: ObjectMetadataMaps,

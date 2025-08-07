@@ -1,4 +1,9 @@
-import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
+import {
+  type DynamicModule,
+  Global,
+  Module,
+  type Provider,
+} from '@nestjs/common';
 
 import { capitalize } from 'twenty-shared/utils';
 

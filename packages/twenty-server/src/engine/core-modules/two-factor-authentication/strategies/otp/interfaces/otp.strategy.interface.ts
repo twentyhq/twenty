@@ -1,6 +1,6 @@
-import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
+import { type TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 
-import { OTPContext } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
+import { type OTPContext } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 
 export interface OTPAuthenticationStrategyInterface {
   readonly name: TwoFactorAuthenticationStrategy;

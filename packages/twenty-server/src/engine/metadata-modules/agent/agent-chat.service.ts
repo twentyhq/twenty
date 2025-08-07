@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import {
   AgentChatMessageEntity,
-  AgentChatMessageRole,
+  type AgentChatMessageRole,
 } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/agent/agent-chat-thread.entity';
 import {

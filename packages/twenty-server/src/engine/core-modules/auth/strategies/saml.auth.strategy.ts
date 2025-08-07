@@ -5,14 +5,14 @@ import { PassportStrategy } from '@nestjs/passport';
 
 import {
   MultiSamlStrategy,
-  MultiStrategyConfig,
-  PassportSamlConfig,
-  SamlConfig,
-  VerifyWithRequest,
+  type MultiStrategyConfig,
+  type PassportSamlConfig,
+  type SamlConfig,
+  type VerifyWithRequest,
 } from '@node-saml/passport-saml';
-import { AuthenticateOptions } from '@node-saml/passport-saml/lib/types';
+import { type AuthenticateOptions } from '@node-saml/passport-saml/lib/types';
 import { isEmail } from 'class-validator';
-import { Request } from 'express';
+import { type Request } from 'express';
 
 import {
   AuthException,

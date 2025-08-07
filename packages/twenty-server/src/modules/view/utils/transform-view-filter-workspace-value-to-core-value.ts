@@ -1,4 +1,4 @@
-import { ViewFilterValue } from 'src/engine/core-modules/view/types/view-filter-value.type';
+import { type ViewFilterValue } from 'src/engine/core-modules/view/types/view-filter-value.type';
 
 export const transformViewFilterWorkspaceValueToCoreValue = (
   value: string,

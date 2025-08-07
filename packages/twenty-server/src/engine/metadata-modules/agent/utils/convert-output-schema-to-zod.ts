@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
+import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 
 export const convertOutputSchemaToZod = (
   schema: OutputSchema,

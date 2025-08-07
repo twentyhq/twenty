@@ -2,8 +2,9 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
-import Stripe from 'stripe';
 import { isDefined } from 'twenty-shared/utils';
+
+import type Stripe from 'stripe';
 
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';

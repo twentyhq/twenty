@@ -1,10 +1,10 @@
 import {
-  BeforeCreateOneHook,
-  CreateOneInputType,
+  type BeforeCreateOneHook,
+  type CreateOneInputType,
 } from '@ptc-org/nestjs-query-graphql';
 import { v4 as uuidv4 } from 'uuid';
 
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { type AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 
 export class BeforeCreateOneAppToken<T extends AppToken>
   implements BeforeCreateOneHook<T>

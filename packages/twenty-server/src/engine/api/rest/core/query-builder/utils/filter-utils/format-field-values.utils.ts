@@ -3,7 +3,7 @@ import { BadRequestException } from '@nestjs/common';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FieldValue } from 'src/engine/api/rest/core/types/field-value.type';
+import { type FieldValue } from 'src/engine/api/rest/core/types/field-value.type';
 
 export const formatFieldValue = (
   value: string,

@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class FixMetadataIndexes1748846032709 implements MigrationInterface {
   name = 'FixMetadataIndexes1748846032709';

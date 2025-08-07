@@ -1,4 +1,4 @@
-import { atom, AtomEffect } from 'recoil';
+import { atom, type AtomEffect } from 'recoil';
 
 export const createState = <ValueType>({
   key,

@@ -1,8 +1,8 @@
 import { IconBrackets } from '@ui/display';
 import { JsonNestedNode } from '@ui/json-visualizer/components/JsonNestedNode';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
-import { JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
-import { JsonArray } from 'type-fest';
+import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
+import { type JsonArray } from 'type-fest';
 
 export const JsonArrayNode = ({
   label,

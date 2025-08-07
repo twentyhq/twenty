@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class CreateAgentTable1747401483136 implements MigrationInterface {
   name = 'CreateAgentTable1747401483136';

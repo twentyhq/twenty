@@ -1,20 +1,20 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { QueryRunner, TableColumn } from 'typeorm';
+import { type QueryRunner, TableColumn } from 'typeorm';
 
 import {
-  WorkspaceMigrationColumnAction,
+  type WorkspaceMigrationColumnAction,
   WorkspaceMigrationColumnActionType,
-  WorkspaceMigrationColumnAlter,
-  WorkspaceMigrationColumnCreate,
-  WorkspaceMigrationColumnCreateForeignKey,
-  WorkspaceMigrationColumnDrop,
-  WorkspaceMigrationColumnDropForeignKey,
+  type WorkspaceMigrationColumnAlter,
+  type WorkspaceMigrationColumnCreate,
+  type WorkspaceMigrationColumnCreateForeignKey,
+  type WorkspaceMigrationColumnDrop,
+  type WorkspaceMigrationColumnDropForeignKey,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-enum.service';
 import { WorkspaceMigrationTypeService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-type.service';
-import { PostgresQueryRunner } from 'src/engine/workspace-manager/workspace-migration-runner/types/postgres-query-runner.type';
+import { type PostgresQueryRunner } from 'src/engine/workspace-manager/workspace-migration-runner/types/postgres-query-runner.type';
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration-runner/utils/compute-postgres-enum-name.util';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
 import { typeormBuildCreateColumnSql } from 'src/engine/workspace-manager/workspace-migration-runner/utils/internal/typeorm-build-create-column-sql.util';

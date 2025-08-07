@@ -1,4 +1,4 @@
-import { ViewFilterOperand } from './ViewFilterOperand';
+import { type ViewFilterOperand } from './ViewFilterOperand';
 
 export enum StepLogicalOperator {
   AND = 'AND',

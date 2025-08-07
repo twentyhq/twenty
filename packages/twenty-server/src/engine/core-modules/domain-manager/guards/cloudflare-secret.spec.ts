@@ -1,8 +1,8 @@
-import { ExecutionContext } from '@nestjs/common';
+import { type ExecutionContext } from '@nestjs/common';
 
 import * as crypto from 'crypto';
 
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 import { CloudflareSecretMatchGuard } from './cloudflare-secret.guard';
 

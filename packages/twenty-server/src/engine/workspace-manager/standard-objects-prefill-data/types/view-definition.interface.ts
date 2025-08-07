@@ -1,5 +1,5 @@
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.workspace-entity';
+import { type AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { type ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 export interface ViewDefinition {
   id?: string;

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  RemoteServerEntity,
+  type RemoteServerEntity,
   RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import { RemoteTableStatus } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
@@ -10,14 +10,14 @@ import {
   ForeignTableExceptionCode,
 } from 'src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception';
 import { getForeignTableColumnName } from 'src/engine/metadata-modules/remote-server/remote-table/foreign-table/utils/get-foreign-table-column-name.util';
-import { PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
+import { type PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
-  ReferencedTable,
-  WorkspaceMigrationColumnAction,
-  WorkspaceMigrationForeignColumnDefinition,
-  WorkspaceMigrationForeignTable,
+  type ReferencedTable,
+  type WorkspaceMigrationColumnAction,
+  type WorkspaceMigrationForeignColumnDefinition,
+  type WorkspaceMigrationForeignTable,
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';

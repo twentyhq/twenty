@@ -1,4 +1,4 @@
-import { Catch, ExceptionFilter } from '@nestjs/common';
+import { Catch, type ExceptionFilter } from '@nestjs/common';
 
 import { CaptchaException } from 'src/engine/core-modules/captcha/captcha.exception';
 import { captchaGraphqlApiExceptionHandler } from 'src/engine/core-modules/captcha/utils/captcha-graphql-api-exception-handler.util';

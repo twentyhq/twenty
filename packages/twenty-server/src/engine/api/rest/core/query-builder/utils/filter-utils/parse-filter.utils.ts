@@ -6,8 +6,8 @@ import { formatFieldValue } from 'src/engine/api/rest/core/query-builder/utils/f
 import { parseBaseFilter } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/parse-base-filter.utils';
 import { parseFilterContent } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/parse-filter-content.utils';
 import { getFieldType } from 'src/engine/api/rest/core/query-builder/utils/get-field-type.utils';
-import { FieldValue } from 'src/engine/api/rest/core/types/field-value.type';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type FieldValue } from 'src/engine/api/rest/core/types/field-value.type';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export enum Conjunctions {
   or = 'or',

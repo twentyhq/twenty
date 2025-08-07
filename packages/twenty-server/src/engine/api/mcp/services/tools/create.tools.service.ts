@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { Request } from 'express';
+import { type Request } from 'express';
 import pick from 'lodash.pick';
 
 import { MetadataQueryBuilderFactory } from 'src/engine/api/rest/metadata/query-builder/metadata-query-builder.factory';
 import { MCPMetadataToolsService } from 'src/engine/api/mcp/services/tools/mcp-metadata-tools.service';
 import { validationSchemaManager } from 'src/engine/api/mcp/utils/get-json-schema';
-import { ObjectName } from 'src/engine/api/rest/metadata/types/metadata-entity.type';
+import { type ObjectName } from 'src/engine/api/rest/metadata/types/metadata-entity.type';
 
 @Injectable()
 export class CreateToolsService {

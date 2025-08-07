@@ -19,7 +19,7 @@ import {
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
 
-import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { type ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
 import {
   generateViewGroupExceptionMessage,
   ViewGroupExceptionMessageKey,

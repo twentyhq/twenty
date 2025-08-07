@@ -1,11 +1,11 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { type AxiosInstance } from 'axios';
 
-import { CaptchaDriver } from 'src/engine/core-modules/captcha/drivers/interfaces/captcha-driver.interface';
-import { CaptchaServerResponse } from 'src/engine/core-modules/captcha/drivers/interfaces/captcha-server-response';
+import { type CaptchaDriver } from 'src/engine/core-modules/captcha/drivers/interfaces/captcha-driver.interface';
+import { type CaptchaServerResponse } from 'src/engine/core-modules/captcha/drivers/interfaces/captcha-server-response';
 
 import {
-  CaptchaDriverOptions,
-  CaptchaValidateResult,
+  type CaptchaDriverOptions,
+  type CaptchaValidateResult,
 } from 'src/engine/core-modules/captcha/interfaces';
 
 export class TurnstileDriver implements CaptchaDriver {

@@ -11,7 +11,7 @@ import { RemoteServerIdInput } from 'src/engine/metadata-modules/remote-server/d
 import { RemoteServerTypeInput } from 'src/engine/metadata-modules/remote-server/dtos/remote-server-type.input';
 import { RemoteServerDTO } from 'src/engine/metadata-modules/remote-server/dtos/remote-server.dto';
 import { UpdateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/update-remote-server.input';
-import { RemoteServerType } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
+import { type RemoteServerType } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import { RemoteServerService } from 'src/engine/metadata-modules/remote-server/remote-server.service';
 import { remoteServerGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/remote-server/utils/remote-server-graphql-api-exception-handler.util';
 

@@ -1,6 +1,6 @@
 import isObject from 'lodash.isobject';
 import lodashCamelCase from 'lodash.camelcase';
-import { CamelCase, CamelCasedPropertiesDeep } from 'type-fest';
+import { type CamelCase, type CamelCasedPropertiesDeep } from 'type-fest';
 
 export const camelCase = <T>(text: T) =>
   lodashCamelCase(text as unknown as string) as CamelCase<T>;

@@ -4,10 +4,10 @@ import * as process from 'process';
 
 import { INTROSPECTION_QUERY } from './introspection-query';
 import {
-  Field,
-  InputValue,
-  IntrospectionResponse,
-  TypeRef,
+  type Field,
+  type InputValue,
+  type IntrospectionResponse,
+  type TypeRef,
 } from './introspection.interface';
 
 const GRAPHQL_URL = 'http://localhost:3000/graphql';

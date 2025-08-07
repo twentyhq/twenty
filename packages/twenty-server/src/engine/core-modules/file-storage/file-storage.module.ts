@@ -1,4 +1,4 @@
-import { DynamicModule, Global } from '@nestjs/common';
+import { type DynamicModule, Global } from '@nestjs/common';
 
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';

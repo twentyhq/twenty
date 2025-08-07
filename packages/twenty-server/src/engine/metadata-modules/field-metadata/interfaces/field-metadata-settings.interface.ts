@@ -1,11 +1,11 @@
 import {
-  AllowedAddressSubField,
-  FieldMetadataType,
-  IsExactly,
+  type AllowedAddressSubField,
+  type FieldMetadataType,
+  type IsExactly,
 } from 'twenty-shared/types';
 
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { type RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+import { type RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 export enum NumberDataType {
   FLOAT = 'float',

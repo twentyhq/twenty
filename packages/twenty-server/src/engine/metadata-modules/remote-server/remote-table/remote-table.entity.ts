@@ -11,7 +11,7 @@ import {
 
 import {
   RemoteServerEntity,
-  RemoteServerType,
+  type RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 
 @Entity('remoteTable')

@@ -1,7 +1,7 @@
 import { Tag } from '@ui/components';
-import { IconComponent } from '@ui/display';
+import { type IconComponent } from '@ui/display';
 import { Checkbox, CheckboxShape, CheckboxSize } from '@ui/input';
-import { ThemeColor } from '@ui/theme';
+import { type ThemeColor } from '@ui/theme';
 import {
   StyledMenuItemBase,
   StyledMenuItemLeftContent,

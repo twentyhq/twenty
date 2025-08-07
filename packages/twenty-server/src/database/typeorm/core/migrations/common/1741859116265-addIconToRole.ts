@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddIconToRole1741859116265 implements MigrationInterface {
   name = 'AddIconToRole1741859116265';

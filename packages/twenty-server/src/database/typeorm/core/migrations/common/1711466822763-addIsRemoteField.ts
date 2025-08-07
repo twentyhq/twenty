@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddIsRemoteField1711466822763 implements MigrationInterface {
   name = 'AddIsRemoteField1711466822763';

@@ -1,5 +1,5 @@
 import {
-  WorkspaceQueryRunnerException,
+  type WorkspaceQueryRunnerException,
   WorkspaceQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import {

@@ -6,11 +6,11 @@ import semver from 'semver';
 import { Repository } from 'typeorm';
 import * as z from 'zod';
 
-import { ConfigVariable } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
-import { ConfigVariablesGroupData } from 'src/engine/core-modules/admin-panel/dtos/config-variables-group.dto';
-import { ConfigVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/config-variables.output';
-import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
-import { VersionInfo } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
+import { type ConfigVariable } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
+import { type ConfigVariablesGroupData } from 'src/engine/core-modules/admin-panel/dtos/config-variables-group.dto';
+import { type ConfigVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/config-variables.output';
+import { type UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
+import { type VersionInfo } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
 import {
   AuthException,
   AuthExceptionCode,
@@ -18,10 +18,10 @@ import {
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { type FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_GROUP_METADATA } from 'src/engine/core-modules/twenty-config/constants/config-variables-group-metadata';
-import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
+import { type ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';

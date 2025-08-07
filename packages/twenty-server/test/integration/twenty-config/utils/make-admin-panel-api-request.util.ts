@@ -1,4 +1,4 @@
-import { ASTNode, print } from 'graphql';
+import { type ASTNode, print } from 'graphql';
 import request from 'supertest';
 
 /* global APP_PORT, APPLE_JANE_ADMIN_ACCESS_TOKEN */
