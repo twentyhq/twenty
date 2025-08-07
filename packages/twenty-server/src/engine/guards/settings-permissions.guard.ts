@@ -55,6 +55,10 @@ export const SettingsPermissionsGuard = (
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
+        {
+          userFriendlyMessage:
+            'You do not have permission to access this feature. Please contact your workspace administrator for access.',
+        },
       );
     }
   }

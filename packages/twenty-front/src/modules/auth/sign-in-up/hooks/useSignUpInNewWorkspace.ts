@@ -11,8 +11,8 @@ export const useSignUpInNewWorkspace = () => {
 
   const [signUpInNewWorkspaceMutation] = useSignUpInNewWorkspaceMutation();
 
-  const createWorkspace = ({ newTab } = { newTab: true }) => {
-    signUpInNewWorkspaceMutation({
+  const createWorkspace = async ({ newTab } = { newTab: true }) => {
+    await signUpInNewWorkspaceMutation({
       onCompleted: async (data) => {
         return await redirectToWorkspaceDomain(
           getWorkspaceUrl(data.signUpInNewWorkspace.workspace.workspaceUrls),

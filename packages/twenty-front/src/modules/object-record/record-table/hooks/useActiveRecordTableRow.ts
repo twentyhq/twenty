@@ -1,16 +1,16 @@
 import { activeRecordTableRowIndexComponentState } from '@/object-record/record-table/states/activeRecordTableRowIndexComponentState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useActiveRecordTableRow = (recordTableId?: string) => {
-  const isRowActiveState = useRecoilComponentCallbackStateV2(
+  const isRowActiveState = useRecoilComponentCallbackState(
     isRecordTableRowActiveComponentFamilyState,
     recordTableId,
   );
 
-  const activeRowIndexState = useRecoilComponentCallbackStateV2(
+  const activeRowIndexState = useRecoilComponentCallbackState(
     activeRecordTableRowIndexComponentState,
     recordTableId,
   );

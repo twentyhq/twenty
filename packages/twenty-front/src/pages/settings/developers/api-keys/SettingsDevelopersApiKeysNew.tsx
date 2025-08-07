@@ -10,7 +10,7 @@ import { EXPIRATION_DATES } from '@/settings/developers/constants/ExpirationDate
 import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyTokenFamilyState';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
@@ -157,7 +157,7 @@ export const SettingsDevelopersApiKeysNew = () => {
       <SettingsPageContainer>
         <Section>
           <H2Title title={t`Name`} description={t`Name of your API key`} />
-          <TextInput
+          <SettingsTextInput
             instanceId="api-key-new-name"
             placeholder={t`E.g. backoffice integration`}
             value={formValues.name}

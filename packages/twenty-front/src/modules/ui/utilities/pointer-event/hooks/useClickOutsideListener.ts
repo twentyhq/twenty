@@ -2,17 +2,16 @@ import { useRecoilCallback } from 'recoil';
 
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
 import { clickOutsideListenerMouseDownHappenedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerMouseDownHappenedComponentState';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 
 export const useClickOutsideListener = (instanceId: string) => {
-  const clickOutsideListenerIsActivatedState =
-    useRecoilComponentCallbackStateV2(
-      clickOutsideListenerIsActivatedComponentState,
-      instanceId,
-    );
+  const clickOutsideListenerIsActivatedState = useRecoilComponentCallbackState(
+    clickOutsideListenerIsActivatedComponentState,
+    instanceId,
+  );
 
   const clickOutsideListenerMouseDownHappenedState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       clickOutsideListenerMouseDownHappenedComponentState,
       instanceId,
     );

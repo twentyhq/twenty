@@ -1,7 +1,7 @@
 name: GraphQL and OpenAPI Breaking Changes Detection
 
 on:
-  pull_request:
+ pull_request:
     types: [opened, synchronize, edited]
     branches:
       - main

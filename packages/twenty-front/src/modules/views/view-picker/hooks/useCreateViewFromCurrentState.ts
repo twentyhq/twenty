@@ -1,4 +1,4 @@
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useCreateViewFromCurrentView } from '@/views/hooks/useCreateViewFromCurrentView';
@@ -16,32 +16,32 @@ import { v4 } from 'uuid';
 export const useCreateViewFromCurrentState = () => {
   const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
 
-  const viewPickerInputNameCallbackState = useRecoilComponentCallbackStateV2(
+  const viewPickerInputNameCallbackState = useRecoilComponentCallbackState(
     viewPickerInputNameComponentState,
   );
 
-  const viewPickerSelectedIconCallbackState = useRecoilComponentCallbackStateV2(
+  const viewPickerSelectedIconCallbackState = useRecoilComponentCallbackState(
     viewPickerSelectedIconComponentState,
   );
 
-  const viewPickerTypeCallbackState = useRecoilComponentCallbackStateV2(
+  const viewPickerTypeCallbackState = useRecoilComponentCallbackState(
     viewPickerTypeComponentState,
   );
 
   const viewPickerKanbanFieldMetadataIdCallbackState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       viewPickerKanbanFieldMetadataIdComponentState,
     );
 
-  const viewPickerIsPersistingCallbackState = useRecoilComponentCallbackStateV2(
+  const viewPickerIsPersistingCallbackState = useRecoilComponentCallbackState(
     viewPickerIsPersistingComponentState,
   );
 
-  const viewPickerIsDirtyCallbackState = useRecoilComponentCallbackStateV2(
+  const viewPickerIsDirtyCallbackState = useRecoilComponentCallbackState(
     viewPickerIsDirtyComponentState,
   );
 
-  const viewPickerModeCallbackState = useRecoilComponentCallbackStateV2(
+  const viewPickerModeCallbackState = useRecoilComponentCallbackState(
     viewPickerModeComponentState,
   );
 

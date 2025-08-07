@@ -1,9 +1,9 @@
-import { createComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentFamilyStateV2';
+import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewType } from '@/views/types/ViewType';
 
 export const recordIndexRecordGroupHideComponentFamilyState =
-  createComponentFamilyStateV2<boolean, ViewType>({
+  createComponentFamilyState<boolean, ViewType>({
     key: 'recordIndexRecordGroupHideComponentFamilyState',
     defaultValue: ({ familyKey }) => {
       switch (familyKey) {

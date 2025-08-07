@@ -2,7 +2,7 @@ import { useEmailsField } from '@/object-record/record-field/meta-types/hooks/us
 import { EmailsFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/EmailsFieldMenuItem';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
 import { emailSchema } from '@/object-record/record-field/validation-schemas/emailSchema';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -52,7 +52,7 @@ export const EmailsFieldInput = ({
     index === 0 && emails.length > 1;
   const getShowSetAsPrimaryButton = (index: number) => index > 0;
 
-  const setIsFieldInError = useSetRecoilComponentStateV2(
+  const setIsFieldInError = useSetRecoilComponentState(
     recordFieldInputIsFieldInErrorComponentState,
   );
 

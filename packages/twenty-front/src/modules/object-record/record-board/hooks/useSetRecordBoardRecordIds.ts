@@ -6,24 +6,24 @@ import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/re
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sortRecordsByPosition } from '@/object-record/utils/sortRecordsByPosition';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { ViewType } from '@/views/types/ViewType';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from 'twenty-shared/utils';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
-  const visibleRecordGroupIdsFamilySelector = useRecoilComponentCallbackStateV2(
+  const visibleRecordGroupIdsFamilySelector = useRecoilComponentCallbackState(
     visibleRecordGroupIdsComponentFamilySelector,
   );
 
-  const recordGroupFieldMetadataState = useRecoilComponentCallbackStateV2(
+  const recordGroupFieldMetadataState = useRecoilComponentCallbackState(
     recordGroupFieldMetadataComponentState,
     recordBoardId,
   );
 
   const recordIndexRecordIdsByGroupFamilyState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       recordIndexRecordIdsByGroupComponentFamilyState,
       recordBoardId,
     );

@@ -10,7 +10,7 @@ import { ToMerge } from 'src/engine/workspace-manager/workspace-migration-v2/wor
 export const mergeTwoFlatFieldMetadatas = ({
   destFlatFieldMetadatas,
   toMergeFlatFieldMetadatas,
-}: ToMerge<FlatFieldMetadata[], 'field'>): FlatFieldMetadata[] => {
+}: ToMerge<FlatFieldMetadata[], 'FlatFieldMetadatas'>): FlatFieldMetadata[] => {
   const initialRecordAccumulator = fromArrayToUniqueKeyRecord({
     array: destFlatFieldMetadatas,
     uniqueKey: 'uniqueIdentifier',

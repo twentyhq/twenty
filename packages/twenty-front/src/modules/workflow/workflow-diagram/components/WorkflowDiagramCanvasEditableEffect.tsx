@@ -1,99 +1,41 @@
-import { useCallback, useContext } from 'react';
-import { useSetRecoilState } from 'recoil';
-
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
-import { EMPTY_TRIGGER_STEP_ID } from '@/workflow/workflow-diagram/constants/EmptyTriggerStepId';
-import { useTriggerNodeSelection } from '@/workflow/workflow-diagram/hooks/useTriggerNodeSelection';
-import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
-import {
-  WorkflowDiagramNode,
-  WorkflowDiagramStepNodeData,
-} from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
+import { useEdgeSelected } from '@/workflow/workflow-diagram/hooks/useEdgeSelected';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const WorkflowDiagramCanvasEditableEffect = () => {
-  const { getIcon } = useIcons();
+  const { setEdgeSelected, clearEdgeSelection } = useEdgeSelected();
 
-  const {
-    openWorkflowTriggerTypeInCommandMenu,
-    openWorkflowEditStepInCommandMenu,
-  } = useWorkflowCommandMenu();
-
-  const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
-    workflowSelectedNodeComponentState,
+  const isWorkflowBranchEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
   );
 
-  const setCommandMenuNavigationStack = useSetRecoilState(
-    commandMenuNavigationStackState,
-  );
-
-  const { isInRightDrawer } = useContext(ActionMenuContext);
-
-  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
-    workflowVisualizerWorkflowIdComponentState,
-  );
-
-  const handleSelectionChange = useCallback(
-    ({ nodes }: OnSelectionChangeParams) => {
-      const selectedNode = nodes[0] as WorkflowDiagramNode | undefined;
-
-      if (!isInRightDrawer) {
-        setCommandMenuNavigationStack([]);
-      }
-
-      if (!isDefined(selectedNode)) {
+  const handleSelectedEdges = useCallback(
+    ({ edges }: OnSelectionChangeParams) => {
+      if (!isWorkflowBranchEnabled) {
         return;
       }
 
-      const isEmptyTriggerNode = selectedNode.type === EMPTY_TRIGGER_STEP_ID;
-      if (isEmptyTriggerNode) {
-        if (isDefined(workflowVisualizerWorkflowId)) {
-          openWorkflowTriggerTypeInCommandMenu(workflowVisualizerWorkflowId);
-          return;
-        }
+      const selectedEdge = edges?.[0];
 
+      if (!isDefined(selectedEdge)) {
+        clearEdgeSelection();
         return;
       }
 
-      const selectedNodeData = selectedNode.data as WorkflowDiagramStepNodeData;
-
-      setWorkflowSelectedNode(selectedNode.id);
-
-      if (isDefined(workflowVisualizerWorkflowId)) {
-        openWorkflowEditStepInCommandMenu(
-          workflowVisualizerWorkflowId,
-          selectedNodeData.name,
-          getIcon(getWorkflowNodeIconKey(selectedNodeData)),
-        );
-
-        return;
-      }
+      setEdgeSelected({
+        source: selectedEdge.source,
+        target: selectedEdge.target,
+      });
     },
-    [
-      isInRightDrawer,
-      setCommandMenuNavigationStack,
-      workflowVisualizerWorkflowId,
-      openWorkflowTriggerTypeInCommandMenu,
-      openWorkflowEditStepInCommandMenu,
-      getIcon,
-      setWorkflowSelectedNode,
-    ],
+    [isWorkflowBranchEnabled, setEdgeSelected, clearEdgeSelection],
   );
 
   useOnSelectionChange({
-    onChange: handleSelectionChange,
+    onChange: handleSelectedEdges,
   });
-
-  useTriggerNodeSelection();
 
   return null;
 };

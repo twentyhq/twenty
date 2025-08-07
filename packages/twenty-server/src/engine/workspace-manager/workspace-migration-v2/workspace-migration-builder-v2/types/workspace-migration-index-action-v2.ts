@@ -7,7 +7,7 @@ export type CreateIndexAction = {
 
 export type DeleteIndexAction = {
   type: 'delete_index';
-  flatIndexMetadata: FlatIndexMetadata;
+  flatIndexMetadataId: string;
 };
 
 export type WorkspaceMigrationIndexActionV2 =

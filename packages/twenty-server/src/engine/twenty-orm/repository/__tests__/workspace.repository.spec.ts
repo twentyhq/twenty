@@ -273,6 +273,7 @@ describe('WorkspaceRepository', () => {
           shouldBypassPermissionChecks: false,
           objectRecordsPermissions: mockObjectRecordsPermissions,
         },
+        undefined,
       );
     });
 

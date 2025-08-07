@@ -38,7 +38,12 @@ export class RoleService {
       where: {
         workspaceId,
       },
-      relations: ['roleTargets', 'permissionFlags', 'objectPermissions'],
+      relations: {
+        roleTargets: true,
+        permissionFlags: true,
+        objectPermissions: true,
+        fieldPermissions: true,
+      },
     });
   }
 
@@ -51,7 +56,12 @@ export class RoleService {
         id,
         workspaceId,
       },
-      relations: ['roleTargets', 'permissionFlags'],
+      relations: {
+        roleTargets: true,
+        permissionFlags: true,
+        objectPermissions: true,
+        fieldPermissions: true,
+      },
     });
   }
 
@@ -124,6 +134,10 @@ export class RoleService {
       throw new PermissionsException(
         PermissionsExceptionMessage.ROLE_NOT_FOUND,
         PermissionsExceptionCode.ROLE_NOT_FOUND,
+        {
+          userFriendlyMessage:
+            'The role you are looking for could not be found. It may have been deleted or you may not have access to it.',
+        },
       );
     }
 
@@ -167,6 +181,10 @@ export class RoleService {
       throw new PermissionsException(
         PermissionsExceptionMessage.DEFAULT_ROLE_NOT_FOUND,
         PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND,
+        {
+          userFriendlyMessage:
+            'The default role for this workspace could not be found. Please contact support for assistance.',
+        },
       );
     }
 
@@ -245,6 +263,10 @@ export class RoleService {
         throw new PermissionsException(
           error.message,
           PermissionsExceptionCode.INVALID_ARG,
+          {
+            userFriendlyMessage:
+              'Some of the information provided is invalid. Please check your input and try again.',
+          },
         );
       }
     }
@@ -308,6 +330,10 @@ export class RoleService {
       throw new PermissionsException(
         PermissionsExceptionMessage.CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION,
         PermissionsExceptionCode.CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION,
+        {
+          userFriendlyMessage:
+            'You cannot grant edit permissions without also granting read permissions. Please enable read access first.',
+        },
       );
     }
   }
@@ -363,6 +389,10 @@ export class RoleService {
       throw new PermissionsException(
         PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
         PermissionsExceptionCode.ROLE_NOT_EDITABLE,
+        {
+          userFriendlyMessage:
+            'This role cannot be modified because it is a system role. Only custom roles can be edited.',
+        },
       );
     }
   }
@@ -378,6 +408,10 @@ export class RoleService {
       throw new PermissionsException(
         PermissionsExceptionMessage.DEFAULT_ROLE_CANNOT_BE_DELETED,
         PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED,
+        {
+          userFriendlyMessage:
+            'The default role cannot be deleted as it is required for the workspace to function properly.',
+        },
       );
     }
   }

@@ -7,7 +7,7 @@ import {
   ImportedStructuredRow,
   SpreadsheetImportFields,
 } from '@/spreadsheet-import/types';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
 import camelCase from 'lodash.camelcase';
 import { isDefined } from 'twenty-shared/utils';
@@ -147,7 +147,7 @@ export const generateColumns = (
           }
           default:
             component = (
-              <TextInput
+              <SettingsTextInput
                 instanceId={`validation-${column.key}-${row.__index}`}
                 value={row[columnKey] as string}
                 onChange={(value: string) => {

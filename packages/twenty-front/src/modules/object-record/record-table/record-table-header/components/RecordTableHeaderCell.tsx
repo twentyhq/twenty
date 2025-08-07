@@ -17,10 +17,10 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -117,15 +117,15 @@ export const RecordTableHeaderCell = ({
   const { objectMetadataItem, objectPermissions } =
     useRecordTableContextOrThrow();
 
-  const resizeFieldOffsetState = useRecoilComponentCallbackStateV2(
+  const resizeFieldOffsetState = useRecoilComponentCallbackState(
     resizeFieldOffsetComponentState,
   );
 
-  const [resizeFieldOffset, setResizeFieldOffset] = useRecoilComponentStateV2(
+  const [resizeFieldOffset, setResizeFieldOffset] = useRecoilComponentState(
     resizeFieldOffsetComponentState,
   );
 
-  const tableColumns = useRecoilComponentValueV2(tableColumnsComponentState);
+  const tableColumns = useRecoilComponentValue(tableColumnsComponentState);
   const tableColumnsByKey = useMemo(
     () =>
       mapArrayToObject(tableColumns, ({ fieldMetadataId }) => fieldMetadataId),
@@ -206,7 +206,7 @@ export const RecordTableHeaderCell = ({
     onMouseUp: handleResizeHandlerEnd,
   });
 
-  const isRecordTableScrolledLeft = useRecoilComponentValueV2(
+  const isRecordTableScrolledLeft = useRecoilComponentValue(
     isRecordTableScrolledLeftComponentState,
   );
 
@@ -229,12 +229,12 @@ export const RecordTableHeaderCell = ({
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
-  const isFirstRowActive = useRecoilComponentFamilyValueV2(
+  const isFirstRowActive = useRecoilComponentFamilyValue(
     isRecordTableRowActiveComponentFamilyState,
     0,
   );
 
-  const isFirstRowFocused = useRecoilComponentFamilyValueV2(
+  const isFirstRowFocused = useRecoilComponentFamilyValue(
     isRecordTableRowFocusedComponentFamilyState,
     0,
   );

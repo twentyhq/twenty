@@ -35,10 +35,13 @@ export enum CalendarChannelSyncStatus {
 }
 
 export enum CalendarChannelSyncStage {
-  FULL_CALENDAR_EVENT_LIST_FETCH_PENDING = 'FULL_CALENDAR_EVENT_LIST_FETCH_PENDING',
-  PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING = 'PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING',
+  FULL_CALENDAR_EVENT_LIST_FETCH_PENDING = 'FULL_CALENDAR_EVENT_LIST_FETCH_PENDING', // WILL BE DEPRECATED
+  PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING = 'PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING', // DEPRECATED
+  CALENDAR_EVENT_LIST_FETCH_PENDING = 'CALENDAR_EVENT_LIST_FETCH_PENDING',
+  CALENDAR_EVENT_LIST_FETCH_SCHEDULED = 'CALENDAR_EVENT_LIST_FETCH_SCHEDULED',
   CALENDAR_EVENT_LIST_FETCH_ONGOING = 'CALENDAR_EVENT_LIST_FETCH_ONGOING',
   CALENDAR_EVENTS_IMPORT_PENDING = 'CALENDAR_EVENTS_IMPORT_PENDING',
+  CALENDAR_EVENTS_IMPORT_SCHEDULED = 'CALENDAR_EVENTS_IMPORT_SCHEDULED',
   CALENDAR_EVENTS_IMPORT_ONGOING = 'CALENDAR_EVENTS_IMPORT_ONGOING',
   FAILED = 'FAILED',
 }
@@ -137,17 +140,16 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconStatusChange',
     options: [
       {
-        value: CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING,
-        label: 'Full calendar event list fetch pending',
+        value: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
+        label: 'Calendar event list fetch pending',
         position: 0,
         color: 'blue',
       },
       {
-        value:
-          CalendarChannelSyncStage.PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING,
-        label: 'Partial calendar event list fetch pending',
+        value: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
+        label: 'Calendar event list fetch scheduled',
         position: 1,
-        color: 'blue',
+        color: 'green',
       },
       {
         value: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_ONGOING,
@@ -162,16 +164,35 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
         color: 'blue',
       },
       {
+        value: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED,
+        label: 'Calendar events import scheduled',
+        position: 4,
+        color: 'green',
+      },
+      {
         value: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_ONGOING,
         label: 'Calendar events import ongoing',
-        position: 4,
+        position: 5,
         color: 'orange',
       },
       {
         value: CalendarChannelSyncStage.FAILED,
         label: 'Failed',
-        position: 5,
+        position: 6,
         color: 'red',
+      },
+      {
+        value: CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING,
+        label: 'Full calendar event list fetch pending',
+        position: 7,
+        color: 'blue',
+      },
+      {
+        value:
+          CalendarChannelSyncStage.PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING,
+        label: 'Partial calendar event list fetch pending',
+        position: 8,
+        color: 'blue',
       },
     ],
     defaultValue: `'${CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING}'`,

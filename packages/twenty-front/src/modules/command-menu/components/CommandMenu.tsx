@@ -7,7 +7,7 @@ import { useMatchingCommandMenuActions } from '@/command-menu/hooks/useMatchingC
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -38,12 +38,12 @@ export const CommandMenu = () => {
   });
 
   const previousContextStoreCurrentObjectMetadataItemId =
-    useRecoilComponentValueV2(
+    useRecoilComponentValue(
       contextStoreCurrentObjectMetadataItemIdComponentState,
       'command-menu-previous',
     );
 
-  const objectMetadataItemId = useRecoilComponentValueV2(
+  const objectMetadataItemId = useRecoilComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
   const currentObjectMetadataItem = objectMetadataItems.find(

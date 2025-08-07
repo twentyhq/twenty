@@ -1,8 +1,8 @@
 import { RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext } from '@/object-record/record-board/contexts/RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
 export const availableFieldIdsForAggregateOperationComponentState =
-  createComponentStateV2<string[]>({
+  createComponentState<string[]>({
     key: 'availableFieldIdsForAggregateOperationComponentFamilyState',
     defaultValue: [],
     componentInstanceContext:

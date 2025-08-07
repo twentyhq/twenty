@@ -40,7 +40,7 @@ export class WorkspaceRepository<
   private readonly internalContext: WorkspaceInternalContext;
   private shouldBypassPermissionChecks: boolean;
   private featureFlagMap: FeatureFlagMap;
-  private objectRecordsPermissions?: ObjectRecordsPermissions;
+  public readonly objectRecordsPermissions?: ObjectRecordsPermissions;
   private authContext?: AuthContext;
   declare manager: WorkspaceEntityManager;
 
@@ -554,6 +554,7 @@ export class WorkspaceRepository<
       entity,
       selectedColumns,
       permissionOptions,
+      this.authContext,
     );
   }
 

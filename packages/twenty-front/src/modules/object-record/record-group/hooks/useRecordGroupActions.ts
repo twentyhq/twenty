@@ -9,8 +9,8 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPath } from '@/types/SettingsPath';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewType } from '@/views/types/ViewType';
 import { t } from '@lingui/core/macro';
 import { isUndefined } from '@sniptt/guards';
@@ -47,7 +47,7 @@ export const useRecordGroupActions = ({
     objectNameSingular,
   });
 
-  const recordGroupFieldMetadata = useRecoilComponentValueV2(
+  const recordGroupFieldMetadata = useRecoilComponentValue(
     recordGroupFieldMetadataComponentState,
   );
 
@@ -60,7 +60,7 @@ export const useRecordGroupActions = ({
     navigationMemorizedUrlState,
   );
 
-  const visibleRecordGroupIds = useRecoilComponentFamilyValueV2(
+  const visibleRecordGroupIds = useRecoilComponentFamilyValue(
     visibleRecordGroupIdsComponentFamilySelector,
     viewType,
   );

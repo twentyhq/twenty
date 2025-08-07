@@ -16816,7 +16816,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   "id": "3f99df3c-f124-491e-a9e5-deb0922f250f",
                   "color": "blue",
                   "label": "Partial calendar event list fetch pending",
-                  "value": "PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING",
+                  "value": "FULL_CALENDAR_EVENT_LIST_FETCH_PENDING",
                   "position": 1
                 },
                 {
