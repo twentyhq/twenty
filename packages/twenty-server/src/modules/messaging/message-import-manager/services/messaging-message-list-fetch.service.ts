@@ -13,6 +13,7 @@ import {
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
+import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import {
@@ -21,7 +22,6 @@ import {
 } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 
-const MAX_MESSAGE_COUNT_FOR_QUICK_IMPORT = 100;
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
 
 @Injectable()
@@ -36,6 +36,7 @@ export class MessagingMessageListFetchService {
     private readonly messagingMessageCleanerService: MessagingMessageCleanerService,
     private readonly messagingCursorService: MessagingCursorService,
     private readonly messagingMessagesImportService: MessagingMessagesImportService,
+    private readonly messagingAccountAuthenticationService: MessagingAccountAuthenticationService,
   ) {}
 
   public async processMessageListFetch(
@@ -47,9 +48,27 @@ export class MessagingMessageListFetchService {
         [messageChannel.id],
       );
 
+      const { accessToken, refreshToken } =
+        await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
+          {
+            connectedAccount: messageChannel.connectedAccount,
+            workspaceId,
+            messageChannelId: messageChannel.id,
+          },
+        );
+
+      const messageChannelWithFreshTokens = {
+        ...messageChannel,
+        connectedAccount: {
+          ...messageChannel.connectedAccount,
+          accessToken,
+          refreshToken,
+        },
+      };
+
       const messageLists =
         await this.messagingGetMessageListService.getMessageLists(
-          messageChannel,
+          messageChannelWithFreshTokens,
         );
 
       await this.cacheStorage.del(
@@ -116,7 +135,7 @@ export class MessagingMessageListFetchService {
 
         if (allMessageExternalIdsToDelete.length) {
           await messageChannelMessageAssociationRepository.delete({
-            messageChannelId: messageChannel.id,
+            messageChannelId: messageChannelWithFreshTokens.id,
             messageExternalId: In(allMessageExternalIdsToDelete),
           });
 
@@ -127,14 +146,14 @@ export class MessagingMessageListFetchService {
 
         if (messageExternalIdsToImport.length) {
           await this.cacheStorage.setAdd(
-            `messages-to-import:${workspaceId}:${messageChannel.id}`,
+            `messages-to-import:${workspaceId}:${messageChannelWithFreshTokens.id}`,
             messageExternalIdsToImport,
             ONE_WEEK_IN_MILLISECONDS,
           );
         }
 
         await this.messagingCursorService.updateCursor(
-          messageChannel,
+          messageChannelWithFreshTokens,
           nextSyncCursor,
           folderId,
         );
@@ -142,26 +161,22 @@ export class MessagingMessageListFetchService {
 
       if (totalMessageCount === 0) {
         await this.messageChannelSyncStatusService.markAsCompletedAndScheduleMessageListFetch(
-          [messageChannel.id],
+          [messageChannelWithFreshTokens.id],
         );
-
-        return;
       }
 
       await this.messageChannelSyncStatusService.scheduleMessagesImport([
-        messageChannel.id,
+        messageChannelWithFreshTokens.id,
       ]);
 
-      if (totalMessageCount < MAX_MESSAGE_COUNT_FOR_QUICK_IMPORT) {
-        await this.messagingMessagesImportService.processMessageBatchImport(
-          {
-            ...messageChannel,
-            syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
-          },
-          messageChannel.connectedAccount,
-          workspaceId,
-        );
-      }
+      await this.messagingMessagesImportService.processMessageBatchImport(
+        {
+          ...messageChannelWithFreshTokens,
+          syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
+        },
+        messageChannelWithFreshTokens.connectedAccount,
+        workspaceId,
+      );
     } catch (error) {
       await this.messageImportErrorHandlerService.handleDriverException(
         error,

@@ -53,6 +53,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
               messagesToSave,
               messageChannel.id,
               transactionManager,
+              workspaceId,
             );
 
           const participantsWithMessageId: (ParticipantWithMessageId & {

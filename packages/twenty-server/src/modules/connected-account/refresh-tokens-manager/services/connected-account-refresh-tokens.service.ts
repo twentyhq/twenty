@@ -4,14 +4,8 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import {
-  GoogleAPIRefreshAccessTokenService,
-  GoogleTokens,
-} from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-access-token.service';
-import {
-  MicrosoftAPIRefreshAccessTokenService,
-  MicrosoftTokens,
-} from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
+import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-access-token.service';
+import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
@@ -19,7 +13,10 @@ import {
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { isAxiosTemporaryError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-axios-gaxios-error.util';
 
-export type ConnectedAccountTokens = GoogleTokens | MicrosoftTokens;
+export type ConnectedAccountTokens = {
+  accessToken: string;
+  refreshToken: string;
+};
 
 @Injectable()
 export class ConnectedAccountRefreshTokensService {
@@ -36,7 +33,7 @@ export class ConnectedAccountRefreshTokensService {
   async refreshAndSaveTokens(
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
-  ): Promise<string> {
+  ): Promise<ConnectedAccountTokens> {
     const refreshToken = connectedAccount.refreshToken;
 
     if (!refreshToken) {
@@ -52,23 +49,17 @@ export class ConnectedAccountRefreshTokensService {
       workspaceId,
     );
 
-    try {
-      const connectedAccountRepository =
-        await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
-          'connectedAccount',
-        );
-
-      await connectedAccountRepository.update(
-        { id: connectedAccount.id },
-        connectedAccountTokens,
+    const connectedAccountRepository =
+      await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
+        'connectedAccount',
       );
-    } catch (error) {
-      throw new Error(
-        `Error saving the new tokens for connected account ${connectedAccount.id} in workspace ${workspaceId}: ${error.message} `,
-      );
-    }
 
-    return connectedAccountTokens.accessToken;
+    await connectedAccountRepository.update(
+      { id: connectedAccount.id },
+      connectedAccountTokens,
+    );
+
+    return connectedAccountTokens;
   }
 
   async refreshTokens(
