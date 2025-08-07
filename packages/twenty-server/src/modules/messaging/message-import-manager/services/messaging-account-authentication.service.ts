@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
@@ -9,62 +9,39 @@ import {
   ConnectedAccountTokens,
 } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 
+interface ValidateAndRefreshConnectedAccountAuthenticationParams {
+  connectedAccount: ConnectedAccountWorkspaceEntity;
+  workspaceId: string;
+  messageChannelId: string;
+}
+
 @Injectable()
 export class MessagingAccountAuthenticationService {
-  private readonly logger = new Logger(
-    MessagingAccountAuthenticationService.name,
-  );
   constructor(
     private readonly connectedAccountRefreshTokensService: ConnectedAccountRefreshTokensService,
     private readonly messagingMonitoringService: MessagingMonitoringService,
   ) {}
 
-  async validateAndPrepareAuthentication(
-    messageChannel: MessageChannelWorkspaceEntity,
-    workspaceId: string,
-  ): Promise<void> {
-    if (
-      messageChannel.connectedAccount.provider ===
-      ConnectedAccountProvider.IMAP_SMTP_CALDAV
-    ) {
-      await this.validateImapCredentialsForConnectedAccount(
-        messageChannel.connectedAccount,
-        workspaceId,
-        messageChannel.id,
-      );
-
-      return;
-    }
-
-    await this.refreshAccessTokenForNonImapProvider(
-      messageChannel.connectedAccount,
-      workspaceId,
-      messageChannel.id,
-      messageChannel.connectedAccountId,
-    );
-  }
-
-  async validateAndRefreshConnectedAccountAuthentication(
-    connectedAccount: ConnectedAccountWorkspaceEntity,
-    workspaceId: string,
-    messageChannelId: string,
-  ): Promise<ConnectedAccountTokens> {
+  async validateAndRefreshConnectedAccountAuthentication({
+    connectedAccount,
+    workspaceId,
+    messageChannelId,
+  }: ValidateAndRefreshConnectedAccountAuthenticationParams): Promise<ConnectedAccountTokens> {
     if (
       connectedAccount.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
       isDefined(connectedAccount.connectionParameters?.IMAP)
     ) {
-      await this.validateImapCredentialsForConnectedAccount(
+      await this.validateImapCredentialsForConnectedAccount({
         connectedAccount,
         workspaceId,
         messageChannelId,
-      );
+      });
 
       return {
         accessToken: '',
@@ -72,19 +49,18 @@ export class MessagingAccountAuthenticationService {
       };
     }
 
-    return await this.refreshAccessTokenForNonImapProvider(
+    return await this.refreshAccessTokenForNonImapProvider({
       connectedAccount,
       workspaceId,
       messageChannelId,
-      connectedAccount.id,
-    );
+    });
   }
 
-  private async validateImapCredentialsForConnectedAccount(
-    connectedAccount: ConnectedAccountWorkspaceEntity,
-    workspaceId: string,
-    messageChannelId: string,
-  ): Promise<void> {
+  private async validateImapCredentialsForConnectedAccount({
+    connectedAccount,
+    workspaceId,
+    messageChannelId,
+  }: ValidateAndRefreshConnectedAccountAuthenticationParams): Promise<void> {
     if (
       !isDefined(connectedAccount.connectionParameters) ||
       !isDefined(connectedAccount.connectionParameters?.IMAP)
@@ -103,12 +79,11 @@ export class MessagingAccountAuthenticationService {
     }
   }
 
-  private async refreshAccessTokenForNonImapProvider(
-    connectedAccount: ConnectedAccountWorkspaceEntity,
-    workspaceId: string,
-    messageChannelId: string,
-    connectedAccountId: string,
-  ): Promise<ConnectedAccountTokens> {
+  private async refreshAccessTokenForNonImapProvider({
+    connectedAccount,
+    workspaceId,
+    messageChannelId,
+  }: ValidateAndRefreshConnectedAccountAuthenticationParams): Promise<ConnectedAccountTokens> {
     try {
       return await this.connectedAccountRefreshTokensService.refreshAndSaveTokens(
         connectedAccount,
@@ -126,7 +101,7 @@ export class MessagingAccountAuthenticationService {
           await this.messagingMonitoringService.track({
             eventName: `refresh_token.error.insufficient_permissions`,
             workspaceId,
-            connectedAccountId,
+            connectedAccountId: connectedAccount.id,
             messageChannelId,
             message: `${error.code}: ${error.reason ?? ''}`,
           });

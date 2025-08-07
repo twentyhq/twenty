@@ -50,9 +50,11 @@ export class MessagingMessageListFetchService {
 
       const { accessToken, refreshToken } =
         await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
-          messageChannel.connectedAccount,
-          workspaceId,
-          messageChannel.id,
+          {
+            connectedAccount: messageChannel.connectedAccount,
+            workspaceId,
+            messageChannelId: messageChannel.id,
+          },
         );
 
       const messageChannelWithFreshTokens = {

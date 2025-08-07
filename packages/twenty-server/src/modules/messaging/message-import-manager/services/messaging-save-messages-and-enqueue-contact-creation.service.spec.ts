@@ -165,6 +165,7 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
       mockMessages,
       mockMessageChannel.id,
       expect.any(Object),
+      workspaceId,
     );
 
     expect(

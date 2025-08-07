@@ -73,9 +73,11 @@ export class MessagingMessagesImportService {
 
       const { accessToken, refreshToken } =
         await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
-          connectedAccount,
-          workspaceId,
-          messageChannel.id,
+          {
+            connectedAccount,
+            workspaceId,
+            messageChannelId: messageChannel.id,
+          },
         );
 
       const connectedAccountWithFreshTokens = {
