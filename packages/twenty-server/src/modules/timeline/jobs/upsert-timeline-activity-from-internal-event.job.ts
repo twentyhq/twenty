@@ -1,3 +1,6 @@
+import { isDefined } from 'twenty-shared/utils';
+import { In } from 'typeorm';
+
 import { ObjectRecordNonDestructiveEvent } from 'src/engine/core-modules/event-emitter/types/object-record-non-destructive-event';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -18,49 +21,62 @@ export class UpsertTimelineActivityFromInternalEvent {
   async handle(
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>,
   ): Promise<void> {
-    for (const eventData of workspaceEventBatch.events) {
-      if (eventData.userId) {
-        const workspaceMemberRepository =
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-            workspaceEventBatch.workspaceId,
-            WorkspaceMemberWorkspaceEntity,
-            {
-              shouldBypassPermissionChecks: true,
-            },
-          );
-        const workspaceMember = await workspaceMemberRepository.findOneByOrFail(
-          {
-            userId: eventData.userId,
-          },
-        );
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceEventBatch.workspaceId,
+        WorkspaceMemberWorkspaceEntity,
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
 
+    const userIds = workspaceEventBatch.events
+      .map((event) => event.userId)
+      .filter(isDefined);
+
+    const workspaceMembers = await workspaceMemberRepository.findBy({
+      userId: In(userIds),
+    });
+
+    for (const eventData of workspaceEventBatch.events) {
+      const workspaceMember = workspaceMembers.find(
+        (workspaceMember) => workspaceMember.userId === eventData.userId,
+      );
+
+      if (eventData.userId && workspaceMember) {
         eventData.workspaceMemberId = workspaceMember.id;
       }
-
-      // Temporary
-      // We ignore every that is not a LinkedObject or a Business Object
-      if (
-        eventData.objectMetadata.isSystem &&
-        eventData.objectMetadata.nameSingular !== 'noteTarget' &&
-        eventData.objectMetadata.nameSingular !== 'taskTarget'
-      ) {
-        continue;
-      }
-
-      await this.timelineActivityService.upsertEvent({
-        event:
-          // we remove "before" and "after" property for a cleaner/slimmer event payload
-          'diff' in eventData.properties && eventData.properties.diff
-            ? {
-                ...eventData,
-                properties: {
-                  diff: eventData.properties.diff,
-                },
-              }
-            : eventData,
-        eventName: workspaceEventBatch.name,
-        workspaceId: workspaceEventBatch.workspaceId,
-      });
     }
+
+    const filteredEvents = workspaceEventBatch.events
+      .filter((event) => {
+        return (
+          !event.objectMetadata.isSystem ||
+          event.objectMetadata.nameSingular === 'noteTarget' ||
+          event.objectMetadata.nameSingular === 'taskTarget'
+        );
+      })
+      .map((event) => {
+        if ('diff' in event.properties && event.properties.diff) {
+          return {
+            ...event,
+            properties: {
+              diff: event.properties.diff,
+            },
+          };
+        }
+
+        return event;
+      });
+
+    if (filteredEvents.length === 0) {
+      return;
+    }
+
+    await this.timelineActivityService.upsertEvents({
+      events: filteredEvents,
+      eventName: workspaceEventBatch.name,
+      workspaceId: workspaceEventBatch.workspaceId,
+    });
   }
 }

@@ -150,10 +150,9 @@ export class CreateCompanyAndContactService {
       filteredContactsToCreateWithCompanyDomainNames.map((contact) => ({
         handle: contact.handle,
         displayName: contact.displayName,
-        companyId:
-          contact.companyDomainName && contact.companyDomainName !== ''
-            ? companiesObject[contact.companyDomainName]
-            : undefined,
+        companyId: isNonEmptyString(contact.companyDomainName)
+          ? companiesObject[contact.companyDomainName]
+          : undefined,
         createdBySource: source,
         createdByWorkspaceMember: connectedAccount.accountOwner,
         createdByContext: {

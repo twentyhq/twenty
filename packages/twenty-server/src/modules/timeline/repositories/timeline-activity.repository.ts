@@ -1,11 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
-import { MoreThan } from 'typeorm';
+import { isDefined } from 'class-validator';
+import { In, MoreThan } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/utils/object-record-diff-merge';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
+
+type TimelineActivityPayloadWorkspaceIdAndObjectSingularName = {
+  payloads: TimelineActivityPayload[];
+  workspaceId: string;
+  objectSingularName: string;
+};
 
 @Injectable()
 export class TimelineActivityRepository {
@@ -13,82 +21,67 @@ export class TimelineActivityRepository {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  async upsertOne({
-    name,
-    objectName,
-    properties,
-    recordId,
+  async upsertTimelineActivities({
+    objectSingularName,
     workspaceId,
-    linkedObjectMetadataId,
-    linkedRecordCachedName,
-    linkedRecordId,
-    workspaceMemberId,
-  }: {
-    name: string;
-    properties: Partial<ObjectRecord>;
-    objectName: string;
-    recordId: string;
-    workspaceId: string;
-    workspaceMemberId?: string;
-    linkedRecordCachedName?: string;
-    linkedRecordId?: string;
-    linkedObjectMetadataId: string | null;
-  }) {
-    const recentTimelineActivity = await this.findRecentTimelineActivity(
-      name,
-      objectName,
-      recordId,
-      workspaceMemberId,
-      linkedRecordId,
+    payloads,
+  }: TimelineActivityPayloadWorkspaceIdAndObjectSingularName) {
+    const recentTimelineActivities = await this.findRecentTimelineActivities({
+      objectSingularName,
       workspaceId,
-    );
+      payloads,
+    });
 
-    // If the diff is empty, we don't need to insert or update an activity
-    // this should be handled differently, events should not be triggered when we will use proper DB events.
-    const isDiffEmpty =
-      properties.diff !== null &&
-      properties.diff &&
-      Object.keys(properties.diff).length === 0;
+    const payloadsWithDiff = payloads.filter(({ properties }) => {
+      const isDiffEmpty =
+        properties.diff !== null &&
+        properties.diff &&
+        Object.keys(properties.diff).length === 0;
 
-    if (isDiffEmpty) {
-      return;
-    }
+      return !isDiffEmpty;
+    });
 
-    if (recentTimelineActivity.length !== 0) {
-      const newProps = objectRecordDiffMerge(
-        recentTimelineActivity[0].properties,
-        properties,
+    const payloadsToInsert: TimelineActivityPayload[] = [];
+
+    for (const payload of payloadsWithDiff) {
+      const recentTimelineActivity = recentTimelineActivities.find(
+        (timelineActivity) =>
+          timelineActivity[`${objectSingularName}Id`] === payload.recordId &&
+          timelineActivity.workspaceMemberId === payload.workspaceMemberId &&
+          (!isDefined(payload.linkedRecordId) ||
+            timelineActivity.linkedRecordId === payload.linkedRecordId) &&
+          timelineActivity.name === payload.name,
       );
 
-      return this.updateTimelineActivity(
-        recentTimelineActivity[0].id,
-        newProps,
-        workspaceMemberId,
-        workspaceId,
-      );
+      if (recentTimelineActivity) {
+        const mergedProperties = objectRecordDiffMerge(
+          recentTimelineActivity.properties,
+          payload.properties,
+        );
+
+        await this.updateTimelineActivity({
+          id: recentTimelineActivity.id,
+          properties: mergedProperties,
+          workspaceMemberId: payload.workspaceMemberId,
+          workspaceId,
+        });
+      } else {
+        payloadsToInsert.push(payload);
+      }
     }
 
-    return this.insertTimelineActivity({
-      name,
-      properties,
-      objectName,
-      recordId,
-      workspaceMemberId,
-      linkedRecordCachedName: linkedRecordCachedName ?? '',
-      linkedRecordId,
-      linkedObjectMetadataId,
+    await this.insertTimelineActivities({
+      objectSingularName,
+      payloads: payloadsToInsert,
       workspaceId,
     });
   }
 
-  private async findRecentTimelineActivity(
-    name: string,
-    objectName: string,
-    recordId: string,
-    workspaceMemberId: string | undefined,
-    linkedRecordId: string | undefined,
-    workspaceId: string,
-  ) {
+  private async findRecentTimelineActivities({
+    objectSingularName,
+    workspaceId,
+    payloads,
+  }: TimelineActivityPayloadWorkspaceIdAndObjectSingularName) {
     const timelineActivityTypeORMRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
@@ -101,31 +94,65 @@ export class TimelineActivityRepository {
     const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
 
     const whereConditions: Record<string, unknown> = {
-      [objectName + 'Id']: recordId,
-      name: name,
-      workspaceMemberId: workspaceMemberId,
+      [`${objectSingularName}Id`]: In(
+        payloads.map((payload) => payload.recordId),
+      ),
+      name: In(payloads.map((payload) => payload.name)),
+      workspaceMemberId: In(
+        payloads.map((payload) => payload.workspaceMemberId),
+      ),
       createdAt: MoreThan(tenMinutesAgo),
     };
 
-    if (linkedRecordId) {
-      whereConditions.linkedRecordId = linkedRecordId;
-    } else {
-      whereConditions.linkedRecordId = null;
-    }
-
-    return timelineActivityTypeORMRepository.find({
+    return await timelineActivityTypeORMRepository.find({
       where: whereConditions,
       order: { createdAt: 'DESC' },
       take: 1,
     });
   }
 
-  private async updateTimelineActivity(
-    id: string,
-    properties: Partial<ObjectRecord>,
-    workspaceMemberId: string | undefined,
-    workspaceId: string,
-  ) {
+  public async insertTimelineActivities({
+    objectSingularName,
+    workspaceId,
+    payloads,
+  }: TimelineActivityPayloadWorkspaceIdAndObjectSingularName) {
+    if (payloads.length === 0) {
+      return;
+    }
+
+    const timelineActivityTypeORMRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        'timelineActivity',
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
+
+    return timelineActivityTypeORMRepository.insert(
+      payloads.map((payload) => ({
+        name: payload.name,
+        properties: payload.properties,
+        workspaceMemberId: payload.workspaceMemberId,
+        [`${objectSingularName}Id`]: payload.recordId,
+        linkedRecordCachedName: payload.linkedRecordCachedName ?? '',
+        linkedRecordId: payload.linkedRecordId,
+        linkedObjectMetadataId: payload.linkedObjectMetadataId,
+      })),
+    );
+  }
+
+  private async updateTimelineActivity({
+    id,
+    properties,
+    workspaceMemberId,
+    workspaceId,
+  }: {
+    id: string;
+    properties: Partial<ObjectRecord>;
+    workspaceMemberId: string | undefined;
+    workspaceId: string;
+  }) {
     const timelineActivityTypeORMRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
@@ -139,84 +166,5 @@ export class TimelineActivityRepository {
       properties: properties,
       workspaceMemberId: workspaceMemberId,
     });
-  }
-
-  private async insertTimelineActivity({
-    linkedObjectMetadataId,
-    linkedRecordCachedName,
-    linkedRecordId,
-    name,
-    objectName,
-    properties,
-    recordId,
-    workspaceId,
-    workspaceMemberId,
-  }: {
-    name: string;
-    properties: Partial<ObjectRecord>;
-    objectName: string;
-    recordId: string;
-    workspaceMemberId: string | undefined;
-    linkedRecordCachedName: string;
-    linkedRecordId: string | undefined;
-    linkedObjectMetadataId: string | null;
-    workspaceId: string;
-  }) {
-    const timelineActivityTypeORMRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        'timelineActivity',
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
-
-    return timelineActivityTypeORMRepository.insert({
-      name: name,
-      properties: properties,
-      workspaceMemberId: workspaceMemberId,
-      [objectName + 'Id']: recordId,
-      linkedRecordCachedName: linkedRecordCachedName ?? '',
-      linkedRecordId: linkedRecordId,
-      linkedObjectMetadataId: linkedObjectMetadataId,
-    });
-  }
-
-  public async insertTimelineActivitiesForObject(
-    objectName: string,
-    activities: {
-      name: string;
-      properties: Partial<ObjectRecord> | null;
-      workspaceMemberId: string | undefined;
-      recordId: string | null;
-      linkedRecordCachedName: string;
-      linkedRecordId: string | null | undefined;
-      linkedObjectMetadataId: string | undefined;
-    }[],
-    workspaceId: string,
-  ) {
-    if (activities.length === 0) {
-      return;
-    }
-    const timelineActivityTypeORMRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        'timelineActivity',
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
-
-    return timelineActivityTypeORMRepository.insert(
-      activities.map((activity) => ({
-        name: activity.name,
-        properties: activity.properties,
-        workspaceMemberId: activity.workspaceMemberId,
-        [objectName + 'Id']: activity.recordId,
-        linkedRecordCachedName: activity.linkedRecordCachedName ?? '',
-        linkedRecordId: activity.linkedRecordId,
-        linkedObjectMetadataId: activity.linkedObjectMetadataId,
-      })),
-    );
   }
 }

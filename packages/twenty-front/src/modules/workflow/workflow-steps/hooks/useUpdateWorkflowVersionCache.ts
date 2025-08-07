@@ -44,8 +44,12 @@ export const useUpdateWorkflowVersionCache = () => {
       return;
     }
 
-    const { triggerNextStepIds, stepsNextStepIds, createdStep, deletedStepId } =
-      workflowVersionStepChanges;
+    const {
+      triggerNextStepIds,
+      stepsNextStepIds,
+      createdStep,
+      deletedStepIds,
+    } = workflowVersionStepChanges;
 
     const newCachedRecord = {
       ...cachedRecord,
@@ -70,10 +74,16 @@ export const useUpdateWorkflowVersionCache = () => {
       newCachedRecord.steps.push(formattedCreatedStep);
     }
 
-    if (isDefined(deletedStepId)) {
+    if (isDefined(deletedStepIds) && deletedStepIds.length > 0) {
       newCachedRecord.steps = newCachedRecord.steps.filter(
-        (step: WorkflowAction) => step.id !== deletedStepId,
+        (step: WorkflowAction) => !deletedStepIds.includes(step.id),
       );
+
+      const hasDeletedTrigger: boolean = deletedStepIds.includes('trigger');
+
+      if (hasDeletedTrigger) {
+        newCachedRecord.trigger = null;
+      }
     }
 
     const recordGqlFields = {

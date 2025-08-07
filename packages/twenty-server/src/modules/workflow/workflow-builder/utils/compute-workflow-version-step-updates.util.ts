@@ -1,17 +1,17 @@
 import { WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
-import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 export const computeWorkflowVersionStepChanges = ({
   trigger,
   steps,
   createdStep,
-  deletedStepId,
+  deletedStepIds,
 }: {
   trigger: WorkflowTrigger | null;
   steps: WorkflowAction[] | null;
   createdStep?: WorkflowAction;
-  deletedStepId?: string;
+  deletedStepIds?: string[];
 }): WorkflowVersionStepChangesDTO => {
   return {
     triggerNextStepIds: trigger?.nextStepIds,
@@ -19,6 +19,6 @@ export const computeWorkflowVersionStepChanges = ({
       (steps || []).map((step) => [step.id, step.nextStepIds]),
     ),
     createdStep,
-    deletedStepId,
+    deletedStepIds,
   };
 };

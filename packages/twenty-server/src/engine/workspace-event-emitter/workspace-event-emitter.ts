@@ -16,6 +16,7 @@ import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { CustomEventName } from 'src/engine/workspace-event-emitter/types/custom-event-name.type';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
 
 type ActionEventMap<T> = {
   [DatabaseEventAction.CREATED]: ObjectRecordCreateEvent<T>;
@@ -147,7 +148,7 @@ export class WorkspaceEventEmitter {
       return;
     }
 
-    const eventName = `${objectMetadataNameSingular}.${action}`;
+    const eventName = computeEventName(objectMetadataNameSingular, action);
 
     this.eventEmitter.emit(eventName, {
       name: eventName,

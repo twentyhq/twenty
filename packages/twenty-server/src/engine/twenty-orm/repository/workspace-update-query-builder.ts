@@ -247,6 +247,12 @@ export class WorkspaceUpdateQueryBuilder<
           this.authContext,
         );
 
+        this.relationNestedConfig =
+          this.relationNestedQueries.prepareNestedRelationQueries(
+            input.partialEntity as QueryDeepPartialEntityWithNestedRelationFields<T>,
+            mainAliasTarget,
+          );
+
         if (isDefined(this.relationNestedConfig)) {
           const updatedValues =
             await this.relationNestedQueries.processRelationNestedQueries({
@@ -284,13 +290,13 @@ export class WorkspaceUpdateQueryBuilder<
       });
 
       const formattedResults = formatResult<T[]>(
-        results.map((result) => result.raw),
+        results.flatMap((result) => result.raw),
         objectMetadata,
         this.internalContext.objectMetadataMaps,
       );
 
       return {
-        raw: results.map((result) => result.raw),
+        raw: results.flatMap((result) => result.raw),
         generatedMaps: formattedResults,
         affected: results.length,
       };
@@ -383,7 +389,17 @@ export class WorkspaceUpdateQueryBuilder<
       partialEntity: QueryDeepPartialEntity<T>;
     }[],
   ): this {
-    this.manyInputs = inputs;
+    const mainAliasTarget = this.getMainAliasTarget();
+
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      mainAliasTarget,
+      this.internalContext,
+    );
+
+    this.manyInputs = inputs.map((input) => ({
+      criteria: input.criteria,
+      partialEntity: formatData(input.partialEntity, objectMetadata),
+    }));
 
     return this;
   }

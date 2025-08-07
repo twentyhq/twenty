@@ -332,7 +332,7 @@ const getSelectedColumnsFromExpressionMap = ({
       operationType,
     )
   ) {
-    if (isEmpty(expressionMap.returning)) {
+    if (!isDefined(expressionMap.returning)) {
       throw new InternalServerError(
         'Returning columns are not set for update query',
       );

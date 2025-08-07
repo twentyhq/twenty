@@ -179,6 +179,10 @@ export class WorkspaceMigrationColumnService {
             column: {
               name: createColumnMigration.columnName,
               type: createColumnMigration.columnType,
+              precision:
+                createColumnMigration.columnType === 'timestamptz'
+                  ? 3
+                  : undefined,
               isArray: createColumnMigration.isArray ?? false,
               isNullable: createColumnMigration.isNullable,
               default: createColumnMigration.defaultValue,

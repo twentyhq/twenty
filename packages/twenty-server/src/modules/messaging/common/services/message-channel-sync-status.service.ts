@@ -159,7 +159,7 @@ export class MessageChannelSyncStatusService {
     });
   }
 
-  public async markAsFailedAndFlushMessagesToImport(
+  public async markAsFailed(
     messageChannelIds: string[],
     workspaceId: string,
     syncStatus:
@@ -168,12 +168,6 @@ export class MessageChannelSyncStatusService {
   ) {
     if (!messageChannelIds.length) {
       return;
-    }
-
-    for (const messageChannelId of messageChannelIds) {
-      await this.cacheStorage.del(
-        `messages-to-import:${workspaceId}:${messageChannelId}`,
-      );
     }
 
     const messageChannelRepository =

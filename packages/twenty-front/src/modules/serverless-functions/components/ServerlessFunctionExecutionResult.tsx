@@ -1,7 +1,7 @@
 import {
   ExecutionStatus,
-  WorkflowExecutionResult,
-} from '@/workflow/components/WorkflowExecutionResult';
+  WorkflowStepExecutionResult,
+} from '@/workflow/components/WorkflowStepExecutionResult';
 import { ServerlessFunctionTestData } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import { ServerlessFunctionExecutionStatus } from '~/generated-metadata/graphql';
 
@@ -37,7 +37,7 @@ export const ServerlessFunctionExecutionResult = ({
   };
 
   return (
-    <WorkflowExecutionResult
+    <WorkflowStepExecutionResult
       result={result}
       language={serverlessFunctionTestData.language}
       height={serverlessFunctionTestData.height}

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import DataLoader from 'dataloader';
-import { APP_LOCALES } from 'twenty-shared/translations';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { filterMorphRelationDuplicateFieldsDTO } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
@@ -17,6 +17,7 @@ import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-m
 import { resolveFieldMetadataStandardOverride } from 'src/engine/metadata-modules/field-metadata/utils/resolve-field-metadata-standard-override.util';
 import { IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 
 export type RelationMetadataLoaderPayload = {
@@ -69,6 +70,7 @@ export type IndexFieldMetadataLoaderPayload = {
 @Injectable()
 export class DataloaderService {
   constructor(
+    private readonly i18nService: I18nService,
     private readonly fieldMetadataRelationService: FieldMetadataRelationService,
     private readonly fieldMetadataMorphRelationService: FieldMetadataMorphRelationService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
@@ -190,6 +192,10 @@ export class DataloaderService {
   private createFieldMetadataLoader() {
     return new DataLoader<FieldMetadataLoaderPayload, FieldMetadataDTO[]>(
       async (dataLoaderParams: FieldMetadataLoaderPayload[]) => {
+        const locale = dataLoaderParams[0].locale;
+        const i18nInstance = this.i18nService.getI18nInstance(
+          locale ?? SOURCE_LOCALE,
+        );
         const workspaceId = dataLoaderParams[0].workspaceId;
         const objectMetadataIds = dataLoaderParams.map(
           (dataLoaderParam) => dataLoaderParam.objectMetadata.id,
@@ -232,6 +238,7 @@ export class DataloaderService {
                   },
                   field,
                   dataLoaderParams[0].locale,
+                  i18nInstance,
                 ),
               }),
               {},

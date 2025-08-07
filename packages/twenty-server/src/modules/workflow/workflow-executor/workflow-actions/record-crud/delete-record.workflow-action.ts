@@ -92,7 +92,13 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
       );
     }
 
-    await repository.softDelete(workflowActionInput.objectRecordId);
+    const columnsToReturnForSoftDelete: string[] = [];
+
+    await repository.softDelete(
+      workflowActionInput.objectRecordId,
+      undefined,
+      columnsToReturnForSoftDelete,
+    );
 
     return {
       result: objectRecord,

@@ -6,9 +6,9 @@ import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
 import { deleteObjectFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-object-from-flat-object-metadata-maps-or-throw.util';
 import { findFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps.util';
-import { findFlatObjectdMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
+import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
 import { replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
-import { replaceFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
+import { replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { WorkspaceMigrationRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-runner-args.type';
 import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
 import {
@@ -49,7 +49,7 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = ({
     case 'update_object': {
       const { objectMetadataId } = action;
       const existingFlatObjectMetadata =
-        findFlatObjectdMetadataInFlatObjectMetadataMaps({
+        findFlatObjectMetadataInFlatObjectMetadataMaps({
           objectMetadataId,
           flatObjectMetadataMaps,
         });
@@ -65,7 +65,7 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = ({
         ...fromWorkspaceMigrationUpdateActionToPartialEntity(action),
       };
 
-      return replaceFlatObjectMetadataInFlatObjectMetadataMaps({
+      return replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
         flatObjectMetadata: updatedFlatObjectMetadata,
         flatObjectMetadataMaps,
       });

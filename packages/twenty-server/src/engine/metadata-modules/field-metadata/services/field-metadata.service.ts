@@ -289,6 +289,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           await this.twentyORMGlobalManager.getRepositoryForWorkspace(
             fieldMetadataInput.workspaceId,
             'view',
+            {
+              shouldBypassPermissionChecks: true,
+            },
           );
 
         await viewsRepository.delete({

@@ -15,6 +15,6 @@ export class WorkflowVersionStepChangesDTO {
   @Field(() => WorkflowActionDTO, { nullable: true })
   createdStep?: WorkflowActionDTO;
 
-  @Field(() => String, { nullable: true })
-  deletedStepId?: string;
+  @Field(() => [String], { nullable: true })
+  deletedStepIds?: string[];
 }

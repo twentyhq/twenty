@@ -1,7 +1,7 @@
 import {
   ExecutionStatus,
-  WorkflowExecutionResult,
-} from '@/workflow/components/WorkflowExecutionResult';
+  WorkflowStepExecutionResult,
+} from '@/workflow/components/WorkflowStepExecutionResult';
 import type { HttpRequestTestData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/types/HttpRequestTestData';
 
 export const HttpRequestExecutionResult = ({
@@ -51,7 +51,7 @@ export const HttpRequestExecutionResult = ({
   };
 
   return (
-    <WorkflowExecutionResult
+    <WorkflowStepExecutionResult
       result={result}
       language={httpRequestTestData.language}
       height="100%"

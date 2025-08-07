@@ -1,3 +1,4 @@
+import { InputSchemaPropertyType } from '@/workflow/types/InputSchema';
 import {
   BaseOutputSchema,
   OutputSchema,
@@ -128,20 +129,55 @@ const filterBaseOutputSchema = ({
   return undefined;
 };
 
+const filterRecordOutputSchemaFieldsByType = ({
+  outputSchema,
+  fieldTypesToExclude,
+}: {
+  outputSchema: RecordOutputSchema;
+  fieldTypesToExclude: InputSchemaPropertyType[];
+}) => {
+  const filteredFields: BaseOutputSchema = {};
+
+  for (const key in outputSchema.fields) {
+    const field = outputSchema.fields[key];
+
+    if (isDefined(field.type) && fieldTypesToExclude.includes(field.type)) {
+      continue;
+    }
+
+    filteredFields[key] = field;
+  }
+
+  return {
+    ...outputSchema,
+    // Relations could be filtered recursively but this util requires a global simplification first
+    fields: filteredFields,
+  };
+};
+
 export const filterOutputSchema = ({
   shouldDisplayRecordFields,
   shouldDisplayRecordObjects,
   outputSchema,
+  fieldTypesToExclude,
 }: {
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
   outputSchema?: OutputSchema;
+  fieldTypesToExclude?: InputSchemaPropertyType[];
 }): OutputSchema | undefined => {
-  if (
-    !shouldDisplayRecordObjects ||
-    shouldDisplayRecordFields ||
-    !outputSchema
-  ) {
+  if (!isDefined(outputSchema)) {
+    return undefined;
+  }
+
+  if (!shouldDisplayRecordObjects || shouldDisplayRecordFields) {
+    if (isRecordOutputSchema(outputSchema) && isDefined(fieldTypesToExclude)) {
+      return filterRecordOutputSchemaFieldsByType({
+        outputSchema,
+        fieldTypesToExclude,
+      });
+    }
+
     return outputSchema;
   }
 

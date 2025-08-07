@@ -8,6 +8,7 @@ import { FeatureFlagKey } from '~/generated/graphql';
 type WorkflowDiagramBaseHandleProps = HandleProps & {
   isVisible?: boolean;
   disableHoverEffect?: boolean;
+  selected?: boolean;
 };
 
 const HANDLE_SCALE_ON_HOVER = 1.5;
@@ -15,13 +16,18 @@ const HANDLE_SCALE_ON_HOVER = 1.5;
 const TRANSLATE_PERCENT = 33.33;
 
 const StyledHandle = styled(Handle, {
-  shouldForwardProp: (prop) => !['disableHoverEffect'].includes(prop),
+  shouldForwardProp: (prop) =>
+    !['disableHoverEffect', 'selected'].includes(prop),
 })<WorkflowDiagramBaseHandleProps>`
   // We need !important to avoid passing style with the Handle.style property
   height: ${NODE_HANDLE_HEIGHT_PX}px !important;
   width: ${NODE_HANDLE_WIDTH_PX}px !important;
-  border-color: ${({ theme }) => theme.border.color.strong} !important;
-  background: ${({ theme }) => theme.background.primary} !important;
+  border-color: ${({ theme, selected }) =>
+    selected ? theme.color.blue : theme.border.color.strong} !important;
+  background: ${({ theme, selected }) =>
+    selected
+      ? theme.adaptiveColors.blue1
+      : theme.background.primary} !important;
   transition:
     transform 0.1s ease-out,
     background 0.1s,
@@ -39,7 +45,7 @@ const StyledHandle = styled(Handle, {
     }
   }}
 
-  ${({ disableHoverEffect, theme, position }) => {
+  ${({ disableHoverEffect, theme, position, selected }) => {
     if (disableHoverEffect === true) {
       return '';
     }
@@ -54,8 +60,8 @@ const StyledHandle = styled(Handle, {
 
     return `
     &:hover {
-      border-color: ${theme.font.color.light} !important;
-      background: ${theme.background.secondary} !important;
+      border-color: ${selected ? theme.color.blue : theme.font.color.light} !important;
+      background: ${selected ? theme.adaptiveColors.blue1 : theme.background.primary} !important;
       ${transform}
     }
   `;
@@ -66,6 +72,7 @@ export const WorkflowDiagramBaseHandle = ({
   type,
   position,
   isVisible = true,
+  selected = false,
 }: WorkflowDiagramBaseHandleProps) => {
   const isWorkflowBranchEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
@@ -77,6 +84,7 @@ export const WorkflowDiagramBaseHandle = ({
       position={position}
       style={{ opacity: isVisible ? 1 : 0 }}
       disableHoverEffect={!isWorkflowBranchEnabled}
+      selected={selected}
     />
   );
 };

@@ -2952,7 +2952,7 @@ export type WorkflowVersion = {
 export type WorkflowVersionStepChanges = {
   __typename?: 'WorkflowVersionStepChanges';
   createdStep?: Maybe<WorkflowAction>;
-  deletedStepId?: Maybe<Scalars['String']>;
+  deletedStepIds?: Maybe<Array<Scalars['String']>>;
   stepsNextStepIds?: Maybe<Scalars['JSON']>;
   triggerNextStepIds?: Maybe<Array<Scalars['String']>>;
 };

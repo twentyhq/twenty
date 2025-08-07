@@ -3124,7 +3124,7 @@ export type WorkflowVersion = {
 export type WorkflowVersionStepChanges = {
   __typename?: 'WorkflowVersionStepChanges';
   createdStep?: Maybe<WorkflowAction>;
-  deletedStepId?: Maybe<Scalars['String']>;
+  deletedStepIds?: Maybe<Array<Scalars['String']>>;
   stepsNextStepIds?: Maybe<Scalars['JSON']>;
   triggerNextStepIds?: Maybe<Array<Scalars['String']>>;
 };
@@ -4208,7 +4208,7 @@ export type DeleteWorkflowVersionStepMutationVariables = Exact<{
 }>;
 
 
-export type DeleteWorkflowVersionStepMutation = { __typename?: 'Mutation', deleteWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerNextStepIds?: Array<string> | null, stepsNextStepIds?: any | null, deletedStepId?: string | null } };
+export type DeleteWorkflowVersionStepMutation = { __typename?: 'Mutation', deleteWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerNextStepIds?: Array<string> | null, stepsNextStepIds?: any | null, deletedStepIds?: Array<string> | null } };
 
 export type RunWorkflowVersionMutationVariables = Exact<{
   input: RunWorkflowVersionInput;
@@ -9535,7 +9535,7 @@ export const DeleteWorkflowVersionStepDocument = gql`
   deleteWorkflowVersionStep(input: $input) {
     triggerNextStepIds
     stepsNextStepIds
-    deletedStepId
+    deletedStepIds
   }
 }
     `;
