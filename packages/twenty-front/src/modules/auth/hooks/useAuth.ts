@@ -661,9 +661,6 @@ export const useAuth = () => {
     getLoginTokenFromEmailVerificationToken:
       handleGetLoginTokenFromEmailVerificationToken,
     getAuthTokensFromLoginToken: handleGetAuthTokensFromLoginToken,
-
-    loadCurrentUser,
-
     checkUserExists: { checkUserExistsData, checkUserExistsQuery },
     clearSession,
     signOut: handleSignOut,

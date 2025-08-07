@@ -29,7 +29,7 @@ export const useRefreshObjectMetadataItems = (
         pagedObjectMetadataItems: objectMetadataItemsResult.data,
       });
 
-    replaceObjectMetadataItemIfDifferent(objectMetadataItems);
+    return replaceObjectMetadataItemIfDifferent(objectMetadataItems);
   };
 
   const replaceObjectMetadataItemIfDifferent = useRecoilCallback(
@@ -77,6 +77,8 @@ export const useRefreshObjectMetadataItems = (
           set(objectMetadataItemsState, newObjectMetadataItems);
           set(isAppWaitingForFreshObjectMetadataState, false);
         }
+
+        return newObjectMetadataItems;
       },
     [],
   );

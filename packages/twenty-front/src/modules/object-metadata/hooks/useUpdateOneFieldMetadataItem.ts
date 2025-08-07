@@ -76,8 +76,7 @@ export const useUpdateOneFieldMetadataItem = () => {
       },
     });
 
-    const { objectMetadataItems: objectMetadataItemsRefreshed } =
-      await refreshObjectMetadataItems();
+    const objectMetadataItemsRefreshed = await refreshObjectMetadataItems();
 
     const { data } = await apolloClient.query({ query: GET_CURRENT_USER });
     setCurrentWorkspace(data?.currentUser?.currentWorkspace);
