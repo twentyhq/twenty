@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
 import { t } from '@lingui/core/macro';
+
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,

@@ -144,6 +144,7 @@ export class FieldMetadataResolver {
           workspaceId,
         });
       }
+
       return await this.fieldMetadataService.deleteOneField(input, workspaceId);
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(error);

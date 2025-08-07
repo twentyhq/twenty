@@ -1,6 +1,7 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { isDefined } from 'twenty-shared/utils';
 
 export type FindFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFielIdArgs = {
   fieldMetadataId: string;
@@ -17,12 +18,15 @@ export const findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFielId = ({
     flatObjectMetadataMaps.byId,
   ).filter(isDefined);
 
-  const matchingFlatObjectMetadataWithFlatFieldMaps =  flatObjectMetadataWithFlatFieldMapsArray.find(
-    (flatObjectMetadataWithFlatFieldMaps) =>
-      isDefined(
-        flatObjectMetadataWithFlatFieldMaps.fieldsById[fieldMetadataId],
-      ),
-  );
+  const matchingFlatObjectMetadataWithFlatFieldMaps =
+    flatObjectMetadataWithFlatFieldMapsArray.find(
+      (flatObjectMetadataWithFlatFieldMaps) =>
+        isDefined(
+          flatObjectMetadataWithFlatFieldMaps.fieldsById[fieldMetadataId],
+        ),
+    );
 
-  return matchingFlatObjectMetadataWithFlatFieldMaps?.fieldsById[fieldMetadataId]
+  return matchingFlatObjectMetadataWithFlatFieldMaps?.fieldsById[
+    fieldMetadataId
+  ];
 };

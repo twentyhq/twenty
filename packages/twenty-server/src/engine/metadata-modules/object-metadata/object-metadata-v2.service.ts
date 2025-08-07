@@ -10,7 +10,6 @@ import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
-
 @Injectable()
 export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataEntity> {
   constructor(
