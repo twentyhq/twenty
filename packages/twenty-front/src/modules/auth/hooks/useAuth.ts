@@ -330,10 +330,6 @@ export const useAuth = () => {
           throw new Error('No getAuthTokensFromLoginToken result');
         }
 
-        console.log(
-          'getAuthTokensResult.data.getAuthTokensFromLoginToken',
-          getAuthTokensResult.data.getAuthTokensFromLoginToken,
-        );
         await handleLoadWorkspaceAfterAuthentication(
           getAuthTokensResult.data.getAuthTokensFromLoginToken.tokens,
         );

@@ -123,6 +123,7 @@ export const CreateWorkspace = () => {
         }
 
         await refreshObjectMetadataItems();
+        await loadCurrentUser();
         setNextOnboardingStatus();
       } catch (error: any) {
         setPendingCreationLoaderStep(PendingCreationLoaderStep.None);
