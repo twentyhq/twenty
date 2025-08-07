@@ -193,6 +193,7 @@ export const WorkflowDiagramCanvasBase = ({
       if (isWorkflowBranchEnabled) {
         return workflowDiagram;
       }
+
       return getOrganizedDiagram(workflowDiagram);
     }
     return { nodes: [], edges: [] };

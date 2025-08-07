@@ -17,6 +17,7 @@ import { WorkspaceFeatureFlagsMapCacheModule } from 'src/engine/metadata-modules
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
+import { AddPositionsToWorkflowVersionsAndWorkflowRuns } from 'src/database/commands/upgrade-version-command/1-3/1-3-add-positions-to-workflow-versions-and-workflow-runs.command';
 
 @Module({
   imports: [
@@ -43,11 +44,13 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     AssignRolesToExistingApiKeysCommand,
     AddNextStepIdsToWorkflowRunsTrigger,
     UpdateTimestampColumnTypeInWorkspaceSchemaCommand,
+    AddPositionsToWorkflowVersionsAndWorkflowRuns,
   ],
   exports: [
     AssignRolesToExistingApiKeysCommand,
     AddNextStepIdsToWorkflowRunsTrigger,
     UpdateTimestampColumnTypeInWorkspaceSchemaCommand,
+    AddPositionsToWorkflowVersionsAndWorkflowRuns,
   ],
 })
 export class V1_3_UpgradeVersionCommandModule {}
