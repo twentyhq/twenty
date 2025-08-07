@@ -13,23 +13,23 @@ import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
 import {
-  H2Title,
-  IconArrowUp,
-  IconCalendarEvent,
-  IconTag,
-  IconUsers,
+    H2Title,
+    IconArrowUp,
+    IconCalendarEvent,
+    IconTag,
+    IconUsers,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
-  BillingPlanKey,
-  BillingPlanOutput,
-  BillingProductKey,
-  SubscriptionInterval,
-  SubscriptionStatus,
-  useBillingBaseProductPricesQuery,
-  useSwitchSubscriptionToEnterprisePlanMutation,
-  useSwitchSubscriptionToYearlyIntervalMutation,
+    BillingPlanKey,
+    BillingPlanOutput,
+    BillingProductKey,
+    SubscriptionInterval,
+    SubscriptionStatus,
+    useBillingBaseProductPricesQuery,
+    useSwitchSubscriptionToEnterprisePlanMutation,
+    useSwitchSubscriptionToYearlyIntervalMutation,
 } from '~/generated-metadata/graphql';
 
 const SWITCH_BILLING_INTERVAL_MODAL_ID = 'switch-billing-interval-modal';
@@ -136,7 +136,7 @@ export const SettingsBillingSubscriptionInfo = () => {
       enqueueSuccessSnackBar({
         message: t`Subscription has been switched to Yearly.`,
       });
-    } catch (error: any) {
+    } catch {
       enqueueErrorSnackBar({
         message: t`Error while switching subscription to Yearly.`,
       });
@@ -162,7 +162,7 @@ export const SettingsBillingSubscriptionInfo = () => {
       enqueueSuccessSnackBar({
         message: t`Subscription has been switched to Organization Plan.`,
       });
-    } catch (error: any) {
+    } catch {
       enqueueErrorSnackBar({
         message: t`Error while switching subscription to Organization Plan.`,
       });

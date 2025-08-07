@@ -91,7 +91,7 @@ export class WorkspacePermissionsCacheService {
         workspaceId,
         freshUserWorkspaceRoleMap,
       );
-    } catch (error) {
+    } catch () {
       // Flush stale userWorkspaceRoleMap
       await this.workspacePermissionsCacheStorageService.removeUserWorkspaceRoleMap(
         workspaceId,
@@ -344,7 +344,7 @@ export class WorkspacePermissionsCacheService {
         workspaceId,
         freshApiKeyRoleMap,
       );
-    } catch (error) {
+    } catch () {
       // Flush stale apiKeyRoleMap
       await this.workspacePermissionsCacheStorageService.removeApiKeyRoleMap(
         workspaceId,

@@ -146,7 +146,7 @@ export class MCPMetadataService {
         });
 
         return { result };
-      } catch (err) {
+      } catch () {
         await this.metricsService.incrementCounter({
           key: MetricsKeys.AIToolExecutionFailed,
           attributes: {

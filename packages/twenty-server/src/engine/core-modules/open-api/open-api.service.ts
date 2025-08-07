@@ -9,32 +9,32 @@ import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { baseSchema } from 'src/engine/core-modules/open-api/utils/base-schema.utils';
 import {
-  computeMetadataSchemaComponents,
-  computeParameterComponents,
-  computeSchemaComponents,
+    computeMetadataSchemaComponents,
+    computeParameterComponents,
+    computeSchemaComponents,
 } from 'src/engine/core-modules/open-api/utils/components.utils';
 import { computeSchemaTags } from 'src/engine/core-modules/open-api/utils/compute-schema-tags.utils';
 import { computeWebhooks } from 'src/engine/core-modules/open-api/utils/computeWebhooks.utils';
 import {
-  get400ErrorResponses,
-  get401ErrorResponses,
+    get400ErrorResponses,
+    get401ErrorResponses,
 } from 'src/engine/core-modules/open-api/utils/get-error-responses.utils';
 import {
-  computeBatchPath,
-  computeDuplicatesResultPath,
-  computeManyResultPath,
-  computeSingleResultPath,
+    computeBatchPath,
+    computeDuplicatesResultPath,
+    computeManyResultPath,
+    computeSingleResultPath,
 } from 'src/engine/core-modules/open-api/utils/path.utils';
 import {
-  getRequestBody,
-  getUpdateRequestBody,
+    getRequestBody,
+    getUpdateRequestBody,
 } from 'src/engine/core-modules/open-api/utils/request-body.utils';
 import {
-  getCreateOneResponse201,
-  getDeleteResponse200,
-  getFindManyResponse200,
-  getFindOneResponse200,
-  getUpdateOneResponse200,
+    getCreateOneResponse201,
+    getDeleteResponse200,
+    getFindManyResponse200,
+    getFindOneResponse200,
+    getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -62,7 +62,7 @@ export class OpenApiService {
       workspaceValidator.assertIsDefinedOrThrow(workspace);
 
       return workspace;
-    } catch (e) {
+    } catch {
       return null;
     }
   }

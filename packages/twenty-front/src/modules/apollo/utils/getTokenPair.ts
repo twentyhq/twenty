@@ -28,7 +28,7 @@ export const getTokenPair = (): AuthTokenPair | undefined => {
     }
 
     return parsedTokenPair;
-  } catch (error) {
+  } catch {
     cookieStorage.removeItem('tokenPair');
     return undefined;
   }

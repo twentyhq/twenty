@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
-import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/compute-option-value-from-label.utils';
 import { themeColorSchema } from 'twenty-ui/theme';
+import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/compute-option-value-from-label.utils';
 
 const selectOptionSchema = z
   .object({
@@ -17,7 +17,7 @@ const selectOptionSchema = z
       try {
         computeOptionValueFromLabel(option.label);
         return true;
-      } catch (error) {
+      } catch {
         return false;
       }
     },

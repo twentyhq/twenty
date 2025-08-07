@@ -156,7 +156,7 @@ export class CustomDomainService {
           zone_id: this.twentyConfigService.get('CLOUDFLARE_ZONE_ID'),
         });
       }
-    } catch (err) {
+    } catch () {
       return;
     }
   }

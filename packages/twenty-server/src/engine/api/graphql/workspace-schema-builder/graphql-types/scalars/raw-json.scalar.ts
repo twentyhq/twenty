@@ -60,7 +60,7 @@ const stringify = (value: any): string => {
 const parseJSON = (value: string): object => {
   try {
     return JSON.parse(value);
-  } catch (e) {
+  } catch {
     throw new ValidationError(`Value is not valid JSON: ${value}`);
   }
 };

@@ -11,13 +11,13 @@ import { InMemoryTestingCacheInstance } from '~/testing/cache/inMemoryTestingCac
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 import {
-  allMockCompanyRecordsWithRelation,
-  findMockCompanyWithRelationRecord,
+    allMockCompanyRecordsWithRelation,
+    findMockCompanyWithRelationRecord,
 } from '~/testing/mock-data/companiesWithRelations';
 import {
-  allMockPersonRecords,
-  getMockPersonObjectMetadataItem,
-  getMockPersonRecord,
+    allMockPersonRecords,
+    getMockPersonObjectMetadataItem,
+    getMockPersonRecord,
 } from '~/testing/mock-data/people';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
@@ -176,7 +176,7 @@ describe('useDeleteOneRecord', () => {
         try {
           await result.current.deleteOneRecord(personRecord.id);
           fail('Should have thrown an error');
-        } catch (e) {
+        } catch {
           assertCachedRecordIsNull({
             recordId: personRecord.id,
             objectMetadataItem: personObjectMetadataItem,
@@ -316,7 +316,7 @@ describe('useDeleteOneRecord', () => {
         try {
           await result.current.deleteOneRecord(personRecord.id);
           fail('Should have thrown an error');
-        } catch (e) {
+        } catch {
           assertCachedRecordMatchSnapshot({
             recordId: personRecord.id,
             objectMetadataItem: personObjectMetadataItem,

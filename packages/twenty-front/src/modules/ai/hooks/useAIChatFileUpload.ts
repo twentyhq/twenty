@@ -6,8 +6,8 @@ import { useRecoilComponentState } from '@/ui/utilities/state/component-state/ho
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  File as FileDocument,
-  useCreateFileMutation,
+    File as FileDocument,
+    useCreateFileMutation,
 } from '~/generated-metadata/graphql';
 
 export const useAIChatFileUpload = ({ agentId }: { agentId: string }) => {
@@ -37,7 +37,7 @@ export const useAIChatFileUpload = ({ agentId }: { agentId: string }) => {
         agentChatSelectedFiles.filter((f) => f.name !== file.name),
       );
       return uploadedFile;
-    } catch (error) {
+    } catch {
       const fileName = file.name;
       enqueueErrorSnackBar({
         message: t`Failed to upload file: ${fileName}`,

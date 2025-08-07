@@ -35,7 +35,7 @@ export class FilePathGuard implements CanActivate {
       ) {
         return false;
       }
-    } catch (error) {
+    } catch () {
       return false;
     }
 

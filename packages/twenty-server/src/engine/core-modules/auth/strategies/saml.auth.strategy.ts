@@ -102,7 +102,7 @@ export class SamlAuthStrategy extends PassportStrategy(
       }
 
       throw new Error();
-    } catch (err) {
+    } catch () {
       throw new AuthException('Invalid state', AuthExceptionCode.INVALID_INPUT);
     }
   }

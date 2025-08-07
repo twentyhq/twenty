@@ -1,8 +1,8 @@
 import {
-  ApolloLink,
-  Observable,
-  Operation,
-  ServerError,
+    ApolloLink,
+    Observable,
+    Operation,
+    ServerError,
 } from '@apollo/client/core';
 import { FetchResult } from '@apollo/client/link/core';
 import { ArgumentNode, DirectiveNode } from 'graphql';
@@ -157,7 +157,7 @@ export class StreamingRestLink extends ApolloLink {
       });
 
       return directive;
-    } catch (error) {
+    } catch {
       return null;
     }
   }
