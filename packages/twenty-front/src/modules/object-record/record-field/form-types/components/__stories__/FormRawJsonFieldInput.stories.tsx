@@ -1,11 +1,11 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { fn, userEvent, waitFor, within } from '@storybook/test';
+import { getUserDevice } from 'twenty-ui/utilities';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormRawJsonFieldInput } from '../FormRawJsonFieldInput';
-import { getUserDevice } from 'twenty-ui/utilities';
 
 const meta: Meta<typeof FormRawJsonFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormRawJsonFieldInput',
@@ -55,6 +55,9 @@ export const Readonly: Story = {
     const editor = await waitFor(() => {
       const editor = canvasElement.querySelector('.ProseMirror > p');
       expect(editor).toBeVisible();
+      if (!editor) {
+        throw new Error('Editor element not found');
+      }
       return editor;
     });
 
@@ -82,6 +85,9 @@ export const SaveValidJson: Story = {
     const editor = await waitFor(() => {
       const editor = canvasElement.querySelector('.ProseMirror > p');
       expect(editor).toBeVisible();
+      if (!editor) {
+        throw new Error('Editor element not found');
+      }
       return editor;
     });
 
@@ -102,6 +108,9 @@ export const SaveValidMultilineJson: Story = {
     const editor = await waitFor(() => {
       const editor = canvasElement.querySelector('.ProseMirror > p');
       expect(editor).toBeVisible();
+      if (!editor) {
+        throw new Error('Editor element not found');
+      }
       return editor;
     });
 
@@ -127,6 +136,9 @@ export const MultilineWithDefaultValue: Story = {
     const editor = await waitFor(() => {
       const editor = canvasElement.querySelector('.ProseMirror > p');
       expect(editor).toBeVisible();
+      if (!editor) {
+        throw new Error('Editor element not found');
+      }
       return editor;
     });
 
@@ -147,6 +159,9 @@ export const DoesNotIgnoreInvalidJson: Story = {
     const editor = await waitFor(() => {
       const editor = canvasElement.querySelector('.ProseMirror > p');
       expect(editor).toBeVisible();
+      if (!editor) {
+        throw new Error('Editor element not found');
+      }
       return editor;
     });
 
@@ -198,6 +213,9 @@ export const InsertVariableInTheMiddleOnTextInput: Story = {
     const editor = await waitFor(() => {
       const editor = canvasElement.querySelector('.ProseMirror > p');
       expect(editor).toBeVisible();
+      if (!editor) {
+        throw new Error('Editor element not found');
+      }
       return editor;
     });
 
@@ -243,6 +261,9 @@ export const CanUseVariableAsObjectProperty: Story = {
     const editor = await waitFor(() => {
       const editor = canvasElement.querySelector('.ProseMirror > p');
       expect(editor).toBeVisible();
+      if (!editor) {
+        throw new Error('Editor element not found');
+      }
       return editor;
     });
 
@@ -274,6 +295,9 @@ export const ClearField: Story = {
     const editor = await waitFor(() => {
       const editor = canvasElement.querySelector('.ProseMirror > p');
       expect(editor).toBeVisible();
+      if (!editor) {
+        throw new Error('Editor element not found');
+      }
       return editor;
     });
 
@@ -300,6 +324,9 @@ export const DoesNotBreakWhenUserInsertsNewlineInJsonString: Story = {
     const editor = await waitFor(() => {
       const editor = canvasElement.querySelector('.ProseMirror > p');
       expect(editor).toBeVisible();
+      if (!editor) {
+        throw new Error('Editor element not found');
+      }
       return editor;
     });
 
@@ -320,6 +347,9 @@ export const AcceptsJsonEncodedNewline: Story = {
     const editor = await waitFor(() => {
       const editor = canvasElement.querySelector('.ProseMirror > p');
       expect(editor).toBeVisible();
+      if (!editor) {
+        throw new Error('Editor element not found');
+      }
       return editor;
     });
 
@@ -355,6 +385,9 @@ export const HasHistory: Story = {
     const editor = await waitFor(() => {
       const editor = canvasElement.querySelector('.ProseMirror > p');
       expect(editor).toBeVisible();
+      if (!editor) {
+        throw new Error('Editor element not found');
+      }
       return editor;
     });
 

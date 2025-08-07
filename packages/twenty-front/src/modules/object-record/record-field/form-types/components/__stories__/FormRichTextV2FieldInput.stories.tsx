@@ -1,11 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
 import {
-  expect,
-  fn,
-  userEvent,
-  waitFor,
-  waitForElementToBeRemoved,
-  within,
+    expect,
+    fn,
+    userEvent,
+    waitFor,
+    waitForElementToBeRemoved,
+    within,
 } from '@storybook/test';
 import { getUserDevice } from 'twenty-ui/utilities';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -68,10 +68,15 @@ export const WithVariable: Story = {
       const editor = canvasElement.querySelector('.ProseMirror > p');
 
       expect(editor).toBeVisible();
-
+      if (!editor) {
+        throw new Error('Editor element not found');
+      }
       return editor;
     });
 
+    if (!editor) {
+      throw new Error('Editor element not found');
+    }
     await userEvent.click(editor);
 
     const addVariableButton = await canvas.findByRole('button', {
@@ -110,7 +115,9 @@ export const WithDeletableVariable: Story = {
       const editor = canvasElement.querySelector('.ProseMirror > p');
 
       expect(editor).toBeVisible();
-
+      if (!editor) {
+        throw new Error('Editor element not found');
+      }
       return editor;
     });
 
@@ -157,6 +164,9 @@ export const Disabled: Story = {
     const editor = await waitFor(() => {
       const editor = canvasElement.querySelector('.ProseMirror > p');
       expect(editor).toBeVisible();
+      if (!editor) {
+        throw new Error('Editor element not found');
+      }
       return editor;
     });
 
@@ -188,7 +198,9 @@ export const DisabledWithVariable: Story = {
       const editor = canvasElement.querySelector('.ProseMirror > p');
 
       expect(editor).toBeVisible();
-
+      if (!editor) {
+        throw new Error('Editor element not found');
+      }
       return editor;
     });
 
@@ -228,6 +240,9 @@ export const HasHistory: Story = {
     const editor = await waitFor(() => {
       const editor = canvasElement.querySelector('.ProseMirror > p');
       expect(editor).toBeVisible();
+      if (!editor) {
+        throw new Error('Editor element not found');
+      }
       return editor;
     });
 

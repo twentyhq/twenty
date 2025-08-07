@@ -1,17 +1,17 @@
 import { Meta, StoryObj } from '@storybook/react';
 import {
-  expect,
-  fn,
-  userEvent,
-  waitFor,
-  waitForElementToBeRemoved,
-  within,
+    expect,
+    fn,
+    userEvent,
+    waitFor,
+    waitForElementToBeRemoved,
+    within,
 } from '@storybook/test';
+import { getUserDevice } from 'twenty-ui/utilities';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormTextFieldInput } from '../FormTextFieldInput';
-import { getUserDevice } from 'twenty-ui/utilities';
 
 const meta: Meta<typeof FormTextFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormTextFieldInput',
@@ -164,6 +164,9 @@ export const Disabled: Story = {
     const editor = await waitFor(() => {
       const editor = canvasElement.querySelector('.ProseMirror > p');
       expect(editor).toBeVisible();
+      if (!editor) {
+        throw new Error('Editor element not found');
+      }
       return editor;
     });
 
@@ -191,6 +194,9 @@ export const DisabledWithVariable: Story = {
     const editor = await waitFor(() => {
       const editor = canvasElement.querySelector('.ProseMirror > p');
       expect(editor).toBeVisible();
+      if (!editor) {
+        throw new Error('Editor element not found');
+      }
       return editor;
     });
 
@@ -230,6 +236,9 @@ export const HasHistory: Story = {
     const editor = await waitFor(() => {
       const editor = canvasElement.querySelector('.ProseMirror > p');
       expect(editor).toBeVisible();
+      if (!editor) {
+        throw new Error('Editor element not found');
+      }
       return editor;
     });
 

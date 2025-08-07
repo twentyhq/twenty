@@ -121,7 +121,7 @@ const ALL_STEPS = [
   },
 ] satisfies WorkflowDiagramStepNodeData[];
 
-export const Catalog: CatalogStory<Story, WrapperProps> = {
+export const Catalog: CatalogStory<Story, typeof WorkflowDiagramStepNodeEditableContent> = {
   args: {
     onDelete: fn(),
   },

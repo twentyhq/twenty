@@ -16,9 +16,9 @@ import { SetRecoilState } from 'recoil';
 import { Avatar, IconChevronLeft } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {
-  MenuItem,
-  MenuItemMultiSelectAvatar,
-  MenuItemSelectAvatar,
+    MenuItem,
+    MenuItemMultiSelectAvatar,
+    MenuItemSelectAvatar,
 } from 'twenty-ui/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -216,7 +216,7 @@ const FakeCheckableMenuItemList = ({ hasAvatar }: { hasAvatar?: boolean }) => {
   );
 };
 
-const playInteraction: PlayFunction<any, any> = async () => {
+const playInteraction: PlayFunction = async () => {
   const canvas = within(document.body);
 
   const buttons = await canvas.findAllByRole('button');

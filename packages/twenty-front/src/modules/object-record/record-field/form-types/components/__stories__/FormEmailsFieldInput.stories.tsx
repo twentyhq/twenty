@@ -71,6 +71,9 @@ export const Disabled: Story = {
     const editor = await waitFor(() => {
       const editor = canvasElement.querySelector('.ProseMirror > p');
       expect(editor).toBeVisible();
+      if (!editor) {
+        throw new Error('Editor element not found');
+      }
       return editor;
     });
 

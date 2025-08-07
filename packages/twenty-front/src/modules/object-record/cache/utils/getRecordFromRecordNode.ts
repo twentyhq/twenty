@@ -27,7 +27,7 @@ export const getRecordFromRecordNode = <T extends ObjectRecord>({
               fieldName,
               getRecordsFromRecordConnection({ recordConnection: value }),
             ]
-          : [fieldName, getRecordFromRecordNode({ recordNode: value })];
+          : [fieldName, getRecordFromRecordNode({ recordNode: value }) as ObjectRecord];
       }),
     ),
     // Only adds `id` and `__typename` if they exist.

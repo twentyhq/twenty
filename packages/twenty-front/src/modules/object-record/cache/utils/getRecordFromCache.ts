@@ -65,7 +65,7 @@ export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
     return null;
   }
 
-  return getRecordFromRecordNode<T>({
+  return getRecordFromRecordNode({
     recordNode: record,
-  });
+  }) as T;
 };
