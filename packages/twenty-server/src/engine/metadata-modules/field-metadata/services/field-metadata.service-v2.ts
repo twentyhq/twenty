@@ -21,7 +21,8 @@ import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/fla
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { addFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps.util';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/extract-flat-object-metadata-maps-out-of-flat-object-metadata-maps.util';
+import { fromFlatObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-maps-to-flat-object-metadatas.util';
 import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-with-flat-field-maps-to-flat-object-metadatas.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
@@ -181,19 +182,20 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
       ),
     );
     // We need to create an extract sub object metadatamaps and then tranpsile them to flat object metadatas
-    const filterFlatObjectMetadatasByImpactedIds = (
-      flatObjectMetadatas: FlatObjectMetadata[],
-    ) =>
-      flatObjectMetadatas.filter((flatObjectMetadata) =>
-        impactedObjectMetadataIds.includes(flatObjectMetadata.id),
-      );
+
     const workspaceMigration = this.workspaceMigrationBuilderV2.build({
       objectMetadataFromToInputs: {
-        from: filterFlatObjectMetadatasByImpactedIds(
-          existingFlatObjectMetadatas,
+        from: fromFlatObjectMetadataMapsToFlatObjectMetadatas(
+          extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow({
+            flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+            objectMetadataIds: impactedObjectMetadataIds,
+          }),
         ),
-        to: filterFlatObjectMetadatasByImpactedIds(
-          optimisticFlatObjectMetadataMaps,
+        to: fromFlatObjectMetadataMapsToFlatObjectMetadatas(
+          extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow({
+            flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+            objectMetadataIds: impactedObjectMetadataIds,
+          }),
         ),
       },
       inferDeletionFromMissingObjectFieldIndex: false,
