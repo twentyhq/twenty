@@ -11,6 +11,8 @@ import {
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import {
@@ -38,6 +40,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { BeforeUpdateOneField } from 'src/engine/metadata-modules/field-metadata/hooks/before-update-one-field.hook';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
+import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
 import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
 import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-object-metadata-entity-to-object-metadata-dto.util';
@@ -57,6 +60,8 @@ export class FieldMetadataResolver {
   constructor(
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly beforeUpdateOneField: BeforeUpdateOneField<UpdateFieldInput>,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly fieldMetadataServiceV2: FieldMetadataServiceV2,
   ) {}
 
   @UseGuards(SettingsPermissionsGuard(PermissionFlagType.DATA_MODEL))
@@ -103,7 +108,7 @@ export class FieldMetadataResolver {
     @Args('input') input: DeleteOneFieldInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    if (!workspaceId) {
+    if (!isDefined(workspaceId)) {
       throw new ForbiddenError('Could not retrieve workspace ID');
     }
 
@@ -114,11 +119,11 @@ export class FieldMetadataResolver {
         },
       });
 
-    if (!fieldMetadata) {
+    if (!isDefined(fieldMetadata)) {
       throw new ValidationError('Field does not exist');
     }
 
-    if (!fieldMetadata.isCustom) {
+    if (fieldMetadata.isCustom) {
       throw new ValidationError("Standard Fields can't be deleted");
     }
 
@@ -127,6 +132,18 @@ export class FieldMetadataResolver {
     }
 
     try {
+      const isWorkspaceMigrationV2Enabled =
+        await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+          workspaceId,
+        );
+
+      if (isWorkspaceMigrationV2Enabled) {
+        return this.fieldMetadataServiceV2.deleteOneField({
+          deleteOneFieldInput: input,
+          workspaceId,
+        });
+      }
       return await this.fieldMetadataService.deleteOneField(input, workspaceId);
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(error);

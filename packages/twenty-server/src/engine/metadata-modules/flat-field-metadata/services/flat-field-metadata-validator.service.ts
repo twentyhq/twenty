@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { t } from '@lingui/core/macro';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
@@ -37,6 +38,74 @@ export class FlatFieldMetadataValidatorService {
   constructor(
     private readonly flatFieldMetadataTypeValidatorService: FlatFieldMetadataTypeValidatorService,
   ) {}
+
+  validateFlatFieldMetadataDeletion({
+    existingFlatObjectMetadataMaps,
+    flatFieldMetadataToDelete,
+  }: {
+    flatFieldMetadataToDelete: FlatFieldMetadata | undefined;
+    existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+  }): FailedFlatFieldMetadataValidationExceptions[] {
+    if (!isDefined(flatFieldMetadataToDelete)) {
+      return [
+        new FieldMetadataException(
+          'field to delete not found',
+          FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+        ),
+      ];
+    }
+
+    const flatObjectMetadataWithFieldMaps =
+      existingFlatObjectMetadataMaps.byId[
+        flatFieldMetadataToDelete.objectMetadataId
+      ];
+
+    if (!isDefined(flatObjectMetadataWithFieldMaps)) {
+      return [
+        new FieldMetadataException(
+          'field to delete object metadata not found',
+          FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        ),
+      ];
+    }
+
+    const errors: FailedFlatFieldMetadataValidationExceptions[] = [];
+
+    if (flatFieldMetadataToDelete.isCustom) {
+      errors.push(
+        new FieldMetadataException(
+          "Standard Fields can't be deleted",
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        ),
+      );
+    }
+
+    if (flatFieldMetadataToDelete.isActive) {
+      errors.push(
+        new FieldMetadataException(
+          "Active fields can't be deleted",
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        ),
+      );
+    }
+
+    if (
+      flatObjectMetadataWithFieldMaps.labelIdentifierFieldMetadataId ===
+      flatFieldMetadataToDelete.id
+    ) {
+      errors.push(
+        new FieldMetadataException(
+          'Cannot delete, please update the label identifier field first',
+          FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+          {
+            userFriendlyMessage: t`Cannot delete, please update the label identifier field first`,
+          },
+        ),
+      );
+    }
+
+    return errors;
+  }
 
   async validateOneFlatFieldMetadata<
     T extends FieldMetadataType = FieldMetadataType,

@@ -3,11 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
+} from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { MultipleMetadataValidationErrors } from 'src/engine/core-modules/error/multiple-metadata-validation-errors';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
@@ -23,6 +27,7 @@ import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/
 import { addFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps.util';
 import { extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/extract-flat-object-metadata-maps-out-of-flat-object-metadata-maps-or-throw.util';
 import { extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/extract-flat-object-metadata-maps-out-of-flat-object-metadata-maps.util';
+import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFielId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
 import { fromFlatObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-maps-to-flat-object-metadatas.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
@@ -54,6 +59,48 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
     }
 
     return createdFieldMetadata;
+  }
+
+  public async deleteOneField({
+    deleteOneFieldInput: rawDeleteOneInput,
+    workspaceId,
+  }: {
+    deleteOneFieldInput: DeleteOneFieldInput;
+    workspaceId: string;
+  }) {
+    const { id: fieldMetadataToDeleteId } =
+      trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
+        rawDeleteOneInput,
+        ['id'],
+      );
+
+    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
+      await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
+        {
+          workspaceId,
+        },
+      );
+
+    const flatFieldMetadataToDelete =
+      findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFielId({
+        fieldMetadataId: fieldMetadataToDeleteId,
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      });
+
+    const validationErrors =
+      this.flatFieldMetadataValidatorService.validateFlatFieldMetadataDeletion({
+        existingFlatObjectMetadataMaps,
+        flatFieldMetadataToDelete,
+      });
+
+    if (validationErrors.length > 0) {
+      throw new MultipleMetadataValidationErrors(
+        validationErrors,
+        validationErrors.length > 1
+          ? 'Multiple validation errors occurred while deleting field'
+          : 'A validation error occurred while deleting field',
+      );
+    }
   }
 
   private computeOtherFlatObjectMetadataMapsToValidate({
