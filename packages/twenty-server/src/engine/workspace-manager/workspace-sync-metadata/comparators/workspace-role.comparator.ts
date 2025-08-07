@@ -22,7 +22,6 @@ const rolePropertiesToIgnore = [
   'permissionFlags',
   'objectPermissions',
   'fieldPermissions',
-  'uniqueIdentifier',
 ];
 
 @Injectable()
@@ -37,7 +36,7 @@ export class WorkspaceRoleComparator {
       shouldIgnoreProperty: (property) =>
         rolePropertiesToIgnore.includes(property),
       keyFactory(role) {
-        return role.id || role.label;
+        return role.uniqueIdentifier || role.id || role.label;
       },
     });
 
@@ -45,7 +44,7 @@ export class WorkspaceRoleComparator {
       shouldIgnoreProperty: (property) =>
         rolePropertiesToIgnore.includes(property),
       keyFactory(role) {
-        return role.id;
+        return role.standardId || role.id;
       },
     });
 
@@ -55,7 +54,9 @@ export class WorkspaceRoleComparator {
       switch (difference.type) {
         case 'CREATE': {
           const standardRole = standardRoles.find(
-            (role) => (role.id || role.label) === difference.path[0],
+            (role) =>
+              (role.uniqueIdentifier || role.id || role.label) ===
+              difference.path[0],
           );
 
           if (standardRole) {
@@ -67,9 +68,13 @@ export class WorkspaceRoleComparator {
           break;
         }
         case 'CHANGE': {
-          const roleId = difference.path[0];
-          const existingRole = existingRoles.find((role) => role.id === roleId);
-          const standardRole = standardRoles.find((role) => role.id === roleId);
+          const uniqueIdentifier = difference.path[0];
+          const existingRole = existingRoles.find(
+            (role) => (role.standardId || role.id) === uniqueIdentifier,
+          );
+          const standardRole = standardRoles.find(
+            (role) => (role.uniqueIdentifier || role.id) === uniqueIdentifier,
+          );
 
           if (existingRole && standardRole) {
             results.push({
