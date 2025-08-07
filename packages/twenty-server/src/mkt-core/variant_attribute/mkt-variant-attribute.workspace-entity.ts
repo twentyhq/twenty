@@ -22,9 +22,11 @@ import {
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { MktAttributeWorkspaceEntity } from 'src/mkt-core/attribute/mkt-attribute.workspace-entity';
-import { MKT_VARIANT_ATTRIBUTE_FIELD_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-field-ids';
-import { MKT_OBJECT_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-object-ids';
+import { MKT_VARIANT_ATTRIBUTE_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
+import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { MktVariantWorkspaceEntity } from 'src/mkt-core/variant/mkt-variant.workspace-entity';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const TABLE_VARIANT_ATTRIBUTE_NAME = 'mktVariantAttribute';
 const NAME_FIELD_NAME = 'name';
@@ -36,8 +38,8 @@ const SEARCH_FIELDS_FOR_MKT_VARIANT_ATTRIBUTE: FieldTypeAndNameMetadata[] = [
   standardId: MKT_OBJECT_IDS.mktVariantAttribute,
   namePlural: `${TABLE_VARIANT_ATTRIBUTE_NAME}s`,
   labelSingular: msg`Variant Attribute`,
-  labelPlural: msg`Variant Attributes`,
-  description: msg`Gán thuộc tính cho biến thể sản phẩm`,
+  labelPlural: msg`Variant Attributes (Product)`,
+  description: msg`Assign attributes to variants`,
   icon: 'IconListDetails',
   labelIdentifierStandardId: MKT_VARIANT_ATTRIBUTE_FIELD_IDS.name,
 })
@@ -102,6 +104,36 @@ export class MktVariantAttributeWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('mktAttribute')
   mktAttributeId: string | null;
+
+  @WorkspaceRelation({
+    standardId: MKT_VARIANT_ATTRIBUTE_FIELD_IDS.accountOwner,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Account Owner`,
+    description: msg`Your team member responsible for managing the variant attribute`,
+    icon: 'IconUserCircle',
+    inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
+    inverseSideFieldKey: 'accountOwnerForMktVariantAttributes',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  accountOwner: Relation<WorkspaceMemberWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('accountOwner')
+  accountOwnerId: string | null;
+
+  @WorkspaceRelation({
+    standardId: MKT_VARIANT_ATTRIBUTE_FIELD_IDS.timelineActivities,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Timeline Activities`,
+    description: msg`Timeline Activities linked to the variant attribute`,
+    icon: 'IconIconTimelineEvent',
+    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    inverseSideFieldKey: 'mktVariantAttribute',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
+  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: MKT_VARIANT_ATTRIBUTE_FIELD_IDS.searchVector,

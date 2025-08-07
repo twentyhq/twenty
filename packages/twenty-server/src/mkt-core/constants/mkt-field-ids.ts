@@ -47,6 +47,8 @@ export const MKT_VALUE_FIELD_IDS = {
   createdBy: 'f5a6b7c8-9f12-4e56-8acd-5678901234fe',
   // TODO: check if this can be deleted
   mktAttribute: 'c2d3e4f5-3f89-4b23-8bcd-2345678901fb',
+  accountOwner: '140ac958-4c2e-4ccf-96b9-e05f3fb98055',
+  timelineActivities: '0c31bdd6-3c1e-4e37-9e5f-df7fcff44c3a',
   searchVector: 'fa2199eb-2793-425c-9075-2b1b3bfae5dd',
 };
 
@@ -62,6 +64,8 @@ export const MKT_VARIANT_FIELD_IDS = {
   // TODO: check if this can be deleted
   mktProduct: '7cfa6d7b-db26-4fb5-9beb-3ec348f9fed7',
   mktVariantAttribute: 'b57069ab-7e21-4823-a61f-8de0726bfbe1',
+  accountOwner: '60914403-db18-454f-a11c-7b8387539edf',
+  timelineActivities: 'af6607e3-b106-44e9-9c3a-483a7ee342f3',
   searchVector: '1b50d19d-459d-466f-8560-c1ec12470936',
 };
 
@@ -72,6 +76,8 @@ export const MKT_VARIANT_ATTRIBUTE_FIELD_IDS = {
   // TODO: check if this can be deleted
   mktVariant: 'fa8e0243-fd39-4bc2-a4ea-d27922bb99f7',
   mktAttribute: 'd2b08210-69ab-4809-a73c-9b3a7898e037',
+  accountOwner: '94f09209-0fc6-41c8-aed7-29e882f4551b',
+  timelineActivities: '9a2679ed-def4-4b4e-818c-28e5ae723bf0',
   searchVector: '4d4928e3-c0f1-4bc7-a777-a051f54f0e3a',
 };
 
@@ -79,10 +85,17 @@ export const MKT_VARIANT_ATTRIBUTE_FIELD_IDS = {
 export const TIMELINE_ACTIVITY_MKT_FIELD_IDS = {
   mktCustomer: 'e42c00cb-dcc8-4682-ab98-2fa5f5c03f08',
   mktProduct: 'fb70cd51-fca9-414c-ac2e-41c00fcb1d45',
+  mktAttribute: '18a51a5f-122f-4536-a4c5-cc4672664f93',
+  mktVariant: 'b6ecb5e1-14c8-4aaa-b715-e26ed4e81e62',
+  mktValue: '9022a8c1-5948-473e-a361-1ddfb017a4f2',
+  mktVariantAttribute: 'f656fa33-96e7-42a0-8f4f-f35dfcb0acae',
 };
 
 //EXTENDS FROM WORKSPACE_MEMBER_STANDARD_FIELD_IDS
 export const WORKSPACE_MEMBER_MKT_FIELD_IDS = {
   accountOwnerForMktProducts: 'fa7e06e6-3d12-4185-928a-db45e0257b95',
   accountOwnerForMktAttributes: '84954c00-5b31-46ab-9b6c-e95b81ae8d94',
+  accountOwnerForMktVariants: '27b1e5ab-980b-4c3c-8168-c8ed77e86363',
+  accountOwnerForMktValues: '7bdf395c-9f67-4fc9-9149-e58ba5c135de',
+  accountOwnerForMktVariantAttributes: '6cd393a4-db2a-4cc6-b444-8e9ca99f93ec',
 };
