@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import isEmpty from 'lodash.isempty';
 import {
-  ObjectsPermissions,
+  ObjectsPermissionsDeprecated,
   RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -38,7 +38,7 @@ export type OperationType =
 type ValidateOperationIsPermittedOrThrowArgs = {
   entityName: string;
   operationType: OperationType;
-  objectsPermissions: ObjectsPermissions;
+  objectsPermissions: ObjectsPermissionsDeprecated;
   objectMetadataMaps: ObjectMetadataMaps;
   selectedColumns: string[] | '*';
   isFieldPermissionsEnabled?: boolean;
@@ -177,7 +177,7 @@ export const validateOperationIsPermittedOrThrow = ({
 
 type ValidateQueryIsPermittedOrThrowArgs = {
   expressionMap: QueryExpressionMap;
-  objectsPermissions: ObjectsPermissions;
+  objectsPermissions: ObjectsPermissionsDeprecated;
   objectMetadataMaps: ObjectMetadataMaps;
   shouldBypassPermissionChecks: boolean;
   isFieldPermissionsEnabled?: boolean;

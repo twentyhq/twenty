@@ -1,5 +1,5 @@
 import isEmpty from 'lodash.isempty';
-import { ObjectsPermissions } from 'twenty-shared/types';
+import { ObjectsPermissionsDeprecated } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   DeleteResult,
@@ -58,7 +58,7 @@ import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/g
 
 type PermissionOptions = {
   shouldBypassPermissionChecks?: boolean;
-  objectRecordsPermissions?: ObjectsPermissions;
+  objectRecordsPermissions?: ObjectsPermissionsDeprecated;
 };
 
 export class WorkspaceEntityManager extends EntityManager {
@@ -130,7 +130,7 @@ export class WorkspaceEntityManager extends EntityManager {
     queryRunner?: QueryRunner,
     options: {
       shouldBypassPermissionChecks?: boolean;
-      objectRecordsPermissions?: ObjectsPermissions;
+      objectRecordsPermissions?: ObjectsPermissionsDeprecated;
     } = {
       shouldBypassPermissionChecks: false,
       objectRecordsPermissions: {},
@@ -196,7 +196,7 @@ export class WorkspaceEntityManager extends EntityManager {
     conflictPathsOrOptions: string[] | UpsertOptions<Entity>,
     permissionOptions?: {
       shouldBypassPermissionChecks?: boolean;
-      objectRecordsPermissions?: ObjectsPermissions;
+      objectRecordsPermissions?: ObjectsPermissionsDeprecated;
     },
     selectedColumns: string[] | '*' = '*',
   ): Promise<InsertResult> {
@@ -385,7 +385,7 @@ export class WorkspaceEntityManager extends EntityManager {
     operationType: OperationType;
     permissionOptions?: {
       shouldBypassPermissionChecks?: boolean;
-      objectRecordsPermissions?: ObjectsPermissions;
+      objectRecordsPermissions?: ObjectsPermissionsDeprecated;
     };
     selectedColumns: string[];
     updatedColumns?: string[];

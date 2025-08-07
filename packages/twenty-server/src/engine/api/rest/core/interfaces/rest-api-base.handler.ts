@@ -6,7 +6,6 @@ import isEmpty from 'lodash.isempty';
 import {
   FieldMetadataType,
   RestrictedFieldsPermissions,
-  RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { In, ObjectLiteral } from 'typeorm';
