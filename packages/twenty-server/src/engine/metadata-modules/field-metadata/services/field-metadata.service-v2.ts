@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { MultipleMetadataValidationErrors } from 'src/engine/core-modules/error/multiple-metadata-validation-errors';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
@@ -44,7 +44,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
   override async createOne(
     fieldMetadataInput: CreateFieldInput,
   ): Promise<FieldMetadataEntity> {
-    const [createdFieldMetadata] = await this.createMany([fieldMetadataInput]);
+    const [createdFieldMetadata] = await this.createMany([fieldMetadataInput]); // Incomplete when creating relation field
 
     if (!isDefined(createdFieldMetadata)) {
       throw new FieldMetadataException(
@@ -217,8 +217,17 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
 
       await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
 
-      // TODO refactor once the runner has been refactored to return created entities
-      return [];
+      // In the best of the world could consume runner returned value instead of searching in db here
+      return this.fieldMetadataRepository.find({
+        where: {
+          id: In(
+            flatFieldMetadatasToCreate.map(
+              (flatFieldMetadata) => flatFieldMetadata.id,
+            ),
+          ),
+          workspaceId,
+        },
+      });
     } catch {
       // TODO prastoin We should pass the internal error here
       throw new FieldMetadataException(
