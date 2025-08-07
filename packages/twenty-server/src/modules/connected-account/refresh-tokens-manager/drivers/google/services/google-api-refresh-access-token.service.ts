@@ -4,6 +4,7 @@ import axios from 'axios';
 import { z } from 'zod';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { ConnectedAccountTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 
 export type GoogleTokens = {
   accessToken: string;
@@ -20,7 +21,9 @@ interface GoogleRefreshTokenResponse {
 export class GoogleAPIRefreshAccessTokenService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  async refreshAccessToken(refreshToken: string): Promise<GoogleTokens> {
+  async refreshAccessToken(
+    refreshToken: string,
+  ): Promise<ConnectedAccountTokens> {
     const response = await axios.post<GoogleRefreshTokenResponse>(
       'https://oauth2.googleapis.com/token',
       {
@@ -42,6 +45,7 @@ export class GoogleAPIRefreshAccessTokenService {
 
     return {
       accessToken: response.data.access_token,
+      refreshToken,
     };
   }
 }

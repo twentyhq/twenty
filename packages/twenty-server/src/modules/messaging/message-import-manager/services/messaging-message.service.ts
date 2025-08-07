@@ -305,7 +305,14 @@ export class MessagingMessageService {
         // this means that we have to channels that have imported messages separately and that this message is the first connection between the two channels
         // we should merge messageThreads
         this.logger.warn(
-          `Message thread id is different for the same message header id and message thread external id, this means that we have to channels that have imported messages separately and that this message is the first connection between the two channels, we should merge messageThreads`,
+          `Message ExternalId: ${message.externalId} /
+          Message HeaderId: ${message.headerMessageId} /
+          Message Thread ExternalId: ${message.messageThreadExternalId} /
+          Message Thread Id in DB: ${existingThreadIdInDBIfMessageIsExistingInDB} /
+          Message Thread Id in Message Channel Message Association: ${existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageAssociation} /
+          Message Subject: ${message.subject} /
+          Message Received At: ${message.receivedAt} /
+          Thread inter channel detected`,
         );
       }
 

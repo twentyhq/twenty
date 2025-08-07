@@ -79,11 +79,6 @@ export class MessagingMessageListFetchJob {
         return;
       }
 
-      await this.messagingAccountAuthenticationService.validateAndPrepareAuthentication(
-        messageChannel,
-        workspaceId,
-      );
-
       switch (messageChannel.syncStage) {
         case MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING:
         case MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING: // DEPRECATED

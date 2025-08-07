@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { ConnectedAccountRefreshAccessTokenExceptionCode } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
-import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
+import {
+  ConnectedAccountRefreshTokensService,
+  ConnectedAccountTokens,
+} from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
@@ -15,6 +18,9 @@ import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/ser
 
 @Injectable()
 export class MessagingAccountAuthenticationService {
+  private readonly logger = new Logger(
+    MessagingAccountAuthenticationService.name,
+  );
   constructor(
     private readonly connectedAccountRefreshTokensService: ConnectedAccountRefreshTokensService,
     private readonly messagingMonitoringService: MessagingMonitoringService,
@@ -28,7 +34,11 @@ export class MessagingAccountAuthenticationService {
       messageChannel.connectedAccount.provider ===
       ConnectedAccountProvider.IMAP_SMTP_CALDAV
     ) {
-      await this.validateImapCredentials(messageChannel, workspaceId);
+      await this.validateImapCredentialsForConnectedAccount(
+        messageChannel.connectedAccount,
+        workspaceId,
+        messageChannel.id,
+      );
 
       return;
     }
@@ -41,11 +51,11 @@ export class MessagingAccountAuthenticationService {
     );
   }
 
-  async validateConnectedAccountAuthentication(
+  async validateAndRefreshConnectedAccountAuthentication(
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
     messageChannelId: string,
-  ): Promise<void> {
+  ): Promise<ConnectedAccountTokens> {
     if (
       connectedAccount.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
       isDefined(connectedAccount.connectionParameters?.IMAP)
@@ -56,10 +66,13 @@ export class MessagingAccountAuthenticationService {
         messageChannelId,
       );
 
-      return;
+      return {
+        accessToken: '',
+        refreshToken: '',
+      };
     }
 
-    await this.refreshAccessTokenForNonImapProvider(
+    return await this.refreshAccessTokenForNonImapProvider(
       connectedAccount,
       workspaceId,
       messageChannelId,
@@ -72,7 +85,16 @@ export class MessagingAccountAuthenticationService {
     workspaceId: string,
     messageChannelId: string,
   ): Promise<void> {
-    if (!connectedAccount.connectionParameters) {
+    let isValid = true;
+
+    if (
+      !isDefined(connectedAccount.connectionParameters) ||
+      !isDefined(connectedAccount.connectionParameters?.IMAP)
+    ) {
+      isValid = false;
+    }
+
+    if (!isValid) {
       await this.messagingMonitoringService.track({
         eventName: 'messages_import.error.missing_imap_credentials',
         workspaceId,
@@ -87,41 +109,17 @@ export class MessagingAccountAuthenticationService {
     }
   }
 
-  private async validateImapCredentials(
-    messageChannel: MessageChannelWorkspaceEntity,
-    workspaceId: string,
-  ): Promise<void> {
-    if (
-      !isDefined(messageChannel.connectedAccount.connectionParameters?.IMAP)
-    ) {
-      await this.messagingMonitoringService.track({
-        eventName: 'message_list_fetch_job.error.missing_imap_credentials',
-        workspaceId,
-        connectedAccountId: messageChannel.connectedAccount.id,
-        messageChannelId: messageChannel.id,
-      });
-
-      throw {
-        code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-        message: 'Missing IMAP credentials in connectionParameters',
-      };
-    }
-  }
-
   private async refreshAccessTokenForNonImapProvider(
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
     messageChannelId: string,
     connectedAccountId: string,
-  ): Promise<string> {
+  ): Promise<ConnectedAccountTokens> {
     try {
-      const accessToken =
-        await this.connectedAccountRefreshTokensService.refreshAndSaveTokens(
-          connectedAccount,
-          workspaceId,
-        );
-
-      return accessToken;
+      return await this.connectedAccountRefreshTokensService.refreshAndSaveTokens(
+        connectedAccount,
+        workspaceId,
+      );
     } catch (error) {
       switch (error.code) {
         case ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR:
