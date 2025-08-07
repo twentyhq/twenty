@@ -76,6 +76,13 @@ describe('ViewFilterGroupService', () => {
           deletedAt: expect.anything(),
         },
         order: { positionInViewFilterGroup: 'ASC' },
+        relations: [
+          'workspace',
+          'view',
+          'viewFilters',
+          'parentViewFilterGroup',
+          'childViewFilterGroups',
+        ],
       });
       expect(result).toEqual(expectedViewFilterGroups);
     });
@@ -103,6 +110,13 @@ describe('ViewFilterGroupService', () => {
           deletedAt: expect.anything(),
         },
         order: { positionInViewFilterGroup: 'ASC' },
+        relations: [
+          'workspace',
+          'view',
+          'viewFilters',
+          'parentViewFilterGroup',
+          'childViewFilterGroups',
+        ],
       });
       expect(result).toEqual(expectedViewFilterGroups);
     });
@@ -125,6 +139,13 @@ describe('ViewFilterGroupService', () => {
           workspaceId,
           deletedAt: expect.anything(),
         },
+        relations: [
+          'workspace',
+          'view',
+          'viewFilters',
+          'parentViewFilterGroup',
+          'childViewFilterGroups',
+        ],
       });
       expect(result).toEqual(mockViewFilterGroup);
     });

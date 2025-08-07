@@ -75,6 +75,7 @@ describe('ViewFilterService', () => {
           deletedAt: expect.anything(),
         },
         order: { positionInViewFilterGroup: 'ASC' },
+        relations: ['workspace', 'view', 'viewFilterGroup'],
       });
       expect(result).toEqual(expectedViewFilters);
     });
@@ -99,6 +100,7 @@ describe('ViewFilterService', () => {
           deletedAt: expect.anything(),
         },
         order: { positionInViewFilterGroup: 'ASC' },
+        relations: ['workspace', 'view', 'viewFilterGroup'],
       });
       expect(result).toEqual(expectedViewFilters);
     });
@@ -121,6 +123,7 @@ describe('ViewFilterService', () => {
           workspaceId,
           deletedAt: expect.anything(),
         },
+        relations: ['workspace', 'view', 'viewFilterGroup'],
       });
       expect(result).toEqual(mockViewFilter);
     });

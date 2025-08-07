@@ -72,6 +72,7 @@ describe('ViewSortService', () => {
           workspaceId,
           deletedAt: expect.anything(),
         },
+        relations: ['workspace', 'view'],
       });
       expect(result).toEqual(expectedViewSorts);
     });
@@ -95,6 +96,7 @@ describe('ViewSortService', () => {
           viewId,
           deletedAt: expect.anything(),
         },
+        relations: ['workspace', 'view'],
       });
       expect(result).toEqual(expectedViewSorts);
     });
@@ -115,6 +117,7 @@ describe('ViewSortService', () => {
           workspaceId,
           deletedAt: expect.anything(),
         },
+        relations: ['workspace', 'view'],
       });
       expect(result).toEqual(mockViewSort);
     });

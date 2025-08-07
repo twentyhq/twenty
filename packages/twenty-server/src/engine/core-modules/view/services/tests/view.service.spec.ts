@@ -80,6 +80,14 @@ describe('ViewService', () => {
           deletedAt: expect.anything(),
         },
         order: { position: 'ASC' },
+        relations: [
+          'workspace',
+          'viewFields',
+          'viewFilters',
+          'viewSorts',
+          'viewGroups',
+          'viewFilterGroups',
+        ],
       });
       expect(result).toEqual(expectedViews);
     });
@@ -105,6 +113,14 @@ describe('ViewService', () => {
           deletedAt: expect.anything(),
         },
         order: { position: 'ASC' },
+        relations: [
+          'workspace',
+          'viewFields',
+          'viewFilters',
+          'viewSorts',
+          'viewGroups',
+          'viewFilterGroups',
+        ],
       });
       expect(result).toEqual(expectedViews);
     });
@@ -125,6 +141,14 @@ describe('ViewService', () => {
           workspaceId,
           deletedAt: expect.anything(),
         },
+        relations: [
+          'workspace',
+          'viewFields',
+          'viewFilters',
+          'viewSorts',
+          'viewGroups',
+          'viewFilterGroups',
+        ],
       });
       expect(result).toEqual(mockView);
     });

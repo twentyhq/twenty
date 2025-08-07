@@ -74,6 +74,7 @@ describe('ViewFieldService', () => {
           deletedAt: expect.anything(),
         },
         order: { position: 'ASC' },
+        relations: ['workspace', 'view'],
       });
       expect(result).toEqual(expectedViewFields);
     });
@@ -98,6 +99,7 @@ describe('ViewFieldService', () => {
           deletedAt: expect.anything(),
         },
         order: { position: 'ASC' },
+        relations: ['workspace', 'view'],
       });
       expect(result).toEqual(expectedViewFields);
     });
@@ -120,6 +122,7 @@ describe('ViewFieldService', () => {
           workspaceId,
           deletedAt: expect.anything(),
         },
+        relations: ['workspace', 'view'],
       });
       expect(result).toEqual(mockViewField);
     });

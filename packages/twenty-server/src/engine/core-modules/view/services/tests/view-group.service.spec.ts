@@ -74,6 +74,7 @@ describe('ViewGroupService', () => {
           deletedAt: expect.anything(),
         },
         order: { position: 'ASC' },
+        relations: ['workspace', 'view'],
       });
       expect(result).toEqual(expectedViewGroups);
     });
@@ -98,6 +99,7 @@ describe('ViewGroupService', () => {
           deletedAt: expect.anything(),
         },
         order: { position: 'ASC' },
+        relations: ['workspace', 'view'],
       });
       expect(result).toEqual(expectedViewGroups);
     });
@@ -120,6 +122,7 @@ describe('ViewGroupService', () => {
           workspaceId,
           deletedAt: expect.anything(),
         },
+        relations: ['workspace', 'view'],
       });
       expect(result).toEqual(mockViewGroup);
     });
