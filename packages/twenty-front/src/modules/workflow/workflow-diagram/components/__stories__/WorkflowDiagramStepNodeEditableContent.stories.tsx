@@ -18,6 +18,10 @@ type WrapperProps = ComponentProps<
   typeof WorkflowDiagramStepNodeEditableContent
 > & { state: ComponentState };
 
+const Wrapper = (_props: WrapperProps) => {
+  return <div></div>;
+};
+
 const meta: Meta<WrapperProps> = {
   title: 'Modules/Workflow/WorkflowDiagramStepNodeEditableContent',
   component: WorkflowDiagramStepNodeEditableContent,
@@ -28,7 +32,7 @@ const meta: Meta<WrapperProps> = {
 
 export default meta;
 
-type Story = StoryObj<WrapperProps>;
+type Story = StoryObj<typeof Wrapper>;
 
 const ALL_STEPS = [
   {
@@ -43,106 +47,85 @@ const ALL_STEPS = [
     },
   },
   {
-    nodeType: 'condition',
+    nodeType: 'trigger',
+    triggerType: 'MANUAL',
+    name: 'Manual',
     hasNextStepIds: true,
-    name: 'Code - Condition',
-    stepId: 'step_1',
+    stepId: 'step1',
     position: {
       x: 0,
-      y: 0,
-    },
-  },
-  {
-    nodeType: 'action',
-    actionType: 'SEND_EMAIL',
-    name: 'Send Email',
-    hasNextStepIds: false,
-    stepId: 'step_2',
-    position: {
-      x: 0,
-      y: 0,
-    },
-  },
-  {
-    nodeType: 'action',
-    actionType: 'CODE',
-    name: 'Code - Action',
-    hasNextStepIds: false,
-    stepId: 'step_3',
-    position: {
-      x: 0,
-      y: 0,
+      y: 150,
     },
   },
   {
     nodeType: 'action',
     actionType: 'CREATE_RECORD',
     name: 'Create Record',
-    hasNextStepIds: false,
-    stepId: 'step_4',
+    hasNextStepIds: true,
+    stepId: 'step2',
     position: {
       x: 0,
-      y: 0,
+      y: 300,
     },
   },
   {
     nodeType: 'action',
     actionType: 'UPDATE_RECORD',
     name: 'Update Record',
-    hasNextStepIds: false,
-    stepId: 'step_5',
+    hasNextStepIds: true,
+    stepId: 'step3',
     position: {
       x: 0,
-      y: 0,
+      y: 450,
     },
   },
   {
     nodeType: 'action',
     actionType: 'DELETE_RECORD',
     name: 'Delete Record',
-    hasNextStepIds: false,
-    stepId: 'step_6',
-    position: {
-      x: 0,
-      y: 0,
-    },
-  },
-  {
-    nodeType: 'condition',
     hasNextStepIds: true,
-    name: 'A very long condition name that tests the way the name is rendered',
-    stepId: 'step_7',
+    stepId: 'step4',
     position: {
       x: 0,
-      y: 0,
+      y: 600,
+    },
+  },
+  {
+    nodeType: 'action',
+    actionType: 'SEND_EMAIL',
+    name: 'Send Email',
+    hasNextStepIds: true,
+    stepId: 'step5',
+    position: {
+      x: 0,
+      y: 750,
     },
   },
   {
     nodeType: 'action',
     actionType: 'CODE',
-    name: 'A very very long action name that tests the way the name is rendered in the interface',
-    hasNextStepIds: false,
-    stepId: 'step_8',
+    name: 'Code',
+    hasNextStepIds: true,
+    stepId: 'step6',
     position: {
       x: 0,
-      y: 0,
+      y: 900,
     },
   },
   {
     nodeType: 'action',
-    actionType: 'CODE',
-    name: 'A very very long action name that tests the way the name is rendered in the interface and the way it wraps',
-    hasNextStepIds: false,
-    stepId: 'step_9',
+    actionType: 'HTTP_REQUEST',
+    name: 'HTTP Request',
+    hasNextStepIds: true,
+    stepId: 'step7',
     position: {
       x: 0,
-      y: 0,
+      y: 1050,
     },
   },
 ] satisfies WorkflowDiagramStepNodeData[];
 
-// For the catalog, we'll use the actual component without the wrapper state
-export const Catalog: CatalogStory<StoryObj<typeof WorkflowDiagramStepNodeEditableContent>, typeof WorkflowDiagramStepNodeEditableContent> = {
+export const Catalog: CatalogStory<Story, typeof Wrapper> = {
   args: {
     onDelete: fn(),
   },
@@ -151,43 +134,53 @@ export const Catalog: CatalogStory<StoryObj<typeof WorkflowDiagramStepNodeEditab
     catalog: {
       options: {
         elementContainer: {
-          width: 240,
-          height: 80,
+          width: 250,
+          style: { position: 'relative' },
         },
       },
       dimensions: [
         {
-          name: 'data',
+          name: 'step type',
           values: ALL_STEPS,
           props: (data: WorkflowDiagramStepNodeData) => ({ data }),
         },
         {
           name: 'variant',
           values: [
+            'empty',
             'default',
-            'placeholder',
-            'selected',
-            'notSelected',
+            'running',
+            'success',
+            'failure',
+            'not-executed',
           ] satisfies WorkflowDiagramNodeVariant[],
           props: (variant: WorkflowDiagramNodeVariant) => ({ variant }),
+        },
+        {
+          name: 'state',
+          values: ['default', 'hover', 'selected'] satisfies ComponentState[],
+          props: (state: ComponentState) => ({ state }),
         },
       ],
     },
   },
   decorators: [
-    (Story, { args }) => (
-      <WorkflowVisualizerComponentInstanceContext.Provider
-        value={{
-          instanceId: 'story-workflow-visualizer',
-        }}
-      >
-        <RecoilRoot>
-          <ReactflowDecorator>
-            <Story {...args} />
-          </ReactflowDecorator>
-        </RecoilRoot>
-      </WorkflowVisualizerComponentInstanceContext.Provider>
-    ),
+    (Story, { args }) => {
+      return (
+        <div
+          className={`selectable ${args.state === 'selected' ? 'selected' : args.state === 'hover' ? 'workflow-node-container hover' : ''}`}
+        >
+          <RecoilRoot>
+            <WorkflowVisualizerComponentInstanceContext.Provider
+              value={{ instanceId: 'workflow-visualizer-instance-id' }}
+            >
+              <Story />
+            </WorkflowVisualizerComponentInstanceContext.Provider>
+          </RecoilRoot>
+        </div>
+      );
+    },
     CatalogDecorator,
+    ReactflowDecorator,
   ],
 };
