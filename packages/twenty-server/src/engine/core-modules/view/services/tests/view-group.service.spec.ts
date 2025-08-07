@@ -164,11 +164,14 @@ describe('ViewGroupService', () => {
 
       await expect(viewGroupService.create(invalidData)).rejects.toThrow(
         new ViewGroupException(
-          generateViewGroupExceptionMessage(ViewGroupExceptionMessageKey.WORKSPACE_ID_REQUIRED),
+          generateViewGroupExceptionMessage(
+            ViewGroupExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+          ),
           ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA,
           {
-            userFriendlyMessage:
-              generateViewGroupUserFriendlyExceptionMessage(ViewGroupExceptionMessageKey.WORKSPACE_ID_REQUIRED),
+            userFriendlyMessage: generateViewGroupUserFriendlyExceptionMessage(
+              ViewGroupExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+            ),
           },
         ),
       );
@@ -179,11 +182,14 @@ describe('ViewGroupService', () => {
 
       await expect(viewGroupService.create(invalidData)).rejects.toThrow(
         new ViewGroupException(
-          generateViewGroupExceptionMessage(ViewGroupExceptionMessageKey.VIEW_ID_REQUIRED),
+          generateViewGroupExceptionMessage(
+            ViewGroupExceptionMessageKey.VIEW_ID_REQUIRED,
+          ),
           ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA,
           {
-            userFriendlyMessage:
-              generateViewGroupUserFriendlyExceptionMessage(ViewGroupExceptionMessageKey.VIEW_ID_REQUIRED),
+            userFriendlyMessage: generateViewGroupUserFriendlyExceptionMessage(
+              ViewGroupExceptionMessageKey.VIEW_ID_REQUIRED,
+            ),
           },
         ),
       );
@@ -194,11 +200,14 @@ describe('ViewGroupService', () => {
 
       await expect(viewGroupService.create(invalidData)).rejects.toThrow(
         new ViewGroupException(
-          generateViewGroupExceptionMessage(ViewGroupExceptionMessageKey.FIELD_METADATA_ID_REQUIRED),
+          generateViewGroupExceptionMessage(
+            ViewGroupExceptionMessageKey.FIELD_METADATA_ID_REQUIRED,
+          ),
           ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA,
           {
-            userFriendlyMessage:
-              generateViewGroupUserFriendlyExceptionMessage(ViewGroupExceptionMessageKey.FIELD_METADATA_ID_REQUIRED),
+            userFriendlyMessage: generateViewGroupUserFriendlyExceptionMessage(
+              ViewGroupExceptionMessageKey.FIELD_METADATA_ID_REQUIRED,
+            ),
           },
         ),
       );
@@ -238,7 +247,10 @@ describe('ViewGroupService', () => {
         viewGroupService.update(id, workspaceId, updateData),
       ).rejects.toThrow(
         new ViewGroupException(
-          generateViewGroupExceptionMessage(ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND, id),
+          generateViewGroupExceptionMessage(
+            ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+            id,
+          ),
           ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND,
         ),
       );
@@ -270,7 +282,10 @@ describe('ViewGroupService', () => {
 
       await expect(viewGroupService.delete(id, workspaceId)).rejects.toThrow(
         new ViewGroupException(
-          generateViewGroupExceptionMessage(ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND, id),
+          generateViewGroupExceptionMessage(
+            ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+            id,
+          ),
           ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND,
         ),
       );

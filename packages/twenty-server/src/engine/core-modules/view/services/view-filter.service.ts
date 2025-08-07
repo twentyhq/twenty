@@ -62,33 +62,42 @@ export class ViewFilterService {
   async create(viewFilterData: Partial<ViewFilter>): Promise<ViewFilter> {
     if (!isDefined(viewFilterData.workspaceId)) {
       throw new ViewFilterException(
-        generateViewFilterExceptionMessage(ViewFilterExceptionMessageKey.WORKSPACE_ID_REQUIRED),
+        generateViewFilterExceptionMessage(
+          ViewFilterExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+        ),
         ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
         {
-          userFriendlyMessage:
-            generateViewFilterUserFriendlyExceptionMessage(ViewFilterExceptionMessageKey.WORKSPACE_ID_REQUIRED),
+          userFriendlyMessage: generateViewFilterUserFriendlyExceptionMessage(
+            ViewFilterExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+          ),
         },
       );
     }
 
     if (!isDefined(viewFilterData.viewId)) {
       throw new ViewFilterException(
-        generateViewFilterExceptionMessage(ViewFilterExceptionMessageKey.VIEW_ID_REQUIRED),
+        generateViewFilterExceptionMessage(
+          ViewFilterExceptionMessageKey.VIEW_ID_REQUIRED,
+        ),
         ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
         {
-          userFriendlyMessage:
-            generateViewFilterUserFriendlyExceptionMessage(ViewFilterExceptionMessageKey.VIEW_ID_REQUIRED),
+          userFriendlyMessage: generateViewFilterUserFriendlyExceptionMessage(
+            ViewFilterExceptionMessageKey.VIEW_ID_REQUIRED,
+          ),
         },
       );
     }
 
     if (!isDefined(viewFilterData.fieldMetadataId)) {
       throw new ViewFilterException(
-        generateViewFilterExceptionMessage(ViewFilterExceptionMessageKey.FIELD_METADATA_ID_REQUIRED),
+        generateViewFilterExceptionMessage(
+          ViewFilterExceptionMessageKey.FIELD_METADATA_ID_REQUIRED,
+        ),
         ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
         {
-          userFriendlyMessage:
-            generateViewFilterUserFriendlyExceptionMessage(ViewFilterExceptionMessageKey.FIELD_METADATA_ID_REQUIRED),
+          userFriendlyMessage: generateViewFilterUserFriendlyExceptionMessage(
+            ViewFilterExceptionMessageKey.FIELD_METADATA_ID_REQUIRED,
+          ),
         },
       );
     }
@@ -107,7 +116,10 @@ export class ViewFilterService {
 
     if (!isDefined(existingViewFilter)) {
       throw new ViewFilterException(
-        generateViewFilterExceptionMessage(ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND, id),
+        generateViewFilterExceptionMessage(
+          ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND,
+          id,
+        ),
         ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
       );
     }
@@ -125,7 +137,10 @@ export class ViewFilterService {
 
     if (!isDefined(viewFilter)) {
       throw new ViewFilterException(
-        generateViewFilterExceptionMessage(ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND, id),
+        generateViewFilterExceptionMessage(
+          ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND,
+          id,
+        ),
         ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
       );
     }

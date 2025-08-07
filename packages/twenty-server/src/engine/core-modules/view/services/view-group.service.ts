@@ -62,33 +62,42 @@ export class ViewGroupService {
   async create(viewGroupData: Partial<ViewGroup>): Promise<ViewGroup> {
     if (!isDefined(viewGroupData.workspaceId)) {
       throw new ViewGroupException(
-        generateViewGroupExceptionMessage(ViewGroupExceptionMessageKey.WORKSPACE_ID_REQUIRED),
+        generateViewGroupExceptionMessage(
+          ViewGroupExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+        ),
         ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA,
         {
-          userFriendlyMessage:
-            generateViewGroupUserFriendlyExceptionMessage(ViewGroupExceptionMessageKey.WORKSPACE_ID_REQUIRED),
+          userFriendlyMessage: generateViewGroupUserFriendlyExceptionMessage(
+            ViewGroupExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+          ),
         },
       );
     }
 
     if (!isDefined(viewGroupData.viewId)) {
       throw new ViewGroupException(
-        generateViewGroupExceptionMessage(ViewGroupExceptionMessageKey.VIEW_ID_REQUIRED),
+        generateViewGroupExceptionMessage(
+          ViewGroupExceptionMessageKey.VIEW_ID_REQUIRED,
+        ),
         ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA,
         {
-          userFriendlyMessage:
-            generateViewGroupUserFriendlyExceptionMessage(ViewGroupExceptionMessageKey.VIEW_ID_REQUIRED),
+          userFriendlyMessage: generateViewGroupUserFriendlyExceptionMessage(
+            ViewGroupExceptionMessageKey.VIEW_ID_REQUIRED,
+          ),
         },
       );
     }
 
     if (!isDefined(viewGroupData.fieldMetadataId)) {
       throw new ViewGroupException(
-        generateViewGroupExceptionMessage(ViewGroupExceptionMessageKey.FIELD_METADATA_ID_REQUIRED),
+        generateViewGroupExceptionMessage(
+          ViewGroupExceptionMessageKey.FIELD_METADATA_ID_REQUIRED,
+        ),
         ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA,
         {
-          userFriendlyMessage:
-            generateViewGroupUserFriendlyExceptionMessage(ViewGroupExceptionMessageKey.FIELD_METADATA_ID_REQUIRED),
+          userFriendlyMessage: generateViewGroupUserFriendlyExceptionMessage(
+            ViewGroupExceptionMessageKey.FIELD_METADATA_ID_REQUIRED,
+          ),
         },
       );
     }
@@ -107,7 +116,10 @@ export class ViewGroupService {
 
     if (!isDefined(existingViewGroup)) {
       throw new ViewGroupException(
-        generateViewGroupExceptionMessage(ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND, id),
+        generateViewGroupExceptionMessage(
+          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+          id,
+        ),
         ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND,
       );
     }
@@ -125,7 +137,10 @@ export class ViewGroupService {
 
     if (!isDefined(viewGroup)) {
       throw new ViewGroupException(
-        generateViewGroupExceptionMessage(ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND, id),
+        generateViewGroupExceptionMessage(
+          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+          id,
+        ),
         ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND,
       );
     }

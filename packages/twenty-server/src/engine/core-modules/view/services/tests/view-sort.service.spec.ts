@@ -155,11 +155,14 @@ describe('ViewSortService', () => {
 
       await expect(viewSortService.create(invalidData)).rejects.toThrow(
         new ViewSortException(
-          generateViewSortExceptionMessage(ViewSortExceptionMessageKey.WORKSPACE_ID_REQUIRED),
+          generateViewSortExceptionMessage(
+            ViewSortExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+          ),
           ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
           {
-            userFriendlyMessage:
-              generateViewSortUserFriendlyExceptionMessage(ViewSortExceptionMessageKey.WORKSPACE_ID_REQUIRED),
+            userFriendlyMessage: generateViewSortUserFriendlyExceptionMessage(
+              ViewSortExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+            ),
           },
         ),
       );
@@ -170,11 +173,14 @@ describe('ViewSortService', () => {
 
       await expect(viewSortService.create(invalidData)).rejects.toThrow(
         new ViewSortException(
-          generateViewSortExceptionMessage(ViewSortExceptionMessageKey.VIEW_ID_REQUIRED),
+          generateViewSortExceptionMessage(
+            ViewSortExceptionMessageKey.VIEW_ID_REQUIRED,
+          ),
           ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
           {
-            userFriendlyMessage:
-              generateViewSortUserFriendlyExceptionMessage(ViewSortExceptionMessageKey.VIEW_ID_REQUIRED),
+            userFriendlyMessage: generateViewSortUserFriendlyExceptionMessage(
+              ViewSortExceptionMessageKey.VIEW_ID_REQUIRED,
+            ),
           },
         ),
       );
@@ -185,11 +191,14 @@ describe('ViewSortService', () => {
 
       await expect(viewSortService.create(invalidData)).rejects.toThrow(
         new ViewSortException(
-          generateViewSortExceptionMessage(ViewSortExceptionMessageKey.FIELD_METADATA_ID_REQUIRED),
+          generateViewSortExceptionMessage(
+            ViewSortExceptionMessageKey.FIELD_METADATA_ID_REQUIRED,
+          ),
           ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
           {
-            userFriendlyMessage:
-              generateViewSortUserFriendlyExceptionMessage(ViewSortExceptionMessageKey.FIELD_METADATA_ID_REQUIRED),
+            userFriendlyMessage: generateViewSortUserFriendlyExceptionMessage(
+              ViewSortExceptionMessageKey.FIELD_METADATA_ID_REQUIRED,
+            ),
           },
         ),
       );
@@ -227,7 +236,10 @@ describe('ViewSortService', () => {
         viewSortService.update(id, workspaceId, updateData),
       ).rejects.toThrow(
         new ViewSortException(
-          generateViewSortExceptionMessage(ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND, id),
+          generateViewSortExceptionMessage(
+            ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
+            id,
+          ),
           ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
         ),
       );
@@ -257,7 +269,10 @@ describe('ViewSortService', () => {
 
       await expect(viewSortService.delete(id, workspaceId)).rejects.toThrow(
         new ViewSortException(
-          generateViewSortExceptionMessage(ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND, id),
+          generateViewSortExceptionMessage(
+            ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
+            id,
+          ),
           ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
         ),
       );

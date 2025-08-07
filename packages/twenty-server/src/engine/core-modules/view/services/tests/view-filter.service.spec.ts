@@ -169,11 +169,14 @@ describe('ViewFilterService', () => {
 
       await expect(viewFilterService.create(invalidData)).rejects.toThrow(
         new ViewFilterException(
-          generateViewFilterExceptionMessage(ViewFilterExceptionMessageKey.WORKSPACE_ID_REQUIRED),
+          generateViewFilterExceptionMessage(
+            ViewFilterExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+          ),
           ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
           {
-            userFriendlyMessage:
-              generateViewFilterUserFriendlyExceptionMessage(ViewFilterExceptionMessageKey.WORKSPACE_ID_REQUIRED),
+            userFriendlyMessage: generateViewFilterUserFriendlyExceptionMessage(
+              ViewFilterExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+            ),
           },
         ),
       );
@@ -184,11 +187,14 @@ describe('ViewFilterService', () => {
 
       await expect(viewFilterService.create(invalidData)).rejects.toThrow(
         new ViewFilterException(
-          generateViewFilterExceptionMessage(ViewFilterExceptionMessageKey.VIEW_ID_REQUIRED),
+          generateViewFilterExceptionMessage(
+            ViewFilterExceptionMessageKey.VIEW_ID_REQUIRED,
+          ),
           ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
           {
-            userFriendlyMessage:
-              generateViewFilterUserFriendlyExceptionMessage(ViewFilterExceptionMessageKey.VIEW_ID_REQUIRED),
+            userFriendlyMessage: generateViewFilterUserFriendlyExceptionMessage(
+              ViewFilterExceptionMessageKey.VIEW_ID_REQUIRED,
+            ),
           },
         ),
       );
@@ -202,11 +208,14 @@ describe('ViewFilterService', () => {
 
       await expect(viewFilterService.create(invalidData)).rejects.toThrow(
         new ViewFilterException(
-          generateViewFilterExceptionMessage(ViewFilterExceptionMessageKey.FIELD_METADATA_ID_REQUIRED),
+          generateViewFilterExceptionMessage(
+            ViewFilterExceptionMessageKey.FIELD_METADATA_ID_REQUIRED,
+          ),
           ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
           {
-            userFriendlyMessage:
-              generateViewFilterUserFriendlyExceptionMessage(ViewFilterExceptionMessageKey.FIELD_METADATA_ID_REQUIRED),
+            userFriendlyMessage: generateViewFilterUserFriendlyExceptionMessage(
+              ViewFilterExceptionMessageKey.FIELD_METADATA_ID_REQUIRED,
+            ),
           },
         ),
       );
@@ -252,7 +261,10 @@ describe('ViewFilterService', () => {
         viewFilterService.update(id, workspaceId, updateData),
       ).rejects.toThrow(
         new ViewFilterException(
-          generateViewFilterExceptionMessage(ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND, id),
+          generateViewFilterExceptionMessage(
+            ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND,
+            id,
+          ),
           ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
         ),
       );
@@ -286,7 +298,10 @@ describe('ViewFilterService', () => {
 
       await expect(viewFilterService.delete(id, workspaceId)).rejects.toThrow(
         new ViewFilterException(
-          generateViewFilterExceptionMessage(ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND, id),
+          generateViewFilterExceptionMessage(
+            ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND,
+            id,
+          ),
           ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
         ),
       );

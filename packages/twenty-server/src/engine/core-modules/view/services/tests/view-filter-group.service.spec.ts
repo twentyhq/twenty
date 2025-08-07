@@ -178,11 +178,15 @@ describe('ViewFilterGroupService', () => {
 
       await expect(viewFilterGroupService.create(invalidData)).rejects.toThrow(
         new ViewFilterGroupException(
-          generateViewFilterGroupExceptionMessage(ViewFilterGroupExceptionMessageKey.WORKSPACE_ID_REQUIRED),
+          generateViewFilterGroupExceptionMessage(
+            ViewFilterGroupExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+          ),
           ViewFilterGroupExceptionCode.INVALID_VIEW_FILTER_GROUP_DATA,
           {
             userFriendlyMessage:
-              generateViewFilterGroupUserFriendlyExceptionMessage(ViewFilterGroupExceptionMessageKey.WORKSPACE_ID_REQUIRED),
+              generateViewFilterGroupUserFriendlyExceptionMessage(
+                ViewFilterGroupExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+              ),
           },
         ),
       );
@@ -193,11 +197,15 @@ describe('ViewFilterGroupService', () => {
 
       await expect(viewFilterGroupService.create(invalidData)).rejects.toThrow(
         new ViewFilterGroupException(
-          generateViewFilterGroupExceptionMessage(ViewFilterGroupExceptionMessageKey.VIEW_ID_REQUIRED),
+          generateViewFilterGroupExceptionMessage(
+            ViewFilterGroupExceptionMessageKey.VIEW_ID_REQUIRED,
+          ),
           ViewFilterGroupExceptionCode.INVALID_VIEW_FILTER_GROUP_DATA,
           {
             userFriendlyMessage:
-              generateViewFilterGroupUserFriendlyExceptionMessage(ViewFilterGroupExceptionMessageKey.VIEW_ID_REQUIRED),
+              generateViewFilterGroupUserFriendlyExceptionMessage(
+                ViewFilterGroupExceptionMessageKey.VIEW_ID_REQUIRED,
+              ),
           },
         ),
       );
@@ -249,7 +257,10 @@ describe('ViewFilterGroupService', () => {
         viewFilterGroupService.update(id, workspaceId, updateData),
       ).rejects.toThrow(
         new ViewFilterGroupException(
-          generateViewFilterGroupExceptionMessage(ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND, id),
+          generateViewFilterGroupExceptionMessage(
+            ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
+            id,
+          ),
           ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
         ),
       );
@@ -288,7 +299,10 @@ describe('ViewFilterGroupService', () => {
         viewFilterGroupService.delete(id, workspaceId),
       ).rejects.toThrow(
         new ViewFilterGroupException(
-          generateViewFilterGroupExceptionMessage(ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND, id),
+          generateViewFilterGroupExceptionMessage(
+            ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
+            id,
+          ),
           ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
         ),
       );
