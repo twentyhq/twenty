@@ -2,22 +2,22 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import * as ical from 'node-ical';
 import {
-  calendarMultiGet,
-  createAccount,
-  DAVAccount,
-  DAVCalendar,
-  DAVNamespaceShort,
-  DAVObject,
-  fetchCalendars,
-  getBasicAuthHeaders,
-  syncCollection,
+    calendarMultiGet,
+    createAccount,
+    DAVAccount,
+    DAVCalendar,
+    DAVNamespaceShort,
+    DAVObject,
+    fetchCalendars,
+    getBasicAuthHeaders,
+    syncCollection,
 } from 'tsdav';
 
 import { CalDavGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-get-events.service';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import {
-  FetchedCalendarEvent,
-  FetchedCalendarEventParticipant,
+    FetchedCalendarEvent,
+    FetchedCalendarEventParticipant,
 } from 'src/modules/calendar/common/types/fetched-calendar-event';
 
 const DEFAULT_CALENDAR_TYPE = 'caldav';
