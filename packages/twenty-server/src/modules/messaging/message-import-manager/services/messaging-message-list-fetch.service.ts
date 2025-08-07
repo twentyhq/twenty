@@ -158,7 +158,7 @@ export class MessagingMessageListFetchService {
         );
       }
 
-      const fullSyncMessageChannelMessageToDelete = [];
+      const fullSyncMessageChannelMessageAssociationsToDelete = [];
 
       if (isFullSync) {
         const firstMessageChannelMessageAssociation =
@@ -230,8 +230,35 @@ export class MessagingMessageListFetchService {
             `messageChannelId: ${messageChannel.id} Full sync: Message channel message associations to delete in batch ${batchIndex}: ${messageChannelMessageAssociationsToDelete.length}`,
           );
 
-          fullSyncMessageChannelMessageToDelete.push(
+          fullSyncMessageChannelMessageAssociationsToDelete.push(
             ...messageChannelMessageAssociationsToDelete,
+          );
+        }
+      }
+
+      const allMessageExternalIdsToDelete = [
+        ...messageExternalIdsToDelete,
+        ...fullSyncMessageChannelMessageAssociationsToDelete.map(
+          (messageChannelMessageAssociation) =>
+            messageChannelMessageAssociation.messageExternalId,
+        ),
+      ];
+
+      if (allMessageExternalIdsToDelete.length) {
+        this.logger.log(
+          `messageChannelId: ${messageChannel.id} Deleting ${allMessageExternalIdsToDelete.length} message channel message associations`,
+        );
+
+        const toDeleteChunks = chunk(allMessageExternalIdsToDelete, 200);
+
+        for (const [index, toDeleteChunk] of toDeleteChunks.entries()) {
+          await messageChannelMessageAssociationRepository.delete({
+            messageChannelId: messageChannelWithFreshTokens.id,
+            messageExternalId: In(toDeleteChunk),
+          });
+
+          this.logger.log(
+            `messageChannelId: ${messageChannel.id} Deleted ${toDeleteChunk.length} message channel message associations in batch ${index + 1}`,
           );
         }
       }
