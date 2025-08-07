@@ -59,7 +59,7 @@ export class MessagingMessageCleanerService {
             transactionManager?: WorkspaceEntityManager,
           ) => {
             this.logger.log(
-              `MessageChannelId: ${workspaceId} Deleting ${ids.length} messages from message cleaner`,
+              `WorkspaceId: ${workspaceId} Deleting ${ids.length} messages from message cleaner`,
             );
             await messageRepository.delete(ids, transactionManager);
           },

@@ -312,6 +312,7 @@ export class MessagingMessageListFetchService {
 
       if (existingMessageChannelMessageAssociations.length < 200) {
         nextFirstBatchMessageChannelMessageAssociationId = undefined;
+        break;
       }
 
       nextFirstBatchMessageChannelMessageAssociationId =
