@@ -1,8 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import isEmpty from 'lodash.isempty';
 import {
-  ObjectRecordsPermissions,
-  RestrictedFields,
+  ObjectsPermissionsDeprecated,
+  RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { QueryExpressionMap } from 'typeorm/query-builder/QueryExpressionMap';
@@ -35,25 +35,27 @@ export type OperationType =
   | 'restore'
   | 'soft-delete';
 
-export const validateOperationIsPermittedOrThrow = ({
-  entityName,
-  operationType,
-  objectRecordsPermissions,
-  objectMetadataMaps,
-  selectedColumns,
-  isFieldPermissionsEnabled,
-  allFieldsSelected,
-  updatedColumns,
-}: {
+type ValidateOperationIsPermittedOrThrowArgs = {
   entityName: string;
   operationType: OperationType;
-  objectRecordsPermissions: ObjectRecordsPermissions;
+  objectsPermissions: ObjectsPermissionsDeprecated;
   objectMetadataMaps: ObjectMetadataMaps;
   selectedColumns: string[] | '*';
   isFieldPermissionsEnabled?: boolean;
   allFieldsSelected: boolean;
   updatedColumns: string[];
-}) => {
+};
+
+export const validateOperationIsPermittedOrThrow = ({
+  entityName,
+  operationType,
+  objectsPermissions,
+  objectMetadataMaps,
+  selectedColumns,
+  isFieldPermissionsEnabled,
+  allFieldsSelected,
+  updatedColumns,
+}: ValidateOperationIsPermittedOrThrowArgs) => {
   const objectMetadataIdForEntity =
     objectMetadataMaps.idByNameSingular[entityName];
 
@@ -83,8 +85,7 @@ export const validateOperationIsPermittedOrThrow = ({
     ? getColumnNameToFieldMetadataIdMap(objectMetadata)
     : {};
 
-  const permissionsForEntity =
-    objectRecordsPermissions[objectMetadataIdForEntity];
+  const permissionsForEntity = objectsPermissions[objectMetadataIdForEntity];
 
   switch (operationType) {
     case 'select':
@@ -174,19 +175,21 @@ export const validateOperationIsPermittedOrThrow = ({
   }
 };
 
-export const validateQueryIsPermittedOrThrow = ({
-  expressionMap,
-  objectRecordsPermissions,
-  objectMetadataMaps,
-  shouldBypassPermissionChecks,
-  isFieldPermissionsEnabled,
-}: {
+type ValidateQueryIsPermittedOrThrowArgs = {
   expressionMap: QueryExpressionMap;
-  objectRecordsPermissions: ObjectRecordsPermissions;
+  objectsPermissions: ObjectsPermissionsDeprecated;
   objectMetadataMaps: ObjectMetadataMaps;
   shouldBypassPermissionChecks: boolean;
   isFieldPermissionsEnabled?: boolean;
-}) => {
+};
+
+export const validateQueryIsPermittedOrThrow = ({
+  expressionMap,
+  objectsPermissions,
+  objectMetadataMaps,
+  shouldBypassPermissionChecks,
+  isFieldPermissionsEnabled,
+}: ValidateQueryIsPermittedOrThrowArgs) => {
   if (shouldBypassPermissionChecks) {
     return;
   }
@@ -232,7 +235,7 @@ export const validateQueryIsPermittedOrThrow = ({
   validateOperationIsPermittedOrThrow({
     entityName: mainEntity,
     operationType: operationType as OperationType,
-    objectRecordsPermissions,
+    objectsPermissions,
     objectMetadataMaps,
     selectedColumns,
     isFieldPermissionsEnabled,
@@ -247,7 +250,7 @@ const validateReadFieldPermissionOrThrow = ({
   columnNameToFieldMetadataIdMap,
   allFieldsSelected,
 }: {
-  restrictedFields: RestrictedFields;
+  restrictedFields: RestrictedFieldsPermissions;
   selectedColumns: string[] | '*';
   columnNameToFieldMetadataIdMap: Record<string, string>;
   allFieldsSelected?: boolean;
@@ -290,7 +293,7 @@ const validateUpdateFieldPermissionOrThrow = ({
   updatedColumns,
   columnNameToFieldMetadataIdMap,
 }: {
-  restrictedFields: RestrictedFields;
+  restrictedFields: RestrictedFieldsPermissions;
   updatedColumns: string[];
   columnNameToFieldMetadataIdMap: Record<string, string>;
 }) => {

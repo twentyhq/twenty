@@ -14,8 +14,8 @@ import { encodeCursor } from '@/apollo/utils/encodeCursor';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { isDefined } from 'twenty-shared/utils';
-import { ObjectPermission } from '~/generated/graphql';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
+import { ObjectPermissions } from 'twenty-shared/types';
 
 /*
   TODO: for now new records are added to all cached record lists, no matter what the variables (filters, orderBy, etc.) are.
@@ -29,7 +29,10 @@ type TriggerCreateRecordsOptimisticEffectArgs = {
   objectMetadataItems: ObjectMetadataItem[];
   shouldMatchRootQueryFilter?: boolean;
   checkForRecordInCache?: boolean;
-  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
+  objectPermissionsByObjectMetadataId: Record<
+    string,
+    ObjectPermissions & { objectMetadataId: string }
+  >;
 };
 export const triggerCreateRecordsOptimisticEffect = ({
   cache,

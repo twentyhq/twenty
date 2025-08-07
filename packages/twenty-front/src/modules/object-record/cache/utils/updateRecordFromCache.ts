@@ -6,8 +6,8 @@ import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObje
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { ObjectPermissions } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
-import { ObjectPermission } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const updateRecordFromCache = <T extends ObjectRecord>({
@@ -24,7 +24,10 @@ export const updateRecordFromCache = <T extends ObjectRecord>({
   cache: ApolloCache<object>;
   recordGqlFields: Record<string, boolean>;
   record: T;
-  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
+  objectPermissionsByObjectMetadataId: Record<
+    string,
+    ObjectPermissions & { objectMetadataId: string }
+  >;
   isFieldsPermissionsEnabled?: boolean;
 }) => {
   if (isUndefinedOrNull(objectMetadataItem)) {

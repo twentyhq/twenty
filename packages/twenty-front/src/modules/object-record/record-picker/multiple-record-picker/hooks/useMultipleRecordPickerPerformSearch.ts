@@ -10,6 +10,7 @@ import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { searchRecordStoreComponentFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
+import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { ApolloClient } from '@apollo/client';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
@@ -104,8 +105,10 @@ export const useMultipleRecordPickerPerformSearch = () => {
         const filteredSearchableObjectMetadataItems =
           searchableObjectMetadataItems.filter(
             (objectMetadataItem) =>
-              objectPermissionsByObjectMetadataId[objectMetadataItem.id]
-                .canReadObjectRecords === true,
+              getObjectPermissionsFromMapByObjectMetadataId({
+                objectPermissionsByObjectMetadataId,
+                objectMetadataId: objectMetadataItem.id,
+              }).canReadObjectRecords === true,
           );
 
         const [

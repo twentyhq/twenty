@@ -1,4 +1,4 @@
-import { ObjectRecordsPermissions } from 'twenty-shared/types';
+import { ObjectsPermissionsDeprecated } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   EntityTarget,
@@ -35,7 +35,7 @@ import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/g
 export class WorkspaceInsertQueryBuilder<
   T extends ObjectLiteral,
 > extends InsertQueryBuilder<T> {
-  private objectRecordsPermissions: ObjectRecordsPermissions;
+  private objectRecordsPermissions: ObjectsPermissionsDeprecated;
   private shouldBypassPermissionChecks: boolean;
   private internalContext: WorkspaceInternalContext;
   private authContext?: AuthContext;
@@ -47,7 +47,7 @@ export class WorkspaceInsertQueryBuilder<
 
   constructor(
     queryBuilder: InsertQueryBuilder<T>,
-    objectRecordsPermissions: ObjectRecordsPermissions,
+    objectRecordsPermissions: ObjectsPermissionsDeprecated,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
     authContext?: AuthContext,
@@ -104,7 +104,7 @@ export class WorkspaceInsertQueryBuilder<
     try {
       validateQueryIsPermittedOrThrow({
         expressionMap: this.expressionMap,
-        objectRecordsPermissions: this.objectRecordsPermissions,
+        objectsPermissions: this.objectRecordsPermissions,
         objectMetadataMaps: this.internalContext.objectMetadataMaps,
         shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
         isFieldPermissionsEnabled:

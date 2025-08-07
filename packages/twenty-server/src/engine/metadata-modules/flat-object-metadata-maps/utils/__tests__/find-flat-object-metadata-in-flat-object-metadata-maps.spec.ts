@@ -55,6 +55,10 @@ describe('findFlatObjectMetadataInFlatObjectMetadataMaps', () => {
         flatObjectMetadataMaps,
       });
 
+      expect(result?.flatFieldMetadatas.length).toEqual(
+        expected?.flatFieldMetadatas.length,
+      );
+
       expect(result).toEqual(expected);
     },
   );

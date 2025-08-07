@@ -44,7 +44,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
   ) => {
     const availableFieldMetadataItemsToImport =
       spreadsheetImportFilterAvailableFieldMetadataItems(
-        objectMetadataItem.fields,
+        objectMetadataItem.updatableFields,
       );
 
     const spreadsheetImportFields = buildSpreadsheetImportFields(

@@ -78,7 +78,7 @@ describe('addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow', () => {
             flatObjectMetadataMaps,
           });
 
-        expect(updatedFlatObjectMetadataMaps).toEqual(expected);
+        expect(updatedFlatObjectMetadataMaps).toStrictEqual(expected);
       }
     },
   );

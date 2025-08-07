@@ -12,6 +12,8 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
+
 describe('deleteOne', () => {
   describe('Kanban aggregate operation', () => {
     let listingObjectId = '';
@@ -54,7 +56,7 @@ describe('deleteOne', () => {
           kanbanAggregateOperation: 'MAX',
           objectMetadataId: listingObjectId,
           name: 'By Type',
-          type: 'kanban',
+          type: ViewType.KANBAN,
           icon: 'IconLayoutKanban',
         },
       });

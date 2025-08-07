@@ -5,8 +5,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
-import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
-import { View } from 'src/engine/metadata-modules/view/view.entity';
+import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
+import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 @Injectable()
@@ -34,6 +35,9 @@ export class ViewSyncService {
             diffValue.after === 'SIDE_PANEL'
               ? ViewOpenRecordIn.SIDE_PANEL
               : ViewOpenRecordIn.RECORD_PAGE;
+        } else if (key === 'type') {
+          updateData[key] =
+            diffValue.after === 'table' ? ViewType.TABLE : ViewType.KANBAN;
         } else {
           updateData[key] = diffValue.after;
         }
@@ -51,7 +55,7 @@ export class ViewSyncService {
       id: workspaceView.id,
       name: workspaceView.name,
       objectMetadataId: workspaceView.objectMetadataId,
-      type: workspaceView.type,
+      type: workspaceView.type === 'table' ? ViewType.TABLE : ViewType.KANBAN,
       key: workspaceView.key,
       icon: workspaceView.icon,
       position: workspaceView.position,

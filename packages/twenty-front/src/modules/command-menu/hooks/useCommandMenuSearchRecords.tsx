@@ -9,6 +9,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { AppPath } from '@/types/AppPath';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
@@ -28,8 +29,10 @@ export const useCommandMenuSearchRecords = () => {
   const nonReadableObjectMetadataItemsNameSingular = useMemo(() => {
     return Object.values(objectMetadataItems)
       .filter((objectMetadataItem) => {
-        const objectPermission =
-          objectPermissionsByObjectMetadataId[objectMetadataItem.id];
+        const objectPermission = getObjectPermissionsFromMapByObjectMetadataId({
+          objectPermissionsByObjectMetadataId,
+          objectMetadataId: objectMetadataItem.id,
+        });
 
         return !objectPermission?.canReadObjectRecords;
       })

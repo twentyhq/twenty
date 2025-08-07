@@ -5,10 +5,11 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
 
 import { fromCreateObjectInputToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata.util';
-import { fromObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-maps-to-flat-object-metadatas.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
+import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
+import { fromFlatObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-maps-to-flat-object-metadatas.util';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -30,8 +31,8 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
   override async createOne(
     objectMetadataInput: CreateObjectInput,
   ): Promise<ObjectMetadataEntity> {
-    const { objectMetadataMaps } =
-      await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
+    const { flatObjectMetadataMaps } =
+      await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
         {
           workspaceId: objectMetadataInput.workspaceId,
         },
@@ -39,19 +40,23 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
 
     const createdRawFlatObjectMetadata =
       fromCreateObjectInputToFlatObjectMetadata(objectMetadataInput);
-    const existingFlatObjectMetadatas =
-      fromObjectMetadataMapsToFlatObjectMetadatas(objectMetadataMaps);
+    const existingFlatObjectMetadatas: FlatObjectMetadataMaps = {
+      byId: {},
+      idByNameSingular: {},
+    };
     // @ts-expect-error TODO implement validateFlatObjectMetadata
     const createdFlatObjectMetadata = validateFlatObjectMetadata({
       existing:
         // Here we assume that EVERYTHING is in cache and up to date, this is very critical, also race condition prone :thinking:
-        fromObjectMetadataMapsToFlatObjectMetadatas(objectMetadataMaps),
+        fromFlatObjectMetadataMapsToFlatObjectMetadatas(flatObjectMetadataMaps),
       toValidate: [createdRawFlatObjectMetadata],
     });
 
     const workspaceMigration = this.workspaceMigrationBuilderV2.build({
       objectMetadataFromToInputs: {
-        from: existingFlatObjectMetadatas,
+        from: fromFlatObjectMetadataMapsToFlatObjectMetadatas(
+          existingFlatObjectMetadatas,
+        ),
         to: [createdFlatObjectMetadata],
       },
       inferDeletionFromMissingObjectFieldIndex: false,

@@ -24,7 +24,9 @@ export class RestApiMetadataService {
   async get(request: Request) {
     await this.accessTokenService.validateTokenByRequest(request);
     const requestContext = this.getRequestContext(request);
-    const data = await this.metadataQueryBuilderFactory.get(requestContext);
+    const data = await this.metadataQueryBuilderFactory.get(requestContext, {
+      fields: ['*'],
+    });
 
     return await this.restApiService.call(
       GraphqlApiType.METADATA,
@@ -36,7 +38,9 @@ export class RestApiMetadataService {
   async create(request: Request) {
     await this.accessTokenService.validateTokenByRequest(request);
     const requestContext = this.getRequestContext(request);
-    const data = await this.metadataQueryBuilderFactory.create(requestContext);
+    const data = await this.metadataQueryBuilderFactory.create(requestContext, {
+      fields: ['*'],
+    });
 
     return await this.restApiService.call(
       GraphqlApiType.METADATA,
@@ -48,7 +52,9 @@ export class RestApiMetadataService {
   async update(request: Request) {
     await this.accessTokenService.validateTokenByRequest(request);
     const requestContext = this.getRequestContext(request);
-    const data = await this.metadataQueryBuilderFactory.update(requestContext);
+    const data = await this.metadataQueryBuilderFactory.update(requestContext, {
+      fields: ['*'],
+    });
 
     return await this.restApiService.call(
       GraphqlApiType.METADATA,

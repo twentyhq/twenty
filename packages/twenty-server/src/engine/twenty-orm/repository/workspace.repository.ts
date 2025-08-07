@@ -1,4 +1,4 @@
-import { ObjectRecordsPermissions } from 'twenty-shared/types';
+import { ObjectsPermissionsDeprecated } from 'twenty-shared/types';
 import {
   DeepPartial,
   DeleteResult,
@@ -40,7 +40,7 @@ export class WorkspaceRepository<
   private readonly internalContext: WorkspaceInternalContext;
   private shouldBypassPermissionChecks: boolean;
   private featureFlagMap: FeatureFlagMap;
-  public readonly objectRecordsPermissions?: ObjectRecordsPermissions;
+  public readonly objectRecordsPermissions?: ObjectsPermissionsDeprecated;
   private authContext?: AuthContext;
   declare manager: WorkspaceEntityManager;
 
@@ -50,7 +50,7 @@ export class WorkspaceRepository<
     manager: WorkspaceEntityManager,
     featureFlagMap: FeatureFlagMap,
     queryRunner?: QueryRunner,
-    objectRecordsPermissions?: ObjectRecordsPermissions,
+    objectRecordsPermissions?: ObjectsPermissionsDeprecated,
     shouldBypassPermissionChecks = false,
     authContext?: AuthContext,
   ) {

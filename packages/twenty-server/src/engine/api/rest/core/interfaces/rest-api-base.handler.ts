@@ -3,7 +3,10 @@ import { BadRequestException, Inject } from '@nestjs/common';
 import { Request } from 'express';
 import chunk from 'lodash.chunk';
 import isEmpty from 'lodash.isempty';
-import { FieldMetadataType, RestrictedFields } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RestrictedFieldsPermissions,
+} from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { In, ObjectLiteral } from 'typeorm';
 
@@ -185,7 +188,7 @@ export abstract class RestApiBaseHandler {
       roleId,
     );
 
-    let restrictedFields: RestrictedFields = {};
+    let restrictedFields: RestrictedFieldsPermissions = {};
 
     if (
       await this.featureFlagService.isFeatureEnabled(
@@ -298,7 +301,7 @@ export abstract class RestApiBaseHandler {
       objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
     };
     depth: Depth | undefined;
-    restrictedFields: RestrictedFields;
+    restrictedFields: RestrictedFieldsPermissions;
   }) {
     const relations = this.getRelations({
       objectMetadata,
@@ -415,7 +418,7 @@ export abstract class RestApiBaseHandler {
     };
     objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
     extraFilters?: Partial<ObjectRecordFilter>;
-    restrictedFields: RestrictedFields;
+    restrictedFields: RestrictedFieldsPermissions;
   }) {
     const objectMetadataNameSingular =
       objectMetadata.objectMetadataMapItem.nameSingular;

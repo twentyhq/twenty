@@ -15,9 +15,10 @@ export const expectFlatFieldMetadataToBeInFlatObjectMetadataMaps = ({
   flatObjectMetadataMaps,
 }: ExpectFlatFieldMetadataToBeInFlatObjectMetadataMapsArgs) => {
   const { objectMetadataId, id: flatFieldMetadataId } = flatFieldMetadata;
-  const petObject = flatObjectMetadataMaps.byId[objectMetadataId];
+  const matchingFlatObjectMetadata =
+    flatObjectMetadataMaps.byId[objectMetadataId];
 
-  jestExpectToBeDefined(petObject);
+  jestExpectToBeDefined(matchingFlatObjectMetadata);
 
   if (
     isFlatFieldMetadataEntityOfType(
@@ -27,15 +28,22 @@ export const expectFlatFieldMetadataToBeInFlatObjectMetadataMaps = ({
     isDefined(flatFieldMetadata.settings.joinColumnName)
   ) {
     expect(
-      petObject.fieldIdByJoinColumnName[
+      matchingFlatObjectMetadata.fieldIdByJoinColumnName[
         flatFieldMetadata.settings.joinColumnName
       ],
     ).toEqual(flatFieldMetadataId);
   }
 
-  expect(petObject.fieldsById[flatFieldMetadataId]).toBeDefined();
-  expect(petObject.fieldsById[flatFieldMetadataId]).toEqual(flatFieldMetadata);
-  expect(petObject.fieldIdByName[flatFieldMetadata.name]).toEqual(
-    flatFieldMetadataId,
+  expect(
+    matchingFlatObjectMetadata.fieldsById[flatFieldMetadataId],
+  ).toBeDefined();
+  expect(matchingFlatObjectMetadata.fieldsById[flatFieldMetadataId]).toEqual(
+    flatFieldMetadata,
   );
+  expect(matchingFlatObjectMetadata.flatFieldMetadatas).toContain(
+    flatFieldMetadata,
+  );
+  expect(
+    matchingFlatObjectMetadata.fieldIdByName[flatFieldMetadata.name],
+  ).toEqual(flatFieldMetadataId);
 };
