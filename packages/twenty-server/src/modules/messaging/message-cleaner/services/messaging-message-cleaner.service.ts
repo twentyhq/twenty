@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { IsNull } from 'typeorm';
 
@@ -10,6 +10,7 @@ import { deleteUsingPagination } from 'src/modules/messaging/message-cleaner/uti
 
 @Injectable()
 export class MessagingMessageCleanerService {
+  private readonly logger = new Logger(MessagingMessageCleanerService.name);
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
   public async cleanWorkspaceThreads(workspaceId: string) {
@@ -57,6 +58,9 @@ export class MessagingMessageCleanerService {
             workspaceId: string,
             transactionManager?: WorkspaceEntityManager,
           ) => {
+            this.logger.log(
+              `WorkspaceId: ${workspaceId} Deleting ${ids.length} messages from message cleaner`,
+            );
             await messageRepository.delete(ids, transactionManager);
           },
           transactionManager,
