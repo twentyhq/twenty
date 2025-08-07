@@ -134,23 +134,14 @@ const filterRecordOutputSchemaFieldsByType = ({
   typesToFilter,
 }: {
   outputSchema: RecordOutputSchema;
-  typesToFilter?: InputSchemaPropertyType[];
+  typesToFilter: InputSchemaPropertyType[];
 }) => {
-  if (!isDefined(typesToFilter)) {
-    return outputSchema.fields;
-  }
-
   const filteredFields: BaseOutputSchema = {};
 
   for (const key in outputSchema.fields) {
     const field = outputSchema.fields[key];
 
-    if (!isDefined(field.type)) {
-      filteredFields[key] = field;
-      continue;
-    }
-
-    if (typesToFilter.includes(field.type)) {
+    if (isDefined(field.type) && typesToFilter.includes(field.type)) {
       continue;
     }
 
@@ -179,7 +170,7 @@ export const filterOutputSchema = ({
   }
 
   if (!shouldDisplayRecordObjects || shouldDisplayRecordFields) {
-    if (isRecordOutputSchema(outputSchema)) {
+    if (isRecordOutputSchema(outputSchema) && isDefined(typesToFilter)) {
       return filterRecordOutputSchemaFieldsByType({
         outputSchema,
         typesToFilter,
