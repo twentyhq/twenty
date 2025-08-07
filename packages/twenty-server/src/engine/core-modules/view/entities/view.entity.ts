@@ -72,7 +72,7 @@ export class View {
 
   @Column({
     type: 'enum',
-    enumName: 'AggregateOperations',
+    enumName: 'KanbanAggregateOperations',
     enum: AggregateOperations,
     nullable: true,
     default: null,
