@@ -15,9 +15,9 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { ActivityRichTextEditorChangeOnActivityIdEffect } from '@/activities/components/ActivityRichTextEditorChangeOnActivityIdEffect';
-import { Attachment } from '@/activities/files/types/Attachment';
-import { Note } from '@/activities/types/Note';
-import { Task } from '@/activities/types/Task';
+import { type Attachment } from '@/activities/files/types/Attachment';
+import { type Note } from '@/activities/types/Note';
+import { type Task } from '@/activities/types/Task';
 import { filterAttachmentsToRestore } from '@/activities/utils/filterAttachmentsToRestore';
 import { getActivityAttachmentIdsAndNameToUpdate } from '@/activities/utils/getActivityAttachmentIdsAndNameToUpdate';
 import { getActivityAttachmentIdsToDelete } from '@/activities/utils/getActivityAttachmentIdsToDelete';
@@ -37,7 +37,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import type { PartialBlock } from '@blocknote/core';
+import { type PartialBlock } from '@blocknote/core';
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';

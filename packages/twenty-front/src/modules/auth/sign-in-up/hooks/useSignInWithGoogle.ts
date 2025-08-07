@@ -1,8 +1,8 @@
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '@/auth/hooks/useAuth';
-import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
-import { SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
+import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
 
 export const useSignInWithGoogle = () => {
   const workspaceInviteHash = useParams().workspaceInviteHash;

@@ -1,4 +1,4 @@
-import { InputSchemaPropertyType } from '@/workflow/types/InputSchema';
+import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 export const getFieldIcon = (fieldType?: InputSchemaPropertyType): string => {

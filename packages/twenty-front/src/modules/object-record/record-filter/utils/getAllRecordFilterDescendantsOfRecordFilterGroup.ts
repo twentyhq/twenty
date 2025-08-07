@@ -1,5 +1,5 @@
-import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 
 export const getAllRecordFilterDescendantsOfRecordFilterGroup = ({
   recordFilterGroupId,

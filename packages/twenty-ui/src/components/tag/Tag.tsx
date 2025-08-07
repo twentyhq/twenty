@@ -2,14 +2,14 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 
 // TODO prastoin We should forbid barrel import within the twenty-ui package
-import { IconComponent } from '@ui/display/icon/types/IconComponent';
+import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
 import {
   BORDER_COMMON,
   THEME_COMMON,
-  ThemeColor,
+  type ThemeColor,
   ThemeContext,
-  ThemeType,
+  type ThemeType,
 } from '@ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 

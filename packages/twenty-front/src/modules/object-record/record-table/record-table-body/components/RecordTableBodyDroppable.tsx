@@ -3,7 +3,7 @@ import { RecordTableBodyDroppableContextProvider } from '@/object-record/record-
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { Droppable } from '@hello-pangea/dnd';
-import { ReactNode, useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { v4 } from 'uuid';
 
 type RecordTableBodyDroppableProps = {

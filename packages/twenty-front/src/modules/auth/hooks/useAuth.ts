@@ -14,10 +14,10 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { supportChatState } from '@/client-config/states/supportChatState';
-import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
-  AuthTokenPair,
+  type AuthTokenPair,
   useCheckUserExistsLazyQuery,
   useGetAuthTokensFromLoginTokenMutation,
   useGetAuthTokensFromOtpMutation,
@@ -52,7 +52,7 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
-import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import {
   countAvailableWorkspaces,
   getFirstAvailableWorkspaces,
@@ -73,10 +73,10 @@ import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefres
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { i18n } from '@lingui/core';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { iconsState } from 'twenty-ui/display';
-import { AuthToken } from '~/generated/graphql';
+import { type AuthToken } from '~/generated/graphql';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';

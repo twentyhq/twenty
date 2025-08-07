@@ -5,7 +5,7 @@ import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotIm
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { suggestedFieldsByColumnHeaderState } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/states/suggestedFieldsByColumnHeaderState';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
-import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { spreadsheetImportBuildFieldOptions } from '@/spreadsheet-import/utils/spreadsheetImportBuildFieldOptions';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';

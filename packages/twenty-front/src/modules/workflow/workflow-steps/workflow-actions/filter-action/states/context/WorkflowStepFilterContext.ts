@@ -1,4 +1,4 @@
-import { FilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
+import { type FilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
 import { createContext } from 'react';
 
 type WorkflowStepFilterContextType = {

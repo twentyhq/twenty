@@ -1,7 +1,7 @@
-import { FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';
 import {
   ALLOWED_ADDRESS_SUBFIELDS,
-  AllowedAddressSubField,
+  type AllowedAddressSubField,
 } from 'twenty-shared/src/types/AddressFieldsType';
 import { isDefined } from 'twenty-shared/utils';
 import { joinAddressFieldValues } from '~/utils/joinAddressFieldValues';

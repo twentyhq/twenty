@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
+import { type SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';

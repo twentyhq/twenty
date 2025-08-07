@@ -1,8 +1,8 @@
 import {
-  GenerateDepthOneRecordGqlFields,
+  type GenerateDepthOneRecordGqlFields,
   generateDepthOneRecordGqlFields,
 } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 type ComputeDepthOneRecordGqlFieldsFromRecordArgs =
   GenerateDepthOneRecordGqlFields & {

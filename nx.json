@@ -55,10 +55,9 @@
         "{options.outputFile}"
       ],
       "options": {
-        "eslintConfig": "{projectRoot}/.eslintrc.cjs",
+        "eslintConfig": "{projectRoot}/eslint.config.mjs",
         "cache": true,
-        "cacheLocation": "{workspaceRoot}/.cache/eslint",
-        "ignorePath": "{workspaceRoot}/.gitignore"
+        "cacheLocation": "{workspaceRoot}/.cache/eslint"
       },
       "configurations": {
         "ci": {

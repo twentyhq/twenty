@@ -1,7 +1,7 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const useUpsertFindOneRecordQueryInCache = ({
   objectMetadataItem,

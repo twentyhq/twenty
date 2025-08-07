@@ -1,4 +1,4 @@
-import { AttachmentType } from '@/activities/files/types/Attachment';
+import { type AttachmentType } from '@/activities/files/types/Attachment';
 
 const FileExtensionMapping: { [key: string]: AttachmentType } = {
   doc: 'TextDocument',

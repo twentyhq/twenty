@@ -1,4 +1,4 @@
-import { WorkflowDiagramNode } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { type WorkflowDiagramNode } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { isStepNode } from '../isStepNode';
 
 describe('isStepNode', () => {

@@ -1,5 +1,5 @@
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { ComponentDecorator } from 'twenty-ui/testing';

@@ -1,7 +1,7 @@
 import {
-  WorkflowAction,
-  WorkflowRunStepStatus,
-  WorkflowTrigger,
+  type WorkflowAction,
+  type WorkflowRunStepStatus,
+  type WorkflowTrigger,
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-function-type */
+ 
 import { Injectable, Type } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 

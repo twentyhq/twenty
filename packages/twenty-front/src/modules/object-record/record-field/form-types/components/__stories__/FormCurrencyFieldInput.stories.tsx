@@ -1,6 +1,6 @@
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
-import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
-import { Meta, StoryObj } from '@storybook/react';
+import { type FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';

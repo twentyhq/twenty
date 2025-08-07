@@ -1,6 +1,6 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { lastVisitedObjectMetadataItemIdState } from '@/navigation/states/lastVisitedObjectMetadataItemIdState';
-import { ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
+import { type ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { arePrefetchViewsLoadedState } from '@/prefetch/states/arePrefetchViewsLoaded';

@@ -1,11 +1,11 @@
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '@/object-metadata/utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
-import { FetchPolicy, useApolloClient } from '@apollo/client';
+import { type FetchPolicy, useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
-import { ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
+import { type ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useRefreshObjectMetadataItems = (

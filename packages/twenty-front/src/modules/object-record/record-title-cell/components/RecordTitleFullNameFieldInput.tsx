@@ -2,10 +2,10 @@ import { useFullNameField } from '@/object-record/record-field/meta-types/hooks/
 import { FIRST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS } from '@/object-record/record-field/meta-types/input/constants/FirstNamePlaceholder';
 import { LAST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS } from '@/object-record/record-field/meta-types/input/constants/LastNamePlaceholder';
 import { isDoubleTextFieldEmpty } from '@/object-record/record-field/meta-types/input/utils/isDoubleTextFieldEmpty';
-import { FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleText';
+import { type FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleText';
 import {
-  FieldInputClickOutsideEvent,
-  FieldInputEvent,
+  type FieldInputClickOutsideEvent,
+  type FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
 import { RecordTitleDoubleTextInput } from './RecordTitleDoubleTextInput';
 

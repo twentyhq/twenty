@@ -1,4 +1,4 @@
-import { Decorator, Meta, StoryObj } from '@storybook/react';
+import { type Decorator, type Meta, type StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
 
@@ -10,9 +10,9 @@ import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { FieldRatingValue } from '../../../../types/FieldMetadata';
+import { type FieldRatingValue } from '../../../../types/FieldMetadata';
 import { useRatingField } from '../../../hooks/useRatingField';
-import { RatingFieldInput, RatingFieldInputProps } from '../RatingFieldInput';
+import { RatingFieldInput, type RatingFieldInputProps } from '../RatingFieldInput';
 
 const RatingFieldValueSetterEffect = ({
   value,

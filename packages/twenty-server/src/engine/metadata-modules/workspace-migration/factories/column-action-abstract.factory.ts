@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 import { Logger } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';

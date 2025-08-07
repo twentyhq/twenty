@@ -1,5 +1,5 @@
-import { SelectableItem } from '@/object-record/select/types/SelectableItem';
-import { Currency } from '@/ui/input/components/internal/types/Currency';
+import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
+import { type Currency } from '@/ui/input/components/internal/types/Currency';
 
 export const turnCurrencyIntoSelectableItem = (
   currency: Currency,

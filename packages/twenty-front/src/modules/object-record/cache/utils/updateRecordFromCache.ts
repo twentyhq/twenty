@@ -1,13 +1,13 @@
-import { ApolloCache } from '@apollo/client/cache';
+import { type ApolloCache } from '@apollo/client/cache';
 import gql from 'graphql-tag';
 
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
-import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { capitalize } from 'twenty-shared/utils';
-import { ObjectPermission } from '~/generated/graphql';
+import { type ObjectPermission } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const updateRecordFromCache = <T extends ObjectRecord>({

@@ -1,11 +1,11 @@
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroupRecords';
 import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
-import { ViewGroup } from '@/views/types/ViewGroup';
+import { type ViewGroup } from '@/views/types/ViewGroup';
 import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';

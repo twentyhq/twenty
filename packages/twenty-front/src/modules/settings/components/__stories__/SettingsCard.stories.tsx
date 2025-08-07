@@ -1,5 +1,5 @@
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import React from 'react';
 import { IconMailCog } from 'twenty-ui/display';
 import { ComponentDecorator } from 'twenty-ui/testing';

@@ -1,8 +1,8 @@
 import { DEBUG_FOCUS_STACK } from '@/ui/utilities/focus/constants/DebugFocusStack';
 import { currentGlobalHotkeysConfigSelector } from '@/ui/utilities/focus/states/currentGlobalHotkeysConfigSelector';
 import {
-  Hotkey,
-  OptionsOrDependencyArray,
+  type Hotkey,
+  type OptionsOrDependencyArray,
 } from 'react-hotkeys-hook/dist/types';
 import { useRecoilCallback } from 'recoil';
 import { logDebug } from '~/utils/logDebug';

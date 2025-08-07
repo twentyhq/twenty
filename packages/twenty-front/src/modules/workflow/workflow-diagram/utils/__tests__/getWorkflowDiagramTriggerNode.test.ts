@@ -1,4 +1,4 @@
-import { WorkflowTrigger } from '@/workflow/types/Workflow';
+import { type WorkflowTrigger } from '@/workflow/types/Workflow';
 import { getWorkflowDiagramTriggerNode } from '../getWorkflowDiagramTriggerNode';
 
 describe('getWorkflowDiagramTriggerNode', () => {

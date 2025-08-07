@@ -1,4 +1,4 @@
-import { ActionMenuContextType } from '@/action-menu/contexts/ActionMenuContext';
+import { type ActionMenuContextType } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuContextProviderWorkflowObjects } from '@/action-menu/contexts/ActionMenuContextProviderWorkflowObjects';
 import { ActionMenuContextProviderWorkflowsEnabled } from '@/action-menu/contexts/ActionMenuContextProviderWorkflowsEnabled';
 import { ActionMenuContextProviderWorkflowsNotEnabled } from '@/action-menu/contexts/ActionMenuContextProviderWorkflowsNotEnabled';

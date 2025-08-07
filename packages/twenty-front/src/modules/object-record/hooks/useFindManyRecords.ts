@@ -1,18 +1,18 @@
-import { useQuery, WatchQueryFetchPolicy } from '@apollo/client';
+import { useQuery, type WatchQueryFetchPolicy } from '@apollo/client';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
-import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
-import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
-import { RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
+import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
+import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
+import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
+import { type RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
 import { useFetchMoreRecordsWithPagination } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { useHandleFindManyRecordsCompleted } from '@/object-record/hooks/useHandleFindManyRecordsCompleted';
 import { useHandleFindManyRecordsError } from '@/object-record/hooks/useHandleFindManyRecordsError';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyRecordsCompleted';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyRecordsCompleted';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 
 export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &

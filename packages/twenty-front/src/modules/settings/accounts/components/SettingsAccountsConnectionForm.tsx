@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { Control, Controller } from 'react-hook-form';
+import { type Control, Controller } from 'react-hook-form';
 
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
-import { ConnectionFormData } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
+import { type ConnectionFormData } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';

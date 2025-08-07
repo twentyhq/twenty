@@ -1,7 +1,7 @@
 import IllustrationIconManyToManyRaw from '@assets/icons/illustration-many-to-many.svg?react';
 import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
-import { IconComponentProps } from '@ui/display/icon/types/IconComponent';
+import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
 type IllustrationIconManyToManyProps = Pick<IconComponentProps, 'size'>;
 

@@ -2,8 +2,8 @@ import { useCallback, useState } from 'react';
 
 import { SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID } from '@/geo-map/constants/selectAutocompleteListDropDownId';
 import { useGetPlaceApiData } from '@/geo-map/hooks/useGetPlaceApiData';
-import { PlaceAutocompleteResult } from '@/geo-map/types/placeApi';
-import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
+import { type PlaceAutocompleteResult } from '@/geo-map/types/placeApi';
+import { type FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDefined } from 'twenty-shared/utils';

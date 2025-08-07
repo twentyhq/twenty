@@ -1,7 +1,7 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { FieldDefinition } from '../FieldDefinition';
-import { FieldFullNameMetadata, FieldMetadata } from '../FieldMetadata';
+import { type FieldDefinition } from '../FieldDefinition';
+import { type FieldFullNameMetadata, type FieldMetadata } from '../FieldMetadata';
 
 export const isFieldFullName = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type'>,

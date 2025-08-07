@@ -10,7 +10,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { useTheme } from '@emotion/react';
 import { IconChevronRight, IconSearch } from 'twenty-ui/display';
-import { Agent } from '~/generated-metadata/graphql';
+import { type Agent } from '~/generated-metadata/graphql';
 import { SETTINGS_AI_AGENT_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsAIAgentTableMetadata';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import {

@@ -1,6 +1,6 @@
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
-import { FieldInputDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { type FieldInputDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
+import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldCurrency } from '@/object-record/record-field/types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '@/object-record/record-field/types/guards/isFieldCurrencyValue';

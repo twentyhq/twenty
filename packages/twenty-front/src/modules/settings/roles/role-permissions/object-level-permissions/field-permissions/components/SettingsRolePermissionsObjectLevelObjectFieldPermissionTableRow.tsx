@@ -1,9 +1,9 @@
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import { SettingsObjectFieldDataType } from '@/settings/data-model/object-details/components/SettingsObjectFieldDataType';
-import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
+import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { useObjectPermissionDerivedStates } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useObjectPermissionDerivedStates';
 import { useUpsertFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useUpsertFieldPermissionInDraftRole';
 import { OverridableCheckbox } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/OverridableCheckbox';
@@ -15,7 +15,7 @@ import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { v4 } from 'uuid';
-import { FieldPermission, RelationType } from '~/generated/graphql';
+import { type FieldPermission, RelationType } from '~/generated/graphql';
 
 export const StyledObjectFieldTableRow = styled(TableRow)`
   grid-template-columns: 180px 1fr 60px 60px;

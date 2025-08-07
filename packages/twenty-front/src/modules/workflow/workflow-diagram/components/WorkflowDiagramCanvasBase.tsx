@@ -1,5 +1,5 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
+import { type CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
 import { useListenToSidePanelClosing } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelClosing';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -13,11 +13,11 @@ import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diag
 import { workflowDiagramWaitingNodesDimensionsComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramWaitingNodesDimensionsComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import {
-  WorkflowDiagram,
-  WorkflowDiagramEdge,
-  WorkflowDiagramEdgeType,
-  WorkflowDiagramNode,
-  WorkflowDiagramNodeType,
+  type WorkflowDiagram,
+  type WorkflowDiagramEdge,
+  type WorkflowDiagramEdgeType,
+  type WorkflowDiagramNode,
+  type WorkflowDiagramNodeType,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
@@ -26,18 +26,18 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
   Background,
-  EdgeChange,
-  EdgeProps,
-  FitViewOptions,
-  NodeChange,
-  NodeProps,
+  type EdgeChange,
+  type EdgeProps,
+  type FitViewOptions,
+  type NodeChange,
+  type NodeProps,
   ReactFlow,
   applyEdgeChanges,
   applyNodeChanges,
   useReactFlow,
-  Connection,
-  OnNodeDrag,
-  OnBeforeDelete,
+  type Connection,
+  type OnNodeDrag,
+  type OnBeforeDelete,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, {
@@ -50,7 +50,7 @@ import React, {
 } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag, TagColor } from 'twenty-ui/components';
+import { Tag, type TagColor } from 'twenty-ui/components';
 import { THEME_COMMON } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { useEdgeHovered } from '@/workflow/workflow-diagram/hooks/useEdgeHovered';

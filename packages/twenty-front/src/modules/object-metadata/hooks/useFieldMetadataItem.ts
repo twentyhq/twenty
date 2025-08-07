@@ -1,6 +1,6 @@
-import { Field, RelationType } from '~/generated-metadata/graphql';
+import { type Field, type RelationType } from '~/generated-metadata/graphql';
 
-import { FieldMetadataItem } from '../types/FieldMetadataItem';
+import { type FieldMetadataItem } from '../types/FieldMetadataItem';
 import { formatFieldMetadataItemInput } from '../utils/formatFieldMetadataItemInput';
 
 import { useCreateOneFieldMetadataItem } from './useCreateOneFieldMetadataItem';

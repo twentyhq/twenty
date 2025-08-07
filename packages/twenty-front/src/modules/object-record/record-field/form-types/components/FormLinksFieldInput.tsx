@@ -1,9 +1,9 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/form-types/components/FormNestedFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
-import { FieldLinksDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
-import { FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { type FieldLinksDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
+import { type FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 
 type FormLinksFieldInputProps = {

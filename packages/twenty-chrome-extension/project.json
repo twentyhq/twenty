@@ -44,11 +44,10 @@
           "{projectRoot}/src/**/*.{ts,tsx,json}",
           "{projectRoot}/package.json"
         ],
-        "maxWarnings": 0,
-        "reportUnusedDisableDirectives": "error"
+        "maxWarnings": 0
       },
       "configurations": {
-        "ci": { "eslintConfig": "{projectRoot}/.eslintrc-ci.cjs" },
+        "ci": { "eslintConfig": "{projectRoot}/eslint.config.mjs" },
         "fix": {}
       }
     },

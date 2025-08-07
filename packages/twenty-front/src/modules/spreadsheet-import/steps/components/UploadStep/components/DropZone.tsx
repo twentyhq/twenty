@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { read, WorkBook } from 'xlsx-ugnis';
+import { read, type WorkBook } from 'xlsx-ugnis';
 
 import { SpreadsheetMaxRecordImportCapacity } from '@/spreadsheet-import/constants/SpreadsheetMaxRecordImportCapacity';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';

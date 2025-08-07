@@ -1,4 +1,4 @@
-import type { PartialBlock } from '@blocknote/core';
+import { type PartialBlock } from '@blocknote/core';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const getFirstNonEmptyLineOfRichText = (

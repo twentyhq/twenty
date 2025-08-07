@@ -2,10 +2,10 @@ import { useContext } from 'react';
 
 import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 
-import { FieldRichTextValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldRichTextValue } from '@/object-record/record-field/types/FieldMetadata';
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
-import type { PartialBlock } from '@blocknote/core';
+import { type PartialBlock } from '@blocknote/core';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { FieldContext } from '../../contexts/FieldContext';

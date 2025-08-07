@@ -1,6 +1,6 @@
-import { TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
+import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export const filterOutInvalidTimelineActivities = (
   timelineActivities: TimelineActivity[],

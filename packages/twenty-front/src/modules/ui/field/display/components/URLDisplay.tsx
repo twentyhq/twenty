@@ -1,4 +1,4 @@
-import { MouseEvent } from 'react';
+import { type MouseEvent } from 'react';
 
 import { LinkType, RoundedLink, SocialLink } from 'twenty-ui/navigation';
 import { checkUrlType } from '~/utils/checkUrlType';

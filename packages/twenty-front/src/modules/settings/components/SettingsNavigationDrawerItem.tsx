@@ -1,9 +1,9 @@
 import { useMatch, useResolvedPath } from 'react-router-dom';
 
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
-import { SettingsNavigationItem } from '@/settings/hooks/useSettingsNavigationItems';
+import { type SettingsNavigationItem } from '@/settings/hooks/useSettingsNavigationItems';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
+import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { isDefined } from 'twenty-shared/utils';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 

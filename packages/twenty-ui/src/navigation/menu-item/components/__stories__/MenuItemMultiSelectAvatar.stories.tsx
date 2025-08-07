@@ -1,12 +1,12 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 import { Avatar } from '@ui/display';
 import {
   AVATAR_URL_MOCK,
   CatalogDecorator,
-  CatalogDimension,
-  CatalogOptions,
-  CatalogStory,
+  type CatalogDimension,
+  type CatalogOptions,
+  type CatalogStory,
   ComponentDecorator,
   RecoilRootDecorator,
 } from '@ui/testing';

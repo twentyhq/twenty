@@ -1,5 +1,5 @@
-import { FunctionComponent } from 'react';
-import * as React from 'react';
+import { type FunctionComponent } from 'react';
+import type * as React from 'react';
 
 export type IconComponentProps = {
   className?: string;

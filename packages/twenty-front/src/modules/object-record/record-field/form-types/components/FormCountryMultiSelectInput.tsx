@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
-import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { type FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
-import { IconComponentProps } from 'twenty-ui/display';
-import { SelectOption } from 'twenty-ui/input';
+import { type IconComponentProps } from 'twenty-ui/display';
+import { type SelectOption } from 'twenty-ui/input';
 
 export const FormCountryMultiSelectInput = ({
   onChange,

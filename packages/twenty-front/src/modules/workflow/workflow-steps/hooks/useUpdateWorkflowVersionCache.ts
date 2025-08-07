@@ -5,11 +5,11 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { WorkflowVersion } from '@/workflow/types/Workflow';
+import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  WorkflowAction,
-  WorkflowVersionStepChanges,
+  type WorkflowAction,
+  type WorkflowVersionStepChanges,
 } from '~/generated/graphql';
 
 export const useUpdateWorkflowVersionCache = () => {

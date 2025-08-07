@@ -1,6 +1,6 @@
 import { IANA_TIME_ZONES } from '@/localization/constants/IanaTimeZones';
 import { formatTimeZoneLabel } from '@/localization/utils/formatTimeZoneLabel';
-import { SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/input';
 
 export const AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL = IANA_TIME_ZONES.reduce<
   Record<string, SelectOption>

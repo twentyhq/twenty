@@ -1,5 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
-import { WorkspaceMember } from '~/generated/graphql';
+import { type WorkspaceMember } from '~/generated/graphql';
 
 export type TimelineActivity = {
   id: string;

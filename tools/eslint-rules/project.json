@@ -16,7 +16,7 @@
     },
     "lint": {
       "options": {
-        "eslintConfig": "{workspaceRoot}/.eslintrc.cjs",
+        "eslintConfig": "{workspaceRoot}/eslint.config.global.mjs",
         "lintFilePatterns": ["{projectRoot}/**/*.ts"]
       },
       "configurations": {

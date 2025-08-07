@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
 import { indexMetadataItemSchema } from '@/object-metadata/validation-schemas/indexMetadataItemSchema';
 import { metadataLabelSchema } from '@/object-metadata/validation-schemas/metadataLabelSchema';

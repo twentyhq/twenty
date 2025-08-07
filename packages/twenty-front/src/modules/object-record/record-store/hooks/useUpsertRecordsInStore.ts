@@ -1,7 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const useUpsertRecordsInStore = () => {
   const upsertRecords = useRecoilCallback(

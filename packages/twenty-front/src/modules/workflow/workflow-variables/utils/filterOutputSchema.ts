@@ -1,8 +1,8 @@
-import { InputSchemaPropertyType } from '@/workflow/types/InputSchema';
+import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
 import {
-  BaseOutputSchema,
-  OutputSchema,
-  RecordOutputSchema,
+  type BaseOutputSchema,
+  type OutputSchema,
+  type RecordOutputSchema,
 } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
 import { isFieldTypeCompatibleWithRecordId } from '@/workflow/workflow-variables/utils/isFieldTypeCompatibleWithRecordId';

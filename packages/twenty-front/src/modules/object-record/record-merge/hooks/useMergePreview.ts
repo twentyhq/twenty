@@ -5,7 +5,7 @@ import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
 import { useMergeRecordRelationships } from '@/object-record/record-merge/hooks/useMergeRecordRelationships';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { mergeSettingsState } from '../states/mergeSettingsState';
 
 type UseMergePreviewProps = {

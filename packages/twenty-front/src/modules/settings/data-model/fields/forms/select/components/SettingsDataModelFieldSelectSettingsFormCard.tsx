@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import {
   settingsDataModelFieldMultiSelectFormSchema,
@@ -12,10 +12,10 @@ import {
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
 import {
   SettingsDataModelFieldPreviewCard,
-  SettingsDataModelFieldPreviewCardProps,
+  type SettingsDataModelFieldPreviewCardProps,
 } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 const _selectOrMultiSelectFormSchema = z.union([
   settingsDataModelFieldSelectFormSchema,
   settingsDataModelFieldMultiSelectFormSchema,

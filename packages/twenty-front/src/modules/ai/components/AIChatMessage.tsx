@@ -7,7 +7,7 @@ import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePrev
 import { AgentChatMessageRole } from '@/ai/constants/agent-chat-message-role';
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 
-import { AgentChatMessage } from '~/generated/graphql';
+import { type AgentChatMessage } from '~/generated/graphql';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const StyledMessageBubble = styled.div<{ isUser?: boolean }>`

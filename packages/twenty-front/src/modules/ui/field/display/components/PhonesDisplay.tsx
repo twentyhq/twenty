@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 
 import { DEFAULT_PHONE_CALLING_CODE } from '@/object-record/record-field/meta-types/input/components/PhonesFieldInput';

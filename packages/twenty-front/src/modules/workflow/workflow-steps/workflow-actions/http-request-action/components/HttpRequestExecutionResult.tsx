@@ -1,8 +1,8 @@
 import {
-  ExecutionStatus,
+  type ExecutionStatus,
   WorkflowStepExecutionResult,
 } from '@/workflow/components/WorkflowStepExecutionResult';
-import type { HttpRequestTestData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/types/HttpRequestTestData';
+import { type HttpRequestTestData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/types/HttpRequestTestData';
 
 export const HttpRequestExecutionResult = ({
   httpRequestTestData,

@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
-import { DropResult } from '@hello-pangea/dnd';
+import { type DropResult } from '@hello-pangea/dnd';
 import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import {
-  FieldMetadataItem,
-  FieldMetadataItemOption,
+  type FieldMetadataItem,
+  type FieldMetadataItemOption,
 } from '@/object-metadata/types/FieldMetadataItem';
 import { selectOptionsSchema } from '@/object-metadata/validation-schemas/selectOptionsSchema';
 import { multiSelectFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/multiSelectFieldDefaultValueSchema';
@@ -40,7 +40,7 @@ export const settingsDataModelFieldMultiSelectFormSchema = z.object({
   options: selectOptionsSchema,
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 const _selectOrMultiSelectFormSchema = z.union([
   settingsDataModelFieldSelectFormSchema,
   settingsDataModelFieldMultiSelectFormSchema,

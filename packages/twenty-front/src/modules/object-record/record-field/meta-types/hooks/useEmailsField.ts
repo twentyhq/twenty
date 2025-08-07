@@ -3,7 +3,7 @@ import { useRecoilState } from 'recoil';
 
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
-import { FieldEmailsValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldEmailsValue } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldEmails } from '@/object-record/record-field/types/guards/isFieldEmails';
 import { emailsSchema } from '@/object-record/record-field/types/guards/isFieldEmailsValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';

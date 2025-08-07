@@ -24,7 +24,7 @@ export const handleCompositeKey = (
   result[parsedFieldKey.parentFieldName][parsedFieldKey.childFieldName] = value;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const parseResult = (obj: any): any => {
   if (obj === null || typeof obj !== 'object' || typeof obj === 'function') {
@@ -39,7 +39,7 @@ export const parseResult = (obj: any): any => {
   const result: any = {};
 
   for (const key in obj) {
-    // eslint-disable-next-line no-prototype-builtins
+     
     if (obj.hasOwnProperty(key)) {
       if (typeof obj[key] === 'object' && obj[key] !== null) {
         result[key] = parseResult(obj[key]);

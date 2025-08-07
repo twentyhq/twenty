@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { metadataLabelSchema } from '@/object-metadata/validation-schemas/metadataLabelSchema';
 import { themeColorSchema } from 'twenty-ui/theme';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';

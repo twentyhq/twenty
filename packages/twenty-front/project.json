@@ -52,12 +52,11 @@
     "typecheck": {},
     "lint": {
       "options": {
-        "maxWarnings": 0,
-        "reportUnusedDisableDirectives": "error"
+        "maxWarnings": 0
       },
       "configurations": {
         "ci": {
-          "eslintConfig": "{projectRoot}/.eslintrc-ci.cjs"
+          "eslintConfig": "{projectRoot}/eslint.config.mjs"
         },
         "fix": {}
       }

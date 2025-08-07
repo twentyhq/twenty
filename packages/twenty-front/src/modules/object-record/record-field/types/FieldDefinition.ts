@@ -1,7 +1,7 @@
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { type FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { IconComponent } from 'twenty-ui/display';
-import { FieldMetadata } from './FieldMetadata';
+import { type IconComponent } from 'twenty-ui/display';
+import { type FieldMetadata } from './FieldMetadata';
 
 export type FieldDefinition<T extends FieldMetadata> = {
   fieldMetadataId: string;

@@ -9,7 +9,7 @@ import { useDeleteFavoriteFolder } from '@/favorites/hooks/useDeleteFavoriteFold
 import { useRenameFavoriteFolder } from '@/favorites/hooks/useRenameFavoriteFolder';
 import { openFavoriteFolderIdsState } from '@/favorites/states/openFavoriteFolderIdsState';
 import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatchingFavorite';
-import { ProcessedFavorite } from '@/favorites/utils/sortFavorites';
+import { type ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';

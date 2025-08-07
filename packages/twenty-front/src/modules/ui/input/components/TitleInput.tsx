@@ -1,4 +1,4 @@
-import { TextInput, TextInputSize } from '@/ui/input/components/TextInput';
+import { TextInput, type TextInputSize } from '@/ui/input/components/TextInput';
 import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 

@@ -1,4 +1,4 @@
-import { Reference } from '@apollo/client';
+import { type Reference } from '@apollo/client';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';

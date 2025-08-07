@@ -1,11 +1,11 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useRecoilCallback } from 'recoil';
-import { RestrictedField } from 'twenty-shared/types';
+import { type RestrictedField } from 'twenty-shared/types';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 

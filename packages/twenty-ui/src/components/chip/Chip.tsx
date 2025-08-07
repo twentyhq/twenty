@@ -1,6 +1,6 @@
-import { Theme, withTheme } from '@emotion/react';
+import { type Theme, withTheme } from '@emotion/react';
 import { styled } from '@linaria/react';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
 

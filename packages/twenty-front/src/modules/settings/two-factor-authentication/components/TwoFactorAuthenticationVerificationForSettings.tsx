@@ -2,7 +2,7 @@ import { useMutation } from '@apollo/client';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { OTPInput, SlotProps } from 'input-otp';
+import { OTPInput, type SlotProps } from 'input-otp';
 import { useState } from 'react';
 import { Controller, useForm, useFormContext } from 'react-hook-form';
 

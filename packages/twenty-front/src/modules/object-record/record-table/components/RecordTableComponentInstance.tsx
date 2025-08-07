@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 
 import { RecordTableComponentInstanceEffect } from '@/object-record/record-table/components/RecordTableComponentInstanceEffect';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';

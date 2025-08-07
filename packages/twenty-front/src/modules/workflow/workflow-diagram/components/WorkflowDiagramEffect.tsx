@@ -5,8 +5,8 @@ import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
 import {
-  WorkflowVersion,
-  WorkflowWithCurrentVersion,
+  type WorkflowVersion,
+  type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 

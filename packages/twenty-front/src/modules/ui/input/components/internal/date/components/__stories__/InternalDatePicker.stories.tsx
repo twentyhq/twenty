@@ -1,5 +1,5 @@
 import { useArgs } from '@storybook/preview-api';
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 import { DateTimePicker } from '../InternalDatePicker';
 import { isDefined } from 'twenty-shared/utils';

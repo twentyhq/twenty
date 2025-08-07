@@ -1,7 +1,7 @@
 import { useRecoilState } from 'recoil';
 
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
-import { MergeManySettings } from '@/object-record/hooks/useMergeManyRecords';
+import { type MergeManySettings } from '@/object-record/hooks/useMergeManyRecords';
 import { mergeSettingsState } from '../states/mergeSettingsState';
 
 export const useMergeRecordsSettings = () => {

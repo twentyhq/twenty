@@ -1,4 +1,4 @@
-import { DateFormat } from '@/localization/constants/DateFormat';
+import { type DateFormat } from '@/localization/constants/DateFormat';
 import { formatInTimeZone } from 'date-fns-tz';
 
 export const formatDateISOStringToDate = ({

@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 import { CurrencyFieldDisplay } from '@/object-record/record-field/meta-types/display/components/CurrencyFieldDisplay';
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';

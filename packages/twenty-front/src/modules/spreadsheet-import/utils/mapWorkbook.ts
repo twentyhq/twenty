@@ -1,4 +1,4 @@
-import { utils, WorkBook } from 'xlsx-ugnis';
+import { utils, type WorkBook } from 'xlsx-ugnis';
 
 export const mapWorkbook = (workbook: WorkBook, sheetName?: string) => {
   const worksheet = workbook.Sheets[sheetName || workbook.SheetNames[0]];

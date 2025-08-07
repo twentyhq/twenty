@@ -17,7 +17,7 @@ export class GmailFetchByBatchService {
     boundary: string,
   ): Promise<{
     messageIdsByBatch: string[][];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     batchResponses: AxiosResponse<any, any>[];
   }> {
@@ -25,7 +25,7 @@ export class GmailFetchByBatchService {
 
     let batchOffset = 0;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let batchResponses: AxiosResponse<any, any>[] = [];
 
@@ -58,7 +58,7 @@ export class GmailFetchByBatchService {
     batchOffset: number,
     batchLimit: number,
     boundary: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<AxiosResponse<any, any>> {
     const queries = createQueriesFromMessageIds(messageIds);
@@ -104,7 +104,7 @@ export class GmailFetchByBatchService {
   }
 
   parseBatch(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     responseCollection: AxiosResponse<any, any>,
   ): GmailMessageParsedResponse[] {
@@ -132,7 +132,7 @@ export class GmailFetchByBatchService {
     return responseItems;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getBatchSeparator(responseCollection: AxiosResponse<any, any>): string {
     const headers = responseCollection.headers;

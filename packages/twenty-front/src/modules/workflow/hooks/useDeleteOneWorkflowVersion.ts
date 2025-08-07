@@ -2,7 +2,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
-import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
+import { type Workflow, type WorkflowVersion } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useDeleteOneWorkflowVersion = () => {

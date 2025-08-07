@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { getAggregateQueryName } from '@/object-record/utils/getAggregateQueryName';
 import { capitalize } from 'twenty-shared/utils';
 

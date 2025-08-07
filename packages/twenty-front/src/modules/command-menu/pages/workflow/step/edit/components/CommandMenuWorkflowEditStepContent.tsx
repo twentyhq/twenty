@@ -1,5 +1,5 @@
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
-import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
 import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';

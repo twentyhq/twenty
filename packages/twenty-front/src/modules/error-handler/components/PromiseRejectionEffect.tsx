@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 
-import { CustomError } from '@/error-handler/CustomError';
+import { type CustomError } from '@/error-handler/CustomError';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-shared/utils';

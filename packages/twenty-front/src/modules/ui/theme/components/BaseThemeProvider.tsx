@@ -2,7 +2,7 @@ import { ThemeProvider } from '@emotion/react';
 import { createContext, useState } from 'react';
 
 import { useSystemColorScheme } from '../hooks/useSystemColorScheme';
-import { ColorScheme } from 'twenty-ui/input';
+import { type ColorScheme } from 'twenty-ui/input';
 import { THEME_DARK, THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';
 
 type BaseThemeProviderProps = {

@@ -1,7 +1,7 @@
 import { useObjectOptionsForTable } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForTable';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
-import { DropResult, ResponderProvided } from '@hello-pangea/dnd';
+import { type DropResult, type ResponderProvided } from '@hello-pangea/dnd';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { RecoilRoot } from 'recoil';

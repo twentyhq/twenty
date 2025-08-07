@@ -1,13 +1,13 @@
 import { createReactBlockSpec } from '@blocknote/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { ChangeEvent, useRef } from 'react';
+import { type ChangeEvent, useRef } from 'react';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { FileIcon } from '@/file/components/FileIcon';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
-import { AttachmentType } from '../../files/types/Attachment';
+import { type AttachmentType } from '../../files/types/Attachment';
 import { getFileType } from '../../files/utils/getFileType';
 
 const StyledFileInput = styled.input`
@@ -54,7 +54,7 @@ export const FileBlock = createReactBlockSpec(
   },
   {
     render: ({ block, editor }) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
+       
       const inputFileRef = useRef<HTMLInputElement>(null);
 
       const handleUploadAttachment = async (file: File) => {

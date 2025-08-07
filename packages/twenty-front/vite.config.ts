@@ -72,8 +72,8 @@ export default defineConfig(({ command, mode }) => {
   if (VITE_DISABLE_ESLINT_CHECKER !== 'true') {
     checkers['eslint'] = {
       lintCommand:
-        // Appended to packages/twenty-front/.eslintrc.cjs
-        'eslint ../../packages/twenty-front --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs',
+        // Uses flat config eslint.config.mjs
+        'eslint ../../packages/twenty-front --max-warnings 0 --config eslint.config.mjs',
     };
   }
 

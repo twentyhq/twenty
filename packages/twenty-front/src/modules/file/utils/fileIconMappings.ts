@@ -1,7 +1,7 @@
-import { AttachmentType } from '@/activities/files/types/Attachment';
+import { type AttachmentType } from '@/activities/files/types/Attachment';
 import { useTheme } from '@emotion/react';
 import {
-  IconComponent,
+  type IconComponent,
   IconFile,
   IconFileText,
   IconFileZip,

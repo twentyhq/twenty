@@ -1,14 +1,14 @@
 import styled from '@emotion/styled';
-import { ReactNode, useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
-import { Modal, ModalVariants } from '@/ui/layout/modal/components/Modal';
+import { Modal, type ModalVariants } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useLingui } from '@lingui/react/macro';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
-import { Button, ButtonAccent } from 'twenty-ui/input';
+import { Button, type ButtonAccent } from 'twenty-ui/input';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 
 export type ConfirmationModalProps = {

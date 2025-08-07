@@ -1,13 +1,13 @@
-import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
+import { type WorkflowStep, type WorkflowTrigger } from '@/workflow/types/Workflow';
 import { FIRST_NODE_POSITION } from '@/workflow/workflow-diagram/constants/FirstNodePosition';
 import { VERTICAL_DISTANCE_BETWEEN_TWO_NODES } from '@/workflow/workflow-diagram/constants/VerticalDistanceBetweenTwoNodes';
 import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workflow-diagram/constants/WorkflowVisualizerEdgeDefaultConfiguration';
 import {
-  WorkflowDiagram,
-  WorkflowDiagramEdge,
-  WorkflowDiagramEdgeType,
-  WorkflowDiagramNode,
-  WorkflowDiagramStepNodeData,
+  type WorkflowDiagram,
+  type WorkflowDiagramEdge,
+  type WorkflowDiagramEdgeType,
+  type WorkflowDiagramNode,
+  type WorkflowDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowDiagramTriggerNode } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramTriggerNode';
 
