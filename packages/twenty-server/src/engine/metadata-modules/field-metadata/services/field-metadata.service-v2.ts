@@ -183,31 +183,37 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
         ),
       ),
     );
-    // We need to create an extract sub object metadatamaps and then tranpsile them to flat object metadatas
 
-    const workspaceMigration = this.workspaceMigrationBuilderV2.build({
-      objectMetadataFromToInputs: {
-        from: fromFlatObjectMetadataMapsToFlatObjectMetadatas(
-          extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow({
-            flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-            objectMetadataIds: impactedObjectMetadataIds,
-          }),
-        ),
-        to: fromFlatObjectMetadataMapsToFlatObjectMetadatas(
-          extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow({
-            flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
-            objectMetadataIds: impactedObjectMetadataIds,
-          }),
-        ),
-      },
-      inferDeletionFromMissingObjectFieldIndex: false,
-      workspaceId,
-    });
-    ///
+    try {
+      const workspaceMigration = this.workspaceMigrationBuilderV2.build({
+        objectMetadataFromToInputs: {
+          from: fromFlatObjectMetadataMapsToFlatObjectMetadatas(
+            extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow({
+              flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+              objectMetadataIds: impactedObjectMetadataIds,
+            }),
+          ),
+          to: fromFlatObjectMetadataMapsToFlatObjectMetadatas(
+            extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow({
+              flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+              objectMetadataIds: impactedObjectMetadataIds,
+            }),
+          ),
+        },
+        inferDeletionFromMissingObjectFieldIndex: false,
+        workspaceId,
+      });
 
-    await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
+      await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
 
-    // TODO refactor once the runner has been refactored to return created entities
-    return [];
+      // TODO refacto`r once the runner has been refactored to return created entities
+      return [];
+    } catch {
+      // TODO prastoin We should pass the internal error here
+      throw new FieldMetadataException(
+        'Workspace migration failed to run',
+        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
