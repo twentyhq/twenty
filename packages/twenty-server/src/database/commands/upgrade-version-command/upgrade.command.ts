@@ -36,6 +36,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-minor-and-major';
+import { AddPositionsToWorkflowVersionsAndWorkflowRuns } from 'src/database/commands/upgrade-version-command/1-3/1-3-add-positions-to-workflow-versions-and-workflow-runs.command';
 
 const execPromise = promisify(exec);
 
@@ -161,6 +162,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly assignRolesToExistingApiKeysCommand: AssignRolesToExistingApiKeysCommand,
     protected readonly addNextStepIdsToWorkflowRunsTrigger: AddNextStepIdsToWorkflowRunsTrigger,
     protected readonly updateTimestampColumnTypeInWorkspaceSchemaCommand: UpdateTimestampColumnTypeInWorkspaceSchemaCommand,
+    protected readonly addPositionsToWorkflowVersionsAndWorkflowRuns: AddPositionsToWorkflowVersionsAndWorkflowRuns,
   ) {
     super(
       workspaceRepository,
@@ -225,6 +227,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.addNextStepIdsToWorkflowRunsTrigger,
         this.assignRolesToExistingApiKeysCommand,
         this.updateTimestampColumnTypeInWorkspaceSchemaCommand,
+        this.addPositionsToWorkflowVersionsAndWorkflowRuns,
       ],
       afterSyncMetadata: [],
     };
