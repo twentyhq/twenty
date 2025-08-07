@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { In, MoreThanOrEqual } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -161,33 +161,59 @@ export class MessagingMessageListFetchService {
       const fullSyncMessageChannelMessageToDelete = [];
 
       if (isFullSync) {
-        const existingMessageChannelMessageAssociationsCount =
-          await messageChannelMessageAssociationRepository.count({
+        const firstMessageChannelMessageAssociation =
+          await messageChannelMessageAssociationRepository.findOne({
             where: {
               messageChannelId: messageChannelWithFreshTokens.id,
             },
+            order: {
+              id: 'ASC',
+            },
           });
 
+        if (!firstMessageChannelMessageAssociation) {
+          this.logger.log(
+            `messageChannelId: ${messageChannel.id} Full sync: No message channel message associations found`,
+          );
+
+          return;
+        }
+
         this.logger.log(
-          `messageChannelId: ${messageChannel.id} Full sync: Existing message channel message associations count: ${existingMessageChannelMessageAssociationsCount}`,
+          `messageChannelId: ${messageChannel.id} Full sync: First message channel message association id: ${firstMessageChannelMessageAssociation.id}`,
         );
 
-        for (
-          let offset = 0;
-          offset < existingMessageChannelMessageAssociationsCount;
-          offset += 200
-        ) {
+        let nextFirstBatchMessageChannelMessageAssociationId:
+          | string
+          | undefined = firstMessageChannelMessageAssociation.id;
+        let batchIndex = 0;
+
+        while (isDefined(nextFirstBatchMessageChannelMessageAssociationId)) {
           const existingMessageChannelMessageAssociations =
             await messageChannelMessageAssociationRepository.find({
               where: {
                 messageChannelId: messageChannelWithFreshTokens.id,
+                id: MoreThanOrEqual(
+                  nextFirstBatchMessageChannelMessageAssociationId,
+                ),
               },
               order: {
                 id: 'ASC',
               },
               take: 200,
-              skip: offset,
             });
+
+          if (existingMessageChannelMessageAssociations.length < 200) {
+            nextFirstBatchMessageChannelMessageAssociationId = undefined;
+            break;
+          }
+
+          nextFirstBatchMessageChannelMessageAssociationId =
+            existingMessageChannelMessageAssociations[
+              existingMessageChannelMessageAssociations.length - 1
+            ].id;
+
+          batchIndex++;
 
           const messageChannelMessageAssociationsToDelete =
             existingMessageChannelMessageAssociations.filter(
@@ -201,39 +227,12 @@ export class MessagingMessageListFetchService {
             );
 
           this.logger.log(
-            `messageChannelId: ${messageChannel.id} Full sync: Message channel message associations to delete in batch ${offset}: ${messageChannelMessageAssociationsToDelete.length}`,
+            `messageChannelId: ${messageChannel.id} Full sync: Message channel message associations to delete in batch ${batchIndex}: ${messageChannelMessageAssociationsToDelete.length}`,
           );
 
           fullSyncMessageChannelMessageToDelete.push(
             ...messageChannelMessageAssociationsToDelete,
           );
-        }
-
-        const allMessageExternalIdsToDelete = [
-          ...messageExternalIdsToDelete,
-          ...fullSyncMessageChannelMessageToDelete.map(
-            (messageChannelMessageAssociation) =>
-              messageChannelMessageAssociation.messageExternalId,
-          ),
-        ];
-
-        if (allMessageExternalIdsToDelete.length) {
-          this.logger.log(
-            `messageChannelId: ${messageChannel.id} Deleting ${allMessageExternalIdsToDelete.length} message channel message associations`,
-          );
-
-          const toDeleteChunks = chunk(allMessageExternalIdsToDelete, 200);
-
-          for (const [index, toDeleteChunk] of toDeleteChunks.entries()) {
-            await messageChannelMessageAssociationRepository.delete({
-              messageChannelId: messageChannelWithFreshTokens.id,
-              messageExternalId: In(toDeleteChunk),
-            });
-
-            this.logger.log(
-              `messageChannelId: ${messageChannel.id} Deleted ${toDeleteChunk.length} message channel message associations in batch ${index + 1}`,
-            );
-          }
         }
       }
 
