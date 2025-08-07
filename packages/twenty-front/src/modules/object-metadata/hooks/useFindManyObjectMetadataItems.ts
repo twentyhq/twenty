@@ -45,7 +45,7 @@ export const useFindManyObjectMetadataItems = ({
       objectMetadataItems: objectMetadataItemsArray,
       objectPermissionsByObjectMetadataId,
     });
-  }, [data]);
+  }, [data, objectPermissionsByObjectMetadataId]);
 
   return {
     objectMetadataItems,
