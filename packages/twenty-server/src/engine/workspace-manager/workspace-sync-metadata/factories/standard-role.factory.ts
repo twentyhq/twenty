@@ -35,7 +35,7 @@ export class StandardRoleFactory {
       } else {
         computedRoles.push({
           ...flatRole,
-          uniqueIdentifier: roleDefinition.standardId || '',
+          uniqueIdentifier: roleDefinition.standardId,
         });
       }
     }
