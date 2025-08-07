@@ -291,13 +291,6 @@ export class MessagingMessageListFetchService {
           take: 200,
         });
 
-      nextFirstBatchMessageChannelMessageAssociationId =
-        existingMessageChannelMessageAssociations[
-          existingMessageChannelMessageAssociations.length - 1
-        ].id;
-
-      batchIndex++;
-
       const messageChannelMessageAssociationsToDelete =
         existingMessageChannelMessageAssociations.filter(
           (existingMessageChannelMessageAssociation) =>
@@ -319,8 +312,14 @@ export class MessagingMessageListFetchService {
 
       if (existingMessageChannelMessageAssociations.length < 200) {
         nextFirstBatchMessageChannelMessageAssociationId = undefined;
-        break;
       }
+
+      nextFirstBatchMessageChannelMessageAssociationId =
+        existingMessageChannelMessageAssociations[
+          existingMessageChannelMessageAssociations.length - 1
+        ].id;
+
+      batchIndex++;
     }
 
     return fullSyncMessageChannelMessageAssociationsToDelete;
