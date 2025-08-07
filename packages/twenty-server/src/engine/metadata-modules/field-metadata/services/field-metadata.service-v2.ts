@@ -66,46 +66,45 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
     flatFieldMetadataToCreate: FlatFieldMetadata;
   }): FlatObjectMetadataMaps | undefined {
     if (
-      isFlatFieldMetadataEntityOfType(
+      !isFlatFieldMetadataEntityOfType(
         flatFieldMetadataToCreate,
         FieldMetadataType.RELATION,
-      ) ||
-      isFlatFieldMetadataEntityOfType(
+      ) &&
+      !isFlatFieldMetadataEntityOfType(
         flatFieldMetadataToCreate,
         FieldMetadataType.MORPH_RELATION,
       )
     ) {
-      const relatedFlatFieldMetadataToCreate = flatFieldMetadatasToCreate.find(
-        (relatedFlatFieldMetadata) =>
-          isFlatFieldMetadataEntityOfType(
-            relatedFlatFieldMetadata,
-            FieldMetadataType.RELATION,
-          ) &&
-          relatedFlatFieldMetadata.id ===
-            flatFieldMetadataToCreate.relationTargetFieldMetadataId,
-      );
-
-      if (!isDefined(relatedFlatFieldMetadataToCreate)) {
-        return undefined;
-      }
-
-      const flatObjectMetadataMapsWithRelatedObjectMetadata =
-        extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMaps({
-          flatObjectMetadataMaps,
-          objectMetadataIds: [
-            relatedFlatFieldMetadataToCreate.objectMetadataId,
-          ],
-        });
-
-      if (!isDefined(flatObjectMetadataMapsWithRelatedObjectMetadata)) {
-        return undefined;
-      }
-
-      return addFlatFieldMetadataInFlatObjectMetadataMaps({
-        flatFieldMetadata: relatedFlatFieldMetadataToCreate,
-        flatObjectMetadataMaps: flatObjectMetadataMapsWithRelatedObjectMetadata,
-      });
+      return undefined;
     }
+    const relatedFlatFieldMetadataToCreate = flatFieldMetadatasToCreate.find(
+      (relatedFlatFieldMetadata) =>
+        isFlatFieldMetadataEntityOfType(
+          relatedFlatFieldMetadata,
+          FieldMetadataType.RELATION,
+        ) &&
+        relatedFlatFieldMetadata.id ===
+          flatFieldMetadataToCreate.relationTargetFieldMetadataId,
+    );
+
+    if (!isDefined(relatedFlatFieldMetadataToCreate)) {
+      return undefined;
+    }
+
+    const flatObjectMetadataMapsWithRelatedObjectMetadata =
+      extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMaps({
+        flatObjectMetadataMaps,
+        objectMetadataIds: [relatedFlatFieldMetadataToCreate.objectMetadataId],
+      });
+
+    if (!isDefined(flatObjectMetadataMapsWithRelatedObjectMetadata)) {
+      return undefined;
+    }
+
+    return addFlatFieldMetadataInFlatObjectMetadataMaps({
+      flatFieldMetadata: relatedFlatFieldMetadataToCreate,
+      flatObjectMetadataMaps: flatObjectMetadataMapsWithRelatedObjectMetadata,
+    });
   }
 
   async createMany(
@@ -193,19 +192,23 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
     );
 
     try {
+      const fromImpactedFlatObjectMetadataMaps =
+        extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow({
+          flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+          objectMetadataIds: impactedObjectMetadataIds,
+        });
+      const toImpactedFlatObjectMetadataMaps =
+        extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow({
+          flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+          objectMetadataIds: impactedObjectMetadataIds,
+        });
       const workspaceMigration = this.workspaceMigrationBuilderV2.build({
         objectMetadataFromToInputs: {
           from: fromFlatObjectMetadataMapsToFlatObjectMetadatas(
-            extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow({
-              flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-              objectMetadataIds: impactedObjectMetadataIds,
-            }),
+            fromImpactedFlatObjectMetadataMaps,
           ),
           to: fromFlatObjectMetadataMapsToFlatObjectMetadatas(
-            extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow({
-              flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
-              objectMetadataIds: impactedObjectMetadataIds,
-            }),
+            toImpactedFlatObjectMetadataMaps,
           ),
         },
         inferDeletionFromMissingObjectFieldIndex: false,
