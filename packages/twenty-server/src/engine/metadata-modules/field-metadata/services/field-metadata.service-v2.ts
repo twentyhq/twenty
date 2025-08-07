@@ -206,7 +206,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
 
       await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
 
-      // TODO refacto`r once the runner has been refactored to return created entities
+      // TODO refactor once the runner has been refactored to return created entities
       return [];
     } catch {
       // TODO prastoin We should pass the internal error here

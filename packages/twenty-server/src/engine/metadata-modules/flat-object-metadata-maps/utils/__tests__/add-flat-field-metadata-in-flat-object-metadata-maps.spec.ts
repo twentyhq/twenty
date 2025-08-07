@@ -19,7 +19,7 @@ describe('addFlatFieldMetadataInFlatObjectMetadataMaps', () => {
     [
       {
         title:
-          'should throw when field metadata parent object metadata does not exist',
+          'should return undefined when field metadata parent object metadata does not exist',
         context: {
           input: {
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
@@ -34,7 +34,7 @@ describe('addFlatFieldMetadataInFlatObjectMetadataMaps', () => {
       },
       {
         title:
-          'should throw when field metadata to add already exist in object',
+          'should return undefined when field metadata to add already exist in object',
         context: {
           input: {
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,

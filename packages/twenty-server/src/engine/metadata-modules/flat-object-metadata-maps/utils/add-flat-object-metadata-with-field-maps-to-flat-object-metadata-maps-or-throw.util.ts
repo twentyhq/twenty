@@ -23,7 +23,7 @@ export const addFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadataMapsOrThr
       )
     ) {
       throw new FlatObjectMetadataMapsException(
-        'addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow: flat object metadata with fields maps to add already exists',
+        'addFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadataMapsOrThrow: flat object metadata with fields maps to add already exists',
         FlatObjectMetadataMapsExceptionCode.OBJECT_METADATA_ALREADY_EXISTS,
       );
     }
