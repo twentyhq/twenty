@@ -60,7 +60,8 @@ export const MKT_PRODUCT_DATA_SEEDS: MktProductDataSeed[] = [
     type: MKT_PRODUCT_TYPE.PHYSICAL,
     code: 'ELEC-BTH-001',
     name: 'Wireless Bluetooth Headphones',
-    description: 'Experience premium sound quality with these over-ear wireless Bluetooth headphones.',
+    description:
+      'Experience premium sound quality with these over-ear wireless Bluetooth headphones.',
     price: 129,
     licenseDurationMonths: 12,
     isActive: true,
@@ -77,7 +78,8 @@ export const MKT_PRODUCT_DATA_SEEDS: MktProductDataSeed[] = [
     type: MKT_PRODUCT_TYPE.PHYSICAL,
     code: 'FOOD-CFE-002',
     name: 'Organic Arabica Coffee Beans 1kg',
-    description: '100% organic Arabica coffee beans, slow-roasted to perfection for a rich flavor.',
+    description:
+      '100% organic Arabica coffee beans, slow-roasted to perfection for a rich flavor.',
     price: 45,
     licenseDurationMonths: 12,
     isActive: true,
@@ -94,7 +96,8 @@ export const MKT_PRODUCT_DATA_SEEDS: MktProductDataSeed[] = [
     type: MKT_PRODUCT_TYPE.PHYSICAL,
     code: 'FURN-CHR-003',
     name: 'Ergonomic Office Chair',
-    description: 'Adjustable ergonomic chair with lumbar support for long working hours.',
+    description:
+      'Adjustable ergonomic chair with lumbar support for long working hours.',
     price: 289,
     licenseDurationMonths: 12,
     isActive: true,
@@ -111,7 +114,8 @@ export const MKT_PRODUCT_DATA_SEEDS: MktProductDataSeed[] = [
     type: MKT_PRODUCT_TYPE.PHYSICAL,
     code: 'OUTD-WBT-004',
     name: 'Stainless Steel Water Bottle 750ml',
-    description: 'Keep your drinks cold or hot for up to 12 hours with this eco-friendly bottle.',
+    description:
+      'Keep your drinks cold or hot for up to 12 hours with this eco-friendly bottle.',
     price: 25,
     licenseDurationMonths: 12,
     isActive: true,
@@ -128,7 +132,8 @@ export const MKT_PRODUCT_DATA_SEEDS: MktProductDataSeed[] = [
     type: MKT_PRODUCT_TYPE.PHYSICAL,
     code: 'HOME-LMP-005',
     name: 'LED Desk Lamp with USB Charging Port',
-    description: 'Modern LED desk lamp with touch control, dimming, and built-in USB charger.',
+    description:
+      'Modern LED desk lamp with touch control, dimming, and built-in USB charger.',
     price: 59,
     licenseDurationMonths: 12,
     isActive: true,

@@ -67,7 +67,8 @@ export const mktProductsAllView = (
       {
         fieldMetadataId:
           productObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_PRODUCT_FIELD_IDS.licenseDurationMonths,
+            (field) =>
+              field.standardId === MKT_PRODUCT_FIELD_IDS.licenseDurationMonths,
           )?.id ?? '',
         position: 4,
         isVisible: true,
@@ -85,7 +86,8 @@ export const mktProductsAllView = (
       {
         fieldMetadataId:
           productObjectMetadata.fields.find(
-            (field) => field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
+            (field) =>
+              field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
           )?.id ?? '',
         position: 6,
         isVisible: true,

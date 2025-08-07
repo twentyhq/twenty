@@ -20,9 +20,9 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
 import { CalendarEventImportManagerModule } from 'src/modules/calendar/calendar-event-import-manager/calendar-event-import-manager.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
+import { MKT_DATABASE_COMMAND_MODULES } from 'src/mkt-core/enums/mkt-database-command.module';
 
 import { DataSeedWorkspaceCommand } from './data-seed-dev-workspace.command';
-import {MKT_DATABASE_COMMAND_MODULES} from 'src/mkt-core/enums/mkt-database-command.module';
 
 @Module({
   imports: [
