@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -95,7 +96,7 @@ export class RecordPositionService {
 
     const numericPositions = recordsWithExistingNumberPosition
       .map((record) => record.position)
-      .filter((pos): pos is number => typeof pos === 'number' && !isNaN(pos));
+      .filter(isNumber);
 
     const calculatePosition = (
       mathOperation: (positions: number[], existingPosition: number) => number,
