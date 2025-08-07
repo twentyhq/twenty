@@ -25,6 +25,7 @@ import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/fla
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { addFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps.util';
+import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
 import { extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/extract-flat-object-metadata-maps-out-of-flat-object-metadata-maps-or-throw.util';
 import { extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/extract-flat-object-metadata-maps-out-of-flat-object-metadata-maps.util';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFielId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
@@ -67,7 +68,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
   }: {
     deleteOneFieldInput: DeleteOneFieldInput;
     workspaceId: string;
-  }) {
+  }): Promise<void> {
     const { id: fieldMetadataToDeleteId } =
       trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
         rawDeleteOneInput,
@@ -87,6 +88,13 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       });
 
+    if (!isDefined(flatFieldMetadataToDelete)) {
+      throw new FieldMetadataException(
+        'field to delete not found',
+        FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+      );
+    }
+
     const validationErrors =
       this.flatFieldMetadataValidatorService.validateFlatFieldMetadataDeletion({
         existingFlatObjectMetadataMaps,
@@ -101,6 +109,34 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
           : 'A validation error occurred while deleting field',
       );
     }
+
+    const fromFlatObjectMetadataMaps =
+      extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow({
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+        objectMetadataIds: [flatFieldMetadataToDelete.objectMetadataId],
+      });
+    const toImpactedFlatObjectMetadataMaps =
+      deleteFieldFromFlatObjectMetadataMapsOrThrow({
+        fieldMetadataId: flatFieldMetadataToDelete.id,
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+        objectMetadataId: flatFieldMetadataToDelete.objectMetadataId,
+      });
+
+    const workspaceMigration = this.workspaceMigrationBuilderV2.build({
+      objectMetadataFromToInputs: {
+        from: fromFlatObjectMetadataMapsToFlatObjectMetadatas(
+          fromFlatObjectMetadataMaps,
+        ),
+        to: fromFlatObjectMetadataMapsToFlatObjectMetadatas(
+          toImpactedFlatObjectMetadataMaps,
+        ),
+      },
+      workspaceId,
+    });
+
+    await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
+
+    return;
   }
 
   private computeOtherFlatObjectMetadataMapsToValidate({

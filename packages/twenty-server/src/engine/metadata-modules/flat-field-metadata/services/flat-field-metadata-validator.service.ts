@@ -43,17 +43,10 @@ export class FlatFieldMetadataValidatorService {
     existingFlatObjectMetadataMaps,
     flatFieldMetadataToDelete,
   }: {
-    flatFieldMetadataToDelete: FlatFieldMetadata | undefined;
+    flatFieldMetadataToDelete: FlatFieldMetadata;
     existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
   }): FailedFlatFieldMetadataValidationExceptions[] {
-    if (!isDefined(flatFieldMetadataToDelete)) {
-      return [
-        new FieldMetadataException(
-          'field to delete not found',
-          FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
-        ),
-      ];
-    }
+    const errors: FailedFlatFieldMetadataValidationExceptions[] = [];
 
     const flatObjectMetadataWithFieldMaps =
       existingFlatObjectMetadataMaps.byId[
@@ -61,15 +54,28 @@ export class FlatFieldMetadataValidatorService {
       ];
 
     if (!isDefined(flatObjectMetadataWithFieldMaps)) {
-      return [
+      errors.push(
         new FieldMetadataException(
           'field to delete object metadata not found',
           FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         ),
-      ];
+      );
+    } else {
+      if (
+        flatObjectMetadataWithFieldMaps.labelIdentifierFieldMetadataId ===
+        flatFieldMetadataToDelete.id
+      ) {
+        errors.push(
+          new FieldMetadataException(
+            'Cannot delete, please update the label identifier field first',
+            FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+            {
+              userFriendlyMessage: t`Cannot delete, please update the label identifier field first`,
+            },
+          ),
+        );
+      }
     }
-
-    const errors: FailedFlatFieldMetadataValidationExceptions[] = [];
 
     if (flatFieldMetadataToDelete.isCustom) {
       errors.push(
@@ -85,21 +91,6 @@ export class FlatFieldMetadataValidatorService {
         new FieldMetadataException(
           "Active fields can't be deleted",
           FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        ),
-      );
-    }
-
-    if (
-      flatObjectMetadataWithFieldMaps.labelIdentifierFieldMetadataId ===
-      flatFieldMetadataToDelete.id
-    ) {
-      errors.push(
-        new FieldMetadataException(
-          'Cannot delete, please update the label identifier field first',
-          FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
-          {
-            userFriendlyMessage: t`Cannot delete, please update the label identifier field first`,
-          },
         ),
       );
     }
