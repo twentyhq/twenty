@@ -259,7 +259,12 @@ export class UserRoleService {
       };
     }
 
-    if (!(currentRole?.standardId && currentRole.standardId === ADMIN_ROLE.standardId)) {
+    if (
+      !(
+        currentRole?.standardId &&
+        currentRole.standardId === ADMIN_ROLE.standardId
+      )
+    ) {
       return;
     }
 
