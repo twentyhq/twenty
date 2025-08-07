@@ -87,4 +87,6 @@ export class ViewFieldController {
 
     return { success: isDefined(deletedViewField) };
   }
+
+  // TODO: the destroy endpoint will be implemented when we settle on a strategy
 }
