@@ -21,6 +21,11 @@ type WorkflowStepFilterFieldSelectProps = {
   stepFilter: StepFilter;
 };
 
+const NON_SELECTABLE_FIELD_TYPES = [
+  FieldMetadataType.ACTOR,
+  FieldMetadataType.RICH_TEXT_V2,
+];
+
 export const WorkflowStepFilterFieldSelect = ({
   stepFilter,
 }: WorkflowStepFilterFieldSelectProps) => {
@@ -164,7 +169,7 @@ export const WorkflowStepFilterFieldSelect = ({
       shouldDisplayRecordFields={shouldDisplayRecordFields}
       shouldDisplayRecordObjects={shouldDisplayRecordObjects}
       shouldEnableSelectRelationObject={true}
-      typesToFilter={[FieldMetadataType.ACTOR, FieldMetadataType.RICH_TEXT_V2]}
+      fieldTypesToExclude={NON_SELECTABLE_FIELD_TYPES}
     />
   );
 };

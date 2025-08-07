@@ -38,7 +38,7 @@ export const WorkflowVariablesDropdown = ({
   disabled,
   shouldDisplayRecordFields,
   shouldDisplayRecordObjects,
-  typesToFilter,
+  fieldTypesToExclude,
   shouldEnableSelectRelationObject,
   multiline,
   clickableComponent,
@@ -47,7 +47,7 @@ export const WorkflowVariablesDropdown = ({
   onVariableSelect: (variableName: string) => void;
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
-  typesToFilter?: InputSchemaPropertyType[];
+  fieldTypesToExclude?: InputSchemaPropertyType[];
   shouldEnableSelectRelationObject?: boolean;
   disabled?: boolean;
   multiline?: boolean;
@@ -64,7 +64,7 @@ export const WorkflowVariablesDropdown = ({
   const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
     shouldDisplayRecordFields,
     shouldDisplayRecordObjects,
-    typesToFilter,
+    fieldTypesToExclude,
   });
 
   const noAvailableVariables = availableVariablesInWorkflowStep.length === 0;

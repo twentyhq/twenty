@@ -16,11 +16,11 @@ import { isEmptyObject } from '~/utils/isEmptyObject';
 export const useAvailableVariablesInWorkflowStep = ({
   shouldDisplayRecordFields,
   shouldDisplayRecordObjects,
-  typesToFilter,
+  fieldTypesToExclude,
 }: {
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
-  typesToFilter?: InputSchemaPropertyType[];
+  fieldTypesToExclude?: InputSchemaPropertyType[];
 }): StepOutputSchema[] => {
   const workflowSelectedNode = useWorkflowSelectedNodeOrThrow();
   const flow = useFlowOrThrow();
@@ -44,7 +44,7 @@ export const useAvailableVariablesInWorkflowStep = ({
         shouldDisplayRecordFields,
         shouldDisplayRecordObjects,
         outputSchema: stepOutputSchema.outputSchema,
-        typesToFilter,
+        fieldTypesToExclude,
       }) as OutputSchema;
 
       if (!isDefined(outputSchema) || isEmptyObject(outputSchema)) {

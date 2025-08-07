@@ -226,7 +226,7 @@ describe('filterOutputSchema', () => {
     });
   });
 
-  describe('typesToFilter', () => {
+  describe('fieldTypesToExclude', () => {
     it('should filter out the types', () => {
       const inputSchema = createRecordSchema('person', {
         name: { isLeaf: true, type: undefined, value: 'toto' },
@@ -244,7 +244,7 @@ describe('filterOutputSchema', () => {
           shouldDisplayRecordFields: true,
           shouldDisplayRecordObjects: false,
           outputSchema: inputSchema,
-          typesToFilter: [FieldMetadataType.UUID],
+          fieldTypesToExclude: [FieldMetadataType.UUID],
         }),
       ).toEqual(expectedSchema);
     });
@@ -260,7 +260,7 @@ describe('filterOutputSchema', () => {
           shouldDisplayRecordFields: true,
           shouldDisplayRecordObjects: false,
           outputSchema: inputSchema,
-          typesToFilter: [],
+          fieldTypesToExclude: [],
         }),
       ).toEqual(inputSchema);
     });

@@ -131,17 +131,17 @@ const filterBaseOutputSchema = ({
 
 const filterRecordOutputSchemaFieldsByType = ({
   outputSchema,
-  typesToFilter,
+  fieldTypesToExclude,
 }: {
   outputSchema: RecordOutputSchema;
-  typesToFilter: InputSchemaPropertyType[];
+  fieldTypesToExclude: InputSchemaPropertyType[];
 }) => {
   const filteredFields: BaseOutputSchema = {};
 
   for (const key in outputSchema.fields) {
     const field = outputSchema.fields[key];
 
-    if (isDefined(field.type) && typesToFilter.includes(field.type)) {
+    if (isDefined(field.type) && fieldTypesToExclude.includes(field.type)) {
       continue;
     }
 
@@ -150,6 +150,7 @@ const filterRecordOutputSchemaFieldsByType = ({
 
   return {
     ...outputSchema,
+    // Relations could be filtered recursively but this util requires a global simplification first
     fields: filteredFields,
   };
 };
@@ -158,22 +159,22 @@ export const filterOutputSchema = ({
   shouldDisplayRecordFields,
   shouldDisplayRecordObjects,
   outputSchema,
-  typesToFilter,
+  fieldTypesToExclude,
 }: {
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
   outputSchema?: OutputSchema;
-  typesToFilter?: InputSchemaPropertyType[];
+  fieldTypesToExclude?: InputSchemaPropertyType[];
 }): OutputSchema | undefined => {
   if (!isDefined(outputSchema)) {
     return undefined;
   }
 
   if (!shouldDisplayRecordObjects || shouldDisplayRecordFields) {
-    if (isRecordOutputSchema(outputSchema) && isDefined(typesToFilter)) {
+    if (isRecordOutputSchema(outputSchema) && isDefined(fieldTypesToExclude)) {
       return filterRecordOutputSchemaFieldsByType({
         outputSchema,
-        typesToFilter,
+        fieldTypesToExclude,
       });
     }
 
