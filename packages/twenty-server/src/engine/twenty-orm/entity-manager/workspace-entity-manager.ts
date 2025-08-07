@@ -1,5 +1,5 @@
 import isEmpty from 'lodash.isempty';
-import { ObjectRecordsPermissions } from 'twenty-shared/types';
+import { ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   DeleteResult,
@@ -44,6 +44,7 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { DeepPartialWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/deep-partial-entity-with-nested-relation-fields.type';
 import { QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
+import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 import { RelationNestedQueries } from 'src/engine/twenty-orm/relation-nested-queries/relation-nested-queries';
 import {
   OperationType,
@@ -54,11 +55,10 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
-import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 
 type PermissionOptions = {
   shouldBypassPermissionChecks?: boolean;
-  objectRecordsPermissions?: ObjectRecordsPermissions;
+  objectRecordsPermissions?: ObjectsPermissions;
 };
 
 export class WorkspaceEntityManager extends EntityManager {
@@ -130,7 +130,7 @@ export class WorkspaceEntityManager extends EntityManager {
     queryRunner?: QueryRunner,
     options: {
       shouldBypassPermissionChecks?: boolean;
-      objectRecordsPermissions?: ObjectRecordsPermissions;
+      objectRecordsPermissions?: ObjectsPermissions;
     } = {
       shouldBypassPermissionChecks: false,
       objectRecordsPermissions: {},
@@ -196,7 +196,7 @@ export class WorkspaceEntityManager extends EntityManager {
     conflictPathsOrOptions: string[] | UpsertOptions<Entity>,
     permissionOptions?: {
       shouldBypassPermissionChecks?: boolean;
-      objectRecordsPermissions?: ObjectRecordsPermissions;
+      objectRecordsPermissions?: ObjectsPermissions;
     },
     selectedColumns: string[] | '*' = '*',
   ): Promise<InsertResult> {
@@ -385,7 +385,7 @@ export class WorkspaceEntityManager extends EntityManager {
     operationType: OperationType;
     permissionOptions?: {
       shouldBypassPermissionChecks?: boolean;
-      objectRecordsPermissions?: ObjectRecordsPermissions;
+      objectRecordsPermissions?: ObjectsPermissions;
     };
     selectedColumns: string[];
     updatedColumns?: string[];

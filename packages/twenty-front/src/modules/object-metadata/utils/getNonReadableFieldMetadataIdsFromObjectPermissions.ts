@@ -1,21 +1,15 @@
-import { RestrictedField } from 'twenty-shared/types';
-import { ObjectPermission } from '~/generated/graphql';
+import { ObjectPermissions } from 'twenty-shared/types';
+
+type GetNonReadableFieldMetadataIdsFromObjectPermissionsArgs = {
+  objectPermissions: ObjectPermissions;
+};
 
 export const getNonReadableFieldMetadataIdsFromObjectPermissions = ({
   objectPermissions,
-  objectMetadataId,
-}: {
-  objectPermissions?: ObjectPermission[] | null;
-  objectMetadataId: string;
-}) => {
-  const restrictedFields = objectPermissions?.find(
-    (permission) => permission.objectMetadataId === objectMetadataId,
-  )?.restrictedFields;
+}: GetNonReadableFieldMetadataIdsFromObjectPermissionsArgs) => {
+  const restrictedFields = objectPermissions.restrictedFields;
 
-  return Object.entries(restrictedFields ?? {})
-    .filter(
-      ([_fieldMetadataId, restrictedField]) =>
-        (restrictedField as RestrictedField).canRead === false,
-    )
+  return Object.entries(restrictedFields)
+    .filter(([_, restrictedField]) => restrictedField.canRead === false)
     .map(([fieldMetadataId]) => fieldMetadataId);
 };

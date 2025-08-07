@@ -1,13 +1,15 @@
+import { ObjectsPermissions } from 'twenty-shared/types';
 import { createState } from 'twenty-ui/utilities';
 import { UserWorkspace } from '~/generated/graphql';
 
 export type CurrentUserWorkspace = Pick<
   UserWorkspace,
   | 'permissionFlags'
-  | 'objectRecordsPermissions'
-  | 'objectPermissions'
   | 'twoFactorAuthenticationMethodSummary'
->;
+  | 'objectRecordsPermissions'
+> & {
+  objectPermissions: ObjectsPermissions;
+};
 
 export const currentUserWorkspaceState =
   createState<CurrentUserWorkspace | null>({

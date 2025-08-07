@@ -1,4 +1,4 @@
-import { ObjectRecordsPermissions } from 'twenty-shared/types';
+import { ObjectsPermissions } from 'twenty-shared/types';
 import {
   DeepPartial,
   FindManyOptions,
@@ -20,7 +20,7 @@ describe('WorkspaceRepository', () => {
   let mockEntityManager: jest.Mocked<WorkspaceEntityManager>;
   let mockInternalContext: WorkspaceInternalContext;
   let mockFeatureFlagMap: FeatureFlagMap;
-  let mockObjectRecordsPermissions: ObjectRecordsPermissions;
+  let mockObjectRecordsPermissions: ObjectsPermissions;
   let mockQueryRunner: QueryRunner;
 
   beforeEach(() => {

@@ -1,17 +1,15 @@
-import { RestrictedField } from 'twenty-shared/types';
-import { ObjectPermission } from '~/generated/graphql';
+import { ObjectPermissions } from 'twenty-shared/types';
+
+type GetNonUpdatableFieldMetadataIdsFromObjectPermissionsArgs = {
+  objectPermissions: ObjectPermissions;
+};
 
 export const getNonUpdatableFieldMetadataIdsFromObjectPermissions = ({
   objectPermissions,
-}: {
-  objectPermissions: ObjectPermission;
-}) => {
+}: GetNonUpdatableFieldMetadataIdsFromObjectPermissionsArgs): string[] => {
   const restrictedFields = objectPermissions.restrictedFields;
 
-  return Object.entries(restrictedFields ?? {})
-    .filter(
-      ([_fieldMetadataId, restrictedField]) =>
-        (restrictedField as RestrictedField).canUpdate === false,
-    )
+  return Object.entries(restrictedFields)
+    .filter(([_, restrictedField]) => restrictedField.canUpdate === false)
     .map(([fieldMetadataId]) => fieldMetadataId);
 };
