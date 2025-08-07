@@ -112,7 +112,13 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
               recordId,
             }),
           }),
-          (steps) => [...steps, stepToOpenByDefault.id],
+          (steps) => [
+            ...steps,
+            {
+              stepId: stepToOpenByDefault.id,
+              isInRightDrawer: true,
+            },
+          ],
         );
         openWorkflowRunViewStepInCommandMenu({
           workflowId: workflowRunRecord.workflowId,

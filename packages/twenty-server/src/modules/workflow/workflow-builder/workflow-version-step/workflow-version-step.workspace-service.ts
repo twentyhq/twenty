@@ -10,6 +10,8 @@ import { v4 } from 'uuid';
 
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
+import { WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
+import { WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
@@ -21,6 +23,7 @@ import {
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { computeWorkflowVersionStepChanges } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-version-step-updates.util';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/remove-step';
@@ -32,9 +35,6 @@ import {
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
-import { WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
-import { WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
-import { computeWorkflowVersionStepChanges } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-version-step-updates.util';
 
 const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
   outputSchema: {},
@@ -225,51 +225,54 @@ export class WorkflowVersionStepWorkspaceService {
       );
     }
 
-    if (stepIdToDelete === 'trigger') {
-      await workflowVersionRepository.update(workflowVersion.id, {
-        trigger: null,
-      });
-
-      return computeWorkflowVersionStepChanges({
-        trigger: null,
-        steps: workflowVersion?.steps,
-        deletedStepId: stepIdToDelete,
-      });
-    }
-
     const existingTrigger = workflowVersion.trigger;
+    const isDeletingTrigger =
+      stepIdToDelete === 'trigger' && isDefined(existingTrigger);
 
     const stepToDelete = workflowVersion.steps.find(
       (step) => step.id === stepIdToDelete,
     );
 
-    if (!isDefined(stepToDelete)) {
+    if (!isDefined(stepToDelete) && !isDeletingTrigger) {
       throw new WorkflowVersionStepException(
         "Can't delete not existing step",
         WorkflowVersionStepExceptionCode.NOT_FOUND,
       );
     }
 
-    const workflowVersionUpdates = removeStep({
+    const stepToDeleteChildrenIds = isDeletingTrigger
+      ? (existingTrigger?.nextStepIds ?? [])
+      : (stepToDelete?.nextStepIds ?? []);
+
+    const { updatedSteps, updatedTrigger, removedStepIds } = removeStep({
       existingTrigger,
       existingSteps: workflowVersion.steps,
       stepIdToDelete,
-      stepToDeleteChildrenIds: stepToDelete.nextStepIds,
+      stepToDeleteChildrenIds,
     });
 
-    await workflowVersionRepository.update(
-      workflowVersion.id,
-      workflowVersionUpdates,
+    await workflowVersionRepository.update(workflowVersion.id, {
+      steps: updatedSteps,
+      trigger: updatedTrigger,
+    });
+
+    const removedSteps = workflowVersion.steps.filter((step) =>
+      removedStepIds.includes(step.id),
     );
 
-    await this.runWorkflowVersionStepDeletionSideEffects({
-      step: stepToDelete,
-      workspaceId,
-    });
+    await Promise.all(
+      removedSteps.map((step) =>
+        this.runWorkflowVersionStepDeletionSideEffects({
+          step,
+          workspaceId,
+        }),
+      ),
+    );
 
     return computeWorkflowVersionStepChanges({
-      ...workflowVersionUpdates,
-      deletedStepId: stepIdToDelete,
+      steps: updatedSteps,
+      trigger: updatedTrigger,
+      deletedStepIds: removedStepIds,
     });
   }
 

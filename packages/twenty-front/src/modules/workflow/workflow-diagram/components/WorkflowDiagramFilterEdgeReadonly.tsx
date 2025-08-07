@@ -1,3 +1,5 @@
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
@@ -18,6 +20,8 @@ import {
   EdgeProps,
   getBezierPath,
 } from '@xyflow/react';
+import { useContext } from 'react';
+import { useSetRecoilState } from 'recoil';
 import { IconFilter } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
 
@@ -62,6 +66,8 @@ export const WorkflowDiagramFilterEdgeReadonly = ({
 }: WorkflowDiagramFilterEdgeReadonlyProps) => {
   assertFilterEdgeDataOrThrow(data);
 
+  const { isInRightDrawer } = useContext(ActionMenuContext);
+
   const theme = useTheme();
 
   const [edgePath, labelX, labelY] = getBezierPath({
@@ -81,7 +87,15 @@ export const WorkflowDiagramFilterEdgeReadonly = ({
   const { openWorkflowViewFilterInCommandMenu } =
     useOpenWorkflowViewFilterInCommandMenu();
 
+  const setCommandMenuNavigationStack = useSetRecoilState(
+    commandMenuNavigationStackState,
+  );
+
   const handleFilterButtonClick = () => {
+    if (!isInRightDrawer) {
+      setCommandMenuNavigationStack([]);
+    }
+
     openWorkflowViewFilterInCommandMenu({
       stepId: data.stepId,
       stepName: data.name,

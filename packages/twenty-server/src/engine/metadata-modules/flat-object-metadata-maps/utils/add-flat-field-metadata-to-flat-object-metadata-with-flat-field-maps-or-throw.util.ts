@@ -12,14 +12,15 @@ import {
   FlatObjectMetadataWithFlatFieldMaps,
 } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-with-flat-field-metadata-maps.type';
 
+type AddFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMapsOrThrowArgs = {
+  flatFieldMetadata: FlatFieldMetadata;
+  flatObjectMetadataWithFlatFieldMaps: FlatObjectMetadataWithFlatFieldMaps;
+};
 export const addFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMapsOrThrow =
   ({
     flatFieldMetadata,
     flatObjectMetadataWithFlatFieldMaps,
-  }: {
-    flatFieldMetadata: FlatFieldMetadata;
-    flatObjectMetadataWithFlatFieldMaps: FlatObjectMetadataWithFlatFieldMaps;
-  }): FlatObjectMetadataWithFlatFieldMaps => {
+  }: AddFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMapsOrThrowArgs): FlatObjectMetadataWithFlatFieldMaps => {
     if (
       isDefined(
         flatObjectMetadataWithFlatFieldMaps.fieldsById[flatFieldMetadata.id],

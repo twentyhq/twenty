@@ -44,6 +44,7 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { DeepPartialWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/deep-partial-entity-with-nested-relation-fields.type';
 import { QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
+import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 import { RelationNestedQueries } from 'src/engine/twenty-orm/relation-nested-queries/relation-nested-queries';
 import {
   OperationType,
@@ -54,7 +55,6 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
-import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 
 type PermissionOptions = {
   shouldBypassPermissionChecks?: boolean;
@@ -173,6 +173,7 @@ export class WorkspaceEntityManager extends EntityManager {
       | QueryDeepPartialEntityWithNestedRelationFields<Entity>[],
     selectedColumns: string[] | '*' = '*',
     permissionOptions?: PermissionOptions,
+    authContext?: AuthContext,
   ): Promise<InsertResult> {
     const metadata = this.connection.getMetadata(target);
 
@@ -183,6 +184,7 @@ export class WorkspaceEntityManager extends EntityManager {
       permissionOptions,
     )
       .insert()
+      .setAuthContext(authContext ?? {})
       .values(entity)
       .returning(selectedColumns)
       .execute();

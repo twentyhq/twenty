@@ -5,7 +5,7 @@ export const DELETE_WORKFLOW_VERSION_STEP = gql`
     deleteWorkflowVersionStep(input: $input) {
       triggerNextStepIds
       stepsNextStepIds
-      deletedStepId
+      deletedStepIds
     }
   }
 `;

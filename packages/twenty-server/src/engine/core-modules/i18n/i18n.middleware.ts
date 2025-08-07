@@ -4,6 +4,7 @@ import { i18n } from '@lingui/core';
 import { NextFunction, Request, Response } from 'express';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 
+// TODO: this should be deprecated as singleton pattern won't work: user will keep changing locales for eachothers
 @Injectable()
 export class I18nMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {

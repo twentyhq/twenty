@@ -50,8 +50,8 @@ describe('removeStep', () => {
       stepIdToDelete: '2',
     });
 
-    expect(result.steps).toEqual([step1, step3]);
-    expect(result.trigger).toEqual(mockTrigger);
+    expect(result.updatedSteps).toEqual([step1, step3]);
+    expect(result.updatedTrigger).toEqual(mockTrigger);
   });
 
   it('should handle removing a step that has no next steps', () => {
@@ -65,8 +65,8 @@ describe('removeStep', () => {
       stepIdToDelete: '2',
     });
 
-    expect(result.steps).toEqual([{ ...step1, nextStepIds: [] }, step3]);
-    expect(result.trigger).toEqual(mockTrigger);
+    expect(result.updatedSteps).toEqual([{ ...step1, nextStepIds: [] }, step3]);
+    expect(result.updatedTrigger).toEqual(mockTrigger);
   });
 
   it('should update nextStepIds of parent steps to include children of removed step', () => {
@@ -81,8 +81,11 @@ describe('removeStep', () => {
       stepToDeleteChildrenIds: ['3'],
     });
 
-    expect(result.steps).toEqual([{ ...step1, nextStepIds: ['3'] }, step3]);
-    expect(result.trigger).toEqual(mockTrigger);
+    expect(result.updatedSteps).toEqual([
+      { ...step1, nextStepIds: ['3'] },
+      step3,
+    ]);
+    expect(result.updatedTrigger).toEqual(mockTrigger);
   });
 
   it('should handle multiple parent steps pointing to the same step', () => {
@@ -98,12 +101,12 @@ describe('removeStep', () => {
       stepToDeleteChildrenIds: ['4'],
     });
 
-    expect(result.steps).toEqual([
+    expect(result.updatedSteps).toEqual([
       { ...step1, nextStepIds: ['4'] },
       { ...step2, nextStepIds: ['4'] },
       step4,
     ]);
-    expect(result.trigger).toEqual(mockTrigger);
+    expect(result.updatedTrigger).toEqual(mockTrigger);
   });
 
   it('should handle removing a step with multiple children', () => {
@@ -119,12 +122,12 @@ describe('removeStep', () => {
       stepToDeleteChildrenIds: ['3', '4'],
     });
 
-    expect(result.steps).toEqual([
+    expect(result.updatedSteps).toEqual([
       { ...step1, nextStepIds: ['3', '4'] },
       step3,
       step4,
     ]);
-    expect(result.trigger).toEqual(mockTrigger);
+    expect(result.updatedTrigger).toEqual(mockTrigger);
   });
 
   it('should handle removing a step linked to trigger', () => {
@@ -139,7 +142,56 @@ describe('removeStep', () => {
       stepToDeleteChildrenIds: ['2'],
     });
 
-    expect(result.steps).toEqual([step2, step3]);
-    expect(result.trigger).toEqual({ ...mockTrigger, nextStepIds: ['2'] });
+    expect(result.updatedSteps).toEqual([step2, step3]);
+    expect(result.updatedTrigger).toEqual({
+      ...mockTrigger,
+      nextStepIds: ['2'],
+    });
+  });
+
+  it('should remove step child that is a filter', () => {
+    const step1 = createMockAction('1', ['2']);
+    const step2 = createMockAction('2', ['3']);
+    const step3 = {
+      id: '3',
+      name: 'Step 3',
+      type: WorkflowActionType.FILTER,
+      nextStepIds: ['4'],
+    } as WorkflowAction;
+    const step4 = createMockAction('4');
+
+    const result = removeStep({
+      existingTrigger: mockTrigger,
+      existingSteps: [step1, step2, step3, step4],
+      stepIdToDelete: '2',
+      stepToDeleteChildrenIds: ['3'],
+    });
+
+    expect(result.updatedTrigger).toEqual(mockTrigger);
+    expect(result.updatedSteps).toEqual([
+      { ...step1, nextStepIds: ['4'] },
+      step4,
+    ]);
+  });
+
+  it('should remove trigger children that is a filter', () => {
+    const step1 = {
+      id: '1',
+      name: 'Step 1',
+      type: WorkflowActionType.FILTER,
+      nextStepIds: ['2'],
+    } as WorkflowAction;
+    const step2 = createMockAction('2', ['3']);
+    const step3 = createMockAction('3');
+
+    const result = removeStep({
+      existingTrigger: mockTrigger,
+      existingSteps: [step1, step2, step3],
+      stepIdToDelete: 'trigger',
+      stepToDeleteChildrenIds: ['1'],
+    });
+
+    expect(result.updatedTrigger).toEqual(null);
+    expect(result.updatedSteps).toEqual([step2, step3]);
   });
 });

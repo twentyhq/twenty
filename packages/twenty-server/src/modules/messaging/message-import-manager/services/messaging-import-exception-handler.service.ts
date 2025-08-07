@@ -112,7 +112,7 @@ export class MessageImportExceptionHandlerService {
     if (
       messageChannel.throttleFailureCount >= MESSAGING_THROTTLE_MAX_ATTEMPTS
     ) {
-      await this.messageChannelSyncStatusService.markAsFailedAndFlushMessagesToImport(
+      await this.messageChannelSyncStatusService.markAsFailed(
         [messageChannel.id],
         workspaceId,
         MessageChannelSyncStatus.FAILED_UNKNOWN,
@@ -172,7 +172,7 @@ export class MessageImportExceptionHandlerService {
     messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
-    await this.messageChannelSyncStatusService.markAsFailedAndFlushMessagesToImport(
+    await this.messageChannelSyncStatusService.markAsFailed(
       [messageChannel.id],
       workspaceId,
       MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
@@ -184,7 +184,7 @@ export class MessageImportExceptionHandlerService {
     messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
-    await this.messageChannelSyncStatusService.markAsFailedAndFlushMessagesToImport(
+    await this.messageChannelSyncStatusService.markAsFailed(
       [messageChannel.id],
       workspaceId,
       MessageChannelSyncStatus.FAILED_UNKNOWN,
@@ -213,7 +213,7 @@ export class MessageImportExceptionHandlerService {
     messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
-    await this.messageChannelSyncStatusService.markAsFailedAndFlushMessagesToImport(
+    await this.messageChannelSyncStatusService.markAsFailed(
       [messageChannel.id],
       workspaceId,
       MessageChannelSyncStatus.FAILED_UNKNOWN,

@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow should throw when object metadata to replace does not exist 1`] = `"deleteObjectFromFlatObjectMetadataMapsOrThrow: object to delete not found"`;

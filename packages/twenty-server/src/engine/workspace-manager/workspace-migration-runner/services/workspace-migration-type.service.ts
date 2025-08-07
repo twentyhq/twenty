@@ -15,13 +15,16 @@ export class WorkspaceMigrationTypeService {
     migrationColumn: WorkspaceMigrationColumnAlter,
   ) {
     const columnDefinition = migrationColumn.alteredColumnDefinition;
+    const computedColumnType = ` ${columnDefinition.columnType}${
+      columnDefinition.columnType === 'timestamptz' ? `(3)` : ''
+    }`;
 
     // Update the column type
     // If casting is not possible, the query will fail
     await queryRunner.query(`
       ALTER TABLE "${schemaName}"."${tableName}"
-      ALTER COLUMN "${columnDefinition.columnName}" TYPE ${columnDefinition.columnType}
-      USING "${columnDefinition.columnName}"::${columnDefinition.columnType}
+      ALTER COLUMN "${columnDefinition.columnName}" TYPE ${computedColumnType}
+      USING "${columnDefinition.columnName}"::${computedColumnType}
     `);
 
     // Update the column default value
