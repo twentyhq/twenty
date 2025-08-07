@@ -33,7 +33,7 @@ export class FileDeletionJob {
         filename,
         folderPath,
       });
-    } catch () {
+    } catch {
       throw new Error(
         `[${FileDeletionJob.name}] Cannot delete file - ${fullPath}`,
       );

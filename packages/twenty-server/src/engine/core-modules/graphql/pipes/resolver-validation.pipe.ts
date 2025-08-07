@@ -1,8 +1,8 @@
 import {
-  ArgumentMetadata,
-  Injectable,
-  PipeTransform,
-  Type,
+    ArgumentMetadata,
+    Injectable,
+    PipeTransform,
+    Type,
 } from '@nestjs/common';
 
 import { plainToInstance } from 'class-transformer';
@@ -15,7 +15,7 @@ const safeClassValidatorValidateWrapper = async (
 ): Promise<ValidationError[]> => {
   try {
     return await validate(object);
-  } catch () {
+  } catch {
     return [];
   }
 };

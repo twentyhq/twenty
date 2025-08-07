@@ -55,7 +55,7 @@ export const useMergePreview = ({
 
         setMergePreviewRecord(previewRecord);
         upsertRecords([previewRecord]);
-      } catch () {
+      } catch {
         setMergePreviewRecord(null);
       } finally {
         setIsGeneratingPreview(false);

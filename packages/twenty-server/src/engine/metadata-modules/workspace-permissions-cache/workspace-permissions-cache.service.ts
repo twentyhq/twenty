@@ -2,9 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
-  ObjectRecordsPermissions,
-  ObjectRecordsPermissionsByRoleId,
-  RestrictedFields,
+    ObjectRecordsPermissions,
+    ObjectRecordsPermissionsByRoleId,
+    RestrictedFields,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';
@@ -91,7 +91,7 @@ export class WorkspacePermissionsCacheService {
         workspaceId,
         freshUserWorkspaceRoleMap,
       );
-    } catch () {
+    } catch {
       // Flush stale userWorkspaceRoleMap
       await this.workspacePermissionsCacheStorageService.removeUserWorkspaceRoleMap(
         workspaceId,
@@ -344,7 +344,7 @@ export class WorkspacePermissionsCacheService {
         workspaceId,
         freshApiKeyRoleMap,
       );
-    } catch () {
+    } catch {
       // Flush stale apiKeyRoleMap
       await this.workspacePermissionsCacheStorageService.removeApiKeyRoleMap(
         workspaceId,

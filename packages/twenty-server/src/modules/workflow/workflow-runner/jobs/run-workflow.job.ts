@@ -13,8 +13,8 @@ import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import {
-  WorkflowRunException,
-  WorkflowRunExceptionCode,
+    WorkflowRunException,
+    WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
 import { getRootSteps } from 'src/modules/workflow/workflow-runner/utils/get-root-steps.utils';
 import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
@@ -180,7 +180,7 @@ export class RunWorkflowJob {
         this.twentyConfigService.get('WORKFLOW_EXEC_THROTTLE_LIMIT'),
         this.twentyConfigService.get('WORKFLOW_EXEC_THROTTLE_TTL'),
       );
-    } catch () {
+    } catch {
       await this.metricsService.incrementCounter({
         key: MetricsKeys.WorkflowRunFailedThrottled,
         eventId: workflowId,

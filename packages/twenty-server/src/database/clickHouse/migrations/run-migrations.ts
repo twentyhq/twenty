@@ -30,7 +30,7 @@ async function ensureDatabaseExists() {
     await client.command({
       query: `CREATE DATABASE IF NOT EXISTS "${database}"`,
     });
-  } catch () {
+  } catch {
     // It may fail due to permissions, but the database already exists
   } finally {
     await client.close();
