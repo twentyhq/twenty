@@ -1,15 +1,8 @@
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 
 export type StandardRoleDefinition = Omit<
-  RoleEntity,
-  | 'id'
-  | 'workspaceId'
-  | 'createdAt'
-  | 'updatedAt'
-  | 'permissionFlags'
-  | 'roleTargets'
-  | 'objectPermissions'
-  | 'fieldPermissions'
+  FlatRole,
+  'id' | 'workspaceId' | 'uniqueIdentifier'
 > & {
   standardId: string;
 };

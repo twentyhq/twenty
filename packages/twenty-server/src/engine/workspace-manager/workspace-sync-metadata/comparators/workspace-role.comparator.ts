@@ -4,13 +4,13 @@ import diff from 'microdiff';
 
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 
+import { FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
-import { ComputedRole } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-role.factory';
 
 type RoleComparatorResult = {
   action: ComparatorAction;
-  object: ComputedRole;
+  object: FlatRole;
 };
 
 const rolePropertiesToIgnore = [
@@ -22,12 +22,13 @@ const rolePropertiesToIgnore = [
   'permissionFlags',
   'objectPermissions',
   'fieldPermissions',
+  'uniqueIdentifier',
 ];
 
 @Injectable()
 export class WorkspaceRoleComparator {
   compare(
-    standardRoles: ComputedRole[],
+    standardRoles: FlatRole[],
     existingRoles: RoleEntity[],
   ): RoleComparatorResult[] {
     const results: RoleComparatorResult[] = [];
@@ -36,7 +37,7 @@ export class WorkspaceRoleComparator {
       shouldIgnoreProperty: (property) =>
         rolePropertiesToIgnore.includes(property),
       keyFactory(role) {
-        return role.roleId || role.label;
+        return role.id || role.label;
       },
     });
 
@@ -54,7 +55,7 @@ export class WorkspaceRoleComparator {
       switch (difference.type) {
         case 'CREATE': {
           const standardRole = standardRoles.find(
-            (role) => (role.roleId || role.label) === difference.path[0],
+            (role) => (role.id || role.label) === difference.path[0],
           );
 
           if (standardRole) {
@@ -68,9 +69,7 @@ export class WorkspaceRoleComparator {
         case 'CHANGE': {
           const roleId = difference.path[0];
           const existingRole = existingRoles.find((role) => role.id === roleId);
-          const standardRole = standardRoles.find(
-            (role) => role.roleId === roleId,
-          );
+          const standardRole = standardRoles.find((role) => role.id === roleId);
 
           if (existingRole && standardRole) {
             results.push({

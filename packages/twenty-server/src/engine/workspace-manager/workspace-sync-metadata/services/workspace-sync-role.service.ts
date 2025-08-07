@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { removePropertiesFromRecord } from 'twenty-shared/utils';
 import { EntityManager } from 'typeorm';
 
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
@@ -47,19 +48,12 @@ export class WorkspaceSyncRoleService {
       if (roleComparatorResult.action === ComparatorAction.CREATE) {
         const roleToCreate = roleComparatorResult.object;
 
+        const flatRoleData = removePropertiesFromRecord(roleToCreate, [
+          'uniqueIdentifier',
+        ]);
+
         await roleRepository.save({
-          standardId: roleToCreate.standardId,
-          label: roleToCreate.label,
-          description: roleToCreate.description,
-          icon: roleToCreate.icon,
-          isEditable: roleToCreate.isEditable,
-          canUpdateAllSettings: roleToCreate.canUpdateAllSettings,
-          canAccessAllTools: roleToCreate.canAccessAllTools,
-          canReadAllObjectRecords: roleToCreate.canReadAllObjectRecords,
-          canUpdateAllObjectRecords: roleToCreate.canUpdateAllObjectRecords,
-          canSoftDeleteAllObjectRecords:
-            roleToCreate.canSoftDeleteAllObjectRecords,
-          canDestroyAllObjectRecords: roleToCreate.canDestroyAllObjectRecords,
+          ...flatRoleData,
           workspaceId: context.workspaceId,
         });
       }
@@ -67,23 +61,13 @@ export class WorkspaceSyncRoleService {
       if (roleComparatorResult.action === ComparatorAction.UPDATE) {
         const roleToUpdate = roleComparatorResult.object;
 
-        await roleRepository.update(
-          { id: roleToUpdate.roleId },
-          {
-            standardId: roleToUpdate.standardId,
-            label: roleToUpdate.label,
-            description: roleToUpdate.description,
-            icon: roleToUpdate.icon,
-            isEditable: roleToUpdate.isEditable,
-            canUpdateAllSettings: roleToUpdate.canUpdateAllSettings,
-            canAccessAllTools: roleToUpdate.canAccessAllTools,
-            canReadAllObjectRecords: roleToUpdate.canReadAllObjectRecords,
-            canUpdateAllObjectRecords: roleToUpdate.canUpdateAllObjectRecords,
-            canSoftDeleteAllObjectRecords:
-              roleToUpdate.canSoftDeleteAllObjectRecords,
-            canDestroyAllObjectRecords: roleToUpdate.canDestroyAllObjectRecords,
-          },
-        );
+        const flatRoleData = removePropertiesFromRecord(roleToUpdate, [
+          'id',
+          'uniqueIdentifier',
+          'workspaceId',
+        ]);
+
+        await roleRepository.update({ id: roleToUpdate.id }, flatRoleData);
       }
     }
   }
