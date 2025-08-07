@@ -6,6 +6,7 @@ import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-u
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { ApiKeyGuard } from 'src/engine/guards/api-key-guard';
+import { UnknownException } from 'src/utils/custom-exception';
 
 @Controller('auth/api')
 @UseGuards(ApiKeyGuard)
@@ -26,18 +27,32 @@ export class ApiAuthController {
       },
     );
 
-    await this.workspaceService.activateWorkspace(user, workspace, {
-      displayName: workspace.subdomain,
-    });
+    const activatedWorkspace = await this.workspaceService.activateWorkspace(
+      user,
+      workspace,
+      {
+        displayName: workspace.subdomain,
+      },
+    );
 
-    // Create an API key for the workspace, valid for 5 year
-    const oneYearMs = 5 * 365 * 24 * 60 * 60 * 1000;
-    const expiresAt = new Date(Date.now() + oneYearMs);
+    if (!activatedWorkspace?.defaultRoleId) {
+      throw new UnknownException(
+        'Default role not found for the workspace',
+        'NO_DEFAULT_ROLE',
+      );
+    }
+
+    const oneYearMs = 1000 * 60 * 60 * 24 * 365;
+    const expiresInMs = process.env.API_KEY_EXPIRES_IN_MS
+      ? parseInt(process.env.API_KEY_EXPIRES_IN_MS)
+      : oneYearMs;
+    const expiresAt = new Date(Date.now() + expiresInMs);
 
     const apiKey = await this.apiKeyService.create({
       name: 'Webapp',
       workspaceId: workspace.id,
       expiresAt,
+      roleId: activatedWorkspace?.defaultRoleId,
     });
 
     const apiToken = await this.apiKeyService.generateApiKeyToken(
@@ -48,7 +63,9 @@ export class ApiAuthController {
     return {
       userId: user.id,
       workspaceId: workspace.id,
-      workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
+      workspaceUrl:
+        this.domainManagerService.getWorkspaceUrls(workspace).subdomainUrl,
+      apiKeyId: apiKey.id,
       apiToken: apiToken?.token,
       expiresAt,
     };

@@ -6,7 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
-import { ApiKeyService as CoreApiKeyService } from 'src/engine/core-modules/api-key/api-key.service';
+import { ApiKeyService } from 'src/engine/core-modules/api-key/api-key.service';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
 import { ApiAuthController } from 'src/engine/core-modules/auth/controllers/api-auth.controller';
@@ -147,7 +147,6 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     UpdateConnectedAccountOnReconnectService,
     TransientTokenService,
     ApiKeyService,
-    CoreApiKeyService,
     AuthSsoService,
   ],
   exports: [
