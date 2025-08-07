@@ -93,13 +93,9 @@ export class RecordPositionService {
       }
     }
 
-    // Helper to check if value is a valid number
-    const isNumber = (value: unknown): value is number => 
-      typeof value === 'number' && !isNaN(value);
-
     const numericPositions = recordsWithExistingNumberPosition
       .map((record) => record.position)
-      .filter(isNumber);
+      .filter((pos): pos is number => typeof pos === 'number' && !isNaN(pos));
 
     const calculatePosition = (
       mathOperation: (positions: number[], existingPosition: number) => number,
