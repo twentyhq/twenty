@@ -1,4 +1,4 @@
-import { ObjectPermissions } from '@/types/ObjectPermissions';
+import { ObjectPermissions } from './ObjectPermissions';
 
 type ObjectMetadataId = string;
 

@@ -1,4 +1,4 @@
-import { ObjectPermissionsDeprecated } from '@/types/ObjectPermissionsDeprecated';
+import { ObjectPermissionsDeprecated } from './ObjectPermissionsDeprecated';
 
 type ObjectMetadataId = string;
 

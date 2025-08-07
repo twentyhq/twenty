@@ -8,7 +8,7 @@ import {
 
 import { CREATE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
 
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
+import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { useRefreshCachedViews } from '@/views/hooks/useRefreshViews';
 
 export const useCreateOneFieldMetadataItem = () => {

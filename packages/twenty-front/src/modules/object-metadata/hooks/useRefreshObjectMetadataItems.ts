@@ -3,35 +3,68 @@ import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/state
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '@/object-metadata/utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { FetchPolicy, useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
-import { ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
+import { ObjectPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { ObjectMetadataItemsQuery, useGetCurrentUserLazyQuery } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useRefreshObjectMetadataItems = (
   fetchPolicy: FetchPolicy = 'network-only',
 ) => {
+  const [getCurrentUser] = useGetCurrentUserLazyQuery();
+
   const client = useApolloClient();
-
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-
   const refreshObjectMetadataItems = async () => {
-    const result = await client.query<ObjectMetadataItemsQuery>({
-      query: FIND_MANY_OBJECT_METADATA_ITEMS,
-      variables: {},
-      fetchPolicy,
+    const objectMetadataItemsResult =
+      await client.query<ObjectMetadataItemsQuery>({
+        query: FIND_MANY_OBJECT_METADATA_ITEMS,
+        variables: {},
+        fetchPolicy,
+      });
+
+    const currentUserResult = await getCurrentUser({
+      fetchPolicy: 'network-only',
     });
+
+    if (isDefined(currentUserResult.error)) {
+      throw new Error(currentUserResult.error.message);
+    }
+
+    const user = currentUserResult.data?.currentUser;
+
+    if (!isDefined(user?.currentUserWorkspace?.objectPermissions)) {
+      return {
+        objectMetadataItems: [],
+        currentUser: user,
+      };
+    }
+
+    const objectPermissionsByObjectMetadataId =
+      user.currentUserWorkspace.objectPermissions.reduce(
+        (acc, objectPermission) => {
+          acc[objectPermission.objectMetadataId] =
+            objectPermission as ObjectPermissions & {
+              objectMetadataId: string;
+            };
+          return acc;
+        },
+        {} as Record<string, ObjectPermissions & { objectMetadataId: string }>,
+      );
 
     const objectMetadataItems =
       mapPaginatedObjectMetadataItemsToObjectMetadataItems({
-        pagedObjectMetadataItems: result.data,
+        pagedObjectMetadataItems: objectMetadataItemsResult.data,
         objectPermissionsByObjectMetadataId,
       });
 
     replaceObjectMetadataItemIfDifferent(objectMetadataItems);
 
-    return objectMetadataItems;
+    return {
+      objectMetadataItems,
+      currentUser: user,
+    };
   };
 
   const replaceObjectMetadataItemIfDifferent = useRecoilCallback(

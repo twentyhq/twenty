@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { ObjectsPermissionsByRoleIdDeprecated } from 'twenty-shared/types';
 import { In, Repository } from 'typeorm';
 
 import {
@@ -21,7 +22,6 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
-import { ObjectsPermissionsByRoleIdDeprecated } from 'twenty-shared/types';
 
 describe('FieldPermissionService', () => {
   let service: FieldPermissionService;

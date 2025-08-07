@@ -1,4 +1,4 @@
-import { ObjectsPermissions } from '@/types/ObjectsPermissions';
+import { ObjectsPermissions } from './ObjectsPermissions';
 
 type RoleId = string;
 

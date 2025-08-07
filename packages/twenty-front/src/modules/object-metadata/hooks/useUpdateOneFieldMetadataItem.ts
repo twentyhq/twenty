@@ -9,7 +9,7 @@ import { UPDATE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
+import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
@@ -76,7 +76,8 @@ export const useUpdateOneFieldMetadataItem = () => {
       },
     });
 
-    const objectMetadataItemsRefreshed = await refreshObjectMetadataItems();
+    const { objectMetadataItems: objectMetadataItemsRefreshed } =
+      await refreshObjectMetadataItems();
 
     const { data } = await apolloClient.query({ query: GET_CURRENT_USER });
     setCurrentWorkspace(data?.currentUser?.currentWorkspace);

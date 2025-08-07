@@ -1,4 +1,4 @@
-import { RestrictedFieldPermissions } from '@/types/RestrictedFieldPermissions';
+import { RestrictedFieldPermissions } from './RestrictedFieldPermissions';
 
 export type RestrictedFieldsPermissions = Record<
   string,

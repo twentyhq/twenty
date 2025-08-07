@@ -37,8 +37,8 @@ export const useSetTableColumns = () => {
 
         const columnsToSet = columns.filter((column) =>
           objectMetadataItem.readableFields
-            .map((field) => field.id)
-            .includes(column.fieldMetadataId),
+            .map((field) => field.name)
+            .includes(column.metadata.fieldName),
         );
 
         if (isDeeplyEqual(tableColumns, columnsToSet)) {

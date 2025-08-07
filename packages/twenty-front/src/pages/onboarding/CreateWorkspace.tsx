@@ -10,7 +10,7 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
+import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -123,7 +123,6 @@ export const CreateWorkspace = () => {
         }
 
         await refreshObjectMetadataItems();
-        await loadCurrentUser();
         setNextOnboardingStatus();
       } catch (error: any) {
         setPendingCreationLoaderStep(PendingCreationLoaderStep.None);
@@ -136,7 +135,6 @@ export const CreateWorkspace = () => {
     [
       activateWorkspace,
       enqueueErrorSnackBar,
-      loadCurrentUser,
       refreshObjectMetadataItems,
       setNextOnboardingStatus,
       t,

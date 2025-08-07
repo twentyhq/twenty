@@ -1,4 +1,4 @@
-import { ObjectsPermissionsDeprecated } from '@/types/ObjectsPermissionsDeprecated';
+import { ObjectsPermissionsDeprecated } from './ObjectsPermissionsDeprecated';
 
 type RoleId = string;
 

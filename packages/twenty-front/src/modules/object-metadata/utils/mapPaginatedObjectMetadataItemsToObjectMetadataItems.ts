@@ -4,6 +4,7 @@ import { getNonReadableFieldMetadataIdsFromObjectPermissions } from '@/object-me
 import { getNonUpdatableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonUpdatableFieldMetadataIdsFromObjectPermissions';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { ObjectPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
@@ -24,15 +25,17 @@ export const mapPaginatedObjectMetadataItemsToObjectMetadataItems = ({
       const objectPermissions =
         objectPermissionsByObjectMetadataId[object.node.id];
 
-      const nonReadableFieldMetadataIds =
-        getNonReadableFieldMetadataIdsFromObjectPermissions({
-          objectPermissions: objectPermissions,
-        });
+      const nonReadableFieldMetadataIds = isDefined(objectPermissions)
+        ? getNonReadableFieldMetadataIdsFromObjectPermissions({
+            objectPermissions: objectPermissions,
+          })
+        : [];
 
-      const nonUpdatableFieldMetadataIds =
-        getNonUpdatableFieldMetadataIdsFromObjectPermissions({
-          objectPermissions: objectPermissions,
-        });
+      const nonUpdatableFieldMetadataIds = isDefined(objectPermissions)
+        ? getNonUpdatableFieldMetadataIdsFromObjectPermissions({
+            objectPermissions: objectPermissions,
+          })
+        : [];
 
       const labelIdentifierFieldMetadataId =
         objectMetadataItemSchema.shape.labelIdentifierFieldMetadataId.parse(
