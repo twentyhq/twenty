@@ -8,7 +8,6 @@ import { type WorkspaceMigrationBuilderTestCase } from 'src/engine/workspace-man
 export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBuilderTestCase[] =
   [
     {
-      only: true,
       title: 'It should build an create_index action',
       context: {
         input: {

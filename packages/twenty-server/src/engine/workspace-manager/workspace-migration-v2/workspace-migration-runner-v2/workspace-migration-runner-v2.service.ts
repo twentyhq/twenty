@@ -29,7 +29,7 @@ export class WorkspaceMigrationRunnerV2Service {
   ): Promise<FlatObjectMetadataMaps> => {
     const queryRunner = this.coreDataSource.createQueryRunner();
 
-    const { flatObjectMetadataMaps: existingflatObjectMetadataMaps } =
+    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
         {
           workspaceId: workspaceMigration.workspaceId,
@@ -39,7 +39,7 @@ export class WorkspaceMigrationRunnerV2Service {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     let optimisticFlatObjectMetadataMaps = structuredClone(
-      existingflatObjectMetadataMaps,
+      existingFlatObjectMetadataMaps,
     );
 
     try {

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { t } from '@lingui/core/macro';
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { t } from '@lingui/core/macro';
 
 import {
   FieldMetadataException,
@@ -77,7 +77,7 @@ export class FlatFieldMetadataValidatorService {
       }
     }
 
-    if (flatFieldMetadataToDelete.isCustom) {
+    if (!flatFieldMetadataToDelete.isCustom) {
       errors.push(
         new FieldMetadataException(
           "Standard Fields can't be deleted",

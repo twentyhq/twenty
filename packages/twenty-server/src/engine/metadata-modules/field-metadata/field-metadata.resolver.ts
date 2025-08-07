@@ -123,7 +123,7 @@ export class FieldMetadataResolver {
       throw new ValidationError('Field does not exist');
     }
 
-    if (fieldMetadata.isCustom) {
+    if (!fieldMetadata.isCustom) {
       throw new ValidationError("Standard Fields can't be deleted");
     }
 
@@ -139,7 +139,7 @@ export class FieldMetadataResolver {
         );
 
       if (isWorkspaceMigrationV2Enabled) {
-        return this.fieldMetadataServiceV2.deleteOneField({
+        return await this.fieldMetadataServiceV2.deleteOneField({
           deleteOneFieldInput: input,
           workspaceId,
         });

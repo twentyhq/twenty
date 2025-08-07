@@ -188,6 +188,15 @@ exports[`Workspace migration builder field actions test suite It should build an
 
 exports[`Workspace migration builder field actions test suite It should not infer any actions as from and to fields are identical 1`] = `[]`;
 
+exports[`Workspace migration builder index actions test suite It should build a delete_index action 1`] = `
+[
+  {
+    "flatIndexMetadataId": Any<String>,
+    "type": "delete_index",
+  },
+]
+`;
+
 exports[`Workspace migration builder index actions test suite It should build an create_index action 1`] = `
 [
   {
@@ -209,6 +218,34 @@ exports[`Workspace migration builder index actions test suite It should build an
   },
 ]
 `;
+
+exports[`Workspace migration builder index actions test suite It should build an delete_index and a create_index action ( the way we handle update ) 1`] = `
+[
+  {
+    "flatIndexMetadataId": Any<String>,
+    "type": "delete_index",
+  },
+  {
+    "flatIndexMetadata": {
+      "createdAt": Any<ClockDate>,
+      "flatIndexFieldMetadatas": [],
+      "id": Any<String>,
+      "indexType": "BTREE",
+      "indexWhereClause": "new index where clause",
+      "isCustom": false,
+      "isUnique": false,
+      "name": "new index name",
+      "objectMetadataId": Any<String>,
+      "uniqueIdentifier": "field-metadata-unique-identifier-1",
+      "updatedAt": Any<ClockDate>,
+      "workspaceId": Any<String>,
+    },
+    "type": "create_index",
+  },
+]
+`;
+
+exports[`Workspace migration builder index actions test suite It should not infer any actions as from and to indexes are identical 1`] = `[]`;
 
 exports[`Workspace migration builder object actions test suite It should build a create_object action 1`] = `
 [
