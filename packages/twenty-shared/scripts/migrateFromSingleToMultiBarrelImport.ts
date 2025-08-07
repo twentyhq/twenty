@@ -475,7 +475,6 @@ const main = () => {
     'twenty-server',
     'twenty-emails',
     'twenty-zapier',
-    'twenty-chrome-extension',
   ];
   for (const currPackage of packagesToMigrate) {
     console.log(`About to run over ${currPackage}`);

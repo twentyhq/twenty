@@ -7,7 +7,7 @@
     "build": "preconstruct build"
   },
   "engines": {
-    "node": "^22.12.0",
+    "node": "^24.0.0",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
   },

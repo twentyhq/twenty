@@ -4,7 +4,7 @@
   "description": "Effortlessly sync Twenty with 3000+ apps. Automate tasks, boost productivity, and supercharge your customer relationships!",
   "main": "src/index.ts",
   "engines": {
-    "node": "^22.12.0",
+    "node": "^24.0.0",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
   },
