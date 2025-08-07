@@ -198,7 +198,10 @@ export class UserRoleService {
       );
     }
 
-    if (roleOfUserWorkspace.standardId === ADMIN_ROLE.standardId) {
+    if (
+      roleOfUserWorkspace.standardId &&
+      roleOfUserWorkspace.standardId === ADMIN_ROLE.standardId
+    ) {
       const adminRole = roleOfUserWorkspace;
 
       await this.validateMoreThanOneWorkspaceMemberHasAdminRoleOrThrow({
@@ -256,7 +259,7 @@ export class UserRoleService {
       };
     }
 
-    if (!(currentRole?.standardId === ADMIN_ROLE.standardId)) {
+    if (!(currentRole?.standardId && currentRole.standardId === ADMIN_ROLE.standardId)) {
       return;
     }
 

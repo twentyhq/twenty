@@ -193,7 +193,7 @@ export class WorkspaceManagerService {
     userId: string,
   ): Promise<void> {
     const memberRole = await this.roleRepository.findOne({
-      where: { standardId: MEMBER_ROLE.standardId, workspaceId },
+      where: { standardId: MEMBER_ROLE.standardId as string, workspaceId },
     });
 
     if (memberRole) {
@@ -203,7 +203,10 @@ export class WorkspaceManagerService {
     }
 
     const adminRole = await this.roleRepository.findOne({
-      where: { standardId: ADMIN_ROLE.standardId, workspaceId },
+      where: {
+        standardId: (ADMIN_ROLE.standardId as string) || undefined,
+        workspaceId,
+      },
     });
 
     if (adminRole) {

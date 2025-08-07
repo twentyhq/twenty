@@ -36,11 +36,11 @@ export class DevSeederPermissionsService {
 
   public async initPermissions(workspaceId: string) {
     const adminRole = await this.roleService.getRoleByStandardId(
-      ADMIN_ROLE.standardId,
+      ADMIN_ROLE.standardId as string,
       workspaceId,
     );
     const memberRole = await this.roleService.getRoleByStandardId(
-      MEMBER_ROLE.standardId,
+      MEMBER_ROLE.standardId as string,
       workspaceId,
     );
 
