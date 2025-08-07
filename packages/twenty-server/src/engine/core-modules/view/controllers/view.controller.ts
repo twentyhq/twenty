@@ -84,4 +84,6 @@ export class ViewController {
 
     return { success: isDefined(deletedView) };
   }
+
+  // TODO: the destroy endpoint will be implemented when we settle on a strategy
 }
