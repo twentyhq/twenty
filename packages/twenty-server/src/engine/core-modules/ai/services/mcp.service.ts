@@ -60,7 +60,7 @@ export class McpService {
       const roles = await this.roleRepository.find({
         where: {
           workspaceId,
-          standardId: ADMIN_ROLE.standardId as string,
+          standardId: ADMIN_ROLE.standardId,
         },
       });
 

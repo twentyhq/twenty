@@ -41,7 +41,7 @@ export class DevSeederPermissionsService {
   public async initPermissions(workspaceId: string) {
     const adminRole = await this.roleRepository.findOne({
       where: {
-        standardId: ADMIN_ROLE.standardId as string,
+        standardId: ADMIN_ROLE.standardId,
         workspaceId,
       },
     });
