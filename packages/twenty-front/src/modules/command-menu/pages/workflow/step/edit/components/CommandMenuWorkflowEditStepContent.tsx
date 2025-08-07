@@ -1,10 +1,12 @@
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
-import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -18,12 +20,18 @@ export const CommandMenuWorkflowEditStepContent = ({
   workflow: WorkflowWithCurrentVersion;
 }) => {
   const flow = useFlowOrThrow();
-  const workflowSelectedNode = useWorkflowSelectedNodeOrThrow();
+  const workflowSelectedNode = useRecoilComponentValue(
+    workflowSelectedNodeComponentState,
+  );
 
   const { updateTrigger } = useUpdateWorkflowVersionTrigger({ workflow });
   const { updateStep } = useUpdateStep({
     workflow,
   });
+
+  if (!isDefined(workflowSelectedNode)) {
+    return null;
+  }
 
   return (
     <StyledContainer>
