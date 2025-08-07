@@ -45,9 +45,7 @@ export const useAggregateRecordsQuery = ({
           availableAggregations[fieldName]?.[aggregateOperation];
 
         if (!isDefined(fieldToQuery)) {
-          throw new Error(
-            `Cannot query operation ${aggregateOperation} on field ${fieldName}`,
-          );
+          return;
         }
         gqlFieldToFieldMap[fieldToQuery] = [fieldName, aggregateOperation];
 
