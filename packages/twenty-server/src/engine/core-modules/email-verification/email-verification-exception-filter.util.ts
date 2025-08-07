@@ -1,14 +1,15 @@
 import { Catch, type ExceptionFilter } from '@nestjs/common';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { t } from '@lingui/core/macro';
 
 import {
-  EmailVerificationException,
-  EmailVerificationExceptionCode,
+    EmailVerificationException,
+    EmailVerificationExceptionCode,
 } from 'src/engine/core-modules/email-verification/email-verification.exception';
 import {
-  ForbiddenError,
-  UserInputError,
+    ForbiddenError,
+    UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 @Catch(EmailVerificationException)
@@ -39,9 +40,7 @@ export class EmailVerificationExceptionFilter implements ExceptionFilter {
       case EmailVerificationExceptionCode.INVALID_EMAIL:
         throw new UserInputError(exception);
       default: {
-        const _exhaustiveCheck: never = exception.code;
-
-        throw exception;
+        assertUnreachable(exception.code);
       }
     }
   }

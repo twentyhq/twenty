@@ -1,14 +1,15 @@
 import { t } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
-  type AuthException,
-  AuthExceptionCode,
+    type AuthException,
+    AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import {
-  AuthenticationError,
-  ForbiddenError,
-  NotFoundError,
-  UserInputError,
+    AuthenticationError,
+    ForbiddenError,
+    NotFoundError,
+    UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 export const authGraphqlApiExceptionHandler = (exception: AuthException) => {
@@ -55,9 +56,7 @@ export const authGraphqlApiExceptionHandler = (exception: AuthException) => {
     case AuthExceptionCode.INTERNAL_SERVER_ERROR:
       throw exception;
     default: {
-      const _exhaustiveCheck: never = exception.code;
-
-      throw exception;
+      assertUnreachable(exception.code);
     }
   }
 };

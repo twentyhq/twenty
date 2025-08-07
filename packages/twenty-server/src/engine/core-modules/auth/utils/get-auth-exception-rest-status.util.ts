@@ -1,3 +1,5 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
   type AuthException,
   AuthExceptionCode,
@@ -32,9 +34,7 @@ export const getAuthExceptionRestStatus = (exception: AuthException) => {
     case AuthExceptionCode.USER_WORKSPACE_NOT_FOUND:
       return 500;
     default: {
-      const _exhaustiveCheck: never = exception.code;
-
-      return 500;
+      assertUnreachable(exception.code);
     }
   }
 };

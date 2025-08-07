@@ -1,12 +1,13 @@
 import { Catch, type ExceptionFilter } from '@nestjs/common';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
-  NotFoundError,
-  UserInputError,
+    NotFoundError,
+    UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-  WorkflowTriggerException,
-  WorkflowTriggerExceptionCode,
+    WorkflowTriggerException,
+    WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 
 export const handleWorkflowTriggerException = (
@@ -25,9 +26,7 @@ export const handleWorkflowTriggerException = (
     case WorkflowTriggerExceptionCode.INTERNAL_ERROR:
       throw exception;
     default: {
-      const _exhaustiveCheck: never = exception.code;
-
-      throw exception;
+      assertUnreachable(exception.code);
     }
   }
 };

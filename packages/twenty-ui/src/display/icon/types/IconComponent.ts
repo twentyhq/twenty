@@ -1,4 +1,4 @@
-import { type CSSProperties, type FunctionComponent } from 'react';
+import type { CSSProperties, FunctionComponent } from 'react';
 
 export type IconComponentProps = {
   className?: string;
