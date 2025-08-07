@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { Decorator, Meta, StoryObj, ReactRenderer } from '@storybook/react';
 import { expect, userEvent, waitFor, within } from '@storybook/test';
-import { PlayFunction } from '@storybook/types';
+// Remove conflicting import - PlayFunction should come from @storybook/react
 import { ComponentProps, useState } from 'react';
 
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
@@ -216,10 +216,7 @@ const FakeCheckableMenuItemList = ({ hasAvatar }: { hasAvatar?: boolean }) => {
   );
 };
 
-const playInteraction: PlayFunction<
-  ReactRenderer,
-  ComponentProps<typeof Dropdown>
-> = async () => {
+const playInteraction = async () => {
   const canvas = within(document.body);
 
   const buttons = await canvas.findAllByRole('button');

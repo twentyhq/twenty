@@ -55,17 +55,17 @@ export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
     id: recordId,
   });
 
-  const record = cache.readFragment<T & { __typename: string }>({
+  const record = cache.readFragment({
     id: cachedRecordId,
     fragment: cacheReadFragment,
     returnPartialData: true,
-  });
+  }) as T & { __typename: string } | null;
 
   if (isUndefinedOrNull(record) || isEmptyObject(record)) {
     return null;
   }
 
-  return getRecordFromRecordNode<T>({
+  return getRecordFromRecordNode({
     recordNode: record,
-  });
+  }) as T;
 };
