@@ -1,5 +1,5 @@
 import { HealthCheckService } from '@nestjs/terminus';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
 import { HealthController } from 'src/engine/core-modules/health/controllers/health.controller';
 import { AppHealthIndicator } from 'src/engine/core-modules/health/indicators/app.health';

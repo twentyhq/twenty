@@ -1,15 +1,15 @@
 import {
-  EachTestingContext,
+  type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 
 import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata-maps/mocks/flat-object-metadata-maps.mock';
 import {
-  FindFlatObjectMetadataInFlatObjectMetadataMapsArgs,
+  type FindFlatObjectMetadataInFlatObjectMetadataMapsArgs,
   findFlatObjectMetadataInFlatObjectMetadataMaps,
 } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
 import { PET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/pet-flat-object.mock';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type FindFlatObjectMetadataInFlatObjectMetadataMapsTestCase = {
   input: FindFlatObjectMetadataInFlatObjectMetadataMapsArgs;

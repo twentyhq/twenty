@@ -1,11 +1,11 @@
-import { ObjectRecordsPermissions } from 'twenty-shared/types';
-import { EntityTarget, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
-import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
+import { type EntityTarget, type ObjectLiteral, SelectQueryBuilder } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
-import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
+import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import {
   PermissionsException,

@@ -1,8 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import Cloudflare from 'cloudflare';
-import { CustomHostnameCreateResponse } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
+import { type CustomHostnameCreateResponse } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
 import { AuditContextMock } from 'test/utils/audit-context.mock';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';

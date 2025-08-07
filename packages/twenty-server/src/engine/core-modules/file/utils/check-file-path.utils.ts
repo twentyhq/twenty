@@ -1,12 +1,12 @@
 import { BadRequestException } from '@nestjs/common';
 
 import {
-  AllowedFolders,
+  type AllowedFolders,
   FileFolder,
 } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { settings } from 'src/engine/constants/settings';
-import { ShortCropSize } from 'src/utils/image';
+import { type ShortCropSize } from 'src/utils/image';
 import { kebabCase } from 'src/utils/kebab-case';
 
 export const checkFilePath = (filePath: string): string => {

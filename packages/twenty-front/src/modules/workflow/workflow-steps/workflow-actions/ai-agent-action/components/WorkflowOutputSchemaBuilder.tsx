@@ -3,7 +3,7 @@ import { FormTextFieldInput } from '@/object-record/record-field/form-types/comp
 
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
-import { type OutputSchemaField } from '@/ai/constants/output-field-type-options';
+import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';

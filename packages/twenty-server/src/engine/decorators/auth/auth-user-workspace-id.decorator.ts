@@ -1,4 +1,4 @@
-import { ExecutionContext, createParamDecorator } from '@nestjs/common';
+import { type ExecutionContext, createParamDecorator } from '@nestjs/common';
 
 import { getRequest } from 'src/utils/extract-request';
 

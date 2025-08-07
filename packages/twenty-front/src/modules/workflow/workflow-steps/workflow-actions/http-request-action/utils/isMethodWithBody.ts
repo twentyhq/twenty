@@ -1,6 +1,6 @@
 import {
   type HttpMethodWithBody,
-  METHODS_WITH_BODY,
+  HTTP_REQUEST_CONSTANTS,
 } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 
 export const isMethodWithBody = (
@@ -10,5 +10,5 @@ export const isMethodWithBody = (
     return false;
   }
 
-  return METHODS_WITH_BODY.includes(method as HttpMethodWithBody);
+  return HTTP_REQUEST_CONSTANTS.METHODS_WITH_BODY.includes(method as HttpMethodWithBody);
 };

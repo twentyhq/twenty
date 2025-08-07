@@ -1,11 +1,11 @@
 import {
-  FieldNode,
-  GraphQLResolveInfo,
-  InlineFragmentNode,
+  type FieldNode,
+  type GraphQLResolveInfo,
+  type InlineFragmentNode,
   Kind,
-  SelectionNode,
-  SelectionSetNode,
-  ValueNode,
+  type SelectionNode,
+  type SelectionSetNode,
+  type ValueNode,
 } from 'graphql';
 
 const isFieldNode = (node: SelectionNode): node is FieldNode =>

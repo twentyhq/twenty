@@ -1,5 +1,5 @@
 import { PermissionIcon } from '@/settings/roles/role-permissions/objects-permissions/components/PermissionIcon';
-import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/settingsRoleObjectPermissionIconConfig';
+import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { type SettingsRolePermissionsObjectPermission } from '@/settings/roles/role-permissions/objects-permissions/types/SettingsRolePermissionsObjectPermission';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';

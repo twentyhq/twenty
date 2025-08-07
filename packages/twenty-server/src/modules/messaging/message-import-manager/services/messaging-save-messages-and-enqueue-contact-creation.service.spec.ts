@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -7,16 +7,16 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CreateCompanyAndContactJob } from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import {
   MessageChannelContactAutoCreationPolicy,
-  MessageChannelWorkspaceEntity,
+  type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
-import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
 
 describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {

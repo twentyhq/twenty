@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm';
+import { type DataSource } from 'typeorm';
 
 import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
 

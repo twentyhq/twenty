@@ -1,4 +1,4 @@
-import { Axios } from 'axios';
+import { type Axios } from 'axios';
 
 const cropRegex = /([w|h])([0-9]+)/;
 

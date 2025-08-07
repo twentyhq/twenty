@@ -1,5 +1,5 @@
 import {
-  CaptchaException,
+  type CaptchaException,
   CaptchaExceptionCode,
 } from 'src/engine/core-modules/captcha/captcha.exception';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';

@@ -1,8 +1,8 @@
 import { fromArrayToValuesByKeyRecord, isDefined } from 'twenty-shared/utils';
 
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { mergeFlatFieldMetadatasInFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/merge-flat-field-metadatas-in-flat-object-metadata.util';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type DispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatasArgs = {
   flatObjectMetadatas: FlatObjectMetadata[];

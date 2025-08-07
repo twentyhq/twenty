@@ -1,5 +1,5 @@
-import { calendar_v3 as calendarV3 } from 'googleapis';
-import { EachTestingContext } from 'twenty-shared/testing';
+import { type calendar_v3 as calendarV3 } from 'googleapis';
+import { type EachTestingContext } from 'twenty-shared/testing';
 
 import { formatGoogleCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/format-google-calendar-event.util';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';

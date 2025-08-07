@@ -1,5 +1,5 @@
 import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
-import { DEFAULT_HTTP_REQUEST_OUTPUT_VALUE } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
+import { HTTP_REQUEST_CONSTANTS } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import { type HttpRequestTestData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/types/HttpRequestTestData';
 
 export const httpRequestTestDataFamilyState = createFamilyState<
@@ -11,6 +11,6 @@ export const httpRequestTestDataFamilyState = createFamilyState<
     language: 'plaintext',
     height: 400,
     variableValues: {},
-    output: DEFAULT_HTTP_REQUEST_OUTPUT_VALUE,
+    output: HTTP_REQUEST_CONSTANTS.DEFAULT_OUTPUT_VALUE,
   },
 });

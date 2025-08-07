@@ -1,15 +1,15 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import {
   FlatObjectMetadataMapsException,
   FlatObjectMetadataMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-object-metadata-maps/flat-object-metadata-maps.exception';
 import {
-  FlatFieldMetadataMaps,
-  FlatObjectMetadataWithFlatFieldMaps,
+  type FlatFieldMetadataMaps,
+  type FlatObjectMetadataWithFlatFieldMaps,
 } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-with-flat-field-metadata-maps.type';
 
 type AddFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMapsOrThrowArgs = {

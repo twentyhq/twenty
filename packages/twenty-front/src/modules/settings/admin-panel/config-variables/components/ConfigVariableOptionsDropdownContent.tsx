@@ -1,5 +1,5 @@
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
-import { ConfigVariableSourceOptions } from '@/settings/admin-panel/config-variables/constants/ConfigVariableSourceOptions';
+import { CONFIG_VARIABLE_SOURCE_OPTIONS } from '@/settings/admin-panel/config-variables/constants/ConfigVariableSourceOptions';
 import { type ConfigVariableFilterCategory } from '@/settings/admin-panel/config-variables/types/ConfigVariableFilterCategory';
 import { type ConfigVariableGroupFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableGroupFilter';
 import { type ConfigVariableSourceFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableSourceFilter';
@@ -43,7 +43,7 @@ export const ConfigVariableOptionsDropdownContent = ({
     isConfigVariablesInDbEnabledState,
   );
 
-  const availableSourceOptions = ConfigVariableSourceOptions.filter(
+  const availableSourceOptions = CONFIG_VARIABLE_SOURCE_OPTIONS.filter(
     (option) => isConfigVariablesInDbEnabled || option.value !== 'database',
   );
 

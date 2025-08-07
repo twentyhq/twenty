@@ -1,10 +1,10 @@
-import { I18n } from '@lingui/core';
+import { type I18n } from '@lingui/core';
 import { isNonEmptyString } from '@sniptt/guards';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
-import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 
 export const resolveFieldMetadataStandardOverride = (
   fieldMetadata: Pick<

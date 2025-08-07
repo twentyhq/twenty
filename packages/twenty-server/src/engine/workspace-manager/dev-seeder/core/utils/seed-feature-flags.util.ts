@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm';
+import { type DataSource } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 

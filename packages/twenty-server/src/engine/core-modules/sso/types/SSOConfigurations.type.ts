@@ -1,8 +1,8 @@
 /* @license Enterprise */
 
 import {
-  IdentityProviderType,
-  SSOIdentityProviderStatus,
+  type IdentityProviderType,
+  type SSOIdentityProviderStatus,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
 type CommonSSOConfiguration = {

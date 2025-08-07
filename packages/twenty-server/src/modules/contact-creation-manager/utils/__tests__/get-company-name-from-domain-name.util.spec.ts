@@ -1,4 +1,4 @@
-import { EachTestingContext } from 'twenty-shared/testing';
+import { type EachTestingContext } from 'twenty-shared/testing';
 
 import { getCompanyNameFromDomainName } from 'src/modules/contact-creation-manager/utils/get-company-name-from-domain-name.util';
 

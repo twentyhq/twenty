@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddAgentHandoffTable1753709914396 implements MigrationInterface {
   name = 'AddAgentHandoffTable1753709914396';

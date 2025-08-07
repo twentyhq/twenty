@@ -1,8 +1,8 @@
 import deepEqual from 'deep-equal';
 
-import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { type BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 
 export const objectRecordChangedProperties = <
   PRecord extends Partial<

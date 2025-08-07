@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddPasswordResetToken1704825571702 implements MigrationInterface {
   name = 'AddPasswordResetToken1704825571702';

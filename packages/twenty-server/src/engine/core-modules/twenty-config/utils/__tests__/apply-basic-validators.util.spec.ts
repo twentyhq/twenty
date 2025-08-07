@@ -95,7 +95,7 @@ describe('applyBasicValidators', () => {
       expect(Transform).toHaveBeenCalled();
       expect(IsNumber).toHaveBeenCalled();
 
-      const transformFn = capturedTransformFn!;
+      const transformFn = capturedTransformFn as (params: { value: any }) => any;
       const mockTransformParams = { value: '42' };
 
       (configTransformers.number as jest.Mock).mockReturnValueOnce(42);

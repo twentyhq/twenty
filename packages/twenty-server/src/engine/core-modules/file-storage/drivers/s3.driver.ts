@@ -8,21 +8,21 @@ import { pipeline } from 'stream/promises';
 
 import {
   CopyObjectCommand,
-  CreateBucketCommandInput,
+  type CreateBucketCommandInput,
   DeleteObjectCommand,
   DeleteObjectsCommand,
   GetObjectCommand,
-  HeadBucketCommandInput,
+  type HeadBucketCommandInput,
   HeadObjectCommand,
   ListObjectsV2Command,
   NotFound,
   PutObjectCommand,
   S3,
-  S3ClientConfig,
+  type S3ClientConfig,
 } from '@aws-sdk/client-s3';
 import { isDefined } from 'twenty-shared/utils';
 
-import { StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
+import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import {
   FileStorageException,
   FileStorageExceptionCode,

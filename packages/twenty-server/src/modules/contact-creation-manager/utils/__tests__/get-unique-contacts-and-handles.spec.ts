@@ -1,4 +1,4 @@
-import { Contact } from 'src/modules/contact-creation-manager/types/contact.type';
+import { type Contact } from 'src/modules/contact-creation-manager/types/contact.type';
 import { getUniqueContactsAndHandles } from 'src/modules/contact-creation-manager/utils/get-unique-contacts-and-handles.util';
 
 describe('getUniqueContactsAndHandles', () => {

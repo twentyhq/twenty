@@ -1,7 +1,7 @@
-import { Request } from 'express';
+import { type Request } from 'express';
 
-import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { type CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { type MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 export type GoogleAPIsRequest = Omit<
   Request,

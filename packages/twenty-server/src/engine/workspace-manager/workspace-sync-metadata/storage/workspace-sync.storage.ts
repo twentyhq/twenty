@@ -1,11 +1,11 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type FieldMetadataType } from 'twenty-shared/types';
 
-import { ComputedPartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
-import { ComputedPartialWorkspaceEntity } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
+import { type ComputedPartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
+import { type ComputedPartialWorkspaceEntity } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 export class WorkspaceSyncStorage {
   // Object metadata

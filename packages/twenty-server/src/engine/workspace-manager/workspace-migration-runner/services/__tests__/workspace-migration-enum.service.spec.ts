@@ -1,10 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
-import { DataSource, QueryRunner, TableColumn } from 'typeorm';
+import { DataSource, type QueryRunner, TableColumn } from 'typeorm';
 
 import {
   WorkspaceMigrationColumnActionType,
-  WorkspaceMigrationColumnAlter,
+  type WorkspaceMigrationColumnAlter,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-enum.service';
 

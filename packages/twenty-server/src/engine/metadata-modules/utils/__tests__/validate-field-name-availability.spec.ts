@@ -1,4 +1,4 @@
-import { EachTestingContext } from 'twenty-shared/testing';
+import { type EachTestingContext } from 'twenty-shared/testing';
 
 import {
   FIELD_ACTOR_MOCK_NAME,

@@ -1,5 +1,5 @@
 import { isEmailBlocklisted } from 'src/modules/blocklist/utils/is-email-blocklisted.util';
-import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { isWorkEmail } from 'src/utils/is-work-email';
 

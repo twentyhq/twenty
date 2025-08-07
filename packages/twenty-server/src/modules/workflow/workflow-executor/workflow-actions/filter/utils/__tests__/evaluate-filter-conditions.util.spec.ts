@@ -1,6 +1,6 @@
 import {
-  StepFilter,
-  StepFilterGroup,
+  type StepFilter,
+  type StepFilterGroup,
   StepLogicalOperator,
   ViewFilterOperand,
 } from 'twenty-shared/types';

@@ -1,7 +1,7 @@
 import {
-  WorkflowAction,
+  type WorkflowAction,
   WorkflowActionType,
-  WorkflowFilterAction,
+  type WorkflowFilterAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 export const isWorkflowFilterAction = (

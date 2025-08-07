@@ -1,4 +1,4 @@
-import { RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
+import { type RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 
 export const getRecordToConnectFields = (
   connectQueryConfig: RelationConnectQueryConfig,

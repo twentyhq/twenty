@@ -5,11 +5,11 @@ import ts, { transpileModule } from 'typescript';
 import { v4 } from 'uuid';
 
 import {
-  ServerlessDriver,
-  ServerlessExecuteResult,
+  type ServerlessDriver,
+  type ServerlessExecuteResult,
 } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
 import { COMMON_LAYER_NAME } from 'src/engine/core-modules/serverless/drivers/constants/common-layer-name';
 import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
@@ -18,7 +18,7 @@ import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/dri
 import { ConsoleListener } from 'src/engine/core-modules/serverless/drivers/utils/intercept-console';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;

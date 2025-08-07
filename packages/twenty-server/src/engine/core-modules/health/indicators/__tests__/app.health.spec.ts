@@ -1,8 +1,8 @@
 import { HealthIndicatorService } from '@nestjs/terminus';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { AppHealthIndicator } from 'src/engine/core-modules/health/indicators/app.health';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';

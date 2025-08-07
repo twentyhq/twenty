@@ -1,7 +1,7 @@
 import {
-  ValidationOptions,
+  type ValidationOptions,
   registerDecorator,
-  ValidationArguments,
+  type ValidationArguments,
 } from 'class-validator';
 
 export const AssertOrWarn = (

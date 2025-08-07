@@ -1,4 +1,4 @@
-import { GraphError } from '@microsoft/microsoft-graph-client';
+import { type GraphError } from '@microsoft/microsoft-graph-client';
 
 import {
   CalendarEventImportDriverException,

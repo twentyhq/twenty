@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddWorkspaceCacheVersion1700650554672
   implements MigrationInterface

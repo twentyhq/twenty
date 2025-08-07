@@ -52,11 +52,18 @@
     "typecheck": {},
     "lint": {
       "options": {
+        "eslintConfig": "{projectRoot}/eslint.config.mjs",
+        "lintFilePatterns": [
+          "{projectRoot}/src/**/*.{ts,tsx,js,jsx}"
+        ],
         "maxWarnings": 0
       },
       "configurations": {
         "ci": {
-          "eslintConfig": "{projectRoot}/eslint.config.mjs"
+          "eslintConfig": "{projectRoot}/eslint.config.mjs",
+          "lintFilePatterns": [
+            "{projectRoot}/src/**/*.{ts,tsx,js,jsx}"
+          ]
         },
         "fix": {}
       }

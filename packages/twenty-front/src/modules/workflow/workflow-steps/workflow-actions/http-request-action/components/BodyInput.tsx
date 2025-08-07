@@ -4,7 +4,7 @@ import { FormRawJsonFieldInput } from '@/object-record/record-field/form-types/c
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Select } from '@/ui/input/components/Select';
 import {
-  DEFAULT_JSON_BODY_PLACEHOLDER,
+  HTTP_REQUEST_CONSTANTS,
   type HttpRequestBody,
 } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import { parseHttpJsonBodyWithoutVariablesOrThrow } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/parseHttpJsonBodyWithoutVariablesOrThrow';
@@ -123,7 +123,7 @@ export const BodyInput = ({
       <StyledContainer>
         {isRawJson ? (
           <FormRawJsonFieldInput
-            placeholder={DEFAULT_JSON_BODY_PLACEHOLDER}
+            placeholder={HTTP_REQUEST_CONSTANTS.DEFAULT_JSON_BODY_PLACEHOLDER}
             readonly={readonly}
             defaultValue={jsonString}
             error={errorMessage}

@@ -1,5 +1,5 @@
 import {
-  AuthException,
+  type AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 

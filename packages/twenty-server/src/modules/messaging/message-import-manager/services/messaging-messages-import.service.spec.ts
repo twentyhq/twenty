@@ -1,5 +1,5 @@
-import { Logger, Provider } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Logger, type Provider } from '@nestjs/common';
+import { Test, type TestingModule } from '@nestjs/testing';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
@@ -9,11 +9,11 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageChannelSyncStage,
-  MessageChannelWorkspaceEntity,
+  type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';

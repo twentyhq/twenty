@@ -18,10 +18,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
 import { IconPlayerPlay, IconSettings, useIcons } from 'twenty-ui/display';
-import {
-  HTTP_METHODS,
-  JSON_RESPONSE_PLACEHOLDER,
-} from '../constants/HttpRequest';
+import { HTTP_REQUEST_CONSTANTS } from '../constants/HttpRequest';
 import { WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID } from '../constants/WorkflowHttpRequestTabListComponentId';
 import { useHttpRequestForm } from '../hooks/useHttpRequestForm';
 import { useHttpRequestOutputSchema } from '../hooks/useHttpRequestOutputSchema';
@@ -168,7 +165,7 @@ export const WorkflowEditActionHttpRequest = ({
             <Select
               label="HTTP Method"
               dropdownId="http-method"
-              options={[...HTTP_METHODS]}
+              options={[...HTTP_REQUEST_CONSTANTS.METHODS]}
               value={formData.method}
               onChange={(value) => handleFieldChange('method', value)}
               disabled={actionOptions.readonly}
@@ -195,7 +192,7 @@ export const WorkflowEditActionHttpRequest = ({
 
             <StyledFullHeightFormRawJsonFieldInput
               label="Expected Response Body"
-              placeholder={JSON_RESPONSE_PLACEHOLDER}
+              placeholder={HTTP_REQUEST_CONSTANTS.JSON_RESPONSE_PLACEHOLDER}
               defaultValue={outputSchema}
               onChange={handleOutputSchemaChange}
               readonly={actionOptions.readonly}

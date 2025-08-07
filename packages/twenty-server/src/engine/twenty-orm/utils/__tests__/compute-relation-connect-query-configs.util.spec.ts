@@ -2,8 +2,8 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { computeRelationConnectQueryConfigs } from 'src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util';
 
 describe('computeRelationConnectQueryConfigs', () => {

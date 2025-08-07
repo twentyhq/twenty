@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 
 import {
-  CacheLockOptions,
+  type CacheLockOptions,
   CacheLockService,
 } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 

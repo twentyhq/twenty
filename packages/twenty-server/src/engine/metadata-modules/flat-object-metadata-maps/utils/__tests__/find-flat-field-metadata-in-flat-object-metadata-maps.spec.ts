@@ -1,13 +1,13 @@
 import {
-  EachTestingContext,
+  type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 
 import { PET_FLAT_FIELDS_MOCK } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/pet-flat-fields.mock';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata-maps/mocks/flat-object-metadata-maps.mock';
 import {
-  FindFlatFieldMetadataInFlatObjectMetadataMapsArgs,
+  type FindFlatFieldMetadataInFlatObjectMetadataMapsArgs,
   findFlatFieldMetadataInFlatObjectMetadataMaps,
 } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps.util';
 import { PET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/pet-flat-object.mock';

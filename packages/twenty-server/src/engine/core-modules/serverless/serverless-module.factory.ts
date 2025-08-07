@@ -1,11 +1,11 @@
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import {
   ServerlessDriverType,
-  ServerlessModuleOptions,
+  type ServerlessModuleOptions,
 } from 'src/engine/core-modules/serverless/serverless.interface';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export const serverlessModuleFactory = async (
   twentyConfigService: TwentyConfigService,

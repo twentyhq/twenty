@@ -312,7 +312,7 @@
       "cache": true,
       "inputs": [
         "default",
-        "{workspaceRoot}/.eslintrc.js",
+        "{workspaceRoot}/eslint.config.*.mjs",
         "{workspaceRoot}/tools/eslint-rules/**/*"
       ]
     },

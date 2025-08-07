@@ -2,7 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/__mocks__/mockObjectMetadataItemsWithFieldMaps';
 import { generateFakeFormResponse } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-form-response';
-import { FormFieldMetadata } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
+import { type FormFieldMetadata } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
 
 const companyMockObjectMetadataItem = mockObjectMetadataItemsWithFieldMaps.find(
   (item) => item.nameSingular === 'company',

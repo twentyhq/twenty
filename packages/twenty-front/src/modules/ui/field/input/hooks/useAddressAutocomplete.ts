@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import { SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID } from '@/geo-map/constants/selectAutocompleteListDropDownId';
+import { SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID } from '@/geo-map/constants/SelectAutocompleteListDropDownId';
 import { useGetPlaceApiData } from '@/geo-map/hooks/useGetPlaceApiData';
 import { type PlaceAutocompleteResult } from '@/geo-map/types/placeApi';
 import { type FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';

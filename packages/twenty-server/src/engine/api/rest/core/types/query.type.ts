@@ -1,4 +1,4 @@
-import { QueryVariables } from 'src/engine/api/rest/core/types/query-variables.type';
+import { type QueryVariables } from 'src/engine/api/rest/core/types/query-variables.type';
 
 export type Query = {
   query: string;

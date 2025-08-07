@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class FixCoreIndexes21748849487789 implements MigrationInterface {
   name = 'FixCoreIndexes21748849487789';

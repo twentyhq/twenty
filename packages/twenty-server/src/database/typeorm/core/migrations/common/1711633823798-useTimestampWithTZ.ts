@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class UseTimestampWithTZ1711633823798 implements MigrationInterface {
   name = 'UseTimestampWithTZ1711633823798';

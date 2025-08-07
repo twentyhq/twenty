@@ -1,4 +1,4 @@
-import { EachTestingContext } from 'twenty-shared/testing';
+import { type EachTestingContext } from 'twenty-shared/testing';
 
 import { OPPORTUNITY_WITH_FIELDS_MAPS } from 'src/engine/api/rest/core/query-builder/utils/__tests__/mocks/opportunity-field-maps.mock';
 import { checkFields } from 'src/engine/api/rest/core/query-builder/utils/check-fields.utils';

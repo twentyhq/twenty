@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { AgentChatMessageRole } from '@/ai/constants/agent-chat-message-role';
+import { AgentChatMessageRole } from '@/ai/constants/AgentChatMessageRole';
 import { STREAM_CHAT_QUERY } from '@/ai/rest-api/agent-chat-apollo.api';
 import {
   type AIChatObjectMetadataAndRecordContext,

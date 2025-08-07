@@ -1,8 +1,8 @@
 import {
-  ObjectRecord,
-  ObjectRecordOrderBy,
+  type ObjectRecord,
+  type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { type FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {
   GraphqlQueryRunnerException,

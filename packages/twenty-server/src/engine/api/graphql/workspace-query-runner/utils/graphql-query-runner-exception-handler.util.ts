@@ -1,5 +1,5 @@
 import {
-  GraphqlQueryRunnerException,
+  type GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import {

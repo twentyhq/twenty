@@ -1,4 +1,4 @@
-import { FactoryProvider, ModuleMetadata } from '@nestjs/common';
+import { type FactoryProvider, type ModuleMetadata } from '@nestjs/common';
 
  
 export type TwentyORMOptions = Record<string, never>;
