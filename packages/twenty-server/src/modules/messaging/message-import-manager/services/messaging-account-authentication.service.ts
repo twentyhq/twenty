@@ -85,16 +85,10 @@ export class MessagingAccountAuthenticationService {
     workspaceId: string,
     messageChannelId: string,
   ): Promise<void> {
-    let isValid = true;
-
     if (
       !isDefined(connectedAccount.connectionParameters) ||
       !isDefined(connectedAccount.connectionParameters?.IMAP)
     ) {
-      isValid = false;
-    }
-
-    if (!isValid) {
       await this.messagingMonitoringService.track({
         eventName: 'messages_import.error.missing_imap_credentials',
         workspaceId,
