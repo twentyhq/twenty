@@ -1,8 +1,6 @@
 import { In } from 'typeorm';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import {
   CreateFieldAction,
   DeleteFieldAction,
@@ -11,6 +9,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { RunnerMethodForActionType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/runner-method-for-action-type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
+import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
 
 export class WorkspaceMetadataFieldActionRunnerService
   implements
@@ -25,10 +24,10 @@ export class WorkspaceMetadataFieldActionRunnerService
         FieldMetadataEntity,
       );
 
-    const { flatFieldMetadata } = action;
+    const { fieldMetadataId } = action;
 
     await fieldMetadataRepository.delete({
-      id: In([flatFieldMetadata.id]),
+      id: In([fieldMetadataId]),
     });
   };
 
@@ -43,7 +42,6 @@ export class WorkspaceMetadataFieldActionRunnerService
 
     const { flatFieldMetadata } = action;
 
-    // We need to defer here in case we create a relation the relationTargetFieldMetadataId might not already be created here
     await fieldMetadataRepository.save(flatFieldMetadata);
   };
   runUpdateFieldMetadataMigration = async ({
@@ -55,16 +53,11 @@ export class WorkspaceMetadataFieldActionRunnerService
         FieldMetadataEntity,
       );
 
-    const { flatFieldMetadata, updates } = action;
-    const update = updates.reduce<
-      Partial<Pick<FlatFieldMetadata, FlatFieldMetadataPropertiesToCompare>>
-    >((acc, { property, to }) => {
-      return {
-        ...acc,
-        [property]: to,
-      };
-    }, {});
+    const { fieldMetadataId } = action;
 
-    await fieldMetadataRepository.update(flatFieldMetadata.id, update);
+    await fieldMetadataRepository.update(
+      fieldMetadataId,
+      fromWorkspaceMigrationUpdateActionToPartialEntity(action),
+    );
   };
 }

@@ -12,7 +12,7 @@ import { getDateFilterDisplayValue } from '@/object-record/record-filter/utils/g
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,26 +21,24 @@ import { v4 } from 'uuid';
 export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
   () => {
     const selectedOperandInDropdownCallbackState =
-      useRecoilComponentCallbackStateV2(
-        selectedOperandInDropdownComponentState,
-      );
+      useRecoilComponentCallbackState(selectedOperandInDropdownComponentState);
 
-    const currentRecordFiltersCallbackState = useRecoilComponentCallbackStateV2(
+    const currentRecordFiltersCallbackState = useRecoilComponentCallbackState(
       currentRecordFiltersComponentState,
     );
 
     const objectFilterDropdownCurrentRecordFilterCallbackState =
-      useRecoilComponentCallbackStateV2(
+      useRecoilComponentCallbackState(
         objectFilterDropdownCurrentRecordFilterComponentState,
       );
 
     const fieldMetadataItemUsedInDropdownCallbackState =
-      useRecoilComponentCallbackStateV2(
+      useRecoilComponentCallbackState(
         fieldMetadataItemIdUsedInDropdownComponentState,
       );
 
     const objectFilterDropdownFilterIsSelectedCallbackState =
-      useRecoilComponentCallbackStateV2(
+      useRecoilComponentCallbackState(
         objectFilterDropdownFilterIsSelectedComponentState,
       );
 

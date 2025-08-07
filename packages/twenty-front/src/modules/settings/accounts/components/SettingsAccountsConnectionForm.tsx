@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { Control, Controller } from 'react-hook-form';
 
 import { Select } from '@/ui/input/components/Select';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
 import { ConnectionFormData } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
 import { H2Title } from 'twenty-ui/display';
@@ -89,7 +89,7 @@ export const SettingsAccountsConnectionForm = ({
           name="handle"
           control={control}
           render={({ field, fieldState }) => (
-            <TextInput
+            <SettingsTextInput
               instanceId="email-address-connection-form"
               label={t`Email Address`}
               placeholder={t`john.doe@example.com`}
@@ -114,7 +114,7 @@ export const SettingsAccountsConnectionForm = ({
             name="IMAP.host"
             control={control}
             render={({ field, fieldState }) => (
-              <TextInput
+              <SettingsTextInput
                 instanceId="imap-host-connection-form"
                 label={t`IMAP Server`}
                 placeholder={t`imap.example.com`}
@@ -129,7 +129,7 @@ export const SettingsAccountsConnectionForm = ({
             name="IMAP.password"
             control={control}
             render={({ field, fieldState }) => (
-              <TextInput
+              <SettingsTextInput
                 instanceId="imap-password-connection-form"
                 label={t`IMAP Password`}
                 placeholder={t`••••••••`}
@@ -147,7 +147,7 @@ export const SettingsAccountsConnectionForm = ({
                 name="IMAP.port"
                 control={control}
                 render={({ field, fieldState }) => (
-                  <TextInput
+                  <SettingsTextInput
                     instanceId="imap-port-connection-form"
                     label={t`IMAP Port`}
                     type="number"
@@ -197,7 +197,7 @@ export const SettingsAccountsConnectionForm = ({
             name="SMTP.host"
             control={control}
             render={({ field, fieldState }) => (
-              <TextInput
+              <SettingsTextInput
                 instanceId="smtp-host-connection-form"
                 label={t`SMTP Server`}
                 placeholder={t`smtp.example.com`}
@@ -212,7 +212,7 @@ export const SettingsAccountsConnectionForm = ({
             name="SMTP.password"
             control={control}
             render={({ field, fieldState }) => (
-              <TextInput
+              <SettingsTextInput
                 instanceId="smtp-password-connection-form"
                 label={t`SMTP Password`}
                 placeholder={t`••••••••`}
@@ -230,7 +230,7 @@ export const SettingsAccountsConnectionForm = ({
                 name="SMTP.port"
                 control={control}
                 render={({ field, fieldState }) => (
-                  <TextInput
+                  <SettingsTextInput
                     instanceId="smtp-port-connection-form"
                     label={t`SMTP Port`}
                     type="number"
@@ -280,7 +280,7 @@ export const SettingsAccountsConnectionForm = ({
             name="CALDAV.host"
             control={control}
             render={({ field, fieldState }) => (
-              <TextInput
+              <SettingsTextInput
                 instanceId="caldav-host-connection-form"
                 label={t`CalDAV Server`}
                 placeholder={t`caldav.example.com`}
@@ -295,7 +295,7 @@ export const SettingsAccountsConnectionForm = ({
             name="CALDAV.username"
             control={control}
             render={({ field, fieldState }) => (
-              <TextInput
+              <SettingsTextInput
                 instanceId="caldav-username-connection-form"
                 label={t`CalDAV Username`}
                 placeholder={t`john.doe`}
@@ -311,7 +311,7 @@ export const SettingsAccountsConnectionForm = ({
             name="CALDAV.password"
             control={control}
             render={({ field, fieldState }) => (
-              <TextInput
+              <SettingsTextInput
                 instanceId="caldav-password-connection-form"
                 label={t`CalDAV Password`}
                 placeholder={t`••••••••`}

@@ -3,7 +3,7 @@ import { useMergeRecordsActions } from '@/object-record/record-merge/hooks/useMe
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
-import { IconArrowMerge, IconDotsVertical } from 'twenty-ui/display';
+import { IconArrowMerge } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
 const StyledFooterContainer = styled.div`
@@ -47,15 +47,6 @@ export const MergeRecordsFooter = ({
   return (
     <StyledFooterContainer>
       <StyledFooterActions>
-        <Button
-          title="Options"
-          variant="secondary"
-          accent="default"
-          size="medium"
-          Icon={IconDotsVertical}
-          disabled={isMerging}
-        />
-
         <Button
           title={isMerging ? 'Merging...' : 'Merge'}
           variant="primary"

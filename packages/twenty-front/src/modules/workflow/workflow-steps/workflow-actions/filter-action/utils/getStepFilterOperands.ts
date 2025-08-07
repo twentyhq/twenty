@@ -76,14 +76,45 @@ export const FILTER_OPERANDS_MAP = {
   ],
 };
 
+export const COMPOSITE_FIELD_FILTER_OPERANDS_MAP = {
+  CURRENCY: {
+    currencyCode: [
+      ViewFilterOperand.Is,
+      ViewFilterOperand.IsNot,
+      ...emptyOperands,
+    ],
+    amountMicros: [
+      ViewFilterOperand.GreaterThanOrEqual,
+      ViewFilterOperand.LessThanOrEqual,
+      ViewFilterOperand.Is,
+      ViewFilterOperand.IsNot,
+      ...emptyOperands,
+    ],
+  },
+};
+
 export const getViewFilterOperands = ({
   filterType,
+  subFieldName,
 }: {
-  filterType: string;
+  filterType: string | undefined;
+  subFieldName: string | undefined;
 }): readonly ViewFilterOperand[] => {
   switch (filterType) {
     case 'TEXT':
+    case 'EMAILS':
+    case 'FULL_NAME':
+    case 'ADDRESS':
+    case 'LINKS':
+    case 'PHONES':
       return FILTER_OPERANDS_MAP.TEXT;
+    case 'CURRENCY': {
+      if (subFieldName === 'currencyCode') {
+        return COMPOSITE_FIELD_FILTER_OPERANDS_MAP.CURRENCY.currencyCode;
+      } else {
+        return COMPOSITE_FIELD_FILTER_OPERANDS_MAP.CURRENCY.amountMicros;
+      }
+    }
     case 'NUMBER':
       return FILTER_OPERANDS_MAP.NUMBER;
     case 'RAW_JSON':

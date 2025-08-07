@@ -20,6 +20,7 @@ import {
   connectionImapSmtpCalDav,
   isProtocolConfigured,
 } from '@/settings/accounts/validation-schemas/connectionImapSmtpCalDav';
+import { ApolloError } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import {
   ConnectedImapSmtpCaldavAccount,
@@ -149,12 +150,9 @@ export const useImapSmtpCaldavConnectionForm = ({
         enqueueSuccessSnackBar({ message: successMessage });
         navigate(SettingsPath.Accounts);
       } catch (error) {
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : 'An unexpected error occurred';
-
-        enqueueErrorSnackBar({ message: errorMessage });
+        enqueueErrorSnackBar({
+          apolloError: error instanceof ApolloError ? error : undefined,
+        });
       }
     },
     [

@@ -7,6 +7,8 @@
  *                              |___/
  */
 
+export type { AllowedAddressSubField } from './AddressFieldsType';
+export { ALLOWED_ADDRESS_SUBFIELDS } from './AddressFieldsType';
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export type { EnumFieldMetadataType } from './EnumFieldMetadataType';

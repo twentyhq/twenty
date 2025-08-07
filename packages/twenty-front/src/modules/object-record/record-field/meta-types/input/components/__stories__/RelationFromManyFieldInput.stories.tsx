@@ -100,7 +100,7 @@ const RelationManyFieldInputWithContext = () => {
             fieldDefinition,
             recordId: 'recordId',
             isLabelIdentifier: false,
-            isReadOnly: false,
+            isRecordFieldReadOnly: false,
           }}
         >
           <RelationWorkspaceSetterEffect />

@@ -1,12 +1,12 @@
 import { favoriteFolderSearchFilterComponentState } from '@/favorites/favorite-folder-picker/states/favoriteFoldersSearchFilterComponentState';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 export const FavoriteFolderPickerSearchInput = () => {
   const [favoriteFoldersSearchFilter, setFavoriteFoldersSearchFilter] =
-    useRecoilComponentStateV2(favoriteFolderSearchFilterComponentState);
+    useRecoilComponentState(favoriteFolderSearchFilterComponentState);
 
   const debouncedSetSearchFilter = useDebouncedCallback(
     setFavoriteFoldersSearchFilter,

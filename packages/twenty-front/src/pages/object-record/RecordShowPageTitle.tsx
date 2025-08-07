@@ -1,9 +1,10 @@
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { getLabelIdentifierFieldValue } from '@/object-metadata/utils/getLabelIdentifierFieldValue';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { useRecoilValue } from 'recoil';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RecordShowPageTitle = ({
   objectNameSingular,
@@ -15,22 +16,21 @@ export const RecordShowPageTitle = ({
   const { labelIdentifierFieldMetadataItem } =
     useLabelIdentifierFieldMetadataItem({ objectNameSingular });
 
-  const record = useRecoilValue(recordStoreFamilyState(objectRecordId));
-  const labelIdentifierFieldValue = record?.labelIdentifierFieldValue;
+  const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
 
-  const pageName =
-    labelIdentifierFieldMetadataItem?.type === FieldMetadataType.FULL_NAME
-      ? [
-          labelIdentifierFieldValue?.firstName,
-          labelIdentifierFieldValue?.lastName,
-        ].join(' ')
-      : isDefined(labelIdentifierFieldValue)
-        ? `${labelIdentifierFieldValue}`
-        : '';
+  const record = useRecoilValue(recordStoreFamilyState(objectRecordId));
+
+  const pageName = isDefined(record)
+    ? getLabelIdentifierFieldValue(
+        record,
+        labelIdentifierFieldMetadataItem,
+        objectNameSingular,
+      )
+    : '';
 
   const pageTitle = pageName.trim()
-    ? `${pageName} - ${capitalize(objectNameSingular)}`
-    : capitalize(objectNameSingular);
+    ? `${pageName} - ${objectMetadataItem.labelSingular}`
+    : objectMetadataItem.labelSingular;
 
   return <PageTitle title={pageTitle} />;
 };

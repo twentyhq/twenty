@@ -19,10 +19,10 @@ import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/u
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
 import { InView, useInView } from 'react-intersection-observer';
@@ -134,23 +134,23 @@ export const RecordBoardCard = () => {
     multiDragState.originalSelection.includes(recordId) &&
     recordId !== multiDragState.primaryDraggedRecordId;
 
-  const visibleFieldDefinitions = useRecoilComponentValueV2(
+  const visibleFieldDefinitions = useRecoilComponentValue(
     recordBoardVisibleFieldDefinitionsComponentSelector,
   );
 
-  const isCompactModeActive = useRecoilComponentValueV2(
+  const isCompactModeActive = useRecoilComponentValue(
     isRecordBoardCompactModeActiveComponentState,
   );
 
   const [isCardExpanded, setIsCardExpanded] = useState(false);
 
   const [isCurrentCardSelected, setIsCurrentCardSelected] =
-    useRecoilComponentFamilyStateV2(
+    useRecoilComponentFamilyState(
       isRecordBoardCardSelectedComponentFamilyState,
       recordId,
     );
 
-  const isCurrentCardFocused = useRecoilComponentFamilyValueV2(
+  const isCurrentCardFocused = useRecoilComponentFamilyValue(
     isRecordBoardCardFocusedComponentFamilyState,
     {
       rowIndex,
@@ -158,7 +158,7 @@ export const RecordBoardCard = () => {
     },
   );
 
-  const isCurrentCardActive = useRecoilComponentFamilyValueV2(
+  const isCurrentCardActive = useRecoilComponentFamilyValue(
     isRecordBoardCardActiveComponentFamilyState,
     {
       rowIndex,
@@ -175,7 +175,7 @@ export const RecordBoardCard = () => {
   const actionMenuDropdownId =
     getActionMenuDropdownIdFromActionMenuId(actionMenuId);
 
-  const setActionMenuDropdownPosition = useSetRecoilComponentStateV2(
+  const setActionMenuDropdownPosition = useSetRecoilComponentState(
     recordIndexActionMenuDropdownPositionComponentState,
     actionMenuDropdownId,
   );

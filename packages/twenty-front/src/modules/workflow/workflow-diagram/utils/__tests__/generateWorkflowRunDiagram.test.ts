@@ -17,6 +17,7 @@ describe('generateWorkflowRunDiagram', () => {
         eventName: 'company.created',
         outputSchema: {},
       },
+      nextStepIds: ['step1'],
     };
 
     const steps: WorkflowStep[] = [
@@ -153,10 +154,16 @@ describe('generateWorkflowRunDiagram', () => {
     "nodes": [
       {
         "data": {
+          "hasNextStepIds": true,
           "icon": "IconPlaylistAdd",
           "name": "Company created",
           "nodeType": "trigger",
+          "position": {
+            "x": 0,
+            "y": 0,
+          },
           "runStatus": "SUCCESS",
+          "stepId": "trigger",
           "triggerType": "DATABASE_EVENT",
         },
         "id": "trigger",
@@ -168,9 +175,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": true,
           "name": "Step 1",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 150,
+          },
           "runStatus": "FAILED",
+          "stepId": "step1",
         },
         "id": "step1",
         "position": {
@@ -181,9 +194,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": true,
           "name": "Step 2",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 300,
+          },
           "runStatus": "NOT_STARTED",
+          "stepId": "step2",
         },
         "id": "step2",
         "position": {
@@ -194,9 +213,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": false,
           "name": "Step 3",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 450,
+          },
           "runStatus": "NOT_STARTED",
+          "stepId": "step3",
         },
         "id": "step3",
         "position": {
@@ -219,6 +244,7 @@ describe('generateWorkflowRunDiagram', () => {
         eventName: 'company.created',
         outputSchema: {},
       },
+      nextStepIds: ['step1'],
     };
 
     const steps: WorkflowStep[] = [
@@ -357,10 +383,16 @@ describe('generateWorkflowRunDiagram', () => {
     "nodes": [
       {
         "data": {
+          "hasNextStepIds": true,
           "icon": "IconPlaylistAdd",
           "name": "Company created",
           "nodeType": "trigger",
+          "position": {
+            "x": 0,
+            "y": 0,
+          },
           "runStatus": "SUCCESS",
+          "stepId": "trigger",
           "triggerType": "DATABASE_EVENT",
         },
         "id": "trigger",
@@ -372,9 +404,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": true,
           "name": "Step 1",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 150,
+          },
           "runStatus": "SUCCESS",
+          "stepId": "step1",
         },
         "id": "step1",
         "position": {
@@ -385,9 +423,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": true,
           "name": "Step 2",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 300,
+          },
           "runStatus": "SUCCESS",
+          "stepId": "step2",
         },
         "id": "step2",
         "position": {
@@ -398,9 +442,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": false,
           "name": "Step 3",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 450,
+          },
           "runStatus": "SUCCESS",
+          "stepId": "step3",
         },
         "id": "step3",
         "position": {
@@ -423,6 +473,7 @@ describe('generateWorkflowRunDiagram', () => {
         eventName: 'company.created',
         outputSchema: {},
       },
+      nextStepIds: ['step1'],
     };
 
     const steps: WorkflowStep[] = [
@@ -561,10 +612,16 @@ describe('generateWorkflowRunDiagram', () => {
     "nodes": [
       {
         "data": {
+          "hasNextStepIds": true,
           "icon": "IconPlaylistAdd",
           "name": "Company created",
           "nodeType": "trigger",
+          "position": {
+            "x": 0,
+            "y": 0,
+          },
           "runStatus": "SUCCESS",
+          "stepId": "trigger",
           "triggerType": "DATABASE_EVENT",
         },
         "id": "trigger",
@@ -576,9 +633,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": true,
           "name": "Step 1",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 150,
+          },
           "runStatus": "RUNNING",
+          "stepId": "step1",
         },
         "id": "step1",
         "position": {
@@ -589,9 +652,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": true,
           "name": "Step 2",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 300,
+          },
           "runStatus": "NOT_STARTED",
+          "stepId": "step2",
         },
         "id": "step2",
         "position": {
@@ -602,9 +671,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": false,
           "name": "Step 3",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 450,
+          },
           "runStatus": "NOT_STARTED",
+          "stepId": "step3",
         },
         "id": "step3",
         "position": {
@@ -627,6 +702,7 @@ describe('generateWorkflowRunDiagram', () => {
         eventName: 'company.created',
         outputSchema: {},
       },
+      nextStepIds: ['step1'],
     };
 
     const steps: WorkflowStep[] = [
@@ -798,10 +874,16 @@ describe('generateWorkflowRunDiagram', () => {
     "nodes": [
       {
         "data": {
+          "hasNextStepIds": true,
           "icon": "IconPlaylistAdd",
           "name": "Company created",
           "nodeType": "trigger",
+          "position": {
+            "x": 0,
+            "y": 0,
+          },
           "runStatus": "SUCCESS",
+          "stepId": "trigger",
           "triggerType": "DATABASE_EVENT",
         },
         "id": "trigger",
@@ -813,9 +895,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": true,
           "name": "Step 1",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 150,
+          },
           "runStatus": "SUCCESS",
+          "stepId": "step1",
         },
         "id": "step1",
         "position": {
@@ -826,9 +914,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": true,
           "name": "Step 2",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 300,
+          },
           "runStatus": "RUNNING",
+          "stepId": "step2",
         },
         "id": "step2",
         "position": {
@@ -839,9 +933,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": true,
           "name": "Step 3",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 450,
+          },
           "runStatus": "NOT_STARTED",
+          "stepId": "step3",
         },
         "id": "step3",
         "position": {
@@ -852,9 +952,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": false,
           "name": "Step 4",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 600,
+          },
           "runStatus": "NOT_STARTED",
+          "stepId": "step4",
         },
         "id": "step4",
         "position": {
@@ -877,6 +983,7 @@ describe('generateWorkflowRunDiagram', () => {
         eventName: 'company.created',
         outputSchema: {},
       },
+      nextStepIds: ['step1'],
     };
     const steps: WorkflowStep[] = [
       {
@@ -953,10 +1060,16 @@ describe('generateWorkflowRunDiagram', () => {
     "nodes": [
       {
         "data": {
+          "hasNextStepIds": true,
           "icon": "IconPlaylistAdd",
           "name": "Company created",
           "nodeType": "trigger",
+          "position": {
+            "x": 0,
+            "y": 0,
+          },
           "runStatus": "SUCCESS",
+          "stepId": "trigger",
           "triggerType": "DATABASE_EVENT",
         },
         "id": "trigger",
@@ -968,9 +1081,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "FORM",
+          "hasNextStepIds": false,
           "name": "Step 1",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 150,
+          },
           "runStatus": "PENDING",
+          "stepId": "step1",
         },
         "id": "step1",
         "position": {
@@ -983,9 +1102,15 @@ describe('generateWorkflowRunDiagram', () => {
   "stepToOpenByDefault": {
     "data": {
       "actionType": "FORM",
+      "hasNextStepIds": false,
       "name": "Step 1",
       "nodeType": "action",
+      "position": {
+        "x": 0,
+        "y": 150,
+      },
       "runStatus": "PENDING",
+      "stepId": "step1",
     },
     "id": "step1",
   },

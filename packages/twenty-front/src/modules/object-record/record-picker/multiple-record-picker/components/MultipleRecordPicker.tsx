@@ -13,7 +13,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
@@ -46,14 +46,13 @@ export const MultipleRecordPicker = ({
     selectableListComponentInstanceId,
   );
 
-  const multipleRecordPickerSearchFilterState =
-    useRecoilComponentCallbackStateV2(
-      multipleRecordPickerSearchFilterComponentState,
-      componentInstanceId,
-    );
+  const multipleRecordPickerSearchFilterState = useRecoilComponentCallbackState(
+    multipleRecordPickerSearchFilterComponentState,
+    componentInstanceId,
+  );
 
   const multipleRecordPickerPickableMorphItemsState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       multipleRecordPickerPickableMorphItemsComponentState,
       componentInstanceId,
     );

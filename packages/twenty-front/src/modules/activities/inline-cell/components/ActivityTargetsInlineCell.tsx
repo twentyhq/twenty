@@ -37,7 +37,8 @@ export const ActivityTargetsInlineCell = ({
 
   const { closeInlineCell } = useInlineCell(componentInstanceId);
 
-  const { fieldDefinition, isReadOnly } = useContext(FieldContext);
+  const { fieldDefinition, isRecordFieldReadOnly: isReadOnly } =
+    useContext(FieldContext);
 
   const { openActivityTargetCellEditMode } =
     useOpenActivityTargetCellEditMode();

@@ -1,21 +1,23 @@
 import { useParams } from 'react-router-dom';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { capitalize } from 'twenty-shared/utils';
 
 export const ViewBarPageTitle = () => {
   const { objectNamePlural } = useParams();
-
   const { currentView } = useGetCurrentViewOnly();
 
-  if (!objectNamePlural) {
-    return;
-  }
+  const { objectNameSingular } = useObjectNameSingularFromPlural({
+    objectNamePlural: objectNamePlural ?? '',
+  });
+
+  const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
 
   const pageTitle = currentView?.name
-    ? `${currentView?.name} - ${capitalize(objectNamePlural)}`
-    : capitalize(objectNamePlural);
+    ? `${currentView?.name} - ${objectMetadataItem.labelPlural}`
+    : objectMetadataItem.labelPlural;
 
   return <PageTitle title={pageTitle} />;
 };

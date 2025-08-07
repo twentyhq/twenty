@@ -4,7 +4,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { RecordIndexBoardColumnLoaderEffect } from '@/object-record/record-index/components/RecordIndexBoardColumnLoaderEffect';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 
 type RecordIndexBoardDataLoaderProps = {
@@ -20,9 +20,7 @@ export const RecordIndexBoardDataLoader = ({
     objectNameSingular,
   });
 
-  const recordGroupIds = useRecoilComponentValueV2(
-    recordGroupIdsComponentState,
-  );
+  const recordGroupIds = useRecoilComponentValue(recordGroupIdsComponentState);
 
   const recordIndexKanbanFieldMetadataId = useRecoilValue(
     recordIndexKanbanFieldMetadataIdState,

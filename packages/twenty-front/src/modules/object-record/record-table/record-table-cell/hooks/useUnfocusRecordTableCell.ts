@@ -5,7 +5,7 @@ import { RecordTableComponentInstanceContext } from '@/object-record/record-tabl
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useSetIsRecordTableCellFocusActive } from './useSetIsRecordTableCellFocusActive';
 
 export const useUnfocusRecordTableCell = (recordTableId?: string) => {
@@ -14,7 +14,7 @@ export const useUnfocusRecordTableCell = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const focusPositionState = useRecoilComponentCallbackStateV2(
+  const focusPositionState = useRecoilComponentCallbackState(
     recordTableFocusPositionComponentState,
     recordTableIdFromProps,
   );

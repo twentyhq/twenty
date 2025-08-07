@@ -40,6 +40,7 @@ export type RecordOutputSchema = {
     nameSingular: string;
     fieldIdName: string;
     objectMetadataId: string;
+    isRelationField?: boolean;
   } & Leaf;
   fields: Record<string, FieldOutputSchema>;
   _outputSchemaType: 'RECORD';

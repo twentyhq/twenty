@@ -16,12 +16,14 @@
     "@preconstruct/cli": "^2.8.12",
     "@prettier/sync": "^0.5.2",
     "@types/babel__preset-env": "^7",
+    "@types/handlebars": "^4.1.0",
     "babel-plugin-module-resolver": "^5.0.2",
     "glob": "^11.0.1",
     "tsx": "^4.19.3"
   },
   "dependencies": {
     "@sniptt/guards": "^0.2.0",
+    "handlebars": "^4.7.8",
     "libphonenumber-js": "^1.10.26",
     "zod": "3.23.8"
   },

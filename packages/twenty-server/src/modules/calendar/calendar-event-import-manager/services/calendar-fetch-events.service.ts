@@ -79,7 +79,7 @@ export class CalendarFetchEventsService {
           },
         );
 
-        await this.calendarChannelSyncStatusService.schedulePartialCalendarEventListFetch(
+        await this.calendarChannelSyncStatusService.scheduleCalendarEventListFetch(
           [calendarChannel.id],
         );
       }

@@ -5,16 +5,16 @@ import { WorkflowDeleteRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useEffect, useState } from 'react';
 
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { useTheme } from '@emotion/react';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useTheme } from '@emotion/react';
 
 type WorkflowEditActionDeleteRecordProps = {
   action: WorkflowDeleteRecordAction;
@@ -29,7 +29,7 @@ type WorkflowEditActionDeleteRecordProps = {
 };
 
 type DeleteRecordFormData = {
-  objectName: string;
+  objectNameSingular: string;
   objectRecordId: string;
 };
 
@@ -52,7 +52,7 @@ export const WorkflowEditActionDeleteRecord = ({
     }));
 
   const [formData, setFormData] = useState<DeleteRecordFormData>({
-    objectName: action.settings.input.objectName,
+    objectNameSingular: action.settings.input.objectName,
     objectRecordId: action.settings.input.objectRecordId,
   });
   const isFormDisabled = actionOptions.readonly;
@@ -72,7 +72,7 @@ export const WorkflowEditActionDeleteRecord = ({
   };
 
   const objectNameSingular = activeNonSystemObjectMetadataItems.find(
-    (item) => item.nameSingular === formData.objectName,
+    (item) => item.nameSingular === formData.objectNameSingular,
   )?.nameSingular;
 
   const saveAction = useDebouncedCallback(
@@ -82,7 +82,7 @@ export const WorkflowEditActionDeleteRecord = ({
       }
 
       const {
-        objectName: updatedObjectName,
+        objectNameSingular: updatedObjectName,
         objectRecordId: updatedObjectRecordId,
       } = formData;
 
@@ -137,12 +137,12 @@ export const WorkflowEditActionDeleteRecord = ({
           label="Object"
           fullWidth
           disabled={isFormDisabled}
-          value={formData.objectName}
+          value={formData.objectNameSingular}
           emptyOption={{ label: 'Select an option', value: '' }}
           options={availableMetadata}
-          onChange={(objectName) => {
+          onChange={(objectNameSingular) => {
             const newFormData: DeleteRecordFormData = {
-              objectName,
+              objectNameSingular,
               objectRecordId: '',
             };
 

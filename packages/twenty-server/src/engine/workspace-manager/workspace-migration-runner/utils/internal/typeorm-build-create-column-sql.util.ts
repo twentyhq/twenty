@@ -19,6 +19,7 @@ export const typeormBuildCreateColumnSql = ({
     | 'default'
     | 'generatedType'
     | 'asExpression'
+    | 'precision'
   >;
 }): string => {
   let columnSql = '"' + column.name + '"';
@@ -30,6 +31,7 @@ export const typeormBuildCreateColumnSql = ({
     })}"`;
   } else {
     columnSql += ' ' + column.type;
+    if (column.precision) columnSql += `(${column.precision})`;
   }
 
   if (column.isArray) columnSql += '[]';

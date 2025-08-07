@@ -1,7 +1,6 @@
-import { CREATE_STEP_NODE_WIDTH } from '@/workflow/workflow-diagram/constants/CreateStepNodeWidth';
 import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useTheme } from '@emotion/react';
-import { BaseEdge, EdgeProps, getStraightPath } from '@xyflow/react';
+import { BaseEdge, EdgeProps, getBezierPath } from '@xyflow/react';
 
 type WorkflowDiagramFilteringDisabledEdgeReadonlyProps =
   EdgeProps<WorkflowDiagramEdge>;
@@ -9,15 +8,17 @@ type WorkflowDiagramFilteringDisabledEdgeReadonlyProps =
 export const WorkflowDiagramFilteringDisabledEdgeReadonly = ({
   markerStart,
   markerEnd,
+  sourceX,
   sourceY,
+  targetX,
   targetY,
 }: WorkflowDiagramFilteringDisabledEdgeReadonlyProps) => {
   const theme = useTheme();
 
-  const [edgePath] = getStraightPath({
-    sourceX: CREATE_STEP_NODE_WIDTH,
+  const [edgePath] = getBezierPath({
+    sourceX,
     sourceY,
-    targetX: CREATE_STEP_NODE_WIDTH,
+    targetX,
     targetY,
   });
 

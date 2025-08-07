@@ -5,7 +5,7 @@ import { expect } from '@storybook/test';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import gql from 'graphql-tag';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const defaultResponseData = {
   pageInfo: {

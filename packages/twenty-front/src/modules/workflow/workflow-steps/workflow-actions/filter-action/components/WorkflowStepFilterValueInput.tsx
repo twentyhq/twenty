@@ -43,6 +43,7 @@ const isFilterableFieldMetadataType = (
     FieldMetadataType.RICH_TEXT_V2,
     FieldMetadataType.ARRAY,
     FieldMetadataType.UUID,
+    FieldMetadataType.RELATION,
     ...COMPOSITE_FIELD_METADATA_TYPES,
   ].includes(type as FieldMetadataType);
 };
@@ -142,6 +143,9 @@ export const WorkflowStepFilterValueInput = ({
     metadata: {
       fieldName: selectedFieldMetadataItem?.name ?? '',
       options: selectedFieldMetadataItem?.options ?? [],
+      relationObjectMetadataNameSingular:
+        selectedFieldMetadataItem?.relation?.targetObjectMetadata?.nameSingular,
+      relationType: selectedFieldMetadataItem?.relation?.type,
     } as FieldMetadata,
   };
 

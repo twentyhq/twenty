@@ -159,6 +159,9 @@ export class AuthService {
       throw new AuthException(
         'Incorrect login method',
         AuthExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: t`User was not created with email/password`,
+        },
       );
     }
 
@@ -239,7 +242,7 @@ export class AuthService {
 
     if (params.userData.type === 'newUser') {
       const partialUserWithPicture =
-        await this.signInUpService.computeParamsForNewUser(
+        await this.signInUpService.computePartialUserFromUserPayload(
           params.userData.newUserPayload,
           params.authParams,
         );
@@ -725,6 +728,7 @@ export class AuthService {
             lastName,
             email,
             picture,
+            isEmailAlreadyVerified: true,
           },
           {
             provider: authProvider,
@@ -780,6 +784,7 @@ export class AuthService {
           email,
           picture,
           locale,
+          isEmailAlreadyVerified: true,
         },
         existingUser,
       );

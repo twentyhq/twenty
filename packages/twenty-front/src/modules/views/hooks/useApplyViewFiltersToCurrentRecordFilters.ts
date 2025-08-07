@@ -1,10 +1,10 @@
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { useMapViewFiltersToFilters } from './useMapViewFiltersToFilters';
 
 export const useApplyViewFiltersToCurrentRecordFilters = () => {
-  const setCurrentRecordFilters = useSetRecoilComponentStateV2(
+  const setCurrentRecordFilters = useSetRecoilComponentState(
     currentRecordFiltersComponentState,
   );
 

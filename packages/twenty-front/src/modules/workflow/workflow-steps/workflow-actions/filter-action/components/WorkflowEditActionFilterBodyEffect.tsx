@@ -1,5 +1,5 @@
-import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { FilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/currentStepFilterGroupsComponentState';
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/currentStepFiltersComponentState';
@@ -18,7 +18,7 @@ export const WorkflowEditActionFilterBodyEffect = ({
   const [
     hasInitializedCurrentStepFilters,
     setHasInitializedCurrentStepFilters,
-  ] = useRecoilComponentFamilyStateV2(
+  ] = useRecoilComponentFamilyState(
     hasInitializedCurrentStepFiltersComponentFamilyState,
     { stepId },
   );
@@ -26,16 +26,16 @@ export const WorkflowEditActionFilterBodyEffect = ({
   const [
     hasInitializedCurrentStepFilterGroups,
     setHasInitializedCurrentStepFilterGroups,
-  ] = useRecoilComponentFamilyStateV2(
+  ] = useRecoilComponentFamilyState(
     hasInitializedCurrentStepFilterGroupsComponentFamilyState,
     { stepId },
   );
 
-  const setCurrentStepFilters = useSetRecoilComponentStateV2(
+  const setCurrentStepFilters = useSetRecoilComponentState(
     currentStepFiltersComponentState,
   );
 
-  const setCurrentStepFilterGroups = useSetRecoilComponentStateV2(
+  const setCurrentStepFilterGroups = useSetRecoilComponentState(
     currentStepFilterGroupsComponentState,
   );
 

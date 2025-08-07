@@ -12,7 +12,7 @@ import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/reco
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { AnimatePresence } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
@@ -26,7 +26,7 @@ export const CommandMenuContainer = ({
 
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
 
-  const objectMetadataItemId = useRecoilComponentValueV2(
+  const objectMetadataItemId = useRecoilComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     COMMAND_MENU_COMPONENT_INSTANCE_ID,
   );
@@ -37,7 +37,7 @@ export const CommandMenuContainer = ({
     (objectMetadataItem) => objectMetadataItem.id === objectMetadataItemId,
   );
 
-  const currentViewId = useRecoilComponentValueV2(
+  const currentViewId = useRecoilComponentValue(
     contextStoreCurrentViewIdComponentState,
     COMMAND_MENU_COMPONENT_INSTANCE_ID,
   );

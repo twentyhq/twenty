@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordBoard } from '@/object-record/record-board/components/RecordBoard';
 import { RecordBoardBodyEscapeHotkeyEffect } from '@/object-record/record-board/components/RecordBoardBodyEscapeHotkeyEffect';
@@ -12,7 +13,7 @@ import { RecordIndexRemoveSortingModal } from '@/object-record/record-index/comp
 import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 type RecordIndexBoardContainerProps = {
   recordBoardId: string;
   viewBarId: string;
@@ -26,6 +27,10 @@ export const RecordIndexBoardContainer = ({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
 
   const recordIndexKanbanFieldMetadataId = useRecoilValue(
     recordIndexKanbanFieldMetadataIdState,
@@ -42,7 +47,7 @@ export const RecordIndexBoardContainer = ({
     shouldMatchRootQueryFilter: true,
   });
 
-  const isRecordIndexRemoveSortingModalOpened = useRecoilComponentValueV2(
+  const isRecordIndexRemoveSortingModalOpened = useRecoilComponentValue(
     isModalOpenedComponentState,
     RECORD_INDEX_REMOVE_SORTING_MODAL_ID,
   );
@@ -60,6 +65,7 @@ export const RecordIndexBoardContainer = ({
         updateOneRecord,
         deleteOneRecord,
         recordBoardId,
+        objectPermissions,
       }}
     >
       <RecordBoard />

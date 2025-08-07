@@ -40,7 +40,7 @@ export class WorkspaceRepository<
   private readonly internalContext: WorkspaceInternalContext;
   private shouldBypassPermissionChecks: boolean;
   private featureFlagMap: FeatureFlagMap;
-  private objectRecordsPermissions?: ObjectRecordsPermissions;
+  public readonly objectRecordsPermissions?: ObjectRecordsPermissions;
   private authContext?: AuthContext;
   declare manager: WorkspaceEntityManager;
 
@@ -348,6 +348,7 @@ export class WorkspaceRepository<
       | ObjectId[]
       | FindOptionsWhere<T>,
     entityManager?: WorkspaceEntityManager,
+    selectedColumns?: string[] | '*',
   ): Promise<DeleteResult> {
     const manager = entityManager || this.manager;
 
@@ -360,7 +361,12 @@ export class WorkspaceRepository<
       objectRecordsPermissions: this.objectRecordsPermissions,
     };
 
-    return manager.delete(this.target, criteria, permissionOptions);
+    return manager.delete(
+      this.target,
+      criteria,
+      permissionOptions,
+      selectedColumns,
+    );
   }
 
   override softRemove<U extends DeepPartial<T>>(
@@ -431,6 +437,7 @@ export class WorkspaceRepository<
       | ObjectId[]
       | FindOptionsWhere<T>,
     entityManager?: WorkspaceEntityManager,
+    selectedColumns?: string[],
   ): Promise<UpdateResult> {
     const manager = entityManager || this.manager;
 
@@ -443,7 +450,12 @@ export class WorkspaceRepository<
       objectRecordsPermissions: this.objectRecordsPermissions,
     };
 
-    return manager.softDelete(this.target, criteria, permissionOptions);
+    return manager.softDelete(
+      this.target,
+      criteria,
+      permissionOptions,
+      selectedColumns,
+    );
   }
 
   /**
@@ -517,6 +529,7 @@ export class WorkspaceRepository<
       | ObjectId[]
       | FindOptionsWhere<T>,
     entityManager?: WorkspaceEntityManager,
+    selectedColumns?: string[],
   ): Promise<UpdateResult> {
     const manager = entityManager || this.manager;
 
@@ -529,7 +542,12 @@ export class WorkspaceRepository<
       objectRecordsPermissions: this.objectRecordsPermissions,
     };
 
-    return manager.restore(this.target, criteria, permissionOptions);
+    return manager.restore(
+      this.target,
+      criteria,
+      permissionOptions,
+      selectedColumns,
+    );
   }
 
   /**
@@ -554,6 +572,7 @@ export class WorkspaceRepository<
       entity,
       selectedColumns,
       permissionOptions,
+      this.authContext,
     );
   }
 
@@ -595,8 +614,36 @@ export class WorkspaceRepository<
     );
   }
 
+  // Experimental method to allow batch update and batch event emission
+  async updateMany(
+    inputs: {
+      criteria: string;
+      partialEntity: QueryDeepPartialEntity<T>;
+    }[],
+    entityManager?: WorkspaceEntityManager,
+    selectedColumns?: string[],
+  ): Promise<UpdateResult> {
+    const manager = entityManager || this.manager;
+
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+
+    const results = await manager.updateMany(
+      this.target,
+      inputs,
+      permissionOptions,
+      selectedColumns,
+    );
+
+    return results;
+  }
+
   override async upsert(
-    entityOrEntities: QueryDeepPartialEntity<T> | QueryDeepPartialEntity<T>[],
+    entityOrEntities:
+      | QueryDeepPartialEntityWithNestedRelationFields<T>
+      | QueryDeepPartialEntityWithNestedRelationFields<T>[],
     conflictPathsOrOptions: string[] | UpsertOptions<T>,
     entityManager?: WorkspaceEntityManager,
     selectedColumns: string[] = [],

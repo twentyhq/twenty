@@ -1,14 +1,21 @@
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import {
   WorkflowActionType,
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
+import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useCloseRightClickMenu';
 import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
 import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 import { useFilteredOtherActions } from '@/workflow/workflow-steps/workflow-actions/hooks/useFilteredOtherActions';
+import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
+import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemCommand } from 'twenty-ui/navigation';
@@ -25,28 +32,55 @@ export const CommandMenuWorkflowSelectActionContent = ({
   });
   const filteredOtherActions = useFilteredOtherActions();
 
+  const { closeRightClickMenu } = useCloseRightClickMenu();
+
   const [workflowInsertStepIds, setWorkflowInsertStepIds] =
-    useRecoilComponentStateV2(workflowInsertStepIdsComponentState);
+    useRecoilComponentState(workflowInsertStepIdsComponentState);
+
+  const setCommandMenuNavigationStack = useSetRecoilState(
+    commandMenuNavigationStackState,
+  );
+
+  const workflowVisualizerWorkflowId = useRecoilComponentValue(
+    workflowVisualizerWorkflowIdComponentState,
+  );
+  const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
 
   const handleCreateStep = async (actionType: WorkflowActionType) => {
-    const { parentStepId, nextStepId } = workflowInsertStepIds;
-
-    if (!isDefined(parentStepId)) {
+    if (!isDefined(workflowVisualizerWorkflowId)) {
       throw new Error(
-        'No parentStepId. Please select a parent step to create from.',
+        'Workflow ID must be configured for the edge when creating a step',
       );
     }
 
-    await createStep({
+    const { parentStepId, nextStepId, position } = workflowInsertStepIds;
+
+    const createdStep = await createStep({
       newStepType: actionType,
       parentStepId,
       nextStepId,
+      position,
     });
+
+    if (!isDefined(createdStep)) {
+      return;
+    }
 
     setWorkflowInsertStepIds({
       parentStepId: undefined,
       nextStepId: undefined,
+      position: undefined,
     });
+
+    closeRightClickMenu();
+
+    setCommandMenuNavigationStack([]);
+
+    openWorkflowEditStepInCommandMenu(
+      workflowVisualizerWorkflowId,
+      createdStep.name,
+      getIcon(getActionIcon(createdStep.type as WorkflowActionType)),
+    );
   };
 
   return (

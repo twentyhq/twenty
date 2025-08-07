@@ -24,12 +24,19 @@ import {
   MAX_DEPTH,
 } from 'src/engine/api/rest/input-factories/depth-input.factory';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
+import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
@@ -38,7 +45,6 @@ import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/format-result.util';
-import { getFieldMetadataIdToColumnNamesMap } from 'src/engine/twenty-orm/utils/get-field-metadata-id-to-column-names-map.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export interface PageInfo {
@@ -88,6 +94,8 @@ export abstract class RestApiBaseHandler {
   protected readonly createdByFromAuthContextService: CreatedByFromAuthContextService;
   @Inject()
   protected readonly featureFlagService: FeatureFlagService;
+  @Inject()
+  protected readonly apiKeyRoleService: ApiKeyRoleService;
 
   protected abstract handle(
     request: Request,
@@ -127,13 +135,49 @@ export abstract class RestApiBaseHandler {
       );
     }
 
-    const shouldBypassPermissionChecks = isDefined(apiKey);
+    let roleId: string | undefined = undefined;
+    let shouldBypassPermissionChecks = false;
 
-    const roleId =
-      await this.workspacePermissionsCacheService.getRoleIdFromUserWorkspaceId({
-        workspaceId: workspace.id,
-        userWorkspaceId,
-      });
+    if (isDefined(apiKey)) {
+      const isApiKeyRolesEnabled =
+        await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
+          workspace.id,
+        );
+
+      if (!isApiKeyRolesEnabled) {
+        shouldBypassPermissionChecks = true;
+      } else {
+        roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
+          apiKey.id,
+          workspace.id,
+        );
+      }
+    }
+
+    if (isDefined(userWorkspaceId)) {
+      roleId =
+        await this.workspacePermissionsCacheService.getRoleIdFromUserWorkspaceId(
+          {
+            workspaceId: workspace.id,
+            userWorkspaceId,
+          },
+        );
+
+      if (!roleId) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+          PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+        );
+      }
+    }
+
+    if (!isDefined(apiKey) && !isDefined(userWorkspaceId)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.NO_AUTHENTICATION_CONTEXT,
+        PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
+      );
+    }
 
     const repository = workspaceDataSource.getRepository<ObjectRecord>(
       objectMetadataNameSingular,
@@ -266,7 +310,7 @@ export abstract class RestApiBaseHandler {
     let selectOptions = undefined;
 
     if (!isEmpty(restrictedFields)) {
-      selectOptions = this.getAllSelectableFields({
+      selectOptions = getAllSelectableFields({
         restrictedFields,
         objectMetadata,
       });
@@ -309,36 +353,6 @@ export abstract class RestApiBaseHandler {
       workspaceMemberId: request.workspaceMemberId,
       userWorkspaceId: request.userWorkspaceId,
     };
-  }
-
-  public getAllSelectableFields({
-    restrictedFields,
-    objectMetadata,
-  }: {
-    restrictedFields: RestrictedFields;
-    objectMetadata: { objectMetadataMapItem: ObjectMetadataItemWithFieldMaps };
-  }) {
-    const restrictedFieldsIds = Object.entries(restrictedFields)
-      .filter(([_, value]) => value.canRead === false)
-      .map(([key]) => key);
-
-    const fieldMetadataIdToColumnNamesMap = getFieldMetadataIdToColumnNamesMap(
-      objectMetadata.objectMetadataMapItem,
-    );
-
-    const restrictedFieldsColumnNames: string[] = restrictedFieldsIds
-      .map((fieldId) => fieldMetadataIdToColumnNamesMap.get(fieldId))
-      .filter(isDefined)
-      .flat();
-
-    const allColumnNames = [...fieldMetadataIdToColumnNamesMap.values()].flat();
-
-    return Object.fromEntries(
-      allColumnNames.map((columnName) => [
-        columnName,
-        !restrictedFieldsColumnNames.includes(columnName),
-      ]),
-    );
   }
 
   public formatResult<T>({

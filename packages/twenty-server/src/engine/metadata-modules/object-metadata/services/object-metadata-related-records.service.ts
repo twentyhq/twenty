@@ -116,6 +116,9 @@ export class ObjectMetadataRelatedRecordsService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
         workspaceId,
         'view',
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
     await viewRepository.delete({

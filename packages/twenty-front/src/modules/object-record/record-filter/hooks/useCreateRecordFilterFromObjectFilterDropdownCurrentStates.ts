@@ -3,7 +3,7 @@ import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-recor
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -11,19 +11,15 @@ import { v4 } from 'uuid';
 export const useCreateRecordFilterFromObjectFilterDropdownCurrentStates =
   () => {
     const fieldMetadataItemUsedInDropdownCallbackState =
-      useRecoilComponentCallbackStateV2(
+      useRecoilComponentCallbackState(
         fieldMetadataItemUsedInDropdownComponentSelector,
       );
 
     const selectedOperandInDropdownCallbackState =
-      useRecoilComponentCallbackStateV2(
-        selectedOperandInDropdownComponentState,
-      );
+      useRecoilComponentCallbackState(selectedOperandInDropdownComponentState);
 
     const subFieldNameUsedInDropdownCallbackState =
-      useRecoilComponentCallbackStateV2(
-        subFieldNameUsedInDropdownComponentState,
-      );
+      useRecoilComponentCallbackState(subFieldNameUsedInDropdownComponentState);
 
     const createRecordFilterFromObjectFilterDropdownCurrentStates =
       useRecoilCallback(

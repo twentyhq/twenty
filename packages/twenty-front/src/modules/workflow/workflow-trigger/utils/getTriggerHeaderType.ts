@@ -1,5 +1,5 @@
 import { WorkflowTrigger } from '@/workflow/types/Workflow';
-import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
+import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 export const getTriggerHeaderType = (trigger: WorkflowTrigger) => {

@@ -13,14 +13,13 @@ import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { isDate } from 'src/utils/date/isDate';
 import { isValidDate } from 'src/utils/date/isValidDate';
-
 export function formatResult<T>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any,
   objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps | undefined,
   objectMetadataMaps: ObjectMetadataMaps,
 ): T {
-  if (!data) {
+  if (!isDefined(data)) {
     return data;
   }
 
@@ -122,13 +121,11 @@ export function formatResult<T>(
 
   // This is a temporary fix to handle a bug in the frontend where the date gets returned in the wrong timezone,
   //   thus returning the wrong date.
-  //
   // In short, for example :
   //   - DB stores `2025-01-01`
   //   - TypeORM .returning() returns `2024-12-31T23:00:00.000Z`
   //   - we shift +1h (or whatever the timezone offset is on the server)
   //   - we return `2025-01-01T00:00:00.000Z`
-  //
   // See this PR for more details: https://github.com/twentyhq/twenty/pull/9700
   const serverOffsetInMillisecondsToCounterActTypeORMAutomaticTimezoneShift =
     new Date().getTimezoneOffset() * 60 * 1000;

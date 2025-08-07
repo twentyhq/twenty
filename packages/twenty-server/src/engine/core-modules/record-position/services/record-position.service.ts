@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 export type RecordPositionServiceCreateArgs = {
@@ -44,6 +48,89 @@ export class RecordPositionService {
     return recordWithMaxPosition !== null
       ? recordWithMaxPosition + index + 1
       : 1;
+  }
+
+  async overridePositionOnRecords({
+    partialRecordInputs,
+    workspaceId,
+    objectMetadata,
+    shouldBackfillPositionIfUndefined,
+  }: {
+    partialRecordInputs: Partial<ObjectRecord>[];
+    workspaceId: string;
+    objectMetadata: {
+      isCustom: boolean;
+      nameSingular: string;
+      fieldIdByName: Record<string, string>;
+    };
+    shouldBackfillPositionIfUndefined: boolean;
+  }): Promise<Partial<ObjectRecord>[]> {
+    const recordsThatNeedFirstPosition: Partial<ObjectRecord>[] = [];
+    const recordsThatNeedLastPosition: Partial<ObjectRecord>[] = [];
+    const recordsWithExistingNumberPosition: Partial<ObjectRecord>[] = [];
+    const recordsThatShouldNotBeUpdated: Partial<ObjectRecord>[] = [];
+
+    const positionFieldId = objectMetadata.fieldIdByName['position'];
+
+    if (!isDefined(positionFieldId)) {
+      return partialRecordInputs;
+    }
+
+    for (const partialRecordInput of partialRecordInputs) {
+      if (partialRecordInput.position === 'last') {
+        recordsThatNeedLastPosition.push(partialRecordInput);
+      } else if (typeof partialRecordInput.position === 'number') {
+        recordsWithExistingNumberPosition.push(partialRecordInput);
+      } else if (partialRecordInput.position === 'first') {
+        recordsThatNeedFirstPosition.push(partialRecordInput);
+      } else if (
+        partialRecordInput.position === undefined &&
+        shouldBackfillPositionIfUndefined
+      ) {
+        recordsThatNeedFirstPosition.push(partialRecordInput);
+      } else {
+        recordsThatShouldNotBeUpdated.push(partialRecordInput);
+      }
+    }
+
+    if (recordsThatNeedFirstPosition.length > 0) {
+      const existingRecordMinPosition = await this.findMinPosition(
+        objectMetadata,
+        workspaceId,
+      );
+
+      const minPosition = Math.min(
+        ...recordsWithExistingNumberPosition.map((record) => record.position),
+        isDefined(existingRecordMinPosition) ? existingRecordMinPosition : 1,
+      );
+
+      for (const [index, record] of recordsThatNeedFirstPosition.entries()) {
+        record.position = minPosition - index - 1;
+      }
+    }
+
+    if (recordsThatNeedLastPosition.length > 0) {
+      const existingRecordMaxPosition = await this.findMaxPosition(
+        objectMetadata,
+        workspaceId,
+      );
+
+      const maxPosition = Math.max(
+        ...recordsThatNeedLastPosition.map((record) => record.position),
+        isDefined(existingRecordMaxPosition) ? existingRecordMaxPosition : 1,
+      );
+
+      for (const [index, record] of recordsThatNeedLastPosition.entries()) {
+        record.position = maxPosition + index + 1;
+      }
+    }
+
+    return [
+      ...recordsThatNeedFirstPosition,
+      ...recordsThatNeedLastPosition,
+      ...recordsWithExistingNumberPosition,
+      ...recordsThatShouldNotBeUpdated,
+    ];
   }
 
   async findByPosition(
@@ -100,7 +187,7 @@ export class RecordPositionService {
         },
       );
 
-    return repository.minimum('position');
+    return await repository.minimum('position');
   }
 
   private async findMaxPosition(
@@ -116,6 +203,6 @@ export class RecordPositionService {
         },
       );
 
-    return repository.maximum('position');
+    return await repository.maximum('position');
   }
 }

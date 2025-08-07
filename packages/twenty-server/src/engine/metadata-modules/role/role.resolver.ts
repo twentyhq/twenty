@@ -75,8 +75,9 @@ export class RoleResolver {
   @UseGuards(UserAuthGuard)
   async updateWorkspaceMemberRole(
     @AuthWorkspace() workspace: Workspace,
-    @Args('workspaceMemberId') workspaceMemberId: string,
-    @Args('roleId', { type: () => String }) roleId: string,
+    @Args('workspaceMemberId', { type: () => UUIDScalarType })
+    workspaceMemberId: string,
+    @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
     @AuthWorkspaceMemberId()
     updatorWorkspaceMemberId: string,
   ): Promise<WorkspaceMember> {
@@ -84,6 +85,10 @@ export class RoleResolver {
       throw new PermissionsException(
         PermissionsExceptionMessage.CANNOT_UPDATE_SELF_ROLE,
         PermissionsExceptionCode.CANNOT_UPDATE_SELF_ROLE,
+        {
+          userFriendlyMessage:
+            'You cannot change your own role. Please ask another administrator to update your role.',
+        },
       );
     }
 
@@ -149,7 +154,7 @@ export class RoleResolver {
   @Mutation(() => String)
   async deleteOneRole(
     @AuthWorkspace() workspace: Workspace,
-    @Args('roleId') roleId: string,
+    @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
   ): Promise<string> {
     const deletedRoleId = await this.roleService.deleteRole(
       roleId,

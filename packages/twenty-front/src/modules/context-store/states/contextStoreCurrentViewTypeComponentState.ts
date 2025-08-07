@@ -1,9 +1,9 @@
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
 export const contextStoreCurrentViewTypeComponentState =
-  createComponentStateV2<ContextStoreViewType | null>({
+  createComponentState<ContextStoreViewType | null>({
     key: 'contextStoreCurrentViewTypeComponentState',
     defaultValue: null,
     componentInstanceContext: ContextStoreComponentInstanceContext,

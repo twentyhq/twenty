@@ -3,15 +3,15 @@ import { useEffect } from 'react';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
 import { scrollWrapperScrollLeftComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollLeftComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 export const RecordTableRecordGroupStickyEffect = () => {
-  const scrollLeft = useRecoilComponentValueV2(
+  const scrollLeft = useRecoilComponentValue(
     scrollWrapperScrollLeftComponentState,
   );
 
-  const setIsRecordTableScrolledLeft = useSetRecoilComponentStateV2(
+  const setIsRecordTableScrolledLeft = useSetRecoilComponentState(
     isRecordTableScrolledLeftComponentState,
   );
 
