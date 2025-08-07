@@ -9,6 +9,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
@@ -30,16 +31,20 @@ export class DevSeederPermissionsService {
     private readonly objectPermissionService: ObjectPermissionService,
     @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectRepository(RoleEntity, 'core')
+    private readonly roleRepository: Repository<RoleEntity>,
     private readonly typeORMService: TypeORMService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly fieldPermissionService: FieldPermissionService,
   ) {}
 
   public async initPermissions(workspaceId: string) {
-    const adminRole = await this.roleService.getRoleByStandardId(
-      ADMIN_ROLE.standardId as string,
-      workspaceId,
-    );
+    const adminRole = await this.roleRepository.findOne({
+      where: {
+        standardId: ADMIN_ROLE.standardId as string,
+        workspaceId,
+      },
+    });
 
     if (!adminRole) {
       throw new Error(
