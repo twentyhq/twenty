@@ -1,7 +1,7 @@
 import {
-  WorkflowActionType,
-  WorkflowRunStepStatus,
-  WorkflowTriggerType,
+    WorkflowActionType,
+    WorkflowRunStepStatus,
+    WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
 import { FilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
 import { Edge, Node } from '@xyflow/react';
@@ -96,9 +96,6 @@ export type WorkflowDiagramNodeType = 'default' | 'empty-trigger';
 
 export type WorkflowDiagramEdgeType =
   | 'blank'
-  | 'filtering-disabled--editable'
-  | 'filtering-disabled--readonly'
-  | 'filtering-disabled--run'
   | 'empty-filter--editable'
   | 'empty-filter--readonly'
   | 'empty-filter--run'

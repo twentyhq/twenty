@@ -6,7 +6,6 @@ import { WorkflowDiagramCanvasEditableEffect } from '@/workflow/workflow-diagram
 import { WorkflowDiagramDefaultEdgeEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramDefaultEdgeEditable';
 import { WorkflowDiagramEmptyTriggerEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerEditable';
 import { WorkflowDiagramFilterEdgeEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable';
-import { WorkflowDiagramFilteringDisabledEdgeEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramFilteringDisabledEdgeEditable';
 import { WorkflowDiagramStepNodeEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeEditable';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramRightClickMenuPositionState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuPositionState';
@@ -122,8 +121,6 @@ export const WorkflowDiagramCanvasEditable = ({
         }}
         edgeTypes={{
           blank: WorkflowDiagramBlankEdge,
-          'filtering-disabled--editable':
-            WorkflowDiagramFilteringDisabledEdgeEditable,
           'empty-filter--editable': WorkflowDiagramDefaultEdgeEditable,
           'filter--editable': WorkflowDiagramFilterEdgeEditable,
         }}
