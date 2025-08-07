@@ -54683,14 +54683,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-chrome-extension@workspace:packages/twenty-chrome-extension":
-  version: 0.0.0-use.local
-  resolution: "twenty-chrome-extension@workspace:packages/twenty-chrome-extension"
-  dependencies:
-    twenty-shared: "workspace:*"
-  languageName: unknown
-  linkType: soft
-
 "twenty-e2e-testing@workspace:packages/twenty-e2e-testing":
   version: 0.0.0-use.local
   resolution: "twenty-e2e-testing@workspace:packages/twenty-e2e-testing"
