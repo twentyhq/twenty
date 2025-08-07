@@ -222,7 +222,7 @@ export class RoleService {
       description: 'Member role',
       icon: 'IconUser',
       canUpdateAllSettings: false,
-      canAccessAllTools: false,
+      canAccessAllTools: true,
       canReadAllObjectRecords: true,
       canUpdateAllObjectRecords: true,
       canSoftDeleteAllObjectRecords: true,
