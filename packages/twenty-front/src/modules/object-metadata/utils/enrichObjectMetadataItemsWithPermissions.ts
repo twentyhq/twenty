@@ -1,6 +1,8 @@
 import { getNonReadableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonReadableFieldMetadataIdsFromObjectPermissions';
 import { getNonUpdatableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonUpdatableFieldMetadataIdsFromObjectPermissions';
+import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { ObjectPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 type enrichObjectMetadataItemsWithPermissionsArgs = {
@@ -20,17 +22,22 @@ export const enrichObjectMetadataItemsWithPermissions = ({
 }: enrichObjectMetadataItemsWithPermissionsArgs) => {
   const formattedObjects: ObjectMetadataItem[] =
     objectMetadataItems.map((object) => {
-      const objectPermissions = objectPermissionsByObjectMetadataId[object.id];
+      const objectPermissions = getObjectPermissionsFromMapByObjectMetadataId({
+        objectPermissionsByObjectMetadataId,
+        objectMetadataId: object.id,
+      });
 
-      const nonReadableFieldMetadataIds =
-        getNonReadableFieldMetadataIdsFromObjectPermissions({
-          objectPermissions: objectPermissions,
-        });
+      const nonReadableFieldMetadataIds = !isDefined(objectPermissions)
+        ? []
+        : getNonReadableFieldMetadataIdsFromObjectPermissions({
+            objectPermissions: objectPermissions,
+          });
 
-      const nonUpdatableFieldMetadataIds =
-        getNonUpdatableFieldMetadataIdsFromObjectPermissions({
-          objectPermissions: objectPermissions,
-        });
+      const nonUpdatableFieldMetadataIds = !isDefined(objectPermissions)
+        ? []
+        : getNonUpdatableFieldMetadataIdsFromObjectPermissions({
+            objectPermissions: objectPermissions,
+          });
 
       const { fields, ...objectWithoutFields } = object;
 

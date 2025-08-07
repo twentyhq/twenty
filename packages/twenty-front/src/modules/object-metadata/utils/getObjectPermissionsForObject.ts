@@ -1,3 +1,4 @@
+import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -8,8 +9,10 @@ export const getObjectPermissionsForObject = (
   >,
   objectMetadataId: string,
 ): ObjectPermissions & { objectMetadataId: string } => {
-  const objectPermissions =
-    objectPermissionsByObjectMetadataId[objectMetadataId];
+  const objectPermissions = getObjectPermissionsFromMapByObjectMetadataId({
+    objectPermissionsByObjectMetadataId,
+    objectMetadataId,
+  });
 
   if (!isDefined(objectPermissions)) {
     return {

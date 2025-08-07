@@ -23,6 +23,7 @@ import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported
 import { useIsInRightDrawerOrThrow } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 
 type FieldsCardProps = {
   objectNameSingular: string;
@@ -138,9 +139,10 @@ export const FieldsCard = ({
                     isRecordFieldReadOnly: isRecordFieldReadOnly({
                       isRecordReadOnly,
                       objectPermissions:
-                        objectPermissionsByObjectMetadataId[
-                          objectMetadataItem.id
-                        ],
+                        getObjectPermissionsFromMapByObjectMetadataId({
+                          objectPermissionsByObjectMetadataId,
+                          objectMetadataId: objectMetadataItem.id,
+                        }),
                       fieldMetadataId: fieldMetadataItem.id,
                       objectNameSingular,
                       fieldName: fieldMetadataItem.name,
@@ -188,9 +190,10 @@ export const FieldsCard = ({
                   isRecordFieldReadOnly: isRecordFieldReadOnly({
                     isRecordReadOnly,
                     objectPermissions:
-                      objectPermissionsByObjectMetadataId[
-                        objectMetadataItem.id
-                      ],
+                      getObjectPermissionsFromMapByObjectMetadataId({
+                        objectPermissionsByObjectMetadataId,
+                        objectMetadataId: objectMetadataItem.id,
+                      }),
                     fieldMetadataId: fieldMetadataItem.id,
                     objectNameSingular,
                     fieldName: fieldMetadataItem.name,
@@ -239,8 +242,10 @@ export const FieldsCard = ({
             isDisplayModeFixHeight: true,
             isRecordFieldReadOnly: isRecordFieldReadOnly({
               isRecordReadOnly,
-              objectPermissions:
-                objectPermissionsByObjectMetadataId[objectMetadataItem.id],
+              objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
+                objectPermissionsByObjectMetadataId,
+                objectMetadataId: objectMetadataItem.id,
+              }),
               fieldMetadataId: fieldMetadataItem.id,
               objectNameSingular,
               fieldName: fieldMetadataItem.name,

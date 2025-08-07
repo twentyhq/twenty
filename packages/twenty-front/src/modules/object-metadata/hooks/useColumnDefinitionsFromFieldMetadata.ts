@@ -5,11 +5,7 @@ import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailab
 
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
-import { getNonReadableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonReadableFieldMetadataIdsFromObjectPermissions';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useRecoilValue } from 'recoil';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { formatFieldMetadataItemAsColumnDefinition } from '../utils/formatFieldMetadataItemAsColumnDefinition';
 
 export const useColumnDefinitionsFromFieldMetadata = (
@@ -31,21 +27,7 @@ export const useColumnDefinitionsFromFieldMetadata = (
     }),
   );
 
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-
-  let restrictedFieldMetadataIds: string[] = [];
-
-  const featureFlags = useFeatureFlagsMap();
-  const isFieldsPermissionsEnabled =
-    featureFlags[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
-
-  if (isFieldsPermissionsEnabled) {
-    restrictedFieldMetadataIds =
-      getNonReadableFieldMetadataIdsFromObjectPermissions({
-        objectPermissions:
-          objectPermissionsByObjectMetadataId[objectMetadataItem.id],
-      });
-  }
+  const restrictedFieldMetadataIds: string[] = [];
 
   const columnDefinitions: ColumnDefinition<FieldMetadata>[] =
     activeFieldMetadataItems
