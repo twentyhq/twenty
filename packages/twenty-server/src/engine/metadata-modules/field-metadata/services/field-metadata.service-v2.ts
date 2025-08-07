@@ -21,7 +21,8 @@ import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/fla
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { addFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps.util';
-import { extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/extract-flat-object-metadata-maps-out-of-flat-object-metadata-maps.util';
+import { extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/extract-flat-object-metadata-maps-out-of-flat-object-metadata-maps-or-throw.util';
+import { extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/extract-flat-object-metadata-maps-out-of-flat-object-metadata-maps.util';
 import { fromFlatObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-maps-to-flat-object-metadatas.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
@@ -88,9 +89,21 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
         return undefined;
       }
 
+      const flatObjectMetadataMapsWithRelatedObjectMetadata =
+        extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMaps({
+          flatObjectMetadataMaps,
+          objectMetadataIds: [
+            relatedFlatFieldMetadataToCreate.objectMetadataId,
+          ],
+        });
+
+      if (!isDefined(flatObjectMetadataMapsWithRelatedObjectMetadata)) {
+        return undefined;
+      }
+
       return addFlatFieldMetadataInFlatObjectMetadataMaps({
         flatFieldMetadata: relatedFlatFieldMetadataToCreate,
-        flatObjectMetadataMaps,
+        flatObjectMetadataMaps: flatObjectMetadataMapsWithRelatedObjectMetadata,
       });
     }
   }
