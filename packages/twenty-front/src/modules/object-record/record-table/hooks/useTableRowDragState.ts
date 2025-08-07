@@ -2,25 +2,25 @@ import { draggedRecordIdsTableComponentState } from '@/object-record/record-tabl
 import { isMultiDragActiveTableComponentState } from '@/object-record/record-table/states/isMultiDragActiveTableComponentState';
 import { originalSelectionTableComponentState } from '@/object-record/record-table/states/originalSelectionTableComponentState';
 import { primaryDraggedRecordIdTableComponentState } from '@/object-record/record-table/states/primaryDraggedRecordIdTableComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const useTableRowDragState = (recordTableId?: string) => {
-  const isDragging = useRecoilComponentValueV2(
+  const isDragging = useRecoilComponentValue(
     isMultiDragActiveTableComponentState,
     recordTableId,
   );
 
-  const draggedRecordIds = useRecoilComponentValueV2(
+  const draggedRecordIds = useRecoilComponentValue(
     draggedRecordIdsTableComponentState,
     recordTableId,
   );
 
-  const primaryDraggedRecordId = useRecoilComponentValueV2(
+  const primaryDraggedRecordId = useRecoilComponentValue(
     primaryDraggedRecordIdTableComponentState,
     recordTableId,
   );
 
-  const originalSelection = useRecoilComponentValueV2(
+  const originalSelection = useRecoilComponentValue(
     originalSelectionTableComponentState,
     recordTableId,
   );
