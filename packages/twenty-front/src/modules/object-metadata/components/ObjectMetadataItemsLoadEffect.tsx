@@ -14,8 +14,7 @@ export const ObjectMetadataItemsLoadEffect = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const { refreshObjectMetadataItems } =
-    useRefreshObjectMetadataItems('network-only');
+  const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
   const { loadMockedObjectMetadataItems } = useLoadMockedObjectMetadataItems();
 
   useEffect(() => {

@@ -187,7 +187,17 @@ export const mockedOnboardingUserData = (
     workspaceMember: null,
     workspaceMembers: [],
     currentWorkspace: mockCurrentWorkspace,
-    currentUserWorkspace: null,
+    currentUserWorkspace: {
+      permissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
+      objectPermissions: generatedMockObjectMetadataItems.map((item) => ({
+        objectMetadataId: item.id,
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: true,
+        canSoftDeleteObjectRecords: true,
+        canDestroyObjectRecords: true,
+        restrictedFields: {},
+      })),
+    },
     locale: 'en',
     workspaces: [{ workspace: mockCurrentWorkspace }],
     onboardingStatdeus: onboardingStatus || null,
