@@ -7,7 +7,7 @@ export const MEMBER_ROLE: StandardRoleDefinition = {
   label: msg`Member`.message as string,
   description: msg`Member role`.message as string,
   icon: 'IconUser',
-  isEditable: false,
+  isEditable: true,
   canUpdateAllSettings: false,
   canAccessAllTools: false,
   canReadAllObjectRecords: true,
