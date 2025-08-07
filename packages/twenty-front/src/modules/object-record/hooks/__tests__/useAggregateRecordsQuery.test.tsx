@@ -122,19 +122,19 @@ describe('useAggregateRecordsQuery', () => {
     );
   });
 
-  it('should throw error for invalid aggregation operation', () => {
-    expect(() =>
-      renderHook(
-        () =>
-          useAggregateRecordsQuery({
-            objectNameSingular: 'company',
-            recordGqlFieldsAggregate: {
-              name: [AggregateOperations.SUM],
-            },
-          }),
-        { wrapper: Wrapper },
-      ),
-    ).toThrow();
+  it('should early return for invalid aggregation operation', () => {
+    const { result } = renderHook(
+      () =>
+        useAggregateRecordsQuery({
+          objectNameSingular: 'company',
+          recordGqlFieldsAggregate: {
+            name: [AggregateOperations.SUM],
+          },
+        }),
+      { wrapper: Wrapper },
+    );
+
+    expect(result.current.gqlFieldToFieldMap).toEqual({});
   });
 
   it('should handle multiple aggregations', () => {
