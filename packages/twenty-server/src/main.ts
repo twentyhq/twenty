@@ -22,8 +22,16 @@ import { settings } from './engine/constants/settings';
 import { generateFrontConfig } from './utils/generate-front-config';
 
 const bootstrap = async () => {
+  const allowedOriginRegex = process.env.ALLOWED_REQUEST_ORIGIN_REGEX;
+  const corsOptions = allowedOriginRegex
+    ? {
+        origin: new RegExp(allowedOriginRegex),
+        credentials: true,
+      }
+    : true;
+
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    cors: true,
+    cors: corsOptions,
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
     rawBody: true,
     snapshot: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
