@@ -43,85 +43,106 @@ const ALL_STEPS = [
     },
   },
   {
-    nodeType: 'trigger',
-    triggerType: 'MANUAL',
-    name: 'Manual',
+    nodeType: 'condition',
     hasNextStepIds: true,
-    stepId: 'step1',
+    name: 'Code - Condition',
+    stepId: 'step_1',
     position: {
       x: 0,
-      y: 150,
-    },
-  },
-  {
-    nodeType: 'action',
-    actionType: 'CREATE_RECORD',
-    name: 'Create Record',
-    hasNextStepIds: true,
-    stepId: 'step2',
-    position: {
-      x: 0,
-      y: 300,
-    },
-  },
-  {
-    nodeType: 'action',
-    actionType: 'UPDATE_RECORD',
-    name: 'Update Record',
-    hasNextStepIds: true,
-    stepId: 'step3',
-    position: {
-      x: 0,
-      y: 450,
-    },
-  },
-  {
-    nodeType: 'action',
-    actionType: 'DELETE_RECORD',
-    name: 'Delete Record',
-    hasNextStepIds: true,
-    stepId: 'step4',
-    position: {
-      x: 0,
-      y: 600,
+      y: 0,
     },
   },
   {
     nodeType: 'action',
     actionType: 'SEND_EMAIL',
     name: 'Send Email',
-    hasNextStepIds: true,
-    stepId: 'step5',
+    hasNextStepIds: false,
+    stepId: 'step_2',
     position: {
       x: 0,
-      y: 750,
+      y: 0,
     },
   },
   {
     nodeType: 'action',
     actionType: 'CODE',
-    name: 'Code',
-    hasNextStepIds: true,
-    stepId: 'step6',
+    name: 'Code - Action',
+    hasNextStepIds: false,
+    stepId: 'step_3',
     position: {
       x: 0,
-      y: 900,
+      y: 0,
     },
   },
   {
     nodeType: 'action',
-    actionType: 'HTTP_REQUEST',
-    name: 'HTTP Request',
-    hasNextStepIds: true,
-    stepId: 'step7',
+    actionType: 'CREATE_RECORD',
+    name: 'Create Record',
+    hasNextStepIds: false,
+    stepId: 'step_4',
     position: {
       x: 0,
-      y: 1050,
+      y: 0,
+    },
+  },
+  {
+    nodeType: 'action',
+    actionType: 'UPDATE_RECORD',
+    name: 'Update Record',
+    hasNextStepIds: false,
+    stepId: 'step_5',
+    position: {
+      x: 0,
+      y: 0,
+    },
+  },
+  {
+    nodeType: 'action',
+    actionType: 'DELETE_RECORD',
+    name: 'Delete Record',
+    hasNextStepIds: false,
+    stepId: 'step_6',
+    position: {
+      x: 0,
+      y: 0,
+    },
+  },
+  {
+    nodeType: 'condition',
+    hasNextStepIds: true,
+    name: 'A very long condition name that tests the way the name is rendered',
+    stepId: 'step_7',
+    position: {
+      x: 0,
+      y: 0,
+    },
+  },
+  {
+    nodeType: 'action',
+    actionType: 'CODE',
+    name: 'A very very long action name that tests the way the name is rendered in the interface',
+    hasNextStepIds: false,
+    stepId: 'step_8',
+    position: {
+      x: 0,
+      y: 0,
+    },
+  },
+  {
+    nodeType: 'action',
+    actionType: 'CODE',
+    name: 'A very very long action name that tests the way the name is rendered in the interface and the way it wraps',
+    hasNextStepIds: false,
+    stepId: 'step_9',
+    position: {
+      x: 0,
+      y: 0,
     },
   },
 ] satisfies WorkflowDiagramStepNodeData[];
 
-export const Catalog: CatalogStory<Story, typeof WorkflowDiagramStepNodeEditableContent> = {
+// For the catalog, we'll use the actual component without the wrapper state
+export const Catalog: CatalogStory<StoryObj<typeof WorkflowDiagramStepNodeEditableContent>, typeof WorkflowDiagramStepNodeEditableContent> = {
   args: {
     onDelete: fn(),
   },
@@ -130,53 +151,43 @@ export const Catalog: CatalogStory<Story, typeof WorkflowDiagramStepNodeEditable
     catalog: {
       options: {
         elementContainer: {
-          width: 250,
-          style: { position: 'relative' },
+          width: 240,
+          height: 80,
         },
       },
       dimensions: [
         {
-          name: 'step type',
+          name: 'data',
           values: ALL_STEPS,
           props: (data: WorkflowDiagramStepNodeData) => ({ data }),
         },
         {
           name: 'variant',
           values: [
-            'empty',
             'default',
-            'running',
-            'success',
-            'failure',
-            'not-executed',
+            'placeholder',
+            'selected',
+            'notSelected',
           ] satisfies WorkflowDiagramNodeVariant[],
           props: (variant: WorkflowDiagramNodeVariant) => ({ variant }),
-        },
-        {
-          name: 'state',
-          values: ['default', 'hover', 'selected'] satisfies ComponentState[],
-          props: (state: ComponentState) => ({ state }),
         },
       ],
     },
   },
   decorators: [
-    (Story, { args }) => {
-      return (
-        <div
-          className={`selectable ${args.state === 'selected' ? 'selected' : args.state === 'hover' ? 'workflow-node-container hover' : ''}`}
-        >
-          <RecoilRoot>
-            <WorkflowVisualizerComponentInstanceContext.Provider
-              value={{ instanceId: 'workflow-visualizer-instance-id' }}
-            >
-              <Story />
-            </WorkflowVisualizerComponentInstanceContext.Provider>
-          </RecoilRoot>
-        </div>
-      );
-    },
+    (Story, { args }) => (
+      <WorkflowVisualizerComponentInstanceContext.Provider
+        value={{
+          instanceId: 'story-workflow-visualizer',
+        }}
+      >
+        <RecoilRoot>
+          <ReactflowDecorator>
+            <Story {...args} />
+          </ReactflowDecorator>
+        </RecoilRoot>
+      </WorkflowVisualizerComponentInstanceContext.Provider>
+    ),
     CatalogDecorator,
-    ReactflowDecorator,
   ],
 };

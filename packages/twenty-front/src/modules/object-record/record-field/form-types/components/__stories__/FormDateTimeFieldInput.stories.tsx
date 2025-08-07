@@ -5,11 +5,11 @@ import { parseDateToString } from '@/ui/input/components/internal/date/utils/par
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import {
-    fn,
-    userEvent,
-    waitFor,
-    waitForElementToBeRemoved,
-    within,
+  fn,
+  userEvent,
+  waitFor,
+  waitForElementToBeRemoved,
+  within,
 } from '@storybook/test';
 import { DateTime } from 'luxon';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';

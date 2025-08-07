@@ -6,11 +6,10 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-export const getRecordFromRecordNode = <T extends ObjectRecord>({
-  recordNode,
-}: {
-  recordNode: RecordGqlNode;
-}): T => {
+// Internal non-generic implementation to avoid recursive type instantiation issues
+const getRecordFromRecordNodeInternal = (
+  recordNode: RecordGqlNode,
+): ObjectRecord => {
   return {
     ...Object.fromEntries(
       Object.entries(recordNode).map(([fieldName, value]) => {
@@ -27,7 +26,7 @@ export const getRecordFromRecordNode = <T extends ObjectRecord>({
               fieldName,
               getRecordsFromRecordConnection({ recordConnection: value }),
             ]
-          : [fieldName, getRecordFromRecordNode({ recordNode: value }) as ObjectRecord];
+          : [fieldName, getRecordFromRecordNodeInternal(value)];
       }),
     ),
     // Only adds `id` and `__typename` if they exist.
@@ -35,5 +34,14 @@ export const getRecordFromRecordNode = <T extends ObjectRecord>({
     // This prevents adding an undefined `id` and `__typename` to the RawJson field value,
     // which is invalid JSON.
     ...pick(recordNode, ['id', '__typename'] as const),
-  } as T;
+  };
+};
+
+// Public generic interface
+export const getRecordFromRecordNode = <T extends ObjectRecord>({
+  recordNode,
+}: {
+  recordNode: RecordGqlNode;
+}): T => {
+  return getRecordFromRecordNodeInternal(recordNode) as T;
 };
