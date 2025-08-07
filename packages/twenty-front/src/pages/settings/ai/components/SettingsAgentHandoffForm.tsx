@@ -79,7 +79,7 @@ export const SettingsAgentHandoffForm = ({
       enqueueSuccessSnackBar({
         message: t`Handoff created successfully`,
       });
-    } catch (error) {
+    } catch {
       enqueueErrorSnackBar({
         message: t`Failed to create handoff`,
       });

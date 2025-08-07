@@ -83,7 +83,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "eslint-plugin-simple-import-sort": "^12.1.1",
-    "eslint-plugin-storybook": "^0.6.15",
+    "eslint-plugin-storybook": "^9.0.7",
     "eslint-plugin-unicorn": "^60.0.0",
     "eslint-plugin-unused-imports": "^4.1.4",
     "optionator": "^0.9.1",

@@ -190,7 +190,7 @@ export const useTwoFactorVerificationForSettings = () => {
       });
 
       await handleVerificationSuccess();
-    } catch (error) {
+    } catch {
       enqueueErrorSnackBar({
         message: t`Invalid verification code. Please try again.`,
       });

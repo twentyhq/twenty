@@ -35,7 +35,7 @@ export const PhonesFieldDisplay = () => {
           duration: 2000,
         },
       });
-    } catch (err) {
+    } catch {
       enqueueErrorSnackBar({
         message: t`Error copying to clipboard`,
         options: {

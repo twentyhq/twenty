@@ -5,14 +5,14 @@ module.exports = {
     'plugin:@nx/react',
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
-    // Temporarily disabled due to ESLint 9 compatibility issue
-    // 'plugin:storybook/recommended',
+    'plugin:storybook/recommended',
     'plugin:prettier/recommended',
     'plugin:lingui/recommended',
     'plugin:@nx/typescript'
   ],
   plugins: ['react-hooks', 'react-refresh', '@nx', 'prefer-arrow', 'import', 'unused-imports', 'unicorn', 'lingui'],
   rules: {
+    'storybook/no-renderer-packages': 'off', // TODO: Remove this once we upgrade to Storybook 9
     'lingui/no-single-variables-to-translate': 'off',
     'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
     'no-console': ['warn', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],

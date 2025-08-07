@@ -122,7 +122,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         message: t`Role updated successfully`,
       });
       setSelectedRoleId(roleId);
-    } catch (error) {
+    } catch {
       enqueueErrorSnackBar({
         message: t`Error updating role`,
       });
@@ -145,7 +145,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       if (redirect) {
         navigate(SettingsPath.APIs);
       }
-    } catch (err) {
+    } catch {
       enqueueErrorSnackBar({ message: t`Error deleting api key.` });
     } finally {
       setIsLoading(false);
@@ -216,7 +216,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
           });
         }
       }
-    } catch (err) {
+    } catch {
       enqueueErrorSnackBar({
         message: t`Error regenerating api key.`,
       });

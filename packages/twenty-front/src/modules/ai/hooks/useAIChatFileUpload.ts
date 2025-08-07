@@ -37,7 +37,7 @@ export const useAIChatFileUpload = ({ agentId }: { agentId: string }) => {
         agentChatSelectedFiles.filter((f) => f.name !== file.name),
       );
       return uploadedFile;
-    } catch (error) {
+    } catch {
       const fileName = file.name;
       enqueueErrorSnackBar({
         message: t`Failed to upload file: ${fileName}`,

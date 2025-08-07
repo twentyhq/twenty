@@ -54,7 +54,7 @@ export const TwoFactorAuthenticationSetupEffect = () => {
         setQrCodeState(
           initiateOTPProvisioningResult.data?.initiateOTPProvisioning.uri,
         );
-      } catch (error) {
+      } catch {
         enqueueErrorSnackBar({
           message: t`Two factor authentication provisioning failed.`,
           options: {
