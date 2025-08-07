@@ -86,9 +86,9 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     });
   };
 
-  const isEdgeParentNodeIsAnEmptyTrigger =
+  const isEmptyTriggerEdge =
     source === TRIGGER_STEP_ID && !isDefined(workflow?.currentVersion?.trigger);
-  const canCreateNode = !isEdgeParentNodeIsAnEmptyTrigger;
+  const canCreateNode = !isEmptyTriggerEdge;
 
   const handleNodeButtonClick = () => {
     if (!canCreateNode) {
