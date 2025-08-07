@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
-import { StandardRoleDefinition } from '../types/standard-role-definition.interface';
+
+import { StandardRoleDefinition } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/types/standard-role-definition.interface';
 
 export const memberRole: StandardRoleDefinition = {
   standardId: '20202020-0001-0001-0001-000000000002',
@@ -13,4 +14,4 @@ export const memberRole: StandardRoleDefinition = {
   canUpdateAllObjectRecords: true,
   canSoftDeleteAllObjectRecords: true,
   canDestroyAllObjectRecords: true,
-}; 
+};
