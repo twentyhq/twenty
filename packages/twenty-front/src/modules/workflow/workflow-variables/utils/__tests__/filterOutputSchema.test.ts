@@ -225,4 +225,44 @@ describe('filterOutputSchema', () => {
       ).toBeUndefined();
     });
   });
+
+  describe('fieldTypesToExclude', () => {
+    it('should filter out the types', () => {
+      const inputSchema = createRecordSchema('person', {
+        name: { isLeaf: true, type: undefined, value: 'toto' },
+        age: { isLeaf: true, type: FieldMetadataType.NUMBER },
+        id: { isLeaf: true, type: FieldMetadataType.UUID },
+      });
+
+      const expectedSchema = createRecordSchema('person', {
+        name: { isLeaf: true, type: undefined, value: 'toto' },
+        age: { isLeaf: true, type: FieldMetadataType.NUMBER },
+      });
+
+      expect(
+        filterOutputSchema({
+          shouldDisplayRecordFields: true,
+          shouldDisplayRecordObjects: false,
+          outputSchema: inputSchema,
+          fieldTypesToExclude: [FieldMetadataType.UUID],
+        }),
+      ).toEqual(expectedSchema);
+    });
+
+    it('should return the same schema if no types to filter', () => {
+      const inputSchema = createRecordSchema('person', {
+        name: { isLeaf: true, value: 'string' },
+        id: { isLeaf: true, type: FieldMetadataType.UUID },
+      });
+
+      expect(
+        filterOutputSchema({
+          shouldDisplayRecordFields: true,
+          shouldDisplayRecordObjects: false,
+          outputSchema: inputSchema,
+          fieldTypesToExclude: [],
+        }),
+      ).toEqual(inputSchema);
+    });
+  });
 });
