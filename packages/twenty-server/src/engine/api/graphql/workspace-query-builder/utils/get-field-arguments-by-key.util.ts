@@ -1,10 +1,10 @@
 import {
+  FieldNode,
   GraphQLResolveInfo,
-  SelectionSetNode,
+  InlineFragmentNode,
   Kind,
   SelectionNode,
-  FieldNode,
-  InlineFragmentNode,
+  SelectionSetNode,
   ValueNode,
 } from 'graphql';
 
@@ -44,11 +44,10 @@ const findFieldNode = (
   return field;
 };
 
-// @ts-expect-error legacy noImplicitAny
 const parseValueNode = (
   valueNode: ValueNode,
   variables: GraphQLResolveInfo['variableValues'],
-) => {
+): any => {
   switch (valueNode.kind) {
     case Kind.VARIABLE:
       return variables[valueNode.name.value];

@@ -3,8 +3,8 @@ import pick from 'lodash.pick';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { isDefined } from 'twenty-shared/utils';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const getRecordFromRecordNode = <T extends ObjectRecord>({
   recordNode,
@@ -27,7 +27,7 @@ export const getRecordFromRecordNode = <T extends ObjectRecord>({
               fieldName,
               getRecordsFromRecordConnection({ recordConnection: value }),
             ]
-          : [fieldName, getRecordFromRecordNode<T>({ recordNode: value })];
+          : [fieldName, getRecordFromRecordNode({ recordNode: value })];
       }),
     ),
     // Only adds `id` and `__typename` if they exist.

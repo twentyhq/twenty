@@ -220,14 +220,14 @@ export class S3Driver implements StorageDriver {
       return;
     }
 
-    const result = /(?<folder>.*)\/(?<file>.*)/.exec(objectKey);
+    const result = /(.*)\/(.*)/.exec(objectKey);
 
-    if (!isDefined(result) || !isDefined(result.groups)) {
+    if (!isDefined(result)) {
       return;
     }
 
-    const fromFolderPath = result.groups.folder;
-    const filename = result.groups.file;
+    const fromFolderPath = result[1];
+    const filename = result[2];
 
     return { fromFolderPath, filename };
   }

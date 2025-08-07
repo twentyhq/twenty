@@ -1,6 +1,6 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 
-import { GraphQLInputObjectType } from 'graphql';
+import { GraphQLInputFieldConfigMap, GraphQLInputObjectType } from 'graphql';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
@@ -41,17 +41,15 @@ export class InputTypeDefinitionFactory {
     kind: InputTypeDefinitionKind;
     options: WorkspaceBuildSchemaOptions;
   }): InputTypeDefinition {
-    // @ts-expect-error legacy noImplicitAny
     const inputType = new GraphQLInputObjectType({
       name: `${pascalCase(objectMetadata.nameSingular)}${kind.toString()}Input`,
       description: objectMetadata.description,
-      fields: () => {
+      fields: (): GraphQLInputFieldConfigMap => {
         switch (kind) {
           /**
            * Filter input type has additional fields for filtering and is self referencing
            */
           case InputTypeDefinitionKind.Filter: {
-            // @ts-expect-error legacy noImplicitAny
             const andOrType = this.typeMapperService.mapToGqlType(inputType, {
               isArray: true,
               arrayDepth: 1,
