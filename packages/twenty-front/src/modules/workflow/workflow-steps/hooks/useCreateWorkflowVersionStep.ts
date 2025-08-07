@@ -7,11 +7,16 @@ import {
   CreateWorkflowVersionStepMutationVariables,
 } from '~/generated-metadata/graphql';
 import { useUpdateWorkflowVersionCache } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionCache';
+import { flowComponentState } from '@/workflow/states/flowComponentState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateWorkflowVersionStep = () => {
   const apolloCoreClient = useApolloCoreClient();
 
   const { updateWorkflowVersionCache } = useUpdateWorkflowVersionCache();
+
+  const setFlow = useSetRecoilComponentState(flowComponentState);
 
   const [mutate] = useMutation<
     CreateWorkflowVersionStepMutation,
@@ -29,10 +34,18 @@ export const useCreateWorkflowVersionStep = () => {
 
     const workflowVersionStepChanges = result?.data?.createWorkflowVersionStep;
 
-    updateWorkflowVersionCache({
+    const updatedWorkflowVersion = updateWorkflowVersionCache({
       workflowVersionStepChanges,
       workflowVersionId: input.workflowVersionId,
     });
+
+    if (isDefined(updatedWorkflowVersion)) {
+      setFlow({
+        workflowVersionId: updatedWorkflowVersion.id,
+        trigger: updatedWorkflowVersion.trigger,
+        steps: updatedWorkflowVersion.steps,
+      });
+    }
 
     return result;
   };

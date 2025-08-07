@@ -33,7 +33,7 @@ export const useUpdateWorkflowVersionCache = () => {
   }: {
     workflowVersionStepChanges: WorkflowVersionStepChanges | undefined;
     workflowVersionId: string;
-  }) => {
+  }): WorkflowVersion | undefined => {
     if (!isDefined(workflowVersionStepChanges)) {
       return;
     }
@@ -99,6 +99,8 @@ export const useUpdateWorkflowVersionCache = () => {
       recordGqlFields,
       objectPermissionsByObjectMetadataId,
     });
+
+    return newCachedRecord;
   };
 
   return { updateWorkflowVersionCache };
