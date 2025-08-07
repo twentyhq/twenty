@@ -349,7 +349,6 @@
   },
   "workspaces": {
     "packages": [
-      "packages/twenty-chrome-extension",
       "packages/twenty-front",
       "packages/twenty-server",
       "packages/twenty-emails",
