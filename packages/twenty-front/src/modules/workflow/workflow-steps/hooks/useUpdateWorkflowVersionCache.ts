@@ -8,8 +8,8 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { WorkflowVersion } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
 import {
-    WorkflowAction,
-    WorkflowVersionStepChanges,
+  WorkflowAction,
+  WorkflowVersionStepChanges,
 } from '~/generated/graphql';
 
 export const useUpdateWorkflowVersionCache = () => {

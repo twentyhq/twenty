@@ -44,7 +44,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     const secretOrKeyProviderFunction = async (
       _request: Request,
       rawJwtToken: string,
-      done: (error: any, secret?: string | null) => void,
+      done: (error: Error | null, secret?: string | null) => void,
     ) => {
       try {
         const decodedToken = jwtWrapperService.decode<

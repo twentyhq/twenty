@@ -243,7 +243,7 @@ describe('WorkspaceService', () => {
 
       await service.deleteWorkspace(mockWorkspace.id, true);
 
-      expect(billingSubscriptionService.deleteSubscriptions).toHaveBeenCalled;
+      expect(billingSubscriptionService.deleteSubscriptions).toHaveBeenCalled();
 
       expect(workspaceRepository.softDelete).toHaveBeenCalledWith({
         id: mockWorkspace.id,

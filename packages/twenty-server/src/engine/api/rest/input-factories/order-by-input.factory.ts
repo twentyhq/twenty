@@ -60,7 +60,7 @@ export class OrderByInputFactory {
         itemFields = orderByItem;
       }
 
-      let fieldResult = {};
+      let fieldResult: Record<string, unknown> = {};
 
       itemFields
         .split('.')
@@ -69,15 +69,13 @@ export class OrderByInputFactory {
           if (Object.keys(fieldResult).length) {
             fieldResult = { [field]: fieldResult };
           } else {
-            // @ts-expect-error legacy noImplicitAny
-            fieldResult[field] = itemDirection;
+            fieldResult[field] = itemDirection as OrderByDirection;
           }
         }, itemDirection);
 
       const resultFields = Object.keys(fieldResult).map((key) => ({
-        // @ts-expect-error legacy noImplicitAny
         [key]: fieldResult[key],
-      }));
+      })) as Array<Record<string, OrderByDirection>>;
 
       result = [...result, ...resultFields];
     }

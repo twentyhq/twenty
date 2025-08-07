@@ -2,8 +2,8 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 
 import {
-  AuthException,
-  AuthExceptionCode,
+    AuthException,
+    AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { includesExpectedScopes } from 'src/engine/core-modules/auth/services/google-apis-scopes.service.util';
 import { getGoogleApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes';
@@ -42,7 +42,7 @@ export class GoogleAPIScopesService {
         scopes,
         isValid: includesExpectedScopes(scopes, expectedScopes),
       };
-    } catch (error) {
+    } catch {
       throw new AuthException(
         'Google account connect error: cannot read scopes from token',
         AuthExceptionCode.INSUFFICIENT_SCOPES,

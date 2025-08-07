@@ -43,9 +43,9 @@ export const useDeleteOneWorkflowVersion = () => {
       id: apolloCoreClient.cache.identify(cachedWorkflow),
       fields: {
         versions: () => {
-                  return cachedWorkflow.versions.filter(
-          (version: WorkflowVersion) => version.id !== workflowVersionId,
-        );
+          return cachedWorkflow.versions.filter(
+            (version: WorkflowVersion) => version.id !== workflowVersionId,
+          );
         },
       },
     });

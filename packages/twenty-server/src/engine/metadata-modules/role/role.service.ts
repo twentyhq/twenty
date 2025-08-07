@@ -8,14 +8,14 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
 import {
-    PermissionsException,
-    PermissionsExceptionCode,
-    PermissionsExceptionMessage,
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
 import {
-    UpdateRoleInput,
-    UpdateRolePayload,
+  UpdateRoleInput,
+  UpdateRolePayload,
 } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';

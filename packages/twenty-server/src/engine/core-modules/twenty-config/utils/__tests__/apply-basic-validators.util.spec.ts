@@ -43,7 +43,7 @@ describe('applyBasicValidators', () => {
 
   describe('boolean type', () => {
     it('should apply boolean transformers and validators', () => {
-      let capturedTransformFn;
+      let capturedTransformFn: ((params: { value: any }) => any) | undefined;
 
       (Transform as jest.Mock).mockImplementation((transformFn) => {
         capturedTransformFn = transformFn;
@@ -60,18 +60,16 @@ describe('applyBasicValidators', () => {
       expect(Transform).toHaveBeenCalled();
       expect(IsBoolean).toHaveBeenCalled();
 
-      const transformFn = capturedTransformFn;
+      const transformFn = capturedTransformFn!;
       const mockTransformParams = { value: 'true' };
 
       (configTransformers.boolean as jest.Mock).mockReturnValueOnce(true);
-      // @ts-expect-error legacy noImplicitAny
       const result1 = transformFn(mockTransformParams);
 
       expect(configTransformers.boolean).toHaveBeenCalledWith('true');
       expect(result1).toBe(true);
 
       (configTransformers.boolean as jest.Mock).mockReturnValueOnce(undefined);
-      // @ts-expect-error legacy noImplicitAny
       const result2 = transformFn(mockTransformParams);
 
       expect(result2).toBe('true');
@@ -80,7 +78,7 @@ describe('applyBasicValidators', () => {
 
   describe('number type', () => {
     it('should apply number transformers and validators', () => {
-      let capturedTransformFn;
+      let capturedTransformFn: ((params: { value: any }) => any) | undefined;
 
       (Transform as jest.Mock).mockImplementation((transformFn) => {
         capturedTransformFn = transformFn;
@@ -97,18 +95,16 @@ describe('applyBasicValidators', () => {
       expect(Transform).toHaveBeenCalled();
       expect(IsNumber).toHaveBeenCalled();
 
-      const transformFn = capturedTransformFn;
+      const transformFn = capturedTransformFn!;
       const mockTransformParams = { value: '42' };
 
       (configTransformers.number as jest.Mock).mockReturnValueOnce(42);
-      // @ts-expect-error legacy noImplicitAny
       const result1 = transformFn(mockTransformParams);
 
       expect(configTransformers.number).toHaveBeenCalledWith('42');
       expect(result1).toBe(42);
 
       (configTransformers.number as jest.Mock).mockReturnValueOnce(undefined);
-      // @ts-expect-error legacy noImplicitAny
       const result2 = transformFn(mockTransformParams);
 
       expect(result2).toBe('42');

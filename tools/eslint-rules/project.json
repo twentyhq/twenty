@@ -4,6 +4,16 @@
   "sourceRoot": "tools/eslint-rules",
   "tags": ["scope:shared"],
   "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/tools/eslint-rules",
+        "main": "tools/eslint-rules/index.ts",
+        "tsConfig": "tools/eslint-rules/tsconfig.json",
+        "assets": ["tools/eslint-rules/*.md"]
+      }
+    },
     "lint": {
       "options": {
         "eslintConfig": "{workspaceRoot}/.eslintrc.cjs",

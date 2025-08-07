@@ -12,10 +12,10 @@ import { generateDeterministicIndexName } from 'src/engine/metadata-modules/inde
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
-  WorkspaceMigrationIndexAction,
-  WorkspaceMigrationIndexActionType,
-  WorkspaceMigrationTableAction,
-  WorkspaceMigrationTableActionType,
+    WorkspaceMigrationIndexAction,
+    WorkspaceMigrationIndexActionType,
+    WorkspaceMigrationTableAction,
+    WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -93,7 +93,7 @@ export class IndexMetadataService {
         ...(isDefined(indexType) ? { indexType } : {}),
         isCustom,
       });
-    } catch (error) {
+    } catch {
       throw new Error(
         `Failed to create index ${indexName} on object metadata ${objectMetadata.nameSingular}`,
       );

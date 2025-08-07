@@ -47,7 +47,7 @@ const findFieldNode = (
 const parseValueNode = (
   valueNode: ValueNode,
   variables: GraphQLResolveInfo['variableValues'],
-): any => {
+): unknown => {
   switch (valueNode.kind) {
     case Kind.VARIABLE:
       return variables[valueNode.name.value];
@@ -61,8 +61,7 @@ const parseValueNode = (
     case Kind.LIST:
       return valueNode.values.map((value) => parseValueNode(value, variables));
     case Kind.OBJECT:
-      return valueNode.fields.reduce((obj, field) => {
-        // @ts-expect-error legacy noImplicitAny
+      return valueNode.fields.reduce<Record<string, unknown>>((obj, field) => {
         obj[field.name.value] = parseValueNode(field.value, variables);
 
         return obj;

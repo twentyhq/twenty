@@ -13,7 +13,11 @@ export const objectRecordChangedProperties = <
   newRecord: PRecord,
 ) => {
   const changedProperties = Object.keys(newRecord).filter(
-    (key: keyof PRecord) => !deepEqual(oldRecord[key], newRecord[key]),
+    (key) =>
+      !deepEqual(
+        oldRecord[key as keyof PRecord],
+        newRecord[key as keyof PRecord],
+      ),
   );
 
   return changedProperties;

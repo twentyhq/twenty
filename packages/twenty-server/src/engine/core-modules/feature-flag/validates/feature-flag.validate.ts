@@ -7,7 +7,8 @@ const assertIsFeatureFlagKey = (
   featureFlagKey: string,
   exceptionToThrow: CustomException,
 ): asserts featureFlagKey is FeatureFlagKey => {
-  if (isDefined(FeatureFlagKey[featureFlagKey as keyof typeof FeatureFlagKey])) return;
+  if (isDefined(FeatureFlagKey[featureFlagKey as keyof typeof FeatureFlagKey]))
+    return;
   throw exceptionToThrow;
 };
 

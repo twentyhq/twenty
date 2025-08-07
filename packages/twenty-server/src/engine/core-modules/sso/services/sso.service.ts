@@ -53,7 +53,7 @@ export class SSOService {
   private async getIssuerForOIDC(issuerUrl: string) {
     try {
       return await Issuer.discover(issuerUrl);
-    } catch (err) {
+    } catch {
       throw new SSOException(
         'Invalid issuer',
         SSOExceptionCode.INVALID_ISSUER_URL,

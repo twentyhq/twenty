@@ -9,11 +9,14 @@ export class ScalarsExplorerService {
   private scalarImplementations: Record<string, GraphQLScalarType>;
 
   constructor() {
-    this.scalarImplementations = scalars.reduce((acc: Record<string, GraphQLScalarType>, scalar) => {
-      acc[scalar.name] = scalar;
+    this.scalarImplementations = scalars.reduce(
+      (acc: Record<string, GraphQLScalarType>, scalar) => {
+        acc[scalar.name] = scalar;
 
-      return acc;
-    }, {});
+        return acc;
+      },
+      {},
+    );
   }
 
   getScalarImplementation(scalarName: string): GraphQLScalarType | undefined {

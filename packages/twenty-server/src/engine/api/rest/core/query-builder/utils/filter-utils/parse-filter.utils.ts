@@ -19,7 +19,7 @@ export const parseFilter = (
   filterQuery: string,
   objectMetadataItem: ObjectMetadataItemWithFieldMaps,
 ): Record<string, FieldValue> => {
-  const result = {};
+  const result: Record<string, FieldValue> = {};
   const match = filterQuery.match(
     `^(${Object.values(Conjunctions).join('|')})\\((.+)\\)$`,
   );
@@ -42,10 +42,8 @@ export const parseFilter = (
           `'filter' invalid. 'not' conjunction should contain only 1 condition. eg: not(field[eq]:1)`,
         );
       }
-      // @ts-expect-error legacy noImplicitAny
       result[conjunction] = subResult[0];
     } else {
-      // @ts-expect-error legacy noImplicitAny
       result[conjunction] = subResult;
     }
 

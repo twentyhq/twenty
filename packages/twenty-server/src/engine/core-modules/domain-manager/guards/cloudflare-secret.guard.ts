@@ -12,28 +12,36 @@ export class CloudflareSecretMatchGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     try {
-      const request = context.switchToHttp().getRequest<Request>();
+      const request = context
+        .switchToHttp()
+        .getRequest<
+          Request & { headers: Record<string, string | string[] | undefined> }
+        >();
 
       const cloudflareWebhookSecret = this.twentyConfigService.get(
         'CLOUDFLARE_WEBHOOK_SECRET',
       );
 
+      const cfWebhookAuth = request.headers['cf-webhook-auth'];
+      const authHeader = Array.isArray(cfWebhookAuth)
+        ? cfWebhookAuth[0]
+        : cfWebhookAuth;
+
       if (
         !cloudflareWebhookSecret ||
         (cloudflareWebhookSecret &&
-          // @ts-expect-error legacy noImplicitAny
-          (typeof request.headers['cf-webhook-auth'] === 'string' ||
-            timingSafeEqual(
-              // @ts-expect-error legacy noImplicitAny
-              Buffer.from(request.headers['cf-webhook-auth']),
-              Buffer.from(cloudflareWebhookSecret),
-            )))
+          authHeader &&
+          typeof authHeader === 'string' &&
+          timingSafeEqual(
+            Buffer.from(authHeader),
+            Buffer.from(cloudflareWebhookSecret),
+          ))
       ) {
         return true;
       }
 
       return false;
-    } catch (err) {
+    } catch {
       return false;
     }
   }

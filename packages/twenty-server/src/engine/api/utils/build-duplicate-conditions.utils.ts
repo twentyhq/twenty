@@ -40,21 +40,22 @@ export const buildDuplicateConditions = (
     );
 
     return criteriaWithMatchingArgs.map((criteria) => {
-      const condition = {};
+      const condition: Record<string, unknown> = {};
 
       criteria.forEach((columnName) => {
         const compositeFieldMetadata =
           compositeFieldMetadataMap.get(columnName);
 
         if (compositeFieldMetadata) {
-          // @ts-expect-error legacy noImplicitAny
+          const existingCondition = condition[
+            compositeFieldMetadata.parentField
+          ] as Record<string, unknown> | undefined;
+
           condition[compositeFieldMetadata.parentField] = {
-            // @ts-expect-error legacy noImplicitAny
-            ...condition[compositeFieldMetadata.parentField],
+            ...(existingCondition || {}),
             [compositeFieldMetadata.name]: { eq: record[columnName] },
           };
         } else {
-          // @ts-expect-error legacy noImplicitAny
           condition[columnName] = { eq: record[columnName] };
         }
       });

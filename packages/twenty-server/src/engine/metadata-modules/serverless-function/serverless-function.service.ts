@@ -27,12 +27,12 @@ import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serve
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import {
-  ServerlessFunctionException,
-  ServerlessFunctionExceptionCode,
+    ServerlessFunctionException,
+    ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import {
-  WorkflowVersionStepException,
-  WorkflowVersionStepExceptionCode,
+    WorkflowVersionStepException,
+    WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 
 @Injectable()
@@ -407,7 +407,7 @@ export class ServerlessFunctionService {
         this.twentyConfigService.get('SERVERLESS_FUNCTION_EXEC_THROTTLE_LIMIT'),
         this.twentyConfigService.get('SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL'),
       );
-    } catch (error) {
+    } catch {
       throw new ServerlessFunctionException(
         'Serverless function execution rate limit exceeded',
         ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_EXECUTION_LIMIT_REACHED,

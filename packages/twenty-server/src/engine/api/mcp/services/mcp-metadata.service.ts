@@ -1,19 +1,19 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
-import { Request } from 'express';
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
+import { Request } from 'express';
 import { JSONSchema7 } from 'json-schema';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { CreateToolsService } from 'src/engine/api/mcp/services/tools/create.tools.service';
+import { DeleteToolsService } from 'src/engine/api/mcp/services/tools/delete.tools.service';
+import { GetToolsService } from 'src/engine/api/mcp/services/tools/get.tools.service';
+import { UpdateToolsService } from 'src/engine/api/mcp/services/tools/update.tools.service';
 import { wrapJsonRpcResponse } from 'src/engine/core-modules/ai/utils/wrap-jsonrpc-response.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { CreateToolsService } from 'src/engine/api/mcp/services/tools/create.tools.service';
-import { UpdateToolsService } from 'src/engine/api/mcp/services/tools/update.tools.service';
-import { DeleteToolsService } from 'src/engine/api/mcp/services/tools/delete.tools.service';
-import { GetToolsService } from 'src/engine/api/mcp/services/tools/get.tools.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class MCPMetadataService {
@@ -146,7 +146,7 @@ export class MCPMetadataService {
         });
 
         return { result };
-      } catch (err) {
+      } catch {
         await this.metricsService.incrementCounter({
           key: MetricsKeys.AIToolExecutionFailed,
           attributes: {

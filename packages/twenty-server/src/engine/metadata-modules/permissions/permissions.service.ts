@@ -11,9 +11,9 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
 import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
+    PermissionsException,
+    PermissionsExceptionCode,
+    PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -247,7 +247,7 @@ export class PermissionsService {
       return permissionFlags.some(
         (permissionFlag) => permissionFlag.flag === flag,
       );
-    } catch (error) {
+    } catch {
       return false;
     }
   }

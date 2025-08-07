@@ -1,8 +1,8 @@
 import { isObject, isString } from '@sniptt/guards';
 import {
-  StepFilter,
-  StepFilterGroup,
-  ViewFilterOperand,
+    StepFilter,
+    StepFilterGroup,
+    ViewFilterOperand,
 } from 'twenty-shared/types';
 
 type ResolvedFilter = Omit<StepFilter, 'value' | 'stepOutputKey'> & {
@@ -104,7 +104,7 @@ function contains(leftValue: unknown, rightValue: unknown): boolean {
       } else {
         return leftValue.includes(parsedRightValue);
       }
-    } catch (error) {
+    } catch {
       return leftValue.includes(rightValue);
     }
   }

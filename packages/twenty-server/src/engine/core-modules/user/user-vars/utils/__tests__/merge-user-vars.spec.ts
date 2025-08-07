@@ -1,3 +1,4 @@
+import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { mergeUserVars } from 'src/engine/core-modules/user/user-vars/utils/merge-user-vars.util';
 
 describe('mergeUserVars', () => {
@@ -35,10 +36,11 @@ describe('mergeUserVars', () => {
   });
 
   it('should merge user vars correctly when user vars are empty', () => {
-    // @ts-expect-error legacy noImplicitAny
-    const userVars = [];
+    const userVars: Pick<
+      KeyValuePair,
+      'key' | 'value' | 'userId' | 'workspaceId'
+    >[] = [];
 
-    // @ts-expect-error legacy noImplicitAny
     const mergedUserVars = mergeUserVars(userVars);
 
     expect(mergedUserVars).toEqual(new Map());

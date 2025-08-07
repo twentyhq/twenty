@@ -3,10 +3,10 @@
 import * as crypto from 'crypto';
 
 import {
-  registerDecorator,
-  ValidationOptions,
-  ValidatorConstraint,
-  ValidatorConstraintInterface,
+    registerDecorator,
+    ValidationOptions,
+    ValidatorConstraint,
+    ValidatorConstraintInterface,
 } from 'class-validator';
 
 @ValidatorConstraint({ async: false })
@@ -30,7 +30,7 @@ export class IsX509CertificateConstraint
       const cert = new crypto.X509Certificate(der);
 
       return cert instanceof crypto.X509Certificate;
-    } catch (error) {
+    } catch {
       return false;
     }
   }
