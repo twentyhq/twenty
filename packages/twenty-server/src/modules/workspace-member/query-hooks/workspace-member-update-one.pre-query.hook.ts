@@ -8,8 +8,8 @@ import { UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import {
-    AuthException,
-    AuthExceptionCode,
+  AuthException,
+  AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';

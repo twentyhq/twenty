@@ -4,22 +4,28 @@ import { ValidationError } from 'src/engine/core-modules/graphql/utils/graphql-e
 
 type PositionType = 'first' | 'last' | number;
 
-const isValidStringPosition = (value: string): boolean =>
-  typeof value === 'string' && (value === 'first' || value === 'last');
+const VALID_STRING_POSITIONS = ['first', 'last'] as const;
 
-const isValidNumberPosition = (value: number): boolean =>
-  typeof value === 'number';
+type ValidStringPosition = (typeof VALID_STRING_POSITIONS)[number];
+
+const isValidStringPosition = (value: unknown): value is ValidStringPosition =>
+  typeof value === 'string' &&
+  VALID_STRING_POSITIONS.includes(value as ValidStringPosition);
+
+const isValidNumberPosition = (value: unknown): value is number =>
+  typeof value === 'number' && !isNaN(value) && isFinite(value);
 
 const checkPosition = (value: unknown): PositionType => {
-  if (
-    isValidNumberPosition(value as number) ||
-    isValidStringPosition(value as string)
-  ) {
-    return value as PositionType;
+  if (isValidNumberPosition(value)) {
+    return value;
+  }
+
+  if (isValidStringPosition(value)) {
+    return value;
   }
 
   throw new ValidationError(
-    `Invalid position value: '${value}'. Position must be 'first', 'last', or a number`,
+    `Invalid position value: '${value}'. Position must be 'first', 'last', or a finite number`,
   );
 };
 
@@ -30,17 +36,28 @@ export const PositionScalarType = new GraphQLScalarType({
   serialize: checkPosition,
   parseValue: checkPosition,
   parseLiteral(ast): PositionType {
-    if (
-      ast.kind == Kind.STRING &&
-      (ast.value === 'first' || ast.value === 'last')
-    ) {
-      return ast.value;
+    if (ast.kind === Kind.STRING) {
+      if (isValidStringPosition(ast.value)) {
+        return ast.value;
+      }
+      throw new ValidationError(
+        `Invalid string position value: '${ast.value}'. Must be 'first' or 'last'`,
+      );
     }
 
-    if (ast.kind == Kind.INT || ast.kind == Kind.FLOAT) {
-      return parseFloat(ast.value);
+    if (ast.kind === Kind.INT || ast.kind === Kind.FLOAT) {
+      const numericValue = parseFloat(ast.value);
+
+      if (isValidNumberPosition(numericValue)) {
+        return numericValue;
+      }
+      throw new ValidationError(
+        `Invalid numeric position value: '${ast.value}'. Must be a finite number`,
+      );
     }
 
-    throw new ValidationError('Invalid position value');
+    throw new ValidationError(
+      `Invalid position AST kind: '${ast.kind}'. Expected STRING, INT, or FLOAT`,
+    );
   },
 });

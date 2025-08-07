@@ -1,3 +1,5 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
   ApiKeyException,
   ApiKeyExceptionCode,
@@ -7,7 +9,6 @@ import {
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { assertUnreachable } from 'twenty-shared/utils';
 
 export const apiKeyGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof ApiKeyException) {

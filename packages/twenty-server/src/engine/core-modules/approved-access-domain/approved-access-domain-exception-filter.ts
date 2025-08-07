@@ -1,11 +1,12 @@
 import { Catch, ExceptionFilter } from '@nestjs/common';
 
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
-    ApprovedAccessDomainException,
-    ApprovedAccessDomainExceptionCode,
+  ApprovedAccessDomainException,
+  ApprovedAccessDomainExceptionCode,
 } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.exception';
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { assertUnreachable } from 'twenty-shared/utils';
 
 @Catch(ApprovedAccessDomainException)
 export class ApprovedAccessDomainExceptionFilter implements ExceptionFilter {

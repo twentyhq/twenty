@@ -18,8 +18,8 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
-    CalendarChannelSyncStage,
-    CalendarChannelVisibility,
+  CalendarChannelSyncStage,
+  CalendarChannelVisibility,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';

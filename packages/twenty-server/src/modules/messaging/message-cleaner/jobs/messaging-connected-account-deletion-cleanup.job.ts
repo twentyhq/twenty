@@ -15,7 +15,6 @@ export type MessagingConnectedAccountDeletionCleanupJobData = {
   scope: Scope.REQUEST,
 })
 export class MessagingConnectedAccountDeletionCleanupJob {
-
   constructor(
     private readonly messageCleanerService: MessagingMessageCleanerService,
   ) {}

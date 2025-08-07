@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';

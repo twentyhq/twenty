@@ -8,19 +8,18 @@ import { CompositeObjectTypeDefinitionFactory } from 'src/engine/api/graphql/wor
 import { EnumTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/enum-type-definition.factory';
 import { ExtendObjectTypeDefinitionV2Factory } from 'src/engine/api/graphql/workspace-schema-builder/factories/extend-object-type-definition-v2.factory';
 import { RelationConnectInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/relation-connect-input-type-definition.factory';
-
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 import { ConnectionTypeDefinitionFactory } from './factories/connection-type-definition.factory';
 import { EdgeTypeDefinitionFactory } from './factories/edge-type-definition.factory';
 import {
-    InputTypeDefinitionFactory,
-    InputTypeDefinitionKind,
+  InputTypeDefinitionFactory,
+  InputTypeDefinitionKind,
 } from './factories/input-type-definition.factory';
 import {
-    ObjectTypeDefinitionFactory,
-    ObjectTypeDefinitionKind,
+  ObjectTypeDefinitionFactory,
+  ObjectTypeDefinitionKind,
 } from './factories/object-type-definition.factory';
 import { WorkspaceBuildSchemaOptions } from './interfaces/workspace-build-schema-options.interface';
 import { TypeDefinitionsStorage } from './storages/type-definitions.storage';

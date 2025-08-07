@@ -1,3 +1,5 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
@@ -6,7 +8,6 @@ import {
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { assertUnreachable } from 'twenty-shared/utils';
 
 export const graphqlQueryRunnerExceptionHandler = (
   error: GraphqlQueryRunnerException,

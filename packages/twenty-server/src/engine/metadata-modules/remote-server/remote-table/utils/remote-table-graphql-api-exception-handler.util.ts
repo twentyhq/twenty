@@ -1,13 +1,14 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
-    ConflictError,
-    NotFoundError,
-    UserInputError,
+  ConflictError,
+  NotFoundError,
+  UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-    RemoteTableException,
-    RemoteTableExceptionCode,
+  RemoteTableException,
+  RemoteTableExceptionCode,
 } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.exception';
-import { assertUnreachable } from 'twenty-shared/utils';
 
 export const remoteTableGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof RemoteTableException) {

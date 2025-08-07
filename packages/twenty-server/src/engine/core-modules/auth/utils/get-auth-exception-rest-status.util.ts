@@ -1,8 +1,9 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { assertUnreachable } from 'twenty-shared/utils';
 
 export const getAuthExceptionRestStatus = (exception: AuthException) => {
   switch (exception.code) {

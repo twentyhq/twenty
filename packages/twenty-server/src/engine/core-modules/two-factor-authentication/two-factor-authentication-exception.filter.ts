@@ -1,16 +1,16 @@
 import { Catch, ExceptionFilter } from '@nestjs/common';
 
 import { t } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
-    ForbiddenError,
-    UserInputError,
+  ForbiddenError,
+  UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-    TwoFactorAuthenticationException,
-    TwoFactorAuthenticationExceptionCode,
+  TwoFactorAuthenticationException,
+  TwoFactorAuthenticationExceptionCode,
 } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception';
-import { assertUnreachable } from 'twenty-shared/utils';
 
 @Catch(TwoFactorAuthenticationException)
 export class TwoFactorAuthenticationExceptionFilter implements ExceptionFilter {

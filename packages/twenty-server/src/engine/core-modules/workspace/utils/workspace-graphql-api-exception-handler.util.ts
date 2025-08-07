@@ -1,13 +1,14 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
-    ConflictError,
-    ForbiddenError,
-    NotFoundError,
+  ConflictError,
+  ForbiddenError,
+  NotFoundError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-    WorkspaceException,
-    WorkspaceExceptionCode,
+  WorkspaceException,
+  WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
-import { assertUnreachable } from 'twenty-shared/utils';
 
 export const workspaceGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof WorkspaceException) {

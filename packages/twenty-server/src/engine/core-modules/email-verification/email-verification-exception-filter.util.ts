@@ -1,16 +1,16 @@
 import { Catch, ExceptionFilter } from '@nestjs/common';
 
 import { t } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
-    EmailVerificationException,
-    EmailVerificationExceptionCode,
+  EmailVerificationException,
+  EmailVerificationExceptionCode,
 } from 'src/engine/core-modules/email-verification/email-verification.exception';
 import {
-    ForbiddenError,
-    UserInputError,
+  ForbiddenError,
+  UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { assertUnreachable } from 'twenty-shared/utils';
 
 @Catch(EmailVerificationException)
 export class EmailVerificationExceptionFilter implements ExceptionFilter {

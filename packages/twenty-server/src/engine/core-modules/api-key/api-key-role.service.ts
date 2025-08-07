@@ -5,10 +5,9 @@ import { DataSource, EntityManager, In, Repository } from 'typeorm';
 
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
-    ApiKeyException,
-    ApiKeyExceptionCode,
+  ApiKeyException,
+  ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/api-key.exception';
-
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';

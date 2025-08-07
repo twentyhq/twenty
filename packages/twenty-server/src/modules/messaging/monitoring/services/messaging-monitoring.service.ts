@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-
-
 type MessagingMonitoringTrackInput = {
   eventName: string;
   workspaceId?: string;
@@ -15,6 +13,7 @@ type MessagingMonitoringTrackInput = {
 export class MessagingMonitoringService {
   constructor() {}
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars unused-imports/no-unused-vars
   public async track({
     eventName,
     workspaceId,

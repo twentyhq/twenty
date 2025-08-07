@@ -1,16 +1,16 @@
 import { t } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
-    AuthException,
-    AuthExceptionCode,
+  AuthException,
+  AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import {
-    AuthenticationError,
-    ForbiddenError,
-    NotFoundError,
-    UserInputError,
+  AuthenticationError,
+  ForbiddenError,
+  NotFoundError,
+  UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { assertUnreachable } from 'twenty-shared/utils';
 
 export const authGraphqlApiExceptionHandler = (exception: AuthException) => {
   switch (exception.code) {

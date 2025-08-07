@@ -1,9 +1,10 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
-    CaptchaException,
-    CaptchaExceptionCode,
+  CaptchaException,
+  CaptchaExceptionCode,
 } from 'src/engine/core-modules/captcha/captcha.exception';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { assertUnreachable } from 'twenty-shared/utils';
 
 export const captchaGraphqlApiExceptionHandler = (
   exception: CaptchaException,

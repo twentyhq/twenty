@@ -6,7 +6,9 @@ import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-const isRecordGqlConnection = (value: unknown): value is RecordGqlConnection => {
+const isRecordGqlConnection = (
+  value: unknown,
+): value is RecordGqlConnection => {
   return (
     typeof value === 'object' &&
     value !== null &&
