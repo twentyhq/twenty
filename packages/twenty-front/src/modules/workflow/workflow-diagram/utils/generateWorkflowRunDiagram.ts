@@ -1,7 +1,6 @@
 import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
 import {
   WorkflowDiagramEdgeData,
-  WorkflowDiagramEdgeType,
   WorkflowRunDiagram,
   WorkflowRunDiagramNode,
   WorkflowRunDiagramStepNodeData,
@@ -16,12 +15,10 @@ export const generateWorkflowRunDiagram = ({
   trigger,
   steps,
   stepInfos,
-  isWorkflowFilteringEnabled,
 }: {
   trigger: WorkflowTrigger;
   steps: Array<WorkflowStep>;
   stepInfos: WorkflowRunStepInfos | undefined;
-  isWorkflowFilteringEnabled: boolean;
 }): {
   diagram: WorkflowRunDiagram;
   stepToOpenByDefault:
@@ -86,13 +83,9 @@ export const generateWorkflowRunDiagram = ({
 
     const stepInfo = stepInfos?.[parentNode.id];
 
-    const edgeType: WorkflowDiagramEdgeType = isWorkflowFilteringEnabled
-      ? 'empty-filter--run'
-      : 'filtering-disabled--run';
-
     return {
       ...edge,
-      type: edgeType,
+      type: 'empty-filter--run',
       data: {
         ...edge.data,
         edgeType: 'default',
@@ -100,16 +93,6 @@ export const generateWorkflowRunDiagram = ({
       } satisfies WorkflowDiagramEdgeData,
     };
   });
-
-  if (!isWorkflowFilteringEnabled) {
-    return {
-      diagram: {
-        nodes: workflowRunDiagramNodes,
-        edges: workflowRunDiagramEdges,
-      },
-      stepToOpenByDefault,
-    };
-  }
 
   return {
     diagram: transformFilterNodesAsEdges({

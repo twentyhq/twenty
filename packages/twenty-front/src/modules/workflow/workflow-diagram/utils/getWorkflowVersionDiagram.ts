@@ -4,8 +4,8 @@ import {
   WorkflowDiagramEdgeType,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
-import { isDefined } from 'twenty-shared/utils';
 import { transformFilterNodesAsEdges } from '@/workflow/workflow-diagram/utils/transformFilterNodesAsEdges';
+import { isDefined } from 'twenty-shared/utils';
 
 const EMPTY_DIAGRAM: WorkflowDiagram = {
   nodes: [],
@@ -13,28 +13,18 @@ const EMPTY_DIAGRAM: WorkflowDiagram = {
 };
 
 const getEdgeTypeToCreateByDefault = ({
-  isWorkflowFilteringEnabled,
   isEditable,
 }: {
-  isWorkflowFilteringEnabled: boolean;
   isEditable: boolean;
 }): WorkflowDiagramEdgeType => {
-  if (isWorkflowFilteringEnabled) {
-    return isEditable ? 'empty-filter--editable' : 'empty-filter--readonly';
-  }
-
-  return isEditable
-    ? 'filtering-disabled--editable'
-    : 'filtering-disabled--readonly';
+  return isEditable ? 'empty-filter--editable' : 'empty-filter--readonly';
 };
 
 export const getWorkflowVersionDiagram = ({
   workflowVersion,
-  isWorkflowFilteringEnabled,
   isEditable,
 }: {
   workflowVersion: WorkflowVersion | undefined;
-  isWorkflowFilteringEnabled: boolean;
   isEditable: boolean;
 }): WorkflowDiagram => {
   if (!isDefined(workflowVersion)) {
@@ -45,7 +35,6 @@ export const getWorkflowVersionDiagram = ({
     trigger: workflowVersion.trigger ?? undefined,
     steps: workflowVersion.steps ?? [],
     defaultEdgeType: getEdgeTypeToCreateByDefault({
-      isWorkflowFilteringEnabled,
       isEditable,
     }),
   });

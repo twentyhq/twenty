@@ -101,7 +101,7 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-      isWorkflowFilteringEnabled: true,
+      
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -330,7 +330,7 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-      isWorkflowFilteringEnabled: true,
+      
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -559,7 +559,7 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-      isWorkflowFilteringEnabled: true,
+      
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -807,7 +807,7 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-      isWorkflowFilteringEnabled: true,
+      
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -1035,7 +1035,7 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-      isWorkflowFilteringEnabled: true,
+      
     });
 
     expect(result).toMatchInlineSnapshot(`
