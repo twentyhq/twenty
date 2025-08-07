@@ -4,6 +4,7 @@ import {
 } from 'test/integration/constants/test-view-ids.constants';
 import { createViewFilterOperationFactory } from 'test/integration/graphql/utils/create-view-filter-operation-factory.util';
 import { deleteViewFilterOperationFactory } from 'test/integration/graphql/utils/delete-view-filter-operation-factory.util';
+import { destroyViewFilterOperationFactory } from 'test/integration/graphql/utils/destroy-view-filter-operation-factory.util';
 import { findViewFiltersOperationFactory } from 'test/integration/graphql/utils/find-view-filters-operation-factory.util';
 import {
   assertGraphQLErrorResponse,
@@ -219,6 +220,43 @@ describe('View Filter Resolver', () => {
           ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND,
           TEST_NOT_EXISTING_VIEW_FILTER_ID,
         ),
+      );
+    });
+  });
+
+  describe('destroyCoreViewFilter', () => {
+    it('should destroy an existing view filter', async () => {
+      const createOperation = createViewFilterOperationFactory({
+        data: createViewFilterData(testViewId, {
+          operand: ViewFilterOperand.CONTAINS,
+          value: 'to destroy',
+        }),
+      });
+
+      const createResponse = await makeGraphqlAPIRequest(createOperation);
+
+      const viewFilterId = createResponse.body.data.createCoreViewFilter.id;
+
+      const destroyOperation = destroyViewFilterOperationFactory({
+        viewFilterId: viewFilterId,
+      });
+
+      const response = await makeGraphqlAPIRequest(destroyOperation);
+
+      assertGraphQLSuccessfulResponse(response);
+      expect(response.body.data.destroyCoreViewFilter).toBe(true);
+    });
+
+    it('should throw an error when destroying non-existent view filter', async () => {
+      const operation = destroyViewFilterOperationFactory({
+        viewFilterId: TEST_NOT_EXISTING_VIEW_FILTER_ID,
+      });
+      const response = await makeGraphqlAPIRequest(operation);
+
+      assertGraphQLErrorResponse(
+        response,
+        ErrorCode.NOT_FOUND,
+        ViewFilterExceptionMessage.VIEW_FILTER_NOT_FOUND,
       );
     });
   });
