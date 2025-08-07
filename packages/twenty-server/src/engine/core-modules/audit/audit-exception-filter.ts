@@ -1,9 +1,10 @@
 import { Catch, type ExceptionFilter } from '@nestjs/common';
+
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
-    AuditException,
-    AuditExceptionCode,
+  AuditException,
+  AuditExceptionCode,
 } from 'src/engine/core-modules/audit/audit.exception';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 

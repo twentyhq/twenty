@@ -1,4 +1,5 @@
 import { Catch, type ExceptionFilter } from '@nestjs/common';
+
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {

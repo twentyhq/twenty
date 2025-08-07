@@ -1,9 +1,10 @@
 import { Catch, type ExceptionFilter } from '@nestjs/common';
+
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
-    SearchException,
-    SearchExceptionCode,
+  SearchException,
+  SearchExceptionCode,
 } from 'src/engine/core-modules/search/exceptions/search.exception';
 
 @Catch(SearchException)

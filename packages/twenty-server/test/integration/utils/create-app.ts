@@ -1,6 +1,10 @@
 import { APP_FILTER } from '@nestjs/core';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
+import { type NestExpressApplication } from '@nestjs/platform-express';
+import {
+  Test,
+  type TestingModule,
+  type TestingModuleBuilder,
+} from '@nestjs/testing';
 
 import { AppModule } from 'src/app.module';
 import { StripeSDKMockService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/mocks/stripe-sdk-mock.service';
