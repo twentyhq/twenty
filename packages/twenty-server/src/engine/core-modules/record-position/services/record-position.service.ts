@@ -93,9 +93,24 @@ export class RecordPositionService {
       }
     }
 
+    // Helper to check if value is a valid number
+    const isNumber = (value: unknown): value is number => 
+      typeof value === 'number' && !isNaN(value);
+
     const numericPositions = recordsWithExistingNumberPosition
       .map((record) => record.position)
-      .filter((pos): pos is number => typeof pos === 'number' && !isNaN(pos));
+      .filter(isNumber);
+
+    const calculatePosition = (
+      mathOperation: (positions: number[], existingPosition: number) => number,
+      existingPosition: number | null,
+    ): number => {
+      const fallback = isDefined(existingPosition) ? existingPosition : 1;
+
+      return numericPositions.length > 0
+        ? mathOperation(numericPositions, fallback)
+        : fallback;
+    };
 
     if (recordsThatNeedFirstPosition.length > 0) {
       const existingRecordMinPosition = await this.findMinPosition(
@@ -103,17 +118,10 @@ export class RecordPositionService {
         workspaceId,
       );
 
-      const minPosition =
-        numericPositions.length > 0
-          ? Math.min(
-              ...numericPositions,
-              isDefined(existingRecordMinPosition)
-                ? existingRecordMinPosition
-                : 1,
-            )
-          : isDefined(existingRecordMinPosition)
-            ? existingRecordMinPosition
-            : 1;
+      const minPosition = calculatePosition(
+        (positions, fallback) => Math.min(...positions, fallback),
+        existingRecordMinPosition,
+      );
 
       for (const [index, record] of recordsThatNeedFirstPosition.entries()) {
         record.position = minPosition - index - 1;
@@ -126,17 +134,10 @@ export class RecordPositionService {
         workspaceId,
       );
 
-      const maxPosition =
-        numericPositions.length > 0
-          ? Math.max(
-              ...numericPositions,
-              isDefined(existingRecordMaxPosition)
-                ? existingRecordMaxPosition
-                : 1,
-            )
-          : isDefined(existingRecordMaxPosition)
-            ? existingRecordMaxPosition
-            : 1;
+      const maxPosition = calculatePosition(
+        (positions, fallback) => Math.max(...positions, fallback),
+        existingRecordMaxPosition,
+      );
 
       for (const [index, record] of recordsThatNeedLastPosition.entries()) {
         record.position = maxPosition + index + 1;
