@@ -15,9 +15,11 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-and-its-flat-object-metadata.util';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { mergeFlatFieldMetadatasInFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/merge-flat-field-metadatas-in-flat-object-metadata.util';
+import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { dispatchAndMergeFlatFieldMetadatasInFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/dispatch-and-merge-flat-field-metadatas-in-flat-object-metadatas.util';
 import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-with-flat-field-maps-to-flat-object-metadatas.util';
@@ -51,6 +53,55 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
     }
 
     return createdFieldMetadata;
+  }
+
+  private computeOtherFlatObjectMetadataToValidate({
+    flatFieldMetadataToCreate,
+    flatFieldMetadatasToCreate,
+    existingFlatObjectMetadataMaps,
+  }: {
+    existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+    flatFieldMetadatasToCreate: FlatFieldMetadata[];
+    flatFieldMetadataToCreate: FlatFieldMetadata;
+  }): FlatObjectMetadata | undefined {
+    if (
+      isFlatFieldMetadataEntityOfType(
+        flatFieldMetadataToCreate,
+        FieldMetadataType.RELATION,
+      ) ||
+      isFlatFieldMetadataEntityOfType(
+        flatFieldMetadataToCreate,
+        FieldMetadataType.MORPH_RELATION,
+      )
+    ) {
+      const relatedFlatFieldMetadataToCreate = flatFieldMetadatasToCreate.find(
+        (relatedFlatFieldMetadata) =>
+          isFlatFieldMetadataEntityOfType(
+            relatedFlatFieldMetadata,
+            FieldMetadataType.RELATION,
+          ) &&
+          relatedFlatFieldMetadata.id ===
+            flatFieldMetadataToCreate.relationTargetFieldMetadataId,
+      );
+      const relatedFlatObjectMetadata = isDefined(
+        relatedFlatFieldMetadataToCreate,
+      )
+        ? existingFlatObjectMetadataMaps.byId[
+            relatedFlatFieldMetadataToCreate.objectMetadataId
+          ]
+        : undefined;
+
+      return isDefined(relatedFlatObjectMetadata) &&
+        isDefined(relatedFlatFieldMetadataToCreate)
+        ? mergeFlatFieldMetadatasInFlatObjectMetadata({
+            flatFieldMetadatas: [relatedFlatFieldMetadataToCreate],
+            flatObjectMetadata:
+              fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata(
+                relatedFlatObjectMetadata,
+              ),
+          })
+        : undefined;
+    }
   }
 
   async createMany(
@@ -106,46 +157,12 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
     );
 
     for (const flatFieldMetadataToCreate of flatFieldMetadatasToCreate) {
-      let otherFlatObjectMetadataToValidate: FlatObjectMetadata | undefined =
-        undefined;
-
-      if (
-        isFlatFieldMetadataEntityOfType(
+      const otherFlatObjectMetadataToValidate =
+        this.computeOtherFlatObjectMetadataToValidate({
+          existingFlatObjectMetadataMaps,
+          flatFieldMetadatasToCreate,
           flatFieldMetadataToCreate,
-          FieldMetadataType.RELATION,
-        ) ||
-        isFlatFieldMetadataEntityOfType(
-          flatFieldMetadataToCreate,
-          FieldMetadataType.MORPH_RELATION,
-        )
-      ) {
-        const relatedFlatFieldMetadataToCreate =
-          flatFieldMetadatasToCreate.find(
-            (relatedFlatFieldMetadata) =>
-              isFlatFieldMetadataEntityOfType(
-                relatedFlatFieldMetadata,
-                FieldMetadataType.RELATION,
-              ) &&
-              relatedFlatFieldMetadata.id ===
-                flatFieldMetadataToCreate.relationTargetFieldMetadataId,
-          );
-        const relatedFlatObjectMetadata = isDefined(
-          relatedFlatFieldMetadataToCreate,
-        )
-          ? existingFlatObjectMetadataMaps.byId[
-              relatedFlatFieldMetadataToCreate.objectMetadataId
-            ]
-          : undefined;
-
-        otherFlatObjectMetadataToValidate =
-          isDefined(relatedFlatObjectMetadata) &&
-          isDefined(relatedFlatFieldMetadataToCreate)
-            ? mergeFlatFieldMetadatasInFlatObjectMetadata({
-                flatFieldMetadatas: [relatedFlatFieldMetadataToCreate],
-                flatObjectMetadata: relatedFlatObjectMetadata,
-              })
-            : undefined;
-      }
+        });
 
       const validationErrors =
         await this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadata(
