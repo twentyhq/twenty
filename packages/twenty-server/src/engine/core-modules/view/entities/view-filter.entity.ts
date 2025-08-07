@@ -38,6 +38,7 @@ export class ViewFilter {
   @Column({
     nullable: false,
     type: 'enum',
+    enumName: 'ViewFilterOperand',
     enum: ViewFilterOperand,
     default: ViewFilterOperand.CONTAINS,
   })

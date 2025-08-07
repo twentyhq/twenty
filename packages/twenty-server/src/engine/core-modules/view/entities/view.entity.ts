@@ -67,6 +67,7 @@ export class View {
 
   @Column({
     type: 'enum',
+    enumName: 'ViewOpenRecordIn',
     enum: ViewOpenRecordIn,
     nullable: false,
     default: ViewOpenRecordIn.SIDE_PANEL,

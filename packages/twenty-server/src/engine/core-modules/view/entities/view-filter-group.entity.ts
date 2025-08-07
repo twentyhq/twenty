@@ -35,6 +35,7 @@ export class ViewFilterGroup {
 
   @Column({
     type: 'enum',
+    enumName: 'ViewFilterGroupLogicalOperator',
     enum: ViewFilterGroupLogicalOperator,
     nullable: false,
     default: ViewFilterGroupLogicalOperator.NOT,

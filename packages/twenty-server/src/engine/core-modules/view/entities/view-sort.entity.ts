@@ -42,6 +42,7 @@ export class ViewSort {
   @Column({
     nullable: false,
     type: 'enum',
+    enumName: 'ViewSortDirection',
     enum: ViewSortDirection,
     default: ViewSortDirection.ASC,
   })
