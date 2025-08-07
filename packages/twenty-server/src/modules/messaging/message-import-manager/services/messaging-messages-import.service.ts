@@ -123,12 +123,14 @@ export class MessagingMessagesImportService {
         blocklist.map((blocklistItem) => blocklistItem.handle),
       );
 
-      await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
-        messagesToSave,
-        messageChannel,
-        connectedAccountWithFreshTokens,
-        workspaceId,
-      );
+      if (messagesToSave.length > 0) {
+        await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
+          messagesToSave,
+          messageChannel,
+          connectedAccountWithFreshTokens,
+          workspaceId,
+        );
+      }
 
       if (
         messageIdsToFetch.length < MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE

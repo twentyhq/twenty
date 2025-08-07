@@ -10,17 +10,19 @@ export const filterEmails = (
   messages: MessageWithParticipants[],
   blocklist: string[],
 ) => {
+  const messagesWithoutIcsAttachments = filterOutIcsAttachments(messages);
+
   const messagesWithoutBlocklisted = filterOutBlocklistedMessages(
     [primaryHandle, ...handleAliases],
-    filterOutIcsAttachments(messages),
+    messagesWithoutIcsAttachments,
     blocklist,
   );
 
-  if (isWorkEmail(primaryHandle)) {
-    return filterOutInternals(primaryHandle, messagesWithoutBlocklisted);
-  }
+  const messagesWithoutInternals = isWorkEmail(primaryHandle)
+    ? filterOutInternals(primaryHandle, messagesWithoutBlocklisted)
+    : messagesWithoutBlocklisted;
 
-  return messagesWithoutBlocklisted;
+  return messagesWithoutInternals;
 };
 
 const filterOutBlocklistedMessages = (
