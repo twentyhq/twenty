@@ -1,3 +1,6 @@
+import { t } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import { CustomException } from 'src/utils/custom-exception';
 
 export class ViewFilterGroupException extends CustomException {
@@ -16,16 +19,43 @@ export enum ViewFilterGroupExceptionCode {
   INVALID_VIEW_FILTER_GROUP_DATA = 'INVALID_VIEW_FILTER_GROUP_DATA',
 }
 
-export enum ViewFilterGroupExceptionMessage {
-  WORKSPACE_ID_REQUIRED = 'WorkspaceId is required',
-  VIEW_ID_REQUIRED = 'ViewId is required',
-  VIEW_FILTER_GROUP_NOT_FOUND = 'View filter group not found',
-  INVALID_VIEW_FILTER_GROUP_DATA = 'Invalid view filter group data',
-  FIELD_METADATA_ID_REQUIRED = 'FieldMetadataId is required',
+export enum ViewFilterGroupExceptionMessageKey {
+  WORKSPACE_ID_REQUIRED = 'WORKSPACE_ID_REQUIRED',
+  VIEW_ID_REQUIRED = 'VIEW_ID_REQUIRED',
+  VIEW_FILTER_GROUP_NOT_FOUND = 'VIEW_FILTER_GROUP_NOT_FOUND',
+  INVALID_VIEW_FILTER_GROUP_DATA = 'INVALID_VIEW_FILTER_GROUP_DATA',
+  FIELD_METADATA_ID_REQUIRED = 'FIELD_METADATA_ID_REQUIRED',
 }
 
-export enum ViewFilterGroupExceptionUserFriendlyMessage {
-  WORKSPACE_ID_REQUIRED = 'WorkspaceId is required to create a view filter group.',
-  VIEW_ID_REQUIRED = 'ViewId is required to create a view filter group.',
-  FIELD_METADATA_ID_REQUIRED = 'FieldMetadataId is required to create a view filter group.',
-}
+export const generateViewFilterGroupExceptionMessage = (
+  key: ViewFilterGroupExceptionMessageKey,
+  id?: string,
+) => {
+  switch (key) {
+    case ViewFilterGroupExceptionMessageKey.WORKSPACE_ID_REQUIRED:
+      return 'WorkspaceId is required';
+    case ViewFilterGroupExceptionMessageKey.VIEW_ID_REQUIRED:
+      return 'ViewId is required';
+    case ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND:
+      return `View filter group${id ? ` (id: ${id})` : ''} not found`;
+    case ViewFilterGroupExceptionMessageKey.INVALID_VIEW_FILTER_GROUP_DATA:
+      return `Invalid view filter group data${id ? ` for view filter group id: ${id}` : ''}`;
+    case ViewFilterGroupExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
+      return 'FieldMetadataId is required';
+    default:
+      assertUnreachable(key);
+  }
+};
+
+export const generateViewFilterGroupUserFriendlyExceptionMessage = (
+  key: ViewFilterGroupExceptionMessageKey,
+) => {
+  switch (key) {
+    case ViewFilterGroupExceptionMessageKey.WORKSPACE_ID_REQUIRED:
+      return t`WorkspaceId is required to create a view filter group.`;
+    case ViewFilterGroupExceptionMessageKey.VIEW_ID_REQUIRED:
+      return t`ViewId is required to create a view filter group.`;
+    case ViewFilterGroupExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
+      return t`FieldMetadataId is required to create a view filter group.`;
+  }
+};

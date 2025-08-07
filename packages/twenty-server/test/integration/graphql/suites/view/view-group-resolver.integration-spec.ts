@@ -22,7 +22,10 @@ import {
 } from 'test/integration/utils/view-test.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ViewGroupExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-group.exception';
+import {
+  generateViewGroupExceptionMessage,
+  ViewGroupExceptionMessageKey,
+} from 'src/engine/core-modules/view/exceptions/view-group.exception';
 
 describe('View Group Resolver', () => {
   let testViewId: string;
@@ -166,7 +169,10 @@ describe('View Group Resolver', () => {
       assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
-        ViewGroupExceptionMessage.VIEW_GROUP_NOT_FOUND,
+        generateViewGroupExceptionMessage(
+          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_GROUP_ID,
+        ),
       );
     });
   });
@@ -202,7 +208,10 @@ describe('View Group Resolver', () => {
       assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
-        ViewGroupExceptionMessage.VIEW_GROUP_NOT_FOUND,
+        generateViewGroupExceptionMessage(
+          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_GROUP_ID,
+        ),
       );
     });
   });

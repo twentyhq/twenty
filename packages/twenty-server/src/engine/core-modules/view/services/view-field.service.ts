@@ -8,8 +8,9 @@ import { ViewField } from 'src/engine/core-modules/view/entities/view-field.enti
 import {
   ViewFieldException,
   ViewFieldExceptionCode,
-  ViewFieldExceptionMessage,
-  ViewFieldExceptionUserFriendlyMessage,
+  ViewFieldExceptionMessageKey,
+  generateViewFieldExceptionMessage,
+  generateViewFieldUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
 
 @Injectable()
@@ -61,33 +62,42 @@ export class ViewFieldService {
   async create(viewFieldData: Partial<ViewField>): Promise<ViewField> {
     if (!isDefined(viewFieldData.workspaceId)) {
       throw new ViewFieldException(
-        ViewFieldExceptionMessage.WORKSPACE_ID_REQUIRED,
+        generateViewFieldExceptionMessage(
+          ViewFieldExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+        ),
         ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
         {
-          userFriendlyMessage:
-            ViewFieldExceptionUserFriendlyMessage.WORKSPACE_ID_REQUIRED,
+          userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
+            ViewFieldExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+          ),
         },
       );
     }
 
     if (!isDefined(viewFieldData.viewId)) {
       throw new ViewFieldException(
-        ViewFieldExceptionMessage.VIEW_ID_REQUIRED,
+        generateViewFieldExceptionMessage(
+          ViewFieldExceptionMessageKey.VIEW_ID_REQUIRED,
+        ),
         ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
         {
-          userFriendlyMessage:
-            ViewFieldExceptionUserFriendlyMessage.VIEW_ID_REQUIRED,
+          userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
+            ViewFieldExceptionMessageKey.VIEW_ID_REQUIRED,
+          ),
         },
       );
     }
 
     if (!isDefined(viewFieldData.fieldMetadataId)) {
       throw new ViewFieldException(
-        ViewFieldExceptionMessage.FIELD_METADATA_ID_REQUIRED,
+        generateViewFieldExceptionMessage(
+          ViewFieldExceptionMessageKey.FIELD_METADATA_ID_REQUIRED,
+        ),
         ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
         {
-          userFriendlyMessage:
-            ViewFieldExceptionUserFriendlyMessage.FIELD_METADATA_ID_REQUIRED,
+          userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
+            ViewFieldExceptionMessageKey.FIELD_METADATA_ID_REQUIRED,
+          ),
         },
       );
     }
@@ -106,7 +116,10 @@ export class ViewFieldService {
 
     if (!isDefined(existingViewField)) {
       throw new ViewFieldException(
-        ViewFieldExceptionMessage.VIEW_FIELD_NOT_FOUND,
+        generateViewFieldExceptionMessage(
+          ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
+          id,
+        ),
         ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
       );
     }
@@ -124,7 +137,10 @@ export class ViewFieldService {
 
     if (!isDefined(viewField)) {
       throw new ViewFieldException(
-        ViewFieldExceptionMessage.VIEW_FIELD_NOT_FOUND,
+        generateViewFieldExceptionMessage(
+          ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
+          id,
+        ),
         ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
       );
     }

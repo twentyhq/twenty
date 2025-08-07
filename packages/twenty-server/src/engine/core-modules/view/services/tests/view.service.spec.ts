@@ -9,8 +9,9 @@ import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import {
   ViewException,
   ViewExceptionCode,
-  ViewExceptionMessage,
-  ViewExceptionUserFriendlyMessage,
+  ViewExceptionMessageKey,
+  generateViewExceptionMessage,
+  generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 
@@ -165,11 +166,14 @@ describe('ViewService', () => {
 
       await expect(viewService.create(invalidData)).rejects.toThrow(
         new ViewException(
-          ViewExceptionMessage.WORKSPACE_ID_REQUIRED,
+          generateViewExceptionMessage(
+            ViewExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+          ),
           ViewExceptionCode.INVALID_VIEW_DATA,
           {
-            userFriendlyMessage:
-              ViewExceptionUserFriendlyMessage.WORKSPACE_ID_REQUIRED,
+            userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
+              ViewExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+            ),
           },
         ),
       );
@@ -180,11 +184,14 @@ describe('ViewService', () => {
 
       await expect(viewService.create(invalidData)).rejects.toThrow(
         new ViewException(
-          ViewExceptionMessage.OBJECT_METADATA_ID_REQUIRED,
+          generateViewExceptionMessage(
+            ViewExceptionMessageKey.OBJECT_METADATA_ID_REQUIRED,
+          ),
           ViewExceptionCode.INVALID_VIEW_DATA,
           {
-            userFriendlyMessage:
-              ViewExceptionUserFriendlyMessage.OBJECT_METADATA_ID_REQUIRED,
+            userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
+              ViewExceptionMessageKey.OBJECT_METADATA_ID_REQUIRED,
+            ),
           },
         ),
       );
@@ -222,7 +229,10 @@ describe('ViewService', () => {
         viewService.update(id, workspaceId, updateData),
       ).rejects.toThrow(
         new ViewException(
-          ViewExceptionMessage.VIEW_NOT_FOUND,
+          generateViewExceptionMessage(
+            ViewExceptionMessageKey.VIEW_NOT_FOUND,
+            id,
+          ),
           ViewExceptionCode.VIEW_NOT_FOUND,
         ),
       );
@@ -252,7 +262,10 @@ describe('ViewService', () => {
 
       await expect(viewService.delete(id, workspaceId)).rejects.toThrow(
         new ViewException(
-          ViewExceptionMessage.VIEW_NOT_FOUND,
+          generateViewExceptionMessage(
+            ViewExceptionMessageKey.VIEW_NOT_FOUND,
+            id,
+          ),
           ViewExceptionCode.VIEW_NOT_FOUND,
         ),
       );

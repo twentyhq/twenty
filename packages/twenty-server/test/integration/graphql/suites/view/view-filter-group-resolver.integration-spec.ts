@@ -21,7 +21,10 @@ import {
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
-import { ViewFilterGroupExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';
+import {
+  generateViewFilterGroupExceptionMessage,
+  ViewFilterGroupExceptionMessageKey,
+} from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';
 
 describe('View Filter Group Resolver', () => {
   let testViewId: string;
@@ -346,7 +349,10 @@ describe('View Filter Group Resolver', () => {
       assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
-        ViewFilterGroupExceptionMessage.VIEW_FILTER_GROUP_NOT_FOUND,
+        generateViewFilterGroupExceptionMessage(
+          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_FILTER_GROUP_ID,
+        ),
       );
     });
   });
@@ -388,7 +394,10 @@ describe('View Filter Group Resolver', () => {
       assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
-        ViewFilterGroupExceptionMessage.VIEW_FILTER_GROUP_NOT_FOUND,
+        generateViewFilterGroupExceptionMessage(
+          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_FILTER_GROUP_ID,
+        ),
       );
     });
   });

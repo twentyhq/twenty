@@ -19,7 +19,10 @@ import {
 
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
-import { ViewExceptionMessage } from 'src/engine/core-modules/view/exceptions/view.exception';
+import {
+  ViewExceptionMessageKey,
+  generateViewExceptionMessage,
+} from 'src/engine/core-modules/view/exceptions/view.exception';
 
 describe('View REST API', () => {
   beforeEach(async () => {
@@ -200,7 +203,10 @@ describe('View REST API', () => {
       assertRestApiErrorResponse(
         response,
         404,
-        ViewExceptionMessage.VIEW_NOT_FOUND,
+        generateViewExceptionMessage(
+          ViewExceptionMessageKey.VIEW_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_ID,
+        ),
       );
     });
   });
@@ -247,7 +253,10 @@ describe('View REST API', () => {
       assertRestApiErrorResponse(
         response,
         404,
-        ViewExceptionMessage.VIEW_NOT_FOUND,
+        generateViewExceptionMessage(
+          ViewExceptionMessageKey.VIEW_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_ID,
+        ),
       );
     });
   });

@@ -23,7 +23,10 @@ import {
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
-import { ViewSortExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-sort.exception';
+import {
+  generateViewSortExceptionMessage,
+  ViewSortExceptionMessageKey,
+} from 'src/engine/core-modules/view/exceptions/view-sort.exception';
 
 describe('View Sort Resolver', () => {
   let testViewId: string;
@@ -146,7 +149,10 @@ describe('View Sort Resolver', () => {
       assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
-        ViewSortExceptionMessage.VIEW_SORT_NOT_FOUND,
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_SORT_ID,
+        ),
       );
     });
   });
@@ -178,7 +184,10 @@ describe('View Sort Resolver', () => {
       assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
-        ViewSortExceptionMessage.VIEW_SORT_NOT_FOUND,
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_SORT_ID,
+        ),
       );
     });
   });

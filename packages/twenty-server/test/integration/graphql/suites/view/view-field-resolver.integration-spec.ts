@@ -22,7 +22,10 @@ import {
 } from 'test/integration/utils/view-test.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ViewFieldExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-field.exception';
+import {
+  generateViewFieldExceptionMessage,
+  ViewFieldExceptionMessageKey,
+} from 'src/engine/core-modules/view/exceptions/view-field.exception';
 
 describe('View Field Resolver', () => {
   let testViewId: string;
@@ -165,7 +168,10 @@ describe('View Field Resolver', () => {
       assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
-        ViewFieldExceptionMessage.VIEW_FIELD_NOT_FOUND,
+        generateViewFieldExceptionMessage(
+          ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_FIELD_ID,
+        ),
       );
     });
   });
@@ -197,7 +203,10 @@ describe('View Field Resolver', () => {
       assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
-        ViewFieldExceptionMessage.VIEW_FIELD_NOT_FOUND,
+        generateViewFieldExceptionMessage(
+          ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_FIELD_ID,
+        ),
       );
     });
   });

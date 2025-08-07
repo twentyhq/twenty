@@ -8,8 +8,9 @@ import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filt
 import {
   ViewFilterGroupException,
   ViewFilterGroupExceptionCode,
-  ViewFilterGroupExceptionMessage,
-  ViewFilterGroupExceptionUserFriendlyMessage,
+  ViewFilterGroupExceptionMessageKey,
+  generateViewFilterGroupExceptionMessage,
+  generateViewFilterGroupUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';
 
 @Injectable()
@@ -84,22 +85,22 @@ export class ViewFilterGroupService {
   ): Promise<ViewFilterGroup> {
     if (!isDefined(viewFilterGroupData.workspaceId)) {
       throw new ViewFilterGroupException(
-        ViewFilterGroupExceptionMessage.WORKSPACE_ID_REQUIRED,
+        generateViewFilterGroupExceptionMessage(ViewFilterGroupExceptionMessageKey.WORKSPACE_ID_REQUIRED),
         ViewFilterGroupExceptionCode.INVALID_VIEW_FILTER_GROUP_DATA,
         {
           userFriendlyMessage:
-            ViewFilterGroupExceptionUserFriendlyMessage.WORKSPACE_ID_REQUIRED,
+            generateViewFilterGroupUserFriendlyExceptionMessage(ViewFilterGroupExceptionMessageKey.WORKSPACE_ID_REQUIRED),
         },
       );
     }
 
     if (!isDefined(viewFilterGroupData.viewId)) {
       throw new ViewFilterGroupException(
-        ViewFilterGroupExceptionMessage.VIEW_ID_REQUIRED,
+        generateViewFilterGroupExceptionMessage(ViewFilterGroupExceptionMessageKey.VIEW_ID_REQUIRED),
         ViewFilterGroupExceptionCode.INVALID_VIEW_FILTER_GROUP_DATA,
         {
           userFriendlyMessage:
-            ViewFilterGroupExceptionUserFriendlyMessage.VIEW_ID_REQUIRED,
+            generateViewFilterGroupUserFriendlyExceptionMessage(ViewFilterGroupExceptionMessageKey.VIEW_ID_REQUIRED),
         },
       );
     }
@@ -119,7 +120,7 @@ export class ViewFilterGroupService {
 
     if (!isDefined(existingViewFilterGroup)) {
       throw new ViewFilterGroupException(
-        ViewFilterGroupExceptionMessage.VIEW_FILTER_GROUP_NOT_FOUND,
+        generateViewFilterGroupExceptionMessage(ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND, id),
         ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
       );
     }
@@ -137,7 +138,7 @@ export class ViewFilterGroupService {
 
     if (!isDefined(viewFilterGroup)) {
       throw new ViewFilterGroupException(
-        ViewFilterGroupExceptionMessage.VIEW_FILTER_GROUP_NOT_FOUND,
+        generateViewFilterGroupExceptionMessage(ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND, id),
         ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
       );
     }

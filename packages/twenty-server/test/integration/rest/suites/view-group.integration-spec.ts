@@ -20,7 +20,10 @@ import {
 } from 'test/integration/utils/view-test.util';
 
 import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
-import { ViewGroupExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-group.exception';
+import {
+  generateViewGroupExceptionMessage,
+  ViewGroupExceptionMessageKey,
+} from 'src/engine/core-modules/view/exceptions/view-group.exception';
 
 describe('View Group REST API', () => {
   beforeEach(async () => {
@@ -224,7 +227,9 @@ describe('View Group REST API', () => {
       assertRestApiErrorResponse(
         response,
         400,
-        ViewGroupExceptionMessage.INVALID_VIEW_GROUP_DATA,
+        generateViewGroupExceptionMessage(
+          ViewGroupExceptionMessageKey.INVALID_VIEW_GROUP_DATA,
+        ),
       );
     });
   });
@@ -306,7 +311,10 @@ describe('View Group REST API', () => {
       assertRestApiErrorResponse(
         response,
         404,
-        ViewGroupExceptionMessage.VIEW_GROUP_NOT_FOUND,
+        generateViewGroupExceptionMessage(
+          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_GROUP_ID,
+        ),
       );
     });
   });
@@ -337,7 +345,10 @@ describe('View Group REST API', () => {
       assertRestApiErrorResponse(
         response,
         404,
-        ViewGroupExceptionMessage.VIEW_GROUP_NOT_FOUND,
+        generateViewGroupExceptionMessage(
+          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_GROUP_ID,
+        ),
       );
     });
 
@@ -363,7 +374,10 @@ describe('View Group REST API', () => {
       assertRestApiErrorResponse(
         deleteResponse2,
         404,
-        ViewGroupExceptionMessage.VIEW_GROUP_NOT_FOUND,
+        generateViewGroupExceptionMessage(
+          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_GROUP_ID,
+        ),
       );
     });
   });

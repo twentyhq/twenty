@@ -26,7 +26,10 @@ import {
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
-import { ViewExceptionMessage } from 'src/engine/core-modules/view/exceptions/view.exception';
+import {
+  ViewExceptionMessageKey,
+  generateViewExceptionMessage,
+} from 'src/engine/core-modules/view/exceptions/view.exception';
 
 describe('View Resolver', () => {
   beforeEach(async () => {
@@ -213,7 +216,10 @@ describe('View Resolver', () => {
       assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
-        ViewExceptionMessage.VIEW_NOT_FOUND,
+        generateViewExceptionMessage(
+          ViewExceptionMessageKey.VIEW_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_ID,
+        ),
       );
     });
   });
@@ -245,7 +251,10 @@ describe('View Resolver', () => {
       assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
-        ViewExceptionMessage.VIEW_NOT_FOUND,
+        generateViewExceptionMessage(
+          ViewExceptionMessageKey.VIEW_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_ID,
+        ),
       );
     });
   });

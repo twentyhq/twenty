@@ -19,7 +19,10 @@ import {
 } from 'test/integration/utils/view-test.util';
 
 import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
-import { ViewFilterGroupExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';
+import {
+  generateViewFilterGroupExceptionMessage,
+  ViewFilterGroupExceptionMessageKey,
+} from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';
 
 describe('View Filter Group REST API', () => {
   beforeEach(async () => {
@@ -378,7 +381,10 @@ describe('View Filter Group REST API', () => {
       assertRestApiErrorResponse(
         response,
         404,
-        ViewFilterGroupExceptionMessage.VIEW_FILTER_GROUP_NOT_FOUND,
+        generateViewFilterGroupExceptionMessage(
+          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_FILTER_GROUP_ID,
+        ),
       );
     });
   });
@@ -429,7 +435,10 @@ describe('View Filter Group REST API', () => {
       assertRestApiErrorResponse(
         response,
         404,
-        ViewFilterGroupExceptionMessage.VIEW_FILTER_GROUP_NOT_FOUND,
+        generateViewFilterGroupExceptionMessage(
+          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_FILTER_GROUP_ID,
+        ),
       );
     });
   });

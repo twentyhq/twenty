@@ -19,7 +19,10 @@ import {
 } from 'test/integration/utils/view-test.util';
 
 import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
-import { ViewFilterExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-filter.exception';
+import {
+  generateViewFilterExceptionMessage,
+  ViewFilterExceptionMessageKey,
+} from 'src/engine/core-modules/view/exceptions/view-filter.exception';
 
 describe('View Filter REST API', () => {
   beforeEach(async () => {
@@ -221,7 +224,10 @@ describe('View Filter REST API', () => {
       assertRestApiErrorResponse(
         response,
         404,
-        ViewFilterExceptionMessage.VIEW_FILTER_NOT_FOUND,
+        generateViewFilterExceptionMessage(
+          ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_FILTER_ID,
+        ),
       );
     });
   });
@@ -262,7 +268,10 @@ describe('View Filter REST API', () => {
       assertRestApiErrorResponse(
         response,
         404,
-        ViewFilterExceptionMessage.VIEW_FILTER_NOT_FOUND,
+        generateViewFilterExceptionMessage(
+          ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_FILTER_ID,
+        ),
       );
     });
   });

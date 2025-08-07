@@ -8,8 +8,9 @@ import { View } from 'src/engine/core-modules/view/entities/view.entity';
 import {
   ViewException,
   ViewExceptionCode,
-  ViewExceptionMessage,
-  ViewExceptionUserFriendlyMessage,
+  ViewExceptionMessageKey,
+  generateViewExceptionMessage,
+  generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
 
 @Injectable()
@@ -82,22 +83,28 @@ export class ViewService {
   async create(viewData: Partial<View>): Promise<View> {
     if (!isDefined(viewData.workspaceId)) {
       throw new ViewException(
-        ViewExceptionMessage.WORKSPACE_ID_REQUIRED,
+        generateViewExceptionMessage(
+          ViewExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+        ),
         ViewExceptionCode.INVALID_VIEW_DATA,
         {
-          userFriendlyMessage:
-            ViewExceptionUserFriendlyMessage.WORKSPACE_ID_REQUIRED,
+          userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
+            ViewExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+          ),
         },
       );
     }
 
     if (!isDefined(viewData.objectMetadataId)) {
       throw new ViewException(
-        ViewExceptionMessage.OBJECT_METADATA_ID_REQUIRED,
+        generateViewExceptionMessage(
+          ViewExceptionMessageKey.OBJECT_METADATA_ID_REQUIRED,
+        ),
         ViewExceptionCode.INVALID_VIEW_DATA,
         {
-          userFriendlyMessage:
-            ViewExceptionUserFriendlyMessage.OBJECT_METADATA_ID_REQUIRED,
+          userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
+            ViewExceptionMessageKey.OBJECT_METADATA_ID_REQUIRED,
+          ),
         },
       );
     }
@@ -116,7 +123,10 @@ export class ViewService {
 
     if (!isDefined(existingView)) {
       throw new ViewException(
-        ViewExceptionMessage.VIEW_NOT_FOUND,
+        generateViewExceptionMessage(
+          ViewExceptionMessageKey.VIEW_NOT_FOUND,
+          id,
+        ),
         ViewExceptionCode.VIEW_NOT_FOUND,
       );
     }
@@ -134,7 +144,10 @@ export class ViewService {
 
     if (!isDefined(view)) {
       throw new ViewException(
-        ViewExceptionMessage.VIEW_NOT_FOUND,
+        generateViewExceptionMessage(
+          ViewExceptionMessageKey.VIEW_NOT_FOUND,
+          id,
+        ),
         ViewExceptionCode.VIEW_NOT_FOUND,
       );
     }

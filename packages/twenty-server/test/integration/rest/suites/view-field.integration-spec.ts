@@ -18,7 +18,10 @@ import {
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
 
-import { ViewFieldExceptionMessage } from 'src/engine/core-modules/view/exceptions/view-field.exception';
+import {
+  generateViewFieldExceptionMessage,
+  ViewFieldExceptionMessageKey,
+} from 'src/engine/core-modules/view/exceptions/view-field.exception';
 
 describe('View Field REST API', () => {
   beforeEach(async () => {
@@ -213,7 +216,10 @@ describe('View Field REST API', () => {
       assertRestApiErrorResponse(
         response,
         404,
-        ViewFieldExceptionMessage.VIEW_FIELD_NOT_FOUND,
+        generateViewFieldExceptionMessage(
+          ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_FIELD_ID,
+        ),
       );
     });
   });
@@ -255,7 +261,10 @@ describe('View Field REST API', () => {
       assertRestApiErrorResponse(
         response,
         404,
-        ViewFieldExceptionMessage.VIEW_FIELD_NOT_FOUND,
+        generateViewFieldExceptionMessage(
+          ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_FIELD_ID,
+        ),
       );
     });
   });

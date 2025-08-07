@@ -8,8 +8,9 @@ import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity
 import {
   ViewSortException,
   ViewSortExceptionCode,
-  ViewSortExceptionMessage,
-  ViewSortExceptionUserFriendlyMessage,
+  ViewSortExceptionMessageKey,
+  generateViewSortExceptionMessage,
+  generateViewSortUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-sort.exception';
 
 @Injectable()
@@ -56,33 +57,42 @@ export class ViewSortService {
   async create(viewSortData: Partial<ViewSort>): Promise<ViewSort> {
     if (!isDefined(viewSortData.workspaceId)) {
       throw new ViewSortException(
-        ViewSortExceptionMessage.WORKSPACE_ID_REQUIRED,
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+        ),
         ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
         {
-          userFriendlyMessage:
-            ViewSortExceptionUserFriendlyMessage.WORKSPACE_ID_REQUIRED,
+          userFriendlyMessage: generateViewSortUserFriendlyExceptionMessage(
+            ViewSortExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+          ),
         },
       );
     }
 
     if (!isDefined(viewSortData.viewId)) {
       throw new ViewSortException(
-        ViewSortExceptionMessage.VIEW_ID_REQUIRED,
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.VIEW_ID_REQUIRED,
+        ),
         ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
         {
-          userFriendlyMessage:
-            ViewSortExceptionUserFriendlyMessage.VIEW_ID_REQUIRED,
+          userFriendlyMessage: generateViewSortUserFriendlyExceptionMessage(
+            ViewSortExceptionMessageKey.VIEW_ID_REQUIRED,
+          ),
         },
       );
     }
 
     if (!isDefined(viewSortData.fieldMetadataId)) {
       throw new ViewSortException(
-        ViewSortExceptionMessage.FIELD_METADATA_ID_REQUIRED,
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.FIELD_METADATA_ID_REQUIRED,
+        ),
         ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
         {
-          userFriendlyMessage:
-            ViewSortExceptionUserFriendlyMessage.FIELD_METADATA_ID_REQUIRED,
+          userFriendlyMessage: generateViewSortUserFriendlyExceptionMessage(
+            ViewSortExceptionMessageKey.FIELD_METADATA_ID_REQUIRED,
+          ),
         },
       );
     }
@@ -101,7 +111,10 @@ export class ViewSortService {
 
     if (!isDefined(existingViewSort)) {
       throw new ViewSortException(
-        ViewSortExceptionMessage.VIEW_SORT_NOT_FOUND,
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
+          id,
+        ),
         ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
       );
     }
@@ -119,7 +132,10 @@ export class ViewSortService {
 
     if (!isDefined(viewSort)) {
       throw new ViewSortException(
-        ViewSortExceptionMessage.VIEW_SORT_NOT_FOUND,
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
+          id,
+        ),
         ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
       );
     }

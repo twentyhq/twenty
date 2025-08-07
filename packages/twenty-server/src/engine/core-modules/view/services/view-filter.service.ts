@@ -8,8 +8,9 @@ import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.en
 import {
   ViewFilterException,
   ViewFilterExceptionCode,
-  ViewFilterExceptionMessage,
-  ViewFilterExceptionUserFriendlyMessage,
+  ViewFilterExceptionMessageKey,
+  generateViewFilterExceptionMessage,
+  generateViewFilterUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-filter.exception';
 
 @Injectable()
@@ -61,33 +62,33 @@ export class ViewFilterService {
   async create(viewFilterData: Partial<ViewFilter>): Promise<ViewFilter> {
     if (!isDefined(viewFilterData.workspaceId)) {
       throw new ViewFilterException(
-        ViewFilterExceptionMessage.WORKSPACE_ID_REQUIRED,
+        generateViewFilterExceptionMessage(ViewFilterExceptionMessageKey.WORKSPACE_ID_REQUIRED),
         ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
         {
           userFriendlyMessage:
-            ViewFilterExceptionUserFriendlyMessage.WORKSPACE_ID_REQUIRED,
+            generateViewFilterUserFriendlyExceptionMessage(ViewFilterExceptionMessageKey.WORKSPACE_ID_REQUIRED),
         },
       );
     }
 
     if (!isDefined(viewFilterData.viewId)) {
       throw new ViewFilterException(
-        ViewFilterExceptionMessage.VIEW_ID_REQUIRED,
+        generateViewFilterExceptionMessage(ViewFilterExceptionMessageKey.VIEW_ID_REQUIRED),
         ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
         {
           userFriendlyMessage:
-            ViewFilterExceptionUserFriendlyMessage.VIEW_ID_REQUIRED,
+            generateViewFilterUserFriendlyExceptionMessage(ViewFilterExceptionMessageKey.VIEW_ID_REQUIRED),
         },
       );
     }
 
     if (!isDefined(viewFilterData.fieldMetadataId)) {
       throw new ViewFilterException(
-        ViewFilterExceptionMessage.FIELD_METADATA_ID_REQUIRED,
+        generateViewFilterExceptionMessage(ViewFilterExceptionMessageKey.FIELD_METADATA_ID_REQUIRED),
         ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
         {
           userFriendlyMessage:
-            ViewFilterExceptionUserFriendlyMessage.FIELD_METADATA_ID_REQUIRED,
+            generateViewFilterUserFriendlyExceptionMessage(ViewFilterExceptionMessageKey.FIELD_METADATA_ID_REQUIRED),
         },
       );
     }
@@ -106,7 +107,7 @@ export class ViewFilterService {
 
     if (!isDefined(existingViewFilter)) {
       throw new ViewFilterException(
-        ViewFilterExceptionMessage.VIEW_FILTER_NOT_FOUND,
+        generateViewFilterExceptionMessage(ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND, id),
         ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
       );
     }
@@ -124,7 +125,7 @@ export class ViewFilterService {
 
     if (!isDefined(viewFilter)) {
       throw new ViewFilterException(
-        ViewFilterExceptionMessage.VIEW_FILTER_NOT_FOUND,
+        generateViewFilterExceptionMessage(ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND, id),
         ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
       );
     }
