@@ -44,6 +44,7 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { DeepPartialWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/deep-partial-entity-with-nested-relation-fields.type';
 import { QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
+import { getEntityManager } from 'src/engine/twenty-orm/entity-manager/utils/get-entity-manager';
 import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 import { RelationNestedQueries } from 'src/engine/twenty-orm/relation-nested-queries/relation-nested-queries';
 import {
@@ -1222,7 +1223,12 @@ export class WorkspaceEntityManager extends EntityManager {
 
       return isEntityArray ? formattedResult : formattedResult[0];
     } catch (error) {
-      throw computeTwentyORMException(error);
+      const objectMetadataItem = getObjectMetadataFromEntityTarget(
+        getEntityManager(targetOrEntity, entityOrMaybeOptions),
+        this.internalContext,
+      );
+
+      throw computeTwentyORMException(error, objectMetadataItem);
     }
   }
 

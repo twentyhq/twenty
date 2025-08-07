@@ -91,7 +91,12 @@ export class WorkspaceSelectQueryBuilder<
         identifiers: result.identifiers,
       };
     } catch (error) {
-      throw computeTwentyORMException(error);
+      const objectMetadata = getObjectMetadataFromEntityTarget(
+        this.getMainAliasTarget(),
+        this.internalContext,
+      );
+
+      throw computeTwentyORMException(error, objectMetadata);
     }
   }
 
@@ -116,7 +121,12 @@ export class WorkspaceSelectQueryBuilder<
 
       return formattedResult;
     } catch (error) {
-      throw computeTwentyORMException(error);
+      const objectMetadata = getObjectMetadataFromEntityTarget(
+        this.getMainAliasTarget(),
+        this.internalContext,
+      );
+
+      throw computeTwentyORMException(error, objectMetadata);
     }
   }
 
@@ -127,7 +137,12 @@ export class WorkspaceSelectQueryBuilder<
 
       return super.getRawOne();
     } catch (error) {
-      throw computeTwentyORMException(error);
+      const objectMetadata = getObjectMetadataFromEntityTarget(
+        this.getMainAliasTarget(),
+        this.internalContext,
+      );
+
+      throw computeTwentyORMException(error, objectMetadata);
     }
   }
 
@@ -138,7 +153,12 @@ export class WorkspaceSelectQueryBuilder<
 
       return super.getRawMany();
     } catch (error) {
-      throw computeTwentyORMException(error);
+      const objectMetadata = getObjectMetadataFromEntityTarget(
+        this.getMainAliasTarget(),
+        this.internalContext,
+      );
+
+      throw computeTwentyORMException(error, objectMetadata);
     }
   }
 
@@ -163,7 +183,12 @@ export class WorkspaceSelectQueryBuilder<
 
       return formattedResult;
     } catch (error) {
-      throw computeTwentyORMException(error);
+      const objectMetadata = getObjectMetadataFromEntityTarget(
+        this.getMainAliasTarget(),
+        this.internalContext,
+      );
+
+      throw computeTwentyORMException(error, objectMetadata);
     }
   }
 
@@ -188,7 +213,12 @@ export class WorkspaceSelectQueryBuilder<
 
       return formattedResult[0];
     } catch (error) {
-      throw computeTwentyORMException(error);
+      const objectMetadata = getObjectMetadataFromEntityTarget(
+        this.getMainAliasTarget(),
+        this.internalContext,
+      );
+
+      throw computeTwentyORMException(error, objectMetadata);
     }
   }
 
@@ -198,7 +228,12 @@ export class WorkspaceSelectQueryBuilder<
 
       return super.getCount();
     } catch (error) {
-      throw computeTwentyORMException(error);
+      const objectMetadata = getObjectMetadataFromEntityTarget(
+        this.getMainAliasTarget(),
+        this.internalContext,
+      );
+
+      throw computeTwentyORMException(error, objectMetadata);
     }
   }
 
@@ -230,7 +265,12 @@ export class WorkspaceSelectQueryBuilder<
 
       return [formattedResult, count];
     } catch (error) {
-      throw computeTwentyORMException(error);
+      const objectMetadata = getObjectMetadataFromEntityTarget(
+        this.getMainAliasTarget(),
+        this.internalContext,
+      );
+
+      throw computeTwentyORMException(error, objectMetadata);
     }
   }
 
