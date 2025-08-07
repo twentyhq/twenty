@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -93,15 +94,30 @@ export class RecordPositionService {
       }
     }
 
+    const numericPositions = recordsWithExistingNumberPosition
+      .map((record) => record.position)
+      .filter(isNumber);
+
+    const calculatePosition = (
+      mathOperation: (positions: number[], existingPosition: number) => number,
+      existingPosition: number | null,
+    ): number => {
+      const fallback = isDefined(existingPosition) ? existingPosition : 1;
+
+      return numericPositions.length > 0
+        ? mathOperation(numericPositions, fallback)
+        : fallback;
+    };
+
     if (recordsThatNeedFirstPosition.length > 0) {
       const existingRecordMinPosition = await this.findMinPosition(
         objectMetadata,
         workspaceId,
       );
 
-      const minPosition = Math.min(
-        ...recordsWithExistingNumberPosition.map((record) => record.position),
-        isDefined(existingRecordMinPosition) ? existingRecordMinPosition : 1,
+      const minPosition = calculatePosition(
+        (positions, fallback) => Math.min(...positions, fallback),
+        existingRecordMinPosition,
       );
 
       for (const [index, record] of recordsThatNeedFirstPosition.entries()) {
@@ -115,9 +131,9 @@ export class RecordPositionService {
         workspaceId,
       );
 
-      const maxPosition = Math.max(
-        ...recordsThatNeedLastPosition.map((record) => record.position),
-        isDefined(existingRecordMaxPosition) ? existingRecordMaxPosition : 1,
+      const maxPosition = calculatePosition(
+        (positions, fallback) => Math.max(...positions, fallback),
+        existingRecordMaxPosition,
       );
 
       for (const [index, record] of recordsThatNeedLastPosition.entries()) {

@@ -5,12 +5,9 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { WorkflowVersion } from '@/workflow/types/Workflow';
+import { WorkflowAction, WorkflowVersion } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  WorkflowAction,
-  WorkflowVersionStepChanges,
-} from '~/generated/graphql';
+import { WorkflowVersionStepChanges } from '~/generated/graphql';
 
 export const useUpdateWorkflowVersionCache = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -33,7 +30,7 @@ export const useUpdateWorkflowVersionCache = () => {
   }: {
     workflowVersionStepChanges: WorkflowVersionStepChanges | undefined;
     workflowVersionId: string;
-  }) => {
+  }): WorkflowVersion | undefined => {
     if (!isDefined(workflowVersionStepChanges)) {
       return;
     }
@@ -63,11 +60,11 @@ export const useUpdateWorkflowVersionCache = () => {
         ...step,
         nextStepIds: stepsNextStepIds[step.id] ?? step.nextStepIds,
       })),
-    };
+    } satisfies WorkflowVersion;
 
     if (isDefined(createdStep)) {
       const formattedCreatedStep = {
-        ...createdStep,
+        ...(createdStep as WorkflowAction),
         nextStepIds: createdStep.nextStepIds || [],
       };
 
@@ -99,6 +96,8 @@ export const useUpdateWorkflowVersionCache = () => {
       recordGqlFields,
       objectPermissionsByObjectMetadataId,
     });
+
+    return newCachedRecord;
   };
 
   return { updateWorkflowVersionCache };
