@@ -37,35 +37,37 @@ export class WorkspaceRoleComparator {
   ): RoleComparatorResult[] {
     const results: RoleComparatorResult[] = [];
 
-    const standardRoleMap = transformMetadataForComparison(standardRoles, {
-      shouldIgnoreProperty: (property) =>
-        rolePropertiesToIgnore.includes(property),
-      keyFactory(role) {
+    const keyFactory = (role: FlatRole | RoleEntity) => {
+      if ('uniqueIdentifier' in role) {
         return (
           role.standardId || role.uniqueIdentifier || role.id || role.label
         );
-      },
+      } else {
+        return role.standardId || role.id;
+      }
+    };
+
+    const standardRoleMap = transformMetadataForComparison(standardRoles, {
+      shouldIgnoreProperty: (property) =>
+        rolePropertiesToIgnore.includes(property),
+      keyFactory,
     });
 
     const existingRoleMap = transformMetadataForComparison(existingRoles, {
       shouldIgnoreProperty: (property) =>
         rolePropertiesToIgnore.includes(property),
-      keyFactory(role) {
-        return role.standardId || role.id;
-      },
+      keyFactory,
     });
 
     const roleDifferences = diff(existingRoleMap, standardRoleMap);
 
     for (const difference of roleDifferences) {
+      const uniqueIdentifier = difference.path[0] as string;
+
       switch (difference.type) {
         case 'CREATE': {
           const standardRole = standardRoles.find(
-            (role) =>
-              (role.standardId ||
-                role.uniqueIdentifier ||
-                role.id ||
-                role.label) === difference.path[0],
+            (role) => keyFactory(role) === uniqueIdentifier,
           );
 
           if (standardRole) {
@@ -77,14 +79,11 @@ export class WorkspaceRoleComparator {
           break;
         }
         case 'CHANGE': {
-          const uniqueIdentifier = difference.path[0];
           const existingRole = existingRoles.find(
-            (role) => (role.standardId || role.id) === uniqueIdentifier,
+            (role) => keyFactory(role) === uniqueIdentifier,
           );
           const standardRole = standardRoles.find(
-            (role) =>
-              (role.standardId || role.uniqueIdentifier || role.id) ===
-              uniqueIdentifier,
+            (role) => keyFactory(role) === uniqueIdentifier,
           );
 
           if (existingRole && standardRole) {
@@ -96,9 +95,8 @@ export class WorkspaceRoleComparator {
           break;
         }
         case 'REMOVE': {
-          const uniqueIdentifier = difference.path[0];
           const existingRole = existingRoles.find(
-            (role) => (role.standardId || role.id) === uniqueIdentifier,
+            (role) => keyFactory(role) === uniqueIdentifier,
           );
 
           if (existingRole && difference.path.length === 1) {
