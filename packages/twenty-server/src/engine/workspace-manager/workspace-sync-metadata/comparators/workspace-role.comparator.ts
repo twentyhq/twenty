@@ -36,7 +36,9 @@ export class WorkspaceRoleComparator {
       shouldIgnoreProperty: (property) =>
         rolePropertiesToIgnore.includes(property),
       keyFactory(role) {
-        return role.uniqueIdentifier || role.id || role.label;
+        return (
+          role.standardId || role.uniqueIdentifier || role.id || role.label
+        );
       },
     });
 
@@ -55,8 +57,10 @@ export class WorkspaceRoleComparator {
         case 'CREATE': {
           const standardRole = standardRoles.find(
             (role) =>
-              (role.uniqueIdentifier || role.id || role.label) ===
-              difference.path[0],
+              (role.standardId ||
+                role.uniqueIdentifier ||
+                role.id ||
+                role.label) === difference.path[0],
           );
 
           if (standardRole) {
@@ -73,7 +77,9 @@ export class WorkspaceRoleComparator {
             (role) => (role.standardId || role.id) === uniqueIdentifier,
           );
           const standardRole = standardRoles.find(
-            (role) => (role.uniqueIdentifier || role.id) === uniqueIdentifier,
+            (role) =>
+              (role.standardId || role.uniqueIdentifier || role.id) ===
+              uniqueIdentifier,
           );
 
           if (existingRole && standardRole) {

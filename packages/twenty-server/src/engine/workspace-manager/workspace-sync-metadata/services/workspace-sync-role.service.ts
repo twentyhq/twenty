@@ -50,6 +50,7 @@ export class WorkspaceSyncRoleService {
 
         const flatRoleData = removePropertiesFromRecord(roleToCreate, [
           'uniqueIdentifier',
+          'id',
         ]);
 
         await roleRepository.save({
