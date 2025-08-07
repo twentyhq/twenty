@@ -64,8 +64,8 @@ export class AddNextStepIdsToWorkflowRunsTrigger extends ActiveOrSuspendedWorksp
         };
 
         await mainDataSource.query(
-          `UPDATE ${schemaName}."workflowRun" SET state = $1::jsonb`,
-          [updatedState],
+          `UPDATE ${schemaName}."workflowRun" SET state = $1::jsonb WHERE id = $2;`,
+          [updatedState, workflowRun.id],
         );
 
         updatedWorkflowRunCount += 1;

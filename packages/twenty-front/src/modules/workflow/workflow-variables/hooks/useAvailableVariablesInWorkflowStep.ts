@@ -1,5 +1,6 @@
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
+import { InputSchemaPropertyType } from '@/workflow/types/InputSchema';
 import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
 import { getPreviousSteps } from '@/workflow/workflow-steps/utils/getWorkflowPreviousSteps';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
@@ -15,9 +16,11 @@ import { isEmptyObject } from '~/utils/isEmptyObject';
 export const useAvailableVariablesInWorkflowStep = ({
   shouldDisplayRecordFields,
   shouldDisplayRecordObjects,
+  fieldTypesToExclude,
 }: {
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
+  fieldTypesToExclude?: InputSchemaPropertyType[];
 }): StepOutputSchema[] => {
   const workflowSelectedNode = useWorkflowSelectedNodeOrThrow();
   const flow = useFlowOrThrow();
@@ -41,6 +44,7 @@ export const useAvailableVariablesInWorkflowStep = ({
         shouldDisplayRecordFields,
         shouldDisplayRecordObjects,
         outputSchema: stepOutputSchema.outputSchema,
+        fieldTypesToExclude,
       }) as OutputSchema;
 
       if (!isDefined(outputSchema) || isEmptyObject(outputSchema)) {

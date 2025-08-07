@@ -15,10 +15,16 @@ import { useContext } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type WorkflowStepFilterFieldSelectProps = {
   stepFilter: StepFilter;
 };
+
+const NON_SELECTABLE_FIELD_TYPES = [
+  FieldMetadataType.ACTOR,
+  FieldMetadataType.RICH_TEXT_V2,
+];
 
 export const WorkflowStepFilterFieldSelect = ({
   stepFilter,
@@ -163,6 +169,7 @@ export const WorkflowStepFilterFieldSelect = ({
       shouldDisplayRecordFields={shouldDisplayRecordFields}
       shouldDisplayRecordObjects={shouldDisplayRecordObjects}
       shouldEnableSelectRelationObject={true}
+      fieldTypesToExclude={NON_SELECTABLE_FIELD_TYPES}
     />
   );
 };

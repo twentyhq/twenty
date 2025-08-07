@@ -3,6 +3,7 @@ import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/S
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { InputSchemaPropertyType } from '@/workflow/types/InputSchema';
 import { WorkflowVariablesDropdownAllItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownAllItems';
 import { WorkflowVariablesDropdownFieldItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownFieldItems';
 import { WorkflowVariablesDropdownWorkflowStepItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownWorkflowStepItems';
@@ -37,6 +38,7 @@ export const WorkflowVariablesDropdown = ({
   disabled,
   shouldDisplayRecordFields,
   shouldDisplayRecordObjects,
+  fieldTypesToExclude,
   shouldEnableSelectRelationObject,
   multiline,
   clickableComponent,
@@ -45,6 +47,7 @@ export const WorkflowVariablesDropdown = ({
   onVariableSelect: (variableName: string) => void;
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
+  fieldTypesToExclude?: InputSchemaPropertyType[];
   shouldEnableSelectRelationObject?: boolean;
   disabled?: boolean;
   multiline?: boolean;
@@ -61,6 +64,7 @@ export const WorkflowVariablesDropdown = ({
   const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
     shouldDisplayRecordFields,
     shouldDisplayRecordObjects,
+    fieldTypesToExclude,
   });
 
   const noAvailableVariables = availableVariablesInWorkflowStep.length === 0;

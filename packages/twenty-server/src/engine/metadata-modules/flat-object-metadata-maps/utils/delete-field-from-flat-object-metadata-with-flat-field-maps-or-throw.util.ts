@@ -6,14 +6,14 @@ import {
 } from 'src/engine/metadata-modules/flat-object-metadata-maps/flat-object-metadata-maps.exception';
 import { FlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-with-flat-field-metadata-maps.type';
 
-type DeleteFieldFromFlatObjectMetadataMapsArgs = {
+type DeleteFieldFromFlatObjectMetadataMapsOrThrowArgs = {
   fieldMetadataId: string;
   flatObjectMetadataWithFlatFieldMaps: FlatObjectMetadataWithFlatFieldMaps;
 };
 export const deleteFieldFromFlatObjectMetadataWithFlatFieldMapsOrThrow = ({
   flatObjectMetadataWithFlatFieldMaps,
   fieldMetadataId: fieldMetadataIdToRemove,
-}: DeleteFieldFromFlatObjectMetadataMapsArgs): FlatObjectMetadataWithFlatFieldMaps => {
+}: DeleteFieldFromFlatObjectMetadataMapsOrThrowArgs): FlatObjectMetadataWithFlatFieldMaps => {
   const flatFieldMetadataToRemove =
     flatObjectMetadataWithFlatFieldMaps.fieldsById[fieldMetadataIdToRemove];
 

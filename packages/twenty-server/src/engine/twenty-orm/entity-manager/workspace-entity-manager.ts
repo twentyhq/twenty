@@ -44,6 +44,7 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { DeepPartialWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/deep-partial-entity-with-nested-relation-fields.type';
 import { QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
+import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 import { RelationNestedQueries } from 'src/engine/twenty-orm/relation-nested-queries/relation-nested-queries';
 import {
   OperationType,
@@ -54,7 +55,6 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
-import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 
 type PermissionOptions = {
   shouldBypassPermissionChecks?: boolean;
@@ -173,6 +173,7 @@ export class WorkspaceEntityManager extends EntityManager {
       | QueryDeepPartialEntityWithNestedRelationFields<Entity>[],
     selectedColumns: string[] | '*' = '*',
     permissionOptions?: PermissionOptions,
+    authContext?: AuthContext,
   ): Promise<InsertResult> {
     const metadata = this.connection.getMetadata(target);
 
@@ -183,6 +184,7 @@ export class WorkspaceEntityManager extends EntityManager {
       permissionOptions,
     )
       .insert()
+      .setAuthContext(authContext ?? {})
       .values(entity)
       .returning(selectedColumns)
       .execute();
@@ -581,6 +583,7 @@ export class WorkspaceEntityManager extends EntityManager {
     targetOrEntity: EntityTarget<Entity>,
     criteria: unknown,
     permissionOptions?: PermissionOptions,
+    selectedColumns: string[] | '*' = '*',
   ): Promise<DeleteResult> {
     if (
       criteria === undefined ||
@@ -609,6 +612,7 @@ export class WorkspaceEntityManager extends EntityManager {
         .delete()
         .from(targetOrEntity)
         .whereInIds(criteria)
+        .returning(selectedColumns)
         .execute();
     } else {
       return this.createQueryBuilder(
@@ -620,6 +624,7 @@ export class WorkspaceEntityManager extends EntityManager {
         .delete()
         .from(targetOrEntity)
         .where(criteria)
+        .returning(selectedColumns)
         .execute();
     }
   }
@@ -628,6 +633,7 @@ export class WorkspaceEntityManager extends EntityManager {
     targetOrEntity: EntityTarget<Entity>,
     criteria: unknown,
     permissionOptions?: PermissionOptions,
+    selectedColumns: string[] | '*' = '*',
   ): Promise<UpdateResult> {
     // if user passed empty criteria or empty list of criterias, then throw an error
     if (
@@ -657,6 +663,7 @@ export class WorkspaceEntityManager extends EntityManager {
         .softDelete()
         .from(targetOrEntity)
         .whereInIds(criteria)
+        .returning(selectedColumns)
         .execute();
     } else {
       return this.createQueryBuilder(
@@ -668,6 +675,7 @@ export class WorkspaceEntityManager extends EntityManager {
         .softDelete()
         .from(targetOrEntity)
         .where(criteria)
+        .returning(selectedColumns)
         .execute();
     }
   }
@@ -676,6 +684,7 @@ export class WorkspaceEntityManager extends EntityManager {
     targetOrEntity: EntityTarget<Entity>,
     criteria: unknown,
     permissionOptions?: PermissionOptions,
+    selectedColumns: string[] | '*' = '*',
   ): Promise<UpdateResult> {
     // if user passed empty criteria or empty list of criterias, then throw an error
     if (
@@ -705,6 +714,7 @@ export class WorkspaceEntityManager extends EntityManager {
         .restore()
         .from(targetOrEntity)
         .whereInIds(criteria)
+        .returning(selectedColumns)
         .execute();
     } else {
       return this.createQueryBuilder(
@@ -716,6 +726,7 @@ export class WorkspaceEntityManager extends EntityManager {
         .restore()
         .from(targetOrEntity)
         .where(criteria)
+        .returning(selectedColumns)
         .execute();
     }
   }
@@ -1235,6 +1246,10 @@ export class WorkspaceEntityManager extends EntityManager {
     objectMetadataItem: ObjectMetadataItemWithFieldMaps;
     permissionOptionsFromArgs: PermissionOptions | undefined;
   }): Entity[] {
+    if (permissionOptionsFromArgs?.shouldBypassPermissionChecks === true) {
+      return formattedResult;
+    }
+
     const restrictedFields =
       permissionOptionsFromArgs?.objectRecordsPermissions?.[
         objectMetadataItem.id

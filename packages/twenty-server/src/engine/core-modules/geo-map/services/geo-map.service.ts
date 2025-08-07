@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -37,13 +38,13 @@ export class GeoMapService {
     country?: string,
     isFieldCity?: boolean,
   ): Promise<AutocompleteSanitizedResult[] | undefined> {
-    if (!isDefined(address) || address.trim().length === 0) {
+    if (!isNonEmptyString(address?.trim())) {
       return [];
     }
 
     let url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(address)}&sessiontoken=${token}&key=${this.apiMapKey}`;
 
-    if (isDefined(country) && country !== '') {
+    if (isNonEmptyString(country)) {
       url += `&components=country:${country}`;
     }
     if (isDefined(isFieldCity) && isFieldCity === true) {
