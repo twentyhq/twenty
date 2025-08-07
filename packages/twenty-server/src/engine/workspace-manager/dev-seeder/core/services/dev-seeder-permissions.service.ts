@@ -19,7 +19,6 @@ import {
 } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
-import { MEMBER_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/member-role';
 
 @Injectable()
 export class DevSeederPermissionsService {
@@ -41,12 +40,8 @@ export class DevSeederPermissionsService {
       ADMIN_ROLE.standardId as string,
       workspaceId,
     );
-    const memberRole = await this.roleService.getRoleByStandardId(
-      MEMBER_ROLE.standardId as string,
-      workspaceId,
-    );
 
-    if (!adminRole || !memberRole) {
+    if (!adminRole) {
       throw new Error(
         'Required roles not found. Make sure the permission sync has run.',
       );
@@ -132,6 +127,10 @@ export class DevSeederPermissionsService {
         roleId: adminRole.id,
       });
     }
+
+    const memberRole = await this.roleService.createMemberRole({
+      workspaceId,
+    });
 
     await this.typeORMService
       .getMainDataSource()

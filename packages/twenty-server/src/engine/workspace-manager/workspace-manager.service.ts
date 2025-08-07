@@ -20,7 +20,6 @@ import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
-import { MEMBER_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/member-role';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 @Injectable()
@@ -192,16 +191,6 @@ export class WorkspaceManagerService {
     workspaceId: string,
     userId: string,
   ): Promise<void> {
-    const memberRole = await this.roleRepository.findOne({
-      where: { standardId: MEMBER_ROLE.standardId as string, workspaceId },
-    });
-
-    if (memberRole) {
-      await this.workspaceRepository.update(workspaceId, {
-        defaultRoleId: memberRole.id,
-      });
-    }
-
     const adminRole = await this.roleRepository.findOne({
       where: {
         standardId: (ADMIN_ROLE.standardId as string) || undefined,
@@ -220,5 +209,13 @@ export class WorkspaceManagerService {
         roleId: adminRole.id,
       });
     }
+
+    const memberRole = await this.roleService.createMemberRole({
+      workspaceId,
+    });
+
+    await this.workspaceRepository.update(workspaceId, {
+      defaultRoleId: memberRole.id,
+    });
   }
 }

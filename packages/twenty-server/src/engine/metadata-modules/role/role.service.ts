@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -209,6 +210,26 @@ export class RoleService {
     });
 
     return roleId;
+  }
+
+  public async createMemberRole({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<RoleEntity> {
+    return this.roleRepository.save({
+      label: MEMBER_ROLE_LABEL,
+      description: 'Member role',
+      icon: 'IconUser',
+      canUpdateAllSettings: false,
+      canAccessAllTools: false,
+      canReadAllObjectRecords: true,
+      canUpdateAllObjectRecords: true,
+      canSoftDeleteAllObjectRecords: true,
+      canDestroyAllObjectRecords: true,
+      isEditable: true,
+      workspaceId,
+    });
   }
 
   // Only used for dev seeding and testing
