@@ -240,11 +240,9 @@ export class WorkflowVersionStepWorkspaceService {
       );
     }
 
-    const stepToDeleteChildrenIds = isDefined(stepToDelete)
-      ? stepToDelete.nextStepIds
-      : isDeletingTrigger
-        ? existingTrigger?.nextStepIds
-        : [];
+    const stepToDeleteChildrenIds = isDeletingTrigger
+      ? (existingTrigger?.nextStepIds ?? [])
+      : (stepToDelete?.nextStepIds ?? []);
 
     const { updatedSteps, updatedTrigger, removedStepIds } = removeStep({
       existingTrigger,

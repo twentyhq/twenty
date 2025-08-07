@@ -34,7 +34,7 @@ export const useDeleteStep = ({
     closeCommandMenu();
 
     deleteStepsOutputSchema({
-      stepIds: workflowVersionStepChanges?.deletedStepIds || [],
+      stepIds: workflowVersionStepChanges?.deletedStepIds ?? [],
       workflowVersionId,
     });
   };
