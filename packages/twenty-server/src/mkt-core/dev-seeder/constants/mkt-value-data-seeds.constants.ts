@@ -404,5 +404,3 @@ export const MKT_VALUE_DATA_SEEDS: MktValueDataSeed[] = [
     createdByName: 'John Doe',
   },
 ];
-
-

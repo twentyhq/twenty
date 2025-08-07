@@ -1,6 +1,6 @@
-import {WORKSPACE_MEMBER_DATA_SEED_IDS} from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-import {MKT_ATTRIBUTE_DATA_SEEDS_IDS} from 'src/mkt-core/dev-seeder/constants/mkt-attribute-data-seeds.constants';
-import {MKT_VARIANT_DATA_SEEDS_IDS} from 'src/mkt-core/dev-seeder/constants/mkt-variant-data-seeds.constants';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { MKT_ATTRIBUTE_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-attribute-data-seeds.constants';
+import { MKT_VARIANT_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-variant-data-seeds.constants';
 
 type MktVariantAttributeDataSeed = {
   id: string;

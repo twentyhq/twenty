@@ -42,7 +42,7 @@ export const prefillViews = async (
     workflowsAllView(objectMetadataItems),
     workflowVersionsAllView(objectMetadataItems),
     workflowRunsAllView(objectMetadataItems),
-    ...MKT_ALL_VIEWS.map(item => item(objectMetadataItems)),
+    ...MKT_ALL_VIEWS.map((item) => item(objectMetadataItems)),
     ...customViews,
   ];
 

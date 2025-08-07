@@ -47,7 +47,8 @@ export const mktVariantsAllView = (
       {
         fieldMetadataId:
           attributeObjectMetadata.fields.find(
-            (field) => field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
+            (field) =>
+              field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
           )?.id ?? '',
         position: 3,
         isVisible: true,

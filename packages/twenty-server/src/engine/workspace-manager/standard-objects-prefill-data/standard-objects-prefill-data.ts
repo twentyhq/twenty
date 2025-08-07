@@ -21,7 +21,9 @@ export const standardObjectsPrefillData = async (
     await prefillPeople(entityManager, schemaName);
 
     await Promise.all(
-      MKT_PREFILLS.map(prefillFunction => prefillFunction(entityManager, schemaName))
+      MKT_PREFILLS.map((prefillFunction) =>
+        prefillFunction(entityManager, schemaName),
+      ),
     );
 
     await prefillWorkflows(entityManager, schemaName);

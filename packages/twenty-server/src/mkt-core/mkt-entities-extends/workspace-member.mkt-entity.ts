@@ -1,15 +1,14 @@
+import { msg } from '@lingui/core/macro';
 
-import {msg} from '@lingui/core/macro';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import {RelationOnDeleteAction} from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
-import {RelationType} from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import {Relation} from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
-
-import {BaseWorkspaceEntity} from 'src/engine/twenty-orm/base.workspace-entity';
-import {WorkspaceRelation} from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import {MktAttributeWorkspaceEntity} from 'src/mkt-core/attribute/mkt-attribute.workspace-entity';
-import {MktProductWorkspaceEntity} from 'src/mkt-core/product/standard-objects/mkt-product.workspace-entity';
-import {WORKSPACE_MEMBER_MKT_FIELD_IDS} from 'src/mkt-core/constants/mkt-field-ids';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
+import { MktAttributeWorkspaceEntity } from 'src/mkt-core/attribute/mkt-attribute.workspace-entity';
+import { MktProductWorkspaceEntity } from 'src/mkt-core/product/standard-objects/mkt-product.workspace-entity';
+import { WORKSPACE_MEMBER_MKT_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 
 export class WorkspaceMemberMktEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({

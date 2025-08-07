@@ -1,4 +1,5 @@
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+
 import { MKT_PRODUCT_DATA_SEEDS_IDS } from './mkt-product-data-seeds.constants';
 
 type MktVariantDataSeed = {
@@ -32,7 +33,7 @@ export const MKT_VARIANT_DATA_SEED_COLUMNS: (keyof MktVariantDataSeed)[] = [
   'createdByName',
 ];
 
-// prettier-ignore 
+// prettier-ignore
 export const MKT_VARIANT_DATA_SEEDS_IDS = {
     // Product 1 variants (3 variants)
     ID_1: 'f6a07de5-1aef-4886-8922-4b429fe01267',

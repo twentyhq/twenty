@@ -1,33 +1,36 @@
-import {msg} from '@lingui/core/macro';
-import {ActorMetadata} from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import {RelationOnDeleteAction} from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
-import {RelationType} from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import {BaseWorkspaceEntity} from 'src/engine/twenty-orm/base.workspace-entity';
-import {WorkspaceEntity} from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
-import {WorkspaceField} from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import {WorkspaceIsNullable} from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
-import {WorkspaceJoinColumn} from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
-import {WorkspaceRelation} from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import {Relation} from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
-import {FieldMetadataType} from 'twenty-shared/types';
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
 
-import {SEARCH_VECTOR_FIELD} from 'src/engine/metadata-modules/constants/search-vector-field.constants';
-import {IndexType} from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
-import {WorkspaceFieldIndex} from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
-import {WorkspaceIsSearchable} from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
-import {WorkspaceIsSystem} from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import {FieldTypeAndNameMetadata,getTsVectorColumnExpressionFromFields} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import {MktAttributeWorkspaceEntity} from 'src/mkt-core/attribute/mkt-attribute.workspace-entity';
-import {MKT_VARIANT_ATTRIBUTE_FIELD_IDS} from 'src/mkt-core/dev-seeder/constants/mkt-field-ids';
-import {MKT_OBJECT_IDS} from 'src/mkt-core/dev-seeder/constants/mkt-object-ids';
-import {MktVariantWorkspaceEntity} from 'src/mkt-core/variant/mkt-variant.workspace-entity';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
+import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
+import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
+import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import {
+  FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import { MktAttributeWorkspaceEntity } from 'src/mkt-core/attribute/mkt-attribute.workspace-entity';
+import { MKT_VARIANT_ATTRIBUTE_FIELD_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-field-ids';
+import { MKT_OBJECT_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-object-ids';
+import { MktVariantWorkspaceEntity } from 'src/mkt-core/variant/mkt-variant.workspace-entity';
 
 const TABLE_VARIANT_ATTRIBUTE_NAME = 'mktVariantAttribute';
 const NAME_FIELD_NAME = 'name';
 const SEARCH_FIELDS_FOR_MKT_VARIANT_ATTRIBUTE: FieldTypeAndNameMetadata[] = [
   { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
 ];
-
 
 @WorkspaceEntity({
   standardId: MKT_OBJECT_IDS.mktVariantAttribute,
@@ -38,7 +41,6 @@ const SEARCH_FIELDS_FOR_MKT_VARIANT_ATTRIBUTE: FieldTypeAndNameMetadata[] = [
   icon: 'IconListDetails',
   labelIdentifierStandardId: MKT_VARIANT_ATTRIBUTE_FIELD_IDS.name,
 })
-
 @WorkspaceIsSearchable()
 export class MktVariantAttributeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({

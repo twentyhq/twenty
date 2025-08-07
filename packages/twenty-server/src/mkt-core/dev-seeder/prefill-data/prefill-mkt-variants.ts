@@ -1,5 +1,8 @@
-import {WorkspaceEntityManager} from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import {MKT_VARIANT_DATA_SEED_COLUMNS,MKT_VARIANT_DATA_SEEDS} from 'src/mkt-core/dev-seeder/constants/mkt-variant-data-seeds.constants';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import {
+  MKT_VARIANT_DATA_SEED_COLUMNS,
+  MKT_VARIANT_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-variant-data-seeds.constants';
 
 export const prefillMktVariants = async (
   entityManager: WorkspaceEntityManager,

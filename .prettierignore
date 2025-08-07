@@ -2,3 +2,4 @@
 /dist
 /coverage
 /.nx/cache
+packages/twenty-server/src/engine/core-modules/i18n

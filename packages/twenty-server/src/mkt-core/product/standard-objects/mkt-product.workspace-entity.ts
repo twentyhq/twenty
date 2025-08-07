@@ -1,5 +1,10 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
+
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -8,20 +13,19 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 import { MktAttributeWorkspaceEntity } from 'src/mkt-core/attribute/mkt-attribute.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { FieldTypeAndNameMetadata, getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import {
+  FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceDuplicateCriteria } from 'src/engine/twenty-orm/decorators/workspace-duplicate-criteria.decorator';
-
 import { MktVariantWorkspaceEntity } from 'src/mkt-core/variant/mkt-variant.workspace-entity';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-object-ids';
 import { MKT_PRODUCT_FIELD_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-field-ids';
@@ -47,16 +51,41 @@ export enum PRODUCT_TYPE {
   OTHER = 'OTHER',
 }
 export const PRODUCT_TYPE_OPTIONS: FieldMetadataComplexOption[] = [
-  { value: PRODUCT_TYPE.PHYSICAL, label: 'Physical', position: 0, color: 'blue' },
-  { value: PRODUCT_TYPE.DIGITAL, label: 'Digital', position: 1, color: 'purple' },
-  { value: PRODUCT_TYPE.SERVICE, label: 'Service', position: 2, color: 'green' },
-  { value: PRODUCT_TYPE.SUBSCRIPTION, label: 'Subscription', position: 3, color: 'orange' },
-  { value: PRODUCT_TYPE.LICENSE, label: 'License', position: 4, color: 'yellow' },
+  {
+    value: PRODUCT_TYPE.PHYSICAL,
+    label: 'Physical',
+    position: 0,
+    color: 'blue',
+  },
+  {
+    value: PRODUCT_TYPE.DIGITAL,
+    label: 'Digital',
+    position: 1,
+    color: 'purple',
+  },
+  {
+    value: PRODUCT_TYPE.SERVICE,
+    label: 'Service',
+    position: 2,
+    color: 'green',
+  },
+  {
+    value: PRODUCT_TYPE.SUBSCRIPTION,
+    label: 'Subscription',
+    position: 3,
+    color: 'orange',
+  },
+  {
+    value: PRODUCT_TYPE.LICENSE,
+    label: 'License',
+    position: 4,
+    color: 'yellow',
+  },
   { value: PRODUCT_TYPE.OTHER, label: 'Other', position: 5, color: 'gray' },
 ];
 
 @WorkspaceEntity({
-  standardId: MKT_OBJECT_IDS.mktProduct, 
+  standardId: MKT_OBJECT_IDS.mktProduct,
   namePlural: `${TABLE_PRODUCT_NAME}s`,
   labelSingular: msg`Product`,
   labelPlural: msg`Products`,
@@ -64,7 +93,7 @@ export const PRODUCT_TYPE_OPTIONS: FieldMetadataComplexOption[] = [
   icon: 'IconBox',
   labelIdentifierStandardId: MKT_PRODUCT_FIELD_IDS.name,
 })
-@WorkspaceDuplicateCriteria([['name'], ['sku']])  
+@WorkspaceDuplicateCriteria([['name'], ['sku']])
 @WorkspaceIsSearchable()
 export class MktProductWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -73,7 +102,7 @@ export class MktProductWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Product Type`,
     description: msg`Product type (physical, digital, service, subscription, license, other)`,
     icon: 'IconTags',
-    options: PRODUCT_TYPE_OPTIONS
+    options: PRODUCT_TYPE_OPTIONS,
   })
   @WorkspaceIsNullable()
   type: PRODUCT_TYPE;

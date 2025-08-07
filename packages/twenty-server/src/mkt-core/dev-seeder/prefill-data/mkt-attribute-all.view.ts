@@ -1,4 +1,3 @@
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.workspace-entity';
@@ -48,7 +47,8 @@ export const mktAttributesAllView = (
       {
         fieldMetadataId:
           attributeObjectMetadata.fields.find(
-            (field) => field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
+            (field) =>
+              field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
           )?.id ?? '',
         position: 3,
         isVisible: true,
