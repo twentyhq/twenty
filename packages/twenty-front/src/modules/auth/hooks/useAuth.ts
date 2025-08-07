@@ -306,8 +306,8 @@ export const useAuth = () => {
       // TODO: We can't parallelize this yet because when loadCurrentUSer is loaded
       // then UserProvider updates its children and PrefetchDataProvider is triggered
       // which requires the correct metadata to be loaded (not the mocks)
-      await refreshObjectMetadataItems();
       await loadCurrentUser();
+      await refreshObjectMetadataItems();
     },
     [loadCurrentUser, handleSetAuthTokens, refreshObjectMetadataItems],
   );
