@@ -5,7 +5,8 @@ module.exports = {
     'plugin:@nx/react',
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
-    'plugin:storybook/recommended',
+    // Temporarily disabled due to ESLint 9 compatibility issue
+    // 'plugin:storybook/recommended',
     'plugin:prettier/recommended',
     'plugin:lingui/recommended',
     'plugin:@nx/typescript'

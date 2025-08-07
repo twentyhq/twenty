@@ -1,24 +1,24 @@
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
-    CountryCallingCode,
-    parsePhoneNumberWithError,
+  CountryCallingCode,
+  parsePhoneNumberWithError,
 } from 'libphonenumber-js';
 import {
-    getCountryCodesForCallingCode,
-    isDefined,
-    isValidCountryCode,
-    parseJson,
-    removeUndefinedFields,
+  getCountryCodesForCallingCode,
+  isDefined,
+  isValidCountryCode,
+  parseJson,
+  removeUndefinedFields,
 } from 'twenty-shared/utils';
 
 import {
-    RecordTransformerException,
-    RecordTransformerExceptionCode,
+  RecordTransformerException,
+  RecordTransformerExceptionCode,
 } from 'src/engine/core-modules/record-transformer/record-transformer.exception';
 import {
-    AdditionalPhoneMetadata,
-    PhonesMetadata,
+  AdditionalPhoneMetadata,
+  PhonesMetadata,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
 
 export type PhonesFieldGraphQLInput =

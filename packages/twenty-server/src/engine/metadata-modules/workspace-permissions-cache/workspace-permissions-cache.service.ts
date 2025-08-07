@@ -2,9 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
-    ObjectRecordsPermissions,
-    ObjectRecordsPermissionsByRoleId,
-    RestrictedFields,
+  ObjectRecordsPermissions,
+  ObjectRecordsPermissionsByRoleId,
+  RestrictedFields,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';

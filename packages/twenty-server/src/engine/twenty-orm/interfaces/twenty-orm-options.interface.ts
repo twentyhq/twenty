@@ -1,7 +1,7 @@
 import { FactoryProvider, ModuleMetadata } from '@nestjs/common';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface TwentyORMOptions {}
+export type TwentyORMOptions = Record<string, never>;
 
 export type TwentyORMModuleAsyncOptions = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

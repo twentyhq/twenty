@@ -7,8 +7,8 @@ import { Request } from 'express';
 import { Strategy, StrategyOptions, TokenSet } from 'openid-client';
 
 import {
-    AuthException,
-    AuthExceptionCode,
+  AuthException,
+  AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 
 export type OIDCRequest = Omit<

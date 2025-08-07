@@ -12,8 +12,8 @@ import { ConfigVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import { VersionInfo } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
 import {
-    AuthException,
-    AuthExceptionCode,
+  AuthException,
+  AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';

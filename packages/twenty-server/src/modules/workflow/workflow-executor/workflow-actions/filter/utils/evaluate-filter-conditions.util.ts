@@ -1,8 +1,8 @@
 import { isObject, isString } from '@sniptt/guards';
 import {
-    StepFilter,
-    StepFilterGroup,
-    ViewFilterOperand,
+  StepFilter,
+  StepFilterGroup,
+  ViewFilterOperand,
 } from 'twenty-shared/types';
 
 type ResolvedFilter = Omit<StepFilter, 'value' | 'stepOutputKey'> & {

@@ -8,8 +8,8 @@ import { capitalize, isDefined } from 'twenty-shared/utils';
 import { In, ObjectLiteral } from 'typeorm';
 
 import {
-    ObjectRecord,
-    ObjectRecordFilter,
+  ObjectRecord,
+  ObjectRecordFilter,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
@@ -19,9 +19,9 @@ import { GetVariablesFactory } from 'src/engine/api/rest/core/query-builder/fact
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { QueryVariables } from 'src/engine/api/rest/core/types/query-variables.type';
 import {
-    Depth,
-    DepthInputFactory,
-    MAX_DEPTH,
+  Depth,
+  DepthInputFactory,
+  MAX_DEPTH,
 } from 'src/engine/api/rest/input-factories/depth-input.factory';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
@@ -33,9 +33,9 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import {
-    PermissionsException,
-    PermissionsExceptionCode,
-    PermissionsExceptionMessage,
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
