@@ -2,7 +2,7 @@ import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-i
 import { eachTestingContextFilter } from 'twenty-shared/testing';
 import { capitalize } from 'twenty-shared/utils';
 
-import { WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-field-test-case';
+import { WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-object-test-case';
 import {
   type CamelCasedWorkspaceMigrationActionsType,
   type ExpectedActionCounters,
@@ -15,14 +15,14 @@ const allWorkspaceBuilderTestCases: {
   label: string;
   testCases: WorkspaceMigrationBuilderTestCase[];
 }[] = [
-  // {
-  //   label: 'object',
-  //   testCases: WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES,
-  // },
   {
-    label: 'field',
-    testCases: WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES,
+    label: 'object',
+    testCases: WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES,
   },
+  // {
+  //   label: 'field',
+  //   testCases: WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES,
+  // },
   // {
   //   label: 'index',
   //   testCases: WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES,
