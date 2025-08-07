@@ -99,10 +99,21 @@ export class RecordPositionService {
         workspaceId,
       );
 
-      const minPosition = Math.min(
-        ...recordsWithExistingNumberPosition.map((record) => record.position),
-        isDefined(existingRecordMinPosition) ? existingRecordMinPosition : 1,
-      );
+      const numericPositions = recordsWithExistingNumberPosition
+        .map((record) => record.position)
+        .filter((pos): pos is number => typeof pos === 'number' && !isNaN(pos));
+
+      const minPosition =
+        numericPositions.length > 0
+          ? Math.min(
+              ...numericPositions,
+              isDefined(existingRecordMinPosition)
+                ? existingRecordMinPosition
+                : 1,
+            )
+          : isDefined(existingRecordMinPosition)
+            ? existingRecordMinPosition
+            : 1;
 
       for (const [index, record] of recordsThatNeedFirstPosition.entries()) {
         record.position = minPosition - index - 1;
@@ -115,10 +126,21 @@ export class RecordPositionService {
         workspaceId,
       );
 
-      const maxPosition = Math.max(
-        ...recordsThatNeedLastPosition.map((record) => record.position),
-        isDefined(existingRecordMaxPosition) ? existingRecordMaxPosition : 1,
-      );
+      const numericPositions = recordsWithExistingNumberPosition
+        .map((record) => record.position)
+        .filter((pos): pos is number => typeof pos === 'number' && !isNaN(pos));
+
+      const maxPosition =
+        numericPositions.length > 0
+          ? Math.max(
+              ...numericPositions,
+              isDefined(existingRecordMaxPosition)
+                ? existingRecordMaxPosition
+                : 1,
+            )
+          : isDefined(existingRecordMaxPosition)
+            ? existingRecordMaxPosition
+            : 1;
 
       for (const [index, record] of recordsThatNeedLastPosition.entries()) {
         record.position = maxPosition + index + 1;
