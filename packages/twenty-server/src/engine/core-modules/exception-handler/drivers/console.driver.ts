@@ -7,8 +7,7 @@ export class ExceptionHandlerConsoleDriver
   implements ExceptionHandlerDriverInterface
 {
   captureExceptions(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    exceptions: ReadonlyArray<any>,
+    exceptions: ReadonlyArray<unknown>,
     options?: ExceptionHandlerOptions,
   ) {
     console.group('Exception Captured');

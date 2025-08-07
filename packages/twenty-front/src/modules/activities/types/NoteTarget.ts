@@ -11,6 +11,6 @@ export type NoteTarget = {
   note: Pick<Note, 'id' | 'createdAt' | 'updatedAt' | '__typename'>;
   person?: Pick<Person, 'id' | 'name' | 'avatarUrl' | '__typename'> | null;
   company?: Pick<Company, 'id' | 'name' | 'domainName' | '__typename'> | null;
-  [key: string]: any;
+  [key: string]: unknown;
   __typename: 'NoteTarget';
 };

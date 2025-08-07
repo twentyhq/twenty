@@ -1,6 +1,6 @@
 import { isString } from '@sniptt/guards';
 
-export const escapeCSVValue = (value: any) => {
+export const escapeCSVValue = (value: unknown) => {
   if (value == null) return '';
 
   const stringValue = isString(value) ? value : JSON.stringify(value);

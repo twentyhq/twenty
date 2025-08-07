@@ -32,16 +32,10 @@ export class CacheStorageService {
     }
 
     if (this.isRedisCache()) {
-      await (this.cache as RedisCache).store.client.sAdd(
-        this.getKey(key),
-        value,
-      );
+      await this.redisClient.sAdd(this.getKey(key), value);
 
       if (ttl) {
-        await (this.cache as RedisCache).store.client.expire(
-          this.getKey(key),
-          ttl / 1000,
-        );
+        await this.redisClient.expire(this.getKey(key), ttl / 1000);
       }
 
       return;
@@ -59,15 +53,12 @@ export class CacheStorageService {
   async countAllSetMembers(cacheKeys: string[]) {
     return (
       await Promise.all(cacheKeys.map((key) => this.getSetLength(key) || 0))
-    ).reduce((acc, setLength) => acc + setLength, 0);
+    ).reduce((acc: number, setLength: number) => acc + setLength, 0);
   }
 
   async setPop(key: string, size = 1) {
     if (this.isRedisCache()) {
-      return (this.cache as RedisCache).store.client.sPop(
-        this.getKey(key),
-        size,
-      );
+      return this.redisClient.sPop(this.getKey(key), size);
     }
 
     return this.get(key).then((res: string[]) => {
@@ -83,9 +74,7 @@ export class CacheStorageService {
 
   async getSetLength(key: string) {
     if (this.isRedisCache()) {
-      return await (this.cache as RedisCache).store.client.sCard(
-        this.getKey(key),
-      );
+      return await this.redisClient.sCard(this.getKey(key));
     }
 
     return this.get(key).then((res: string[]) => {
@@ -102,11 +91,10 @@ export class CacheStorageService {
       throw new Error('flushByPattern is only supported with Redis cache');
     }
 
-    const redisClient = (this.cache as RedisCache).store.client;
     let cursor = 0;
 
     do {
-      const result = await redisClient.scan(cursor, {
+      const result = await this.redisClient.scan(cursor, {
         MATCH: scanPattern,
         COUNT: 100,
       });
@@ -115,7 +103,7 @@ export class CacheStorageService {
       const keys = result.keys;
 
       if (keys.length > 0) {
-        await redisClient.del(keys);
+        await this.redisClient.del(keys);
       }
 
       cursor = nextCursor;
@@ -127,9 +115,7 @@ export class CacheStorageService {
       throw new Error('acquireLock is only supported with Redis cache');
     }
 
-    const redisClient = (this.cache as RedisCache).store.client;
-
-    const result = await redisClient.set(this.getKey(key), 'lock', {
+    const result = await this.redisClient.set(this.getKey(key), 'lock', {
       NX: true,
       PX: ttl,
     });
@@ -145,9 +131,20 @@ export class CacheStorageService {
     await this.del(key);
   }
 
-  private isRedisCache() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (this.cache.store as any)?.name === 'redis';
+  private isRedisCache(): boolean {
+    return (
+      this.cache.store instanceof Object &&
+      'name' in this.cache.store &&
+      this.cache.store.name === 'redis'
+    );
+  }
+
+  private get redisClient() {
+    if (!this.isRedisCache()) {
+      throw new Error('Redis cache is not available');
+    }
+
+    return (this.cache as RedisCache).store.client;
   }
 
   private getKey(key: string) {

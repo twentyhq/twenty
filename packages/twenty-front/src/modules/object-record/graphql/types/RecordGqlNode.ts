@@ -1,5 +1,5 @@
 export type RecordGqlNode = {
   id: string;
-  [key: string]: any;
+  [key: string]: unknown;
   __typename: string;
 };

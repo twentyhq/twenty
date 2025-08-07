@@ -12,16 +12,16 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
-  JwtPayload,
-  JwtTokenTypeEnum,
-  TransientTokenJwtPayload,
-  RefreshTokenJwtPayload,
-  WorkspaceAgnosticTokenJwtPayload,
   AccessTokenJwtPayload,
   FileTokenJwtPayload,
+  JwtPayload,
+  JwtTokenTypeEnum,
+  RefreshTokenJwtPayload,
+  TransientTokenJwtPayload,
+  WorkspaceAgnosticTokenJwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class JwtWrapperService {
@@ -35,16 +35,14 @@ export class JwtWrapperService {
     return this.jwtService.sign(payload, options);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  verify<T extends object = any>(
+  verify<T extends object = Record<string, unknown>>(
     token: string,
     options?: { secret: string },
   ): T {
     return this.jwtService.verify(token, options);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  decode<T = any>(payload: string, options?: jwt.DecodeOptions): T {
+  decode<T = unknown>(payload: string, options?: jwt.DecodeOptions): T {
     return this.jwtService.decode(payload, options);
   }
 

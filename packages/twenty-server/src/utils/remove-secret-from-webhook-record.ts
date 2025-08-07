@@ -1,9 +1,7 @@
 export const removeSecretFromWebhookRecord = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  record: Record<string, any> | undefined,
+  record: Record<string, unknown> | undefined,
   isWebhookEvent: boolean,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Record<string, any> | undefined => {
+): Record<string, unknown> | undefined => {
   if (!isWebhookEvent || !record) return record;
 
   const { secret: _secret, ...sanitizedRecord } = record;

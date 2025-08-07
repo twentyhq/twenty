@@ -8,8 +8,7 @@ export interface ObjectRecord {
 }
 
 export type ObjectRecordFilter = Partial<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [Property in keyof ObjectRecord]: any;
+  [Property in keyof ObjectRecord]: unknown;
 }>;
 
 export enum OrderByDirection {

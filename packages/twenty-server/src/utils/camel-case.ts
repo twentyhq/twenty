@@ -1,5 +1,5 @@
-import isObject from 'lodash.isobject';
 import lodashCamelCase from 'lodash.camelcase';
+import isObject from 'lodash.isobject';
 import { CamelCase, CamelCasedPropertiesDeep } from 'type-fest';
 
 export const camelCase = <T>(text: T) =>
@@ -13,8 +13,7 @@ export const camelCaseDeep = <T>(value: T): CamelCasedPropertiesDeep<T> => {
 
   // Check if it's an object
   if (isObject(value)) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result: Record<string, any> = {};
+    const result: Record<string, unknown> = {};
 
     for (const key in value) {
       result[camelCase(key)] = camelCaseDeep(value[key]);

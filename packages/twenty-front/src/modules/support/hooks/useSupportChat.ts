@@ -16,7 +16,7 @@ const insertScript = ({
 }: {
   src?: string;
   innerHTML?: string;
-  onLoad?: (...args: any[]) => void;
+  onLoad?: (...args: unknown[]) => void;
   defer?: boolean;
 }) => {
   const script = document.createElement('script');

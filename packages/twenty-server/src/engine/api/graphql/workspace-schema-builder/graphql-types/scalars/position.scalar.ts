@@ -10,10 +10,12 @@ const isValidStringPosition = (value: string): boolean =>
 const isValidNumberPosition = (value: number): boolean =>
   typeof value === 'number';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const checkPosition = (value: any): PositionType => {
-  if (isValidNumberPosition(value) || isValidStringPosition(value)) {
-    return value;
+const checkPosition = (value: unknown): PositionType => {
+  if (
+    isValidNumberPosition(value as number) ||
+    isValidStringPosition(value as string)
+  ) {
+    return value as PositionType;
   }
 
   throw new ValidationError(

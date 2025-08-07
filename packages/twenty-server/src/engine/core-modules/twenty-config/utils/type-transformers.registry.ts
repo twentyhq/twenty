@@ -27,8 +27,7 @@ export interface TypeTransformer<T> {
 
 export const typeTransformers: Record<
   ConfigVariableType,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  TypeTransformer<any>
+  TypeTransformer<unknown>
 > = {
   [ConfigVariableType.BOOLEAN]: {
     toApp: (value: unknown): boolean | undefined => {

@@ -22,10 +22,9 @@ export class FlushCacheCommand extends CommandRunner {
 
   async run(
     passedParams: string[],
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    options?: Record<string, any>,
+    options?: Record<string, unknown>,
   ): Promise<void> {
-    const pattern = options?.pattern || '*';
+    const pattern = (options?.pattern as string) || '*';
 
     this.logger.log(`Flushing cache for pattern: ${pattern}...`);
 

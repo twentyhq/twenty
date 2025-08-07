@@ -50,11 +50,9 @@ export class WorkspaceCacheStorageService {
   setORMEntitySchema(
     workspaceId: string,
     metadataVersion: number,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    entitySchemas: EntitySchemaOptions<any>[],
+    entitySchemas: EntitySchemaOptions<unknown>[],
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return this.cacheStorageService.set<EntitySchemaOptions<any>[]>(
+    return this.cacheStorageService.set<EntitySchemaOptions<unknown>[]>(
       `${WorkspaceCacheKeys.ORMEntitySchemas}:${workspaceId}:${metadataVersion}`,
       entitySchemas,
       TTL_ONE_WEEK,
@@ -64,10 +62,8 @@ export class WorkspaceCacheStorageService {
   getORMEntitySchema(
     workspaceId: string,
     metadataVersion: number,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): Promise<EntitySchemaOptions<any>[] | undefined> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return this.cacheStorageService.get<EntitySchemaOptions<any>[]>(
+  ): Promise<EntitySchemaOptions<unknown>[] | undefined> {
+    return this.cacheStorageService.get<EntitySchemaOptions<unknown>[]>(
       `${WorkspaceCacheKeys.ORMEntitySchemas}:${workspaceId}:${metadataVersion}`,
     );
   }

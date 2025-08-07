@@ -1,8 +1,7 @@
 import { Readable } from 'stream';
 
 export const streamToBuffer = async (stream: Readable): Promise<Buffer> => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const chunks: any[] = [];
+  const chunks: Uint8Array[] = [];
 
   for await (const chunk of stream) {
     chunks.push(chunk);

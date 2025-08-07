@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { FieldMetadataType } from 'twenty-shared/types';
 import { ColumnType } from 'typeorm';
 import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
+  FieldMetadataDefaultSerializableValue,
   FieldMetadataDefaultValue,
   FieldMetadataFunctionDefaultValue,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
@@ -250,8 +251,7 @@ export class DatabaseStructureService {
       const typeORMType = fieldMetadataTypeToColumnType(type) as ColumnType;
       const mainDataSource = this.typeORMService.getMainDataSource();
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let value: any =
+      let value: unknown =
         // Old formart default values
         defaultValue &&
         typeof defaultValue === 'object' &&
@@ -269,7 +269,9 @@ export class DatabaseStructureService {
         return this.computeFunctionDefaultValue(defaultValue.type);
       }
 
-      if (isFunctionDefaultValue(value)) {
+      if (
+        isFunctionDefaultValue(value as FieldMetadataDefaultSerializableValue)
+      ) {
         return this.computeFunctionDefaultValue(value);
       }
 

@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { resolveInput } from 'twenty-shared/utils';
 
-const convertFlatVariablesToNestedContext = (flatVariables: {
-  [variablePath: string]: any;
-}): Record<string, unknown> => {
+const convertFlatVariablesToNestedContext = (
+  flatVariables: Record<string, unknown>,
+): Record<string, unknown> => {
   const result: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(flatVariables)) {
@@ -35,7 +35,7 @@ export const useTestHttpRequest = (actionId: string) => {
 
   const testHttpRequest = async (
     httpRequestFormData: HttpRequestFormData,
-    variableValues: { [variablePath: string]: any },
+    variableValues: Record<string, unknown>,
   ) => {
     setIsTesting(true);
     const startTime = Date.now();

@@ -9,6 +9,7 @@ import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOp
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
 import { SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ApolloError } from '@apollo/client';
 import { useSetRecoilState } from 'recoil';
 
 export const useOpenObjectRecordsSpreadsheetImportDialog = (
@@ -70,9 +71,9 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
             recordsToCreate: createInputs,
             upsert: true,
           });
-        } catch (error: any) {
+        } catch (error: unknown) {
           enqueueErrorSnackBar({
-            apolloError: error,
+            ...(error instanceof ApolloError ? { apolloError: error } : {}),
           });
         }
       },

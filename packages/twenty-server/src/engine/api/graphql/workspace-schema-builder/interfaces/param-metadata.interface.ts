@@ -2,8 +2,7 @@ import { GraphQLScalarType } from 'graphql';
 
 import { InputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface ArgMetadata<T = any> {
+export interface ArgMetadata<T = unknown> {
   kind?: InputTypeDefinitionKind;
   type?: GraphQLScalarType;
   isNullable?: boolean;

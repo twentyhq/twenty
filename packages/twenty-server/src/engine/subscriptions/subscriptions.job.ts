@@ -34,7 +34,7 @@ export class SubscriptionsJob {
 
       const isWebhookEvent = nameSingular === 'webhook';
       const sanitizedRecord = removeSecretFromWebhookRecord(
-        record,
+        record as Record<string, unknown>,
         isWebhookEvent,
       );
 

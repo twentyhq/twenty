@@ -1,5 +1,5 @@
-import isObject from 'lodash.isobject';
 import lodashCamelCase from 'lodash.camelcase';
+import isObject from 'lodash.isobject';
 import upperFirst from 'lodash.upperfirst';
 import { PascalCase, PascalCasedPropertiesDeep } from 'type-fest';
 
@@ -14,8 +14,7 @@ export const pascalCaseDeep = <T>(value: T): PascalCasedPropertiesDeep<T> => {
 
   // Check if it's an object
   if (isObject(value)) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result: Record<string, any> = {};
+    const result: Record<string, unknown> = {};
 
     for (const key in value) {
       result[pascalCase(key)] = pascalCaseDeep(value[key]);

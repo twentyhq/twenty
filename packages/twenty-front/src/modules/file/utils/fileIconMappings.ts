@@ -11,6 +11,7 @@ import {
   IconTable,
   IconVideo,
 } from 'twenty-ui/display';
+import { ThemeType } from 'twenty-ui/theme';
 
 export const IconMapping: { [key in AttachmentType]: IconComponent } = {
   Archive: IconFileZip,
@@ -23,7 +24,9 @@ export const IconMapping: { [key in AttachmentType]: IconComponent } = {
   Other: IconFile,
 };
 
-const getIconColors = (theme: any): { [key in AttachmentType]: string } => ({
+const getIconColors = (
+  theme: ThemeType,
+): { [key in AttachmentType]: string } => ({
   Archive: theme.color.gray,
   Audio: theme.color.pink,
   Image: theme.color.yellow,

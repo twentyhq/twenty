@@ -9,16 +9,16 @@ import { isDefined } from 'class-validator';
  */
 export function LogExecutionTime(label?: string | undefined) {
   return function (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    target: any,
+    target: object,
     propertyKey: string,
     descriptor: PropertyDescriptor,
   ) {
     const originalMethod = descriptor.value;
-    const logger = new Logger(`${target.constructor.name}:${propertyKey}`);
+    const logger = new Logger(
+      `${(target as { constructor: { name: string } }).constructor.name}:${propertyKey}`,
+    );
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (...args: unknown[]) {
       const start = performance.now();
 
       const result = await originalMethod.apply(this, args);

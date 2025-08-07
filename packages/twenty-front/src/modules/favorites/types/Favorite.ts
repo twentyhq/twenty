@@ -2,7 +2,7 @@ import { AvatarType } from 'twenty-ui/display';
 export type Favorite = {
   id: string;
   position: number;
-  [key: string]: any;
+  [key: string]: unknown;
   labelIdentifier: string;
   avatarUrl: string;
   avatarType: AvatarType;

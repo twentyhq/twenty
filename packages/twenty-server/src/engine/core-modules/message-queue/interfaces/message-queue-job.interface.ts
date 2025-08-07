@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface MessageQueueJob<T = any> {
+export interface MessageQueueJob<T = unknown> {
   id: string;
   name: string;
   data: T;
@@ -12,6 +11,5 @@ export interface MessageQueueCronJobData<
 }
 
 export interface MessageQueueJobData {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
+  [key: string]: unknown;
 }

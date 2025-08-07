@@ -1,12 +1,10 @@
 export class HealthStateManager {
   private lastKnownState: {
     timestamp: Date;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    details: Record<string, any>;
+    details: Record<string, unknown>;
   } | null = null;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  updateState(details: Record<string, any>) {
+  updateState(details: Record<string, unknown>) {
     this.lastKnownState = {
       timestamp: new Date(),
       details,

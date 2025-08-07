@@ -13,8 +13,7 @@ import {
 export class IsX509CertificateConstraint
   implements ValidatorConstraintInterface
 {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  validate(value: any) {
+  validate(value: unknown) {
     if (typeof value !== 'string') {
       return false;
     }

@@ -24,7 +24,7 @@ export const useSSO = () => {
           },
         },
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       return enqueueErrorSnackBar({
         ...(error instanceof ApolloError ? { apolloError: error } : {}),
       });

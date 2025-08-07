@@ -74,7 +74,7 @@ export const sortFavorites = (
 
           const objectRecordIdentifier =
             getObjectRecordIdentifierByNameSingular(
-              relationObject,
+              relationObject as ObjectRecord,
               objectNameSingular,
             );
 

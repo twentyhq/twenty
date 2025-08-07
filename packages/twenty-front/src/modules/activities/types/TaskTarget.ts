@@ -14,6 +14,6 @@ export type TaskTarget = {
   person?: Pick<Person, 'id' | 'name' | 'avatarUrl' | '__typename'> | null;
   company?: Pick<Company, 'id' | 'name' | 'domainName' | '__typename'> | null;
   assignee?: Partial<WorkspaceMember>;
-  [key: string]: any;
+  [key: string]: unknown;
   __typename: 'TaskTarget';
 };

@@ -16,21 +16,20 @@ export const WithLock = (
 
     const originalMethod = descriptor.value;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (...args: unknown[]) {
       const self = this as { cacheLockService: CacheLockService };
 
       if (!self.cacheLockService) {
         throw new Error('cacheLockService not available on instance');
       }
 
-      if (typeof args[0] !== 'object') {
+      if (typeof args[0] !== 'object' || args[0] === null) {
         throw new Error(
           `You must use one object parameter to use @WithLock decorator. Received ${args}`,
         );
       }
 
-      const key = args[0][lockKeyParamPath];
+      const key = (args[0] as Record<string, unknown>)[lockKeyParamPath];
 
       if (typeof key !== 'string') {
         throw new Error(

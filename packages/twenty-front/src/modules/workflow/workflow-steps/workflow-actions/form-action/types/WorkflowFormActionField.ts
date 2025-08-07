@@ -6,6 +6,6 @@ export type WorkflowFormActionField = {
   label: string;
   type: WorkflowFormFieldType;
   placeholder?: string;
-  settings?: Record<string, any>;
-  value?: any;
+  settings?: Record<string, unknown>;
+  value?: unknown;
 };

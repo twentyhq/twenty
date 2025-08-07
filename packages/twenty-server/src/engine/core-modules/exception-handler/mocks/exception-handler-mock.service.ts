@@ -9,8 +9,7 @@ export class ExceptionHandlerMockService
   implements ExceptionHandlerDriverInterface
 {
   captureExceptions(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    exceptions: readonly any[],
+    exceptions: readonly unknown[],
     _?: ExceptionHandlerOptions | undefined,
   ): string[] {
     return exceptions.map(() => 'mocked-exception-id');

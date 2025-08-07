@@ -32,6 +32,5 @@ export class CreateObjectEventInput {
   @Field(() => GraphQLJSON, { nullable: true })
   @IsObject()
   @IsOptional()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
 }

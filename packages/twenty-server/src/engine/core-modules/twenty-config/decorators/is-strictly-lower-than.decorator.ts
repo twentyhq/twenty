@@ -16,11 +16,11 @@ export const IsStrictlyLowerThan = (
       constraints: [property],
       options: validationOptions,
       validator: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        validate(value: any, args: ValidationArguments) {
+        validate(value: unknown, args: ValidationArguments) {
           const [relatedPropertyName] = args.constraints;
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const relatedValue = (args.object as any)[relatedPropertyName];
+          const relatedValue = (args.object as Record<string, unknown>)[
+            relatedPropertyName
+          ];
 
           return (
             typeof value === 'number' &&

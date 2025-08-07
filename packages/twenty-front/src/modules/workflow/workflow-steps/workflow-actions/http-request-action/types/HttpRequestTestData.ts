@@ -1,5 +1,5 @@
 export type HttpRequestTestData = {
-  variableValues: { [variablePath: string]: any };
+  variableValues: Record<string, unknown>;
   output: {
     data?: string;
     status?: number;

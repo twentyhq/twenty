@@ -16,7 +16,7 @@ export const shouldFieldBeQueried = ({
   fieldMetadata: Pick<FieldMetadataItem, 'name' | 'type' | 'settings'>;
   objectRecord?: ObjectRecord;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
-}): any => {
+}): boolean => {
   const isJoinColumn: boolean =
     isFieldRelation(fieldMetadata) &&
     fieldMetadata.settings.joinColumnName === gqlField;

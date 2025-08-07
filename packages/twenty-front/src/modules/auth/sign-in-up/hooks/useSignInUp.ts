@@ -143,7 +143,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           captchaToken: token,
           verifyEmailRedirectPath,
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         enqueueErrorSnackBar({
           ...(error instanceof ApolloError ? { apolloError: error } : {}),
         });

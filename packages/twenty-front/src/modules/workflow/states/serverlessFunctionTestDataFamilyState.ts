@@ -2,7 +2,7 @@ import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState'
 import { ServerlessFunctionExecutionStatus } from '~/generated-metadata/graphql';
 
 export type ServerlessFunctionTestData = {
-  input: { [field: string]: any };
+  input: Record<string, unknown>;
   shouldInitInput: boolean;
   output: {
     data?: string;

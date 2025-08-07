@@ -5,14 +5,14 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WebhookService } from 'src/engine/core-modules/webhook/webhook.service';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import {
   CallWebhookJob,
   CallWebhookJobData,
 } from 'src/engine/core-modules/webhook/jobs/call-webhook.job';
 import { ObjectRecordEventForWebhook } from 'src/engine/core-modules/webhook/types/object-record-event-for-webhook.type';
+import { WebhookService } from 'src/engine/core-modules/webhook/webhook.service';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { removeSecretFromWebhookRecord } from 'src/utils/remove-secret-from-webhook-record';
 
 @Processor(MessageQueue.webhookQueue)
@@ -66,7 +66,7 @@ export class CallWebhookJobsJob {
 
       const isWebhookEvent = nameSingular === 'webhook';
       const sanitizedRecord = removeSecretFromWebhookRecord(
-        record,
+        record as Record<string, unknown>,
         isWebhookEvent,
       );
 

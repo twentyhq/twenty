@@ -3,7 +3,7 @@ import { BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutput
 import { isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-const getValueType = (value: any): InputSchemaPropertyType => {
+const getValueType = (value: unknown): InputSchemaPropertyType => {
   if (!isDefined(value) || value === null) {
     return 'unknown';
   }

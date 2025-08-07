@@ -1,7 +1,7 @@
 import {
   registerDecorator,
-  ValidationOptions,
   ValidationArguments,
+  ValidationOptions,
 } from 'class-validator';
 
 export function IsValidMetadataName(validationOptions?: ValidationOptions) {
@@ -12,10 +12,9 @@ export function IsValidMetadataName(validationOptions?: ValidationOptions) {
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        validate(value: any) {
+        validate(value: unknown) {
           return /^(?!(?:not|or|and|Int|Float|Boolean|String|ID)$)[^'"\\;.=*/]+$/.test(
-            value,
+            value as string,
           );
         },
         defaultMessage(args: ValidationArguments) {
