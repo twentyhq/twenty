@@ -26,6 +26,13 @@ export class ViewFilterGroupService {
         deletedAt: IsNull(),
       },
       order: { positionInViewFilterGroup: 'ASC' },
+      relations: [
+        'workspace',
+        'view',
+        'viewFilters',
+        'parentViewFilterGroup',
+        'childViewFilterGroups',
+      ],
     });
   }
 
@@ -40,6 +47,13 @@ export class ViewFilterGroupService {
         deletedAt: IsNull(),
       },
       order: { positionInViewFilterGroup: 'ASC' },
+      relations: [
+        'workspace',
+        'view',
+        'viewFilters',
+        'parentViewFilterGroup',
+        'childViewFilterGroups',
+      ],
     });
   }
 
@@ -53,6 +67,13 @@ export class ViewFilterGroupService {
         workspaceId,
         deletedAt: IsNull(),
       },
+      relations: [
+        'workspace',
+        'view',
+        'viewFilters',
+        'parentViewFilterGroup',
+        'childViewFilterGroups',
+      ],
     });
 
     return viewFilterGroup || null;

@@ -26,6 +26,7 @@ export class ViewFilterService {
         deletedAt: IsNull(),
       },
       order: { positionInViewFilterGroup: 'ASC' },
+      relations: ['workspace', 'view', 'viewFilterGroup'],
     });
   }
 
@@ -40,6 +41,7 @@ export class ViewFilterService {
         deletedAt: IsNull(),
       },
       order: { positionInViewFilterGroup: 'ASC' },
+      relations: ['workspace', 'view', 'viewFilterGroup'],
     });
   }
 
@@ -50,6 +52,7 @@ export class ViewFilterService {
         workspaceId,
         deletedAt: IsNull(),
       },
+      relations: ['workspace', 'view', 'viewFilterGroup'],
     });
 
     return viewFilter || null;

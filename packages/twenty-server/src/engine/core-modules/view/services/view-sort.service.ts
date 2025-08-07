@@ -25,6 +25,7 @@ export class ViewSortService {
         workspaceId,
         deletedAt: IsNull(),
       },
+      relations: ['workspace', 'view'],
     });
   }
 
@@ -35,6 +36,7 @@ export class ViewSortService {
         viewId,
         deletedAt: IsNull(),
       },
+      relations: ['workspace', 'view'],
     });
   }
 
@@ -45,6 +47,7 @@ export class ViewSortService {
         workspaceId,
         deletedAt: IsNull(),
       },
+      relations: ['workspace', 'view'],
     });
 
     return viewSort || null;

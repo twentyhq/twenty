@@ -26,6 +26,7 @@ export class ViewFieldService {
         deletedAt: IsNull(),
       },
       order: { position: 'ASC' },
+      relations: ['workspace', 'view'],
     });
   }
 
@@ -40,6 +41,7 @@ export class ViewFieldService {
         deletedAt: IsNull(),
       },
       order: { position: 'ASC' },
+      relations: ['workspace', 'view'],
     });
   }
 
@@ -50,6 +52,7 @@ export class ViewFieldService {
         workspaceId,
         deletedAt: IsNull(),
       },
+      relations: ['workspace', 'view'],
     });
 
     return viewField || null;
