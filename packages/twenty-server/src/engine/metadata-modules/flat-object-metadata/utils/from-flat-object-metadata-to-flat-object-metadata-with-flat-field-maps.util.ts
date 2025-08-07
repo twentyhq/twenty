@@ -8,6 +8,8 @@ export const fromFlatObjectMetadataToFlatObjectMetadataWithFlatFieldMaps = (
   const emptyFlatObjectMetadataWithFlatFieldMaps: FlatObjectMetadataWithFlatFieldMaps =
     {
       ...flatObjectMetadata,
+      flatIndexMetadatas: [],
+      flatFieldMetadatas: [],
       fieldIdByJoinColumnName: {},
       fieldIdByName: {},
       fieldsById: {},

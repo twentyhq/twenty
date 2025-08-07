@@ -67,5 +67,9 @@ export const addFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMapsOrThrow =
         ...flatObjectMetadataWithFlatFieldMaps.fieldsById,
         [flatFieldMetadata.id]: flatFieldMetadata,
       },
+      flatFieldMetadatas: [
+        ...flatObjectMetadataWithFlatFieldMaps.flatFieldMetadatas,
+        flatFieldMetadata,
+      ],
     };
   };

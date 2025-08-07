@@ -35,6 +35,6 @@ export const addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow = ({
           flatObjectMetadataWithFlatFieldMaps,
         }),
     },
-    idByNameSingular: flatObjectMetadataMaps.idByNameSingular,
+    idByNameSingular: { ...flatObjectMetadataMaps.idByNameSingular },
   };
 };

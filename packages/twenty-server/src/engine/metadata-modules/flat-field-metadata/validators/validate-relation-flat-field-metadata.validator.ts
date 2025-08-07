@@ -7,17 +7,16 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { ValidateOneFieldMetadataArgs } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
-import { mergeTwoFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/merge-two-flat-object-metadatas.util';
 
 // Remark: This is duplicated with api metadata transpilers exceptions handlers
 // We might wanna have an NotValidatedFlatFieldMetadata and NotValidatedFlatObjectMetadata, in order to avoid
 export const validateRelationFlatFieldMetadata = async ({
-  existingFlatObjectMetadatas,
+  existingFlatObjectMetadataMaps,
   flatFieldMetadataToValidate: {
     relationTargetFieldMetadataId,
     relationTargetObjectMetadataId,
   },
-  othersFlatObjectMetadataToValidate,
+  otherFlatObjectMetadataMapsToValidate,
 }: ValidateOneFieldMetadataArgs<FieldMetadataType.RELATION>): Promise<
   FailedFlatFieldMetadataValidationExceptions[]
 > => {
@@ -38,22 +37,16 @@ export const validateRelationFlatFieldMetadata = async ({
   }
 
   const errors: FailedFlatFieldMetadataValidationExceptions[] = [];
-  const allFlatObjectMetadata = isDefined(othersFlatObjectMetadataToValidate)
-    ? mergeTwoFlatObjectMetadatas({
-        destFlatObjectMetadatas: existingFlatObjectMetadatas,
-        toMergeFlatObjectMetadatas: othersFlatObjectMetadataToValidate,
-      })
-    : existingFlatObjectMetadatas;
 
-  const targetRelationFlatObjectMetadata = allFlatObjectMetadata.find(
-    (flatObjectMetadata) =>
-      flatObjectMetadata.id === relationTargetObjectMetadataId,
-  );
+  const targetRelationFlatObjectMetadata =
+    otherFlatObjectMetadataMapsToValidate?.byId[
+      relationTargetObjectMetadataId
+    ] ?? existingFlatObjectMetadataMaps.byId[relationTargetObjectMetadataId];
 
   if (!isDefined(targetRelationFlatObjectMetadata)) {
     errors.push(
       new FieldMetadataException(
-        isDefined(othersFlatObjectMetadataToValidate)
+        isDefined(otherFlatObjectMetadataMapsToValidate)
           ? 'Relation target object metadata not found in both existing and about to be created object metadatas'
           : 'Relation target object metadata not found',
         FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
@@ -62,15 +55,15 @@ export const validateRelationFlatFieldMetadata = async ({
   }
 
   const targetRelationFlatFieldMetadata =
-    targetRelationFlatObjectMetadata?.flatFieldMetadatas.find(
-      (flatFieldMetadata) =>
-        flatFieldMetadata.id === relationTargetFieldMetadataId,
-    );
+    targetRelationFlatObjectMetadata?.fieldsById[relationTargetFieldMetadataId];
 
-  if (!isDefined(targetRelationFlatFieldMetadata)) {
+  if (
+    isDefined(targetRelationFlatObjectMetadata) &&
+    !isDefined(targetRelationFlatFieldMetadata)
+  ) {
     errors.push(
       new FieldMetadataException(
-        isDefined(othersFlatObjectMetadataToValidate)
+        isDefined(otherFlatObjectMetadataMapsToValidate)
           ? 'Relation field target metadata not found in both existing and about to be created field metadatas'
           : 'Relation field target metadata not found',
         FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
