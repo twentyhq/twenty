@@ -6,10 +6,10 @@ import { OTPInput, SlotProps } from 'input-otp';
 import { useState } from 'react';
 import { Controller, useForm, useFormContext } from 'react-hook-form';
 
-import { useAuth } from '@/auth/hooks/useAuth';
 import { VERIFY_TWO_FACTOR_AUTHENTICATION_METHOD_FOR_AUTHENTICATED_USER } from '@/settings/two-factor-authentication/graphql/mutations/verifyTwoFactorAuthenticationMethod';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 // OTP Form Types
@@ -150,7 +150,7 @@ export const useTwoFactorVerificationForSettings = () => {
   const navigate = useNavigateSettings();
   const { t } = useLingui();
   const [isLoading, setIsLoading] = useState(false);
-  const { loadCurrentUser } = useAuth();
+  const { loadCurrentUser } = useLoadCurrentUser();
 
   const [verifyTwoFactorAuthenticationMethod] = useMutation(
     VERIFY_TWO_FACTOR_AUTHENTICATION_METHOD_FOR_AUTHENTICATED_USER,

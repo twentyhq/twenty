@@ -37,6 +37,7 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
           canSoftDeleteObjectRecords: true,
           canDestroyObjectRecords: true,
           objectMetadataId: personObjectMetadataItem.id,
+          restrictedFields: {},
         },
       },
     });
@@ -140,6 +141,7 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
           canSoftDeleteObjectRecords: true,
           canDestroyObjectRecords: true,
           objectMetadataId: personObjectMetadataItem.id,
+          restrictedFields: {},
         },
       },
     });

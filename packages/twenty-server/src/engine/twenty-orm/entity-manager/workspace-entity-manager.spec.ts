@@ -1,4 +1,4 @@
-import { ObjectRecordsPermissions } from 'twenty-shared/types';
+import { ObjectsPermissionsDeprecated } from 'twenty-shared/types';
 import { EntityManager } from 'typeorm';
 import { EntityPersistExecutor } from 'typeorm/persistence/EntityPersistExecutor';
 import { PlainObjectToDatabaseEntityTransformer } from 'typeorm/query-builder/transformer/PlainObjectToDatabaseEntityTransformer';
@@ -75,7 +75,7 @@ describe('WorkspaceEntityManager', () => {
   let mockDataSource: WorkspaceDataSource;
   let mockPermissionOptions: {
     shouldBypassPermissionChecks: boolean;
-    objectRecordsPermissions?: ObjectRecordsPermissions;
+    objectRecordsPermissions?: ObjectsPermissionsDeprecated;
   };
 
   beforeEach(() => {
@@ -331,8 +331,7 @@ describe('WorkspaceEntityManager', () => {
         isFieldPermissionsEnabled: true,
         operationType: 'update',
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
+        objectsPermissions: mockPermissionOptions.objectRecordsPermissions,
         selectedColumns: [],
         allFieldsSelected: false,
         updatedColumns: [],
@@ -366,8 +365,7 @@ describe('WorkspaceEntityManager', () => {
         operationType: 'delete',
         isFieldPermissionsEnabled: true,
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
+        objectsPermissions: mockPermissionOptions.objectRecordsPermissions,
         selectedColumns: [],
         allFieldsSelected: false,
         updatedColumns: [],

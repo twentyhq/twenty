@@ -9,7 +9,7 @@ export const useActiveFieldMetadataItems = ({
   const activeFieldMetadataItems = useMemo(
     () =>
       objectMetadataItem
-        ? objectMetadataItem.fields.filter(
+        ? objectMetadataItem.readableFields.filter(
             ({ isActive, isSystem }) => isActive && !isSystem,
           )
         : [],

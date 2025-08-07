@@ -1,6 +1,6 @@
 import { Entity } from '@microsoft/microsoft-graph-types';
 import { isDefined } from 'class-validator';
-import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
+import { ObjectsPermissionsByRoleIdDeprecated } from 'twenty-shared/types';
 import {
   DataSource,
   DataSourceOptions,
@@ -34,7 +34,7 @@ export class WorkspaceDataSource extends DataSource {
   featureFlagMapVersion: string;
   featureFlagMap: FeatureFlagMap;
   rolesPermissionsVersion: string;
-  permissionsPerRoleId: ObjectRecordsPermissionsByRoleId;
+  permissionsPerRoleId: ObjectsPermissionsByRoleIdDeprecated;
   dataSourceWithOverridenCreateQueryBuilder: WorkspaceDataSource;
 
   constructor(
@@ -43,7 +43,7 @@ export class WorkspaceDataSource extends DataSource {
     featureFlagMapVersion: string,
     featureFlagMap: FeatureFlagMap,
     rolesPermissionsVersion: string,
-    permissionsPerRoleId: ObjectRecordsPermissionsByRoleId,
+    permissionsPerRoleId: ObjectsPermissionsByRoleIdDeprecated,
   ) {
     super(options);
     this.internalContext = internalContext;
@@ -235,7 +235,9 @@ export class WorkspaceDataSource extends DataSource {
     this.rolesPermissionsVersion = rolesPermissionsVersion;
   }
 
-  setRolesPermissions(permissionsPerRoleId: ObjectRecordsPermissionsByRoleId) {
+  setRolesPermissions(
+    permissionsPerRoleId: ObjectsPermissionsByRoleIdDeprecated,
+  ) {
     this.permissionsPerRoleId = permissionsPerRoleId;
   }
 

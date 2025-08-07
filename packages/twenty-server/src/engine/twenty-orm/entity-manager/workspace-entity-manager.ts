@@ -1,5 +1,5 @@
 import isEmpty from 'lodash.isempty';
-import { ObjectRecordsPermissions } from 'twenty-shared/types';
+import { ObjectsPermissionsDeprecated } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   DeleteResult,
@@ -58,7 +58,7 @@ import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/g
 
 type PermissionOptions = {
   shouldBypassPermissionChecks?: boolean;
-  objectRecordsPermissions?: ObjectRecordsPermissions;
+  objectRecordsPermissions?: ObjectsPermissionsDeprecated;
 };
 
 export class WorkspaceEntityManager extends EntityManager {
@@ -130,7 +130,7 @@ export class WorkspaceEntityManager extends EntityManager {
     queryRunner?: QueryRunner,
     options: {
       shouldBypassPermissionChecks?: boolean;
-      objectRecordsPermissions?: ObjectRecordsPermissions;
+      objectRecordsPermissions?: ObjectsPermissionsDeprecated;
     } = {
       shouldBypassPermissionChecks: false,
       objectRecordsPermissions: {},
@@ -198,7 +198,7 @@ export class WorkspaceEntityManager extends EntityManager {
     conflictPathsOrOptions: string[] | UpsertOptions<Entity>,
     permissionOptions?: {
       shouldBypassPermissionChecks?: boolean;
-      objectRecordsPermissions?: ObjectRecordsPermissions;
+      objectRecordsPermissions?: ObjectsPermissionsDeprecated;
     },
     selectedColumns: string[] | '*' = '*',
   ): Promise<InsertResult> {
@@ -387,7 +387,7 @@ export class WorkspaceEntityManager extends EntityManager {
     operationType: OperationType;
     permissionOptions?: {
       shouldBypassPermissionChecks?: boolean;
-      objectRecordsPermissions?: ObjectRecordsPermissions;
+      objectRecordsPermissions?: ObjectsPermissionsDeprecated;
     };
     selectedColumns: string[];
     updatedColumns?: string[];
@@ -404,8 +404,7 @@ export class WorkspaceEntityManager extends EntityManager {
     validateOperationIsPermittedOrThrow({
       entityName,
       operationType,
-      objectRecordsPermissions:
-        permissionOptions?.objectRecordsPermissions ?? {},
+      objectsPermissions: permissionOptions?.objectRecordsPermissions ?? {},
       objectMetadataMaps: this.internalContext.objectMetadataMaps,
       selectedColumns,
       allFieldsSelected: false,

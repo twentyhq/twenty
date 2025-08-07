@@ -22,11 +22,11 @@ export const filterOutInvalidTimelineActivities = (
   }
 
   const fieldMetadataItemMap = new Map(
-    mainObjectMetadataItem.fields.map((field) => [field.name, field]),
+    mainObjectMetadataItem.readableFields.map((field) => [field.name, field]),
   );
 
   const noteFieldMetadataItemMap = new Map(
-    noteObjectMetadataItem.fields.map((field) => [field.name, field]),
+    noteObjectMetadataItem.readableFields.map((field) => [field.name, field]),
   );
 
   return timelineActivities.filter((timelineActivity) => {

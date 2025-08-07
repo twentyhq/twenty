@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
+import { ObjectsPermissionsByRoleIdDeprecated } from 'twenty-shared/types';
 import { In, Repository } from 'typeorm';
 
 import {
@@ -53,7 +53,7 @@ describe('FieldPermissionService', () => {
     isEditable: true,
   } as RoleEntity;
 
-  const mockRolesPermissions: ObjectRecordsPermissionsByRoleId = {
+  const mockRolesPermissions: ObjectsPermissionsByRoleIdDeprecated = {
     [testRoleId]: {
       [testObjectMetadataId]: {
         canRead: true,

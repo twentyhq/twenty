@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
-import { RestrictedFields } from 'twenty-shared/types';
+import { RestrictedFieldsPermissions } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -25,5 +25,5 @@ export class ObjectPermissionDTO {
   @Field(() => GraphQLJSON, {
     nullable: true,
   })
-  restrictedFields?: RestrictedFields;
+  restrictedFields?: RestrictedFieldsPermissions;
 }
