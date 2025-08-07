@@ -1,5 +1,3 @@
-import { registerEnumType } from '@nestjs/graphql';
-
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
@@ -20,10 +18,6 @@ import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.en
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-
-registerEnumType(ViewFilterGroupLogicalOperator, {
-  name: 'ViewFilterGroupLogicalOperator',
-});
 
 @Entity({ name: 'viewFilterGroup', schema: 'core' })
 @Index('IDX_VIEW_FILTER_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
@@ -77,12 +71,19 @@ export class ViewFilterGroup {
   @OneToMany(() => ViewFilter, (viewFilter) => viewFilter.viewFilterGroup)
   viewFilters: Relation<ViewFilter>[];
 
-  @ManyToOne(() => ViewFilterGroup, (viewFilterGroup) => viewFilterGroup.childViewFilterGroups, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(
+    () => ViewFilterGroup,
+    (viewFilterGroup) => viewFilterGroup.childViewFilterGroups,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'parentViewFilterGroupId' })
   parentViewFilterGroup: Relation<ViewFilterGroup>;
 
-  @OneToMany(() => ViewFilterGroup, (viewFilterGroup) => viewFilterGroup.parentViewFilterGroup)
+  @OneToMany(
+    () => ViewFilterGroup,
+    (viewFilterGroup) => viewFilterGroup.parentViewFilterGroup,
+  )
   childViewFilterGroups: Relation<ViewFilterGroup>[];
 }

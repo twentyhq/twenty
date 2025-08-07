@@ -1,5 +1,3 @@
-import { registerEnumType } from '@nestjs/graphql';
-
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
@@ -20,10 +18,6 @@ import { View } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import { ViewFilterValue } from 'src/engine/core-modules/view/types/view-filter-value.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-
-registerEnumType(ViewFilterOperand, {
-  name: 'ViewFilterOperand',
-});
 
 @Entity({ name: 'viewFilter', schema: 'core' })
 @Index('IDX_VIEW_FILTER_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
@@ -84,9 +78,13 @@ export class ViewFilter {
   @JoinColumn({ name: 'viewId' })
   view: Relation<View>;
 
-  @ManyToOne(() => ViewFilterGroup, (viewFilterGroup) => viewFilterGroup.viewFilters, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(
+    () => ViewFilterGroup,
+    (viewFilterGroup) => viewFilterGroup.viewFilters,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'viewFilterGroupId' })
   viewFilterGroup: Relation<ViewFilterGroup>;
 }

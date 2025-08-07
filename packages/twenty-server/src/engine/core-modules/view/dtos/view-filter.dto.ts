@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
@@ -8,6 +8,10 @@ import {
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import { ViewFilterValue } from 'src/engine/core-modules/view/types/view-filter-value.type';
+
+registerEnumType(ViewFilterOperand, {
+  name: 'ViewFilterOperand',
+});
 
 @ObjectType('CoreViewFilter')
 export class ViewFilterDTO {

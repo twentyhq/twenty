@@ -1,5 +1,3 @@
-import { registerEnumType } from '@nestjs/graphql';
-
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
@@ -25,9 +23,6 @@ import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-
-registerEnumType(ViewOpenRecordIn, { name: 'ViewOpenRecordIn' });
-registerEnumType(ViewType, { name: 'ViewType' });
 
 @Entity({ name: 'view', schema: 'core' })
 @Index('IDX_VIEW_WORKSPACE_ID_OBJECT_METADATA_ID', [

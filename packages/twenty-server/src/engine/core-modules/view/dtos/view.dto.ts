@@ -8,6 +8,7 @@ import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-r
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 
 registerEnumType(ViewOpenRecordIn, { name: 'ViewOpenRecordIn' });
+registerEnumType(ViewType, { name: 'ViewType' });
 
 @ObjectType('CoreView')
 export class ViewDTO {

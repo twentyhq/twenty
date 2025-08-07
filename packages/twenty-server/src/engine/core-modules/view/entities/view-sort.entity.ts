@@ -1,5 +1,3 @@
-import { registerEnumType } from '@nestjs/graphql';
-
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
@@ -18,8 +16,6 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-
-registerEnumType(ViewSortDirection, { name: 'ViewSortDirection' });
 
 @Entity({ name: 'viewSort', schema: 'core' })
 @Index('IDX_VIEW_SORT_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
