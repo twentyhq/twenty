@@ -279,74 +279,33 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       const workspaceMigrationsOnCustomUniqueIndex: WorkspaceMigrationTableAction[] =
         [];
+
       const shouldUpdateUniqueIndex =
         isDefined(fieldMetadataInput.name) &&
         fieldMetadataInput.name !== existingFieldMetadata.name &&
         existingFieldMetadata.isUnique === true;
 
       if (shouldUpdateUniqueIndex) {
-        const recomputedIndexPayload =
-          await this.indexMetadataService.recomputeUniqueCustomIndexMetadataForField(
-            {
-              workspaceId: fieldMetadataInput.workspaceId,
-              objectMetadata:
-                getObjectMetadataEntityFromObjectMetadataItemWithFieldsMap(
-                  objectMetadataItemWithFieldMaps,
-                ),
-              updatedFieldMetadata: updatedFieldMetadata,
-              queryRunner,
-            },
-          );
-
-        if (!isDefined(recomputedIndexPayload)) {
-          throw new FieldMetadataException(
-            'Unique index not found for unique field',
-            FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-          );
-        }
-
-        const { updatedIndex, previousName } = recomputedIndexPayload;
-
         workspaceMigrationsOnCustomUniqueIndex.push(
-          this.indexMetadataService.createIndexRecomputeMigrationActions(
+          await this.updateUniqueIndexMetdataAndCreateMigrationActions({
+            fieldMetadataInput,
             objectMetadataItemWithFieldMaps,
-            {
-              indexMetadata: updatedIndex,
-              previousName,
-              newName: updatedIndex.name,
-            },
-          ),
+            updatedFieldMetadata,
+            queryRunner,
+          }),
         );
       }
 
-      if (
-        fieldMetadataInput.isUnique === true &&
-        shouldCreateUniqueIndexOrThrow(updatedFieldMetadata) &&
-        !existingFieldMetadata.isUnique
-      ) {
-        await this.indexMetadataService.createIndexMetadata({
-          workspaceId: fieldMetadataInput.workspaceId,
-          objectMetadata:
-            getObjectMetadataEntityFromObjectMetadataItemWithFieldsMap(
-              objectMetadataItemWithFieldMaps,
-            ),
-          fieldMetadataToIndex: [updatedFieldMetadata],
-          isUnique: true,
-          isCustom: true,
-          indexWhereClause: computeUniqueIndexWhereClause(updatedFieldMetadata),
-          queryRunner,
-        });
+      const shouldCreateUniqueIndex =
+        fieldMetadataInput.isUnique === true && !existingFieldMetadata.isUnique;
 
+      if (shouldCreateUniqueIndex) {
         workspaceMigrationsOnCustomUniqueIndex.push(
-          this.indexMetadataService.computeIndexCreationMigration({
-            objectMetadata:
-              getObjectMetadataEntityFromObjectMetadataItemWithFieldsMap(
-                objectMetadataItemWithFieldMaps,
-              ),
-            fieldMetadataToIndex: [updatedFieldMetadata],
-            isUnique: true,
-            indexWhereClause:
-              computeUniqueIndexWhereClause(updatedFieldMetadata),
+          await this.createUniqueIndexMetadataAndCreateMigrationActions({
+            fieldMetadataItem: updatedFieldMetadata,
+            objectMetadataItemWithFieldMaps,
+            fieldMetadataInput,
+            queryRunner,
           }),
         );
       }
@@ -357,24 +316,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         existingFieldMetadata.isUnique;
 
       if (shouldDeleteUniqueIndex) {
-        await this.indexMetadataService.deleteIndexMetadata({
-          workspaceId: fieldMetadataInput.workspaceId,
-          objectMetadata:
-            getObjectMetadataEntityFromObjectMetadataItemWithFieldsMap(
-              objectMetadataItemWithFieldMaps,
-            ),
-          fieldMetadataToIndex: [updatedFieldMetadata],
-          queryRunner,
-        });
-
         workspaceMigrationsOnCustomUniqueIndex.push(
-          this.indexMetadataService.computeIndexDeletionMigration({
-            objectMetadata:
-              getObjectMetadataEntityFromObjectMetadataItemWithFieldsMap(
-                objectMetadataItemWithFieldMaps,
-              ),
-            fieldMetadataToIndex: [updatedFieldMetadata],
-            isUnique: fieldMetadataInput.isUnique ?? false,
+          await this.deleteUniqueIndexMetadataAndCreateMigrationActions({
+            fieldMetadataInput,
+            objectMetadataItemWithFieldMaps,
+            updatedFieldMetadata,
+            queryRunner,
           }),
         );
       }
@@ -795,7 +742,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           if (fieldMetadataInput.isUnique) {
             if (createdFieldMetadataItems.length > 1) {
               throw new FieldMetadataException(
-                'Unique field cannot have be Relation or Morph Relation',
+                'Unique field cannot bet RELATION or MORPH_RELATION type',
                 FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
               );
             }
@@ -908,6 +855,117 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       fieldMetadataToIndex: [createdFieldMetadataItem],
       isUnique: true,
       indexWhereClause: computeUniqueIndexWhereClause(createdFieldMetadataItem),
+    });
+  }
+
+  private async createUniqueIndexMetadataAndCreateMigrationActions({
+    fieldMetadataItem,
+    objectMetadataItemWithFieldMaps,
+    fieldMetadataInput,
+    queryRunner,
+  }: {
+    fieldMetadataItem: FieldMetadataEntity;
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+    fieldMetadataInput: UpdateFieldInput;
+    queryRunner: QueryRunner;
+  }) {
+    shouldCreateUniqueIndexOrThrow(fieldMetadataItem);
+
+    await this.indexMetadataService.createIndexMetadata({
+      workspaceId: fieldMetadataInput.workspaceId,
+      objectMetadata:
+        getObjectMetadataEntityFromObjectMetadataItemWithFieldsMap(
+          objectMetadataItemWithFieldMaps,
+        ),
+      fieldMetadataToIndex: [fieldMetadataItem],
+      isUnique: true,
+      isCustom: true,
+      indexWhereClause: computeUniqueIndexWhereClause(fieldMetadataItem),
+      queryRunner,
+    });
+
+    return this.indexMetadataService.computeIndexCreationMigration({
+      objectMetadata:
+        getObjectMetadataEntityFromObjectMetadataItemWithFieldsMap(
+          objectMetadataItemWithFieldMaps,
+        ),
+      fieldMetadataToIndex: [fieldMetadataItem],
+      isUnique: true,
+      indexWhereClause: computeUniqueIndexWhereClause(fieldMetadataItem),
+    });
+  }
+
+  private async updateUniqueIndexMetdataAndCreateMigrationActions({
+    fieldMetadataInput,
+    objectMetadataItemWithFieldMaps,
+    updatedFieldMetadata,
+    queryRunner,
+  }: {
+    fieldMetadataInput: UpdateFieldInput;
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+    updatedFieldMetadata: FieldMetadataEntity;
+    queryRunner: QueryRunner;
+  }) {
+    const recomputedIndexPayload =
+      await this.indexMetadataService.recomputeUniqueCustomIndexMetadataForField(
+        {
+          workspaceId: fieldMetadataInput.workspaceId,
+          objectMetadata:
+            getObjectMetadataEntityFromObjectMetadataItemWithFieldsMap(
+              objectMetadataItemWithFieldMaps,
+            ),
+          updatedFieldMetadata: updatedFieldMetadata,
+          queryRunner,
+        },
+      );
+
+    if (!isDefined(recomputedIndexPayload)) {
+      throw new FieldMetadataException(
+        'Unique index not found for unique field',
+        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    const { updatedIndex, previousName } = recomputedIndexPayload;
+
+    return this.indexMetadataService.createIndexRecomputeMigrationActions(
+      objectMetadataItemWithFieldMaps,
+      {
+        indexMetadata: updatedIndex,
+        previousName,
+        newName: updatedIndex.name,
+      },
+    );
+  }
+
+  private async deleteUniqueIndexMetadataAndCreateMigrationActions({
+    fieldMetadataInput,
+    objectMetadataItemWithFieldMaps,
+    updatedFieldMetadata,
+    queryRunner,
+  }: {
+    fieldMetadataInput: UpdateFieldInput;
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+    updatedFieldMetadata: FieldMetadataEntity;
+    queryRunner: QueryRunner;
+  }) {
+    await this.indexMetadataService.deleteIndexMetadata({
+      workspaceId: fieldMetadataInput.workspaceId,
+      objectMetadata:
+        getObjectMetadataEntityFromObjectMetadataItemWithFieldsMap(
+          objectMetadataItemWithFieldMaps,
+        ),
+      fieldMetadataToIndex: [updatedFieldMetadata],
+      queryRunner,
+    });
+
+    return this.indexMetadataService.computeIndexDeletionMigration({
+      objectMetadata:
+        getObjectMetadataEntityFromObjectMetadataItemWithFieldsMap(
+          objectMetadataItemWithFieldMaps,
+        ),
+      fieldMetadataToIndex: [updatedFieldMetadata],
+      isUnique: fieldMetadataInput.isUnique ?? false,
     });
   }
 
