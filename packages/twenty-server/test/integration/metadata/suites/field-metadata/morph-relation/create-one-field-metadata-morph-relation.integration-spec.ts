@@ -138,10 +138,15 @@ describe('createOne FieldMetadataService morph relation fields', () => {
 
     expect(createdField.id).toBeDefined();
     expect(createdField.name).toBe('owner');
-    expect(createdField.morphRelations[0].targetObjectMetadata.id).toBe(
+
+    const morphRelationTargetIds = createdField.morphRelations.map(
+      (relation) => relation.targetObjectMetadata.id,
+    );
+
+    expect(morphRelationTargetIds).toContain(
       contextPayload.firstTargetObjectMetadataId,
     );
-    expect(createdField.morphRelations[1].targetObjectMetadata.id).toBe(
+    expect(morphRelationTargetIds).toContain(
       contextPayload.secondTargetObjectMetadataId,
     );
 
