@@ -94,7 +94,7 @@ export class MessagingMessageListFetchService {
       const isFullSync =
         messageLists.every(
           (messageList) => !isNonEmptyString(messageList.previousSyncCursor),
-        ) && isNonEmptyString(messageChannel.syncCursor);
+        ) && !isNonEmptyString(messageChannel.syncCursor);
 
       let totalMessagesToImportCount = 0;
 
