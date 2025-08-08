@@ -1,5 +1,4 @@
 import { Controller, useFormContext } from 'react-hook-form';
-import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
@@ -10,13 +9,9 @@ import { t } from '@lingui/core/macro';
 import { IconKey } from 'twenty-ui/display';
 import { Toggle } from 'twenty-ui/input';
 
-const settingsDataModelFieldIsUniqueFormSchema = z.object({
-  isUnique: z.boolean().nullable(),
-});
-
-type SettingsDataModelFieldIsUniqueFormValues = z.infer<
-  typeof settingsDataModelFieldIsUniqueFormSchema
->;
+type SettingsDataModelFieldIsUniqueFormValues = {
+  isUnique: boolean;
+};
 
 type SettingsDataModelFieldIsUniqueFormProps = {
   fieldMetadataItem: Pick<FieldMetadataItem, 'isUnique' | 'type' | 'isCustom'>;

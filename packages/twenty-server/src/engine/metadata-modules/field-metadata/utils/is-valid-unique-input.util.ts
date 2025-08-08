@@ -17,8 +17,5 @@ export const isValidUniqueFieldDefaultValueCombination = ({
 }) => {
   const defaultDefaultValue = generateDefaultValue(type);
 
-  console.log(defaultDefaultValue);
-  console.log(defaultValue);
-
   return !isUnique || isDeepStrictEqual(defaultValue, defaultDefaultValue);
 };
