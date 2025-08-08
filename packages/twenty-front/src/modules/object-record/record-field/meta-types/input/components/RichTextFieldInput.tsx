@@ -1,17 +1,17 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useRichTextCommandMenu } from '@/command-menu/hooks/useRichTextCommandMenu';
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import {
-  type FieldInputClickOutsideEvent,
-  type FieldInputEvent,
-} from '@/object-record/record-field/types/FieldInputEvent';
+
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
+
+import { type FieldRichTextV2Metadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Suspense, lazy, useRef } from 'react';
+import { Suspense, lazy, useContext, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { IconLayoutSidebarLeftCollapse } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
@@ -21,13 +21,6 @@ const ActivityRichTextEditor = lazy(() =>
     default: module.ActivityRichTextEditor,
   })),
 );
-
-export type RichTextFieldInputProps = {
-  onClickOutside?: FieldInputClickOutsideEvent;
-  onCancel?: () => void;
-  onEnter?: FieldInputEvent;
-  onEscape?: FieldInputEvent;
-};
 
 const StyledContainer = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
@@ -60,29 +53,34 @@ const LoadingSkeleton = () => {
     </SkeletonTheme>
   );
 };
-export const RichTextFieldInput = ({
-  targetableObject,
-  onClickOutside,
-  onEscape,
-}: {
-  targetableObject: Pick<ActivityTargetableObject, 'id'> & {
-    targetObjectNameSingular:
+export const RichTextFieldInput = () => {
+  const { fieldDefinition, recordId } = useContext(FieldContext);
+
+  const targetableObject = {
+    id: recordId,
+    targetObjectNameSingular: (
+      fieldDefinition as {
+        metadata: FieldRichTextV2Metadata;
+      }
+    ).metadata.objectMetadataNameSingular as
       | CoreObjectNameSingular.Note
-      | CoreObjectNameSingular.Task;
+      | CoreObjectNameSingular.Task,
   };
-} & RichTextFieldInputProps) => {
+
   const { editRichText } = useRichTextCommandMenu();
   const containerRef = useRef<HTMLDivElement>(null);
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
   );
 
+  const { onEscape, onClickOutside } = useContext(FieldInputEventContext);
+
   const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-    onClickOutside?.(() => {}, event);
+    onClickOutside?.({ event, skipPersist: true });
   };
 
   const handleEscape = () => {
-    onEscape?.(() => {});
+    onEscape?.({ skipPersist: true });
   };
 
   useRegisterInputEvents({
@@ -106,7 +104,7 @@ export const RichTextFieldInput = ({
           Icon={IconLayoutSidebarLeftCollapse}
           size="small"
           onClick={() => {
-            onEscape?.(() => {});
+            onEscape?.({ skipPersist: true });
             editRichText(
               targetableObject.id,
               targetableObject.targetObjectNameSingular,

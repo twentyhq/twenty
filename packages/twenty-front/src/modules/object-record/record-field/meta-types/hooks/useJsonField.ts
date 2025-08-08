@@ -1,7 +1,6 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { type FieldJsonValue } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
@@ -32,18 +31,6 @@ export const useJsonField = () => {
     }),
   );
 
-  const persistField = usePersistField();
-
-  const persistJsonField = (nextValue: string) => {
-    if (!nextValue) persistField(null);
-
-    try {
-      persistField(JSON.parse(nextValue));
-    } catch {
-      // Do nothing
-    }
-  };
-
   const { setDraftValue } = useRecordFieldInput<FieldJsonValue>();
 
   const draftValue = useRecoilComponentValue(
@@ -62,6 +49,5 @@ export const useJsonField = () => {
     fieldDefinition,
     fieldValue,
     setFieldValue,
-    persistJsonField,
   };
 };

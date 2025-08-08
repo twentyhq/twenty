@@ -3,31 +3,17 @@ import { type FieldAddressDraftValue } from '@/object-record/record-field/types/
 import { AddressInput } from '@/ui/field/input/components/AddressInput';
 
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import {
-  type FieldInputClickOutsideEvent,
-  type FieldInputEvent,
-} from '@/object-record/record-field/types/FieldInputEvent';
+
+import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { usePersistField } from '../../../hooks/usePersistField';
+import { useContext } from 'react';
 
-export type AddressFieldInputProps = {
-  onClickOutside?: FieldInputClickOutsideEvent;
-  onEnter?: FieldInputEvent;
-  onEscape?: FieldInputEvent;
-  onTab?: FieldInputEvent;
-  onShiftTab?: FieldInputEvent;
-};
-
-export const AddressFieldInput = ({
-  onEnter,
-  onEscape,
-  onClickOutside,
-  onTab,
-  onShiftTab,
-}: AddressFieldInputProps) => {
+export const AddressFieldInput = () => {
   const { draftValue, setDraftValue, fieldDefinition } = useAddressField();
 
-  const persistField = usePersistField();
+  const { onEnter, onTab, onShiftTab, onEscape, onClickOutside } = useContext(
+    FieldInputEventContext,
+  );
 
   const convertToAddress = (
     newAddress: FieldAddressDraftValue | undefined,
@@ -47,27 +33,28 @@ export const AddressFieldInput = ({
 
   const subFields =
     settings && 'subFields' in settings ? settings.subFields : undefined;
+
   const handleEnter = (newAddress: FieldAddressDraftValue) => {
-    onEnter?.(() => persistField(convertToAddress(newAddress)));
+    onEnter?.({ newValue: convertToAddress(newAddress) });
   };
 
   const handleTab = (newAddress: FieldAddressDraftValue) => {
-    onTab?.(() => persistField(convertToAddress(newAddress)));
+    onTab?.({ newValue: convertToAddress(newAddress) });
   };
 
   const handleShiftTab = (newAddress: FieldAddressDraftValue) => {
-    onShiftTab?.(() => persistField(convertToAddress(newAddress)));
+    onShiftTab?.({ newValue: convertToAddress(newAddress) });
   };
 
   const handleEscape = (newAddress: FieldAddressDraftValue) => {
-    onEscape?.(() => persistField(convertToAddress(newAddress)));
+    onEscape?.({ newValue: convertToAddress(newAddress) });
   };
 
   const handleClickOutside = (
     event: MouseEvent | TouchEvent,
     newAddress: FieldAddressDraftValue,
   ) => {
-    onClickOutside?.(() => persistField(convertToAddress(newAddress)), event);
+    onClickOutside?.({ newValue: convertToAddress(newAddress), event });
   };
 
   const handleChange = (newAddress: FieldAddressDraftValue) => {

@@ -13,7 +13,6 @@ import { SelectFieldInput } from '@/object-record/record-field/meta-types/input/
 import { isFieldPhones } from '@/object-record/record-field/types/guards/isFieldPhones';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
 
-import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ArrayFieldInput } from '@/object-record/record-field/meta-types/input/components/ArrayFieldInput';
 import { RichTextFieldInput } from '@/object-record/record-field/meta-types/input/components/RichTextFieldInput';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
@@ -40,147 +39,51 @@ import { NumberFieldInput } from '../meta-types/input/components/NumberFieldInpu
 import { RatingFieldInput } from '../meta-types/input/components/RatingFieldInput';
 import { RelationToOneFieldInput } from '../meta-types/input/components/RelationToOneFieldInput';
 import { TextFieldInput } from '../meta-types/input/components/TextFieldInput';
-import { type FieldInputEvent } from '../types/FieldInputEvent';
-import { type FieldRichTextV2Metadata } from '../types/FieldMetadata';
 import { isFieldText } from '../types/guards/isFieldText';
 
-type FieldInputProps = {
-  onSubmit?: FieldInputEvent;
-  onCancel?: () => void;
-  onClickOutside?: (
-    persist: () => void,
-    event: MouseEvent | TouchEvent,
-  ) => void;
-  onEnter?: FieldInputEvent;
-  onEscape?: FieldInputEvent;
-  onTab?: FieldInputEvent;
-  onShiftTab?: FieldInputEvent;
-  isReadOnly?: boolean;
-};
-
-export const FieldInput = ({
-  onCancel,
-  onSubmit,
-  onEnter,
-  onEscape,
-  onShiftTab,
-  onTab,
-  onClickOutside,
-  isReadOnly,
-}: FieldInputProps) => {
-  const { fieldDefinition, recordId } = useContext(FieldContext);
+export const FieldInput = () => {
+  const { fieldDefinition } = useContext(FieldContext);
 
   return (
     <>
       {isFieldRelationToOneObject(fieldDefinition) ? (
-        <RelationToOneFieldInput onSubmit={onSubmit} onCancel={onCancel} />
+        <RelationToOneFieldInput />
       ) : isFieldRelationFromManyObjects(fieldDefinition) ? (
-        <RelationFromManyFieldInput onSubmit={onSubmit} />
+        <RelationFromManyFieldInput />
       ) : isFieldPhones(fieldDefinition) ? (
-        <PhonesFieldInput onCancel={onCancel} onClickOutside={onClickOutside} />
+        <PhonesFieldInput />
       ) : isFieldText(fieldDefinition) ? (
-        <TextFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
+        <TextFieldInput />
       ) : isFieldEmails(fieldDefinition) ? (
-        <EmailsFieldInput
-          onCancel={onCancel}
-          onClickOutside={(event) => onClickOutside?.(() => {}, event)}
-        />
+        <EmailsFieldInput />
       ) : isFieldFullName(fieldDefinition) ? (
-        <FullNameFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
+        <FullNameFieldInput />
       ) : isFieldDateTime(fieldDefinition) ? (
-        <DateTimeFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onClear={onSubmit}
-          onSubmit={onSubmit}
-        />
+        <DateTimeFieldInput />
       ) : isFieldDate(fieldDefinition) ? (
-        <DateFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onClear={onSubmit}
-          onSubmit={onSubmit}
-        />
+        <DateFieldInput />
       ) : isFieldNumber(fieldDefinition) ? (
-        <NumberFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
+        <NumberFieldInput />
       ) : isFieldLinks(fieldDefinition) ? (
-        <LinksFieldInput
-          onCancel={onCancel}
-          onClickOutside={(event) => onClickOutside?.(() => {}, event)}
-        />
+        <LinksFieldInput />
       ) : isFieldCurrency(fieldDefinition) ? (
-        <CurrencyFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
+        <CurrencyFieldInput />
       ) : isFieldBoolean(fieldDefinition) ? (
-        <BooleanFieldInput onSubmit={onSubmit} readonly={isReadOnly} />
+        <BooleanFieldInput />
       ) : isFieldRating(fieldDefinition) ? (
-        <RatingFieldInput onSubmit={onSubmit} readonly={isReadOnly} />
+        <RatingFieldInput />
       ) : isFieldSelect(fieldDefinition) ? (
-        <SelectFieldInput onSubmit={onSubmit} onCancel={onCancel} />
+        <SelectFieldInput />
       ) : isFieldMultiSelect(fieldDefinition) ? (
-        <MultiSelectFieldInput onCancel={onCancel} />
+        <MultiSelectFieldInput />
       ) : isFieldAddress(fieldDefinition) ? (
-        <AddressFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
+        <AddressFieldInput />
       ) : isFieldRawJson(fieldDefinition) ? (
-        <RawJsonFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
+        <RawJsonFieldInput />
       ) : isFieldArray(fieldDefinition) ? (
-        <ArrayFieldInput
-          onCancel={onCancel}
-          onClickOutside={(event) => onClickOutside?.(() => {}, event)}
-        />
+        <ArrayFieldInput />
       ) : isFieldRichTextV2(fieldDefinition) ? (
-        <RichTextFieldInput
-          targetableObject={{
-            id: recordId,
-            targetObjectNameSingular: (
-              fieldDefinition as {
-                metadata: FieldRichTextV2Metadata;
-              }
-            ).metadata.objectMetadataNameSingular as
-              | CoreObjectNameSingular.Note
-              | CoreObjectNameSingular.Task,
-          }}
-          onCancel={onCancel}
-          onClickOutside={onClickOutside}
-          onEscape={onEscape}
-        />
+        <RichTextFieldInput />
       ) : (
         <></>
       )}
