@@ -49,6 +49,14 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
         'https://twenty.com/images/lab/is-worklfow-filtering-enabled.png',
     },
   },
+  {
+    key: FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
+    metadata: {
+      label: 'Workflow Branches',
+      description: 'Create multiple branches on your workflows',
+      imagePath: 'https://twenty.com/images/lab/is-workflow-branch-enabled.png',
+    },
+  },
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
         // {

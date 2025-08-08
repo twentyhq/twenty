@@ -104,8 +104,7 @@ export const SettingsAccountsConnectionForm = ({
           <StyledSectionHeader>
             <StyledSectionTitle>{t`IMAP Configuration`}</StyledSectionTitle>
             <StyledSectionDescription>
-              {t`Configure IMAP settings to receive and sync your emails.`}
-              <br />
+              {t`Configure IMAP settings to receive and sync your emails.`}{' '}
               {t`Leave blank if you don't need to import emails.`}
             </StyledSectionDescription>
           </StyledSectionHeader>
@@ -187,8 +186,7 @@ export const SettingsAccountsConnectionForm = ({
           <StyledSectionHeader>
             <StyledSectionTitle>{t`SMTP Configuration`}</StyledSectionTitle>
             <StyledSectionDescription>
-              {t`Configure SMTP settings to send emails from your account.`}
-              <br />
+              {t`Configure SMTP settings to send emails from your account.`}{' '}
               {t`Leave blank if you don't need to send emails.`}
             </StyledSectionDescription>
           </StyledSectionHeader>
@@ -270,8 +268,7 @@ export const SettingsAccountsConnectionForm = ({
           <StyledSectionHeader>
             <StyledSectionTitle>{t`CalDAV Configuration`}</StyledSectionTitle>
             <StyledSectionDescription>
-              {t`Configure CalDAV settings to sync your calendar events.`}
-              <br />
+              {t`Configure CalDAV settings to sync your calendar events.`}{' '}
               {t`Leave blank if you don't need calendar sync.`}
             </StyledSectionDescription>
           </StyledSectionHeader>
