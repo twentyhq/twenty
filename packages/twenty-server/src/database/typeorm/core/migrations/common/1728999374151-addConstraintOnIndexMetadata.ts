@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddConstraintOnIndex1728999374151 implements MigrationInterface {
   name = 'AddConstraintOnIndexMetadata1728999374151';

@@ -1,4 +1,4 @@
-import { FieldMetadataFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+import { type FieldMetadataFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 export const serializeFunctionDefaultValue = (
   defaultValue?: FieldMetadataFunctionDefaultValue,

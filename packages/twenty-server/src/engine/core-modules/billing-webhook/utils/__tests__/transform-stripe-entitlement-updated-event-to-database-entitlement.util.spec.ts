@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 
 import { transformStripeEntitlementUpdatedEventToDatabaseEntitlement } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-entitlement-updated-event-to-database-entitlement.util';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';

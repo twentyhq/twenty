@@ -1,14 +1,14 @@
 import { action } from '@storybook/addon-actions';
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 import { IconBell, IconMinus } from '@ui/display';
 import {
   CatalogDecorator,
-  CatalogDimension,
-  CatalogOptions,
+  type CatalogDimension,
+  type CatalogOptions,
   ComponentDecorator,
 } from '@ui/testing';
-import { MenuItemAccent } from '../../types/MenuItemAccent';
+import { type MenuItemAccent } from '../../types/MenuItemAccent';
 import { MenuItemDraggable } from '../MenuItemDraggable';
 
 const meta: Meta<typeof MenuItemDraggable> = {

@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class WorkspaceEntityDefaultMicrosoftAuthEnabled1737630672873
   implements MigrationInterface

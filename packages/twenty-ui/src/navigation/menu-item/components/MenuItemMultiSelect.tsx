@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 
 import { Tag } from '@ui/components';
-import { IconComponent } from '@ui/display';
+import { type IconComponent } from '@ui/display';
 import { Checkbox } from '@ui/input/components/Checkbox';
 import { MenuItemLeftContent } from '@ui/navigation/menu-item/internals/components/MenuItemLeftContent';
-import { ThemeColor } from '@ui/theme';
+import { type ThemeColor } from '@ui/theme';
 import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';
 
 const StyledLeftContentWithCheckboxContainer = styled.div`

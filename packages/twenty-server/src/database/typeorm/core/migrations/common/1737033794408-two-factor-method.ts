@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class TwoFactorMethod1737033794408 implements MigrationInterface {
   name = 'TwoFactorMethod1737033794408';

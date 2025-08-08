@@ -1,10 +1,10 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 
-import { ComputedPartialFieldMetadata } from './partial-field-metadata.interface';
-import { ComputedPartialWorkspaceEntity } from './partial-object-metadata.interface';
+import { type ComputedPartialFieldMetadata } from './partial-field-metadata.interface';
+import { type ComputedPartialWorkspaceEntity } from './partial-object-metadata.interface';
 
 export const enum ComparatorAction {
   SKIP = 'SKIP',

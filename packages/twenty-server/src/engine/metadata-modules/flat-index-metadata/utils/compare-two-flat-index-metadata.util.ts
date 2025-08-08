@@ -1,7 +1,7 @@
 import diff from 'microdiff';
-import { FromTo } from 'twenty-shared/types';
+import { type FromTo } from 'twenty-shared/types';
 
-import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 const flatIndexMetadataPropertiesToCompare = [

@@ -1,7 +1,7 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { APP_LOCALES } from 'twenty-shared/translations';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 
 @ArgsType()
 export class UserCredentialsInput {

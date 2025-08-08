@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class UpdateRoleTable1739795699972 implements MigrationInterface {
   name = 'UpdateRoleTable1739795699972';

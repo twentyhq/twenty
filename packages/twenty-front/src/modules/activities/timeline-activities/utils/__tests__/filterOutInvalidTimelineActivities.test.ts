@@ -7,6 +7,8 @@ const noteObjectMetadataItem = {
   nameSingular: CoreObjectNameSingular.Note,
   namePlural: 'notes',
   fields: [{ name: 'field1' }, { name: 'field2' }, { name: 'field3' }],
+  readableFields: [{ name: 'field1' }, { name: 'field2' }, { name: 'field3' }],
+  updatableFields: [{ name: 'field1' }, { name: 'field2' }, { name: 'field3' }],
 } as ObjectMetadataItem;
 
 describe('filterOutInvalidTimelineActivities', () => {
@@ -40,6 +42,16 @@ describe('filterOutInvalidTimelineActivities', () => {
       nameSingular: 'objectNameSingular',
       namePlural: 'objectNamePlural',
       fields: [{ name: 'field1' }, { name: 'field2' }, { name: 'field3' }],
+      readableFields: [
+        { name: 'field1' },
+        { name: 'field2' },
+        { name: 'field3' },
+      ],
+      updatableFields: [
+        { name: 'field1' },
+        { name: 'field2' },
+        { name: 'field3' },
+      ],
     } as ObjectMetadataItem;
 
     const filteredEvents = filterOutInvalidTimelineActivities(
@@ -99,6 +111,8 @@ describe('filterOutInvalidTimelineActivities', () => {
       nameSingular: 'objectNameSingular',
       namePlural: 'objectNamePlural',
       fields: [{ name: 'field1' }, { name: 'field2' }],
+      readableFields: [{ name: 'field1' }, { name: 'field2' }],
+      updatableFields: [{ name: 'field1' }, { name: 'field2' }],
     } as ObjectMetadataItem;
 
     const filteredEvents = filterOutInvalidTimelineActivities(
@@ -128,6 +142,8 @@ describe('filterOutInvalidTimelineActivities', () => {
       nameSingular: 'objectNameSingular',
       namePlural: 'objectNamePlural',
       fields: [{ name: 'field1' }, { name: 'field2' }],
+      readableFields: [{ name: 'field1' }, { name: 'field2' }],
+      updatableFields: [{ name: 'field1' }, { name: 'field2' }],
     } as ObjectMetadataItem;
 
     const filteredEvents = filterOutInvalidTimelineActivities(

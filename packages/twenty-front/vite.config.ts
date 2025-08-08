@@ -73,7 +73,7 @@ export default defineConfig(({ command, mode }) => {
     checkers['eslint'] = {
       lintCommand:
         // Appended to packages/twenty-front/.eslintrc.cjs
-        'eslint ../../packages/twenty-front --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs',
+        'ESLINT_USE_FLAT_CONFIG=false eslint ../../packages/twenty-front --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs',
     };
   }
 

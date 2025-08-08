@@ -1,12 +1,12 @@
 import * as Sentry from '@sentry/node';
 import {
   handleStreamOrSingleExecutionResult,
-  Plugin,
+  type Plugin,
   getDocumentString,
 } from '@envelop/core';
-import { OperationDefinitionNode, Kind, print } from 'graphql';
+import { type OperationDefinitionNode, Kind, print } from 'graphql';
 
-import { GraphQLContext } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
+import { type GraphQLContext } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
 
 export const useSentryTracing = <
   PluginContext extends GraphQLContext,

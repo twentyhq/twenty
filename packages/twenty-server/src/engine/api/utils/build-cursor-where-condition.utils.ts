@@ -1,10 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  ObjectRecord,
-  ObjectRecordCursorLeafCompositeValue,
-  ObjectRecordCursorLeafScalarValue,
-  ObjectRecordOrderBy,
+  type ObjectRecord,
+  type ObjectRecordCursorLeafCompositeValue,
+  type ObjectRecordCursorLeafScalarValue,
+  type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import {
@@ -16,7 +16,7 @@ import { computeOperator } from 'src/engine/api/utils/compute-operator.utils';
 import { isAscendingOrder } from 'src/engine/api/utils/is-ascending-order.utils';
 import { validateAndGetOrderByForScalarField } from 'src/engine/api/utils/validate-and-get-order-by.utils';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 type BuildCursorWhereConditionParams = {
   cursorKey: keyof ObjectRecord;

@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { anthropic } from '@ai-sdk/anthropic';
 import { createOpenAI, openai } from '@ai-sdk/openai';
-import { LanguageModel } from 'ai';
+import { type LanguageModel } from 'ai';
 
 import {
   AI_MODELS,
-  AIModelConfig,
+  type AIModelConfig,
   ModelProvider,
 } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';

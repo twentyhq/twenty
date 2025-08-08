@@ -185,9 +185,26 @@ export const mockedOnboardingUserData = (
     supportUserHash:
       '4fb61d34ed3a4aeda2476d4b308b5162db9e1809b2b8277e6fdc6efc4a609254',
     workspaceMember: null,
+    workspaceMembers: [],
     currentWorkspace: mockCurrentWorkspace,
+    currentUserWorkspace: {
+      permissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
+      objectPermissions: generatedMockObjectMetadataItems.map((item) => ({
+        objectMetadataId: item.id,
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: true,
+        canSoftDeleteObjectRecords: true,
+        canDestroyObjectRecords: true,
+        restrictedFields: {},
+      })),
+    },
     locale: 'en',
     workspaces: [{ workspace: mockCurrentWorkspace }],
-    onboardingStatus: onboardingStatus || null,
+    onboardingStatdeus: onboardingStatus || null,
+    userVars: {},
+    availableWorkspaces: {
+      availableWorkspacesForSignIn: [],
+      availableWorkspacesForSignUp: [],
+    },
   };
 };

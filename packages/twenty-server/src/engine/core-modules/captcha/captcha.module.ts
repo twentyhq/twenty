@@ -1,4 +1,4 @@
-import { DynamicModule, Global } from '@nestjs/common';
+import { type DynamicModule, Global } from '@nestjs/common';
 
 import { CaptchaService } from 'src/engine/core-modules/captcha/captcha.service';
 import { CAPTCHA_DRIVER } from 'src/engine/core-modules/captcha/constants/captcha-driver.constants';
@@ -6,7 +6,7 @@ import { GoogleRecaptchaDriver } from 'src/engine/core-modules/captcha/drivers/g
 import { TurnstileDriver } from 'src/engine/core-modules/captcha/drivers/turnstile.driver';
 import {
   CaptchaDriverType,
-  CaptchaModuleAsyncOptions,
+  type CaptchaModuleAsyncOptions,
 } from 'src/engine/core-modules/captcha/interfaces';
 
 @Global()

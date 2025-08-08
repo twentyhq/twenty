@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { resolveInput } from 'twenty-shared/utils';
 
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
-import { ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
-import { WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
-import { WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
+import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
+import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 @Injectable()

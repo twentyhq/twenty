@@ -5,6 +5,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { arePrefetchViewsLoadedState } from '@/prefetch/states/arePrefetchViewsLoaded';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
+import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import isEmpty from 'lodash.isempty';
@@ -26,7 +27,10 @@ export const useDefaultHomePagePath = () => {
 
   const readableAlphaSortedActiveNonSystemObjectMetadataItems = useMemo(() => {
     return alphaSortedActiveNonSystemObjectMetadataItems.filter((item) => {
-      const objectPermissions = objectPermissionsByObjectMetadataId[item.id];
+      const objectPermissions = getObjectPermissionsFromMapByObjectMetadataId({
+        objectPermissionsByObjectMetadataId,
+        objectMetadataId: item.id,
+      });
       return objectPermissions?.canReadObjectRecords;
     });
   }, [
@@ -82,8 +86,10 @@ export const useDefaultHomePagePath = () => {
 
         if (
           !isDefined(lastVisitedObjectMetadataItemId) ||
-          !objectPermissionsByObjectMetadataId[lastVisitedObjectMetadataItemId]
-            ?.canReadObjectRecords
+          !getObjectPermissionsFromMapByObjectMetadataId({
+            objectPermissionsByObjectMetadataId,
+            objectMetadataId: lastVisitedObjectMetadataItemId,
+          }).canReadObjectRecords
         ) {
           return firstObjectPathInfo;
         }

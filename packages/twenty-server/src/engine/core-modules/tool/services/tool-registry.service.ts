@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
-import { SendEmailInput } from 'src/engine/core-modules/tool/tools/send-email-tool/types/send-email-input.type';
-import { Tool } from 'src/engine/core-modules/tool/types/tool.type';
+import { type SendEmailInput } from 'src/engine/core-modules/tool/tools/send-email-tool/types/send-email-input.type';
+import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
 @Injectable()

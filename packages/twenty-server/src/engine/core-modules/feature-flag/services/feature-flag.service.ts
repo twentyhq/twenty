@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
+import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
-import { FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag-dto';
+import { type FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag-dto';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import {
@@ -131,6 +131,14 @@ export class FeatureFlagService {
     await this.workspaceFeatureFlagsMapCacheService.recomputeFeatureFlagsMapCache(
       { workspaceId },
     );
+
+    if (featureFlag === FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED) {
+      await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
+        {
+          workspaceId,
+        },
+      );
+    }
 
     return result;
   }

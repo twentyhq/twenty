@@ -1,6 +1,6 @@
 import { ConfigurableModuleBuilder } from '@nestjs/common';
 
-import { MessageQueueModuleOptions } from 'src/engine/core-modules/message-queue/interfaces';
+import { type MessageQueueModuleOptions } from 'src/engine/core-modules/message-queue/interfaces';
 
 export const {
   ConfigurableModuleClass,

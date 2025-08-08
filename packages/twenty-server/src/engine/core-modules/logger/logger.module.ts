@@ -1,11 +1,16 @@
-import { ConsoleLogger, DynamicModule, Global, Module } from '@nestjs/common';
+import {
+  ConsoleLogger,
+  type DynamicModule,
+  Global,
+  Module,
+} from '@nestjs/common';
 
 import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
 import { LOGGER_DRIVER } from 'src/engine/core-modules/logger/logger.constants';
 import {
-  ASYNC_OPTIONS_TYPE,
+  type ASYNC_OPTIONS_TYPE,
   ConfigurableModuleClass,
-  OPTIONS_TYPE,
+  type OPTIONS_TYPE,
 } from 'src/engine/core-modules/logger/logger.module-definition';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 

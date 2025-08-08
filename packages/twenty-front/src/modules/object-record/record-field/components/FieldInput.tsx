@@ -139,7 +139,7 @@ export const FieldInput = ({
       ) : isFieldBoolean(fieldDefinition) ? (
         <BooleanFieldInput onSubmit={onSubmit} readonly={isReadOnly} />
       ) : isFieldRating(fieldDefinition) ? (
-        <RatingFieldInput onSubmit={onSubmit} />
+        <RatingFieldInput onSubmit={onSubmit} readonly={isReadOnly} />
       ) : isFieldSelect(fieldDefinition) ? (
         <SelectFieldInput onSubmit={onSubmit} onCancel={onCancel} />
       ) : isFieldMultiSelect(fieldDefinition) ? (

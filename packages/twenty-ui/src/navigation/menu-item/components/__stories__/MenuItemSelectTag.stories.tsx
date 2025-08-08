@@ -1,13 +1,13 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 import {
   CatalogDecorator,
-  CatalogDimension,
-  CatalogOptions,
-  CatalogStory,
+  type CatalogDimension,
+  type CatalogOptions,
+  type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { ThemeColor } from '@ui/theme';
+import { type ThemeColor } from '@ui/theme';
 import { MenuItemSelectTag } from '../MenuItemSelectTag';
 
 const meta: Meta<typeof MenuItemSelectTag> = {

@@ -1,8 +1,8 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-import { RelationType } from 'typeorm/metadata/types/RelationTypes';
+import { type FieldMetadataType } from 'twenty-shared/types';
+import { type RelationType } from 'typeorm/metadata/types/RelationTypes';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import {
   RelationException,
   RelationExceptionCode,

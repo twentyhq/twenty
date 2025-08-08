@@ -1,20 +1,20 @@
 import {
   FieldMetadataType,
-  RelationAndMorphRelationFieldMetadataType,
+  type RelationAndMorphRelationFieldMetadataType,
 } from 'twenty-shared/types';
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import {
-  FieldMetadataEntityRelationProperties,
-  FlatFieldMetadata,
+  type FieldMetadataEntityRelationProperties,
+  type FlatFieldMetadata,
   fieldMetadataRelationProperties,
 } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { FlatRelationTargetFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-relation-target-field-metadata.type';
+import { type FlatRelationTargetFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-relation-target-field-metadata.type';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { fromObjectMetadataEntityToFlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/from-object-metadata-entity-to-flat-object-metadata-without-fields.util';
 

@@ -38,6 +38,8 @@ describe('useRelatedRecordActions', () => {
   it('should return empty object when objectMetadataItem has no fields', () => {
     const objectMetadataItem = {
       fields: [],
+      readableFields: [],
+      updatableFields: [],
     } as unknown as ObjectMetadataItem;
 
     const { result } = renderHook(
@@ -70,33 +72,36 @@ describe('useRelatedRecordActions', () => {
   });
 
   it('should generate actions for one-to-many relations', () => {
+    const fields = [
+      {
+        type: 'RELATION',
+        relation: {
+          type: 'ONE_TO_MANY',
+          targetObjectMetadata: {
+            nameSingular: CoreObjectNameSingular.Person,
+            namePlural: 'People',
+          },
+        },
+        label: 'person',
+        isSystem: false,
+      },
+      {
+        type: 'RELATION',
+        relation: {
+          type: 'ONE_TO_MANY',
+          targetObjectMetadata: {
+            nameSingular: CoreObjectNameSingular.Company,
+            namePlural: 'Companies',
+          },
+        },
+        label: 'company',
+        isSystem: false,
+      },
+    ];
     const objectMetadataItem = {
-      fields: [
-        {
-          type: 'RELATION',
-          relation: {
-            type: 'ONE_TO_MANY',
-            targetObjectMetadata: {
-              nameSingular: CoreObjectNameSingular.Person,
-              namePlural: 'People',
-            },
-          },
-          label: 'person',
-          isSystem: false,
-        },
-        {
-          type: 'RELATION',
-          relation: {
-            type: 'ONE_TO_MANY',
-            targetObjectMetadata: {
-              nameSingular: CoreObjectNameSingular.Company,
-              namePlural: 'Companies',
-            },
-          },
-          label: 'company',
-          isSystem: false,
-        },
-      ],
+      fields,
+      readableFields: fields,
+      updatableFields: fields,
     } as unknown as ObjectMetadataItem;
 
     const { result } = renderHook(
@@ -115,36 +120,40 @@ describe('useRelatedRecordActions', () => {
   });
 
   it('should filter out non-one-to-many relations', () => {
+    const fields = [
+      {
+        type: 'RELATION',
+        relation: {
+          type: 'MANY_TO_ONE',
+          targetObjectMetadata: {
+            nameSingular: CoreObjectNameSingular.Person,
+            namePlural: 'People',
+          },
+        },
+        label: 'person',
+        isSystem: false,
+      },
+      {
+        type: 'TEXT',
+      },
+      {
+        type: 'RELATION',
+        relation: {
+          type: 'ONE_TO_MANY',
+          targetObjectMetadata: {
+            nameSingular: CoreObjectNameSingular.Company,
+            namePlural: 'Companies',
+          },
+        },
+        label: 'company',
+        isSystem: false,
+      },
+    ];
+
     const objectMetadataItem = {
-      fields: [
-        {
-          type: 'RELATION',
-          relation: {
-            type: 'MANY_TO_ONE',
-            targetObjectMetadata: {
-              nameSingular: CoreObjectNameSingular.Person,
-              namePlural: 'People',
-            },
-          },
-          label: 'person',
-          isSystem: false,
-        },
-        {
-          type: 'TEXT',
-        },
-        {
-          type: 'RELATION',
-          relation: {
-            type: 'ONE_TO_MANY',
-            targetObjectMetadata: {
-              nameSingular: CoreObjectNameSingular.Company,
-              namePlural: 'Companies',
-            },
-          },
-          label: 'company',
-          isSystem: false,
-        },
-      ],
+      fields,
+      readableFields: fields,
+      updatableFields: fields,
     } as unknown as ObjectMetadataItem;
 
     const { result } = renderHook(
@@ -163,33 +172,36 @@ describe('useRelatedRecordActions', () => {
   });
 
   it('should assign correct positions to each action', () => {
+    const fields = [
+      {
+        type: 'RELATION',
+        relation: {
+          type: 'ONE_TO_MANY',
+          targetObjectMetadata: {
+            nameSingular: CoreObjectNameSingular.Person,
+            namePlural: 'People',
+          },
+        },
+        label: 'person',
+        isSystem: false,
+      },
+      {
+        type: 'RELATION',
+        relation: {
+          type: 'ONE_TO_MANY',
+          targetObjectMetadata: {
+            nameSingular: CoreObjectNameSingular.Company,
+            namePlural: 'Companies',
+          },
+        },
+        label: 'company',
+        isSystem: false,
+      },
+    ];
     const objectMetadataItem = {
-      fields: [
-        {
-          type: 'RELATION',
-          relation: {
-            type: 'ONE_TO_MANY',
-            targetObjectMetadata: {
-              nameSingular: CoreObjectNameSingular.Person,
-              namePlural: 'People',
-            },
-          },
-          label: 'person',
-          isSystem: false,
-        },
-        {
-          type: 'RELATION',
-          relation: {
-            type: 'ONE_TO_MANY',
-            targetObjectMetadata: {
-              nameSingular: CoreObjectNameSingular.Company,
-              namePlural: 'Companies',
-            },
-          },
-          label: 'company',
-          isSystem: false,
-        },
-      ],
+      fields,
+      readableFields: fields,
+      updatableFields: fields,
     } as unknown as ObjectMetadataItem;
 
     const { result } = renderHook(
@@ -207,33 +219,36 @@ describe('useRelatedRecordActions', () => {
   });
 
   it('should filter out system fields', () => {
+    const fields = [
+      {
+        type: 'RELATION',
+        relation: {
+          type: 'ONE_TO_MANY',
+          targetObjectMetadata: {
+            nameSingular: CoreObjectNameSingular.Person,
+            namePlural: 'People',
+          },
+        },
+        label: 'person',
+        isSystem: true,
+      },
+      {
+        type: 'RELATION',
+        relation: {
+          type: 'ONE_TO_MANY',
+          targetObjectMetadata: {
+            nameSingular: CoreObjectNameSingular.Company,
+            namePlural: 'Companies',
+          },
+        },
+        label: 'company',
+        isSystem: false,
+      },
+    ];
     const objectMetadataItem = {
-      fields: [
-        {
-          type: 'RELATION',
-          relation: {
-            type: 'ONE_TO_MANY',
-            targetObjectMetadata: {
-              nameSingular: CoreObjectNameSingular.Person,
-              namePlural: 'People',
-            },
-          },
-          label: 'person',
-          isSystem: true,
-        },
-        {
-          type: 'RELATION',
-          relation: {
-            type: 'ONE_TO_MANY',
-            targetObjectMetadata: {
-              nameSingular: CoreObjectNameSingular.Company,
-              namePlural: 'Companies',
-            },
-          },
-          label: 'company',
-          isSystem: false,
-        },
-      ],
+      fields,
+      readableFields: fields,
+      updatableFields: fields,
     } as unknown as ObjectMetadataItem;
 
     const { result } = renderHook(

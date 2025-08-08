@@ -8,14 +8,14 @@ import { z } from 'zod';
 import { Logo } from '@/auth/components/Logo';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { useAuth } from '@/auth/hooks/useAuth';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
+import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/layout/modal/components/Modal';
+import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { ApolloError } from '@apollo/client';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -69,7 +69,7 @@ export const CreateWorkspace = () => {
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
 
-  const { loadCurrentUser } = useAuth();
+  const { loadCurrentUser } = useLoadCurrentUser();
   const [activateWorkspace] = useActivateWorkspaceMutation();
   const [pendingCreationLoaderStep, setPendingCreationLoaderStep] = useState(
     PendingCreationLoaderStep.None,

@@ -1,7 +1,7 @@
-import { Scope, SetMetadata } from '@nestjs/common';
+import { type Scope, SetMetadata } from '@nestjs/common';
 import { SCOPE_OPTIONS_METADATA } from '@nestjs/common/constants';
 
-import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { type WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { WORKSPACE_QUERY_HOOK_METADATA } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.constants';
@@ -32,7 +32,7 @@ export function WorkspaceQueryHook(
     options.type = WorkspaceQueryHookType.PRE_HOOK;
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   return (target: Function) => {
     SetMetadata(SCOPE_OPTIONS_METADATA, options)(target);
     SetMetadata(WORKSPACE_QUERY_HOOK_METADATA, options)(target);

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { QueryRunner } from 'typeorm';
+import { type QueryRunner } from 'typeorm';
 
 import { sanitizeDefaultValue } from 'src/engine/twenty-orm/workspace-schema-manager/utils/sanitize-default-value.util';
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';

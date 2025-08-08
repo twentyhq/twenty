@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
@@ -22,7 +22,7 @@ import {
   CalendarChannelVisibility,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 jest.mock('uuid', () => ({
@@ -82,7 +82,7 @@ describe('MicrosoftAPIsService', () => {
           useValue: {
             getRepositoryForWorkspace: jest
               .fn()
-              .mockImplementation((workspaceId, entity) => {
+              .mockImplementation((_workspaceId, entity) => {
                 if (entity === 'connectedAccount')
                   return mockConnectedAccountRepository;
                 if (entity === 'calendarChannel')

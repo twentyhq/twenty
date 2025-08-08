@@ -26,7 +26,7 @@ jest.mock('@/domain-manager/hooks/useRedirect', () => ({
   })),
 }));
 
-jest.mock('@/object-metadata/hooks/useRefreshObjectMetadataItem', () => ({
+jest.mock('@/object-metadata/hooks/useRefreshObjectMetadataItems', () => ({
   useRefreshObjectMetadataItems: jest.fn().mockImplementation(() => ({
     refreshObjectMetadataItems: jest.fn(),
   })),

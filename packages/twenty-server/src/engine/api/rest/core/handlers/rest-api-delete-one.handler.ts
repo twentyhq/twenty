@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { Request } from 'express';
+import { type Request } from 'express';
 
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
@@ -29,7 +29,9 @@ export class RestApiDeleteOneHandler extends RestApiBaseHandler {
       select: selectOptions,
     });
 
-    await repository.delete(recordId);
+    const columnsToReturnForDelete: string[] = [];
+
+    await repository.delete(recordId, undefined, columnsToReturnForDelete);
 
     return this.formatResult({
       operation: 'delete',

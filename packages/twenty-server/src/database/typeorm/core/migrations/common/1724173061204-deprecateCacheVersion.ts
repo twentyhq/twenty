@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class DeprecateCacheVersion1724173061204 implements MigrationInterface {
   name = 'DeprecateCacheVersion1724173061204';

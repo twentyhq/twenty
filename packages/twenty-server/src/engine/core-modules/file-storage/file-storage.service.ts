@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { Readable } from 'stream';
+import { type Readable } from 'stream';
 
-import { StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
+import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 

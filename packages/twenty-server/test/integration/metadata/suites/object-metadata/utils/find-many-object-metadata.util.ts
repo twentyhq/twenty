@@ -1,13 +1,13 @@
 import {
-  FindManyObjectMetadataFactoryInput,
+  type FindManyObjectMetadataFactoryInput,
   findManyObjectMetadataQueryFactory,
 } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+import { type BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 
 export const findManyObjectMetadata = async ({
   input,

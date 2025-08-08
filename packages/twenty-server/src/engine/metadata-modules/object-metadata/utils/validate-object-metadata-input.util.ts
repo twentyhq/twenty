@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
-import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
+import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
+import { type UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,

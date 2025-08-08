@@ -2,7 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { ClickHouseClient, createClient } from '@clickhouse/client';
+import { type ClickHouseClient, createClient } from '@clickhouse/client';
 import { config } from 'dotenv';
 
 config({
@@ -30,7 +30,7 @@ async function ensureDatabaseExists() {
     await client.command({
       query: `CREATE DATABASE IF NOT EXISTS "${database}"`,
     });
-  } catch (error) {
+  } catch {
     // It may fail due to permissions, but the database already exists
   } finally {
     await client.close();

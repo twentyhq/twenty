@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm';
+import { type DataSource } from 'typeorm';
 
 import { seedBillingSubscriptions } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-subscriptions.util';
 import { seedAgents } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-agents.util';

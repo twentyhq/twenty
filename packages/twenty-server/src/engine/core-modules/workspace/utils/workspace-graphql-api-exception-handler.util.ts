@@ -1,3 +1,5 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
   ConflictError,
   ForbiddenError,
@@ -21,9 +23,7 @@ export const workspaceGraphqlApiExceptionHandler = (error: Error) => {
       case WorkspaceExceptionCode.WORKSPACE_CUSTOM_DOMAIN_DISABLED:
         throw new ForbiddenError(error);
       default: {
-        const _exhaustiveCheck: never = error.code;
-
-        throw error;
+        return assertUnreachable(error.code);
       }
     }
   }

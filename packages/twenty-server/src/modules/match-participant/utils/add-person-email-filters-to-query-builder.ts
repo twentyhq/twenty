@@ -1,6 +1,6 @@
-import { SelectQueryBuilder } from 'typeorm';
+import { type SelectQueryBuilder } from 'typeorm';
 
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 export interface AddPersonEmailFiltersToQueryBuilderOptions {
   queryBuilder: SelectQueryBuilder<PersonWorkspaceEntity>;

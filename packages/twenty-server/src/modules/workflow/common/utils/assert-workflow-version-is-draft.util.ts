@@ -6,7 +6,7 @@ import {
 } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 import {
   WorkflowVersionStatus,
-  WorkflowVersionWorkspaceEntity,
+  type WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
 export const assertWorkflowVersionIsDraft = (

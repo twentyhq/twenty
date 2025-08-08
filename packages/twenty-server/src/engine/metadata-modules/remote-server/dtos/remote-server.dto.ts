@@ -7,7 +7,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { UserMappingOptionsDTO } from 'src/engine/metadata-modules/remote-server/dtos/user-mapping-dto';
 import {
   ForeignDataWrapperOptions,
-  RemoteServerType,
+  type RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 
 @ObjectType('RemoteServer')
