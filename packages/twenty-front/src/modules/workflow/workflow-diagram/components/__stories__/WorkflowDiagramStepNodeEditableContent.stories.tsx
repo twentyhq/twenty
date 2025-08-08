@@ -114,7 +114,10 @@ const ALL_STEPS = [
   },
 ] satisfies WorkflowDiagramStepNodeData[];
 
-export const Catalog: CatalogStory<Story, typeof WorkflowDiagramStepNodeEditableContent> = {
+export const Catalog: CatalogStory<
+  Story,
+  typeof WorkflowDiagramStepNodeEditableContent
+> = {
   args: {
     id: 'story-node',
     data: ALL_STEPS[0],
