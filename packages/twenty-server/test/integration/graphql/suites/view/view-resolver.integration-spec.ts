@@ -5,6 +5,7 @@ import {
 } from 'test/integration/constants/test-view-ids.constants';
 import { createViewOperationFactory } from 'test/integration/graphql/utils/create-view-operation-factory.util';
 import { deleteViewOperationFactory } from 'test/integration/graphql/utils/delete-view-operation-factory.util';
+import { destroyViewOperationFactory } from 'test/integration/graphql/utils/destroy-view-operation-factory.util';
 import { findViewOperationFactory } from 'test/integration/graphql/utils/find-view-operation-factory.util';
 import { findViewsOperationFactory } from 'test/integration/graphql/utils/find-views-operation-factory.util';
 import {
@@ -244,6 +245,36 @@ describe('View Resolver', () => {
 
     it('should throw an error when deleting non-existent view', async () => {
       const operation = deleteViewOperationFactory({
+        viewId: TEST_NOT_EXISTING_VIEW_ID,
+      });
+      const response = await makeGraphqlAPIRequest(operation);
+
+      assertGraphQLErrorResponse(
+        response,
+        ErrorCode.NOT_FOUND,
+        generateViewExceptionMessage(
+          ViewExceptionMessageKey.VIEW_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_ID,
+        ),
+      );
+    });
+  });
+
+  describe('destroyCoreView', () => {
+    it('should destroy an existing view', async () => {
+      const view = await createTestViewWithGraphQL({
+        name: 'View to Destroy',
+      });
+
+      const destroyOperation = destroyViewOperationFactory({ viewId: view.id });
+      const destroyResponse = await makeGraphqlAPIRequest(destroyOperation);
+
+      assertGraphQLSuccessfulResponse(destroyResponse);
+      expect(destroyResponse.body.data.destroyCoreView).toBe(true);
+    });
+
+    it('should throw an error when destroying non-existent view', async () => {
+      const operation = destroyViewOperationFactory({
         viewId: TEST_NOT_EXISTING_VIEW_ID,
       });
       const response = await makeGraphqlAPIRequest(operation);
