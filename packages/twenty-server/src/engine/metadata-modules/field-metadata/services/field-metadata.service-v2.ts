@@ -22,10 +22,10 @@ import { type FailedFlatFieldMetadataValidationExceptions } from 'src/engine/met
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-and-its-flat-object-metadata.util';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { EMPTY_FLAT_OBJECT_METADATA_MAPS } from 'src/engine/metadata-modules/flat-object-metadata-maps/constant/empty-flat-object-metadata-maps.constant';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { addFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps.util';
+import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
 import { extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/extract-flat-object-metadata-maps-out-of-flat-object-metadata-maps-or-throw.util';
 import { extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/extract-flat-object-metadata-maps-out-of-flat-object-metadata-maps.util';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
@@ -114,9 +114,15 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
         objectMetadataIds: [flatFieldMetadataToDelete.objectMetadataId],
       });
+    const toFlatObjectMetadataMaps =
+      deleteFieldFromFlatObjectMetadataMapsOrThrow({
+        fieldMetadataId: flatFieldMetadataToDelete.id,
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+        objectMetadataId: flatFieldMetadataToDelete.objectMetadataId,
+      });
     const workspaceMigration = this.workspaceMigrationBuilderV2.build({
       fromFlatObjectMetadataMaps,
-      toFlatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+      toFlatObjectMetadataMaps,
       inferDeletionFromMissingObjectFieldIndex: true,
       workspaceId,
     });
