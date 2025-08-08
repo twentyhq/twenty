@@ -260,5 +260,6 @@
     "default": { "options": { "cacheableOperations": ["storybook:build"] } }
   },
   "useInferencePlugins": false,
-  "defaultBase": "main"
+  "defaultBase": "main",
+  "nxCloudId": "6895ca12e7d4ba1786546b3c"
 }
