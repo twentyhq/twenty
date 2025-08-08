@@ -10310,9 +10310,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lingui/swc-plugin@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "@lingui/swc-plugin@npm:5.1.0"
+"@lingui/swc-plugin@npm:^5.6.0":
+  version: 5.6.0
+  resolution: "@lingui/swc-plugin@npm:5.6.0"
   peerDependencies:
     "@lingui/core": 5
   peerDependenciesMeta:
@@ -10320,7 +10320,7 @@ __metadata:
       optional: true
     next:
       optional: true
-  checksum: 10c0/ca514c4fcc2d6d1ca62e7063fe4dc8ef2b29d328bbe22184b4773149a86448335c39f72faccfe41f10ca2081df379cfcb7f9e70337a27aec2568571c0118c0d6
+  checksum: 10c0/8bbb08100da2fc1316e663a35c4abd32e36c804cb977b54466dc2ac84749810d2cdd546e7144e8b811e9b9518a05f6d4cc0fc033b6ca4e2b17bc5ddecaff8eb3
   languageName: node
   linkType: hard
 
@@ -56176,7 +56176,7 @@ __metadata:
     "@lingui/cli": "npm:^5.1.2"
     "@lingui/core": "npm:^5.1.2"
     "@lingui/react": "npm:^5.1.2"
-    "@lingui/swc-plugin": "npm:^5.1.0"
+    "@lingui/swc-plugin": "npm:^5.6.0"
     "@lingui/vite-plugin": "npm:^5.1.2"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
@@ -56201,7 +56201,7 @@ __metadata:
     "@lingui/core": "npm:^5.1.2"
     "@lingui/detect-locale": "npm:^5.2.0"
     "@lingui/react": "npm:^5.1.2"
-    "@lingui/swc-plugin": "npm:^5.1.0"
+    "@lingui/swc-plugin": "npm:^5.6.0"
     "@lingui/vite-plugin": "npm:^5.1.2"
     "@nivo/core": "npm:^0.87.0"
     "@nivo/line": "npm:^0.87.0"
