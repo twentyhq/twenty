@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { EMPTY_FLAT_OBJECT_METADATA_MAPS } from 'src/engine/metadata-modules/flat-object-metadata-maps/constant/empty-flat-object-metadata-maps.constant';
 import {
   FlatObjectMetadataMapsException,
   FlatObjectMetadataMapsExceptionCode,
@@ -17,11 +18,6 @@ export const extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow =
     flatObjectMetadataMaps: sourceFlatObjectMetadataMaps,
     objectMetadataIds,
   }: ExtractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrowArgs): FlatObjectMetadataMaps => {
-    const emptyFlatObjectMetadataMaps: FlatObjectMetadataMaps = {
-      byId: {},
-      idByNameSingular: {},
-    };
-
     return objectMetadataIds.reduce(
       (flatObjectMetadataMaps, objectMetadataId) => {
         const flatObjectMetadataWithFlatFieldMaps =
@@ -41,6 +37,6 @@ export const extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow =
           },
         );
       },
-      emptyFlatObjectMetadataMaps,
+      EMPTY_FLAT_OBJECT_METADATA_MAPS,
     );
   };

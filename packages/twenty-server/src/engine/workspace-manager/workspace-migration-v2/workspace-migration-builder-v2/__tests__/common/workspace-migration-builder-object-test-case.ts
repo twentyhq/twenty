@@ -1,4 +1,5 @@
 import { getFlatIndexMetadataMock } from 'src/engine/metadata-modules/flat-index-metadata/__mocks__/get-flat-index-metadata.mock';
+import { EMPTY_FLAT_OBJECT_METADATA_MAPS } from 'src/engine/metadata-modules/flat-object-metadata-maps/constant/empty-flat-object-metadata-maps.constant';
 import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata-maps/mocks/flat-object-metadata-maps.mock';
 import { deleteObjectFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-object-from-flat-object-metadata-maps-or-throw.util';
 import { replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
@@ -57,7 +58,7 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
         'It should build a create_object and create_index actions for each of this fieldMetadata',
       context: {
         input: {
-          fromFlatObjectMetadataMaps: { byId: {}, idByNameSingular: {} },
+          fromFlatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
           toFlatObjectMetadataMaps:
             fromFlatObjectMetadatasToFlatObjectMetadataMaps([
               {
