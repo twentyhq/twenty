@@ -25,7 +25,7 @@ import {
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   generateViewFieldExceptionMessage,
-  ViewFieldExceptionMessageKey
+  ViewFieldExceptionMessageKey,
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
 
 describe('View Field Resolver', () => {

@@ -23,7 +23,7 @@ import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.
 import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import {
   ViewFilterExceptionMessageKey,
-  generateViewFilterExceptionMessage
+  generateViewFilterExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-filter.exception';
 
 describe('View Filter Resolver', () => {

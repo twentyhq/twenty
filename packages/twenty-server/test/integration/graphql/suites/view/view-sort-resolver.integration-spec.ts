@@ -26,7 +26,7 @@ import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.
 import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
 import {
   generateViewSortExceptionMessage,
-  ViewSortExceptionMessageKey
+  ViewSortExceptionMessageKey,
 } from 'src/engine/core-modules/view/exceptions/view-sort.exception';
 
 describe('View Sort Resolver', () => {

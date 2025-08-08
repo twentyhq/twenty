@@ -29,7 +29,7 @@ import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-r
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import {
   ViewExceptionMessageKey,
-  generateViewExceptionMessage
+  generateViewExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
 
 describe('View Resolver', () => {
