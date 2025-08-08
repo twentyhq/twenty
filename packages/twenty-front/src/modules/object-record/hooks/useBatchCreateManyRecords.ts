@@ -21,18 +21,22 @@ export const useBatchCreateManyRecords = <
   objectNameSingular,
   recordGqlFields,
   shouldMatchRootQueryFilter,
+  skipPostOptimisticEffect = false,
   mutationBatchSize = DEFAULT_MUTATION_BATCH_SIZE,
   setBatchedRecordsCount,
   abortController,
+  deferPostOptimisticEffectUntilBatchCompletion = false,
 }: useCreateManyRecordsProps & {
   mutationBatchSize?: number;
   setBatchedRecordsCount?: (count: number) => void;
   abortController?: AbortController;
+  deferPostOptimisticEffectUntilBatchCompletion?: boolean;
 }) => {
   const { createManyRecords } = useCreateManyRecords({
     objectNameSingular,
     recordGqlFields,
-    skipPostOptimisticEffect: true, // Skip optimistic effects during batch processing to prevent findMany queries after each batch
+    skipPostOptimisticEffect:
+      skipPostOptimisticEffect || deferPostOptimisticEffectUntilBatchCompletion,
     shouldMatchRootQueryFilter,
     shouldRefetchAggregateQueries: false,
   });
@@ -101,7 +105,11 @@ export const useBatchCreateManyRecords = <
       }
     }
 
-    if (allCreatedRecords.length > 0) {
+    if (
+      allCreatedRecords.length > 0 &&
+      deferPostOptimisticEffectUntilBatchCompletion &&
+      !skipPostOptimisticEffect
+    ) {
       triggerCreateRecordsOptimisticEffect({
         cache: apolloCoreClient.cache,
         objectMetadataItem,
