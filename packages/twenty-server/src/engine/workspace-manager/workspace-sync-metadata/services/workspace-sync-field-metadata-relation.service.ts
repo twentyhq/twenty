@@ -5,8 +5,8 @@ import { type EntityManager } from 'typeorm';
 
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 import {
-    ComparatorAction,
-    type FieldRelationComparatorResult,
+  ComparatorAction,
+  type FieldRelationComparatorResult,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
@@ -16,8 +16,8 @@ import { type WorkspaceMigrationEntity } from 'src/engine/metadata-modules/works
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { WorkspaceMigrationFieldRelationFactory } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field-relation.factory';
 import {
-    type FieldMetadataUpdate,
-    WorkspaceMigrationFieldFactory,
+  type FieldMetadataUpdate,
+  WorkspaceMigrationFieldFactory,
 } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
 import { WorkspaceFieldRelationComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-field-relation.comparator';
 import { StandardFieldRelationFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-field-relation.factory';

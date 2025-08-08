@@ -6,9 +6,9 @@ import { resolveInput } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import {
-    type ObjectRecordFilter,
-    type ObjectRecordOrderBy,
-    OrderByDirection,
+  type ObjectRecordFilter,
+  type ObjectRecordOrderBy,
+  OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -20,14 +20,14 @@ import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/works
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
-    WorkflowStepExecutorException,
-    WorkflowStepExecutorExceptionCode,
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import {
-    RecordCRUDActionException,
-    RecordCRUDActionExceptionCode,
+  RecordCRUDActionException,
+  RecordCRUDActionExceptionCode,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/exceptions/record-crud-action.exception';
 import { isWorkflowFindRecordsAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-find-records-action.guard';
 import { type WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';

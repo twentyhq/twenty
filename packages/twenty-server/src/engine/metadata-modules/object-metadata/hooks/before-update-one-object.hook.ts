@@ -26,9 +26,7 @@ interface StandardObjectUpdate extends Partial<UpdateObjectPayload> {
 export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
   implements BeforeUpdateOneHook<T>
 {
-  constructor(
-    readonly objectMetadataService: ObjectMetadataService,
-  ) {}
+  constructor(readonly objectMetadataService: ObjectMetadataService) {}
 
   // TODO: this logic could be moved to a policy guard
   async run(

@@ -14,8 +14,6 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
 
 @Injectable()
 export class DevSeederService {
-
-
   constructor(
     private readonly typeORMService: TypeORMService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,

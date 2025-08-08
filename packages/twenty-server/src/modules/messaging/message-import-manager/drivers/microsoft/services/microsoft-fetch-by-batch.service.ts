@@ -12,7 +12,6 @@ import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-impo
 
 @Injectable()
 export class MicrosoftFetchByBatchService {
-
   constructor(
     private readonly microsoftClientProvider: MicrosoftClientProvider,
     private readonly microsoftHandleErrorService: MicrosoftHandleErrorService,

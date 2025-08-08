@@ -1,15 +1,15 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
-    ConflictError,
-    ForbiddenError,
-    InternalServerError,
-    NotFoundError,
-    UserInputError,
+  ConflictError,
+  ForbiddenError,
+  InternalServerError,
+  NotFoundError,
+  UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-    ObjectMetadataException,
-    ObjectMetadataExceptionCode,
+  ObjectMetadataException,
+  ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 

@@ -4,8 +4,8 @@ import { type CaptchaDriver } from 'src/engine/core-modules/captcha/drivers/inte
 import { type CaptchaServerResponse } from 'src/engine/core-modules/captcha/drivers/interfaces/captcha-server-response';
 
 import {
-    type CaptchaDriverOptions,
-    type CaptchaValidateResult,
+  type CaptchaDriverOptions,
+  type CaptchaValidateResult,
 } from 'src/engine/core-modules/captcha/interfaces';
 
 export class GoogleRecaptchaDriver implements CaptchaDriver {

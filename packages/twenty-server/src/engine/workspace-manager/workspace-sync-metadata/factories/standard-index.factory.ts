@@ -15,8 +15,6 @@ import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-syn
 
 @Injectable()
 export class StandardIndexFactory {
-
-
   create(
     standardObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[],
     context: WorkspaceSyncContext,

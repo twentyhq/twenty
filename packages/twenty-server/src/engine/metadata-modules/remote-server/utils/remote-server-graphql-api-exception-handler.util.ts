@@ -1,14 +1,14 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
-    ConflictError,
-    ForbiddenError,
-    NotFoundError,
-    UserInputError,
+  ConflictError,
+  ForbiddenError,
+  NotFoundError,
+  UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-    RemoteServerException,
-    RemoteServerExceptionCode,
+  RemoteServerException,
+  RemoteServerExceptionCode,
 } from 'src/engine/metadata-modules/remote-server/remote-server.exception';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

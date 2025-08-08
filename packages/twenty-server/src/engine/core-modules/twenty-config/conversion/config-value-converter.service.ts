@@ -13,7 +13,6 @@ import { TypedReflect } from 'src/utils/typed-reflect';
 
 @Injectable()
 export class ConfigValueConverterService {
-
   constructor(
     @Inject(CONFIG_VARIABLES_INSTANCE_TOKEN)
     private readonly configVariables: ConfigVariables,

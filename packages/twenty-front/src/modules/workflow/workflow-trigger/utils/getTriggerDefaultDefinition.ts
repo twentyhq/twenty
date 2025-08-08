@@ -1,8 +1,8 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
-    WorkflowAction,
-    WorkflowTrigger,
-    WorkflowTriggerType,
+  WorkflowAction,
+  WorkflowTrigger,
+  WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';

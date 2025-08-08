@@ -22,8 +22,6 @@ import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-mi
 
 @Injectable()
 export class WorkspaceMigrationColumnService {
-
-
   constructor(
     private readonly workspaceMigrationEnumService: WorkspaceMigrationEnumService,
     private readonly workspaceMigrationTypeService: WorkspaceMigrationTypeService,

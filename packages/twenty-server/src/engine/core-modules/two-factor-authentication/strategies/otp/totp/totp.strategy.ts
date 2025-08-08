@@ -23,7 +23,6 @@ import {
 export class TotpStrategy implements OTPAuthenticationStrategyInterface {
   public readonly name = TwoFactorAuthenticationStrategy.TOTP;
 
-
   constructor(options?: TOTPStrategyConfig) {
     let result: SafeParseReturnType<unknown, TOTPStrategyConfig> | undefined;
 

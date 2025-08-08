@@ -22,8 +22,6 @@ export type BlocklistItemDeleteCalendarEventsJobData = WorkspaceEventBatch<
   scope: Scope.REQUEST,
 })
 export class BlocklistItemDeleteCalendarEventsJob {
-
-
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly calendarEventCleanerService: CalendarEventCleanerService,

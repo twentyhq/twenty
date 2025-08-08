@@ -4,14 +4,14 @@ import { type EntityManager } from 'typeorm';
 
 import { type FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import {
-    type WorkspaceHealthColumnIssue,
-    WorkspaceHealthIssueType,
+  type WorkspaceHealthColumnIssue,
+  WorkspaceHealthIssueType,
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-issue.interface';
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
 import {
-    type FieldMetadataDefaultValueFunctionNames,
-    fieldMetadataDefaultValueFunctionName,
+  type FieldMetadataDefaultValueFunctionNames,
+  fieldMetadataDefaultValueFunctionName,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -19,8 +19,8 @@ import { type WorkspaceMigrationEntity } from 'src/engine/metadata-modules/works
 import { WorkspaceMigrationFieldFactory } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
 
 import {
-    AbstractWorkspaceFixer,
-    type CompareEntity,
+  AbstractWorkspaceFixer,
+  type CompareEntity,
 } from './abstract-workspace.fixer';
 
 type WorkspaceDefaultValueFixerType =

@@ -99,7 +99,6 @@ describe('publicFeatureFlagValidator', () => {
           mockException,
         );
 
-
         return true;
       };
 

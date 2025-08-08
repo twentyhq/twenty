@@ -1,13 +1,13 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
-    ForbiddenError,
-    NotFoundError,
-    UserInputError,
+  ForbiddenError,
+  NotFoundError,
+  UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-    type PermissionsException,
-    PermissionsExceptionCode,
+  type PermissionsException,
+  PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 export const permissionGraphqlApiExceptionHandler = (

@@ -7,8 +7,8 @@ import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runne
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import {
-    type BlocklistItem,
-    BlocklistValidationService,
+  type BlocklistItem,
+  BlocklistValidationService,
 } from 'src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service';
 
 @WorkspaceQueryHook(`blocklist.createMany`)

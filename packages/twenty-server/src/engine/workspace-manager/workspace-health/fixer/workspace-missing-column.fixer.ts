@@ -3,16 +3,16 @@ import { Injectable } from '@nestjs/common';
 import { type EntityManager } from 'typeorm';
 
 import {
-    type WorkspaceHealthColumnIssue,
-    WorkspaceHealthIssueType,
+  type WorkspaceHealthColumnIssue,
+  WorkspaceHealthIssueType,
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-issue.interface';
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import {
-    type FieldMetadataUpdate,
-    WorkspaceMigrationFieldFactory,
+  type FieldMetadataUpdate,
+  WorkspaceMigrationFieldFactory,
 } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
 
 import { AbstractWorkspaceFixer } from './abstract-workspace.fixer';
