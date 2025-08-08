@@ -30,7 +30,8 @@ export class UnhandledExceptionFilter implements ExceptionFilter {
       return;
     }
 
-    const origin = request.headers.origin as string | undefined;
+    const originHeader = request.headers.origin;
+    const origin = Array.isArray(originHeader) ? originHeader[0] : originHeader;
     
     if (this.allowedOriginPattern && origin) {
       if (this.allowedOriginPattern.test(origin)) {
