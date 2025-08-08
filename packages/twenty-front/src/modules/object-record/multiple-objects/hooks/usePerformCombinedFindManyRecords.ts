@@ -13,7 +13,6 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { CombinedFindManyRecordsQueryResult } from '@/object-record/multiple-objects/types/CombinedFindManyRecordsQueryResult';
 import { generateCombinedFindManyRecordsQueryVariables } from '@/object-record/multiple-objects/utils/generateCombinedFindManyRecordsQueryVariables';
 import { getCombinedFindManyRecordsQueryFilteringPart } from '@/object-record/multiple-objects/utils/getCombinedFindManyRecordsQueryFilteringPart';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useRecoilValue } from 'recoil';
 import { capitalize } from 'twenty-shared/utils';
 
@@ -22,8 +21,6 @@ export const usePerformCombinedFindManyRecords = () => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-
-  const featureFlags = useFeatureFlagsMap();
 
   const generateCombinedFindManyRecordsQuery = (
     operationSignatures: RecordGqlOperationSignature[],

@@ -7,7 +7,6 @@ import { isAggregationEnabled } from '@/object-metadata/utils/isAggregationEnabl
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getFindDuplicateRecordsQueryResponseField } from '@/object-record/utils/getFindDuplicateRecordsQueryResponseField';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { capitalize } from 'twenty-shared/utils';
 
 export const useFindDuplicateRecordsQuery = ({
@@ -22,8 +21,6 @@ export const useFindDuplicateRecordsQuery = ({
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-
-  const featureFlags = useFeatureFlagsMap();
 
   const findDuplicateRecordsQuery = gql`
     query FindDuplicate${capitalize(

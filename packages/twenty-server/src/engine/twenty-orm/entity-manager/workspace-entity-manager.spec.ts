@@ -358,7 +358,6 @@ describe('WorkspaceEntityManager', () => {
       expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
         entityName: 'test-entity',
         operationType: 'delete',
-        isFieldPermissionsEnabled: true,
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
         objectsPermissions: mockPermissionOptions.objectRecordsPermissions,
         selectedColumns: [],

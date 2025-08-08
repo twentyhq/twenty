@@ -10,7 +10,6 @@ import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interf
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -321,15 +320,11 @@ export class WorkspaceSelectQueryBuilder<
   }
 
   private validatePermissions(): void {
-    const isFieldPermissionsEnabled =
-      this.featureFlagMap?.[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
-
     validateQueryIsPermittedOrThrow({
       expressionMap: this.expressionMap,
       objectsPermissions: this.objectRecordsPermissions,
       objectMetadataMaps: this.internalContext.objectMetadataMaps,
       shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
-      isFieldPermissionsEnabled,
     });
   }
 

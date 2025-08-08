@@ -8,7 +8,6 @@ import {
   generateFindManyRecordsQuery,
   QueryCursorDirection,
 } from '@/object-record/utils/generateFindManyRecordsQuery';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 
 export const useFindManyRecordsQuery = ({
   objectNameSingular,
@@ -28,8 +27,6 @@ export const useFindManyRecordsQuery = ({
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-
-  const featureFlags = useFeatureFlagsMap();
 
   const findManyRecordsQuery = generateFindManyRecordsQuery({
     objectMetadataItem,

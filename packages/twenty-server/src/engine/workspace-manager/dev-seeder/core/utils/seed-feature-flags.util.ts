@@ -80,11 +80,6 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: true,
       },
-      {
-        key: FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
     ])
     .execute();
 };

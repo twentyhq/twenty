@@ -6,7 +6,6 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { capitalize } from 'twenty-shared/utils';
 
 export const useFindOneRecordQuery = ({
@@ -25,8 +24,6 @@ export const useFindOneRecordQuery = ({
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-
-  const featureFlags = useFeatureFlagsMap();
 
   const findOneRecordQuery = gql`
       query FindOne${capitalize(

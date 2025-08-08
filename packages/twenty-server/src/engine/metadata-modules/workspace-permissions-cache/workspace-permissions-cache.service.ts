@@ -13,7 +13,6 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/workspace-permissions-cache/types/user-workspace-role-map.type';
 import { WorkspacePermissionsCacheStorageService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache-storage.service';
 import { TwentyORMExceptionCode } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
@@ -40,7 +39,6 @@ export class WorkspacePermissionsCacheService {
     @InjectRepository(RoleTargetsEntity, 'core')
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly workspacePermissionsCacheStorageService: WorkspacePermissionsCacheStorageService,
-    private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
   ) {}
 
   async recomputeRolesPermissionsCache({
@@ -172,11 +170,6 @@ export class WorkspacePermissionsCacheService {
     roleIds?: string[];
   }): Promise<ObjectsPermissionsByRoleIdDeprecated> {
     let roles: RoleEntity[] = [];
-
-    const workspaceFeatureFlagsMap =
-      await this.workspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMap(
-        { workspaceId },
-      );
 
     roles = await this.roleRepository.find({
       where: {

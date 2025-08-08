@@ -11,7 +11,6 @@ import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphq
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { capitalize } from 'twenty-shared/utils';
 
 export const useCreateOneRecordInCache = <T extends ObjectRecord>({
@@ -26,7 +25,6 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const apolloCoreClient = useApolloCoreClient();
-  const featureFlags = useFeatureFlagsMap();
 
   return (record: ObjectRecord) => {
     const prefilledRecord = prefillRecord({
