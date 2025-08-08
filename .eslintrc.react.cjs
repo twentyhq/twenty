@@ -5,7 +5,7 @@ module.exports = {
     'plugin:@nx/react',
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
-    'plugin:storybook/recommended',
+    // 'plugin:storybook/recommended', // Temporarily disabled
     'plugin:prettier/recommended',
     'plugin:lingui/recommended',
     'plugin:@nx/typescript'
@@ -143,17 +143,18 @@ module.exports = {
         '@typescript-eslint/no-non-null-assertion': 'off',
       },
     },
-    {
-      files: ['.storybook/main.@(js|cjs|mjs|ts)'],
-      rules: {
-        'storybook/no-uninstalled-addons': [
-          'error',
-          {
-            packageJsonLocation: path.resolve(__dirname, './package.json'),
-          },
-        ],
-      },
-    },
+    // Temporarily disabled storybook rules / TODO: Re-enable after migrating Storybook to v8
+    // {
+    //   files: ['.storybook/main.@(js|cjs|mjs|ts)'],
+    //   rules: {
+    //     'storybook/no-uninstalled-addons': [
+    //       'error',
+    //       {
+    //         packageJsonLocation: path.resolve(__dirname, './package.json'),
+    //       },
+    //     ],
+    //   },
+    // },
     {
       files: ['*.js', '*.jsx'],
       extends: ['plugin:@nx/javascript'],

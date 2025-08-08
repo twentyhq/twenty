@@ -1,28 +1,17 @@
 import { Meta, StoryObj } from '@storybook/react';
 
+import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
 import { fn } from '@storybook/test';
 import '@xyflow/react/dist/style.css';
-import { ComponentProps } from 'react';
+import { RecoilRoot } from 'recoil';
 import { CatalogDecorator, CatalogStory } from 'twenty-ui/testing';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { WorkflowDiagramStepNodeEditableContent } from '../WorkflowDiagramStepNodeEditableContent';
-import { RecoilRoot } from 'recoil';
-import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
-type ComponentState = 'default' | 'hover' | 'selected';
-
-type WrapperProps = ComponentProps<
-  typeof WorkflowDiagramStepNodeEditableContent
-> & { state: ComponentState };
-
-const Wrapper = (_props: WrapperProps) => {
-  return <div></div>;
-};
-
-const meta: Meta<WrapperProps> = {
+const meta: Meta<typeof WorkflowDiagramStepNodeEditableContent> = {
   title: 'Modules/Workflow/WorkflowDiagramStepNodeEditableContent',
   component: WorkflowDiagramStepNodeEditableContent,
   parameters: {
@@ -32,7 +21,7 @@ const meta: Meta<WrapperProps> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Wrapper>;
+type Story = StoryObj<typeof WorkflowDiagramStepNodeEditableContent>;
 
 const ALL_STEPS = [
   {
@@ -125,8 +114,15 @@ const ALL_STEPS = [
   },
 ] satisfies WorkflowDiagramStepNodeData[];
 
-export const Catalog: CatalogStory<Story, typeof Wrapper> = {
+export const Catalog: CatalogStory<
+  Story,
+  typeof WorkflowDiagramStepNodeEditableContent
+> = {
   args: {
+    id: 'story-node',
+    data: ALL_STEPS[0],
+    variant: 'default',
+    selected: false,
     onDelete: fn(),
   },
   parameters: {
@@ -157,9 +153,9 @@ export const Catalog: CatalogStory<Story, typeof Wrapper> = {
           props: (variant: WorkflowDiagramNodeVariant) => ({ variant }),
         },
         {
-          name: 'state',
-          values: ['default', 'hover', 'selected'] satisfies ComponentState[],
-          props: (state: ComponentState) => ({ state }),
+          name: 'selected',
+          values: [false, true],
+          props: (selected: boolean) => ({ selected }),
         },
       ],
     },
@@ -167,9 +163,7 @@ export const Catalog: CatalogStory<Story, typeof Wrapper> = {
   decorators: [
     (Story, { args }) => {
       return (
-        <div
-          className={`selectable ${args.state === 'selected' ? 'selected' : args.state === 'hover' ? 'workflow-node-container hover' : ''}`}
-        >
+        <div className={`selectable ${args.selected ? 'selected' : ''}`}>
           <RecoilRoot>
             <WorkflowVisualizerComponentInstanceContext.Provider
               value={{ instanceId: 'workflow-visualizer-instance-id' }}

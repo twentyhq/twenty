@@ -250,7 +250,7 @@ export class FieldMetadataServiceV2 {
             flatFieldMetadata: flatFieldMetadataToCreate,
             flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
           });
-      } catch (e) {
+      } catch {
         throw new FieldMetadataException(
           'Optimistic cache manipulation failed, should never occur',
           FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
