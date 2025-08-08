@@ -1,4 +1,7 @@
 const testHusy = async () => {
+  const number = 42; // Example number, replace with actual logic if needed
+
+  number = 33;
   const run = async () => {
     // Simulate the Husy command execution
     console.log('Running Husy...');
