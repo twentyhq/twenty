@@ -4,7 +4,7 @@ import { IsNull, Repository } from 'typeorm';
 
 import {
   KeyValuePair,
-  KeyValuePairType,
+  type KeyValuePairType,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 
 export class KeyValuePairService<

@@ -1,6 +1,6 @@
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import { type FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { ShortCropSize } from 'src/utils/image';
+import { type ShortCropSize } from 'src/utils/image';
 
 type ValueOfFileFolder = `${FileFolder}`;
 

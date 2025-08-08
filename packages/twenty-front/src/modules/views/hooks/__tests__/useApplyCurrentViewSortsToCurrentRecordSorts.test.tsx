@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
 
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 import { ViewSort } from '@/views/types/ViewSort';
 
@@ -11,11 +11,11 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 
 import { View } from '@/views/types/View';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { mockedViewsData } from '~/testing/mock-data/views';
-import { useApplyCurrentViewSortsToCurrentRecordSorts } from '../useApplyCurrentViewSortsToCurrentRecordSorts';
 import { isDefined } from 'twenty-shared/utils';
+import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
+import { mockedViewsData } from '~/testing/mock-data/views';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { useApplyCurrentViewSortsToCurrentRecordSorts } from '../useApplyCurrentViewSortsToCurrentRecordSorts';
 
 const mockObjectMetadataItemNameSingular = 'company';
 
@@ -58,7 +58,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
         const { applyCurrentViewSortsToCurrentRecordSorts } =
           useApplyCurrentViewSortsToCurrentRecordSorts();
 
-        const currentSorts = useRecoilComponentValueV2(
+        const currentSorts = useRecoilComponentValue(
           currentRecordSortsComponentState,
         );
 
@@ -100,7 +100,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
         const { applyCurrentViewSortsToCurrentRecordSorts } =
           useApplyCurrentViewSortsToCurrentRecordSorts();
 
-        const currentSorts = useRecoilComponentValueV2(
+        const currentSorts = useRecoilComponentValue(
           currentRecordSortsComponentState,
         );
 
@@ -147,7 +147,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
         const { applyCurrentViewSortsToCurrentRecordSorts } =
           useApplyCurrentViewSortsToCurrentRecordSorts();
 
-        const currentSorts = useRecoilComponentValueV2(
+        const currentSorts = useRecoilComponentValue(
           currentRecordSortsComponentState,
         );
 

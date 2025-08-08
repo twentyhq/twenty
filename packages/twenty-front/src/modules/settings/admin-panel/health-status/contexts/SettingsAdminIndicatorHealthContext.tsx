@@ -2,6 +2,7 @@ import { createContext } from 'react';
 import {
   AdminPanelHealthServiceData,
   AdminPanelHealthServiceStatus,
+  HealthIndicatorId,
 } from '~/generated/graphql';
 
 type SettingsAdminIndicatorHealthContextType = {
@@ -11,7 +12,7 @@ type SettingsAdminIndicatorHealthContextType = {
 export const SettingsAdminIndicatorHealthContext =
   createContext<SettingsAdminIndicatorHealthContextType>({
     indicatorHealth: {
-      id: '',
+      id: HealthIndicatorId.app,
       label: '',
       description: '',
       errorMessage: '',

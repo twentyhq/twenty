@@ -2,7 +2,7 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { DropResult } from '@hello-pangea/dnd';
 import { useContext } from 'react';
@@ -16,7 +16,7 @@ export const useRecordBoardDragOperations = () => {
     useContext(RecordBoardContext);
 
   const recordIndexRecordIdsByGroupFamilyState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 

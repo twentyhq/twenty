@@ -1,7 +1,7 @@
-import { CanActivate, ExecutionContext } from '@nestjs/common';
+import { type CanActivate, type ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { Observable } from 'rxjs';
+import { type Observable } from 'rxjs';
 
 export class UserAuthGuard implements CanActivate {
   canActivate(

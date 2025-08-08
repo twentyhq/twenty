@@ -1,5 +1,6 @@
-import Cloudflare from 'cloudflare';
 import { t } from '@lingui/core/macro';
+
+import type Cloudflare from 'cloudflare';
 
 import {
   DomainManagerException,

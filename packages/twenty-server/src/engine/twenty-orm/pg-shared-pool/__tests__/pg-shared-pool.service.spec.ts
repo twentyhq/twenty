@@ -1,5 +1,5 @@
-import { Logger, LogLevel } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+import { type Logger, type LogLevel } from '@nestjs/common';
+import { Test, type TestingModule } from '@nestjs/testing';
 
 import { Pool } from 'pg';
 

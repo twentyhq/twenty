@@ -2,6 +2,7 @@ import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { MessageNetworkExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-network.exception';
 import { isImapFlowError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/is-imap-flow-error.util';
 
 export const parseImapError = (
@@ -13,6 +14,20 @@ export const parseImapError = (
 
   if (!isImapFlowError(error)) {
     return null;
+  }
+
+  if (error.message.includes('Connection not available')) {
+    return new MessageImportDriverException(
+      `IMAP client not available: ${error.message}`,
+      MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
+    );
+  }
+
+  if (error.message.includes('timeout')) {
+    return new MessageImportDriverException(
+      `IMAP connection timeout: ${error.message}`,
+      MessageNetworkExceptionCode.ETIMEDOUT,
+    );
   }
 
   if (error.code === 'ECONNREFUSED' || error.message === 'Failed to connect') {

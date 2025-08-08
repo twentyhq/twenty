@@ -1,8 +1,8 @@
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 import { StepFilterGroupsComponentInstanceContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/StepFilterGroupsComponentInstanceContext';
 import { StepFilterGroup } from 'twenty-shared/types';
 
-export const currentStepFilterGroupsComponentState = createComponentStateV2<
+export const currentStepFilterGroupsComponentState = createComponentState<
   StepFilterGroup[]
 >({
   key: 'currentStepFilterGroupsComponentState',

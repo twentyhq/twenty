@@ -20,7 +20,7 @@ import { RecordTableRowContextProvider } from '@/object-record/record-table/cont
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { mockPerformance } from './mock';
 
 const RelationFieldValueSetterEffect = () => {
@@ -45,7 +45,7 @@ const RelationFieldValueSetterEffect = () => {
 };
 
 const meta: Meta = {
-  title: 'RecordIndex/Table/RecordTableCell',
+  title: 'Modules/ObjectRecord/RecordTable/RecordTableCell',
   decorators: [
     MemoryRouterDecorator,
     ChipGeneratorsDecorator,
@@ -70,6 +70,9 @@ const meta: Meta = {
               visibleTableColumns: mockPerformance.visibleTableColumns as any,
               objectNameSingular:
                 mockPerformance.objectMetadataItem.nameSingular,
+              objectPermissions: {
+                objectMetadataId: mockPerformance.objectMetadataItem.id,
+              },
             }}
           >
             <RecordTableComponentInstance
@@ -120,7 +123,7 @@ const meta: Meta = {
                           fieldDefinition: {
                             ...mockPerformance.fieldDefinition,
                           },
-                          isReadOnly: false,
+                          isRecordFieldReadOnly: false,
                         }}
                       >
                         <RelationFieldValueSetterEffect />

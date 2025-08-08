@@ -1,7 +1,4 @@
-import {
-  TextInputV2,
-  TextInputV2Size,
-} from '@/ui/input/components/TextInputV2';
+import { TextInput, TextInputSize } from '@/ui/input/components/TextInput';
 import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -22,7 +19,7 @@ type InputProps = {
   onClickOutside?: () => void;
   onTab?: () => void;
   onShiftTab?: () => void;
-  sizeVariant?: TextInputV2Size;
+  sizeVariant?: TextInputSize;
 };
 
 export type TitleInputProps = {
@@ -30,7 +27,7 @@ export type TitleInputProps = {
 } & InputProps;
 
 const StyledDiv = styled.div<{
-  sizeVariant: TextInputV2Size;
+  sizeVariant: TextInputSize;
   disabled?: boolean;
 }>`
   background: inherit;
@@ -116,7 +113,7 @@ const Input = ({
   });
 
   return (
-    <TextInputV2
+    <TextInput
       ref={wrapperRef}
       autoGrow
       sizeVariant={sizeVariant}

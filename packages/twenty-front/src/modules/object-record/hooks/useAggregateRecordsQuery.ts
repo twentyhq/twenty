@@ -28,8 +28,11 @@ export const useAggregateRecordsQuery = ({
 
   const apolloCoreClient = useApolloCoreClient();
   const availableAggregations = useMemo(
-    () => getAvailableAggregationsFromObjectFields(objectMetadataItem.fields),
-    [objectMetadataItem.fields],
+    () =>
+      getAvailableAggregationsFromObjectFields(
+        objectMetadataItem.readableFields,
+      ),
+    [objectMetadataItem.readableFields],
   );
 
   const recordGqlFields: RecordGqlFields = {};
@@ -42,9 +45,7 @@ export const useAggregateRecordsQuery = ({
           availableAggregations[fieldName]?.[aggregateOperation];
 
         if (!isDefined(fieldToQuery)) {
-          throw new Error(
-            `Cannot query operation ${aggregateOperation} on field ${fieldName}`,
-          );
+          return;
         }
         gqlFieldToFieldMap[fieldToQuery] = [fieldName, aggregateOperation];
 

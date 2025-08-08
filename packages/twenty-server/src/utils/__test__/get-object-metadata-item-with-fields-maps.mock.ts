@@ -1,6 +1,6 @@
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import {
-  GetMockObjectMetadataEntityOverride,
+  type GetMockObjectMetadataEntityOverride,
   getMockObjectMetadataEntity,
 } from 'src/utils/__test__/get-object-metadata-entity.mock';
 

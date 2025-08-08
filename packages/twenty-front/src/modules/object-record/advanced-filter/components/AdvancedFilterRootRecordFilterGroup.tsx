@@ -8,7 +8,7 @@ import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/adv
 import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/advanced-filter/utils/isRecordFilterGroupChildARecordFilterGroup';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { id } from 'date-fns/locale';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,7 +23,7 @@ const StyledContainer = styled.div`
 `;
 
 export const AdvancedFilterRootRecordFilterGroup = () => {
-  const rootRecordFilterGroup = useRecoilComponentValueV2(
+  const rootRecordFilterGroup = useRecoilComponentValue(
     rootLevelRecordFilterGroupComponentSelector,
   );
 

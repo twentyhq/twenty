@@ -18,7 +18,7 @@ import { prefetchIndexViewIdFromObjectMetadataItemFamilySelector } from '@/prefe
 import { AppPath } from '@/types/AppPath';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useLingui } from '@lingui/react/macro';
 import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 import { RelationType } from '~/generated-metadata/graphql';
@@ -70,7 +70,7 @@ export const RecordDetailRelationSection = ({
     recordId,
   });
 
-  const isDropdownOpen = useRecoilComponentValueV2(
+  const isDropdownOpen = useRecoilComponentValue(
     isDropdownOpenComponentState,
     dropdownId,
   );

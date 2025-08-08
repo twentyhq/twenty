@@ -1,10 +1,10 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 import { CatalogDecorator } from '@ui/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '@ui/testing/decorators/ComponentDecorator';
-import { CatalogStory } from '@ui/testing/types/CatalogStory';
+import { type CatalogStory } from '@ui/testing/types/CatalogStory';
 
-import { Label, LabelVariant } from '../Label';
+import { Label, type LabelVariant } from '../Label';
 
 const meta: Meta<typeof Label> = {
   title: 'UI/Display/Typography/Label',

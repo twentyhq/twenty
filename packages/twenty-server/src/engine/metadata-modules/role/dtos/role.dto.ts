@@ -4,9 +4,10 @@ import { Relation } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
+import { FieldPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/field-permission.dto';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { PermissionFlagDTO } from 'src/engine/metadata-modules/permission-flag/dtos/permission-flag.dto';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { type RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 
 @ObjectType('Role')
 export class RoleDTO {
@@ -54,4 +55,7 @@ export class RoleDTO {
 
   @Field(() => [ObjectPermissionDTO], { nullable: true })
   objectPermissions?: ObjectPermissionDTO[];
+
+  @Field(() => [FieldPermissionDTO], { nullable: true })
+  fieldPermissions?: FieldPermissionDTO[];
 }

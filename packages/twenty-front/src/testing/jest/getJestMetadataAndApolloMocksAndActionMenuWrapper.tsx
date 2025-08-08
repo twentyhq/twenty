@@ -13,7 +13,7 @@ import {
   JestContextStoreSetterMocks,
 } from '~/testing/jest/JestContextStoreSetter';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 export type GetJestMetadataAndApolloMocksAndActionMenuWrapperProps = {
   apolloMocks:
@@ -39,10 +39,8 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
     onInitializeRecoilSnapshot,
   });
 
-  const mockObjectMetadataItem = generatedMockObjectMetadataItems.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.nameSingular ===
-      contextStoreCurrentObjectMetadataNameSingular,
+  const mockObjectMetadataItem = getMockObjectMetadataItemOrThrow(
+    contextStoreCurrentObjectMetadataNameSingular ?? '',
   );
 
   if (!isDefined(mockObjectMetadataItem)) {

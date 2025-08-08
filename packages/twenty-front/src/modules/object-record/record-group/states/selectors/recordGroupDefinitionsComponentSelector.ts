@@ -2,36 +2,37 @@ import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/s
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 
-import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
+import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { isDefined } from 'twenty-shared/utils';
 
-export const recordGroupDefinitionsComponentSelector =
-  createComponentSelectorV2<RecordGroupDefinition[]>({
-    key: 'recordGroupDefinitionsComponentSelector',
-    componentInstanceContext: ViewComponentInstanceContext,
-    get:
-      ({ instanceId }) =>
-      ({ get }) => {
-        const recordGroupIds = get(
-          recordGroupIdsComponentState.atomFamily({
-            instanceId,
-          }),
-        );
+export const recordGroupDefinitionsComponentSelector = createComponentSelector<
+  RecordGroupDefinition[]
+>({
+  key: 'recordGroupDefinitionsComponentSelector',
+  componentInstanceContext: ViewComponentInstanceContext,
+  get:
+    ({ instanceId }) =>
+    ({ get }) => {
+      const recordGroupIds = get(
+        recordGroupIdsComponentState.atomFamily({
+          instanceId,
+        }),
+      );
 
-        return recordGroupIds.reduce<RecordGroupDefinition[]>(
-          (acc, recordGroupId) => {
-            const recordGroupDefinition = get(
-              recordGroupDefinitionFamilyState(recordGroupId),
-            );
+      return recordGroupIds.reduce<RecordGroupDefinition[]>(
+        (acc, recordGroupId) => {
+          const recordGroupDefinition = get(
+            recordGroupDefinitionFamilyState(recordGroupId),
+          );
 
-            if (!isDefined(recordGroupDefinition)) {
-              return acc;
-            }
+          if (!isDefined(recordGroupDefinition)) {
+            return acc;
+          }
 
-            return [...acc, recordGroupDefinition];
-          },
-          [],
-        );
-      },
-  });
+          return [...acc, recordGroupDefinition];
+        },
+        [],
+      );
+    },
+});

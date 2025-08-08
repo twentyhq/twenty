@@ -1,4 +1,4 @@
-import { InputSchemaPropertyType } from 'src/modules/workflow/workflow-builder/workflow-schema/types/input-schema.type';
+import { type InputSchemaPropertyType } from 'src/modules/workflow/workflow-builder/workflow-schema/types/input-schema.type';
 
 export type Leaf = {
   isLeaf: true;
@@ -40,6 +40,7 @@ export type RecordOutputSchema = {
     nameSingular: string;
     fieldIdName: string;
     objectMetadataId: string;
+    isRelationField?: boolean;
   } & Leaf;
   fields: Record<string, FieldOutputSchema>;
   _outputSchemaType: 'RECORD';

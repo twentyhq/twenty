@@ -49,7 +49,10 @@ export const useCustomResolver = <
     ...(activityTargetableObject.targetObjectNameSingular ===
     CoreObjectNameSingular.Person
       ? { personId: activityTargetableObject.id }
-      : { companyId: activityTargetableObject.id }),
+      : activityTargetableObject.targetObjectNameSingular ===
+          CoreObjectNameSingular.Opportunity
+        ? { opportunityId: activityTargetableObject.id }
+        : { companyId: activityTargetableObject.id }),
     page: 1,
     pageSize,
   };

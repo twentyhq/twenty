@@ -1,15 +1,15 @@
 import {
-  CanActivate,
-  ExecutionContext,
+  type CanActivate,
+  type ExecutionContext,
   Injectable,
   mixin,
-  Type,
+  type Type,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { type PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -55,6 +55,10 @@ export const SettingsPermissionsGuard = (
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
+        {
+          userFriendlyMessage:
+            'You do not have permission to access this feature. Please contact your workspace administrator for access.',
+        },
       );
     }
   }

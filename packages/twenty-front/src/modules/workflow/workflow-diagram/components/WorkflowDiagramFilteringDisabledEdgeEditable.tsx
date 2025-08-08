@@ -1,28 +1,19 @@
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import {
-  BaseEdge,
-  EdgeLabelRenderer,
-  EdgeProps,
-  getBezierPath,
-} from '@xyflow/react';
-import { useState } from 'react';
+import { EdgeLabelRenderer, EdgeProps, getBezierPath } from '@xyflow/react';
 import { IconPlus } from 'twenty-ui/display';
-import { IconButtonGroup } from 'twenty-ui/input';
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
-
-const StyledIconButtonGroup = styled(IconButtonGroup)`
-  pointer-events: all;
-`;
+import { useEdgeHovered } from '@/workflow/workflow-diagram/hooks/useEdgeHovered';
+import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseEdge';
+import { WorkflowDiagramEdgeButtonGroup } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeButtonGroup';
 
 type WorkflowDiagramFilteringDisabledEdgeEditableProps =
   EdgeProps<WorkflowDiagramEdge>;
 
 export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
+  id,
   markerStart,
   markerEnd,
   source,
@@ -32,7 +23,7 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
   targetX,
   targetY,
 }: WorkflowDiagramFilteringDisabledEdgeEditableProps) => {
-  const theme = useTheme();
+  const { isEdgeHovered } = useEdgeHovered();
 
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -41,30 +32,29 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
     targetY,
   });
 
-  const [hovered, setHovered] = useState(false);
-
-  const handleMouseEnter = () => {
-    setHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setHovered(false);
-  };
-
   const { startNodeCreation, isNodeCreationStarted } = useStartNodeCreation();
 
-  const forceDisplayAddButton = isNodeCreationStarted({
+  const nodeCreationStarted = isNodeCreationStarted({
     parentStepId: source,
     nextStepId: target,
   });
 
+  const handleAddNodeButtonClick = () => {
+    startNodeCreation({
+      parentStepId: source,
+      nextStepId: target,
+      position: { x: labelX, y: labelY },
+    });
+  };
+
   return (
     <>
-      <BaseEdge
+      <WorkflowDiagramBaseEdge
+        source={source}
+        target={target}
+        path={edgePath}
         markerStart={markerStart}
         markerEnd={markerEnd}
-        path={edgePath}
-        style={{ stroke: theme.border.color.strong }}
       />
 
       <EdgeLabelRenderer>
@@ -72,25 +62,18 @@ export const WorkflowDiagramFilteringDisabledEdgeEditable = ({
           data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
           labelX={labelX}
           labelY={labelY}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
         >
           <WorkflowDiagramEdgeV2VisibilityContainer
-            shouldDisplay={hovered || forceDisplayAddButton}
+            shouldDisplay={isEdgeHovered(id) || nodeCreationStarted}
           >
-            <StyledIconButtonGroup
-              className="nodrag nopan"
+            <WorkflowDiagramEdgeButtonGroup
               iconButtons={[
                 {
                   Icon: IconPlus,
-                  onClick: () => {
-                    startNodeCreation({
-                      parentStepId: source,
-                      nextStepId: target,
-                    });
-                  },
+                  onClick: handleAddNodeButtonClick,
                 },
               ]}
+              selected={nodeCreationStarted}
             />
           </WorkflowDiagramEdgeV2VisibilityContainer>
         </WorkflowDiagramEdgeV2Container>

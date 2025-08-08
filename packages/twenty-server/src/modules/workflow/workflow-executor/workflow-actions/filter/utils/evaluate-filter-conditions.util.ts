@@ -1,7 +1,7 @@
-import { isString } from '@sniptt/guards';
+import { isObject, isString } from '@sniptt/guards';
 import {
-  StepFilter,
-  StepFilterGroup,
+  type StepFilter,
+  type StepFilterGroup,
   ViewFilterOperand,
 } from 'twenty-shared/types';
 
@@ -32,12 +32,13 @@ function evaluateFilter(filter: ResolvedFilter): boolean {
     case 'BOOLEAN':
       return evaluateBooleanFilter(filter);
     case 'UUID':
+      return evaluateUuidFilter(filter);
     case 'RELATION':
       return evaluateRelationFilter(filter);
     case 'CURRENCY':
       return evaluateCurrencyFilter(filter);
     default:
-      throw new Error(`Filter type ${filter.type} not supported`);
+      return evaluateDefaultFilter(filter);
   }
 }
 
@@ -103,7 +104,7 @@ function contains(leftValue: unknown, rightValue: unknown): boolean {
       } else {
         return leftValue.includes(parsedRightValue);
       }
-    } catch (error) {
+    } catch {
       return leftValue.includes(rightValue);
     }
   }
@@ -193,12 +194,36 @@ function evaluateDateFilter(filter: ResolvedFilter): boolean {
   }
 }
 
-function evaluateRelationFilter(filter: ResolvedFilter): boolean {
+function evaluateUuidFilter(filter: ResolvedFilter): boolean {
   switch (filter.operand) {
     case ViewFilterOperand.Is:
       return filter.leftOperand === filter.rightOperand;
     case ViewFilterOperand.IsNot:
       return filter.leftOperand !== filter.rightOperand;
+    default:
+      throw new Error(
+        `Operand ${filter.operand} not supported for uuid filter`,
+      );
+  }
+}
+
+function evaluateRelationFilter(filter: ResolvedFilter): boolean {
+  // compare only the ids. If the left operand is the relation object, get the id
+  const leftValue =
+    isObject(filter.leftOperand) && 'id' in filter.leftOperand
+      ? filter.leftOperand.id
+      : filter.leftOperand;
+
+  const rightValue =
+    isObject(filter.rightOperand) && 'id' in filter.rightOperand
+      ? filter.rightOperand.id
+      : filter.rightOperand;
+
+  switch (filter.operand) {
+    case ViewFilterOperand.Is:
+      return leftValue === rightValue;
+    case ViewFilterOperand.IsNot:
+      return leftValue !== rightValue;
     default:
       throw new Error(
         `Operand ${filter.operand} not supported for relation filter`,
@@ -255,6 +280,44 @@ function evaluateNumberFilter(filter: ResolvedFilter): boolean {
     default:
       throw new Error(
         `Operand ${filter.operand} not supported for number filter`,
+      );
+  }
+}
+
+function evaluateDefaultFilter(filter: ResolvedFilter): boolean {
+  const leftValue = filter.leftOperand;
+  const rightValue = filter.rightOperand;
+
+  switch (filter.operand) {
+    case ViewFilterOperand.Is:
+      return leftValue == rightValue;
+    case ViewFilterOperand.IsNot:
+      return leftValue != rightValue;
+    case ViewFilterOperand.IsEmpty:
+      return (
+        leftValue === null ||
+        leftValue === undefined ||
+        leftValue === '' ||
+        (Array.isArray(leftValue) && leftValue.length === 0)
+      );
+    case ViewFilterOperand.IsNotEmpty:
+      return (
+        leftValue !== null &&
+        leftValue !== undefined &&
+        leftValue !== '' &&
+        (!Array.isArray(leftValue) || leftValue.length > 0)
+      );
+    case ViewFilterOperand.Contains:
+      return contains(leftValue, rightValue);
+    case ViewFilterOperand.DoesNotContain:
+      return !contains(leftValue, rightValue);
+    case ViewFilterOperand.GreaterThanOrEqual:
+      return Number(leftValue) >= Number(rightValue);
+    case ViewFilterOperand.LessThanOrEqual:
+      return Number(leftValue) <= Number(rightValue);
+    default:
+      throw new Error(
+        `Operand ${filter.operand} not supported for ${filter.type} filter type`,
       );
   }
 }

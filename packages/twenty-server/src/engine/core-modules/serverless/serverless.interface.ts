@@ -1,7 +1,7 @@
-import { FactoryProvider, ModuleMetadata } from '@nestjs/common';
+import { type FactoryProvider, type ModuleMetadata } from '@nestjs/common';
 
-import { LambdaDriverOptions } from 'src/engine/core-modules/serverless/drivers/lambda.driver';
-import { LocalDriverOptions } from 'src/engine/core-modules/serverless/drivers/local.driver';
+import { type LambdaDriverOptions } from 'src/engine/core-modules/serverless/drivers/lambda.driver';
+import { type LocalDriverOptions } from 'src/engine/core-modules/serverless/drivers/local.driver';
 
 export enum ServerlessDriverType {
   LAMBDA = 'LAMBDA',

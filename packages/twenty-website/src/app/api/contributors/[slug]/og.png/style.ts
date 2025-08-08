@@ -1,4 +1,4 @@
-import { CSSProperties } from 'react';
+import { type CSSProperties } from 'react';
 
 const BACKGROUND_IMAGE_URL =
   'https://framerusercontent.com/images/nqEmdwe7yDXNsOZovuxG5zvj2E.png';

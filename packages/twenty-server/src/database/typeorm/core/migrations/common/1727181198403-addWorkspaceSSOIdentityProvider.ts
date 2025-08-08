@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddWorkspaceSSOIdentityProvider1727181198403
   implements MigrationInterface

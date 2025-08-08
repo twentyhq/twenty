@@ -5,7 +5,7 @@ import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/sta
 import { scrollWrapperScrollBottomComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollBottomComponentState';
 import { scrollWrapperScrollLeftComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollLeftComponentState';
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 const StyledScrollWrapper = styled.div`
   &.scroll-wrapper-x-enabled {
@@ -35,17 +35,17 @@ export const ScrollWrapper = ({
   defaultEnableXScroll = true,
   defaultEnableYScroll = true,
 }: ScrollWrapperProps) => {
-  const setScrollTop = useSetRecoilComponentStateV2(
+  const setScrollTop = useSetRecoilComponentState(
     scrollWrapperScrollTopComponentState,
     componentInstanceId,
   );
 
-  const setScrollLeft = useSetRecoilComponentStateV2(
+  const setScrollLeft = useSetRecoilComponentState(
     scrollWrapperScrollLeftComponentState,
     componentInstanceId,
   );
 
-  const setScrollBottom = useSetRecoilComponentStateV2(
+  const setScrollBottom = useSetRecoilComponentState(
     scrollWrapperScrollBottomComponentState,
     componentInstanceId,
   );

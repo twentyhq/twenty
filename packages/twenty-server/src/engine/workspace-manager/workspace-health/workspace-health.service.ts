@@ -3,11 +3,11 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource } from 'typeorm';
 
-import { WorkspaceHealthFixKind } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-fix-kind.interface';
-import { WorkspaceHealthIssue } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-issue.interface';
+import { type WorkspaceHealthFixKind } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-fix-kind.interface';
+import { type WorkspaceHealthIssue } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-issue.interface';
 import {
   WorkspaceHealthMode,
-  WorkspaceHealthOptions,
+  type WorkspaceHealthOptions,
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-options.interface';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';

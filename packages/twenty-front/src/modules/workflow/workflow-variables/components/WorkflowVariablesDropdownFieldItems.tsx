@@ -50,7 +50,6 @@ export const WorkflowVariablesDropdownFieldItems = ({
             Icon={IconChevronLeft}
           />
         }
-        style={{ position: 'fixed' }}
       >
         <OverflowingTextWithTooltip
           text={getStepHeaderLabel(step, currentPath)}

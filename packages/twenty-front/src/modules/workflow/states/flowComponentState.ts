@@ -1,8 +1,8 @@
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 import { WorkflowAction, WorkflowTrigger } from '@/workflow/types/Workflow';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
-export const flowComponentState = createComponentStateV2<
+export const flowComponentState = createComponentState<
   | {
       workflowVersionId: string;
       trigger: WorkflowTrigger | null;

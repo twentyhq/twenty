@@ -5,11 +5,11 @@ import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import {
-  ForeignDataWrapperOptions,
-  RemoteServerType,
+  type ForeignDataWrapperOptions,
+  type RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import {
-  UserMappingOptions,
+  type UserMappingOptions,
   UserMappingOptionsUpdateInput,
 } from 'src/engine/metadata-modules/remote-server/types/user-mapping-options';
 

@@ -9,7 +9,7 @@ import { singleRecordPickerSearchFilterComponentState } from '@/object-record/re
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 export const SINGLE_RECORD_PICKER_LISTENER_ID = 'single-record-select';
 
@@ -33,7 +33,7 @@ export const SingleRecordPicker = ({
 }: SingleRecordPickerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const setRecordPickerSearchFilter = useSetRecoilComponentStateV2(
+  const setRecordPickerSearchFilter = useSetRecoilComponentState(
     singleRecordPickerSearchFilterComponentState,
     componentInstanceId,
   );

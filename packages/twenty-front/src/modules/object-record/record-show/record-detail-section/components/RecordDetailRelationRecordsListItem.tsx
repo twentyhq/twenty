@@ -17,8 +17,8 @@ import {
   RecordUpdateHook,
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
-import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
+import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordReadOnly';
+import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -38,8 +38,8 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { createPortal } from 'react-dom';
 import {
   IconChevronDown,
@@ -107,7 +107,11 @@ export const RecordDetailRelationRecordsListItem = ({
   onClick,
   relationRecord,
 }: RecordDetailRelationRecordsListItemProps) => {
-  const { fieldDefinition, recordId } = useContext(FieldContext);
+  const {
+    fieldDefinition,
+    recordId,
+    isRecordFieldReadOnly: parentIsRecordFieldReadOnly,
+  } = useContext(FieldContext);
 
   const { openModal } = useModal();
 
@@ -161,7 +165,7 @@ export const RecordDetailRelationRecordsListItem = ({
   const dropdownInstanceId = `record-field-card-menu-${relationFieldMetadataId}-${relationRecord.id}`;
 
   const { closeDropdown } = useCloseDropdown();
-  const isDropdownOpen = useRecoilComponentValueV2(
+  const isDropdownOpen = useRecoilComponentValue(
     isDropdownOpenComponentState,
     dropdownInstanceId,
   );
@@ -170,17 +174,17 @@ export const RecordDetailRelationRecordsListItem = ({
     fieldDefinition,
     recordId,
   });
-  const setSingleRecordPickerSelectedId = useSetRecoilComponentStateV2(
+  const setSingleRecordPickerSelectedId = useSetRecoilComponentState(
     singleRecordPickerSelectedIdComponentState,
     dropdownId,
   );
 
+  const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
+    ({ id }) => id === relationFieldMetadataId,
+  );
+
   const handleDetach = () => {
     closeDropdown(dropdownInstanceId);
-
-    const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
-      ({ id }) => id === relationFieldMetadataId,
-    );
 
     if (!relationFieldMetadataItem?.name) return;
 
@@ -236,14 +240,9 @@ export const RecordDetailRelationRecordsListItem = ({
     [isExpanded],
   );
 
-  const isRecordReadOnly = useIsRecordReadOnly({
+  const isRelationRecordReadOnly = useIsRecordReadOnly({
     recordId: relationRecord.id,
     objectMetadataId: relationObjectMetadataItem.id,
-  });
-
-  const isFieldReadOnly = useIsFieldValueReadOnly({
-    fieldDefinition,
-    isRecordReadOnly,
   });
 
   return (
@@ -260,7 +259,7 @@ export const RecordDetailRelationRecordsListItem = ({
             accent="tertiary"
           />
         </StyledClickableZone>
-        {!isFieldReadOnly && (
+        {!parentIsRecordFieldReadOnly && (
           <Dropdown
             dropdownId={dropdownInstanceId}
             dropdownPlacement="right-start"
@@ -312,7 +311,15 @@ export const RecordDetailRelationRecordsListItem = ({
                     labelWidth: 90,
                   }),
                   useUpdateRecord: useUpdateOneObjectRecordMutation,
-                  isReadOnly: isFieldReadOnly,
+                  isRecordFieldReadOnly: isRecordFieldReadOnly({
+                    isRecordReadOnly: isRelationRecordReadOnly,
+                    objectPermissions: relationObjectPermissions,
+                    fieldMetadataId: fieldMetadataItem.id,
+                    objectNameSingular: relationObjectMetadataNameSingular,
+                    fieldName: fieldMetadataItem.name,
+                    fieldType: fieldMetadataItem.type,
+                    isCustom: relationObjectMetadataItem.isCustom,
+                  }),
                 }}
               >
                 <RecordFieldComponentInstanceContext.Provider

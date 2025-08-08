@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import {
   WorkflowStepExecutorException,

@@ -6,7 +6,7 @@ import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/reco
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useTheme } from '@emotion/react';
 import { IconPlus } from 'twenty-ui/display';
 
@@ -59,12 +59,12 @@ export const RecordTableHeaderLastColumn = () => {
     (scrollWrapperHTMLElement?.clientWidth ?? 0) <
     (scrollWrapperHTMLElement?.scrollWidth ?? 0);
 
-  const isFirstRowActive = useRecoilComponentFamilyValueV2(
+  const isFirstRowActive = useRecoilComponentFamilyValue(
     isRecordTableRowActiveComponentFamilyState,
     0,
   );
 
-  const isFirstRowFocused = useRecoilComponentFamilyValueV2(
+  const isFirstRowFocused = useRecoilComponentFamilyValue(
     isRecordTableRowFocusedComponentFamilyState,
     0,
   );

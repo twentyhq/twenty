@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddCascadeDeleteOnFieldMetadataRelationTargetObject1747062634513
   implements MigrationInterface

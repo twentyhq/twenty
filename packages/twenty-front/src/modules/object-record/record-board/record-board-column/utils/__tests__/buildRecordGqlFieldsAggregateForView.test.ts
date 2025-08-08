@@ -8,6 +8,24 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 const MOCK_FIELD_ID = '7d2d7b5e-7b3e-4b4a-8b0a-7b3e4b4a8b0a';
 
 describe('buildRecordGqlFieldsAggregateForView', () => {
+  const fields = [
+    {
+      id: MOCK_FIELD_ID,
+      name: 'amount',
+      type: FieldMetadataType.NUMBER,
+    } as FieldMetadataItem,
+    {
+      id: '06b33746-5293-4d07-9f7f-ebf5ad396064',
+      name: 'name',
+      type: FieldMetadataType.TEXT,
+    } as FieldMetadataItem,
+    {
+      id: 'e46b9ba4-144b-4d10-a092-03a7521c8aa0',
+      name: 'createdAt',
+      type: FieldMetadataType.DATE_TIME,
+    } as FieldMetadataItem,
+  ];
+
   const mockObjectMetadata: ObjectMetadataItem = {
     id: '123',
     nameSingular: 'opportunity',
@@ -22,23 +40,9 @@ describe('buildRecordGqlFieldsAggregateForView', () => {
     labelIdentifierFieldMetadataId: '06b33746-5293-4d07-9f7f-ebf5ad396064',
     imageIdentifierFieldMetadataId: null,
     isLabelSyncedWithName: true,
-    fields: [
-      {
-        id: MOCK_FIELD_ID,
-        name: 'amount',
-        type: FieldMetadataType.NUMBER,
-      } as FieldMetadataItem,
-      {
-        id: '06b33746-5293-4d07-9f7f-ebf5ad396064',
-        name: 'name',
-        type: FieldMetadataType.TEXT,
-      } as FieldMetadataItem,
-      {
-        id: 'e46b9ba4-144b-4d10-a092-03a7521c8aa0',
-        name: 'createdAt',
-        type: FieldMetadataType.DATE_TIME,
-      } as FieldMetadataItem,
-    ],
+    fields,
+    readableFields: fields,
+    updatableFields: fields,
     indexMetadatas: [],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),

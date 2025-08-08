@@ -16,7 +16,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
   FileWorkspaceFolderDeletionJob,
-  FileWorkspaceFolderDeletionJobData,
+  type FileWorkspaceFolderDeletionJobData,
 } from 'src/engine/core-modules/file/jobs/file-workspace-folder-deletion.job';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -25,7 +25,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
+import { type ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
@@ -429,6 +429,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
+          {
+            userFriendlyMessage:
+              'You do not have permission to manage security settings. Please contact your workspace administrator.',
+          },
         );
       }
     }
@@ -475,6 +479,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
+          {
+            userFriendlyMessage:
+              'You do not have permission to manage workspace settings. Please contact your workspace administrator.',
+          },
         );
       }
     }

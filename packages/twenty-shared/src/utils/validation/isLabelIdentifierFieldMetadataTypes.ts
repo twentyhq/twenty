@@ -1,5 +1,5 @@
 import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/constants/LabelIdentifierFieldMetadataTypes';
-import { FieldMetadataType } from '@/types';
+import { type FieldMetadataType } from '@/types';
 
 export const isLabelIdentifierFieldMetadataTypes = (
   value: FieldMetadataType,

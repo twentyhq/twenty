@@ -43,6 +43,7 @@ module.exports = {
         withComponent: false,
         scalars: {
           DateTime: 'string',
+          UUID: 'string',
         },
         namingConvention: { enumValues: 'keep' },
       },

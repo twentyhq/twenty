@@ -1,6 +1,6 @@
 import { objectOptionsDropdownSearchInputComponentState } from '@/object-record/object-options-dropdown/states/objectOptionsDropdownSearchInputComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useMemo } from 'react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -8,18 +8,18 @@ export const useSearchRecordGroupField = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const [recordGroupFieldSearchInput, setRecordGroupFieldSearchInput] =
-    useRecoilComponentStateV2(objectOptionsDropdownSearchInputComponentState);
+    useRecoilComponentState(objectOptionsDropdownSearchInputComponentState);
 
   const filteredRecordGroupFieldMetadataItems = useMemo(() => {
     const searchInputLowerCase =
       recordGroupFieldSearchInput.toLocaleLowerCase();
 
-    return objectMetadataItem.fields.filter(
+    return objectMetadataItem.readableFields.filter(
       (field) =>
         field.type === FieldMetadataType.SELECT &&
         field.label.toLocaleLowerCase().includes(searchInputLowerCase),
     );
-  }, [objectMetadataItem.fields, recordGroupFieldSearchInput]);
+  }, [objectMetadataItem.readableFields, recordGroupFieldSearchInput]);
 
   return {
     recordGroupFieldSearchInput,

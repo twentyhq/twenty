@@ -1,11 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
 import {
   AuditException,
   AuditExceptionCode,
 } from 'src/engine/core-modules/audit/audit.exception';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type User } from 'src/engine/core-modules/user/user.entity';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { AuditResolver } from './audit.resolver';
 

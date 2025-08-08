@@ -3,7 +3,7 @@ import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRec
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
 import { ViewType } from '@/views/types/ViewType';
@@ -30,7 +30,7 @@ export const useReorderRecordGroups = ({
   const { setRecordGroups } = useSetRecordGroups();
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const visibleRecordGroupIdsFamilySelector = useRecoilComponentCallbackStateV2(
+  const visibleRecordGroupIdsFamilySelector = useRecoilComponentCallbackState(
     visibleRecordGroupIdsComponentFamilySelector,
   );
 

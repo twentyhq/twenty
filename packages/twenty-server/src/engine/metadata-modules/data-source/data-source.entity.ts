@@ -1,7 +1,7 @@
 import {
   Column,
   CreateDateColumn,
-  DataSourceOptions,
+  type DataSourceOptions,
   Entity,
   Index,
   OneToMany,

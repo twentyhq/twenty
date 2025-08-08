@@ -1,10 +1,10 @@
-import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
+import { type CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import {
-  ColumnNameProcessor,
+  type ColumnNameProcessor,
   processFieldMetadataForColumnNameMapping,
 } from 'src/engine/twenty-orm/utils/process-field-metadata-for-column-name-mapping.util';
 
@@ -40,13 +40,12 @@ export function getFieldMetadataIdToColumnNamesMap(
     },
     processRelationField: ({
       fieldMetadataId,
-      columnName,
+      joinColumnName,
     }: {
       fieldMetadataId: string;
-      fieldMetadata: FieldMetadataEntity;
-      columnName: string;
+      joinColumnName: string;
     }) => {
-      fieldMetadataToColumnNamesMap.set(fieldMetadataId, [columnName]); // TODO test
+      fieldMetadataToColumnNamesMap.set(fieldMetadataId, [joinColumnName]);
     },
     processSimpleField: ({
       fieldMetadataId,

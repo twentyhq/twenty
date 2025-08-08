@@ -12,12 +12,12 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import {
-  AccessTokenJwtPayload,
-  ApiKeyTokenJwtPayload,
-  AuthContext,
-  FileTokenJwtPayload,
-  JwtPayload,
-  WorkspaceAgnosticTokenJwtPayload,
+  type AccessTokenJwtPayload,
+  type ApiKeyTokenJwtPayload,
+  type AuthContext,
+  type FileTokenJwtPayload,
+  type JwtPayload,
+  type WorkspaceAgnosticTokenJwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';

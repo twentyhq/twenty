@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { createTransport, Transporter } from 'nodemailer';
+import { createTransport, type Transporter } from 'nodemailer';
 
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
 export class SmtpClientProvider {

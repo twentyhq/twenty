@@ -6,28 +6,28 @@ import {
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
+import { type FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromRelationCreateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadata.util';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 
 type FromCreateFieldInputToFlatObjectMetadata = {
   rawCreateFieldInput: CreateFieldInput;
-  existingFlatObjectMetadatas: FlatObjectMetadata[];
+  existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
 };
 
 export const fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata = async ({
-  existingFlatObjectMetadatas,
   rawCreateFieldInput,
+  existingFlatObjectMetadataMaps,
 }: FromCreateFieldInputToFlatObjectMetadata): Promise<FlatFieldMetadata[]> => {
   if (rawCreateFieldInput.isRemoteCreation) {
     throw new FieldMetadataException(
@@ -40,10 +40,8 @@ export const fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata = async ({
       rawCreateFieldInput,
       ['description', 'icon', 'label', 'name', 'objectMetadataId', 'type'],
     );
-  const parentFlatObjectMetadata = existingFlatObjectMetadatas.find(
-    (existingFlatObjectMetadata) =>
-      existingFlatObjectMetadata.id === createFieldInput.objectMetadataId,
-  );
+  const parentFlatObjectMetadata =
+    existingFlatObjectMetadataMaps.byId[createFieldInput.objectMetadataId];
 
   if (!isDefined(parentFlatObjectMetadata)) {
     throw new FieldMetadataException(
@@ -70,7 +68,7 @@ export const fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata = async ({
     }
     case FieldMetadataType.RELATION: {
       return fromRelationCreateFieldInputToFlatFieldMetadata({
-        existingFlatObjectMetadatas,
+        existingFlatObjectMetadataMaps,
         sourceParentFlatObjectMetadata: parentFlatObjectMetadata,
         createFieldInput,
       });

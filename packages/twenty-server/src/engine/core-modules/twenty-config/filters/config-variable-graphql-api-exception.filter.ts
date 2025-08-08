@@ -1,4 +1,6 @@
-import { Catch, ExceptionFilter } from '@nestjs/common';
+import { Catch, type ExceptionFilter } from '@nestjs/common';
+
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
   ForbiddenError,
@@ -27,9 +29,7 @@ export class ConfigVariableGraphqlApiExceptionFilter
       case ConfigVariableExceptionCode.UNSUPPORTED_CONFIG_TYPE:
         throw exception;
       default: {
-        const _exhaustiveCheck: never = exception.code;
-
-        throw exception;
+        assertUnreachable(exception.code);
       }
     }
   }

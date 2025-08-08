@@ -5,46 +5,45 @@ import {
   RecordGroupDefinitionType,
 } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordGroupSortedInsert } from '@/object-record/record-group/utils/recordGroupSortedInsert';
-import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
+import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
 
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { isDefined } from 'twenty-shared/utils';
 
-export const availableRecordGroupIdsComponentSelector =
-  createComponentSelectorV2<RecordGroupDefinition['id'][]>({
-    key: 'availableRecordGroupIdsComponentSelector',
-    componentInstanceContext: ViewComponentInstanceContext,
-    get:
-      ({ instanceId }) =>
-      ({ get }) => {
-        const recordGroupIds = get(
-          recordGroupIdsComponentState.atomFamily({
-            instanceId,
-          }),
+export const availableRecordGroupIdsComponentSelector = createComponentSelector<
+  RecordGroupDefinition['id'][]
+>({
+  key: 'availableRecordGroupIdsComponentSelector',
+  componentInstanceContext: ViewComponentInstanceContext,
+  get:
+    ({ instanceId }) =>
+    ({ get }) => {
+      const recordGroupIds = get(
+        recordGroupIdsComponentState.atomFamily({
+          instanceId,
+        }),
+      );
+
+      const result: RecordGroupDefinition[] = [];
+
+      for (const recordGroupId of recordGroupIds) {
+        const recordGroupDefinition = get(
+          recordGroupDefinitionFamilyState(recordGroupId),
         );
 
-        const result: RecordGroupDefinition[] = [];
-
-        for (const recordGroupId of recordGroupIds) {
-          const recordGroupDefinition = get(
-            recordGroupDefinitionFamilyState(recordGroupId),
-          );
-
-          if (!isDefined(recordGroupDefinition)) {
-            continue;
-          }
-
-          if (
-            recordGroupDefinition.type === RecordGroupDefinitionType.NoValue
-          ) {
-            continue;
-          }
-
-          recordGroupSortedInsert(result, recordGroupDefinition, (a, b) =>
-            a.title.localeCompare(b.title),
-          );
+        if (!isDefined(recordGroupDefinition)) {
+          continue;
         }
 
-        return result.map(({ id }) => id);
-      },
-  });
+        if (recordGroupDefinition.type === RecordGroupDefinitionType.NoValue) {
+          continue;
+        }
+
+        recordGroupSortedInsert(result, recordGroupDefinition, (a, b) =>
+          a.title.localeCompare(b.title),
+        );
+      }
+
+      return result.map(({ id }) => id);
+    },
+});

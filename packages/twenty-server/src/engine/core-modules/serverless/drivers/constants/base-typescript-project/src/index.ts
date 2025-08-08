@@ -4,7 +4,9 @@ export const main = async (params: {
 }): Promise<object> => {
   const { a, b } = params;
 
-  // Your code here
+  // Rename the parameters and code below with your own logic
+  // This is just an example
+  const message = `Hello, input: ${a} and ${b}`;
 
-  return {};
+  return { message };
 };

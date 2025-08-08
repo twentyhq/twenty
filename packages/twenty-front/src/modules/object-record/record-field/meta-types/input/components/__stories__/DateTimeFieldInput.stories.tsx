@@ -101,7 +101,7 @@ const DateFieldInputWithContext = ({
           },
           recordId,
           isLabelIdentifier: false,
-          isReadOnly: false,
+          isRecordFieldReadOnly: false,
         }}
       >
         <StorybookFieldInputDropdownFocusIdSetterEffect />

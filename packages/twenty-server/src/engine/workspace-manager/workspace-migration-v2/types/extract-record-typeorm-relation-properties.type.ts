@@ -1,4 +1,4 @@
-import { Relation } from 'typeorm';
+import { type Relation } from 'typeorm';
 
 export type ExtractRecordTypeOrmRelationProperties<T, TRelationTargets> =
   NonNullable<

@@ -30,7 +30,7 @@ export const useRelatedRecordActions = ({
     return relatedActions;
   }
 
-  const oneToManyFields = sourceObjectMetadataItem.fields.filter(
+  const oneToManyFields = sourceObjectMetadataItem.readableFields.filter(
     (field) =>
       field.type === 'RELATION' &&
       field.relation?.type === 'ONE_TO_MANY' &&

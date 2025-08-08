@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
 
 describe('getColumnNameToFieldMetadataIdMap', () => {
@@ -226,8 +226,9 @@ describe('getColumnNameToFieldMetadataIdMap', () => {
       );
 
       expect(result['companyId']).toBe('field-1');
+      expect(result['company']).toBe('field-1');
       expect(result['name']).toBe('field-2');
-      expect(Object.keys(result)).toHaveLength(2);
+      expect(Object.keys(result)).toHaveLength(3);
     });
 
     it('should skip ONE_TO_MANY relation field types', () => {

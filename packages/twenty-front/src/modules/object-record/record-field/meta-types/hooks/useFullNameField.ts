@@ -10,7 +10,7 @@ import { assertFieldMetadata } from '@/object-record/record-field/types/guards/a
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useFullNameField = () => {
@@ -43,7 +43,7 @@ export const useFullNameField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldFullNameValue>();
 
-  const draftValue = useRecoilComponentValueV2(
+  const draftValue = useRecoilComponentValue(
     recordFieldInputDraftValueComponentState,
   );
 

@@ -1,17 +1,18 @@
-import styled from '@emotion/styled';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useCloseRightClickMenu';
+import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
+import { useWorkflowDiagramScreenToFlowPosition } from '@/workflow/workflow-diagram/hooks/useWorkflowDiagramScreenToFlowPosition';
 import { workflowDiagramRightClickMenuPositionState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuPositionState';
-import { isDefined } from 'twenty-shared/utils';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
+import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useRef } from 'react';
-import { WorkflowDiagramRightClickCommandMenuClickOutsideEffect } from './WorkflowDiagramRightClickCommandMenuClickOutsideEffect';
+import { isDefined } from 'twenty-shared/utils';
 import { IconPlus, IconReorder } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import { useLingui } from '@lingui/react/macro';
-import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
-import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useCloseRightClickMenu';
-import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
+import { WorkflowDiagramRightClickCommandMenuClickOutsideEffect } from './WorkflowDiagramRightClickCommandMenuClickOutsideEffect';
 
 const StyledContainer = styled.div<{ x: number; y: number }>`
   background: ${({ theme }) => theme.background.primary};
@@ -31,15 +32,18 @@ export const WorkflowDiagramRightClickCommandMenu = () => {
   const { t } = useLingui();
   const rightClickCommandMenuRef = useRef<HTMLDivElement>(null);
 
+  const { workflowDiagramScreenToFlowPosition } =
+    useWorkflowDiagramScreenToFlowPosition();
+
   const { startNodeCreation } = useStartNodeCreation();
 
   const { closeRightClickMenu } = useCloseRightClickMenu();
 
-  const workflowDiagramRightClickMenuPosition = useRecoilComponentValueV2(
+  const workflowDiagramRightClickMenuPosition = useRecoilComponentValue(
     workflowDiagramRightClickMenuPositionState,
   );
 
-  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
+  const workflowVisualizerWorkflowId = useRecoilComponentValue(
     workflowVisualizerWorkflowIdComponentState,
   );
 
@@ -57,10 +61,13 @@ export const WorkflowDiagramRightClickCommandMenu = () => {
   };
 
   const addNode = () => {
+    const position = workflowDiagramScreenToFlowPosition(
+      workflowDiagramRightClickMenuPosition,
+    );
     startNodeCreation({
       parentStepId: undefined,
       nextStepId: undefined,
-      position: workflowDiagramRightClickMenuPosition,
+      position,
     });
   };
 

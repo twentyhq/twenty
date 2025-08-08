@@ -1,5 +1,5 @@
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePersistViewFilterGroupRecords';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -20,7 +20,7 @@ export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
   const { currentView } = useGetCurrentViewOnly();
 
   const currentRecordFilterGroupsCallbackState =
-    useRecoilComponentCallbackStateV2(currentRecordFilterGroupsComponentState);
+    useRecoilComponentCallbackState(currentRecordFilterGroupsComponentState);
 
   const saveRecordFilterGroupsToViewFilterGroups = useRecoilCallback(
     ({ snapshot }) =>

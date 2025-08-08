@@ -14,7 +14,7 @@ import { computeNewExpirationDate } from '@/settings/developers/utils/computeNew
 import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -122,7 +122,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         message: t`Role updated successfully`,
       });
       setSelectedRoleId(roleId);
-    } catch (error) {
+    } catch {
       enqueueErrorSnackBar({
         message: t`Error updating role`,
       });
@@ -145,7 +145,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       if (redirect) {
         navigate(SettingsPath.APIs);
       }
-    } catch (err) {
+    } catch {
       enqueueErrorSnackBar({ message: t`Error deleting api key.` });
     } finally {
       setIsLoading(false);
@@ -166,7 +166,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       return;
     }
 
-    if (!roleIdToUse) {
+    if (!isDefined(roleIdToUse)) {
       throw new Error('Admin role not found - this should never happen');
     }
 
@@ -216,7 +216,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
           });
         }
       }
-    } catch (err) {
+    } catch {
       enqueueErrorSnackBar({
         message: t`Error regenerating api key.`,
       });
@@ -245,7 +245,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               children: t`APIs`,
               href: getSettingsPath(SettingsPath.APIs),
             },
-            { children: t`${apiKeyName}` },
+            { children: apiKey?.name },
           ]}
         >
           <SettingsPageContainer>
@@ -304,7 +304,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 title={t`Expiration`}
                 description={t`When the key will be disabled`}
               />
-              <TextInput
+              <SettingsTextInput
                 instanceId={`api-key-expiration-${apiKey?.id}`}
                 placeholder={t`E.g. backoffice integration`}
                 value={formatExpiration(apiKey?.expiresAt || '', true, false)}

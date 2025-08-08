@@ -43,7 +43,7 @@ export const RecordInlineCell = ({
     isDisplayModeFixHeight,
     onOpenEditMode: onOpenEditModeFromContext,
     onCloseEditMode: onCloseEditModeFromContext,
-    isReadOnly,
+    isRecordFieldReadOnly: isReadOnly,
   } = useContext(FieldContext);
 
   const { openFieldInput, closeFieldInput } = useOpenFieldInputEditMode();

@@ -7,9 +7,9 @@ import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { capitalize } from 'twenty-shared/utils';
-import { ObjectPermission } from '~/generated/graphql';
 import { isEmptyObject } from '~/utils/isEmptyObject';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { ObjectPermissions } from 'twenty-shared/types';
 
 export type GetRecordFromCacheArgs = {
   cache: ApolloCache<object>;
@@ -17,7 +17,10 @@ export type GetRecordFromCacheArgs = {
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: ObjectMetadataItem;
   recordGqlFields?: RecordGqlFields;
-  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
+  objectPermissionsByObjectMetadataId: Record<
+    string,
+    ObjectPermissions & { objectMetadataId: string }
+  >;
   isFieldsPermissionsEnabled?: boolean;
 };
 export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({

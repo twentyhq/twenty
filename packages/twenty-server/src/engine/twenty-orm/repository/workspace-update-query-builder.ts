@@ -1,22 +1,22 @@
-import { ObjectRecordsPermissions } from 'twenty-shared/types';
+import { type ObjectsPermissionsDeprecated } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  EntityTarget,
-  ObjectLiteral,
+  type EntityTarget,
+  type ObjectLiteral,
   UpdateQueryBuilder,
-  UpdateResult,
+  type UpdateResult,
 } from 'typeorm';
-import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
-import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
+import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
-import { RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
-import { RelationDisconnectQueryFieldsByEntityIndex } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
+import { type QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
+import { type RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
+import { type RelationDisconnectQueryFieldsByEntityIndex } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
 import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 import {
   TwentyORMException,
@@ -24,9 +24,9 @@ import {
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { RelationNestedQueries } from 'src/engine/twenty-orm/relation-nested-queries/relation-nested-queries';
 import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
-import { WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
+import { type WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
-import { WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
+import { type WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
@@ -34,7 +34,7 @@ import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/g
 export class WorkspaceUpdateQueryBuilder<
   T extends ObjectLiteral,
 > extends UpdateQueryBuilder<T> {
-  private objectRecordsPermissions: ObjectRecordsPermissions;
+  private objectRecordsPermissions: ObjectsPermissionsDeprecated;
   private shouldBypassPermissionChecks: boolean;
   private internalContext: WorkspaceInternalContext;
   private authContext?: AuthContext;
@@ -50,7 +50,7 @@ export class WorkspaceUpdateQueryBuilder<
 
   constructor(
     queryBuilder: UpdateQueryBuilder<T>,
-    objectRecordsPermissions: ObjectRecordsPermissions,
+    objectRecordsPermissions: ObjectsPermissionsDeprecated,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
     authContext?: AuthContext,
@@ -88,7 +88,7 @@ export class WorkspaceUpdateQueryBuilder<
 
       validateQueryIsPermittedOrThrow({
         expressionMap: this.expressionMap,
-        objectRecordsPermissions: this.objectRecordsPermissions,
+        objectsPermissions: this.objectRecordsPermissions,
         objectMetadataMaps: this.internalContext.objectMetadataMaps,
         shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
         isFieldPermissionsEnabled:
@@ -194,7 +194,7 @@ export class WorkspaceUpdateQueryBuilder<
 
         validateQueryIsPermittedOrThrow({
           expressionMap: fakeExpressionMapToValidatePermissions,
-          objectRecordsPermissions: this.objectRecordsPermissions,
+          objectsPermissions: this.objectRecordsPermissions,
           objectMetadataMaps: this.internalContext.objectMetadataMaps,
           shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
           isFieldPermissionsEnabled:
@@ -247,6 +247,12 @@ export class WorkspaceUpdateQueryBuilder<
           this.authContext,
         );
 
+        this.relationNestedConfig =
+          this.relationNestedQueries.prepareNestedRelationQueries(
+            input.partialEntity as QueryDeepPartialEntityWithNestedRelationFields<T>,
+            mainAliasTarget,
+          );
+
         if (isDefined(this.relationNestedConfig)) {
           const updatedValues =
             await this.relationNestedQueries.processRelationNestedQueries({
@@ -284,13 +290,13 @@ export class WorkspaceUpdateQueryBuilder<
       });
 
       const formattedResults = formatResult<T[]>(
-        results.map((result) => result.raw),
+        results.flatMap((result) => result.raw),
         objectMetadata,
         this.internalContext.objectMetadataMaps,
       );
 
       return {
-        raw: results.map((result) => result.raw),
+        raw: results.flatMap((result) => result.raw),
         generatedMaps: formattedResults,
         affected: results.length,
       };
@@ -383,7 +389,17 @@ export class WorkspaceUpdateQueryBuilder<
       partialEntity: QueryDeepPartialEntity<T>;
     }[],
   ): this {
-    this.manyInputs = inputs;
+    const mainAliasTarget = this.getMainAliasTarget();
+
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      mainAliasTarget,
+      this.internalContext,
+    );
+
+    this.manyInputs = inputs.map((input) => ({
+      criteria: input.criteria,
+      partialEntity: formatData(input.partialEntity, objectMetadata),
+    }));
 
     return this;
   }

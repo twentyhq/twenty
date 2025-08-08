@@ -1,15 +1,18 @@
 import { BadRequestException, Inject } from '@nestjs/common';
 
-import { Request } from 'express';
+import { type Request } from 'express';
 import chunk from 'lodash.chunk';
 import isEmpty from 'lodash.isempty';
-import { FieldMetadataType, RestrictedFields } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type RestrictedFieldsPermissions,
+} from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { In, ObjectLiteral } from 'typeorm';
+import { In, type ObjectLiteral } from 'typeorm';
 
 import {
-  ObjectRecord,
-  ObjectRecordFilter,
+  type ObjectRecord,
+  type ObjectRecordFilter,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
@@ -17,16 +20,17 @@ import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
 import { GetVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/get-variables.factory';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
-import { QueryVariables } from 'src/engine/api/rest/core/types/query-variables.type';
+import { type QueryVariables } from 'src/engine/api/rest/core/types/query-variables.type';
 import {
-  Depth,
+  type Depth,
   DepthInputFactory,
   MAX_DEPTH,
 } from 'src/engine/api/rest/input-factories/depth-input.factory';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
+import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -36,15 +40,14 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
-import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/format-result.util';
-import { getFieldMetadataIdToColumnNamesMap } from 'src/engine/twenty-orm/utils/get-field-metadata-id-to-column-names-map.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export interface PageInfo {
@@ -185,7 +188,7 @@ export abstract class RestApiBaseHandler {
       roleId,
     );
 
-    let restrictedFields: RestrictedFields = {};
+    let restrictedFields: RestrictedFieldsPermissions = {};
 
     if (
       await this.featureFlagService.isFeatureEnabled(
@@ -298,7 +301,7 @@ export abstract class RestApiBaseHandler {
       objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
     };
     depth: Depth | undefined;
-    restrictedFields: RestrictedFields;
+    restrictedFields: RestrictedFieldsPermissions;
   }) {
     const relations = this.getRelations({
       objectMetadata,
@@ -310,7 +313,7 @@ export abstract class RestApiBaseHandler {
     let selectOptions = undefined;
 
     if (!isEmpty(restrictedFields)) {
-      selectOptions = this.getAllSelectableFields({
+      selectOptions = getAllSelectableFields({
         restrictedFields,
         objectMetadata,
       });
@@ -353,36 +356,6 @@ export abstract class RestApiBaseHandler {
       workspaceMemberId: request.workspaceMemberId,
       userWorkspaceId: request.userWorkspaceId,
     };
-  }
-
-  public getAllSelectableFields({
-    restrictedFields,
-    objectMetadata,
-  }: {
-    restrictedFields: RestrictedFields;
-    objectMetadata: { objectMetadataMapItem: ObjectMetadataItemWithFieldMaps };
-  }) {
-    const restrictedFieldsIds = Object.entries(restrictedFields)
-      .filter(([_, value]) => value.canRead === false)
-      .map(([key]) => key);
-
-    const fieldMetadataIdToColumnNamesMap = getFieldMetadataIdToColumnNamesMap(
-      objectMetadata.objectMetadataMapItem,
-    );
-
-    const restrictedFieldsColumnNames: string[] = restrictedFieldsIds
-      .map((fieldId) => fieldMetadataIdToColumnNamesMap.get(fieldId))
-      .filter(isDefined)
-      .flat();
-
-    const allColumnNames = [...fieldMetadataIdToColumnNamesMap.values()].flat();
-
-    return Object.fromEntries(
-      allColumnNames.map((columnName) => [
-        columnName,
-        !restrictedFieldsColumnNames.includes(columnName),
-      ]),
-    );
   }
 
   public formatResult<T>({
@@ -445,7 +418,7 @@ export abstract class RestApiBaseHandler {
     };
     objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
     extraFilters?: Partial<ObjectRecordFilter>;
-    restrictedFields: RestrictedFields;
+    restrictedFields: RestrictedFieldsPermissions;
   }) {
     const objectMetadataNameSingular =
       objectMetadata.objectMetadataMapItem.nameSingular;
@@ -592,7 +565,7 @@ export abstract class RestApiBaseHandler {
   private parseCursor = (cursor: string) => {
     try {
       return JSON.parse(Buffer.from(cursor ?? '', 'base64').toString());
-    } catch (error) {
+    } catch {
       throw new BadRequestException(`Invalid cursor: ${cursor}`);
     }
   };

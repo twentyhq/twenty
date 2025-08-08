@@ -9,19 +9,15 @@ import {
   useSetRecoilState,
 } from 'recoil';
 
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { supportChatState } from '@/client-config/states/supportChatState';
-import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   AuthTokenPair,
   useCheckUserExistsLazyQuery,
   useGetAuthTokensFromLoginTokenMutation,
   useGetAuthTokensFromOtpMutation,
-  useGetCurrentUserLazyQuery,
   useGetLoginTokenFromCredentialsMutation,
   useGetLoginTokenFromEmailVerificationTokenMutation,
   useGetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation,
@@ -30,22 +26,10 @@ import {
   useSignUpMutation,
 } from '~/generated-metadata/graphql';
 
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
-import { DateFormat } from '@/localization/constants/DateFormat';
-import { TimeFormat } from '@/localization/constants/TimeFormat';
-import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
-import { detectDateFormat } from '@/localization/utils/detectDateFormat';
-import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
-import { detectTimeZone } from '@/localization/utils/detectTimeZone';
-import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDateFormatFromWorkspaceDateFormat';
-import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
-import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
-import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import {
   SignInUpStep,
@@ -63,49 +47,39 @@ import { captchaState } from '@/client-config/states/captchaState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
-import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
+import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { i18n } from '@lingui/core';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { iconsState } from 'twenty-ui/display';
 import { AuthToken } from '~/generated/graphql';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
-import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { loginTokenState } from '../states/loginTokenState';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
   const setLoginToken = useSetRecoilState(loginTokenState);
-  const setCurrentUser = useSetRecoilState(currentUserState);
-  const setAvailableWorkspaces = useSetRecoilState(availableWorkspacesState);
-  const setCurrentWorkspaceMember = useSetRecoilState(
-    currentWorkspaceMemberState,
-  );
-  const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
   const { origin } = useOrigin();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
-  const setCurrentWorkspaceMembers = useSetRecoilState(
-    currentWorkspaceMembersState,
-  );
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
   const isEmailVerificationRequired = useRecoilValue(
     isEmailVerificationRequiredState,
   );
+  const { loadCurrentUser } = useLoadCurrentUser();
 
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
   const { createWorkspace } = useSignUpInNewWorkspace();
 
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const { redirect } = useRedirect();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
@@ -120,10 +94,7 @@ export const useAuth = () => {
     useGetLoginTokenFromEmailVerificationTokenMutation();
   const [getWorkspaceAgnosticTokenFromEmailVerificationToken] =
     useGetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation();
-  const [getCurrentUser] = useGetCurrentUserLazyQuery();
   const [getAuthTokensFromOtp] = useGetAuthTokensFromOtpMutation();
-
-  const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
 
@@ -135,8 +106,6 @@ export const useAuth = () => {
   const client = useApolloClient();
 
   const goToRecoilSnapshot = useGotoRecoilSnapshot();
-
-  const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
 
   const [, setSearchParams] = useSearchParams();
 
@@ -206,103 +175,6 @@ export const useAuth = () => {
       },
     [navigate, client, goToRecoilSnapshot, setLastAuthenticateWorkspaceDomain],
   );
-
-  const loadCurrentUser = useCallback(async () => {
-    const currentUserResult = await getCurrentUser({
-      fetchPolicy: 'network-only',
-    });
-
-    if (isDefined(currentUserResult.error)) {
-      throw new Error(currentUserResult.error.message);
-    }
-
-    const user = currentUserResult.data?.currentUser;
-
-    if (!user) {
-      throw new Error('No current user result');
-    }
-
-    let workspaceMember = null;
-
-    setCurrentUser(user);
-
-    if (isDefined(user.workspaceMembers)) {
-      const workspaceMembers = user.workspaceMembers.map((workspaceMember) => ({
-        ...workspaceMember,
-        colorScheme: workspaceMember.colorScheme as ColorScheme,
-        locale: workspaceMember.locale ?? SOURCE_LOCALE,
-      }));
-
-      setCurrentWorkspaceMembers(workspaceMembers);
-    }
-
-    if (isDefined(user.availableWorkspaces)) {
-      setAvailableWorkspaces(user.availableWorkspaces);
-    }
-
-    if (isDefined(user.currentUserWorkspace)) {
-      setCurrentUserWorkspace(user.currentUserWorkspace);
-    }
-
-    if (isDefined(user.workspaceMember)) {
-      workspaceMember = {
-        ...user.workspaceMember,
-        colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
-        locale: user.workspaceMember?.locale ?? SOURCE_LOCALE,
-      };
-
-      setCurrentWorkspaceMember(workspaceMember);
-
-      // TODO: factorize with UserProviderEffect
-      setDateTimeFormat({
-        timeZone:
-          workspaceMember.timeZone && workspaceMember.timeZone !== 'system'
-            ? workspaceMember.timeZone
-            : detectTimeZone(),
-        dateFormat: isDefined(user.workspaceMember.dateFormat)
-          ? getDateFormatFromWorkspaceDateFormat(
-              user.workspaceMember.dateFormat,
-            )
-          : DateFormat[detectDateFormat()],
-        timeFormat: isDefined(user.workspaceMember.timeFormat)
-          ? getTimeFormatFromWorkspaceTimeFormat(
-              user.workspaceMember.timeFormat,
-            )
-          : TimeFormat[detectTimeFormat()],
-      });
-      dynamicActivate(
-        (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,
-      );
-    }
-
-    const workspace = user.currentWorkspace ?? null;
-
-    setCurrentWorkspace(workspace);
-
-    if (isDefined(workspace) && isOnAWorkspace) {
-      setLastAuthenticateWorkspaceDomain({
-        workspaceId: workspace.id,
-        workspaceUrl: getWorkspaceUrl(workspace.workspaceUrls),
-      });
-    }
-
-    return {
-      user,
-      workspaceMember,
-      workspace,
-    };
-  }, [
-    getCurrentUser,
-    isOnAWorkspace,
-    setCurrentUser,
-    setCurrentUserWorkspace,
-    setCurrentWorkspace,
-    setCurrentWorkspaceMember,
-    setCurrentWorkspaceMembers,
-    setDateTimeFormat,
-    setLastAuthenticateWorkspaceDomain,
-    setAvailableWorkspaces,
-  ]);
 
   const handleSetAuthTokens = useCallback(
     (tokens: AuthTokenPair) => {
@@ -434,8 +306,8 @@ export const useAuth = () => {
       // TODO: We can't parallelize this yet because when loadCurrentUSer is loaded
       // then UserProvider updates its children and PrefetchDataProvider is triggered
       // which requires the correct metadata to be loaded (not the mocks)
-      await refreshObjectMetadataItems();
       await loadCurrentUser();
+      await refreshObjectMetadataItems();
     },
     [loadCurrentUser, handleSetAuthTokens, refreshObjectMetadataItems],
   );
@@ -789,9 +661,6 @@ export const useAuth = () => {
     getLoginTokenFromEmailVerificationToken:
       handleGetLoginTokenFromEmailVerificationToken,
     getAuthTokensFromLoginToken: handleGetAuthTokensFromLoginToken,
-
-    loadCurrentUser,
-
     checkUserExists: { checkUserExistsData, checkUserExistsQuery },
     clearSession,
     signOut: handleSignOut,

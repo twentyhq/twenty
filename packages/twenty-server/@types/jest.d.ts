@@ -1,5 +1,5 @@
 import 'jest';
-import { DataSource } from 'typeorm';
+import { type DataSource } from 'typeorm';
 
 declare module '@jest/types' {
   namespace Config {

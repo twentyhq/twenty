@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { FetchMessageObject, ImapFlow } from 'imapflow';
-import { ParsedMail, simpleParser } from 'mailparser';
+import { type FetchMessageObject, type ImapFlow } from 'imapflow';
+import { type ParsedMail, simpleParser } from 'mailparser';
 
 import { ImapHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-handle-error.service';
-import { MessageLocation } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-locator.service';
+import { type MessageLocation } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-locator.service';
 
 export type MessageFetchResult = {
   messageId: string;

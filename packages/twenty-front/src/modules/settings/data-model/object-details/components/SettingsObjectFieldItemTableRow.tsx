@@ -39,7 +39,7 @@ type SettingsObjectFieldItemTableRowProps = {
 };
 
 export const StyledObjectFieldTableRow = styled(TableRow)`
-  grid-template-columns: 180px 148px 148px 36px;
+  grid-auto-columns: 180px 148px 148px 36px;
 `;
 
 const StyledNameTableCell = styled(TableCell)`

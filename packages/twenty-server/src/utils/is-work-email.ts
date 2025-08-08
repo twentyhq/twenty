@@ -4,7 +4,7 @@ import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 export const isWorkEmail = (email: string) => {
   try {
     return !emailProvidersSet.has(getDomainNameByEmail(email));
-  } catch (err) {
+  } catch {
     return false;
   }
 };

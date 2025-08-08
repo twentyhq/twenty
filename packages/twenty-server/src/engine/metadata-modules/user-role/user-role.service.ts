@@ -14,7 +14,7 @@ import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export class UserRoleService {
   constructor(
@@ -195,6 +195,10 @@ export class UserRoleService {
       throw new PermissionsException(
         PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
         PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+        {
+          userFriendlyMessage:
+            'Your role in this workspace could not be found. Please contact your workspace administrator.',
+        },
       );
     }
 
@@ -227,6 +231,10 @@ export class UserRoleService {
       throw new PermissionsException(
         'User workspace not found',
         PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND,
+        {
+          userFriendlyMessage:
+            'Your workspace membership could not be found. You may no longer have access to this workspace.',
+        },
       );
     }
 
@@ -240,6 +248,10 @@ export class UserRoleService {
       throw new PermissionsException(
         'Role not found',
         PermissionsExceptionCode.ROLE_NOT_FOUND,
+        {
+          userFriendlyMessage:
+            'The role you are trying to assign could not be found. It may have been deleted.',
+        },
       );
     }
 
@@ -280,6 +292,10 @@ export class UserRoleService {
       throw new PermissionsException(
         PermissionsExceptionMessage.CANNOT_UNASSIGN_LAST_ADMIN,
         PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN,
+        {
+          userFriendlyMessage:
+            'You cannot remove the admin role from the last administrator. Please assign another administrator first.',
+        },
       );
     }
   }

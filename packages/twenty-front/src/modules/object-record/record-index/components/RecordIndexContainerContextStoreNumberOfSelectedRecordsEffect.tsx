@@ -9,17 +9,17 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useEffect } from 'react';
 
 export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
   () => {
-    const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentStateV2(
+    const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentState(
       contextStoreNumberOfSelectedRecordsComponentState,
     );
 
-    const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+    const contextStoreTargetedRecordsRule = useRecoilComponentValue(
       contextStoreTargetedRecordsRuleComponentState,
     );
 
@@ -37,11 +37,11 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
       objectMetadataItem?.nameSingular ?? '',
     );
 
-    const contextStoreFilters = useRecoilComponentValueV2(
+    const contextStoreFilters = useRecoilComponentValue(
       contextStoreFiltersComponentState,
     );
 
-    const contextStoreAnyFieldFilterValue = useRecoilComponentValueV2(
+    const contextStoreAnyFieldFilterValue = useRecoilComponentValue(
       contextStoreAnyFieldFilterValueComponentState,
     );
 

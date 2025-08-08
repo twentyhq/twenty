@@ -1,7 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { DeleteResult, IsNull, Repository } from 'typeorm';
+import { type DeleteResult, IsNull, type Repository } from 'typeorm';
 
 import * as authUtils from 'src/engine/core-modules/auth/auth.util';
 import {
@@ -18,8 +18,8 @@ import {
   ConfigVariableException,
   ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type User } from 'src/engine/core-modules/user/user.entity';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 jest.mock('src/engine/core-modules/auth/auth.util', () => ({

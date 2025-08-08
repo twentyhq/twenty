@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow should throw when field metadata parent object metadata does not exist 1`] = `"addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow field parent object metadata not found"`;
+
+exports[`addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow should throw when field metadata to add already exist in object 1`] = `"addFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMaps added flatFieldMetadata already exists"`;

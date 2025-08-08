@@ -9,7 +9,7 @@ import {
   WorkspaceActivationStatus,
 } from '~/generated/graphql';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   apolloMocks: [],

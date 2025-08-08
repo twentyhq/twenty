@@ -1,8 +1,8 @@
 import { objectFilterDropdownAnyFieldSearchIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownAnyFieldSearchIsSelectedComponentState';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewBarFilterDropdownAnyFieldSearchInput } from '@/views/components/ViewBarFilterDropdownAnyFieldSearchInput';
 import { ViewBarFilterDropdownFieldSelectMenu } from '@/views/components/ViewBarFilterDropdownFieldSelectMenu';
 import { ViewBarFilterDropdownFilterInput } from '@/views/components/ViewBarFilterDropdownFilterInput';
@@ -11,17 +11,16 @@ import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDrop
 import { ViewFilterOperand } from 'twenty-shared/types';
 
 export const ViewBarFilterDropdownContent = () => {
-  const [objectFilterDropdownFilterIsSelected] = useRecoilComponentStateV2(
+  const [objectFilterDropdownFilterIsSelected] = useRecoilComponentState(
     objectFilterDropdownFilterIsSelectedComponentState,
     VIEW_BAR_FILTER_DROPDOWN_ID,
   );
 
-  const objectFilterDropdownAnyFieldSearchIsSelected =
-    useRecoilComponentValueV2(
-      objectFilterDropdownAnyFieldSearchIsSelectedComponentState,
-    );
+  const objectFilterDropdownAnyFieldSearchIsSelected = useRecoilComponentValue(
+    objectFilterDropdownAnyFieldSearchIsSelectedComponentState,
+  );
 
-  const selectedOperandInDropdown = useRecoilComponentValueV2(
+  const selectedOperandInDropdown = useRecoilComponentValue(
     selectedOperandInDropdownComponentState,
   );
 

@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddUserWorkspaceRoleCompositeIndex1748843737248
   implements MigrationInterface

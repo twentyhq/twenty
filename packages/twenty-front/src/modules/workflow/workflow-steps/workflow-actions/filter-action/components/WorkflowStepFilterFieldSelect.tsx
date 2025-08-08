@@ -15,15 +15,23 @@ import { useContext } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type WorkflowStepFilterFieldSelectProps = {
   stepFilter: StepFilter;
 };
 
+const NON_SELECTABLE_FIELD_TYPES = [
+  FieldMetadataType.ACTOR,
+  FieldMetadataType.RICH_TEXT_V2,
+];
+
 export const WorkflowStepFilterFieldSelect = ({
   stepFilter,
 }: WorkflowStepFilterFieldSelectProps) => {
   const { readonly } = useContext(WorkflowStepFilterContext);
+  const shouldDisplayRecordFields = true;
+  const shouldDisplayRecordObjects = true;
 
   const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
 
@@ -44,9 +52,10 @@ export const WorkflowStepFilterFieldSelect = ({
 
   const { getFieldMetadataItemById } = useGetFieldMetadataItemById();
 
-  const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep(
-    {},
-  );
+  const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
+    shouldDisplayRecordFields,
+    shouldDisplayRecordObjects,
+  });
 
   const noAvailableVariables = availableVariablesInWorkflowStep.length === 0;
 
@@ -157,6 +166,10 @@ export const WorkflowStepFilterFieldSelect = ({
           textAccent={isSelectedFieldNotFound ? 'placeholder' : 'default'}
         />
       }
+      shouldDisplayRecordFields={shouldDisplayRecordFields}
+      shouldDisplayRecordObjects={shouldDisplayRecordObjects}
+      shouldEnableSelectRelationObject={true}
+      fieldTypesToExclude={NON_SELECTABLE_FIELD_TYPES}
     />
   );
 };

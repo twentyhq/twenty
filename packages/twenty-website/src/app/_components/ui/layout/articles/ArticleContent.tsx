@@ -1,7 +1,7 @@
 'use client';
 
 import styled from '@emotion/styled';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import { Theme } from '@/app/_components/ui/theme/theme';
 import { wrapHeadingsWithAnchor } from '@/shared-utils/wrapHeadingsWithAnchor';

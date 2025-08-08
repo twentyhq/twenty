@@ -1,6 +1,6 @@
 import {
   MAIN_COLOR_NAMES,
-  ThemeColor,
+  type ThemeColor,
 } from '@ui/theme/constants/MainColorNames';
 
 import { getNextThemeColor } from '../getNextThemeColor';

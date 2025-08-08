@@ -1,24 +1,24 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { QueryRunner, Table, TableColumn } from 'typeorm';
+import { type QueryRunner, Table, type TableColumn } from 'typeorm';
 
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import {
-  WorkspaceMigrationColumnAction,
+  type WorkspaceMigrationColumnAction,
   WorkspaceMigrationColumnActionType,
-  WorkspaceMigrationColumnCreate,
-  WorkspaceMigrationForeignTable,
-  WorkspaceMigrationIndexAction,
+  type WorkspaceMigrationColumnCreate,
+  type WorkspaceMigrationForeignTable,
+  type WorkspaceMigrationIndexAction,
   WorkspaceMigrationIndexActionType,
-  WorkspaceMigrationTableAction,
+  type WorkspaceMigrationTableAction,
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationColumnService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-column.service';
-import { PostgresQueryRunner } from 'src/engine/workspace-manager/workspace-migration-runner/types/postgres-query-runner.type';
+import { type PostgresQueryRunner } from 'src/engine/workspace-manager/workspace-migration-runner/types/postgres-query-runner.type';
 import { tableDefaultColumns } from 'src/engine/workspace-manager/workspace-migration-runner/utils/table-default-column.util';
 
 export const RELATION_MIGRATION_PRIORITY_PREFIX = '1000';

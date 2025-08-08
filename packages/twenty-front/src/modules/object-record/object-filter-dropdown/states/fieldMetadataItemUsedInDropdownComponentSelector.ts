@@ -2,10 +2,10 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
-import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
+import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
 
 export const fieldMetadataItemUsedInDropdownComponentSelector =
-  createComponentSelectorV2<FieldMetadataItem | null | undefined>({
+  createComponentSelector<FieldMetadataItem | null | undefined>({
     key: 'fieldMetadataItemUsedInDropdownComponentSelector',
     get:
       ({ instanceId }) =>

@@ -1,11 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
+import { type ObjectsPermissionsByRoleIdDeprecated } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
-import { UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
+import {
+  InternalServerError,
+  UserInputError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { isFieldMetadataTypeRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-relation.util';
+import { type UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import {
   PermissionsException,
@@ -13,7 +21,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
@@ -22,6 +30,8 @@ export class FieldPermissionService {
   constructor(
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
+    @InjectRepository(FieldMetadataEntity, 'core')
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(FieldPermissionEntity, 'core')
     private readonly fieldPermissionsRepository: Repository<FieldPermissionEntity>,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
@@ -67,6 +77,7 @@ export class FieldPermissionService {
 
     input.fieldPermissions.forEach((fieldPermission) => {
       this.validateFieldPermission({
+        allFieldPermissions: input.fieldPermissions,
         fieldPermission,
         objectMetadataMapsById,
         rolesPermissions,
@@ -91,13 +102,55 @@ export class FieldPermissionService {
       workspaceId,
     }));
 
-    await this.fieldPermissionsRepository.upsert(fieldPermissions, {
-      conflictPaths: ['fieldMetadataId', 'roleId'],
-    });
+    const existingFieldPermissionsToDelete = existingFieldPermissions.filter(
+      (existingFieldPermissionToFilter) =>
+        fieldPermissionsToDeleteIds.includes(
+          existingFieldPermissionToFilter.id,
+        ),
+    );
+
+    const fieldPermissionsToUpsert = fieldPermissions.filter(
+      (fieldPermissionToUpsert) =>
+        !existingFieldPermissionsToDelete.some(
+          (existingFieldPermissionToDelete) =>
+            existingFieldPermissionToDelete.fieldMetadataId ===
+            fieldPermissionToUpsert.fieldMetadataId,
+        ),
+    );
+
+    const fieldMetadatasForFieldPermissions =
+      await this.fieldMetadataRepository.find({
+        where: {
+          id: In(fieldPermissions.map((fp) => fp.fieldMetadataId)),
+        },
+      });
+
+    const relatedFieldPermissionsToUpsert =
+      this.computeFieldPermissionForRelationTargetFieldMetadata({
+        fieldPermissions: fieldPermissionsToUpsert,
+        fieldMetadatasForFieldPermissions,
+      });
+
+    await this.fieldPermissionsRepository.upsert(
+      [...fieldPermissionsToUpsert, ...relatedFieldPermissionsToUpsert],
+      {
+        conflictPaths: ['fieldMetadataId', 'roleId'],
+      },
+    );
 
     if (fieldPermissionsToDeleteIds.length > 0) {
+      const relatedFieldPermissionToDeleteIds =
+        this.getRelatedFieldPermissionsToDeleteIds({
+          allFieldPermissions: existingFieldPermissions,
+          fieldPermissionsToDelete: existingFieldPermissionsToDelete,
+          fieldMetadatas: fieldMetadatasForFieldPermissions,
+        });
+
       await this.fieldPermissionsRepository.delete({
-        id: In(fieldPermissionsToDeleteIds),
+        id: In([
+          ...fieldPermissionsToDeleteIds,
+          ...relatedFieldPermissionToDeleteIds,
+        ]),
       });
     }
 
@@ -120,16 +173,28 @@ export class FieldPermissionService {
   }
 
   private validateFieldPermission({
+    allFieldPermissions,
     fieldPermission,
     objectMetadataMapsById,
     rolesPermissions,
     role,
   }: {
+    allFieldPermissions: UpsertFieldPermissionsInput['fieldPermissions'];
     fieldPermission: UpsertFieldPermissionsInput['fieldPermissions'][0];
     objectMetadataMapsById: ObjectMetadataMaps['byId'];
-    rolesPermissions: ObjectRecordsPermissionsByRoleId;
+    rolesPermissions: ObjectsPermissionsByRoleIdDeprecated;
     role: RoleEntity;
   }) {
+    const duplicateFieldPermissions = allFieldPermissions.filter(
+      (permission) =>
+        permission.fieldMetadataId === fieldPermission.fieldMetadataId,
+    );
+
+    if (duplicateFieldPermissions.length > 1) {
+      throw new UserInputError(
+        `Cannot accept more than one fieldPermission for field ${fieldPermission.fieldMetadataId} in input.`,
+      );
+    }
     if (
       ('canUpdateFieldValue' in fieldPermission &&
         fieldPermission.canUpdateFieldValue !== null &&
@@ -141,6 +206,10 @@ export class FieldPermissionService {
       throw new PermissionsException(
         PermissionsExceptionMessage.ONLY_FIELD_RESTRICTION_ALLOWED,
         PermissionsExceptionCode.ONLY_FIELD_RESTRICTION_ALLOWED,
+        {
+          userFriendlyMessage:
+            'Field permissions can only be used to restrict access, not to grant additional permissions.',
+        },
       );
     }
 
@@ -151,6 +220,10 @@ export class FieldPermissionService {
       throw new PermissionsException(
         PermissionsExceptionMessage.OBJECT_METADATA_NOT_FOUND,
         PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        {
+          userFriendlyMessage:
+            'The object you are trying to set permissions for could not be found. It may have been deleted.',
+        },
       );
     }
 
@@ -158,6 +231,10 @@ export class FieldPermissionService {
       throw new PermissionsException(
         PermissionsExceptionMessage.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT,
         PermissionsExceptionCode.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT,
+        {
+          userFriendlyMessage:
+            'You cannot set field permissions on system objects as they are managed by the platform.',
+        },
       );
     }
 
@@ -170,6 +247,10 @@ export class FieldPermissionService {
       throw new PermissionsException(
         PermissionsExceptionMessage.FIELD_METADATA_NOT_FOUND,
         PermissionsExceptionCode.FIELD_METADATA_NOT_FOUND,
+        {
+          userFriendlyMessage:
+            'The field you are trying to set permissions for could not be found. It may have been deleted.',
+        },
       );
     }
 
@@ -180,33 +261,10 @@ export class FieldPermissionService {
       throw new PermissionsException(
         PermissionsExceptionMessage.OBJECT_PERMISSION_NOT_FOUND,
         PermissionsExceptionCode.OBJECT_PERMISSION_NOT_FOUND,
-      );
-    }
-
-    if (rolePermissionOnObject.canRead === false) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.FIELD_RESTRICTION_ONLY_ALLOWED_ON_READABLE_OBJECT,
-        PermissionsExceptionCode.FIELD_RESTRICTION_ONLY_ALLOWED_ON_READABLE_OBJECT,
-      );
-    }
-
-    if (
-      rolePermissionOnObject.canUpdate === false &&
-      fieldPermission.canUpdateFieldValue === false
-    ) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT,
-        PermissionsExceptionCode.FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT,
-      );
-    }
-
-    if (
-      fieldPermission.canUpdateFieldValue === null &&
-      fieldPermission.canReadFieldValue === null
-    ) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.EMPTY_FIELD_PERMISSION_NOT_ALLOWED,
-        PermissionsExceptionCode.EMPTY_FIELD_PERMISSION_NOT_ALLOWED,
+        {
+          userFriendlyMessage:
+            'No permissions are set for this role on the selected object. Please set object permissions first.',
+        },
       );
     }
   }
@@ -230,6 +288,10 @@ export class FieldPermissionService {
       throw new PermissionsException(
         PermissionsExceptionMessage.ROLE_NOT_FOUND,
         PermissionsExceptionCode.ROLE_NOT_FOUND,
+        {
+          userFriendlyMessage:
+            'The role you are trying to modify could not be found. It may have been deleted or you may not have access to it.',
+        },
       );
     }
 
@@ -241,6 +303,10 @@ export class FieldPermissionService {
       throw new PermissionsException(
         PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
         PermissionsExceptionCode.ROLE_NOT_EDITABLE,
+        {
+          userFriendlyMessage:
+            'This role cannot be modified because it is a system role. Only custom roles can be edited.',
+        },
       );
     }
   }
@@ -277,5 +343,120 @@ export class FieldPermissionService {
         fieldPermissionsToDeleteIds.push(existingFieldPermission.id);
       }
     }
+  }
+
+  private getRelatedFieldPermissionsToDeleteIds({
+    allFieldPermissions,
+    fieldPermissionsToDelete,
+    fieldMetadatas,
+  }: {
+    allFieldPermissions: FieldPermissionEntity[];
+    fieldPermissionsToDelete: FieldPermissionEntity[];
+    fieldMetadatas: FieldMetadataEntity[];
+  }) {
+    const fieldMetadatasForFieldPermissionsToDelete = fieldMetadatas.filter(
+      (fieldMetadata) =>
+        fieldPermissionsToDelete.some(
+          (existingFieldPermissionToDelete) =>
+            existingFieldPermissionToDelete.fieldMetadataId ===
+            fieldMetadata.id,
+        ),
+    );
+
+    const relationTargetFieldMetadataIds: string[] = [];
+
+    for (const fieldMetadataForFieldPermissionToDelete of fieldMetadatasForFieldPermissionsToDelete) {
+      if (
+        isFieldMetadataTypeRelation(fieldMetadataForFieldPermissionToDelete)
+      ) {
+        if (
+          fieldMetadataForFieldPermissionToDelete.settings?.relationType ===
+            RelationType.ONE_TO_MANY ||
+          fieldMetadataForFieldPermissionToDelete.settings?.relationType ===
+            RelationType.MANY_TO_ONE
+        ) {
+          relationTargetFieldMetadataIds.push(
+            fieldMetadataForFieldPermissionToDelete.relationTargetFieldMetadataId,
+          );
+        }
+      }
+    }
+
+    const fieldPermissionsForRelationTargetFieldMetadataIds =
+      allFieldPermissions
+        .filter((fieldPermission) =>
+          relationTargetFieldMetadataIds.includes(
+            fieldPermission.fieldMetadataId,
+          ),
+        )
+        .map((fieldPermission) => fieldPermission.id);
+
+    return fieldPermissionsForRelationTargetFieldMetadataIds;
+  }
+
+  private computeFieldPermissionForRelationTargetFieldMetadata({
+    fieldPermissions,
+    fieldMetadatasForFieldPermissions,
+  }: {
+    fieldPermissions: UpsertFieldPermissionsInput['fieldPermissions'];
+    fieldMetadatasForFieldPermissions: FieldMetadataEntity[];
+  }) {
+    return fieldPermissions
+      .map((fieldPermission) => {
+        const fieldMetadata = fieldMetadatasForFieldPermissions.find(
+          (fm) => fm.id === fieldPermission.fieldMetadataId,
+        );
+
+        if (!isDefined(fieldMetadata)) {
+          throw new InternalServerError(
+            'Field metadata not found for field permission',
+          );
+        }
+
+        if (isFieldMetadataTypeRelation(fieldMetadata)) {
+          if (
+            fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY ||
+            fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE
+          ) {
+            const fieldPermissionsOnRelationTargetField =
+              fieldPermissions.filter(
+                (fieldPermissionInput) =>
+                  fieldPermissionInput.fieldMetadataId ===
+                  fieldMetadata.relationTargetFieldMetadataId,
+              );
+
+            if (fieldPermissionsOnRelationTargetField.length > 0) {
+              const firstFieldPermission =
+                fieldPermissionsOnRelationTargetField[0]; // validation rules guarantee there can only be one
+
+              const hasConflictingPermissions =
+                fieldPermission.canReadFieldValue !==
+                  firstFieldPermission.canReadFieldValue ||
+                fieldPermission.canUpdateFieldValue !==
+                  firstFieldPermission.canUpdateFieldValue;
+
+              if (hasConflictingPermissions) {
+                throw new UserInputError(
+                  'Conflicting field permissions found for relation target field',
+                  {
+                    userFriendlyMessage: `Contradicting field permissions have been detected on a relation field (${fieldMetadata.name}).`,
+                  },
+                );
+              }
+
+              return;
+            }
+
+            return {
+              ...fieldPermission,
+              objectMetadataId: fieldMetadata.relationTargetObjectMetadataId,
+              fieldMetadataId: fieldMetadata.relationTargetFieldMetadataId,
+            };
+          }
+        }
+
+        return null;
+      })
+      .filter(isDefined);
   }
 }

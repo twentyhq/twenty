@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
-import { PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 
-import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
+import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 
 export type CreateOneObjectFactoryInput = Omit<
   CreateObjectInput,
