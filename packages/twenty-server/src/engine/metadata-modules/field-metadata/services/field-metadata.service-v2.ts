@@ -136,7 +136,7 @@ export class FieldMetadataServiceV2 {
       });
 
       await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
-    } catch (error) {
+    } catch {
       throw new FieldMetadataException(
         'Workspace migration failed to run',
         FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
@@ -256,7 +256,7 @@ export class FieldMetadataServiceV2 {
       });
 
       await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
-    } catch (error) {
+    } catch {
       throw new FieldMetadataException(
         'Workspace migration failed to run',
         FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,

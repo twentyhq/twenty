@@ -12,8 +12,8 @@ import {
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import {
-  FlatFieldMetadataPropertiesToCompare,
   flatFieldMetadataPropertiesToCompare,
+  type FlatFieldMetadataPropertiesToCompare,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
@@ -21,7 +21,7 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-type tmp = Exclude<FlatFieldMetadataPropertiesToCompare, 'standardOverrides'>;
+
 type FromUpdateFieldInputToFlatFieldMetadataToUpdateArgs = {
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
   updateFieldInput: UpdateFieldInput;
@@ -92,6 +92,7 @@ export const fromUpdateFieldInputToFlatFieldMetadataToUpdate = ({
   const updatedFlatFieldMetadata = editableProperties.reduce(
     (acc, property) => {
       const isPropertyUpdated = updatedEditableFields[property] !== undefined;
+
       return {
         ...acc,
         ...(isPropertyUpdated
