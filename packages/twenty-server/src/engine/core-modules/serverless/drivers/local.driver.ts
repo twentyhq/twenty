@@ -138,7 +138,7 @@ export class LocalDriver implements ServerlessDriver {
 
           return JSON.stringify(
             arg,
-            (key, value) => {
+            (_key, value) => {
               if (typeof value === 'object' && value !== null) {
                 if (seen.has(value)) {
                   return '[Circular]'; // Handle circular references

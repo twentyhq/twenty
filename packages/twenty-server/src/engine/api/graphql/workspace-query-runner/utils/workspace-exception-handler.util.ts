@@ -1,3 +1,5 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
   type WorkspaceQueryRunnerException,
   WorkspaceQueryRunnerExceptionCode,
@@ -27,9 +29,7 @@ export const workspaceExceptionHandler = (
     case WorkspaceQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR:
       throw error;
     default: {
-      const _exhaustiveCheck: never = error.code;
-
-      throw error;
+      return assertUnreachable(error.code);
     }
   }
 };

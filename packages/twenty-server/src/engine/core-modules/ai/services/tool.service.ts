@@ -504,7 +504,7 @@ export class ToolService {
     }
   }
 
-  private async destroyRecord(
+  private async _destroyRecord(
     objectName: string,
     parameters: Record<string, unknown>,
     workspaceId: string,
@@ -618,7 +618,7 @@ export class ToolService {
     }
   }
 
-  private async destroyManyRecords(
+  private async _destroyManyRecords(
     objectName: string,
     parameters: Record<string, unknown>,
     workspaceId: string,

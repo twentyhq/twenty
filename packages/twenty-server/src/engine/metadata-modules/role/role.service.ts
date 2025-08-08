@@ -17,7 +17,6 @@ import {
   type UpdateRoleInput,
   type UpdateRolePayload,
 } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { isArgDefinedIfProvidedOrThrow } from 'src/engine/metadata-modules/utils/is-arg-defined-if-provided-or-throw.util';
@@ -29,8 +28,6 @@ export class RoleService {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(RoleTargetsEntity, 'core')
-    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly userRoleService: UserRoleService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}

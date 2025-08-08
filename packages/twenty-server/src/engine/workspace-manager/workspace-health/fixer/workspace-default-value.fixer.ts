@@ -2,21 +2,21 @@ import { Injectable } from '@nestjs/common';
 
 import { type EntityManager } from 'typeorm';
 
+import { type FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import {
   type WorkspaceHealthColumnIssue,
   WorkspaceHealthIssueType,
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-issue.interface';
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
-import { type FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import { WorkspaceMigrationFieldFactory } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   type FieldMetadataDefaultValueFunctionNames,
   fieldMetadataDefaultValueFunctionName,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import { WorkspaceMigrationFieldFactory } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
 
 import {
   AbstractWorkspaceFixer,
@@ -39,8 +39,8 @@ export class WorkspaceDefaultValueFixer extends AbstractWorkspaceFixer<Workspace
   }
 
   async createWorkspaceMigrations(
-    manager: EntityManager,
-    objectMetadataCollection: ObjectMetadataEntity[],
+    _manager: EntityManager,
+    _objectMetadataCollection: ObjectMetadataEntity[],
     issues: WorkspaceHealthColumnIssue<WorkspaceDefaultValueFixerType>[],
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     if (issues.length <= 0) {
@@ -52,14 +52,14 @@ export class WorkspaceDefaultValueFixer extends AbstractWorkspaceFixer<Workspace
       [];
 
     return this.fixColumnDefaultValueConflictIssues(
-      objectMetadataCollection,
+      _objectMetadataCollection,
       issueNeedingMigration as WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT>[],
     );
   }
 
   async createMetadataUpdates(
-    manager: EntityManager,
-    objectMetadataCollection: ObjectMetadataEntity[],
+    _manager: EntityManager,
+    _objectMetadataCollection: ObjectMetadataEntity[],
     issues: WorkspaceHealthColumnIssue<WorkspaceDefaultValueFixerType>[],
   ): Promise<CompareEntity<FieldMetadataEntity>[]> {
     if (issues.length <= 0) {
@@ -72,7 +72,7 @@ export class WorkspaceDefaultValueFixer extends AbstractWorkspaceFixer<Workspace
       [];
 
     return this.fixColumnDefaultValueNotValidIssues(
-      manager,
+      _manager,
       issueNeedingMetadataUpdate as WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID>[],
     );
   }

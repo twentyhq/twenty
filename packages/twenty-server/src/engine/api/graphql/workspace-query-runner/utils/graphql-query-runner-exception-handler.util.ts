@@ -1,3 +1,5 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
   type GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
@@ -31,9 +33,7 @@ export const graphqlQueryRunnerExceptionHandler = (
     case GraphqlQueryRunnerExceptionCode.MISSING_SYSTEM_FIELD:
       throw error;
     default: {
-      const _exhaustiveCheck: never = error.code;
-
-      throw error;
+      return assertUnreachable(error.code);
     }
   }
 };

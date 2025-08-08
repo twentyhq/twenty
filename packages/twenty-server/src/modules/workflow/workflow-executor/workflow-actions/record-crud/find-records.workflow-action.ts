@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { type Entity } from '@microsoft/microsoft-graph-types';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { type ObjectLiteral } from 'typeorm';
 import { resolveInput } from 'twenty-shared/utils';
+import { type ObjectLiteral } from 'typeorm';
 
 import {
   type ObjectRecordFilter,
@@ -118,8 +118,8 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
 
   private async getObjectRecords<T extends ObjectLiteral>(
     workflowActionInput: WorkflowFindRecordsActionInput,
-    objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps,
-    objectMetadataMaps: ObjectMetadataMaps,
+    _objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps,
+    _objectMetadataMaps: ObjectMetadataMaps,
     repository: WorkspaceRepository<T>,
     graphqlQueryParser: GraphqlQueryParser,
   ) {

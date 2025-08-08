@@ -32,7 +32,7 @@ export class WorkspaceMemberDeleteOnePreQueryHook
 
   async execute(
     authContext: AuthContext,
-    objectName: string,
+    _objectName: string,
     payload: DeleteOneResolverArgs,
   ): Promise<DeleteOneResolverArgs> {
     const targettedWorkspaceMemberId = payload.id;

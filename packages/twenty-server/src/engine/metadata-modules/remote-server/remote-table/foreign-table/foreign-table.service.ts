@@ -34,7 +34,7 @@ export class ForeignTableService {
   ) {}
 
   public async fetchForeignTableNamesWithinWorkspace(
-    workspaceId: string,
+    _workspaceId: string,
     foreignDataWrapperId: string,
   ): Promise<string[]> {
     const mainDataSource =

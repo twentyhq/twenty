@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
-import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.service';
 import { type CreateAgentInput } from 'src/engine/metadata-modules/agent/dtos/create-agent.input';
 import { type UpdateAgentInput } from 'src/engine/metadata-modules/agent/dtos/update-agent.input';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
@@ -21,7 +20,6 @@ export class AgentService {
     private readonly agentRepository: Repository<AgentEntity>,
     @InjectRepository(RoleTargetsEntity, 'core')
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
-    private readonly agentChatService: AgentChatService,
     private readonly agentRoleService: AgentRoleService,
   ) {}
 

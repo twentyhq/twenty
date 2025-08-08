@@ -45,8 +45,6 @@ export class WorkspaceSyncStorage {
   // Index metadata
   private readonly _indexMetadataCreateCollection: Partial<IndexMetadataEntity>[] =
     [];
-  private readonly _indexMetadataUpdateCollection: Partial<IndexMetadataEntity>[] =
-    [];
   private readonly _indexMetadataDeleteCollection: IndexMetadataEntity[] = [];
 
   constructor() {}

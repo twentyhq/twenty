@@ -12,7 +12,7 @@ import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/
  * @param twentyConfigService
  */
 export const messageQueueModuleFactory = async (
-  twentyConfigService: TwentyConfigService,
+  _twentyConfigService: TwentyConfigService,
   redisClientService: RedisClientService,
 ): Promise<MessageQueueModuleOptions> => {
   const driverType = MessageQueueDriverType.BullMQ;

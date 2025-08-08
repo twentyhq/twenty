@@ -137,7 +137,7 @@ export class BillingSyncPlansDataCommand extends MigrationCommandRunner {
   }
 
   override async runMigrationCommand(
-    passedParams: string[],
+    _passedParams: string[],
     options: MigrationCommandOptions,
   ): Promise<void> {
     const billingMeters = await this.stripeBillingMeterService.getAllMeters();
