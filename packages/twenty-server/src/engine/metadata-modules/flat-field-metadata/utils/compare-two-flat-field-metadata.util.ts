@@ -7,7 +7,7 @@ import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-
 import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
-const flatFieldMetadataPropertiesToCompare = [
+export const flatFieldMetadataPropertiesToCompare = [
   'defaultValue',
   'description',
   'icon',
