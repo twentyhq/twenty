@@ -36,7 +36,7 @@ export class WorkspaceSyncRoleService {
       },
     });
 
-    const standardRoleMetadataCollection = this.standardRoleFactory.create(
+    const targetStandardRoles = this.standardRoleFactory.create(
       standardRoleDefinitions,
       context,
       existingStandardRoleEntities,
@@ -44,7 +44,7 @@ export class WorkspaceSyncRoleService {
 
     const roleComparatorResults = this.workspaceRoleComparator.compare({
       fromFlatRoles: existingStandardRoleEntities.map(fromRoleEntityToFlatRole),
-      toFlatRoles: standardRoleMetadataCollection,
+      toFlatRoles: targetStandardRoles,
     });
 
     for (const roleComparatorResult of roleComparatorResults) {
