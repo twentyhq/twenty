@@ -72,6 +72,10 @@ export const WithVariable: Story = {
       return editor;
     });
 
+    if (!editor) {
+      throw new Error('Editor element not found');
+    }
+
     await userEvent.click(editor);
 
     const addVariableButton = await canvas.findByRole('button', {
@@ -166,6 +170,10 @@ export const Disabled: Story = {
     const defaultValue = await canvas.findByText('Rich Text');
     expect(defaultValue).toBeVisible();
 
+    if (!editor) {
+      throw new Error('Editor element not found');
+    }
+
     await userEvent.type(editor, 'Hello');
 
     expect(args.onChange).not.toHaveBeenCalled();
@@ -230,6 +238,10 @@ export const HasHistory: Story = {
       expect(editor).toBeVisible();
       return editor;
     });
+
+    if (!editor) {
+      throw new Error('Editor element not found');
+    }
 
     const addVariableButton = await canvas.findByRole('button', {
       name: 'Add variable',

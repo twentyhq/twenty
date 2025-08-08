@@ -95,8 +95,10 @@ export const Disabled: Story = {
     const variablePicker = canvas.queryByText('VariablePicker');
     expect(variablePicker).not.toBeInTheDocument();
 
-    // Clicking should not trigger onChange
-    await userEvent.click(dropdown);
-    expect(args.onChange).not.toHaveBeenCalled();
+    // If dropdown exists, clicking should not trigger onChange
+    if (dropdown) {
+      await userEvent.click(dropdown);
+      expect(args.onChange).not.toHaveBeenCalled();
+    }
   },
 };

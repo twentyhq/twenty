@@ -1,6 +1,6 @@
 import { Decorator, Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { useEffect } from 'react';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 
@@ -125,6 +125,10 @@ export const Submit: Story = {
 
     const input = canvas.getByRole('slider', { name: 'Rating' });
     const firstStar = input.firstElementChild;
+
+    if (!firstStar) {
+      throw new Error('First star element not found');
+    }
 
     await userEvent.click(firstStar);
 

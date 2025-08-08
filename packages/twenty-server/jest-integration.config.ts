@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { type JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
+import { type JestConfigWithTsJest } from 'ts-jest';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
@@ -12,9 +12,6 @@ if (process.env.NODE_ENV === 'test') {
 
 const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
 const isClickhouseEnabled = process.env.CLICKHOUSE_URL !== undefined;
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const tsConfig = require('./tsconfig.json');
 
 const jestConfig: JestConfigWithTsJest = {
   // For more information please have a look to official docs https://jestjs.io/docs/configuration/#prettierpath-string
@@ -63,9 +60,7 @@ const jestConfig: JestConfigWithTsJest = {
     ],
   },
   moduleNameMapper: {
-    ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths, {
-      prefix: '<rootDir>/../..',
-    }),
+    '^src/(.*)$': '<rootDir>/src/$1',
     '^test/(.*)$': '<rootDir>/test/$1',
   },
   fakeTimers: {
