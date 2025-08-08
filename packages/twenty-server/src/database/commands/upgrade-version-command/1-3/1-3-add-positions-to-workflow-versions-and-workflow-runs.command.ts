@@ -8,15 +8,15 @@ import Dagre from '@dagrejs/dagre';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  RunOnWorkspaceArgs,
+  type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
 type Diagram = {
   nodes: {
@@ -62,8 +62,16 @@ export class AddPositionsToWorkflowVersionsAndWorkflowRuns extends ActiveOrSuspe
 
     const workflowVersions = await workflowVersionRepository.find();
 
+    let multiBranchCount = 0;
+
     for (const workflowVersion of workflowVersions) {
       try {
+        // We only update one branch workflow
+        if (this.isWorkflowMultiBranch(workflowVersion)) {
+          multiBranchCount += 1;
+          continue;
+        }
+
         const { updatedTrigger, updatedSteps } =
           this.getOrganizedStepsAndTrigger({
             trigger: workflowVersion.trigger,
@@ -83,8 +91,24 @@ export class AddPositionsToWorkflowVersionsAndWorkflowRuns extends ActiveOrSuspe
     }
 
     this.logger.log(
-      `Workflow versions updated count: ${workflowVersions.length}`,
+      `Workflow versions updated count: ${workflowVersions.length - multiBranchCount} out of ${workflowVersions.length}`,
     );
+  }
+
+  private isWorkflowMultiBranch(
+    workflowVersion: WorkflowVersionWorkspaceEntity,
+  ) {
+    if ((workflowVersion.trigger?.nextStepIds ?? []).length > 1) {
+      return true;
+    }
+
+    for (const step of workflowVersion.steps || []) {
+      if ((step.nextStepIds ?? []).length > 1) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private async addPositionsToWorkflowRuns({
