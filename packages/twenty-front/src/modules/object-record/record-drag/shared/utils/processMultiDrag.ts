@@ -1,30 +1,32 @@
-import { DropResult } from '@hello-pangea/dnd';
-import { calculateDragPositions } from '@/object-record/record-drag/shared/utils/calculateDragPositions';
 import { RecordPositionData } from '@/object-record/record-drag/shared/types/dragTypes';
+import { calculateDragPositions } from '@/object-record/record-drag/shared/utils/calculateDragPositions';
+import { DropResult } from '@hello-pangea/dnd';
 
 type MultiDragContext = {
   result: DropResult;
   selectedRecordIds: string[];
   recordPositionData: RecordPositionData[];
-  destinationRecordIds: string[];
-  groupValue: string | null;
-  selectFieldName: string;
+  recordIds: string[];
+  groupValue?: string | null;
+  selectFieldName?: string;
+};
+
+type RecordUpdate = {
+  recordId: string;
+  position: number;
+  groupValue?: string | null;
+  selectFieldName?: string;
 };
 
 type MultiDragResult = {
-  recordUpdates: Array<{
-    recordId: string;
-    position: number;
-    groupValue: string | null;
-    selectFieldName: string;
-  }>;
+  recordUpdates: RecordUpdate[];
 };
 
 export const processMultiDrag = ({
   result,
   selectedRecordIds,
   recordPositionData,
-  destinationRecordIds,
+  recordIds,
   groupValue,
   selectFieldName,
 }: MultiDragContext): MultiDragResult => {
@@ -33,22 +35,31 @@ export const processMultiDrag = ({
   }
 
   const destinationIndex = result.destination.index;
-
   const recordsToMove = selectedRecordIds;
 
   const positions = calculateDragPositions({
-    recordIds: destinationRecordIds,
+    recordIds,
     recordsToMove,
     destinationIndex,
     recordPositionData,
   });
 
-  const recordUpdates = recordsToMove.map((recordId) => ({
-    recordId,
-    position: positions[recordId],
-    groupValue,
-    selectFieldName,
-  }));
+  const recordUpdates = recordsToMove.map((recordId) => {
+    const baseUpdate = {
+      recordId,
+      position: positions[recordId],
+    };
+
+    if (groupValue !== undefined && selectFieldName !== undefined) {
+      return {
+        ...baseUpdate,
+        groupValue,
+        selectFieldName,
+      };
+    }
+
+    return baseUpdate;
+  });
 
   return {
     recordUpdates,

@@ -1,15 +1,15 @@
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { DropResult } from '@hello-pangea/dnd';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { getDragOperationType } from '@/object-record/record-drag/shared/utils/getDragOperationType';
-import { processMultiDrag } from '@/object-record/record-drag/board/utils/processMultiDrag';
-import { processSingleDrag } from '@/object-record/record-drag/board/utils/processSingleDrag';
+import { getRecordPositionDataFromSnapshot } from '@/object-record/record-drag/shared/utils/getRecordPositionDataFromSnapshot';
+import { processMultiDrag } from '@/object-record/record-drag/shared/utils/processMultiDrag';
+import { processSingleDrag } from '@/object-record/record-drag/shared/utils/processSingleDrag';
 
 export const useRecordBoardDragOperations = () => {
   const { updateOneRecord, selectFieldMetadataItem } =
@@ -40,15 +40,9 @@ export const useRecordBoardDragOperations = () => {
           recordIndexRecordIdsByGroupFamilyState(destinationGroupId),
         ) as string[];
 
-        const recordPositionData = destinationRecordIds.map((recordId) => {
-          const record = getSnapshotValue(
-            snapshot,
-            recordStoreFamilyState(recordId),
-          );
-          return {
-            recordId,
-            position: record?.position,
-          };
+        const recordPositionData = getRecordPositionDataFromSnapshot({
+          allRecordIds: destinationRecordIds,
+          snapshot,
         });
 
         const operationType = getDragOperationType({
@@ -60,7 +54,7 @@ export const useRecordBoardDragOperations = () => {
           const singleDragResult = processSingleDrag({
             result,
             recordPositionData,
-            destinationRecordIds,
+            recordIds: destinationRecordIds,
             groupValue: recordGroup.value,
             selectFieldName: selectFieldMetadataItem.name,
           });
@@ -77,7 +71,7 @@ export const useRecordBoardDragOperations = () => {
             result,
             selectedRecordIds,
             recordPositionData,
-            destinationRecordIds,
+            recordIds: destinationRecordIds,
             groupValue: recordGroup.value,
             selectFieldName: selectFieldMetadataItem.name,
           });

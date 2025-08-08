@@ -14,8 +14,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 import { getRecordPositionDataFromSnapshot } from '@/object-record/record-drag/shared/utils/getRecordPositionDataFromSnapshot';
-import { getNewSingleRecordDropPosition } from '@/object-record/record-drag/table/utils/getNewSingleRecordDropPosition';
-import { processMultiTableDrag } from '@/object-record/record-drag/table/utils/processMultiTableDrag';
+import { processSingleDrag } from '@/object-record/record-drag/shared/utils/processSingleDrag';
+import { processMultiDrag } from '@/object-record/record-drag/shared/utils/processMultiDrag';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { useRecoilCallback } from 'recoil';
 
@@ -63,39 +63,39 @@ export const useRecordTableDragOperations = () => {
           selectedRowIdsSelector,
         );
 
+        const recordPositionData = getRecordPositionDataFromSnapshot({
+          allRecordIds,
+          snapshot,
+        });
+
         const operationType = getDragOperationType({
           draggedRecordId,
           selectedRecordIds,
         });
 
         if (operationType === 'single') {
-          const newPosition = getNewSingleRecordDropPosition({
+          const singleDragResult = processSingleDrag({
             result,
-            allRecordIds,
-            snapshot,
+            recordPositionData,
+            recordIds: allRecordIds,
           });
 
-          if (!isDefined(newPosition)) {
+          if (!isDefined(singleDragResult.position)) {
             return;
           }
 
           updateOneRow({
-            idToUpdate: result.draggableId,
+            idToUpdate: singleDragResult.recordId,
             updateOneRecordInput: {
-              position: newPosition,
+              position: singleDragResult.position,
             },
           });
         } else {
-          const recordPositionData = getRecordPositionDataFromSnapshot({
-            allRecordIds,
-            snapshot,
-          });
-
-          const multiDragResult = processMultiTableDrag({
+          const multiDragResult = processMultiDrag({
             result,
             selectedRecordIds: multiDragState.originalSelection,
             recordPositionData,
-            allRecordIds,
+            recordIds: allRecordIds,
           });
 
           for (const update of multiDragResult.recordUpdates) {

@@ -1,26 +1,26 @@
-import { DropResult } from '@hello-pangea/dnd';
-import { calculateDragPositions } from '@/object-record/record-drag/shared/utils/calculateDragPositions';
 import { RecordPositionData } from '@/object-record/record-drag/shared/types/dragTypes';
+import { calculateDragPositions } from '@/object-record/record-drag/shared/utils/calculateDragPositions';
+import { DropResult } from '@hello-pangea/dnd';
 
 type SingleDragContext = {
   result: DropResult;
   recordPositionData: RecordPositionData[];
-  destinationRecordIds: string[];
-  groupValue: string | null;
-  selectFieldName: string;
+  recordIds: string[];
+  groupValue?: string | null;
+  selectFieldName?: string;
 };
 
 type SingleDragResult = {
   recordId: string;
   position: number;
-  groupValue: string | null;
-  selectFieldName: string;
+  groupValue?: string | null;
+  selectFieldName?: string;
 };
 
 export const processSingleDrag = ({
   result,
   recordPositionData,
-  destinationRecordIds,
+  recordIds,
   groupValue,
   selectFieldName,
 }: SingleDragContext): SingleDragResult => {
@@ -31,20 +31,27 @@ export const processSingleDrag = ({
   }
 
   const destinationIndex = result.destination.index;
-
   const recordsToMove = [draggedRecordId];
 
   const positions = calculateDragPositions({
-    recordIds: destinationRecordIds,
+    recordIds,
     recordsToMove,
     destinationIndex,
     recordPositionData,
   });
 
-  return {
+  const baseResult = {
     recordId: draggedRecordId,
     position: positions[draggedRecordId],
-    groupValue,
-    selectFieldName,
   };
+
+  if (groupValue !== undefined && selectFieldName !== undefined) {
+    return {
+      ...baseResult,
+      groupValue,
+      selectFieldName,
+    };
+  }
+
+  return baseResult;
 };
