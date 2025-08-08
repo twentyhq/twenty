@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import diff from 'microdiff';
+import { type FromTo } from 'twenty-shared/types';
 
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 
@@ -16,14 +17,16 @@ type RoleComparatorResult =
     }
   | {
       action: ComparatorAction.UPDATE;
-      fromFlatRole: RoleEntity;
+      fromFlatRole: FlatRole;
       toFlatRole: FlatRole;
     }
   | {
       action: ComparatorAction.DELETE;
-      fromFlatRole: RoleEntity;
+      fromFlatRole: FlatRole;
       toFlatRole: null;
     };
+
+type WorkspaceRoleComparatorArgs = FromTo<FlatRole[], 'FlatRoles'>;
 
 const rolePropertiesToIgnore = [
   'id',
@@ -38,73 +41,73 @@ const rolePropertiesToIgnore = [
 
 @Injectable()
 export class WorkspaceRoleComparator {
-  compare(
-    standardRoles: FlatRole[],
-    existingRoles: RoleEntity[],
-  ): RoleComparatorResult[] {
+  compare({
+    fromFlatRoles,
+    toFlatRoles,
+  }: WorkspaceRoleComparatorArgs): RoleComparatorResult[] {
     const results: RoleComparatorResult[] = [];
 
     const keyFactory = (role: FlatRole | RoleEntity) =>
       role.standardId || role.id;
 
-    const standardRoleMap = transformMetadataForComparison(standardRoles, {
+    const fromRoleMap = transformMetadataForComparison(fromFlatRoles, {
       shouldIgnoreProperty: (property) =>
         rolePropertiesToIgnore.includes(property),
       keyFactory,
     });
 
-    const existingRoleMap = transformMetadataForComparison(existingRoles, {
+    const toRoleMap = transformMetadataForComparison(toFlatRoles, {
       shouldIgnoreProperty: (property) =>
         rolePropertiesToIgnore.includes(property),
       keyFactory,
     });
 
-    const roleDifferences = diff(existingRoleMap, standardRoleMap);
+    const roleDifferences = diff(fromRoleMap, toRoleMap);
 
     for (const difference of roleDifferences) {
       const uniqueIdentifier = difference.path[0] as string;
 
       switch (difference.type) {
         case 'CREATE': {
-          const standardRole = standardRoles.find(
+          const toRole = toFlatRoles.find(
             (role) => keyFactory(role) === uniqueIdentifier,
           );
 
-          if (standardRole) {
+          if (toRole) {
             results.push({
               action: ComparatorAction.CREATE,
               fromFlatRole: null,
-              toFlatRole: standardRole,
+              toFlatRole: toRole,
             });
           }
           break;
         }
         case 'CHANGE': {
-          const existingRole = existingRoles.find(
+          const fromRole = fromFlatRoles.find(
             (role) => keyFactory(role) === uniqueIdentifier,
           );
-          const standardRole = standardRoles.find(
+          const toRole = toFlatRoles.find(
             (role) => keyFactory(role) === uniqueIdentifier,
           );
 
-          if (existingRole && standardRole) {
+          if (fromRole && toRole) {
             results.push({
               action: ComparatorAction.UPDATE,
-              fromFlatRole: existingRole,
-              toFlatRole: standardRole,
+              fromFlatRole: fromRole,
+              toFlatRole: toRole,
             });
           }
           break;
         }
         case 'REMOVE': {
-          const existingRole = existingRoles.find(
+          const fromRole = fromFlatRoles.find(
             (role) => keyFactory(role) === uniqueIdentifier,
           );
 
-          if (existingRole && difference.path.length === 1) {
+          if (fromRole && difference.path.length === 1) {
             results.push({
               action: ComparatorAction.DELETE,
-              fromFlatRole: existingRole,
+              fromFlatRole: fromRole,
               toFlatRole: null,
             });
           }

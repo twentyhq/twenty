@@ -6,6 +6,7 @@ import { type EntityManager } from 'typeorm';
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
+import { fromRoleEntityToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/from-role-entity-to-flat-role.util';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceRoleComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-role.comparator';
 import { StandardRoleFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-role.factory';
@@ -38,10 +39,10 @@ export class WorkspaceSyncRoleService {
       existingRoleEntities,
     );
 
-    const roleComparatorResults = this.workspaceRoleComparator.compare(
-      standardRoleMetadataCollection,
-      existingRoleEntities,
-    );
+    const roleComparatorResults = this.workspaceRoleComparator.compare({
+      fromFlatRoles: existingRoleEntities.map(fromRoleEntityToFlatRole),
+      toFlatRoles: standardRoleMetadataCollection,
+    });
 
     for (const roleComparatorResult of roleComparatorResults) {
       if (roleComparatorResult.action === ComparatorAction.CREATE) {
