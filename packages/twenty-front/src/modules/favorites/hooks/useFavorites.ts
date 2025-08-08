@@ -24,13 +24,13 @@ export const useFavorites = () => {
 
   const favoriteRelationFieldMetadataItems = useMemo(
     () =>
-      favoriteObjectMetadataItem.fields.filter(
+      favoriteObjectMetadataItem.readableFields.filter(
         (fieldMetadataItem) =>
           fieldMetadataItem.type === FieldMetadataType.RELATION &&
           fieldMetadataItem.name !== 'forWorkspaceMember' &&
           fieldMetadataItem.name !== 'favoriteFolder',
       ),
-    [favoriteObjectMetadataItem.fields],
+    [favoriteObjectMetadataItem.readableFields],
   );
 
   const sortedFavorites = useMemo(

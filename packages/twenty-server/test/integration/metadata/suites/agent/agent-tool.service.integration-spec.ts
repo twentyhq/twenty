@@ -1,5 +1,5 @@
 import {
-  AgentToolTestContext,
+  type AgentToolTestContext,
   createAgentToolTestModule,
   createMockRepository,
   createTestRecord,

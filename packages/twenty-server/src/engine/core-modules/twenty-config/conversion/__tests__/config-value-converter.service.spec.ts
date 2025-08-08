@@ -1,7 +1,7 @@
-import { LogLevel } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+import { type LogLevel } from '@nestjs/common';
+import { Test, type TestingModule } from '@nestjs/testing';
 
-import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_INSTANCE_TOKEN } from 'src/engine/core-modules/twenty-config/constants/config-variables-instance-tokens.constants';
 import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';

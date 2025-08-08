@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { ToolSet } from 'ai';
+import { type ToolSet } from 'ai';
 import {
   ILike,
   In,

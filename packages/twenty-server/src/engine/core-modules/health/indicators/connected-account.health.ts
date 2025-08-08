@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
-  HealthIndicatorResult,
+  type HealthIndicatorResult,
   HealthIndicatorService,
 } from '@nestjs/terminus';
 

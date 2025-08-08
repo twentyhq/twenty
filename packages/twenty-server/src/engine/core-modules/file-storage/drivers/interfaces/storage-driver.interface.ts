@@ -1,4 +1,4 @@
-import { Readable } from 'stream';
+import { type Readable } from 'stream';
 
 export interface StorageDriver {
   delete(params: { folderPath: string; filename?: string }): Promise<void>;

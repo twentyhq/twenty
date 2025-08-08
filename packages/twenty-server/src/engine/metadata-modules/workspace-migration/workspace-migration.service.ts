@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, QueryRunner, Repository } from 'typeorm';
+import { IsNull, type QueryRunner, Repository } from 'typeorm';
 
 import {
   WorkspaceMigrationEntity,
-  WorkspaceMigrationTableAction,
+  type WorkspaceMigrationTableAction,
 } from './workspace-migration.entity';
 
 @Injectable()

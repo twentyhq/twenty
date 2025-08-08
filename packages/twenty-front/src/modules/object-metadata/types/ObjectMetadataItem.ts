@@ -15,6 +15,8 @@ export type ObjectMetadataItem = Omit<
 > & {
   __typename?: string;
   fields: FieldMetadataItem[];
+  readableFields: FieldMetadataItem[];
+  updatableFields: FieldMetadataItem[];
   labelIdentifierFieldMetadataId: string;
   indexMetadatas: IndexMetadataItem[];
 };

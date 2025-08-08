@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class FixSoftDeleteUniqueConstraints1754371805617
   implements MigrationInterface

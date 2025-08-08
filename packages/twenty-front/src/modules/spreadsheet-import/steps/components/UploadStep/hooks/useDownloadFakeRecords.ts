@@ -12,7 +12,7 @@ export const useDownloadFakeRecords = () => {
 
   const availableFieldMetadataItems =
     spreadsheetImportFilterAvailableFieldMetadataItems(
-      objectMetadataItem.fields,
+      objectMetadataItem.updatableFields,
     );
 
   const buildTableWithFakeRecords = () => {

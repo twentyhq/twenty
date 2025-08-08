@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { capitalize } from 'twenty-shared/utils';
 
 import {
-  ObjectName,
-  Singular,
+  type ObjectName,
+  type Singular,
 } from 'src/engine/api/rest/metadata/types/metadata-entity.type';
 
 @Injectable()

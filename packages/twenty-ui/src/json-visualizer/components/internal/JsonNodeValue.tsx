@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
-import { JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
+import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
 
 const StyledText = styled.span<{
   highlighting: JsonNodeHighlighting | undefined;

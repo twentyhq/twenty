@@ -12,7 +12,7 @@ import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowStepContext';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
-import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { WorkflowRunStepInputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepInputDetail';
 import { WorkflowRunStepNodeDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepNodeDetail';
 import { WorkflowRunStepOutputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepOutputDetail';
@@ -41,7 +41,9 @@ type TabId = WorkflowRunTabIdType;
 
 export const CommandMenuWorkflowRunViewStepContent = () => {
   const flow = useFlowOrThrow();
-  const workflowSelectedNode = useWorkflowSelectedNodeOrThrow();
+  const workflowSelectedNode = useRecoilComponentValue(
+    workflowSelectedNodeComponentState,
+  );
   const workflowRunId = useWorkflowRunIdOrThrow();
 
   const workflowRun = useWorkflowRun({ workflowRunId });
@@ -60,7 +62,7 @@ export const CommandMenuWorkflowRunViewStepContent = () => {
     commandMenuPageComponentInstance.instanceId,
   );
 
-  if (!isDefined(workflowRun)) {
+  if (!isDefined(workflowRun) || !isDefined(workflowSelectedNode)) {
     return null;
   }
 

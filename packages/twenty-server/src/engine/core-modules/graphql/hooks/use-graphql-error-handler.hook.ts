@@ -1,26 +1,31 @@
 import {
   getDocumentString,
   handleStreamOrSingleExecutionResult,
-  OnExecuteDoneHookResultOnNextHook,
-  Plugin,
+  type OnExecuteDoneHookResultOnNextHook,
+  type Plugin,
 } from '@envelop/core';
 import { t } from '@lingui/core/macro';
-import { GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
+import {
+  GraphQLError,
+  Kind,
+  type OperationDefinitionNode,
+  print,
+} from 'graphql';
 import semver from 'semver';
 import { isDefined } from 'twenty-shared/utils';
 
-import { GraphQLContext } from 'src/engine/api/graphql/graphql-config/interfaces/graphql-context.interface';
+import { type GraphQLContext } from 'src/engine/api/graphql/graphql-config/interfaces/graphql-context.interface';
 
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { generateGraphQLErrorFromError } from 'src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util';
 import {
   BaseGraphQLError,
   convertGraphQLErrorToBaseGraphQLError,
   ErrorCode,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   graphQLErrorCodesToFilter,
   shouldCaptureException,

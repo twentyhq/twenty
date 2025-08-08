@@ -1,7 +1,7 @@
 import { isObject, isString } from '@sniptt/guards';
 import {
-  StepFilter,
-  StepFilterGroup,
+  type StepFilter,
+  type StepFilterGroup,
   ViewFilterOperand,
 } from 'twenty-shared/types';
 
@@ -104,7 +104,7 @@ function contains(leftValue: unknown, rightValue: unknown): boolean {
       } else {
         return leftValue.includes(parsedRightValue);
       }
-    } catch (error) {
+    } catch {
       return leftValue.includes(rightValue);
     }
   }

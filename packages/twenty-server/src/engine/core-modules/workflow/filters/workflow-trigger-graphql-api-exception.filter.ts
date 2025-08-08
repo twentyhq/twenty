@@ -1,4 +1,6 @@
-import { Catch, ExceptionFilter } from '@nestjs/common';
+import { Catch, type ExceptionFilter } from '@nestjs/common';
+
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
   NotFoundError,
@@ -25,9 +27,7 @@ export const handleWorkflowTriggerException = (
     case WorkflowTriggerExceptionCode.INTERNAL_ERROR:
       throw exception;
     default: {
-      const _exhaustiveCheck: never = exception.code;
-
-      throw exception;
+      assertUnreachable(exception.code);
     }
   }
 };

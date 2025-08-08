@@ -9,11 +9,11 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageChannelSyncStage,
-  MessageChannelWorkspaceEntity,
+  type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
@@ -71,14 +71,23 @@ export class MessagingMessagesImportService {
         messageChannel.id,
       ]);
 
-      await this.messagingAccountAuthenticationService.validateConnectedAccountAuthentication(
-        connectedAccount,
-        workspaceId,
-        messageChannel.id,
-      );
+      const { accessToken, refreshToken } =
+        await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
+          {
+            connectedAccount,
+            workspaceId,
+            messageChannelId: messageChannel.id,
+          },
+        );
+
+      const connectedAccountWithFreshTokens = {
+        ...connectedAccount,
+        accessToken,
+        refreshToken,
+      };
 
       await this.emailAliasManagerService.refreshHandleAliases(
-        connectedAccount,
+        connectedAccountWithFreshTokens,
       );
 
       messageIdsToFetch = await this.cacheStorage.setPop(
@@ -99,27 +108,29 @@ export class MessagingMessagesImportService {
 
       const allMessages = await this.messagingGetMessagesService.getMessages(
         messageIdsToFetch,
-        connectedAccount,
+        connectedAccountWithFreshTokens,
       );
 
       const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(
-        connectedAccount.accountOwnerId,
+        connectedAccountWithFreshTokens.accountOwnerId,
         workspaceId,
       );
 
       const messagesToSave = filterEmails(
         messageChannel.handle,
-        [...connectedAccount.handleAliases.split(',')],
+        [...connectedAccountWithFreshTokens.handleAliases.split(',')],
         allMessages,
         blocklist.map((blocklistItem) => blocklistItem.handle),
       );
 
-      await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
-        messagesToSave,
-        messageChannel,
-        connectedAccount,
-        workspaceId,
-      );
+      if (messagesToSave.length > 0) {
+        await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
+          messagesToSave,
+          messageChannel,
+          connectedAccountWithFreshTokens,
+          workspaceId,
+        );
+      }
 
       if (
         messageIdsToFetch.length < MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE

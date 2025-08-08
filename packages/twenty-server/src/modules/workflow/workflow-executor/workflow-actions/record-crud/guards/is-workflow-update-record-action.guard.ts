@@ -1,7 +1,7 @@
 import {
-  WorkflowAction,
+  type WorkflowAction,
   WorkflowActionType,
-  WorkflowUpdateRecordAction,
+  type WorkflowUpdateRecordAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 export const isWorkflowUpdateRecordAction = (

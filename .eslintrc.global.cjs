@@ -78,7 +78,10 @@ module.exports = {
         '@typescript-eslint/ban-ts-comment': 'error',
         '@typescript-eslint/consistent-type-imports': [
           'error',
-          { prefer: 'no-type-imports' },
+          { 
+            prefer: 'type-imports',
+            fixStyle: 'inline-type-imports'
+          },
         ],
         '@typescript-eslint/explicit-function-return-type': 'off',
         '@typescript-eslint/explicit-module-boundary-types': 'off',

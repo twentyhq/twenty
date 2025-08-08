@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm';
+import { type DataSource } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
@@ -59,6 +59,11 @@ export const seedFeatureFlags = async (
         key: FeatureFlagKey.IS_MORPH_RELATION_ENABLED,
         workspaceId: workspaceId,
         value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_CORE_VIEW_ENABLED,
+        workspaceId: workspaceId,
+        value: false,
       },
       {
         key: FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_ENABLED,

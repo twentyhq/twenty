@@ -1,4 +1,4 @@
-import { IconComponent } from '@ui/display';
+import { type IconComponent } from '@ui/display';
 import styled from '@emotion/styled';
 import React from 'react';
 import { useTheme } from '@emotion/react';

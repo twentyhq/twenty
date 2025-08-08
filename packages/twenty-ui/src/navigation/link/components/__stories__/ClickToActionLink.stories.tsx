@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { ClickToActionLink } from '@ui/navigation/link/components/ClickToActionLink';
 import { ComponentDecorator } from '@ui/testing';
 

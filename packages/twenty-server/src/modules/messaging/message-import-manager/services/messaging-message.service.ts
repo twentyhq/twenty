@@ -4,12 +4,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
-import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
-import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
+import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 
 type MessageAccumulator = {
   existingMessageInDB?: MessageWorkspaceEntity;
@@ -44,6 +44,7 @@ export class MessagingMessageService {
     messages: MessageWithParticipants[],
     messageChannelId: string,
     transactionManager: WorkspaceEntityManager,
+    workspaceId: string,
   ): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
     messageExternalIdsAndIdsMap: Map<string, string>;
@@ -103,6 +104,7 @@ export class MessagingMessageService {
       messages,
       messageAccumulatorMap,
       messageChannelMessageAssociationsReferencingMessageThread,
+      workspaceId,
     );
 
     await this.enrichMessageAccumulatorWithExistingMessageChannelMessageAssociations(
@@ -252,6 +254,7 @@ export class MessagingMessageService {
       MessageChannelMessageAssociationWorkspaceEntity,
       'messageThreadExternalId' | 'message'
     >[],
+    workspaceId: string,
   ) {
     for (const message of messages) {
       const messageAccumulator = messageAccumulatorMap.get(message.externalId);
@@ -305,7 +308,16 @@ export class MessagingMessageService {
         // this means that we have to channels that have imported messages separately and that this message is the first connection between the two channels
         // we should merge messageThreads
         this.logger.warn(
-          `Message thread id is different for the same message header id and message thread external id, this means that we have to channels that have imported messages separately and that this message is the first connection between the two channels, we should merge messageThreads`,
+          `
+          WorkspaceId: ${workspaceId} /
+          Message ExternalId: ${message.externalId} /
+          Message HeaderId: ${message.headerMessageId} /
+          Message Thread ExternalId: ${message.messageThreadExternalId} /
+          Message Thread Id in DB: ${existingThreadIdInDBIfMessageIsExistingInDB} /
+          Message Thread Id in Message Channel Message Association: ${existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageAssociation} /
+          Message Subject: ${message.subject} /
+          Message Received At: ${message.receivedAt} /
+          Thread inter channel detected`,
         );
       }
 

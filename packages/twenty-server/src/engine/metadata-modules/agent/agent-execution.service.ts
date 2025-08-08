@@ -1,17 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Readable } from 'stream';
+import { type Readable } from 'stream';
 
 import {
-  CoreMessage,
-  CoreUserMessage,
-  FilePart,
+  type CoreMessage,
+  type CoreUserMessage,
+  type FilePart,
   generateObject,
   generateText,
-  ImagePart,
+  type ImagePart,
   streamText,
-  UserContent,
+  type UserContent,
 } from 'ai';
 import { In, Repository } from 'typeorm';
 
@@ -22,19 +22,19 @@ import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { extractFolderPathAndFilename } from 'src/engine/core-modules/file/utils/extract-folderpath-and-filename.utils';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
-  AgentChatMessageEntity,
+  type AgentChatMessageEntity,
   AgentChatMessageRole,
 } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
 import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
-import { RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
+import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
 import { convertOutputSchemaToZod } from 'src/engine/metadata-modules/agent/utils/convert-output-schema-to-zod';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
+import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 import { AgentEntity } from './agent.entity';

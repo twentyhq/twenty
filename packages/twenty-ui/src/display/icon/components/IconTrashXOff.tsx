@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 
 import IconTrashXOffRaw from '@assets/icons/trash-x-off.svg?react';
-import { IconComponentProps } from '@ui/display/icon/types/IconComponent';
+import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
 type IconTrashXOffProps = Pick<IconComponentProps, 'size' | 'stroke'>;
 

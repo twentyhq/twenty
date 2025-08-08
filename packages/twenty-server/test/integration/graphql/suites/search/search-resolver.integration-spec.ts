@@ -13,15 +13,15 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { performCreateManyOperation } from 'test/integration/graphql/utils/perform-create-many-operation.utils';
 import { searchFactory } from 'test/integration/graphql/utils/search-factory.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
-import { EachTestingContext } from 'twenty-shared/testing';
+import { type EachTestingContext } from 'twenty-shared/testing';
 
 import {
   decodeCursor,
   encodeCursorData,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
-import { SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
-import { SearchCursor } from 'src/engine/core-modules/search/services/search.service';
+import { type SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
+import { type SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
+import { type SearchCursor } from 'src/engine/core-modules/search/services/search.service';
 
 describe('SearchResolver', () => {
   const [firstPerson, secondPerson, thirdPerson] = [

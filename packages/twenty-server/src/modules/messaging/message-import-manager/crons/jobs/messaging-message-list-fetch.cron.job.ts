@@ -16,7 +16,7 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { MessageChannelSyncStage } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessagingMessageListFetchJob,
-  MessagingMessageListFetchJobData,
+  type MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 
 export const MESSAGING_MESSAGE_LIST_FETCH_CRON_PATTERN = '*/2 * * * *';

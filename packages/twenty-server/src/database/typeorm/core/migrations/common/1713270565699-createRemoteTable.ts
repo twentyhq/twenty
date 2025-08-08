@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class CreateRemoteTable1713270565699 implements MigrationInterface {
   name = 'CreateRemoteTable1713270565699';

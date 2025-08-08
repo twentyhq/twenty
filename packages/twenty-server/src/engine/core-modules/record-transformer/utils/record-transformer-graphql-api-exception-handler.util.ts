@@ -2,7 +2,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-  RecordTransformerException,
+  type RecordTransformerException,
   RecordTransformerExceptionCode,
 } from 'src/engine/core-modules/record-transformer/record-transformer.exception';
 

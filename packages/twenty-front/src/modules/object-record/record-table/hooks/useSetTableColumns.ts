@@ -1,19 +1,13 @@
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useRecoilCallback } from 'recoil';
-import { RestrictedField } from 'twenty-shared/types';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useSetTableColumns = () => {
-  const featureFlags = useFeatureFlagsMap();
-  const isFieldsPermissionsEnabled =
-    featureFlags[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
-
   const setTableColumns = useRecoilCallback(
     ({ snapshot, set }) =>
       (
@@ -21,6 +15,19 @@ export const useSetTableColumns = () => {
         recordTableId: string,
         objectMetadataId: string,
       ) => {
+        const objectMetadataItems = getSnapshotValue(
+          snapshot,
+          objectMetadataItemsState,
+        );
+
+        const objectMetadataItem = objectMetadataItems.find(
+          (item) => item.id === objectMetadataId,
+        );
+
+        if (!isDefined(objectMetadataItem)) {
+          return;
+        }
+
         const tableColumns = getSnapshotValue(
           snapshot,
           tableColumnsComponentState.atomFamily({
@@ -28,30 +35,11 @@ export const useSetTableColumns = () => {
           }),
         );
 
-        let columnsToSet = columns;
-
-        if (isFieldsPermissionsEnabled) {
-          const restrictedFields = getSnapshotValue(
-            snapshot,
-            currentUserWorkspaceState,
-          )?.objectPermissions?.find(
-            (permission) => permission.objectMetadataId === objectMetadataId,
-          )?.restrictedFields;
-
-          const restrictedFieldMetadataIds = Object.entries(
-            restrictedFields ?? {},
-          )
-            .filter(
-              ([_fieldMetadataId, restrictedField]) =>
-                (restrictedField as RestrictedField).canRead === false,
-            )
-            .map(([fieldMetadataId]) => fieldMetadataId);
-          const nonRestrictedColumns = columns.filter(
-            (column) =>
-              !restrictedFieldMetadataIds?.includes(column.fieldMetadataId),
-          );
-          columnsToSet = nonRestrictedColumns;
-        }
+        const columnsToSet = columns.filter((column) =>
+          objectMetadataItem.readableFields
+            .map((field) => field.name)
+            .includes(column.metadata.fieldName),
+        );
 
         if (isDeeplyEqual(tableColumns, columnsToSet)) {
           return;
@@ -63,7 +51,7 @@ export const useSetTableColumns = () => {
           columnsToSet,
         );
       },
-    [isFieldsPermissionsEnabled],
+    [],
   );
 
   return { setTableColumns };

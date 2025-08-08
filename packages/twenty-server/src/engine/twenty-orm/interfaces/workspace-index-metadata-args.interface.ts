@@ -1,6 +1,6 @@
-import { Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
+import { type Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
+import { type IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 
 export interface WorkspaceIndexMetadataArgs {
   /**

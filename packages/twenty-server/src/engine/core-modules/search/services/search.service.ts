@@ -4,11 +4,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
-import { Brackets, ObjectLiteral } from 'typeorm';
+import { Brackets, type ObjectLiteral } from 'typeorm';
 
 import {
-  ObjectRecord,
-  ObjectRecordFilter,
+  type ObjectRecord,
+  type ObjectRecordFilter,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
@@ -18,21 +18,21 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { STANDARD_OBJECTS_BY_PRIORITY_RANK } from 'src/engine/core-modules/search/constants/standard-objects-by-priority-rank';
-import { ObjectRecordFilterInput } from 'src/engine/core-modules/search/dtos/object-record-filter-input';
-import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
-import { SearchRecordDTO } from 'src/engine/core-modules/search/dtos/search-record.dto';
-import { SearchResultConnectionDTO } from 'src/engine/core-modules/search/dtos/search-result-connection.dto';
-import { SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
+import { type ObjectRecordFilterInput } from 'src/engine/core-modules/search/dtos/object-record-filter-input';
+import { type SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
+import { type SearchRecordDTO } from 'src/engine/core-modules/search/dtos/search-record.dto';
+import { type SearchResultConnectionDTO } from 'src/engine/core-modules/search/dtos/search-result-connection.dto';
+import { type SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
 import {
   SearchException,
   SearchExceptionCode,
 } from 'src/engine/core-modules/search/exceptions/search.exception';
-import { RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/types/records-with-object-metadata-item';
+import { type RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/types/records-with-object-metadata-item';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 
 type LastRanks = { tsRankCD: number; tsRank: number };

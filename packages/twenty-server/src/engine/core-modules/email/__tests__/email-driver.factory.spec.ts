@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
 import { EmailDriverFactory } from 'src/engine/core-modules/email/email-driver.factory';
 import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.enum';

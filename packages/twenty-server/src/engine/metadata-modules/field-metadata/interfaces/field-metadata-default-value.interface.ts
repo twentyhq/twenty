@@ -1,23 +1,23 @@
-import { FieldMetadataType, IsExactly } from 'twenty-shared/types';
+import { type FieldMetadataType, type IsExactly } from 'twenty-shared/types';
 
 import {
-  FieldMetadataDefaultActor,
-  FieldMetadataDefaultArray,
-  FieldMetadataDefaultValueAddress,
-  FieldMetadataDefaultValueBoolean,
-  FieldMetadataDefaultValueCurrency,
-  FieldMetadataDefaultValueDateTime,
-  FieldMetadataDefaultValueEmails,
-  FieldMetadataDefaultValueFullName,
-  FieldMetadataDefaultValueLinks,
-  FieldMetadataDefaultValueNowFunction,
-  FieldMetadataDefaultValueNumber,
-  FieldMetadataDefaultValuePhones,
-  FieldMetadataDefaultValueRawJson,
-  FieldMetadataDefaultValueRichText,
-  FieldMetadataDefaultValueString,
-  FieldMetadataDefaultValueStringArray,
-  FieldMetadataDefaultValueUuidFunction,
+  type FieldMetadataDefaultActor,
+  type FieldMetadataDefaultArray,
+  type FieldMetadataDefaultValueAddress,
+  type FieldMetadataDefaultValueBoolean,
+  type FieldMetadataDefaultValueCurrency,
+  type FieldMetadataDefaultValueDateTime,
+  type FieldMetadataDefaultValueEmails,
+  type FieldMetadataDefaultValueFullName,
+  type FieldMetadataDefaultValueLinks,
+  type FieldMetadataDefaultValueNowFunction,
+  type FieldMetadataDefaultValueNumber,
+  type FieldMetadataDefaultValuePhones,
+  type FieldMetadataDefaultValueRawJson,
+  type FieldMetadataDefaultValueRichText,
+  type FieldMetadataDefaultValueString,
+  type FieldMetadataDefaultValueStringArray,
+  type FieldMetadataDefaultValueUuidFunction,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 
 type ExtractValueType<T> = T extends { value: infer V } ? V : T;

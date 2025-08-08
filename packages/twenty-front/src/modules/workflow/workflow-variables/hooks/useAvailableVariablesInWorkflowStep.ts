@@ -1,7 +1,8 @@
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
 import { InputSchemaPropertyType } from '@/workflow/types/InputSchema';
-import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { getPreviousSteps } from '@/workflow/workflow-steps/utils/getWorkflowPreviousSteps';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import {
@@ -22,14 +23,15 @@ export const useAvailableVariablesInWorkflowStep = ({
   shouldDisplayRecordObjects: boolean;
   fieldTypesToExclude?: InputSchemaPropertyType[];
 }): StepOutputSchema[] => {
-  const workflowSelectedNode = useWorkflowSelectedNodeOrThrow();
+  const workflowSelectedNode = useRecoilComponentValue(
+    workflowSelectedNodeComponentState,
+  );
   const flow = useFlowOrThrow();
   const steps = flow.steps ?? [];
 
-  const previousStepIds: string[] = getPreviousSteps(
-    steps,
-    workflowSelectedNode,
-  ).map((step) => step.id);
+  const previousStepIds: string[] = isDefined(workflowSelectedNode)
+    ? getPreviousSteps(steps, workflowSelectedNode).map((step) => step.id)
+    : [];
 
   const availableStepsOutputSchema: StepOutputSchema[] = useRecoilValue(
     stepsOutputSchemaFamilySelector({

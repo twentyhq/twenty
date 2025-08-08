@@ -180,7 +180,7 @@ export class RunWorkflowJob {
         this.twentyConfigService.get('WORKFLOW_EXEC_THROTTLE_LIMIT'),
         this.twentyConfigService.get('WORKFLOW_EXEC_THROTTLE_TTL'),
       );
-    } catch (error) {
+    } catch {
       await this.metricsService.incrementCounter({
         key: MetricsKeys.WorkflowRunFailedThrottled,
         eventId: workflowId,

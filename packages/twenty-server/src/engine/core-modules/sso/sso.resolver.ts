@@ -17,7 +17,7 @@ import {
 } from 'src/engine/core-modules/sso/dtos/setup-sso.input';
 import { SetupSsoOutput } from 'src/engine/core-modules/sso/dtos/setup-sso.output';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
-import { SSOException } from 'src/engine/core-modules/sso/sso.exception';
+import { type SSOException } from 'src/engine/core-modules/sso/sso.exception';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';

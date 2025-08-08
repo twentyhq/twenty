@@ -13,7 +13,7 @@ import {
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { CreateWebhookDTO } from 'src/engine/core-modules/webhook/dtos/create-webhook.dto';
 import { UpdateWebhookDTO } from 'src/engine/core-modules/webhook/dtos/update-webhook.dto';
-import { Webhook } from 'src/engine/core-modules/webhook/webhook.entity';
+import { type Webhook } from 'src/engine/core-modules/webhook/webhook.entity';
 import { WebhookService } from 'src/engine/core-modules/webhook/webhook.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';

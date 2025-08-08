@@ -1,4 +1,4 @@
-import { Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
+import { type Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
 export interface WorkspaceExtendedEntityMetadataArgs {
   /**

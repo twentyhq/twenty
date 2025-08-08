@@ -1,12 +1,12 @@
 import {
-  Event,
-  NullableOption,
-  ResponseType,
+  type Event,
+  type NullableOption,
+  type ResponseType,
 } from '@microsoft/microsoft-graph-types';
 
 import { sanitizeCalendarEvent } from 'src/modules/calendar/calendar-event-import-manager/drivers/utils/sanitizeCalendarEvent';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-import { FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
+import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 
 export const formatMicrosoftCalendarEvents = (
   events: Event[],

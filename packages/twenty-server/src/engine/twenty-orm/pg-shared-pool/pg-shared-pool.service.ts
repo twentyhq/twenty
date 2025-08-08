@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import pg, { Pool, PoolConfig } from 'pg';
+import pg, { type Pool, type PoolConfig } from 'pg';
 import { isDefined } from 'twenty-shared/utils';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';

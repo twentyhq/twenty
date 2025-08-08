@@ -1,11 +1,11 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export const mapSoftDeleteFieldsToGraphQLQuery = (
-  objectMetadataItem: Pick<ObjectMetadataItem, 'fields'>,
+  objectMetadataItem: Pick<ObjectMetadataItem, 'readableFields'>,
 ): string => {
   const softDeleteFields = ['deletedAt', 'id'];
 
-  const fieldsThatShouldBeQueried = objectMetadataItem.fields
+  const fieldsThatShouldBeQueried = objectMetadataItem.readableFields
     .filter((field) => field.isActive && softDeleteFields.includes(field.name))
     .sort(
       (a, b) =>

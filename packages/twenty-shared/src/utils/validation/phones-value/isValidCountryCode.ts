@@ -1,4 +1,4 @@
-import { CountryCode, getCountries } from 'libphonenumber-js';
+import { type CountryCode, getCountries } from 'libphonenumber-js';
 
 const ALL_COUNTRIES_CODE = getCountries();
 

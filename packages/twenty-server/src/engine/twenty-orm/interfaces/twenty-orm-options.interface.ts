@@ -1,4 +1,4 @@
-import { FactoryProvider, ModuleMetadata } from '@nestjs/common';
+import { type FactoryProvider, type ModuleMetadata } from '@nestjs/common';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface TwentyORMOptions {}

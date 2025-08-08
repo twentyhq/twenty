@@ -1,5 +1,5 @@
-import { CanActivate } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+import { type CanActivate } from '@nestjs/common';
+import { Test, type TestingModule } from '@nestjs/testing';
 
 import { FileApiExceptionFilter } from 'src/engine/core-modules/file/filters/file-api-exception.filter';
 import { FilePathGuard } from 'src/engine/core-modules/file/guards/file-path-guard';

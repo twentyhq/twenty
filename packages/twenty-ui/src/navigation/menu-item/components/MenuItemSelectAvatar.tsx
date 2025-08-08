@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import {
   StyledMenuItemIconCheck,

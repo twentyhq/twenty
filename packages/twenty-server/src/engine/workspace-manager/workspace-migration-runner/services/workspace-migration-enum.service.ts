@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
-import { QueryRunner, TableColumn } from 'typeorm';
+import { type QueryRunner, TableColumn } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
 import { unserializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/unserialize-default-value';
 import {
-  WorkspaceMigrationColumnAlter,
-  WorkspaceMigrationRenamedEnum,
+  type WorkspaceMigrationColumnAlter,
+  type WorkspaceMigrationRenamedEnum,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import {
   WorkspaceMigrationException,

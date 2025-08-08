@@ -1,5 +1,5 @@
 import {
-  ExecutionContext,
+  type ExecutionContext,
   ForbiddenException,
   createParamDecorator,
 } from '@nestjs/common';

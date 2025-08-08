@@ -71,7 +71,7 @@ export const PhonesDisplay = ({
   const parsePhoneNumberOrReturnInvalidValue = (number: string) => {
     try {
       return { parsedPhone: parsePhoneNumber(number) };
-    } catch (e) {
+    } catch {
       return { invalidPhone: number };
     }
   };

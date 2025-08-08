@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 
 import addressparser from 'addressparser';
 
-import { EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
+import { type EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
 
 export const safeParseEmailAddressAddress = (
   address: string,

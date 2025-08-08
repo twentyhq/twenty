@@ -2,8 +2,8 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { PublicFeatureFlag } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { type PublicFeatureFlag } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
+import { type FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
 
 jest.mock(
