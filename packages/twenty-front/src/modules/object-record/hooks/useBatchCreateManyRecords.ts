@@ -1,13 +1,9 @@
-import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
 import {
   useCreateManyRecords,
   useCreateManyRecordsProps,
 } from '@/object-record/hooks/useCreateManyRecords';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -25,18 +21,15 @@ export const useBatchCreateManyRecords = <
   mutationBatchSize = DEFAULT_MUTATION_BATCH_SIZE,
   setBatchedRecordsCount,
   abortController,
-  deferPostOptimisticEffectUntilBatchCompletion = false,
 }: useCreateManyRecordsProps & {
   mutationBatchSize?: number;
   setBatchedRecordsCount?: (count: number) => void;
   abortController?: AbortController;
-  deferPostOptimisticEffectUntilBatchCompletion?: boolean;
 }) => {
   const { createManyRecords } = useCreateManyRecords({
     objectNameSingular,
     recordGqlFields,
-    skipPostOptimisticEffect:
-      skipPostOptimisticEffect || deferPostOptimisticEffectUntilBatchCompletion,
+    skipPostOptimisticEffect: skipPostOptimisticEffect,
     shouldMatchRootQueryFilter,
     shouldRefetchAggregateQueries: false,
   });
@@ -50,10 +43,6 @@ export const useBatchCreateManyRecords = <
   });
 
   const { enqueueWarningSnackBar } = useSnackBar();
-
-  const apolloCoreClient = useApolloCoreClient();
-  const { objectMetadataItems } = useObjectMetadataItems();
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const batchCreateManyRecords = async ({
     recordsToCreate,
@@ -103,22 +92,6 @@ export const useBatchCreateManyRecords = <
       } else {
         throw error;
       }
-    }
-
-    if (
-      allCreatedRecords.length > 0 &&
-      deferPostOptimisticEffectUntilBatchCompletion &&
-      !skipPostOptimisticEffect
-    ) {
-      triggerCreateRecordsOptimisticEffect({
-        cache: apolloCoreClient.cache,
-        objectMetadataItem,
-        recordsToCreate: allCreatedRecords,
-        objectMetadataItems,
-        shouldMatchRootQueryFilter,
-        checkForRecordInCache: true,
-        objectPermissionsByObjectMetadataId,
-      });
     }
 
     await refetchAggregateQueries();

@@ -1,3 +1,4 @@
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { generateDepthOneWithoutRelationsRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneWithoutRelationsRecordGqlFields';
 import { useBatchCreateManyRecords } from '@/object-record/hooks/useBatchCreateManyRecords';
@@ -15,6 +16,7 @@ import { useSetRecoilState } from 'recoil';
 export const useOpenObjectRecordsSpreadsheetImportDialog = (
   objectNameSingular: string,
 ) => {
+  const apolloCoreClient = useApolloCoreClient();
   const { openSpreadsheetImportDialog } = useOpenSpreadsheetImportDialog();
   const { buildSpreadsheetImportFields } = useBuildSpreadsheetImportFields();
 
@@ -38,7 +40,6 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
     mutationBatchSize: SpreadsheetImportCreateRecordsBatchSize,
     setBatchedRecordsCount: setCreatedRecordsProgress,
     abortController,
-    deferPostOptimisticEffectUntilBatchCompletion: true,
   });
 
   const openObjectRecordsSpreadsheetImportDialog = (
@@ -74,6 +75,11 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
           await batchCreateManyRecords({
             recordsToCreate: createInputs,
             upsert: true,
+          });
+          await apolloCoreClient.refetchQueries({
+            updateCache: (cache) => {
+              cache.evict({ fieldName: objectMetadataItem.namePlural });
+            },
           });
         } catch (error: any) {
           enqueueErrorSnackBar({
