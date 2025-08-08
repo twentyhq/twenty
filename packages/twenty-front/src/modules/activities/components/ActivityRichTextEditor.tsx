@@ -282,7 +282,7 @@ export const ActivityRichTextEditor = ({
       // TODO: Remove this once we have removed the old rich text
       try {
         parsedBody = JSON.parse(blocknote);
-      } catch (error) {
+      } catch {
         // eslint-disable-next-line no-console
         console.warn(
           `Failed to parse body for activity ${activityId}, for rich text version 'v2'`,

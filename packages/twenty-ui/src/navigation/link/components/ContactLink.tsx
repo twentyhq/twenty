@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Theme, withTheme } from '@emotion/react';
+import { type Theme, withTheme } from '@emotion/react';
 import { styled } from '@linaria/react';
 
 const StyledClickableLink = withTheme(styled.a<{

@@ -4,11 +4,10 @@ import {
   WorkflowTrigger,
   WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
-import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
-import { isDefined } from 'twenty-shared/utils';
 import { getRootStepIds } from '@/workflow/workflow-trigger/utils/getRootStepIds';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 // TODO: This needs to be migrated to the server
 export const getTriggerDefaultDefinition = ({

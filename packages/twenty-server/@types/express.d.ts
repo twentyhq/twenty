@@ -1,10 +1,10 @@
-import { APP_LOCALES } from 'twenty-shared/translations';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 
-import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
+import { type UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { type User } from 'src/engine/core-modules/user/user.entity';
+import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 declare module 'express-serve-static-core' {
   interface Request {

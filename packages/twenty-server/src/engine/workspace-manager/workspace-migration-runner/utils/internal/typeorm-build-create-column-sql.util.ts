@@ -1,6 +1,6 @@
 // This code is from TypeORM and is used to build the SQL for creating a column
 
-import { Table, TableColumn } from 'typeorm';
+import { type Table, type TableColumn } from 'typeorm';
 
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration-runner/utils/compute-postgres-enum-name.util';
 

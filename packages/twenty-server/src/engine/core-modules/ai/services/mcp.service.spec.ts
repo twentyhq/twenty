@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -6,8 +6,8 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { JsonRpc } from 'src/engine/core-modules/ai/dtos/json-rpc';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type JsonRpc } from 'src/engine/core-modules/ai/dtos/json-rpc';
 import { MCP_SERVER_METADATA } from 'src/engine/core-modules/ai/constants/mcp.const';
 import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';

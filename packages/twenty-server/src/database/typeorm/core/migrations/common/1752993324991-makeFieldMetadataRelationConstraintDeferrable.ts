@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class MakeFieldMetadataRelationConstraintDeferrable1752993324991
   implements MigrationInterface

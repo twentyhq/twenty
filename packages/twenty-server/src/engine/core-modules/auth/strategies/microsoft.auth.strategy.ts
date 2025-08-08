@@ -1,16 +1,16 @@
 import { PassportStrategy } from '@nestjs/passport';
 
-import { Request } from 'express';
-import { VerifyCallback } from 'passport-google-oauth20';
+import { type Request } from 'express';
+import { type VerifyCallback } from 'passport-google-oauth20';
 import { Strategy } from 'passport-microsoft';
-import { APP_LOCALES } from 'twenty-shared/translations';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { SocialSSOSignInUpActionType } from 'src/engine/core-modules/auth/types/signInUp.type';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type SocialSSOSignInUpActionType } from 'src/engine/core-modules/auth/types/signInUp.type';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type MicrosoftRequest = Omit<
   Request,

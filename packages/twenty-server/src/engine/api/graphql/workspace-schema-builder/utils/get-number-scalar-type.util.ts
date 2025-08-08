@@ -1,4 +1,4 @@
-import { GraphQLInt, GraphQLFloat, GraphQLScalarType } from 'graphql';
+import { GraphQLInt, GraphQLFloat, type GraphQLScalarType } from 'graphql';
 import { GraphQLBigInt } from 'graphql-scalars';
 
 import { NumberDataType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';

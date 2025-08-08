@@ -1,4 +1,4 @@
-import { Selectors } from 'src/engine/api/rest/metadata/types/metadata-query.type';
+import { type Selectors } from 'src/engine/api/rest/metadata/types/metadata-query.type';
 
 export const hasSelectAllFieldsSelector = (selector: Selectors) => {
   return (

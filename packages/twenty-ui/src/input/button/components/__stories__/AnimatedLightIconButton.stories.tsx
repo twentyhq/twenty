@@ -1,12 +1,12 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { IconSearch } from '@ui/display';
 import {
-  LightIconButtonAccent,
-  LightIconButtonSize,
+  type LightIconButtonAccent,
+  type LightIconButtonSize,
 } from '@ui/input/button/components/LightIconButton';
 import {
   CatalogDecorator,
-  CatalogStory,
+  type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
 import { AnimatedLightIconButton } from '../AnimatedLightIconButton';

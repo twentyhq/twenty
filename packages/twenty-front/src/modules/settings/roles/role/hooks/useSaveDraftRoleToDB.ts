@@ -1,6 +1,7 @@
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
 import { useRemoveFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRemoveFieldPermissionInDraftRole';
+import { newFieldPermissionsFilter } from '@/settings/roles/role/hooks/utils/newFieldPermissionsFilter.util';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -72,7 +73,7 @@ export const useSaveDraftRoleToDB = ({
       );
     });
 
-  const fieldPermissionsToUpsert =
+  const onlyMeaningfulFieldPermissions =
     dirtyFields.fieldPermissions?.filter(
       (dirtyFieldPermissionToFilter) =>
         !fieldPermissionsThatShouldntBeCreatedBecauseTheyAreUseless?.some(
@@ -81,6 +82,14 @@ export const useSaveDraftRoleToDB = ({
             fieldPermissionThatShouldntBeCreatedToFilter.fieldMetadataId,
         ),
     ) ?? [];
+
+  const fieldPermissionsToUpsert = onlyMeaningfulFieldPermissions.filter(
+    (dirtyFieldPermission) =>
+      newFieldPermissionsFilter(
+        dirtyFieldPermission,
+        settingsPersistedRole?.fieldPermissions,
+      ),
+  );
 
   const { removeFieldPermissionInDraftRole } =
     useRemoveFieldPermissionInDraftRole();

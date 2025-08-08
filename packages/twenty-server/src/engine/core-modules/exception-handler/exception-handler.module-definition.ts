@@ -1,6 +1,6 @@
 import { ConfigurableModuleBuilder } from '@nestjs/common';
 
-import { ExceptionHandlerModuleOptions } from 'src/engine/core-modules/exception-handler/interfaces';
+import { type ExceptionHandlerModuleOptions } from 'src/engine/core-modules/exception-handler/interfaces';
 
 export const {
   ConfigurableModuleClass,

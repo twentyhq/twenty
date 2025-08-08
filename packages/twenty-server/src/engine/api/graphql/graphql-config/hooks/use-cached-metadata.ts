@@ -1,7 +1,7 @@
 import { createHash } from 'crypto';
 
-import { Request } from 'express';
-import { Plugin } from 'graphql-yoga';
+import { type Request } from 'express';
+import { type Plugin } from 'graphql-yoga';
 import { isDefined } from 'twenty-shared/utils';
 
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';

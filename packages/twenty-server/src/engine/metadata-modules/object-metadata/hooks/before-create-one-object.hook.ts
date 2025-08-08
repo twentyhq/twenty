@@ -1,11 +1,11 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 import {
-  BeforeCreateOneHook,
-  CreateOneInputType,
+  type BeforeCreateOneHook,
+  type CreateOneInputType,
 } from '@ptc-org/nestjs-query-graphql';
 
-import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
+import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 
 @Injectable()
 export class BeforeCreateOneObject<T extends CreateObjectInput>

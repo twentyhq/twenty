@@ -1,7 +1,7 @@
 import {
   Inject,
   Injectable,
-  LogLevel,
+  type LogLevel,
   LoggerService as LoggerServiceInterface,
 } from '@nestjs/common';
 

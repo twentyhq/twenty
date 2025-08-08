@@ -1,6 +1,6 @@
 import {
   JsonTreeContext,
-  JsonTreeContextType,
+  type JsonTreeContextType,
 } from '@ui/json-visualizer/contexts/JsonTreeContext';
 
 export const JsonTreeContextProvider = ({

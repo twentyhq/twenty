@@ -1,8 +1,8 @@
 import {
   LoggerDriverType,
-  LoggerModuleOptions,
+  type LoggerModuleOptions,
 } from 'src/engine/core-modules/logger/interfaces';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 /**
  * Logger Module factory

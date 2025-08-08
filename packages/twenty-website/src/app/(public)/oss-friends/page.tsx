@@ -1,5 +1,5 @@
 import { Background } from '@/app/_components/oss-friends/Background';
-import { Card, OssData } from '@/app/_components/oss-friends/Card';
+import { Card, type OssData } from '@/app/_components/oss-friends/Card';
 import { CardContainer } from '@/app/_components/oss-friends/CardContainer';
 import { ContentContainer } from '@/app/_components/oss-friends/ContentContainer';
 import { Header } from '@/app/_components/oss-friends/Header';

@@ -1,4 +1,4 @@
-import { GithubReleases } from '@/database/model';
+import { type GithubReleases } from '@/database/model';
 
 function formatDate(dateString: string) {
   const date = new Date(dateString);

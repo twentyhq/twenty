@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { ToolSet } from 'ai';
+import { type ToolSet } from 'ai';
 import { Repository } from 'typeorm';
 import { z } from 'zod';
 

@@ -9,16 +9,25 @@ import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/s
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
+import { DeleteWorkflowRunsCommand } from 'src/modules/workflow/workflow-runner/workflow-run/command/delete-workflow-runs.command';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Module({
   imports: [
     WorkflowCommonModule,
-    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
+    NestjsQueryTypeOrmModule.forFeature(
+      [ObjectMetadataEntity, Workspace],
+      'core',
+    ),
     RecordPositionModule,
     CacheLockModule,
     MetricsModule,
   ],
-  providers: [WorkflowRunWorkspaceService, ScopedWorkspaceContextFactory],
-  exports: [WorkflowRunWorkspaceService],
+  providers: [
+    WorkflowRunWorkspaceService,
+    ScopedWorkspaceContextFactory,
+    DeleteWorkflowRunsCommand,
+  ],
+  exports: [WorkflowRunWorkspaceService, DeleteWorkflowRunsCommand],
 })
 export class WorkflowRunModule {}

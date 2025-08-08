@@ -1,7 +1,7 @@
-import { GraphQLResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
+import { type GraphQLResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
-import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { type View } from 'src/engine/core-modules/view/entities/view.entity';
 
 import { createViewOperationFactory } from './create-view-operation-factory.util';
 import { createViewData } from './view-data-factory.util';

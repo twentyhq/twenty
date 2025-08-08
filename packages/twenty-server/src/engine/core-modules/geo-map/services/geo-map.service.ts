@@ -5,11 +5,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  AutocompleteSanitizedResult,
+  type AutocompleteSanitizedResult,
   sanitizeAutocompleteResults,
 } from 'src/engine/core-modules/geo-map/utils/sanitize-autocomplete-results.util';
 import {
-  AddressFields,
+  type AddressFields,
   sanitizePlaceDetailsResults,
 } from 'src/engine/core-modules/geo-map/utils/sanitize-place-details-results.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';

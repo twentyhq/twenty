@@ -1,7 +1,7 @@
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { type FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { RemoteServerType } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import {
   RemoteServerException,

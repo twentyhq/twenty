@@ -1,4 +1,4 @@
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 export const createMockStripeEntitlementUpdatedData = (
   overrides = {},
 ): Stripe.EntitlementsActiveEntitlementSummaryUpdatedEvent.Data => ({

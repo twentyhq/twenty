@@ -6,7 +6,7 @@ import DocsCard from '@/app/_components/docs/DocsCard';
 import { Breadcrumbs } from '@/app/_components/ui/layout/Breadcrumbs';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
-import { DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
+import { type DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
 import { constructSections } from '@/shared-utils/constructSections';
 import { filterDocsIndex } from '@/shared-utils/filterDocsIndex';
 import { getUriAndLabel } from '@/shared-utils/pathUtils';

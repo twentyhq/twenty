@@ -1,8 +1,12 @@
 /* @license Enterprise */
 
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+import {
+  type ArgumentsHost,
+  Catch,
+  type ExceptionFilter,
+} from '@nestjs/common';
 
-import { Response } from 'express';
+import { type Response } from 'express';
 import Stripe from 'stripe';
 
 import {
@@ -10,7 +14,7 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
-import { CustomException } from 'src/utils/custom-exception';
+import { type CustomException } from 'src/utils/custom-exception';
 
 @Catch(BillingException, Stripe.errors.StripeError)
 export class BillingRestApiExceptionFilter implements ExceptionFilter {

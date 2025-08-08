@@ -1,4 +1,4 @@
-import { EachTestingContext } from '@/testing/types/EachTestingContext.type';
+import { type EachTestingContext } from '@/testing/types/EachTestingContext.type';
 
 export const eachTestingContextFilter = <T>(
   testCases: EachTestingContext<T>[],

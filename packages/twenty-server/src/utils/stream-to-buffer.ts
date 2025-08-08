@@ -1,4 +1,4 @@
-import { Readable } from 'stream';
+import { type Readable } from 'stream';
 
 export const streamToBuffer = async (stream: Readable): Promise<Buffer> => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

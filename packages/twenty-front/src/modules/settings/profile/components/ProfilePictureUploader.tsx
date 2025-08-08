@@ -70,7 +70,7 @@ export const ProfilePictureUploader = () => {
       });
 
       return result;
-    } catch (error) {
+    } catch {
       setErrorMessage('An error occurred while uploading the picture.');
     }
   };
@@ -96,7 +96,7 @@ export const ProfilePictureUploader = () => {
       });
 
       setCurrentWorkspaceMember({ ...currentWorkspaceMember, avatarUrl: null });
-    } catch (error) {
+    } catch {
       setErrorMessage('An error occurred while removing the picture.');
     }
   };

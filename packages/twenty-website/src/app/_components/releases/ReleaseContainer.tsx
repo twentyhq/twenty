@@ -1,11 +1,11 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { ReleaseNote } from '@/app/(public)/releases/api/route';
+import { type ReleaseNote } from '@/app/(public)/releases/api/route';
 import { getGithubReleaseDateFromReleaseNote } from '@/app/(public)/releases/utils/get-github-release-date-from-release-note';
 import { Line } from '@/app/_components/releases/Line';
 import { Release } from '@/app/_components/releases/Release';
-import { GithubReleases } from '@/database/model';
+import { type GithubReleases } from '@/database/model';
 
 interface ReleaseProps {
   visibleReleasesNotes: ReleaseNote[];

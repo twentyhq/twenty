@@ -1,4 +1,4 @@
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 export const createMockStripePriceCreatedData = (
   overrides = {},
 ): Stripe.PriceCreatedEvent.Data => ({

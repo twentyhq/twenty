@@ -1,28 +1,28 @@
-import { Entity } from '@microsoft/microsoft-graph-types';
+import { type Entity } from '@microsoft/microsoft-graph-types';
 import { isDefined } from 'class-validator';
-import { ObjectsPermissionsByRoleIdDeprecated } from 'twenty-shared/types';
+import { type ObjectsPermissionsByRoleIdDeprecated } from 'twenty-shared/types';
 import {
   DataSource,
-  DataSourceOptions,
-  EntityTarget,
-  ObjectLiteral,
-  QueryRunner,
-  ReplicationMode,
-  SelectQueryBuilder,
+  type DataSourceOptions,
+  type EntityTarget,
+  type ObjectLiteral,
+  type QueryRunner,
+  type ReplicationMode,
+  type SelectQueryBuilder,
 } from 'typeorm';
 import { EntityManagerFactory } from 'typeorm/entity-manager/EntityManagerFactory';
 
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
-import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
+import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { WorkspaceQueryRunner } from 'src/engine/twenty-orm/query-runner/workspace-query-runner';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type WorkspaceQueryRunner } from 'src/engine/twenty-orm/query-runner/workspace-query-runner';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 type CreateQueryBuilderOptions = {
   calledByWorkspaceEntityManager?: boolean;

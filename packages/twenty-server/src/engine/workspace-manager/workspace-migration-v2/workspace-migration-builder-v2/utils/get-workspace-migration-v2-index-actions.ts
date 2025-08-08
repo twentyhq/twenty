@@ -1,7 +1,7 @@
-import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import {
-  CreateIndexAction,
-  DeleteIndexAction,
+  type CreateIndexAction,
+  type DeleteIndexAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-index-action-v2';
 
 export const getWorkspaceMigrationV2CreateIndexAction = (

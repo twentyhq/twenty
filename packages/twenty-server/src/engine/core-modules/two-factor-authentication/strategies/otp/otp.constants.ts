@@ -1,4 +1,4 @@
-import { TotpContext } from './totp/constants/totp.strategy.constants';
+import { type TotpContext } from './totp/constants/totp.strategy.constants';
 
 export enum OTPStatus {
   PENDING = 'PENDING',

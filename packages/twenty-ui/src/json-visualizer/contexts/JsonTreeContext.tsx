@@ -1,4 +1,4 @@
-import { GetJsonNodeHighlighting } from '@ui/json-visualizer/types/GetJsonNodeHighlighting';
+import { type GetJsonNodeHighlighting } from '@ui/json-visualizer/types/GetJsonNodeHighlighting';
 import { createContext } from 'react';
 
 export type ShouldExpandNodeInitiallyProps = { keyPath: string; depth: number };

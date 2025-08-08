@@ -2,15 +2,15 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useIsMobile } from '@ui/utilities';
 import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
-import { MotionProps, motion } from 'framer-motion';
+import { type MotionProps, motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 import { Pill } from '@ui/components/Pill/Pill';
 import {
-  ButtonAccent,
-  ButtonProps,
-  ButtonSize,
-  ButtonVariant,
+  type ButtonAccent,
+  type ButtonProps,
+  type ButtonSize,
+  type ButtonVariant,
 } from './Button/Button';
 
 export type AnimatedButtonProps = ButtonProps &

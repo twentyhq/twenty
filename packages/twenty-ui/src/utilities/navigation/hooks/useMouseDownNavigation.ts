@@ -1,6 +1,6 @@
 import { isNavigationModifierPressed } from '@ui/utilities/navigation/isNavigationModifierPressed';
-import { TriggerEventType } from '@ui/utilities/navigation/types/trigger-event.type';
-import { MouseEvent } from 'react';
+import { type TriggerEventType } from '@ui/utilities/navigation/types/trigger-event.type';
+import { type MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 

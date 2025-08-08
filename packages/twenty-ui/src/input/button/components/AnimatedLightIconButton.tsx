@@ -1,12 +1,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconComponent } from '@ui/display';
+import { type IconComponent } from '@ui/display';
 import {
-  LightIconButtonAccent,
-  LightIconButtonSize,
+  type LightIconButtonAccent,
+  type LightIconButtonSize,
 } from '@ui/input/button/components/LightIconButton';
-import { motion, MotionProps } from 'framer-motion';
-import { ComponentProps, MouseEvent } from 'react';
+import { motion, type MotionProps } from 'framer-motion';
+import { type ComponentProps, type MouseEvent } from 'react';
 
 export type AnimatedLightIconButtonProps = {
   className?: string;

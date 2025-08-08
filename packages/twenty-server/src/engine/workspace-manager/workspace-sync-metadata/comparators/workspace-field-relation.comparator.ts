@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import diff, { DifferenceChange, DifferenceRemove } from 'microdiff';
-import { FieldMetadataType } from 'twenty-shared/types';
+import diff, { type DifferenceChange, type DifferenceRemove } from 'microdiff';
+import { type FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import { type FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import {
   ComparatorAction,
-  FieldRelationComparatorResult,
+  type FieldRelationComparatorResult,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 const fieldPropertiesToCompare = [

@@ -1,5 +1,5 @@
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
-import { JSONSchema7 } from 'json-schema';
+import { type JSONSchema7 } from 'json-schema';
 
 class ValidationSchemaManager {
   private static instance: ValidationSchemaManager;

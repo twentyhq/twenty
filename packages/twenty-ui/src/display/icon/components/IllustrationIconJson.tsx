@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 
 import IllustrationIconJsonRaw from '@assets/icons/illustration-json.svg?react';
-import { IconComponentProps } from '@ui/display/icon/types/IconComponent';
+import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
 type IllustrationIconJsonProps = Pick<IconComponentProps, 'size'>;
 

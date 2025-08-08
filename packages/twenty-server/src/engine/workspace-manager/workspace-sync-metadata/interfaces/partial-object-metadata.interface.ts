@@ -1,10 +1,10 @@
 import {
-  ComputedPartialFieldMetadata,
-  PartialComputedFieldMetadata,
-  PartialFieldMetadata,
+  type ComputedPartialFieldMetadata,
+  type PartialComputedFieldMetadata,
+  type PartialFieldMetadata,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 export type PartialWorkspaceEntity = Pick<
   ObjectMetadataEntity,

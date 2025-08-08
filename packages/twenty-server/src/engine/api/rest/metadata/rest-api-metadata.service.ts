@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { Request } from 'express';
+import { type Request } from 'express';
 
 import { MetadataQueryBuilderFactory } from 'src/engine/api/rest/metadata/query-builder/metadata-query-builder.factory';
 import {
   GraphqlApiType,
   RestApiService,
 } from 'src/engine/api/rest/rest-api.service';
-import { RequestContext } from 'src/engine/api/rest/types/RequestContext';
+import { type RequestContext } from 'src/engine/api/rest/types/RequestContext';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { getServerUrl } from 'src/utils/get-server-url';
