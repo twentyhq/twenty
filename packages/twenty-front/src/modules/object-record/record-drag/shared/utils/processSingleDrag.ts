@@ -2,6 +2,7 @@ import { RecordDragPositionData } from '@/object-record/record-drag/shared/types
 import { RecordDragUpdate } from '@/object-record/record-drag/shared/types/RecordDragUpdate';
 import { calculateDragPositions } from '@/object-record/record-drag/shared/utils/calculateDragPositions';
 import { DropResult } from '@hello-pangea/dnd';
+import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 type SingleDragContext = {
@@ -40,7 +41,10 @@ export const processSingleDrag = ({
     position: positions[draggedRecordId],
   };
 
-  if (isDefined(groupValue) && isDefined(selectFieldName)) {
+  const shouldIncludeGroupFields =
+    isDefined(selectFieldName) && (isDefined(groupValue) || isNull(groupValue));
+
+  if (shouldIncludeGroupFields) {
     return {
       ...baseResult,
       groupValue,
