@@ -1,5 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
+import { RecordDragContext } from '@/object-record/record-drag/shared/types/RecordDragContext';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 
 // Board states
@@ -15,32 +16,32 @@ import { originalSelectionTableComponentState } from '@/object-record/record-dra
 import { primaryDraggedRecordIdTableComponentState } from '@/object-record/record-drag/table/states/primaryDraggedRecordIdTableComponentState';
 
 export const useEndRecordDrag = (
-  type: 'board' | 'table',
+  context: RecordDragContext,
   instanceId?: string,
 ) => {
   const isMultiDragActiveState = useRecoilComponentCallbackState(
-    type === 'board'
+    context === 'board'
       ? isMultiDragActiveComponentState
       : isMultiDragActiveTableComponentState,
     instanceId,
   );
 
   const draggedRecordIdsState = useRecoilComponentCallbackState(
-    type === 'board'
+    context === 'board'
       ? draggedRecordIdsComponentState
       : draggedRecordIdsTableComponentState,
     instanceId,
   );
 
   const primaryDraggedRecordIdState = useRecoilComponentCallbackState(
-    type === 'board'
+    context === 'board'
       ? primaryDraggedRecordIdComponentState
       : primaryDraggedRecordIdTableComponentState,
     instanceId,
   );
 
   const originalSelectionState = useRecoilComponentCallbackState(
-    type === 'board'
+    context === 'board'
       ? originalSelectionComponentState
       : originalSelectionTableComponentState,
     instanceId,

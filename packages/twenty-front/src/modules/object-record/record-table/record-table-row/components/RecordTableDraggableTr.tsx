@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
-import { useTableRowDragState } from '@/object-record/record-drag/table/hooks/useTableRowDragState';
+import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 import { RecordTableRowMultiDragPreview } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragPreview';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { RecordTableTrEffect } from '@/object-record/record-table/record-table-row/components/RecordTableTrEffect';
@@ -30,7 +30,7 @@ export const RecordTableDraggableTr = ({
 }: RecordTableDraggableTrProps) => {
   const theme = useTheme();
   const { recordTableId } = useRecordTableContextOrThrow();
-  const multiDragState = useTableRowDragState(recordTableId);
+  const multiDragState = useRecordDragState('table', recordTableId);
 
   const isSecondaryDragged =
     multiDragState?.isDragging &&

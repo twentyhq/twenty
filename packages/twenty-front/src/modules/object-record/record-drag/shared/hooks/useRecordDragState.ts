@@ -1,9 +1,5 @@
-import { DragStart } from '@hello-pangea/dnd';
-import { useRecoilCallback } from 'recoil';
-
-import { getDragOperationType } from '@/object-record/record-drag/shared/utils/getDragOperationType';
 import { RecordDragContext } from '@/object-record/record-drag/shared/types/RecordDragContext';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 // Board states
 import { draggedRecordIdsComponentState } from '@/object-record/record-drag/board/states/draggedRecordIdsComponentState';
@@ -17,67 +13,42 @@ import { isMultiDragActiveTableComponentState } from '@/object-record/record-dra
 import { originalSelectionTableComponentState } from '@/object-record/record-drag/table/states/originalSelectionTableComponentState';
 import { primaryDraggedRecordIdTableComponentState } from '@/object-record/record-drag/table/states/primaryDraggedRecordIdTableComponentState';
 
-export const useStartRecordDrag = (
+export const useRecordDragState = (
   context: RecordDragContext,
   instanceId?: string,
 ) => {
-  const isMultiDragActiveState = useRecoilComponentCallbackState(
+  const isDragging = useRecoilComponentValue(
     context === 'board'
       ? isMultiDragActiveComponentState
       : isMultiDragActiveTableComponentState,
     instanceId,
   );
 
-  const draggedRecordIdsState = useRecoilComponentCallbackState(
+  const draggedRecordIds = useRecoilComponentValue(
     context === 'board'
       ? draggedRecordIdsComponentState
       : draggedRecordIdsTableComponentState,
     instanceId,
   );
 
-  const primaryDraggedRecordIdState = useRecoilComponentCallbackState(
+  const primaryDraggedRecordId = useRecoilComponentValue(
     context === 'board'
       ? primaryDraggedRecordIdComponentState
       : primaryDraggedRecordIdTableComponentState,
     instanceId,
   );
 
-  const originalSelectionState = useRecoilComponentCallbackState(
+  const originalSelection = useRecoilComponentValue(
     context === 'board'
       ? originalSelectionComponentState
       : originalSelectionTableComponentState,
     instanceId,
   );
 
-  const startDrag = useRecoilCallback(
-    ({ set }) =>
-      (start: DragStart, selectedRecordIds: string[]) => {
-        const draggedRecordId = start.draggableId;
-
-        const operationType = getDragOperationType({
-          draggedRecordId,
-          selectedRecordIds,
-        });
-
-        if (operationType === 'multi') {
-          set(isMultiDragActiveState, true);
-          set(draggedRecordIdsState, selectedRecordIds);
-          set(primaryDraggedRecordIdState, draggedRecordId);
-          set(originalSelectionState, selectedRecordIds);
-        } else {
-          set(isMultiDragActiveState, true);
-          set(draggedRecordIdsState, [draggedRecordId]);
-          set(primaryDraggedRecordIdState, draggedRecordId);
-          set(originalSelectionState, [draggedRecordId]);
-        }
-      },
-    [
-      isMultiDragActiveState,
-      draggedRecordIdsState,
-      primaryDraggedRecordIdState,
-      originalSelectionState,
-    ],
-  );
-
-  return { startDrag };
+  return {
+    isDragging,
+    draggedRecordIds,
+    primaryDraggedRecordId,
+    originalSelection,
+  };
 };

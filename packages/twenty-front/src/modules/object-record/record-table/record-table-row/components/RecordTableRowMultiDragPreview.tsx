@@ -3,7 +3,7 @@ import { NotificationCounter } from 'twenty-ui/navigation';
 
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { useTableRowDragState } from '@/object-record/record-drag/table/hooks/useTableRowDragState';
+import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 
 const StyledNotificationCounter = styled(NotificationCounter)`
   position: absolute;
@@ -21,7 +21,7 @@ export const RecordTableRowMultiDragPreview = ({
 }: RecordTableRowMultiDragPreviewProps) => {
   const { recordId } = useRecordTableRowContextOrThrow();
   const { recordTableId } = useRecordTableContextOrThrow();
-  const multiDragState = useTableRowDragState(recordTableId);
+  const multiDragState = useRecordDragState('table', recordTableId);
 
   const isCurrentRowSelected =
     multiDragState?.originalSelection.includes(recordId) || false;

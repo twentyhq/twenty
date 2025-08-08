@@ -12,9 +12,9 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useTableRowDragState } from '@/object-record/record-drag/table/hooks/useTableRowDragState';
+import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 import { getNewSingleRecordDropPosition } from '@/object-record/record-drag/table/utils/getNewSingleRecordDropPosition';
-import { getRecordPositionDataFromSnapshot } from '@/object-record/record-drag/table/utils/getRecordPositionDataFromSnapshot';
+import { getRecordPositionDataFromSnapshot } from '@/object-record/record-drag/shared/utils/getRecordPositionDataFromSnapshot';
 import { processMultiTableDrag } from '@/object-record/record-drag/table/utils/processMultiTableDrag';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 
@@ -39,7 +39,7 @@ export const useRecordTableDragOperations = () => {
   );
 
   const { openModal } = useModal();
-  const multiDragState = useTableRowDragState(recordTableId);
+  const multiDragState = useRecordDragState('table', recordTableId);
 
   const processDragEndOperation = (snapshot: any) => (result: DropResult) => {
     if (!result.destination) return;

@@ -15,8 +15,8 @@ import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/comp
 import { RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-board/constants/RecordBoardClickOutsideListenerId';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
-import { useBoardCardDragState } from '@/object-record/record-board/hooks/useBoardCardDragState';
-import { useEndBoardCardDrag } from '@/object-record/record-board/hooks/useEndBoardCardDrag';
+import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
+import { useEndRecordDrag } from '@/object-record/record-drag/shared/hooks/useEndRecordDrag';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { useRecordBoardDragOperations } from '@/object-record/record-board/hooks/useRecordBoardDragOperations';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
@@ -114,8 +114,8 @@ export const RecordBoard = () => {
   );
 
   const { startDrag } = useStartRecordDrag('board', recordBoardId);
-  const endDrag = useEndBoardCardDrag(recordBoardId);
-  const multiDragState = useBoardCardDragState(recordBoardId);
+  const { endDrag } = useEndRecordDrag('board', recordBoardId);
+  const multiDragState = useRecordDragState('board', recordBoardId);
 
   const { processDragOperation } = useRecordBoardDragOperations();
 
