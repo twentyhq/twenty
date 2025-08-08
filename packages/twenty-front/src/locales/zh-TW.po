@@ -675,11 +675,6 @@ msgstr "允許用戶使用電子郵件和密碼登錄。"
 msgid "An error occurred."
 msgstr "發生錯誤。"
 
-#. js-lingui-id: mJ6m4C
-#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
-msgid "An optional description"
-msgstr "可選描述"
-
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "An unexpected error occurred"
@@ -6374,6 +6369,11 @@ msgstr "我們在驗證時遇到了一個問題"
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "我們支持 10MB 以下的正方形 PNG、JPEG 和 GIF 文件"
+
+#. js-lingui-id: K4HbuR
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "We will send a POST request to this endpoint for each new event in application/json format."
+msgstr ""
 
 #. js-lingui-id: ZS7vYp
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx

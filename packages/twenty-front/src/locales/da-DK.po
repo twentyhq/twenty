@@ -675,11 +675,6 @@ msgstr "Tillad brugere at logge ind med en e-mail og password."
 msgid "An error occurred."
 msgstr "Der opstod en fejl."
 
-#. js-lingui-id: mJ6m4C
-#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
-msgid "An optional description"
-msgstr "En valgfri beskrivelse"
-
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "An unexpected error occurred"
@@ -6374,6 +6369,11 @@ msgstr "Vi stødte på et problem under verificeringen"
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "Vi understøtter dine kvadratiske PNG'er, JPEG'er og GIF'er på under 10MB"
+
+#. js-lingui-id: K4HbuR
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "We will send a POST request to this endpoint for each new event in application/json format."
+msgstr ""
 
 #. js-lingui-id: ZS7vYp
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx

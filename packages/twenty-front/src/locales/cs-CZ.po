@@ -675,11 +675,6 @@ msgstr "Povolit uživatelům přihlášení pomocí e-mailu a hesla."
 msgid "An error occurred."
 msgstr "Došlo k chybě."
 
-#. js-lingui-id: mJ6m4C
-#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
-msgid "An optional description"
-msgstr "Volitelný popis"
-
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "An unexpected error occurred"
@@ -6374,6 +6369,11 @@ msgstr "Narazili jsme na problém s ověřením"
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "Podporujeme vaše čtvercové PNG, JPEG a GIFy menší než 10MB"
+
+#. js-lingui-id: K4HbuR
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "We will send a POST request to this endpoint for each new event in application/json format."
+msgstr ""
 
 #. js-lingui-id: ZS7vYp
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
