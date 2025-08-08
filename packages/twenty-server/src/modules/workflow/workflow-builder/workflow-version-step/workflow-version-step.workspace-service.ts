@@ -218,22 +218,23 @@ export class WorkflowVersionStepWorkspaceService {
 
     assertWorkflowVersionIsDraft(workflowVersion);
 
-    if (!isDefined(workflowVersion.steps)) {
+    const existingTrigger = workflowVersion.trigger;
+
+    const isDeletingTrigger =
+      stepIdToDelete === 'trigger' && isDefined(existingTrigger);
+
+    if (!isDeletingTrigger && !isDefined(workflowVersion.steps)) {
       throw new WorkflowVersionStepException(
         "Can't delete step from undefined steps",
         WorkflowVersionStepExceptionCode.UNDEFINED,
       );
     }
 
-    const existingTrigger = workflowVersion.trigger;
-    const isDeletingTrigger =
-      stepIdToDelete === 'trigger' && isDefined(existingTrigger);
-
-    const stepToDelete = workflowVersion.steps.find(
+    const stepToDelete = workflowVersion.steps?.find(
       (step) => step.id === stepIdToDelete,
     );
 
-    if (!isDefined(stepToDelete) && !isDeletingTrigger) {
+    if (!isDeletingTrigger && !isDefined(stepToDelete)) {
       throw new WorkflowVersionStepException(
         "Can't delete not existing step",
         WorkflowVersionStepExceptionCode.NOT_FOUND,
@@ -256,9 +257,10 @@ export class WorkflowVersionStepWorkspaceService {
       trigger: updatedTrigger,
     });
 
-    const removedSteps = workflowVersion.steps.filter((step) =>
-      removedStepIds.includes(step.id),
-    );
+    const removedSteps =
+      workflowVersion.steps?.filter((step) =>
+        removedStepIds.includes(step.id),
+      ) ?? [];
 
     await Promise.all(
       removedSteps.map((step) =>
