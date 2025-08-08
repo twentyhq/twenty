@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
-import { type EntityManager } from 'typeorm';
+import { IsNull, Not, type EntityManager } from 'typeorm';
 
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
@@ -25,22 +25,25 @@ export class WorkspaceSyncRoleService {
     context: WorkspaceSyncContext,
     manager: EntityManager,
   ): Promise<void> {
-    this.logger.log('Syncing role metadata');
+    this.logger.log('Syncing standard role metadata');
 
     const roleRepository = manager.getRepository(RoleEntity);
 
-    const existingRoleEntities = await roleRepository.find({
-      where: { workspaceId: context.workspaceId },
+    const existingStandardRoleEntities = await roleRepository.find({
+      where: {
+        workspaceId: context.workspaceId,
+        standardId: Not(IsNull()),
+      },
     });
 
     const standardRoleMetadataCollection = this.standardRoleFactory.create(
       standardRoleDefinitions,
       context,
-      existingRoleEntities,
+      existingStandardRoleEntities,
     );
 
     const roleComparatorResults = this.workspaceRoleComparator.compare({
-      fromFlatRoles: existingRoleEntities.map(fromRoleEntityToFlatRole),
+      fromFlatRoles: existingStandardRoleEntities.map(fromRoleEntityToFlatRole),
       toFlatRoles: standardRoleMetadataCollection,
     });
 
