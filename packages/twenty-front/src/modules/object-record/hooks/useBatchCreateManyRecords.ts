@@ -1,9 +1,13 @@
+import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
 import {
   useCreateManyRecords,
   useCreateManyRecordsProps,
 } from '@/object-record/hooks/useCreateManyRecords';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -16,7 +20,6 @@ export const useBatchCreateManyRecords = <
 >({
   objectNameSingular,
   recordGqlFields,
-  skipPostOptimisticEffect = false,
   shouldMatchRootQueryFilter,
   mutationBatchSize = DEFAULT_MUTATION_BATCH_SIZE,
   setBatchedRecordsCount,
@@ -29,7 +32,7 @@ export const useBatchCreateManyRecords = <
   const { createManyRecords } = useCreateManyRecords({
     objectNameSingular,
     recordGqlFields,
-    skipPostOptimisticEffect,
+    skipPostOptimisticEffect: true, // Skip optimistic effects during batch processing to prevent findMany queries after each batch
     shouldMatchRootQueryFilter,
     shouldRefetchAggregateQueries: false,
   });
@@ -43,6 +46,10 @@ export const useBatchCreateManyRecords = <
   });
 
   const { enqueueWarningSnackBar } = useSnackBar();
+
+  const apolloCoreClient = useApolloCoreClient();
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const batchCreateManyRecords = async ({
     recordsToCreate,
@@ -94,7 +101,20 @@ export const useBatchCreateManyRecords = <
       }
     }
 
+    if (allCreatedRecords.length > 0) {
+      triggerCreateRecordsOptimisticEffect({
+        cache: apolloCoreClient.cache,
+        objectMetadataItem,
+        recordsToCreate: allCreatedRecords,
+        objectMetadataItems,
+        shouldMatchRootQueryFilter,
+        checkForRecordInCache: true,
+        objectPermissionsByObjectMetadataId,
+      });
+    }
+
     await refetchAggregateQueries();
+
     return allCreatedRecords;
   };
 

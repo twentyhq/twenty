@@ -1,4 +1,5 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { generateDepthOneWithoutRelationsRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneWithoutRelationsRecordGqlFields';
 import { useBatchCreateManyRecords } from '@/object-record/hooks/useBatchCreateManyRecords';
 import { useBuildSpreadsheetImportFields } from '@/object-record/spreadsheet-import/hooks/useBuildSpreadSheetImportFields';
 import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
@@ -31,6 +32,9 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
 
   const { batchCreateManyRecords } = useBatchCreateManyRecords({
     objectNameSingular,
+    recordGqlFields: generateDepthOneWithoutRelationsRecordGqlFields({
+      objectMetadataItem,
+    }),
     mutationBatchSize: SpreadsheetImportCreateRecordsBatchSize,
     setBatchedRecordsCount: setCreatedRecordsProgress,
     abortController,
