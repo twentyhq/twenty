@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  trimAndRemoveDuplicatedWhitespacesFromString,
+} from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { MultipleMetadataValidationErrors } from 'src/engine/core-modules/error/multiple-metadata-validation-errors';
@@ -46,7 +49,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
   override async createOne(
     fieldMetadataInput: CreateFieldInput,
   ): Promise<FieldMetadataEntity> {
-    const [createdFieldMetadata] = await this.createMany([fieldMetadataInput]); // Incomplete when creating relation field
+    const [createdFieldMetadata] = await this.createMany([fieldMetadataInput]);
 
     if (!isDefined(createdFieldMetadata)) {
       throw new FieldMetadataException(
@@ -286,9 +289,11 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
       // In the best of the world could consume runner returned value instead of searching in db here
       return this.fieldMetadataRepository.find({
         where: {
-          id: In(
-            flatFieldMetadatasToCreate.map(
-              (flatFieldMetadata) => flatFieldMetadata.id,
+          name: In(
+            fieldMetadataInputs.map((flatFieldMetadata) =>
+              trimAndRemoveDuplicatedWhitespacesFromString(
+                flatFieldMetadata.name,
+              ),
             ),
           ),
           workspaceId,
