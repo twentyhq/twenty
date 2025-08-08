@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { t } from '@lingui/core/macro';
-import { type FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -11,6 +11,11 @@ import {
 import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
 import { type FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import {
+  type FlatFieldMetadataPropertiesToCompare,
+  compareTwoFlatFieldMetadata,
+} from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
+import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-flat-field-metadata-name-availability.validator';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import {
@@ -38,6 +43,99 @@ export class FlatFieldMetadataValidatorService {
   constructor(
     private readonly flatFieldMetadataTypeValidatorService: FlatFieldMetadataTypeValidatorService,
   ) {}
+
+  validateFlatFieldMetadataUpdate({
+    existingFlatObjectMetadataMaps,
+    updatedFlatFieldMetadata,
+  }: {
+    updatedFlatFieldMetadata: FlatFieldMetadata;
+    existingFlatObjectMetadataMaps: FlatObjectMetadataMaps; // Should take others too I think for not created object ? or maybe we don't care because we gonna be creating objects first ?
+  }): FailedFlatFieldMetadataValidationExceptions[] {
+    const errors: FailedFlatFieldMetadataValidationExceptions[] = [];
+    const FlatObjectMetadataWithFlatFieldMaps =
+      existingFlatObjectMetadataMaps.byId[
+        updatedFlatFieldMetadata.objectMetadataId
+      ];
+
+    if (!isDefined(FlatObjectMetadataWithFlatFieldMaps)) {
+      return [
+        new FieldMetadataException(
+          'field metadata to update object metadata not found',
+          FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        ),
+      ];
+    }
+    if (
+      !isDefined(
+        FlatObjectMetadataWithFlatFieldMaps.labelIdentifierFieldMetadataId,
+      )
+    ) {
+      errors.push(
+        new FieldMetadataException(
+          'Label identifier field metadata id does not exist',
+          FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND,
+        ),
+      );
+    }
+
+    const existingFlatFieldMetadataToUpdate =
+      FlatObjectMetadataWithFlatFieldMaps.fieldsById[
+        updatedFlatFieldMetadata.id
+      ];
+
+    if (!isDefined(existingFlatFieldMetadataToUpdate)) {
+      errors.push(
+        new FieldMetadataException(
+          'field metadata to update not found',
+          FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+        ),
+      );
+
+      return errors;
+    }
+
+    const updates = compareTwoFlatFieldMetadata({
+      from: existingFlatFieldMetadataToUpdate,
+      to: updatedFlatFieldMetadata,
+    });
+
+    if (
+      isFlatFieldMetadataEntityOfType(
+        updatedFlatFieldMetadata,
+        FieldMetadataType.RELATION,
+      ) ||
+      isFlatFieldMetadataEntityOfType(
+        updatedFlatFieldMetadata,
+        FieldMetadataType.MORPH_RELATION,
+      )
+    ) {
+      // TODO Nothing else ?
+      const relationEditableFields = [
+        'label',
+        'description',
+        'isActive',
+      ] as const satisfies FlatFieldMetadataPropertiesToCompare[];
+      const relationNonEditableUpdatedProperties = updates.flatMap(
+        ({ property }) =>
+          !relationEditableFields.includes(
+            property as (typeof relationEditableFields)[number],
+          )
+            ? property
+            : [],
+      );
+
+      if (relationNonEditableUpdatedProperties.length > 0) {
+        errors.push(
+          new FieldMetadataException(
+            `Forbidden updated properties for relation field metadata: ${relationNonEditableUpdatedProperties.join(', ')}`,
+            FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+          ),
+        );
+      }
+    }
+
+    return errors;
+  }
 
   validateFlatFieldMetadataDeletion({
     existingFlatObjectMetadataMaps,
@@ -98,7 +196,7 @@ export class FlatFieldMetadataValidatorService {
     return errors;
   }
 
-  async validateOneFlatFieldMetadata<
+  async validateOneFlatFieldMetadataCreation<
     T extends FieldMetadataType = FieldMetadataType,
   >({
     existingFlatObjectMetadataMaps,
