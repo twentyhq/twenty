@@ -6376,15 +6376,15 @@ msgstr "Wir hatten ein Problem bei der Verifizierung"
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "Wir unterstützen Ihre quadratischen PNGs, JPEGs und GIFs unter 10MB"
 
+#. js-lingui-id: KIfYq0
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "We will send a POST request to this endpoint for each new event in application/json format"
+msgstr ""
+
 #. js-lingui-id: K4HbuR
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "We will send a POST request to this endpoint for each new event in application/json format."
 msgstr ""
-
-#. js-lingui-id: ZS7vYp
-#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
-msgid "We will send POST requests to this endpoint for every new event"
-msgstr "Wir senden POST-Anfragen an diesen Endpunkt für jedes neue Ereignis"
 
 #. js-lingui-id: PI4LiB
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
