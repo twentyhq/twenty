@@ -14,14 +14,14 @@ import { PET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-me
 import { ROCKET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/rocket-flat-object.mock';
 import { fromFlatObjectMetadatasToFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadatas-to-flat-object-metadata-maps.util';
 
-type ExtractFlatObjectMetadataMapsTestCase = {
+type GetSubObjectMetadataMapsOrThrowTestCase = {
   input: GetSubFlatObjectMetadataMapsOrThrowArgs;
   shouldThrow?: true;
   expected?: FlatObjectMetadataMaps;
 };
 
 describe('getSubFlatObjectMetadataMapsOrThrow', () => {
-  const testCases: EachTestingContext<ExtractFlatObjectMetadataMapsTestCase>[] =
+  const testCases: EachTestingContext<GetSubObjectMetadataMapsOrThrowTestCase>[] =
     [
       {
         title: 'should throw when object metadata id is not found',

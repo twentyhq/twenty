@@ -8,12 +8,12 @@ import { type GetSubFlatObjectMetadataMapsOrThrowArgs } from 'src/engine/metadat
 import { getSubFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps.util';
 import { PET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/pet-flat-object.mock';
 
-type ExtractFlatObjectMetadataMapsTestCase = {
+type GetSubFlatObjectMetadataMapsTestCase = {
   input: GetSubFlatObjectMetadataMapsOrThrowArgs;
 };
 
 describe('getSubFlatObjectMetadataMaps', () => {
-  const testCases: EachTestingContext<ExtractFlatObjectMetadataMapsTestCase>[] =
+  const testCases: EachTestingContext<GetSubFlatObjectMetadataMapsTestCase>[] =
     [
       {
         title: 'should throw when object metadata id is not found',
