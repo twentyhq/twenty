@@ -217,7 +217,6 @@
     "@storybook/addon-coverage": "^2.0.0",
     "@storybook/addon-docs": "^9.1.1",
     "@storybook/addon-links": "^9.1.1",
-    "@storybook/addon-onboarding": "^9.1.1",
     "@storybook/icons": "^1.2.9",
     "@storybook/jest": "^0.2.3",
     "@storybook/react-vite": "^9.1.1",

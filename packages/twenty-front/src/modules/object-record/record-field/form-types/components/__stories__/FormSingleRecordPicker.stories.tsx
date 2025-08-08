@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -96,7 +97,7 @@ export const Disabled: Story = {
     expect(variablePicker).not.toBeInTheDocument();
 
     // If dropdown exists, clicking should not trigger onChange
-    if (dropdown) {
+    if (isDefined(dropdown)) {
       await userEvent.click(dropdown);
       expect(args.onChange).not.toHaveBeenCalled();
     }

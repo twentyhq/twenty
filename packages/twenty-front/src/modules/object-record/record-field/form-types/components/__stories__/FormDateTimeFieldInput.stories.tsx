@@ -6,11 +6,11 @@ import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react-vite';
 import { DateTime } from 'luxon';
 import {
-    fn,
-    userEvent,
-    waitFor,
-    waitForElementToBeRemoved,
-    within,
+  fn,
+  userEvent,
+  waitFor,
+  waitForElementToBeRemoved,
+  within,
 } from 'storybook/test';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';

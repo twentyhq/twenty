@@ -1,11 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react-vite';
 import {
-    expect,
-    fn,
-    userEvent,
-    waitFor,
-    waitForElementToBeRemoved,
-    within,
+  expect,
+  fn,
+  userEvent,
+  waitFor,
+  waitForElementToBeRemoved,
+  within,
 } from 'storybook/test';
 import { getUserDevice } from 'twenty-ui/utilities';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';

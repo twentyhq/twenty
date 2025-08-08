@@ -20595,15 +20595,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-onboarding@npm:^9.1.1":
-  version: 9.1.1
-  resolution: "@storybook/addon-onboarding@npm:9.1.1"
-  peerDependencies:
-    storybook: ^9.1.1
-  checksum: 10c0/98fd89d689f7bf68b6b0542046713218704234e2f8a2853e364ce791cdce4385e6e2f14d752c47f9a7b3ee684be1840d46e79b2f0020cfc90fd351bf6ec7f5a9
-  languageName: node
-  linkType: hard
-
 "@storybook/builder-vite@npm:9.1.1":
   version: 9.1.1
   resolution: "@storybook/builder-vite@npm:9.1.1"
@@ -56252,7 +56243,6 @@ __metadata:
     "@storybook/addon-coverage": "npm:^2.0.0"
     "@storybook/addon-docs": "npm:^9.1.1"
     "@storybook/addon-links": "npm:^9.1.1"
-    "@storybook/addon-onboarding": "npm:^9.1.1"
     "@storybook/icons": "npm:^1.2.9"
     "@storybook/jest": "npm:^0.2.3"
     "@storybook/react-vite": "npm:^9.1.1"
