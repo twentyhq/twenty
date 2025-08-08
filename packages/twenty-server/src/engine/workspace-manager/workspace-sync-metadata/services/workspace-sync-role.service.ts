@@ -30,7 +30,6 @@ export class WorkspaceSyncRoleService {
 
     const originalRoleCollection = await roleRepository.find({
       where: { workspaceId: context.workspaceId },
-      relations: ['permissionFlags'],
     });
 
     const standardRoleMetadataCollection = this.standardRoleFactory.create(
