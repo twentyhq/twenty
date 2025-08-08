@@ -5895,11 +5895,6 @@ msgstr "Đã có lỗi xảy ra trong quá trình cập nhật mật khẩu."
 msgid "Third"
 msgstr ""
 
-#. js-lingui-id: Kb1oAw
-#: src/modules/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityRowHook.ts
-msgid "This {columnName} value already exists in your import data"
-msgstr "Giá trị {columnName} này đã tồn tại trong dữ liệu nhập của bạn"
-
 #. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
