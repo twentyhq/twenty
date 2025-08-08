@@ -4594,6 +4594,11 @@ msgstr ""
 msgid "Prefilling your workspace data..."
 msgstr "ממלא את נתוני סביבת העבודה שלך מראש..."
 
+#. js-lingui-id: GlHcNE
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
+msgid "Prevent users from assigining the same value to different records"
+msgstr ""
+
 #. js-lingui-id: rdUucN
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
@@ -6094,6 +6099,7 @@ msgstr "אוקראינית"
 
 #. js-lingui-id: wSXm5S
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Unique"
 msgstr "ייחודי"
