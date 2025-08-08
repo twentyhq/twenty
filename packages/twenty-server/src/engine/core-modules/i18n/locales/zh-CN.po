@@ -514,6 +514,7 @@ msgid "Cannot create workflow version with status other than draft"
 msgstr "无法创建除草稿之外状态的工作流程版本"
 
 #. js-lingui-id: AQyr9X
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "无法删除，请先更新标签标识字段"

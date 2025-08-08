@@ -514,6 +514,7 @@ msgid "Cannot create workflow version with status other than draft"
 msgstr "No es pot crear una versió de flux de treball amb un estatus diferent de l'esborrany"
 
 #. js-lingui-id: AQyr9X
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "No es pot eliminar, actualitzeu primer el camp d'identificador d'etiqueta"

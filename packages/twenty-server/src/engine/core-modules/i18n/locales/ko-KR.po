@@ -514,6 +514,7 @@ msgid "Cannot create workflow version with status other than draft"
 msgstr "임시 상태가 아닌 워크플로우 버전을 생성할 수 없습니다"
 
 #. js-lingui-id: AQyr9X
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "삭제할 수 없습니다. 먼저 레이블 식별자 필드를 업데이트하십시오"
