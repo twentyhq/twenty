@@ -5,6 +5,30 @@ icon: IconApi
 image: /images/user-guide/api/api.png
 sectionInfo: Learn how to connect Twenty to your other tools.
 ---
+## Twnenty API
+Twenty offers APIs in **REST and GraphQL**.  
+- Use the **Metadata API** for anything related to your workspace and its data model.
+- Use the **Core API** for anything related to your records.
+
+### Your unique APIs
+Unique APIs are generated for your workspace, to perfectly reflect your custom data model.  
+This means you will have a dedicated endpoint for each of your custom objects and custom fields -- which will make the dev experience much nicer!
+
+
+### Benefits of the GraphQL APIs
+- **Batch operations** are available with the GraphQL APIs. You just need to use the plural name of your object.  
+  *Example*: use the mutation ```CreateCompanies``` instead of ```CreateCompany``` for your batch creation.
+    *(This is the reason why the singular and plural names of your object needs to be distinct.)*
+
+- **Upsert** option is available with the GraphQL APIs.
+
+
+## API Documentation 
+**Twenty API documentation is accessible under your workspace Settings -> API.**
+As unique APIs are generated to perfectly reflect your data model, Twenty creates customized API documentation.
+This is why you need to input an API key to access it.  
+You will also find a playground where you can test the APIs and the data returned.
+
 
 ## API Keys
 
