@@ -13,8 +13,8 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { validateRelationCreationPayloadOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/validate-relation-creation-payload-or-throw.util';
+import { FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { FlatFieldMetadataToCreateTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -53,7 +53,9 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
   sourceParentFlatObjectMetadata,
   createFieldInput,
   workspaceId,
-}: FromRelationCreateFieldInputToFlatFieldMetadataArgs): Promise<FlatFieldMetadataToCreateTranspilationResult> => {
+}: FromRelationCreateFieldInputToFlatFieldMetadataArgs): Promise<
+  FieldInputTranspilationResult<FlatFieldMetadata[]>
+> => {
   const rawCreationPayload = createFieldInput.relationCreationPayload;
 
   if (!isDefined(rawCreationPayload)) {
@@ -162,7 +164,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
 
   return {
     status: 'success',
-    flatFieldMetadatasToCreate: [
+    result: [
       {
         ...sourceFlatFieldMetadata,
         flatRelationTargetFieldMetadata: targetFlatFieldMetadata,

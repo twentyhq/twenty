@@ -11,7 +11,6 @@ import { In, Repository } from 'typeorm';
 import { MultipleMetadataValidationErrors } from 'src/engine/core-modules/error/multiple-metadata-validation-errors';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
-import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
@@ -23,6 +22,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util';
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { throwOnInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-input-transpilation-error.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { addFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps.util';
@@ -72,7 +72,7 @@ export class FieldMetadataServiceV2 {
   }: {
     deleteOneFieldInput: DeleteOneFieldInput;
     workspaceId: string;
-  }): Promise<void> {
+  }): Promise<FlatFieldMetadata> {
     const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
         {
@@ -133,18 +133,7 @@ export class FieldMetadataServiceV2 {
 
     await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
 
-    return;
-  }
-
-  async updateOne({
-    updateFieldInput,
-    workspaceId,
-  }: {
-    updateFieldInput: UpdateFieldInput;
-    workspaceId: string;
-  }) {
-
-  
+    return flatFieldMetadatasToDelete[0];
   }
 
   private computeOtherFlatObjectMetadataMapsToValidate({
@@ -214,7 +203,7 @@ export class FieldMetadataServiceV2 {
         { workspaceId },
       );
 
-    const flatFieldMetadatasToCreate = (
+    const allInputTranspilationsResults = (
       await Promise.all(
         fieldMetadataInputs.map(
           async (fieldMetadataInput) =>
@@ -226,6 +215,14 @@ export class FieldMetadataServiceV2 {
         ),
       )
     ).flat();
+
+    throwOnInputTranspilationsError(
+      allInputTranspilationsResults,
+      'Multiple validation errors occurred while creating field',
+    );
+    const flatFieldMetadatasToCreate = allInputTranspilationsResults.flatMap(
+      ({ result }) => result,
+    );
 
     const allValidationErrors: FailedFlatFieldMetadataValidationExceptions[] =
       [];
@@ -286,16 +283,14 @@ export class FieldMetadataServiceV2 {
     );
 
     try {
-      const fromFlatObjectMetadataMaps =
-        getSubFlatObjectMetadataMapsOrThrow({
-          flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-          objectMetadataIds: impactedObjectMetadataIds,
-        });
-      const toFlatObjectMetadataMaps =
-        getSubFlatObjectMetadataMapsOrThrow({
-          flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
-          objectMetadataIds: impactedObjectMetadataIds,
-        });
+      const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+        objectMetadataIds: impactedObjectMetadataIds,
+      });
+      const toFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
+        flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+        objectMetadataIds: impactedObjectMetadataIds,
+      });
       const workspaceMigration = this.workspaceMigrationBuilderV2.build({
         fromFlatObjectMetadataMaps,
         toFlatObjectMetadataMaps,

@@ -15,7 +15,7 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
-import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
+import { FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromRelationCreateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadata.util';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
@@ -27,21 +27,13 @@ type FromCreateFieldInputToFlatObjectMetadataArgs = {
   workspaceId: string;
 };
 
-export type FlatFieldMetadataToCreateTranspilationResult =
-  | {
-      status: 'success';
-      flatFieldMetadatasToCreate: FlatFieldMetadata[];
-    }
-  | {
-      status: 'fail';
-      error: FailedFlatFieldMetadataValidationExceptions;
-    };
-
 export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
   rawCreateFieldInput,
   workspaceId,
   existingFlatObjectMetadataMaps,
-}: FromCreateFieldInputToFlatObjectMetadataArgs): Promise<FlatFieldMetadataToCreateTranspilationResult> => {
+}: FromCreateFieldInputToFlatObjectMetadataArgs): Promise<
+  FieldInputTranspilationResult<FlatFieldMetadata[]>
+> => {
   if (rawCreateFieldInput.isRemoteCreation) {
     return {
       status: 'fail',
@@ -98,7 +90,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     case FieldMetadataType.RATING: {
       return {
         status: 'success',
-        flatFieldMetadatasToCreate: [
+        result: [
           {
             ...commonFlatFieldMetadata,
             type: createFieldInput.type,
@@ -122,7 +114,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
 
       return {
         status: 'success',
-        flatFieldMetadatasToCreate: [
+        result: [
           {
             ...commonFlatFieldMetadata,
             type: createFieldInput.type,
@@ -155,7 +147,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     case FieldMetadataType.TS_VECTOR: {
       return {
         status: 'success',
-        flatFieldMetadatasToCreate: [
+        result: [
           {
             ...commonFlatFieldMetadata,
             type: createFieldInput.type,
