@@ -26,7 +26,7 @@ export class WorkspaceMissingColumnFixer extends AbstractWorkspaceFixer<Workspac
   }
 
   async createWorkspaceMigrations(
-    manager: EntityManager,
+    _manager: EntityManager,
     objectMetadataCollection: ObjectMetadataEntity[],
     issues: WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.MISSING_COLUMN>[],
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {

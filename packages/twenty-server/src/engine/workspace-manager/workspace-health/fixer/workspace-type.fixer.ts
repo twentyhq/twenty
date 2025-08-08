@@ -10,11 +10,11 @@ import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/wo
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import { DatabaseStructureService } from 'src/engine/workspace-manager/workspace-health/services/database-structure.service';
 import {
   type FieldMetadataUpdate,
   WorkspaceMigrationFieldFactory,
 } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
-import { DatabaseStructureService } from 'src/engine/workspace-manager/workspace-health/services/database-structure.service';
 
 import { AbstractWorkspaceFixer } from './abstract-workspace.fixer';
 
@@ -32,7 +32,7 @@ export class WorkspaceTypeFixer extends AbstractWorkspaceFixer<WorkspaceHealthIs
   }
 
   async createWorkspaceMigrations(
-    manager: EntityManager,
+    _manager: EntityManager,
     objectMetadataCollection: ObjectMetadataEntity[],
     issues: WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_DATA_TYPE_CONFLICT>[],
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {

@@ -1,3 +1,5 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
   ApiKeyException,
   ApiKeyExceptionCode,
@@ -26,9 +28,7 @@ export const apiKeyGraphqlApiExceptionHandler = (error: Error) => {
           userFriendlyMessage: error.userFriendlyMessage,
         });
       default: {
-        const _exhaustiveCheck: never = error.code;
-
-        throw error;
+        return assertUnreachable(error.code);
       }
     }
   }

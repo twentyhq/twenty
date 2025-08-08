@@ -3,7 +3,6 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { i18n } from '@lingui/core';
 import {
@@ -12,10 +11,8 @@ import {
 } from '@ptc-org/nestjs-query-graphql';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
 import { type UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -29,12 +26,7 @@ interface StandardObjectUpdate extends Partial<UpdateObjectPayload> {
 export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
   implements BeforeUpdateOneHook<T>
 {
-  constructor(
-    readonly objectMetadataService: ObjectMetadataService,
-    // TODO: Should not use the repository here
-    @InjectRepository(FieldMetadataEntity, 'core')
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-  ) {}
+  constructor(readonly objectMetadataService: ObjectMetadataService) {}
 
   // TODO: this logic could be moved to a policy guard
   async run(

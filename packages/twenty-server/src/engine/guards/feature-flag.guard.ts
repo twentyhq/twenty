@@ -15,7 +15,7 @@ export const FEATURE_FLAG_KEY = 'feature-flag-metadata-args';
 export function RequireFeatureFlag(featureFlag: FeatureFlagKey) {
   return (
     target: object,
-    propertyKey?: string,
+    _propertyKey?: string,
     descriptor?: PropertyDescriptor,
   ) => {
     TypedReflect.defineMetadata(

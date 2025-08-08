@@ -5,11 +5,11 @@ import { type CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-re
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import {
   type BlocklistItem,
   BlocklistValidationService,
 } from 'src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @WorkspaceQueryHook(`blocklist.createMany`)
 export class BlocklistCreateManyPreQueryHook
@@ -21,7 +21,7 @@ export class BlocklistCreateManyPreQueryHook
 
   async execute(
     authContext: AuthContext,
-    objectName: string,
+    _objectName: string,
     payload: CreateManyResolverArgs<BlocklistItem>,
   ): Promise<CreateManyResolverArgs<BlocklistItem>> {
     if (!authContext.user?.id) {

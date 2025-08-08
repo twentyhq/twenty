@@ -7,7 +7,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/components/SettingsAccountsCalendarChannelDetails';
-import { SettingsAccountsCalendarChannelsGeneral } from '@/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral';
 import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
 import { SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/settings/accounts/constants/SettingsAccountCalendarChannelsTabListComponentId';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -82,9 +81,10 @@ export const SettingsAccountsCalendarChannelsContainer = () => {
           )}
         </React.Fragment>
       ))}
-      {false && activeTabId === 'general' && (
+      {/* TODO: remove or keep? */}
+      {/* {activeTabId === 'general' && (
         <SettingsAccountsCalendarChannelsGeneral />
-      )}
+      )} */}
     </>
   );
 };

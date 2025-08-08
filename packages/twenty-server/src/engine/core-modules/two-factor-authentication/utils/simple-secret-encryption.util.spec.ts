@@ -20,10 +20,12 @@ describe('SimpleSecretEncryptionUtil', () => {
         {
           provide: JwtWrapperService,
           useValue: {
-            generateAppSecret: jest.fn().mockImplementation((type, purpose) => {
-              // Return different secrets for different purposes to simulate real behavior
-              return `${mockAppSecret}-${purpose}`;
-            }),
+            generateAppSecret: jest
+              .fn()
+              .mockImplementation((_type, purpose) => {
+                // Return different secrets for different purposes to simulate real behavior
+                return `${mockAppSecret}-${purpose}`;
+              }),
           },
         },
       ],

@@ -26,7 +26,7 @@ export class RestoreOneResolverFactory
   ): Resolver<RestoreOneResolverArgs> {
     const internalContext = context;
 
-    return async (_source, args, context, info) => {
+    return async (_source, args, _context, info) => {
       const options: WorkspaceQueryRunnerOptions = {
         authContext: internalContext.authContext,
         info,

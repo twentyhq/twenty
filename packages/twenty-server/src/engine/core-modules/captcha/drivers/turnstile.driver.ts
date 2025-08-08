@@ -9,12 +9,12 @@ import {
 } from 'src/engine/core-modules/captcha/interfaces';
 
 export class TurnstileDriver implements CaptchaDriver {
-  private readonly siteKey: string;
+  private readonly _siteKey: string;
   private readonly secretKey: string;
   private readonly httpService: AxiosInstance;
-  constructor(private options: CaptchaDriverOptions) {
-    this.siteKey = options.siteKey;
-    this.secretKey = options.secretKey;
+  constructor(private _options: CaptchaDriverOptions) {
+    this._siteKey = _options.siteKey;
+    this.secretKey = _options.secretKey;
     this.httpService = axios.create({
       baseURL: 'https://challenges.cloudflare.com/turnstile/v0/siteverify',
     });
