@@ -53,7 +53,7 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     key: FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
     metadata: {
       label: 'Workflow Branches',
-      description: 'Create multiple branches on you workflows',
+      description: 'Create multiple branches on your workflows',
       imagePath: 'https://twenty.com/images/lab/is-worklfow-branch-enabled.png',
     },
   },
