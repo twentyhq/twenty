@@ -28,7 +28,7 @@ export class WorkspaceMemberUpdateOnePreQueryHook
 
   async execute(
     authContext: AuthContext,
-    objectName: string,
+    _objectName: string,
     payload: UpdateOneResolverArgs,
   ): Promise<UpdateOneResolverArgs> {
     const workspace = authContext.workspace;

@@ -9,7 +9,7 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 import { createRelationDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
 export const computeStandardFields = (
-  context: WorkspaceSyncContext,
+  _context: WorkspaceSyncContext,
   standardFieldMetadataCollection: (
     | PartialFieldMetadata
     | PartialComputedFieldMetadata

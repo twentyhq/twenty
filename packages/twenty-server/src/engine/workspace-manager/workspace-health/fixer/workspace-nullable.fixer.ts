@@ -23,7 +23,7 @@ export class WorkspaceNullableFixer extends AbstractWorkspaceFixer<WorkspaceHeal
   }
 
   async createWorkspaceMigrations(
-    manager: EntityManager,
+    _manager: EntityManager,
     objectMetadataCollection: ObjectMetadataEntity[],
     issues: WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT>[],
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {

@@ -40,6 +40,10 @@ export const WorkflowDiagramEffect = ({
     FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
   );
 
+  const isWorkflowBranchEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
+  );
+
   const computeAndMergeNewWorkflowDiagram = useRecoilCallback(
     ({ snapshot, set }) => {
       return (currentVersion: WorkflowVersion) => {
@@ -51,6 +55,7 @@ export const WorkflowDiagramEffect = ({
         const nextWorkflowDiagram = getWorkflowVersionDiagram({
           workflowVersion: currentVersion,
           isWorkflowFilteringEnabled,
+          isWorkflowBranchEnabled,
           isEditable: true,
         });
 
@@ -87,6 +92,7 @@ export const WorkflowDiagramEffect = ({
     [
       workflowDiagramState,
       isWorkflowFilteringEnabled,
+      isWorkflowBranchEnabled,
       workflowLastCreatedStepIdState,
     ],
   );

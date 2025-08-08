@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -14,8 +14,6 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
 
 @Injectable()
 export class DevSeederService {
-  private readonly logger = new Logger(DevSeederService.name);
-
   constructor(
     private readonly typeORMService: TypeORMService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,

@@ -17,7 +17,6 @@ import { type PartialFieldMetadata } from 'src/engine/workspace-manager/workspac
 import { type PartialIndexMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-index-metadata.interface';
 import { type UpdaterOptions } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/updater-options.interface';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { type FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -33,7 +32,7 @@ import { type WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspac
 
 @Injectable()
 export class WorkspaceMetadataUpdaterService {
-  constructor(private readonly featureFlagService: FeatureFlagService) {}
+  constructor() {}
 
   async updateObjectMetadata(
     manager: EntityManager,

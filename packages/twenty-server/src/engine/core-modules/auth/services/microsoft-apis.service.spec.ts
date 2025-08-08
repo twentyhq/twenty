@@ -82,7 +82,7 @@ describe('MicrosoftAPIsService', () => {
           useValue: {
             getRepositoryForWorkspace: jest
               .fn()
-              .mockImplementation((workspaceId, entity) => {
+              .mockImplementation((_workspaceId, entity) => {
                 if (entity === 'connectedAccount')
                   return mockConnectedAccountRepository;
                 if (entity === 'calendarChannel')

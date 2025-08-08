@@ -195,7 +195,7 @@ export class WorkspaceSyncFieldMetadataRelationService {
   }
 
   private async synchronizeCustomObjectRelationFields(
-    context: WorkspaceSyncContext,
+    _context: WorkspaceSyncContext,
     customObjectMetadataCollection: ObjectMetadataEntity[],
     originalObjectMetadataMapByName: Record<string, ObjectMetadataEntity>,
     storage: WorkspaceSyncStorage,

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner, TableColumn } from 'typeorm';
@@ -22,8 +22,6 @@ import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-mi
 
 @Injectable()
 export class WorkspaceMigrationColumnService {
-  private readonly logger = new Logger(WorkspaceMigrationColumnService.name);
-
   constructor(
     private readonly workspaceMigrationEnumService: WorkspaceMigrationEnumService,
     private readonly workspaceMigrationTypeService: WorkspaceMigrationTypeService,

@@ -7,7 +7,7 @@ import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 // TODO: this should be deprecated as singleton pattern won't work: user will keep changing locales for eachothers
 @Injectable()
 export class I18nMiddleware implements NestMiddleware {
-  use(req: Request, res: Response, next: NextFunction) {
+  use(req: Request, _res: Response, next: NextFunction) {
     const locale = req.locale;
 
     if (locale && Object.values(APP_LOCALES).includes(locale)) {

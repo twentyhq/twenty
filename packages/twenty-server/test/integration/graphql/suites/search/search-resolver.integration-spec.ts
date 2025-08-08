@@ -462,9 +462,11 @@ describe('SearchResolver', () => {
     const edges = search.edges;
     const pageInfo = search.pageInfo;
 
-    context.eval.orderedRecordIds.length > 0
-      ? expect(edges).not.toHaveLength(0)
-      : expect(edges).toHaveLength(0);
+    if (context.eval.orderedRecordIds.length > 0) {
+      expect(edges).not.toHaveLength(0);
+    } else {
+      expect(edges).toHaveLength(0);
+    }
 
     expect(
       edges.map((edge: SearchResultEdgeDTO) => edge.node.recordId),

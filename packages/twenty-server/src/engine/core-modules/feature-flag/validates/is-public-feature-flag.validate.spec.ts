@@ -98,7 +98,6 @@ describe('publicFeatureFlagValidator', () => {
           flag,
           mockException,
         );
-        const _test: PublicFeatureFlag['key'] = flag;
 
         return true;
       };

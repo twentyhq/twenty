@@ -1,3 +1,5 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
   ForbiddenError,
   NotFoundError,
@@ -66,9 +68,7 @@ export const permissionGraphqlApiExceptionHandler = (
     case PermissionsExceptionCode.COMPOSITE_TYPE_NOT_FOUND:
       throw error;
     default: {
-      const _exhaustiveCheck: never = error.code;
-
-      throw error;
+      return assertUnreachable(error.code);
     }
   }
 };
