@@ -1,4 +1,3 @@
-import { mocked } from '@storybook/test';
 import { act, renderHook } from '@testing-library/react';
 import { v4 } from 'uuid';
 
@@ -10,6 +9,7 @@ import {
 } from '@/object-record/hooks/__mocks__/useCreateManyRecords';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
+import { mocked } from 'storybook/internal/test';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 jest.mock('uuid', () => ({
