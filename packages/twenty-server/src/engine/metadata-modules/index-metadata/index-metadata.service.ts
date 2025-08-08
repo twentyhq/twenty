@@ -76,7 +76,7 @@ export class IndexMetadataService {
       ? queryRunner.manager.getRepository(IndexMetadataEntity)
       : this.indexMetadataRepository;
 
-    const indexes = await indexMetadataRepository.find({
+    const existingIndex = await indexMetadataRepository.findOne({
       where: {
         name: indexName,
         workspaceId,
@@ -85,19 +85,9 @@ export class IndexMetadataService {
       relations: ['indexFieldMetadatas'],
     });
 
-    const existingIndex = indexes.find(
-      (index) =>
-        index.indexFieldMetadatas.every((indexFieldMetadata) =>
-          fieldMetadataToIndex.some(
-            (fieldMetadata) =>
-              fieldMetadata.id === indexFieldMetadata.fieldMetadataId,
-          ),
-        ) && index.indexFieldMetadatas.length === fieldMetadataToIndex.length,
-    );
-
     if (isDefined(existingIndex)) {
       throw new Error(
-        `Index ${indexName} on object metadata ${objectMetadata.nameSingular} and fields ${columnNames.join(', ')} already exists`,
+        `Index ${indexName} on object metadata ${objectMetadata.nameSingular} already exists`,
       );
     }
 
