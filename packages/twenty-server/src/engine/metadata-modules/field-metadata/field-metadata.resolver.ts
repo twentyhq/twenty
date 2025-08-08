@@ -30,8 +30,8 @@ import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import {
-  type UpdateFieldInput,
   UpdateOneFieldMetadataInput,
+  type UpdateFieldInput,
 } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -111,6 +111,23 @@ export class FieldMetadataResolver {
     if (!isDefined(workspaceId)) {
       throw new ForbiddenError('Could not retrieve workspace ID');
     }
+    
+    try {
+      const isWorkspaceMigrationV2Enabled =
+        await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+          workspaceId,
+        );
+
+      if (isWorkspaceMigrationV2Enabled) {
+        return await this.fieldMetadataServiceV2.deleteOneField({
+          deleteOneFieldInput: input,
+          workspaceId,
+        });
+      }
+    } catch (error) {
+      fieldMetadataGraphqlApiExceptionHandler(error);
+    }
 
     const fieldMetadata =
       await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
@@ -132,19 +149,6 @@ export class FieldMetadataResolver {
     }
 
     try {
-      const isWorkspaceMigrationV2Enabled =
-        await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-          workspaceId,
-        );
-
-      if (isWorkspaceMigrationV2Enabled) {
-        return await this.fieldMetadataServiceV2.deleteOneField({
-          deleteOneFieldInput: input,
-          workspaceId,
-        });
-      }
-
       return await this.fieldMetadataService.deleteOneField(input, workspaceId);
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(error);
