@@ -92,6 +92,7 @@ export const WorkflowDiagramEffect = ({
     [
       workflowDiagramState,
       isWorkflowFilteringEnabled,
+      isWorkflowBranchEnabled,
       workflowLastCreatedStepIdState,
     ],
   );

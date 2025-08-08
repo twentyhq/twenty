@@ -76,7 +76,12 @@ export const WorkflowVersionVisualizerEffect = ({
     });
 
     setWorkflowDiagram(nextWorkflowDiagram);
-  }, [isWorkflowFilteringEnabled, setWorkflowDiagram, workflowVersion]);
+  }, [
+    isWorkflowBranchEnabled,
+    isWorkflowFilteringEnabled,
+    setWorkflowDiagram,
+    workflowVersion,
+  ]);
 
   useEffect(() => {
     if (!isDefined(workflowVersion)) {
