@@ -23,7 +23,7 @@ const ArrayValueSetterEffect = ({ value }: { value: string[] }) => {
   useEffect(() => {
     setFieldValue(value);
     setDraftValue(value);
-  }, [setFieldValue, value]);
+  }, [setFieldValue, value, setDraftValue]);
 
   return null;
 };
