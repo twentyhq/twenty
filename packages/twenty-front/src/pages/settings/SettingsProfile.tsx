@@ -80,7 +80,7 @@ export const SettingsProfile = () => {
                   has2FAMethod ? (
                     <Status text={'Active'} color={'turquoise'} />
                   ) : (
-                    <Status text={'Setup'} color={'blue'} />
+                    <Status text={'Deactivated'} color={'gray'} />
                   )
                 }
               />

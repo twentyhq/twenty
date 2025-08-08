@@ -1,3 +1,7 @@
+import { VERIFY_TWO_FACTOR_AUTHENTICATION_METHOD_FOR_AUTHENTICATED_USER } from '@/settings/two-factor-authentication/graphql/mutations/verifyTwoFactorAuthenticationMethod';
+import { SettingsPath } from '@/types/SettingsPath';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useMutation } from '@apollo/client';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -5,11 +9,6 @@ import { useLingui } from '@lingui/react/macro';
 import { OTPInput, SlotProps } from 'input-otp';
 import { useState } from 'react';
 import { Controller, useForm, useFormContext } from 'react-hook-form';
-
-import { VERIFY_TWO_FACTOR_AUTHENTICATION_METHOD_FOR_AUTHENTICATED_USER } from '@/settings/two-factor-authentication/graphql/mutations/verifyTwoFactorAuthenticationMethod';
-import { SettingsPath } from '@/types/SettingsPath';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 // OTP Form Types
@@ -29,31 +28,30 @@ const StyledOTPContainer = styled.div`
 
 const StyledSlotGroup = styled.div`
   display: flex;
+  gap: 0.4rem; /* reduced gap for tighter look */
 `;
 
 const StyledSlot = styled.div<{ isActive: boolean }>`
   position: relative;
-  width: 2.5rem;
-  height: 3.5rem;
-  font-size: 2rem;
+  width: 2.2rem;
+  height: 3rem;
+  font-size: 1.25rem;
+  font-weight: 500; /* match example boldness */
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
   display: flex;
+  line-height: 140%;
+  background-color: ${({ theme }) => theme.border.color.light};
   align-items: center;
   justify-content: center;
   transition: all 0.3s;
-  border-top: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-right: 1px solid ${({ theme }) => theme.border.color.medium};
-
-  &:first-of-type {
-    border-left: 1px solid ${({ theme }) => theme.border.color.medium};
-    border-top-left-radius: 0.375rem;
-    border-bottom-left-radius: 0.375rem;
-  }
-
-  &:last-of-type {
-    border-top-right-radius: 0.375rem;
-    border-bottom-right-radius: 0.375rem;
-  }
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: 0.375rem;
 
   .group:hover &,
   .group:focus-within & {
@@ -61,14 +59,12 @@ const StyledSlot = styled.div<{ isActive: boolean }>`
   }
 
   outline: 0;
-  outline-color: ${({ theme }) => theme.border.color.medium};
 
   ${({ isActive, theme }) =>
     isActive &&
     css`
-      outline-width: 1px;
-      outline-style: solid;
-      outline-color: ${theme.border.color.strong};
+      border-color: ${theme.border.color.strong};
+      box-shadow: 0 0 0 1px ${theme.border.color.strong};
     `}
 `;
 
@@ -106,16 +102,16 @@ const StyledCaret = styled.div`
 
 const StyledDashContainer = styled.div`
   display: flex;
-  width: 2.5rem;
+  width: 1.2rem;
   justify-content: center;
   align-items: center;
 `;
 
 const StyledDash = styled.div`
-  background-color: ${({ theme }) => theme.font.color.tertiary};
+  background-color: ${({ theme }) => theme.font.color.light};
   border-radius: 9999px;
-  height: 0.25rem;
-  width: 0.75rem;
+  height: 0.15rem;
+  width: 0.65rem;
 `;
 
 const FakeCaret = () => {

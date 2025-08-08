@@ -25,39 +25,61 @@ import { Section } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledQRCodeContainer = styled.div`
+  align-items: center;
+  background-color: ${({ theme }) => theme.background.primary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  display: inline-flex;
+  flex-direction: column;
   margin: ${({ theme }) => theme.spacing(4)} 0;
+  padding: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledInstructions = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.sm};
   margin-bottom: ${({ theme }) => theme.spacing(4)};
-  max-width: 400px;
+  max-width: 450px;
+  line-height: 140%;
+  margin-top: 0;
+
+  a {
+    color: ${({ theme }) => theme.font.color.light};
+    text-decoration: underline;
+
+    &:hover {
+      color: ${({ theme }) => theme.font.color.primary};
+    }
+  }
 `;
 
-const StyledDivider = styled.div`
-  width: 100%;
-  height: 1px;
-  background-color: ${({ theme }) => theme.border.color.light};
-  margin: ${({ theme }) => theme.spacing(6)} 0;
-`;
-
-const StyledCopySetupKeyLink = styled.button`
-  background: none;
-  border: none;
-  color: ${({ theme }) => theme.font.color.secondary};
-  cursor: pointer;
-  display: flex;
+const StyledInlineText = styled.div`
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
+  color: ${({ theme }) => theme.font.color.tertiary};
+  display: flex;
   font-size: ${({ theme }) => theme.font.size.sm};
-  margin-top: ${({ theme }) => theme.spacing(2)};
-  padding: 0;
+  gap: ${({ theme }) => theme.spacing(1)};
+  line-height: 140%;
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  max-width: 450px;
+`;
+const StyledCopySetupKeyButton = styled.button`
+  all: unset;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  cursor: pointer;
   text-decoration: underline;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  padding: 0;
 
   &:hover {
     color: ${({ theme }) => theme.font.color.primary};
   }
+`;
+
+const StyledH2Title = styled(H2Title)`
+  margin-top: 0 !important;
+  margin-bottom: 8px !important;
+  padding: 0 !important;
 `;
 
 export const SettingsTwoFactorAuthenticationMethod = () => {
@@ -74,7 +96,6 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
     'VERIFIED';
 
   const verificationForm = useTwoFactorVerificationForSettings();
-
   const shouldShowActionButtons = !has2FAMethod;
 
   const handleCopySetupKey = async () => {
@@ -97,7 +118,7 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...verificationForm.formConfig}>
       <SubMenuTopBarContainer
-        title={t`Two Factor Authentication`}
+        title={t`Two-factor authentication`}
         links={[
           {
             children: <Trans>User</Trans>,
@@ -134,32 +155,59 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
             <Section>
               <TwoFactorAuthenticationSetupForSettingsEffect />
 
-              <H2Title title={t`1. Scan the QR code`} />
+              <StyledH2Title title={t`Authenticator app`} />
+
               <StyledInstructions>
                 <Trans>
-                  Use an authenticator app like Google Authenticator, Authy, or
-                  Microsoft Authenticator to scan this QR code.
+                  Authenticator apps and browser extensions like{' '}
+                  <a
+                    href="https://1password.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    1Password
+                  </a>
+                  ,{' '}
+                  <a
+                    href="https://authy.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Authy
+                  </a>
+                  ,{' '}
+                  <a
+                    href="https://www.microsoft.com/en-us/security/mobile-authenticator-app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Microsoft Authenticator
+                  </a>{' '}
+                  . etc generate one-time passwords that are used as a second
+                  factor to verify your identity when prompted during sign-in.
                 </Trans>
               </StyledInstructions>
+
               <StyledQRCodeContainer>
-                {!qrCode ? <Loader /> : <QRCode value={qrCode} />}
-                {qrCode && (
-                  <StyledCopySetupKeyLink onClick={handleCopySetupKey}>
-                    <IconCopy size={theme.icon.size.sm} />
-                    <Trans>Copy Setup Key</Trans>
-                  </StyledCopySetupKeyLink>
+                {!qrCode ? (
+                  <Loader />
+                ) : (
+                  <>
+                    <QRCode value={qrCode} size={100} />
+                  </>
                 )}
               </StyledQRCodeContainer>
 
-              <StyledDivider />
+              <StyledInlineText>
+                <Trans>Can't scan? Copy the</Trans>
+                <StyledCopySetupKeyButton onClick={handleCopySetupKey}>
+                  <Trans>setup key</Trans>
+                </StyledCopySetupKeyButton>
+              </StyledInlineText>
 
-              <H2Title title={t`2. Enter the code`} />
-
+              <H2Title title={t`Verify the code from the app`} />
               <StyledInstructions>
-                <Trans>
-                  Enter the 6-digit verification code from your authenticator
-                  app to complete the setup.
-                </Trans>
+                <Trans>Copy paste the code below</Trans>
               </StyledInstructions>
 
               <TwoFactorAuthenticationVerificationForSettings />
