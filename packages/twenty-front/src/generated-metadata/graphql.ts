@@ -699,7 +699,6 @@ export type CreateRoleInput = {
   icon?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
   label: Scalars['String'];
-  standardId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type CreateServerlessFunctionInput = {
@@ -3229,7 +3228,6 @@ export type UpdateRolePayload = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
   label?: InputMaybe<Scalars['String']>;
-  standardId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateServerlessFunctionInput = {
