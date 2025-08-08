@@ -5895,11 +5895,6 @@ msgstr "비밀번호 업데이트 중 오류가 발생했습니다."
 msgid "Third"
 msgstr ""
 
-#. js-lingui-id: Kb1oAw
-#: src/modules/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityRowHook.ts
-msgid "This {columnName} value already exists in your import data"
-msgstr "이 {columnName} 값은 이미 해당 가져오기 데이터에 존재합니다."
-
 #. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."

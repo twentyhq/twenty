@@ -5895,11 +5895,6 @@ msgstr "更新密码时出错。"
 msgid "Third"
 msgstr ""
 
-#. js-lingui-id: Kb1oAw
-#: src/modules/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityRowHook.ts
-msgid "This {columnName} value already exists in your import data"
-msgstr "此 {columnName} 值已存在于您的导入数据中"
-
 #. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."

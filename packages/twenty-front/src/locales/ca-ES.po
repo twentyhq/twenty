@@ -5895,11 +5895,6 @@ msgstr "S'ha produït un error en actualitzar la contrasenya."
 msgid "Third"
 msgstr ""
 
-#. js-lingui-id: Kb1oAw
-#: src/modules/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityRowHook.ts
-msgid "This {columnName} value already exists in your import data"
-msgstr "Aquest valor de {columnName} ja existeix a les teves dades d'importació"
-
 #. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
