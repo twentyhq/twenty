@@ -46,8 +46,29 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
       FieldMetadataType.RELATION,
     )
   ) {
-    // TODO prastoin
-    return [flatFieldMetadataToDelete];
+    const { relationTargetFieldMetadataId, relationTargetObjectMetadataId } =
+      flatFieldMetadataToDelete;
+
+    const relatedFlatObjectMetadata =
+      existingFlatObjectMetadataMaps.byId[relationTargetObjectMetadataId];
+
+    if (!isDefined(relatedFlatObjectMetadata)) {
+      throw new FieldMetadataException(
+        `Deleted field metadata relation object metadata target not found`,
+        FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
+    const relatedFlatFieldMetadata =
+      relatedFlatObjectMetadata.fieldsById[relationTargetFieldMetadataId];
+
+    if (!isDefined(relatedFlatFieldMetadata)) {
+      throw new FieldMetadataException(
+        `Deleted field metadata relation field metadata target not found`,
+        FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+      );
+    }
+
+    return [flatFieldMetadataToDelete, relatedFlatFieldMetadata];
   }
 
   if (
