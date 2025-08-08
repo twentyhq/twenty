@@ -222,14 +222,19 @@ export class FieldMetadataServiceV2 {
 
     const updatedFlatFieldMetadata = inputTranspilationResult.result;
 
-    const validationErrors =
+    const validationErrors = [
       await this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadataCreation(
         {
           existingFlatObjectMetadataMaps,
           flatFieldMetadataToValidate: updatedFlatFieldMetadata,
           workspaceId,
         },
-      );
+      ),
+      this.flatFieldMetadataValidatorService.validateFlatFieldMetadataUpdate({
+        existingFlatObjectMetadataMaps,
+        updatedFlatFieldMetadata,
+      }),
+    ].flat();
 
     if (validationErrors.length > 0) {
       throw new MultipleMetadataValidationErrors(
