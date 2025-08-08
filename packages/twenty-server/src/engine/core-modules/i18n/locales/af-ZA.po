@@ -514,6 +514,7 @@ msgid "Cannot create workflow version with status other than draft"
 msgstr "Kan nie werkvloeiontwikke se weergawe skep met status, anders as konsep, nie"
 
 #. js-lingui-id: AQyr9X
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Kan nie uitvee nie, asseblief werk eers die etiketidentifiseerdersveld by"

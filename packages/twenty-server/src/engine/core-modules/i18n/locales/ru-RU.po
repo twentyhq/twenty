@@ -514,6 +514,7 @@ msgid "Cannot create workflow version with status other than draft"
 msgstr "Невозможно создать версию процесса со статусом, отличным от чернового"
 
 #. js-lingui-id: AQyr9X
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Удаление невозможно, сначала обновите поле идентификатора метки"

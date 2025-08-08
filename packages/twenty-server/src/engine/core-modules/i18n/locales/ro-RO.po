@@ -514,6 +514,7 @@ msgid "Cannot create workflow version with status other than draft"
 msgstr "Nu se poate crea o versiune a fluxului de lucru cu alt statut decât schiță"
 
 #. js-lingui-id: AQyr9X
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Nu se poate șterge, vă rugăm actualizați mai întâi câmpul identificatorului etichetei"
