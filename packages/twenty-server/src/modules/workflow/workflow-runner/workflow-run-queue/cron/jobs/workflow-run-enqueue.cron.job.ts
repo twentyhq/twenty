@@ -24,6 +24,7 @@ import {
   RunWorkflowJob,
   type RunWorkflowJobData,
 } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
+import { WORKFLOW_RUN_QUEUE_THROTTLE_LIMIT } from 'src/modules/workflow/workflow-runner/workflow-run-queue/constants/workflow-run-queue-throttle-limit';
 import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
 
 export const WORKFLOW_RUN_ENQUEUE_CRON_PATTERN = '* * * * *';
@@ -59,15 +60,27 @@ export class WorkflowRunEnqueueJob {
       await this.workspaceDataSourceService.connectToMainDataSource();
 
     for (const activeWorkspace of activeWorkspaces) {
-      let enqueuedWorkflowRunCount = 0;
+      let currentlyEnqueuedWorkflowRunCount = 0;
+      let newlyEnqueuedWorkflowRunCount = 0;
 
       try {
-        const remainingWorkflowRunCount =
-          await this.workflowRunQueueWorkspaceService.getRemainingRunsToEnqueueCount(
+        const workflowRunRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace(
             activeWorkspace.id,
+            WorkflowRunWorkspaceEntity,
+            { shouldBypassPermissionChecks: true },
           );
 
-        if (remainingWorkflowRunCount <= 0) {
+        currentlyEnqueuedWorkflowRunCount = await workflowRunRepository.count({
+          where: {
+            status: WorkflowRunStatus.ENQUEUED,
+          },
+        });
+
+        const remainingWorkflowRunToEnqueueCount =
+          WORKFLOW_RUN_QUEUE_THROTTLE_LIMIT - currentlyEnqueuedWorkflowRunCount;
+
+        if (remainingWorkflowRunToEnqueueCount <= 0) {
           continue;
         }
 
@@ -79,20 +92,13 @@ export class WorkflowRunEnqueueJob {
         );
 
         const workflowRunsToEnqueueCount = Math.min(
-          remainingWorkflowRunCount,
+          remainingWorkflowRunToEnqueueCount,
           workflowRuns.length,
         );
 
         if (workflowRunsToEnqueueCount <= 0) {
           continue;
         }
-
-        const workflowRunRepository =
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-            activeWorkspace.id,
-            WorkflowRunWorkspaceEntity,
-            { shouldBypassPermissionChecks: true },
-          );
 
         for (
           let runIndex = 0;
@@ -113,7 +119,7 @@ export class WorkflowRunEnqueueJob {
             status: WorkflowRunStatus.ENQUEUED,
           });
 
-          enqueuedWorkflowRunCount++;
+          newlyEnqueuedWorkflowRunCount++;
         }
       } catch (error) {
         this.logger.error(
@@ -126,12 +132,10 @@ export class WorkflowRunEnqueueJob {
           eventId: activeWorkspace.id,
         });
       } finally {
-        if (enqueuedWorkflowRunCount > 0) {
-          await this.workflowRunQueueWorkspaceService.increaseWorkflowRunQueuedCount(
-            activeWorkspace.id,
-            enqueuedWorkflowRunCount,
-          );
-        }
+        await this.workflowRunQueueWorkspaceService.setWorkflowRunQueuedCount(
+          activeWorkspace.id,
+          currentlyEnqueuedWorkflowRunCount + newlyEnqueuedWorkflowRunCount,
+        );
       }
     }
   }

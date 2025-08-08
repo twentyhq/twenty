@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner } from 'nest-commander';
 
+import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-modules/domain-manager/crons/commands/check-custom-domain-valid-records.cron.command';
 import { CleanupOrphanedFilesCronCommand } from 'src/engine/core-modules/file/crons/commands/cleanup-orphaned-files.cron.command';
 import { CalendarEventListFetchCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-event-list-fetch.cron.command';
 import { CalendarEventsImportCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-import.cron.command';
@@ -9,8 +10,8 @@ import { CalendarOngoingStaleCronCommand } from 'src/modules/calendar/calendar-e
 import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-message-list-fetch.cron.command';
 import { MessagingMessagesImportCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-messages-import.cron.command';
 import { MessagingOngoingStaleCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-ongoing-stale.cron.command';
+import { CronWorkflowRunEnqueueCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/cron-workflow-run-enqueue.cron.command';
 import { CronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/cron-trigger.cron.command';
-import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-modules/domain-manager/crons/commands/check-custom-domain-valid-records.cron.command';
 
 @Command({
   name: 'cron:register:all',
@@ -29,6 +30,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly cronTriggerCronCommand: CronTriggerCronCommand,
     private readonly cleanupOrphanedFilesCronCommand: CleanupOrphanedFilesCronCommand,
     private readonly checkCustomDomainValidRecordsCronCommand: CheckCustomDomainValidRecordsCronCommand,
+    private readonly cronWorkflowRunEnqueueCommand: CronWorkflowRunEnqueueCommand,
   ) {
     super();
   }
@@ -69,6 +71,10 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'CheckCustomDomainValidRecords',
         command: this.checkCustomDomainValidRecordsCronCommand,
+      },
+      {
+        name: 'CronWorkflowRunEnqueue',
+        command: this.cronWorkflowRunEnqueueCommand,
       },
     ];
 
