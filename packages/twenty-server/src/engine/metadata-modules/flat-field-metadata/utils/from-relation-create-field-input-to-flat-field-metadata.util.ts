@@ -39,14 +39,16 @@ const computeFieldMetadataRelationSettingsForRelationType = ({
 };
 
 type FromRelationCreateFieldInputToFlatFieldMetadataArgs = {
-  createFieldInput: CreateFieldInput;
+  createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
   sourceParentFlatObjectMetadata: FlatObjectMetadata;
+  workspaceId: string;
 };
 export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
   existingFlatObjectMetadataMaps,
   sourceParentFlatObjectMetadata,
   createFieldInput,
+  workspaceId,
 }: FromRelationCreateFieldInputToFlatFieldMetadataArgs): Promise<
   FlatFieldMetadata[]
 > => {
@@ -85,6 +87,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
   > = {
     ...getDefaultFlatFieldMetadata({
       createFieldInput,
+      workspaceId,
       fieldMetadataId: sourceRelationTargetFieldMetadataId,
     }),
     icon: createFieldInput.icon ?? 'IconRelationOneToMany',
@@ -105,7 +108,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
     )}Id`,
     objectMetadataId: targetParentFlatObjectMetadata.id,
     type: FieldMetadataType.RELATION,
-    workspaceId: createFieldInput.workspaceId,
+    workspaceId,
   };
   const targetFlatFieldMetadataSettings =
     computeFieldMetadataRelationSettingsForRelationType({
@@ -119,6 +122,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
     {
       ...getDefaultFlatFieldMetadata({
         createFieldInput: targetCreateFieldInput,
+        workspaceId,
         fieldMetadataId: targetRelationTargetFieldMetadataId,
       }),
       type: FieldMetadataType.RELATION,

@@ -3,6 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource } from 'typeorm';
 
+import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
@@ -23,10 +24,12 @@ export class WorkspaceMigrationRunnerV2Service {
     private readonly coreDataSource: DataSource,
   ) {}
 
-  run = async (workspaceMigration: WorkspaceMigrationV2) => {
+  run = async (
+    workspaceMigration: WorkspaceMigrationV2,
+  ): Promise<FlatObjectMetadataMaps> => {
     const queryRunner = this.coreDataSource.createQueryRunner();
 
-    const { flatObjectMetadataMaps } =
+    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
         {
           workspaceId: workspaceMigration.workspaceId,
@@ -36,7 +39,7 @@ export class WorkspaceMigrationRunnerV2Service {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     let optimisticFlatObjectMetadataMaps = structuredClone(
-      flatObjectMetadataMaps,
+      existingFlatObjectMetadataMaps,
     );
 
     try {
@@ -73,6 +76,8 @@ export class WorkspaceMigrationRunnerV2Service {
           workspaceId,
         },
       );
+
+      return optimisticFlatObjectMetadataMaps;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction();

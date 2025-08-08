@@ -6,11 +6,13 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 
 type GetDefaultFlatFieldMetadataArgs = {
   fieldMetadataId: string;
-  createFieldInput: CreateFieldInput;
+  createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
+  workspaceId: string;
 };
 export const getDefaultFlatFieldMetadata = ({
   createFieldInput,
   fieldMetadataId,
+  workspaceId,
 }: GetDefaultFlatFieldMetadataArgs) => {
   const { defaultValue, settings } = extractAndSanitizeObjectStringFields(
     createFieldInput,
@@ -40,7 +42,7 @@ export const getDefaultFlatFieldMetadata = ({
     standardOverrides: null,
     type: createFieldInput.type,
     uniqueIdentifier: fieldMetadataId,
-    workspaceId: createFieldInput.workspaceId,
+    workspaceId,
     flatRelationTargetFieldMetadata: null,
     flatRelationTargetObjectMetadata: null,
     options: null,
