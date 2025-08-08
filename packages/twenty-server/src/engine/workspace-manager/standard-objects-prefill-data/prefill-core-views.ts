@@ -1,5 +1,5 @@
-import { ViewFilterOperand as SharedViewFilterOperand } from 'twenty-shared/types';
-import { DataSource, QueryRunner } from 'typeorm';
+import { type ViewFilterOperand as SharedViewFilterOperand } from 'twenty-shared/types';
+import { type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
@@ -8,8 +8,8 @@ import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.enti
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
 import { customAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
@@ -24,7 +24,7 @@ import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-o
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
 import { convertViewFilterOperandToCoreOperand } from 'src/modules/view/utils/convert-view-filter-operand-to-core-operand.util';
 
-export const seedCoreViews = async (
+export const prefillCoreViews = async (
   dataSource: DataSource,
   workspaceId: string,
   objectMetadataItems: ObjectMetadataEntity[],

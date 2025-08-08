@@ -18,7 +18,7 @@ import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { seedCoreViews } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-core-views';
+import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
@@ -149,7 +149,11 @@ export class WorkspaceManagerService {
     if (featureFlags[FeatureFlagKey.IS_CORE_VIEW_SYNCING_ENABLED]) {
       this.logger.log(`Prefilling core views for workspace ${workspaceId}`);
 
-      await seedCoreViews(mainDataSource, workspaceId, createdObjectMetadata);
+      await prefillCoreViews(
+        mainDataSource,
+        workspaceId,
+        createdObjectMetadata,
+      );
     }
   }
 
