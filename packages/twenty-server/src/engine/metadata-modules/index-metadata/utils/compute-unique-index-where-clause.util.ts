@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
@@ -9,23 +11,30 @@ import {
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import {
+  IndexMetadataException,
+  IndexMetadataExceptionCode,
+} from 'src/engine/metadata-modules/index-metadata/index-field-metadata.exception';
 
 export const computeUniqueIndexWhereClause = (
-  fieldMetadata: FieldMetadataEntity,
+  fieldMetadata: Pick<FieldMetadataEntity, 'type' | 'name'>,
 ) => {
-  const standardDefaultValue = generateDefaultValue(fieldMetadata.type);
+  const defaultDefaultValue = generateDefaultValue(fieldMetadata.type);
 
-  if (!isCompositeFieldMetadataType(fieldMetadata.type)) {
-    return isDefined(standardDefaultValue)
-      ? `"${fieldMetadata.name}" != ${standardDefaultValue}`
-      : undefined;
-  }
+  if (!isDefined(defaultDefaultValue)) return;
 
   if (
-    !isDefined(standardDefaultValue) ||
-    typeof standardDefaultValue !== 'object'
+    fieldMetadata.type === FieldMetadataType.RELATION ||
+    fieldMetadata.type === FieldMetadataType.MORPH_RELATION
   ) {
-    return;
+    throw new IndexMetadataException(
+      `Unique index cannot be created for relation or morph relation field ${fieldMetadata.name}`,
+      IndexMetadataExceptionCode.INDEX_NOT_SUPPORTED_FOR_MORH_RELATION_FIELD_AND_RELATION_FIELD,
+    );
+  }
+
+  if (!isCompositeFieldMetadataType(fieldMetadata.type)) {
+    return `"${fieldMetadata.name}" != ${defaultDefaultValue}`;
   }
 
   const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
@@ -37,19 +46,19 @@ export const computeUniqueIndexWhereClause = (
     );
   }
 
+  const defaultDefaultValueProperties = Object.keys(defaultDefaultValue);
+
   const columnNamesWithDefaultValues = compositeType.properties
     .filter(
       (property) =>
         property.isIncludedInUniqueConstraint &&
-        property.name in standardDefaultValue,
+        defaultDefaultValueProperties.includes(property.name),
     )
     .map((property) => {
       const defaultValue =
-        standardDefaultValue[
-          property.name as keyof typeof standardDefaultValue
-        ];
+        defaultDefaultValue[property.name as keyof typeof defaultDefaultValue];
 
-      if (isDefined(defaultValue) && typeof defaultValue === 'string') {
+      if (isNonEmptyString(defaultValue)) {
         return [
           computeCompositeColumnName(fieldMetadata, property),
           defaultValue,

@@ -51,7 +51,7 @@ import { prepareCustomFieldMetadataOptions } from 'src/engine/metadata-modules/f
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { computeUniqueIndexWhereClause } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-index-where-clause.util';
-import { shouldCreateUniqueIndexOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/should-create-unique-index-or-throw.util';
+import { validateCanCreateUniqueIndex } from 'src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -172,15 +172,15 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     if (
-      !isValidUniqueFieldDefaultValueCombination(
-        isDefined(fieldMetadataInput.defaultValue)
+      !isValidUniqueFieldDefaultValueCombination({
+        defaultValue: isDefined(fieldMetadataInput.defaultValue)
           ? fieldMetadataInput.defaultValue
           : existingFieldMetadata.defaultValue,
-        isDefined(fieldMetadataInput.isUnique)
+        isUnique: isDefined(fieldMetadataInput.isUnique)
           ? fieldMetadataInput.isUnique
           : (existingFieldMetadata.isUnique ?? false),
-        existingFieldMetadata.type,
-      )
+        type: existingFieldMetadata.type,
+      })
     ) {
       throw new FieldMetadataException(
         'Unique field cannot have a default value',
@@ -817,22 +817,20 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   }) {
     if (
       isDefined(fieldMetadataInput.defaultValue) &&
-      !isValidUniqueFieldDefaultValueCombination(
-        fieldMetadataInput.defaultValue,
-        fieldMetadataInput.isUnique ?? false,
-        fieldMetadataInput.type,
-      )
+      !isValidUniqueFieldDefaultValueCombination({
+        defaultValue: fieldMetadataInput.defaultValue,
+        isUnique: fieldMetadataInput.isUnique ?? false,
+        type: fieldMetadataInput.type,
+      })
     )
       throw new FieldMetadataException(
         'Unique field cannot have a default value',
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       );
 
-    if (
-      fieldMetadataInput.isUnique !== true ||
-      !shouldCreateUniqueIndexOrThrow(fieldMetadataInput)
-    )
-      return;
+    if (fieldMetadataInput.isUnique !== true) return;
+
+    validateCanCreateUniqueIndex(createdFieldMetadataItem);
 
     await this.indexMetadataService.createIndexMetadata({
       workspaceId,
@@ -869,7 +867,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     fieldMetadataInput: UpdateFieldInput;
     queryRunner: QueryRunner;
   }) {
-    shouldCreateUniqueIndexOrThrow(fieldMetadataItem);
+    validateCanCreateUniqueIndex(fieldMetadataItem);
 
     await this.indexMetadataService.createIndexMetadata({
       workspaceId: fieldMetadataInput.workspaceId,

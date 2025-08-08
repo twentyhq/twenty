@@ -1,7 +1,7 @@
+import { t } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
-import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
@@ -9,13 +9,16 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 
-export const shouldCreateUniqueIndexOrThrow = (
-  field: CreateFieldInput | FieldMetadataEntity,
+export const validateCanCreateUniqueIndex = (
+  field: Pick<FieldMetadataEntity, 'type' | 'name' | 'isCustom'>,
 ) => {
   if (field.isCustom === false)
     throw new FieldMetadataException(
       `Unique index cannot be created on standard field`,
       FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      {
+        userFriendlyMessage: t`Standard fields cannot be unique.`,
+      },
     );
 
   const isCompositeFieldWithNonIncludedUniqueConstraint =
@@ -29,11 +32,15 @@ export const shouldCreateUniqueIndexOrThrow = (
       field.type,
     ) ||
     isCompositeFieldWithNonIncludedUniqueConstraint
-  )
-    throw new FieldMetadataException(
-      `Unique index cannot be created for field ${field.name} of type ${field.type}`,
-      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-    );
+  ) {
+    const fieldType = field.type;
 
-  return true;
+    throw new FieldMetadataException(
+      `Unique index cannot be created for field ${field.name} of type ${fieldType}`,
+      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      {
+        userFriendlyMessage: t`${fieldType} fields cannot be unique.`,
+      },
+    );
+  }
 };

@@ -82,7 +82,6 @@ export class IndexMetadataService {
         workspaceId,
         objectMetadataId: objectMetadata.id,
       },
-      relations: ['indexFieldMetadatas'],
     });
 
     if (isDefined(existingIndex)) {
@@ -176,7 +175,7 @@ export class IndexMetadataService {
       ? queryRunner.manager.getRepository(IndexMetadataEntity)
       : this.indexMetadataRepository;
 
-    const index = await indexMetadataRepository.findOne({
+    const [index] = await indexMetadataRepository.find({
       where: {
         objectMetadataId: objectMetadata.id,
         workspaceId,
@@ -191,15 +190,17 @@ export class IndexMetadataService {
 
     if (!isDefined(index)) return;
 
+    const updatedIndex = await indexMetadataRepository.save({
+      ...index,
+      name: `IDX_${generateDeterministicIndexName([
+        computeObjectTargetTable(objectMetadata),
+        updatedFieldMetadata.name,
+      ])}`,
+      indexWhereClause: computeUniqueIndexWhereClause(updatedFieldMetadata),
+    });
+
     return {
-      updatedIndex: await indexMetadataRepository.save({
-        ...index,
-        name: `IDX_${generateDeterministicIndexName([
-          computeObjectTargetTable(objectMetadata),
-          updatedFieldMetadata.name,
-        ])}`,
-        indexWhereClause: computeUniqueIndexWhereClause(updatedFieldMetadata),
-      }),
+      updatedIndex,
       previousName: index.name,
     };
   }

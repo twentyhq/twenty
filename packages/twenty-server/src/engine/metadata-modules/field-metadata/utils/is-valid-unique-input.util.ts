@@ -6,19 +6,16 @@ import { type FieldMetadataDefaultValue } from 'src/engine/metadata-modules/fiel
 
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 
-export const isValidUniqueFieldDefaultValueCombination = (
-  defaultValue: FieldMetadataDefaultValue,
-  isUnique: boolean,
-  type: FieldMetadataType,
-) => {
+export const isValidUniqueFieldDefaultValueCombination = ({
+  defaultValue,
+  isUnique,
+  type,
+}: {
+  defaultValue: FieldMetadataDefaultValue;
+  isUnique: boolean;
+  type: FieldMetadataType;
+}) => {
   const defaultDefaultValue = generateDefaultValue(type);
 
-  if (
-    isUnique === false ||
-    isDeepStrictEqual(defaultValue, defaultDefaultValue)
-  ) {
-    return true;
-  }
-
-  return false;
+  return !isUnique || isDeepStrictEqual(defaultValue, defaultDefaultValue);
 };
