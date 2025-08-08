@@ -7,10 +7,10 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   DataSource,
-  type FindOneOptions,
   In,
-  type QueryRunner,
   Repository,
+  type FindOneOptions,
+  type QueryRunner,
 } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -58,9 +58,9 @@ import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/wor
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationColumnActionType,
+  WorkspaceMigrationTableActionType,
   type WorkspaceMigrationColumnDrop,
   type WorkspaceMigrationTableAction,
-  WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
@@ -111,7 +111,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       );
 
     if (isWorkspaceMigrationV2Enabled) {
-      return this.fieldMetadataServiceV2.createOne(fieldMetadataInput);
+      return this.fieldMetadataServiceV2.createOne({
+        fieldMetadataInput,
+        workspaceId: fieldMetadataInput.workspaceId,
+      });
     }
 
     const [createdFieldMetadata] = await this.createMany([fieldMetadataInput]);
@@ -589,7 +592,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       );
 
     if (isWorkspaceMigrationV2Enabled) {
-      return this.fieldMetadataServiceV2.createMany(fieldMetadataInputs);
+      return this.fieldMetadataServiceV2.createMany({
+        fieldMetadataInputs,
+        workspaceId,
+      });
     }
 
     const { objectMetadataMaps } =

@@ -21,12 +21,14 @@ import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fi
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 
 type FromCreateFieldInputToFlatObjectMetadata = {
-  rawCreateFieldInput: CreateFieldInput;
+  rawCreateFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+  workspaceId: string;
 };
 
-export const fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata = async ({
+export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
   rawCreateFieldInput,
+  workspaceId,
   existingFlatObjectMetadataMaps,
 }: FromCreateFieldInputToFlatObjectMetadata): Promise<FlatFieldMetadata[]> => {
   if (rawCreateFieldInput.isRemoteCreation) {
@@ -57,11 +59,13 @@ export const fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata = async ({
   const fieldMetadataId = v4();
   const commonFlatFieldMetadata = getDefaultFlatFieldMetadata({
     createFieldInput,
+    workspaceId,
     fieldMetadataId,
   });
 
   switch (createFieldInput.type) {
     case FieldMetadataType.MORPH_RELATION: {
+      // TODO prastoin
       throw new UserInputError(
         'Morph relation feature is not migrated to workspace migration v2 yet',
       );
@@ -71,6 +75,7 @@ export const fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata = async ({
         existingFlatObjectMetadataMaps,
         sourceParentFlatObjectMetadata: parentFlatObjectMetadata,
         createFieldInput,
+        workspaceId,
       });
     }
     case FieldMetadataType.RATING: {
