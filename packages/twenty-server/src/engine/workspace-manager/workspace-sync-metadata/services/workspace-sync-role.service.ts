@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
-import { EntityManager } from 'typeorm';
+import { type EntityManager } from 'typeorm';
 
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
-import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
+import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceRoleComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-role.comparator';

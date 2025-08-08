@@ -1,4 +1,4 @@
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
 export const roleEntityRelationProperties = [
   'roleTargets',

@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddStandardIdToRole1754480368129 implements MigrationInterface {
   name = 'AddStandardIdToRole1754480368129';
