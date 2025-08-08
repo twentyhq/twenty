@@ -72,7 +72,7 @@ export class FieldMetadataServiceV2 {
   }: {
     deleteOneFieldInput: DeleteOneFieldInput;
     workspaceId: string;
-  }): Promise<FlatFieldMetadata> {
+  }): Promise<void> {
     const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
         {
@@ -133,7 +133,8 @@ export class FieldMetadataServiceV2 {
 
     await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
 
-    return flatFieldMetadatasToDelete[0];
+    // TODO to be discussed with coco regarding storing dates in flat in order to build dtos
+    // return flatFieldMetadatasToDelete[0];
   }
 
   private computeOtherFlatObjectMetadataMapsToValidate({
