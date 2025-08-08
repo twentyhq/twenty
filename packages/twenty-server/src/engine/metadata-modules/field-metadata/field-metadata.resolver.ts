@@ -111,7 +111,7 @@ export class FieldMetadataResolver {
     if (!isDefined(workspaceId)) {
       throw new ForbiddenError('Could not retrieve workspace ID');
     }
-    
+
     try {
       const isWorkspaceMigrationV2Enabled =
         await this.featureFlagService.isFeatureEnabled(
