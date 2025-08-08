@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic';
 
-import { Metadata } from 'next';
+import { type Metadata } from 'next';
 
 import { getContributorActivity } from '@/app/(public)/contributors/utils/get-contributor-activity';
 import { ActivityLog } from '@/app/_components/contributors/ActivityLog';
