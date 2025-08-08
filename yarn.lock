@@ -21230,12 +21230,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/plugin-emotion@npm:4.0.2":
-  version: 4.0.2
-  resolution: "@swc/plugin-emotion@npm:4.0.2"
+"@swc/plugin-emotion@npm:11.0.2":
+  version: 11.0.2
+  resolution: "@swc/plugin-emotion@npm:11.0.2"
   dependencies:
     "@swc/counter": "npm:^0.1.3"
-  checksum: 10c0/78e72728a6395051b71e0b5cf8aa140131bcdee1e96ddc0cd7a67a1d988eb4813fee7395e684c96947b6130a0995792db904ba3f59ae351efc3cd8916af8315f
+  checksum: 10c0/bf7375124a039978942cfb531c0c84052497be23ccfe09e642b9e56ddc049f55b05f801b2c11b8f039aec745218e51af8abb4b6c73f24fa76b05aeb30adaee92
   languageName: node
   linkType: hard
 
@@ -56117,7 +56117,7 @@ __metadata:
     "@monaco-editor/react": "npm:^4.6.0"
     "@prettier/sync": "npm:^0.5.2"
     "@sniptt/guards": "npm:^0.2.0"
-    "@swc/plugin-emotion": "npm:4.0.2"
+    "@swc/plugin-emotion": "npm:11.0.2"
     "@tabler/icons-react": "npm:^3.31.0"
     "@types/babel__preset-env": "npm:^7"
     "@types/react": "npm:^18.2.39"
