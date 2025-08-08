@@ -10,10 +10,6 @@ type DragPositionCalculationParams = {
   recordPositionData: RecordPositionData[];
 };
 
-/**
- * Calculates new positions for dragged records based on their destination.
- * Shared logic between board columns and table rows.
- */
 export const calculateDragPositions = ({
   recordIds,
   recordsToMove,

@@ -41,11 +41,10 @@ export const RecordTableBodyDragDropContextProvider = ({
   );
 
   const handleDragEnd = useRecoilCallback(
-    ({ snapshot }) =>
-      (result: DropResult) => {
-        processDragEndOperation(snapshot)(result);
-        endDrag();
-      },
+    () => (result: DropResult) => {
+      processDragEndOperation(result);
+      endDrag();
+    },
     [endDrag, processDragEndOperation],
   );
 
