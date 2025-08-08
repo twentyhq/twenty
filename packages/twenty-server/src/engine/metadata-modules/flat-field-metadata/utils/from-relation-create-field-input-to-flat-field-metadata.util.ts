@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   isDefined,
-  trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties
+  trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -68,10 +68,11 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
     };
   }
 
-  const relationCreationPayload = trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
-    rawCreationPayload,
-    ['targetFieldIcon', 'targetFieldLabel', 'targetObjectMetadataId', 'type'],
-  );
+  const relationCreationPayload =
+    trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
+      rawCreationPayload,
+      ['targetFieldIcon', 'targetFieldLabel', 'targetObjectMetadataId', 'type'],
+    );
 
   try {
     await validateRelationCreationPayloadOrThrow(relationCreationPayload);
