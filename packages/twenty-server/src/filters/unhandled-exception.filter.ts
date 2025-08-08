@@ -7,6 +7,8 @@ import {
 
 import { Request, Response } from 'express';
 
+import { getCorsOriginPattern } from 'src/utils/cors-origin-pattern';
+
 // In case of exception in middleware run before the CORS middleware (eg: JSON Middleware that checks the request body),
 // the CORS headers are missing in the response.
 // This class add CORS headers to exception response to avoid misleading CORS error
@@ -15,10 +17,7 @@ export class UnhandledExceptionFilter implements ExceptionFilter {
   private readonly allowedOriginPattern: RegExp | null;
 
   constructor() {
-    const allowedOriginRegex = process.env.ALLOWED_REQUEST_ORIGIN_REGEX;
-    this.allowedOriginPattern = allowedOriginRegex
-      ? new RegExp(allowedOriginRegex)
-      : null;
+    this.allowedOriginPattern = getCorsOriginPattern();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

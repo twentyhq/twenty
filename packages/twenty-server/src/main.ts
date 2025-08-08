@@ -20,12 +20,13 @@ import './instrument';
 
 import { settings } from './engine/constants/settings';
 import { generateFrontConfig } from './utils/generate-front-config';
+import { getCorsOriginPattern } from './utils/cors-origin-pattern';
 
 const bootstrap = async () => {
-  const allowedOriginRegex = process.env.ALLOWED_REQUEST_ORIGIN_REGEX;
-  const corsOptions = allowedOriginRegex
+  const corsOriginPattern = getCorsOriginPattern();
+  const corsOptions = corsOriginPattern
     ? {
-        origin: new RegExp(allowedOriginRegex),
+        origin: corsOriginPattern,
         credentials: true,
       }
     : true;
