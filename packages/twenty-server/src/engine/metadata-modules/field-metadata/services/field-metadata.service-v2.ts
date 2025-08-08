@@ -27,8 +27,8 @@ import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-ob
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { addFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps.util';
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
-import { extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/extract-flat-object-metadata-maps-out-of-flat-object-metadata-maps-or-throw.util';
-import { extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/extract-flat-object-metadata-maps-out-of-flat-object-metadata-maps.util';
+import { getSubFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-or-throw.util';
+import { getSubFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
@@ -106,7 +106,7 @@ export class FieldMetadataServiceV2 {
     }
 
     const flatObjectMetadataMapsWithImpactedObject =
-      extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow({
+      getSubFlatObjectMetadataMapsOrThrow({
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
         objectMetadataIds: flatFieldMetadatasToDelete.map(
           (flatFieldMetadataToDelete) =>
@@ -183,7 +183,7 @@ export class FieldMetadataServiceV2 {
     }
 
     const flatObjectMetadataMapsWithRelatedObjectMetadata =
-      extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMaps({
+      getSubFlatObjectMetadataMaps({
         flatObjectMetadataMaps,
         objectMetadataIds: [relatedFlatFieldMetadataToCreate.objectMetadataId],
       });
@@ -287,12 +287,12 @@ export class FieldMetadataServiceV2 {
 
     try {
       const fromFlatObjectMetadataMaps =
-        extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow({
+        getSubFlatObjectMetadataMapsOrThrow({
           flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
           objectMetadataIds: impactedObjectMetadataIds,
         });
       const toFlatObjectMetadataMaps =
-        extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow({
+        getSubFlatObjectMetadataMapsOrThrow({
           flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
           objectMetadataIds: impactedObjectMetadataIds,
         });

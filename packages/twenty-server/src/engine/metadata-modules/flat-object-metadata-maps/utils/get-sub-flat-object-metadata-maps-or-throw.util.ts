@@ -8,16 +8,16 @@ import {
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { addFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-with-field-maps-to-flat-object-metadata-maps-or-throw.util';
 
-export type ExtractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrowArgs =
+export type GetSubFlatObjectMetadataMapsOrThrowArgs =
   {
     objectMetadataIds: string[];
     flatObjectMetadataMaps: FlatObjectMetadataMaps;
   };
-export const extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow =
+export const getSubFlatObjectMetadataMapsOrThrow =
   ({
     flatObjectMetadataMaps: sourceFlatObjectMetadataMaps,
     objectMetadataIds,
-  }: ExtractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrowArgs): FlatObjectMetadataMaps => {
+  }: GetSubFlatObjectMetadataMapsOrThrowArgs): FlatObjectMetadataMaps => {
     return objectMetadataIds.reduce(
       (flatObjectMetadataMaps, objectMetadataId) => {
         const flatObjectMetadataWithFlatFieldMaps =
@@ -25,7 +25,7 @@ export const extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow =
 
         if (!isDefined(flatObjectMetadataWithFlatFieldMaps)) {
           throw new FlatObjectMetadataMapsException(
-            'extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow object metadata not found',
+            'getSubFlatObjectMetadataMapsOrThrow object metadata not found',
             FlatObjectMetadataMapsExceptionCode.OBJECT_METADATA_NOT_FOUND,
           );
         }
