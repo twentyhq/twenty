@@ -316,11 +316,13 @@
     "eslint-plugin-unicorn": "^51.0.1",
     "eslint-plugin-unused-imports": "^3.0.0",
     "http-server": "^14.1.1",
+    "husky": "^9.1.7",
     "jest": "29.7.0",
     "jest-environment-jsdom": "30.0.0-beta.3",
     "jest-environment-node": "^29.4.1",
     "jest-fetch-mock": "^3.0.3",
     "jsdom": "~22.1.0",
+    "lint-staged": "^16.1.4",
     "msw": "^2.0.11",
     "msw-storybook-addon": "2.0.0--canary.122.b3ed3b1.0",
     "nx": "18.3.3",
@@ -366,7 +368,32 @@
   "nx": {},
   "scripts": {
     "start": "npx concurrently --kill-others 'npx nx run-many -t start -p twenty-server twenty-front' 'npx wait-on tcp:3000 && npx nx run twenty-server:worker'",
-    "fix-twenty-server": "npx prettier \"packages/twenty-server/src/**/*.ts\" --write && npx nx lint twenty-server --fix"
+    "fix-twenty-server": "npx prettier \"packages/twenty-server/src/**/*.ts\" --write && npx nx lint twenty-server --fix",
+    "prepare": "husky",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "type-check": "tsc --noEmit --skipLibCheck",
+    "lint:ts": "tsc --noEmit --skipLibCheck && eslint --fix",
+    "fix:changed": "git diff --name-only --diff-filter=ACM | grep -E '\\.(ts|tsx|js|jsx)$' | xargs -r eslint --fix && git diff --name-only --diff-filter=ACM | grep -E '\\.(ts|tsx|js|jsx|json|md)$' | xargs -r prettier --write"
+  },
+  "lint-staged": {
+    "packages/twenty-front/src/**/*.{ts,tsx,js,jsx}": [
+      "prettier --write",
+      "eslint --fix",
+      "yarn run type-check"
+    ],
+    "packages/twenty-server/src/**/*.{ts,js}": [
+      "prettier --write",
+      "eslint --fix",
+      "npm run type-check"
+    ],
+    "*.{ts,tsx,js,jsx}": [
+      "prettier --write",
+      "eslint --fix",
+      "yarn run type-check"
+    ]
   },
   "workspaces": {
     "packages": [
