@@ -6376,15 +6376,15 @@ msgstr "Doğrulama sırasında bir sorunla karşılaştık"
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "10MB'nin altındaki kare PNG, JPEG ve GIF'lerinizi destekliyoruz"
 
+#. js-lingui-id: KIfYq0
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "We will send a POST request to this endpoint for each new event in application/json format"
+msgstr ""
+
 #. js-lingui-id: K4HbuR
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "We will send a POST request to this endpoint for each new event in application/json format."
 msgstr ""
-
-#. js-lingui-id: ZS7vYp
-#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
-msgid "We will send POST requests to this endpoint for every new event"
-msgstr "Yeni her olay için bu uç noktaya POST istekleri göndereceğiz"
 
 #. js-lingui-id: PI4LiB
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx

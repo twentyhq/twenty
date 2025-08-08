@@ -6376,15 +6376,15 @@ msgstr "Problémát észleltünk a hitelesítés során"
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "Támogatjuk a négyzetes PNG-ket, JPEG-eket és GIF-eket 10MB alatt"
 
+#. js-lingui-id: KIfYq0
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "We will send a POST request to this endpoint for each new event in application/json format"
+msgstr ""
+
 #. js-lingui-id: K4HbuR
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "We will send a POST request to this endpoint for each new event in application/json format."
 msgstr ""
-
-#. js-lingui-id: ZS7vYp
-#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
-msgid "We will send POST requests to this endpoint for every new event"
-msgstr "Minden új eseményhez POST kéréseket küldünk erre az végpontra"
 
 #. js-lingui-id: PI4LiB
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
