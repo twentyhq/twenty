@@ -81,6 +81,25 @@ export const MKT_VARIANT_ATTRIBUTE_FIELD_IDS = {
   searchVector: '4d4928e3-c0f1-4bc7-a777-a051f54f0e3a',
 };
 
+export const MKT_ORDER_FIELD_IDS = {
+  name: 'a5faa4d8-e788-465f-811b-a311d07c0aa2',
+  orderCode: 'b6db3443-3b87-4fad-b27f-77ec6eb6e57a',
+  status: 'c384db65-a8ae-436f-a3c0-63175c91bd53',
+  totalAmount: '3d9ea0ed-00bf-4626-bb2a-659d80c39107',
+  currency: 'c7d46917-51ff-4dc3-a81e-6937e6f245ea',
+  note: '60377888-15dc-42df-b868-5015a1f43c2e',
+  requireContract: '3bc491e5-3e65-44d4-97d5-f71300ab3d41',
+
+  // TODO: check if this can be deleted
+  items: '5c818b2a-bd61-4423-b1bc-ac89781f4324',
+  person: '4d6b6ef3-6d6b-4323-9e4f-a7f01d97e68d',
+  position: '9d970deb-f1e5-4cc4-8b36-9ad83ca03ee5',
+  createdBy: '6d52adfa-9230-4df0-84fc-d51c646e8538',
+  accountOwner: '8e8ab1f5-3777-488f-ac6b-495f6b816c5f',
+  timelineActivities: '5ddc8d4c-e8f3-4b36-a367-3b812d9f7d02',
+  searchVector: '68623375-43f6-49ed-b29f-291f4cd34921',
+};
+
 //EXTENDS FROM TIMELINE_ACTIVITY_STANDARD_FIELD_IDS
 export const TIMELINE_ACTIVITY_MKT_FIELD_IDS = {
   mktCustomer: 'e42c00cb-dcc8-4682-ab98-2fa5f5c03f08',
@@ -89,6 +108,7 @@ export const TIMELINE_ACTIVITY_MKT_FIELD_IDS = {
   mktVariant: 'b6ecb5e1-14c8-4aaa-b715-e26ed4e81e62',
   mktValue: '9022a8c1-5948-473e-a361-1ddfb017a4f2',
   mktVariantAttribute: 'f656fa33-96e7-42a0-8f4f-f35dfcb0acae',
+  mktOrder: 'e0919045-74af-4800-bb40-ccef297253a9',
 };
 
 //EXTENDS FROM WORKSPACE_MEMBER_STANDARD_FIELD_IDS
@@ -98,4 +118,5 @@ export const WORKSPACE_MEMBER_MKT_FIELD_IDS = {
   accountOwnerForMktVariants: '27b1e5ab-980b-4c3c-8168-c8ed77e86363',
   accountOwnerForMktValues: '7bdf395c-9f67-4fc9-9149-e58ba5c135de',
   accountOwnerForMktVariantAttributes: '6cd393a4-db2a-4cc6-b444-8e9ca99f93ec',
+  accountOwnerForMktOrders: 'dbbf2703-8803-4c21-9b10-2cf38b045d4b',
 };
