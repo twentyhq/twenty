@@ -48,6 +48,11 @@ msgstr ""
 msgid "{fieldName} and {fieldName}Id cannot be both provided."
 msgstr ""
 
+#. js-lingui-id: ZkHTHm
+#: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
+msgid "{fieldType} fields cannot be unique."
+msgstr ""
+
 #. js-lingui-id: wapGcj
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "{message}"
@@ -517,6 +522,11 @@ msgstr ""
 #. js-lingui-id: FrNWt0
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot disable non-active workflow version"
+msgstr ""
+
+#. js-lingui-id: RATxdO
+#: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
+msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first."
 msgstr ""
 
 #. js-lingui-id: IDMgr/
@@ -2145,6 +2155,11 @@ msgstr ""
 #. js-lingui-id: 3PRxO3
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Stage"
+msgstr ""
+
+#. js-lingui-id: t5U1Cv
+#: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
+msgid "Standard fields cannot be unique."
 msgstr ""
 
 #. js-lingui-id: D3iCkb
