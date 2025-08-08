@@ -17,10 +17,11 @@ const { FieldInputEventContextProviderWithJestMocks } =
   getFieldInputEventContextProviderWithJestMocks();
 
 const ArrayValueSetterEffect = ({ value }: { value: string[] }) => {
-  const { setFieldValue } = useArrayField();
+  const { setFieldValue, setDraftValue } = useArrayField();
 
   useEffect(() => {
     setFieldValue(value);
+    setDraftValue(value);
   }, [setFieldValue, value]);
 
   return null;

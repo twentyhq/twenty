@@ -23,10 +23,11 @@ const { FieldInputEventContextProviderWithJestMocks } =
   getFieldInputEventContextProviderWithJestMocks();
 
 const EmailValueSetterEffect = ({ value }: { value: FieldEmailsValue }) => {
-  const { setFieldValue } = useEmailsField();
+  const { setFieldValue, setDraftValue } = useEmailsField();
 
   useEffect(() => {
     setFieldValue(value);
+    setDraftValue(value);
   }, [setFieldValue, value]);
 
   return null;

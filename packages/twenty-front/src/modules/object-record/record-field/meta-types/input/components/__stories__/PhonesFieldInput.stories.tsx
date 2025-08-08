@@ -19,10 +19,11 @@ const { FieldInputEventContextProviderWithJestMocks } =
   getFieldInputEventContextProviderWithJestMocks();
 
 const PhoneValueSetterEffect = ({ value }: { value: FieldPhonesValue }) => {
-  const { setFieldValue } = usePhonesField();
+  const { setFieldValue, setDraftValue } = usePhonesField();
 
   useEffect(() => {
     setFieldValue(value);
+    setDraftValue(value);
   }, [setFieldValue, value]);
 
   return null;
