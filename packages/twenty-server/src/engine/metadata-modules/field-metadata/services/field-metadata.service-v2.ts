@@ -11,7 +11,7 @@ import { In, Repository } from 'typeorm';
 import { MultipleMetadataValidationErrors } from 'src/engine/core-modules/error/multiple-metadata-validation-errors';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
-import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
@@ -223,7 +223,7 @@ export class FieldMetadataServiceV2 {
     const updatedFlatFieldMetadata = inputTranspilationResult.result;
 
     const validationErrors =
-      await this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadata(
+      await this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadataCreation(
         {
           existingFlatObjectMetadataMaps,
           flatFieldMetadataToValidate: updatedFlatFieldMetadata,
@@ -316,7 +316,7 @@ export class FieldMetadataServiceV2 {
         });
 
       const validationErrors =
-        await this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadata(
+        await this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadataCreation(
           {
             existingFlatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
             flatFieldMetadataToValidate: flatFieldMetadataToCreate,
