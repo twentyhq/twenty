@@ -8,7 +8,6 @@ describe('validateCanCreateUniqueIndex', () => {
     const field = {
       name: 'testField',
       type: FieldMetadataType.MORPH_RELATION,
-      isCustom: true,
     };
 
     expect(() => validateCanCreateUniqueIndex(field)).toThrow(
@@ -23,7 +22,6 @@ describe('validateCanCreateUniqueIndex', () => {
     const field = {
       name: 'testField',
       type: FieldMetadataType.RELATION,
-      isCustom: true,
     };
 
     expect(() => validateCanCreateUniqueIndex(field)).toThrow(
@@ -38,7 +36,6 @@ describe('validateCanCreateUniqueIndex', () => {
     const field = {
       name: 'testField',
       type: FieldMetadataType.FULL_NAME,
-      isCustom: true,
     };
 
     expect(() => validateCanCreateUniqueIndex(field)).toThrow(
@@ -53,7 +50,6 @@ describe('validateCanCreateUniqueIndex', () => {
     const field = {
       name: 'testField',
       type: FieldMetadataType.ADDRESS,
-      isCustom: true,
     };
 
     expect(() => validateCanCreateUniqueIndex(field)).toThrow(

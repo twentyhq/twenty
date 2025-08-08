@@ -12,20 +12,26 @@ type SettingsDataModelFieldTextFormProps = {
   disabled?: boolean;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'defaultValue' | 'settings'
+    | 'icon'
+    | 'label'
+    | 'type'
+    | 'defaultValue'
+    | 'settings'
+    | 'isUnique'
+    | 'isCustom'
   >;
 };
 
-export const textFieldDefaultValueSchema = z.object({
+const textFieldDefaultValueSchema = z.object({
   displayedMaxRows: z.number().nullable(),
 });
 
-export const settingsDataModelFieldtextFormSchema = z.object({
+export const settingsDataModelFieldTextFormSchema = z.object({
   settings: textFieldDefaultValueSchema,
 });
 
 export type SettingsDataModelFieldTextFormValues = z.infer<
-  typeof settingsDataModelFieldtextFormSchema
+  typeof settingsDataModelFieldTextFormSchema
 >;
 
 export const SettingsDataModelFieldTextForm = ({
@@ -46,25 +52,23 @@ export const SettingsDataModelFieldTextForm = ({
         const displayedMaxRows = value?.displayedMaxRows ?? 0;
 
         return (
-          <>
-            <SettingsOptionCardContentSelect
-              Icon={IconTextWrap}
-              title={t`Wrap on record pages`}
-              description={t`Display text on multiple lines`}
-            >
-              <Select<number>
-                dropdownId="text-wrap"
-                value={displayedMaxRows}
-                onChange={(value) => onChange({ displayedMaxRows: value })}
-                disabled={disabled}
-                options={TEXT_DATA_MODEL_SELECT_OPTIONS.map((option) => ({
-                  ...option,
-                  label: t(option.label),
-                }))}
-                selectSizeVariant="small"
-              />
-            </SettingsOptionCardContentSelect>
-          </>
+          <SettingsOptionCardContentSelect
+            Icon={IconTextWrap}
+            title={t`Wrap on record pages`}
+            description={t`Display text on multiple lines`}
+          >
+            <Select<number>
+              dropdownId="text-wrap"
+              value={displayedMaxRows}
+              onChange={(value) => onChange({ displayedMaxRows: value })}
+              disabled={disabled}
+              options={TEXT_DATA_MODEL_SELECT_OPTIONS.map((option) => ({
+                ...option,
+                label: t(option.label),
+              }))}
+              selectSizeVariant="small"
+            />
+          </SettingsOptionCardContentSelect>
         );
       }}
     />
