@@ -263,5 +263,5 @@
     "default": { "options": { "cacheableOperations": ["storybook:build"] } }
   },
   "useInferencePlugins": false,
-  "defaultBase": "main",
+  "defaultBase": "main"
 }
