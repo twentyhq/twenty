@@ -89,7 +89,7 @@ describe('create records with custom unique fields', () => {
 
     expect(secondRecordResponse.body.errors).toBeDefined();
     expect(secondRecordResponse.body.errors[0].message).toContain(
-      'Duplicate Unique Test Field. Please set a unique one.',
+      'Duplicate Unique Test Field with value uniqueValue123. Please set a unique one.',
     );
     expect(secondRecordResponse.body.data.createTestRecordObject).toBeNull();
   });
