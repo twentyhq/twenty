@@ -273,7 +273,7 @@ export class UserRoleService {
 
     if (
       !(
-        currentRole?.standardId &&
+        isDefined(currentRole?.standardId) &&
         currentRole.standardId === ADMIN_ROLE.standardId
       )
     ) {
