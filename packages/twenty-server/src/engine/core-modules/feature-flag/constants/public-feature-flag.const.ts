@@ -39,6 +39,16 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
         'https://twenty.com/images/lab/is-fields-permissions-enabled.png',
     },
   },
+  {
+    key: FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
+    metadata: {
+      label: 'Workflow Filter Step',
+      description:
+        'Continue to the next node only if the filter conditions are met',
+      imagePath:
+        'https://twenty.com/images/lab/is-worklfow-filtering-enabled.png',
+    },
+  },
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
         // {
