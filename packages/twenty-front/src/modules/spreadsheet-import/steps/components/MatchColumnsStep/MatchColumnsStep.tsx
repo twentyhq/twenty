@@ -146,6 +146,7 @@ export const MatchColumnsStep = ({
       columns: SpreadsheetColumns,
     ) => {
       try {
+        setIsLoading(true);
         const data = await matchColumnsStepHook(values, rawData, columns);
         setCurrentStepState({
           type: SpreadsheetImportStepType.validateData,

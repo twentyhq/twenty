@@ -1,9 +1,11 @@
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { generateDepthOneWithoutRelationsRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneWithoutRelationsRecordGqlFields';
 import { useBatchCreateManyRecords } from '@/object-record/hooks/useBatchCreateManyRecords';
 import { useBuildSpreadsheetImportFields } from '@/object-record/spreadsheet-import/hooks/useBuildSpreadSheetImportFields';
 import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
 import { spreadsheetImportFilterAvailableFieldMetadataItems } from '@/object-record/spreadsheet-import/utils/spreadsheetImportFilterAvailableFieldMetadataItems';
-import { spreadsheetImportGetUnicityRowHook } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityRowHook';
+import { spreadsheetImportGetUnicityTableHook } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityTableHook';
 import { SpreadsheetImportCreateRecordsBatchSize } from '@/spreadsheet-import/constants/SpreadsheetImportCreateRecordsBatchSize';
 import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
@@ -14,6 +16,7 @@ import { useSetRecoilState } from 'recoil';
 export const useOpenObjectRecordsSpreadsheetImportDialog = (
   objectNameSingular: string,
 ) => {
+  const apolloCoreClient = useApolloCoreClient();
   const { openSpreadsheetImportDialog } = useOpenSpreadsheetImportDialog();
   const { buildSpreadsheetImportFields } = useBuildSpreadsheetImportFields();
 
@@ -31,6 +34,9 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
 
   const { batchCreateManyRecords } = useBatchCreateManyRecords({
     objectNameSingular,
+    recordGqlFields: generateDepthOneWithoutRelationsRecordGqlFields({
+      objectMetadataItem,
+    }),
     mutationBatchSize: SpreadsheetImportCreateRecordsBatchSize,
     setBatchedRecordsCount: setCreatedRecordsProgress,
     abortController,
@@ -70,6 +76,11 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
             recordsToCreate: createInputs,
             upsert: true,
           });
+          await apolloCoreClient.refetchQueries({
+            updateCache: (cache) => {
+              cache.evict({ fieldName: objectMetadataItem.namePlural });
+            },
+          });
         } catch (error: any) {
           enqueueErrorSnackBar({
             apolloError: error,
@@ -81,7 +92,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
       onAbortSubmit: () => {
         abortController.abort();
       },
-      rowHook: spreadsheetImportGetUnicityRowHook(objectMetadataItem),
+      tableHook: spreadsheetImportGetUnicityTableHook(objectMetadataItem),
     });
   };
 
