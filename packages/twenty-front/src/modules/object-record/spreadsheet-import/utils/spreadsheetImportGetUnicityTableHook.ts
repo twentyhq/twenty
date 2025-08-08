@@ -56,7 +56,7 @@ export const spreadsheetImportGetUnicityTableHook = (
 
     for (const uniqueConstraint of uniqueConstraintsWithColumnNames) {
       const uniqueValues: Record<string, number> = {};
-      const duplicateIndices: number[] = [];
+      const duplicateIndices: Set<number> = new Set();
 
       table.forEach((row, index) => {
         const uniqueValue = getUniqueValues(row, uniqueConstraint);
@@ -67,8 +67,8 @@ export const spreadsheetImportGetUnicityTableHook = (
 
         if (isDefined(uniqueValues[uniqueValue])) {
           const originalIndex = uniqueValues[uniqueValue];
-          duplicateIndices.push(originalIndex);
-          duplicateIndices.push(index);
+          duplicateIndices.add(originalIndex);
+          duplicateIndices.add(index);
         } else {
           uniqueValues[uniqueValue] = index;
         }
