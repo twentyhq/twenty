@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { Theme } from '@/app/_components/ui/theme/theme';
-import { DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
+import { type DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
 import { getCardPath } from '@/shared-utils/getCardPath';
 
 const StyledContainer = styled(Link)`

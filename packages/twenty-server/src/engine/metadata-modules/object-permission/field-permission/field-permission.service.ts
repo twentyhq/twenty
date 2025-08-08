@@ -7,7 +7,10 @@ import { In, Repository } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  InternalServerError,
+  UserInputError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isFieldMetadataTypeRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-relation.util';
 import { type UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
@@ -74,6 +77,7 @@ export class FieldPermissionService {
 
     input.fieldPermissions.forEach((fieldPermission) => {
       this.validateFieldPermission({
+        allFieldPermissions: input.fieldPermissions,
         fieldPermission,
         objectMetadataMapsById,
         rolesPermissions,
@@ -169,16 +173,28 @@ export class FieldPermissionService {
   }
 
   private validateFieldPermission({
+    allFieldPermissions,
     fieldPermission,
     objectMetadataMapsById,
     rolesPermissions,
     role,
   }: {
+    allFieldPermissions: UpsertFieldPermissionsInput['fieldPermissions'];
     fieldPermission: UpsertFieldPermissionsInput['fieldPermissions'][0];
     objectMetadataMapsById: ObjectMetadataMaps['byId'];
     rolesPermissions: ObjectsPermissionsByRoleIdDeprecated;
     role: RoleEntity;
   }) {
+    const duplicateFieldPermissions = allFieldPermissions.filter(
+      (permission) =>
+        permission.fieldMetadataId === fieldPermission.fieldMetadataId,
+    );
+
+    if (duplicateFieldPermissions.length > 1) {
+      throw new UserInputError(
+        `Cannot accept more than one fieldPermission for field ${fieldPermission.fieldMetadataId} in input.`,
+      );
+    }
     if (
       ('canUpdateFieldValue' in fieldPermission &&
         fieldPermission.canUpdateFieldValue !== null &&
@@ -402,16 +418,32 @@ export class FieldPermissionService {
             fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY ||
             fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE
           ) {
-            const fieldPermissionInputHasFieldPermissionOnRelationTargetFieldMetadata =
+            const fieldPermissionsOnRelationTargetField =
               fieldPermissions.filter(
                 (fieldPermissionInput) =>
                   fieldPermissionInput.fieldMetadataId ===
                   fieldMetadata.relationTargetFieldMetadataId,
-              ).length > 0;
+              );
 
-            if (
-              fieldPermissionInputHasFieldPermissionOnRelationTargetFieldMetadata
-            ) {
+            if (fieldPermissionsOnRelationTargetField.length > 0) {
+              const firstFieldPermission =
+                fieldPermissionsOnRelationTargetField[0]; // validation rules guarantee there can only be one
+
+              const hasConflictingPermissions =
+                fieldPermission.canReadFieldValue !==
+                  firstFieldPermission.canReadFieldValue ||
+                fieldPermission.canUpdateFieldValue !==
+                  firstFieldPermission.canUpdateFieldValue;
+
+              if (hasConflictingPermissions) {
+                throw new UserInputError(
+                  'Conflicting field permissions found for relation target field',
+                  {
+                    userFriendlyMessage: `Contradicting field permissions have been detected on a relation field (${fieldMetadata.name}).`,
+                  },
+                );
+              }
+
               return;
             }
 

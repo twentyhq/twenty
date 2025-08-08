@@ -1,12 +1,7 @@
 {
-  "workspaceLayout": {
-    "appsDir": "packages",
-    "libsDir": "packages"
-  },
+  "workspaceLayout": { "appsDir": "packages", "libsDir": "packages" },
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*"
-    ],
+    "default": ["{projectRoot}/**/*"],
     "excludeStories": [
       "default",
       "!{projectRoot}/.storybook/*",
@@ -34,26 +29,14 @@
   "targetDefaults": {
     "build": {
       "cache": true,
-      "inputs": [
-        "^production",
-        "production"
-      ],
-      "dependsOn": [
-        "^build"
-      ]
+      "inputs": ["^production", "production"],
+      "dependsOn": ["^build"]
     },
-    "start": {
-      "cache": true,
-      "dependsOn": [
-        "^build"
-      ]
-    },
+    "start": { "cache": true, "dependsOn": ["^build"] },
     "lint": {
       "executor": "@nx/eslint:lint",
       "cache": true,
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
         "eslintConfig": "{projectRoot}/.eslintrc.cjs",
         "cache": true,
@@ -61,16 +44,10 @@
         "ignorePath": "{workspaceRoot}/.gitignore"
       },
       "configurations": {
-        "ci": {
-          "cacheStrategy": "content"
-        },
-        "fix": {
-          "fix": true
-        }
+        "ci": { "cacheStrategy": "content" },
+        "fix": { "fix": true }
       },
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "fmt": {
       "executor": "nx:run-commands",
@@ -84,16 +61,10 @@
         "write": false
       },
       "configurations": {
-        "ci": {
-          "cacheStrategy": "content"
-        },
-        "fix": {
-          "write": true
-        }
+        "ci": { "cacheStrategy": "content" },
+        "fix": { "write": true }
       },
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "typecheck": {
       "executor": "nx:run-commands",
@@ -102,85 +73,49 @@
         "cwd": "{projectRoot}",
         "command": "tsc -b tsconfig.json --incremental"
       },
-      "configurations": {
-        "watch": {
-          "watch": true
-        }
-      },
-      "dependsOn": [
-        "^build"
-      ]
+      "configurations": { "watch": { "watch": true } },
+      "dependsOn": ["^build"]
     },
     "test": {
       "executor": "@nx/jest:jest",
       "cache": true,
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "inputs": [
         "^default",
         "excludeStories",
         "{workspaceRoot}/jest.preset.js"
       ],
-      "outputs": [
-        "{projectRoot}/coverage"
-      ],
+      "outputs": ["{projectRoot}/coverage"],
       "options": {
         "jestConfig": "{projectRoot}/jest.config.ts",
         "coverage": true,
-        "coverageReporters": [
-          "text-summary"
-        ],
+        "coverageReporters": ["text-summary"],
         "cacheDirectory": "../../.cache/jest/{projectRoot}"
       },
       "configurations": {
-        "ci": {
-          "ci": true,
-          "maxWorkers": 3
-        },
-        "coverage": {
-          "coverageReporters": [
-            "lcov",
-            "text"
-          ]
-        },
-        "watch": {
-          "watch": true
-        }
+        "ci": { "ci": true, "maxWorkers": 3 },
+        "coverage": { "coverageReporters": ["lcov", "text"] },
+        "watch": { "watch": true }
       }
     },
-    "test:e2e": {
-      "cache": true,
-      "dependsOn": [
-        "^build"
-      ]
-    },
+    "test:e2e": { "cache": true, "dependsOn": ["^build"] },
     "storybook:build": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": [
-        "^default",
-        "excludeTests"
-      ],
-      "outputs": [
-        "{projectRoot}/{options.output-dir}"
-      ],
+      "inputs": ["^default", "excludeTests"],
+      "outputs": ["{projectRoot}/{options.output-dir}"],
       "options": {
         "cwd": "{projectRoot}",
         "command": "VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true storybook build --test",
         "output-dir": "storybook-static",
         "config-dir": ".storybook"
       },
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "storybook:serve:dev": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "{projectRoot}",
         "command": "storybook dev",
@@ -189,9 +124,7 @@
     },
     "storybook:serve:static": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        "storybook:build"
-      ],
+      "dependsOn": ["storybook:build"],
       "options": {
         "cwd": "{projectRoot}",
         "command": "npx http-server {args.staticDir} -a={args.host} --port={args.port} --silent={args.silent}",
@@ -204,13 +137,8 @@
     "storybook:test": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": [
-        "^default",
-        "excludeTests"
-      ],
-      "outputs": [
-        "{projectRoot}/coverage/storybook"
-      ],
+      "inputs": ["^default", "excludeTests"],
+      "outputs": ["{projectRoot}/coverage/storybook"],
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
@@ -226,10 +154,7 @@
     },
     "storybook:test:no-coverage": {
       "executor": "nx:run-commands",
-      "inputs": [
-        "^default",
-        "excludeTests"
-      ],
+      "inputs": ["^default", "excludeTests"],
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
@@ -256,11 +181,7 @@
         "reporter": "lcov",
         "checkCoverage": true
       },
-      "configurations": {
-        "text": {
-          "reporter": "text"
-        }
-      }
+      "configurations": { "text": { "reporter": "text" } }
     },
     "storybook:serve-and-test:static": {
       "executor": "nx:run-commands",
@@ -286,11 +207,7 @@
         ],
         "parallel": false
       },
-      "configurations": {
-        "ci": {
-          "ci": "--exit-zero-on-changes"
-        }
-      }
+      "configurations": { "ci": { "ci": "--exit-zero-on-changes" } }
     },
     "@nx/jest:jest": {
       "cache": true,
@@ -299,15 +216,8 @@
         "excludeStories",
         "{workspaceRoot}/jest.preset.js"
       ],
-      "options": {
-        "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "codeCoverage": true
-        }
-      }
+      "options": { "passWithNoTests": true },
+      "configurations": { "ci": { "ci": true, "codeCoverage": true } }
     },
     "@nx/eslint:lint": {
       "cache": true,
@@ -317,27 +227,14 @@
         "{workspaceRoot}/tools/eslint-rules/**/*"
       ]
     },
-    "@nx/vite:test": {
-      "cache": true,
-      "inputs": [
-        "default",
-        "^default"
-      ]
-    },
+    "@nx/vite:test": { "cache": true, "inputs": ["default", "^default"] },
     "@nx/vite:build": {
       "cache": true,
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "default",
-        "^default"
-      ]
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^default"]
     }
   },
-  "installation": {
-    "version": "18.3.3"
-  },
+  "installation": { "version": "21.3.11" },
   "generators": {
     "@nx/react": {
       "application": {
@@ -356,19 +253,11 @@
         "unitTestRunner": "jest",
         "projectNameAndRootFormat": "derived"
       },
-      "component": {
-        "style": "@emotion/styled"
-      }
+      "component": { "style": "@emotion/styled" }
     }
   },
   "tasksRunnerOptions": {
-    "default": {
-      "options": {
-        "cacheableOperations": [
-          "storybook:build"
-        ]
-      }
-    }
+    "default": { "options": { "cacheableOperations": ["storybook:build"] } }
   },
   "useInferencePlugins": false,
   "defaultBase": "main"
