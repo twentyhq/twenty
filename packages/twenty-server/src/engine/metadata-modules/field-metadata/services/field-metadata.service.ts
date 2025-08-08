@@ -56,6 +56,7 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { getObjectMetadataEntityFromObjectMetadataItemWithFieldsMap } from 'src/engine/metadata-modules/utils/get-object-metadata-entity-from-object-metadata-item-with-fields-map.util';
 import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
@@ -288,7 +289,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           await this.indexMetadataService.recomputeUniqueCustomIndexMetadataForField(
             {
               workspaceId: fieldMetadataInput.workspaceId,
-              objectMetadata: objectMetadataItemWithFieldMaps,
+              objectMetadata:
+                getObjectMetadataEntityFromObjectMetadataItemWithFieldsMap(
+                  objectMetadataItemWithFieldMaps,
+                ),
               updatedFieldMetadata: updatedFieldMetadata,
               queryRunner,
             },
@@ -322,7 +326,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       ) {
         await this.indexMetadataService.createIndexMetadata({
           workspaceId: fieldMetadataInput.workspaceId,
-          objectMetadata: objectMetadataItemWithFieldMaps,
+          objectMetadata:
+            getObjectMetadataEntityFromObjectMetadataItemWithFieldsMap(
+              objectMetadataItemWithFieldMaps,
+            ),
           fieldMetadataToIndex: [updatedFieldMetadata],
           isUnique: true,
           isCustom: true,
@@ -332,7 +339,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
         workspaceMigrationsOnCustomUniqueIndex.push(
           this.indexMetadataService.computeIndexCreationMigration({
-            objectMetadata: objectMetadataItemWithFieldMaps,
+            objectMetadata:
+              getObjectMetadataEntityFromObjectMetadataItemWithFieldsMap(
+                objectMetadataItemWithFieldMaps,
+              ),
             fieldMetadataToIndex: [updatedFieldMetadata],
             isUnique: true,
             indexWhereClause:
@@ -342,21 +352,27 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       }
 
       const shouldDeleteUniqueIndex =
-        isDefined(fieldMetadataInput.isUnique) &&
-        !fieldMetadataInput.isUnique &&
+        (fieldMetadataInput.isUnique === null ||
+          fieldMetadataInput.isUnique === false) &&
         existingFieldMetadata.isUnique;
 
       if (shouldDeleteUniqueIndex) {
         await this.indexMetadataService.deleteIndexMetadata({
           workspaceId: fieldMetadataInput.workspaceId,
-          objectMetadata: objectMetadataItemWithFieldMaps,
+          objectMetadata:
+            getObjectMetadataEntityFromObjectMetadataItemWithFieldsMap(
+              objectMetadataItemWithFieldMaps,
+            ),
           fieldMetadataToIndex: [updatedFieldMetadata],
           queryRunner,
         });
 
         workspaceMigrationsOnCustomUniqueIndex.push(
           this.indexMetadataService.computeIndexDeletionMigration({
-            objectMetadata: objectMetadataItemWithFieldMaps,
+            objectMetadata:
+              getObjectMetadataEntityFromObjectMetadataItemWithFieldsMap(
+                objectMetadataItemWithFieldMaps,
+              ),
             fieldMetadataToIndex: [updatedFieldMetadata],
             isUnique: fieldMetadataInput.isUnique ?? false,
           }),
@@ -873,7 +889,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     await this.indexMetadataService.createIndexMetadata({
       workspaceId,
-      objectMetadata,
+      objectMetadata:
+        getObjectMetadataEntityFromObjectMetadataItemWithFieldsMap(
+          objectMetadata,
+        ),
       fieldMetadataToIndex: [createdFieldMetadataItem],
       isUnique: true,
       isCustom: true,
@@ -882,7 +901,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     });
 
     return this.indexMetadataService.computeIndexCreationMigration({
-      objectMetadata,
+      objectMetadata:
+        getObjectMetadataEntityFromObjectMetadataItemWithFieldsMap(
+          objectMetadata,
+        ),
       fieldMetadataToIndex: [createdFieldMetadataItem],
       isUnique: true,
       indexWhereClause: computeUniqueIndexWhereClause(createdFieldMetadataItem),

@@ -21,7 +21,6 @@ import { type IndexType } from 'src/engine/metadata-modules/index-metadata/types
 import { computeUniqueIndexWhereClause } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-index-where-clause.util';
 import { generateDeterministicIndexName } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   type WorkspaceMigrationIndexAction,
@@ -51,7 +50,7 @@ export class IndexMetadataService {
     queryRunner,
   }: {
     workspaceId: string;
-    objectMetadata: ObjectMetadataEntity | ObjectMetadataItemWithFieldMaps;
+    objectMetadata: ObjectMetadataEntity;
     fieldMetadataToIndex: Partial<FieldMetadataEntity>[];
     isUnique: boolean;
     isCustom: boolean;
@@ -179,7 +178,7 @@ export class IndexMetadataService {
     queryRunner,
   }: {
     workspaceId: string;
-    objectMetadata: ObjectMetadataEntity | ObjectMetadataItemWithFieldMaps;
+    objectMetadata: ObjectMetadataEntity;
     updatedFieldMetadata: FieldMetadataEntity;
     queryRunner?: QueryRunner;
   }) {
@@ -279,7 +278,7 @@ export class IndexMetadataService {
     queryRunner,
   }: {
     workspaceId: string;
-    objectMetadata: ObjectMetadataEntity | ObjectMetadataItemWithFieldMaps;
+    objectMetadata: ObjectMetadataEntity;
     fieldMetadataToIndex: Partial<FieldMetadataEntity>[];
     queryRunner?: QueryRunner;
   }) {
@@ -325,7 +324,7 @@ export class IndexMetadataService {
     fieldMetadataToIndex,
     isUnique,
   }: {
-    objectMetadata: ObjectMetadataEntity | ObjectMetadataItemWithFieldMaps;
+    objectMetadata: ObjectMetadataEntity;
     fieldMetadataToIndex: Partial<FieldMetadataEntity>[];
     isUnique: boolean;
   }) {
@@ -358,7 +357,7 @@ export class IndexMetadataService {
     indexType,
     indexWhereClause,
   }: {
-    objectMetadata: ObjectMetadataEntity | ObjectMetadataItemWithFieldMaps;
+    objectMetadata: ObjectMetadataEntity;
     fieldMetadataToIndex: (Partial<FieldMetadataEntity> & {
       type: FieldMetadataType;
       name: string;
