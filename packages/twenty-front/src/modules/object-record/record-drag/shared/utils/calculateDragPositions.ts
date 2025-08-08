@@ -1,13 +1,12 @@
+import { RecordDragPositionData } from '@/object-record/record-drag/shared/types/RecordDragPositionData';
 import { getDraggedRecordPosition } from '@/object-record/record-drag/shared/utils/getDraggedRecordPosition';
 import { getIndexNeighboursElementsFromArray } from '~/utils/array/getIndexNeighboursElementsFromArray';
-
-import { RecordPositionData } from '@/object-record/record-drag/shared/types/dragTypes';
 
 type DragPositionCalculationParams = {
   recordIds: string[];
   recordsToMove: string[];
   destinationIndex: number;
-  recordPositionData: RecordPositionData[];
+  recordPositionData: RecordDragPositionData[];
 };
 
 export const calculateDragPositions = ({
@@ -50,7 +49,7 @@ export const calculateDragPositions = ({
     if (recordsToMove.length > 1) {
       const availableSpace = recordAfter?.position
         ? recordAfter.position - basePosition
-        : Math.max(1, recordsToMove.length * 0.0001);
+        : 1;
 
       const increment = availableSpace / (recordsToMove.length + 1);
       positions[recordId] = basePosition + (index + 1) * increment;

@@ -1,4 +1,4 @@
-import { RecordPositionData } from '@/object-record/record-drag/shared/types/dragTypes';
+import { RecordDragPositionData } from '@/object-record/record-drag/shared/types/RecordDragPositionData';
 import { processMultiDrag } from '@/object-record/record-drag/shared/utils/processMultiDrag';
 import { DropResult } from '@hello-pangea/dnd';
 
@@ -16,7 +16,11 @@ jest.mock(
 );
 
 describe('processMultiDrag', () => {
-  const mockRecordPositionData: RecordPositionData[] = [
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  const mockRecordPositionData: RecordDragPositionData[] = [
     { recordId: 'record-1', position: 1000 },
     { recordId: 'record-2', position: 2000 },
     { recordId: 'record-3', position: 3000 },

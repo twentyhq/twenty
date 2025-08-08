@@ -1,25 +1,16 @@
-import { RecordPositionData } from '@/object-record/record-drag/shared/types/dragTypes';
+import { MultiDragResult } from '@/object-record/record-drag/shared/types/MultiDragResult';
+import { RecordDragPositionData } from '@/object-record/record-drag/shared/types/RecordDragPositionData';
 import { calculateDragPositions } from '@/object-record/record-drag/shared/utils/calculateDragPositions';
 import { DropResult } from '@hello-pangea/dnd';
+import { isDefined } from 'twenty-shared/utils';
 
 type MultiDragContext = {
   result: DropResult;
   selectedRecordIds: string[];
-  recordPositionData: RecordPositionData[];
+  recordPositionData: RecordDragPositionData[];
   recordIds: string[];
   groupValue?: string | null;
   selectFieldName?: string;
-};
-
-type RecordUpdate = {
-  recordId: string;
-  position: number;
-  groupValue?: string | null;
-  selectFieldName?: string;
-};
-
-type MultiDragResult = {
-  recordUpdates: RecordUpdate[];
 };
 
 export const processMultiDrag = ({
@@ -35,22 +26,21 @@ export const processMultiDrag = ({
   }
 
   const destinationIndex = result.destination.index;
-  const recordsToMove = selectedRecordIds;
 
   const positions = calculateDragPositions({
     recordIds,
-    recordsToMove,
+    recordsToMove: selectedRecordIds,
     destinationIndex,
     recordPositionData,
   });
 
-  const recordUpdates = recordsToMove.map((recordId) => {
+  const recordUpdates = selectedRecordIds.map((recordId) => {
     const baseUpdate = {
       recordId,
       position: positions[recordId],
     };
 
-    if (groupValue !== undefined && selectFieldName !== undefined) {
+    if (isDefined(groupValue) && isDefined(selectFieldName)) {
       return {
         ...baseUpdate,
         groupValue,

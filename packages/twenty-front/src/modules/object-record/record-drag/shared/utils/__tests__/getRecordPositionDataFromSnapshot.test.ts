@@ -1,6 +1,7 @@
 import { Snapshot } from 'recoil';
 
 import { getRecordPositionDataFromSnapshot } from '@/object-record/record-drag/shared/utils/getRecordPositionDataFromSnapshot';
+import { isDefined } from 'twenty-shared/utils';
 
 describe('getRecordPositionDataFromSnapshot', () => {
   const createMockSnapshot = (recordData: Record<string, any>): Snapshot => {
@@ -8,7 +9,7 @@ describe('getRecordPositionDataFromSnapshot', () => {
       getLoadable: (atom: any) => {
         const match = atom.key.match(/recordStoreFamilyState__"([^"]+)"/);
         const recordId = match ? match[1] : atom.key;
-        if (recordData[recordId] !== undefined) {
+        if (isDefined(recordData[recordId])) {
           return {
             getValue: () => recordData[recordId],
             state: 'hasValue',

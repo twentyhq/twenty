@@ -1,18 +1,13 @@
-import { RecordPositionData } from '@/object-record/record-drag/shared/types/dragTypes';
+import { RecordDragPositionData } from '@/object-record/record-drag/shared/types/RecordDragPositionData';
+import { RecordDragUpdate } from '@/object-record/record-drag/shared/types/RecordDragUpdate';
 import { calculateDragPositions } from '@/object-record/record-drag/shared/utils/calculateDragPositions';
 import { DropResult } from '@hello-pangea/dnd';
+import { isDefined } from 'twenty-shared/utils';
 
 type SingleDragContext = {
   result: DropResult;
-  recordPositionData: RecordPositionData[];
+  recordPositionData: RecordDragPositionData[];
   recordIds: string[];
-  groupValue?: string | null;
-  selectFieldName?: string;
-};
-
-type SingleDragResult = {
-  recordId: string;
-  position: number;
   groupValue?: string | null;
   selectFieldName?: string;
 };
@@ -23,7 +18,7 @@ export const processSingleDrag = ({
   recordIds,
   groupValue,
   selectFieldName,
-}: SingleDragContext): SingleDragResult => {
+}: SingleDragContext): RecordDragUpdate => {
   const draggedRecordId = result.draggableId;
 
   if (!result.destination) {
@@ -45,7 +40,7 @@ export const processSingleDrag = ({
     position: positions[draggedRecordId],
   };
 
-  if (groupValue !== undefined && selectFieldName !== undefined) {
+  if (isDefined(groupValue) && isDefined(selectFieldName)) {
     return {
       ...baseResult,
       groupValue,

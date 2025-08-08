@@ -1,4 +1,4 @@
-import { DragOperationType } from '@/object-record/record-drag/shared/types/dragTypes';
+import { DragOperationType } from '@/object-record/record-drag/shared/types/DragOperationType';
 
 type DragOperationContext = {
   draggedRecordId: string;

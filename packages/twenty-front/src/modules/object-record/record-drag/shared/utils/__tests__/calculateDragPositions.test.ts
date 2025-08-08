@@ -1,8 +1,8 @@
-import { RecordPositionData } from '@/object-record/record-drag/shared/types/dragTypes';
+import { RecordDragPositionData } from '@/object-record/record-drag/shared/types/RecordDragPositionData';
 import { calculateDragPositions } from '@/object-record/record-drag/shared/utils/calculateDragPositions';
 
 describe('calculateDragPositions', () => {
-  const mockRecordPositionData: RecordPositionData[] = [
+  const mockRecordPositionData: RecordDragPositionData[] = [
     { recordId: 'record-1', position: 1 },
     { recordId: 'record-2', position: 2 },
     { recordId: 'record-3', position: 3 },
@@ -101,7 +101,7 @@ describe('calculateDragPositions', () => {
 
   describe('Edge cases', () => {
     it('should handle undefined positions', () => {
-      const dataWithUndefined: RecordPositionData[] = [
+      const dataWithUndefined: RecordDragPositionData[] = [
         { recordId: 'record-1', position: undefined },
         { recordId: 'record-2', position: 2 },
         { recordId: 'record-3', position: undefined },
@@ -130,7 +130,7 @@ describe('calculateDragPositions', () => {
     });
 
     it('should handle negative positions', () => {
-      const negativeData: RecordPositionData[] = [
+      const negativeData: RecordDragPositionData[] = [
         { recordId: 'record-1', position: -5 },
         { recordId: 'record-2', position: -3 },
         { recordId: 'record-3', position: -1 },
@@ -147,7 +147,7 @@ describe('calculateDragPositions', () => {
     });
 
     it('should handle very small gaps between positions', () => {
-      const tightData: RecordPositionData[] = [
+      const tightData: RecordDragPositionData[] = [
         { recordId: 'record-1', position: 1 },
         { recordId: 'record-2', position: 1.0001 },
         { recordId: 'record-3', position: 1.0002 },
