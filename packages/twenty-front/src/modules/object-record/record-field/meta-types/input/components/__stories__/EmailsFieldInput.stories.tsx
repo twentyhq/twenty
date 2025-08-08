@@ -28,7 +28,7 @@ const EmailValueSetterEffect = ({ value }: { value: FieldEmailsValue }) => {
   useEffect(() => {
     setFieldValue(value);
     setDraftValue(value);
-  }, [setFieldValue, value]);
+  }, [setFieldValue, value, setDraftValue]);
 
   return null;
 };

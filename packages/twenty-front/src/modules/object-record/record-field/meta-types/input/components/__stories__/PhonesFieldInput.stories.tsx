@@ -24,7 +24,7 @@ const PhoneValueSetterEffect = ({ value }: { value: FieldPhonesValue }) => {
   useEffect(() => {
     setFieldValue(value);
     setDraftValue(value);
-  }, [setFieldValue, value]);
+  }, [setFieldValue, value, setDraftValue]);
 
   return null;
 };
