@@ -1,4 +1,4 @@
-import { calculateRecordPositions } from '@/object-record/record-drag/board/utils/calculateRecordPositions';
+import { calculateDragPositions } from '@/object-record/record-drag/shared/utils/calculateDragPositions';
 
 import { getDraggedRecordPosition } from '@/object-record/record-drag/shared/utils/getDraggedRecordPosition';
 import { getIndexNeighboursElementsFromArray } from '~/utils/array/getIndexNeighboursElementsFromArray';
@@ -18,7 +18,7 @@ const mockGetDraggedRecordPosition = getDraggedRecordPosition as jest.Mock;
 const mockGetIndexNeighboursElementsFromArray =
   getIndexNeighboursElementsFromArray as jest.Mock;
 
-describe('calculateRecordPositions', () => {
+describe('calculateDragPositions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -41,14 +41,8 @@ describe('calculateRecordPositions', () => {
 
     mockGetDraggedRecordPosition.mockReturnValue(basePosition);
 
-    const result = calculateRecordPositions({
-      destinationRecordIds: [
-        'record-1',
-        'record-2',
-        'record-3',
-        'record-4',
-        'record-5',
-      ],
+    const result = calculateDragPositions({
+      recordIds: ['record-1', 'record-2', 'record-3', 'record-4', 'record-5'],
       recordsToMove: ['record-1'],
       destinationIndex: 2,
       recordPositionData: mockRecordPositionData,
@@ -70,8 +64,8 @@ describe('calculateRecordPositions', () => {
 
     mockGetDraggedRecordPosition.mockReturnValue(basePosition);
 
-    const result = calculateRecordPositions({
-      destinationRecordIds: ['record-2', 'record-3', 'record-4', 'record-5'],
+    const result = calculateDragPositions({
+      recordIds: ['record-2', 'record-3', 'record-4', 'record-5'],
       recordsToMove: ['record-1', 'record-6', 'record-7'],
       destinationIndex: 1,
       recordPositionData: mockRecordPositionData,
@@ -94,14 +88,8 @@ describe('calculateRecordPositions', () => {
 
     mockGetDraggedRecordPosition.mockReturnValue(basePosition);
 
-    calculateRecordPositions({
-      destinationRecordIds: [
-        'record-1',
-        'record-2',
-        'record-3',
-        'record-4',
-        'record-5',
-      ],
+    calculateDragPositions({
+      recordIds: ['record-1', 'record-2', 'record-3', 'record-4', 'record-5'],
       recordsToMove: ['record-1', 'record-3'],
       destinationIndex: 1,
       recordPositionData: mockRecordPositionData,
@@ -123,14 +111,8 @@ describe('calculateRecordPositions', () => {
 
     mockGetDraggedRecordPosition.mockReturnValue(basePosition);
 
-    calculateRecordPositions({
-      destinationRecordIds: [
-        'record-1',
-        'record-2',
-        'record-3',
-        'record-4',
-        'record-5',
-      ],
+    calculateDragPositions({
+      recordIds: ['record-1', 'record-2', 'record-3', 'record-4', 'record-5'],
       recordsToMove: ['record-3'],
       destinationIndex: 1,
       recordPositionData: mockRecordPositionData,
@@ -152,8 +134,8 @@ describe('calculateRecordPositions', () => {
 
     mockGetDraggedRecordPosition.mockReturnValue(basePosition);
 
-    const result = calculateRecordPositions({
-      destinationRecordIds: ['record-1', 'record-2', 'record-3'],
+    const result = calculateDragPositions({
+      recordIds: ['record-1', 'record-2', 'record-3'],
       recordsToMove: ['record-new'],
       destinationIndex: 0,
       recordPositionData: mockRecordPositionData,
@@ -175,14 +157,8 @@ describe('calculateRecordPositions', () => {
 
     mockGetDraggedRecordPosition.mockReturnValue(basePosition);
 
-    const result = calculateRecordPositions({
-      destinationRecordIds: [
-        'record-1',
-        'record-2',
-        'record-3',
-        'record-4',
-        'record-5',
-      ],
+    const result = calculateDragPositions({
+      recordIds: ['record-1', 'record-2', 'record-3', 'record-4', 'record-5'],
       recordsToMove: ['record-new'],
       destinationIndex: 5,
       recordPositionData: mockRecordPositionData,
@@ -210,14 +186,8 @@ describe('calculateRecordPositions', () => {
       { recordId: 'record-5', position: afterPosition },
     ];
 
-    const result = calculateRecordPositions({
-      destinationRecordIds: [
-        'record-1',
-        'record-2',
-        'record-3',
-        'record-4',
-        'record-5',
-      ],
+    const result = calculateDragPositions({
+      recordIds: ['record-1', 'record-2', 'record-3', 'record-4', 'record-5'],
       recordsToMove: ['record-a', 'record-b'],
       destinationIndex: 1,
       recordPositionData: recordPositionDataWithAfter,
@@ -239,14 +209,8 @@ describe('calculateRecordPositions', () => {
 
     mockGetDraggedRecordPosition.mockReturnValue(basePosition);
 
-    const result = calculateRecordPositions({
-      destinationRecordIds: [
-        'record-1',
-        'record-2',
-        'record-3',
-        'record-4',
-        'record-5',
-      ],
+    const result = calculateDragPositions({
+      recordIds: ['record-1', 'record-2', 'record-3', 'record-4', 'record-5'],
       recordsToMove: ['record-a', 'record-b'],
       destinationIndex: 5,
       recordPositionData: mockRecordPositionData,
@@ -266,8 +230,8 @@ describe('calculateRecordPositions', () => {
       });
       mockGetDraggedRecordPosition.mockReturnValue(2.5);
 
-      const result = calculateRecordPositions({
-        destinationRecordIds: ['record-1', 'record-2', 'record-3', 'record-4'],
+      const result = calculateDragPositions({
+        recordIds: ['record-1', 'record-2', 'record-3', 'record-4'],
         recordsToMove: ['record-3'],
         destinationIndex: 2,
         recordPositionData: mockRecordPositionData,
@@ -290,8 +254,8 @@ describe('calculateRecordPositions', () => {
       });
       mockGetDraggedRecordPosition.mockReturnValue(1);
 
-      const result = calculateRecordPositions({
-        destinationRecordIds: [],
+      const result = calculateDragPositions({
+        recordIds: [],
         recordsToMove: ['record-1'],
         destinationIndex: 0,
         recordPositionData: mockRecordPositionData,
@@ -316,8 +280,8 @@ describe('calculateRecordPositions', () => {
       });
       mockGetDraggedRecordPosition.mockReturnValue(2);
 
-      const result = calculateRecordPositions({
-        destinationRecordIds: ['record-1', 'record-2', 'record-3', 'record-4'],
+      const result = calculateDragPositions({
+        recordIds: ['record-1', 'record-2', 'record-3', 'record-4'],
         recordsToMove: ['record-2', 'record-3', 'record-5'],
         destinationIndex: 1,
         recordPositionData: mockRecordPositionData,
@@ -345,8 +309,8 @@ describe('calculateRecordPositions', () => {
       });
       mockGetDraggedRecordPosition.mockReturnValue(1.5);
 
-      const result = calculateRecordPositions({
-        destinationRecordIds: ['record-1', 'record-2'],
+      const result = calculateDragPositions({
+        recordIds: ['record-1', 'record-2'],
         recordsToMove: ['record-3', 'record-4'],
         destinationIndex: 1,
         recordPositionData: mockRecordPositionData,
@@ -373,8 +337,8 @@ describe('calculateRecordPositions', () => {
       });
       mockGetDraggedRecordPosition.mockReturnValue(1);
 
-      const result = calculateRecordPositions({
-        destinationRecordIds: [],
+      const result = calculateDragPositions({
+        recordIds: [],
         recordsToMove: ['record-1', 'record-2'],
         destinationIndex: 0,
         recordPositionData: mockRecordPositionData,
@@ -402,8 +366,8 @@ describe('calculateRecordPositions', () => {
       });
       mockGetDraggedRecordPosition.mockReturnValue(0.5);
 
-      const result = calculateRecordPositions({
-        destinationRecordIds: ['record-1', 'record-2'],
+      const result = calculateDragPositions({
+        recordIds: ['record-1', 'record-2'],
         recordsToMove: ['record-3'],
         destinationIndex: 0,
         recordPositionData: mockRecordPositionData,
@@ -426,8 +390,8 @@ describe('calculateRecordPositions', () => {
       });
       mockGetDraggedRecordPosition.mockReturnValue(2.5);
 
-      const result = calculateRecordPositions({
-        destinationRecordIds: ['record-1', 'record-2'],
+      const result = calculateDragPositions({
+        recordIds: ['record-1', 'record-2'],
         recordsToMove: ['record-3'],
         destinationIndex: 2,
         recordPositionData: mockRecordPositionData,

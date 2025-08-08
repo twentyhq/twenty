@@ -3,29 +3,31 @@ import { getIndexNeighboursElementsFromArray } from '~/utils/array/getIndexNeigh
 
 import { RecordPositionData } from '@/object-record/record-drag/shared/types/dragTypes';
 
-type PositionCalculationContext = {
-  destinationRecordIds: string[];
+type DragPositionCalculationParams = {
+  recordIds: string[];
   recordsToMove: string[];
   destinationIndex: number;
   recordPositionData: RecordPositionData[];
 };
 
-export const calculateRecordPositions = ({
-  destinationRecordIds,
+/**
+ * Calculates new positions for dragged records based on their destination.
+ * Shared logic between board columns and table rows.
+ */
+export const calculateDragPositions = ({
+  recordIds,
   recordsToMove,
   destinationIndex,
   recordPositionData,
-}: PositionCalculationContext): Record<string, number> => {
-  const otherRecordIdsInDestinationColumn = destinationRecordIds.filter(
+}: DragPositionCalculationParams): Record<string, number> => {
+  const otherRecordIds = recordIds.filter(
     (recordId: string) => !recordsToMove.includes(recordId),
   );
 
   const filteredRecordIds =
     recordsToMove.length === 1
-      ? otherRecordIdsInDestinationColumn
-      : destinationRecordIds.filter(
-          (recordId) => recordId !== recordsToMove[0],
-        );
+      ? otherRecordIds
+      : recordIds.filter((recordId) => recordId !== recordsToMove[0]);
 
   const { before: recordBeforeId, after: recordAfterId } =
     getIndexNeighboursElementsFromArray({
@@ -52,7 +54,7 @@ export const calculateRecordPositions = ({
     if (recordsToMove.length > 1) {
       const availableSpace = recordAfter?.position
         ? recordAfter.position - basePosition
-        : 1;
+        : Math.max(1, recordsToMove.length * 0.0001);
 
       const increment = availableSpace / (recordsToMove.length + 1);
       positions[recordId] = basePosition + (index + 1) * increment;

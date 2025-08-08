@@ -20,7 +20,7 @@ import { useEndBoardCardDrag } from '@/object-record/record-board/hooks/useEndBo
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { useRecordBoardDragOperations } from '@/object-record/record-board/hooks/useRecordBoardDragOperations';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
-import { useStartBoardCardDrag } from '@/object-record/record-board/hooks/useStartBoardCardDrag';
+import { useStartRecordDrag } from '@/object-record/record-drag/shared/hooks/useStartRecordDrag';
 import { RecordBoardDeactivateBoardCardEffect } from '@/object-record/record-board/record-board-card/components/RecordBoardDeactivateBoardCardEffect';
 import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
@@ -113,7 +113,7 @@ export const RecordBoard = () => {
     recordBoardId,
   );
 
-  const startDrag = useStartBoardCardDrag(recordBoardId);
+  const { startDrag } = useStartRecordDrag('board', recordBoardId);
   const endDrag = useEndBoardCardDrag(recordBoardId);
   const multiDragState = useBoardCardDragState(recordBoardId);
 

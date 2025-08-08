@@ -1,5 +1,5 @@
 import { DropResult } from '@hello-pangea/dnd';
-import { calculateTableRowPositions } from '@/object-record/record-drag/table/utils/calculateTableRowPositions';
+import { calculateDragPositions } from '@/object-record/record-drag/shared/utils/calculateDragPositions';
 import {
   RecordPositionData,
   MultiDragResult,
@@ -25,8 +25,8 @@ export const processMultiTableDrag = ({
   const destinationIndex = result.destination.index;
   const recordsToMove = selectedRecordIds;
 
-  const positions = calculateTableRowPositions({
-    allRecordIds,
+  const positions = calculateDragPositions({
+    recordIds: allRecordIds,
     recordsToMove,
     destinationIndex,
     recordPositionData,

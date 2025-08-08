@@ -1,16 +1,16 @@
 import { processSingleDrag } from '@/object-record/record-drag/board/utils/processSingleDrag';
 import { DropResult } from '@hello-pangea/dnd';
 
-import { calculateRecordPositions } from '@/object-record/record-drag/board/utils/calculateRecordPositions';
+import { calculateDragPositions } from '@/object-record/record-drag/shared/utils/calculateDragPositions';
 
 jest.mock(
-  '@/object-record/record-drag/board/utils/calculateRecordPositions',
+  '@/object-record/record-drag/shared/utils/calculateDragPositions',
   () => ({
-    calculateRecordPositions: jest.fn(),
+    calculateDragPositions: jest.fn(),
   }),
 );
 
-const mockCalculateRecordPositions = calculateRecordPositions as jest.Mock;
+const mockCalculateDragPositions = calculateDragPositions as jest.Mock;
 
 describe('processSingleDrag', () => {
   beforeEach(() => {
@@ -42,7 +42,7 @@ describe('processSingleDrag', () => {
   it('should process single drag operation correctly', () => {
     const expectedPosition = 2.5;
 
-    mockCalculateRecordPositions.mockReturnValue({
+    mockCalculateDragPositions.mockReturnValue({
       'record-1': expectedPosition,
     });
 
@@ -61,8 +61,8 @@ describe('processSingleDrag', () => {
       selectFieldName: 'status',
     });
 
-    expect(mockCalculateRecordPositions).toHaveBeenCalledWith({
-      destinationRecordIds: ['record-1', 'record-2', 'record-3'],
+    expect(mockCalculateDragPositions).toHaveBeenCalledWith({
+      recordIds: ['record-1', 'record-2', 'record-3'],
       recordsToMove: ['record-1'],
       destinationIndex: 1,
       recordPositionData: mockRecordPositionData,
@@ -77,7 +77,7 @@ describe('processSingleDrag', () => {
 
     const expectedPosition = 3.5;
 
-    mockCalculateRecordPositions.mockReturnValue({
+    mockCalculateDragPositions.mockReturnValue({
       'record-5': expectedPosition,
     });
 
@@ -96,8 +96,8 @@ describe('processSingleDrag', () => {
       selectFieldName: 'priority',
     });
 
-    expect(mockCalculateRecordPositions).toHaveBeenCalledWith({
-      destinationRecordIds: ['record-1', 'record-2', 'record-3'],
+    expect(mockCalculateDragPositions).toHaveBeenCalledWith({
+      recordIds: ['record-1', 'record-2', 'record-3'],
       recordsToMove: ['record-5'],
       destinationIndex: 1,
       recordPositionData: mockRecordPositionData,
@@ -107,7 +107,7 @@ describe('processSingleDrag', () => {
   it('should handle null group value', () => {
     const expectedPosition = 1.5;
 
-    mockCalculateRecordPositions.mockReturnValue({
+    mockCalculateDragPositions.mockReturnValue({
       'record-1': expectedPosition,
     });
 

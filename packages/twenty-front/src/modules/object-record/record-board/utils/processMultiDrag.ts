@@ -1,8 +1,6 @@
 import { DropResult } from '@hello-pangea/dnd';
-import {
-  calculateRecordPositions,
-  RecordPositionData,
-} from './calculateRecordPositions';
+import { calculateDragPositions } from '@/object-record/record-drag/shared/utils/calculateDragPositions';
+import { RecordPositionData } from '@/object-record/record-drag/shared/types/dragTypes';
 
 type MultiDragContext = {
   result: DropResult;
@@ -38,8 +36,8 @@ export const processMultiDrag = ({
 
   const recordsToMove = selectedRecordIds;
 
-  const positions = calculateRecordPositions({
-    destinationRecordIds,
+  const positions = calculateDragPositions({
+    recordIds: destinationRecordIds,
     recordsToMove,
     destinationIndex,
     recordPositionData,

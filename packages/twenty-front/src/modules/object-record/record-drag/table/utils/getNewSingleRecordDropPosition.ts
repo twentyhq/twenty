@@ -36,12 +36,14 @@ export const getNewSingleRecordDropPosition = ({
       )
     : null;
 
+  const afterDestinationIndex = isSourceIndexBeforeDestinationIndex
+    ? result.destination.index + 1
+    : result.destination.index;
+
   const recordAfterDestinationId =
-    allRecordIds[
-      isSourceIndexBeforeDestinationIndex
-        ? result.destination.index + 1
-        : result.destination.index
-    ];
+    afterDestinationIndex < allRecordIds.length
+      ? allRecordIds[afterDestinationIndex]
+      : undefined;
 
   const recordAfterDestination = recordAfterDestinationId
     ? getSnapshotValue(

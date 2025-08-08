@@ -1,6 +1,6 @@
-import { calculateTableRowPositions } from '@/object-record/record-drag/table/utils/calculateTableRowPositions';
+import { calculateDragPositions } from '@/object-record/record-drag/shared/utils/calculateDragPositions';
 
-describe('calculateTableRowPositions', () => {
+describe('calculateDragPositions', () => {
   const mockRecordPositionData = [
     { recordId: 'record-1', position: 1 },
     { recordId: 'record-2', position: 2 },
@@ -11,14 +11,8 @@ describe('calculateTableRowPositions', () => {
 
   describe('Single drag scenarios', () => {
     it('should calculate single record position correctly', () => {
-      const result = calculateTableRowPositions({
-        allRecordIds: [
-          'record-1',
-          'record-2',
-          'record-3',
-          'record-4',
-          'record-5',
-        ],
+      const result = calculateDragPositions({
+        recordIds: ['record-1', 'record-2', 'record-3', 'record-4', 'record-5'],
         recordsToMove: ['record-2'],
         destinationIndex: 3,
         recordPositionData: mockRecordPositionData,
@@ -29,8 +23,8 @@ describe('calculateTableRowPositions', () => {
     });
 
     it('should handle moving record to beginning', () => {
-      const result = calculateTableRowPositions({
-        allRecordIds: ['record-1', 'record-2', 'record-3'],
+      const result = calculateDragPositions({
+        recordIds: ['record-1', 'record-2', 'record-3'],
         recordsToMove: ['record-3'],
         destinationIndex: 0,
         recordPositionData: [
@@ -44,8 +38,8 @@ describe('calculateTableRowPositions', () => {
     });
 
     it('should handle moving record to end', () => {
-      const result = calculateTableRowPositions({
-        allRecordIds: ['record-1', 'record-2', 'record-3'],
+      const result = calculateDragPositions({
+        recordIds: ['record-1', 'record-2', 'record-3'],
         recordsToMove: ['record-1'],
         destinationIndex: 2,
         recordPositionData: [
@@ -59,14 +53,8 @@ describe('calculateTableRowPositions', () => {
     });
 
     it('should handle moving record backward (higher to lower index)', () => {
-      const result = calculateTableRowPositions({
-        allRecordIds: [
-          'record-1',
-          'record-2',
-          'record-3',
-          'record-4',
-          'record-5',
-        ],
+      const result = calculateDragPositions({
+        recordIds: ['record-1', 'record-2', 'record-3', 'record-4', 'record-5'],
         recordsToMove: ['record-5'],
         destinationIndex: 1,
         recordPositionData: mockRecordPositionData,
@@ -77,14 +65,8 @@ describe('calculateTableRowPositions', () => {
     });
 
     it('should handle moving record forward (lower to higher index)', () => {
-      const result = calculateTableRowPositions({
-        allRecordIds: [
-          'record-1',
-          'record-2',
-          'record-3',
-          'record-4',
-          'record-5',
-        ],
+      const result = calculateDragPositions({
+        recordIds: ['record-1', 'record-2', 'record-3', 'record-4', 'record-5'],
         recordsToMove: ['record-1'],
         destinationIndex: 3,
         recordPositionData: mockRecordPositionData,
@@ -97,14 +79,8 @@ describe('calculateTableRowPositions', () => {
 
   describe('Multi-drag scenarios', () => {
     it('should calculate multiple record positions with proportional spacing', () => {
-      const result = calculateTableRowPositions({
-        allRecordIds: [
-          'record-1',
-          'record-2',
-          'record-3',
-          'record-4',
-          'record-5',
-        ],
+      const result = calculateDragPositions({
+        recordIds: ['record-1', 'record-2', 'record-3', 'record-4', 'record-5'],
         recordsToMove: ['record-1', 'record-3'],
         destinationIndex: 3,
         recordPositionData: mockRecordPositionData,
@@ -118,7 +94,7 @@ describe('calculateTableRowPositions', () => {
     });
 
     it('should handle non-contiguous multi-record selection', () => {
-      const allRecordIds = [
+      const recordIds = [
         'record-1',
         'record-2',
         'record-3',
@@ -135,8 +111,8 @@ describe('calculateTableRowPositions', () => {
         { recordId: 'record-6', position: 6 },
       ];
 
-      const result = calculateTableRowPositions({
-        allRecordIds,
+      const result = calculateDragPositions({
+        recordIds,
         recordsToMove: ['record-1', 'record-3', 'record-5'],
         destinationIndex: 1,
         recordPositionData,
@@ -153,14 +129,8 @@ describe('calculateTableRowPositions', () => {
     });
 
     it('should handle contiguous block of records', () => {
-      const result = calculateTableRowPositions({
-        allRecordIds: [
-          'record-1',
-          'record-2',
-          'record-3',
-          'record-4',
-          'record-5',
-        ],
+      const result = calculateDragPositions({
+        recordIds: ['record-1', 'record-2', 'record-3', 'record-4', 'record-5'],
         recordsToMove: ['record-2', 'record-3', 'record-4'],
         destinationIndex: 0,
         recordPositionData: mockRecordPositionData,
@@ -175,14 +145,8 @@ describe('calculateTableRowPositions', () => {
     });
 
     it('should handle multi-drag to end of list', () => {
-      const result = calculateTableRowPositions({
-        allRecordIds: [
-          'record-1',
-          'record-2',
-          'record-3',
-          'record-4',
-          'record-5',
-        ],
+      const result = calculateDragPositions({
+        recordIds: ['record-1', 'record-2', 'record-3', 'record-4', 'record-5'],
         recordsToMove: ['record-1', 'record-2'],
         destinationIndex: 4,
         recordPositionData: mockRecordPositionData,
@@ -194,10 +158,10 @@ describe('calculateTableRowPositions', () => {
     });
 
     it('should handle all records being moved', () => {
-      const allRecordIds = ['record-1', 'record-2', 'record-3'];
-      const result = calculateTableRowPositions({
-        allRecordIds,
-        recordsToMove: allRecordIds,
+      const recordIds = ['record-1', 'record-2', 'record-3'];
+      const result = calculateDragPositions({
+        recordIds,
+        recordsToMove: recordIds,
         destinationIndex: 0,
         recordPositionData: [
           { recordId: 'record-1', position: 1 },
@@ -217,8 +181,8 @@ describe('calculateTableRowPositions', () => {
 
   describe('Edge cases', () => {
     it('should handle destinationIndex 0 (very beginning)', () => {
-      const result = calculateTableRowPositions({
-        allRecordIds: ['record-1', 'record-2', 'record-3'],
+      const result = calculateDragPositions({
+        recordIds: ['record-1', 'record-2', 'record-3'],
         recordsToMove: ['record-3'],
         destinationIndex: 0,
         recordPositionData: [
@@ -238,8 +202,8 @@ describe('calculateTableRowPositions', () => {
         { recordId: 'record-3', position: 3 },
       ];
 
-      const result = calculateTableRowPositions({
-        allRecordIds: ['record-1', 'record-2', 'record-3'],
+      const result = calculateDragPositions({
+        recordIds: ['record-1', 'record-2', 'record-3'],
         recordsToMove: ['record-2'],
         destinationIndex: 1,
         recordPositionData: recordPositionDataWithUndefined,
@@ -257,8 +221,8 @@ describe('calculateTableRowPositions', () => {
         { recordId: 'record-3', position: 1.000000000000003 },
       ];
 
-      const result = calculateTableRowPositions({
-        allRecordIds: ['record-1', 'record-2', 'record-3'],
+      const result = calculateDragPositions({
+        recordIds: ['record-1', 'record-2', 'record-3'],
         recordsToMove: ['record-2'],
         destinationIndex: 1,
         recordPositionData: tightPositionData,
@@ -269,8 +233,8 @@ describe('calculateTableRowPositions', () => {
     });
 
     it('should handle negative positions', () => {
-      const result = calculateTableRowPositions({
-        allRecordIds: ['record-1', 'record-2', 'record-3'],
+      const result = calculateDragPositions({
+        recordIds: ['record-1', 'record-2', 'record-3'],
         recordsToMove: ['record-3'],
         destinationIndex: 0,
         recordPositionData: [
@@ -284,8 +248,8 @@ describe('calculateTableRowPositions', () => {
     });
 
     it('should handle zero positions', () => {
-      const result = calculateTableRowPositions({
-        allRecordIds: ['record-1', 'record-2', 'record-3'],
+      const result = calculateDragPositions({
+        recordIds: ['record-1', 'record-2', 'record-3'],
         recordsToMove: ['record-1'],
         destinationIndex: 1,
         recordPositionData: [
@@ -307,8 +271,8 @@ describe('calculateTableRowPositions', () => {
       }));
       const recordsToMove = manyRecords.slice(0, 25);
 
-      const result = calculateTableRowPositions({
-        allRecordIds: manyRecords,
+      const result = calculateDragPositions({
+        recordIds: manyRecords,
         recordsToMove,
         destinationIndex: 12,
         recordPositionData: manyPositionData,
@@ -323,8 +287,8 @@ describe('calculateTableRowPositions', () => {
     });
 
     it('should simulate actual drag from react-beautiful-dnd', () => {
-      const result = calculateTableRowPositions({
-        allRecordIds: ['row-1', 'row-2', 'row-3', 'row-4', 'row-5'],
+      const result = calculateDragPositions({
+        recordIds: ['row-1', 'row-2', 'row-3', 'row-4', 'row-5'],
         recordsToMove: ['row-2'],
         destinationIndex: 3,
         recordPositionData: [
@@ -341,8 +305,8 @@ describe('calculateTableRowPositions', () => {
     });
 
     it('should simulate multi-select drag from react-beautiful-dnd', () => {
-      const result = calculateTableRowPositions({
-        allRecordIds: ['row-1', 'row-2', 'row-3', 'row-4', 'row-5'],
+      const result = calculateDragPositions({
+        recordIds: ['row-1', 'row-2', 'row-3', 'row-4', 'row-5'],
         recordsToMove: ['row-1', 'row-3'],
         destinationIndex: 3,
         recordPositionData: [

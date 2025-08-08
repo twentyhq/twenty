@@ -1,16 +1,16 @@
 import { processMultiDrag } from '@/object-record/record-drag/board/utils/processMultiDrag';
 import { DropResult } from '@hello-pangea/dnd';
 
-import { calculateRecordPositions } from '@/object-record/record-drag/board/utils/calculateRecordPositions';
+import { calculateDragPositions } from '@/object-record/record-drag/shared/utils/calculateDragPositions';
 
 jest.mock(
-  '@/object-record/record-drag/board/utils/calculateRecordPositions',
+  '@/object-record/record-drag/shared/utils/calculateDragPositions',
   () => ({
-    calculateRecordPositions: jest.fn(),
+    calculateDragPositions: jest.fn(),
   }),
 );
 
-const mockCalculateRecordPositions = calculateRecordPositions as jest.Mock;
+const mockCalculateDragPositions = calculateDragPositions as jest.Mock;
 
 describe('processMultiDrag', () => {
   beforeEach(() => {
@@ -42,7 +42,7 @@ describe('processMultiDrag', () => {
   it('should process multi-drag operation correctly', () => {
     const selectedRecordIds = ['record-1', 'record-3'];
 
-    mockCalculateRecordPositions.mockReturnValue({
+    mockCalculateDragPositions.mockReturnValue({
       'record-1': 2.5,
       'record-3': 2.5001,
     });
@@ -73,8 +73,8 @@ describe('processMultiDrag', () => {
       ],
     });
 
-    expect(mockCalculateRecordPositions).toHaveBeenCalledWith({
-      destinationRecordIds: ['record-1', 'record-2', 'record-3'],
+    expect(mockCalculateDragPositions).toHaveBeenCalledWith({
+      recordIds: ['record-1', 'record-2', 'record-3'],
       recordsToMove: selectedRecordIds,
       destinationIndex: 1,
       recordPositionData: mockRecordPositionData,
@@ -84,7 +84,7 @@ describe('processMultiDrag', () => {
   it('should handle single record in multi-drag correctly', () => {
     const selectedRecordIds = ['record-2'];
 
-    mockCalculateRecordPositions.mockReturnValue({
+    mockCalculateDragPositions.mockReturnValue({
       'record-2': 3.5,
     });
 
@@ -112,7 +112,7 @@ describe('processMultiDrag', () => {
   it('should handle null group value', () => {
     const selectedRecordIds = ['record-1', 'record-2'];
 
-    mockCalculateRecordPositions.mockReturnValue({
+    mockCalculateDragPositions.mockReturnValue({
       'record-1': 1.5,
       'record-2': 1.5001,
     });
@@ -165,7 +165,7 @@ describe('processMultiDrag', () => {
   it('should handle empty selectedRecordIds', () => {
     const selectedRecordIds: string[] = [];
 
-    mockCalculateRecordPositions.mockReturnValue({});
+    mockCalculateDragPositions.mockReturnValue({});
 
     const result = processMultiDrag({
       result: mockDropResult,
