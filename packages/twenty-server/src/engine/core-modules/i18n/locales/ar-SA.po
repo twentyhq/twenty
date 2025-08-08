@@ -53,6 +53,11 @@ msgstr "(النظام) العروض"
 msgid "{fieldName} and {fieldName}Id cannot be both provided."
 msgstr "لا يمكن توفير كل من {fieldName} و{fieldName}Id معاً."
 
+#. js-lingui-id: ZkHTHm
+#: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
+msgid "{fieldType} fields cannot be unique."
+msgstr ""
+
 #. js-lingui-id: wapGcj
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "{message}"
@@ -523,6 +528,11 @@ msgstr "لا يمكن الحذف، يرجى تحديث حقل معرف العل�
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot disable non-active workflow version"
 msgstr "لا يمكن تعطيل إصدار سير العمل غير النشط"
+
+#. js-lingui-id: RATxdO
+#: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
+msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first."
+msgstr ""
 
 #. js-lingui-id: IDMgr/
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
@@ -2151,6 +2161,11 @@ msgstr "الحجم"
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Stage"
 msgstr "المرحلة"
+
+#. js-lingui-id: t5U1Cv
+#: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
+msgid "Standard fields cannot be unique."
+msgstr ""
 
 #. js-lingui-id: D3iCkb
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts

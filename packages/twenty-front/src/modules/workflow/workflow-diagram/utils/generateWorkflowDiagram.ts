@@ -21,10 +21,12 @@ export const generateWorkflowDiagram = ({
   trigger,
   steps,
   defaultEdgeType,
+  isWorkflowBranchEnabled = false,
 }: {
   trigger: WorkflowTrigger | undefined;
   steps: Array<WorkflowStep>;
   defaultEdgeType: WorkflowDiagramEdgeType;
+  isWorkflowBranchEnabled?: boolean;
 }): WorkflowDiagram => {
   const nodes: Array<WorkflowDiagramNode> = [];
   const edges: Array<WorkflowDiagramEdge> = [];
@@ -34,7 +36,8 @@ export const generateWorkflowDiagram = ({
   } else {
     nodes.push(WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION);
 
-    const triggerNextStepIds = isDefined(steps) ? getRootStepIds(steps) : [];
+    const triggerNextStepIds =
+      isDefined(steps) && !isWorkflowBranchEnabled ? getRootStepIds(steps) : [];
 
     triggerNextStepIds.forEach((stepId) => {
       edges.push({
