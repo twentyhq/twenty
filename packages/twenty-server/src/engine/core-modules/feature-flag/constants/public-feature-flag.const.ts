@@ -54,7 +54,7 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     metadata: {
       label: 'Workflow Branches',
       description: 'Create multiple branches on your workflows',
-      imagePath: 'https://twenty.com/images/lab/is-worklfow-branch-enabled.png',
+      imagePath: 'https://twenty.com/images/lab/is-workflow-branch-enabled.png',
     },
   },
   ...(process.env.CLOUDFLARE_API_KEY
