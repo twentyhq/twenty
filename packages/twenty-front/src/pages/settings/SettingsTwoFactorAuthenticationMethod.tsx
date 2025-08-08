@@ -183,7 +183,7 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
                   >
                     Microsoft Authenticator
                   </a>{' '}
-                  . etc generate one-time passwords that are used as a second
+                  ,etc generate one-time passwords that are used as a second
                   factor to verify your identity when prompted during sign-in.
                 </Trans>
               </StyledInstructions>
@@ -192,9 +192,7 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
                 {!qrCode ? (
                   <Loader />
                 ) : (
-                  <>
                     <QRCode value={qrCode} size={100} />
-                  </>
                 )}
               </StyledQRCodeContainer>
 

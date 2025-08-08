@@ -28,7 +28,7 @@ const StyledOTPContainer = styled.div`
 
 const StyledSlotGroup = styled.div`
   display: flex;
-  gap: 0.4rem; /* reduced gap for tighter look */
+  gap: 0.4rem; 
 `;
 
 const StyledSlot = styled.div<{ isActive: boolean }>`
@@ -36,7 +36,7 @@ const StyledSlot = styled.div<{ isActive: boolean }>`
   width: 2.2rem;
   height: 3rem;
   font-size: 1.25rem;
-  font-weight: 500; /* match example boldness */
+  font-weight: 500; 
   font-family:
     system-ui,
     -apple-system,
