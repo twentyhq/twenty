@@ -48,36 +48,41 @@ export class WorkspaceSyncRoleService {
     });
 
     for (const roleComparatorResult of roleComparatorResults) {
-      if (roleComparatorResult.action === ComparatorAction.CREATE) {
-        const roleToCreate = roleComparatorResult.toFlatRole;
+      switch (roleComparatorResult.action) {
+        case ComparatorAction.CREATE: {
+          const roleToCreate = roleComparatorResult.toFlatRole;
 
-        const flatRoleData = removePropertiesFromRecord(roleToCreate, [
-          'uniqueIdentifier',
-          'id',
-        ]);
+          const flatRoleData = removePropertiesFromRecord(roleToCreate, [
+            'uniqueIdentifier',
+            'id',
+          ]);
 
-        await roleRepository.save({
-          ...flatRoleData,
-          workspaceId: context.workspaceId,
-        });
-      }
+          await roleRepository.save({
+            ...flatRoleData,
+            workspaceId: context.workspaceId,
+          });
+          break;
+        }
 
-      if (roleComparatorResult.action === ComparatorAction.UPDATE) {
-        const roleToUpdate = roleComparatorResult.toFlatRole;
+        case ComparatorAction.UPDATE: {
+          const roleToUpdate = roleComparatorResult.toFlatRole;
 
-        const flatRoleData = removePropertiesFromRecord(roleToUpdate, [
-          'id',
-          'uniqueIdentifier',
-          'workspaceId',
-        ]);
+          const flatRoleData = removePropertiesFromRecord(roleToUpdate, [
+            'id',
+            'uniqueIdentifier',
+            'workspaceId',
+          ]);
 
-        await roleRepository.update({ id: roleToUpdate.id }, flatRoleData);
-      }
+          await roleRepository.update({ id: roleToUpdate.id }, flatRoleData);
+          break;
+        }
 
-      if (roleComparatorResult.action === ComparatorAction.DELETE) {
-        const roleToDelete = roleComparatorResult.fromFlatRole;
+        case ComparatorAction.DELETE: {
+          const roleToDelete = roleComparatorResult.fromFlatRole;
 
-        await roleRepository.delete({ id: roleToDelete.id });
+          await roleRepository.delete({ id: roleToDelete.id });
+          break;
+        }
       }
     }
   }
