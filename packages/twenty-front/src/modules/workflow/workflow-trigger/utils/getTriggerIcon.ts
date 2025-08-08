@@ -2,6 +2,7 @@ import { WorkflowTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 import { OTHER_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/OtherTriggerTypes';
+import { isNonEmptyString } from '@sniptt/guards';
 
 export const getTriggerIcon = (
   trigger: WorkflowTrigger,
@@ -9,7 +10,7 @@ export const getTriggerIcon = (
   if (
     trigger.settings &&
     'icon' in trigger.settings &&
-    typeof trigger.settings.icon === 'string'
+    isNonEmptyString(trigger?.settings?.icon)
   ) {
     return trigger.settings.icon;
   }
