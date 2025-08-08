@@ -169,7 +169,6 @@ type ValidateQueryIsPermittedOrThrowArgs = {
   objectsPermissions: ObjectsPermissionsDeprecated;
   objectMetadataMaps: ObjectMetadataMaps;
   shouldBypassPermissionChecks: boolean;
-  isFieldPermissionsEnabled?: boolean;
 };
 
 export const validateQueryIsPermittedOrThrow = ({
@@ -177,7 +176,6 @@ export const validateQueryIsPermittedOrThrow = ({
   objectsPermissions,
   objectMetadataMaps,
   shouldBypassPermissionChecks,
-  isFieldPermissionsEnabled,
 }: ValidateQueryIsPermittedOrThrowArgs) => {
   if (shouldBypassPermissionChecks) {
     return;
@@ -193,31 +191,29 @@ export const validateQueryIsPermittedOrThrow = ({
   let selectedColumns: string[] | '*' = [];
   let updatedColumns: string[] = [];
 
-  if (isFieldPermissionsEnabled) {
-    selectedColumns = getSelectedColumnsFromExpressionMap({
-      operationType,
-      expressionMap,
-      allFieldsSelected,
-    });
+  selectedColumns = getSelectedColumnsFromExpressionMap({
+    operationType,
+    expressionMap,
+    allFieldsSelected,
+  });
 
-    if (operationType !== 'select') {
-      const valuesSet = expressionMap.valuesSet;
+  if (operationType !== 'select') {
+    const valuesSet = expressionMap.valuesSet;
 
-      if (Array.isArray(valuesSet)) {
-        updatedColumns = valuesSet.reduce((acc, value) => {
-          const keys = Object.keys(value);
+    if (Array.isArray(valuesSet)) {
+      updatedColumns = valuesSet.reduce((acc, value) => {
+        const keys = Object.keys(value);
 
-          keys.forEach((key) => {
-            if (!acc.includes(key)) {
-              acc.push(key);
-            }
-          });
+        keys.forEach((key) => {
+          if (!acc.includes(key)) {
+            acc.push(key);
+          }
+        });
 
-          return acc;
-        }, []);
-      } else {
-        updatedColumns = Object.keys(valuesSet ?? {});
-      }
+        return acc;
+      }, []);
+    } else {
+      updatedColumns = Object.keys(valuesSet ?? {});
     }
   }
 

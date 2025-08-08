@@ -323,7 +323,6 @@ describe('WorkspaceEntityManager', () => {
       });
       expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
         entityName: 'test-entity',
-        isFieldPermissionsEnabled: true,
         operationType: 'update',
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
         objectsPermissions: mockPermissionOptions.objectRecordsPermissions,
