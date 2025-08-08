@@ -1,5 +1,7 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
+import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
+
 export class AddStandardIdToRole1754480368129 implements MigrationInterface {
   name = 'AddStandardIdToRole1754480368129';
 
@@ -7,7 +9,7 @@ export class AddStandardIdToRole1754480368129 implements MigrationInterface {
     await queryRunner.query(`ALTER TABLE "core"."role" ADD "standardId" uuid`);
 
     await queryRunner.query(
-      `UPDATE "core"."role" SET "standardId" = '20202020-0001-0001-0001-000000000001' WHERE "label" = 'Admin'`,
+      `UPDATE "core"."role" SET "standardId" = '${ADMIN_ROLE.standardId}' WHERE "label" = 'Admin'`,
     );
   }
 
