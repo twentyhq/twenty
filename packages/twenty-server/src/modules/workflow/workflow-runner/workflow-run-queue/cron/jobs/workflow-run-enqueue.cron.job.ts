@@ -116,6 +116,7 @@ export class WorkflowRunEnqueueJob {
           );
 
           await workflowRunRepository.update(workflowRunId, {
+            enqueuedAt: new Date().toISOString(),
             status: WorkflowRunStatus.ENQUEUED,
           });
 

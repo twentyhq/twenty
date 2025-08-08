@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
+import { type WorkflowRunStepInfo } from 'twenty-shared/src/workflow/types/WorkflowRunStateStepInfos';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
-import { type WorkflowRunStepInfo } from 'twenty-shared/src/workflow/types/WorkflowRunStateStepInfos';
 
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -45,9 +45,9 @@ export class WorkflowRunWorkspaceService {
   }: {
     workflowVersionId: string;
     createdBy: ActorMetadata;
-    workflowRunId?: string;
     status: WorkflowRunStatus.NOT_STARTED | WorkflowRunStatus.ENQUEUED;
     triggerPayload: object;
+    workflowRunId?: string;
   }) {
     const workspaceId =
       this.scopedWorkspaceContextFactory.create()?.workspaceId;
@@ -125,6 +125,8 @@ export class WorkflowRunWorkspaceService {
       status,
       position,
       state: initState,
+      enqueuedAt:
+        status === WorkflowRunStatus.ENQUEUED ? new Date().toISOString() : null,
     });
 
     await workflowRunRepository.insert(workflowRun);
