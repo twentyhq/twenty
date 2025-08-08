@@ -87,4 +87,6 @@ export class ViewFilterController {
 
     return { success: isDefined(deletedViewFilter) };
   }
+
+  // TODO: the destroy endpoint will be implemented when we settle on a strategy
 }

@@ -1,6 +1,7 @@
 import { TEST_NOT_EXISTING_VIEW_FILTER_GROUP_ID } from 'test/integration/constants/test-view-ids.constants';
 import { createViewFilterGroupOperationFactory } from 'test/integration/graphql/utils/create-view-filter-group-operation-factory.util';
 import { deleteViewFilterGroupOperationFactory } from 'test/integration/graphql/utils/delete-view-filter-group-operation-factory.util';
+import { destroyViewFilterGroupOperationFactory } from 'test/integration/graphql/utils/destroy-view-filter-group-operation-factory.util';
 import { findViewFilterGroupOperationFactory } from 'test/integration/graphql/utils/find-view-filter-group-operation-factory.util';
 import { findViewFilterGroupsOperationFactory } from 'test/integration/graphql/utils/find-view-filter-groups-operation-factory.util';
 import {
@@ -387,6 +388,44 @@ describe('View Filter Group Resolver', () => {
 
     it('should throw an error when deleting non-existent filter group', async () => {
       const operation = deleteViewFilterGroupOperationFactory({
+        viewFilterGroupId: TEST_NOT_EXISTING_VIEW_FILTER_GROUP_ID,
+      });
+      const response = await makeGraphqlAPIRequest(operation);
+
+      assertGraphQLErrorResponse(
+        response,
+        ErrorCode.NOT_FOUND,
+        generateViewFilterGroupExceptionMessage(
+          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_FILTER_GROUP_ID,
+        ),
+      );
+    });
+  });
+
+  describe('destroyCoreViewFilterGroup', () => {
+    it('should destroy an existing filter group', async () => {
+      const filterGroupData = createViewFilterGroupData(testViewId, {
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
+      });
+      const createOperation = createViewFilterGroupOperationFactory({
+        data: filterGroupData,
+      });
+      const createResponse = await makeGraphqlAPIRequest(createOperation);
+      const filterGroupId =
+        createResponse.body.data.createCoreViewFilterGroup.id;
+
+      const destroyOperation = destroyViewFilterGroupOperationFactory({
+        viewFilterGroupId: filterGroupId,
+      });
+      const response = await makeGraphqlAPIRequest(destroyOperation);
+
+      assertGraphQLSuccessfulResponse(response);
+      expect(response.body.data.destroyCoreViewFilterGroup).toBe(true);
+    });
+
+    it('should throw an error when destroying non-existent filter group', async () => {
+      const operation = destroyViewFilterGroupOperationFactory({
         viewFilterGroupId: TEST_NOT_EXISTING_VIEW_FILTER_GROUP_ID,
       });
       const response = await makeGraphqlAPIRequest(operation);
