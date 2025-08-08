@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react-vite';
 
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -23,7 +23,7 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { View } from '@/views/types/View';
-import { within } from '@storybook/test';
+import { within } from 'storybook/test';
 import { useSetRecoilState } from 'recoil';
 import {
   ComponentDecorator,

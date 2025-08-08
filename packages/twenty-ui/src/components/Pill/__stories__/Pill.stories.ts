@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { Pill } from '@ui/components/Pill/Pill';
 import { ComponentDecorator } from '../../../testing/decorators/ComponentDecorator';

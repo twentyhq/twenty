@@ -1,4 +1,8 @@
+import { createRequire } from "node:module";
+import { dirname, join } from "node:path";
 import { StorybookConfig } from '@storybook/react-vite';
+
+const require = createRequire(import.meta.url);
 
 const computeStoriesGlob = () => {
   if (process.env.STORYBOOK_SCOPE === 'pages') {
@@ -40,18 +44,17 @@ const config: StorybookConfig = {
     },
   },
   addons: [
-    '@storybook/addon-links',
-    '@storybook/addon-essentials',
-    '@storybook/addon-onboarding',
-    '@storybook/addon-interactions',
-    '@storybook/addon-coverage',
-    'storybook-dark-mode',
-    'storybook-addon-cookie',
-    'storybook-addon-pseudo-states',
-    'storybook-addon-mock-date'
+    getAbsolutePath("@storybook/addon-links"),
+    getAbsolutePath("@storybook/addon-onboarding"),
+    getAbsolutePath("@storybook/addon-coverage"),
+    getAbsolutePath("storybook-dark-mode"),
+    getAbsolutePath("storybook-addon-cookie"),
+    getAbsolutePath("storybook-addon-pseudo-states"),
+    getAbsolutePath("storybook-addon-mock-date"),
+    getAbsolutePath("@storybook/addon-docs")
   ],
   framework: {
-    name: '@storybook/react-vite',
+    name: getAbsolutePath("@storybook/react-vite"),
     options: {},
   },
   viteFinal: async (config) => {
@@ -69,3 +72,7 @@ const config: StorybookConfig = {
   logLevel: 'error',
 };
 export default config;
+
+function getAbsolutePath(value: string): any {
+  return dirname(require.resolve(join(value, "package.json")));
+}

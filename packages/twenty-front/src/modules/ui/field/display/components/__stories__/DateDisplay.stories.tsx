@@ -3,7 +3,7 @@ import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { FieldDateDisplayFormat } from '@/object-record/record-field/types/FieldMetadata';
 import { UserContext } from '@/users/contexts/UserContext';
 import { expect } from '@storybook/jest';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { within } from '@storybook/testing-library';
 import { DateDisplay } from '../DateDisplay';
 

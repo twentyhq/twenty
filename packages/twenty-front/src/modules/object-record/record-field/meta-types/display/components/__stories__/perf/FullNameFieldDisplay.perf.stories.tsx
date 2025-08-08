@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react-vite';
 
 import { FullNameFieldDisplay } from '@/object-record/record-field/meta-types/display/components/FullNameFieldDisplay';
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';

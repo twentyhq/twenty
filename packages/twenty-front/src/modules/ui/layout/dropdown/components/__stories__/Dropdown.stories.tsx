@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
-import { Decorator, Meta, StoryObj } from '@storybook/react';
-import { expect, userEvent, waitFor, within } from '@storybook/test';
-import { PlayFunction } from '@storybook/types';
+import { Decorator, Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { PlayFunction } from 'storybook/internal/types';
 import { useState } from 'react';
 
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';

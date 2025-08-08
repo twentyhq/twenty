@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ProgressBar } from '../ProgressBar';
 import { ComponentDecorator } from '@ui/testing/decorators/ComponentDecorator';
 import { useProgressAnimation } from '@ui/feedback/progress-bar/hooks/useProgressAnimation';

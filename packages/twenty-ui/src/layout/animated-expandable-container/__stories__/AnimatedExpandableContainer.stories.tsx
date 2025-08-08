@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ComponentDecorator } from '@ui/testing';
 import { useState } from 'react';
 import { AnimatedExpandableContainer } from '../components/AnimatedExpandableContainer';

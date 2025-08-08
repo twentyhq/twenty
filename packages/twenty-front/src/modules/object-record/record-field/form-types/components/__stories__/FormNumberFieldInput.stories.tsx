@@ -1,6 +1,6 @@
 import { expect } from '@storybook/jest';
-import { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
+import { Meta, StoryObj } from '@storybook/react-vite';
+import { within } from 'storybook/test';
 import { FormNumberFieldInput } from '../FormNumberFieldInput';
 
 const meta: Meta<typeof FormNumberFieldInput> = {

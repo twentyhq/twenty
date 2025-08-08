@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react-vite';
 
 import styled from '@emotion/styled';
 import { CommandMenuContextChipGroups } from '../CommandMenuContextChipGroups';

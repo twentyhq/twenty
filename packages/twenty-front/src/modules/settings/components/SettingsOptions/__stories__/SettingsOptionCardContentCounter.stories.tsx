@@ -1,6 +1,6 @@
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import styled from '@emotion/styled';
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { IconUsers } from 'twenty-ui/display';

@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react-vite';
 
 import { AddressFieldDisplay } from '@/object-record/record-field/meta-types/display/components/AddressFieldDisplay';
 import { FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';

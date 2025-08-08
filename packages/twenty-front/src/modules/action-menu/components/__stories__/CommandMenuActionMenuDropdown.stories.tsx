@@ -1,5 +1,5 @@
 import { expect, jest } from '@storybook/jest';
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react-vite';
 import { RecoilRoot } from 'recoil';
 
 import { CommandMenuActionMenuDropdown } from '@/action-menu/components/CommandMenuActionMenuDropdown';
@@ -8,7 +8,7 @@ import { createMockActionMenuActions } from '@/action-menu/mock/action-menu-acti
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { userEvent, waitFor, within } from '@storybook/test';
+import { userEvent, waitFor, within } from 'storybook/test';
 import {
   ComponentDecorator,
   RouterDecorator,

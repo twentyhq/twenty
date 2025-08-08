@@ -1,5 +1,5 @@
-import { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
+import { Meta, StoryObj } from '@storybook/react-vite';
+import { within } from 'storybook/test';
 
 import { FormCountryCodeSelectInput } from '../FormCountryCodeSelectInput';
 
