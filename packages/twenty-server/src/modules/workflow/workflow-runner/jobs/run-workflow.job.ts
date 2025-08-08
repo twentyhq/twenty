@@ -136,10 +136,7 @@ export class RunWorkflowJob {
       });
 
     if (workflowRun.status !== WorkflowRunStatus.RUNNING) {
-      throw new WorkflowRunException(
-        'Workflow is not running',
-        WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
-      );
+      return;
     }
 
     const lastExecutedStep = workflowRun.state?.flow?.steps?.find(
