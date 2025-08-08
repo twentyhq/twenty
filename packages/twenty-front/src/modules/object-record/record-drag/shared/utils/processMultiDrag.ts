@@ -2,6 +2,7 @@ import { MultiDragResult } from '@/object-record/record-drag/shared/types/MultiD
 import { RecordDragPositionData } from '@/object-record/record-drag/shared/types/RecordDragPositionData';
 import { calculateDragPositions } from '@/object-record/record-drag/shared/utils/calculateDragPositions';
 import { DropResult } from '@hello-pangea/dnd';
+import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 type MultiDragContext = {
@@ -40,7 +41,11 @@ export const processMultiDrag = ({
       position: positions[recordId],
     };
 
-    if (isDefined(groupValue) && isDefined(selectFieldName)) {
+    const shouldIncludeGroupFields =
+      isDefined(selectFieldName) &&
+      (isDefined(groupValue) || isNull(groupValue));
+
+    if (shouldIncludeGroupFields) {
       return {
         ...baseUpdate,
         groupValue,
