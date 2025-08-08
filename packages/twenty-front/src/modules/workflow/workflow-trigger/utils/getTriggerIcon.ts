@@ -7,13 +7,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 export const getTriggerIcon = (
   trigger: WorkflowTrigger,
 ): string | undefined => {
-  if (
-    trigger.settings &&
-    'icon' in trigger.settings &&
-    isNonEmptyString(trigger?.settings?.icon)
-  ) {
+  if (trigger.type === 'MANUAL' && isNonEmptyString(trigger.settings.icon)) {
     return trigger.settings.icon;
   }
+
   if (trigger.type === 'DATABASE_EVENT') {
     const eventName = splitWorkflowTriggerEventName(
       trigger.settings.eventName,
