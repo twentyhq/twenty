@@ -61,7 +61,6 @@ export class WorkflowRunEnqueueJob {
 
     for (const activeWorkspace of activeWorkspaces) {
       let currentlyEnqueuedWorkflowRunCount = 0;
-      let newlyEnqueuedWorkflowRunCount = 0;
 
       try {
         const workflowRunRepository =
@@ -77,6 +76,11 @@ export class WorkflowRunEnqueueJob {
           },
         });
 
+        await this.workflowRunQueueWorkspaceService.setWorkflowRunQueuedCount(
+          activeWorkspace.id,
+          currentlyEnqueuedWorkflowRunCount,
+        );
+
         const remainingWorkflowRunToEnqueueCount =
           WORKFLOW_RUN_QUEUE_THROTTLE_LIMIT - currentlyEnqueuedWorkflowRunCount;
 
@@ -88,7 +92,7 @@ export class WorkflowRunEnqueueJob {
 
         // Using raw query to avoid storing repository in cache
         const workflowRuns = await mainDataSource.query(
-          `SELECT id FROM ${schemaName}."workflowRun" WHERE status = '${WorkflowRunStatus.NOT_STARTED}' ORDER BY "createdAt" ASC`,
+          `SELECT id FROM ${schemaName}."workflowRun" WHERE status = '${WorkflowRunStatus.NOT_STARTED}' ORDER BY "createdAt" ASC LIMIT ${remainingWorkflowRunToEnqueueCount}`,
         );
 
         const workflowRunsToEnqueueCount = Math.min(
@@ -100,12 +104,18 @@ export class WorkflowRunEnqueueJob {
           continue;
         }
 
-        for (
-          let runIndex = 0;
-          runIndex < workflowRunsToEnqueueCount;
-          runIndex++
-        ) {
-          const workflowRunId = workflowRuns[runIndex].id;
+        const workflowRunIds = workflowRuns.map((workflowRun: WorkflowRunWorkspaceEntity) => workflowRun.id);
+
+        await workflowRunRepository.update(workflowRunIds, {
+          enqueuedAt: new Date().toISOString(),
+          status: WorkflowRunStatus.ENQUEUED,
+        });
+
+
+        for (const workflowRunId of workflowRunIds) {
+          await this.workflowRunQueueWorkspaceService.increaseWorkflowRunQueuedCount(
+            activeWorkspace.id,
+          );
 
           await this.messageQueueService.add<RunWorkflowJobData>(
             RunWorkflowJob.name,
@@ -114,12 +124,6 @@ export class WorkflowRunEnqueueJob {
               workspaceId: activeWorkspace.id,
             },
           );
-
-          await workflowRunRepository.update(workflowRunId, {
-            status: WorkflowRunStatus.ENQUEUED,
-          });
-
-          newlyEnqueuedWorkflowRunCount++;
         }
       } catch (error) {
         this.logger.error(
@@ -131,11 +135,6 @@ export class WorkflowRunEnqueueJob {
           key: MetricsKeys.WorkflowRunFailedToEnqueue,
           eventId: activeWorkspace.id,
         });
-      } finally {
-        await this.workflowRunQueueWorkspaceService.setWorkflowRunQueuedCount(
-          activeWorkspace.id,
-          currentlyEnqueuedWorkflowRunCount + newlyEnqueuedWorkflowRunCount,
-        );
       }
     }
   }

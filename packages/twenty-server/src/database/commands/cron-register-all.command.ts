@@ -10,6 +10,7 @@ import { CalendarOngoingStaleCronCommand } from 'src/modules/calendar/calendar-e
 import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-message-list-fetch.cron.command';
 import { MessagingMessagesImportCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-messages-import.cron.command';
 import { MessagingOngoingStaleCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-ongoing-stale.cron.command';
+import { CronWorkflowRunDequeueCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/cron-workflow-run-dequeue.cron.command';
 import { CronWorkflowRunEnqueueCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/cron-workflow-run-enqueue.cron.command';
 import { CronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/cron-trigger.cron.command';
 
@@ -31,6 +32,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly cleanupOrphanedFilesCronCommand: CleanupOrphanedFilesCronCommand,
     private readonly checkCustomDomainValidRecordsCronCommand: CheckCustomDomainValidRecordsCronCommand,
     private readonly cronWorkflowRunEnqueueCommand: CronWorkflowRunEnqueueCommand,
+    private readonly cronWorkflowRunDequeueCommand: CronWorkflowRunDequeueCommand,
   ) {
     super();
   }
@@ -75,6 +77,10 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'CronWorkflowRunEnqueue',
         command: this.cronWorkflowRunEnqueueCommand,
+      },
+      {
+        name: 'CronWorkflowRunDequeue',
+        command: this.cronWorkflowRunDequeueCommand,
       },
     ];
 
