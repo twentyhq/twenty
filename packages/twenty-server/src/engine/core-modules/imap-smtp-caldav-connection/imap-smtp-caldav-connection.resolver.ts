@@ -1,8 +1,15 @@
-import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  UseFilters,
+  UseGuards,
+  UsePipes,
+} from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -10,26 +17,23 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ConnectedImapSmtpCaldavAccount } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connected-account.dto';
 import { ImapSmtpCaldavConnectionSuccess } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection-success.dto';
-import {
-  AccountType,
-  ConnectionParameters,
-} from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
+import { EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
 import { ImapSmtpCaldavValidatorService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service';
 import { ImapSmtpCaldavService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Resolver()
 @UsePipes(ResolverValidationPipe)
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
-@UseGuards(SettingsPermissionsGuard(SettingPermissionType.WORKSPACE))
+@UseGuards(SettingsPermissionsGuard(PermissionFlagType.WORKSPACE))
 export class ImapSmtpCaldavResolver {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -39,40 +43,10 @@ export class ImapSmtpCaldavResolver {
     private readonly mailConnectionValidatorService: ImapSmtpCaldavValidatorService,
   ) {}
 
-  private async checkIfFeatureEnabled(
-    workspaceId: string,
-    accountType: AccountType,
-  ): Promise<void> {
-    if (accountType.type === 'IMAP') {
-      const isImapEnabled = await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_IMAP_ENABLED,
-        workspaceId,
-      );
-
-      if (!isImapEnabled) {
-        throw new UserInputError(
-          'IMAP feature is not enabled for this workspace',
-        );
-      }
-    }
-
-    if (accountType.type === 'SMTP') {
-      throw new UserInputError(
-        'SMTP feature is not enabled for this workspace',
-      );
-    }
-
-    if (accountType.type === 'CALDAV') {
-      throw new UserInputError(
-        'CALDAV feature is not enabled for this workspace',
-      );
-    }
-  }
-
   @Query(() => ConnectedImapSmtpCaldavAccount)
   @UseGuards(WorkspaceAuthGuard)
   async getConnectedImapSmtpCaldavAccount(
-    @Args('id') id: string,
+    @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ConnectedImapSmtpCaldavAccount> {
     const connectedAccountRepository =
@@ -102,38 +76,73 @@ export class ImapSmtpCaldavResolver {
 
   @Mutation(() => ImapSmtpCaldavConnectionSuccess)
   @UseGuards(WorkspaceAuthGuard)
-  async saveImapSmtpCaldav(
-    @Args('accountOwnerId') accountOwnerId: string,
+  async saveImapSmtpCaldavAccount(
+    @Args('accountOwnerId', { type: () => UUIDScalarType })
+    accountOwnerId: string,
     @Args('handle') handle: string,
-    @Args('accountType') accountType: AccountType,
     @Args('connectionParameters')
-    connectionParameters: ConnectionParameters,
+    connectionParameters: EmailAccountConnectionParameters,
     @AuthWorkspace() workspace: Workspace,
-    @Args('id', { nullable: true }) id?: string,
+    @Args('id', { type: () => UUIDScalarType, nullable: true }) id?: string,
   ): Promise<ImapSmtpCaldavConnectionSuccess> {
-    await this.checkIfFeatureEnabled(workspace.id, accountType);
-
-    const validatedParams =
-      this.mailConnectionValidatorService.validateProtocolConnectionParams(
-        connectionParameters,
+    const isImapSmtpCaldavFeatureFlagEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_IMAP_SMTP_CALDAV_ENABLED,
+        workspace.id,
       );
 
-    await this.ImapSmtpCaldavConnectionService.testImapSmtpCaldav(
-      validatedParams,
-      accountType.type,
+    if (!isImapSmtpCaldavFeatureFlagEnabled) {
+      throw new HttpException(
+        'IMAP, SMTP, CalDAV feature is not enabled for this workspace',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    const validatedParams = await this.validateAndTestConnectionParameters(
+      connectionParameters,
+      handle,
     );
 
-    await this.imapSmtpCaldavApisService.setupConnectedAccount({
+    await this.imapSmtpCaldavApisService.setupCompleteAccount({
       handle,
       workspaceMemberId: accountOwnerId,
       workspaceId: workspace.id,
-      connectionParams: validatedParams,
-      accountType: accountType.type,
+      connectionParameters: validatedParams,
       connectedAccountId: id,
     });
 
     return {
       success: true,
     };
+  }
+
+  private async validateAndTestConnectionParameters(
+    connectionParameters: EmailAccountConnectionParameters,
+    handle: string,
+  ): Promise<EmailAccountConnectionParameters> {
+    const validatedParams: EmailAccountConnectionParameters = {};
+    const protocols = ['IMAP', 'SMTP', 'CALDAV'] as const;
+
+    for (const protocol of protocols) {
+      const params = connectionParameters[protocol];
+
+      if (params) {
+        validatedParams[protocol] =
+          this.mailConnectionValidatorService.validateProtocolConnectionParams(
+            params,
+          );
+        const validatedProtocolParams = validatedParams[protocol];
+
+        if (validatedProtocolParams) {
+          await this.ImapSmtpCaldavConnectionService.testImapSmtpCaldav(
+            handle,
+            validatedProtocolParams,
+            protocol,
+          );
+        }
+      }
+    }
+
+    return validatedParams;
   }
 }

@@ -1,4 +1,6 @@
-import { Catch, ExceptionFilter } from '@nestjs/common';
+import { Catch, type ExceptionFilter } from '@nestjs/common';
+
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
   AuditException,
@@ -12,11 +14,9 @@ export class AuditExceptionFilter implements ExceptionFilter {
     switch (exception.code) {
       case AuditExceptionCode.INVALID_TYPE:
       case AuditExceptionCode.INVALID_INPUT:
-        throw new UserInputError(exception.message);
+        throw new UserInputError(exception);
       default: {
-        const _exhaustiveCheck: never = exception.code;
-
-        throw exception;
+        assertUnreachable(exception.code);
       }
     }
   }

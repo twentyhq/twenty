@@ -3,12 +3,12 @@ import { WorkflowVersion } from '@/workflow/types/Workflow';
 import { getStepOutputSchemaFamilyStateKey } from '@/workflow/utils/getStepOutputSchemaFamilyStateKey';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
+import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import {
   OutputSchema,
   StepOutputSchema,
 } from '@/workflow/workflow-variables/types/StepOutputSchema';
-import { getTriggerStepName } from '@/workflow/workflow-variables/utils/getTriggerStepName';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -41,7 +41,7 @@ export const useStepsOutputSchema = () => {
             id: TRIGGER_STEP_ID,
             name: isDefined(trigger.name)
               ? trigger.name
-              : getTriggerStepName(trigger),
+              : getTriggerDefaultLabel(trigger),
             icon: triggerIconKey,
             outputSchema: trigger.settings?.outputSchema as OutputSchema,
           };
@@ -60,27 +60,29 @@ export const useStepsOutputSchema = () => {
     [],
   );
 
-  const deleteStepOutputSchema = useRecoilCallback(
+  const deleteStepsOutputSchema = useRecoilCallback(
     ({ set }) =>
       ({
-        stepId,
+        stepIds,
         workflowVersionId,
       }: {
-        stepId: string;
+        stepIds: string[];
         workflowVersionId: string;
       }) => {
-        set(
-          stepsOutputSchemaFamilyState(
-            getStepOutputSchemaFamilyStateKey(workflowVersionId, stepId),
-          ),
-          null,
-        );
+        stepIds.forEach((stepId) => {
+          set(
+            stepsOutputSchemaFamilyState(
+              getStepOutputSchemaFamilyStateKey(workflowVersionId, stepId),
+            ),
+            null,
+          );
+        });
       },
     [],
   );
 
   return {
     populateStepsOutputSchema,
-    deleteStepOutputSchema,
+    deleteStepsOutputSchema,
   };
 };

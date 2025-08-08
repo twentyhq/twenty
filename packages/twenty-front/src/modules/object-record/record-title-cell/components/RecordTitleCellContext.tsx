@@ -1,3 +1,4 @@
+import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { createContext, ReactElement } from 'react';
 
 export type RecordTitleCellContextProps = {
@@ -6,15 +7,8 @@ export type RecordTitleCellContextProps = {
   displayModeContent?: ReactElement;
   loading?: boolean;
   isReadOnly?: boolean;
-};
-
-const defaultRecordTitleCellContextProp: RecordTitleCellContextProps = {
-  editModeContent: undefined,
-  editModeContentOnly: false,
-  displayModeContent: undefined,
-  loading: false,
-  isReadOnly: false,
+  containerType: RecordTitleCellContainerType;
 };
 
 export const RecordTitleCellContext =
-  createContext<RecordTitleCellContextProps>(defaultRecordTitleCellContextProp);
+  createContext<RecordTitleCellContextProps>({} as RecordTitleCellContextProps);

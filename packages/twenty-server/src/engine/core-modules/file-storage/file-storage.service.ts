@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { Readable } from 'stream';
+import { type Readable } from 'stream';
 
-import { StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
+import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 
@@ -69,5 +69,11 @@ export class FileStorageService implements StorageDriver {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
     return driver.checkFileExists(params);
+  }
+
+  checkFolderExists(folderPath: string): Promise<boolean> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    return driver.checkFolderExists(folderPath);
   }
 }

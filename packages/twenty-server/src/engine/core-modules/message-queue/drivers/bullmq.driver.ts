@@ -1,18 +1,24 @@
-import { OnModuleDestroy } from '@nestjs/common';
+import { type OnModuleDestroy } from '@nestjs/common';
 
-import { JobsOptions, MetricsTime, Queue, QueueOptions, Worker } from 'bullmq';
+import {
+  type JobsOptions,
+  MetricsTime,
+  Queue,
+  type QueueOptions,
+  Worker,
+} from 'bullmq';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import {
-  QueueCronJobOptions,
-  QueueJobOptions,
+  type QueueCronJobOptions,
+  type QueueJobOptions,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
-import { MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
-import { MessageQueueJob } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
-import { MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
+import { type MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
+import { type MessageQueueJob } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
+import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 
 export type BullMQDriverOptions = QueueOptions;

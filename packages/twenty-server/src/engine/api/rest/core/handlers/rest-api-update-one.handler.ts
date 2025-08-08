@@ -4,13 +4,12 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 
-import { Request } from 'express';
+import { type Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
-import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 
 @Injectable()
 export class RestApiUpdateOneHandler extends RestApiBaseHandler {
@@ -21,10 +20,12 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
       throw new BadRequestException('Record ID not found');
     }
 
-    const { objectMetadata, repository } =
+    const { objectMetadata, repository, restrictedFields } =
       await this.getRepositoryAndMetadataOrFail(request);
 
-    const recordToUpdate = await repository.findOneOrFail({
+    // assert the record exists
+    await repository.findOneOrFail({
+      select: { id: true },
       where: { id: recordId },
     });
 
@@ -34,18 +35,8 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
     });
 
     const updatedRecord = await repository.save({
-      ...recordToUpdate,
+      id: recordId,
       ...overriddenBody,
-    });
-
-    this.apiEventEmitterService.emitUpdateEvents({
-      existingRecords: [recordToUpdate],
-      records: [updatedRecord],
-      updatedFields: Object.keys(request.body),
-      authContext: this.getAuthContextFromRequest(request),
-      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-        objectMetadata.objectMetadataMapItem,
-      ),
     });
 
     const records = await this.getRecord({
@@ -53,6 +44,7 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
       repository,
       objectMetadata,
       depth: this.depthInputFactory.create(request),
+      restrictedFields,
     });
 
     const record = records[0];

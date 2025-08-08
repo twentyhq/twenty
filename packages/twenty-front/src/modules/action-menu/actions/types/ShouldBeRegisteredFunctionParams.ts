@@ -1,9 +1,9 @@
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { ObjectPermissions } from '@/object-record/cache/types/ObjectPermissions';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { ObjectPermissions } from 'twenty-shared/types';
 
 export type ShouldBeRegisteredFunctionParams = {
   objectMetadataItem?: ObjectMetadataItem;
@@ -20,6 +20,9 @@ export type ShouldBeRegisteredFunctionParams = {
   workflowWithCurrentVersion?: WorkflowWithCurrentVersion;
   viewType?: ActionViewType;
   getTargetObjectReadPermission: (
+    objectMetadataItemNameSingular: string,
+  ) => boolean;
+  getTargetObjectWritePermission: (
     objectMetadataItemNameSingular: string,
   ) => boolean;
 };

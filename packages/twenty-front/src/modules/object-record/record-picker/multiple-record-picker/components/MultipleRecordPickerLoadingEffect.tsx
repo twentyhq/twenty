@@ -1,24 +1,24 @@
 import { multipleRecordPickerIsFetchingMoreComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsFetchingMoreComponentState';
 import { multipleRecordPickerIsLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsLoadingComponentState';
 import { multipleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowSkeletonComponentState';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 export const MultipleRecordPickerLoadingEffect = () => {
   const [previousLoading, setPreviousLoading] = useState(false);
 
-  const loading = useRecoilComponentValueV2(
+  const loading = useRecoilComponentValue(
     multipleRecordPickerIsLoadingComponentState,
   );
 
-  const setMultipleRecordPickerShowSkeleton = useSetRecoilComponentStateV2(
+  const setMultipleRecordPickerShowSkeleton = useSetRecoilComponentState(
     multipleRecordPickerShouldShowSkeletonComponentState,
   );
 
-  const [multipleRecordPickerIsFetchingMore] = useRecoilComponentStateV2(
+  const [multipleRecordPickerIsFetchingMore] = useRecoilComponentState(
     multipleRecordPickerIsFetchingMoreComponentState,
   );
 

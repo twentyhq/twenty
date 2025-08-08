@@ -7,7 +7,7 @@ import {
   RecordFilterToRecordInputOperand,
 } from '@/object-record/record-filter/types/RecordFilter';
 import { FILTER_OPERANDS_MAP } from '@/object-record/record-filter/utils/getRecordFilterOperands';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 import { assertUnreachable, parseJson } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
@@ -150,9 +150,10 @@ const computeValueFromFilterNumber = (
   value: string,
 ) => {
   switch (operand) {
-    case ViewFilterOperand.GreaterThan:
+    //TODO: we shouln't create values from those filters as it makes no sense for the user
+    case ViewFilterOperand.GreaterThanOrEqual:
       return Number(value) + 1;
-    case ViewFilterOperand.LessThan:
+    case ViewFilterOperand.LessThanOrEqual:
       return Number(value) - 1;
     case ViewFilterOperand.IsNotEmpty:
       return Number(value);
@@ -205,13 +206,13 @@ const computeValueFromFilterRating = (
     case ViewFilterOperand.Is:
     case ViewFilterOperand.IsNotEmpty:
       return option.value;
-    case ViewFilterOperand.GreaterThan: {
+    case ViewFilterOperand.GreaterThanOrEqual: {
       const plusOne = options?.find(
         (opt) => opt.position === option.position + 1,
       )?.value;
       return plusOne ? plusOne : option.value;
     }
-    case ViewFilterOperand.LessThan: {
+    case ViewFilterOperand.LessThanOrEqual: {
       const minusOne = options?.find(
         (opt) => opt.position === option.position - 1,
       )?.value;
@@ -239,7 +240,7 @@ const computeValueFromFilterSelect = (
           return undefined;
         }
         return option.value;
-      } catch (error) {
+      } catch {
         return undefined;
       }
     case ViewFilterOperand.IsNot:
@@ -260,7 +261,7 @@ const computeValueFromFilterMultiSelect = (
       try {
         const parsedValue = parseJson<string[]>(value);
         return parsedValue ? parsedValue : undefined;
-      } catch (error) {
+      } catch {
         return undefined;
       }
     case ViewFilterOperand.DoesNotContain:

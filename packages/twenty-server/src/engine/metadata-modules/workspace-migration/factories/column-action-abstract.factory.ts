@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Logger } from '@nestjs/common';
 
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-import { WorkspaceColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-factory.interface';
-import { WorkspaceColumnActionOptions } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-options.interface';
+import { type WorkspaceColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-factory.interface';
+import { type WorkspaceColumnActionOptions } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-options.interface';
 
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
-  WorkspaceMigrationColumnAction,
+  type WorkspaceMigrationColumnAction,
   WorkspaceMigrationColumnActionType,
-  WorkspaceMigrationColumnAlter,
-  WorkspaceMigrationColumnCreate,
+  type WorkspaceMigrationColumnAlter,
+  type WorkspaceMigrationColumnCreate,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import {
   WorkspaceMigrationException,
@@ -27,8 +27,8 @@ export class ColumnActionAbstractFactory<T extends FieldMetadataType>
     action:
       | WorkspaceMigrationColumnActionType.CREATE
       | WorkspaceMigrationColumnActionType.ALTER,
-    currentFieldMetadata: FieldMetadataInterface<T> | undefined,
-    alteredFieldMetadata: FieldMetadataInterface<T>,
+    currentFieldMetadata: FieldMetadataEntity<T> | undefined,
+    alteredFieldMetadata: FieldMetadataEntity<T>,
     options?: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnAction[] {
     switch (action) {
@@ -59,7 +59,7 @@ export class ColumnActionAbstractFactory<T extends FieldMetadataType>
   }
 
   protected handleCreateAction(
-    _fieldMetadata: FieldMetadataInterface<T>,
+    _fieldMetadata: FieldMetadataEntity<T>,
     _options?: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnCreate[] {
     throw new WorkspaceMigrationException(
@@ -69,8 +69,8 @@ export class ColumnActionAbstractFactory<T extends FieldMetadataType>
   }
 
   protected handleAlterAction(
-    _currentFieldMetadata: FieldMetadataInterface<T>,
-    _alteredFieldMetadata: FieldMetadataInterface<T>,
+    _currentFieldMetadata: FieldMetadataEntity<T>,
+    _alteredFieldMetadata: FieldMetadataEntity<T>,
     _options?: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnAlter[] {
     throw new WorkspaceMigrationException(

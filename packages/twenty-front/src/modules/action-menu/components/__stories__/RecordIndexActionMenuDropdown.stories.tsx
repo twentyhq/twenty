@@ -9,8 +9,7 @@ import { createMockActionMenuActions } from '@/action-menu/mock/action-menu-acti
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 
-import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import {
   RouterDecorator,
   getCanvasElementForDropdownTesting,
@@ -31,15 +30,14 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
       <RecoilRoot
         initializeState={({ set }) => {
           set(
-            extractComponentState(
-              recordIndexActionMenuDropdownPositionComponentState,
-              'action-menu-dropdown-story',
-            ),
+            recordIndexActionMenuDropdownPositionComponentState.atomFamily({
+              instanceId: 'action-menu-dropdown-story',
+            }),
             { x: 10, y: 10 },
           );
 
           set(
-            isDropdownOpenComponentStateV2.atomFamily({
+            isDropdownOpenComponentState.atomFamily({
               instanceId: 'action-menu-dropdown-story-action-menu',
             }),
             true,

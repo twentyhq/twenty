@@ -5,7 +5,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   MessagingAddSingleMessageToCacheForImportJob,
-  MessagingAddSingleMessageToCacheForImportJobData,
+  type MessagingAddSingleMessageToCacheForImportJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-add-single-message-to-cache-for-import.job';
 
 type MessagingSingleMessageImportCommandOptions = {

@@ -7,7 +7,7 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 import {
   CalendarChannelSyncStage,
-  CalendarChannelWorkspaceEntity,
+  type CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
 

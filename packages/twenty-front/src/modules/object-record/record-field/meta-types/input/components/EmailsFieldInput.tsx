@@ -2,11 +2,12 @@ import { useEmailsField } from '@/object-record/record-field/meta-types/hooks/us
 import { EmailsFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/EmailsFieldMenuItem';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
 import { emailSchema } from '@/object-record/record-field/validation-schemas/emailSchema';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 type EmailsFieldInputProps = {
@@ -19,6 +20,8 @@ export const EmailsFieldInput = ({
   onClickOutside,
 }: EmailsFieldInputProps) => {
   const { persistEmailsField, fieldValue } = useEmailsField();
+  const { copyToClipboard } = useCopyToClipboard();
+  const { t } = useLingui();
 
   const emails = useMemo<string[]>(
     () =>
@@ -49,12 +52,16 @@ export const EmailsFieldInput = ({
     index === 0 && emails.length > 1;
   const getShowSetAsPrimaryButton = (index: number) => index > 0;
 
-  const setIsFieldInError = useSetRecoilComponentStateV2(
+  const setIsFieldInError = useSetRecoilComponentState(
     recordFieldInputIsFieldInErrorComponentState,
   );
 
   const handleError = (hasError: boolean, values: any[]) => {
     setIsFieldInError(hasError && values.length === 0);
+  };
+
+  const handleCopy = (email: string) => {
+    copyToClipboard(email, t`Email copied to clipboard`);
   };
 
   return (
@@ -81,14 +88,15 @@ export const EmailsFieldInput = ({
           dropdownId={`emails-${index}`}
           showPrimaryIcon={getShowPrimaryIcon(index)}
           showSetAsPrimaryButton={getShowSetAsPrimaryButton(index)}
+          showCopyButton={true}
           email={email}
           onEdit={handleEdit}
           onSetAsPrimary={handleSetPrimary}
           onDelete={handleDelete}
+          onCopy={handleCopy}
         />
       )}
       onError={handleError}
-      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
     />
   );
 };

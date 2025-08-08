@@ -1,6 +1,6 @@
 import { v4 } from 'uuid';
 
-import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 
 const tableName = 'favorite';
 

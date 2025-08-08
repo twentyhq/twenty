@@ -23,8 +23,10 @@ export type CurrentWorkspace = Pick<
   | 'customDomain'
   | 'workspaceUrls'
   | 'metadataVersion'
+  | 'isTwoFactorAuthenticationEnforced'
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers'> | null;
+  defaultAgent?: { id: string } | null;
 };
 
 export const currentWorkspaceState = createState<CurrentWorkspace | null>({

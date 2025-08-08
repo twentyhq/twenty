@@ -9,7 +9,6 @@ import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendInviteLinkEmail } from 'twenty-emails';
-import { APP_LOCALES } from 'twenty-shared/translations';
 import { IsNull, Repository } from 'typeorm';
 
 import {
@@ -25,14 +24,14 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { SendInvitationsOutput } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.output';
+import { type SendInvitationsOutput } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.output';
 import { castAppTokenToWorkspaceInvitationUtil } from 'src/engine/core-modules/workspace-invitation/utils/cast-app-token-to-workspace-invitation.util';
 import {
   WorkspaceInvitationException,
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -61,7 +60,7 @@ export class WorkspaceInvitationService {
           value: workspacePersonalInviteToken,
           type: AppTokenType.InvitationToken,
         },
-        relations: ['workspace'],
+        relations: { workspace: true },
       });
 
       if (!appToken) {
@@ -119,7 +118,7 @@ export class WorkspaceInvitationService {
         value: invitationToken,
         type: AppTokenType.InvitationToken,
       },
-      relations: ['workspace'],
+      relations: { workspace: true },
     });
 
     if (!appToken) {
@@ -298,12 +297,12 @@ export class WorkspaceInvitationService {
             lastName: sender.name.lastName,
           },
           serverUrl: this.twentyConfigService.get('SERVER_URL'),
-          locale: sender.locale as keyof typeof APP_LOCALES,
+          locale: sender.locale,
         };
 
         const emailTemplate = SendInviteLinkEmail(emailData);
-        const html = await render(emailTemplate);
-        const text = await render(emailTemplate, {
+        const html = render(emailTemplate);
+        const text = render(emailTemplate, {
           plainText: true,
         });
 

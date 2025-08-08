@@ -1,6 +1,7 @@
 export enum CommandMenuPages {
   Root = 'root',
   ViewRecord = 'view-record',
+  MergeRecords = 'merge-records',
   ViewEmailThread = 'view-email-thread',
   ViewCalendarEvent = 'view-calendar-event',
   EditRichText = 'edit-rich-text',
@@ -11,4 +12,6 @@ export enum CommandMenuPages {
   WorkflowStepEdit = 'workflow-step-edit',
   WorkflowRunStepView = 'workflow-run-step-view',
   SearchRecords = 'search-records',
+  AskAI = 'ask-ai',
+  ViewPreviousAIChats = 'view-previous-ai-chats',
 }

@@ -2,7 +2,7 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
 type RecordShowParentViewComponentState = {
   parentViewComponentId: string;
@@ -13,10 +13,8 @@ type RecordShowParentViewComponentState = {
 };
 
 export const contextStoreRecordShowParentViewComponentState =
-  createComponentStateV2<RecordShowParentViewComponentState | undefined | null>(
-    {
-      key: 'contextStoreRecordShowParentViewComponentState',
-      defaultValue: undefined,
-      componentInstanceContext: ContextStoreComponentInstanceContext,
-    },
-  );
+  createComponentState<RecordShowParentViewComponentState | undefined | null>({
+    key: 'contextStoreRecordShowParentViewComponentState',
+    defaultValue: undefined,
+    componentInstanceContext: ContextStoreComponentInstanceContext,
+  });

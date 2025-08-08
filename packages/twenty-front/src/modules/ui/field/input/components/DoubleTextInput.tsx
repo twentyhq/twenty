@@ -9,14 +9,14 @@ import {
 import { Key } from 'ts-key-enum';
 
 import { FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleText';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { isDefined } from 'twenty-shared/utils';
 import { splitFullName } from '~/utils/format/spiltFullName';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { StyledTextInput } from './TextInput';
-import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -29,11 +29,11 @@ const StyledContainer = styled.div`
 `;
 
 type DoubleTextInputProps = {
+  instanceId: string;
   firstValue: string;
   secondValue: string;
   firstValuePlaceholder: string;
   secondValuePlaceholder: string;
-  hotkeyScope: string;
   onEnter: (newDoubleTextValue: FieldDoubleText) => void;
   onEscape: (newDoubleTextValue: FieldDoubleText) => void;
   onTab?: (newDoubleTextValue: FieldDoubleText) => void;
@@ -47,11 +47,11 @@ type DoubleTextInputProps = {
 };
 
 export const DoubleTextInput = ({
+  instanceId,
   firstValue,
   secondValue,
   firstValuePlaceholder,
   secondValuePlaceholder,
-  hotkeyScope,
   onClickOutside,
   onEnter,
   onEscape,
@@ -87,33 +87,33 @@ export const DoubleTextInput = ({
 
   const [focusPosition, setFocusPosition] = useState<'left' | 'right'>('left');
 
-  useScopedHotkeys(
-    Key.Enter,
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Enter],
+    callback: () => {
       onEnter({
         firstValue: firstInternalValue,
         secondValue: secondInternalValue,
       });
     },
-    hotkeyScope,
-    [onEnter, firstInternalValue, secondInternalValue],
-  );
+    focusId: instanceId,
+    dependencies: [onEnter, firstInternalValue, secondInternalValue],
+  });
 
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: () => {
       onEscape({
         firstValue: firstInternalValue,
         secondValue: secondInternalValue,
       });
     },
-    hotkeyScope,
-    [onEscape, firstInternalValue, secondInternalValue],
-  );
+    focusId: instanceId,
+    dependencies: [onEscape, firstInternalValue, secondInternalValue],
+  });
 
-  useScopedHotkeys(
-    'tab',
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: ['tab'],
+    callback: () => {
       if (focusPosition === 'left') {
         setFocusPosition('right');
         secondValueInputRef.current?.focus();
@@ -124,13 +124,18 @@ export const DoubleTextInput = ({
         });
       }
     },
-    hotkeyScope,
-    [onTab, firstInternalValue, secondInternalValue, focusPosition],
-  );
+    focusId: instanceId,
+    dependencies: [
+      onTab,
+      firstInternalValue,
+      secondInternalValue,
+      focusPosition,
+    ],
+  });
 
-  useScopedHotkeys(
-    'shift+tab',
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: ['shift+tab'],
+    callback: () => {
       if (focusPosition === 'right') {
         setFocusPosition('left');
         firstValueInputRef.current?.focus();
@@ -141,9 +146,14 @@ export const DoubleTextInput = ({
         });
       }
     },
-    hotkeyScope,
-    [onShiftTab, firstInternalValue, secondInternalValue, focusPosition],
-  );
+    focusId: instanceId,
+    dependencies: [
+      onShiftTab,
+      firstInternalValue,
+      secondInternalValue,
+      focusPosition,
+    ],
+  });
 
   useListenClickOutside({
     refs: [containerRef],

@@ -1,4 +1,4 @@
-import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 
 /**
  * Interface for drivers that support database-backed configuration

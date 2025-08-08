@@ -4,14 +4,14 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  WorkspaceHealthIssue,
+  type WorkspaceHealthIssue,
   WorkspaceHealthIssueType,
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-issue.interface';
-import { WorkspaceHealthOptions } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-options.interface';
-import { WorkspaceTableStructure } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-table-definition.interface';
+import { type WorkspaceHealthOptions } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-options.interface';
+import { type WorkspaceTableStructure } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-table-definition.interface';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   computeColumnName,
   computeCompositeColumnName,
@@ -172,7 +172,16 @@ export class FieldMetadataHealthService {
           serializeDefaultValue(`'${option.value}'`),
         );
 
-        if (!enumValues.includes(columnDefaultValue)) {
+        if (!isDefined(enumValues)) {
+          issues.push({
+            type: WorkspaceHealthIssueType.COLUMN_OPTIONS_NOT_VALID,
+            fieldMetadata,
+            columnStructure,
+            message: `Column options of ${fieldMetadata.name} are not defined`,
+          });
+        }
+
+        if (isDefined(enumValues) && !enumValues.includes(columnDefaultValue)) {
           issues.push({
             type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID,
             fieldMetadata,
@@ -247,8 +256,17 @@ export class FieldMetadataHealthService {
       });
     }
 
+    if (!isDefined(fieldMetadata.options)) {
+      issues.push({
+        type: WorkspaceHealthIssueType.COLUMN_OPTIONS_NOT_VALID,
+        fieldMetadata,
+        message: `Column options of ${fieldMetadata.name} are not defined`,
+      });
+    }
+
     if (
       isEnumFieldMetadataType(fieldMetadata.type) &&
+      isDefined(fieldMetadata.options) &&
       !validateOptionsForType(fieldMetadata.type, fieldMetadata.options)
     ) {
       issues.push({
@@ -300,7 +318,7 @@ export class FieldMetadataHealthService {
             });
           } else {
             metadataDefaultValue.forEach((value) => {
-              if (!enumValues.includes(value)) {
+              if (isDefined(enumValues) && !enumValues.includes(value)) {
                 issues.push({
                   type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID,
                   fieldMetadata,
@@ -309,7 +327,10 @@ export class FieldMetadataHealthService {
               }
             });
           }
-        } else if (enumValues.includes(metadataDefaultValue as string)) {
+        } else if (
+          isDefined(enumValues) &&
+          !enumValues.includes(metadataDefaultValue as string)
+        ) {
           issues.push({
             type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID,
             fieldMetadata,

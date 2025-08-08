@@ -8,6 +8,8 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
 describe('updateOne', () => {
   describe('FieldMetadataService name/label sync', () => {
     let listingObjectId = '';
@@ -115,79 +117,59 @@ describe('updateOne', () => {
         'Name is not synced with label. Expected name: "testName", got newName',
       );
     });
-  });
 
-  describe('FieldMetadataService Enum Default Value Validation', () => {
-    let createdObjectMetadataId: string;
-
-    beforeEach(async () => {
-      const { data: listingObjectMetadata } = await createOneObjectMetadata({
+    it('should throw if the field name is not available because of other field with the same name', async () => {
+      await createOneFieldMetadata({
         input: {
-          labelSingular: LISTING_NAME_SINGULAR,
-          labelPlural: LISTING_NAME_PLURAL,
-          nameSingular: LISTING_NAME_SINGULAR,
-          namePlural: LISTING_NAME_PLURAL,
-          icon: 'IconBuildingSkyscraper',
-          isLabelSyncedWithName: true,
-        },
-      });
-
-      createdObjectMetadataId = listingObjectMetadata.createOneObject.id;
-    });
-
-    afterEach(async () => {
-      await deleteOneObjectMetadata({
-        input: { idToDelete: createdObjectMetadataId },
-      });
-    });
-
-    it('should throw an error if the default value is not in the options', async () => {
-      const { data: createdFieldMetadata } = await createOneFieldMetadata({
-        input: {
-          objectMetadataId: createdObjectMetadataId,
-          type: FieldMetadataType.SELECT,
-          name: 'testName',
+          objectMetadataId: listingObjectId,
+          type: FieldMetadataType.TEXT,
+          name: 'otherTestName',
           label: 'Test name',
-          isLabelSyncedWithName: true,
-          options: [
-            {
-              label: 'Option 1',
-              value: 'OPTION_1',
-              color: 'green',
-              position: 1,
-            },
-          ],
         },
       });
 
       const { errors } = await updateOneFieldMetadata({
         input: {
-          idToUpdate: createdFieldMetadata.createOneField.id,
-          updatePayload: {
-            defaultValue: "'OPTION_2'",
-          },
+          idToUpdate: testFieldId,
+          updatePayload: { name: 'testName' },
         },
-        gqlFields: `
-          id
-          name
-          label
-          isLabelSyncedWithName
-        `,
-        expectToFail: true,
       });
 
-      expect(errors).toMatchInlineSnapshot(`
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-      "userFriendlyMessage": "Default value "'OPTION_2'" must be one of the option values",
-    },
-    "message": "Default value "'OPTION_2'" must be one of the option values",
-    "name": "UserInputError",
-  },
-]
-`);
+      // Assert
+      expect(errors[0].message).toBe(
+        'Name "testName" is not available, check that it is not duplicating another field\'s name.',
+      );
+    });
+
+    it('should throw if the field name is not available because of other relation field using the same {name}Id', async () => {
+      // Arrange
+      await createOneFieldMetadata({
+        input: {
+          objectMetadataId: listingObjectId,
+          type: FieldMetadataType.RELATION,
+          name: 'children',
+          label: 'Children',
+          relationCreationPayload: {
+            targetObjectMetadataId: listingObjectId,
+            targetFieldLabel: 'parent',
+            targetFieldIcon: 'IconBuildingSkyscraper',
+            type: RelationType.ONE_TO_MANY,
+          },
+        },
+      });
+
+      // Act
+      const { errors } = await updateOneFieldMetadata({
+        input: {
+          idToUpdate: testFieldId,
+          updatePayload: { name: 'parentId' },
+        },
+      });
+
+      // Assert
+      expect(errors[0].message).toBe(
+        'Name "parentId" is not available, check that it is not duplicating another field\'s name.',
+      );
     });
   });
 });

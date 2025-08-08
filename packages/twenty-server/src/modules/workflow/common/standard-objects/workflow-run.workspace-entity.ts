@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -7,7 +8,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
@@ -21,17 +22,16 @@ import { WORKFLOW_RUN_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/wo
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-  FieldTypeAndNameMetadata,
+  type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { WorkflowRunStepInfo } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
+import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 export enum WorkflowRunStatus {
   NOT_STARTED = 'NOT_STARTED',
@@ -43,7 +43,7 @@ export enum WorkflowRunStatus {
 
 export type StepOutput = {
   id: string;
-  output: WorkflowExecutorOutput;
+  output: WorkflowActionOutput;
 };
 
 export type WorkflowRunOutput = {
@@ -51,7 +51,7 @@ export type WorkflowRunOutput = {
     trigger: WorkflowTrigger;
     steps: WorkflowAction[];
   };
-  stepsOutput?: Record<string, WorkflowExecutorOutput>;
+  stepsOutput?: Record<string, WorkflowActionOutput>;
   error?: string;
 };
 
@@ -60,7 +60,7 @@ export type WorkflowRunState = {
     trigger: WorkflowTrigger;
     steps: WorkflowAction[];
   };
-  stepInfos: Record<string, WorkflowRunStepInfo>;
+  stepInfos: WorkflowRunStepInfos;
   workflowRunError?: string;
 };
 
@@ -162,35 +162,13 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   createdBy: ActorMetadata;
 
   @WorkspaceField({
-    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.output,
-    type: FieldMetadataType.RAW_JSON,
-    label: msg`Output`,
-    description: msg`Json object to provide output of the workflow run`,
-    icon: 'IconText',
-  })
-  @WorkspaceIsNullable()
-  output: WorkflowRunOutput | null;
-
-  @WorkspaceField({
-    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.context,
-    type: FieldMetadataType.RAW_JSON,
-    label: msg`Context`,
-    description: msg`Context`,
-    icon: 'IconHierarchy2',
-  })
-  @WorkspaceIsNullable()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  context: Record<string, any> | null;
-
-  @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.state,
     type: FieldMetadataType.RAW_JSON,
     label: msg`State`,
     description: msg`State of the workflow run`,
     icon: 'IconHierarchy2',
   })
-  @WorkspaceIsNullable()
-  state: WorkflowRunState | null;
+  state: WorkflowRunState;
 
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.position,

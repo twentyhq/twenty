@@ -1,20 +1,21 @@
-import { ObjectType, Field, HideField, ID } from '@nestjs/graphql';
+import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
 import { IsOptional } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { UserMappingOptionsDTO } from 'src/engine/metadata-modules/remote-server/dtos/user-mapping-dto';
 import {
   ForeignDataWrapperOptions,
-  RemoteServerType,
+  type RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 
 @ObjectType('RemoteServer')
 export class RemoteServerDTO<T extends RemoteServerType> {
-  @Field(() => ID)
+  @Field(() => UUIDScalarType)
   id: string;
 
-  @Field(() => ID)
+  @Field(() => UUIDScalarType)
   foreignDataWrapperId: string;
 
   @Field(() => String)

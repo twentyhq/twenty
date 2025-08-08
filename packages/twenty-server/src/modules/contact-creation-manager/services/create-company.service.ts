@@ -1,24 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import axios, { AxiosInstance } from 'axios';
+import axios, { type AxiosInstance } from 'axios';
 import uniqBy from 'lodash.uniqby';
 import { TWENTY_COMPANIES_BASE_URL } from 'twenty-shared/constants';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { lowercaseUrlAndRemoveTrailingSlash } from 'twenty-shared/utils';
-import { DeepPartial, ILike, Repository } from 'typeorm';
+import { type ConnectedAccountProvider } from 'twenty-shared/types';
+import { lowercaseUrlOriginAndRemoveTrailingSlash } from 'twenty-shared/utils';
+import { type DeepPartial, ILike } from 'typeorm';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { extractDomainFromLink } from 'src/modules/contact-creation-manager/utils/extract-domain-from-link.util';
 import { getCompanyNameFromDomainName } from 'src/modules/contact-creation-manager/utils/get-company-name-from-domain-name.util';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { computeDisplayName } from 'src/utils/compute-display-name';
 
 export type CompanyToCreate = {
@@ -34,12 +29,7 @@ export type CompanyToCreate = {
 export class CreateCompanyService {
   private readonly httpService: AxiosInstance;
 
-  constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'core')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-  ) {
+  constructor(private readonly twentyORMGlobalManager: TwentyORMGlobalManager) {
     this.httpService = axios.create({
       baseURL: TWENTY_COMPANIES_BASE_URL,
     });
@@ -55,17 +45,6 @@ export class CreateCompanyService {
       return {};
     }
 
-    const objectMetadata = await this.objectMetadataRepository.findOne({
-      where: {
-        standardId: STANDARD_OBJECT_IDS.company,
-        workspaceId,
-      },
-    });
-
-    if (!objectMetadata) {
-      throw new Error('Object metadata not found');
-    }
-
     const companyRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
@@ -79,7 +58,7 @@ export class CreateCompanyService {
     const companiesWithoutTrailingSlash = companies.map((company) => ({
       ...company,
       domainName: company.domainName
-        ? lowercaseUrlAndRemoveTrailingSlash(company.domainName)
+        ? lowercaseUrlOriginAndRemoveTrailingSlash(company.domainName)
         : undefined,
     }));
 
@@ -123,19 +102,6 @@ export class CreateCompanyService {
 
     // Create new companies
     const createdCompanies = await companyRepository.save(newCompaniesData);
-
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: 'company',
-      action: DatabaseEventAction.CREATED,
-      events: createdCompanies.map((createdCompany) => ({
-        recordId: createdCompany.id,
-        objectMetadata,
-        properties: {
-          after: createdCompany,
-        },
-      })),
-      workspaceId,
-    });
 
     const createdCompanyIdsMap = this.createCompanyMap(createdCompanies);
 
@@ -218,7 +184,7 @@ export class CreateCompanyService {
         name: data.name ?? getCompanyNameFromDomainName(domainName ?? ''),
         city: data.city,
       };
-    } catch (e) {
+    } catch {
       return {
         name: getCompanyNameFromDomainName(domainName ?? ''),
         city: '',

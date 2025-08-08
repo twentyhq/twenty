@@ -8,6 +8,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
@@ -15,6 +16,7 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -22,7 +24,10 @@ import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-p
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { Webhook } from 'src/engine/core-modules/webhook/webhook.entity';
+import { AgentHandoffEntity } from 'src/engine/metadata-modules/agent/agent-handoff.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 
 registerEnumType(WorkspaceActivationStatus, {
@@ -108,6 +113,7 @@ export class Workspace {
     enum: WorkspaceActivationStatus,
     default: WorkspaceActivationStatus.INACTIVE,
   })
+  @Index('IDX_WORKSPACE_ACTIVATION_STATUS')
   activationStatus: WorkspaceActivationStatus;
 
   @OneToMany(
@@ -126,6 +132,17 @@ export class Workspace {
     onDelete: 'CASCADE',
   })
   agents: Relation<AgentEntity[]>;
+
+  @OneToMany(() => AgentHandoffEntity, (handoff) => handoff.workspace, {
+    onDelete: 'CASCADE',
+  })
+  agentHandoffs: Relation<AgentHandoffEntity[]>;
+
+  @OneToMany(() => Webhook, (webhook) => webhook.workspace)
+  webhooks: Relation<Webhook[]>;
+
+  @OneToMany(() => ApiKey, (apiKey) => apiKey.workspace)
+  apiKeys: Relation<ApiKey[]>;
 
   @Field()
   @Column({ default: 1 })
@@ -152,6 +169,10 @@ export class Workspace {
   isGoogleAuthEnabled: boolean;
 
   @Field()
+  @Column({ default: false })
+  isTwoFactorAuthenticationEnforced: boolean;
+
+  @Field()
   @Column({ default: true })
   isPasswordAuthEnabled: boolean;
 
@@ -163,11 +184,19 @@ export class Workspace {
   @Column({ default: false })
   isCustomDomainEnabled: boolean;
 
+  // TODO: set as non nullable
   @Column({ nullable: true, type: 'uuid' })
   defaultRoleId: string | null;
 
   @Field(() => RoleDTO, { nullable: true })
   defaultRole: RoleDTO | null;
+
+  // TODO: set as non nullable
+  @Column({ nullable: true, type: 'uuid' })
+  defaultAgentId: string | null;
+
+  @Field(() => AgentDTO, { nullable: true })
+  defaultAgent: AgentDTO | null;
 
   @Field(() => String, { nullable: true })
   @Column({ type: 'varchar', nullable: true })

@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
 import {
-  ModelId,
+  type ModelId,
   ModelProvider,
 } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
@@ -96,8 +96,9 @@ describe('ClientConfigController', () => {
         isGoogleMessagingEnabled: false,
         isGoogleCalendarEnabled: false,
         isConfigVariablesInDbEnabled: false,
-        isIMAPMessagingEnabled: false,
+        isImapSmtpCaldavEnabled: false,
         calendarBookingPageId: undefined,
+        isTwoFactorAuthenticationEnabled: false,
       };
 
       jest

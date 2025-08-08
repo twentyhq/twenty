@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { Request } from 'express';
-import { OpenAPIV3_1 } from 'openapi-types';
-import { capitalize } from 'twenty-shared/utils';
+import { type Request } from 'express';
+import { type OpenAPIV3_1 } from 'openapi-types';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { baseSchema } from 'src/engine/core-modules/open-api/utils/base-schema.utils';
 import {
   computeMetadataSchemaComponents,
@@ -36,9 +37,13 @@ import {
   getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { getServerUrl } from 'src/utils/get-server-url';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
+import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
+import { getServerUrl } from 'src/utils/get-server-url';
 
 @Injectable()
 export class OpenApiService {
@@ -46,38 +51,65 @@ export class OpenApiService {
     private readonly accessTokenService: AccessTokenService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly objectMetadataService: ObjectMetadataService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  async generateCoreSchema(request: Request): Promise<OpenAPIV3_1.Document> {
-    const baseUrl = getServerUrl(
-      request,
-      this.twentyConfigService.get('SERVER_URL'),
-    );
-
-    const schema = baseSchema('core', baseUrl);
-
-    let objectMetadataItems;
-
+  private async getWorkspaceFromRequest(request: Request) {
     try {
       const { workspace } =
         await this.accessTokenService.validateTokenByRequest(request);
 
       workspaceValidator.assertIsDefinedOrThrow(workspace);
 
-      objectMetadataItems =
-        await this.objectMetadataService.findManyWithinWorkspace(workspace.id, {
-          order: {
-            namePlural: 'ASC',
-          },
-        });
-    } catch (err) {
+      return workspace;
+    } catch {
+      return null;
+    }
+  }
+
+  private async getObjectMetadataItems(workspace: Workspace) {
+    return await this.objectMetadataService.findManyWithinWorkspace(
+      workspace.id,
+      {
+        order: {
+          namePlural: 'ASC',
+        },
+      },
+    );
+  }
+
+  async generateCoreSchema(request: Request): Promise<OpenAPIV3_1.Document> {
+    const baseUrl = getServerUrl(
+      this.twentyConfigService.get('SERVER_URL'),
+      `${request.protocol}://${request.get('host')}`,
+    );
+
+    const schema = baseSchema('core', baseUrl);
+
+    const workspace = await this.getWorkspaceFromRequest(request);
+
+    if (!isDefined(workspace)) {
       return schema;
     }
+
+    const objectMetadataItems = await this.getObjectMetadataItems(workspace);
 
     if (!objectMetadataItems.length) {
       return schema;
     }
-    schema.paths = objectMetadataItems.reduce((paths, item) => {
+
+    const workspaceFeatureFlagsMap =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspace.id);
+
+    const filteredObjectMetadataItems = objectMetadataItems.filter((item) => {
+      return !shouldExcludeFromWorkspaceApi(
+        item,
+        standardObjectMetadataDefinitions,
+        workspaceFeatureFlagsMap,
+      );
+    });
+
+    schema.paths = filteredObjectMetadataItems.reduce((paths, item) => {
       paths[`/${item.namePlural}`] = computeManyResultPath(item);
       paths[`/batch/${item.namePlural}`] = computeBatchPath(item);
       paths[`/${item.namePlural}/{id}`] = computeSingleResultPath(item);
@@ -87,7 +119,7 @@ export class OpenApiService {
       return paths;
     }, schema.paths as OpenAPIV3_1.PathsObject);
 
-    schema.webhooks = objectMetadataItems.reduce(
+    schema.webhooks = filteredObjectMetadataItems.reduce(
       (paths, item) => {
         paths[
           this.createWebhookEventName(
@@ -116,17 +148,17 @@ export class OpenApiService {
       >,
     );
 
-    schema.tags = computeSchemaTags(objectMetadataItems);
-
     schema.components = {
       ...schema.components, // components.securitySchemes is defined in base Schema
-      schemas: computeSchemaComponents(objectMetadataItems),
+      schemas: computeSchemaComponents(filteredObjectMetadataItems),
       parameters: computeParameterComponents(),
       responses: {
         '400': get400ErrorResponses(),
         '401': get401ErrorResponses(),
       },
     };
+
+    schema.tags = computeSchemaTags(filteredObjectMetadataItems);
 
     return schema;
   }
@@ -135,13 +167,17 @@ export class OpenApiService {
     request: Request,
   ): Promise<OpenAPIV3_1.Document> {
     const baseUrl = getServerUrl(
-      request,
       this.twentyConfigService.get('SERVER_URL'),
+      `${request.protocol}://${request.get('host')}`,
     );
 
     const schema = baseSchema('metadata', baseUrl);
 
-    schema.tags = [{ name: 'placeholder' }];
+    const workspace = await this.getWorkspaceFromRequest(request);
+
+    if (!isDefined(workspace)) {
+      return schema;
+    }
 
     const metadata = [
       {
@@ -151,6 +187,38 @@ export class OpenApiService {
       {
         nameSingular: 'field',
         namePlural: 'fields',
+      },
+      {
+        nameSingular: 'webhook',
+        namePlural: 'webhooks',
+      },
+      {
+        nameSingular: 'apiKey',
+        namePlural: 'apiKeys',
+      },
+      {
+        nameSingular: 'view',
+        namePlural: 'views',
+      },
+      {
+        nameSingular: 'viewField',
+        namePlural: 'viewFields',
+      },
+      {
+        nameSingular: 'viewFilter',
+        namePlural: 'viewFilters',
+      },
+      {
+        nameSingular: 'viewSort',
+        namePlural: 'viewSorts',
+      },
+      {
+        nameSingular: 'viewGroup',
+        namePlural: 'viewGroups',
+      },
+      {
+        nameSingular: 'viewFilterGroup',
+        namePlural: 'viewFilterGroups',
       },
     ];
 
@@ -230,6 +298,13 @@ export class OpenApiService {
         '401': get401ErrorResponses(),
       },
     };
+
+    schema.tags = computeSchemaTags(
+      metadata.map((item) => ({
+        nameSingular: item.nameSingular,
+        namePlural: item.namePlural,
+      })) as ObjectMetadataEntity[],
+    );
 
     return schema;
   }

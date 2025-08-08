@@ -1,6 +1,7 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import { Max, Min } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
@@ -38,6 +39,11 @@ export class WorkspaceMember {
   @Field({ nullable: true })
   locale: string;
 
+  @Field(() => Int, { nullable: true })
+  @Min(0)
+  @Max(7)
+  calendarStartDay: number;
+
   @Field({ nullable: true })
   timeZone: string;
 
@@ -50,6 +56,6 @@ export class WorkspaceMember {
   @Field(() => [RoleDTO], { nullable: true })
   roles?: RoleDTO[];
 
-  @Field(() => String, { nullable: true })
+  @Field(() => UUIDScalarType, { nullable: true })
   userWorkspaceId?: string;
 }

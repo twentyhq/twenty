@@ -1,4 +1,4 @@
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   TASK_STANDARD_FIELD_IDS,
@@ -96,7 +96,7 @@ export const tasksAssignedToMeView = (
       {
         fieldMetadataId:
           taskObjectMetadata.fields.find(
-            (field) => field.standardId === TASK_STANDARD_FIELD_IDS.body,
+            (field) => field.standardId === TASK_STANDARD_FIELD_IDS.bodyV2,
           )?.id ?? '',
         position: 7,
         isVisible: true,

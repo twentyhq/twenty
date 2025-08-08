@@ -12,10 +12,11 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useId } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/display';
@@ -60,7 +61,7 @@ type FormSingleRecordPickerValue =
 export type FormSingleRecordPickerProps = {
   label?: string;
   defaultValue?: RecordId | Variable;
-  onChange: (value: RecordId | Variable) => void;
+  onChange: (value: RecordId | Variable | null) => void;
   objectNameSingular: string;
   disabled?: boolean;
   testId?: string;
@@ -105,7 +106,7 @@ export const FormSingleRecordPicker = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const setRecordPickerSearchFilter = useSetRecoilComponentStateV2(
+  const setRecordPickerSearchFilter = useSetRecoilComponentState(
     singleRecordPickerSearchFilterComponentState,
     dropdownId,
   );
@@ -117,7 +118,16 @@ export const FormSingleRecordPicker = ({
   const handleRecordSelected = (
     selectedEntity: SingleRecordPickerRecord | null | undefined,
   ) => {
-    onChange?.(selectedEntity?.record?.id ?? '');
+    if (
+      !isDefined(selectedEntity?.record?.id) ||
+      !isNonEmptyString(selectedEntity.record?.id)
+    ) {
+      onChange(null);
+
+      return;
+    }
+
+    onChange(selectedEntity.record.id);
     closeDropdown(dropdownId);
   };
 
@@ -128,10 +138,10 @@ export const FormSingleRecordPicker = ({
   const handleUnlinkVariable = (event?: React.MouseEvent<HTMLDivElement>) => {
     // Prevents the dropdown to open when clicking on the chip
     event?.stopPropagation();
-    onChange('');
+    onChange(null);
   };
 
-  const setRecordPickerSelectedId = useSetRecoilComponentStateV2(
+  const setRecordPickerSelectedId = useSetRecoilComponentState(
     singleRecordPickerSelectedIdComponentState,
     dropdownId,
   );
@@ -150,7 +160,11 @@ export const FormSingleRecordPicker = ({
       {label ? <InputLabel>{label}</InputLabel> : null}
       <FormFieldInputRowContainer>
         {disabled ? (
-          <StyledFormSelectContainer hasRightElement={false} readonly>
+          <StyledFormSelectContainer
+            formFieldInputInstanceId={componentId}
+            hasRightElement={false}
+            readonly
+          >
             <FormSingleRecordFieldChip
               draftValue={draftValue}
               selectedRecord={selectedRecord}
@@ -169,8 +183,9 @@ export const FormSingleRecordPicker = ({
             dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
             clickableComponent={
               <StyledFormSelectContainer
+                formFieldInputInstanceId={componentId}
                 hasRightElement={isDefined(VariablePicker) && !disabled}
-                preventSetHotkeyScope={true}
+                preventFocusStackUpdate={true}
               >
                 <FormSingleRecordFieldChip
                   draftValue={draftValue}
@@ -204,10 +219,11 @@ export const FormSingleRecordPicker = ({
         )}
         {isDefined(VariablePicker) && !disabled && (
           <VariablePicker
-            inputId={variablesDropdownId}
+            instanceId={variablesDropdownId}
             disabled={disabled}
             onVariableSelect={handleVariableTagInsert}
-            objectNameSingularToSelect={objectNameSingular}
+            shouldDisplayRecordObjects={true}
+            shouldDisplayRecordFields={false}
           />
         )}
       </FormFieldInputRowContainer>

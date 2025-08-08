@@ -7,15 +7,19 @@ import { isDefined } from 'twenty-shared/utils';
 
 type UseHotkeysOptionsWithoutBuggyOptions = Omit<Options, 'enabled'>;
 
-export const useGlobalHotkeys = (
-  keys: Keys,
-  callback: HotkeyCallback,
-  containsModifier: boolean,
-  // TODO: Remove this once we've migrated hotkey scopes to the new api
-  scope: string,
-  dependencies?: unknown[],
-  options?: UseHotkeysOptionsWithoutBuggyOptions,
-) => {
+export const useGlobalHotkeys = ({
+  keys,
+  callback,
+  containsModifier,
+  dependencies,
+  options,
+}: {
+  keys: Keys;
+  callback: HotkeyCallback;
+  containsModifier: boolean;
+  dependencies?: unknown[];
+  options?: UseHotkeysOptionsWithoutBuggyOptions;
+}) => {
   const callGlobalHotkeysCallback = useGlobalHotkeysCallback(dependencies);
 
   const enableOnContentEditable = isDefined(options?.enableOnContentEditable)
@@ -59,7 +63,6 @@ export const useGlobalHotkeys = (
         callback: () => {
           handleCallback(keyboardEvent, hotkeysEvent);
         },
-        scope,
         preventDefault,
         containsModifier,
       });

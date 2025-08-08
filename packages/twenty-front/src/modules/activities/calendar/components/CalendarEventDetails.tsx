@@ -7,10 +7,11 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordReadOnly';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { Chip, ChipAccent, ChipSize, ChipVariant } from 'twenty-ui/components';
 import { IconCalendarEvent } from 'twenty-ui/display';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
@@ -19,6 +20,8 @@ import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 type CalendarEventDetailsProps = {
   calendarEvent: CalendarEvent;
 };
+
+const INPUT_ID_PREFIX = 'calendar-event-details';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -92,6 +95,11 @@ export const CalendarEventDetails = ({
 
   const { calendarEventParticipants } = calendarEvent;
 
+  const isRecordReadOnly = useIsRecordReadOnly({
+    recordId: calendarEvent.id,
+    objectMetadataId: objectMetadataItem.id,
+  });
+
   const Fields = fieldsToDisplay.map((fieldName) => (
     <StyledPropertyBox key={fieldName}>
       <FieldContext.Provider
@@ -106,15 +114,19 @@ export const CalendarEventDetails = ({
           }),
           useUpdateRecord: () => [() => undefined, { loading: false }],
           maxWidth: 300,
-          isReadOnly: false,
+          isRecordFieldReadOnly: isRecordReadOnly,
         }}
       >
         <RecordFieldComponentInstanceContext.Provider
           value={{
-            instanceId: getRecordFieldInputId(calendarEvent.id, fieldName),
+            instanceId: getRecordFieldInputInstanceId({
+              recordId: calendarEvent.id,
+              fieldName,
+              prefix: INPUT_ID_PREFIX,
+            }),
           }}
         >
-          <RecordInlineCell readonly />
+          <RecordInlineCell instanceIdPrefix={INPUT_ID_PREFIX} />
         </RecordFieldComponentInstanceContext.Provider>
       </FieldContext.Provider>
     </StyledPropertyBox>

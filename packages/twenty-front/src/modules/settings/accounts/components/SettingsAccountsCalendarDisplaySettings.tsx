@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 
-import { SettingsAccountsCalendarDateFormatSelect } from '@/settings/accounts/components/SettingsAccountsCalendarDateFormatSelect';
-import { SettingsAccountsCalendarTimeFormatSelect } from '@/settings/accounts/components/SettingsAccountsCalendarTimeFormatSelect';
-import { SettingsAccountsCalendarTimeZoneSelect } from '@/settings/accounts/components/SettingsAccountsCalendarTimeZoneSelect';
+import { DateTimeSettingsDateFormatSelect } from '@/settings/experience/components/DateTimeSettingsDateFormatSelect';
+import { DateTimeSettingsTimeFormatSelect } from '@/settings/experience/components/DateTimeSettingsTimeFormatSelect';
+import { DateTimeSettingsTimeZoneSelect } from '@/settings/experience/components/DateTimeSettingsTimeZoneSelect';
 
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
@@ -27,16 +27,13 @@ export const SettingsAccountsCalendarDisplaySettings = () => {
 
   return (
     <StyledContainer>
-      <SettingsAccountsCalendarTimeZoneSelect
-        value={timeZone}
-        onChange={setTimeZone}
-      />
-      <SettingsAccountsCalendarDateFormatSelect
+      <DateTimeSettingsTimeZoneSelect value={timeZone} onChange={setTimeZone} />
+      <DateTimeSettingsDateFormatSelect
         value={dateFormat}
         onChange={setDateFormat}
         timeZone={timeZone}
       />
-      <SettingsAccountsCalendarTimeFormatSelect
+      <DateTimeSettingsTimeFormatSelect
         value={timeFormat}
         onChange={setTimeFormat}
         timeZone={timeZone}

@@ -1,7 +1,5 @@
-import {
-  PAGE_BAR_MIN_HEIGHT,
-  PageHeader,
-} from '@/ui/layout/page/components/PageHeader';
+import { PageHeader } from '@/ui/layout/page/components/PageHeader';
+import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
 import {
   Breadcrumb,
   BreadcrumbProps,
@@ -24,7 +22,7 @@ const StyledFullScreen = styled.div`
 
 const StyledMainContainer = styled.div`
   height: calc(
-    100% - ${PAGE_BAR_MIN_HEIGHT}px - ${({ theme }) => theme.spacing(2 * 2 + 3)}
+    100% - ${PAGE_BAR_MIN_HEIGHT}px - ${({ theme }) => theme.spacing(2 * 2 + 5)}
   );
   padding: ${({ theme }) =>
     `0 ${theme.spacing(3)} ${theme.spacing(3)} ${theme.spacing(3)}`};

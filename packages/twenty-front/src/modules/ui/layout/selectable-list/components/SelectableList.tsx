@@ -4,7 +4,7 @@ import { useSelectableListHotKeys } from '@/ui/layout/selectable-list/hooks/inte
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { SelectableListContextProvider } from '@/ui/layout/selectable-list/states/contexts/SelectableListContext';
 import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { isDefined } from 'twenty-shared/utils';
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
@@ -15,7 +15,6 @@ type SelectableListProps = {
   onSelect?: (selected: string) => void;
   selectableListInstanceId: string;
   focusId: string;
-  hotkeyScope: string;
 };
 
 export const SelectableList = ({
@@ -25,16 +24,10 @@ export const SelectableList = ({
   selectableListInstanceId,
   onSelect,
   focusId,
-  hotkeyScope,
 }: SelectableListProps) => {
-  useSelectableListHotKeys(
-    selectableListInstanceId,
-    hotkeyScope,
-    focusId,
-    onSelect,
-  );
+  useSelectableListHotKeys(selectableListInstanceId, focusId, onSelect);
 
-  const setSelectableItemIds = useSetRecoilComponentStateV2(
+  const setSelectableItemIds = useSetRecoilComponentState(
     selectableItemIdsComponentState,
     selectableListInstanceId,
   );
@@ -61,7 +54,7 @@ export const SelectableList = ({
         instanceId: selectableListInstanceId,
       }}
     >
-      <SelectableListContextProvider value={{ focusId, hotkeyScope }}>
+      <SelectableListContextProvider value={{ focusId }}>
         {children}
       </SelectableListContextProvider>
     </SelectableListComponentInstanceContext.Provider>

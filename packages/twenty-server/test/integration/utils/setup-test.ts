@@ -1,4 +1,4 @@
-import { JestConfigWithTsJest } from 'ts-jest';
+import { type JestConfigWithTsJest } from 'ts-jest';
 import 'tsconfig-paths/register';
 
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';

@@ -11,8 +11,9 @@ import { Link } from 'src/components/Link';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
 import { capitalize } from 'src/utils/capitalize';
-import { APP_LOCALES } from 'twenty-shared/translations';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { getImageAbsoluteURI } from 'twenty-shared/utils';
+import { DEFAULT_WORKSPACE_LOGO } from 'src/constants/DefaultWorkspaceLogo';
 
 type SendApprovedAccessDomainValidationProps = {
   link: string;
@@ -63,16 +64,19 @@ export const SendApprovedAccessDomainValidation = ({
         <br />
       </MainText>
       <HighlightedContainer>
-        {workspaceLogo ? (
+        <object
+          data={workspaceLogo ?? DEFAULT_WORKSPACE_LOGO}
+          width={40}
+          height={40}
+          aria-label="Workspace logo"
+        >
           <Img
-            src={workspaceLogo}
+            src={DEFAULT_WORKSPACE_LOGO}
             width={40}
             height={40}
             alt="Workspace logo"
           />
-        ) : (
-          <></>
-        )}
+        </object>
         {workspace.name ? <HighlightedText value={workspace.name} /> : <></>}
         <CallToAction href={link} value={i18n._('Validate domain')} />
       </HighlightedContainer>

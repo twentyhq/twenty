@@ -12,14 +12,14 @@ import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/us
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import styled from '@emotion/styled';
 import { Dispatch, SetStateAction, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { AvatarChipVariant } from 'twenty-ui/components';
+import { ChipVariant } from 'twenty-ui/components';
 import { IconEye, IconEyeOff } from 'twenty-ui/display';
 import { Checkbox, CheckboxVariant, LightIconButton } from 'twenty-ui/input';
 
@@ -52,7 +52,7 @@ export const RecordBoardCardHeader = ({
   const { activateBoardCard } = useActiveRecordBoardCard(recordBoardId);
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
-  const showCompactView = useRecoilComponentValueV2(
+  const showCompactView = useRecoilComponentValue(
     isRecordBoardCompactModeActiveComponentState,
   );
 
@@ -60,7 +60,7 @@ export const RecordBoardCardHeader = ({
     useRecordBoardSelection(recordBoardId);
 
   const [isCurrentCardSelected, setIsCurrentCardSelected] =
-    useRecoilComponentFamilyStateV2(
+    useRecoilComponentFamilyState(
       isRecordBoardCardSelectedComponentFamilyState,
       recordId,
     );
@@ -80,7 +80,7 @@ export const RecordBoardCardHeader = ({
           <RecordChip
             objectNameSingular={objectMetadataItem.nameSingular}
             record={record}
-            variant={AvatarChipVariant.Transparent}
+            variant={ChipVariant.Transparent}
             maxWidth={150}
             onClick={() => {
               activateBoardCard({ rowIndex, columnIndex });

@@ -1,14 +1,13 @@
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
-  CountryCallingCode,
-  CountryCode,
-  getCountries,
-  getCountryCallingCode,
+  type CountryCallingCode,
   parsePhoneNumberWithError,
 } from 'libphonenumber-js';
 import {
+  getCountryCodesForCallingCode,
   isDefined,
+  isValidCountryCode,
   parseJson,
   removeUndefinedFields,
 } from 'twenty-shared/utils';
@@ -18,11 +17,9 @@ import {
   RecordTransformerExceptionCode,
 } from 'src/engine/core-modules/record-transformer/record-transformer.exception';
 import {
-  AdditionalPhoneMetadata,
-  PhonesMetadata,
+  type AdditionalPhoneMetadata,
+  type PhonesMetadata,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
-
-const ALL_COUNTRIES_CODE = getCountries();
 
 export type PhonesFieldGraphQLInput =
   | Partial<
@@ -38,22 +35,6 @@ type AdditionalPhoneMetadataWithNumber = Partial<AdditionalPhoneMetadata> &
 
 const removePlusFromString = (str: string) => str.replace(/\+/g, '');
 
-const isValidCountryCode = (input: string): input is CountryCode => {
-  return ALL_COUNTRIES_CODE.includes(input as unknown as CountryCode);
-};
-
-const getCountryCodesForCallingCode = (callingCode: string) => {
-  const cleanCallingCode = callingCode.startsWith('+')
-    ? callingCode.slice(1)
-    : callingCode;
-
-  return ALL_COUNTRIES_CODE.filter((country) => {
-    const countryCallingCode = getCountryCallingCode(country);
-
-    return countryCallingCode === cleanCallingCode;
-  });
-};
-
 const validatePrimaryPhoneCountryCodeAndCallingCode = ({
   callingCode,
   countryCode,
@@ -62,7 +43,7 @@ const validatePrimaryPhoneCountryCodeAndCallingCode = ({
     throw new RecordTransformerException(
       `Invalid country code ${countryCode}`,
       RecordTransformerExceptionCode.INVALID_PHONE_COUNTRY_CODE,
-      t`Invalid country code ${countryCode}`,
+      { userFriendlyMessage: t`Invalid country code ${countryCode}` },
     );
   }
 
@@ -76,7 +57,7 @@ const validatePrimaryPhoneCountryCodeAndCallingCode = ({
     throw new RecordTransformerException(
       `Invalid calling code ${callingCode}`,
       RecordTransformerExceptionCode.INVALID_PHONE_CALLING_CODE,
-      t`Invalid calling code ${callingCode}`,
+      { userFriendlyMessage: t`Invalid calling code ${callingCode}` },
     );
   }
 
@@ -89,7 +70,9 @@ const validatePrimaryPhoneCountryCodeAndCallingCode = ({
     throw new RecordTransformerException(
       `Provided country code and calling code are conflicting`,
       RecordTransformerExceptionCode.CONFLICTING_PHONE_CALLING_CODE_AND_COUNTRY_CODE,
-      t`Provided country code and calling code are conflicting`,
+      {
+        userFriendlyMessage: t`Provided country code and calling code are conflicting`,
+      },
     );
   }
 };
@@ -106,11 +89,11 @@ const parsePhoneNumberExceptionWrapper = ({
         : callingCode,
       defaultCountry: countryCode,
     });
-  } catch (error) {
+  } catch {
     throw new RecordTransformerException(
       `Provided phone number is invalid ${number}`,
       RecordTransformerExceptionCode.INVALID_PHONE_NUMBER,
-      t`Provided phone number is invalid ${number}`,
+      { userFriendlyMessage: t`Provided phone number is invalid ${number}` },
     );
   }
 };
@@ -134,7 +117,9 @@ const validateAndInferMetadataFromPrimaryPhoneNumber = ({
     throw new RecordTransformerException(
       'Provided and inferred country code are conflicting',
       RecordTransformerExceptionCode.CONFLICTING_PHONE_COUNTRY_CODE,
-      t`Provided and inferred country code are conflicting`,
+      {
+        userFriendlyMessage: t`Provided and inferred country code are conflicting`,
+      },
     );
   }
 
@@ -146,7 +131,9 @@ const validateAndInferMetadataFromPrimaryPhoneNumber = ({
     throw new RecordTransformerException(
       'Provided and inferred calling code are conflicting',
       RecordTransformerExceptionCode.CONFLICTING_PHONE_CALLING_CODE,
-      t`Provided and inferred calling code are conflicting`,
+      {
+        userFriendlyMessage: t`Provided and inferred calling code are conflicting`,
+      },
     );
   }
 

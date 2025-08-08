@@ -1,5 +1,5 @@
 import { isDefined } from 'class-validator';
-import { Response } from 'supertest';
+import { type Response } from 'supertest';
 
 type WarnIfNoErrorButExpectedToFailInput = {
   response: Response;

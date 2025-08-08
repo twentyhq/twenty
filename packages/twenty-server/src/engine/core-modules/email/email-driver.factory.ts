@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { EmailDriverInterface } from 'src/engine/core-modules/email/drivers/interfaces/email-driver.interface';
+import { type EmailDriverInterface } from 'src/engine/core-modules/email/drivers/interfaces/email-driver.interface';
 
 import { LoggerDriver } from 'src/engine/core-modules/email/drivers/logger.driver';
 import { SmtpDriver } from 'src/engine/core-modules/email/drivers/smtp.driver';

@@ -1,7 +1,7 @@
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -50,7 +50,7 @@ const StyledColorSample = styled(ColorSample)`
   margin-left: ${({ theme }) => theme.spacing(3.5)};
 `;
 
-const StyledOptionInput = styled(TextInput)`
+const StyledOptionInput = styled(SettingsTextInput)`
   flex-grow: 1;
   width: 100%;
   & input {
@@ -99,6 +99,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
       />
       <AdvancedSettingsWrapper animationDimension="width" hideDot>
         <StyledOptionInput
+          instanceId={`select-option-value-${option.id}`}
           value={option.value}
           onChange={(input) =>
             onChange({
@@ -133,6 +134,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         }
       />
       <StyledOptionInput
+        instanceId={`select-option-label-${option.id}`}
         value={option.label}
         onChange={(label) => {
           const optionNameHasBeenEdited = !(

@@ -8,8 +8,6 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { OnboardingSyncEmailsSettingsCard } from '@/onboarding/components/OnboardingSyncEmailsSettingsCard';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
@@ -17,7 +15,9 @@ import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicros
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { AppPath } from '@/types/AppPath';
+import { PageFocusId } from '@/types/PageFocusId';
 import { Modal } from '@/ui/layout/modal/components/Modal';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { IconGoogle, IconMicrosoft } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
@@ -95,14 +95,14 @@ export const SyncEmails = () => {
   const isMicrosoftProviderEnabled =
     isMicrosoftMessagingEnabled || isMicrosoftCalendarEnabled;
 
-  useScopedHotkeys(
-    [Key.Enter],
-    async () => {
+  useHotkeysOnFocusedElement({
+    keys: Key.Enter,
+    callback: async () => {
       await continueWithoutSync();
     },
-    PageHotkeyScope.SyncEmail,
-    [continueWithoutSync],
-  );
+    focusId: PageFocusId.SyncEmail,
+    dependencies: [continueWithoutSync],
+  });
 
   return (
     <Modal.Content isVerticalCentered isHorizontalCentered>

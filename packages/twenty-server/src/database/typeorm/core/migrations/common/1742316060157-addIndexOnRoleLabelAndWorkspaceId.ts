@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddIndexOnRoleLabelAndWorkspaceId1742316060157
   implements MigrationInterface

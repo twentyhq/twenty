@@ -1,14 +1,14 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import {
-  Leaf,
-  Node,
+  type Leaf,
+  type Node,
 } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { generateFakeField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-field';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record';
-import { FormFieldMetadata } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
+import { type FormFieldMetadata } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
 
 export const generateFakeFormResponse = async ({
   formMetadata,
@@ -30,10 +30,11 @@ export const generateFakeFormResponse = async ({
             formFieldMetadata?.settings?.objectName,
           );
 
-        if (!objectMetadataItemWithFieldsMaps)
+        if (!isDefined(objectMetadataItemWithFieldsMaps)) {
           throw new Error(
             `Object metadata not found for object name ${formFieldMetadata?.settings?.objectName}`,
           );
+        }
 
         return {
           [formFieldMetadata.name]: {
@@ -59,7 +60,10 @@ export const generateFakeFormResponse = async ({
     }),
   );
 
-  return result.filter(isDefined).reduce((acc, curr) => {
-    return { ...acc, ...curr };
-  }, {});
+  return result.filter(isDefined).reduce(
+    (acc, curr) => {
+      return { ...acc, ...curr };
+    },
+    {} as Record<string, Leaf | Node>,
+  );
 };

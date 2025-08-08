@@ -11,16 +11,16 @@ import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import Fuse from 'fuse.js';
 import { isDefined } from 'twenty-shared/utils';
 
-export const getMatchedColumnsWithFuse = <T extends string>({
+export const getMatchedColumnsWithFuse = ({
   columns,
   fields,
   data,
 }: {
-  columns: SpreadsheetColumns<T>;
-  fields: SpreadsheetImportFields<T>;
+  columns: SpreadsheetColumns;
+  fields: SpreadsheetImportFields;
   data: MatchColumnsStepProps['data'];
 }) => {
-  const matchedColumns: SpreadsheetColumn<T>[] = [];
+  const matchedColumns: SpreadsheetColumn[] = [];
 
   const fieldsToSearch = new Fuse(fields, {
     keys: ['label'],
@@ -30,8 +30,8 @@ export const getMatchedColumnsWithFuse = <T extends string>({
   });
 
   const suggestedFieldsByColumnHeader: Record<
-    SpreadsheetColumn<T>['header'],
-    SpreadsheetImportField<T>[]
+    SpreadsheetColumn['header'],
+    SpreadsheetImportField[]
   > = {};
 
   for (const column of columns) {
@@ -58,7 +58,7 @@ export const getMatchedColumnsWithFuse = <T extends string>({
     );
 
     suggestedFieldsByColumnHeader[column.header] = fieldsThatMatch.map(
-      (match) => match.item as SpreadsheetImportField<T>,
+      (match) => match.item as SpreadsheetImportField,
     );
 
     if (isFirstMatchValid && isFieldStillUnmatched) {

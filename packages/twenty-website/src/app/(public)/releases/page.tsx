@@ -1,5 +1,5 @@
 import { desc } from 'drizzle-orm';
-import { Metadata } from 'next';
+import { type Metadata } from 'next';
 
 import {
   getMdxReleasesContent,
@@ -10,7 +10,7 @@ import { ReleaseContainer } from '@/app/_components/releases/ReleaseContainer';
 import { Title } from '@/app/_components/releases/StyledTitle';
 import { ContentContainer } from '@/app/_components/ui/layout/ContentContainer';
 import { findAll } from '@/database/database';
-import { GithubReleases, githubReleasesModel } from '@/database/model';
+import { type GithubReleases, githubReleasesModel } from '@/database/model';
 import { pgGithubReleasesModel } from '@/database/schema-postgres';
 
 export const metadata: Metadata = {
@@ -32,7 +32,7 @@ const Home = async () => {
 
   const visibleReleasesNotes = getVisibleReleases(
     releaseNotes,
-    latestGithubRelease.tagName,
+    latestGithubRelease?.tagName || 'v0.0.0',
   );
 
   const mdxReleasesContent = await getMdxReleasesContent(releaseNotes);

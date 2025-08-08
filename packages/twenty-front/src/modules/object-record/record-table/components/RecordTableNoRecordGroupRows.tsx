@@ -1,17 +1,18 @@
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { RecordTableAddNew } from '@/object-record/record-table/components/RecordTableAddNew';
 import { RecordTableBodyDroppablePlaceholder } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppablePlaceholder';
 import { RecordTableBodyFetchMoreLoader } from '@/object-record/record-table/record-table-body/components/RecordTableBodyFetchMoreLoader';
 import { RecordTableAggregateFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooter';
 import { RecordTableRow } from '@/object-record/record-table/record-table-row/components/RecordTableRow';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const RecordTableNoRecordGroupRows = () => {
-  const allRecordIds = useRecoilComponentValueV2(
+  const allRecordIds = useRecoilComponentValue(
     recordIndexAllRecordIdsComponentSelector,
   );
 
-  const isRecordTableInitialLoading = useRecoilComponentValueV2(
+  const isRecordTableInitialLoading = useRecoilComponentValue(
     isRecordTableInitialLoadingComponentState,
   );
 
@@ -27,6 +28,7 @@ export const RecordTableNoRecordGroupRows = () => {
           />
         );
       })}
+      <RecordTableAddNew />
       <RecordTableBodyFetchMoreLoader />
       <RecordTableBodyDroppablePlaceholder />
       {!isRecordTableInitialLoading && allRecordIds.length > 0 && (

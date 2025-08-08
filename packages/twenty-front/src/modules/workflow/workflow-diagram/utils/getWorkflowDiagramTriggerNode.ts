@@ -1,12 +1,11 @@
 import { WorkflowTrigger } from '@/workflow/types/Workflow';
-import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { Node } from '@xyflow/react';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 export const getWorkflowDiagramTriggerNode = ({
   trigger,
@@ -18,13 +17,13 @@ export const getWorkflowDiagramTriggerNode = ({
 
   switch (trigger.type) {
     case 'MANUAL': {
-      triggerDefaultLabel = 'Manual Trigger';
+      triggerDefaultLabel = 'Manual trigger';
       triggerIcon = getTriggerIcon(trigger);
 
       break;
     }
     case 'CRON': {
-      triggerDefaultLabel = 'On a Schedule';
+      triggerDefaultLabel = 'On a schedule';
       triggerIcon = getTriggerIcon(trigger);
 
       break;
@@ -63,8 +62,15 @@ export const getWorkflowDiagramTriggerNode = ({
       triggerType: trigger.type,
       name: isDefined(trigger.name) ? trigger.name : triggerDefaultLabel,
       icon: triggerIcon,
+      stepId: 'trigger',
+      hasNextStepIds:
+        isDefined(trigger.nextStepIds) && trigger.nextStepIds.length > 0,
+      position: trigger.position ?? {
+        x: 0,
+        y: 0,
+      },
     } satisfies WorkflowDiagramStepNodeData,
-    position: {
+    position: trigger.position ?? {
       x: 0,
       y: 0,
     },

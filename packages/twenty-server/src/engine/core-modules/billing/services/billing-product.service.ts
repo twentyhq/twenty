@@ -6,10 +6,10 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
-import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
-import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
-import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { type BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { type BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
+import { type BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 
 @Injectable()

@@ -1,0 +1,279 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when targetFieldLabel conflicts with an existing {name}Id on target object metadata id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "Name not available",
+      "userFriendlyMessage": "This name is not available as it is already used by another field",
+    },
+    "message": "Name "fieldNameBisId" is not available as it is already used by another field",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when targetFieldLabel conflicts with an existing field on target object metadata id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "Name not available",
+      "userFriendlyMessage": "This name is not available as it is already used by another field",
+    },
+    "message": "Name "fieldName" is not available as it is already used by another field",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when targetFieldLabel contains only whitespace 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "Invalid label",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Invalid label: "   "",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when targetFieldLabel exceeds maximum length 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "Exceeds max length",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Name is too long: it exceeds the 63 characters limit.",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when targetFieldLabel is empty 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "Input too short",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Input is too short: """,
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when targetObjectMetadataId is unknown 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Object metadata relation target not found for relation creation payload",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when type is a wrong value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Relation creation payload is invalid: type must be one of the following values: ONE_TO_MANY, MANY_TO_ONE",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when type is not provided 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Relation creation payload is invalid: type must be one of the following values: ONE_TO_MANY, MANY_TO_ONE",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE when {name}Id is already used 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Name is not available, it may be duplicating another field's name.",
+    },
+    "message": "Name "fieldNameBisId" is not available, check that it is not duplicating another field's name.",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE when target and source are the same object and name are the same 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Relation creation payload is invalid: targetObjectMetadataId must be a UUID",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY (relationCreationPayload) when targetFieldLabel conflicts with an existing {name}Id on target object metadata id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "Name not available",
+      "userFriendlyMessage": "This name is not available as it is already used by another field",
+    },
+    "message": "Name "fieldNameBisId" is not available as it is already used by another field",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY (relationCreationPayload) when targetFieldLabel conflicts with an existing field on target object metadata id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "Name not available",
+      "userFriendlyMessage": "This name is not available as it is already used by another field",
+    },
+    "message": "Name "fieldName" is not available as it is already used by another field",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY (relationCreationPayload) when targetFieldLabel contains only whitespace 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "Invalid label",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Invalid label: "   "",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY (relationCreationPayload) when targetFieldLabel exceeds maximum length 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "Exceeds max length",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Name is too long: it exceeds the 63 characters limit.",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY (relationCreationPayload) when targetFieldLabel is empty 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "Input too short",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Input is too short: """,
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY (relationCreationPayload) when targetObjectMetadataId is unknown 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Object metadata relation target not found for relation creation payload",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY (relationCreationPayload) when type is a wrong value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Relation creation payload is invalid: type must be one of the following values: ONE_TO_MANY, MANY_TO_ONE",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY (relationCreationPayload) when type is not provided 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Relation creation payload is invalid: type must be one of the following values: ONE_TO_MANY, MANY_TO_ONE",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY when {name}Id is already used 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Name is not available, it may be duplicating another field's name.",
+    },
+    "message": "Name "fieldNameBisId" is not available, check that it is not duplicating another field's name.",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY when target and source are the same object and name are the same 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Relation creation payload is invalid: targetObjectMetadataId must be a UUID",
+    "name": "UserInputError",
+  },
+]
+`;

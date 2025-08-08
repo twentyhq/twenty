@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { i18n } from '@lingui/core';
 import {
-  BeforeUpdateOneHook,
-  UpdateOneInputType,
+  type BeforeUpdateOneHook,
+  type UpdateOneInputType,
 } from '@ptc-org/nestjs-query-graphql';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -13,10 +13,10 @@ import {
   ValidationError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
-import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
-import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
+import { type FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
+import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 
 interface StandardFieldUpdate extends Partial<UpdateFieldInput> {
   standardOverrides?: FieldStandardOverridesDTO;
@@ -88,18 +88,6 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
       (key) =>
         !updatableFields.includes(key) && !overridableFields.includes(key),
     );
-
-    const isUpdatingLabelWhenSynced =
-      instance.update.label &&
-      fieldMetadata.isLabelSyncedWithName &&
-      instance.update.isLabelSyncedWithName !== false &&
-      instance.update.label !== fieldMetadata.label;
-
-    if (isUpdatingLabelWhenSynced) {
-      throw new ValidationError(
-        'Cannot update label when it is synced with name',
-      );
-    }
 
     if (nonUpdatableFields.length > 0) {
       throw new ValidationError(
@@ -219,7 +207,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     update: StandardFieldUpdate;
     overrideKey: 'label' | 'description' | 'icon';
     newValue: string;
-    originalValue: string;
+    originalValue: string | null;
     locale?: keyof typeof APP_LOCALES | undefined;
   }): boolean {
     // Handle localized overrides
@@ -250,7 +238,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     update: StandardFieldUpdate,
     overrideKey: 'label' | 'description' | 'icon',
     newValue: string,
-    originalValue: string,
+    originalValue: string | null,
     locale: keyof typeof APP_LOCALES,
   ): boolean {
     const messageId = generateMessageId(originalValue ?? '');
@@ -280,7 +268,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     update: StandardFieldUpdate,
     overrideKey: 'label' | 'description' | 'icon',
     newValue: string,
-    originalValue: string,
+    originalValue: string | null,
   ): boolean {
     if (newValue !== originalValue) {
       return false;
@@ -390,13 +378,6 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     update: StandardFieldUpdate,
     locale?: keyof typeof APP_LOCALES,
   ): void {
-    if (
-      fieldMetadata.isLabelSyncedWithName ||
-      update.isLabelSyncedWithName === true
-    ) {
-      return;
-    }
-
     if (!isDefined(instance.update.label)) {
       return;
     }

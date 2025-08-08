@@ -4,14 +4,13 @@ import { DROPDOWN_RESIZE_MIN_HEIGHT } from '@/ui/layout/dropdown/constants/Dropd
 import { DROPDOWN_RESIZE_MIN_WIDTH } from '@/ui/layout/dropdown/constants/DropdownResizeMinWidth';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { dropdownMaxHeightComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxHeightComponentState';
 import { dropdownMaxWidthComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxWidthComponentState';
-import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
 import {
   Placement,
@@ -59,6 +58,7 @@ export type DropdownProps = {
   onOpen?: () => void;
   excludedClickOutsideIds?: string[];
   isDropdownInModal?: boolean;
+  disableClickForClickableComponent?: boolean;
 };
 
 export const Dropdown = ({
@@ -76,9 +76,10 @@ export const Dropdown = ({
   clickableComponentWidth = 'auto',
   excludedClickOutsideIds,
   isDropdownInModal = false,
+  disableClickForClickableComponent = false,
 }: DropdownProps) => {
-  const isDropdownOpen = useRecoilComponentValueV2(
-    isDropdownOpenComponentStateV2,
+  const isDropdownOpen = useRecoilComponentValue(
+    isDropdownOpenComponentState,
     dropdownId,
   );
 
@@ -96,12 +97,12 @@ export const Dropdown = ({
       ]
     : [];
 
-  const setDropdownMaxHeight = useSetRecoilComponentStateV2(
+  const setDropdownMaxHeight = useSetRecoilComponentState(
     dropdownMaxHeightComponentState,
     dropdownId,
   );
 
-  const setDropdownMaxWidth = useSetRecoilComponentStateV2(
+  const setDropdownMaxWidth = useSetRecoilComponentState(
     dropdownMaxWidthComponentState,
     dropdownId,
   );
@@ -151,6 +152,7 @@ export const Dropdown = ({
 
   const handleClickableComponentClick = useRecoilCallback(
     () => async (event: MouseEvent) => {
+      if (disableClickForClickableComponent) return;
       event.stopPropagation();
       event.preventDefault();
 
@@ -159,50 +161,51 @@ export const Dropdown = ({
         globalHotkeysConfig,
       });
     },
-    [globalHotkeysConfig, toggleDropdown, dropdownId],
+    [
+      globalHotkeysConfig,
+      toggleDropdown,
+      dropdownId,
+      disableClickForClickableComponent,
+    ],
   );
 
   return (
     <DropdownComponentInstanceContext.Provider
       value={{ instanceId: dropdownId }}
     >
-      <DropdownScope dropdownScopeId={dropdownId}>
-        <>
-          {isDefined(clickableComponent) ? (
-            <StyledClickableComponent
-              ref={refs.setReference}
-              onClick={handleClickableComponentClick}
-              aria-controls={`${dropdownId}-options`}
-              aria-expanded={isDropdownOpen}
-              aria-haspopup={true}
-              role="button"
-              width={clickableComponentWidth}
-            >
-              {clickableComponent}
-            </StyledClickableComponent>
-          ) : (
-            <StyledDropdownFallbackAnchor ref={refs.setReference} />
-          )}
-          {isDropdownOpen && (
-            <DropdownInternalContainer
-              floatingStyles={floatingStyles}
-              dropdownComponents={dropdownComponents}
-              dropdownId={dropdownId}
-              dropdownPlacement={placement}
-              floatingUiRefs={refs}
-              hotkey={hotkey}
-              onClickOutside={onClickOutside}
-              onHotkeyTriggered={onOpen}
-              excludedClickOutsideIds={excludedClickOutsideIds}
-              isDropdownInModal={isDropdownInModal}
-            />
-          )}
-          <DropdownOnToggleEffect
-            onDropdownClose={onClose}
-            onDropdownOpen={onOpen}
-          />
-        </>
-      </DropdownScope>
+      {isDefined(clickableComponent) ? (
+        <StyledClickableComponent
+          ref={refs.setReference}
+          onClick={handleClickableComponentClick}
+          aria-controls={`${dropdownId}-options`}
+          aria-expanded={isDropdownOpen}
+          aria-haspopup={true}
+          role="button"
+          width={clickableComponentWidth}
+        >
+          {clickableComponent}
+        </StyledClickableComponent>
+      ) : (
+        <StyledDropdownFallbackAnchor ref={refs.setReference} />
+      )}
+      {isDropdownOpen && (
+        <DropdownInternalContainer
+          floatingStyles={floatingStyles}
+          dropdownComponents={dropdownComponents}
+          dropdownId={dropdownId}
+          dropdownPlacement={placement}
+          floatingUiRefs={refs}
+          hotkey={hotkey}
+          onClickOutside={onClickOutside}
+          onHotkeyTriggered={onOpen}
+          excludedClickOutsideIds={excludedClickOutsideIds}
+          isDropdownInModal={isDropdownInModal}
+        />
+      )}
+      <DropdownOnToggleEffect
+        onDropdownClose={onClose}
+        onDropdownOpen={onOpen}
+      />
     </DropdownComponentInstanceContext.Provider>
   );
 };

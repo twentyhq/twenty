@@ -1,9 +1,9 @@
 import { createReadStream, existsSync } from 'fs';
 import * as fs from 'fs/promises';
 import { dirname, join } from 'path';
-import { Readable } from 'stream';
+import { type Readable } from 'stream';
 
-import { StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
+import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import {
   FileStorageException,
   FileStorageExceptionCode,
@@ -174,5 +174,11 @@ export class LocalDriver implements StorageDriver {
     );
 
     return existsSync(filePath);
+  }
+
+  async checkFolderExists(folderPath: string): Promise<boolean> {
+    const folderFullPath = join(this.options.storagePath, folderPath);
+
+    return existsSync(folderFullPath);
   }
 }

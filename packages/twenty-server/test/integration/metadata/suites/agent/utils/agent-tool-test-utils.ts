@@ -1,18 +1,26 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
+import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
+import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
+import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
+import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
+import { AgentHandoffExecutorService } from 'src/engine/metadata-modules/agent/agent-handoff-executor.service';
+import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
 import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
-import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { type AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
+import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
+import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
 
 export interface AgentToolTestContext {
   module: TestingModule;
@@ -65,14 +73,6 @@ export const createAgentToolTestModule =
           },
         },
         {
-          provide: WorkspaceEventEmitter,
-          useValue: {
-            emit: jest.fn(),
-            emitDatabaseBatchEvent: jest.fn(),
-            emitCustomBatchEvent: jest.fn(),
-          },
-        },
-        {
           provide: WorkspacePermissionsCacheService,
           useValue: {
             getRolesPermissionsFromCache: jest.fn(),
@@ -81,6 +81,52 @@ export const createAgentToolTestModule =
         {
           provide: ToolService,
           useClass: ToolService,
+        },
+        {
+          provide: ToolAdapterService,
+          useClass: ToolAdapterService,
+        },
+        {
+          provide: ToolRegistryService,
+          useClass: ToolRegistryService,
+        },
+        {
+          provide: SendEmailTool,
+          useValue: {
+            description: 'mock',
+            parameters: {},
+            execute: jest.fn(),
+          },
+        },
+        {
+          provide: ScopedWorkspaceContextFactory,
+          useValue: {
+            create: jest.fn(() => ({ workspaceId: 'test-workspace-id' })),
+          },
+        },
+        {
+          provide: MessagingSendMessageService,
+          useValue: { sendMessage: jest.fn() },
+        },
+        {
+          provide: PermissionsService,
+          useValue: {
+            hasToolPermission: jest.fn(),
+          },
+        },
+        {
+          provide: AgentHandoffService,
+          useValue: {
+            getHandoffTargets: jest.fn().mockResolvedValue([]),
+            canHandoffTo: jest.fn().mockResolvedValue(true),
+            getAgentHandoffs: jest.fn().mockResolvedValue([]),
+          },
+        },
+        {
+          provide: AgentHandoffExecutorService,
+          useValue: {
+            executeHandoff: jest.fn().mockResolvedValue({ success: true }),
+          },
         },
       ],
     }).compile();
@@ -103,7 +149,10 @@ export const createAgentToolTestModule =
 
     const testAgent: AgentEntity & { roleId: string | null } = {
       id: testAgentId,
-      name: 'Test Agent',
+      name: 'test-agent',
+      label: 'Test Agent',
+      icon: 'IconTest',
+      isCustom: false,
       description: 'Test agent for integration tests',
       prompt: 'You are a test agent',
       modelId: 'gpt-4o',
@@ -113,6 +162,9 @@ export const createAgentToolTestModule =
       roleId: testRoleId,
       createdAt: new Date(),
       updatedAt: new Date(),
+      chatThreads: [],
+      incomingHandoffs: [],
+      outgoingHandoffs: [],
     };
 
     const testRole: RoleEntity = {
@@ -130,7 +182,7 @@ export const createAgentToolTestModule =
       isEditable: true,
     } as RoleEntity;
 
-    const testObjectMetadata = {
+    const testObjectMetadata = getMockObjectMetadataEntity({
       id: 'test-object-id',
       standardId: null,
       dataSourceId: 'test-data-source-id',
@@ -157,7 +209,8 @@ export const createAgentToolTestModule =
       targetRelationFields: [],
       dataSource: {} as any,
       objectPermissions: [],
-    };
+      fieldPermissions: [],
+    });
 
     return {
       module,
@@ -206,6 +259,7 @@ export const setupBasicPermissions = (context: AgentToolTestContext) => {
             canUpdate: true,
             canSoftDelete: true,
             canDestroy: false,
+            restrictedFields: {},
           },
         },
       },

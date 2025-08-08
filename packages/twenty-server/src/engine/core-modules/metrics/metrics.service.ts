@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { metrics, Attributes } from '@opentelemetry/api';
+import { metrics, type Attributes } from '@opentelemetry/api';
 
 import { MetricsCacheService } from 'src/engine/core-modules/metrics/metrics-cache.service';
-import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { type MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 @Injectable()
 export class MetricsService {

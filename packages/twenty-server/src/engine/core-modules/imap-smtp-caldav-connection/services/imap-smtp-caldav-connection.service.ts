@@ -1,15 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { ImapFlow } from 'imapflow';
+import { createTransport } from 'nodemailer';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-  AccountType,
-  ConnectionParameters,
+  type AccountType,
+  type ConnectionParameters,
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { CalDAVClient } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/caldav.client';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
 export class ImapSmtpCaldavService {
@@ -19,17 +21,16 @@ export class ImapSmtpCaldavService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  async testImapConnection(params: ConnectionParameters): Promise<boolean> {
-    if (!params.host || !params.username || !params.password) {
-      throw new UserInputError('Missing required IMAP connection parameters');
-    }
-
+  async testImapConnection(
+    handle: string,
+    params: ConnectionParameters,
+  ): Promise<boolean> {
     const client = new ImapFlow({
       host: params.host,
       port: params.port,
       secure: params.secure ?? true,
       auth: {
-        user: params.username,
+        user: handle,
         pass: params.password,
       },
       logger: false,
@@ -57,16 +58,27 @@ export class ImapSmtpCaldavService {
       if (error.authenticationFailed) {
         throw new UserInputError(
           'IMAP authentication failed. Please check your credentials.',
+          {
+            userFriendlyMessage:
+              "We couldn't log in to your email account. Please check your email address and password, then try again.",
+          },
         );
       }
 
       if (error.code === 'ECONNREFUSED') {
         throw new UserInputError(
           `IMAP connection refused. Please verify server and port.`,
+          {
+            userFriendlyMessage:
+              "We couldn't connect to your email server. Please check your server settings and try again.",
+          },
         );
       }
 
-      throw new UserInputError(`IMAP connection failed: ${error.message}`);
+      throw new UserInputError(`IMAP connection failed: ${error.message}`, {
+        userFriendlyMessage:
+          'We encountered an issue connecting to your email account. Please check your settings and try again.',
+      });
     } finally {
       if (client.authenticated) {
         await client.logout();
@@ -74,36 +86,94 @@ export class ImapSmtpCaldavService {
     }
   }
 
-  async testSmtpConnection(params: ConnectionParameters): Promise<boolean> {
-    this.logger.log('SMTP connection testing not yet implemented', params);
+  async testSmtpConnection(
+    handle: string,
+    params: ConnectionParameters,
+  ): Promise<boolean> {
+    const transport = createTransport({
+      host: params.host,
+      port: params.port,
+      auth: {
+        user: handle,
+        pass: params.password,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+
+    try {
+      await transport.verify();
+    } catch (error) {
+      this.logger.error(
+        `SMTP connection failed: ${error.message}`,
+        error.stack,
+      );
+      throw new UserInputError(`SMTP connection failed: ${error.message}`, {
+        userFriendlyMessage:
+          "We couldn't connect to your outgoing email server. Please check your SMTP settings and try again.",
+      });
+    }
 
     return true;
   }
 
-  async testCaldavConnection(params: ConnectionParameters): Promise<boolean> {
-    this.logger.log('CALDAV connection testing not yet implemented', params);
+  async testCaldavConnection(
+    handle: string,
+    params: ConnectionParameters,
+  ): Promise<boolean> {
+    const client = new CalDAVClient({
+      serverUrl: params.host,
+      username: params.username ?? handle,
+      password: params.password,
+    });
+
+    try {
+      await client.listCalendars();
+    } catch (error) {
+      this.logger.error(
+        `CALDAV connection failed: ${error.message}`,
+        error.stack,
+      );
+      if (error.code === 'FailedToOpenSocket') {
+        throw new UserInputError(`CALDAV connection failed: ${error.message}`, {
+          userFriendlyMessage:
+            "We couldn't connect to your CalDAV server. Please check your server settings and try again.",
+        });
+      }
+
+      throw new UserInputError(`CALDAV connection failed: ${error.message}`, {
+        userFriendlyMessage:
+          'Invalid credentials. Please check your username and password.',
+      });
+    }
 
     return true;
   }
 
   async testImapSmtpCaldav(
+    handle: string,
     params: ConnectionParameters,
     accountType: AccountType,
   ): Promise<boolean> {
     if (accountType === 'IMAP') {
-      return this.testImapConnection(params);
+      return this.testImapConnection(handle, params);
     }
 
     if (accountType === 'SMTP') {
-      return this.testSmtpConnection(params);
+      return this.testSmtpConnection(handle, params);
     }
 
     if (accountType === 'CALDAV') {
-      return this.testCaldavConnection(params);
+      return this.testCaldavConnection(handle, params);
     }
 
     throw new UserInputError(
       'Invalid account type. Must be one of: IMAP, SMTP, CALDAV',
+      {
+        userFriendlyMessage:
+          'Please select a valid connection type (IMAP, SMTP, or CalDAV) and try again.',
+      },
     );
   }
 

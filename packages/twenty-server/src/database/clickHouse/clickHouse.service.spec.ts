@@ -1,6 +1,6 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
-import { ClickHouseClient } from '@clickhouse/client';
+import { type ClickHouseClient } from '@clickhouse/client';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 

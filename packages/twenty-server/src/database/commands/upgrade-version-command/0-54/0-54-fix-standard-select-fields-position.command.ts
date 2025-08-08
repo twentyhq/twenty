@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  RunOnWorkspaceArgs,
+  type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -71,7 +71,7 @@ export class FixStandardSelectFieldsPositionCommand extends ActiveOrSuspendedWor
     let biggestPosition = -1;
 
     // Sort options by position for consistent processing
-    const sortedOptions = [...taskStatusFieldMetadata.options].sort(
+    const sortedOptions = (taskStatusFieldMetadata.options ?? []).sort(
       (a, b) => a.position - b.position,
     );
 

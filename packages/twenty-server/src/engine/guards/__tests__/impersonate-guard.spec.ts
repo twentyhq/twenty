@@ -1,4 +1,4 @@
-import { ExecutionContext } from '@nestjs/common';
+import { type ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';

@@ -1,23 +1,24 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  GraphQLInputFieldConfig,
+  GraphQLBoolean,
+  type GraphQLInputFieldConfig,
   GraphQLInputObjectType,
-  GraphQLInputType,
+  type GraphQLInputType,
   GraphQLString,
 } from 'graphql';
-
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
+import { getUniqueConstraintsFields } from 'twenty-shared/utils';
 
 import {
-  InputTypeDefinition,
+  type InputTypeDefinition,
   InputTypeDefinitionKind,
 } from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { getUniqueConstraintsFields } from 'src/engine/metadata-modules/index-metadata/utils/getUniqueConstraintsFields.util';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { pascalCase } from 'src/utils/pascal-case';
 
 export const formatRelationConnectInputTarget = (objectMetadataId: string) =>
@@ -27,9 +28,7 @@ export const formatRelationConnectInputTarget = (objectMetadataId: string) =>
 export class RelationConnectInputTypeDefinitionFactory {
   constructor(private readonly typeMapperService: TypeMapperService) {}
 
-  public create(
-    objectMetadata: ObjectMetadataInterface,
-  ): InputTypeDefinition[] {
+  public create(objectMetadata: ObjectMetadataEntity): InputTypeDefinition[] {
     const fields = this.generateRelationConnectInputType(objectMetadata);
     const target = formatRelationConnectInputTarget(objectMetadata.id);
 
@@ -48,26 +47,33 @@ export class RelationConnectInputTypeDefinitionFactory {
   }
 
   private generateRelationConnectInputType(
-    objectMetadata: ObjectMetadataInterface,
+    objectMetadata: ObjectMetadataEntity,
   ): GraphQLInputObjectType {
     return new GraphQLInputObjectType({
       name: `${pascalCase(objectMetadata.nameSingular)}RelationInput`,
       fields: () => ({
-        connect: {
+        [RELATION_NESTED_QUERY_KEYWORDS.CONNECT]: {
           type: new GraphQLInputObjectType({
             name: `${pascalCase(objectMetadata.nameSingular)}ConnectInput`,
             fields: this.generateRelationWhereInputType(objectMetadata),
           }),
           description: `Connect to a ${objectMetadata.nameSingular} record`,
         },
+        [RELATION_NESTED_QUERY_KEYWORDS.DISCONNECT]: {
+          type: GraphQLBoolean,
+          description: `Disconnect from a ${objectMetadata.nameSingular} record`,
+        },
       }),
     });
   }
 
   private generateRelationWhereInputType(
-    objectMetadata: ObjectMetadataInterface,
+    objectMetadata: ObjectMetadataEntity,
   ): Record<string, GraphQLInputFieldConfig> {
-    const uniqueConstraints = getUniqueConstraintsFields(objectMetadata);
+    const uniqueConstraints = getUniqueConstraintsFields<
+      FieldMetadataEntity,
+      ObjectMetadataEntity
+    >(objectMetadata);
 
     const fields: Record<
       string,
@@ -119,7 +125,7 @@ export class RelationConnectInputTypeDefinitionFactory {
         } else {
           const scalarType = this.typeMapperService.mapToScalarType(
             field.type,
-            field.settings,
+            field.settings ?? undefined,
             field.name === 'id',
           );
 
@@ -132,7 +138,7 @@ export class RelationConnectInputTypeDefinitionFactory {
     });
 
     return {
-      where: {
+      [RELATION_NESTED_QUERY_KEYWORDS.CONNECT_WHERE]: {
         type: new GraphQLInputObjectType({
           name: `${pascalCase(objectMetadata.nameSingular)}WhereUniqueInput`,
           fields: () => fields,
@@ -142,7 +148,7 @@ export class RelationConnectInputTypeDefinitionFactory {
     };
   }
 
-  private formatConstraints(constraints: FieldMetadataInterface[][]) {
+  private formatConstraints(constraints: FieldMetadataEntity[][]) {
     return constraints
       .map((constraint) => constraint.map((field) => field.name).join(' and '))
       .join(' or ');

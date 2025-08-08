@@ -6,9 +6,11 @@ type EmailsFieldMenuItemProps = {
   onEdit?: () => void;
   onSetAsPrimary?: () => void;
   onDelete?: () => void;
+  onCopy?: (email: string) => void;
   email: string;
   showPrimaryIcon: boolean;
   showSetAsPrimaryButton: boolean;
+  showCopyButton: boolean;
 };
 
 export const EmailsFieldMenuItem = ({
@@ -19,6 +21,8 @@ export const EmailsFieldMenuItem = ({
   email,
   showPrimaryIcon,
   showSetAsPrimaryButton,
+  showCopyButton,
+  onCopy,
 }: EmailsFieldMenuItemProps) => {
   return (
     <MultiItemFieldMenuItem
@@ -30,6 +34,8 @@ export const EmailsFieldMenuItem = ({
       DisplayComponent={EmailDisplay}
       showPrimaryIcon={showPrimaryIcon}
       showSetAsPrimaryButton={showSetAsPrimaryButton}
+      showCopyButton={showCopyButton}
+      onCopy={onCopy}
     />
   );
 };

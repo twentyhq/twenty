@@ -1,8 +1,8 @@
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 import { RelationType } from '~/generated-metadata/graphql';
 import { buildValueFromFilter } from './buildRecordInputFromFilter';
 
@@ -133,12 +133,12 @@ describe('buildValueFromFilter', () => {
   describe('NUMBER field type', () => {
     const testCases = [
       {
-        operand: ViewFilterOperand.GreaterThan,
+        operand: ViewFilterOperand.GreaterThanOrEqual,
         value: '5',
         expected: 6,
       },
       {
-        operand: ViewFilterOperand.LessThan,
+        operand: ViewFilterOperand.LessThanOrEqual,
         value: '5',
         expected: 4,
       },
@@ -359,12 +359,12 @@ describe('buildValueFromFilter', () => {
         expected: undefined,
       },
       {
-        operand: ViewFilterOperand.GreaterThan,
+        operand: ViewFilterOperand.GreaterThanOrEqual,
         value: 'Rating 1',
         expected: 'RATING_2',
       },
       {
-        operand: ViewFilterOperand.LessThan,
+        operand: ViewFilterOperand.LessThanOrEqual,
         value: 'Rating 2',
         expected: 'RATING_1',
       },

@@ -1,12 +1,11 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 
 export function formatData<T>(
   data: T,
@@ -54,10 +53,10 @@ export function formatData<T>(
   return newData as T;
 }
 
-function formatCompositeField(
+export function formatCompositeField(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
-  fieldMetadata: FieldMetadataInterface,
+  fieldMetadata: FieldMetadataEntity,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Record<string, any> {
   const compositeType = compositeTypeDefinitions.get(
@@ -80,7 +79,7 @@ function formatCompositeField(
     if (value && value[subFieldKey] !== undefined) {
       formattedCompositeField[fullFieldName] = formatFieldMetadataValue(
         value[subFieldKey],
-        property as unknown as FieldMetadataInterface,
+        property as unknown as FieldMetadataEntity,
       );
     }
   }
@@ -91,7 +90,7 @@ function formatCompositeField(
 function formatFieldMetadataValue(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
-  fieldMetadata: FieldMetadataInterface,
+  fieldMetadata: FieldMetadataEntity,
 ) {
   if (
     fieldMetadata.type === FieldMetadataType.RAW_JSON &&

@@ -1,17 +1,17 @@
-import { FieldMetadataType, IsExactly } from 'twenty-shared/types';
+import {
+  type AllowedAddressSubField,
+  type FieldMetadataType,
+  type IsExactly,
+} from 'twenty-shared/types';
 
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { type RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+import { type RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 export enum NumberDataType {
   FLOAT = 'float',
   INT = 'int',
   BIGINT = 'bigint',
 }
-
-export type FieldMetadataDefaultSettings = {
-  isForeignKey?: boolean;
-};
 
 export enum DateDisplayFormat {
   RELATIVE = 'RELATIVE',
@@ -22,7 +22,7 @@ export enum DateDisplayFormat {
 export type FieldNumberVariant = 'number' | 'percentage';
 
 export type FieldMetadataNumberSettings = {
-  dataType: NumberDataType;
+  dataType?: NumberDataType;
   decimals?: number;
   type?: FieldNumberVariant;
 };
@@ -44,20 +44,28 @@ export type FieldMetadataRelationSettings = {
   onDelete?: RelationOnDeleteAction;
   joinColumnName?: string | null;
 };
+export type FieldMetadataAddressSettings = {
+  subFields?: AllowedAddressSubField[];
+};
 
 type FieldMetadataSettingsMapping = {
-  [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings;
-  [FieldMetadataType.DATE]: FieldMetadataDateSettings;
-  [FieldMetadataType.DATE_TIME]: FieldMetadataDateTimeSettings;
-  [FieldMetadataType.TEXT]: FieldMetadataTextSettings;
+  [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings | null;
+  [FieldMetadataType.DATE]: FieldMetadataDateSettings | null;
+  [FieldMetadataType.DATE_TIME]: FieldMetadataDateTimeSettings | null;
+  [FieldMetadataType.TEXT]: FieldMetadataTextSettings | null;
   [FieldMetadataType.RELATION]: FieldMetadataRelationSettings;
+  [FieldMetadataType.ADDRESS]: FieldMetadataAddressSettings | null;
+  [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings | null; // TODO Should not be null
 };
+
+export type AllFieldMetadataSettings =
+  FieldMetadataSettingsMapping[keyof FieldMetadataSettingsMapping];
 
 export type FieldMetadataSettings<
   T extends FieldMetadataType = FieldMetadataType,
 > =
   IsExactly<T, FieldMetadataType> extends true
-    ? FieldMetadataDefaultSettings
+    ? null | AllFieldMetadataSettings // Could be improved to be | unknown
     : T extends keyof FieldMetadataSettingsMapping
-      ? FieldMetadataSettingsMapping[T] & FieldMetadataDefaultSettings
-      : never;
+      ? FieldMetadataSettingsMapping[T]
+      : never | null;

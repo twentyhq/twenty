@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner } from 'nest-commander';
 
+import { CleanupOrphanedFilesCronCommand } from 'src/engine/core-modules/file/crons/commands/cleanup-orphaned-files.cron.command';
 import { CalendarEventListFetchCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-event-list-fetch.cron.command';
 import { CalendarEventsImportCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-import.cron.command';
 import { CalendarOngoingStaleCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-ongoing-stale.cron.command';
@@ -9,6 +10,7 @@ import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/mess
 import { MessagingMessagesImportCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-messages-import.cron.command';
 import { MessagingOngoingStaleCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-ongoing-stale.cron.command';
 import { CronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/cron-trigger.cron.command';
+import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-modules/domain-manager/crons/commands/check-custom-domain-valid-records.cron.command';
 
 @Command({
   name: 'cron:register:all',
@@ -25,6 +27,8 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly calendarEventsImportCronCommand: CalendarEventsImportCronCommand,
     private readonly calendarOngoingStaleCronCommand: CalendarOngoingStaleCronCommand,
     private readonly cronTriggerCronCommand: CronTriggerCronCommand,
+    private readonly cleanupOrphanedFilesCronCommand: CleanupOrphanedFilesCronCommand,
+    private readonly checkCustomDomainValidRecordsCronCommand: CheckCustomDomainValidRecordsCronCommand,
   ) {
     super();
   }
@@ -58,6 +62,14 @@ export class CronRegisterAllCommand extends CommandRunner {
         command: this.calendarOngoingStaleCronCommand,
       },
       { name: 'CronTrigger', command: this.cronTriggerCronCommand },
+      {
+        name: 'CleanupOrphanedFiles',
+        command: this.cleanupOrphanedFilesCronCommand,
+      },
+      {
+        name: 'CheckCustomDomainValidRecords',
+        command: this.checkCustomDomainValidRecordsCronCommand,
+      },
     ];
 
     let successCount = 0;

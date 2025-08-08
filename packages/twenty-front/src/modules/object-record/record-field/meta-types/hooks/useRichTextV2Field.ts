@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import {
@@ -10,8 +10,10 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
+import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/states/recordFieldInputDraftValueComponentState';
 import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isFieldRichTextV2';
 import { isFieldRichTextV2Value } from '@/object-record/record-field/types/guards/isFieldRichTextValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import type { PartialBlock } from '@blocknote/core';
 import { isNonEmptyString } from '@sniptt/guards';
 import { FieldContext } from '../../contexts/FieldContext';
@@ -38,10 +40,11 @@ export const useRichTextV2Field = () => {
     ? fieldValue
     : ({ blocknote: null, markdown: null } as FieldRichTextV2Value);
 
-  const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldRichTextValue>();
+  const { setDraftValue } = useRecordFieldInput<FieldRichTextValue>();
 
-  const draftValue = useRecoilValue(getDraftValueSelector());
+  const draftValue = useRecoilComponentValue(
+    recordFieldInputDraftValueComponentState,
+  );
 
   const draftValueParsed: PartialBlock[] = isNonEmptyString(draftValue)
     ? JSON.parse(draftValue)

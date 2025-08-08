@@ -1,24 +1,28 @@
 import { Injectable } from '@nestjs/common';
 
+import isEmpty from 'lodash.isempty';
 import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
+import { settings } from 'src/engine/constants/settings';
 import {
-  FieldMetadataComplexOption,
-  FieldMetadataDefaultOption,
+  type FieldMetadataComplexOption,
+  type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { isSelectFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-select-field-metadata-type.util';
-import { SelectOrMultiSelectFieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/utils/is-select-or-multi-select-field-metadata.util';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type SelectOrMultiSelectFieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/utils/is-select-or-multi-select-field-metadata.util';
+import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
-import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
-import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
+import { type ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
+import { type ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
+import { type ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 type Differences<T> = {
   created: T[];
@@ -53,8 +57,8 @@ export class FieldMetadataRelatedRecordsService {
     );
 
     const { created, updated, deleted } = this.getOptionsDifferences(
-      oldFieldMetadata.options,
-      newFieldMetadata.options,
+      oldFieldMetadata.options ?? [],
+      newFieldMetadata.options ?? [],
     );
 
     const viewGroupRepository =
@@ -67,7 +71,14 @@ export class FieldMetadataRelatedRecordsService {
       if (view.viewGroups.length === 0) {
         continue;
       }
+      const valuesToDelete = deleted.map((option) => option.value);
 
+      if (valuesToDelete.length > 0) {
+        await viewGroupRepository.delete({
+          fieldMetadataId: newFieldMetadata.id,
+          fieldValue: In(valuesToDelete),
+        });
+      }
       const maxPosition = this.getMaxPosition(view.viewGroups);
 
       const viewGroupsToCreate = created.map((option, index) =>
@@ -80,7 +91,9 @@ export class FieldMetadataRelatedRecordsService {
         }),
       );
 
-      await viewGroupRepository.insert(viewGroupsToCreate);
+      if (viewGroupsToCreate.length > 0) {
+        await viewGroupRepository.insert(viewGroupsToCreate);
+      }
 
       for (const { old: oldOption, new: newOption } of updated) {
         const existingViewGroup = view.viewGroups.find(
@@ -98,13 +111,6 @@ export class FieldMetadataRelatedRecordsService {
           { fieldValue: newOption.value },
         );
       }
-
-      const valuesToDelete = deleted.map((option) => option.value);
-
-      await viewGroupRepository.delete({
-        fieldMetadataId: newFieldMetadata.id,
-        fieldValue: In(valuesToDelete),
-      });
 
       await this.syncNoValueViewGroup(
         newFieldMetadata,
@@ -173,9 +179,15 @@ export class FieldMetadataRelatedRecordsService {
         }
 
         const viewFilterOptions = viewFilterValue
-          .map((value) =>
-            oldFieldMetadata.options.find((option) => option.value === value),
-          )
+          .map((value) => {
+            if (!isDefined(oldFieldMetadata.options)) {
+              return undefined;
+            }
+
+            return oldFieldMetadata.options.find(
+              (option) => option.value === value,
+            );
+          })
           .filter(isDefined);
 
         const afterDeleteViewFilterOptions = viewFilterOptions.filter(
@@ -245,8 +257,12 @@ export class FieldMetadataRelatedRecordsService {
   }
 
   public getOptionsDifferences(
-    oldOptions: (FieldMetadataDefaultOption | FieldMetadataComplexOption)[],
-    newOptions: (FieldMetadataDefaultOption | FieldMetadataComplexOption)[],
+    rawOldOptions:
+      | (FieldMetadataDefaultOption | FieldMetadataComplexOption)[]
+      | null,
+    rawNewOptions:
+      | (FieldMetadataDefaultOption | FieldMetadataComplexOption)[]
+      | null,
     compareLabel = false,
   ): GetOptionsDifferences {
     const differences: Differences<
@@ -256,6 +272,9 @@ export class FieldMetadataRelatedRecordsService {
       updated: [],
       deleted: [],
     };
+
+    const oldOptions = rawOldOptions ?? [];
+    const newOptions = rawNewOptions ?? [];
 
     const oldOptionsMap = new Map(oldOptions.map((opt) => [opt.id, opt]));
 
@@ -309,5 +328,75 @@ export class FieldMetadataRelatedRecordsService {
 
   private getMaxPosition(viewGroups: ViewGroupWorkspaceEntity[]): number {
     return viewGroups.reduce((max, group) => Math.max(max, group.position), 0);
+  }
+
+  async createViewAndViewFields(
+    createdFieldMetadatas: FieldMetadataEntity[],
+    workspaceId: string,
+  ) {
+    const workspaceDataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+      });
+
+    await workspaceDataSource.transaction(
+      async (workspaceEntityManager: WorkspaceEntityManager) => {
+        const viewsRepository = workspaceEntityManager.getRepository('view', {
+          shouldBypassPermissionChecks: true,
+        });
+
+        const viewFieldsRepository = workspaceEntityManager.getRepository(
+          'viewField',
+          {
+            shouldBypassPermissionChecks: true,
+          },
+        );
+
+        for (const createdFieldMetadata of createdFieldMetadatas) {
+          const views = await viewsRepository.find({
+            where: {
+              objectMetadataId: createdFieldMetadata.objectMetadataId,
+            },
+          });
+
+          if (!isEmpty(views)) {
+            const view = views[0];
+            const existingViewFields = await viewFieldsRepository.find({
+              where: {
+                viewId: view.id,
+              },
+            });
+
+            const isVisible =
+              existingViewFields.length < settings.maxVisibleViewFields;
+
+            const createdFieldIsAlreadyInView = existingViewFields.some(
+              (existingViewField) =>
+                existingViewField.fieldMetadataId === createdFieldMetadata.id,
+            );
+
+            if (!createdFieldIsAlreadyInView) {
+              const lastPosition = existingViewFields
+                .map((viewField) => viewField.position)
+                .reduce((acc, position) => {
+                  if (position > acc) {
+                    return position;
+                  }
+
+                  return acc;
+                }, -1);
+
+              await viewFieldsRepository.insert({
+                fieldMetadataId: createdFieldMetadata.id,
+                position: lastPosition + 1,
+                isVisible,
+                size: 180,
+                viewId: view.id,
+              });
+            }
+          }
+        }
+      },
+    );
   }
 }

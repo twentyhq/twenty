@@ -1,4 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { StepStatus } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
 // Base schemas
@@ -22,11 +23,14 @@ export const baseWorkflowActionSchema = z.object({
   name: z.string(),
   valid: z.boolean(),
   nextStepIds: z.array(z.string()).optional().nullable(),
+  position: z.object({ x: z.number(), y: z.number() }).optional().nullable(),
 });
 
 export const baseTriggerSchema = z.object({
   name: z.string().optional(),
   type: z.string(),
+  position: z.object({ x: z.number(), y: z.number() }).optional().nullable(),
+  nextStepIds: z.array(z.string()).optional().nullable(),
 });
 
 // Action settings schemas
@@ -134,14 +138,16 @@ export const workflowHttpRequestActionSettingsSchema =
 export const workflowAiAgentActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
-      agentId: z.string(),
+      agentId: z.string().optional(),
+      prompt: z.string().optional(),
     }),
   });
 
 export const workflowFilterActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
-      filter: z.record(z.any()),
+      stepFilterGroups: z.array(z.any()),
+      stepFilters: z.array(z.any()),
     }),
   });
 
@@ -295,28 +301,26 @@ export const workflowTriggerSchema = z.discriminatedUnion('type', [
   workflowWebhookTriggerSchema,
 ]);
 
-// Step output schemas
-export const workflowExecutorOutputSchema = z.object({
+export const workflowRunStepStatusSchema = z.nativeEnum(StepStatus);
+
+export const workflowRunStateStepInfoSchema = z.object({
   result: z.any().optional(),
   error: z.any().optional(),
-  pendingEvent: z.boolean().optional(),
+  status: workflowRunStepStatusSchema,
 });
 
-export const workflowRunOutputStepsOutputSchema = z.record(
-  workflowExecutorOutputSchema,
+export const workflowRunStateStepInfosSchema = z.record(
+  workflowRunStateStepInfoSchema,
 );
 
-// Final workflow run output schema
-export const workflowRunOutputSchema = z.object({
+export const workflowRunStateSchema = z.object({
   flow: z.object({
     trigger: workflowTriggerSchema,
     steps: z.array(workflowActionSchema),
   }),
-  stepsOutput: workflowRunOutputStepsOutputSchema.optional(),
-  error: z.any().optional(),
+  stepInfos: workflowRunStateStepInfosSchema,
+  workflowRunError: z.any().optional(),
 });
-
-export const workflowRunContextSchema = z.record(z.any());
 
 export const workflowRunStatusSchema = z.enum([
   'NOT_STARTED',
@@ -332,8 +336,7 @@ export const workflowRunSchema = z
     id: z.string(),
     workflowVersionId: z.string(),
     workflowId: z.string(),
-    output: workflowRunOutputSchema.nullable(),
-    context: workflowRunContextSchema.nullable(),
+    state: workflowRunStateSchema.nullable(),
     status: workflowRunStatusSchema,
     createdAt: z.string(),
     deletedAt: z.string().nullable(),

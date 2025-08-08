@@ -1,23 +1,43 @@
 import { jsonSchema } from 'ai';
-import { JSONSchema7Definition } from 'json-schema';
+import { type JSONSchema7Definition } from 'json-schema';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { shouldExcludeFieldFromAgentToolSchema } from 'src/engine/metadata-modules/field-metadata/utils/should-exclude-field-from-agent-tool-schema.util';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { convertObjectMetadataToSchemaProperties } from 'src/engine/utils/convert-object-metadata-to-schema-properties.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
-export const getRecordInputSchema = (objectMetadata: ObjectMetadataEntity) => {
+const createToolSchema = (
+  inputProperties: Record<string, JSONSchema7Definition>,
+  required?: string[],
+) => {
   return jsonSchema({
     type: 'object',
-    properties: convertObjectMetadataToSchemaProperties({
+    properties: {
+      toolDescription: {
+        type: 'string',
+        description:
+          'A clear, human-readable description of the action being performed. Explain what operation you are executing and with what parameters in natural language.',
+      },
+      input: {
+        type: 'object',
+        properties: inputProperties,
+        ...(required && { required }),
+      },
+    },
+  });
+};
+
+export const getRecordInputSchema = (objectMetadata: ObjectMetadataEntity) => {
+  return createToolSchema(
+    convertObjectMetadataToSchemaProperties({
       item: objectMetadata,
       forResponse: false,
     }),
-  });
+  );
 };
 
 export const generateFindToolSchema = (
@@ -48,10 +68,7 @@ export const generateFindToolSchema = (
     }
   });
 
-  return jsonSchema({
-    type: 'object',
-    properties: schemaProperties,
-  });
+  return createToolSchema(schemaProperties);
 };
 
 const generateFieldFilterJsonSchema = (
@@ -808,29 +825,52 @@ const generateFieldFilterJsonSchema = (
 };
 
 export const generateBulkDeleteToolSchema = () => {
-  return jsonSchema({
-    type: 'object',
-    properties: {
-      filter: {
-        type: 'object',
-        description: 'Filter criteria to select records for bulk delete',
-        properties: {
-          id: {
-            type: 'object',
-            description: 'Filter to select records to delete',
-            properties: {
-              in: {
-                type: 'array',
-                items: {
-                  type: 'string',
-                  format: 'uuid',
-                },
-                description: 'Array of record IDs to delete',
+  return createToolSchema({
+    filter: {
+      type: 'object',
+      description: 'Filter criteria to select records for bulk delete',
+      properties: {
+        id: {
+          type: 'object',
+          description: 'Filter to select records to delete',
+          properties: {
+            in: {
+              type: 'array',
+              items: {
+                type: 'string',
+                format: 'uuid',
               },
+              description: 'Array of record IDs to delete',
             },
           },
         },
       },
     },
   });
+};
+
+export const generateFindOneToolSchema = () => {
+  return createToolSchema(
+    {
+      id: {
+        type: 'string',
+        format: 'uuid',
+        description: 'The unique UUID of the record to retrieve',
+      },
+    },
+    ['id'],
+  );
+};
+
+export const generateSoftDeleteToolSchema = () => {
+  return createToolSchema(
+    {
+      id: {
+        type: 'string',
+        format: 'uuid',
+        description: 'The unique UUID of the record to soft delete',
+      },
+    },
+    ['id'],
+  );
 };

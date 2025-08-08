@@ -1,5 +1,7 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
-  GraphqlQueryRunnerException,
+  type GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import {
@@ -22,18 +24,16 @@ export const graphqlQueryRunnerExceptionHandler = (
     case GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND:
     case GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT:
     case GraphqlQueryRunnerExceptionCode.NOT_IMPLEMENTED:
-      throw new UserInputError(error.message);
+      throw new UserInputError(error);
     case GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND:
-      throw new NotFoundError(error.message);
+      throw new NotFoundError(error);
     case GraphqlQueryRunnerExceptionCode.RELATION_SETTINGS_NOT_FOUND:
     case GraphqlQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND:
     case GraphqlQueryRunnerExceptionCode.INVALID_POST_HOOK_PAYLOAD:
     case GraphqlQueryRunnerExceptionCode.MISSING_SYSTEM_FIELD:
       throw error;
     default: {
-      const _exhaustiveCheck: never = error.code;
-
-      throw error;
+      return assertUnreachable(error.code);
     }
   }
 };

@@ -5,10 +5,8 @@ import { Key } from 'ts-key-enum';
 
 export const useRecordTableRowFocusHotkeys = ({
   focusId,
-  hotkeyScope,
 }: {
   focusId: string;
-  hotkeyScope: string;
 }) => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
@@ -20,7 +18,6 @@ export const useRecordTableRowFocusHotkeys = ({
       moveFocusedRow('up');
     },
     focusId,
-    scope: hotkeyScope,
     dependencies: [moveFocusedRow],
   });
 
@@ -30,7 +27,6 @@ export const useRecordTableRowFocusHotkeys = ({
       moveFocusedRow('down');
     },
     focusId,
-    scope: hotkeyScope,
     dependencies: [moveFocusedRow],
   });
 };

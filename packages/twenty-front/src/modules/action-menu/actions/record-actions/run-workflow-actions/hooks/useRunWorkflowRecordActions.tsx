@@ -4,7 +4,7 @@ import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { msg } from '@lingui/core/macro';
@@ -23,7 +23,7 @@ export const useRunWorkflowRecordActions = ({
   skip?: boolean;
 }) => {
   const { getIcon } = useIcons();
-  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+  const contextStoreTargetedRecordsRule = useRecoilComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
 

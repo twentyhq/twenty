@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import diff, { DifferenceChange, DifferenceRemove } from 'microdiff';
-import { FieldMetadataType } from 'twenty-shared/types';
+import diff, { type DifferenceChange, type DifferenceRemove } from 'microdiff';
+import { type FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import { type FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import {
   ComparatorAction,
-  FieldRelationComparatorResult,
+  type FieldRelationComparatorResult,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 const fieldPropertiesToCompare = [
@@ -195,6 +195,8 @@ export class WorkspaceFieldRelationComparator {
         throw new Error(`Field ${fieldId} not found in standardObjectMetadata`);
       }
 
+      const relationFieldMetadata = propertiesMap[fieldId];
+
       if (relationTypeChange) {
         result.push({
           action: ComparatorAction.DELETE,
@@ -204,9 +206,11 @@ export class WorkspaceFieldRelationComparator {
         result.push({
           action: ComparatorAction.CREATE,
           object: {
-            ...propertiesMap[fieldId],
+            ...relationFieldMetadata,
             id: originalFieldMetadata.id,
             standardId: standardFieldMetadata.standardId ?? undefined,
+            description: relationFieldMetadata.description ?? undefined,
+            icon: relationFieldMetadata.icon ?? undefined,
           },
         });
       } else if (allOldPropertiesAreNull) {
@@ -216,6 +220,8 @@ export class WorkspaceFieldRelationComparator {
             ...propertiesMap[fieldId],
             id: originalFieldMetadata.id,
             standardId: standardFieldMetadata.standardId ?? undefined,
+            description: relationFieldMetadata.description ?? undefined,
+            icon: relationFieldMetadata.icon ?? undefined,
           },
         });
       } else if (allNewPropertiesAreNull) {
@@ -230,6 +236,8 @@ export class WorkspaceFieldRelationComparator {
             ...propertiesMap[fieldId],
             id: originalFieldMetadata.id,
             standardId: standardFieldMetadata.standardId ?? undefined,
+            description: relationFieldMetadata.description ?? undefined,
+            icon: relationFieldMetadata.icon ?? undefined,
           },
         });
       }

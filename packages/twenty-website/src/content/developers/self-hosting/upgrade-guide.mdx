@@ -119,6 +119,11 @@ yarn database:migrate:prod
 yarn command:prod upgrade
 ```
 
+#### Docker-compose.yml mutation
+
+This version includes a `docker-compose.yml` mutation to give `worker` service access to the `server-local-data` volume.
+Please update your local `docker-compose.yml` with [v0.50.0 docker-compose.yml](https://github.com/twentyhq/twenty/blob/v0.50.0/packages/twenty-docker/docker-compose.yml)
+
 ### v0.43.0 to v0.44.0
 
 Upgrade your Twenty instance to use v0.44.0 image

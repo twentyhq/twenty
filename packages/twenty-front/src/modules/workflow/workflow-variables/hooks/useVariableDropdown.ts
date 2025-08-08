@@ -1,9 +1,16 @@
+import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { workflowDiagramTriggerNodeSelectionComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramTriggerNodeSelectionComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
+import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
 import { useState } from 'react';
+import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
 import {
   BaseOutputSchema,
   LinkOutputSchema,
@@ -34,18 +41,29 @@ export const useVariableDropdown = ({
   onSelect,
   onBack,
 }: UseVariableDropdownProps): UseVariableDropdownReturn => {
+  const { getIcon } = useIcons();
+
   const [currentPath, setCurrentPath] = useState<string[]>([]);
   const [searchInputValue, setSearchInputValue] = useState('');
 
-  const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
+  const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
+
+  const workflowVisualizerWorkflowId = useRecoilComponentValue(
+    workflowVisualizerWorkflowIdComponentState,
+  );
+
+  const setWorkflowSelectedNode = useSetRecoilComponentState(
     workflowSelectedNodeComponentState,
   );
-  const setActiveTabId = useSetRecoilComponentStateV2(
+  const setActiveTabId = useSetRecoilComponentState(
     activeTabIdComponentState,
     'workflow-serverless-function-tab-list-component-id',
   );
-  const setWorkflowDiagramTriggerNodeSelection = useSetRecoilComponentStateV2(
-    workflowDiagramTriggerNodeSelectionComponentState,
+  const setWorkflowDiagram = useSetRecoilComponentState(
+    workflowDiagramComponentState,
+  );
+  const setCommandMenuNavigationStack = useSetRecoilState(
+    commandMenuNavigationStackState,
   );
 
   const getDisplayedSubStepFields = () => {
@@ -70,15 +88,46 @@ export const useVariableDropdown = ({
         setCurrentPath([...currentPath, key]);
         setSearchInputValue('');
       } else {
-        onSelect(`{{${step.id}.${[...currentPath, key].join('.')}}}`);
+        onSelect(
+          getVariableTemplateFromPath({
+            stepId: step.id,
+            path: [...currentPath, key],
+          }),
+        );
       }
     };
 
     const handleSelectLinkOutputSchema = (
       linkOutputSchema: LinkOutputSchema,
     ) => {
+      if (!isDefined(workflowVisualizerWorkflowId)) {
+        throw new Error('Workflow ID must be configured');
+      }
+
       setWorkflowSelectedNode(step.id);
-      setWorkflowDiagramTriggerNodeSelection(step.id);
+
+      setWorkflowDiagram((diagram) => {
+        if (!isDefined(diagram)) {
+          throw new Error('Workflow diagram must be defined');
+        }
+
+        return {
+          ...diagram,
+          nodes: diagram.nodes.map((node) => ({
+            ...node,
+            selected: node.id === step.id,
+          })),
+        };
+      });
+
+      setCommandMenuNavigationStack([]);
+
+      openWorkflowEditStepInCommandMenu(
+        workflowVisualizerWorkflowId,
+        step.name,
+        getIcon(step.icon),
+      );
+
       if (isDefined(linkOutputSchema.link.tab)) {
         setActiveTabId(linkOutputSchema.link.tab);
       }

@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Field metadata relation update should fail relation when name is changed 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Name cannot be changed for relation fields",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata relation update should fail relation when name is not in camel case 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "New Name should be in camelCase",
+    "name": "UserInputError",
+  },
+]
+`;

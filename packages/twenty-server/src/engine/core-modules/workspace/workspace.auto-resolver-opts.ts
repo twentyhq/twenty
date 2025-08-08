@@ -1,7 +1,7 @@
 import {
-  AutoResolverOpts,
+  type AutoResolverOpts,
   PagingStrategies,
-  ReadResolverOpts,
+  type ReadResolverOpts,
 } from '@ptc-org/nestjs-query-graphql';
 
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';

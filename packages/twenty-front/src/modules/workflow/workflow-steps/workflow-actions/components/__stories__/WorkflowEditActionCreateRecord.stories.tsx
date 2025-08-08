@@ -1,6 +1,7 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { fn, userEvent, within } from '@storybook/test';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -10,10 +11,9 @@ import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 import { WorkflowEditActionCreateRecord } from '../WorkflowEditActionCreateRecord';
-import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof WorkflowEditActionCreateRecord> = {
-  title: 'Modules/Workflow/WorkflowEditActionCreateRecord',
+  title: 'Modules/Workflow/Actions/CreateRecord/EditAction',
   component: WorkflowEditActionCreateRecord,
   parameters: {
     msw: graphqlMocks,

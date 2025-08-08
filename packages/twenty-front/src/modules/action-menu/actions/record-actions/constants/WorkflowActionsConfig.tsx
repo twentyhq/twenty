@@ -222,7 +222,8 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     SingleRecordActionKeys.DELETE,
     SingleRecordActionKeys.DESTROY,
     SingleRecordActionKeys.RESTORE,
-    SingleRecordActionKeys.EXPORT,
+    SingleRecordActionKeys.EXPORT_FROM_RECORD_INDEX,
+    SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW,
     MultipleRecordsActionKeys.DELETE,
     MultipleRecordsActionKeys.DESTROY,
     MultipleRecordsActionKeys.RESTORE,
@@ -259,14 +260,18 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       position: 12,
       label: msg`Permanently destroy workflow`,
     },
-    [SingleRecordActionKeys.EXPORT]: {
+    [SingleRecordActionKeys.EXPORT_FROM_RECORD_INDEX]: {
       position: 13,
       label: msg`Export workflow`,
       shouldBeRegistered: ({ selectedRecord }) =>
         !isDefined(selectedRecord?.deletedAt),
     },
-    [MultipleRecordsActionKeys.EXPORT]: {
+    [SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW]: {
       position: 14,
+      label: msg`Export workflow`,
+    },
+    [MultipleRecordsActionKeys.EXPORT]: {
+      position: 15,
       label: msg`Export workflows`,
     },
     [NoSelectionRecordActionKeys.EXPORT_VIEW]: {

@@ -18,11 +18,11 @@ import {
 import { useCloseRecordTableCellInGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellInGroup';
 import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const onColumnsChange = jest.fn();
-const recordTableId = 'scopeId';
+const recordTableId = 'record-table-id';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot
@@ -44,7 +44,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
             fieldDefinition: textfieldDefinition,
             recordId: 'recordId',
             isLabelIdentifier: false,
-            isReadOnly: false,
+            isRecordFieldReadOnly: false,
           }}
         >
           <RecordTableRowContextProvider value={recordTableRowContextValue}>
@@ -68,7 +68,7 @@ describe('useCloseRecordTableCellInGroup', () => {
   it('should work as expected', async () => {
     const { result } = renderHook(
       () => {
-        const currentTableCellInEditModePosition = useRecoilComponentValueV2(
+        const currentTableCellInEditModePosition = useRecoilComponentValue(
           recordTableCellEditModePositionComponentState,
         );
         return {

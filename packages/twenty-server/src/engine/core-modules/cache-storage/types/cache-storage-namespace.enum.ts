@@ -3,5 +3,6 @@ export enum CacheStorageNamespace {
   ModuleCalendar = 'module:calendar',
   ModuleWorkflow = 'module:workflow',
   EngineWorkspace = 'engine:workspace',
+  EngineLock = 'engine:lock',
   EngineHealth = 'engine:health',
 }

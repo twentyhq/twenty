@@ -1,8 +1,8 @@
 import { millisecondsToSeconds } from 'date-fns';
 import {
   animate,
-  AnimationPlaybackControls,
-  ValueAnimationTransition,
+  type AnimationPlaybackControls,
+  type ValueAnimationTransition,
 } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';

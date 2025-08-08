@@ -1,4 +1,4 @@
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
 import {
@@ -8,31 +8,40 @@ import {
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateStep = ({
   workflow,
 }: {
-  workflow: WorkflowWithCurrentVersion;
+  workflow: WorkflowWithCurrentVersion | undefined;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { createWorkflowVersionStep } = useCreateWorkflowVersionStep();
-  const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
+  const setWorkflowSelectedNode = useSetRecoilComponentState(
     workflowSelectedNodeComponentState,
   );
-  const setWorkflowLastCreatedStepId = useSetRecoilComponentStateV2(
+  const setWorkflowLastCreatedStepId = useSetRecoilComponentState(
     workflowLastCreatedStepIdComponentState,
   );
 
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
 
+  if (!isDefined(workflow)) {
+    return {
+      createStep: async () => undefined,
+    };
+  }
+
   const createStep = async ({
     newStepType,
     parentStepId,
     nextStepId,
+    position,
   }: {
     newStepType: WorkflowStepType;
-    parentStepId: string;
+    parentStepId: string | undefined;
     nextStepId: string | undefined;
+    position?: { x: number; y: number };
   }) => {
     if (isLoading === true) {
       return;
@@ -43,21 +52,30 @@ export const useCreateStep = ({
     try {
       const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
 
-      const createdStep = (
+      if (!isDefined(workflowVersionId)) {
+        throw new Error("Couldn't get updatable workflow version");
+      }
+
+      const workflowVersionStepChanges = (
         await createWorkflowVersionStep({
           workflowVersionId,
           stepType: newStepType,
           parentStepId,
           nextStepId,
+          position,
         })
       )?.data?.createWorkflowVersionStep;
 
-      if (!createdStep) {
-        return;
+      const createdStep = workflowVersionStepChanges?.createdStep;
+
+      if (!isDefined(createdStep)) {
+        throw new Error("Couldn't create step");
       }
 
       setWorkflowSelectedNode(createdStep.id);
       setWorkflowLastCreatedStepId(createdStep.id);
+
+      return createdStep;
     } finally {
       setIsLoading(false);
     }

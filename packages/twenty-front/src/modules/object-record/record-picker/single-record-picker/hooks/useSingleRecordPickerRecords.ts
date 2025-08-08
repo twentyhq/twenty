@@ -1,7 +1,7 @@
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { useFilteredSearchRecordQuery } from '@/search/hooks/useFilteredSearchRecordQuery';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const useSingleRecordPickerRecords = ({
   objectNameSingular,
@@ -10,11 +10,11 @@ export const useSingleRecordPickerRecords = ({
   objectNameSingular: string;
   excludedRecordIds?: string[];
 }) => {
-  const recordPickerSearchFilter = useRecoilComponentValueV2(
+  const recordPickerSearchFilter = useRecoilComponentValue(
     singleRecordPickerSearchFilterComponentState,
   );
 
-  const selectedRecordId = useRecoilComponentValueV2(
+  const selectedRecordId = useRecoilComponentValue(
     singleRecordPickerSelectedIdComponentState,
   );
 

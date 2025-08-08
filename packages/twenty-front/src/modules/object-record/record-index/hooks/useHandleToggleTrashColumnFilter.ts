@@ -7,10 +7,10 @@ import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldM
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useRecoilCallback } from 'recoil';
+import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseHandleToggleTrashColumnFilterProps = {
@@ -30,7 +30,7 @@ export const useHandleToggleTrashColumnFilter = ({
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const isSoftDeleteFilterActiveComponentRecoilState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       isSoftDeleteFilterActiveComponentState,
       viewBarId,
     );

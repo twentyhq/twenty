@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
@@ -6,10 +6,9 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-  CompanyToCreate,
+  type CompanyToCreate,
   CreateCompanyService,
 } from 'src/modules/contact-creation-manager/services/create-company.service';
 
@@ -101,12 +100,6 @@ describe('CreateCompanyService', () => {
             getRepositoryForWorkspace: jest
               .fn()
               .mockResolvedValue(mockCompanyRepository),
-          },
-        },
-        {
-          provide: WorkspaceEventEmitter,
-          useValue: {
-            emitDatabaseBatchEvent: jest.fn(),
           },
         },
         {

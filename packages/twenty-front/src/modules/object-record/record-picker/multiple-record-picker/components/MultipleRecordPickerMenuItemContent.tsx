@@ -9,8 +9,7 @@ import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/typ
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
-import { capitalize } from 'twenty-shared/utils';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 import { SearchRecord } from '~/generated-metadata/graphql';
@@ -38,13 +37,13 @@ export const MultipleRecordPickerMenuItemContent = ({
   const selectableListComponentInstanceId =
     getMultipleRecordPickerSelectableListId(componentInstanceId);
 
-  const isSelectedByKeyboard = useRecoilComponentFamilyValueV2(
+  const isSelectedByKeyboard = useRecoilComponentFamilyValue(
     isSelectedItemIdComponentFamilySelector,
     searchRecord.recordId,
     selectableListComponentInstanceId,
   );
 
-  const isRecordSelectedWithObjectItem = useRecoilComponentFamilyValueV2(
+  const isRecordSelectedWithObjectItem = useRecoilComponentFamilyValue(
     multipleRecordPickerIsSelectedComponentFamilySelector,
     searchRecord.recordId,
     componentInstanceId,
@@ -61,7 +60,7 @@ export const MultipleRecordPickerMenuItemContent = ({
 
   const displayText =
     searchRecord.label?.trim() ||
-    `Untitled ${capitalize(objectMetadataItem.nameSingular)}`;
+    `Untitled ${objectMetadataItem.labelSingular}`;
 
   return (
     <StyledSelectableItem

@@ -1,9 +1,9 @@
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { IconSearch } from 'twenty-ui/display';
 
-const StyledSearchInput = styled(TextInput)`
+const StyledSearchInput = styled(SettingsTextInput)`
   width: 100%;
 `;
 
@@ -18,6 +18,7 @@ export const ConfigVariableSearchInput = ({
 }: ConfigVariableSearchInputProps) => {
   return (
     <StyledSearchInput
+      instanceId="config-variable-search"
       placeholder={t`Search config variables`}
       value={value}
       onChange={onChange}

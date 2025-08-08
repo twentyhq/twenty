@@ -5,7 +5,10 @@ import { fetchAssignableUsers } from '@/github/contributors/fetch-assignable-use
 import { fetchIssuesPRs } from '@/github/contributors/fetch-issues-prs';
 import { saveIssuesToDB } from '@/github/contributors/save-issues-to-db';
 import { savePRsToDB } from '@/github/contributors/save-prs-to-db';
-import { IssueNode, PullRequestNode } from '@/github/contributors/types';
+import {
+  type IssueNode,
+  type PullRequestNode,
+} from '@/github/contributors/types';
 import { fetchAndSaveGithubReleases } from '@/github/github-releases/fetch-and-save-github-releases';
 import { fetchAndSaveGithubStars } from '@/github/github-stars/fetch-and-save-github-stars';
 

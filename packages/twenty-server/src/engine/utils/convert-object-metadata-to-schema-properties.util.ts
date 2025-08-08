@@ -2,13 +2,13 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  FieldMetadataSettings,
+  type FieldMetadataSettings,
   NumberDataType,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export type SchemaObject = {
@@ -130,7 +130,7 @@ export const convertObjectMetadataToSchemaProperties = ({
           type: 'array',
           items: {
             type: 'string',
-            enum: field.options.map(
+            enum: (field.options ?? []).map(
               (option: { value: string }) => option.value,
             ),
           },
@@ -139,7 +139,9 @@ export const convertObjectMetadataToSchemaProperties = ({
       case FieldMetadataType.SELECT:
         itemProperty = {
           type: 'string',
-          enum: field.options.map((option: { value: string }) => option.value),
+          enum: (field.options ?? []).map(
+            (option: { value: string }) => option.value,
+          ),
         };
         break;
       case FieldMetadataType.ARRAY:
@@ -153,7 +155,9 @@ export const convertObjectMetadataToSchemaProperties = ({
       case FieldMetadataType.RATING:
         itemProperty = {
           type: 'string',
-          enum: field.options.map((option: { value: string }) => option.value),
+          enum: (field.options ?? []).map(
+            (option: { value: string }) => option.value,
+          ),
         };
         break;
       case FieldMetadataType.LINKS:

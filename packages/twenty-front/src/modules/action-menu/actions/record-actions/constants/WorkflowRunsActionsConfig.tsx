@@ -51,7 +51,8 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     SingleRecordActionKeys.REMOVE_FROM_FAVORITES,
     SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
     SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
-    SingleRecordActionKeys.EXPORT,
+    SingleRecordActionKeys.EXPORT_FROM_RECORD_INDEX,
+    SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW,
     MultipleRecordsActionKeys.EXPORT,
     NoSelectionRecordActionKeys.EXPORT_VIEW,
     NoSelectionRecordActionKeys.SEE_DELETED_RECORDS,
@@ -73,7 +74,11 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: false,
       position: 3,
     },
-    [SingleRecordActionKeys.EXPORT]: {
+    [SingleRecordActionKeys.EXPORT_FROM_RECORD_INDEX]: {
+      position: 4,
+      label: msg`Export run`,
+    },
+    [SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW]: {
       position: 4,
       label: msg`Export run`,
     },

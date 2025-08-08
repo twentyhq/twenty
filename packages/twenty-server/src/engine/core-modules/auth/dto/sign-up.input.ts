@@ -1,7 +1,15 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { APP_LOCALES } from 'twenty-shared/translations';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
+import { type APP_LOCALES } from 'twenty-shared/translations';
+
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ArgsType()
 export class SignUpInput {
@@ -15,8 +23,8 @@ export class SignUpInput {
   @IsString()
   password: string;
 
-  @Field(() => String, { nullable: true })
-  @IsString()
+  @Field(() => UUIDScalarType, { nullable: true })
+  @IsUUID()
   @IsOptional()
   workspaceId?: string;
 
@@ -43,5 +51,5 @@ export class SignUpInput {
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
-  verifyEmailNextPath?: string;
+  verifyEmailRedirectPath?: string;
 }

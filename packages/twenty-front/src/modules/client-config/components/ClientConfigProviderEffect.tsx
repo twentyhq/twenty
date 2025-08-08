@@ -1,6 +1,7 @@
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
+import { appVersionState } from '@/client-config/states/appVersionState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
@@ -15,6 +16,7 @@ import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/i
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
+import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpCaldavEnabledState';
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
@@ -92,6 +94,12 @@ export const ClientConfigProviderEffect = () => {
     calendarBookingPageIdState,
   );
 
+  const setIsImapSmtpCaldavEnabled = useSetRecoilState(
+    isImapSmtpCaldavEnabledState,
+  );
+
+  const setAppVersion = useSetRecoilState(appVersionState);
+
   const { data, loading, error, fetchClientConfig } = useClientConfig();
 
   useEffect(() => {
@@ -128,7 +136,7 @@ export const ClientConfigProviderEffect = () => {
       isErrored: false,
       error: undefined,
     }));
-
+    setAppVersion(data.clientConfig.appVersion);
     setAuthProviders({
       google: data?.clientConfig.authProviders.google,
       microsoft: data?.clientConfig.authProviders.microsoft,
@@ -183,6 +191,7 @@ export const ClientConfigProviderEffect = () => {
     }));
 
     setCalendarBookingPageId(data?.clientConfig?.calendarBookingPageId ?? null);
+    setIsImapSmtpCaldavEnabled(data?.clientConfig?.isImapSmtpCaldavEnabled);
   }, [
     data,
     loading,
@@ -210,6 +219,8 @@ export const ClientConfigProviderEffect = () => {
     setIsAttachmentPreviewEnabled,
     setIsConfigVariablesInDbEnabled,
     setCalendarBookingPageId,
+    setIsImapSmtpCaldavEnabled,
+    setAppVersion,
   ]);
 
   return <></>;

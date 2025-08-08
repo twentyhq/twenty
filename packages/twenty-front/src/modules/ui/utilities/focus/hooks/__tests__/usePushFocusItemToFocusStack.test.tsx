@@ -43,7 +43,6 @@ describe('usePushFocusItemToFocusStack', () => {
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: true,
       },
-      memoizeKey: 'global',
     };
 
     await act(async () => {
@@ -53,8 +52,6 @@ describe('usePushFocusItemToFocusStack', () => {
           type: focusItem.componentInstance.componentType,
           instanceId: focusItem.componentInstance.componentInstanceId,
         },
-        hotkeyScope: { scope: 'test-scope' },
-        memoizeKey: 'global',
       });
     });
 
@@ -71,7 +68,6 @@ describe('usePushFocusItemToFocusStack', () => {
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: true,
       },
-      memoizeKey: 'global',
     };
 
     await act(async () => {
@@ -81,8 +77,6 @@ describe('usePushFocusItemToFocusStack', () => {
           type: anotherFocusItem.componentInstance.componentType,
           instanceId: anotherFocusItem.componentInstance.componentInstanceId,
         },
-        hotkeyScope: { scope: 'test-scope' },
-        memoizeKey: 'global',
       });
     });
 

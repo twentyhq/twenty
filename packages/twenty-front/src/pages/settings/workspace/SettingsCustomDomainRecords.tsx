@@ -1,16 +1,22 @@
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
-import { IconCopy } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
-import { CustomDomainValidRecords } from '~/generated/graphql';
+import {
+  CustomDomainRecord,
+  CustomDomainValidRecords,
+} from '~/generated/graphql';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { capitalize } from 'twenty-shared/utils';
+import { useRecoilValue } from 'recoil';
+import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
+import { ThemeColor } from 'twenty-ui/theme';
+import { Status } from 'twenty-ui/display';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 
 const StyledTable = styled(Table)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -21,11 +27,11 @@ const StyledTableCell = styled(TableCell)`
   display: block;
   padding: 0 ${({ theme }) => theme.spacing(3)} 0 0;
 
-  &:first-child {
+  &:first-of-type {
     padding-left: 0;
   }
 
-  &:last-child {
+  &:last-of-type {
     padding-right: 0;
   }
 `;
@@ -45,61 +51,92 @@ export const SettingsCustomDomainRecords = ({
 }: {
   records: CustomDomainValidRecords['records'];
 }) => {
-  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { customDomainRecords } = useRecoilValue(customDomainRecordsState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
-  const theme = useTheme();
+  const { copyToClipboard } = useCopyToClipboard();
 
-  const { t } = useLingui();
+  const copyToClipboardDebounced = useDebouncedCallback(
+    (value: string) => copyToClipboard(value),
+    200,
+  );
 
-  const copyToClipboard = (value: string) => {
-    navigator.clipboard.writeText(value);
-    enqueueSuccessSnackBar({
-      message: t`Copied to clipboard!`,
-      options: {
-        icon: <IconCopy size={theme.icon.size.md} />,
-      },
-    });
-  };
+  const rowsDefinitions = [
+    { name: 'Domain Setup', validationType: 'redirection' as const },
+    { name: 'Secure Connection', validationType: 'ssl' as const },
+  ];
 
-  const copyToClipboardDebounced = useDebouncedCallback(copyToClipboard, 200);
+  const defaultValues: { status: string; color: ThemeColor } =
+    currentWorkspace?.customDomain === customDomainRecords?.customDomain
+      ? {
+          status: 'success',
+          color: 'green',
+        }
+      : {
+          status: 'loading',
+          color: 'gray',
+        };
+
+  const rows = rowsDefinitions.map<
+    { name: string; status: string; color: ThemeColor } & CustomDomainRecord
+  >((row) => {
+    const record = records.find(
+      ({ validationType }) => validationType === row.validationType,
+    );
+
+    if (!record) {
+      throw new Error(`Record ${row.name} not found`);
+    }
+
+    return {
+      name: row.name,
+      color:
+        record && record.status === 'error'
+          ? 'red'
+          : record && record.status === 'pending'
+            ? 'yellow'
+            : defaultValues.color,
+      ...record,
+    };
+  });
 
   return (
     <StyledTable>
-      <TableRow gridAutoColumns="35% 16% auto">
+      <TableRow gridAutoColumns="30% 16% 38% 16%">
         <TableHeader>Name</TableHeader>
         <TableHeader>Type</TableHeader>
         <TableHeader>Value</TableHeader>
+        <TableHeader></TableHeader>
       </TableRow>
       <TableBody>
-        {records
-          .filter((record) => record.status !== 'success')
-          .map((record) => (
-            <TableRow gridAutoColumns="30% 16% auto" key={record.key}>
-              <StyledTableCell>
-                <StyledButton
-                  title={record.key}
-                  onClick={() => copyToClipboardDebounced(record.key)}
-                  type="button"
-                />
-              </StyledTableCell>
-              <StyledTableCell>
-                <StyledButton
-                  title={record.type.toUpperCase()}
-                  onClick={() =>
-                    copyToClipboardDebounced(record.type.toUpperCase())
-                  }
-                  type="button"
-                />
-              </StyledTableCell>
-              <StyledTableCell>
-                <StyledButton
-                  title={record.value}
-                  onClick={() => copyToClipboardDebounced(record.value)}
-                  type="button"
-                />
-              </StyledTableCell>
-            </TableRow>
-          ))}
+        {rows.map((row) => (
+          <TableRow gridAutoColumns="30% 16% 38% 16%" key={row.name}>
+            <StyledTableCell>
+              <StyledButton
+                title={row.key}
+                onClick={() => copyToClipboardDebounced(row.key)}
+                type="button"
+              />
+            </StyledTableCell>
+            <StyledTableCell>
+              <StyledButton
+                title={row.type.toUpperCase()}
+                onClick={() => copyToClipboardDebounced(row.type.toUpperCase())}
+                type="button"
+              />
+            </StyledTableCell>
+            <StyledTableCell>
+              <StyledButton
+                title={row.value}
+                onClick={() => copyToClipboardDebounced(row.value)}
+                type="button"
+              />
+            </StyledTableCell>
+            <StyledTableCell>
+              <Status color={row.color} text={capitalize(row.status)} />
+            </StyledTableCell>
+          </TableRow>
+        ))}
       </TableBody>
     </StyledTable>
   );

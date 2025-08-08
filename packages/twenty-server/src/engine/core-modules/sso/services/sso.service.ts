@@ -14,9 +14,9 @@ import {
   SSOExceptionCode,
 } from 'src/engine/core-modules/sso/sso.exception';
 import {
-  OIDCConfiguration,
-  SAMLConfiguration,
-  SSOConfiguration,
+  type OIDCConfiguration,
+  type SAMLConfiguration,
+  type SSOConfiguration,
 } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
 import {
   IdentityProviderType,
@@ -53,7 +53,7 @@ export class SSOService {
   private async getIssuerForOIDC(issuerUrl: string) {
     try {
       return await Issuer.discover(issuerUrl);
-    } catch (err) {
+    } catch {
       throw new SSOException(
         'Invalid issuer',
         SSOExceptionCode.INVALID_ISSUER_URL,
@@ -132,7 +132,7 @@ export class SSOService {
   async findSSOIdentityProviderById(identityProviderId: string) {
     return (await this.workspaceSSOIdentityProviderRepository.findOne({
       where: { id: identityProviderId },
-      relations: ['workspace'],
+      relations: { workspace: true },
     })) as (SSOConfiguration & WorkspaceSSOIdentityProvider) | null;
   }
 

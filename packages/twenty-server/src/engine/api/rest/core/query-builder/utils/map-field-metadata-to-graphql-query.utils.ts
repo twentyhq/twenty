@@ -1,17 +1,18 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 const DEFAULT_DEPTH_VALUE = 1;
 
 // TODO: Should be properly type and based on composite type definitions
 export const mapFieldMetadataToGraphqlQuery = (
   objectMetadataMaps: ObjectMetadataMaps,
-  field: FieldMetadataInterface,
+  field: FieldMetadataEntity,
   maxDepthForRelations = DEFAULT_DEPTH_VALUE,
 ): string | undefined => {
   if (maxDepthForRelations < 0) {
@@ -38,11 +39,15 @@ export const mapFieldMetadataToGraphqlQuery = (
     FieldMetadataType.TS_VECTOR,
   ].includes(fieldType);
 
+  const isRelation =
+    isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) ||
+    isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION);
+
   if (fieldIsSimpleValue) {
     return field.name;
   } else if (
     maxDepthForRelations > 0 &&
-    isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) &&
+    isRelation &&
     field.settings?.relationType === RelationType.MANY_TO_ONE
   ) {
     const targetObjectMetadataId = field.relationTargetObjectMetadataId;
@@ -53,6 +58,10 @@ export const mapFieldMetadataToGraphqlQuery = (
 
     const relationMetadataItem =
       objectMetadataMaps.byId[targetObjectMetadataId];
+
+    if (!isDefined(relationMetadataItem)) {
+      return '';
+    }
 
     return `${field.name}
     {
@@ -69,7 +78,7 @@ export const mapFieldMetadataToGraphqlQuery = (
     }`;
   } else if (
     maxDepthForRelations > 0 &&
-    isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) &&
+    isRelation &&
     field.settings?.relationType === RelationType.ONE_TO_MANY
   ) {
     const targetObjectMetadataId = field.relationTargetObjectMetadataId;

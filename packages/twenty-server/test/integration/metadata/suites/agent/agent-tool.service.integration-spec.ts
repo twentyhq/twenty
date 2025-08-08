@@ -1,5 +1,5 @@
 import {
-  AgentToolTestContext,
+  type AgentToolTestContext,
   createAgentToolTestModule,
   createMockRepository,
   createTestRecord,
@@ -47,6 +47,7 @@ describe('AgentToolService Integration', () => {
                 canUpdate: true,
                 canSoftDelete: true,
                 canDestroy: true,
+                restrictedFields: {},
               },
             },
           },
@@ -62,13 +63,14 @@ describe('AgentToolService Integration', () => {
       );
 
       expect(tools).toBeDefined();
-      expect(Object.keys(tools)).toHaveLength(6);
+      expect(Object.keys(tools)).toHaveLength(7);
       expect(Object.keys(tools)).toContain('create_testObject');
       expect(Object.keys(tools)).toContain('update_testObject');
       expect(Object.keys(tools)).toContain('find_testObject');
       expect(Object.keys(tools)).toContain('find_one_testObject');
       expect(Object.keys(tools)).toContain('soft_delete_testObject');
       expect(Object.keys(tools)).toContain('soft_delete_many_testObject');
+      expect(Object.keys(tools)).toContain('http_request');
     });
 
     it('should generate read-only tools for agent with read permissions only', async () => {
@@ -91,6 +93,7 @@ describe('AgentToolService Integration', () => {
                 canUpdate: false,
                 canSoftDelete: false,
                 canDestroy: false,
+                restrictedFields: {},
               },
             },
           },
@@ -106,14 +109,14 @@ describe('AgentToolService Integration', () => {
       );
 
       expect(tools).toBeDefined();
-      expect(Object.keys(tools)).toHaveLength(2);
+      expect(Object.keys(tools)).toHaveLength(3);
       expect(Object.keys(tools)).toContain('find_testObject');
       expect(Object.keys(tools)).toContain('find_one_testObject');
       expect(Object.keys(tools)).not.toContain('create_testObject');
       expect(Object.keys(tools)).not.toContain('update_testObject');
     });
 
-    it('should return empty tools for agent without role', async () => {
+    it('should return only http request tool for agent without role', async () => {
       const agentWithoutRole = { ...context.testAgent, roleId: null };
 
       jest
@@ -125,7 +128,8 @@ describe('AgentToolService Integration', () => {
         context.testWorkspaceId,
       );
 
-      expect(tools).toEqual({});
+      expect(Object.keys(tools)).toHaveLength(1);
+      expect(Object.keys(tools)).toContain('http_request');
     });
 
     it('should return empty tools when role does not exist', async () => {
@@ -168,6 +172,7 @@ describe('AgentToolService Integration', () => {
                 canUpdate: true,
                 canSoftDelete: true,
                 canDestroy: false,
+                restrictedFields: {},
               },
             },
           },
@@ -182,7 +187,7 @@ describe('AgentToolService Integration', () => {
         context.testWorkspaceId,
       );
 
-      expect(tools).toEqual({});
+      expect(Object.keys(tools)).toHaveLength(1);
     });
   });
 
@@ -213,7 +218,7 @@ describe('AgentToolService Integration', () => {
       }
 
       const result = await createTool.execute(
-        { name: 'Test Record', description: 'Test description' },
+        { input: { name: 'Test Record', description: 'Test description' } },
         {
           toolCallId: 'test-tool-call-id',
           messages: [
@@ -257,7 +262,7 @@ describe('AgentToolService Integration', () => {
       }
 
       const result = await createTool.execute(
-        { name: 'Test Record' },
+        { input: { name: 'Test Record' } },
         {
           toolCallId: 'test-tool-call-id',
           messages: [
@@ -301,7 +306,7 @@ describe('AgentToolService Integration', () => {
       }
 
       const result = await findTool.execute(
-        { limit: 10, offset: 0 },
+        { input: { limit: 10, offset: 0 } },
         {
           toolCallId: 'test-tool-call-id',
           messages: [
@@ -349,7 +354,7 @@ describe('AgentToolService Integration', () => {
       }
 
       const result = await findOneTool.execute(
-        { id: 'test-record-id' },
+        { input: { id: 'test-record-id' } },
         {
           toolCallId: 'test-tool-call-id',
           messages: [
@@ -390,7 +395,7 @@ describe('AgentToolService Integration', () => {
       }
 
       const result = await findOneTool.execute(
-        { id: 'non-existent-id' },
+        { input: { id: 'non-existent-id' } },
         {
           toolCallId: 'test-tool-call-id',
           messages: [
@@ -427,7 +432,7 @@ describe('AgentToolService Integration', () => {
       }
 
       const result = await findOneTool.execute(
-        {},
+        { input: {} },
         {
           toolCallId: 'test-tool-call-id',
           messages: [
@@ -485,9 +490,11 @@ describe('AgentToolService Integration', () => {
 
       const result = await updateTool.execute(
         {
-          id: 'test-record-id',
-          name: 'New Name',
-          description: 'New description',
+          input: {
+            id: 'test-record-id',
+            name: 'New Name',
+            description: 'New description',
+          },
         },
         {
           toolCallId: 'test-tool-call-id',
@@ -531,8 +538,10 @@ describe('AgentToolService Integration', () => {
 
       const result = await updateTool.execute(
         {
-          id: 'non-existent-id',
-          name: 'New Name',
+          input: {
+            id: 'non-existent-id',
+            name: 'New Name',
+          },
         },
         {
           toolCallId: 'test-tool-call-id',
@@ -580,7 +589,7 @@ describe('AgentToolService Integration', () => {
       }
 
       const result = await softDeleteTool.execute(
-        { id: 'test-record-id' },
+        { input: { id: 'test-record-id' } },
         {
           toolCallId: 'test-tool-call-id',
           messages: [
@@ -621,7 +630,9 @@ describe('AgentToolService Integration', () => {
 
       const result = await softDeleteManyTool.execute(
         {
-          filter: { id: { in: ['record-1', 'record-2', 'record-3'] } },
+          input: {
+            filter: { id: { in: ['record-1', 'record-2', 'record-3'] } },
+          },
         },
         {
           toolCallId: 'test-tool-call-id',
@@ -668,7 +679,7 @@ describe('AgentToolService Integration', () => {
       }
 
       const result = await findTool.execute(
-        {},
+        { input: {} },
         {
           toolCallId: 'test-tool-call-id',
           messages: [
@@ -713,10 +724,12 @@ describe('AgentToolService Integration', () => {
 
       const result = await findTool.execute(
         {
-          name: null,
-          description: undefined,
-          status: '',
-          validField: 'valid value',
+          input: {
+            name: null,
+            description: undefined,
+            status: '',
+            validField: 'valid value',
+          },
         },
         {
           toolCallId: 'test-tool-call-id',
@@ -767,12 +780,14 @@ describe('AgentToolService Integration', () => {
                 canUpdate: true,
                 canSoftDelete: false,
                 canDestroy: false,
+                restrictedFields: {},
               },
               [secondObjectMetadata.id]: {
                 canRead: true,
                 canUpdate: false,
                 canSoftDelete: true,
                 canDestroy: false,
+                restrictedFields: {},
               },
             },
           },
@@ -788,7 +803,7 @@ describe('AgentToolService Integration', () => {
       );
 
       expect(tools).toBeDefined();
-      expect(Object.keys(tools)).toHaveLength(8);
+      expect(Object.keys(tools)).toHaveLength(9);
       expect(Object.keys(tools)).toContain('create_testObject');
       expect(Object.keys(tools)).toContain('update_testObject');
       expect(Object.keys(tools)).toContain('find_testObject');

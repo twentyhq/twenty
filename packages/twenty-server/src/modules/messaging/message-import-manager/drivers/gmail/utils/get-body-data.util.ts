@@ -1,4 +1,4 @@
-import { gmail_v1 as gmailV1 } from 'googleapis';
+import { type gmail_v1 as gmailV1 } from 'googleapis';
 
 export const getBodyData = (message: gmailV1.Schema$Message) => {
   const firstPart = message.payload?.parts?.[0];

@@ -4,6 +4,7 @@ import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
+import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { useApolloFactory } from '../useApolloFactory';
 
 enableFetchMocks();
@@ -25,7 +26,11 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
       initialEntries={['/welcome', '/verify', '/opportunities']}
       initialIndex={2}
     >
-      {children}
+      <SnackBarComponentInstanceContext.Provider
+        value={{ instanceId: 'test-instance-id' }}
+      >
+        {children}
+      </SnackBarComponentInstanceContext.Provider>
     </MemoryRouter>
   </RecoilRoot>
 );

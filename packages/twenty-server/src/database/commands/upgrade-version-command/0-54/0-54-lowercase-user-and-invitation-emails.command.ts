@@ -5,7 +5,7 @@ import { Raw, Repository } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  RunOnWorkspaceArgs,
+  type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import {
   AppToken,
@@ -49,7 +49,7 @@ export class LowercaseUserAndInvitationEmailsCommand extends ActiveOrSuspendedWo
   private async lowercaseUserEmails(workspaceId: string, dryRun: boolean) {
     const users = await this.userRepository.find({
       where: {
-        workspaces: {
+        userWorkspaces: {
           workspaceId,
         },
         email: Raw((alias) => `LOWER(${alias}) != ${alias}`),

@@ -5,7 +5,7 @@ import {
   FilterableFieldType,
 } from '@/object-record/record-filter/types/FilterableFieldType';
 import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
-import { ViewFilterOperand as RecordFilterOperand } from '@/views/types/ViewFilterOperand';
+import { ViewFilterOperand as RecordFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
@@ -69,13 +69,13 @@ export const FILTER_OPERANDS_MAP = {
     ...emptyOperands,
   ],
   CURRENCY: [
-    RecordFilterOperand.GreaterThan,
-    RecordFilterOperand.LessThan,
+    RecordFilterOperand.GreaterThanOrEqual,
+    RecordFilterOperand.LessThanOrEqual,
     ...emptyOperands,
   ],
   NUMBER: [
-    RecordFilterOperand.GreaterThan,
-    RecordFilterOperand.LessThan,
+    RecordFilterOperand.GreaterThanOrEqual,
+    RecordFilterOperand.LessThanOrEqual,
     ...emptyOperands,
   ],
   RAW_JSON: [
@@ -105,8 +105,8 @@ export const FILTER_OPERANDS_MAP = {
   ],
   RATING: [
     RecordFilterOperand.Is,
-    RecordFilterOperand.GreaterThan,
-    RecordFilterOperand.LessThan,
+    RecordFilterOperand.GreaterThanOrEqual,
+    RecordFilterOperand.LessThanOrEqual,
     ...emptyOperands,
   ],
   RELATION: [...relationOperands, ...emptyOperands],
@@ -139,8 +139,8 @@ export const COMPOSITE_FIELD_FILTER_OPERANDS_MAP = {
       ...emptyOperands,
     ],
     amountMicros: [
-      RecordFilterOperand.GreaterThan,
-      RecordFilterOperand.LessThan,
+      RecordFilterOperand.GreaterThanOrEqual,
+      RecordFilterOperand.LessThanOrEqual,
       RecordFilterOperand.Is,
       RecordFilterOperand.IsNot,
       ...emptyOperands,

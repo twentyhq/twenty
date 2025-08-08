@@ -5,7 +5,6 @@ import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -18,11 +17,9 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
-import { getFieldInputInstanceId } from '@/object-record/record-field/utils/getFieldInputInstanceId';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 import {
@@ -35,11 +32,10 @@ const RelationWorkspaceSetterEffect = () => {
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
   );
-  const setRecordFieldInputLayoutDirectionLoading =
-    useSetRecoilComponentStateV2(
-      recordFieldInputLayoutDirectionLoadingComponentState,
-      'relation-to-one-field-input-123-Relation',
-    );
+  const setRecordFieldInputLayoutDirectionLoading = useSetRecoilComponentState(
+    recordFieldInputLayoutDirectionLoadingComponentState,
+    'relation-to-one-field-input-123-Relation',
+  );
 
   useEffect(() => {
     setCurrentWorkspace(mockCurrentWorkspace);
@@ -68,24 +64,11 @@ const RelationToOneFieldInputWithContext = ({
 
   useEffect(() => {
     pushFocusItemToFocusStack({
-      focusId: getFieldInputInstanceId({
-        recordId: '123',
-        fieldName: 'Relation',
-      }),
+      focusId: 'relation-to-one-field-input',
       component: {
         type: FocusComponentType.DROPDOWN,
-        instanceId: getFieldInputInstanceId({
-          recordId: '123',
-          fieldName: 'Relation',
-        }),
+        instanceId: 'relation-to-one-field-input',
       },
-      hotkeyScope: {
-        scope: DropdownHotkeyScope.Dropdown,
-      },
-      memoizeKey: getFieldInputInstanceId({
-        recordId: '123',
-        fieldName: 'Relation',
-      }),
     });
   }, [pushFocusItemToFocusStack]);
 
@@ -110,7 +93,7 @@ const RelationToOneFieldInputWithContext = ({
           },
           recordId: recordId,
           isLabelIdentifier: false,
-          isReadOnly: false,
+          isRecordFieldReadOnly: false,
         }}
       >
         <RecordFieldComponentInstanceContext.Provider
@@ -165,12 +148,9 @@ export default meta;
 
 type Story = StoryObj<typeof RelationToOneFieldInputWithContext>;
 
-export const Default: Story = {
-  decorators: [ComponentWithRecoilScopeDecorator],
-};
+export const Default: Story = {};
 
 export const Submit: Story = {
-  decorators: [ComponentWithRecoilScopeDecorator],
   play: async () => {
     const canvas = within(getCanvasElementForDropdownTesting());
 
@@ -189,7 +169,6 @@ export const Submit: Story = {
 };
 
 export const Cancel: Story = {
-  decorators: [ComponentWithRecoilScopeDecorator],
   play: async () => {
     const canvas = within(getCanvasElementForDropdownTesting());
 

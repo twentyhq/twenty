@@ -1,21 +1,34 @@
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 import {
-  ComputedPartialFieldMetadata,
-  PartialComputedFieldMetadata,
-  PartialFieldMetadata,
+  type ComputedPartialFieldMetadata,
+  type PartialComputedFieldMetadata,
+  type PartialFieldMetadata,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 
-export type PartialWorkspaceEntity = Omit<
-  ObjectMetadataInterface,
-  'id' | 'standardId' | 'fields' | 'isActive'
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+
+export type PartialWorkspaceEntity = Pick<
+  ObjectMetadataEntity,
+  | 'workspaceId'
+  | 'nameSingular'
+  | 'namePlural'
+  | 'labelSingular'
+  | 'labelPlural'
+  | 'description'
+  | 'icon'
+  | 'targetTableName'
+  | 'indexMetadatas'
+  | 'isSystem'
+  | 'isCustom'
+  | 'isRemote'
+  | 'isAuditLogged'
+  | 'isSearchable'
+  | 'duplicateCriteria'
+  | 'labelIdentifierFieldMetadataId'
+  | 'imageIdentifierFieldMetadataId'
 > & {
   standardId: string;
-  icon?: string;
-  workspaceId: string;
   dataSourceId: string;
   fields: (PartialFieldMetadata | PartialComputedFieldMetadata)[];
-  labelIdentifierStandardId?: string | null;
-  imageIdentifierStandardId?: string | null;
 };
 
 export type ComputedPartialWorkspaceEntity = Omit<

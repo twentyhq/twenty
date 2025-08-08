@@ -1,17 +1,14 @@
 import { useCallback, useMemo } from 'react';
-import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
-import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
-import { isFieldValueReadOnly } from '@/object-record/record-field/utils/isFieldValueReadOnly';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
@@ -22,24 +19,24 @@ import { Attachment } from '@/activities/files/types/Attachment';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
 import { filterAttachmentsToRestore } from '@/activities/utils/filterAttachmentsToRestore';
+import { getActivityAttachmentIdsAndNameToUpdate } from '@/activities/utils/getActivityAttachmentIdsAndNameToUpdate';
 import { getActivityAttachmentIdsToDelete } from '@/activities/utils/getActivityAttachmentIdsToDelete';
 import { getActivityAttachmentPathsToRestore } from '@/activities/utils/getActivityAttachmentPathsToRestore';
-import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
-import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
-import { isInlineCellInEditModeScopedState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeScopedState';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useIsRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordFieldReadOnly';
+import { isInlineCellInEditModeFamilyState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeFamilyState';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
-import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
-import { getRecordTitleCellId } from '@/object-record/record-title-cell/utils/getRecordTitleCellId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import type { PartialBlock } from '@blocknote/core';
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
@@ -53,10 +50,6 @@ type ActivityRichTextEditorProps = {
   activityObjectNameSingular:
     | CoreObjectNameSingular.Task
     | CoreObjectNameSingular.Note;
-};
-
-type Activity = (Task | Note) & {
-  attachments: Attachment[];
 };
 
 export const ActivityRichTextEditor = ({
@@ -73,16 +66,9 @@ export const ActivityRichTextEditor = ({
       objectNameSingular: activityObjectNameSingular,
     });
 
-  const isRecordReadOnly = useIsRecordReadOnly({
-    recordId: activityId,
-    objectMetadataId: objectMetadataItemActivity.id,
-  });
-
-  const isReadOnly = isFieldValueReadOnly({
-    objectNameSingular: activityObjectNameSingular,
-    isRecordReadOnly,
-    isCustom: objectMetadataItemActivity.isCustom,
-  });
+  const bodyV2FieldMetadataItem = objectMetadataItemActivity.fields.find(
+    (field) => field.name === 'bodyV2',
+  );
 
   const { deleteManyRecords: deleteAttachments } = useDeleteManyRecords({
     objectNameSingular: CoreObjectNameSingular.Attachment,
@@ -105,13 +91,21 @@ export const ActivityRichTextEditor = ({
         },
       },
     });
-
+  const { updateOneRecord: updateOneAttachment } = useUpdateOneRecord({
+    objectNameSingular: CoreObjectNameSingular.Attachment,
+  });
   const { upsertActivity } = useUpsertActivity({
     activityObjectNameSingular: activityObjectNameSingular,
   });
 
+  const isRecordFieldReadOnly = useIsRecordFieldReadOnly({
+    recordId: activityId,
+    objectMetadataId: objectMetadataItemActivity.id,
+    fieldMetadataId: bodyV2FieldMetadataItem?.id ?? '',
+  });
+
   const persistBodyDebounced = useDebouncedCallback((blocknote: string) => {
-    if (isReadOnly) return;
+    if (isRecordFieldReadOnly === true) return;
 
     const input = {
       bodyV2: {
@@ -181,7 +175,7 @@ export const ActivityRichTextEditor = ({
       async (newStringifiedBody: string) => {
         const oldActivity = snapshot
           .getLoadable(recordStoreFamilyState(activityId))
-          .getValue() as Activity;
+          .getValue();
 
         set(recordStoreFamilyState(activityId), (oldActivity) => {
           return {
@@ -213,7 +207,8 @@ export const ActivityRichTextEditor = ({
 
         const attachmentIdsToDelete = getActivityAttachmentIdsToDelete(
           newStringifiedBody,
-          oldActivity.attachments,
+          oldActivity?.attachments,
+          oldActivity?.bodyV2.blocknote,
         );
 
         if (attachmentIdsToDelete.length > 0) {
@@ -224,7 +219,7 @@ export const ActivityRichTextEditor = ({
 
         const attachmentPathsToRestore = getActivityAttachmentPathsToRestore(
           newStringifiedBody,
-          oldActivity.attachments,
+          oldActivity?.attachments,
         );
 
         if (attachmentPathsToRestore.length > 0) {
@@ -240,6 +235,19 @@ export const ActivityRichTextEditor = ({
             idsToRestore: attachmentIdsToRestore,
           });
         }
+        const attachmentsToUpdate = getActivityAttachmentIdsAndNameToUpdate(
+          newStringifiedBody,
+          oldActivity?.attachments,
+        );
+        if (attachmentsToUpdate.length > 0) {
+          for (const attachmentToUpdate of attachmentsToUpdate) {
+            if (!attachmentToUpdate.id) continue;
+            await updateOneAttachment({
+              idToUpdate: attachmentToUpdate.id,
+              updateOneRecordInput: { name: attachmentToUpdate.name },
+            });
+          }
+        }
       },
     [
       activityId,
@@ -249,6 +257,7 @@ export const ActivityRichTextEditor = ({
       deleteAttachments,
       restoreAttachments,
       findSoftDeletedAttachments,
+      updateOneAttachment,
     ],
   );
 
@@ -273,7 +282,7 @@ export const ActivityRichTextEditor = ({
       // TODO: Remove this once we have removed the old rich text
       try {
         parsedBody = JSON.parse(blocknote);
-      } catch (error) {
+      } catch {
         // eslint-disable-next-line no-console
         console.warn(
           `Failed to parse body for activity ${activityId}, for rich text version 'v2'`,
@@ -305,76 +314,70 @@ export const ActivityRichTextEditor = ({
     uploadFile: handleEditorBuiltInUploadFile,
   });
 
-  const commandMenuPage = useRecoilValue(commandMenuPageState);
-
-  useScopedHotkeys(
-    Key.Escape,
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: Key.Escape,
+    callback: () => {
       editor.domElement?.blur();
     },
-    ActivityEditorHotkeyScope.ActivityBody,
-  );
+    focusId: activityId,
+    dependencies: [editor],
+  });
 
-  useScopedHotkeys(
-    '*',
-    (keyboardEvent) => {
-      // TODO: remove once stacked hotkeys / focusKeys are in place
-      if (commandMenuPage !== CommandMenuPages.EditRichText) {
-        return;
-      }
+  const handleAllKeys = (keyboardEvent: KeyboardEvent) => {
+    if (keyboardEvent.key === Key.Escape) {
+      return;
+    }
 
-      if (keyboardEvent.key === Key.Escape) {
-        return;
-      }
+    const isWritingText =
+      !isNonTextWritingKey(keyboardEvent.key) &&
+      !keyboardEvent.ctrlKey &&
+      !keyboardEvent.metaKey;
 
-      const isWritingText =
-        !isNonTextWritingKey(keyboardEvent.key) &&
-        !keyboardEvent.ctrlKey &&
-        !keyboardEvent.metaKey;
+    if (!isWritingText) {
+      return;
+    }
 
-      if (!isWritingText) {
-        return;
-      }
+    keyboardEvent.preventDefault();
+    keyboardEvent.stopPropagation();
+    keyboardEvent.stopImmediatePropagation();
 
-      keyboardEvent.preventDefault();
-      keyboardEvent.stopPropagation();
-      keyboardEvent.stopImmediatePropagation();
+    const newBlockId = v4();
+    const newBlock = {
+      id: newBlockId,
+      type: 'paragraph' as const,
+      content: keyboardEvent.key,
+    };
 
-      const newBlockId = v4();
-      const newBlock = {
-        id: newBlockId,
-        type: 'paragraph' as const,
-        content: keyboardEvent.key,
-      };
+    const lastBlock = editor.document[editor.document.length - 1];
+    editor.insertBlocks([newBlock], lastBlock);
 
-      const lastBlock = editor.document[editor.document.length - 1];
-      editor.insertBlocks([newBlock], lastBlock);
+    editor.setTextCursorPosition(newBlockId, 'end');
+    editor.focus();
+  };
 
-      editor.setTextCursorPosition(newBlockId, 'end');
-      editor.focus();
-    },
-    CommandMenuHotkeyScope.CommandMenuFocused,
-    [],
-    {
-      preventDefault: false,
-    },
-  );
+  useHotkeysOnFocusedElement({
+    keys: '*',
+    callback: handleAllKeys,
+    focusId: SIDE_PANEL_FOCUS_ID,
+    dependencies: [handleAllKeys],
+  });
+
   const { labelIdentifierFieldMetadataItem } = useRecordShowContainerData({
     objectNameSingular: activityObjectNameSingular,
     objectRecordId: activityId,
   });
 
-  const recordTitleCellId = getRecordTitleCellId(
-    activityId,
-    labelIdentifierFieldMetadataItem?.id,
-    RecordTitleCellContainerType.ShowPage,
-  );
+  const recordTitleCellId = getRecordFieldInputInstanceId({
+    recordId: activityId,
+    fieldName: labelIdentifierFieldMetadataItem?.id,
+    prefix: 'activity-rich-text-editor',
+  });
 
   const handleBlockEditorFocus = useRecoilCallback(
     ({ snapshot }) =>
       () => {
         const isRecordTitleCellOpen = snapshot
-          .getLoadable(isInlineCellInEditModeScopedState(recordTitleCellId))
+          .getLoadable(isInlineCellInEditModeFamilyState(recordTitleCellId))
           .getValue();
 
         if (isRecordTitleCellOpen) {
@@ -388,8 +391,8 @@ export const ActivityRichTextEditor = ({
             type: FocusComponentType.ACTIVITY_RICH_TEXT_EDITOR,
           },
           focusId: activityId,
-          hotkeyScope: {
-            scope: ActivityEditorHotkeyScope.ActivityBody,
+          globalHotkeysConfig: {
+            enableGlobalHotkeysConflictingWithKeyboard: false,
           },
         });
       },
@@ -400,7 +403,7 @@ export const ActivityRichTextEditor = ({
     ({ snapshot }) =>
       () => {
         const isRecordTitleCellOpen = snapshot
-          .getLoadable(isInlineCellInEditModeScopedState(recordTitleCellId))
+          .getLoadable(isInlineCellInEditModeFamilyState(recordTitleCellId))
           .getValue();
 
         if (isRecordTitleCellOpen) {
@@ -425,7 +428,7 @@ export const ActivityRichTextEditor = ({
         onBlur={handlerBlockEditorBlur}
         onChange={handleEditorChange}
         editor={editor}
-        readonly={isReadOnly}
+        readonly={isRecordFieldReadOnly}
       />
     </>
   );

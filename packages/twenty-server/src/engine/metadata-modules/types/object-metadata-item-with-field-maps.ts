@@ -1,10 +1,10 @@
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
-import { IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
+import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
-import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
 export type ObjectMetadataItemWithFieldMaps = Omit<
-  ObjectMetadataInterface,
+  ObjectMetadataEntity,
   'fields'
 > & {
   fieldsById: FieldMetadataMap;

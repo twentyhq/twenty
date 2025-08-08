@@ -1,11 +1,12 @@
 # Base image for common dependencies
-FROM node:22-alpine as common-deps
+FROM node:24-alpine as common-deps
 
 WORKDIR /app
 
 # Copy only the necessary files for dependency resolution
 COPY ./package.json ./yarn.lock ./.yarnrc.yml ./tsconfig.base.json ./nx.json /app/
 COPY ./.yarn/releases /app/.yarn/releases
+COPY ./.yarn/patches /app/.yarn/patches
 
 COPY ./.prettierrc /app/
 COPY ./packages/twenty-emails/package.json /app/packages/twenty-emails/
@@ -49,7 +50,7 @@ RUN npx nx build twenty-front
 
 
 # Final stage: Run the application
-FROM node:22-alpine as twenty
+FROM node:24-alpine as twenty
 
 # Used to run healthcheck in docker
 RUN apk add --no-cache curl jq

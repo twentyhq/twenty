@@ -1,11 +1,11 @@
-import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { type WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { camelCase } from 'src/utils/camel-case';
 import { pascalCase } from 'src/utils/pascal-case';
 
 export const getResolverName = (
-  objectMetadata: Pick<ObjectMetadataInterface, 'namePlural' | 'nameSingular'>,
+  objectMetadata: Pick<ObjectMetadataEntity, 'namePlural' | 'nameSingular'>,
   type: WorkspaceResolverBuilderMethodNames,
 ) => {
   switch (type) {
@@ -40,6 +40,9 @@ export const getResolverName = (
       return `restore${pascalCase(objectMetadata.nameSingular)}`;
     case 'restoreMany':
       return `restore${pascalCase(objectMetadata.namePlural)}`;
+
+    case 'mergeMany':
+      return `merge${pascalCase(objectMetadata.namePlural)}`;
 
     default:
       throw new Error(`Unknown resolver type: ${type}`);

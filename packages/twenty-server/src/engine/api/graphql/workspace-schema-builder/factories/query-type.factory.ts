@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { GraphQLObjectType } from 'graphql';
+import { type GraphQLObjectType } from 'graphql';
 
-import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
-import { WorkspaceResolverBuilderQueryMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { type WorkspaceResolverBuilderQueryMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
+
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 import { ObjectTypeName, RootTypeFactory } from './root-type.factory';
 
@@ -13,7 +14,7 @@ export class QueryTypeFactory {
   constructor(private readonly rootTypeFactory: RootTypeFactory) {}
 
   create(
-    objectMetadataCollection: ObjectMetadataInterface[],
+    objectMetadataCollection: ObjectMetadataEntity[],
     workspaceResolverMethodNames: WorkspaceResolverBuilderQueryMethodNames[],
     options: WorkspaceBuildSchemaOptions,
   ): GraphQLObjectType {

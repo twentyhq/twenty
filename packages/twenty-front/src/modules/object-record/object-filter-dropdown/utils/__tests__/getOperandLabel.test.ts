@@ -1,14 +1,14 @@
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 
-import { getOperandLabel, getOperandLabelShort } from '../getOperandLabel';
 import { capitalize } from 'twenty-shared/utils';
+import { getOperandLabel, getOperandLabelShort } from '../getOperandLabel';
 
 describe('getOperandLabel', () => {
   const testCases = [
     [ViewFilterOperand.Contains, 'Contains'],
     [ViewFilterOperand.DoesNotContain, "Doesn't contain"],
-    [ViewFilterOperand.GreaterThan, 'Greater than'],
-    [ViewFilterOperand.LessThan, 'Less than'],
+    [ViewFilterOperand.GreaterThanOrEqual, 'Greater than or equal'],
+    [ViewFilterOperand.LessThanOrEqual, 'Less than or equal'],
     [ViewFilterOperand.Is, 'Is'],
     [ViewFilterOperand.IsNot, 'Is not'],
     [ViewFilterOperand.IsNotNull, 'Is not null'],
@@ -32,8 +32,8 @@ describe('getOperandLabelShort', () => {
     [ViewFilterOperand.IsNot, ': Not'],
     [ViewFilterOperand.DoesNotContain, ': Not'],
     [ViewFilterOperand.IsNotNull, ': NotNull'],
-    [ViewFilterOperand.GreaterThan, '\u00A0> '],
-    [ViewFilterOperand.LessThan, '\u00A0< '],
+    [ViewFilterOperand.GreaterThanOrEqual, '\u00A0≥ '],
+    [ViewFilterOperand.LessThanOrEqual, '\u00A0≤ '],
     [undefined, ': '], // undefined operand
   ];
 

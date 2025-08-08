@@ -5,15 +5,15 @@ import { In } from 'typeorm';
 
 import {
   GraphqlQueryBaseResolverService,
-  GraphqlQueryResolverExecutionArgs,
+  type GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import {
-  ObjectRecord,
+  type ObjectRecord,
   OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
-import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
-import { FindDuplicatesResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { type IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
+import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
+import { type FindDuplicatesResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {
   GraphqlQueryRunnerException,
@@ -21,10 +21,9 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.utils';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
-import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
 export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseResolverService<
@@ -65,21 +64,21 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
 
     let objectRecords: Partial<ObjectRecord>[] = [];
 
-    if (executionArgs.args.ids) {
-      const nonFormattedObjectRecords = (await existingRecordsQueryBuilder
-        .where({ id: In(executionArgs.args.ids) })
-        .getMany()) as ObjectRecord[];
+    const columnsToSelect = buildColumnsToSelect({
+      select: executionArgs.graphqlQuerySelectedFieldsResult.select,
+      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+      objectMetadataItemWithFieldMaps,
+    });
 
-      objectRecords = formatResult(
-        nonFormattedObjectRecords,
-        objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
-      );
+    if (executionArgs.args.ids) {
+      objectRecords = (await existingRecordsQueryBuilder
+        .where({ id: In(executionArgs.args.ids) })
+        .setFindOptions({
+          select: columnsToSelect,
+        })
+        .getMany()) as ObjectRecord[];
     } else if (executionArgs.args.data && !isEmpty(executionArgs.args.data)) {
-      objectRecords = formatData(
-        executionArgs.args.data,
-        objectMetadataItemWithFieldMaps,
-      );
+      objectRecords = executionArgs.args.data;
     }
 
     const duplicateConnections: IConnection<ObjectRecord>[] = await Promise.all(
@@ -113,14 +112,11 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
           duplicateConditions,
         );
 
-        const nonFormattedDuplicates =
-          (await duplicateRecordsQueryBuilder.getMany()) as ObjectRecord[];
-
-        const duplicates = formatResult<ObjectRecord[]>(
-          nonFormattedDuplicates,
-          objectMetadataItemWithFieldMaps,
-          objectMetadataMaps,
-        );
+        const duplicates = (await duplicateRecordsQueryBuilder
+          .setFindOptions({
+            select: columnsToSelect,
+          })
+          .getMany()) as ObjectRecord[];
 
         return typeORMObjectRecordsParser.createConnection({
           objectRecords: duplicates,

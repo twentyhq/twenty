@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Repository } from 'typeorm';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-import { ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
+import { type ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { SERVERLESS_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/serverless-function/serverless-function-executed';
@@ -23,13 +23,17 @@ import { ServerlessService } from 'src/engine/core-modules/serverless/serverless
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
-import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
+import { type CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
+import { type UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
+import {
+  WorkflowVersionStepException,
+  WorkflowVersionStepExceptionCode,
+} from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 
 @Injectable()
 export class ServerlessFunctionService {
@@ -137,7 +141,7 @@ export class ServerlessFunctionService {
     return resultServerlessFunction;
   }
 
-  async publishOneServerlessFunction(id: string, workspaceId: string) {
+  async publishOneServerlessFunctionOrFail(id: string, workspaceId: string) {
     const existingServerlessFunction =
       await this.serverlessFunctionRepository.findOneOrFail({
         where: {
@@ -159,10 +163,7 @@ export class ServerlessFunctionService {
       );
 
       if (deepEqual(latestCode, draftCode)) {
-        throw new ServerlessFunctionException(
-          'Cannot publish a new version when code has not changed',
-          ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CODE_UNCHANGED,
-        );
+        return existingServerlessFunction;
       }
     }
 
@@ -174,6 +175,7 @@ export class ServerlessFunctionService {
       serverlessFunction: existingServerlessFunction,
       version: 'draft',
     });
+
     const newFolderPath = getServerlessFolder({
       serverlessFunction: existingServerlessFunction,
       version: newVersion,
@@ -197,9 +199,26 @@ export class ServerlessFunctionService {
       },
     );
 
-    return this.serverlessFunctionRepository.findOneBy({
-      id: existingServerlessFunction.id,
-    });
+    const publishedServerlessFunction =
+      await this.serverlessFunctionRepository.findOneOrFail({
+        where: {
+          id,
+          workspaceId,
+        },
+      });
+
+    // This check should never be thrown, but we encounter some issue with
+    // publishing serverless function in self hosted instances
+    // See https://github.com/twentyhq/twenty/issues/13058
+    // TODO: remove this check when issue solved
+    if (!isDefined(publishedServerlessFunction.latestVersion)) {
+      throw new WorkflowVersionStepException(
+        `Fail to publish serverlessFunction ${publishedServerlessFunction.id}.Received latest version ${publishedServerlessFunction.latestVersion}`,
+        WorkflowVersionStepExceptionCode.FAILURE,
+      );
+    }
+
+    return publishedServerlessFunction;
   }
 
   async deleteOneServerlessFunction({
@@ -388,7 +407,7 @@ export class ServerlessFunctionService {
         this.twentyConfigService.get('SERVERLESS_FUNCTION_EXEC_THROTTLE_LIMIT'),
         this.twentyConfigService.get('SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL'),
       );
-    } catch (error) {
+    } catch {
       throw new ServerlessFunctionException(
         'Serverless function execution rate limit exceeded',
         ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_EXECUTION_LIMIT_REACHED,

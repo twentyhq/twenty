@@ -4,7 +4,7 @@ import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-pl
 import { BillingPriceTiersMode } from 'src/engine/core-modules/billing/enums/billing-price-tiers-mode.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
-import { BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
+import { type BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
 import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-graphql-dto.util';
 
 describe('formatBillingDatabaseProductToGraphqlDTO', () => {

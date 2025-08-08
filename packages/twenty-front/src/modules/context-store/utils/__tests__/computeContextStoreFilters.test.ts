@@ -2,9 +2,9 @@ import { ContextStoreTargetedRecordsRule } from '@/context-store/states/contextS
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { expect } from '@storybook/test';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 describe('computeContextStoreFilters', () => {
   const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
@@ -26,12 +26,19 @@ describe('computeContextStoreFilters', () => {
       [],
       personObjectMetadataItem,
       mockFilterValueDependencies,
+      '',
     );
 
     expect(filters).toEqual({
-      id: {
-        in: ['1', '2', '3'],
-      },
+      and: [
+        {},
+        {
+          id: {
+            in: ['1', '2', '3'],
+          },
+        },
+        {},
+      ],
     });
   });
 
@@ -62,10 +69,12 @@ describe('computeContextStoreFilters', () => {
       contextStoreFilters,
       personObjectMetadataItem,
       mockFilterValueDependencies,
+      '',
     );
 
     expect(filters).toEqual({
       and: [
+        {},
         {
           or: [
             {

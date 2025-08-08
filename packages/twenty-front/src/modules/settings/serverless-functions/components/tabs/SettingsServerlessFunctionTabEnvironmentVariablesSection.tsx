@@ -1,6 +1,6 @@
 import { SettingsServerlessFunctionTabEnvironmentVariableTableRow } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow';
 import { ServerlessFunctionFormValues } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -8,13 +8,13 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import dotenv from 'dotenv';
 import { useMemo, useState } from 'react';
-import { v4 } from 'uuid';
-import { Button } from 'twenty-ui/input';
 import { H2Title, IconPlus, IconSearch } from 'twenty-ui/display';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { v4 } from 'uuid';
 
-const StyledSearchInput = styled(TextInput)`
+const StyledSearchInput = styled(SettingsTextInput)`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
@@ -82,6 +82,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariablesSection = ({
         description="Set your function environment variables"
       />
       <StyledSearchInput
+        instanceId="serverless-function-env-var-search"
         LeftIcon={IconSearch}
         placeholder="Search a variable"
         value={searchTerm}

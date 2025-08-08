@@ -11,14 +11,15 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { MessageChannelSyncStage } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessagingMessageListFetchJob,
-  MessagingMessageListFetchJobData,
+  type MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 
-export const MESSAGING_MESSAGE_LIST_FETCH_CRON_PATTERN = '*/5 * * * *';
+export const MESSAGING_MESSAGE_LIST_FETCH_CRON_PATTERN = '*/2 * * * *';
 
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessageListFetchCronJob {
@@ -48,10 +49,9 @@ export class MessagingMessageListFetchCronJob {
 
     for (const activeWorkspace of activeWorkspaces) {
       try {
-        const schemaName = this.workspaceDataSourceService.getSchemaName(
-          activeWorkspace.id,
-        );
+        const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
 
+        // TODO: deprecate looking for FULL_MESSAGE_LIST_FETCH_PENDING as we introduce MESSAGE_LIST_FETCH_PENDING
         const messageChannels = await mainDataSource.query(
           `SELECT * FROM ${schemaName}."messageChannel" WHERE "isSyncEnabled" = true AND "syncStage" IN ('${MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING}', '${MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING}')`,
         );

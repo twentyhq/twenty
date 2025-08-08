@@ -11,8 +11,7 @@ export const StyledContainer = styled.div<{
   border: 1px solid transparent;
   display: flex;
   justify-content: space-between;
-  height: ${({ theme, isNavigationDrawerExpanded }) =>
-    isNavigationDrawerExpanded ? theme.spacing(5) : theme.spacing(4)};
+  height: ${({ theme }) => theme.spacing(5)};
   padding: calc(${({ theme }) => theme.spacing(1)} - 1px);
   width: ${({ isNavigationDrawerExpanded }) =>
     isNavigationDrawerExpanded ? '100%' : 'auto'};

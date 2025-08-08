@@ -2,8 +2,10 @@ import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
+import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
+import { turnAnyFieldFilterIntoRecordGqlFilter } from '@/object-record/record-filter/utils/turnAnyFieldFilterIntoRecordGqlFilter';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -11,7 +13,7 @@ import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/rec
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -24,11 +26,11 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   const { objectMetadataItem } = useRecordTableContextOrThrow();
   const { recordGroupFilter } = useRecordGroupFilter(objectMetadataItem.fields);
 
-  const currentRecordFilterGroups = useRecoilComponentValueV2(
+  const currentRecordFilterGroups = useRecoilComponentValue(
     currentRecordFilterGroupsComponentState,
   );
 
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useRecoilComponentValue(
     currentRecordFiltersComponentState,
   );
 
@@ -85,10 +87,20 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
         }
       : {};
 
+  const anyFieldFilterValue = useRecoilComponentValue(
+    anyFieldFilterValueComponentState,
+  );
+
+  const { recordGqlOperationFilter: anyFieldFilter } =
+    turnAnyFieldFilterIntoRecordGqlFilter({
+      objectMetadataItem,
+      filterValue: anyFieldFilterValue,
+    });
+
   const { data, loading } = useAggregateRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFieldsAggregate,
-    filter: { ...requestFilters, ...recordGroupFilter },
+    filter: { ...requestFilters, ...recordGroupFilter, ...anyFieldFilter },
     skip: !isDefined(aggregateOperationForViewField),
   });
 

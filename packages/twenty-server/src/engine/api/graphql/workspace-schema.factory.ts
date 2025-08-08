@@ -3,12 +3,18 @@ import { Injectable } from '@nestjs/common';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { GraphQLSchema, printSchema } from 'graphql';
 import { gql } from 'graphql-tag';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ScalarsExplorerService } from 'src/engine/api/graphql/services/scalars-explorer.service';
 import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
 import { WorkspaceResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver.factory';
 import { WorkspaceGraphQLSchemaFactory } from 'src/engine/api/graphql/workspace-schema-builder/workspace-graphql-schema.factory';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   WorkspaceMetadataCacheException,
@@ -16,6 +22,8 @@ import {
 } from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
+import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
 
 @Injectable()
 export class WorkspaceSchemaFactory {
@@ -26,6 +34,7 @@ export class WorkspaceSchemaFactory {
     private readonly workspaceResolverFactory: WorkspaceResolverFactory,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async createGraphQLSchema(authContext: AuthContext): Promise<GraphQLSchema> {
@@ -56,13 +65,32 @@ export class WorkspaceSchemaFactory {
       );
     }
 
-    const objectMetadataCollection = Object.values(objectMetadataMaps.byId).map(
-      (objectMetadataItem) => ({
+    const workspaceId = authContext.workspace.id;
+
+    if (!workspaceId) {
+      throw new AuthException(
+        'Unauthenticated',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+
+    const workspaceFeatureFlagsMap =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+
+    const objectMetadataCollection = Object.values(objectMetadataMaps.byId)
+      .filter(isDefined)
+      .map((objectMetadataItem) => ({
         ...objectMetadataItem,
         fields: Object.values(objectMetadataItem.fieldsById),
         indexes: objectMetadataItem.indexMetadatas,
-      }),
-    );
+      }))
+      .filter((objectMetadata) => {
+        return !shouldExcludeFromWorkspaceApi(
+          objectMetadata,
+          standardObjectMetadataDefinitions,
+          workspaceFeatureFlagsMap,
+        );
+      });
 
     // Get typeDefs from cache
     let typeDefs = await this.workspaceCacheStorageService.getGraphQLTypeDefs(
@@ -81,9 +109,6 @@ export class WorkspaceSchemaFactory {
         await this.workspaceGraphQLSchemaFactory.create(
           objectMetadataCollection,
           workspaceResolverBuilderMethodNames,
-          {
-            workspaceId: authContext.workspace.id,
-          },
         );
 
       usedScalarNames =

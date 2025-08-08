@@ -4,10 +4,10 @@ import * as process from 'process';
 
 import { INTROSPECTION_QUERY } from './introspection-query';
 import {
-  Field,
-  InputValue,
-  IntrospectionResponse,
-  TypeRef,
+  type Field,
+  type InputValue,
+  type IntrospectionResponse,
+  type TypeRef,
 } from './introspection.interface';
 
 const GRAPHQL_URL = 'http://localhost:3000/graphql';
@@ -91,7 +91,7 @@ describe('${queryName}Resolver (e2e)', () => {
 
     return client
       .post('/graphql')
-      .set('Authorization', \`Bearer \${ADMIN_ACCESS_TOKEN}\`)
+      .set('Authorization', \`Bearer \${APPLE_JANE_ADMIN_ACCESS_TOKEN}\`)
       .send(queryData)
       .expect(200)
       .expect((res) => {

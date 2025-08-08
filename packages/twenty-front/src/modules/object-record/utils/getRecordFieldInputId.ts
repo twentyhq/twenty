@@ -1,9 +1,14 @@
 import { isDefined } from 'twenty-shared/utils';
-export const getRecordFieldInputId = (
-  recordId: string,
-  fieldName?: string,
-  prefix?: string,
-): string => {
+
+export const getRecordFieldInputInstanceId = ({
+  recordId,
+  fieldName,
+  prefix,
+}: {
+  recordId: string;
+  fieldName?: string;
+  prefix?: string;
+}): string => {
   if (isDefined(prefix)) {
     return `${prefix}-${recordId}-${fieldName}`;
   }

@@ -2,29 +2,31 @@ import { Injectable } from '@nestjs/common';
 
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  type EnumFieldMetadataType,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { type FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
-import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import {
-  FieldMetadataComplexOption,
-  FieldMetadataDefaultOption,
+  type FieldMetadataComplexOption,
+  type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { EnumFieldMetadataUnionType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { type EnumFieldMetadataUnionType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import {
   beneathDatabaseIdentifierMinimumLength,
   exceedsDatabaseIdentifierMaximumLength,
 } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
-import { EnumFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/enum-column-action.factory';
 import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
 
 type Validator<T> = {
@@ -36,7 +38,7 @@ type FieldMetadataUpdateCreateInput = CreateFieldInput | UpdateFieldInput;
 
 type ValidateEnumFieldMetadataArgs = {
   existingFieldMetadata?: Pick<
-    FieldMetadataInterface,
+    FieldMetadataEntity,
     'type' | 'isNullable' | 'defaultValue' | 'options'
   >;
   fieldMetadataInput: FieldMetadataUpdateCreateInput;
@@ -137,12 +139,17 @@ export class FieldMetadataEnumValidationService {
     );
   }
 
-  private validateDuplicates(options: FieldMetadataOptions) {
+  private validateDuplicates(
+    options: FieldMetadataOptions<EnumFieldMetadataType>,
+  ) {
     const fieldsToCheckForDuplicates = [
       'position',
       'id',
       'value',
-    ] as const satisfies (keyof FieldMetadataOptions[number])[];
+    ] as const satisfies (keyof (
+      | FieldMetadataDefaultOption[]
+      | FieldMetadataComplexOption[]
+    )[number])[];
     const duplicatedValidators = fieldsToCheckForDuplicates.map<
       Validator<FieldMetadataDefaultOption[] | FieldMetadataComplexOption[]>
     >((field) => ({
@@ -178,7 +185,7 @@ export class FieldMetadataEnumValidationService {
   }
 
   private validateSelectDefaultValue(
-    options: FieldMetadataOptions,
+    options: FieldMetadataOptions<EnumFieldMetadataType>,
     defaultValue: unknown,
   ) {
     if (typeof defaultValue !== 'string') {
@@ -209,7 +216,7 @@ export class FieldMetadataEnumValidationService {
   }
 
   private validateMultiSelectDefaultValue(
-    options: FieldMetadataOptions,
+    options: FieldMetadataOptions<EnumFieldMetadataType>,
     defaultValue: unknown,
   ) {
     if (!Array.isArray(defaultValue)) {
@@ -241,7 +248,7 @@ export class FieldMetadataEnumValidationService {
 
   private validateFieldMetadataDefaultValue(
     fieldType: EnumFieldMetadataType,
-    options: FieldMetadataOptions,
+    options: FieldMetadataOptions<EnumFieldMetadataType>,
     defaultValue: unknown,
   ) {
     switch (fieldType) {

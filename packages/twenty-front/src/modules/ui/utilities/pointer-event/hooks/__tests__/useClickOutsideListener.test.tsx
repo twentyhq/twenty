@@ -3,7 +3,7 @@ import { RecoilRoot } from 'recoil';
 
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 const componentId = 'componentId';
 
@@ -13,7 +13,7 @@ describe('useClickOutsideListener', () => {
       () => {
         return {
           useClickOutside: useClickOutsideListener(componentId),
-          isActivated: useRecoilComponentValueV2(
+          isActivated: useRecoilComponentValue(
             clickOutsideListenerIsActivatedComponentState,
             componentId,
           ),

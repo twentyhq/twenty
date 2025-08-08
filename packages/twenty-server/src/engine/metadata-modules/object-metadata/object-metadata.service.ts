@@ -1,28 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { i18n } from '@lingui/core';
-import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
+import { type Query, type QueryOptions } from '@ptc-org/nestjs-query-core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { APP_LOCALES } from 'twenty-shared/translations';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
-  FindManyOptions,
-  FindOneOptions,
+  type FindManyOptions,
+  type FindOneOptions,
   In,
-  QueryRunner,
+  type QueryRunner,
   Repository,
 } from 'typeorm';
 
-import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
-import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
-import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+import { type DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import {
-  UpdateObjectPayload,
-  UpdateOneObjectInput,
+  type UpdateObjectPayload,
+  type UpdateOneObjectInput,
 } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
   ObjectMetadataException,
@@ -38,7 +35,7 @@ import {
   validateObjectMetadataInputNamesOrThrow,
 } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import { SearchVectorService } from 'src/engine/metadata-modules/search-vector/search-vector.service';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { validateMetadataIdentifierFieldMetadataIds } from 'src/engine/metadata-modules/utils/validate-metadata-identifier-field-metadata-id.utils';
 import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { validatesNoOtherObjectWithSameNameExistsOrThrows } from 'src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util';
@@ -46,6 +43,7 @@ import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/works
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
@@ -53,7 +51,7 @@ import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sy
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
-import { CreateObjectInput } from './dtos/create-object.input';
+import { type CreateObjectInput } from './dtos/create-object.input';
 
 @Injectable()
 export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEntity> {
@@ -146,14 +144,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       });
 
       if (objectMetadataInput.isLabelSyncedWithName === true) {
-        validateNameAndLabelAreSyncOrThrow(
-          objectMetadataInput.labelSingular,
-          objectMetadataInput.nameSingular,
-        );
-        validateNameAndLabelAreSyncOrThrow(
-          objectMetadataInput.labelPlural,
-          objectMetadataInput.namePlural,
-        );
+        validateNameAndLabelAreSyncOrThrow({
+          label: objectMetadataInput.labelSingular,
+          name: objectMetadataInput.nameSingular,
+        });
+        validateNameAndLabelAreSyncOrThrow({
+          label: objectMetadataInput.labelPlural,
+          name: objectMetadataInput.namePlural,
+        });
       }
 
       validatesNoOtherObjectWithSameNameExistsOrThrows({
@@ -311,14 +309,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataMaps,
       });
       if (existingObjectMetadataCombinedWithUpdateInput.isLabelSyncedWithName) {
-        validateNameAndLabelAreSyncOrThrow(
-          existingObjectMetadataCombinedWithUpdateInput.labelSingular,
-          existingObjectMetadataCombinedWithUpdateInput.nameSingular,
-        );
-        validateNameAndLabelAreSyncOrThrow(
-          existingObjectMetadataCombinedWithUpdateInput.labelPlural,
-          existingObjectMetadataCombinedWithUpdateInput.namePlural,
-        );
+        validateNameAndLabelAreSyncOrThrow({
+          label: existingObjectMetadataCombinedWithUpdateInput.labelSingular,
+          name: existingObjectMetadataCombinedWithUpdateInput.nameSingular,
+        });
+        validateNameAndLabelAreSyncOrThrow({
+          label: existingObjectMetadataCombinedWithUpdateInput.labelPlural,
+          name: existingObjectMetadataCombinedWithUpdateInput.namePlural,
+        });
       }
       if (
         isDefined(inputPayload.nameSingular) ||
@@ -405,6 +403,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       const formattedUpdatedObject = {
         ...updatedObject,
         createdAt: new Date(updatedObject.createdAt),
+        updatedAt: new Date(updatedObject.updatedAt),
       };
 
       return formattedUpdatedObject;
@@ -474,9 +473,15 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
 
       const fieldMetadataIds = objectMetadata.fields.map((field) => field.id);
-      const relationMetadataIds = objectMetadata.fields
-        .map((field) => field.relationTargetFieldMetadata?.id)
-        .filter(isDefined);
+      const relationMetadataIds = objectMetadata.fields.flatMap((field) => {
+        if (
+          isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION)
+        ) {
+          return field.relationTargetFieldMetadata.id;
+        }
+
+        return [];
+      });
 
       await fieldMetadataRepository.delete({
         id: In(fieldMetadataIds.concat(relationMetadataIds)),
@@ -601,6 +606,21 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         queryRunner,
       );
 
+      const morphRelationFieldMetadataToUpdate =
+        await this.objectMetadataFieldRelationService.updateMorphRelationsJoinColumnName(
+          {
+            existingObjectMetadata,
+            objectMetadataForUpdate,
+            queryRunner,
+          },
+        );
+
+      await this.objectMetadataMigrationService.updateMorphRelationMigrations({
+        workspaceId: objectMetadataForUpdate.workspaceId,
+        morphRelationFieldMetadataToUpdate: morphRelationFieldMetadataToUpdate,
+        queryRunner,
+      });
+
       await this.objectMetadataMigrationService.recomputeEnumNames(
         objectMetadataForUpdate,
         objectMetadataForUpdate.workspaceId,
@@ -635,32 +655,5 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     return {
       didUpdateLabelOrIcon: false,
     };
-  }
-
-  async resolveOverridableString(
-    objectMetadata: ObjectMetadataDTO,
-    labelKey: 'labelPlural' | 'labelSingular' | 'description' | 'icon',
-    locale: keyof typeof APP_LOCALES | undefined,
-  ): Promise<string> {
-    if (objectMetadata.isCustom) {
-      return objectMetadata[labelKey];
-    }
-
-    const translationValue =
-      // @ts-expect-error legacy noImplicitAny
-      objectMetadata.standardOverrides?.translations?.[locale]?.[labelKey];
-
-    if (isDefined(translationValue)) {
-      return translationValue;
-    }
-
-    const messageId = generateMessageId(objectMetadata[labelKey] ?? '');
-    const translatedMessage = i18n._(messageId);
-
-    if (translatedMessage === messageId) {
-      return objectMetadata[labelKey] ?? '';
-    }
-
-    return translatedMessage;
   }
 }

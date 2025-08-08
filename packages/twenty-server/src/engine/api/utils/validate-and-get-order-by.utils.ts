@@ -1,10 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  ObjectRecord,
-  ObjectRecordOrderBy,
-  ObjectRecordOrderByForCompositeField,
-  ObjectRecordOrderByForScalarField,
+  type ObjectRecord,
+  type ObjectRecordOrderBy,
+  type ObjectRecordOrderByForCompositeField,
+  type ObjectRecordOrderByForScalarField,
   OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 

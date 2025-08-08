@@ -19,7 +19,9 @@ export const availableFieldMetadataItemsForSortFamilySelector = selectorFamily({
       }
 
       const availableFieldMetadataItemsForSort =
-        objectMetadataItem.fields.filter(filterSortableFieldMetadataItems);
+        objectMetadataItem.readableFields.filter(
+          filterSortableFieldMetadataItems,
+        );
 
       return availableFieldMetadataItemsForSort;
     },

@@ -1,28 +1,44 @@
-import { useRecoilValue } from 'recoil';
-
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { RecoilComponentState } from '@/ui/utilities/state/component-state/types/RecoilComponentState';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { ComponentReadOnlySelector } from '@/ui/utilities/state/component-state/types/ComponentReadOnlySelector';
+import { ComponentSelector } from '@/ui/utilities/state/component-state/types/ComponentSelector';
+import { ComponentState } from '@/ui/utilities/state/component-state/types/ComponentState';
+import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
+import { RecoilState, RecoilValueReadOnly, useRecoilValue } from 'recoil';
 
 export const useRecoilComponentValue = <StateType>(
-  componentState: RecoilComponentState<StateType>,
-  componentId?: string,
+  componentState:
+    | ComponentState<StateType>
+    | ComponentSelector<StateType>
+    | ComponentReadOnlySelector<StateType>,
+  instanceIdFromProps?: string,
 ) => {
-  const componentContext = (window as any).componentContextStateMap?.get(
+  const instanceContext = globalComponentInstanceContextMap.get(
     componentState.key,
   );
 
-  if (!componentContext) {
+  if (!instanceContext) {
     throw new Error(
-      `Component context for key "${componentState.key}" is not defined`,
+      `Instance context for key "${componentState.key}" is not defined`,
     );
   }
 
-  const internalComponentId = useAvailableScopeIdOrThrow(
-    componentContext,
-    componentId,
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    instanceContext,
+    instanceIdFromProps,
   );
 
-  return useRecoilValue(
-    componentState.atomFamily({ scopeId: internalComponentId }),
-  );
+  let state: RecoilState<StateType> | RecoilValueReadOnly<StateType>;
+
+  if (componentState.type === 'ComponentState') {
+    state = componentState.atomFamily({ instanceId });
+  } else if (
+    componentState.type === 'ComponentSelector' ||
+    componentState.type === 'ComponentReadOnlySelector'
+  ) {
+    state = componentState.selectorFamily({ instanceId });
+  } else {
+    throw new Error('Invalid component state type');
+  }
+
+  return useRecoilValue(state);
 };

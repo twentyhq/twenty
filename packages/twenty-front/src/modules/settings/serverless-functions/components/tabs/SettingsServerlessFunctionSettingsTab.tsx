@@ -2,16 +2,12 @@ import { SettingsServerlessFunctionNewForm } from '@/settings/serverless-functio
 import { SettingsServerlessFunctionTabEnvironmentVariablesSection } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariablesSection';
 import { useDeleteOneServerlessFunction } from '@/settings/serverless-functions/hooks/useDeleteOneServerlessFunction';
 import { ServerlessFunctionFormValues } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
-import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { Key } from 'ts-key-enum';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const DELETE_FUNCTION_MODAL_ID = 'delete-function-modal';
@@ -36,25 +32,6 @@ export const SettingsServerlessFunctionSettingsTab = ({
     navigate(SettingsPath.ServerlessFunctions);
   };
 
-  useHotkeyScopeOnMount(
-    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionSettingsTab,
-  );
-
-  useScopedHotkeys(
-    [Key.Delete],
-    () => {
-      openModal(DELETE_FUNCTION_MODAL_ID);
-    },
-    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionSettingsTab,
-  );
-
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
-      navigate(SettingsPath.ServerlessFunctions);
-    },
-    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionSettingsTab,
-  );
   return (
     <>
       <SettingsServerlessFunctionNewForm

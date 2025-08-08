@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import { isDefined } from 'class-validator';
 import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { findOneOperation } from 'test/integration/graphql/utils/find-one-operation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
@@ -7,15 +6,17 @@ import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
-import { EachTestingContext } from 'twenty-shared/testing';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { parseJson } from 'twenty-shared/utils';
+import { type EachTestingContext } from 'twenty-shared/testing';
+import {
+  type EnumFieldMetadataType,
+  FieldMetadataType,
+} from 'twenty-shared/types';
+import { isDefined, parseJson } from 'twenty-shared/utils';
 
 import {
-  FieldMetadataComplexOption,
-  FieldMetadataDefaultOption,
+  type FieldMetadataComplexOption,
+  type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { EnumFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/enum-column-action.factory';
 
 type Option = FieldMetadataDefaultOption | FieldMetadataComplexOption;
 
@@ -85,7 +86,7 @@ describe('update-one-field-metadata-related-record', () => {
 
     const {
       data: { createOneField },
-    } = await createOneFieldMetadata({
+    } = await createOneFieldMetadata<typeof fieldMetadataType>({
       input: {
         objectMetadataId: createOneObject.id,
         type: fieldMetadataType,
@@ -258,6 +259,10 @@ describe('update-one-field-metadata-related-record', () => {
         });
 
         const optionsWithIds = createOneField.options;
+
+        if (!isDefined(optionsWithIds)) {
+          throw new Error('optionsWithIds is not defined');
+        }
         const updatedOptions = updateOptions(optionsWithIds);
 
         await updateOneFieldMetadata({
@@ -358,6 +363,10 @@ describe('update-one-field-metadata-related-record', () => {
         });
 
         const optionsWithIds = createOneField.options;
+
+        if (!isDefined(optionsWithIds)) {
+          throw new Error('optionsWithIds is not defined');
+        }
         const updatePayload = {
           options: optionsWithIds.map((option) => updateOption(option)),
         };

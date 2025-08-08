@@ -1,5 +1,4 @@
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -8,16 +7,17 @@ import {
   SubscriptionInterval,
   useCheckoutSessionMutation,
 } from '~/generated-metadata/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const useHandleCheckoutSession = ({
   recurringInterval,
   plan,
   requirePaymentMethod,
+  successUrlPath,
 }: {
   recurringInterval: SubscriptionInterval;
   plan: BillingPlanKey;
   requirePaymentMethod: boolean;
+  successUrlPath: string;
 }) => {
   const { redirect } = useRedirect();
 
@@ -32,7 +32,7 @@ export const useHandleCheckoutSession = ({
     const { data } = await checkoutSession({
       variables: {
         recurringInterval,
-        successUrlPath: getSettingsPath(SettingsPath.Billing),
+        successUrlPath,
         plan,
         requirePaymentMethod,
       },

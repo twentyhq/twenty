@@ -18,9 +18,7 @@ export const getActionHeaderTypeOrThrow = (actionType: WorkflowActionType) => {
     case 'AI_AGENT':
       return msg`AI Agent`;
     case 'FILTER': {
-      throw new Error(
-        "The Filter action isn't meant to be displayed as a node.",
-      );
+      return msg`Filter`;
     }
 
     default:

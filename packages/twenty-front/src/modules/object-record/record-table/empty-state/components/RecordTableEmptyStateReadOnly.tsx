@@ -7,9 +7,9 @@ import { IconPlus } from 'twenty-ui/display';
 export const RecordTableEmptyStateReadOnly = () => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
-  const objectLabel = useObjectLabel(objectMetadataItem);
+  const objectLabelSingular = useObjectLabel(objectMetadataItem);
 
-  const buttonTitle = `Add a ${objectLabel}`;
+  const buttonTitle = `Add a ${objectLabelSingular}`;
 
   return (
     <RecordTableEmptyStateDisplay

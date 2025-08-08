@@ -2,20 +2,22 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
+import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
+import { turnAnyFieldFilterIntoRecordGqlFilter } from '@/object-record/record-filter/utils/turnAnyFieldFilterIntoRecordGqlFilter';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useGetViewGroupsFilters } from '@/views/hooks/useGetViewGroupsFilters';
 
 export const useGetRecordIndexTotalCount = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const currentRecordFilterGroups = useRecoilComponentValueV2(
+  const currentRecordFilterGroups = useRecoilComponentValue(
     currentRecordFilterGroupsComponentState,
   );
 
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useRecoilComponentValue(
     currentRecordFiltersComponentState,
   );
 
@@ -30,11 +32,21 @@ export const useGetRecordIndexTotalCount = () => {
     fields: objectMetadataItem.fields,
   });
 
+  const anyFieldFilterValue = useRecoilComponentValue(
+    anyFieldFilterValueComponentState,
+  );
+
+  const { recordGqlOperationFilter: anyFieldFilter } =
+    turnAnyFieldFilterIntoRecordGqlFilter({
+      objectMetadataItem,
+      filterValue: anyFieldFilterValue,
+    });
+
   const { data, loading } = useAggregateRecords<{
     id: { COUNT: number };
   }>({
     objectNameSingular: objectMetadataItem.nameSingular,
-    filter,
+    filter: { ...filter, ...anyFieldFilter },
     recordGqlFieldsAggregate: {
       id: [AggregateOperations.COUNT],
     },

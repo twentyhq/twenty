@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { Request } from 'express';
+import { type Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
@@ -18,8 +18,12 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
       );
     }
 
-    const { repository, objectMetadata, objectMetadataItemWithFieldsMaps } =
-      await this.getRepositoryAndMetadataOrFail(request);
+    const {
+      repository,
+      objectMetadata,
+      objectMetadataItemWithFieldsMaps,
+      restrictedFields,
+    } = await this.getRepositoryAndMetadataOrFail(request);
 
     const { records } = await this.findRecords({
       request,
@@ -27,6 +31,7 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
       repository,
       objectMetadata,
       objectMetadataItemWithFieldsMaps,
+      restrictedFields,
     });
 
     const record = records?.[0];

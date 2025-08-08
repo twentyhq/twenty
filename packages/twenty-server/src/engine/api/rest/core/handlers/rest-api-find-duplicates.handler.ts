@@ -1,25 +1,28 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { Request } from 'express';
+import { type Request } from 'express';
 import isEmpty from 'lodash.isempty';
 import { In } from 'typeorm';
 
-import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import {
-  FormatResult,
+  type FormatResult,
   RestApiBaseHandler,
 } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.utils';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
 export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
   async handle(request: Request) {
     this.validate(request);
 
-    const { repository, objectMetadata, objectMetadataItemWithFieldsMaps } =
-      await this.getRepositoryAndMetadataOrFail(request);
+    const {
+      repository,
+      objectMetadata,
+      objectMetadataItemWithFieldsMaps,
+      restrictedFields,
+    } = await this.getRepositoryAndMetadataOrFail(request);
 
     const existingRecordsQueryBuilder = repository.createQueryBuilder(
       objectMetadataItemWithFieldsMaps.nameSingular,
@@ -28,15 +31,9 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
     let objectRecords: Partial<ObjectRecord>[] = [];
 
     if (request.body.ids) {
-      const nonFormattedObjectRecords = (await existingRecordsQueryBuilder
+      objectRecords = (await existingRecordsQueryBuilder
         .where({ id: In(request.body.ids) })
         .getMany()) as ObjectRecord[];
-
-      objectRecords = formatResult(
-        nonFormattedObjectRecords,
-        objectMetadataItemWithFieldsMaps,
-        objectMetadata.objectMetadataMaps,
-      );
     } else if (request.body.data && !isEmpty(request.body.data)) {
       objectRecords = request.body.data;
     }
@@ -67,6 +64,7 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
         objectMetadata,
         objectMetadataItemWithFieldsMaps,
         extraFilters: duplicateCondition,
+        restrictedFields,
       });
 
       const paginatedResult = this.formatPaginatedDuplicatesResult({

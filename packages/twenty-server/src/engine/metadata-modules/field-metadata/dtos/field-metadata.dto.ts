@@ -32,7 +32,7 @@ import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadat
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
 import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
-import { FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { type FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { transformEnumValue } from 'src/engine/utils/transform-enum-value';
 
@@ -56,6 +56,7 @@ registerEnumType(FieldMetadataType, {
 @Relation('object', () => ObjectMetadataDTO, {
   nullable: true,
 })
+// TODO refactor nullable fields to be typed as nullable and not optional
 export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @IsUUID()
   @IsNotEmpty()
@@ -117,9 +118,6 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @Field({ nullable: true })
   isUnique?: boolean;
 
-  // TODO: This validator was not used anymore, and it is since graphql error hadling refactoring
-  // it is adding extra load on the database, we are still validing inputs on field update and create
-  // @Validate(IsFieldMetadataDefaultValue)
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   defaultValue?: FieldMetadataDefaultValue<T>;
@@ -127,9 +125,6 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @Transform(({ value }) =>
     transformEnumValue(value as FieldMetadataDefaultOption[]),
   )
-  // TODO: This validator was not used anymore, and it is since graphql error hadling refactoring
-  // it is adding extra load on the database, we are still validing inputs on field update and create
-  // @Validate(IsFieldMetadataOptions)
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   options?: FieldMetadataOptions<T>;

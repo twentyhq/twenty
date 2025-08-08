@@ -1,11 +1,10 @@
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-
 import {
   GraphqlQuerySelectedFieldsParser,
-  GraphqlQuerySelectedFieldsResult,
+  type GraphqlQuerySelectedFieldsResult,
 } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 export class GraphqlQuerySelectedFieldsRelationParser {
   private objectMetadataMaps: ObjectMetadataMaps;
@@ -15,7 +14,7 @@ export class GraphqlQuerySelectedFieldsRelationParser {
   }
 
   parseRelationField(
-    fieldMetadata: FieldMetadataInterface,
+    fieldMetadata: FieldMetadataEntity,
     fieldKey: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fieldValue: any,

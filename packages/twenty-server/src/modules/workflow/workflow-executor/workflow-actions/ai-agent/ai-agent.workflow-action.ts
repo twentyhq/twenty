@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import { resolveInput } from 'twenty-shared/utils';
 
-import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 import { AgentExecutionService } from 'src/engine/metadata-modules/agent/agent-execution.service';
@@ -16,13 +17,13 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
-import { WorkflowExecutorInput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
-import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
+import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
+import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 
 import { isWorkflowAiAgentAction } from './guards/is-workflow-ai-agent-action.guard';
 
 @Injectable()
-export class AiAgentWorkflowAction implements WorkflowExecutor {
+export class AiAgentWorkflowAction implements WorkflowAction {
   constructor(
     private readonly agentExecutionService: AgentExecutionService,
     private readonly aiBillingService: AIBillingService,
@@ -34,7 +35,7 @@ export class AiAgentWorkflowAction implements WorkflowExecutor {
     currentStepId,
     steps,
     context,
-  }: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
+  }: WorkflowActionInput): Promise<WorkflowActionOutput> {
     const step = steps.find((step) => step.id === currentStepId);
 
     if (!step) {
@@ -51,18 +52,22 @@ export class AiAgentWorkflowAction implements WorkflowExecutor {
       );
     }
 
-    const { agentId } = step.settings.input;
+    const { agentId, prompt } = step.settings.input;
     const workspaceId = context.workspaceId as string;
 
     try {
-      const agent = await this.agentRepository.findOne({
-        where: {
-          id: agentId,
-          workspaceId,
-        },
-      });
+      let agent: AgentEntity | null = null;
 
-      if (!agent) {
+      if (agentId) {
+        agent = await this.agentRepository.findOne({
+          where: {
+            id: agentId,
+            workspaceId,
+          },
+        });
+      }
+
+      if (agentId && !agent) {
         throw new AgentException(
           `Agent with id ${agentId} not found`,
           AgentExceptionCode.AGENT_NOT_FOUND,
@@ -73,10 +78,11 @@ export class AiAgentWorkflowAction implements WorkflowExecutor {
         agent,
         context,
         schema: step.settings.outputSchema,
+        userPrompt: resolveInput(prompt, context) as string,
       });
 
       await this.aiBillingService.calculateAndBillUsage(
-        agent.modelId,
+        agent?.modelId ?? 'auto',
         usage,
         workspaceId,
       );

@@ -1,17 +1,17 @@
 import {
   BadRequestException,
-  HttpException,
+  type HttpException,
   Inject,
   Injectable,
   Scope,
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 
-import { Response } from 'express';
+import { type Response } from 'express';
 import { QueryFailedError } from 'typeorm';
 
-import { ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
-import { ExceptionHandlerWorkspace } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-workspace.interface';
+import { type ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
+import { type ExceptionHandlerWorkspace } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-workspace.interface';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { handleException } from 'src/engine/utils/global-exception-handler.util';

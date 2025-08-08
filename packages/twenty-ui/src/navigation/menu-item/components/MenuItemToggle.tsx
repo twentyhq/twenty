@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { IconComponent } from '@ui/display';
-import { Toggle, ToggleSize } from '@ui/input';
+import { type IconComponent } from '@ui/display';
+import { Toggle, type ToggleSize } from '@ui/input';
 import { useId } from 'react';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
@@ -35,14 +35,14 @@ export const MenuItemToggle = ({
   onToggleChange,
   toggleSize,
 }: MenuItemToggleProps) => {
-  const inputId = useId();
+  const instanceId = useId();
   return (
     <StyledMenuItemBase className={className} focused={focused}>
-      <StyledToggleContainer htmlFor={inputId}>
+      <StyledToggleContainer htmlFor={instanceId}>
         <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
         <StyledMenuItemRightContent>
           <Toggle
-            id={inputId}
+            id={instanceId}
             value={toggled}
             onChange={onToggleChange}
             toggleSize={toggleSize}

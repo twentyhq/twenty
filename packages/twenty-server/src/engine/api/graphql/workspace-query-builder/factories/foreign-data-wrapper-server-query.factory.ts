@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  ForeignDataWrapperOptions,
-  RemoteServerType,
+  type ForeignDataWrapperOptions,
+  type RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
-import { UserMappingOptions } from 'src/engine/metadata-modules/remote-server/types/user-mapping-options';
+import { type UserMappingOptions } from 'src/engine/metadata-modules/remote-server/types/user-mapping-options';
 
 @Injectable()
 export class ForeignDataWrapperServerQueryFactory {

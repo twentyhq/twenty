@@ -1,5 +1,5 @@
 import {
-  ExecutionContext,
+  type ExecutionContext,
   UseFilters,
   UseGuards,
   UsePipes,
@@ -25,7 +25,6 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-valid-records';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag-dto';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -40,7 +39,7 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import {
-  AuthProviders,
+  type AuthProviders,
   PublicWorkspaceDataOutput,
 } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
@@ -56,7 +55,9 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
+import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
@@ -68,7 +69,7 @@ import { Workspace } from './workspace.entity';
 import { WorkspaceService } from './services/workspace.service';
 
 const OriginHeader = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext) => {
+  (_: unknown, ctx: ExecutionContext) => {
     const request = getRequest(ctx);
 
     return request.headers['origin'];
@@ -92,6 +93,7 @@ export class WorkspaceResolver {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly roleService: RoleService,
+    private readonly agentService: AgentService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {}
@@ -141,7 +143,7 @@ export class WorkspaceResolver {
   @Mutation(() => SignedFileDTO)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
+    SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
   )
   async uploadWorkspaceLogo(
     @AuthWorkspace() { id }: Workspace,
@@ -187,7 +189,7 @@ export class WorkspaceResolver {
   @Mutation(() => Workspace)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
+    SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
   )
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
     return this.workspaceService.deleteWorkspace(id);
@@ -222,6 +224,29 @@ export class WorkspaceResolver {
     );
   }
 
+  @ResolveField(() => AgentDTO, { nullable: true })
+  async defaultAgent(@Parent() workspace: Workspace): Promise<AgentDTO | null> {
+    if (!workspace.defaultAgentId) {
+      return null;
+    }
+
+    try {
+      const agent = await this.agentService.findOneAgent(
+        workspace.defaultAgentId,
+        workspace.id,
+      );
+
+      // Convert roleId from null to undefined to match AgentDTO
+      return {
+        ...agent,
+        roleId: agent.roleId ?? undefined,
+      };
+    } catch {
+      // If agent is not found, return null instead of throwing
+      return null;
+    }
+  }
+
   @ResolveField(() => BillingSubscription, { nullable: true })
   async currentBillingSubscription(
     @Parent() workspace: Workspace,
@@ -250,7 +275,7 @@ export class WorkspaceResolver {
           url: workspace.logo,
           workspaceId: workspace.id,
         });
-      } catch (e) {
+      } catch {
         return workspace.logo;
       }
     }
@@ -290,14 +315,6 @@ export class WorkspaceResolver {
       workspace.isPasswordAuthEnabled &&
       this.twentyConfigService.get('AUTH_PASSWORD_ENABLED')
     );
-  }
-
-  @Mutation(() => CustomDomainValidRecords, { nullable: true })
-  @UseGuards(WorkspaceAuthGuard)
-  async checkCustomDomainValidRecords(
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<CustomDomainValidRecords | undefined> {
-    return this.workspaceService.checkCustomDomainValidRecords(workspace);
   }
 
   @Query(() => PublicWorkspaceDataOutput)
@@ -343,7 +360,7 @@ export class WorkspaceResolver {
             url: workspace.logo,
             workspaceId: workspace.id,
           });
-        } catch (e) {
+        } catch {
           workspaceLogoWithToken = workspace.logo;
         }
       }

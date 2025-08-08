@@ -2,7 +2,7 @@
 
 import { parseSAMLMetadataFromXMLFile } from '@/settings/security/utils/parseSAMLMetadataFromXMLFile';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -20,6 +20,7 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledUploadFileContainer = styled.div`
   align-items: center;
@@ -55,10 +56,11 @@ const StyledButtonCopy = styled.div`
 `;
 
 export const SettingsSSOSAMLForm = () => {
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const theme = useTheme();
   const { setValue, getValues, watch, trigger } = useFormContext();
   const { t } = useLingui();
+  const { copyToClipboard } = useCopyToClipboard();
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(e.target.files)) {
@@ -168,7 +170,8 @@ export const SettingsSSOSAMLForm = () => {
           <HorizontalSeparator text={'Or'} />
           <StyledContainer>
             <StyledLinkContainer>
-              <TextInput
+              <SettingsTextInput
+                instanceId="sso-saml-acs-url"
                 disabled={true}
                 label="ACS Url"
                 value={acsUrl}
@@ -178,16 +181,9 @@ export const SettingsSSOSAMLForm = () => {
             <StyledButtonCopy>
               <Button
                 Icon={IconCopy}
-                title="Copy"
+                title={t`Copy`}
                 onClick={() => {
-                  enqueueSuccessSnackBar({
-                    message: t`ACS Url copied to clipboard`,
-                    options: {
-                      icon: <IconCopy size={theme.icon.size.md} />,
-                      duration: 2000,
-                    },
-                  });
-                  navigator.clipboard.writeText(acsUrl);
+                  copyToClipboard(acsUrl, t`ACS Url copied to clipboard`);
                 }}
                 type="button"
               />
@@ -195,7 +191,8 @@ export const SettingsSSOSAMLForm = () => {
           </StyledContainer>
           <StyledContainer>
             <StyledLinkContainer>
-              <TextInput
+              <SettingsTextInput
+                instanceId="sso-saml-entity-id"
                 disabled={true}
                 label="Entity ID"
                 value={entityID}
@@ -207,14 +204,7 @@ export const SettingsSSOSAMLForm = () => {
                 Icon={IconCopy}
                 title={t`Copy`}
                 onClick={() => {
-                  enqueueSuccessSnackBar({
-                    message: t`Entity ID copied to clipboard`,
-                    options: {
-                      icon: <IconCopy size={theme.icon.size.md} />,
-                      duration: 2000,
-                    },
-                  });
-                  navigator.clipboard.writeText(entityID);
+                  copyToClipboard(entityID, t`Entity ID copied to clipboard`);
                 }}
                 type="button"
               />

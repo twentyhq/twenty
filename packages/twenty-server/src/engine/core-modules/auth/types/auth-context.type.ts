@@ -1,14 +1,16 @@
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
-import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { type ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
+import { type UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { type User } from 'src/engine/core-modules/user/user.entity';
+import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export type AuthContext = {
   user?: User | null | undefined;
-  apiKey?: ApiKeyWorkspaceEntity | null | undefined;
+  apiKey?: ApiKey | null | undefined;
   workspaceMemberId?: string;
   workspace?: Workspace;
   userWorkspaceId?: string;
+  userWorkspace?: UserWorkspace;
   authProvider?: AuthProviderEnum;
 };
 
@@ -21,6 +23,7 @@ export enum JwtTokenTypeEnum {
   API_KEY = 'API_KEY',
   POSTGRES_PROXY = 'POSTGRES_PROXY',
   REMOTE_SERVER = 'REMOTE_SERVER',
+  KEY_ENCRYPTION_KEY = 'KEY_ENCRYPTION_KEY',
 }
 
 type CommonPropertiesJwtPayload = {

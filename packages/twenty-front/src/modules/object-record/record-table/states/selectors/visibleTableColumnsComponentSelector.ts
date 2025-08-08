@@ -1,8 +1,8 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
-import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
+import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
 
-export const visibleTableColumnsComponentSelector = createComponentSelectorV2({
+export const visibleTableColumnsComponentSelector = createComponentSelector({
   key: 'visibleTableColumnsComponentSelector',
   componentInstanceContext: RecordTableComponentInstanceContext,
   get:

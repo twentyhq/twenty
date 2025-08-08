@@ -11,7 +11,7 @@ import { formatFieldMetadataItemAsColumnDefinition } from '../utils/formatFieldM
 export const useColumnDefinitionsFromFieldMetadata = (
   objectMetadataItem: ObjectMetadataItem,
 ) => {
-  const activeFieldMetadataItems = objectMetadataItem.fields.filter(
+  const activeFieldMetadataItems = objectMetadataItem.readableFields.filter(
     ({ isActive, isSystem }) => isActive && !isSystem,
   );
 
@@ -27,6 +27,8 @@ export const useColumnDefinitionsFromFieldMetadata = (
     }),
   );
 
+  const restrictedFieldMetadataIds: string[] = [];
+
   const columnDefinitions: ColumnDefinition<FieldMetadata>[] =
     activeFieldMetadataItems
       .map((field, index) =>
@@ -37,6 +39,9 @@ export const useColumnDefinitionsFromFieldMetadata = (
         }),
       )
       .filter(filterAvailableTableColumns)
+      .filter((column) => {
+        return !restrictedFieldMetadataIds.includes(column.fieldMetadataId);
+      })
       .map((column) => {
         const existsInFilterDefinitions = filterableFieldMetadataItems.some(
           (fieldMetadataItem) =>

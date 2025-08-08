@@ -15,9 +15,11 @@ import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hook
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 
+import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { combineFilters } from '@/object-record/record-filter/utils/combineFilters';
+import { turnAnyFieldFilterIntoRecordGqlFilter } from '@/object-record/record-filter/utils/turnAnyFieldFilterIntoRecordGqlFilter';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseLoadRecordIndexBoardProps = {
@@ -43,15 +45,15 @@ export const useLoadRecordIndexBoardColumn = ({
     recordGroupDefinitionFamilyState(columnId),
   );
 
-  const currentRecordFilterGroups = useRecoilComponentValueV2(
+  const currentRecordFilterGroups = useRecoilComponentValue(
     currentRecordFilterGroupsComponentState,
   );
 
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useRecoilComponentValue(
     currentRecordFiltersComponentState,
   );
 
-  const currentRecordSorts = useRecoilComponentValueV2(
+  const currentRecordSorts = useRecoilComponentValue(
     currentRecordSortsComponentState,
   );
 
@@ -63,6 +65,16 @@ export const useLoadRecordIndexBoardColumn = ({
     recordFilterGroups: currentRecordFilterGroups,
     fields: objectMetadataItem.fields,
   });
+
+  const anyFieldFilterValue = useRecoilComponentValue(
+    anyFieldFilterValueComponentState,
+  );
+
+  const { recordGqlOperationFilter: anyFieldFilter } =
+    turnAnyFieldFilterIntoRecordGqlFilter({
+      objectMetadataItem,
+      filterValue: anyFieldFilterValue,
+    });
 
   const orderBy = turnSortsIntoOrderBy(objectMetadataItem, currentRecordSorts);
 
@@ -78,6 +90,7 @@ export const useLoadRecordIndexBoardColumn = ({
     : { is: 'NULL' };
 
   const combinedFilters = combineFilters([
+    anyFieldFilter,
     requestFilters,
     {
       [kanbanFieldMetadataItem.name]: recordIndexKanbanFieldMetadataFilterValue,

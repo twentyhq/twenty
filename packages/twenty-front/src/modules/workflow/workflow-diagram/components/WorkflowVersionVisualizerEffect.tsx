@@ -1,4 +1,4 @@
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
@@ -6,8 +6,10 @@ import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/wo
 import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const WorkflowVersionVisualizerEffect = ({
   workflowVersionId,
@@ -16,18 +18,22 @@ export const WorkflowVersionVisualizerEffect = ({
 }) => {
   const workflowVersion = useWorkflowVersion(workflowVersionId);
 
-  const setFlow = useSetRecoilComponentStateV2(flowComponentState);
-  const setWorkflowDiagram = useSetRecoilComponentStateV2(
+  const setFlow = useSetRecoilComponentState(flowComponentState);
+  const setWorkflowDiagram = useSetRecoilComponentState(
     workflowDiagramComponentState,
   );
-  const setWorkflowVisualizerWorkflowId = useSetRecoilComponentStateV2(
+  const setWorkflowVisualizerWorkflowId = useSetRecoilComponentState(
     workflowVisualizerWorkflowIdComponentState,
   );
-  const setWorkflowVisualizerWorkflowVersionId = useSetRecoilComponentStateV2(
+  const setWorkflowVisualizerWorkflowVersionId = useSetRecoilComponentState(
     workflowVisualizerWorkflowVersionIdComponentState,
   );
 
   const { populateStepsOutputSchema } = useStepsOutputSchema();
+
+  const isWorkflowFilteringEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
+  );
 
   useEffect(() => {
     if (!isDefined(workflowVersion)) {
@@ -58,10 +64,14 @@ export const WorkflowVersionVisualizerEffect = ({
       return;
     }
 
-    const nextWorkflowDiagram = getWorkflowVersionDiagram(workflowVersion);
+    const nextWorkflowDiagram = getWorkflowVersionDiagram({
+      workflowVersion,
+      isWorkflowFilteringEnabled,
+      isEditable: false,
+    });
 
     setWorkflowDiagram(nextWorkflowDiagram);
-  }, [setWorkflowDiagram, workflowVersion]);
+  }, [isWorkflowFilteringEnabled, setWorkflowDiagram, workflowVersion]);
 
   useEffect(() => {
     if (!isDefined(workflowVersion)) {

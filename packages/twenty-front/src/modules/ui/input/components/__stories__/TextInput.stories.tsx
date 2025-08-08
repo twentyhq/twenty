@@ -1,10 +1,13 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
-import { TextInput, TextInputProps } from '../TextInput';
+import {
+  TextInput,
+  TextInputComponentProps,
+} from '@/ui/input/components/TextInput';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-type RenderProps = TextInputProps;
+type RenderProps = TextInputComponentProps;
 
 const Render = (args: RenderProps) => {
   const [value, setValue] = useState(args.value);
@@ -36,4 +39,32 @@ export const Filled: Story = {
 
 export const Disabled: Story = {
   args: { disabled: true, value: 'Tim' },
+};
+
+export const AutoGrow: Story = {
+  args: { autoGrow: true, value: 'Tim' },
+};
+
+export const AutoGrowWithPlaceholder: Story = {
+  args: { autoGrow: true, placeholder: 'Tim' },
+};
+
+export const Small: Story = {
+  args: { sizeVariant: 'sm', value: 'Tim' },
+};
+
+export const AutoGrowSmall: Story = {
+  args: { autoGrow: true, sizeVariant: 'sm', value: 'Tim' },
+};
+
+export const WithLeftAdornment: Story = {
+  args: {
+    leftAdornment: 'https://',
+  },
+};
+
+export const WithRightAdornment: Story = {
+  args: {
+    rightAdornment: '@twenty.com',
+  },
 };

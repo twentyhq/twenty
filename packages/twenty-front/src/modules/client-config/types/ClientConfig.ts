@@ -10,6 +10,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 export type ClientConfig = {
+  appVersion?: string;
   aiModels: Array<ClientAiModelConfig>;
   analyticsEnabled: boolean;
   api: ApiConfig;
@@ -30,9 +31,10 @@ export type ClientConfig = {
   isMicrosoftCalendarEnabled: boolean;
   isMicrosoftMessagingEnabled: boolean;
   isMultiWorkspaceEnabled: boolean;
-  isIMAPMessagingEnabled: boolean;
+  isImapSmtpCaldavEnabled: boolean;
   publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;
   signInPrefilled: boolean;
   support: Support;
+  isTwoFactorAuthenticationEnabled: boolean;
 };

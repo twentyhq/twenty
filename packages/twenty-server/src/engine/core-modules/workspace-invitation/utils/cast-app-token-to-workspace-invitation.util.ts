@@ -1,5 +1,5 @@
 import {
-  AppToken,
+  type AppToken,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import {

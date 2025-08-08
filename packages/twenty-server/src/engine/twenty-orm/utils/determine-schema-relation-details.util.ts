@@ -1,9 +1,8 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-import { RelationType } from 'typeorm/metadata/types/RelationTypes';
+import { type FieldMetadataType } from 'twenty-shared/types';
+import { type RelationType } from 'typeorm/metadata/types/RelationTypes';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import {
   RelationException,
   RelationExceptionCode,
@@ -18,7 +17,9 @@ interface RelationDetails {
 }
 
 export async function determineSchemaRelationDetails(
-  fieldMetadata: FieldMetadataInterface<FieldMetadataType.RELATION>,
+  fieldMetadata: FieldMetadataEntity<
+    FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+  >,
   objectMetadataMaps: ObjectMetadataMaps,
 ): Promise<RelationDetails> {
   if (!fieldMetadata.settings) {

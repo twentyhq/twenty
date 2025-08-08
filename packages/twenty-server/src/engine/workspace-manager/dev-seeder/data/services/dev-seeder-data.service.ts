@@ -1,14 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import {
-  API_KEY_DATA_SEED_COLUMNS,
-  API_KEY_DATA_SEEDS,
-} from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
 import {
   CALENDAR_CHANNEL_DATA_SEED_COLUMNS,
   CALENDAR_CHANNEL_DATA_SEEDS,
@@ -129,11 +125,6 @@ const RECORD_SEEDS_CONFIGS = [
     tableName: 'opportunity',
     pgColumns: OPPORTUNITY_DATA_SEED_COLUMNS,
     recordSeeds: OPPORTUNITY_DATA_SEEDS,
-  },
-  {
-    tableName: 'apiKey',
-    pgColumns: API_KEY_DATA_SEED_COLUMNS,
-    recordSeeds: API_KEY_DATA_SEEDS,
   },
   {
     tableName: 'connectedAccount',

@@ -108,6 +108,9 @@ class PublicFeatureFlag {
 
 @ObjectType()
 export class ClientConfig {
+  @Field(() => String, { nullable: true })
+  appVersion?: string;
+
   @Field(() => AuthProviders, { nullable: false })
   authProviders: AuthProviders;
 
@@ -178,7 +181,7 @@ export class ClientConfig {
   isConfigVariablesInDbEnabled: boolean;
 
   @Field(() => Boolean)
-  isIMAPMessagingEnabled: boolean;
+  isImapSmtpCaldavEnabled: boolean;
 
   @Field(() => String, { nullable: true })
   calendarBookingPageId?: string;

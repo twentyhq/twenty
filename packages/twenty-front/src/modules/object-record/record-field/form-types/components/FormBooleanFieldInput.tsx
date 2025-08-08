@@ -29,7 +29,7 @@ export const FormBooleanFieldInput = ({
   readonly,
   VariablePicker,
 }: FormBooleanFieldInputProps) => {
-  const inputId = useId();
+  const instanceId = useId();
 
   const [draftValue, setDraftValue] = useState<
     | {
@@ -48,7 +48,7 @@ export const FormBooleanFieldInput = ({
         }
       : {
           type: 'static',
-          value: defaultValue ?? false,
+          value: Boolean(defaultValue),
         },
   );
 
@@ -85,6 +85,7 @@ export const FormBooleanFieldInput = ({
 
       <FormFieldInputRowContainer>
         <FormFieldInputInnerContainer
+          formFieldInputInstanceId={instanceId}
           hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
@@ -105,7 +106,7 @@ export const FormBooleanFieldInput = ({
 
         {VariablePicker && !readonly ? (
           <VariablePicker
-            inputId={inputId}
+            instanceId={instanceId}
             onVariableSelect={handleVariableTagInsert}
           />
         ) : null}

@@ -5,23 +5,20 @@ import { ObjectFilterDropdownRatingInput } from '@/object-record/object-filter-d
 import { ObjectFilterDropdownRecordSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect';
 import { ObjectFilterDropdownSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { ViewBarFilterDropdownVectorSearchInput } from '@/views/components/ViewBarFilterDropdownVectorSearchInput';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+
+import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { ObjectFilterDropdownBooleanSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect';
-import { ObjectFilterDropdownFilterInputHeader } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInputHeader';
 import { ObjectFilterDropdownInnerSelectOperandDropdown } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownInnerSelectOperandDropdown';
 import { ObjectFilterDropdownTextInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextInput';
+import { ObjectFilterDropdownVectorSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownVectorSearchInput';
 import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
-import { DATE_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/object-record/object-filter-dropdown/constants/DatePickerDropdownContentWidth';
 import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 
 type ObjectFilterDropdownFilterInputProps = {
@@ -33,12 +30,12 @@ export const ObjectFilterDropdownFilterInput = ({
   filterDropdownId,
   recordFilterId,
 }: ObjectFilterDropdownFilterInputProps) => {
-  const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
+  const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
     filterDropdownId,
   );
 
-  const selectedOperandInDropdown = useRecoilComponentValueV2(
+  const selectedOperandInDropdown = useRecoilComponentValue(
     selectedOperandInDropdownComponentState,
     filterDropdownId,
   );
@@ -49,8 +46,8 @@ export const ObjectFilterDropdownFilterInput = ({
       ViewFilterOperand.Is,
       ViewFilterOperand.IsNotNull,
       ViewFilterOperand.IsNot,
-      ViewFilterOperand.LessThan,
-      ViewFilterOperand.GreaterThan,
+      ViewFilterOperand.LessThanOrEqual,
+      ViewFilterOperand.GreaterThanOrEqual,
       ViewFilterOperand.IsBefore,
       ViewFilterOperand.IsAfter,
       ViewFilterOperand.Contains,
@@ -62,11 +59,7 @@ export const ObjectFilterDropdownFilterInput = ({
     selectedOperandInDropdown === ViewFilterOperand.VectorSearch;
 
   if (isVectorSearchFilter && isDefined(filterDropdownId)) {
-    return (
-      <ViewBarFilterDropdownVectorSearchInput
-        filterDropdownId={filterDropdownId}
-      />
-    );
+    return <ObjectFilterDropdownVectorSearchInput />;
   }
 
   if (!isDefined(fieldMetadataItemUsedInDropdown)) {
@@ -82,24 +75,21 @@ export const ObjectFilterDropdownFilterInput = ({
 
   if (isOnlyOperand) {
     return (
-      <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
-        <ObjectFilterDropdownFilterInputHeader />
+      <>
         <ObjectFilterDropdownInnerSelectOperandDropdown />
-      </DropdownContent>
+      </>
     );
   } else if (isDateFilter) {
     return (
-      <DropdownContent widthInPixels={DATE_PICKER_DROPDOWN_CONTENT_WIDTH}>
-        <ObjectFilterDropdownFilterInputHeader />
+      <>
         <ObjectFilterDropdownInnerSelectOperandDropdown />
         <DropdownMenuSeparator />
         <ObjectFilterDropdownDateInput />
-      </DropdownContent>
+      </>
     );
   } else {
     return (
-      <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
-        <ObjectFilterDropdownFilterInputHeader />
+      <>
         <ObjectFilterDropdownInnerSelectOperandDropdown />
         <DropdownMenuSeparator />
         {TEXT_FILTER_TYPES.includes(filterType) && (
@@ -130,7 +120,7 @@ export const ObjectFilterDropdownFilterInput = ({
           </>
         )}
         {filterType === 'BOOLEAN' && <ObjectFilterDropdownBooleanSelect />}
-      </DropdownContent>
+      </>
     );
   }
 };

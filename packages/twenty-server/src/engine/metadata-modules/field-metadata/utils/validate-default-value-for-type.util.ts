@@ -1,10 +1,10 @@
 import { plainToInstance } from 'class-transformer';
-import { ValidationError, validateSync } from 'class-validator';
+import { type ValidationError, validateSync } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
-  FieldMetadataClassValidation,
-  FieldMetadataDefaultValue,
+  type FieldMetadataClassValidation,
+  type FieldMetadataDefaultValue,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import {

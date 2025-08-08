@@ -1,7 +1,7 @@
 export type ConnectionParameters = {
   host: string;
   port: number;
-  username: string;
+  username?: string;
   password: string;
   secure?: boolean;
 };
@@ -9,7 +9,6 @@ export type ConnectionParameters = {
 export type AccountType = 'IMAP' | 'SMTP' | 'CALDAV';
 
 export type ImapSmtpCaldavParams = {
-  handle: string;
   IMAP?: ConnectionParameters;
   SMTP?: ConnectionParameters;
   CALDAV?: ConnectionParameters;

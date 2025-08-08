@@ -2,17 +2,21 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-import { WorkspaceColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-factory.interface';
-import { WorkspaceColumnActionOptions } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-options.interface';
+import { type WorkspaceColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-factory.interface';
+import { type WorkspaceColumnActionOptions } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-options.interface';
 
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { BasicColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/basic-column-action.factory';
 import { CompositeColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { EnumColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/enum-column-action.factory';
+import { MorphRelationColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/morph-relation-column-action.factory';
 import { RelationColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/relation-column-action.factory';
-import { TsVectorColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/ts-vector-column-action.factory';
 import {
-  WorkspaceMigrationColumnAction,
+  TsVectorColumnActionFactory,
+  type TsVectorFieldMetadata,
+} from 'src/engine/metadata-modules/workspace-migration/factories/ts-vector-column-action.factory';
+import {
+  type WorkspaceMigrationColumnAction,
   WorkspaceMigrationColumnActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import {
@@ -38,6 +42,7 @@ export class WorkspaceMigrationFactory {
     private readonly enumColumnActionFactory: EnumColumnActionFactory,
     private readonly compositeColumnActionFactory: CompositeColumnActionFactory,
     private readonly relationColumnActionFactory: RelationColumnActionFactory,
+    private readonly morphRelationColumnActionFactory: MorphRelationColumnActionFactory,
   ) {
     this.factoriesMap = new Map<
       FieldMetadataType,
@@ -106,26 +111,36 @@ export class WorkspaceMigrationFactory {
         FieldMetadataType.RELATION,
         { factory: this.relationColumnActionFactory },
       ],
+      [
+        FieldMetadataType.MORPH_RELATION,
+        { factory: this.morphRelationColumnActionFactory },
+      ],
     ]);
   }
 
-  createColumnActions(
+  createColumnActions<T extends FieldMetadataType = FieldMetadataType>(
     action: WorkspaceMigrationColumnActionType.CREATE,
-    fieldMetadata: FieldMetadataInterface,
+    fieldMetadata: FieldMetadataEntity<T>,
   ): WorkspaceMigrationColumnAction[];
 
   createColumnActions(
     action: WorkspaceMigrationColumnActionType.ALTER,
-    currentFieldMetadata: FieldMetadataInterface,
-    alteredFieldMetadata: FieldMetadataInterface,
+    currentFieldMetadata: FieldMetadataEntity,
+    alteredFieldMetadata: FieldMetadataEntity,
+  ): WorkspaceMigrationColumnAction[];
+
+  createColumnActions(
+    action: WorkspaceMigrationColumnActionType.ALTER,
+    currentFieldMetadata: FieldMetadataEntity,
+    alteredFieldMetadata: TsVectorFieldMetadata,
   ): WorkspaceMigrationColumnAction[];
 
   createColumnActions(
     action:
       | WorkspaceMigrationColumnActionType.CREATE
       | WorkspaceMigrationColumnActionType.ALTER,
-    fieldMetadataOrCurrentFieldMetadata: FieldMetadataInterface,
-    undefinedOrAlteredFieldMetadata?: FieldMetadataInterface,
+    fieldMetadataOrCurrentFieldMetadata: FieldMetadataEntity,
+    undefinedOrAlteredFieldMetadata?: FieldMetadataEntity,
   ): WorkspaceMigrationColumnAction[] {
     const currentFieldMetadata =
       action === WorkspaceMigrationColumnActionType.ALTER
@@ -161,8 +176,8 @@ export class WorkspaceMigrationFactory {
     action:
       | WorkspaceMigrationColumnActionType.CREATE
       | WorkspaceMigrationColumnActionType.ALTER,
-    currentFieldMetadata: FieldMetadataInterface | undefined,
-    alteredFieldMetadata: FieldMetadataInterface,
+    currentFieldMetadata: FieldMetadataEntity | undefined,
+    alteredFieldMetadata: FieldMetadataEntity,
   ): WorkspaceMigrationColumnAction[] {
     const { factory, options } =
       this.factoriesMap.get(alteredFieldMetadata.type) ?? {};

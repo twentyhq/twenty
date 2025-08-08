@@ -1,15 +1,14 @@
 import omit from 'lodash.omit';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
-
-import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export const generateObjectMetadataMaps = (
-  objectMetadataCollection: ObjectMetadataInterface[],
+  objectMetadataCollection: ObjectMetadataEntity[],
 ): ObjectMetadataMaps => {
   const objectMetadataMaps: ObjectMetadataMaps = {
     byId: {},
@@ -21,10 +20,7 @@ export const generateObjectMetadataMaps = (
 
     for (const fieldMetadata of objectMetadata.fields) {
       if (
-        isFieldMetadataInterfaceOfType(
-          fieldMetadata,
-          FieldMetadataType.RELATION,
-        )
+        isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION)
       ) {
         if (fieldMetadata.settings?.joinColumnName) {
           fieldIdByJoinColumnNameMap[fieldMetadata.settings.joinColumnName] =

@@ -2,7 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useSetHasUserSelectedAllRows } from '@/object-record/record-table/hooks/internal/useSetAllRowSelectedState';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { ColumnDefinition } from '../types/ColumnDefinition';
@@ -14,8 +14,8 @@ import { onColumnsChangeComponentState } from '@/object-record/record-table/stat
 
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useLeaveTableFocus } from './internal/useLeaveTableFocus';
 import { useResetTableRowSelection } from './internal/useResetTableRowSelection';
 import { useSelectAllRows } from './internal/useSelectAllRows';
@@ -30,7 +30,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     props?.recordTableId,
   );
 
-  const availableTableColumnsState = useRecoilComponentCallbackStateV2(
+  const availableTableColumnsState = useRecoilComponentCallbackState(
     availableTableColumnsComponentState,
     recordTableId,
   );
@@ -51,22 +51,22 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     [availableTableColumnsState],
   );
 
-  const setOnColumnsChange = useSetRecoilComponentStateV2(
+  const setOnColumnsChange = useSetRecoilComponentState(
     onColumnsChangeComponentState,
     recordTableId,
   );
 
-  const setOnToggleColumnSort = useSetRecoilComponentStateV2(
+  const setOnToggleColumnSort = useSetRecoilComponentState(
     onToggleColumnSortComponentState,
     recordTableId,
   );
 
-  const setIsRecordTableInitialLoading = useSetRecoilComponentStateV2(
+  const setIsRecordTableInitialLoading = useSetRecoilComponentState(
     isRecordTableInitialLoadingComponentState,
     recordTableId,
   );
 
-  const onColumnsChangeState = useRecoilComponentCallbackStateV2(
+  const onColumnsChangeState = useRecoilComponentCallbackState(
     onColumnsChangeComponentState,
     recordTableId,
   );

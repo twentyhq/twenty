@@ -4,7 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SettingPermissionType } from '~/generated/graphql';
+import { PermissionFlagType } from '~/generated/graphql';
 
 const SettingsApiKeys = lazy(() =>
   import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
@@ -64,19 +64,19 @@ const SettingsNewObject = lazy(() =>
   })),
 );
 
-const SettingsNewImapConnection = lazy(() =>
+const SettingsNewImapSmtpCaldavConnection = lazy(() =>
   import(
-    '@/settings/accounts/components/SettingsAccountsNewImapConnection'
+    '@/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection'
   ).then((module) => ({
-    default: module.SettingsAccountsNewImapConnection,
+    default: module.SettingsAccountsNewImapSmtpCaldavConnection,
   })),
 );
 
-const SettingsEditImapConnection = lazy(() =>
+const SettingsEditImapSmtpCaldavConnection = lazy(() =>
   import(
-    '@/settings/accounts/components/SettingsAccountsEditImapConnection'
+    '@/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection'
   ).then((module) => ({
-    default: module.SettingsAccountsEditImapConnection,
+    default: module.SettingsAccountsEditImapSmtpCaldavConnection,
   })),
 );
 
@@ -146,6 +146,18 @@ const SettingsWorkspace = lazy(() =>
   })),
 );
 
+const SettingsAI = lazy(() =>
+  import('~/pages/settings/ai/SettingsAI').then((module) => ({
+    default: module.SettingsAI,
+  })),
+);
+
+const SettingsAgentForm = lazy(() =>
+  import('~/pages/settings/ai/SettingsAgentForm').then((module) => ({
+    default: module.SettingsAgentForm,
+  })),
+);
+
 const SettingsDomain = lazy(() =>
   import('~/pages/settings/workspace/SettingsDomain').then((module) => ({
     default: module.SettingsDomain,
@@ -162,6 +174,14 @@ const SettingsProfile = lazy(() =>
   import('~/pages/settings/SettingsProfile').then((module) => ({
     default: module.SettingsProfile,
   })),
+);
+
+const SettingsTwoFactorAuthenticationMethod = lazy(() =>
+  import('~/pages/settings/SettingsTwoFactorAuthenticationMethod').then(
+    (module) => ({
+      default: module.SettingsTwoFactorAuthenticationMethod,
+    }),
+  ),
 );
 
 const SettingsExperience = lazy(() =>
@@ -222,6 +242,14 @@ const SettingsIntegrationDatabase = lazy(() =>
   ),
 );
 
+const SettingsIntegrationMCP = lazy(() =>
+  import('~/pages/settings/integrations/SettingsIntegrationMCPPage').then(
+    (module) => ({
+      default: module.SettingsIntegrationMCPPage,
+    }),
+  ),
+);
+
 const SettingsIntegrationNewDatabaseConnection = lazy(() =>
   import(
     '~/pages/settings/integrations/SettingsIntegrationNewDatabaseConnection'
@@ -248,7 +276,7 @@ const SettingsIntegrationShowDatabaseConnection = lazy(() =>
 
 const SettingsObjectNewFieldSelect = lazy(() =>
   import(
-    '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect'
+    '~/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect'
   ).then((module) => ({
     default: module.SettingsObjectNewFieldSelect,
   })),
@@ -256,7 +284,7 @@ const SettingsObjectNewFieldSelect = lazy(() =>
 
 const SettingsObjectNewFieldConfigure = lazy(() =>
   import(
-    '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure'
+    '~/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure'
   ).then((module) => ({
     default: module.SettingsObjectNewFieldConfigure,
   })),
@@ -363,6 +391,10 @@ export const SettingsRoutes = ({
   <Suspense fallback={<SettingsSkeletonLoader />}>
     <Routes>
       <Route path={SettingsPath.ProfilePage} element={<SettingsProfile />} />
+      <Route
+        path={SettingsPath.TwoFactorAuthenticationStrategyConfig}
+        element={<SettingsTwoFactorAuthenticationMethod />}
+      />
       <Route path={SettingsPath.Experience} element={<SettingsExperience />} />
       <Route path={SettingsPath.Accounts} element={<SettingsAccounts />} />
       <Route path={SettingsPath.NewAccount} element={<SettingsNewAccount />} />
@@ -375,28 +407,37 @@ export const SettingsRoutes = ({
         element={<SettingsAccountsEmails />}
       />
       <Route
-        path={SettingsPath.NewImapConnection}
-        element={<SettingsNewImapConnection />}
+        path={SettingsPath.NewImapSmtpCaldavConnection}
+        element={<SettingsNewImapSmtpCaldavConnection />}
       />
       <Route
-        path={SettingsPath.EditImapConnection}
-        element={<SettingsEditImapConnection />}
+        path={SettingsPath.EditImapSmtpCaldavConnection}
+        element={<SettingsEditImapSmtpCaldavConnection />}
       />
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingPermissionType.WORKSPACE}
+            settingsPermission={PermissionFlagType.WORKSPACE}
           />
         }
       >
         <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
+        <Route path={SettingsPath.AI} element={<SettingsAI />} />
+        <Route
+          path={SettingsPath.AINewAgent}
+          element={<SettingsAgentForm mode="create" />}
+        />
+        <Route
+          path={SettingsPath.AIAgentDetail}
+          element={<SettingsAgentForm mode="edit" />}
+        />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
       </Route>
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingPermissionType.WORKSPACE_MEMBERS}
+            settingsPermission={PermissionFlagType.WORKSPACE_MEMBERS}
           />
         }
       >
@@ -408,7 +449,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingPermissionType.DATA_MODEL}
+            settingsPermission={PermissionFlagType.DATA_MODEL}
           />
         }
       >
@@ -438,7 +479,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingPermissionType.ROLES}
+            settingsPermission={PermissionFlagType.ROLES}
           />
         }
       >
@@ -460,7 +501,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingPermissionType.API_KEYS_AND_WEBHOOKS}
+            settingsPermission={PermissionFlagType.API_KEYS_AND_WEBHOOKS}
           />
         }
       >
@@ -510,6 +551,10 @@ export const SettingsRoutes = ({
           path={SettingsPath.IntegrationDatabaseConnection}
           element={<SettingsIntegrationShowDatabaseConnection />}
         />
+        <Route
+          path={SettingsPath.IntegrationMCP}
+          element={<SettingsIntegrationMCP />}
+        />
       </Route>
       {isFunctionSettingsEnabled && (
         <>
@@ -531,7 +576,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingPermissionType.SECURITY}
+            settingsPermission={PermissionFlagType.SECURITY}
           />
         }
       >
@@ -563,7 +608,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingPermissionType.WORKSPACE}
+            settingsPermission={PermissionFlagType.WORKSPACE}
           />
         }
       >

@@ -1,5 +1,6 @@
 import { FavoriteFolderNavigationDrawerItemDropdown } from '@/favorites/components/FavoriteFolderNavigationDrawerItemDropdown';
 import { FavoriteIcon } from '@/favorites/components/FavoriteIcon';
+import { FavoriteNavigationDrawerSubItem } from '@/favorites/components/FavoriteNavigationDrawerSubItem';
 import { FavoritesDroppable } from '@/favorites/components/FavoritesDroppable';
 import { FAVORITE_FOLDER_DELETE_MODAL_ID } from '@/favorites/constants/FavoriteFolderDeleteModalId';
 import { FavoritesDragContext } from '@/favorites/contexts/FavoritesDragContext';
@@ -11,16 +12,15 @@ import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatching
 import { ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
-import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { Droppable } from '@hello-pangea/dnd';
 import { useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -73,8 +73,8 @@ export const CurrentWorkspaceMemberFavorites = ({
 
   const dropdownId = `favorite-folder-edit-${folder.folderId}`;
 
-  const isDropdownOpenComponent = useRecoilComponentValueV2(
-    isDropdownOpenComponentStateV2,
+  const isDropdownOpenComponent = useRecoilComponentValue(
+    isDropdownOpenComponentState,
     dropdownId,
   );
 
@@ -140,7 +140,7 @@ export const CurrentWorkspaceMemberFavorites = ({
     />
   );
 
-  const isModalOpened = useRecoilComponentValueV2(
+  const isModalOpened = useRecoilComponentValue(
     isModalOpenedComponentState,
     modalId,
   );
@@ -159,7 +159,6 @@ export const CurrentWorkspaceMemberFavorites = ({
             onSubmit={handleSubmitRename}
             onCancel={handleCancelRename}
             onClickOutside={handleClickOutside}
-            hotkeyScope="favorites-folder-input"
           />
         ) : (
           <FavoritesDroppable droppableId={`folder-header-${folder.folderId}`}>
@@ -197,9 +196,9 @@ export const CurrentWorkspaceMemberFavorites = ({
                     index={index}
                     isInsideScrollableContainer
                     itemComponent={
-                      <NavigationDrawerSubItem
+                      <FavoriteNavigationDrawerSubItem
+                        favorite={favorite}
                         label={favorite.labelIdentifier}
-                        objectName={favorite.objectNameSingular}
                         Icon={() => <FavoriteIcon favorite={favorite} />}
                         to={isDragging ? undefined : favorite.link}
                         active={index === selectedFavoriteIndex}

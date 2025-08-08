@@ -1,13 +1,18 @@
-import { ObjectPermissions } from '@/object-record/cache/types/ObjectPermissions';
+import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
+import { ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ObjectPermission } from '~/generated-metadata/graphql';
 
 export const getObjectPermissionsForObject = (
-  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>,
+  objectPermissionsByObjectMetadataId: Record<
+    string,
+    ObjectPermissions & { objectMetadataId: string }
+  >,
   objectMetadataId: string,
-): ObjectPermissions => {
-  const objectPermissions =
-    objectPermissionsByObjectMetadataId[objectMetadataId];
+): ObjectPermissions & { objectMetadataId: string } => {
+  const objectPermissions = getObjectPermissionsFromMapByObjectMetadataId({
+    objectPermissionsByObjectMetadataId,
+    objectMetadataId,
+  });
 
   if (!isDefined(objectPermissions)) {
     return {
@@ -15,6 +20,8 @@ export const getObjectPermissionsForObject = (
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: true,
       canDestroyObjectRecords: true,
+      restrictedFields: {},
+      objectMetadataId,
     };
   }
 
@@ -24,5 +31,7 @@ export const getObjectPermissionsForObject = (
     canSoftDeleteObjectRecords:
       objectPermissions.canSoftDeleteObjectRecords ?? true,
     canDestroyObjectRecords: objectPermissions.canDestroyObjectRecords ?? true,
+    restrictedFields: objectPermissions.restrictedFields ?? {},
+    objectMetadataId,
   };
 };

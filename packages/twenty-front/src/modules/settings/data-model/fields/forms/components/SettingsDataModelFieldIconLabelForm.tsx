@@ -10,11 +10,11 @@ import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsO
 import { DATABASE_IDENTIFIER_MAXIMUM_LENGTH } from '@/settings/data-model/constants/DatabaseIdentifierMaximumLength';
 import { getErrorMessageFromError } from '@/settings/data-model/fields/forms/utils/errorMessages';
 import { IconPicker } from '@/ui/input/components/IconPicker';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 import {
   AppTooltip,
   IconInfoCircle,
@@ -22,6 +22,7 @@ import {
   TooltipDelay,
 } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
+import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 export const settingsDataModelFieldIconLabelFormSchema = (
   existingOtherLabels: string[] = [],
@@ -74,11 +75,11 @@ const StyledAdvancedSettingsContainer = styled.div`
 type SettingsDataModelFieldIconLabelFormProps = {
   fieldMetadataItem?: FieldMetadataItem;
   maxLength?: number;
-  canToggleSyncLabelWithName?: boolean;
+  isCreationMode?: boolean;
 };
 
 export const SettingsDataModelFieldIconLabelForm = ({
-  canToggleSyncLabelWithName = true,
+  isCreationMode = false,
   fieldMetadataItem,
   maxLength,
 }: SettingsDataModelFieldIconLabelFormProps) => {
@@ -92,14 +93,18 @@ export const SettingsDataModelFieldIconLabelForm = ({
 
   const theme = useTheme();
 
+  const label = watch('label');
+
   const { t } = useLingui();
+
+  const labelTextInputId = `${fieldMetadataItem?.id}-label`;
+  const nameTextInputId = `${fieldMetadataItem?.id}-name`;
 
   const isLabelSyncedWithName =
     watch('isLabelSyncedWithName') ??
     (isDefined(fieldMetadataItem)
       ? fieldMetadataItem.isLabelSyncedWithName
       : true);
-  const label = watch('label');
 
   const apiNameTooltipText = isLabelSyncedWithName
     ? t`Deactivate "Synchronize Objects Labels and API Names" to set a custom API name`
@@ -112,6 +117,27 @@ export const SettingsDataModelFieldIconLabelForm = ({
       });
   };
 
+  const isRelation =
+    fieldMetadataItem?.type === FieldMetadataType.RELATION ||
+    fieldMetadataItem?.type === FieldMetadataType.MORPH_RELATION;
+
+  const isCustomButNotRelationField =
+    fieldMetadataItem?.isCustom === true && !isRelation;
+
+  // TODO: remove the custom RELATION edge case, this will result in canToggleSyncLabelWithName = isCustom
+  const canToggleSyncLabelWithName =
+    !isCreationMode && isCustomButNotRelationField;
+
+  // TODO: remove custom RELATION edge case, this will result in isNameEditEnabled = isCustom
+  const isNameEditEnabled =
+    isLabelSyncedWithName === false && isCustomButNotRelationField;
+
+  // TODO: remove custom RELATION edge case, this will result in isLabelEditEnabled = true
+  const isLabelEditEnabled =
+    isCreationMode ||
+    (!isCreationMode &&
+      (fieldMetadataItem?.isCustom === false || isCustomButNotRelationField));
+
   return (
     <>
       <StyledInputsContainer>
@@ -121,7 +147,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
           defaultValue={fieldMetadataItem?.icon ?? 'IconUsers'}
           render={({ field: { onChange, value } }) => (
             <IconPicker
-              selectedIconKey={value ?? ''}
+              selectedIconKey={value ?? 'IconUsers'}
               onChange={({ iconKey }) => onChange(iconKey)}
               variant="primary"
             />
@@ -132,22 +158,23 @@ export const SettingsDataModelFieldIconLabelForm = ({
           control={control}
           defaultValue={fieldMetadataItem?.label}
           render={({ field: { onChange, value } }) => (
-            <TextInput
+            <SettingsTextInput
+              instanceId={labelTextInputId}
               placeholder={t`Employees`}
               value={value}
+              disabled={!isLabelEditEnabled}
               onChange={(value) => {
                 onChange(value);
                 trigger('label');
-                if (isLabelSyncedWithName === true) {
+                if (
+                  isCreationMode ||
+                  (isLabelSyncedWithName === true &&
+                    fieldMetadataItem?.isCustom === true)
+                ) {
                   fillNameFromLabel(value);
                 }
               }}
               error={getErrorMessageFromError(errors.label?.message)}
-              disabled={
-                isLabelSyncedWithName === true &&
-                fieldMetadataItem &&
-                !fieldMetadataItem?.isCustom
-              }
               maxLength={maxLength}
               fullWidth
             />
@@ -166,15 +193,13 @@ export const SettingsDataModelFieldIconLabelForm = ({
                     defaultValue={fieldMetadataItem?.name}
                     render={({ field: { onChange, value } }) => (
                       <>
-                        <TextInput
+                        <SettingsTextInput
+                          instanceId={nameTextInputId}
                           label={t`API Name`}
                           placeholder={t`employees`}
                           value={value}
                           onChange={onChange}
-                          disabled={
-                            (isLabelSyncedWithName ?? false) ||
-                            !fieldMetadataItem?.isCustom
-                          }
+                          disabled={!isNameEditEnabled}
                           fullWidth
                           maxLength={DATABASE_IDENTIFIER_MAXIMUM_LENGTH}
                           RightIcon={() =>
@@ -223,8 +248,20 @@ export const SettingsDataModelFieldIconLabelForm = ({
                           advancedMode
                           onChange={(value) => {
                             onChange(value);
-                            if (value === true) {
+                            if (!isDefined(fieldMetadataItem)) {
+                              return;
+                            }
+
+                            if (value === false) {
+                              return;
+                            }
+
+                            if (
+                              fieldMetadataItem.isCustom === true &&
+                              !isRelation
+                            ) {
                               fillNameFromLabel(label);
+                              return;
                             }
                           }}
                         />

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { JSX } from 'react';
+import { type JSX } from 'react';
 import { Label } from '@ui/display';
 
 type HorizontalSeparatorProps = {

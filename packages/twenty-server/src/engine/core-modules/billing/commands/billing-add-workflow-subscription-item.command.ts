@@ -7,9 +7,9 @@ import { Repository } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  RunOnWorkspaceArgs,
+  type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { type BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';

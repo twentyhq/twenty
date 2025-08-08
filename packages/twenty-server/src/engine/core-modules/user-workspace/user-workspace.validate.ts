@@ -1,5 +1,5 @@
-import { CustomException } from 'src/utils/custom-exception';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { type CustomException } from 'src/utils/custom-exception';
+import { type UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import {
   UserWorkspaceException,
   UserWorkspaceExceptionCode,

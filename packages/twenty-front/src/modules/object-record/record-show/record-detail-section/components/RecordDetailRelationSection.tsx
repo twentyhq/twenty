@@ -16,11 +16,11 @@ import { AggregateOperations } from '@/object-record/record-table/constants/Aggr
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { prefetchIndexViewIdFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchIndexViewIdFromObjectMetadataItemFamilySelector';
 import { AppPath } from '@/types/AppPath';
-import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useLingui } from '@lingui/react/macro';
+import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 import { RelationType } from '~/generated-metadata/graphql';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 
@@ -70,8 +70,8 @@ export const RecordDetailRelationSection = ({
     recordId,
   });
 
-  const isDropdownOpen = useRecoilComponentValueV2(
-    isDropdownOpenComponentStateV2,
+  const isDropdownOpen = useRecoilComponentValue(
+    isDropdownOpenComponentState,
     dropdownId,
   );
 
@@ -89,7 +89,7 @@ export const RecordDetailRelationSection = ({
         },
       },
     },
-    view: indexViewId,
+    viewId: indexViewId,
   };
 
   const filterLinkHref = getAppPath(

@@ -1,38 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'class-validator';
-import { isValidUuid } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { isValidUuid, resolveInput } from 'twenty-shared/utils';
 
-import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
-import { WorkflowExecutorInput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
-import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
-import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
+import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
+import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import {
   RecordCRUDActionException,
   RecordCRUDActionExceptionCode,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/exceptions/record-crud-action.exception';
 import { isWorkflowDeleteRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-delete-record-action.guard';
-import { WorkflowDeleteRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
+import { type WorkflowDeleteRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 
 @Injectable()
-export class DeleteRecordWorkflowAction implements WorkflowExecutor {
+export class DeleteRecordWorkflowAction implements WorkflowAction {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(ObjectMetadataEntity, 'core')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
@@ -40,7 +31,7 @@ export class DeleteRecordWorkflowAction implements WorkflowExecutor {
     currentStepId,
     steps,
     context,
-  }: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
+  }: WorkflowActionInput): Promise<WorkflowActionOutput> {
     const step = steps.find((step) => step.id === currentStepId);
 
     if (!step) {
@@ -88,19 +79,6 @@ export class DeleteRecordWorkflowAction implements WorkflowExecutor {
         { shouldBypassPermissionChecks: true },
       );
 
-    const objectMetadata = await this.objectMetadataRepository.findOne({
-      where: {
-        nameSingular: workflowActionInput.objectName,
-      },
-    });
-
-    if (!objectMetadata) {
-      throw new RecordCRUDActionException(
-        'Failed to delete: Object metadata not found',
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
-      );
-    }
-
     const objectRecord = await repository.findOne({
       where: {
         id: workflowActionInput.objectRecordId,
@@ -114,22 +92,13 @@ export class DeleteRecordWorkflowAction implements WorkflowExecutor {
       );
     }
 
-    await repository.softDelete(workflowActionInput.objectRecordId);
+    const columnsToReturnForSoftDelete: string[] = [];
 
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: workflowActionInput.objectName,
-      action: DatabaseEventAction.DELETED,
-      events: [
-        {
-          recordId: objectRecord.id,
-          objectMetadata,
-          properties: {
-            before: objectRecord,
-          },
-        },
-      ],
-      workspaceId,
-    });
+    await repository.softDelete(
+      workflowActionInput.objectRecordId,
+      undefined,
+      columnsToReturnForSoftDelete,
+    );
 
     return {
       result: objectRecord,

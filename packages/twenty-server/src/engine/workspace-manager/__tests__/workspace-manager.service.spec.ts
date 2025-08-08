@@ -1,11 +1,12 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -113,6 +114,14 @@ describe('WorkspaceManagerService', () => {
           provide: ObjectMetadataService,
           useValue: {
             deleteObjectsMetadata: jest.fn(),
+          },
+        },
+        {
+          provide: AgentService,
+          useValue: {
+            createOneAgent: jest
+              .fn()
+              .mockResolvedValue({ id: 'mock-agent-id' }),
           },
         },
       ],

@@ -10,7 +10,7 @@ import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRe
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { getAllRecordFilterDescendantsOfRecordFilterGroup } from '@/object-record/record-filter/utils/getAllRecordFilterDescendantsOfRecordFilterGroup';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { plural } from 'pluralize';
@@ -21,11 +21,11 @@ import { IconFilter } from 'twenty-ui/display';
 export const AdvancedFilterChip = () => {
   const { closeDropdown } = useCloseDropdown();
 
-  const currentRecordFilterGroups = useRecoilComponentValueV2(
+  const currentRecordFilterGroups = useRecoilComponentValue(
     currentRecordFilterGroupsComponentState,
   );
 
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useRecoilComponentValue(
     currentRecordFiltersComponentState,
   );
 
@@ -39,7 +39,7 @@ export const AdvancedFilterChip = () => {
   const { removeRootRecordFilterGroupIfEmpty } =
     useRemoveRootRecordFilterGroupIfEmpty();
 
-  const rootRecordFilterGroup = useRecoilComponentValueV2(
+  const rootRecordFilterGroup = useRecoilComponentValue(
     rootLevelRecordFilterGroupComponentSelector,
   );
 

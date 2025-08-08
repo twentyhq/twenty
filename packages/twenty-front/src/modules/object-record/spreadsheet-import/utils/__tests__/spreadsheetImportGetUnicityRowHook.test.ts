@@ -1,34 +1,27 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { spreadsheetImportGetUnicityRowHook } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityRowHook';
 import { ImportedStructuredRow } from '@/spreadsheet-import/types';
-import { isDefined } from 'twenty-shared/utils';
 import { IndexType } from '~/generated-metadata/graphql';
 import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 
 describe('spreadsheetImportGetUnicityRowHook', () => {
   const baseMockCompany = getMockCompanyObjectMetadataItem();
 
-  const nameField = baseMockCompany.fields.find(
-    (field) => field.name === 'name',
-  );
+  const nameField = getMockFieldMetadataItemOrThrow({
+    objectMetadataItem: baseMockCompany,
+    fieldName: 'name',
+  });
 
-  const domainNameField = baseMockCompany.fields.find(
-    (field) => field.name === 'domainName',
-  );
+  const domainNameField = getMockFieldMetadataItemOrThrow({
+    objectMetadataItem: baseMockCompany,
+    fieldName: 'domainName',
+  });
 
-  const employeesField = baseMockCompany.fields.find(
-    (field) => field.name === 'employees',
-  );
-
-  if (
-    !isDefined(nameField) ||
-    !isDefined(domainNameField) ||
-    !isDefined(employeesField)
-  ) {
-    throw new Error(
-      'Name, domainName or employees field not found in company metadata',
-    );
-  }
+  const employeesField = getMockFieldMetadataItemOrThrow({
+    objectMetadataItem: baseMockCompany,
+    fieldName: 'employees',
+  });
 
   const mockObjectMetadataItem: ObjectMetadataItem = {
     ...baseMockCompany,
@@ -79,11 +72,10 @@ describe('spreadsheetImportGetUnicityRowHook', () => {
 
   it('should return row with error if row is not unique - index on composite field', () => {
     const hook = spreadsheetImportGetUnicityRowHook(mockObjectMetadataItem);
-
-    const testData: ImportedStructuredRow<string>[] = [
-      { 'Link URL (domainName)': 'duplicaTe.com' },
-      { 'Link URL (domainName)': 'duplicate.com ' },
-      { 'Link URL (domainName)': 'other.com' },
+    const testData: ImportedStructuredRow[] = [
+      { 'Link URL (domainName)': 'https://duplicaTe.com' },
+      { 'Link URL (domainName)': 'https://duplicate.com' },
+      { 'Link URL (domainName)': 'https://other.com' },
     ];
 
     const addErrorMock = jest.fn();
@@ -101,7 +93,7 @@ describe('spreadsheetImportGetUnicityRowHook', () => {
   it('should return row with error if row is not unique - index on id', () => {
     const hook = spreadsheetImportGetUnicityRowHook(mockObjectMetadataItem);
 
-    const testData: ImportedStructuredRow<string>[] = [
+    const testData: ImportedStructuredRow[] = [
       { 'Link URL (domainName)': 'test.com', id: '1' },
       { 'Link URL (domainName)': 'test2.com', id: '1' },
       { 'Link URL (domainName)': 'test3.com', id: '3' },
@@ -121,7 +113,7 @@ describe('spreadsheetImportGetUnicityRowHook', () => {
   it('should return row with error if row is not unique - multi fields index', () => {
     const hook = spreadsheetImportGetUnicityRowHook(mockObjectMetadataItem);
 
-    const testData: ImportedStructuredRow<string>[] = [
+    const testData: ImportedStructuredRow[] = [
       { name: 'test', employees: '100', id: '1' },
       { name: 'test', employees: '100', id: '2' },
       { name: 'test', employees: '101', id: '3' },
@@ -144,7 +136,7 @@ describe('spreadsheetImportGetUnicityRowHook', () => {
   it('should not add error if row values are unique', () => {
     const hook = spreadsheetImportGetUnicityRowHook(mockObjectMetadataItem);
 
-    const testData: ImportedStructuredRow<string>[] = [
+    const testData: ImportedStructuredRow[] = [
       {
         name: 'test',
         'Link URL (domainName)': 'test.com',

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { Injectable, Type } from '@nestjs/common';
+import { Injectable, type Type } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { MessageQueueProcessOptions } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { MessageQueueProcessorOptions } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { type MessageQueueProcessOptions } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { type MessageQueueProcessorOptions } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import {
   PROCESSOR_METADATA,
   PROCESS_METADATA,

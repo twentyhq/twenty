@@ -2,17 +2,17 @@ import { Scope } from '@nestjs/common';
 
 import { Not } from 'typeorm';
 
-import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
+import { type ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
-import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
+import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
+import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageChannelSyncStage,
-  MessageChannelWorkspaceEntity,
+  type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 export type BlocklistReimportMessagesJobData = WorkspaceEventBatch<
@@ -54,7 +54,7 @@ export class BlocklistReimportMessagesJob {
         },
       });
 
-      await this.messagingChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
+      await this.messagingChannelSyncStatusService.resetAndScheduleMessageListFetch(
         messageChannels.map((messageChannel) => messageChannel.id),
         workspaceId,
       );

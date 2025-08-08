@@ -23,6 +23,8 @@ import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/consta
 import { useMemo } from 'react';
 
 import { SignInUpGlobalScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpGlobalScopeFormEffect';
+import { SignInUpTwoFactorAuthenticationProvision } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision';
+import { SignInUpTOTPVerification } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
@@ -55,8 +57,12 @@ const StandardContent = ({
       </AnimatedEaseIn>
       <Title animate>{title}</Title>
       {signInUpForm}
-      {signInUpStep !== SignInUpStep.Password &&
-        signInUpStep !== SignInUpStep.WorkspaceSelection && <FooterNote />}
+      {![
+        SignInUpStep.Password,
+        SignInUpStep.TwoFactorAuthenticationProvision,
+        SignInUpStep.TwoFactorAuthenticationVerification,
+        SignInUpStep.WorkspaceSelection,
+      ].includes(signInUpStep) && <FooterNote />}
     </Modal.Content>
   );
 };
@@ -83,11 +89,20 @@ export const SignInUp = () => {
 
   const title = useMemo(() => {
     if (isDefined(workspaceInviteHash)) {
-      return `Join ${workspaceFromInviteHash?.displayName ?? ''} team`;
+      const workspaceName = workspaceFromInviteHash?.displayName ?? '';
+      return t`Join ${workspaceName} team`;
     }
 
     if (signInUpStep === SignInUpStep.WorkspaceSelection) {
       return t`Choose a Workspace`;
+    }
+
+    if (signInUpStep === SignInUpStep.TwoFactorAuthenticationProvision) {
+      return t`Setup your 2FA`;
+    }
+
+    if (signInUpStep === SignInUpStep.TwoFactorAuthenticationVerification) {
+      return t`Verify code from the app`;
     }
 
     const workspaceName = !isDefined(workspacePublicData?.displayName)
@@ -123,6 +138,15 @@ export const SignInUp = () => {
     ) {
       return <SignInUpSSOIdentityProviderSelection />;
     }
+
+    if (signInUpStep === SignInUpStep.TwoFactorAuthenticationProvision) {
+      return <SignInUpTwoFactorAuthenticationProvision />;
+    }
+
+    if (signInUpStep === SignInUpStep.TwoFactorAuthenticationVerification) {
+      return <SignInUpTOTPVerification />;
+    }
+
     if (isDefined(workspacePublicData) && isOnAWorkspace) {
       return (
         <>

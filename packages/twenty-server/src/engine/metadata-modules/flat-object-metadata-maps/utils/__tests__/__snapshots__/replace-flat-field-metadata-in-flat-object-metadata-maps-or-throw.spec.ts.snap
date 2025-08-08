@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow should throw when field metadata parent object does not exist 1`] = `"deleteFieldFromFlatObjectMetadataMapsOrThrow: field metadata to delete parent flat object metadata not found"`;
+
+exports[`replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow should throw when field metadata to replace does not exist 1`] = `"deleteFieldFromFlatObjectMetadataWithFlatFieldMapsOrThrow: field to delete not found"`;

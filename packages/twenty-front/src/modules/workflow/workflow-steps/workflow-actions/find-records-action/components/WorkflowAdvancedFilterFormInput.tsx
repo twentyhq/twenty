@@ -15,10 +15,10 @@ import {
 } from '@/object-record/record-field/types/FieldMetadata';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { WorkflowAdvancedFilterValueFormCompositeFieldInput } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterValueFormCompositeFieldInput';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { isObject } from '@sniptt/guards';
+import { isObject, isString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -31,13 +31,13 @@ export const WorkflowAdvancedFilterValueFormInput = ({
 }) => {
   const { readonly } = useContext(AdvancedFilterContext);
 
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useRecoilComponentValue(
     currentRecordFiltersComponentState,
   );
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const subFieldNameUsedInDropdown = useRecoilComponentValueV2(
+  const subFieldNameUsedInDropdown = useRecoilComponentValue(
     subFieldNameUsedInDropdownComponentState,
   );
 
@@ -56,7 +56,7 @@ export const WorkflowAdvancedFilterValueFormInput = ({
     useApplyObjectFilterDropdownFilterValue();
 
   const handleChange = (newValue: JsonValue) => {
-    if (typeof newValue === 'string') {
+    if (isString(newValue)) {
       applyObjectFilterDropdownFilterValue(newValue);
     } else if (Array.isArray(newValue) || isObject(newValue)) {
       applyObjectFilterDropdownFilterValue(JSON.stringify(newValue));
@@ -65,7 +65,7 @@ export const WorkflowAdvancedFilterValueFormInput = ({
     }
   };
 
-  const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
+  const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 

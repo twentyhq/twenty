@@ -2,7 +2,8 @@
 
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { type SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
 import {
   IdentityProviderType,
   SSOIdentityProviderStatus,
@@ -10,7 +11,7 @@ import {
 
 @ObjectType()
 export class EditSsoOutput {
-  @Field(() => String)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @Field(() => IdentityProviderType)

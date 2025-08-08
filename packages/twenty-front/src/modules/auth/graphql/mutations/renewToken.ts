@@ -4,7 +4,7 @@ export const RENEW_TOKEN = gql`
   mutation RenewToken($appToken: String!) {
     renewToken(appToken: $appToken) {
       tokens {
-        ...AuthTokensFragment
+        ...AuthTokenPairFragment
       }
     }
   }

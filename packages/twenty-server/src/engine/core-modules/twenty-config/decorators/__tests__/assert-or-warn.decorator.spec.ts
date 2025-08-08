@@ -7,7 +7,7 @@ import { AssertOrWarn } from 'src/engine/core-modules/twenty-config/decorators/a
 describe('AssertOrWarn Decorator', () => {
   it('should pass validation if the condition is met', () => {
     class ConfigVariables {
-      @AssertOrWarn((object, value) => value > 10, {
+      @AssertOrWarn((_object, value) => value > 10, {
         message: 'Value should be higher than 10',
       })
       someProperty!: number;
@@ -24,7 +24,7 @@ describe('AssertOrWarn Decorator', () => {
 
   it('should provide a warning message if the condition is not met', () => {
     class ConfigVariables {
-      @AssertOrWarn((object, value) => value > 10, {
+      @AssertOrWarn((_object, value) => value > 10, {
         message: 'Value should be higher than 10',
       })
       someProperty!: number;

@@ -5,6 +5,7 @@ exports[`update-one-field-metadata-related-record MULTI_SELECT should delete rel
   {
     "extensions": {
       "code": "NOT_FOUND",
+      "subCode": "RECORD_NOT_FOUND",
       "userFriendlyMessage": "An error occurred.",
     },
     "message": "Record not found",
@@ -95,6 +96,7 @@ exports[`update-one-field-metadata-related-record SELECT should delete related v
   {
     "extensions": {
       "code": "NOT_FOUND",
+      "subCode": "RECORD_NOT_FOUND",
       "userFriendlyMessage": "An error occurred.",
     },
     "message": "Record not found",

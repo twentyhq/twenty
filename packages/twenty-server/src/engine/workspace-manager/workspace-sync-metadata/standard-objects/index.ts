@@ -1,4 +1,3 @@
-import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
@@ -28,7 +27,6 @@ import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/vie
 import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
-import { WebhookWorkspaceEntity } from 'src/modules/webhook/standard-objects/webhook.workspace-entity';
 import { WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
@@ -37,7 +35,6 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 // TODO: Maybe we should automate this with the DiscoverService of Nest.JS
 export const standardObjectMetadataDefinitions = [
-  ApiKeyWorkspaceEntity,
   AttachmentWorkspaceEntity,
   BlocklistWorkspaceEntity,
   CalendarEventWorkspaceEntity,
@@ -55,7 +52,6 @@ export const standardObjectMetadataDefinitions = [
   ViewFilterGroupWorkspaceEntity,
   ViewSortWorkspaceEntity,
   ViewWorkspaceEntity,
-  WebhookWorkspaceEntity,
   WorkflowWorkspaceEntity,
   WorkflowVersionWorkspaceEntity,
   WorkflowRunWorkspaceEntity,

@@ -3,14 +3,15 @@ import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableE
 import { useRichTextCommandMenu } from '@/command-menu/hooks/useRichTextCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { lazy, Suspense, useRef } from 'react';
+import { Suspense, lazy, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { IconLayoutSidebarLeftCollapse } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
@@ -72,6 +73,9 @@ export const RichTextFieldInput = ({
 } & RichTextFieldInputProps) => {
   const { editRichText } = useRichTextCommandMenu();
   const containerRef = useRef<HTMLDivElement>(null);
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldComponentInstanceContext,
+  );
 
   const handleClickOutside = (event: MouseEvent | TouchEvent) => {
     onClickOutside?.(() => {}, event);
@@ -82,11 +86,11 @@ export const RichTextFieldInput = ({
   };
 
   useRegisterInputEvents({
+    focusId: instanceId,
     inputRef: containerRef,
     inputValue: null,
     onClickOutside: handleClickOutside,
     onEscape: handleEscape,
-    hotkeyScope: DEFAULT_CELL_SCOPE.scope,
   });
 
   return (

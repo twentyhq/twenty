@@ -1,5 +1,6 @@
 import { ActionModal } from '@/action-menu/actions/components/ActionModal';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -11,12 +12,12 @@ import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRec
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const DestroyMultipleRecordsAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const contextStoreCurrentViewId = useRecoilComponentValueV2(
+  const contextStoreCurrentViewId = useRecoilComponentValue(
     contextStoreCurrentViewIdComponentState,
   );
 
@@ -35,12 +36,16 @@ export const DestroyMultipleRecordsAction = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+  const contextStoreTargetedRecordsRule = useRecoilComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const contextStoreFilters = useRecoilComponentValueV2(
+  const contextStoreFilters = useRecoilComponentValue(
     contextStoreFiltersComponentState,
+  );
+
+  const contextStoreAnyFieldFilterValue = useRecoilComponentValue(
+    contextStoreAnyFieldFilterValueComponentState,
   );
 
   const { filterValueDependencies } = useFilterValueDependencies();
@@ -54,6 +59,7 @@ export const DestroyMultipleRecordsAction = () => {
       contextStoreFilters,
       objectMetadataItem,
       filterValueDependencies,
+      contextStoreAnyFieldFilterValue,
     ),
     ...deletedAtFilter,
   };

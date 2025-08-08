@@ -1,11 +1,11 @@
 /* @license Enterprise */
 
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
-import { BillingProductMetadata } from 'src/engine/core-modules/billing/types/billing-product-metadata.type';
+import { type BillingProductMetadata } from 'src/engine/core-modules/billing/types/billing-product-metadata.type';
 
 export function isStripeValidProductMetadata(
   metadata: Stripe.Metadata,

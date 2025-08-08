@@ -3,7 +3,7 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
   FeatureFlagKey,
   OnboardingStatus,
-  SettingPermissionType,
+  PermissionFlagType,
   SubscriptionInterval,
   SubscriptionStatus,
   User,
@@ -12,7 +12,7 @@ import {
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 type MockedUser = Pick<
   User,
@@ -68,6 +68,10 @@ export const mockCurrentWorkspace: Workspace = {
       key: FeatureFlagKey.IS_POSTGRESQL_INTEGRATION_ENABLED,
       value: true,
     },
+    {
+      key: FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
+      value: true,
+    },
   ],
   createdAt: '2023-04-26T10:23:42.33625+00:00',
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
@@ -90,6 +94,7 @@ export const mockCurrentWorkspace: Workspace = {
   workspaceMembersCount: 1,
   databaseSchema: '',
   databaseUrl: '',
+  isTwoFactorAuthenticationEnforced: false,
 };
 
 export const mockedWorkspaceMemberData: WorkspaceMember = {
@@ -124,13 +129,14 @@ export const mockedUserData: MockedUser = {
   workspaceMember: mockedWorkspaceMemberData,
   currentWorkspace: mockCurrentWorkspace,
   currentUserWorkspace: {
-    settingsPermissions: [SettingPermissionType.WORKSPACE_MEMBERS],
+    permissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
     objectPermissions: generatedMockObjectMetadataItems.map((item) => ({
       objectMetadataId: item.id,
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: true,
       canDestroyObjectRecords: true,
+      restrictedFields: {},
     })),
   },
   locale: 'en',
@@ -160,6 +166,7 @@ export const mockedLimitedPermissionsUserData: MockedUser = {
         canUpdateObjectRecords: true,
         canSoftDeleteObjectRecords: true,
         canDestroyObjectRecords: true,
+        restrictedFields: {},
       })),
   },
 };
@@ -178,9 +185,26 @@ export const mockedOnboardingUserData = (
     supportUserHash:
       '4fb61d34ed3a4aeda2476d4b308b5162db9e1809b2b8277e6fdc6efc4a609254',
     workspaceMember: null,
+    workspaceMembers: [],
     currentWorkspace: mockCurrentWorkspace,
+    currentUserWorkspace: {
+      permissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
+      objectPermissions: generatedMockObjectMetadataItems.map((item) => ({
+        objectMetadataId: item.id,
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: true,
+        canSoftDeleteObjectRecords: true,
+        canDestroyObjectRecords: true,
+        restrictedFields: {},
+      })),
+    },
     locale: 'en',
     workspaces: [{ workspace: mockCurrentWorkspace }],
-    onboardingStatus: onboardingStatus || null,
+    onboardingStatdeus: onboardingStatus || null,
+    userVars: {},
+    availableWorkspaces: {
+      availableWorkspacesForSignIn: [],
+      availableWorkspacesForSignUp: [],
+    },
   };
 };

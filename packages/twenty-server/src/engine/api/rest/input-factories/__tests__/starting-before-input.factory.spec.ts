@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
 import { StartingAfterInputFactory } from 'src/engine/api/rest/input-factories/starting-after-input.factory';
 

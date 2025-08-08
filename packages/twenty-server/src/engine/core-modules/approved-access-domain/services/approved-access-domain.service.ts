@@ -6,7 +6,6 @@ import crypto from 'crypto';
 import { t } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { SendApprovedAccessDomainValidation } from 'twenty-emails';
-import { APP_LOCALES } from 'twenty-shared/translations';
 import { Repository } from 'typeorm';
 
 import { ApprovedAccessDomain as ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
@@ -18,8 +17,8 @@ import { approvedAccessDomainValidator } from 'src/engine/core-modules/approved-
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { isWorkDomain } from 'src/utils/is-work-email';
 
 @Injectable()
@@ -78,10 +77,10 @@ export class ApprovedAccessDomainService {
         lastName: sender.name.lastName,
       },
       serverUrl: this.twentyConfigService.get('SERVER_URL'),
-      locale: 'en' as keyof typeof APP_LOCALES,
+      locale: sender.locale,
     });
-    const html = await render(emailTemplate);
-    const text = await render(emailTemplate, {
+    const html = render(emailTemplate);
+    const text = render(emailTemplate, {
       plainText: true,
     });
 

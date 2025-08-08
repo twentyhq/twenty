@@ -3,22 +3,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThan, Repository } from 'typeorm';
 import { Command, Option } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
+import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  RunOnWorkspaceArgs,
+  type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
-  WorkflowRunState,
-  WorkflowRunOutput,
-  WorkflowRunWorkspaceEntity,
+  type WorkflowRunState,
+  type WorkflowRunOutput,
+  type WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import {
-  StepStatus,
-  WorkflowRunStepInfo,
-} from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
 
 const DEFAULT_CHUNK_SIZE = 500;
 
@@ -98,11 +95,12 @@ export class MigrateWorkflowRunStatesCommand extends ActiveOrSuspendedWorkspaces
         ? { where: { startedAt: MoreThan(this.afterDate) } }
         : {};
 
-      const workflowRuns = await workflowRunRepository.find({
+      const workflowRuns = (await workflowRunRepository.find({
         ...findOption,
         skip: offset * this.chunkSize,
         take: this.chunkSize,
-      });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      })) as any[]; // We type as any as workflowRun output has been removed since 1.1.0 release
 
       for (const workflowRun of workflowRuns) {
         const output = workflowRun.output;
@@ -121,7 +119,7 @@ export class MigrateWorkflowRunStatesCommand extends ActiveOrSuspendedWorkspaces
   }
 
   private buildRunStateFromOutput(output: WorkflowRunOutput): WorkflowRunState {
-    const stepInfos: Record<string, WorkflowRunStepInfo> = Object.fromEntries(
+    const stepInfos: WorkflowRunStepInfos = Object.fromEntries(
       output.flow.steps.map((step) => {
         const stepOutput = output.stepsOutput?.[step.id];
         const status = stepOutput?.pendingEvent

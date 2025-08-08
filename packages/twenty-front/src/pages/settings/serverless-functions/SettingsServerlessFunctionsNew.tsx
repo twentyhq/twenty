@@ -5,15 +5,11 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { SettingsServerlessFunctionNewForm } from '@/settings/serverless-functions/components/SettingsServerlessFunctionNewForm';
 import { useCreateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useCreateOneServerlessFunction';
 import { ServerlessFunctionNewFormValues } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
-import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useState } from 'react';
-import { Key } from 'ts-key-enum';
-import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
+import { isDefined } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { isDefined } from 'twenty-shared/utils';
 
 export const SettingsServerlessFunctionsNew = () => {
   const navigate = useNavigateSettings();
@@ -49,28 +45,6 @@ export const SettingsServerlessFunctionsNew = () => {
   };
 
   const canSave = !!formValues.name && createOneServerlessFunction;
-
-  useHotkeyScopeOnMount(
-    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionNew,
-  );
-
-  useScopedHotkeys(
-    [Key.Enter],
-    () => {
-      if (canSave !== false) {
-        handleSave();
-      }
-    },
-    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionNew,
-    [canSave],
-  );
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
-      navigate(SettingsPath.ServerlessFunctions);
-    },
-    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionNew,
-  );
 
   return (
     <SubMenuTopBarContainer

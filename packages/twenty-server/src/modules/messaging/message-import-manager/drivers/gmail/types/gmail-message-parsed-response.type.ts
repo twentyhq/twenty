@@ -1,4 +1,4 @@
-import { gmail_v1 } from 'googleapis';
+import { type gmail_v1 } from 'googleapis';
 
 type GmailMessageError = {
   error: {

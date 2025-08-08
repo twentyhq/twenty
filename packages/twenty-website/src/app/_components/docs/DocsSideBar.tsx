@@ -7,7 +7,7 @@ import { AlgoliaDocSearch } from '@/app/_components/docs/AlgoliaDocSearch';
 import DocsSidebarSection from '@/app/_components/docs/DocsSidebarSection';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
-import { DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
+import { type DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
 import { getSectionIcon } from '@/shared-utils/getSectionIcons';
 
 import '@docsearch/css';

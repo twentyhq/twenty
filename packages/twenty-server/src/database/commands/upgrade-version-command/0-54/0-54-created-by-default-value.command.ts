@@ -6,15 +6,15 @@ import { Repository } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  RunOnWorkspaceArgs,
+  type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 @Command({
   name: 'upgrade:0-54:0-54-created-by-default-value',
@@ -27,7 +27,6 @@ export class FixCreatedByDefaultValueCommand extends ActiveOrSuspendedWorkspaces
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
@@ -50,8 +49,7 @@ export class FixCreatedByDefaultValueCommand extends ActiveOrSuspendedWorkspaces
         continue;
       }
 
-      const schemaName =
-        this.workspaceDataSourceService.getSchemaName(workspaceId);
+      const schemaName = getWorkspaceSchemaName(workspaceId);
 
       const tableName = computeTableName(
         objectMetadataItem.nameSingular,

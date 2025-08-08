@@ -17,7 +17,7 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { View } from '@/views/types/View';
 import { ViewField } from '@/views/types/ViewField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
@@ -28,7 +28,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useLoadRecordIndexStates = () => {
   const setContextStoreTargetedRecordsRuleComponentState =
-    useSetRecoilComponentStateV2(contextStoreTargetedRecordsRuleComponentState);
+    useSetRecoilComponentState(contextStoreTargetedRecordsRuleComponentState);
 
   const setRecordIndexIsCompactModeActive = useSetRecoilState(
     recordIndexIsCompactModeActiveState,
@@ -108,7 +108,11 @@ export const useLoadRecordIndexStates = () => {
           columnDefinitions,
         });
 
-        setTableColumns(newFieldDefinitions, recordIndexId);
+        setTableColumns(
+          newFieldDefinitions,
+          recordIndexId,
+          objectMetadataItem.id,
+        );
 
         const existingRecordIndexFieldDefinitions = snapshot
           .getLoadable(recordIndexFieldDefinitionsState)
@@ -194,6 +198,7 @@ export const useLoadRecordIndexStates = () => {
         setRecordIndexViewType(view.type);
         setRecordIndexOpenRecordIn(view.openRecordIn);
         setRecordIndexViewKanbanFieldMetadataIdState(
+          // TODO: replace with viewGroups.fieldMetadataId
           view.kanbanFieldMetadataId,
         );
         const kanbanAggregateOperationFieldMetadataType =

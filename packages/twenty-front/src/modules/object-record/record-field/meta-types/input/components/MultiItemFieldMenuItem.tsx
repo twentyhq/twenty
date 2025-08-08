@@ -1,13 +1,14 @@
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import React, { useState } from 'react';
 import {
   IconBookmark,
   IconBookmarkPlus,
+  IconCopy,
   IconPencil,
   IconTrash,
 } from 'twenty-ui/display';
@@ -19,9 +20,11 @@ type MultiItemFieldMenuItemProps<T> = {
   onEdit?: () => void;
   onSetAsPrimary?: () => void;
   onDelete?: () => void;
+  onCopy?: (value: T) => void;
   DisplayComponent: React.ComponentType<{ value: T }>;
   showPrimaryIcon: boolean;
   showSetAsPrimaryButton: boolean;
+  showCopyButton?: boolean;
 };
 
 export const MultiItemFieldMenuItem = <T,>({
@@ -33,11 +36,13 @@ export const MultiItemFieldMenuItem = <T,>({
   DisplayComponent,
   showPrimaryIcon,
   showSetAsPrimaryButton,
+  showCopyButton,
+  onCopy,
 }: MultiItemFieldMenuItemProps<T>) => {
   const [isHovered, setIsHovered] = useState(false);
   const { closeDropdown } = useCloseDropdown();
-  const isDropdownOpen = useRecoilComponentValueV2(
-    isDropdownOpenComponentStateV2,
+  const isDropdownOpen = useRecoilComponentValue(
+    isDropdownOpenComponentState,
     dropdownId,
   );
 
@@ -71,6 +76,14 @@ export const MultiItemFieldMenuItem = <T,>({
     onEdit?.();
   };
 
+  const handleCopyClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    event.preventDefault();
+
+    closeDropdown(dropdownId);
+    onCopy?.(value);
+  };
+
   return (
     <MenuItemWithOptionDropdown
       onMouseEnter={handleMouseEnter}
@@ -100,6 +113,13 @@ export const MultiItemFieldMenuItem = <T,>({
               text="Delete"
               onClick={handleDeleteClick}
             />
+            {showCopyButton && (
+              <MenuItem
+                LeftIcon={IconCopy}
+                text="Copy"
+                onClick={handleCopyClick}
+              />
+            )}
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

@@ -8,19 +8,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
-import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-deactivated';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
   FileWorkspaceFolderDeletionJob,
-  FileWorkspaceFolderDeletionJobData,
+  type FileWorkspaceFolderDeletionJobData,
 } from 'src/engine/core-modules/file/jobs/file-workspace-folder-deletion.job';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -29,14 +25,14 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
+import { type ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -67,10 +63,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly billingService: BillingService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly domainManagerService: DomainManagerService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly permissionsService: PermissionsService,
-    private readonly auditService: AuditService,
     private readonly customDomainService: CustomDomainService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
@@ -182,6 +176,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       await this.customDomainService.deleteCustomHostnameByHostnameSilently(
         workspace.customDomain,
       );
+      workspace.isCustomDomainEnabled = false;
     }
 
     if (
@@ -401,38 +396,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     return !existingWorkspace;
   }
 
-  async checkCustomDomainValidRecords(workspace: Workspace) {
-    if (!workspace.customDomain) return;
-
-    const customDomainDetails =
-      await this.customDomainService.getCustomDomainDetails(
-        workspace.customDomain,
-      );
-
-    if (!customDomainDetails) return;
-
-    const isCustomDomainWorking =
-      this.domainManagerService.isCustomDomainWorking(customDomainDetails);
-
-    if (workspace.isCustomDomainEnabled !== isCustomDomainWorking) {
-      workspace.isCustomDomainEnabled = isCustomDomainWorking;
-      await this.workspaceRepository.save(workspace);
-
-      const analytics = this.auditService.createContext({
-        workspaceId: workspace.id,
-      });
-
-      analytics.insertWorkspaceEvent(
-        workspace.isCustomDomainEnabled
-          ? CUSTOM_DOMAIN_ACTIVATED_EVENT
-          : CUSTOM_DOMAIN_DEACTIVATED_EVENT,
-        {},
-      );
-    }
-
-    return customDomainDetails;
-  }
-
   private async validateSecurityPermissions({
     payload,
     userWorkspaceId,
@@ -457,15 +420,19 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       const userHasPermission =
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
-          setting: SettingPermissionType.SECURITY,
+          setting: PermissionFlagType.SECURITY,
           workspaceId: workspaceId,
-          isExecutedByApiKey: isDefined(apiKey),
+          apiKeyId: apiKey,
         });
 
       if (!userHasPermission) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
+          {
+            userFriendlyMessage:
+              'You do not have permission to manage security settings. Please contact your workspace administrator.',
+          },
         );
       }
     }
@@ -504,14 +471,18 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
           workspaceId,
-          setting: SettingPermissionType.WORKSPACE,
-          isExecutedByApiKey: isDefined(apiKey),
+          setting: PermissionFlagType.WORKSPACE,
+          apiKeyId: apiKey,
         });
 
       if (!userHasPermission) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
+          {
+            userFriendlyMessage:
+              'You do not have permission to manage workspace settings. Please contact your workspace administrator.',
+          },
         );
       }
     }

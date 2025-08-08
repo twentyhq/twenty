@@ -1,36 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import {
   WorkflowVersionStatus,
-  WorkflowVersionWorkspaceEntity,
+  type WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { assertWorkflowVersionHasSteps } from 'src/modules/workflow/common/utils/assert-workflow-version-has-steps';
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util';
-import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-step/workflow-version-step.workspace-service';
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowStepPositionUpdateInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-update-input.dto';
 
 @Injectable()
 export class WorkflowVersionWorkspaceService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workflowVersionStepWorkspaceService: WorkflowVersionStepWorkspaceService,
-    @InjectRepository(ObjectMetadataEntity, 'core')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly recordPositionService: RecordPositionService,
   ) {}
 
@@ -96,11 +89,6 @@ export class WorkflowVersionWorkspaceService {
         status: WorkflowVersionStatus.DRAFT,
         position,
       });
-
-      await this.emitWorkflowVersionCreationEvent({
-        workflowVersion: draftWorkflowVersion,
-        workspaceId,
-      });
     }
 
     assertWorkflowVersionIsDraft(draftWorkflowVersion);
@@ -126,40 +114,60 @@ export class WorkflowVersionWorkspaceService {
     return draftWorkflowVersion.id;
   }
 
-  private async emitWorkflowVersionCreationEvent({
-    workflowVersion,
+  async updateWorkflowVersionPositions({
+    workflowVersionId,
+    positions,
     workspaceId,
   }: {
-    workflowVersion: WorkflowVersionWorkspaceEntity;
+    workflowVersionId: string;
+    positions: WorkflowStepPositionUpdateInput[];
     workspaceId: string;
   }) {
-    const objectMetadata = await this.objectMetadataRepository.findOne({
-      where: {
-        nameSingular: 'workflowVersion',
+    const workflowVersionRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
         workspaceId,
+        'workflowVersion',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const workflowVersion = await workflowVersionRepository.findOneOrFail({
+      where: {
+        id: workflowVersionId,
       },
     });
 
-    if (!objectMetadata) {
-      throw new WorkflowVersionStepException(
-        'Object metadata not found',
-        WorkflowVersionStepExceptionCode.FAILURE,
-      );
-    }
+    assertWorkflowVersionIsDraft(workflowVersion);
 
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: 'workflowVersion',
-      action: DatabaseEventAction.CREATED,
-      events: [
-        {
-          recordId: workflowVersion.id,
-          objectMetadata,
-          properties: {
-            after: workflowVersion,
-          },
-        },
-      ],
-      workspaceId,
+    const triggerPosition = positions.find(
+      (position) => position.id === 'trigger',
+    );
+
+    const updatedTrigger =
+      isDefined(triggerPosition) && isDefined(workflowVersion.trigger)
+        ? {
+            ...workflowVersion.trigger,
+            position: triggerPosition.position,
+          }
+        : undefined;
+
+    const updatedSteps = workflowVersion.steps?.map((step) => {
+      const updatedStep = positions.find((position) => position.id === step.id);
+
+      if (updatedStep) {
+        return {
+          ...step,
+          position: updatedStep.position,
+        };
+      }
+
+      return step;
     });
+
+    const updatePayload = {
+      ...(!isDefined(updatedTrigger) ? {} : { trigger: updatedTrigger }),
+      ...(!isDefined(updatedSteps) ? {} : { steps: updatedSteps }),
+    };
+
+    await workflowVersionRepository.update(workflowVersionId, updatePayload);
   }
 }

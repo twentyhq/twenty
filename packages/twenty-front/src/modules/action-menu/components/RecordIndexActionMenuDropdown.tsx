@@ -10,17 +10,14 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -50,11 +47,9 @@ export const RecordIndexActionMenuDropdown = () => {
   const dropdownId = getActionMenuDropdownIdFromActionMenuId(actionMenuId);
   const { closeDropdown } = useCloseDropdown();
 
-  const actionMenuDropdownPosition = useRecoilValue(
-    extractComponentState(
-      recordIndexActionMenuDropdownPositionComponentState,
-      dropdownId,
-    ),
+  const actionMenuDropdownPosition = useRecoilComponentValue(
+    recordIndexActionMenuDropdownPositionComponentState,
+    dropdownId,
   );
 
   const { openCommandMenu } = useCommandMenu();
@@ -64,7 +59,7 @@ export const RecordIndexActionMenuDropdown = () => {
     'more-actions',
   ];
 
-  const selectedItemId = useRecoilComponentValueV2(
+  const selectedItemId = useRecoilComponentValue(
     selectedItemIdComponentState,
     dropdownId,
   );
@@ -89,7 +84,6 @@ export const RecordIndexActionMenuDropdown = () => {
                 focusId={dropdownId}
                 selectableItemIdArray={selectedItemIdArray}
                 selectableListInstanceId={dropdownId}
-                hotkeyScope={DropdownHotkeyScope.Dropdown}
               >
                 {recordIndexActions.map((action) => (
                   <ActionComponent action={action} key={action.key} />

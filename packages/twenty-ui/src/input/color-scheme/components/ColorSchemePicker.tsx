@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { ColorScheme } from '@ui/input/types/ColorScheme';
+import { type ColorScheme } from '@ui/input/types/ColorScheme';
 import { MOBILE_VIEWPORT } from '@ui/theme';
 import { ColorSchemeCard } from './ColorSchemeCard';
 

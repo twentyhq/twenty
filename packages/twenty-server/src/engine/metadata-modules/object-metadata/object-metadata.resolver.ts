@@ -12,7 +12,7 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -21,13 +21,14 @@ import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dto
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import {
-  UpdateObjectPayload,
+  type UpdateObjectPayload,
   UpdateOneObjectInput,
 } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
@@ -48,10 +49,10 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
-    return this.objectMetadataService.resolveOverridableString(
+    return resolveObjectMetadataStandardOverride(
       objectMetadata,
       'labelPlural',
-      context.req.headers['x-locale'],
+      context.req.locale,
     );
   }
 
@@ -60,10 +61,10 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
-    return this.objectMetadataService.resolveOverridableString(
+    return resolveObjectMetadataStandardOverride(
       objectMetadata,
       'labelSingular',
-      context.req.headers['x-locale'],
+      context.req.locale,
     );
   }
 
@@ -72,27 +73,27 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
-    return this.objectMetadataService.resolveOverridableString(
+    return resolveObjectMetadataStandardOverride(
       objectMetadata,
       'description',
-      context.req.headers['x-locale'],
+      context.req.locale,
     );
   }
 
-  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.DATA_MODEL))
   @ResolveField(() => String, { nullable: true })
   async icon(
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
-    return this.objectMetadataService.resolveOverridableString(
+    return resolveObjectMetadataStandardOverride(
       objectMetadata,
       'icon',
-      context.req.headers['x-locale'],
+      context.req.locale,
     );
   }
 
-  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.DATA_MODEL))
   @Mutation(() => ObjectMetadataDTO)
   async deleteOneObject(
     @Args('input') input: DeleteOneObjectInput,
@@ -108,7 +109,7 @@ export class ObjectMetadataResolver {
     }
   }
 
-  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.DATA_MODEL))
   @Mutation(() => ObjectMetadataDTO)
   async updateOneObject(
     @Args('input') input: UpdateOneObjectInput,
@@ -118,7 +119,7 @@ export class ObjectMetadataResolver {
     try {
       const updatedInput = (await this.beforeUpdateOneObject.run(input, {
         workspaceId,
-        locale: context.req.headers['x-locale'],
+        locale: context.req.locale,
       })) as UpdateOneObjectInput;
 
       return await this.objectMetadataService.updateOneObject(
@@ -141,7 +142,7 @@ export class ObjectMetadataResolver {
         {
           objectMetadata,
           workspaceId: workspace.id,
-          locale: context.req.headers['x-locale'],
+          locale: context.req.locale,
         },
       );
 

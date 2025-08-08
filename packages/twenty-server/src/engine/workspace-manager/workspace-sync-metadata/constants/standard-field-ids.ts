@@ -29,12 +29,6 @@ export const ACTIVITY_STANDARD_FIELD_IDS = {
   assignee: '20202020-4259-48e4-9e77-6b92991906d5',
 };
 
-export const API_KEY_STANDARD_FIELD_IDS = {
-  name: '20202020-72e6-4079-815b-436ce8a62f23',
-  expiresAt: '20202020-659b-4241-af59-66515b8e7d40',
-  revokedAt: '20202020-06ab-44b5-8faf-f6e407685001',
-};
-
 export const ATTACHMENT_STANDARD_FIELD_IDS = {
   name: '20202020-87a5-48f8-bbf7-ade388825a57',
   fullPath: '20202020-0d19-453d-8e8d-fbcda8ca3747',
@@ -444,14 +438,7 @@ export const VIEW_STANDARD_FIELD_IDS = {
   viewFilterGroups: '20202020-0318-474a-84a1-bac895ceaa5a',
   viewSorts: '20202020-891b-45c3-9fe1-80a75b4aa043',
   favorites: '20202020-c818-4a86-8284-9ec0ef0a59a5',
-};
-
-export const WEBHOOK_STANDARD_FIELD_IDS = {
-  targetUrl: '20202020-1229-45a8-8cf4-85c9172aae12',
-  operation: '20202020-15b7-458e-bf30-74770a54410c',
-  operations: '20202020-15b7-458e-bf30-74770a54411c',
-  description: '20202020-15b7-458e-bf30-74770a54410d',
-  secret: '20202020-97ce-410f-bff9-e9ccb038fb67',
+  anyFieldFilterValue: '20202020-3143-46c0-bb05-034063ce0703',
 };
 
 export const WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS = {
@@ -531,6 +518,7 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   dateFormat: '20202020-af13-4e11-b1e7-b8cf5ea13dc0',
   timeFormat: '20202020-8acb-4cf8-a851-a6ed443c8d81',
   searchVector: '20202020-46d0-4e7f-bc26-74c0edaeb619',
+  calendarStartDay: '20202020-92d0-1d7f-a126-25ededa6b142',
 };
 
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
@@ -550,7 +538,6 @@ export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
 export const STANDARD_OBJECT_FIELD_IDS = {
   activityTarget: ACTIVITY_TARGET_STANDARD_FIELD_IDS,
   activity: ACTIVITY_STANDARD_FIELD_IDS,
-  apiKey: API_KEY_STANDARD_FIELD_IDS,
   attachment: ATTACHMENT_STANDARD_FIELD_IDS,
   blocklist: BLOCKLIST_STANDARD_FIELD_IDS,
   behavioralEvent: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS,
@@ -583,7 +570,6 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   viewFilter: VIEW_FILTER_STANDARD_FIELD_IDS,
   viewSort: VIEW_SORT_STANDARD_FIELD_IDS,
   view: VIEW_STANDARD_FIELD_IDS,
-  webhook: WEBHOOK_STANDARD_FIELD_IDS,
   workflow: WORKFLOW_STANDARD_FIELD_IDS,
   workflowRun: WORKFLOW_RUN_STANDARD_FIELD_IDS,
   workflowVersion: WORKFLOW_VERSION_STANDARD_FIELD_IDS,

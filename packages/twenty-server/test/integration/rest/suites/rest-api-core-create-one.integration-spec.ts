@@ -87,7 +87,7 @@ describe('Core REST API Create One endpoint', () => {
       method: 'post',
       path: `/people`,
       body: requestBody,
-      bearer: ADMIN_ACCESS_TOKEN,
+      bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     })
       .expect(201)
       .expect((res) => {

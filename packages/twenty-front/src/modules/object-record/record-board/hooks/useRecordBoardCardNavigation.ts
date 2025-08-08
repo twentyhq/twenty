@@ -4,8 +4,8 @@ import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/us
 import { focusedRecordBoardCardIndexesComponentState } from '@/object-record/record-board/states/focusedRecordBoardCardIndexesComponentState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { ViewType } from '@/views/types/ViewType';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -14,17 +14,17 @@ type NavigationDirection = 'up' | 'down' | 'left' | 'right';
 export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
   const { focusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
-  const focusedBoardCardIndexesState = useRecoilComponentCallbackStateV2(
+  const focusedBoardCardIndexesState = useRecoilComponentCallbackState(
     focusedRecordBoardCardIndexesComponentState,
     recordBoardId,
   );
 
-  const visibleRecordGroupIds = useRecoilComponentFamilyValueV2(
+  const visibleRecordGroupIds = useRecoilComponentFamilyValue(
     visibleRecordGroupIdsComponentFamilySelector,
     ViewType.Kanban,
   );
 
-  const recordIdsByGroupState = useRecoilComponentCallbackStateV2(
+  const recordIdsByGroupState = useRecoilComponentCallbackState(
     recordIndexRecordIdsByGroupComponentFamilyState,
   );
 

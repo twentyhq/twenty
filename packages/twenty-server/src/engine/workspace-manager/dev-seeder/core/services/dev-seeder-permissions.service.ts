@@ -4,16 +4,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
+import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
+import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
 
 @Injectable()
 export class DevSeederPermissionsService {
@@ -22,17 +26,53 @@ export class DevSeederPermissionsService {
   constructor(
     private readonly roleService: RoleService,
     private readonly userRoleService: UserRoleService,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
     private readonly objectPermissionService: ObjectPermissionService,
     @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly typeORMService: TypeORMService,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly fieldPermissionService: FieldPermissionService,
   ) {}
 
   public async initPermissions(workspaceId: string) {
     const adminRole = await this.roleService.createAdminRole({
       workspaceId,
     });
+
+    const dataSource = this.typeORMService.getMainDataSource();
+
+    if (dataSource) {
+      try {
+        await dataSource
+          .createQueryBuilder()
+          .insert()
+          .into('core.roleTargets', ['roleId', 'apiKeyId', 'workspaceId'])
+          .orIgnore()
+          .values([
+            {
+              roleId: adminRole.id,
+              apiKeyId: API_KEY_DATA_SEED_IDS.ID_1,
+              workspaceId: workspaceId,
+            },
+          ])
+          .execute();
+
+        await this.workspacePermissionsCacheService.recomputeApiKeyRoleMapCache(
+          {
+            workspaceId,
+          },
+        );
+        await this.workspacePermissionsCacheService.recomputeUserWorkspaceRoleMapCache(
+          {
+            workspaceId,
+          },
+        );
+      } catch (error) {
+        this.logger.error(
+          `Could not assign role to test API key: ${error.message}`,
+        );
+      }
+    }
 
     let adminUserWorkspaceId: string | undefined;
     let memberUserWorkspaceIds: string[] = [];
@@ -45,7 +85,6 @@ export class DevSeederPermissionsService {
       memberUserWorkspaceIds = [USER_WORKSPACE_DATA_SEED_IDS.JONY];
       guestUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.PHIL;
 
-      // Create guest role only in this workspace
       const guestRole = await this.roleService.createGuestRole({
         workspaceId,
       });
@@ -85,10 +124,13 @@ export class DevSeederPermissionsService {
       workspaceId,
     });
 
-    await this.workspaceRepository.update(workspaceId, {
-      defaultRoleId: memberRole.id,
-      activationStatus: WorkspaceActivationStatus.ACTIVE,
-    });
+    await this.typeORMService
+      .getMainDataSource()
+      ?.getRepository(Workspace)
+      .update(workspaceId, {
+        defaultRoleId: memberRole.id,
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      });
 
     if (memberUserWorkspaceIds) {
       for (const memberUserWorkspaceId of memberUserWorkspaceIds) {
@@ -110,6 +152,7 @@ export class DevSeederPermissionsService {
           'All permissions except read on Rockets and update on Pets',
         icon: 'custom',
         canUpdateAllSettings: true,
+        canAccessAllTools: true,
         canReadAllObjectRecords: true,
         canUpdateAllObjectRecords: true,
         canSoftDeleteAllObjectRecords: true,
@@ -134,6 +177,28 @@ export class DevSeederPermissionsService {
         },
       });
 
+    const personObjectMetadata =
+      await this.objectMetadataRepository.findOneOrFail({
+        where: {
+          nameSingular: 'person',
+          workspaceId,
+        },
+        relations: {
+          fields: true,
+        },
+      });
+
+    const companyObjectMetadata =
+      await this.objectMetadataRepository.findOneOrFail({
+        where: {
+          nameSingular: 'company',
+          workspaceId,
+        },
+        relations: {
+          fields: true,
+        },
+      });
+
     await this.objectPermissionService.upsertObjectPermissions({
       workspaceId,
       input: {
@@ -153,6 +218,47 @@ export class DevSeederPermissionsService {
             canSoftDeleteObjectRecords: false,
             canDestroyObjectRecords: false,
           },
+        ],
+      },
+    });
+
+    const personCityFieldMetadata = personObjectMetadata.fields.find(
+      (field) => field.name === 'city',
+    );
+
+    if (!personCityFieldMetadata) {
+      throw new Error('Person city field metadata not found');
+    }
+
+    const companyLinkedinLinkFieldMetadata = companyObjectMetadata.fields.find(
+      (field) => field.name === 'linkedinLink',
+    );
+
+    if (!companyLinkedinLinkFieldMetadata) {
+      throw new Error('Company linkedin link field metadata not found');
+    }
+
+    const readOnlyOnPersonCityFieldPermission = {
+      objectMetadataId: personObjectMetadata.id,
+      fieldMetadataId: personCityFieldMetadata.id,
+      canReadFieldValue: null,
+      canUpdateFieldValue: false,
+    };
+
+    const noReadOnCompanyLinkedinLinkFieldPermission = {
+      objectMetadataId: companyObjectMetadata.id,
+      fieldMetadataId: companyLinkedinLinkFieldMetadata.id,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    };
+
+    await this.fieldPermissionService.upsertFieldPermissions({
+      workspaceId,
+      input: {
+        roleId: customRole.id,
+        fieldPermissions: [
+          readOnlyOnPersonCityFieldPermission,
+          noReadOnCompanyLinkedinLinkFieldPermission,
         ],
       },
     });

@@ -1,8 +1,8 @@
-import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { assertUnreachable } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
 const StyledStepNodeLabelIconContainer = styled.div`

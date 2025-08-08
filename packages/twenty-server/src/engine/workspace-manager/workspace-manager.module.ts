@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentModule } from 'src/engine/metadata-modules/agent/agent.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -16,6 +17,7 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-seeder.module';
 import { WorkspaceHealthModule } from 'src/engine/workspace-manager/workspace-health/workspace-health.module';
+import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
 
 import { WorkspaceManagerService } from './workspace-manager.service';
@@ -24,6 +26,7 @@ import { WorkspaceManagerService } from './workspace-manager.service';
   imports: [
     WorkspaceDataSourceModule,
     WorkspaceMigrationModule,
+    WorkspaceMigrationV2Module,
     ObjectMetadataModule,
     DevSeederModule,
     DataSourceModule,
@@ -31,6 +34,7 @@ import { WorkspaceManagerService } from './workspace-manager.service';
     WorkspaceHealthModule,
     FeatureFlagModule,
     PermissionsModule,
+    AgentModule,
     TypeOrmModule.forFeature([UserWorkspace, Workspace], 'core'),
     RoleModule,
     UserRoleModule,

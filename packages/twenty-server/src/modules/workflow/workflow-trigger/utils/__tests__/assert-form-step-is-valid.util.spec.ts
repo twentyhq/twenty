@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { WorkflowFormActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
+import { type WorkflowFormActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
 import { WorkflowTriggerException } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import { assertFormStepIsValid } from 'src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util';
 
@@ -40,6 +40,7 @@ const settings: WorkflowFormActionSettings = {
             label: 'Id',
             value: '123e4567-e89b-12d3-a456-426614174000',
             isLeaf: true,
+            fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
           },
         },
         object: {
@@ -49,6 +50,7 @@ const settings: WorkflowFormActionSettings = {
           isLeaf: true,
           fieldIdName: 'id',
           nameSingular: 'company',
+          objectMetadataId: '123e4567-e89b-12d3-a456-426614174000',
         },
         _outputSchemaType: 'RECORD',
       },

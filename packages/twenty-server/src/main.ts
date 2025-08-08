@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { NestExpressApplication } from '@nestjs/platform-express';
+import { type NestExpressApplication } from '@nestjs/platform-express';
 
 import fs from 'fs';
 
@@ -57,6 +57,15 @@ const bootstrap = async () => {
 
   // Graphql file upload
   app.use(
+    '/graphql',
+    graphqlUploadExpress({
+      maxFieldSize: bytes(settings.storage.maxFileSize),
+      maxFiles: 10,
+    }),
+  );
+
+  app.use(
+    '/metadata',
     graphqlUploadExpress({
       maxFieldSize: bytes(settings.storage.maxFileSize),
       maxFiles: 10,

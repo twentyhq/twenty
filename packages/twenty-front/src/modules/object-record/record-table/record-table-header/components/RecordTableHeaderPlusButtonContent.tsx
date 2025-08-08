@@ -13,7 +13,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useLingui } from '@lingui/react/macro';
 import { IconSettings, useIcons } from 'twenty-ui/display';
 import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
@@ -25,12 +25,14 @@ export const RecordTableHeaderPlusButtonContent = () => {
 
   const { closeDropdown } = useCloseDropdown();
 
-  const hiddenTableColumns = useRecoilComponentValueV2(
+  const hiddenTableColumns = useRecoilComponentValue(
     hiddenTableColumnsComponentSelector,
   );
 
   const { getIcon } = useIcons();
-  const { handleColumnVisibilityChange } = useTableColumns();
+  const { handleColumnVisibilityChange } = useTableColumns({
+    objectMetadataId: objectMetadataItem.id,
+  });
 
   const handleAddColumn = useCallback(
     (column: ColumnDefinition<FieldMetadata>) => {

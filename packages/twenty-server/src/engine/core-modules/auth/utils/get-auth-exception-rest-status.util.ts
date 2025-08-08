@@ -1,5 +1,7 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
-  AuthException,
+  type AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 
@@ -21,6 +23,8 @@ export const getAuthExceptionRestStatus = (exception: AuthException) => {
     case AuthExceptionCode.EMAIL_NOT_VERIFIED:
     case AuthExceptionCode.INVALID_JWT_TOKEN_TYPE:
       return 403;
+    case AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED:
+    case AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED:
     case AuthExceptionCode.INVALID_DATA:
     case AuthExceptionCode.UNAUTHENTICATED:
     case AuthExceptionCode.USER_NOT_FOUND:
@@ -30,9 +34,7 @@ export const getAuthExceptionRestStatus = (exception: AuthException) => {
     case AuthExceptionCode.USER_WORKSPACE_NOT_FOUND:
       return 500;
     default: {
-      const _exhaustiveCheck: never = exception.code;
-
-      return 500;
+      assertUnreachable(exception.code);
     }
   }
 };

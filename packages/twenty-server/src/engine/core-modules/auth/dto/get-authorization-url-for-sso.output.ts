@@ -2,7 +2,8 @@
 
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { type SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
 
 @ObjectType()
 export class GetAuthorizationUrlForSSOOutput {
@@ -12,6 +13,6 @@ export class GetAuthorizationUrlForSSOOutput {
   @Field(() => String)
   type: SSOConfiguration['type'];
 
-  @Field(() => String)
+  @Field(() => UUIDScalarType)
   id: string;
 }

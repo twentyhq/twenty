@@ -1,4 +1,3 @@
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { SelectInput as SelectBaseInput } from '@/ui/input/components/SelectInput';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectOption } from 'twenty-ui/input';
@@ -34,7 +33,6 @@ export const SelectInput = ({
       selectableListInstanceId={selectableListComponentInstanceId}
       selectableItemIdArray={selectableItemIdArray}
       focusId={focusId}
-      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
     >
       <SelectBaseInput
         onOptionSelected={onOptionSelected}

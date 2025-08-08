@@ -9,7 +9,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { SelectValue } from '@/ui/input/components/internal/select/types';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
@@ -17,7 +16,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 import { IconComponent } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
@@ -125,7 +124,7 @@ export const Select = <Value extends SelectValue>({
 
   const selectableItemIdArray = filteredOptions.map((option) => option.label);
 
-  const selectedItemId = useRecoilComponentValueV2(
+  const selectedItemId = useRecoilComponentValue(
     selectedItemIdComponentState,
     dropdownId,
   );
@@ -186,7 +185,6 @@ export const Select = <Value extends SelectValue>({
                     selectableListInstanceId={dropdownId}
                     focusId={dropdownId}
                     selectableItemIdArray={selectableItemIdArray}
-                    hotkeyScope={DropdownHotkeyScope.Dropdown}
                   >
                     {filteredOptions.map((option) => (
                       <SelectableListItem

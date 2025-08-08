@@ -14,10 +14,10 @@ import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFie
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
 
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { isInlineCellInEditModeScopedState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeScopedState';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
+import { isInlineCellInEditModeFamilyState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeFamilyState';
+import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
-import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
+import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
@@ -28,11 +28,14 @@ import {
 } from './RecordInlineCellContext';
 
 type RecordInlineCellProps = {
-  readonly?: boolean;
   loading?: boolean;
+  instanceIdPrefix?: string;
 };
 
-export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
+export const RecordInlineCell = ({
+  loading,
+  instanceIdPrefix,
+}: RecordInlineCellProps) => {
   const {
     fieldDefinition,
     recordId,
@@ -40,20 +43,35 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     isDisplayModeFixHeight,
     onOpenEditMode: onOpenEditModeFromContext,
     onCloseEditMode: onCloseEditModeFromContext,
-    isReadOnly,
+    isRecordFieldReadOnly: isReadOnly,
   } = useContext(FieldContext);
 
   const { openFieldInput, closeFieldInput } = useOpenFieldInputEditMode();
 
   const onOpenEditMode = onOpenEditModeFromContext
     ? onOpenEditModeFromContext
-    : () => openFieldInput({ fieldDefinition, recordId });
+    : () =>
+        openFieldInput({
+          fieldDefinition,
+          recordId,
+          prefix: instanceIdPrefix,
+        });
 
   const onCloseEditMode = useCallback(() => {
     onCloseEditModeFromContext
       ? onCloseEditModeFromContext()
-      : closeFieldInput({ fieldDefinition, recordId });
-  }, [onCloseEditModeFromContext, closeFieldInput, fieldDefinition, recordId]);
+      : closeFieldInput({
+          fieldDefinition,
+          recordId,
+          prefix: instanceIdPrefix,
+        });
+  }, [
+    onCloseEditModeFromContext,
+    closeFieldInput,
+    fieldDefinition,
+    recordId,
+    instanceIdPrefix,
+  ]);
 
   const buttonIcon = useGetButtonIcon();
 
@@ -67,7 +85,7 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
   );
 
   const setIsInlineCellInEditMode = useSetRecoilState(
-    isInlineCellInEditModeScopedState(recordFieldComponentInstanceId),
+    isInlineCellInEditModeFamilyState(recordFieldComponentInstanceId),
   );
 
   const closeInlineCell = useCallback(() => {
@@ -111,20 +129,26 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
   const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
     ({ snapshot }) =>
       (persistField, event) => {
-        const hotkeyScope = snapshot
-          .getLoadable(currentHotkeyScopeState)
+        const currentDropdownFocusId = snapshot
+          .getLoadable(activeDropdownFocusIdState)
           .getValue();
 
-        if (hotkeyScope.scope !== DEFAULT_CELL_SCOPE.scope) {
+        const expectedDropdownFocusId = getDropdownFocusIdForRecordField(
+          recordId,
+          fieldDefinition.fieldMetadataId,
+          'inline-cell',
+        );
+
+        if (currentDropdownFocusId !== expectedDropdownFocusId) {
           return;
         }
-
+        event.preventDefault();
         event.stopImmediatePropagation();
 
         persistField();
         closeInlineCell();
       },
-    [closeInlineCell],
+    [closeInlineCell, recordId, fieldDefinition.fieldMetadataId],
   );
 
   const { getIcon } = useIcons();

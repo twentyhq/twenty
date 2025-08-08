@@ -1,4 +1,6 @@
-import { Catch, ExceptionFilter } from '@nestjs/common';
+import { Catch, type ExceptionFilter } from '@nestjs/common';
+
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
   NotFoundError,
@@ -19,23 +21,13 @@ export const handleWorkflowTriggerException = (
     case WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER:
     case WorkflowTriggerExceptionCode.INVALID_WORKFLOW_STATUS:
     case WorkflowTriggerExceptionCode.FORBIDDEN:
-      throw new UserInputError(exception.message, {
-        extensions: {
-          userFriendlyMessage: exception.userFriendlyMessage,
-        },
-      });
+      throw new UserInputError(exception);
     case WorkflowTriggerExceptionCode.NOT_FOUND:
-      throw new NotFoundError(exception.message, {
-        extensions: {
-          userFriendlyMessage: exception.userFriendlyMessage,
-        },
-      });
+      throw new NotFoundError(exception);
     case WorkflowTriggerExceptionCode.INTERNAL_ERROR:
       throw exception;
     default: {
-      const _exhaustiveCheck: never = exception.code;
-
-      throw exception;
+      assertUnreachable(exception.code);
     }
   }
 };

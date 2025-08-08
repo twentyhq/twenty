@@ -49,6 +49,13 @@
         "command": "NODE_ENV=development && nest start --watch"
       }
     },
+    "start:ci": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "NODE_ENV=development && nest start"
+      }
+    },
     "start:debug": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
@@ -220,7 +227,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "lingui extract --overwrite"
+        "command": "lingui extract --overwrite --clean"
       }
     },
     "lingui:compile": {

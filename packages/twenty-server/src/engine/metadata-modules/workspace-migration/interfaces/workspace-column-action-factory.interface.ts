@@ -1,11 +1,11 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-import { WorkspaceColumnActionOptions } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-options.interface';
+import { type WorkspaceColumnActionOptions } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-options.interface';
 
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
-  WorkspaceMigrationColumnAction,
-  WorkspaceMigrationColumnActionType,
+  type WorkspaceMigrationColumnAction,
+  type WorkspaceMigrationColumnActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 
 export interface WorkspaceColumnActionFactory<T extends FieldMetadataType> {
@@ -13,8 +13,8 @@ export interface WorkspaceColumnActionFactory<T extends FieldMetadataType> {
     action:
       | WorkspaceMigrationColumnActionType.CREATE
       | WorkspaceMigrationColumnActionType.ALTER,
-    currentFieldMetadata: FieldMetadataInterface<T> | undefined,
-    alteredFieldMetadata: FieldMetadataInterface<T>,
+    currentFieldMetadata: FieldMetadataEntity<T> | undefined,
+    alteredFieldMetadata: FieldMetadataEntity<T>,
     options?: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnAction[];
 }

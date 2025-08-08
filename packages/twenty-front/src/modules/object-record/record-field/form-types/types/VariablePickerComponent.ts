@@ -1,7 +1,8 @@
 export type VariablePickerComponent = React.FC<{
-  inputId: string;
+  instanceId: string;
   disabled?: boolean;
   multiline?: boolean;
   onVariableSelect: (variableName: string) => void;
-  objectNameSingularToSelect?: string;
+  shouldDisplayRecordObjects?: boolean;
+  shouldDisplayRecordFields?: boolean;
 }>;

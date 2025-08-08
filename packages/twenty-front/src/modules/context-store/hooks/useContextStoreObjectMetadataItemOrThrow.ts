@@ -1,11 +1,11 @@
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const useContextStoreObjectMetadataItemOrThrow = (
   contextStoreInstanceId?: string,
 ) => {
-  const objectMetadataItemId = useRecoilComponentValueV2(
+  const objectMetadataItemId = useRecoilComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     contextStoreInstanceId,
   );

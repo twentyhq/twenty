@@ -9,9 +9,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
+import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
-import { SettingPermissionEntity } from 'src/engine/metadata-modules/setting-permission/setting-permission.entity';
 
 @Entity('role')
 @Unique('IDX_ROLE_LABEL_WORKSPACE_ID_UNIQUE', ['label', 'workspaceId'])
@@ -24,6 +25,9 @@ export class RoleEntity {
 
   @Column({ nullable: false, default: false })
   canUpdateAllSettings: boolean;
+
+  @Column({ nullable: false, default: false })
+  canAccessAllTools: boolean;
 
   @Column({ nullable: false, default: false })
   canReadAllObjectRecords: boolean;
@@ -68,8 +72,14 @@ export class RoleEntity {
   objectPermissions: Relation<ObjectPermissionEntity[]>;
 
   @OneToMany(
-    () => SettingPermissionEntity,
-    (settingPermission: SettingPermissionEntity) => settingPermission.role,
+    () => PermissionFlagEntity,
+    (permissionFlag: PermissionFlagEntity) => permissionFlag.role,
   )
-  settingPermissions: Relation<SettingPermissionEntity[]>;
+  permissionFlags: Relation<PermissionFlagEntity[]>;
+
+  @OneToMany(
+    () => FieldPermissionEntity,
+    (fieldPermission: FieldPermissionEntity) => fieldPermission.role,
+  )
+  fieldPermissions: Relation<FieldPermissionEntity[]>;
 }

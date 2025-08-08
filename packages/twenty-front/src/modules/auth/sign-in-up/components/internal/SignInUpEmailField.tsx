@@ -1,8 +1,8 @@
-import { TextInput } from '@/ui/input/components/TextInput';
-import { Controller, useFormContext } from 'react-hook-form';
+import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { Controller, useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledFullWidthMotionDiv = styled(motion.div)`
@@ -40,7 +40,8 @@ export const SignInUpEmailField = ({
           fieldState: { error },
         }) => (
           <StyledInputContainer>
-            <TextInput
+            <SettingsTextInput
+              instanceId="sign-in-up-email"
               autoFocus
               value={value}
               placeholder="Email"

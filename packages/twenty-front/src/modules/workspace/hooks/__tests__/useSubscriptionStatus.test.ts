@@ -1,5 +1,4 @@
-import { renderHook } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
+import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 

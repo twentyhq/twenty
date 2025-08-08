@@ -11,12 +11,10 @@ import { multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector } 
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilCallback } from 'recoil';
 
 type MultipleRecordPickerMenuItemsProps = {
@@ -35,17 +33,13 @@ export const MultipleRecordPickerMenuItems = ({
   const selectableListComponentInstanceId =
     getMultipleRecordPickerSelectableListId(componentInstanceId);
 
-  const pickableRecordIds = useRecoilComponentValueV2(
+  const pickableRecordIds = useRecoilComponentValue(
     multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector,
     componentInstanceId,
   );
 
-  const { resetSelectedItem } = useSelectableList(
-    selectableListComponentInstanceId,
-  );
-
   const multipleRecordPickerPickableMorphItemsState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       multipleRecordPickerPickableMorphItemsComponentState,
       componentInstanceId,
     );
@@ -75,12 +69,11 @@ export const MultipleRecordPickerMenuItems = ({
     [multipleRecordPickerPickableMorphItemsState],
   );
 
-  const multipleRecordPickerShouldShowInitialLoading =
-    useRecoilComponentValueV2(
-      multipleRecordPickerShouldShowInitialLoadingComponentState,
-    );
+  const multipleRecordPickerShouldShowInitialLoading = useRecoilComponentValue(
+    multipleRecordPickerShouldShowInitialLoadingComponentState,
+  );
 
-  const multipleRecordPickerShouldShowSkeleton = useRecoilComponentValueV2(
+  const multipleRecordPickerShouldShowSkeleton = useRecoilComponentValue(
     multipleRecordPickerShouldShowSkeletonComponentState,
   );
 
@@ -99,7 +92,6 @@ export const MultipleRecordPickerMenuItems = ({
           selectableListInstanceId={selectableListComponentInstanceId}
           selectableItemIdArray={pickableRecordIds}
           focusId={focusId}
-          hotkeyScope={DropdownHotkeyScope.Dropdown}
         >
           {pickableRecordIds.map((recordId) => {
             return (
@@ -109,7 +101,6 @@ export const MultipleRecordPickerMenuItems = ({
                 onChange={(morphItem) => {
                   handleChange(morphItem);
                   onChange?.(morphItem);
-                  resetSelectedItem();
                 }}
               />
             );

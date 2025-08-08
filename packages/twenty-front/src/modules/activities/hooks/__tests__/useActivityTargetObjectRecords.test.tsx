@@ -8,10 +8,10 @@ import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTa
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const cache = new InMemoryCache();
 
@@ -39,7 +39,10 @@ const taskTarget = {
     createdAt: '2023-04-26T10:12:42.33625+00:00',
     updatedAt: '2023-04-26T10:23:42.33625+00:00',
     dueAt: null,
-    body: '{}',
+    bodyV2: {
+      blocknote: '',
+      markdown: '',
+    },
     title: 'Task title',
     assigneeId: null,
     __typename: 'Task',
@@ -95,7 +98,6 @@ const task = {
   createdAt: '2023-04-26T10:12:42.33625+00:00',
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
   title: 'Task title',
-  body: '',
   bodyV2: {
     blocknote: null,
     markdown: null,
@@ -112,9 +114,11 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
     <MockedProvider cache={cache}>
       <JestObjectMetadataItemSetter>
-        <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+        <SnackBarComponentInstanceContext.Provider
+          value={{ instanceId: 'snack-bar-manager' }}
+        >
           {children}
-        </SnackBarProviderScope>
+        </SnackBarComponentInstanceContext.Provider>
       </JestObjectMetadataItemSetter>
     </MockedProvider>
   </RecoilRoot>

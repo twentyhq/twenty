@@ -1,6 +1,5 @@
 import { OBJECT_MODEL_COMMON_FIELDS } from 'test/integration/constants/object-model-common-fields';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
-import { TEST_API_KEY_1_ID } from 'test/integration/constants/test-api-key-ids.constant';
 import {
   TEST_PERSON_1_ID,
   TEST_PERSON_2_ID,
@@ -14,29 +13,21 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { performCreateManyOperation } from 'test/integration/graphql/utils/perform-create-many-operation.utils';
 import { searchFactory } from 'test/integration/graphql/utils/search-factory.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
-import { EachTestingContext } from 'twenty-shared/testing';
+import { type EachTestingContext } from 'twenty-shared/testing';
 
 import {
   decodeCursor,
   encodeCursorData,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
-import { SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
-import { SearchCursor } from 'src/engine/core-modules/search/services/search.service';
+import { type SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
+import { type SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
+import { type SearchCursor } from 'src/engine/core-modules/search/services/search.service';
 
 describe('SearchResolver', () => {
   const [firstPerson, secondPerson, thirdPerson] = [
     { id: TEST_PERSON_1_ID, name: { firstName: 'searchInput1' } },
     { id: TEST_PERSON_2_ID, name: { firstName: 'searchInput2' } },
     { id: TEST_PERSON_3_ID, name: { firstName: 'searchInput3' } },
-  ];
-
-  const [apiKey] = [
-    {
-      id: TEST_API_KEY_1_ID,
-      name: 'record not searchable',
-      expiresAt: new Date(Date.now()),
-    },
   ];
 
   const [firstPet, secondPet] = [
@@ -68,13 +59,6 @@ describe('SearchResolver', () => {
         secondPerson,
         thirdPerson,
       ]);
-
-      await performCreateManyOperation(
-        'apiKey',
-        'apiKeys',
-        OBJECT_MODEL_COMMON_FIELDS,
-        [apiKey],
-      );
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error);

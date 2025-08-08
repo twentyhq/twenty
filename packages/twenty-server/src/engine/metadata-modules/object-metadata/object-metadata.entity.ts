@@ -10,13 +10,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
-
-import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
+import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import { ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
+import { type ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
+import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 
 @Entity('objectMetadata')
@@ -28,7 +27,7 @@ import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permi
   'namePlural',
   'workspaceId',
 ])
-export class ObjectMetadataEntity implements ObjectMetadataInterface {
+export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -51,14 +50,17 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   labelPlural: string;
 
   @Column({ nullable: true, type: 'text' })
-  description: string;
+  description: string | null;
 
-  @Column({ nullable: true })
-  icon: string;
+  @Column({ nullable: true, type: 'varchar' })
+  icon: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  standardOverrides?: ObjectStandardOverridesDTO;
+  standardOverrides: ObjectStandardOverridesDTO | null;
 
+  /**
+   * @deprecated
+   */
   @Column({ nullable: false })
   targetTableName: string;
 
@@ -81,16 +83,16 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   isSearchable: boolean;
 
   @Column({ type: 'jsonb', nullable: true })
-  duplicateCriteria?: WorkspaceEntityDuplicateCriteria[];
+  duplicateCriteria: WorkspaceEntityDuplicateCriteria[] | null;
 
-  @Column({ nullable: true })
-  shortcut: string;
-
-  @Column({ nullable: true, type: 'uuid' })
-  labelIdentifierFieldMetadataId?: string | null;
+  @Column({ nullable: true, type: 'varchar' })
+  shortcut: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
-  imageIdentifierFieldMetadataId?: string | null;
+  labelIdentifierFieldMetadataId: string | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  imageIdentifierFieldMetadataId: string | null;
 
   @Column({ default: false })
   isLabelSyncedWithName: boolean;
@@ -134,4 +136,13 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
     },
   )
   objectPermissions: Relation<ObjectPermissionEntity[]>;
+
+  @OneToMany(
+    () => FieldPermissionEntity,
+    (fieldPermission: FieldPermissionEntity) => fieldPermission.objectMetadata,
+    {
+      cascade: true,
+    },
+  )
+  fieldPermissions: Relation<FieldPermissionEntity[]>;
 }

@@ -1,4 +1,4 @@
-import { ASTNode, print } from 'graphql';
+import { type ASTNode, print } from 'graphql';
 import request from 'supertest';
 
 type GraphqlOperation = {
@@ -11,7 +11,7 @@ export const makeMetadataAPIRequest = (graphqlOperation: GraphqlOperation) => {
 
   return client
     .post('/metadata')
-    .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+    .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
     .send({
       query: print(graphqlOperation.query),
       variables: graphqlOperation.variables || {},

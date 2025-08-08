@@ -1,11 +1,12 @@
 import { createHash } from 'crypto';
 
 import RedisStore from 'connect-redis';
-import session from 'express-session';
 import { createClient } from 'redis';
 
+import type session from 'express-session';
+
 import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export const getSessionStorageOptions = (
   twentyConfigService: TwentyConfigService,

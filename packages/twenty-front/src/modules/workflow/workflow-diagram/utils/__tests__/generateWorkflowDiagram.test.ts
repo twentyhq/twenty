@@ -13,7 +13,11 @@ describe('generateWorkflowDiagram', () => {
     };
     const steps: WorkflowStep[] = [];
 
-    const result = generateWorkflowDiagram({ trigger, steps });
+    const result = generateWorkflowDiagram({
+      trigger,
+      steps,
+      defaultEdgeType: 'empty-filter--editable',
+    });
 
     expect(result.nodes).toHaveLength(1);
     expect(result.edges).toHaveLength(0);
@@ -33,6 +37,7 @@ describe('generateWorkflowDiagram', () => {
         eventName: 'company.created',
         outputSchema: {},
       },
+      nextStepIds: ['step1'],
     };
     const steps: WorkflowStep[] = [
       {
@@ -75,7 +80,11 @@ describe('generateWorkflowDiagram', () => {
       },
     ];
 
-    const result = generateWorkflowDiagram({ trigger, steps });
+    const result = generateWorkflowDiagram({
+      trigger,
+      steps,
+      defaultEdgeType: 'empty-filter--editable',
+    });
 
     expect(result.nodes).toHaveLength(steps.length + 1); // All steps + trigger
     expect(result.edges).toHaveLength(steps.length - 1 + 1); // Edges are one less than nodes + the edge from the trigger to the first node
@@ -89,6 +98,12 @@ describe('generateWorkflowDiagram', () => {
         nodeType: 'action',
         actionType: 'CODE',
         name: step.name,
+        hasNextStepIds: step.id !== 'step2',
+        stepId: step.id,
+        position: {
+          x: 0,
+          y: 150 * (index + 1),
+        },
       });
     }
   });
@@ -101,6 +116,7 @@ describe('generateWorkflowDiagram', () => {
         eventName: 'company.created',
         outputSchema: {},
       },
+      nextStepIds: ['step1'],
     };
     const steps: WorkflowStep[] = [
       {
@@ -143,7 +159,11 @@ describe('generateWorkflowDiagram', () => {
       },
     ];
 
-    const result = generateWorkflowDiagram({ trigger, steps });
+    const result = generateWorkflowDiagram({
+      trigger,
+      steps,
+      defaultEdgeType: 'empty-filter--editable',
+    });
 
     expect(result.edges.length).toEqual(2);
     expect(result.nodes.length).toEqual(3);
@@ -163,6 +183,7 @@ describe('generateWorkflowDiagram', () => {
         eventName: 'company.created',
         outputSchema: {},
       },
+      nextStepIds: ['step2'],
     };
     const steps: WorkflowStep[] = [
       {
@@ -205,7 +226,11 @@ describe('generateWorkflowDiagram', () => {
       },
     ];
 
-    const result = generateWorkflowDiagram({ trigger, steps });
+    const result = generateWorkflowDiagram({
+      trigger,
+      steps,
+      defaultEdgeType: 'empty-filter--editable',
+    });
 
     expect(result.edges.length).toEqual(2);
     expect(result.nodes.length).toEqual(3);
@@ -225,6 +250,7 @@ describe('generateWorkflowDiagram', () => {
         eventName: 'company.created',
         outputSchema: {},
       },
+      nextStepIds: ['step2', 'step3'],
     };
     const steps: WorkflowStep[] = [
       {
@@ -286,7 +312,11 @@ describe('generateWorkflowDiagram', () => {
       },
     ];
 
-    const result = generateWorkflowDiagram({ trigger, steps });
+    const result = generateWorkflowDiagram({
+      trigger,
+      steps,
+      defaultEdgeType: 'empty-filter--editable',
+    });
 
     expect(result.edges.length).toEqual(4);
     expect(result.nodes.length).toEqual(4);

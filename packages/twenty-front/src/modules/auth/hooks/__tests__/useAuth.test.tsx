@@ -2,7 +2,7 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { billingState } from '@/client-config/states/billingState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useApolloClient } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
@@ -12,10 +12,11 @@ import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { renderHook } from '@testing-library/react';
 import { iconsState } from 'twenty-ui/display';
-import { email, mocks, password, results, token } from '../__mocks__/useAuth';
 import { SupportDriver } from '~/generated/graphql';
+import { email, mocks, password, results, token } from '../__mocks__/useAuth';
 
 const redirectSpy = jest.fn();
 
@@ -25,9 +26,45 @@ jest.mock('@/domain-manager/hooks/useRedirect', () => ({
   })),
 }));
 
-jest.mock('@/object-metadata/hooks/useRefreshObjectMetadataItem', () => ({
+jest.mock('@/object-metadata/hooks/useRefreshObjectMetadataItems', () => ({
   useRefreshObjectMetadataItems: jest.fn().mockImplementation(() => ({
     refreshObjectMetadataItems: jest.fn(),
+  })),
+}));
+
+jest.mock('@/domain-manager/hooks/useOrigin', () => ({
+  useOrigin: jest.fn().mockImplementation(() => ({
+    origin: 'http://localhost',
+  })),
+}));
+
+jest.mock('@/captcha/hooks/useRequestFreshCaptchaToken', () => ({
+  useRequestFreshCaptchaToken: jest.fn().mockImplementation(() => ({
+    requestFreshCaptchaToken: jest.fn(),
+  })),
+}));
+
+jest.mock('@/auth/sign-in-up/hooks/useSignUpInNewWorkspace', () => ({
+  useSignUpInNewWorkspace: jest.fn().mockImplementation(() => ({
+    createWorkspace: jest.fn(),
+  })),
+}));
+
+jest.mock('@/domain-manager/hooks/useRedirectToWorkspaceDomain', () => ({
+  useRedirectToWorkspaceDomain: jest.fn().mockImplementation(() => ({
+    redirectToWorkspaceDomain: jest.fn(),
+  })),
+}));
+
+jest.mock('@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace', () => ({
+  useIsCurrentLocationOnAWorkspace: jest.fn().mockImplementation(() => ({
+    isOnAWorkspace: true,
+  })),
+}));
+
+jest.mock('@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain', () => ({
+  useLastAuthenticatedWorkspaceDomain: jest.fn().mockImplementation(() => ({
+    setLastAuthenticateWorkspaceDomain: jest.fn(),
   })),
 }));
 
@@ -35,9 +72,11 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider mocks={Object.values(mocks)} addTypename={false}>
     <RecoilRoot>
       <MemoryRouter>
-        <SnackBarProviderScope snackBarManagerScopeId="test-scope-id">
+        <SnackBarComponentInstanceContext.Provider
+          value={{ instanceId: 'test-instance-id' }}
+        >
           {children}
-        </SnackBarProviderScope>
+        </SnackBarComponentInstanceContext.Provider>
       </MemoryRouter>
     </RecoilRoot>
   </MockedProvider>

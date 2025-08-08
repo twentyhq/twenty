@@ -8,10 +8,10 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { EmailsMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/emails.composite-type';
-import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
-import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
+import { type FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
+import { type LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { PhonesMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceDuplicateCriteria } from 'src/engine/twenty-orm/decorators/workspace-duplicate-criteria.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -28,7 +28,7 @@ import { PERSON_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspac
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-  FieldTypeAndNameMetadata,
+  type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
@@ -196,7 +196,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.pointOfContactForOpportunities,
     type: RelationType.ONE_TO_MANY,
-    label: msg`Linked Opportunities`,
+    label: msg`Opportunities`,
     description: msg`List of opportunities for which that person is the point of contact`,
     icon: 'IconTargetArrow',
     inverseSideTarget: () => OpportunityWorkspaceEntity,
@@ -248,6 +248,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => AttachmentWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsSystem()
   attachments: Relation<AttachmentWorkspaceEntity[]>;
 
   @WorkspaceRelation({

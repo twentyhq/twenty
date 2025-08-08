@@ -25,21 +25,19 @@ export function generateFrontConfig(): void {
   const distPath = path.join(__dirname, '../..', 'front');
   const indexPath = path.join(distPath, 'index.html');
 
-  if (!fs.existsSync(indexPath)) {
-    // eslint-disable-next-line no-console
-    console.log(
-      'Frontend build not found, assuming it is served independently',
+  try {
+    let indexContent = fs.readFileSync(indexPath, 'utf8');
+
+    indexContent = indexContent.replace(
+      /<!-- BEGIN: Twenty Config -->[\s\S]*?<!-- END: Twenty Config -->/,
+      configString,
     );
 
-    return;
+    fs.writeFileSync(indexPath, indexContent, 'utf8');
+  } catch {
+    // eslint-disable-next-line no-console
+    console.log(
+      'Frontend build not found or not writable, assuming it is served independently',
+    );
   }
-
-  let indexContent = fs.readFileSync(indexPath, 'utf8');
-
-  indexContent = indexContent.replace(
-    /<!-- BEGIN: Twenty Config -->[\s\S]*?<!-- END: Twenty Config -->/,
-    configString,
-  );
-
-  fs.writeFileSync(indexPath, indexContent, 'utf8');
 }

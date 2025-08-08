@@ -1,7 +1,7 @@
-import { DatabaseTriggerDefaultLabel } from '@/workflow/workflow-trigger/constants/DatabaseTriggerDefaultLabel';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { getTriggerDefaultDefinition } from '../getTriggerDefaultDefinition';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
+import { DatabaseTriggerDefaultLabel } from '@/workflow/workflow-trigger/constants/DatabaseTriggerDefaultLabel';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTriggerDefaultDefinition } from '../getTriggerDefaultDefinition';
 
 describe('getTriggerDefaultDefinition', () => {
   it('throws if the activeNonSystemObjectMetadataItems list is empty', () => {
@@ -23,10 +23,15 @@ describe('getTriggerDefaultDefinition', () => {
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
-      name: 'Record is Created',
+      name: 'Record is created',
       settings: {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.created`,
         outputSchema: {},
+      },
+      nextStepIds: [],
+      position: {
+        x: 0,
+        y: 0,
       },
     });
   });
@@ -40,10 +45,15 @@ describe('getTriggerDefaultDefinition', () => {
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
-      name: 'Record is Updated',
+      name: 'Record is updated',
       settings: {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.updated`,
         outputSchema: {},
+      },
+      nextStepIds: [],
+      position: {
+        x: 0,
+        y: 0,
       },
     });
   });
@@ -57,10 +67,15 @@ describe('getTriggerDefaultDefinition', () => {
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
-      name: 'Record is Deleted',
+      name: 'Record is deleted',
       settings: {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.deleted`,
         outputSchema: {},
+      },
+      nextStepIds: [],
+      position: {
+        x: 0,
+        y: 0,
       },
     });
   });
@@ -74,10 +89,15 @@ describe('getTriggerDefaultDefinition', () => {
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
-      name: 'Record is Created',
+      name: 'Record is created',
       settings: {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.created`,
         outputSchema: {},
+      },
+      nextStepIds: [],
+      position: {
+        x: 0,
+        y: 0,
       },
     });
   });
@@ -96,6 +116,57 @@ describe('getTriggerDefaultDefinition', () => {
         objectType: generatedMockObjectMetadataItems[0].nameSingular,
         outputSchema: {},
         icon: COMMAND_MENU_DEFAULT_ICON,
+      },
+      nextStepIds: [],
+      position: {
+        x: 0,
+        y: 0,
+      },
+    });
+  });
+
+  it('returns a valid configuration for CRON trigger type', () => {
+    expect(
+      getTriggerDefaultDefinition({
+        defaultLabel: 'On a schedule',
+        type: 'CRON',
+        activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
+      }),
+    ).toStrictEqual({
+      type: 'CRON',
+      name: 'On a schedule',
+      settings: {
+        type: 'DAYS',
+        schedule: { day: 1, hour: 0, minute: 0 },
+        outputSchema: {},
+      },
+      nextStepIds: [],
+      position: {
+        x: 0,
+        y: 0,
+      },
+    });
+  });
+
+  it('returns a valid configuration for WEBHOOK trigger type', () => {
+    expect(
+      getTriggerDefaultDefinition({
+        defaultLabel: 'Webhook',
+        type: 'WEBHOOK',
+        activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
+      }),
+    ).toStrictEqual({
+      type: 'WEBHOOK',
+      name: 'Webhook',
+      settings: {
+        outputSchema: {},
+        httpMethod: 'GET',
+        authentication: null,
+      },
+      nextStepIds: [],
+      position: {
+        x: 0,
+        y: 0,
       },
     });
   });

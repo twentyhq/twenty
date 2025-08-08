@@ -19,8 +19,12 @@ setup_and_migrate_db() {
     if [ "$db_count" = "0" ]; then
         echo "Database ${PGDATABASE} does not exist, creating..."
         PGPASSWORD=${PGPASS} psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d postgres -c "CREATE DATABASE \"${PGDATABASE}\""
+    fi
 
-        # Run setup and migration scripts
+    # Run setup and migration scripts
+    has_schema=$(PGPASSWORD=${PGPASS} psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d ${PGDATABASE} -tAc "SELECT EXISTS (SELECT 1 FROM information_schema.schemata WHERE schema_name = 'core')")
+    if [ "$has_schema" = "f" ]; then
+        echo "Database appears to be empty, running migrations."
         NODE_OPTIONS="--max-old-space-size=1500" tsx ./scripts/setup-db.ts
         yarn database:migrate:prod
     fi

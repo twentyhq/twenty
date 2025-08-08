@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 
-import { Request } from 'express';
-import { Strategy, VerifyCallback } from 'passport-google-oauth20';
-import { APP_LOCALES } from 'twenty-shared/translations';
+import { type Request } from 'express';
+import { Strategy, type VerifyCallback } from 'passport-google-oauth20';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+import { type SocialSSOSignInUpActionType } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { SocialSSOSignInUpActionType } from 'src/engine/core-modules/auth/types/signInUp.type';
 
 export type GoogleRequest = Omit<
   Request,
@@ -68,8 +72,19 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         ? JSON.parse(request.query.state)
         : undefined;
 
+    const firstVerifiedEmail = emails.find(
+      (email: { verified: boolean }) => email?.verified === true,
+    )?.value;
+
+    if (!firstVerifiedEmail) {
+      throw new AuthException(
+        'Please verify your email address with Google',
+        AuthExceptionCode.EMAIL_NOT_VERIFIED,
+      );
+    }
+
     const user: GoogleRequest['user'] = {
-      email: emails[0].value,
+      email: firstVerifiedEmail,
       firstName: name.givenName,
       lastName: name.familyName,
       picture: photos?.[0]?.value,

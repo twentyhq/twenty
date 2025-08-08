@@ -9,7 +9,7 @@ import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAut
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
@@ -55,7 +55,7 @@ export const WorkflowEditActionSendEmail = ({
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { triggerApisOAuth } = useTriggerApisOAuth();
 
-  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
+  const workflowVisualizerWorkflowId = useRecoilComponentValue(
     workflowVisualizerWorkflowIdComponentState,
   );
   const redirectUrl = `/object/workflow/${workflowVisualizerWorkflowId}`;
@@ -98,7 +98,10 @@ export const WorkflowEditActionSendEmail = ({
       }
     };
 
-    if (!isDefined(scopes) || !hasSendScope(connectedAccount, scopes)) {
+    if (
+      connectedAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
+      (!isDefined(scopes) || !hasSendScope(connectedAccount, scopes))
+    ) {
       await triggerApisOAuth(connectedAccount.provider, {
         redirectLocation: redirectUrl,
         loginHint: connectedAccount.handle,
@@ -180,6 +183,7 @@ export const WorkflowEditActionSendEmail = ({
       provider: true,
       scopes: true,
       accountOwnerId: true,
+      connectionParameters: true,
     },
   });
 

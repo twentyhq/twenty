@@ -1,45 +1,52 @@
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
+import { objectFilterDropdownAnyFieldSearchIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownAnyFieldSearchIsSelectedComponentState';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 
 export const useResetFilterDropdown = (componentInstanceId?: string) => {
   const objectFilterDropdownSearchInputCallbackState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       objectFilterDropdownSearchInputComponentState,
       componentInstanceId,
     );
 
   const fieldMetadataItemIdUsedInDropdownCallbackState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       fieldMetadataItemIdUsedInDropdownComponentState,
       componentInstanceId,
     );
 
   const selectedOperandInDropdownCallbackState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       selectedOperandInDropdownComponentState,
       componentInstanceId,
     );
 
   const objectFilterDropdownFilterIsSelectedCallbackState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       objectFilterDropdownFilterIsSelectedComponentState,
       componentInstanceId,
     );
 
+  const objectFilterDropdownAnyFieldSearchIsSelectedCallbackState =
+    useRecoilComponentCallbackState(
+      objectFilterDropdownAnyFieldSearchIsSelectedComponentState,
+      componentInstanceId,
+    );
+
   const objectFilterDropdownIsSelectingCompositeFieldCallbackState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       objectFilterDropdownIsSelectingCompositeFieldComponentState,
       componentInstanceId,
     );
 
   const objectFilterDropdownCurrentRecordFilterCallbackState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       objectFilterDropdownCurrentRecordFilterComponentState,
       componentInstanceId,
     );
@@ -53,6 +60,7 @@ export const useResetFilterDropdown = (componentInstanceId?: string) => {
         set(objectFilterDropdownIsSelectingCompositeFieldCallbackState, false);
         set(fieldMetadataItemIdUsedInDropdownCallbackState, null);
         set(objectFilterDropdownCurrentRecordFilterCallbackState, null);
+        set(objectFilterDropdownAnyFieldSearchIsSelectedCallbackState, false);
       },
     [
       objectFilterDropdownSearchInputCallbackState,
@@ -61,6 +69,7 @@ export const useResetFilterDropdown = (componentInstanceId?: string) => {
       objectFilterDropdownIsSelectingCompositeFieldCallbackState,
       fieldMetadataItemIdUsedInDropdownCallbackState,
       objectFilterDropdownCurrentRecordFilterCallbackState,
+      objectFilterDropdownAnyFieldSearchIsSelectedCallbackState,
     ],
   );
 

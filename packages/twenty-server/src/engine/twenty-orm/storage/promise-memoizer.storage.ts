@@ -1,9 +1,9 @@
-import { Milliseconds } from 'cache-manager';
+import { type Milliseconds } from 'cache-manager';
 import { isDefined } from 'twenty-shared/utils';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
-import { CacheKey } from 'src/engine/twenty-orm/storage/types/cache-key.type';
+import { type CacheKey } from 'src/engine/twenty-orm/storage/types/cache-key.type';
 
 type AsyncFactoryCallback<T> = () => Promise<T | null>;
 

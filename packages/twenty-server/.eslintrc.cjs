@@ -2,9 +2,10 @@ module.exports = {
   plugins: ['@stylistic'],
   extends: ['../../.eslintrc.global.cjs'],
   ignorePatterns: [
-    'src/engine/workspace-manager/demo-objects-prefill-data/**',
-    'src/engine/seeder/data-seeds/**',
-    'src/engine/seeder/metadata-seeds/**',
+    'src/engine/workspace-manager/dev-seeder/data/constants/**',
+    'src/engine/workspace-manager/dev-seeder/data/seeds/**',
+    'src/utils/email-providers.ts',
+    'src/engine/core-modules/i18n/locales/generated/**',
     'src/engine/core-modules/serverless/drivers/constants/base-typescript-project/src/index.ts',
   ],
   overrides: [

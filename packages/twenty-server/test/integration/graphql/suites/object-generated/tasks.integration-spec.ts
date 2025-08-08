@@ -12,7 +12,10 @@ describe('tasksResolver (e2e)', () => {
               node {
                 position
                 title
-                body
+                bodyV2 {
+                  markdown
+                  blocknote
+                }
                 dueAt
                 status
                 id
@@ -29,7 +32,7 @@ describe('tasksResolver (e2e)', () => {
 
     return client
       .post('/graphql')
-      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -49,7 +52,7 @@ describe('tasksResolver (e2e)', () => {
 
           expect(tasks).toHaveProperty('position');
           expect(tasks).toHaveProperty('title');
-          expect(tasks).toHaveProperty('body');
+          expect(tasks).toHaveProperty('bodyV2');
           expect(tasks).toHaveProperty('dueAt');
           expect(tasks).toHaveProperty('status');
           expect(tasks).toHaveProperty('id');

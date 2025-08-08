@@ -4,6 +4,7 @@ const jestConfig = {
   prettierPath: null,
   // to enable logs, comment out the following line
   silent: true,
+  errorOnDeprecated: true,
   clearMocks: true,
   displayName: 'twenty-server',
   rootDir: './',

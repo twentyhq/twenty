@@ -1,12 +1,12 @@
-import { GraphQLFieldResolver } from 'graphql';
+import { type GraphQLFieldResolver } from 'graphql';
 
 import {
-  ObjectRecord,
-  ObjectRecordFilter,
-  ObjectRecordOrderBy,
+  type ObjectRecord,
+  type ObjectRecordFilter,
+  type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
+import { type workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,6 +26,7 @@ export enum ResolverArgsType {
   RestoreMany = 'RestoreMany',
   DestroyMany = 'DestroyMany',
   DestroyOne = 'DestroyOne',
+  MergeMany = 'MergeMany',
 }
 
 export interface FindManyResolverArgs<
@@ -99,6 +100,12 @@ export interface RestoreManyResolverArgs<Filter = any> {
   filter: Filter;
 }
 
+export interface MergeManyResolverArgs {
+  ids: string[];
+  conflictPriorityIndex: number;
+  dryRun?: boolean;
+}
+
 export interface DestroyOneResolverArgs {
   id: string;
 }
@@ -132,6 +139,7 @@ export type ResolverArgs =
   | FindDuplicatesResolverArgs
   | FindManyResolverArgs
   | FindOneResolverArgs
+  | MergeManyResolverArgs
   | RestoreManyResolverArgs
   | RestoreOneResolverArgs
   | UpdateManyResolverArgs

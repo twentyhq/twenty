@@ -1,13 +1,12 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { DataSource, Repository } from 'typeorm';
+import { type DataSource, type Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
+import { type ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
@@ -15,30 +14,27 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import {
   FileUploadService,
-  SignedFilesResult,
+  type SignedFilesResult,
 } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 describe('UserWorkspaceService', () => {
   let service: UserWorkspaceService;
   let userWorkspaceRepository: Repository<UserWorkspace>;
   let userRepository: Repository<User>;
-  let objectMetadataRepository: Repository<ObjectMetadataEntity>;
   let typeORMService: TypeORMService;
   let workspaceInvitationService: WorkspaceInvitationService;
-  let workspaceEventEmitter: WorkspaceEventEmitter;
   let approvedAccessDomainService: ApprovedAccessDomainService;
   let twentyORMGlobalManager: TwentyORMGlobalManager;
   let userRoleService: UserRoleService;
@@ -90,13 +86,6 @@ describe('UserWorkspaceService', () => {
           useValue: {
             invalidateWorkspaceInvitation: jest.fn(),
             findInvitationsByEmail: jest.fn(),
-          },
-        },
-        {
-          provide: WorkspaceEventEmitter,
-          useValue: {
-            emitCustomBatchEvent: jest.fn(),
-            emitDatabaseBatchEvent: jest.fn(),
           },
         },
         {
@@ -155,15 +144,9 @@ describe('UserWorkspaceService', () => {
       getRepositoryToken(UserWorkspace, 'core'),
     );
     userRepository = module.get(getRepositoryToken(User, 'core'));
-    objectMetadataRepository = module.get(
-      getRepositoryToken(ObjectMetadataEntity, 'core'),
-    );
     typeORMService = module.get<TypeORMService>(TypeORMService);
     workspaceInvitationService = module.get<WorkspaceInvitationService>(
       WorkspaceInvitationService,
-    );
-    workspaceEventEmitter = module.get<WorkspaceEventEmitter>(
-      WorkspaceEventEmitter,
     );
     approvedAccessDomainService = module.get<ApprovedAccessDomainService>(
       ApprovedAccessDomainService,
@@ -296,6 +279,37 @@ describe('UserWorkspaceService', () => {
         pictureUrl: undefined,
       });
 
+      expect(userWorkspaceRepository.save).toHaveBeenCalledWith(userWorkspace);
+      expect(result).toEqual(userWorkspace);
+    });
+
+    it("should create a user workspace without a default avatar url if it's a new user with an empty picture url", async () => {
+      const userId = 'user-id';
+      const workspaceId = 'workspace-id';
+      const userWorkspace = { userId, workspaceId } as UserWorkspace;
+
+      jest
+        .spyOn(userWorkspaceRepository, 'create')
+        .mockReturnValue(userWorkspace);
+      jest
+        .spyOn(userWorkspaceRepository, 'save')
+        .mockResolvedValue(userWorkspace);
+
+      const uploadImageFromUrlSpy = jest
+        .spyOn(fileUploadService, 'uploadImageFromUrl')
+        .mockResolvedValue({
+          files: [{ path: 'path/to/file', token: 'token' }],
+        } as SignedFilesResult);
+
+      const result = await service.create({
+        userId,
+        workspaceId,
+        isExistingUser: false,
+        pictureUrl: '',
+      });
+
+      expect(uploadImageFromUrlSpy).not.toHaveBeenCalled();
+
       expect(userWorkspaceRepository.create).toHaveBeenCalledWith({
         userId,
         workspaceId,
@@ -329,9 +343,6 @@ describe('UserWorkspaceService', () => {
           userEmail: 'test@example.com',
         },
       ];
-      const objectMetadata = {
-        nameSingular: 'workspaceMember',
-      } as ObjectMetadataEntity;
       const workspaceMemberRepository = {
         insert: jest.fn(),
         find: jest.fn().mockResolvedValue(workspaceMember),
@@ -344,13 +355,6 @@ describe('UserWorkspaceService', () => {
         .spyOn(mainDataSource, 'query')
         .mockResolvedValueOnce(undefined)
         .mockResolvedValueOnce(workspaceMember);
-      jest
-        .spyOn(objectMetadataRepository, 'findOneOrFail')
-        .mockResolvedValue(objectMetadata);
-      jest
-        .spyOn(workspaceEventEmitter, 'emitDatabaseBatchEvent')
-        .mockImplementation();
-
       jest
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
         .mockResolvedValue(workspaceMemberRepository as any);
@@ -372,28 +376,6 @@ describe('UserWorkspaceService', () => {
         locale: 'en',
         avatarUrl: 'userWorkspace-avatar-url',
       });
-      expect(objectMetadataRepository.findOneOrFail).toHaveBeenCalledWith({
-        where: {
-          nameSingular: 'workspaceMember',
-          workspaceId,
-        },
-      });
-      expect(workspaceEventEmitter.emitDatabaseBatchEvent).toHaveBeenCalledWith(
-        {
-          objectMetadataNameSingular: 'workspaceMember',
-          action: DatabaseEventAction.CREATED,
-          events: [
-            {
-              recordId: workspaceMember[0].id,
-              objectMetadata,
-              properties: {
-                after: workspaceMember[0],
-              },
-            },
-          ],
-          workspaceId,
-        },
-      );
     });
   });
 
@@ -615,7 +597,7 @@ describe('UserWorkspaceService', () => {
       } as unknown as Workspace;
       const user = {
         email,
-        workspaces: [
+        userWorkspaces: [
           {
             workspaceId: workspace1.id,
             workspace: workspace1,
@@ -645,12 +627,14 @@ describe('UserWorkspaceService', () => {
         where: {
           email,
         },
-        relations: [
-          'workspaces',
-          'workspaces.workspace',
-          'workspaces.workspace.workspaceSSOIdentityProviders',
-          'workspaces.workspace.approvedAccessDomains',
-        ],
+        relations: {
+          userWorkspaces: {
+            workspace: {
+              workspaceSSOIdentityProviders: true,
+              approvedAccessDomains: true,
+            },
+          },
+        },
       });
 
       expect(result).toEqual({
@@ -694,7 +678,7 @@ describe('UserWorkspaceService', () => {
 
       const user = {
         email,
-        workspaces: [
+        userWorkspaces: [
           {
             workspaceId: workspace1.id,
             workspace: workspace1,
@@ -727,12 +711,14 @@ describe('UserWorkspaceService', () => {
         where: {
           email,
         },
-        relations: [
-          'workspaces',
-          'workspaces.workspace',
-          'workspaces.workspace.workspaceSSOIdentityProviders',
-          'workspaces.workspace.approvedAccessDomains',
-        ],
+        relations: {
+          userWorkspaces: {
+            workspace: {
+              workspaceSSOIdentityProviders: true,
+              approvedAccessDomains: true,
+            },
+          },
+        },
       });
 
       expect(result).toEqual({
@@ -792,7 +778,7 @@ describe('UserWorkspaceService', () => {
       } as unknown as Workspace;
       const user = {
         id: userId,
-        workspaces: [{ workspace: workspace1 }, { workspace: workspace2 }],
+        userWorkspaces: [{ workspace: workspace1 }, { workspace: workspace2 }],
       } as unknown as User;
 
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
@@ -803,9 +789,9 @@ describe('UserWorkspaceService', () => {
         where: {
           id: userId,
         },
-        relations: ['workspaces', 'workspaces.workspace'],
+        relations: { userWorkspaces: { workspace: true } },
         order: {
-          workspaces: {
+          userWorkspaces: {
             workspace: {
               createdAt: 'ASC',
             },
@@ -850,6 +836,7 @@ describe('UserWorkspaceService', () => {
           userId,
           workspaceId,
         },
+        relations: ['twoFactorAuthenticationMethods'],
       });
       expect(result).toEqual(userWorkspace);
     });

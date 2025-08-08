@@ -34,26 +34,30 @@ export const useUpdateWorkflowVersionTrigger = ({
     options: { computeOutputSchema: boolean } = { computeOutputSchema: true },
   ) => {
     if (!isDefined(workflow.currentVersion)) {
-      throw new Error('Can not update an undefined workflow version.');
-    }
-
-    const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
-
-    if (options.computeOutputSchema) {
-      const outputSchema = (
-        await computeStepOutputSchema({
-          step: updatedTrigger,
-        })
-      )?.data?.computeStepOutputSchema;
-
-      updatedTrigger.settings = {
-        ...updatedTrigger.settings,
-        outputSchema: outputSchema || {},
-      };
+      throw new Error('Cannot find current workflow version');
     }
 
     try {
       setIsUpdatingWorkflow(true);
+
+      const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
+
+      if (options.computeOutputSchema) {
+        const outputSchema = (
+          await computeStepOutputSchema({
+            step: updatedTrigger,
+          })
+        )?.data?.computeStepOutputSchema;
+
+        updatedTrigger.settings = {
+          ...updatedTrigger.settings,
+          outputSchema: outputSchema || {},
+        };
+      }
+
+      if (!isDefined(workflowVersionId)) {
+        throw new Error('Workflow version not found');
+      }
 
       await updateOneWorkflowVersion({
         idToUpdate: workflowVersionId,

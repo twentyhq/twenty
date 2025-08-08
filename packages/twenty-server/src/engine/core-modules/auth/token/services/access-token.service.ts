@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { addMilliseconds } from 'date-fns';
-import { Request } from 'express';
+import { type Request } from 'express';
 import ms from 'ms';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
@@ -11,11 +11,11 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
+import { type AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import {
-  AccessTokenJwtPayload,
-  AuthContext,
+  type AccessTokenJwtPayload,
+  type AuthContext,
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -27,7 +27,7 @@ import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class AccessTokenService {
@@ -136,6 +136,7 @@ export class AccessTokenService {
       apiKey,
       workspace,
       workspaceMemberId,
+      userWorkspace,
       userWorkspaceId,
       authProvider,
     } = await this.jwtStrategy.validate(decoded);
@@ -144,6 +145,7 @@ export class AccessTokenService {
       user,
       apiKey,
       workspace,
+      userWorkspace,
       workspaceMemberId,
       userWorkspaceId,
       authProvider,

@@ -2,8 +2,7 @@ import { useLinksField } from '@/object-record/record-field/meta-types/hooks/use
 import { LinksFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/LinksFieldMenuItem';
 import { getFieldLinkDefinedLinks } from '@/object-record/record-field/meta-types/input/utils/getFieldLinkDefinedLinks';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useMemo } from 'react';
 import { absoluteUrlSchema } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -41,7 +40,7 @@ export const LinksFieldInput = ({
   const getShowPrimaryIcon = (index: number) => index === 0 && links.length > 1;
   const getShowSetAsPrimaryButton = (index: number) => index > 0;
 
-  const setIsFieldInError = useSetRecoilComponentStateV2(
+  const setIsFieldInError = useSetRecoilComponentState(
     recordFieldInputIsFieldInErrorComponentState,
   );
 
@@ -85,7 +84,6 @@ export const LinksFieldInput = ({
           url={link.url}
         />
       )}
-      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
     />
   );
 };

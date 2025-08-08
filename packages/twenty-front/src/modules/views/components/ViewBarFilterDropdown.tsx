@@ -6,8 +6,9 @@ import { useVectorSearchFilterActions } from '@/views/hooks/useVectorSearchFilte
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewBarFilterDropdownContent } from '@/views/components/ViewBarFilterDropdownContent';
+import { useClearVectorSearchInput } from '@/views/hooks/useClearVectorSearchInput';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewBarFilterButton } from './ViewBarFilterButton';
 
@@ -16,9 +17,11 @@ export const ViewBarFilterDropdown = () => {
   const { removeEmptyVectorSearchFilter } = useVectorSearchFilterActions();
   const { removeRecordFilter } = useRemoveRecordFilter();
 
-  const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValueV2(
+  const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValue(
     objectFilterDropdownCurrentRecordFilterComponentState,
   );
+
+  const { clearVectorSearchInput } = useClearVectorSearchInput();
 
   const handleDropdownClickOutside = () => {
     const recordFilterIsEmpty =
@@ -37,6 +40,7 @@ export const ViewBarFilterDropdown = () => {
   const handleDropdownClose = () => {
     resetFilterDropdown();
     removeEmptyVectorSearchFilter();
+    clearVectorSearchInput();
   };
 
   const handleDropdownOpen = () => {

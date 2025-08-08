@@ -1,20 +1,25 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { AddressObject, ParsedMail } from 'mailparser';
+import { type AddressObject, type ParsedMail } from 'mailparser';
 // @ts-expect-error legacy noImplicitAny
 import planer from 'planer';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
 import { ImapFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-fetch-by-batch.service';
-import { MessageFetchResult } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-processor.service';
-import { EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
-import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { type MessageFetchResult } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-processor.service';
+import { type EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
+import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 import { sanitizeString } from 'src/modules/messaging/message-import-manager/utils/sanitize-string.util';
 
 type AddressType = 'from' | 'to' | 'cc' | 'bcc';
+
+type ConnectedAccountType = Pick<
+  ConnectedAccountWorkspaceEntity,
+  'id' | 'provider' | 'handle' | 'handleAliases' | 'connectionParameters'
+>;
 
 @Injectable()
 export class ImapGetMessagesService {
@@ -24,36 +29,40 @@ export class ImapGetMessagesService {
 
   async getMessages(
     messageIds: string[],
-    connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'id' | 'provider' | 'handle' | 'handleAliases' | 'connectionParameters'
-    >,
+    connectedAccount: ConnectedAccountType,
   ): Promise<MessageWithParticipants[]> {
     if (!messageIds.length) {
       return [];
     }
 
-    const { messageIdsByBatch, batchResults } =
-      await this.fetchByBatchService.fetchAllByBatches(
-        messageIds,
-        connectedAccount,
-      );
+    const { batchResults } = await this.fetchByBatchService.fetchAllByBatches(
+      messageIds,
+      connectedAccount,
+    );
 
     this.logger.log(`IMAP fetch completed`);
 
-    const messages = batchResults.flatMap((batchResult, index) => {
-      return this.formatBatchResultAsMessages(
-        messageIdsByBatch[index],
-        batchResult,
-        connectedAccount,
-      );
-    });
+    const messages = this.formatBatchResponsesAsMessages(
+      batchResults,
+      connectedAccount,
+    );
 
     return messages;
   }
 
-  private formatBatchResultAsMessages(
-    messageIds: string[],
+  public formatBatchResponsesAsMessages(
+    batchResults: MessageFetchResult[][],
+    connectedAccount: Pick<
+      ConnectedAccountWorkspaceEntity,
+      'handle' | 'handleAliases'
+    >,
+  ): MessageWithParticipants[] {
+    return batchResults.flatMap((batchResult) => {
+      return this.formatBatchResponseAsMessages(batchResult, connectedAccount);
+    });
+  }
+
+  private formatBatchResponseAsMessages(
     batchResults: MessageFetchResult[],
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
@@ -104,12 +113,13 @@ export class ImapGetMessagesService {
 
     const direction = computeMessageDirection(fromHandle, connectedAccount);
     const text = sanitizeString(textWithoutReplyQuotations);
+    const subject = sanitizeString(parsed.subject || '');
 
     return {
       externalId: messageId,
       messageThreadExternalId: threadId || messageId,
       headerMessageId: parsed.messageId || messageId,
-      subject: parsed.subject || '',
+      subject: subject,
       text: text,
       receivedAt: parsed.date || new Date(),
       direction: direction,
@@ -199,9 +209,11 @@ export class ImapGetMessagesService {
     if (addressObject && 'value' in addressObject) {
       for (const addr of addressObject.value) {
         if (addr.address) {
+          const name = sanitizeString(addr.name);
+
           addresses.push({
             address: addr.address,
-            name: addr.name || '',
+            name: name,
           });
         }
       }

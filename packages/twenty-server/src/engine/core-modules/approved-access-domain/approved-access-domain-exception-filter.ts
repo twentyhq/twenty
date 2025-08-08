@@ -1,4 +1,6 @@
-import { Catch, ExceptionFilter } from '@nestjs/common';
+import { Catch, type ExceptionFilter } from '@nestjs/common';
+
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
   ApprovedAccessDomainException,
@@ -17,15 +19,9 @@ export class ApprovedAccessDomainExceptionFilter implements ExceptionFilter {
       case ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID:
       case ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_VALIDATED:
       case ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_MUST_BE_A_COMPANY_DOMAIN:
-        throw new ForbiddenError(exception.message, {
-          extensions: {
-            userFriendlyMessage: exception.userFriendlyMessage,
-          },
-        });
+        throw new ForbiddenError(exception);
       default: {
-        const _exhaustiveCheck: never = exception.code;
-
-        throw exception;
+        assertUnreachable(exception.code);
       }
     }
   }

@@ -1,6 +1,6 @@
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
-import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -8,7 +8,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { logError } from '~/utils/logError';
 
 const StyledComboInputContainer = styled.div`
@@ -109,16 +109,21 @@ export const NameFields = ({
     currentWorkspaceMember,
   ]);
 
+  const firstNameTextInputId = `${currentWorkspaceMember?.id}-first-name`;
+  const lastNameTextInputId = `${currentWorkspaceMember?.id}-last-name`;
+
   return (
     <StyledComboInputContainer>
-      <TextInput
+      <SettingsTextInput
+        instanceId={firstNameTextInputId}
         label={t`First Name`}
         value={firstName}
         onChange={setFirstName}
         placeholder="Tim"
         fullWidth
       />
-      <TextInput
+      <SettingsTextInput
+        instanceId={lastNameTextInputId}
         label={t`Last Name`}
         value={lastName}
         onChange={setLastName}

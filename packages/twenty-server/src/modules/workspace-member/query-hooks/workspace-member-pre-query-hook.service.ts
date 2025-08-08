@@ -2,22 +2,18 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { type ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 
 @Injectable()
 export class WorkspaceMemberPreQueryHookService {
-  constructor(
-    private readonly permissionsService: PermissionsService,
-    private readonly featureFlagService: FeatureFlagService,
-  ) {}
+  constructor(private readonly permissionsService: PermissionsService) {}
 
   async validateWorkspaceMemberUpdatePermissionOrThrow({
     userWorkspaceId,
@@ -30,7 +26,7 @@ export class WorkspaceMemberPreQueryHookService {
     workspaceMemberId?: string;
     targettedWorkspaceMemberId?: string;
     workspaceId: string;
-    apiKey?: ApiKeyWorkspaceEntity | null;
+    apiKey?: ApiKey | null;
   }) {
     if (isDefined(apiKey)) {
       return;
@@ -54,8 +50,8 @@ export class WorkspaceMemberPreQueryHookService {
       await this.permissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
         workspaceId,
-        setting: SettingPermissionType.WORKSPACE_MEMBERS,
-        isExecutedByApiKey: isDefined(apiKey),
+        setting: PermissionFlagType.WORKSPACE_MEMBERS,
+        apiKeyId: apiKey ?? undefined,
       })
     ) {
       return;

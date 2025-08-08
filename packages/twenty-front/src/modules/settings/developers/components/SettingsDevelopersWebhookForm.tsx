@@ -8,8 +8,8 @@ import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode
 import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -79,7 +79,7 @@ export const SettingsDevelopersWebhookForm = ({
     handleSave,
     updateOperation,
     removeOperation,
-    deleteWebhook,
+    handleDelete,
     isCreationMode,
     error,
   } = useWebhookForm({ webhookId, mode });
@@ -114,6 +114,10 @@ export const SettingsDevelopersWebhookForm = ({
     { label: 'Updated', value: 'updated', Icon: IconBox },
     { label: 'Deleted', value: 'deleted', Icon: IconTrash },
   ];
+
+  const descriptionTextAreaId = `${webhookId}-description`;
+  const targetUrlTextInputId = `${webhookId}-target-url`;
+  const secretTextInputId = `${webhookId}-secret`;
 
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
@@ -155,7 +159,8 @@ export const SettingsDevelopersWebhookForm = ({
                 fieldState: { error },
               }) => {
                 return (
-                  <TextInput
+                  <SettingsTextInput
+                    instanceId={targetUrlTextInputId}
                     placeholder={t`https://example.com/webhook`}
                     value={value}
                     onChange={onChange}
@@ -177,6 +182,7 @@ export const SettingsDevelopersWebhookForm = ({
               control={formConfig.control}
               render={({ field: { onChange, value } }) => (
                 <TextArea
+                  textAreaId={descriptionTextAreaId}
                   placeholder={t`Write a description`}
                   minRows={4}
                   value={value || ''}
@@ -241,7 +247,8 @@ export const SettingsDevelopersWebhookForm = ({
               name="secret"
               control={formConfig.control}
               render={({ field: { onChange, value } }) => (
-                <TextInput
+                <SettingsTextInput
+                  instanceId={secretTextInputId}
                   placeholder={t`Secret (optional)`}
                   value={value || ''}
                   onChange={onChange}
@@ -278,7 +285,7 @@ export const SettingsDevelopersWebhookForm = ({
               Please type "yes" to confirm you want to delete this webhook.
             </Trans>
           }
-          onConfirmClick={deleteWebhook}
+          onConfirmClick={handleDelete}
           confirmButtonText={t`Delete`}
         />
       )}

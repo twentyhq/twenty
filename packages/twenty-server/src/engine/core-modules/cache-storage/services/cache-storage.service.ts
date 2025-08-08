@@ -1,8 +1,8 @@
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 
-import { Milliseconds } from 'cache-manager';
-import { RedisCache } from 'cache-manager-redis-yet';
+import { type Milliseconds } from 'cache-manager';
+import { type RedisCache } from 'cache-manager-redis-yet';
 
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 
@@ -120,6 +120,29 @@ export class CacheStorageService {
 
       cursor = nextCursor;
     } while (cursor !== 0);
+  }
+
+  async acquireLock(key: string, ttl = 1000): Promise<boolean> {
+    if (!this.isRedisCache()) {
+      throw new Error('acquireLock is only supported with Redis cache');
+    }
+
+    const redisClient = (this.cache as RedisCache).store.client;
+
+    const result = await redisClient.set(this.getKey(key), 'lock', {
+      NX: true,
+      PX: ttl,
+    });
+
+    return result === 'OK';
+  }
+
+  async releaseLock(key: string): Promise<void> {
+    if (!this.isRedisCache()) {
+      throw new Error('releaseLock is only supported with Redis cache');
+    }
+
+    await this.del(key);
   }
 
   private isRedisCache() {

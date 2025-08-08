@@ -17,10 +17,9 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
-import { dropdownPlacementComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownPlacementComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { IconForbid, IconPencil } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
@@ -56,17 +55,17 @@ export const RecordDetailRelationSectionDropdownToOne = () => {
 
   const { closeDropdown } = useCloseDropdown();
 
-  const dropdownPlacement = useRecoilComponentValueV2(
-    dropdownPlacementComponentStateV2,
+  const dropdownPlacement = useRecoilComponentValue(
+    dropdownPlacementComponentState,
     dropdownId,
   );
 
-  const setSingleRecordPickerSearchFilter = useSetRecoilComponentStateV2(
+  const setSingleRecordPickerSearchFilter = useSetRecoilComponentState(
     singleRecordPickerSearchFilterComponentState,
     dropdownId,
   );
 
-  const setSingleRecordPickerSelectedId = useSetRecoilComponentStateV2(
+  const setSingleRecordPickerSelectedId = useSetRecoilComponentState(
     singleRecordPickerSelectedIdComponentState,
     dropdownId,
   );
@@ -117,37 +116,35 @@ export const RecordDetailRelationSectionDropdownToOne = () => {
     CoreObjectNameSingular.WorkspaceMember;
 
   return (
-    <DropdownScope dropdownScopeId={dropdownId}>
-      <Dropdown
-        dropdownId={dropdownId}
-        dropdownPlacement="left-start"
-        onClose={handleCloseRelationPickerDropdown}
-        onOpen={handleOpenRelationPickerDropdown}
-        clickableComponent={
-          <LightIconButton
-            className="displayOnHover"
-            Icon={IconPencil}
-            accent="tertiary"
-          />
-        }
-        dropdownComponents={
-          <SingleRecordPicker
-            focusId={dropdownId}
-            componentInstanceId={dropdownId}
-            EmptyIcon={IconForbid}
-            onRecordSelected={handleRelationPickerEntitySelected}
-            objectNameSingular={relationObjectMetadataNameSingular}
-            recordPickerInstanceId={dropdownId}
-            onCancel={() => closeDropdown(dropdownId)}
-            onCreate={shouldAllowCreateNew ? handleCreateNew : undefined}
-            layoutDirection={
-              dropdownPlacement?.includes('end')
-                ? 'search-bar-on-bottom'
-                : 'search-bar-on-top'
-            }
-          />
-        }
-      />
-    </DropdownScope>
+    <Dropdown
+      dropdownId={dropdownId}
+      dropdownPlacement="left-start"
+      onClose={handleCloseRelationPickerDropdown}
+      onOpen={handleOpenRelationPickerDropdown}
+      clickableComponent={
+        <LightIconButton
+          className="displayOnHover"
+          Icon={IconPencil}
+          accent="tertiary"
+        />
+      }
+      dropdownComponents={
+        <SingleRecordPicker
+          focusId={dropdownId}
+          componentInstanceId={dropdownId}
+          EmptyIcon={IconForbid}
+          onRecordSelected={handleRelationPickerEntitySelected}
+          objectNameSingular={relationObjectMetadataNameSingular}
+          recordPickerInstanceId={dropdownId}
+          onCancel={() => closeDropdown(dropdownId)}
+          onCreate={shouldAllowCreateNew ? handleCreateNew : undefined}
+          layoutDirection={
+            dropdownPlacement?.includes('end')
+              ? 'search-bar-on-bottom'
+              : 'search-bar-on-top'
+          }
+        />
+      }
+    />
   );
 };

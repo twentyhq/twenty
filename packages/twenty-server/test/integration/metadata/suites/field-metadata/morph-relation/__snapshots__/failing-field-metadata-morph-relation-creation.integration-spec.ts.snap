@@ -1,0 +1,195 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Field metadata morph relation creation should fail relation MANY_TO_ONE when targetFieldLabel conflicts with an existing field on target object metadata id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "Name not available",
+      "userFriendlyMessage": "This name is not available as it is already used by another field",
+    },
+    "message": "Name "collisionfieldlabel" is not available as it is already used by another field",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata morph relation creation should fail relation MANY_TO_ONE when targetFieldLabel contains only whitespace 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "Invalid label",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Invalid label: "   "",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata morph relation creation should fail relation MANY_TO_ONE when targetFieldLabel exceeds maximum length 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "Exceeds max length",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Name is too long: it exceeds the 63 characters limit.",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata morph relation creation should fail relation MANY_TO_ONE when targetFieldLabel is empty 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "Input too short",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Input is too short: """,
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata morph relation creation should fail relation MANY_TO_ONE when targetObjectMetadataId is unknown 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Target object metadata does not exist in the object metadata maps",
+  },
+]
+`;
+
+exports[`Field metadata morph relation creation should fail relation MANY_TO_ONE when type is a wrong value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Relation creation payload is invalid: type must be one of the following values: ONE_TO_MANY, MANY_TO_ONE",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata morph relation creation should fail relation MANY_TO_ONE when type is not provided 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Relation creation payload is invalid: type must be one of the following values: ONE_TO_MANY, MANY_TO_ONE",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata morph relation creation should fail relation ONE_TO_MANY when targetFieldLabel conflicts with an existing field on target object metadata id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "Name not available",
+      "userFriendlyMessage": "This name is not available as it is already used by another field",
+    },
+    "message": "Name "collisionfieldlabel" is not available as it is already used by another field",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata morph relation creation should fail relation ONE_TO_MANY when targetFieldLabel contains only whitespace 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "Invalid label",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Invalid label: "   "",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata morph relation creation should fail relation ONE_TO_MANY when targetFieldLabel exceeds maximum length 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "Exceeds max length",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Name is too long: it exceeds the 63 characters limit.",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata morph relation creation should fail relation ONE_TO_MANY when targetFieldLabel is empty 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "Input too short",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Input is too short: """,
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata morph relation creation should fail relation ONE_TO_MANY when targetObjectMetadataId is unknown 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Target object metadata does not exist in the object metadata maps",
+  },
+]
+`;
+
+exports[`Field metadata morph relation creation should fail relation ONE_TO_MANY when type is a wrong value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Relation creation payload is invalid: type must be one of the following values: ONE_TO_MANY, MANY_TO_ONE",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata morph relation creation should fail relation ONE_TO_MANY when type is not provided 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Relation creation payload is invalid: type must be one of the following values: ONE_TO_MANY, MANY_TO_ONE",
+    "name": "UserInputError",
+  },
+]
+`;

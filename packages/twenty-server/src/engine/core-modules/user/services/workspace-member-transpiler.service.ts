@@ -4,15 +4,15 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { DeletedWorkspaceMember } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
-import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { type UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { type DeletedWorkspaceMember } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
+import { type WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
+import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { fromRoleEntitiesToRoleDtos } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 import {
-  WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberTimeFormatEnum,
-  WorkspaceMemberWorkspaceEntity,
+  type WorkspaceMemberDateFormatEnum,
+  type WorkspaceMemberTimeFormatEnum,
+  type WorkspaceMemberWorkspaceEntity,
 } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export type ToWorkspaceMemberDtoArgs = {
@@ -60,6 +60,7 @@ export class WorkspaceMemberTranspiler {
       timeFormat,
       timeZone,
       dateFormat,
+      calendarStartDay,
     } = workspaceMemberEntity;
 
     const avatarUrl = this.generateSignedAvatarUrl({
@@ -84,6 +85,7 @@ export class WorkspaceMemberTranspiler {
       timeFormat: timeFormat as WorkspaceMemberTimeFormatEnum,
       timeZone,
       roles,
+      calendarStartDay,
     } satisfies WorkspaceMember;
   }
 

@@ -1,5 +1,5 @@
-import { act } from 'react-dom/test-utils';
 import { renderHook } from '@testing-library/react';
+import { act } from 'react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { CurrentUser, currentUserState } from '@/auth/states/currentUserState';
@@ -8,7 +8,10 @@ import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '~/generated/graphql';
 
 const tokenPair = {
-  accessToken: { token: 'accessToken', expiresAt: 'expiresAt' },
+  accessOrWorkspaceAgnosticToken: {
+    token: 'accessToken',
+    expiresAt: 'expiresAt',
+  },
   refreshToken: { token: 'refreshToken', expiresAt: 'expiresAt' },
 };
 const currentUser = {

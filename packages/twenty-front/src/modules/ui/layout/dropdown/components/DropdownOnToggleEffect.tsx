@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const DropdownOnToggleEffect = ({
   onDropdownClose,
@@ -9,7 +10,8 @@ export const DropdownOnToggleEffect = ({
   onDropdownClose?: () => void;
   onDropdownOpen?: () => void;
 }) => {
-  const { isDropdownOpen } = useDropdown();
+  const isDropdownOpen = useRecoilComponentValue(isDropdownOpenComponentState);
+
   const [currentIsDropdownOpen, setCurrentIsDropdownOpen] =
     useState(isDropdownOpen);
 

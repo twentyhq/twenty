@@ -8,7 +8,7 @@ import { visibleTableColumnsComponentSelector } from '@/object-record/record-tab
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import {
@@ -24,6 +24,7 @@ import { ColumnDefinition } from '../../types/ColumnDefinition';
 
 export type RecordTableColumnHeadDropdownMenuProps = {
   column: ColumnDefinition<FieldMetadata>;
+  objectMetadataId: string;
 };
 
 const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
@@ -32,13 +33,14 @@ const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
 
 export const RecordTableColumnHeadDropdownMenu = ({
   column,
+  objectMetadataId,
 }: RecordTableColumnHeadDropdownMenuProps) => {
   const { t } = useLingui();
 
   const { toggleScrollXWrapper, toggleScrollYWrapper } =
     useToggleScrollWrapper();
 
-  const visibleTableColumns = useRecoilComponentValueV2(
+  const visibleTableColumns = useRecoilComponentValue(
     visibleTableColumnsComponentSelector,
   );
 
@@ -52,7 +54,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
     column.fieldMetadataId !== lastVisibleColumn?.fieldMetadataId && canMove;
 
   const { handleColumnVisibilityChange, handleMoveTableColumn } =
-    useTableColumns();
+    useTableColumns({ objectMetadataId });
 
   const dropdownId = column.fieldMetadataId + '-header';
 
@@ -84,7 +86,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
     handleColumnVisibilityChange(column);
   };
 
-  const onToggleColumnSort = useRecoilComponentValueV2(
+  const onToggleColumnSort = useRecoilComponentValue(
     onToggleColumnSortComponentState,
   );
 
