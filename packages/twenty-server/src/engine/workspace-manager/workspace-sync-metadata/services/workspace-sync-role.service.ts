@@ -28,19 +28,19 @@ export class WorkspaceSyncRoleService {
 
     const roleRepository = manager.getRepository(RoleEntity);
 
-    const originalRoleCollection = await roleRepository.find({
+    const existingRoleEntities = await roleRepository.find({
       where: { workspaceId: context.workspaceId },
     });
 
     const standardRoleMetadataCollection = this.standardRoleFactory.create(
       standardRoleDefinitions,
       context,
-      originalRoleCollection,
+      existingRoleEntities,
     );
 
     const roleComparatorResults = this.workspaceRoleComparator.compare(
       standardRoleMetadataCollection,
-      originalRoleCollection,
+      existingRoleEntities,
     );
 
     for (const roleComparatorResult of roleComparatorResults) {
