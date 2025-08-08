@@ -26,7 +26,7 @@ import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.
 import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
 import {
   generateViewSortExceptionMessage,
-  ViewSortExceptionMessageKey,
+  ViewSortExceptionMessageKey
 } from 'src/engine/core-modules/view/exceptions/view-sort.exception';
 
 describe('View Sort Resolver', () => {
@@ -220,7 +220,10 @@ describe('View Sort Resolver', () => {
       assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
-        ViewSortExceptionMessage.VIEW_SORT_NOT_FOUND,
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_SORT_ID,
+        ),
       );
     });
   });

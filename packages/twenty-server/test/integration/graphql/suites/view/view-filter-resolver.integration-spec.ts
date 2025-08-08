@@ -23,7 +23,7 @@ import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.
 import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import {
   ViewFilterExceptionMessageKey,
-  generateViewFilterExceptionMessage,
+  generateViewFilterExceptionMessage
 } from 'src/engine/core-modules/view/exceptions/view-filter.exception';
 
 describe('View Filter Resolver', () => {
@@ -256,7 +256,10 @@ describe('View Filter Resolver', () => {
       assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
-        ViewFilterExceptionMessage.VIEW_FILTER_NOT_FOUND,
+        generateViewFilterExceptionMessage(
+          ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_FILTER_ID,
+        ),
       );
     });
   });

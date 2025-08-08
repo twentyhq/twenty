@@ -433,7 +433,10 @@ describe('View Filter Group Resolver', () => {
       assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
-        ViewFilterGroupExceptionMessage.VIEW_FILTER_GROUP_NOT_FOUND,
+        generateViewFilterGroupExceptionMessage(
+          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_FILTER_GROUP_ID,
+        ),
       );
     });
   });

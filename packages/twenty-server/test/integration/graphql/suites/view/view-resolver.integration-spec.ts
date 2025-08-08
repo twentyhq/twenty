@@ -29,7 +29,7 @@ import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-r
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import {
   ViewExceptionMessageKey,
-  generateViewExceptionMessage,
+  generateViewExceptionMessage
 } from 'src/engine/core-modules/view/exceptions/view.exception';
 
 describe('View Resolver', () => {
@@ -282,7 +282,10 @@ describe('View Resolver', () => {
       assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
-        ViewExceptionMessage.VIEW_NOT_FOUND,
+        generateViewExceptionMessage(
+          ViewExceptionMessageKey.VIEW_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_ID,
+        ),
       );
     });
   });

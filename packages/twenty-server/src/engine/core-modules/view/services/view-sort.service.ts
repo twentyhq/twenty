@@ -10,7 +10,7 @@ import {
   ViewSortExceptionCode,
   ViewSortExceptionMessageKey,
   generateViewSortExceptionMessage,
-  generateViewSortUserFriendlyExceptionMessage
+  generateViewSortUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-sort.exception';
 
 @Injectable()

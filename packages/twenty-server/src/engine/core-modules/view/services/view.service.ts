@@ -10,7 +10,7 @@ import {
   ViewExceptionCode,
   ViewExceptionMessageKey,
   generateViewExceptionMessage,
-  generateViewUserFriendlyExceptionMessage
+  generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
 
 @Injectable()

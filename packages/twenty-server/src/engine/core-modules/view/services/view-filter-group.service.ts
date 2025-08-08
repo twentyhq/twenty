@@ -10,7 +10,7 @@ import {
   ViewFilterGroupExceptionCode,
   ViewFilterGroupExceptionMessageKey,
   generateViewFilterGroupExceptionMessage,
-  generateViewFilterGroupUserFriendlyExceptionMessage
+  generateViewFilterGroupUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';
 
 @Injectable()

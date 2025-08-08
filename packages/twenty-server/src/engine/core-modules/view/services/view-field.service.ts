@@ -10,7 +10,7 @@ import {
   ViewFieldExceptionCode,
   ViewFieldExceptionMessageKey,
   generateViewFieldExceptionMessage,
-  generateViewFieldUserFriendlyExceptionMessage
+  generateViewFieldUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
 
 @Injectable()

@@ -25,7 +25,7 @@ import {
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   generateViewGroupExceptionMessage,
-  ViewGroupExceptionMessageKey,
+  ViewGroupExceptionMessageKey
 } from 'src/engine/core-modules/view/exceptions/view-group.exception';
 
 describe('View Group Resolver', () => {
@@ -248,7 +248,10 @@ describe('View Group Resolver', () => {
       assertGraphQLErrorResponse(
         response,
         ErrorCode.NOT_FOUND,
-        ViewGroupExceptionMessage.VIEW_GROUP_NOT_FOUND,
+        generateViewGroupExceptionMessage(
+          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_GROUP_ID,
+        ),
       );
     });
   });
