@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import { EntityManager } from 'typeorm';
+import { type EntityManager } from 'typeorm';
 
 import {
-  WorkspaceHealthColumnIssue,
+  type WorkspaceHealthColumnIssue,
   WorkspaceHealthIssueType,
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-issue.interface';
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationFieldFactory } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
 
 import { AbstractWorkspaceFixer } from './abstract-workspace.fixer';
@@ -23,7 +23,7 @@ export class WorkspaceNullableFixer extends AbstractWorkspaceFixer<WorkspaceHeal
   }
 
   async createWorkspaceMigrations(
-    manager: EntityManager,
+    _manager: EntityManager,
     objectMetadataCollection: ObjectMetadataEntity[],
     issues: WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT>[],
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {

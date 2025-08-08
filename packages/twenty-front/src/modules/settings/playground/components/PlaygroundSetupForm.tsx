@@ -80,7 +80,7 @@ export const PlaygroundSetupForm = () => {
       }
 
       return true;
-    } catch (error) {
+    } catch {
       throw new Error(t`Invalid API key`);
     }
   };

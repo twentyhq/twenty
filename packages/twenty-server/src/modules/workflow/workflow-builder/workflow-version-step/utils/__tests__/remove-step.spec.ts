@@ -1,10 +1,10 @@
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/remove-step';
 import {
-  WorkflowAction,
+  type WorkflowAction,
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
-  WorkflowTrigger,
+  type WorkflowTrigger,
   WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
@@ -240,6 +240,17 @@ describe('removeStep', () => {
       ...mockTrigger,
       nextStepIds: [],
     });
+    expect(result.updatedSteps).toEqual([]);
+  });
+
+  it('should remove trigger if steps are null', () => {
+    const result = removeStep({
+      existingTrigger: { ...mockTrigger, nextStepIds: [] },
+      existingSteps: null,
+      stepIdToDelete: 'trigger',
+    });
+
+    expect(result.updatedTrigger).toEqual(null);
     expect(result.updatedSteps).toEqual([]);
   });
 });

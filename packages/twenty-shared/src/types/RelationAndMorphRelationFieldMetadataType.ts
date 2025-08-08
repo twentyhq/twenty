@@ -1,4 +1,4 @@
-import { FieldMetadataType } from './FieldMetadataType';
+import { type FieldMetadataType } from './FieldMetadataType';
 
 export type RelationAndMorphRelationFieldMetadataType =
   | FieldMetadataType.RELATION

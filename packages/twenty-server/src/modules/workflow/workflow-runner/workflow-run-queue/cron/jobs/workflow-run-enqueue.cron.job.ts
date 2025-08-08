@@ -22,7 +22,7 @@ import {
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import {
   RunWorkflowJob,
-  RunWorkflowJobData,
+  type RunWorkflowJobData,
 } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
 import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
 

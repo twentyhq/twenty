@@ -15,7 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/core-modules/view/dtos/inputs/update-view.input';
-import { ViewDTO } from 'src/engine/core-modules/view/dtos/view.dto';
+import { type ViewDTO } from 'src/engine/core-modules/view/dtos/view.dto';
 import { ViewRestApiExceptionFilter } from 'src/engine/core-modules/view/filters/view-rest-api-exception.filter';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';

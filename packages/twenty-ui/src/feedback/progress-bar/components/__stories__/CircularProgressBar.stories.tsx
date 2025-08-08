@@ -1,5 +1,5 @@
-import { Meta, StoryObj } from '@storybook/react';
-import { CatalogDecorator, CatalogStory } from '@ui/testing';
+import { type Meta, type StoryObj } from '@storybook/react';
+import { CatalogDecorator, type CatalogStory } from '@ui/testing';
 
 import { CircularProgressBar } from '../CircularProgressBar';
 import { ComponentDecorator } from '@ui/testing/decorators/ComponentDecorator';

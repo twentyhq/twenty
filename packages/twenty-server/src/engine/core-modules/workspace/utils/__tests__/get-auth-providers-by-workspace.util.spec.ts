@@ -1,9 +1,9 @@
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   IdentityProviderType,
   SSOIdentityProviderStatus,
-  WorkspaceSSOIdentityProvider,
+  type WorkspaceSSOIdentityProvider,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
 describe('getAuthProvidersByWorkspace', () => {

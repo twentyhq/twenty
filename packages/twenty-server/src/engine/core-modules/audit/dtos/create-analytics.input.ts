@@ -10,7 +10,7 @@ import {
 import GraphQLJSON from 'graphql-type-json';
 
 import { TrackEventName } from 'src/engine/core-modules/audit/types/events.type';
-import { PageviewProperties } from 'src/engine/core-modules/audit/utils/events/pageview/pageview';
+import { type PageviewProperties } from 'src/engine/core-modules/audit/utils/events/pageview/pageview';
 
 enum AnalyticsType {
   PAGEVIEW = 'pageview',

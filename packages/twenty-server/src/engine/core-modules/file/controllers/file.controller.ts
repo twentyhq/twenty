@@ -34,7 +34,7 @@ export class FileController {
   @Get('*/:filename')
   @UseGuards(PublicEndpointGuard)
   async getFile(
-    @Param() params: string[],
+    @Param() _params: string[],
     @Res() res: Response,
     @Req() req: Request,
   ) {

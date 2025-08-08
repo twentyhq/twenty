@@ -1,4 +1,4 @@
-import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 
 export const messagingGetMessagesServiceGetMessages = [
   {

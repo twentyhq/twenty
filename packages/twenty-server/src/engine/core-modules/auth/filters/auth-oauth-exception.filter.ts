@@ -1,6 +1,10 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+import {
+  type ArgumentsHost,
+  Catch,
+  type ExceptionFilter,
+} from '@nestjs/common';
 
-import { Response } from 'express';
+import { type Response } from 'express';
 
 import {
   AuthException,

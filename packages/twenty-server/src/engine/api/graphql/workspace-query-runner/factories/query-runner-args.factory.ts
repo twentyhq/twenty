@@ -4,28 +4,28 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  ObjectRecord,
-  ObjectRecordFilter,
+  type ObjectRecord,
+  type ObjectRecordFilter,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
+import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import {
-  CreateManyResolverArgs,
-  CreateOneResolverArgs,
-  FindDuplicatesResolverArgs,
-  FindManyResolverArgs,
-  FindOneResolverArgs,
-  MergeManyResolverArgs,
-  ResolverArgs,
+  type CreateManyResolverArgs,
+  type CreateOneResolverArgs,
+  type FindDuplicatesResolverArgs,
+  type FindManyResolverArgs,
+  type FindOneResolverArgs,
+  type MergeManyResolverArgs,
+  type ResolverArgs,
   ResolverArgsType,
-  UpdateManyResolverArgs,
-  UpdateOneResolverArgs,
+  type UpdateManyResolverArgs,
+  type UpdateOneResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 @Injectable()
 export class QueryRunnerArgsFactory {

@@ -1,12 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { HealthIndicatorResult, HealthIndicatorStatus } from '@nestjs/terminus';
+import {
+  type HealthIndicatorResult,
+  type HealthIndicatorStatus,
+} from '@nestjs/terminus';
 
 import { Queue } from 'bullmq';
 
 import { HEALTH_INDICATORS } from 'src/engine/core-modules/admin-panel/constants/health-indicators.constants';
-import { AdminPanelHealthServiceData } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-health-service-data.dto';
-import { QueueMetricsData } from 'src/engine/core-modules/admin-panel/dtos/queue-metrics-data.dto';
-import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
+import { type AdminPanelHealthServiceData } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-health-service-data.dto';
+import { type QueueMetricsData } from 'src/engine/core-modules/admin-panel/dtos/queue-metrics-data.dto';
+import { type SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
 import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum';
 import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
@@ -15,8 +18,8 @@ import { ConnectedAccountHealth } from 'src/engine/core-modules/health/indicator
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
 import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/redis.health';
 import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
-import { WorkerQueueHealth } from 'src/engine/core-modules/health/types/worker-queue-health.type';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type WorkerQueueHealth } from 'src/engine/core-modules/health/types/worker-queue-health.type';
+import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
 @Injectable()

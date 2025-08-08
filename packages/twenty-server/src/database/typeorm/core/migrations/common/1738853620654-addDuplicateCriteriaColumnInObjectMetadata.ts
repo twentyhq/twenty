@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddDuplicateCriteriaColumnInObjectMetadata1738853620654
   implements MigrationInterface

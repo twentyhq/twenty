@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class SsoMissingMigration1733318043626 implements MigrationInterface {
   name = 'SsoMissingMigration1733318043626';

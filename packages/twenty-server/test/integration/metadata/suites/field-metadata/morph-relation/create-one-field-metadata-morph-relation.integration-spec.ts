@@ -2,7 +2,7 @@ import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createMorphRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-morph-relation-between-objects.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { EachTestingContext } from 'twenty-shared/testing';
+import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -138,10 +138,15 @@ describe('createOne FieldMetadataService morph relation fields', () => {
 
     expect(createdField.id).toBeDefined();
     expect(createdField.name).toBe('owner');
-    expect(createdField.morphRelations[0].targetObjectMetadata.id).toBe(
+
+    const morphRelationTargetIds = createdField.morphRelations.map(
+      (relation) => relation.targetObjectMetadata.id,
+    );
+
+    expect(morphRelationTargetIds).toContain(
       contextPayload.firstTargetObjectMetadataId,
     );
-    expect(createdField.morphRelations[1].targetObjectMetadata.id).toBe(
+    expect(morphRelationTargetIds).toContain(
       contextPayload.secondTargetObjectMetadataId,
     );
 

@@ -2,12 +2,12 @@ import { isDefined } from 'class-validator';
 import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
 
 import {
-  ConnectObject,
-  DisconnectObject,
+  type ConnectObject,
+  type DisconnectObject,
 } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import {
-  RelationConnectQueryFieldsByEntityIndex,
-  RelationDisconnectQueryFieldsByEntityIndex,
+  type RelationConnectQueryFieldsByEntityIndex,
+  type RelationDisconnectQueryFieldsByEntityIndex,
 } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
 import {
   TwentyORMException,

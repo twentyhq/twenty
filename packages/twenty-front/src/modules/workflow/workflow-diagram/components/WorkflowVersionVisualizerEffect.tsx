@@ -35,6 +35,10 @@ export const WorkflowVersionVisualizerEffect = ({
     FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
   );
 
+  const isWorkflowBranchEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
+  );
+
   useEffect(() => {
     if (!isDefined(workflowVersion)) {
       setFlow(undefined);
@@ -67,11 +71,17 @@ export const WorkflowVersionVisualizerEffect = ({
     const nextWorkflowDiagram = getWorkflowVersionDiagram({
       workflowVersion,
       isWorkflowFilteringEnabled,
+      isWorkflowBranchEnabled,
       isEditable: false,
     });
 
     setWorkflowDiagram(nextWorkflowDiagram);
-  }, [isWorkflowFilteringEnabled, setWorkflowDiagram, workflowVersion]);
+  }, [
+    isWorkflowBranchEnabled,
+    isWorkflowFilteringEnabled,
+    setWorkflowDiagram,
+    workflowVersion,
+  ]);
 
   useEffect(() => {
     if (!isDefined(workflowVersion)) {

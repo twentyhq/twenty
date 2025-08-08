@@ -1,42 +1,42 @@
 import {
-  OBJECT_RECORD_CREATED_EVENT,
-  ObjectRecordCreatedTrackEvent,
+  type OBJECT_RECORD_CREATED_EVENT,
+  type ObjectRecordCreatedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-created';
 import {
-  OBJECT_RECORD_DELETED_EVENT,
-  ObjectRecordDeletedTrackEvent,
+  type OBJECT_RECORD_DELETED_EVENT,
+  type ObjectRecordDeletedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-delete';
 import {
-  OBJECT_RECORD_UPDATED_EVENT,
-  ObjectRecordUpdatedTrackEvent,
+  type OBJECT_RECORD_UPDATED_EVENT,
+  type ObjectRecordUpdatedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-updated';
 import {
-  CUSTOM_DOMAIN_ACTIVATED_EVENT,
-  CustomDomainActivatedTrackEvent,
+  type CUSTOM_DOMAIN_ACTIVATED_EVENT,
+  type CustomDomainActivatedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
 import {
-  CUSTOM_DOMAIN_DEACTIVATED_EVENT,
-  CustomDomainDeactivatedTrackEvent,
+  type CUSTOM_DOMAIN_DEACTIVATED_EVENT,
+  type CustomDomainDeactivatedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-deactivated';
 import {
-  MONITORING_EVENT,
-  MonitoringTrackEvent,
+  type MONITORING_EVENT,
+  type MonitoringTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/monitoring/monitoring';
 import {
-  SERVERLESS_FUNCTION_EXECUTED_EVENT,
-  ServerlessFunctionExecutedTrackEvent,
+  type SERVERLESS_FUNCTION_EXECUTED_EVENT,
+  type ServerlessFunctionExecutedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/serverless-function/serverless-function-executed';
 import {
-  USER_SIGNUP_EVENT,
-  UserSignupTrackEvent,
+  type USER_SIGNUP_EVENT,
+  type UserSignupTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/user/user-signup';
 import {
-  WEBHOOK_RESPONSE_EVENT,
-  WebhookResponseTrackEvent,
+  type WEBHOOK_RESPONSE_EVENT,
+  type WebhookResponseTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/webhook/webhook-response';
 import {
-  WORKSPACE_ENTITY_CREATED_EVENT,
-  WorkspaceEntityCreatedTrackEvent,
+  type WORKSPACE_ENTITY_CREATED_EVENT,
+  type WorkspaceEntityCreatedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/workspace-entity/workspace-entity-created';
 
 // Define all track event names

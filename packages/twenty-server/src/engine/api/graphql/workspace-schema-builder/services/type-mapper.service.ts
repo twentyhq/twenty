@@ -3,20 +3,20 @@ import { GraphQLISODateTime } from '@nestjs/graphql';
 
 import {
   GraphQLBoolean,
-  GraphQLEnumType,
+  type GraphQLEnumType,
   GraphQLID,
-  GraphQLInputObjectType,
-  GraphQLInputType,
+  type GraphQLInputObjectType,
+  type GraphQLInputType,
   GraphQLList,
   GraphQLNonNull,
-  GraphQLScalarType,
+  type GraphQLScalarType,
   GraphQLString,
-  GraphQLType,
+  type GraphQLType,
 } from 'graphql';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
-  FieldMetadataSettings,
+  type FieldMetadataSettings,
   NumberDataType,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 

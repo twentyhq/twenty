@@ -1,5 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow should throw when extracting twice the same object 1`] = `"addFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadataMapsOrThrow: flat object metadata with fields maps to add already exists"`;
-
-exports[`extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow should throw when object metadata id is not found 1`] = `"extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow object metadata not found"`;

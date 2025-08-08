@@ -6,7 +6,7 @@
     "dev": "npx next dev",
     "build": "npx next build",
     "start": "npx next start",
-    "lint": "npx next lint",
+    "lint": "ESLINT_USE_FLAT_CONFIG=false npx next lint",
     "github:sync": "npx tsx src/github/github-sync.ts",
     "github:init": "npx tsx src/github/github-sync.ts --isFullSync",
     "database:migrate": "npx tsx src/database/migrate-database.ts",

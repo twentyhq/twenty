@@ -1,9 +1,9 @@
 import {
-  ASTNode,
+  type ASTNode,
   GraphQLError,
-  GraphQLFormattedError,
-  Source,
-  SourceLocation,
+  type GraphQLFormattedError,
+  type Source,
+  type SourceLocation,
 } from 'graphql';
 
 import { CustomException } from 'src/utils/custom-exception';

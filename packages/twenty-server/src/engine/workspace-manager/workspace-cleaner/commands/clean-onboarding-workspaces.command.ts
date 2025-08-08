@@ -5,7 +5,7 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, LessThan, Repository } from 'typeorm';
 
 import {
-  MigrationCommandOptions,
+  type MigrationCommandOptions,
   MigrationCommandRunner,
 } from 'src/database/commands/command-runners/migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';

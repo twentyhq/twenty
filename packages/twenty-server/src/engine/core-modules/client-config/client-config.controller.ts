@@ -1,6 +1,6 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 
-import { ClientConfig } from 'src/engine/core-modules/client-config/client-config.entity';
+import { type ClientConfig } from 'src/engine/core-modules/client-config/client-config.entity';
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 

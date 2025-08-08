@@ -1,6 +1,6 @@
 import isObject from 'lodash.isobject';
 import lodashSnakeCase from 'lodash.snakecase';
-import { SnakeCase, SnakeCasedPropertiesDeep } from 'type-fest';
+import { type SnakeCase, type SnakeCasedPropertiesDeep } from 'type-fest';
 
 export const snakeCase = <T>(text: T) =>
   lodashSnakeCase(text as unknown as string) as SnakeCase<T>;

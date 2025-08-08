@@ -4,8 +4,8 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { ObjectMetadataException } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
+import { type ObjectMetadataException } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+import { type InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 
 export type FailedFlatFieldMetadataValidationExceptions =
   | FieldMetadataException

@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddKeyValuePairTable1717425967770 implements MigrationInterface {
   name = 'AddKeyValuePairTable1717425967770';

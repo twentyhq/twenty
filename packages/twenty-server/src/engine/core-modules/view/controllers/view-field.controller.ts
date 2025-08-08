@@ -15,7 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
 import { UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
-import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { type ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { ViewFieldRestApiExceptionFilter } from 'src/engine/core-modules/view/filters/view-field-rest-api-exception.filter';
 import { ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';

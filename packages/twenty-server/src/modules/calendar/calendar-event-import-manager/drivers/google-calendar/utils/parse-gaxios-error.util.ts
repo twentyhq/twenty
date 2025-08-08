@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 
-import { GaxiosError } from 'gaxios';
+import { type GaxiosError } from 'gaxios';
 
 import {
   CalendarEventImportDriverException,

@@ -1,4 +1,4 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import { ESLintUtils, TSESTree } from '@typescript-eslint/utils';
 import ts from 'typescript';
 
 export const RULE_NAME = 'explicit-boolean-predicates-in-if';
@@ -14,7 +14,6 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
     type: 'suggestion',
     docs: {
       description: 'Enforce explicit boolean predicates in if statements',
-      recommended: 'warn',
     },
     fixable: 'code',
     schema: [],
@@ -25,12 +24,12 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
   },
   defaultOptions: [],
   create: (context) => {
-    const parserServices = ESLintUtils.getParserServices(context);
-    const typeChecker = parserServices.program.getTypeChecker();
+    const services = ESLintUtils.getParserServices(context);
+    const typeChecker = services.program.getTypeChecker();
 
     return {
       IfStatement: (node: TSESTree.IfStatement) => {
-        const tsNode = parserServices.esTreeNodeToTSNodeMap.get(node.test);
+        const tsNode = services.esTreeNodeToTSNodeMap.get(node.test);
         const type = typeChecker.getTypeAtLocation(tsNode);
 
         if (!isBooleanType(type)) {

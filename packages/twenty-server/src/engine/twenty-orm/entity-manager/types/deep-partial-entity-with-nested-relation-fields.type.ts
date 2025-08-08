@@ -1,10 +1,10 @@
-import { DeepPartial } from 'typeorm/common/DeepPartial';
+import { type DeepPartial } from 'typeorm/common/DeepPartial';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { type BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import {
-  ConnectObject,
-  DisconnectObject,
-  EntityRelationFields,
+  type ConnectObject,
+  type DisconnectObject,
+  type EntityRelationFields,
 } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 
 export type DeepPartialWithNestedRelationFields<T> = Omit<

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { VerifyCallback } from 'passport-google-oauth20';
+import { type VerifyCallback } from 'passport-google-oauth20';
 
 import { GoogleAPIsOauthCommonStrategy } from 'src/engine/core-modules/auth/strategies/google-apis-oauth-common.auth.strategy';
-import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api-request.type';
+import { type GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api-request.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type GoogleAPIScopeConfig = {

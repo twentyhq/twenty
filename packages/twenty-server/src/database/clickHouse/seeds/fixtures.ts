@@ -3,7 +3,7 @@ import { OBJECT_RECORD_DELETED_EVENT } from 'src/engine/core-modules/audit/utils
 import { OBJECT_RECORD_UPDATED_EVENT } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-updated';
 import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
 import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-deactivated';
-import { GenericTrackEvent } from 'src/engine/core-modules/audit/utils/events/workspace-event/track';
+import { type GenericTrackEvent } from 'src/engine/core-modules/audit/utils/events/workspace-event/track';
 
 export const fixtures: Array<GenericTrackEvent> = [
   {

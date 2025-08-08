@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { ValidationArguments, ValidatorConstraint } from 'class-validator';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type ValidationArguments, ValidatorConstraint } from 'class-validator';
+import { type FieldMetadataType } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
-import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
+import { type FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { validateOptionsForType } from 'src/engine/metadata-modules/field-metadata/utils/validate-options-for-type.util';

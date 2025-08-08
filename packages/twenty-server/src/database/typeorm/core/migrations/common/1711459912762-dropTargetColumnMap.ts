@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class DropTargetColumnMap1711459912762 implements MigrationInterface {
   name = 'DropTargetColumnMap1711459912762';

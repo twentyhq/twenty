@@ -1,6 +1,6 @@
 import {
-  BaseGraphQLError,
-  ErrorCode,
+  type BaseGraphQLError,
+  type ErrorCode,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 export interface GraphQLResponse<T extends Record<string, unknown>> {

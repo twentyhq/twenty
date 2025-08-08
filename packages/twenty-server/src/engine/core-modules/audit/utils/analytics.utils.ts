@@ -1,17 +1,17 @@
 import { format } from 'date-fns';
 
-import { AuditCommonPropertiesType } from 'src/engine/core-modules/audit/types/common.type';
+import { type AuditCommonPropertiesType } from 'src/engine/core-modules/audit/types/common.type';
 import {
-  TrackEventName,
-  TrackEventProperties,
+  type TrackEventName,
+  type TrackEventProperties,
 } from 'src/engine/core-modules/audit/types/events.type';
 import {
-  PageviewProperties,
+  type PageviewProperties,
   pageviewSchema,
 } from 'src/engine/core-modules/audit/utils/events/pageview/pageview';
 import {
   eventsRegistry,
-  GenericTrackEvent,
+  type GenericTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/track';
 
 const common = (): Record<AuditCommonPropertiesType, string> => ({

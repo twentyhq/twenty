@@ -42,7 +42,7 @@ export class GoogleAPIScopesService {
         scopes,
         isValid: includesExpectedScopes(scopes, expectedScopes),
       };
-    } catch (error) {
+    } catch {
       throw new AuthException(
         'Google account connect error: cannot read scopes from token',
         AuthExceptionCode.INSUFFICIENT_SCOPES,

@@ -10,7 +10,7 @@ import { isSyncStale } from 'src/modules/calendar/calendar-event-import-manager/
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import {
   CalendarChannelSyncStage,
-  CalendarChannelWorkspaceEntity,
+  type CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
 export type CalendarOngoingStaleJobData = {

@@ -1,11 +1,11 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import {
   CatalogDecorator,
-  CatalogStory,
+  type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { ThemeColor, MAIN_COLOR_NAMES } from '@ui/theme';
+import { type ThemeColor, MAIN_COLOR_NAMES } from '@ui/theme';
 
 import { Status } from '../Status';
 

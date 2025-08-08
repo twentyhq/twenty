@@ -1,4 +1,4 @@
-import { FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { type FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 export function transformEnumValue(options?: FieldMetadataDefaultOption[]) {
   return options?.map((option) => {

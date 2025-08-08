@@ -1,10 +1,10 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type FieldMetadataType } from 'twenty-shared/types';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import {
-  Leaf,
-  Node,
+  type Leaf,
+  type Node,
 } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { camelToTitleCase } from 'src/utils/camel-to-title-case';
 

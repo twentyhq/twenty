@@ -16,7 +16,7 @@ import { JsonObjectNode } from '@ui/json-visualizer/components/JsonObjectNode';
 import { JsonValueNode } from '@ui/json-visualizer/components/JsonValueNode';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { isArray } from '@ui/json-visualizer/utils/isArray';
-import { JsonValue } from 'type-fest';
+import { type JsonValue } from 'type-fest';
 
 export const JsonNode = ({
   label,

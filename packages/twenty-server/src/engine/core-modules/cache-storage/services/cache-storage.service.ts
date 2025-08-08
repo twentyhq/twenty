@@ -1,8 +1,8 @@
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 
-import { Milliseconds } from 'cache-manager';
-import { RedisCache } from 'cache-manager-redis-yet';
+import { type Milliseconds } from 'cache-manager';
+import { type RedisCache } from 'cache-manager-redis-yet';
 
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 

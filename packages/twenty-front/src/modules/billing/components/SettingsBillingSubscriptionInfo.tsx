@@ -136,7 +136,7 @@ export const SettingsBillingSubscriptionInfo = () => {
       enqueueSuccessSnackBar({
         message: t`Subscription has been switched to Yearly.`,
       });
-    } catch (error: any) {
+    } catch {
       enqueueErrorSnackBar({
         message: t`Error while switching subscription to Yearly.`,
       });
@@ -162,7 +162,7 @@ export const SettingsBillingSubscriptionInfo = () => {
       enqueueSuccessSnackBar({
         message: t`Subscription has been switched to Organization Plan.`,
       });
-    } catch (error: any) {
+    } catch {
       enqueueErrorSnackBar({
         message: t`Error while switching subscription to Organization Plan.`,
       });

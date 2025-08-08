@@ -96,7 +96,7 @@ export const SettingsAgentHandoffTable = ({
       enqueueSuccessSnackBar({
         message: t`Handoff removed successfully`,
       });
-    } catch (error) {
+    } catch {
       enqueueErrorSnackBar({
         message: t`Failed to remove handoff`,
       });

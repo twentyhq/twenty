@@ -1,4 +1,4 @@
-import { Inject, Module, OnModuleDestroy } from '@nestjs/common';
+import { Inject, Module, type OnModuleDestroy } from '@nestjs/common';
 
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 

@@ -2,10 +2,10 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  ObjectRecord,
-  ObjectRecordCursorLeafCompositeValue,
-  ObjectRecordFilter,
-  ObjectRecordOrderBy,
+  type ObjectRecord,
+  type ObjectRecordCursorLeafCompositeValue,
+  type ObjectRecordFilter,
+  type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import {

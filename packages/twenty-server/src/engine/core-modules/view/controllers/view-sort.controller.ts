@@ -15,7 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CreateViewSortInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-sort.input';
 import { UpdateViewSortInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-sort.input';
-import { ViewSortDTO } from 'src/engine/core-modules/view/dtos/view-sort.dto';
+import { type ViewSortDTO } from 'src/engine/core-modules/view/dtos/view-sort.dto';
 import { ViewSortRestApiExceptionFilter } from 'src/engine/core-modules/view/filters/view-sort-rest-api-exception.filter';
 import { ViewSortService } from 'src/engine/core-modules/view/services/view-sort.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';

@@ -1,19 +1,23 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
+} from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { validateRelationCreationPayloadOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/validate-relation-creation-payload.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { validateRelationCreationPayloadOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/validate-relation-creation-payload-or-throw.util';
+import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
-import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 
@@ -39,26 +43,49 @@ const computeFieldMetadataRelationSettingsForRelationType = ({
 };
 
 type FromRelationCreateFieldInputToFlatFieldMetadataArgs = {
-  createFieldInput: CreateFieldInput;
+  createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
   sourceParentFlatObjectMetadata: FlatObjectMetadata;
+  workspaceId: string;
 };
 export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
   existingFlatObjectMetadataMaps,
   sourceParentFlatObjectMetadata,
   createFieldInput,
+  workspaceId,
 }: FromRelationCreateFieldInputToFlatFieldMetadataArgs): Promise<
-  FlatFieldMetadata[]
+  FieldInputTranspilationResult<FlatFieldMetadata[]>
 > => {
-  const { relationCreationPayload } = createFieldInput;
+  const rawCreationPayload = createFieldInput.relationCreationPayload;
 
-  if (!isDefined(relationCreationPayload)) {
-    throw new FieldMetadataException(
-      `Relation creation payload is required`,
-      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-    );
+  if (!isDefined(rawCreationPayload)) {
+    return {
+      status: 'fail',
+      error: new FieldMetadataException(
+        `Relation creation payload is required`,
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      ),
+    };
   }
-  await validateRelationCreationPayloadOrThrow(relationCreationPayload);
+
+  const relationCreationPayload =
+    trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
+      rawCreationPayload,
+      ['targetFieldIcon', 'targetFieldLabel', 'targetObjectMetadataId', 'type'],
+    );
+
+  try {
+    await validateRelationCreationPayloadOrThrow(relationCreationPayload);
+  } catch (error) {
+    if (error instanceof FieldMetadataException) {
+      return {
+        status: 'fail',
+        error,
+      };
+    } else {
+      throw error;
+    }
+  }
 
   const targetParentFlatObjectMetadata =
     existingFlatObjectMetadataMaps.byId[
@@ -66,10 +93,13 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
     ];
 
   if (!isDefined(targetParentFlatObjectMetadata)) {
-    throw new FieldMetadataException(
-      `Object metadata relation target not found for relation creation payload`,
-      FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-    );
+    return {
+      status: 'fail',
+      error: new FieldMetadataException(
+        `Object metadata relation target not found for relation creation payload`,
+        FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+      ),
+    };
   }
 
   const sourceFlatFieldMetadataSettings =
@@ -85,6 +115,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
   > = {
     ...getDefaultFlatFieldMetadata({
       createFieldInput,
+      workspaceId,
       fieldMetadataId: sourceRelationTargetFieldMetadataId,
     }),
     icon: createFieldInput.icon ?? 'IconRelationOneToMany',
@@ -105,7 +136,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
     )}Id`,
     objectMetadataId: targetParentFlatObjectMetadata.id,
     type: FieldMetadataType.RELATION,
-    workspaceId: createFieldInput.workspaceId,
+    workspaceId,
   };
   const targetFlatFieldMetadataSettings =
     computeFieldMetadataRelationSettingsForRelationType({
@@ -119,6 +150,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
     {
       ...getDefaultFlatFieldMetadata({
         createFieldInput: targetCreateFieldInput,
+        workspaceId,
         fieldMetadataId: targetRelationTargetFieldMetadataId,
       }),
       type: FieldMetadataType.RELATION,
@@ -131,11 +163,14 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
       flatRelationTargetObjectMetadata: sourceParentFlatObjectMetadata,
     };
 
-  return [
-    {
-      ...sourceFlatFieldMetadata,
-      flatRelationTargetFieldMetadata: targetFlatFieldMetadata,
-    },
-    targetFlatFieldMetadata,
-  ] satisfies FlatFieldMetadata<FieldMetadataType.RELATION>[];
+  return {
+    status: 'success',
+    result: [
+      {
+        ...sourceFlatFieldMetadata,
+        flatRelationTargetFieldMetadata: targetFlatFieldMetadata,
+      },
+      targetFlatFieldMetadata,
+    ] satisfies FlatFieldMetadata<FieldMetadataType.RELATION>[],
+  };
 };

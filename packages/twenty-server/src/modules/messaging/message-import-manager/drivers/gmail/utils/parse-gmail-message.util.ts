@@ -1,6 +1,6 @@
 import assert from 'assert';
 
-import { gmail_v1 } from 'googleapis';
+import { type gmail_v1 } from 'googleapis';
 
 import { getAttachmentData } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/get-attachment-data.util';
 import { getBodyData } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/get-body-data.util';

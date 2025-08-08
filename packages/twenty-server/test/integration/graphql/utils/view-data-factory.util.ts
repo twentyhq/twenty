@@ -3,12 +3,12 @@ import {
   TEST_OBJECT_METADATA_1_ID,
 } from 'test/integration/constants/test-view-ids.constants';
 
-import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
-import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
-import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
-import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
-import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
-import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { type ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { type ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
+import { type ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
+import { type ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { type ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
+import { type View } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
 import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';

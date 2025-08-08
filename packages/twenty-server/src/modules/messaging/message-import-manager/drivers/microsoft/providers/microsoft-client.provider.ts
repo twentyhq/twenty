@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { Client } from '@microsoft/microsoft-graph-client';
+import { type Client } from '@microsoft/microsoft-graph-client';
 
 import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
 export class MicrosoftClientProvider {

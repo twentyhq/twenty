@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class SetupCoreTables implements MigrationInterface {
   name = 'SetupCoreTables1700324860820';

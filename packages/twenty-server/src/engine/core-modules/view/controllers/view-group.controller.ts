@@ -15,7 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CreateViewGroupInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-group.input';
 import { UpdateViewGroupInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-group.input';
-import { ViewGroupDTO } from 'src/engine/core-modules/view/dtos/view-group.dto';
+import { type ViewGroupDTO } from 'src/engine/core-modules/view/dtos/view-group.dto';
 import { ViewGroupRestApiExceptionFilter } from 'src/engine/core-modules/view/filters/view-group-rest-api-exception.filter';
 import { ViewGroupService } from 'src/engine/core-modules/view/services/view-group.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';

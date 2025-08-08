@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 
 import { IconChevronDown, IconChevronRight } from '@/app/_components/ui/icons';
 import { Theme } from '@/app/_components/ui/theme/theme';
-import { DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
+import { type DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
 import { groupArticlesByTopic } from '@/content/user-guide/constants/groupArticlesByTopic';
 import { getCardPath } from '@/shared-utils/getCardPath';
 

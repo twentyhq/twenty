@@ -1,10 +1,10 @@
-import { HttpAdapterHost } from '@nestjs/core';
+import { type HttpAdapterHost } from '@nestjs/core';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
-import { OPTIONS_TYPE } from 'src/engine/core-modules/exception-handler/exception-handler.module-definition';
+import { type OPTIONS_TYPE } from 'src/engine/core-modules/exception-handler/exception-handler.module-definition';
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 /**
  * ExceptionHandler Module factory

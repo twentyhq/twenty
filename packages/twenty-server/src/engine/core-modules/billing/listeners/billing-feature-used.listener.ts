@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
-import { BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
+import { type BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 

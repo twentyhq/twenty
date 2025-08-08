@@ -1,9 +1,9 @@
 import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 import { Pill } from '@ui/components/Pill/Pill';
-import { Avatar, IconComponent } from '@ui/display';
+import { Avatar, type IconComponent } from '@ui/display';
 import { ThemeContext } from '@ui/theme';
-import { ReactElement, useContext } from 'react';
+import { type ReactElement, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
 const StyledTabButton = styled('button', {

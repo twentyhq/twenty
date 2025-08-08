@@ -4,7 +4,7 @@ import { getGithubReleaseDateFromReleaseNote } from '@/app/(public)/releases/uti
 import { getReleases } from '@/app/(public)/releases/utils/get-releases';
 import { getVisibleReleases } from '@/app/(public)/releases/utils/get-visible-releases';
 import { findAll } from '@/database/database';
-import { GithubReleases, githubReleasesModel } from '@/database/model';
+import { type GithubReleases, githubReleasesModel } from '@/database/model';
 
 export const dynamic = 'force-dynamic';
 

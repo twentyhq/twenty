@@ -1,4 +1,4 @@
-import { DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
+import { type DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
 
 export const filterDocsIndex = (
   docsIndex: DocsArticlesProps[],
