@@ -1,16 +1,21 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { isUpdatingWorkflowFamilyState } from '@/workflow/states/isUpdatingWorkflowFamilyState';
 import {
   Workflow,
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { useMemo } from 'react';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useWorkflowWithCurrentVersion = (
   workflowId: string | undefined,
-  disabled?: boolean,
 ): WorkflowWithCurrentVersion | undefined => {
+  const isUpdatingWorkflow = useRecoilValue(
+    isUpdatingWorkflowFamilyState(workflowId ?? ''),
+  );
+
   const { record: workflow } = useFindOneRecord<Workflow>({
     objectNameSingular: CoreObjectNameSingular.Workflow,
     objectRecordId: workflowId,
@@ -31,7 +36,8 @@ export const useWorkflowWithCurrentVersion = (
         updatedAt: true,
       },
     },
-    skip: !isDefined(workflowId) || disabled,
+    skip: !isDefined(workflowId),
+    fetchPolicy: isUpdatingWorkflow ? 'cache-only' : undefined,
   });
 
   return useMemo(() => {
