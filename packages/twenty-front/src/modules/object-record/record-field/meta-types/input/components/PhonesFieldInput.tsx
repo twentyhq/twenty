@@ -10,10 +10,12 @@ import 'react-phone-number-input/style.css';
 
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
+import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
 import { createPhonesFromFieldValue } from '@/object-record/record-field/meta-types/input/utils/phonesUtils';
-import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { phonesSchema } from '@/object-record/record-field/types/guards/isFieldPhonesValue';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { css } from '@emotion/react';
+import { useContext } from 'react';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
@@ -71,24 +73,18 @@ const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
   width: calc(100% - ${({ theme }) => theme.spacing(8)});
 `;
 
-type PhonesFieldInputProps = {
-  onCancel?: () => void;
-  onClickOutside?: FieldInputClickOutsideEvent;
-};
+export const PhonesFieldInput = () => {
+  const { fieldDefinition, setDraftValue, draftValue } = usePhonesField();
 
-export const PhonesFieldInput = ({
-  onCancel,
-  onClickOutside,
-}: PhonesFieldInputProps) => {
-  const { persistPhonesField, fieldValue, fieldDefinition } = usePhonesField();
+  const { onEscape, onClickOutside } = useContext(FieldInputEventContext);
 
-  const phones = createPhonesFromFieldValue(fieldValue);
+  const phones = createPhonesFromFieldValue(draftValue);
 
   const defaultCountry = stripSimpleQuotesFromString(
     fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
   );
 
-  const handlePersistPhones = (
+  const handlePhonesChange = (
     updatedPhones: {
       number: string;
       countryCode: string;
@@ -96,12 +92,19 @@ export const PhonesFieldInput = ({
     }[],
   ) => {
     const [nextPrimaryPhone, ...nextAdditionalPhones] = updatedPhones;
-    persistPhonesField({
+
+    const newValue = {
       primaryPhoneNumber: nextPrimaryPhone?.number ?? '',
       primaryPhoneCountryCode: nextPrimaryPhone?.countryCode ?? '',
       primaryPhoneCallingCode: nextPrimaryPhone?.callingCode ?? '',
       additionalPhones: nextAdditionalPhones,
-    });
+    };
+
+    const newValidatedPhoneResponse = phonesSchema.safeParse(newValue);
+
+    if (newValidatedPhoneResponse.success) {
+      setDraftValue(newValidatedPhoneResponse.data);
+    }
   };
 
   const validateInput = (input: string) => ({
@@ -121,12 +124,23 @@ export const PhonesFieldInput = ({
     setIsFieldInError(hasError && values.length === 0);
   };
 
+  const handleClickOutside = (
+    _newValue: any,
+    event: MouseEvent | TouchEvent,
+  ) => {
+    onClickOutside?.({ newValue: draftValue, event });
+  };
+
+  const handleEscape = (_newValue: any) => {
+    onEscape?.({ newValue: draftValue });
+  };
+
   return (
     <MultiItemFieldInput
       items={phones}
-      onPersist={handlePersistPhones}
-      onClickOutside={onClickOutside}
-      onCancel={onCancel}
+      onChange={handlePhonesChange}
+      onClickOutside={handleClickOutside}
+      onEscape={handleEscape}
       placeholder="Phone"
       fieldMetadataType={FieldMetadataType.PHONES}
       validateInput={validateInput}

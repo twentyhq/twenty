@@ -1,35 +1,50 @@
+import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
 import { useArrayField } from '@/object-record/record-field/meta-types/hooks/useArrayField';
 import { ArrayFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/ArrayFieldMenuItem';
 import { MultiItemFieldInput } from '@/object-record/record-field/meta-types/input/components/MultiItemFieldInput';
-import { useMemo } from 'react';
+import { arraySchema } from '@/object-record/record-field/types/guards/isFieldArrayValue';
+import { useContext, useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-type ArrayFieldInputProps = {
-  onCancel?: () => void;
-  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
-};
+export const ArrayFieldInput = () => {
+  const { setDraftValue, draftValue, fieldDefinition } = useArrayField();
 
-export const ArrayFieldInput = ({
-  onCancel,
-  onClickOutside,
-}: ArrayFieldInputProps) => {
-  const { persistArrayField, fieldValue, fieldDefinition } = useArrayField();
+  const { onEscape, onClickOutside } = useContext(FieldInputEventContext);
 
   const arrayItems = useMemo<Array<string>>(
-    () => (Array.isArray(fieldValue) ? fieldValue : []),
-    [fieldValue],
+    () => (Array.isArray(draftValue) ? draftValue : []),
+    [draftValue],
   );
+
+  const handleChange = (newValue: any[]) => {
+    if (!isDefined(newValue)) setDraftValue(null);
+
+    const parseResponse = arraySchema.safeParse(newValue);
+
+    if (parseResponse.success) {
+      setDraftValue(parseResponse.data);
+    }
+  };
+
+  const handleClickOutside = (
+    _newValue: any,
+    event: MouseEvent | TouchEvent,
+  ) => {
+    onClickOutside?.({ newValue: draftValue, event });
+  };
+
+  const handleEscape = (_newValue: any) => {
+    onEscape?.({ newValue: draftValue });
+  };
 
   return (
     <MultiItemFieldInput
       newItemLabel="Add Item"
       items={arrayItems}
-      onPersist={persistArrayField}
-      onCancel={onCancel}
-      onClickOutside={(persist, event) => {
-        onClickOutside?.(event);
-        persist();
-      }}
+      onChange={handleChange}
+      onEscape={handleEscape}
+      onClickOutside={handleClickOutside}
       placeholder="Enter value"
       fieldMetadataType={FieldMetadataType.ARRAY}
       renderItem={({ value, index, handleEdit, handleDelete }) => (
