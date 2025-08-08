@@ -36,7 +36,7 @@ export const getWorkflowVersionDiagram = ({
 }: {
   workflowVersion: WorkflowVersion | undefined;
   isWorkflowFilteringEnabled: boolean;
-  isWorkflowBranchEnabled: boolean;
+  isWorkflowBranchEnabled?: boolean;
   isEditable: boolean;
 }): WorkflowDiagram => {
   if (!isDefined(workflowVersion)) {
