@@ -54066,13 +54066,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"storybook-addon-cookie@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "storybook-addon-cookie@npm:4.0.1"
-  checksum: 10c0/5d26db2de0cb52357fc829cef1f50c6a04e832fbfdd392b8b3c1f1c23f6616a06ee8b1c2bd9b90148ce1c9829e275f5ae3dcdd034bfd6b5a0699da37db7c6fc3
-  languageName: node
-  linkType: hard
-
 "storybook-addon-mock-date@npm:^0.6.0":
   version: 0.6.0
   resolution: "storybook-addon-mock-date@npm:0.6.0"
@@ -56725,7 +56718,6 @@ __metadata:
     slash: "npm:^5.1.0"
     source-map-support: "npm:^0.5.20"
     storybook: "npm:^9.1.1"
-    storybook-addon-cookie: "npm:^4.0.1"
     storybook-addon-mock-date: "npm:^0.6.0"
     storybook-addon-pseudo-states: "npm:^9.1.1"
     stripe: "npm:^17.3.1"
