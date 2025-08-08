@@ -1,11 +1,11 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { spreadsheetImportGetUnicityRowHook } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityRowHook';
+import { spreadsheetImportGetUnicityTableHook } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityTableHook';
 import { ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { IndexType } from '~/generated-metadata/graphql';
 import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 
-describe('spreadsheetImportGetUnicityRowHook', () => {
+describe('spreadsheetImportGetUnicityTableHook', () => {
   const baseMockCompany = getMockCompanyObjectMetadataItem();
 
   const nameField = getMockFieldMetadataItemOrThrow({
@@ -71,7 +71,7 @@ describe('spreadsheetImportGetUnicityRowHook', () => {
   };
 
   it('should return row with error if row is not unique - index on composite field', () => {
-    const hook = spreadsheetImportGetUnicityRowHook(mockObjectMetadataItem);
+    const hook = spreadsheetImportGetUnicityTableHook(mockObjectMetadataItem);
     const testData: ImportedStructuredRow[] = [
       { 'Link URL (domainName)': 'https://duplicaTe.com' },
       { 'Link URL (domainName)': 'https://duplicate.com' },
@@ -80,18 +80,23 @@ describe('spreadsheetImportGetUnicityRowHook', () => {
 
     const addErrorMock = jest.fn();
 
-    const result = hook(testData[1], addErrorMock, testData);
+    const result = hook(testData, addErrorMock);
 
-    expect(addErrorMock).toHaveBeenCalledWith('Link URL (domainName)', {
+    expect(addErrorMock).toHaveBeenCalledWith(0, 'Link URL (domainName)', {
       message:
         'This Link URL (domainName) value already exists in your import data',
       level: 'error',
     });
-    expect(result).toBe(testData[1]);
+    expect(addErrorMock).toHaveBeenCalledWith(1, 'Link URL (domainName)', {
+      message:
+        'This Link URL (domainName) value already exists in your import data',
+      level: 'error',
+    });
+    expect(result).toBe(testData);
   });
 
   it('should return row with error if row is not unique - index on id', () => {
-    const hook = spreadsheetImportGetUnicityRowHook(mockObjectMetadataItem);
+    const hook = spreadsheetImportGetUnicityTableHook(mockObjectMetadataItem);
 
     const testData: ImportedStructuredRow[] = [
       { 'Link URL (domainName)': 'test.com', id: '1' },
@@ -101,17 +106,21 @@ describe('spreadsheetImportGetUnicityRowHook', () => {
 
     const addErrorMock = jest.fn();
 
-    const result = hook(testData[1], addErrorMock, testData);
+    const result = hook(testData, addErrorMock);
 
-    expect(addErrorMock).toHaveBeenCalledWith('id', {
+    expect(addErrorMock).toHaveBeenCalledWith(0, 'id', {
       message: 'This id value already exists in your import data',
       level: 'error',
     });
-    expect(result).toBe(testData[1]);
+    expect(addErrorMock).toHaveBeenCalledWith(1, 'id', {
+      message: 'This id value already exists in your import data',
+      level: 'error',
+    });
+    expect(result).toBe(testData);
   });
 
   it('should return row with error if row is not unique - multi fields index', () => {
-    const hook = spreadsheetImportGetUnicityRowHook(mockObjectMetadataItem);
+    const hook = spreadsheetImportGetUnicityTableHook(mockObjectMetadataItem);
 
     const testData: ImportedStructuredRow[] = [
       { name: 'test', employees: '100', id: '1' },
@@ -121,20 +130,29 @@ describe('spreadsheetImportGetUnicityRowHook', () => {
 
     const addErrorMock = jest.fn();
 
-    const result = hook(testData[1], addErrorMock, testData);
+    const result = hook(testData, addErrorMock);
 
-    expect(addErrorMock).toHaveBeenCalledWith('name', {
+    expect(addErrorMock).toHaveBeenCalledWith(0, 'name', {
       message: 'This name value already exists in your import data',
       level: 'error',
     });
-    expect(addErrorMock).toHaveBeenCalledWith('employees', {
+    expect(addErrorMock).toHaveBeenCalledWith(0, 'employees', {
       message: 'This employees value already exists in your import data',
       level: 'error',
     });
-    expect(result).toBe(testData[1]);
+    expect(addErrorMock).toHaveBeenCalledWith(1, 'name', {
+      message: 'This name value already exists in your import data',
+      level: 'error',
+    });
+    expect(addErrorMock).toHaveBeenCalledWith(1, 'employees', {
+      message: 'This employees value already exists in your import data',
+      level: 'error',
+    });
+    expect(result).toBe(testData);
   });
+
   it('should not add error if row values are unique', () => {
-    const hook = spreadsheetImportGetUnicityRowHook(mockObjectMetadataItem);
+    const hook = spreadsheetImportGetUnicityTableHook(mockObjectMetadataItem);
 
     const testData: ImportedStructuredRow[] = [
       {
@@ -159,9 +177,9 @@ describe('spreadsheetImportGetUnicityRowHook', () => {
 
     const addErrorMock = jest.fn();
 
-    const result = hook(testData[1], addErrorMock, testData);
+    const result = hook(testData, addErrorMock);
 
     expect(addErrorMock).not.toHaveBeenCalled();
-    expect(result).toBe(testData[1]);
+    expect(result).toBe(testData);
   });
 });
