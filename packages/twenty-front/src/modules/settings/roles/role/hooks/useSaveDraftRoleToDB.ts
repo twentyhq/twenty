@@ -14,7 +14,7 @@ import {
   useUpsertObjectPermissionsMutation,
   useUpsertPermissionFlagsMutation,
 } from '~/generated-metadata/graphql';
-import { Role } from '~/generated/graphql';
+import { FieldPermission, Role } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getDirtyFields } from '~/utils/getDirtyFields';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
@@ -72,7 +72,7 @@ export const useSaveDraftRoleToDB = ({
       );
     });
 
-  const fieldPermissionsToUpsert =
+  const onlyMeaningfulFieldPermissions =
     dirtyFields.fieldPermissions?.filter(
       (dirtyFieldPermissionToFilter) =>
         !fieldPermissionsThatShouldntBeCreatedBecauseTheyAreUseless?.some(
@@ -81,6 +81,14 @@ export const useSaveDraftRoleToDB = ({
             fieldPermissionThatShouldntBeCreatedToFilter.fieldMetadataId,
         ),
     ) ?? [];
+
+  const fieldPermissionsToUpsert = onlyMeaningfulFieldPermissions.filter(
+    (dirtyFieldPermission) =>
+      newFieldPermissionsFilter(
+        dirtyFieldPermission,
+        settingsPersistedRole?.fieldPermissions,
+      ),
+  );
 
   const { removeFieldPermissionInDraftRole } =
     useRemoveFieldPermissionInDraftRole();
@@ -283,4 +291,26 @@ export const useSaveDraftRoleToDB = ({
   return {
     saveDraftRoleToDB,
   };
+};
+
+const newFieldPermissionsFilter = (
+  dirtyFieldPermission: FieldPermission,
+  existingFieldPermissions?: FieldPermission[] | null,
+) => {
+  const existingFieldPermission = existingFieldPermissions?.find(
+    (persistedFieldPermission) =>
+      persistedFieldPermission.fieldMetadataId ===
+      dirtyFieldPermission.fieldMetadataId,
+  );
+
+  if (!existingFieldPermission) {
+    return true;
+  }
+
+  return (
+    dirtyFieldPermission.canReadFieldValue !==
+      existingFieldPermission.canReadFieldValue ||
+    dirtyFieldPermission.canUpdateFieldValue !==
+      existingFieldPermission.canUpdateFieldValue
+  );
 };
