@@ -8,35 +8,33 @@ import {
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { addFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-with-field-maps-to-flat-object-metadata-maps-or-throw.util';
 
-export type GetSubFlatObjectMetadataMapsOrThrowArgs =
-  {
-    objectMetadataIds: string[];
-    flatObjectMetadataMaps: FlatObjectMetadataMaps;
-  };
-export const getSubFlatObjectMetadataMapsOrThrow =
-  ({
-    flatObjectMetadataMaps: sourceFlatObjectMetadataMaps,
-    objectMetadataIds,
-  }: GetSubFlatObjectMetadataMapsOrThrowArgs): FlatObjectMetadataMaps => {
-    return objectMetadataIds.reduce(
-      (flatObjectMetadataMaps, objectMetadataId) => {
-        const flatObjectMetadataWithFlatFieldMaps =
-          sourceFlatObjectMetadataMaps.byId[objectMetadataId];
+export type GetSubFlatObjectMetadataMapsOrThrowArgs = {
+  objectMetadataIds: string[];
+  flatObjectMetadataMaps: FlatObjectMetadataMaps;
+};
+export const getSubFlatObjectMetadataMapsOrThrow = ({
+  flatObjectMetadataMaps: sourceFlatObjectMetadataMaps,
+  objectMetadataIds,
+}: GetSubFlatObjectMetadataMapsOrThrowArgs): FlatObjectMetadataMaps => {
+  return objectMetadataIds.reduce(
+    (flatObjectMetadataMaps, objectMetadataId) => {
+      const flatObjectMetadataWithFlatFieldMaps =
+        sourceFlatObjectMetadataMaps.byId[objectMetadataId];
 
-        if (!isDefined(flatObjectMetadataWithFlatFieldMaps)) {
-          throw new FlatObjectMetadataMapsException(
-            'getSubFlatObjectMetadataMapsOrThrow object metadata not found',
-            FlatObjectMetadataMapsExceptionCode.OBJECT_METADATA_NOT_FOUND,
-          );
-        }
-
-        return addFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadataMapsOrThrow(
-          {
-            flatObjectMetadataMaps,
-            flatObjectMetadataWithFlatFieldMaps,
-          },
+      if (!isDefined(flatObjectMetadataWithFlatFieldMaps)) {
+        throw new FlatObjectMetadataMapsException(
+          'getSubFlatObjectMetadataMapsOrThrow object metadata not found',
+          FlatObjectMetadataMapsExceptionCode.OBJECT_METADATA_NOT_FOUND,
         );
-      },
-      EMPTY_FLAT_OBJECT_METADATA_MAPS,
-    );
-  };
+      }
+
+      return addFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadataMapsOrThrow(
+        {
+          flatObjectMetadataMaps,
+          flatObjectMetadataWithFlatFieldMaps,
+        },
+      );
+    },
+    EMPTY_FLAT_OBJECT_METADATA_MAPS,
+  );
+};

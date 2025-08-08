@@ -96,11 +96,10 @@ describe('getSubFlatObjectMetadataMapsOrThrow', () => {
         ).toThrowErrorMatchingSnapshot();
       } else {
         jestExpectToBeDefined(expected);
-        const result =
-          getSubFlatObjectMetadataMapsOrThrow({
-            objectMetadataIds,
-            flatObjectMetadataMaps,
-          });
+        const result = getSubFlatObjectMetadataMapsOrThrow({
+          objectMetadataIds,
+          flatObjectMetadataMaps,
+        });
 
         expect(result).toEqual(expected);
       }

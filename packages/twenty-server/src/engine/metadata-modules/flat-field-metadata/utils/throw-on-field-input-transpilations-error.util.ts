@@ -1,14 +1,14 @@
 import { MultipleMetadataValidationErrors } from 'src/engine/core-modules/error/multiple-metadata-validation-errors';
 import {
-  FieldInputTranspilationResult,
-  SuccessfulFieldInputTranspilation,
+  type FieldInputTranspilationResult,
+  type SuccessfulFieldInputTranspilation,
 } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 
-type throwOnInputTranspilationsError = <T>(
+type ThrowOnFieldInputTranspilationsErrorArgs = <T>(
   inputTranspilationResults: FieldInputTranspilationResult<T>[],
   errorLabel: string,
 ) => asserts inputTranspilationResults is SuccessfulFieldInputTranspilation<T>[];
-export const throwOnInputTranspilationsError: throwOnInputTranspilationsError =
+export const throwOnFieldInputTranspilationsError: ThrowOnFieldInputTranspilationsErrorArgs =
   <T>(
     inputTranspilationResults: FieldInputTranspilationResult<T>[],
     errorLabel: string,

@@ -8,9 +8,7 @@ export const getSubFlatObjectMetadataMaps = (
   args: GetSubFlatObjectMetadataMapsOrThrowArgs,
 ): FlatObjectMetadataMaps | undefined => {
   try {
-    return getSubFlatObjectMetadataMapsOrThrow(
-      args,
-    );
+    return getSubFlatObjectMetadataMapsOrThrow(args);
   } catch {
     return undefined;
   }
