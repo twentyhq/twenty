@@ -10,7 +10,7 @@ import {
   ViewExceptionCode,
   ViewExceptionMessageKey,
   generateViewExceptionMessage,
-  generateViewUserFriendlyExceptionMessage,
+  generateViewUserFriendlyExceptionMessage
 } from 'src/engine/core-modules/view/exceptions/view.exception';
 
 @Injectable()
@@ -162,7 +162,10 @@ export class ViewService {
 
     if (!isDefined(view)) {
       throw new ViewException(
-        ViewExceptionMessage.VIEW_NOT_FOUND,
+        generateViewExceptionMessage(
+          ViewExceptionMessageKey.VIEW_NOT_FOUND,
+          id,
+        ),
         ViewExceptionCode.VIEW_NOT_FOUND,
       );
     }

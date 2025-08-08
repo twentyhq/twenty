@@ -10,7 +10,7 @@ import {
   ViewFieldExceptionCode,
   ViewFieldExceptionMessageKey,
   generateViewFieldExceptionMessage,
-  generateViewFieldUserFriendlyExceptionMessage,
+  generateViewFieldUserFriendlyExceptionMessage
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
 
 @Injectable()
@@ -155,7 +155,10 @@ export class ViewFieldService {
 
     if (!isDefined(viewField)) {
       throw new ViewFieldException(
-        ViewFieldExceptionMessage.VIEW_FIELD_NOT_FOUND,
+        generateViewFieldExceptionMessage(
+          ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
+          id,
+        ),
         ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
       );
     }

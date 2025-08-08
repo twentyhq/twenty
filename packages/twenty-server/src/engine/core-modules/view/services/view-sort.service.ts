@@ -10,7 +10,7 @@ import {
   ViewSortExceptionCode,
   ViewSortExceptionMessageKey,
   generateViewSortExceptionMessage,
-  generateViewSortUserFriendlyExceptionMessage,
+  generateViewSortUserFriendlyExceptionMessage
 } from 'src/engine/core-modules/view/exceptions/view-sort.exception';
 
 @Injectable()
@@ -150,7 +150,10 @@ export class ViewSortService {
 
     if (!isDefined(viewSort)) {
       throw new ViewSortException(
-        ViewSortExceptionMessage.VIEW_SORT_NOT_FOUND,
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
+          id,
+        ),
         ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
       );
     }

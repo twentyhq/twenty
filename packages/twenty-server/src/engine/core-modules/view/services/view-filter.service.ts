@@ -10,7 +10,7 @@ import {
   ViewFilterExceptionCode,
   ViewFilterExceptionMessageKey,
   generateViewFilterExceptionMessage,
-  generateViewFilterUserFriendlyExceptionMessage,
+  generateViewFilterUserFriendlyExceptionMessage
 } from 'src/engine/core-modules/view/exceptions/view-filter.exception';
 
 @Injectable()
@@ -155,7 +155,10 @@ export class ViewFilterService {
 
     if (!isDefined(viewFilter)) {
       throw new ViewFilterException(
-        ViewFilterExceptionMessage.VIEW_FILTER_NOT_FOUND,
+        generateViewFilterExceptionMessage(
+          ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND,
+          id,
+        ),
         ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
       );
     }

@@ -10,7 +10,7 @@ import {
   ViewFilterGroupExceptionCode,
   ViewFilterGroupExceptionMessageKey,
   generateViewFilterGroupExceptionMessage,
-  generateViewFilterGroupUserFriendlyExceptionMessage,
+  generateViewFilterGroupUserFriendlyExceptionMessage
 } from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';
 
 @Injectable()
@@ -167,7 +167,10 @@ export class ViewFilterGroupService {
 
     if (!isDefined(viewFilterGroup)) {
       throw new ViewFilterGroupException(
-        ViewFilterGroupExceptionMessage.VIEW_FILTER_GROUP_NOT_FOUND,
+        generateViewFilterGroupExceptionMessage(
+          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
+          id,
+        ),
         ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
       );
     }

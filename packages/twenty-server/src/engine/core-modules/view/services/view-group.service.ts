@@ -10,7 +10,7 @@ import {
   ViewGroupExceptionCode,
   ViewGroupExceptionMessageKey,
   generateViewGroupExceptionMessage,
-  generateViewGroupUserFriendlyExceptionMessage,
+  generateViewGroupUserFriendlyExceptionMessage
 } from 'src/engine/core-modules/view/exceptions/view-group.exception';
 
 @Injectable()
@@ -155,7 +155,10 @@ export class ViewGroupService {
 
     if (!isDefined(viewGroup)) {
       throw new ViewGroupException(
-        ViewGroupExceptionMessage.VIEW_GROUP_NOT_FOUND,
+        generateViewGroupExceptionMessage(
+          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+          id,
+        ),
         ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND,
       );
     }
