@@ -1,10 +1,10 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
-  WorkflowManualTriggerAvailability,
-  WorkflowManualTriggerSettings,
+    WorkflowManualTriggerAvailability,
+    WorkflowManualTriggerSettings,
 } from '@/workflow/types/Workflow';
-import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 export const getManualTriggerDefaultSettings = ({
   availability,

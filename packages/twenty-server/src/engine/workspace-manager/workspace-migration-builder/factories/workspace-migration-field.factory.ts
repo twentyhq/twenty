@@ -5,7 +5,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
@@ -30,7 +29,6 @@ export interface FieldMetadataUpdate<
 export class WorkspaceMigrationFieldFactory {
   constructor(
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async create(

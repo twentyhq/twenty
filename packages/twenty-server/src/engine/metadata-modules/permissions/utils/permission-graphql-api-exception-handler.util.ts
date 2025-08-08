@@ -1,11 +1,13 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
-  ForbiddenError,
-  NotFoundError,
-  UserInputError,
+    ForbiddenError,
+    NotFoundError,
+    UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-  type PermissionsException,
-  PermissionsExceptionCode,
+    type PermissionsException,
+    PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 export const permissionGraphqlApiExceptionHandler = (
@@ -66,9 +68,7 @@ export const permissionGraphqlApiExceptionHandler = (
     case PermissionsExceptionCode.COMPOSITE_TYPE_NOT_FOUND:
       throw error;
     default: {
-      const _exhaustiveCheck: never = error.code;
-
-      throw error;
+      return assertUnreachable(error.code);
     }
   }
 };

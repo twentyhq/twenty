@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+
 import { InjectRepository } from '@nestjs/typeorm';
 
 import snakeCase from 'lodash.snakecase';
@@ -20,9 +20,7 @@ export const MESSAGING_MESSAGE_CHANNEL_SYNC_STATUS_MONITORING_CRON_PATTERN =
 
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessageChannelSyncStatusMonitoringCronJob {
-  private readonly logger = new Logger(
-    MessagingMessageChannelSyncStatusMonitoringCronJob.name,
-  );
+
 
   constructor(
     @InjectRepository(Workspace, 'core')

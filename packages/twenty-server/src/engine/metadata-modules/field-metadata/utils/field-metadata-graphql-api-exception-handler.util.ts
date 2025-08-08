@@ -1,3 +1,5 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
   ConflictError,
   ForbiddenError,
@@ -33,9 +35,7 @@ export const fieldMetadataGraphqlApiExceptionHandler = (error: Error) => {
       case FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND:
         throw error;
       default: {
-        const _exhaustiveCheck: never = error.code;
-
-        throw error;
+        return assertUnreachable(error.code);
       }
     }
   }

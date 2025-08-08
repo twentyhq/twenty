@@ -3,7 +3,7 @@
 import type Stripe from 'stripe';
 
 export class StripeSDKMock {
-  constructor(private readonly apiKey: string) {}
+  constructor(private readonly _apiKey: string) {}
 
   customers = {
     update: (_id: string, _params?: Stripe.CustomerUpdateParams) => {

@@ -5,8 +5,8 @@ import ts, { transpileModule } from 'typescript';
 import { v4 } from 'uuid';
 
 import {
-  type ServerlessDriver,
-  type ServerlessExecuteResult,
+    type ServerlessDriver,
+    type ServerlessExecuteResult,
 } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
@@ -138,7 +138,7 @@ export class LocalDriver implements ServerlessDriver {
 
           return JSON.stringify(
             arg,
-            (key, value) => {
+            (_key, value) => {
               if (typeof value === 'object' && value !== null) {
                 if (seen.has(value)) {
                   return '[Circular]'; // Handle circular references

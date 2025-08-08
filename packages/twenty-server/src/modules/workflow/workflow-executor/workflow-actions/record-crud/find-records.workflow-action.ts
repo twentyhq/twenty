@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { type Entity } from '@microsoft/microsoft-graph-types';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { type ObjectLiteral } from 'typeorm';
 import { resolveInput } from 'twenty-shared/utils';
+import { type ObjectLiteral } from 'typeorm';
 
 import {
-  type ObjectRecordFilter,
-  type ObjectRecordOrderBy,
-  OrderByDirection,
+    type ObjectRecordFilter,
+    type ObjectRecordOrderBy,
+    OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -20,14 +20,14 @@ import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/works
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
-  WorkflowStepExecutorException,
-  WorkflowStepExecutorExceptionCode,
+    WorkflowStepExecutorException,
+    WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import {
-  RecordCRUDActionException,
-  RecordCRUDActionExceptionCode,
+    RecordCRUDActionException,
+    RecordCRUDActionExceptionCode,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/exceptions/record-crud-action.exception';
 import { isWorkflowFindRecordsAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-find-records-action.guard';
 import { type WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
@@ -118,8 +118,8 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
 
   private async getObjectRecords<T extends ObjectLiteral>(
     workflowActionInput: WorkflowFindRecordsActionInput,
-    objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps,
-    objectMetadataMaps: ObjectMetadataMaps,
+    _objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps,
+    _objectMetadataMaps: ObjectMetadataMaps,
     repository: WorkspaceRepository<T>,
     graphqlQueryParser: GraphqlQueryParser,
   ) {

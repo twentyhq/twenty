@@ -11,8 +11,8 @@ import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-contex
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import {
-  PermissionsException,
-  PermissionsExceptionCode,
+    PermissionsException,
+    PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
@@ -32,7 +32,7 @@ export class WorkspaceMemberDeleteOnePreQueryHook
 
   async execute(
     authContext: AuthContext,
-    objectName: string,
+    _objectName: string,
     payload: DeleteOneResolverArgs,
   ): Promise<DeleteOneResolverArgs> {
     const targettedWorkspaceMemberId = payload.id;

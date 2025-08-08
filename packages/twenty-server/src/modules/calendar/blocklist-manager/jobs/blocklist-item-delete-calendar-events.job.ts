@@ -1,4 +1,4 @@
-import { Logger, Scope } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
 
 import { And, Any, ILike, In, Not, Or } from 'typeorm';
 
@@ -22,9 +22,7 @@ export type BlocklistItemDeleteCalendarEventsJobData = WorkspaceEventBatch<
   scope: Scope.REQUEST,
 })
 export class BlocklistItemDeleteCalendarEventsJob {
-  private readonly logger = new Logger(
-    BlocklistItemDeleteCalendarEventsJob.name,
-  );
+
 
   constructor(
     private readonly twentyORMManager: TwentyORMManager,

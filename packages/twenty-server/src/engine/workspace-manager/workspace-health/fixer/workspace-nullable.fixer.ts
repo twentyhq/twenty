@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { type EntityManager } from 'typeorm';
 
 import {
-  type WorkspaceHealthColumnIssue,
-  WorkspaceHealthIssueType,
+    type WorkspaceHealthColumnIssue,
+    WorkspaceHealthIssueType,
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-issue.interface';
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
@@ -23,7 +23,7 @@ export class WorkspaceNullableFixer extends AbstractWorkspaceFixer<WorkspaceHeal
   }
 
   async createWorkspaceMigrations(
-    manager: EntityManager,
+    _manager: EntityManager,
     objectMetadataCollection: ObjectMetadataEntity[],
     issues: WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT>[],
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {

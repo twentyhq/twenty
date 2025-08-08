@@ -1,30 +1,32 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
-  NotFoundError,
-  UserInputError,
+    NotFoundError,
+    UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-  ViewFieldException,
-  ViewFieldExceptionCode,
+    ViewFieldException,
+    ViewFieldExceptionCode,
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
 import {
-  ViewFilterGroupException,
-  ViewFilterGroupExceptionCode,
+    ViewFilterGroupException,
+    ViewFilterGroupExceptionCode,
 } from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';
 import {
-  ViewFilterException,
-  ViewFilterExceptionCode,
+    ViewFilterException,
+    ViewFilterExceptionCode,
 } from 'src/engine/core-modules/view/exceptions/view-filter.exception';
 import {
-  ViewGroupException,
-  ViewGroupExceptionCode,
+    ViewGroupException,
+    ViewGroupExceptionCode,
 } from 'src/engine/core-modules/view/exceptions/view-group.exception';
 import {
-  ViewSortException,
-  ViewSortExceptionCode,
+    ViewSortException,
+    ViewSortExceptionCode,
 } from 'src/engine/core-modules/view/exceptions/view-sort.exception';
 import {
-  ViewException,
-  ViewExceptionCode,
+    ViewException,
+    ViewExceptionCode,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
 
 export const viewGraphqlApiExceptionHandler = (error: Error) => {
@@ -37,9 +39,7 @@ export const viewGraphqlApiExceptionHandler = (error: Error) => {
           userFriendlyMessage: error.userFriendlyMessage,
         });
       default: {
-        const _exhaustiveCheck: never = error.code;
-
-        throw error;
+        return assertUnreachable(error.code);
       }
     }
   }
@@ -53,9 +53,7 @@ export const viewGraphqlApiExceptionHandler = (error: Error) => {
           userFriendlyMessage: error.userFriendlyMessage,
         });
       default: {
-        const _exhaustiveCheck: never = error.code;
-
-        throw error;
+        return assertUnreachable(error.code);
       }
     }
   }
@@ -69,9 +67,7 @@ export const viewGraphqlApiExceptionHandler = (error: Error) => {
           userFriendlyMessage: error.userFriendlyMessage,
         });
       default: {
-        const _exhaustiveCheck: never = error.code;
-
-        throw error;
+        return assertUnreachable(error.code);
       }
     }
   }
@@ -85,9 +81,7 @@ export const viewGraphqlApiExceptionHandler = (error: Error) => {
           userFriendlyMessage: error.userFriendlyMessage,
         });
       default: {
-        const _exhaustiveCheck: never = error.code;
-
-        throw error;
+        return assertUnreachable(error.code);
       }
     }
   }
@@ -101,9 +95,7 @@ export const viewGraphqlApiExceptionHandler = (error: Error) => {
           userFriendlyMessage: error.userFriendlyMessage,
         });
       default: {
-        const _exhaustiveCheck: never = error.code;
-
-        throw error;
+        return assertUnreachable(error.code);
       }
     }
   }
@@ -117,9 +109,7 @@ export const viewGraphqlApiExceptionHandler = (error: Error) => {
           userFriendlyMessage: error.userFriendlyMessage,
         });
       default: {
-        const _exhaustiveCheck: never = error.code;
-
-        throw error;
+        return assertUnreachable(error.code);
       }
     }
   }
