@@ -21,7 +21,7 @@ export class RoleEntity {
   id: string;
 
   @Column({ nullable: true, type: 'uuid' })
-  standardId: string | null;
+  standardId?: string;
 
   @Column({ nullable: false })
   label: string;
