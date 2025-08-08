@@ -2,6 +2,8 @@ import { type Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 
+type Constructor = new (...args: unknown[]) => unknown;
+
 export interface WorkspaceEntityMetadataArgs {
   /**
    * Standard id.
@@ -13,8 +15,7 @@ export interface WorkspaceEntityMetadataArgs {
    * Function target is a table defined in the class.
    * String target is a table defined in a json schema.
    */
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  readonly target: Function;
+  readonly target: Constructor;
 
   /**
    * Entity name.

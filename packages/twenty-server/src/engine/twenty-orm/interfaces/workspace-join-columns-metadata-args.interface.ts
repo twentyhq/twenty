@@ -1,9 +1,10 @@
+type Constructor = new (...args: unknown[]) => unknown;
+
 export interface WorkspaceJoinColumnsMetadataArgs {
   /**
    * Class to which relation is applied.
    */
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  readonly target: Function;
+  readonly target: Constructor;
 
   /**
    * Relation name.

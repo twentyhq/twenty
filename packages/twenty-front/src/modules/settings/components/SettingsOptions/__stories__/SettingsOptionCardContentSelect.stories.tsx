@@ -5,12 +5,12 @@ import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import {
-  IconLanguage,
-  IconLayoutKanban,
-  IconList,
-  IconNotes,
-  IconTable,
-  IconUsers,
+    IconLanguage,
+    IconLayoutKanban,
+    IconList,
+    IconNotes,
+    IconTable,
+    IconUsers,
 } from 'twenty-ui/display';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
@@ -18,6 +18,7 @@ const StyledContainer = styled.div`
   width: 480px;
 `;
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface SettingsOptionCardContentSelectProps
   extends React.ComponentProps<typeof SettingsOptionCardContentSelect> {}
 

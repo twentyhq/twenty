@@ -5,7 +5,7 @@ module.exports = {
     'plugin:@nx/react',
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
-    'plugin:storybook/recommended',
+    // 'plugin:storybook/recommended', // Temporarily disabled
     'plugin:prettier/recommended',
     'plugin:lingui/recommended',
     'plugin:@nx/typescript'
@@ -112,7 +112,7 @@ module.exports = {
         '@nx/workspace-styled-components-prefixed-with-styled': 'error',
         '@nx/workspace-no-state-useref': 'error',
         '@nx/workspace-component-props-naming': 'error',
-        '@nx/workspace-explicit-boolean-predicates-in-if': 'off',
+        '@nx/workspace-explicit-boolean-predicates-in-if': 'error',
         '@nx/workspace-use-getLoadable-and-getValue-to-get-atoms': 'error',
         '@nx/workspace-useRecoilCallback-has-dependency-array': 'error',
         '@nx/workspace-no-navigate-prefer-link': 'error',
@@ -143,17 +143,18 @@ module.exports = {
         '@typescript-eslint/no-non-null-assertion': 'off',
       },
     },
-    {
-      files: ['.storybook/main.@(js|cjs|mjs|ts)'],
-      rules: {
-        'storybook/no-uninstalled-addons': [
-          'error',
-          {
-            packageJsonLocation: path.resolve(__dirname, './package.json'),
-          },
-        ],
-      },
-    },
+    // Temporarily disabled storybook rules / TODO: Re-enable after migrating Storybook to v8
+    // {
+    //   files: ['.storybook/main.@(js|cjs|mjs|ts)'],
+    //   rules: {
+    //     'storybook/no-uninstalled-addons': [
+    //       'error',
+    //       {
+    //         packageJsonLocation: path.resolve(__dirname, './package.json'),
+    //       },
+    //     ],
+    //   },
+    // },
     {
       files: ['*.js', '*.jsx'],
       extends: ['plugin:@nx/javascript'],

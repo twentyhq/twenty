@@ -6,6 +6,8 @@ import { type Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
+type Constructor = new (...args: unknown[]) => unknown;
+
 export type WorkspaceDynamicRelationMetadataArgsFactory = (
   oppositeObjectMetadata: ObjectMetadataEntity,
 ) => {
@@ -44,8 +46,7 @@ export interface WorkspaceDynamicRelationMetadataArgs {
   /**
    * Class to which relation is applied.
    */
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  readonly target: Function;
+  readonly target: Constructor;
 
   /**
    * Factory function
