@@ -1,6 +1,7 @@
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
 import { useRemoveFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRemoveFieldPermissionInDraftRole';
+import { newFieldPermissionsFilter } from '@/settings/roles/role/hooks/utils/newFieldPermissionsFilter.util';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -14,7 +15,7 @@ import {
   useUpsertObjectPermissionsMutation,
   useUpsertPermissionFlagsMutation,
 } from '~/generated-metadata/graphql';
-import { FieldPermission, Role } from '~/generated/graphql';
+import { Role } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getDirtyFields } from '~/utils/getDirtyFields';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
@@ -291,26 +292,4 @@ export const useSaveDraftRoleToDB = ({
   return {
     saveDraftRoleToDB,
   };
-};
-
-const newFieldPermissionsFilter = (
-  dirtyFieldPermission: FieldPermission,
-  existingFieldPermissions?: FieldPermission[] | null,
-) => {
-  const existingFieldPermission = existingFieldPermissions?.find(
-    (persistedFieldPermission) =>
-      persistedFieldPermission.fieldMetadataId ===
-      dirtyFieldPermission.fieldMetadataId,
-  );
-
-  if (!existingFieldPermission) {
-    return true;
-  }
-
-  return (
-    dirtyFieldPermission.canReadFieldValue !==
-      existingFieldPermission.canReadFieldValue ||
-    dirtyFieldPermission.canUpdateFieldValue !==
-      existingFieldPermission.canUpdateFieldValue
-  );
 };
