@@ -12,8 +12,8 @@ import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modul
 import { type FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import {
-  type FlatFieldMetadataPropertiesToCompare,
   compareTwoFlatFieldMetadata,
+  type FlatFieldMetadataPropertiesToCompare,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-flat-field-metadata-name-availability.validator';
@@ -196,7 +196,7 @@ export class FlatFieldMetadataValidatorService {
     return errors;
   }
 
-  async validateOneFlatFieldMetadataCreation<
+  async validateOneFlatFieldMetadataIntegrity<
     T extends FieldMetadataType = FieldMetadataType,
   >({
     existingFlatObjectMetadataMaps,
