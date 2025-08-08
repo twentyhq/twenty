@@ -1,4 +1,4 @@
-import { DynamicModule, Global } from '@nestjs/common';
+import { type DynamicModule, Global } from '@nestjs/common';
 
 import { AddPackagesCommand } from 'src/engine/core-modules/serverless/commands/add-packages.command';
 import { LambdaDriver } from 'src/engine/core-modules/serverless/drivers/lambda.driver';
@@ -6,7 +6,7 @@ import { LocalDriver } from 'src/engine/core-modules/serverless/drivers/local.dr
 import { SERVERLESS_DRIVER } from 'src/engine/core-modules/serverless/serverless.constants';
 import {
   ServerlessDriverType,
-  ServerlessModuleAsyncOptions,
+  type ServerlessModuleAsyncOptions,
 } from 'src/engine/core-modules/serverless/serverless.interface';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
 

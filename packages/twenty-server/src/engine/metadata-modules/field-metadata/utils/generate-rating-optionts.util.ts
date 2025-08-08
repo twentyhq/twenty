@@ -1,6 +1,6 @@
 import { v4 as uuidV4 } from 'uuid';
 
-import { FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { type FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 const range = {
   start: 1,

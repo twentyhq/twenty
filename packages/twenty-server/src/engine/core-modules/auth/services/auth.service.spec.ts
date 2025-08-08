@@ -1,8 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import bcrypt from 'bcrypt';
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
@@ -13,7 +13,7 @@ import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.s
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { ExistingUserOrNewUser } from 'src/engine/core-modules/auth/types/signInUp.type';
+import { type ExistingUserOrNewUser } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';

@@ -1,4 +1,4 @@
-import { EntitySchema } from 'typeorm';
+import { type EntitySchema } from 'typeorm';
 
 export class WorkspaceEntitiesStorage {
   private static workspaceEntities = new Map<

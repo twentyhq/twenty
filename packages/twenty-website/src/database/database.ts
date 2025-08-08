@@ -1,5 +1,5 @@
 import { global } from '@apollo/client/utilities/globals';
-import { drizzle, PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import { drizzle, type PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { migrate as postgresMigrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from 'postgres';
 

@@ -1,19 +1,19 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
-import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type User } from 'src/engine/core-modules/user/user.entity';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
-  ActorMetadata,
+  type ActorMetadata,
   FieldActorSource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
+import { type FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 type TestingAuthContext = Omit<AuthContext, 'workspace' | 'apiKey' | 'user'> & {
   workspace: Partial<Workspace>;

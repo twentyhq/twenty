@@ -1,8 +1,8 @@
 import {
-  CaptchaDriverOptions,
-  CaptchaModuleOptions,
+  type CaptchaDriverOptions,
+  type CaptchaModuleOptions,
 } from 'src/engine/core-modules/captcha/interfaces';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export const captchaModuleFactory = (
   twentyConfigService: TwentyConfigService,

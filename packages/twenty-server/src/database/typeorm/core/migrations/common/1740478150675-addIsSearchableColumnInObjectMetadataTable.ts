@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddIsSearchableColumnInObjectMetadataTable1740478150675
   implements MigrationInterface

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { SendMailOptions } from 'nodemailer';
+import { type SendMailOptions } from 'nodemailer';
 
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';

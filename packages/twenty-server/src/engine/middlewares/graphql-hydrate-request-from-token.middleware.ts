@@ -1,6 +1,6 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable, type NestMiddleware } from '@nestjs/common';
 
-import { NextFunction, Request, Response } from 'express';
+import { type NextFunction, type Request, type Response } from 'express';
 
 import { MiddlewareService } from 'src/engine/middlewares/middleware.service';
 

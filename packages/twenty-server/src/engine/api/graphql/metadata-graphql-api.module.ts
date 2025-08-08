@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 
-import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
+import { YogaDriver, type YogaDriverConfig } from '@graphql-yoga/nestjs';
 
 import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
 import { metadataModuleFactory } from 'src/engine/api/graphql/metadata.module-factory';

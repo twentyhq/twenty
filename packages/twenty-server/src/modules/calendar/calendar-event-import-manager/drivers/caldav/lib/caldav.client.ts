@@ -4,10 +4,10 @@ import * as ical from 'node-ical';
 import {
   calendarMultiGet,
   createAccount,
-  DAVAccount,
-  DAVCalendar,
+  type DAVAccount,
+  type DAVCalendar,
   DAVNamespaceShort,
-  DAVObject,
+  type DAVObject,
   fetchCalendars,
   getBasicAuthHeaders,
   syncCollection,
@@ -16,8 +16,8 @@ import {
 import { CalDavGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-get-events.service';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import {
-  FetchedCalendarEvent,
-  FetchedCalendarEventParticipant,
+  type FetchedCalendarEvent,
+  type FetchedCalendarEventParticipant,
 } from 'src/modules/calendar/common/types/fetched-calendar-event';
 
 const DEFAULT_CALENDAR_TYPE = 'caldav';
@@ -411,7 +411,7 @@ export class CalDAVClient {
           events: allEvents,
           newSyncToken,
         });
-      } catch (error) {
+      } catch {
         results.set(calendar.url, {
           events: [],
           newSyncToken: options.syncCursor?.syncTokens[calendar.url],
@@ -486,7 +486,7 @@ export class CalDAVClient {
       const event = events[0] as ical.VEvent;
 
       return event.start < endDate && event.end > startDate;
-    } catch (error) {
+    } catch {
       return true;
     }
   }

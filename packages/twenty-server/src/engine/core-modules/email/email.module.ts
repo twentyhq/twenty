@@ -1,4 +1,4 @@
-import { DynamicModule, Global } from '@nestjs/common';
+import { type DynamicModule, Global } from '@nestjs/common';
 
 import { EmailDriverFactory } from 'src/engine/core-modules/email/email-driver.factory';
 import { EmailSenderService } from 'src/engine/core-modules/email/email-sender.service';

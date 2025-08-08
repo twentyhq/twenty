@@ -11,10 +11,10 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
   CalendarChannelSyncStage,
   CalendarChannelSyncStatus,
-  CalendarChannelWorkspaceEntity,
+  type CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 
 @Injectable()

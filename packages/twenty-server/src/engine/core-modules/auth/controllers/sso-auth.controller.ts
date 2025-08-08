@@ -37,7 +37,7 @@ import {
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 

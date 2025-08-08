@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { Participant } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
-import { EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
+import { type Participant } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
+import { type EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
 
 const removeSpacesAndLowerCase = (email: string): string => {
   return email.replace(/\s/g, '').toLowerCase();

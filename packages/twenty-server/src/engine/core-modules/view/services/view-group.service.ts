@@ -149,4 +149,22 @@ export class ViewGroupService {
 
     return viewGroup;
   }
+
+  async destroy(id: string, workspaceId: string): Promise<boolean> {
+    const viewGroup = await this.findById(id, workspaceId);
+
+    if (!isDefined(viewGroup)) {
+      throw new ViewGroupException(
+        generateViewGroupExceptionMessage(
+          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+          id,
+        ),
+        ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND,
+      );
+    }
+
+    await this.viewGroupRepository.delete(id);
+
+    return true;
+  }
 }

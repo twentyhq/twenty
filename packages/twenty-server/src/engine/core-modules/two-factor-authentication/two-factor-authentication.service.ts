@@ -15,8 +15,8 @@ import { TOTP_DEFAULT_CONFIGURATION } from 'src/engine/core-modules/two-factor-a
 import { TotpStrategy } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/totp.strategy';
 import { SimpleSecretEncryptionUtil } from 'src/engine/core-modules/two-factor-authentication/utils/simple-secret-encryption.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type User } from 'src/engine/core-modules/user/user.entity';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import {
   TwoFactorAuthenticationException,

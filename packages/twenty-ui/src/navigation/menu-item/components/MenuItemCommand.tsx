@@ -6,9 +6,9 @@ import {
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 
-import { IconComponent, OverflowingTextWithTooltip } from '@ui/display';
+import { type IconComponent, OverflowingTextWithTooltip } from '@ui/display';
 import { useIsMobile } from '@ui/utilities/responsive/hooks/useIsMobile';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { MenuItemCommandHotKeys } from './MenuItemCommandHotKeys';
 
 const StyledMenuItemLabelText = styled(StyledMenuItemLabel)`

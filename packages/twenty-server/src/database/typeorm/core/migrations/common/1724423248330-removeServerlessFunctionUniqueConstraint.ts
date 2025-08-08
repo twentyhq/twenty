@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class RemoveServerlessFunctionUniqueConstraint1724423248330
   implements MigrationInterface

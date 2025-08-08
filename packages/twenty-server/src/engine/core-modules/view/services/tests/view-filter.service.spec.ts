@@ -1,7 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
@@ -43,6 +43,7 @@ describe('ViewFilterService', () => {
             create: jest.fn(),
             save: jest.fn(),
             softDelete: jest.fn(),
+            delete: jest.fn(),
           },
         },
       ],
@@ -308,6 +309,24 @@ describe('ViewFilterService', () => {
           ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
         ),
       );
+    });
+  });
+
+  describe('destroy', () => {
+    it('should destroy a view filter successfully', async () => {
+      const id = 'view-filter-id';
+      const workspaceId = 'workspace-id';
+
+      jest
+        .spyOn(viewFilterService, 'findById')
+        .mockResolvedValue(mockViewFilter);
+      jest.spyOn(viewFilterRepository, 'delete').mockResolvedValue({} as any);
+
+      const result = await viewFilterService.destroy(id, workspaceId);
+
+      expect(viewFilterService.findById).toHaveBeenCalledWith(id, workspaceId);
+      expect(viewFilterRepository.delete).toHaveBeenCalledWith(id);
+      expect(result).toEqual(true);
     });
   });
 });

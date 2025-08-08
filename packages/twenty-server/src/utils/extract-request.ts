@@ -1,5 +1,5 @@
-import { ExecutionContext } from '@nestjs/common';
-import { GqlContextType, GqlExecutionContext } from '@nestjs/graphql';
+import { type ExecutionContext } from '@nestjs/common';
+import { type GqlContextType, GqlExecutionContext } from '@nestjs/graphql';
 
 // extract request from the execution context
 export const getRequest = (context: ExecutionContext) => {

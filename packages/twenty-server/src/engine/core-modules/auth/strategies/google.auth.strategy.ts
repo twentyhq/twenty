@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 
-import { Request } from 'express';
-import { Strategy, VerifyCallback } from 'passport-google-oauth20';
-import { APP_LOCALES } from 'twenty-shared/translations';
+import { type Request } from 'express';
+import { Strategy, type VerifyCallback } from 'passport-google-oauth20';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { SocialSSOSignInUpActionType } from 'src/engine/core-modules/auth/types/signInUp.type';
+import { type SocialSSOSignInUpActionType } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type GoogleRequest = Omit<

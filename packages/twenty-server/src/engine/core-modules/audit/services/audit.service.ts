@@ -6,14 +6,14 @@ import {
   AuditExceptionCode,
 } from 'src/engine/core-modules/audit/audit.exception';
 import {
-  TrackEventName,
-  TrackEventProperties,
+  type TrackEventName,
+  type TrackEventProperties,
 } from 'src/engine/core-modules/audit/types/events.type';
 import {
   makePageview,
   makeTrackEvent,
 } from 'src/engine/core-modules/audit/utils/analytics.utils';
-import { PageviewProperties } from 'src/engine/core-modules/audit/utils/events/pageview/pageview';
+import { type PageviewProperties } from 'src/engine/core-modules/audit/utils/events/pageview/pageview';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()

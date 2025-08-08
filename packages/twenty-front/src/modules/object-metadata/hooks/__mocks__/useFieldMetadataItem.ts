@@ -17,6 +17,7 @@ export const queries = {
         icon
         isCustom
         isActive
+        isUnique
         isNullable
         createdAt
         updatedAt
@@ -99,6 +100,7 @@ export const queries = {
         icon
         isCustom
         isActive
+        isUnique
         isNullable
         createdAt
         updatedAt
@@ -131,6 +133,7 @@ export const variables = {
         options: undefined,
         settings: undefined,
         isLabelSyncedWithName: true,
+        isUnique: undefined,
         objectMetadataId,
         type: 'TEXT',
       },

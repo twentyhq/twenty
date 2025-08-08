@@ -23,7 +23,7 @@ export const ExportNoteActionSingleRecordAction = () => {
     // TODO: Remove this once we have removed the old rich text
     try {
       parsedBody = JSON.parse(initialBody);
-    } catch (error) {
+    } catch {
       // eslint-disable-next-line no-console
       console.warn(
         `Failed to parse body for record ${recordId}, for rich text version 'v2'`,

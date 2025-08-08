@@ -1,10 +1,10 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import Editor, { EditorProps, Monaco } from '@monaco-editor/react';
+import Editor, { type EditorProps, type Monaco } from '@monaco-editor/react';
 import { Loader } from '@ui/feedback/loader/components/Loader';
 import { BASE_CODE_EDITOR_THEME_ID } from '@ui/input/code-editor/constants/BaseCodeEditorThemeId';
 import { getBaseCodeEditorTheme } from '@ui/input/code-editor/theme/utils/getBaseCodeEditorTheme';
-import { editor } from 'monaco-editor';
+import { type editor } from 'monaco-editor';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 

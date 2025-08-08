@@ -5,15 +5,15 @@ import { In } from 'typeorm';
 
 import {
   GraphqlQueryBaseResolverService,
-  GraphqlQueryResolverExecutionArgs,
+  type GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import {
-  ObjectRecord,
+  type ObjectRecord,
   OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
-import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
-import { FindDuplicatesResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { type IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
+import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
+import { type FindDuplicatesResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {
   GraphqlQueryRunnerException,

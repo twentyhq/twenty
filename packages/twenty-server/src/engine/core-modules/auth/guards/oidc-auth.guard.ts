@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { ExecutionContext, Injectable } from '@nestjs/common';
+import { type ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import { Issuer } from 'openid-client';
@@ -12,8 +12,8 @@ import {
 import { OIDCAuthStrategy } from 'src/engine/core-modules/auth/strategies/oidc.auth.strategy';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
-import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { type SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
+import { type WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Injectable()

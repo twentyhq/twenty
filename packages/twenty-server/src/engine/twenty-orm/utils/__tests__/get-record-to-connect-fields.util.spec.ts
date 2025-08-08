@@ -1,6 +1,6 @@
 import {
-  RelationConnectQueryConfig,
-  UniqueConstraintCondition,
+  type RelationConnectQueryConfig,
+  type UniqueConstraintCondition,
 } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 import { getRecordToConnectFields } from 'src/engine/twenty-orm/utils/get-record-to-connect-fields.util';
 

@@ -3,12 +3,12 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
-import { CustomException } from 'src/utils/custom-exception';
+import { type CustomException } from 'src/utils/custom-exception';
 
 const assertIsDefinedOrThrow = (
   workspace: Workspace | undefined | null,

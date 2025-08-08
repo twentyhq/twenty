@@ -1,7 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
 import {
@@ -42,6 +42,7 @@ describe('ViewGroupService', () => {
             create: jest.fn(),
             save: jest.fn(),
             softDelete: jest.fn(),
+            delete: jest.fn(),
           },
         },
       ],
@@ -292,6 +293,22 @@ describe('ViewGroupService', () => {
           ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND,
         ),
       );
+    });
+  });
+
+  describe('destroy', () => {
+    it('should destroy a view group successfully', async () => {
+      const id = 'view-group-id';
+      const workspaceId = 'workspace-id';
+
+      jest.spyOn(viewGroupService, 'findById').mockResolvedValue(mockViewGroup);
+      jest.spyOn(viewGroupRepository, 'delete').mockResolvedValue({} as any);
+
+      const result = await viewGroupService.destroy(id, workspaceId);
+
+      expect(viewGroupService.findById).toHaveBeenCalledWith(id, workspaceId);
+      expect(viewGroupRepository.delete).toHaveBeenCalledWith(id);
+      expect(result).toEqual(true);
     });
   });
 });

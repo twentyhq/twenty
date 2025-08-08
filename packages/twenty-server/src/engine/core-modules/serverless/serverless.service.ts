@@ -2,11 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import {
   ServerlessDriver,
-  ServerlessExecuteResult,
+  type ServerlessExecuteResult,
 } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { SERVERLESS_DRIVER } from 'src/engine/core-modules/serverless/serverless.constants';
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 @Injectable()
 export class ServerlessService implements ServerlessDriver {

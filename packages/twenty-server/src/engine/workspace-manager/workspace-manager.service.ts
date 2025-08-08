@@ -8,7 +8,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';

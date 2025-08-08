@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { GraphQLNamedType } from 'graphql';
+import { type GraphQLNamedType } from 'graphql';
 
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
 

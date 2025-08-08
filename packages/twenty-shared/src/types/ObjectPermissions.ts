@@ -1,4 +1,4 @@
-import { RestrictedFieldsPermissions } from './RestrictedFieldsPermissions';
+import { type RestrictedFieldsPermissions } from './RestrictedFieldsPermissions';
 
 export type ObjectPermissions = {
   canReadObjectRecords: boolean;

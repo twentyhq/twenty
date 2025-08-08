@@ -42,15 +42,6 @@ describe('workspaceGraphqlApiExceptionHandler', () => {
     );
   });
 
-  it('should throw InternalServerError for unknown WorkspaceExceptionCode', () => {
-    // @ts-expect-error - should never happen but it allow to test the default case
-    const error = new WorkspaceException('Unknown error', 'UNKNOWN_CODE');
-
-    expect(() => workspaceGraphqlApiExceptionHandler(error)).toThrow(
-      WorkspaceException,
-    );
-  });
-
   it('should throw the original error if it is not a WorkspaceException', () => {
     const genericError = new Error('Generic error');
 

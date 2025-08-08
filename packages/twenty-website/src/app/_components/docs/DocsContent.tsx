@@ -8,7 +8,7 @@ import { ArticleContent } from '@/app/_components/ui/layout/articles/ArticleCont
 import { Breadcrumbs } from '@/app/_components/ui/layout/Breadcrumbs';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
-import { FileContent } from '@/app/_server-utils/get-posts';
+import { type FileContent } from '@/app/_server-utils/get-posts';
 import { getUriAndLabel } from '@/shared-utils/pathUtils';
 
 const StyledContainer = styled('div')`

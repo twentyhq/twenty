@@ -1,11 +1,11 @@
-import { i18n, Messages } from '@lingui/core';
+import { i18n, type Messages } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { Container, Html } from '@react-email/components';
 
 import { BaseHead } from 'src/components/BaseHead';
 import { Footer } from 'src/components/Footer';
 import { Logo } from 'src/components/Logo';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { messages as afMessages } from '../locales/generated/af-ZA';
 import { messages as arMessages } from '../locales/generated/ar-SA';
 import { messages as caMessages } from '../locales/generated/ca-ES';

@@ -3,7 +3,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { generateText } from 'ai';
 
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class AgentTitleGenerationService {
@@ -11,7 +10,6 @@ export class AgentTitleGenerationService {
 
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async generateThreadTitle(messageContent: string): Promise<string> {

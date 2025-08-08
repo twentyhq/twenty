@@ -1,8 +1,8 @@
-import { FieldMetadataType, IsExactly } from 'twenty-shared/types';
+import { type FieldMetadataType, type IsExactly } from 'twenty-shared/types';
 
 import {
-  FieldMetadataComplexOption,
-  FieldMetadataDefaultOption,
+  type FieldMetadataComplexOption,
+  type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 type FieldMetadataOptionsMapping = {

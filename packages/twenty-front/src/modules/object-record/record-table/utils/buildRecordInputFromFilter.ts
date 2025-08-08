@@ -240,7 +240,7 @@ const computeValueFromFilterSelect = (
           return undefined;
         }
         return option.value;
-      } catch (error) {
+      } catch {
         return undefined;
       }
     case ViewFilterOperand.IsNot:
@@ -261,7 +261,7 @@ const computeValueFromFilterMultiSelect = (
       try {
         const parsedValue = parseJson<string[]>(value);
         return parsedValue ? parsedValue : undefined;
-      } catch (error) {
+      } catch {
         return undefined;
       }
     case ViewFilterOperand.DoesNotContain:

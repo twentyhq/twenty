@@ -1,4 +1,9 @@
-import { Global, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  Global,
+  type MiddlewareConsumer,
+  Module,
+  type NestModule,
+} from '@nestjs/common';
 
 import { I18nMiddleware } from 'src/engine/core-modules/i18n/i18n.middleware';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';

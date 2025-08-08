@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import Stripe from 'stripe';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+
+import type Stripe from 'stripe';
 
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 

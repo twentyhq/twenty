@@ -32,7 +32,7 @@ export const detectCalendarStartDay = (): keyof typeof CalendarStartDay => {
           return SUNDAY_KEY;
       }
     }
-  } catch (error) {
+  } catch {
     // Fallback if Intl.Locale is not supported or fails
   }
 

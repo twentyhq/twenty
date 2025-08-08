@@ -1,4 +1,4 @@
-import { DistantTables } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table';
+import { type DistantTables } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table';
 
 /* Commented out tables / columns are either:
  - not supported by the Stripe API

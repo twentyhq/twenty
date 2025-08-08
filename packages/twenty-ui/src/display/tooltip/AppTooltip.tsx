@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { PlacesType, PositionStrategy, Tooltip } from 'react-tooltip';
+import { type PlacesType, type PositionStrategy, Tooltip } from 'react-tooltip';
 
 import { RGBA } from '@ui/theme/constants/Rgba';
 

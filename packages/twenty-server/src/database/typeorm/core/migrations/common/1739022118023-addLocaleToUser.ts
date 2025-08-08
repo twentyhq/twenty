@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddLocaleToUser1739022118023 implements MigrationInterface {
   name = 'AddLocaleToUser1739022118023';

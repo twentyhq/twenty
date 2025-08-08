@@ -1,4 +1,4 @@
-import { HttpException } from '@nestjs/common';
+import { type HttpException } from '@nestjs/common';
 
 type Assert = (
   condition: unknown,

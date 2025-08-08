@@ -1,7 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
@@ -50,6 +50,7 @@ describe('ViewService', () => {
             create: jest.fn(),
             save: jest.fn(),
             softDelete: jest.fn(),
+            delete: jest.fn(),
           },
         },
       ],
@@ -293,6 +294,22 @@ describe('ViewService', () => {
           ViewExceptionCode.VIEW_NOT_FOUND,
         ),
       );
+    });
+  });
+
+  describe('destroy', () => {
+    it('should destroy a view successfully', async () => {
+      const id = 'view-id';
+      const workspaceId = 'workspace-id';
+
+      jest.spyOn(viewService, 'findById').mockResolvedValue(mockView);
+      jest.spyOn(viewRepository, 'delete').mockResolvedValue({} as any);
+
+      const result = await viewService.destroy(id, workspaceId);
+
+      expect(viewService.findById).toHaveBeenCalledWith(id, workspaceId);
+      expect(viewRepository.delete).toHaveBeenCalledWith(id);
+      expect(result).toEqual(true);
     });
   });
 });

@@ -3,8 +3,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { LimitInputFactory } from 'src/engine/api/rest/input-factories/limit-input.factory';
 import { EndingBeforeInputFactory } from 'src/engine/api/rest/input-factories/ending-before-input.factory';
 import { StartingAfterInputFactory } from 'src/engine/api/rest/input-factories/starting-after-input.factory';
-import { MetadataQueryVariables } from 'src/engine/api/rest/metadata/types/metadata-query-variables.type';
-import { RequestContext } from 'src/engine/api/rest/types/RequestContext';
+import { type MetadataQueryVariables } from 'src/engine/api/rest/metadata/types/metadata-query-variables.type';
+import { type RequestContext } from 'src/engine/api/rest/types/RequestContext';
 
 @Injectable()
 export class GetMetadataVariablesFactory {

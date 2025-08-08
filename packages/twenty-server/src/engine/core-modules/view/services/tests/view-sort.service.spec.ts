@@ -1,7 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
 import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
@@ -41,6 +41,7 @@ describe('ViewSortService', () => {
             create: jest.fn(),
             save: jest.fn(),
             softDelete: jest.fn(),
+            delete: jest.fn(),
           },
         },
       ],
@@ -279,6 +280,22 @@ describe('ViewSortService', () => {
           ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
         ),
       );
+    });
+  });
+
+  describe('destroy', () => {
+    it('should destroy a view sort successfully', async () => {
+      const id = 'view-sort-id';
+      const workspaceId = 'workspace-id';
+
+      jest.spyOn(viewSortService, 'findById').mockResolvedValue(mockViewSort);
+      jest.spyOn(viewSortRepository, 'delete').mockResolvedValue({} as any);
+
+      const result = await viewSortService.destroy(id, workspaceId);
+
+      expect(viewSortService.findById).toHaveBeenCalledWith(id, workspaceId);
+      expect(viewSortRepository.delete).toHaveBeenCalledWith(id);
+      expect(result).toEqual(true);
     });
   });
 });

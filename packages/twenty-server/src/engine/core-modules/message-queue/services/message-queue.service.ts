@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import {
-  QueueCronJobOptions,
-  QueueJobOptions,
+  type QueueCronJobOptions,
+  type QueueJobOptions,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 import {
-  MessageQueueJobData,
-  MessageQueueJob,
+  type MessageQueueJobData,
+  type MessageQueueJob,
 } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
-import { MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
+import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
 import {
   MessageQueue,

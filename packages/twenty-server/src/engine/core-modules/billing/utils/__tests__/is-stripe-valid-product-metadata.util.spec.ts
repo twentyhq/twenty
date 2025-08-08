@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';

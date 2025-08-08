@@ -10,12 +10,12 @@ import {
   SendEmailToolExceptionCode,
 } from 'src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception';
 import { SendEmailToolParametersZodSchema } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool.schema';
-import { SendEmailInput } from 'src/engine/core-modules/tool/tools/send-email-tool/types/send-email-input.type';
-import { ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { Tool } from 'src/engine/core-modules/tool/types/tool.type';
+import { type SendEmailInput } from 'src/engine/core-modules/tool/tools/send-email-tool/types/send-email-input.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 
 @Injectable()

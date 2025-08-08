@@ -71,4 +71,17 @@ export class ViewFilterResolver {
 
     return isDefined(deletedViewFilter);
   }
+
+  @Mutation(() => Boolean)
+  async destroyCoreViewFilter(
+    @Args('id', { type: () => String }) id: string,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<boolean> {
+    const deletedViewFilter = await this.viewFilterService.destroy(
+      id,
+      workspace.id,
+    );
+
+    return isDefined(deletedViewFilter);
+  }
 }

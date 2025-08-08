@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 
-import { UniqueConstraintCondition } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
+import { type UniqueConstraintCondition } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 
 export const formatConnectRecordNotFoundErrorMessage = (
   connectFieldName: string,

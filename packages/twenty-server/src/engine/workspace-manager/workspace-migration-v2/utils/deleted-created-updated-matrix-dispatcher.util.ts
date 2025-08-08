@@ -1,4 +1,4 @@
-import { FromTo } from 'twenty-shared/types';
+import { type FromTo } from 'twenty-shared/types';
 
 export type DeletedCreatedUpdatedMatrix<T> = {
   created: T[];

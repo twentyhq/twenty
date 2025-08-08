@@ -1,11 +1,11 @@
 import {
   Injectable,
   Logger,
-  OnModuleDestroy,
-  OnModuleInit,
+  type OnModuleDestroy,
+  type OnModuleInit,
 } from '@nestjs/common';
 
-import { ClickHouseClient, createClient } from '@clickhouse/client';
+import { type ClickHouseClient, createClient } from '@clickhouse/client';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 

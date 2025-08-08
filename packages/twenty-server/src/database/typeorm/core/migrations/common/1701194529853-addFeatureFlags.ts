@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddFeatureFlags1701194529853 implements MigrationInterface {
   name = 'AddFeatureFlags1701194529853';

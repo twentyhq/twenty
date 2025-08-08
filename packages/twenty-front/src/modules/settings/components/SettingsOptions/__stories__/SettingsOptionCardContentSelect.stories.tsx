@@ -18,6 +18,7 @@ const StyledContainer = styled.div`
   width: 480px;
 `;
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface SettingsOptionCardContentSelectProps
   extends React.ComponentProps<typeof SettingsOptionCardContentSelect> {}
 

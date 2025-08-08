@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
-import { PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 
-import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
+import { type UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 
 export type UpdateOneObjectFactoryInput = {
   idToUpdate: string;

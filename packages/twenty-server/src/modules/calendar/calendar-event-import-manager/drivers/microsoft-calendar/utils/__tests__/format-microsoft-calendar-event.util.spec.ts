@@ -1,4 +1,4 @@
-import { Event } from '@microsoft/microsoft-graph-types';
+import { type Event } from '@microsoft/microsoft-graph-types';
 
 import { formatMicrosoftCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/utils/format-microsoft-calendar-event.util';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';

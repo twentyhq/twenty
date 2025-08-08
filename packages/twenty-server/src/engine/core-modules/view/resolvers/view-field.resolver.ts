@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
 import { UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
 import { ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
-import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { type ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/core-modules/view/utils/view-graphql-api-exception.filter';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -61,6 +61,19 @@ export class ViewFieldResolver {
     @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {
     const deletedViewField = await this.viewFieldService.delete(
+      id,
+      workspace.id,
+    );
+
+    return isDefined(deletedViewField);
+  }
+
+  @Mutation(() => Boolean)
+  async destroyCoreViewField(
+    @Args('id', { type: () => String }) id: string,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<boolean> {
+    const deletedViewField = await this.viewFieldService.destroy(
       id,
       workspace.id,
     );

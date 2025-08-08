@@ -7,7 +7,7 @@ import { JSDOM } from 'jsdom';
 import sharp from 'sharp';
 import { v4 } from 'uuid';
 
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import { type FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { settings } from 'src/engine/constants/settings';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';

@@ -1,8 +1,8 @@
-import { EachTestingContext } from 'twenty-shared/testing';
+import { type EachTestingContext } from 'twenty-shared/testing';
 
-import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
+import { type ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
 import { hasPrimaryEmailChanged } from 'src/modules/contact-creation-manager/utils/has-primary-email-changed';
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 type HasPrimaryEmailChangedTestCase = EachTestingContext<{
   diff: Partial<ObjectRecordDiff<PersonWorkspaceEntity>>;

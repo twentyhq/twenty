@@ -11,7 +11,7 @@ import { Link } from 'src/components/Link';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
 import { capitalize } from 'src/utils/capitalize';
-import { APP_LOCALES } from 'twenty-shared/translations';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { getImageAbsoluteURI } from 'twenty-shared/utils';
 import { DEFAULT_WORKSPACE_LOGO } from 'src/constants/DefaultWorkspaceLogo';
 

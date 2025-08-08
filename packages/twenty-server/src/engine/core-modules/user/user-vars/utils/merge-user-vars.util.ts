@@ -1,4 +1,4 @@
-import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { type KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 
 export const mergeUserVars = <T>(
   userVars: Pick<KeyValuePair, 'key' | 'value' | 'userId' | 'workspaceId'>[],

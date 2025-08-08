@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconComponent } from '@ui/display';
-import { JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
+import { type IconComponent } from '@ui/display';
+import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
 
 const StyledLabelContainer = styled.span<{
   highlighting?: JsonNodeHighlighting;

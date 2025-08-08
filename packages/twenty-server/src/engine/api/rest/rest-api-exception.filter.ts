@@ -1,11 +1,11 @@
 import {
-  ArgumentsHost,
+  type ArgumentsHost,
   Catch,
-  ExceptionFilter,
+  type ExceptionFilter,
   HttpException,
 } from '@nestjs/common';
 
-import { Response } from 'express';
+import { type Response } from 'express';
 
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 

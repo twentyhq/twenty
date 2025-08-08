@@ -1,6 +1,6 @@
 import { ConfigurableModuleBuilder } from '@nestjs/common';
 
-import { TwentyORMOptions } from './interfaces/twenty-orm-options.interface';
+import { type TwentyORMOptions } from './interfaces/twenty-orm-options.interface';
 
 export const {
   ConfigurableModuleClass,

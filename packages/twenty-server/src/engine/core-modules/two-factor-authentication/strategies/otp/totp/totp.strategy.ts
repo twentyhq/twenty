@@ -1,11 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { authenticator } from 'otplib';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { SafeParseReturnType } from 'zod';
+import { type SafeParseReturnType } from 'zod';
 
-import { OTPAuthenticationStrategyInterface } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/interfaces/otp.strategy.interface';
+import { type OTPAuthenticationStrategyInterface } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/interfaces/otp.strategy.interface';
 
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 import {
@@ -15,15 +15,13 @@ import {
 
 import {
   TOTP_STRATEGY_CONFIG_SCHEMA,
-  TotpContext,
+  type TotpContext,
   TOTPStrategyConfig,
 } from './constants/totp.strategy.constants';
 
 @Injectable()
 export class TotpStrategy implements OTPAuthenticationStrategyInterface {
   public readonly name = TwoFactorAuthenticationStrategy.TOTP;
-
-  private readonly logger = new Logger(TotpStrategy.name);
 
   constructor(options?: TOTPStrategyConfig) {
     let result: SafeParseReturnType<unknown, TOTPStrategyConfig> | undefined;

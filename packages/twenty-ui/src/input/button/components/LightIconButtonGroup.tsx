@@ -1,8 +1,12 @@
 import styled from '@emotion/styled';
-import { IconComponent } from '@ui/display';
-import { FunctionComponent, MouseEvent, ReactElement } from 'react';
+import { type IconComponent } from '@ui/display';
+import {
+  type FunctionComponent,
+  type MouseEvent,
+  type ReactElement,
+} from 'react';
 
-import { LightIconButton, LightIconButtonProps } from './LightIconButton';
+import { LightIconButton, type LightIconButtonProps } from './LightIconButton';
 
 const StyledLightIconButtonGroupContainer = styled.div`
   display: inline-flex;

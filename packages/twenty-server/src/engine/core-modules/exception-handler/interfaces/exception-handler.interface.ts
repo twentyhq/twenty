@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { type Router } from 'express';
 
 export enum ExceptionHandlerDriver {
   SENTRY = 'SENTRY',

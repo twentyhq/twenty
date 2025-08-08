@@ -1,6 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-import { KebabCase } from 'type-fest';
+import { type KebabCase } from 'type-fest';
 
 export enum FileFolder {
   ProfilePicture = 'profile-picture',

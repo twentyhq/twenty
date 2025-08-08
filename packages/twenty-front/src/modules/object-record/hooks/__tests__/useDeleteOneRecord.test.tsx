@@ -176,7 +176,7 @@ describe('useDeleteOneRecord', () => {
         try {
           await result.current.deleteOneRecord(personRecord.id);
           fail('Should have thrown an error');
-        } catch (e) {
+        } catch {
           assertCachedRecordIsNull({
             recordId: personRecord.id,
             objectMetadataItem: personObjectMetadataItem,
@@ -316,7 +316,7 @@ describe('useDeleteOneRecord', () => {
         try {
           await result.current.deleteOneRecord(personRecord.id);
           fail('Should have thrown an error');
-        } catch (e) {
+        } catch {
           assertCachedRecordMatchSnapshot({
             recordId: personRecord.id,
             objectMetadataItem: personObjectMetadataItem,
