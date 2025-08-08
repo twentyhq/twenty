@@ -6,6 +6,13 @@ import { OTHER_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/Other
 export const getTriggerIcon = (
   trigger: WorkflowTrigger,
 ): string | undefined => {
+  if (
+    trigger.settings &&
+    'icon' in trigger.settings &&
+    typeof trigger.settings.icon === 'string'
+  ) {
+    return trigger.settings.icon;
+  }
   if (trigger.type === 'DATABASE_EVENT') {
     const eventName = splitWorkflowTriggerEventName(
       trigger.settings.eventName,
