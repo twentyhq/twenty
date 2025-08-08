@@ -3,12 +3,15 @@ import { MktProductWorkspaceEntity } from 'src/mkt-core/product/standard-objects
 import { MktValueWorkspaceEntity } from 'src/mkt-core/value/mkt-value.workspace-entity';
 import { MktVariantWorkspaceEntity } from 'src/mkt-core/variant/mkt-variant.workspace-entity';
 import { MktVariantAttributeWorkspaceEntity } from 'src/mkt-core/variant_attribute/mkt-variant-attribute.workspace-entity';
+import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-entity';
 
 export const MKT_WORKSPACE_ENTITIES = [
+  // Product
   MktProductWorkspaceEntity,
   MktAttributeWorkspaceEntity,
   MktVariantWorkspaceEntity,
   MktValueWorkspaceEntity,
   MktVariantAttributeWorkspaceEntity,
-  // add other workspace entities here if needed
+  // Order
+  MktOrderWorkspaceEntity,
 ];
