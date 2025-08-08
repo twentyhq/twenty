@@ -203,7 +203,7 @@ export class UserRoleService {
     }
 
     if (
-      roleOfUserWorkspace.standardId &&
+      isDefined(roleOfUserWorkspace.standardId) &&
       roleOfUserWorkspace.standardId === ADMIN_ROLE.standardId
     ) {
       const adminRole = roleOfUserWorkspace;
