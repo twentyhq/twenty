@@ -45,7 +45,7 @@ export class WorkspaceSyncRoleService {
 
     for (const roleComparatorResult of roleComparatorResults) {
       if (roleComparatorResult.action === ComparatorAction.CREATE) {
-        const roleToCreate = roleComparatorResult.object;
+        const roleToCreate = roleComparatorResult.toFlatRole;
 
         const flatRoleData = removePropertiesFromRecord(roleToCreate, [
           'uniqueIdentifier',
@@ -59,7 +59,7 @@ export class WorkspaceSyncRoleService {
       }
 
       if (roleComparatorResult.action === ComparatorAction.UPDATE) {
-        const roleToUpdate = roleComparatorResult.object;
+        const roleToUpdate = roleComparatorResult.toFlatRole;
 
         const flatRoleData = removePropertiesFromRecord(roleToUpdate, [
           'id',
@@ -71,7 +71,7 @@ export class WorkspaceSyncRoleService {
       }
 
       if (roleComparatorResult.action === ComparatorAction.DELETE) {
-        const roleToDelete = roleComparatorResult.object;
+        const roleToDelete = roleComparatorResult.fromFlatRole;
 
         await roleRepository.delete({ id: roleToDelete.id });
       }

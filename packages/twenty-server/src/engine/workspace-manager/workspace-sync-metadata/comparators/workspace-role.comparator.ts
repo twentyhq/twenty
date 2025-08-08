@@ -10,12 +10,19 @@ import { transformMetadataForComparison } from 'src/engine/workspace-manager/wor
 
 type RoleComparatorResult =
   | {
-      action: ComparatorAction.CREATE | ComparatorAction.UPDATE;
-      object: FlatRole;
+      action: ComparatorAction.CREATE;
+      fromFlatRole: null;
+      toFlatRole: FlatRole;
+    }
+  | {
+      action: ComparatorAction.UPDATE;
+      fromFlatRole: RoleEntity;
+      toFlatRole: FlatRole;
     }
   | {
       action: ComparatorAction.DELETE;
-      object: RoleEntity;
+      fromFlatRole: RoleEntity;
+      toFlatRole: null;
     };
 
 const rolePropertiesToIgnore = [
@@ -66,7 +73,8 @@ export class WorkspaceRoleComparator {
           if (standardRole) {
             results.push({
               action: ComparatorAction.CREATE,
-              object: standardRole,
+              fromFlatRole: null,
+              toFlatRole: standardRole,
             });
           }
           break;
@@ -82,7 +90,8 @@ export class WorkspaceRoleComparator {
           if (existingRole && standardRole) {
             results.push({
               action: ComparatorAction.UPDATE,
-              object: standardRole,
+              fromFlatRole: existingRole,
+              toFlatRole: standardRole,
             });
           }
           break;
@@ -95,7 +104,8 @@ export class WorkspaceRoleComparator {
           if (existingRole && difference.path.length === 1) {
             results.push({
               action: ComparatorAction.DELETE,
-              object: existingRole,
+              fromFlatRole: existingRole,
+              toFlatRole: null,
             });
           }
           break;
