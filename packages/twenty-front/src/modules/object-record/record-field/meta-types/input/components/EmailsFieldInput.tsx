@@ -1,43 +1,46 @@
+import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
 import { useEmailsField } from '@/object-record/record-field/meta-types/hooks/useEmailsField';
 import { EmailsFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/EmailsFieldMenuItem';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
+import { emailsSchema } from '@/object-record/record-field/types/guards/isFieldEmailsValue';
 import { emailSchema } from '@/object-record/record-field/validation-schemas/emailSchema';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useLingui } from '@lingui/react/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
-type EmailsFieldInputProps = {
-  onCancel?: () => void;
-  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
-};
-
-export const EmailsFieldInput = ({
-  onCancel,
-  onClickOutside,
-}: EmailsFieldInputProps) => {
-  const { persistEmailsField, fieldValue } = useEmailsField();
+export const EmailsFieldInput = () => {
+  const { setDraftValue, draftValue } = useEmailsField();
   const { copyToClipboard } = useCopyToClipboard();
   const { t } = useLingui();
+
+  const { onEscape, onClickOutside } = useContext(FieldInputEventContext);
 
   const emails = useMemo<string[]>(
     () =>
       [
-        fieldValue?.primaryEmail ? fieldValue?.primaryEmail : null,
-        ...(fieldValue?.additionalEmails ?? []),
+        draftValue?.primaryEmail ? draftValue?.primaryEmail : null,
+        ...(draftValue?.additionalEmails ?? []),
       ].filter(isDefined),
-    [fieldValue?.primaryEmail, fieldValue?.additionalEmails],
+    [draftValue?.primaryEmail, draftValue?.additionalEmails],
   );
 
-  const handlePersistEmails = (updatedEmails: string[]) => {
+  const handleChange = (updatedEmails: string[]) => {
     const [nextPrimaryEmail, ...nextAdditionalEmails] = updatedEmails;
-    persistEmailsField({
+
+    const nextValue = {
       primaryEmail: nextPrimaryEmail ?? '',
       additionalEmails: nextAdditionalEmails,
-    });
+    };
+
+    const parseResponse = emailsSchema.safeParse(nextValue);
+
+    if (parseResponse.success) {
+      setDraftValue(parseResponse.data);
+    }
   };
 
   const validateInput = useCallback(
@@ -64,15 +67,23 @@ export const EmailsFieldInput = ({
     copyToClipboard(email, t`Email copied to clipboard`);
   };
 
+  const handleClickOutside = (
+    _newValue: any,
+    event: MouseEvent | TouchEvent,
+  ) => {
+    onClickOutside?.({ newValue: draftValue, event });
+  };
+
+  const handleEscape = (_newValue: any) => {
+    onEscape?.({ newValue: draftValue });
+  };
+
   return (
     <MultiItemFieldInput
       items={emails}
-      onPersist={handlePersistEmails}
-      onCancel={onCancel}
-      onClickOutside={(persist, event) => {
-        onClickOutside?.(event);
-        persist();
-      }}
+      onChange={handleChange}
+      onEscape={handleEscape}
+      onClickOutside={handleClickOutside}
       placeholder="Email"
       fieldMetadataType={FieldMetadataType.EMAILS}
       validateInput={validateInput}

@@ -1,10 +1,11 @@
 import { Decorator, Meta, StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
 
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
@@ -12,7 +13,10 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { FieldMetadataType } from 'twenty-shared/types';
 import { FieldRatingValue } from '../../../../types/FieldMetadata';
 import { useRatingField } from '../../../hooks/useRatingField';
-import { RatingFieldInput, RatingFieldInputProps } from '../RatingFieldInput';
+import { RatingFieldInput } from '../RatingFieldInput';
+
+const { FieldInputEventContextProviderWithJestMocks, handleSubmitMocked } =
+  getFieldInputEventContextProviderWithJestMocks();
 
 const RatingFieldValueSetterEffect = ({
   value,
@@ -28,7 +32,7 @@ const RatingFieldValueSetterEffect = ({
   return <></>;
 };
 
-type RatingFieldInputWithContextProps = RatingFieldInputProps & {
+type RatingFieldInputWithContextProps = {
   value: FieldRatingValue;
   recordId: string;
 };
@@ -36,7 +40,6 @@ type RatingFieldInputWithContextProps = RatingFieldInputProps & {
 const RatingFieldInputWithContext = ({
   recordId,
   value,
-  onSubmit,
 }: RatingFieldInputWithContextProps) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
@@ -80,17 +83,17 @@ const RatingFieldInputWithContext = ({
         }}
       >
         <RatingFieldValueSetterEffect value={value} />
-        <RatingFieldInput onSubmit={onSubmit} />
+        <FieldInputEventContextProviderWithJestMocks>
+          <RatingFieldInput />
+        </FieldInputEventContextProviderWithJestMocks>
       </FieldContext.Provider>
     </RecordFieldComponentInstanceContext.Provider>
   );
 };
 
-const submitJestFn = fn();
-
 const clearMocksDecorator: Decorator = (Story, context) => {
   if (context.parameters.clearMocks === true) {
-    submitJestFn.mockClear();
+    handleSubmitMocked.mockClear();
   }
   return <Story />;
 };
@@ -100,7 +103,7 @@ const meta: Meta = {
   component: RatingFieldInputWithContext,
   args: {
     value: '3',
-    onSubmit: submitJestFn,
+    onSubmit: handleSubmitMocked,
   },
   argTypes: {
     onSubmit: { control: false },
@@ -121,7 +124,7 @@ export const Submit: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(submitJestFn).toHaveBeenCalledTimes(0);
+    expect(handleSubmitMocked).toHaveBeenCalledTimes(0);
 
     const input = canvas.getByRole('slider', { name: 'Rating' });
     const firstStar = input.firstElementChild;
@@ -129,7 +132,7 @@ export const Submit: Story = {
     await userEvent.click(firstStar);
 
     await waitFor(() => {
-      expect(submitJestFn).toHaveBeenCalledTimes(1);
+      expect(handleSubmitMocked).toHaveBeenCalledTimes(1);
     });
   },
 };

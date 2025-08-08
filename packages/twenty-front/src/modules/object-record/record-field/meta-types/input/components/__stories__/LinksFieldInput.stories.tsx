@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useLinksField } from '@/object-record/record-field/meta-types/hooks/useLinksField';
+import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
@@ -15,6 +16,12 @@ import { LinksFieldInput } from '../LinksFieldInput';
 
 const updateRecord = fn();
 
+const {
+  FieldInputEventContextProviderWithJestMocks,
+  handleEscapeMocked,
+  handleClickoutsideMocked,
+} = getFieldInputEventContextProviderWithJestMocks();
+
 const LinksValueSetterEffect = ({
   value,
 }: {
@@ -24,11 +31,12 @@ const LinksValueSetterEffect = ({
     secondaryLinks: Array<{ url: string | null; label: string | null }> | null;
   };
 }) => {
-  const { setFieldValue } = useLinksField();
+  const { setFieldValue, setDraftValue } = useLinksField();
 
   useEffect(() => {
     setFieldValue(value);
-  }, [setFieldValue, value]);
+    setDraftValue(value);
+  }, [setFieldValue, value, setDraftValue]);
 
   return null;
 };
@@ -40,33 +48,17 @@ type LinksInputWithContextProps = {
     secondaryLinks: Array<{ url: string | null; label: string | null }> | null;
   };
   recordId: string;
-  onCancel?: () => void;
-  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
 };
 
-type LinksFieldValueGaterProps = Pick<
-  LinksInputWithContextProps,
-  'onCancel' | 'onClickOutside'
->;
-
-const LinksFieldValueGater = ({
-  onCancel,
-  onClickOutside,
-}: LinksFieldValueGaterProps) => {
+const LinksFieldValueGater = () => {
   const { fieldValue } = useLinksField();
 
-  return (
-    fieldValue && (
-      <LinksFieldInput onCancel={onCancel} onClickOutside={onClickOutside} />
-    )
-  );
+  return fieldValue && <LinksFieldInput />;
 };
 
 const LinksInputWithContext = ({
   value,
   recordId,
-  onCancel,
-  onClickOutside,
 }: LinksInputWithContextProps) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const instanceId = getRecordFieldInputInstanceId({
@@ -111,11 +103,10 @@ const LinksInputWithContext = ({
             useUpdateRecord: () => [updateRecord, { loading: false }],
           }}
         >
-          <LinksValueSetterEffect value={value} />
-          <LinksFieldValueGater
-            onCancel={onCancel}
-            onClickOutside={onClickOutside}
-          />
+          <FieldInputEventContextProviderWithJestMocks>
+            <LinksValueSetterEffect value={value} />
+            <LinksFieldValueGater />
+          </FieldInputEventContextProviderWithJestMocks>
         </FieldContext.Provider>
       </RecordFieldComponentInstanceContext.Provider>
       <div data-testid="links-field-input-click-outside-div" />
@@ -127,9 +118,6 @@ const getPrimaryLinkBookmarkIcon = (canvasElement: HTMLElement) =>
   // It would be better to use an aria-label on the icon, but we'll do this for now
   canvasElement.querySelector('svg[class*="tabler-icon-bookmark"]');
 
-const cancelJestFn = fn();
-const clickOutsideJestFn = fn();
-
 const meta: Meta = {
   title: 'UI/Data/Field/Input/LinksFieldInput',
   component: LinksInputWithContext,
@@ -140,8 +128,6 @@ const meta: Meta = {
       secondaryLinks: null,
     },
     recordId: '123',
-    onCancel: cancelJestFn,
-    onClickOutside: clickOutsideJestFn,
   },
   argTypes: {
     onCancel: { control: false },
@@ -242,22 +228,6 @@ export const CreatePrimaryLink: Story = {
     const linkDisplay = await canvas.findByText('twenty.com');
     expect(linkDisplay).toBeVisible();
 
-    await waitFor(() => {
-      expect(updateRecord).toHaveBeenCalledWith({
-        variables: {
-          where: { id: '123' },
-          updateOneRecordInput: {
-            links: {
-              primaryLinkUrl: 'https://www.twenty.com',
-              primaryLinkLabel: null,
-              secondaryLinks: [],
-            },
-          },
-        },
-      });
-    });
-    expect(updateRecord).toHaveBeenCalledTimes(1);
-
     expect(getPrimaryLinkBookmarkIcon(canvasElement)).not.toBeInTheDocument();
   },
 };
@@ -271,22 +241,6 @@ export const TrimInput: Story = {
 
     const linkDisplay = await canvas.findByText('twenty.com');
     expect(linkDisplay).toBeVisible();
-
-    await waitFor(() => {
-      expect(updateRecord).toHaveBeenCalledWith({
-        variables: {
-          where: { id: '123' },
-          updateOneRecordInput: {
-            links: {
-              primaryLinkUrl: 'https://www.twenty.com',
-              primaryLinkLabel: null,
-              secondaryLinks: [],
-            },
-          },
-        },
-      });
-    });
-    expect(updateRecord).toHaveBeenCalledTimes(1);
 
     expect(getPrimaryLinkBookmarkIcon(canvasElement)).not.toBeInTheDocument();
   },
@@ -316,27 +270,6 @@ export const AddSecondaryLink: Story = {
 
     const secondaryLink = await canvas.findByText('docs.twenty.com');
     expect(secondaryLink).toBeVisible();
-
-    await waitFor(() => {
-      expect(updateRecord).toHaveBeenCalledWith({
-        variables: {
-          where: { id: '123' },
-          updateOneRecordInput: {
-            links: {
-              primaryLinkUrl: 'https://www.twenty.com',
-              primaryLinkLabel: 'Twenty Website',
-              secondaryLinks: [
-                {
-                  url: 'https://docs.twenty.com',
-                  label: null,
-                },
-              ],
-            },
-          },
-        },
-      });
-    });
-    expect(updateRecord).toHaveBeenCalledTimes(1);
   },
 };
 
@@ -369,22 +302,6 @@ export const DeletePrimaryLink: Story = {
     const input = await canvas.findByPlaceholderText('URL');
     expect(input).toBeVisible();
     expect(input).toHaveValue('');
-
-    await waitFor(() => {
-      expect(updateRecord).toHaveBeenCalledWith({
-        variables: {
-          where: { id: '123' },
-          updateOneRecordInput: {
-            links: {
-              primaryLinkUrl: null,
-              primaryLinkLabel: null,
-              secondaryLinks: [],
-            },
-          },
-        },
-      });
-    });
-    expect(updateRecord).toHaveBeenCalledTimes(1);
   },
 };
 
@@ -427,22 +344,6 @@ export const DeletePrimaryLinkAndUseSecondaryLinkAsTheNewPrimaryLink: Story = {
     expect(oldPrimaryLink).not.toBeInTheDocument();
 
     expect(getPrimaryLinkBookmarkIcon(canvasElement)).not.toBeInTheDocument();
-
-    await waitFor(() => {
-      expect(updateRecord).toHaveBeenCalledWith({
-        variables: {
-          where: { id: '123' },
-          updateOneRecordInput: {
-            links: {
-              primaryLinkUrl: 'https://docs.twenty.com',
-              primaryLinkLabel: 'Documentation',
-              secondaryLinks: [],
-            },
-          },
-        },
-      });
-    });
-    expect(updateRecord).toHaveBeenCalledTimes(1);
   },
 };
 
@@ -485,22 +386,6 @@ export const DeleteSecondaryLink: Story = {
     expect(secondaryLink).not.toBeInTheDocument();
 
     expect(getPrimaryLinkBookmarkIcon(canvasElement)).not.toBeInTheDocument();
-
-    await waitFor(() => {
-      expect(updateRecord).toHaveBeenCalledWith({
-        variables: {
-          where: { id: '123' },
-          updateOneRecordInput: {
-            links: {
-              primaryLinkUrl: 'https://www.twenty.com',
-              primaryLinkLabel: 'Twenty Website',
-              secondaryLinks: [],
-            },
-          },
-        },
-      });
-    });
-    expect(updateRecord).toHaveBeenCalledTimes(1);
   },
 };
 
@@ -511,14 +396,14 @@ export const ClickOutside: Story = {
     const input = await canvas.findByPlaceholderText('URL');
     await userEvent.click(input);
 
-    expect(clickOutsideJestFn).toHaveBeenCalledTimes(0);
+    expect(handleClickoutsideMocked).toHaveBeenCalledTimes(0);
 
     const outsideDiv = await canvas.findByTestId(
       'links-field-input-click-outside-div',
     );
     await userEvent.click(outsideDiv);
 
-    expect(clickOutsideJestFn).toHaveBeenCalledTimes(1);
+    expect(handleClickoutsideMocked).toHaveBeenCalledTimes(1);
   },
 };
 
@@ -526,14 +411,14 @@ export const Cancel: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(cancelJestFn).toHaveBeenCalledTimes(0);
+    expect(handleEscapeMocked).toHaveBeenCalledTimes(0);
 
     const input = await canvas.findByPlaceholderText('URL');
     await userEvent.click(input);
 
     await userEvent.keyboard('{escape}');
 
-    expect(cancelJestFn).toHaveBeenCalledTimes(1);
+    expect(handleEscapeMocked).toHaveBeenCalledTimes(1);
   },
 };
 
@@ -602,28 +487,6 @@ export const MakeSecondaryLinkPrimary: Story = {
       getCanvasElementForDropdownTesting(),
     ).findByText('Set as Primary');
     await userEvent.click(setPrimaryOption);
-
-    // Documentation should now be the primary link
-    await waitFor(() => {
-      expect(updateRecord).toHaveBeenCalledWith({
-        variables: {
-          where: { id: '123' },
-          updateOneRecordInput: {
-            links: {
-              primaryLinkUrl: 'https://docs.twenty.com',
-              primaryLinkLabel: 'Documentation',
-              secondaryLinks: [
-                {
-                  url: 'https://www.twenty.com',
-                  label: 'Twenty Website',
-                },
-              ],
-            },
-          },
-        },
-      });
-    });
-    expect(updateRecord).toHaveBeenCalledTimes(1);
   },
 };
 
