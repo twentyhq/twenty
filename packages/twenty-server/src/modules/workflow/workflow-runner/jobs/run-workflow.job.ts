@@ -20,6 +20,8 @@ import { getRootSteps } from 'src/modules/workflow/workflow-runner/utils/get-roo
 import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 
 export type RunWorkflowJobData = {
   workspaceId: string;
@@ -37,6 +39,7 @@ export class RunWorkflowJob {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly metricsService: MetricsService,
     private readonly workflowRunQueueWorkspaceService: WorkflowRunQueueWorkspaceService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Process(RunWorkflowJob.name)
@@ -98,6 +101,8 @@ export class RunWorkflowJob {
       );
     }
 
+    await this.throttleExecution(workflowVersion.workflowId);
+
     await this.incrementTriggerMetrics({
       workflowRunId,
       triggerType: workflowVersion.trigger.type,
@@ -108,13 +113,20 @@ export class RunWorkflowJob {
       workspaceId,
     });
 
-    await this.throttleExecution(workflowVersion.workflowId);
-
     const rootSteps = getRootSteps(workflowVersion.steps);
 
+    const isWorkflowBranchEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
+        workspaceId,
+      );
+
+    const stepIds = isWorkflowBranchEnabled
+      ? (workflowVersion.trigger.nextStepIds ?? [])
+      : (rootSteps.map((step) => step.id) ?? []);
+
     await this.workflowExecutorWorkspaceService.executeFromSteps({
-      stepIds:
-        workflowVersion.trigger.nextStepIds ?? rootSteps.map((step) => step.id),
+      stepIds,
       workflowRunId,
       workspaceId,
     });
@@ -136,10 +148,7 @@ export class RunWorkflowJob {
       });
 
     if (workflowRun.status !== WorkflowRunStatus.RUNNING) {
-      throw new WorkflowRunException(
-        'Workflow is not running',
-        WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
-      );
+      return;
     }
 
     const lastExecutedStep = workflowRun.state?.flow?.steps?.find(

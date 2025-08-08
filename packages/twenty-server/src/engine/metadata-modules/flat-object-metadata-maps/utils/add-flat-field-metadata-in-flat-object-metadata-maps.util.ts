@@ -9,7 +9,7 @@ export const addFlatFieldMetadataInFlatObjectMetadataMaps = (
 ): FlatObjectMetadataMaps | undefined => {
   try {
     return addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow(arg);
-  } catch (e) {
+  } catch {
     return undefined;
   }
 };

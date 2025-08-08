@@ -2,7 +2,10 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsRolePermissionsObjectLevelOverrideCellContainer } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCellContainer';
 import { SettingsRolePermissionsObjectLevelSeeFieldsValueForObject } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject';
 import { SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject';
-import { OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS } from '@/settings/roles/role-permissions/object-level-permissions/constants/ObjectLevelPermissionTableGridAutoColumns';
+import {
+  OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS,
+  OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS_WITHOUT_FIELD_PERMISSIONS,
+} from '@/settings/roles/role-permissions/object-level-permissions/constants/ObjectLevelPermissionTableGridAutoColumns';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -29,11 +32,13 @@ const StyledNameLabel = styled.div`
 type SettingsRolePermissionsObjectLevelTableRowProps = {
   objectMetadataItem: ObjectMetadataItem;
   roleId: string;
+  isFieldsPermissionsEnabled: boolean;
 };
 
 export const SettingsRolePermissionsObjectLevelTableRow = ({
   objectMetadataItem,
   roleId,
+  isFieldsPermissionsEnabled,
 }: SettingsRolePermissionsObjectLevelTableRowProps) => {
   const { getIcon } = useIcons();
   const theme = useTheme();
@@ -48,7 +53,11 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
         roleId: roleId,
         objectMetadataId: objectMetadataItem.id,
       })}
-      gridAutoColumns={OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS}
+      gridAutoColumns={
+        isFieldsPermissionsEnabled
+          ? OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS
+          : OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS_WITHOUT_FIELD_PERMISSIONS
+      }
     >
       <StyledNameTableCell>
         {!!Icon && (
@@ -69,18 +78,22 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
           objectLabel={objectLabelPlural}
         />
       </TableCell>
-      <TableCell>
-        <SettingsRolePermissionsObjectLevelSeeFieldsValueForObject
-          roleId={roleId}
-          objectMetadataItemId={objectMetadataItem.id}
-        />
-      </TableCell>
-      <TableCell>
-        <SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject
-          roleId={roleId}
-          objectMetadataItemId={objectMetadataItem.id}
-        />
-      </TableCell>
+      {isFieldsPermissionsEnabled && (
+        <>
+          <TableCell>
+            <SettingsRolePermissionsObjectLevelSeeFieldsValueForObject
+              roleId={roleId}
+              objectMetadataItemId={objectMetadataItem.id}
+            />
+          </TableCell>
+          <TableCell>
+            <SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject
+              roleId={roleId}
+              objectMetadataItemId={objectMetadataItem.id}
+            />
+          </TableCell>
+        </>
+      )}
       <TableCell align={'right'}>
         <IconChevronRight
           size={theme.icon.size.md}

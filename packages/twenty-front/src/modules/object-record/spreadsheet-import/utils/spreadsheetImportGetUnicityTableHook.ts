@@ -6,9 +6,8 @@ import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constant
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import {
   ImportedStructuredRow,
-  SpreadsheetImportRowHook,
+  SpreadsheetImportTableHook,
 } from '@/spreadsheet-import/types';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
@@ -22,7 +21,7 @@ type Column = {
   fieldType: FieldMetadataType;
 };
 
-export const spreadsheetImportGetUnicityRowHook = (
+export const spreadsheetImportGetUnicityTableHook = (
   objectMetadataItem: ObjectMetadataItem,
 ) => {
   const uniqueConstraintsFields = getUniqueConstraintsFields<
@@ -50,40 +49,45 @@ export const spreadsheetImportGetUnicityRowHook = (
         return [{ columnName: field.name, fieldType: field.type }];
       }),
     );
-  const rowHook: SpreadsheetImportRowHook = (row, addError, table) => {
+  const tableHook: SpreadsheetImportTableHook = (table, addError) => {
     if (uniqueConstraintsFields.length === 0) {
-      return row;
+      return table;
     }
 
-    uniqueConstraintsWithColumnNames.forEach((uniqueConstraint) => {
-      const rowUniqueValues = getUniqueValues(row, uniqueConstraint);
+    for (const uniqueConstraint of uniqueConstraintsWithColumnNames) {
+      const uniqueValues: Record<string, number> = {};
+      const duplicateIndices: Set<number> = new Set();
 
-      if (!isNonEmptyString(rowUniqueValues)) {
-        return row;
-      }
+      table.forEach((row, index) => {
+        const uniqueValue = getUniqueValues(row, uniqueConstraint);
 
-      const duplicateRows = table.filter(
-        (r) => getUniqueValues(r, uniqueConstraint) === rowUniqueValues,
-      );
+        if (!isNonEmptyString(uniqueValue)) {
+          return;
+        }
 
-      if (duplicateRows.length <= 1) {
-        return row;
-      }
-
-      uniqueConstraint.forEach(({ columnName }) => {
-        if (isDefined(row[columnName])) {
-          addError(columnName, {
-            message: t`This ${columnName} value already exists in your import data`,
-            level: 'error',
-          });
+        if (isDefined(uniqueValues[uniqueValue])) {
+          const originalIndex = uniqueValues[uniqueValue];
+          duplicateIndices.add(originalIndex);
+          duplicateIndices.add(index);
+        } else {
+          uniqueValues[uniqueValue] = index;
         }
       });
-    });
 
-    return row;
+      duplicateIndices.forEach((duplicateIndex) => {
+        uniqueConstraint.forEach(({ columnName }) => {
+          addError(duplicateIndex, columnName, {
+            message: `This ${columnName} value already exists in your import data`,
+            level: 'error',
+          });
+        });
+      });
+    }
+
+    return table;
   };
 
-  return rowHook;
+  return tableHook;
 };
 
 const getUniqueValues = (

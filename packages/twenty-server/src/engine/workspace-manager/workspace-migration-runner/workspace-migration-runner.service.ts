@@ -1,8 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner, Table, type TableColumn } from 'typeorm';
 
+import {
+  IndexMetadataException,
+  IndexMetadataExceptionCode,
+} from 'src/engine/metadata-modules/index-metadata/index-field-metadata.exception';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import {
   type WorkspaceMigrationColumnAction,
@@ -246,6 +251,17 @@ export class WorkspaceMigrationRunnerService {
       if (error.code === '42P07') {
         return;
       }
+
+      if (error.code === '23505') {
+        throw new IndexMetadataException(
+          `Unique index creation failed because of unique constraint violation`,
+          IndexMetadataExceptionCode.INDEX_CREATION_FAILED,
+          {
+            userFriendlyMessage: t`Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first.`,
+          },
+        );
+      }
+
       throw error;
     }
   }

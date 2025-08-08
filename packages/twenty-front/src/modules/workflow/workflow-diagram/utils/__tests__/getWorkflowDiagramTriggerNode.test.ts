@@ -16,26 +16,26 @@ describe('getWorkflowDiagramTriggerNode', () => {
       const result = getWorkflowDiagramTriggerNode({ trigger });
 
       expect(result).toMatchInlineSnapshot(`
-        {
-          "data": {
-            "hasNextStepIds": false,
-            "icon": "IconHandMove",
-            "name": "Manual trigger",
-            "nodeType": "trigger",
-            "position": {
-              "x": 0,
-              "y": 0,
-            },
-            "stepId": "trigger",
-            "triggerType": "MANUAL",
-          },
-          "id": "trigger",
-          "position": {
-            "x": 0,
-            "y": 0,
-          },
-        }
-      `);
+{
+  "data": {
+    "hasNextStepIds": false,
+    "icon": "IconUser",
+    "name": "Manual trigger",
+    "nodeType": "trigger",
+    "position": {
+      "x": 0,
+      "y": 0,
+    },
+    "stepId": "trigger",
+    "triggerType": "MANUAL",
+  },
+  "id": "trigger",
+  "position": {
+    "x": 0,
+    "y": 0,
+  },
+}
+`);
     });
   });
 
@@ -205,26 +205,26 @@ describe('getWorkflowDiagramTriggerNode', () => {
       const result = getWorkflowDiagramTriggerNode({ trigger });
 
       expect(result).toMatchInlineSnapshot(`
-        {
-          "data": {
-            "hasNextStepIds": false,
-            "icon": "IconHandMove",
-            "name": "Custom Trigger Name",
-            "nodeType": "trigger",
-            "position": {
-              "x": 0,
-              "y": 0,
-            },
-            "stepId": "trigger",
-            "triggerType": "MANUAL",
-          },
-          "id": "trigger",
-          "position": {
-            "x": 0,
-            "y": 0,
-          },
-        }
-      `);
+{
+  "data": {
+    "hasNextStepIds": false,
+    "icon": "IconUser",
+    "name": "Custom Trigger Name",
+    "nodeType": "trigger",
+    "position": {
+      "x": 0,
+      "y": 0,
+    },
+    "stepId": "trigger",
+    "triggerType": "MANUAL",
+  },
+  "id": "trigger",
+  "position": {
+    "x": 0,
+    "y": 0,
+  },
+}
+`);
     });
   });
 

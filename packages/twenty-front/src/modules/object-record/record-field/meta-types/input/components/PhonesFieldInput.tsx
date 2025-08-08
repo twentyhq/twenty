@@ -18,8 +18,6 @@ import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
-export const DEFAULT_PHONE_CALLING_CODE = '1';
-
 const StyledCustomPhoneInputContainer = styled.div<{
   hasItem: boolean;
   hasError?: boolean;

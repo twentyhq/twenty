@@ -31,9 +31,7 @@ export const companiesAllView = (
         fieldMetadataId:
           companyObjectMetadata.fields.find(
             (field) => field.standardId === COMPANY_STANDARD_FIELD_IDS.name,
-          )?.id ??
-          '' ??
-          '',
+          )?.id ?? '',
         position: 0,
         isVisible: true,
         size: 180,
@@ -43,9 +41,7 @@ export const companiesAllView = (
           companyObjectMetadata.fields.find(
             (field) =>
               field.standardId === COMPANY_STANDARD_FIELD_IDS.domainName,
-          )?.id ??
-          '' ??
-          '',
+          )?.id ?? '',
         position: 1,
         isVisible: true,
         size: 100,

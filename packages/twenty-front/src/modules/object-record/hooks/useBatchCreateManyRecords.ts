@@ -16,8 +16,8 @@ export const useBatchCreateManyRecords = <
 >({
   objectNameSingular,
   recordGqlFields,
-  skipPostOptimisticEffect = false,
   shouldMatchRootQueryFilter,
+  skipPostOptimisticEffect = false,
   mutationBatchSize = DEFAULT_MUTATION_BATCH_SIZE,
   setBatchedRecordsCount,
   abortController,
@@ -29,7 +29,7 @@ export const useBatchCreateManyRecords = <
   const { createManyRecords } = useCreateManyRecords({
     objectNameSingular,
     recordGqlFields,
-    skipPostOptimisticEffect,
+    skipPostOptimisticEffect: skipPostOptimisticEffect,
     shouldMatchRootQueryFilter,
     shouldRefetchAggregateQueries: false,
   });
@@ -95,6 +95,7 @@ export const useBatchCreateManyRecords = <
     }
 
     await refetchAggregateQueries();
+
     return allCreatedRecords;
   };
 

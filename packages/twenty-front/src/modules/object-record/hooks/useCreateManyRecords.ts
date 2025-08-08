@@ -91,10 +91,10 @@ export const useCreateManyRecords = <
   }: createManyRecordsProps) => {
     const sanitizedCreateManyRecordsInput: PartialObjectRecordWithOptionalId[] =
       [];
+    const shouldPerformOptimisticEffect = upsert !== true;
     const recordOptimisticRecordsInput: PartialObjectRecordWithId[] = [];
     recordsToCreate.forEach((recordToCreate) => {
-      const shouldDoOptimisticEffect = upsert !== true;
-      const idForCreation = shouldDoOptimisticEffect
+      const idForCreation = shouldPerformOptimisticEffect
         ? (recordToCreate?.id ?? v4())
         : undefined;
       const sanitizedRecord = {
@@ -117,7 +117,7 @@ export const useCreateManyRecords = <
 
       sanitizedCreateManyRecordsInput.push(sanitizedRecord);
 
-      if (shouldDoOptimisticEffect) {
+      if (shouldPerformOptimisticEffect) {
         const optimisticRecordInput = {
           ...computeOptimisticRecordFromInput({
             cache: apolloCoreClient.cache,
@@ -186,7 +186,12 @@ export const useCreateManyRecords = <
         update: (cache, { data }) => {
           const records = data?.[mutationResponseField];
 
-          if (!isDefined(records?.length) || skipPostOptimisticEffect) return;
+          if (
+            !isDefined(records?.length) ||
+            skipPostOptimisticEffect ||
+            !shouldPerformOptimisticEffect
+          )
+            return;
 
           triggerCreateRecordsOptimisticEffect({
             cache,
