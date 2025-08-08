@@ -42,7 +42,7 @@ export const useRecordTableDragOperations = () => {
   const { openModal } = useModal();
   const multiDragState = useRecordDragState('table', recordTableId);
 
-  const processDragEndOperation = useRecoilCallback(
+  const processDragOperation = useRecoilCallback(
     ({ snapshot }) =>
       (result: DropResult) => {
         if (!result.destination) return;
@@ -118,5 +118,5 @@ export const useRecordTableDragOperations = () => {
     ],
   );
 
-  return { processDragEndOperation };
+  return { processDragOperation };
 };

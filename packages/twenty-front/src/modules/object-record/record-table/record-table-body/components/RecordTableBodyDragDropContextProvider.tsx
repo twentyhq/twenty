@@ -25,7 +25,7 @@ export const RecordTableBodyDragDropContextProvider = ({
 
   const { startDrag } = useStartRecordDrag('table', recordTableId);
   const { endDrag } = useEndRecordDrag('table', recordTableId);
-  const { processDragEndOperation } = useRecordTableDragOperations();
+  const { processDragOperation } = useRecordTableDragOperations();
 
   const handleDragStart = useRecoilCallback(
     ({ snapshot }) =>
@@ -42,10 +42,10 @@ export const RecordTableBodyDragDropContextProvider = ({
 
   const handleDragEnd = useRecoilCallback(
     () => (result: DropResult) => {
-      processDragEndOperation(result);
+      processDragOperation(result);
       endDrag();
     },
-    [endDrag, processDragEndOperation],
+    [endDrag, processDragOperation],
   );
 
   return (

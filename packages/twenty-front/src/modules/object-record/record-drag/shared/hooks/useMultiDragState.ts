@@ -1,13 +1,7 @@
+import { MultiDragState } from '@/object-record/record-drag/shared/types/multiDragState';
+import { getDragOperationType } from '@/object-record/record-drag/shared/utils/getDragOperationType';
 import { DragStart } from '@hello-pangea/dnd';
 import { useState } from 'react';
-import { getDragOperationType } from '@/object-record/record-drag/shared/utils/getDragOperationType';
-
-export interface MultiDragState {
-  isDragging: boolean;
-  draggedRecordIds: string[];
-  primaryDraggedRecordId: string | null;
-  originalSelection: string[];
-}
 
 export const useMultiDragState = () => {
   const [multiDragState, setMultiDragState] = useState<MultiDragState>({
