@@ -7,8 +7,6 @@ import { type Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
-type Constructor = new (...args: unknown[]) => unknown;
-
 export interface WorkspaceFieldMetadataArgs {
   /**
    * Standard id.
@@ -18,7 +16,8 @@ export interface WorkspaceFieldMetadataArgs {
   /**
    * Class to which field is applied.
    */
-  readonly target: Constructor;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  readonly target: Function;
 
   /**
    * Field name.

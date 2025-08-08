@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
+
 import { type WorkspaceDynamicRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-dynamic-relation-metadata-args.interface';
 import { type WorkspaceEntityMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-entity-metadata-args.interface';
 import { type WorkspaceExtendedEntityMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-extended-entity-metadata-args.interface';
@@ -5,8 +7,6 @@ import { type WorkspaceFieldMetadataArgs } from 'src/engine/twenty-orm/interface
 import { type WorkspaceIndexMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-index-metadata-args.interface';
 import { type WorkspaceJoinColumnsMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-join-columns-metadata-args.interface';
 import { type WorkspaceRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-relation-metadata-args.interface';
-
-type Constructor = new (...args: unknown[]) => unknown;
 
 export class MetadataArgsStorage {
   private readonly entities: WorkspaceEntityMetadataArgs[] = [];
@@ -51,15 +51,13 @@ export class MetadataArgsStorage {
   }
 
   filterEntities(
-    target: Constructor | string,
+    target: Function | string,
   ): WorkspaceEntityMetadataArgs | undefined;
 
-  filterEntities(
-    target: (Constructor | string)[],
-  ): WorkspaceEntityMetadataArgs[];
+  filterEntities(target: (Function | string)[]): WorkspaceEntityMetadataArgs[];
 
   filterEntities(
-    target: (Constructor | string) | (Constructor | string)[],
+    target: (Function | string) | (Function | string)[],
   ): WorkspaceEntityMetadataArgs | undefined | WorkspaceEntityMetadataArgs[] {
     const objects = this.filterByTarget(this.entities, target);
 
@@ -67,11 +65,11 @@ export class MetadataArgsStorage {
   }
 
   filterExtendedEntities(
-    target: Constructor | string,
+    target: Function | string,
   ): WorkspaceExtendedEntityMetadataArgs | undefined;
 
   filterExtendedEntities(
-    target: (Constructor | string) | (Constructor | string)[],
+    target: (Function | string) | (Function | string)[],
   ):
     | WorkspaceExtendedEntityMetadataArgs
     | undefined
@@ -81,59 +79,57 @@ export class MetadataArgsStorage {
     return Array.isArray(objects) ? objects[0] : objects;
   }
 
-  filterFields(target: Constructor | string): WorkspaceFieldMetadataArgs[];
+  filterFields(target: Function | string): WorkspaceFieldMetadataArgs[];
 
   filterFields(
-    target: (Constructor | string) | (Constructor | string)[],
+    target: (Function | string) | (Function | string)[],
   ): WorkspaceFieldMetadataArgs[] {
     return this.filterByTarget(this.fields, target);
   }
 
+  filterRelations(target: Function | string): WorkspaceRelationMetadataArgs[];
+
   filterRelations(
-    target: Constructor | string,
+    target: (Function | string)[],
   ): WorkspaceRelationMetadataArgs[];
 
   filterRelations(
-    target: (Constructor | string)[],
-  ): WorkspaceRelationMetadataArgs[];
-
-  filterRelations(
-    target: (Constructor | string) | (Constructor | string)[],
+    target: (Function | string) | (Function | string)[],
   ): WorkspaceRelationMetadataArgs[] {
     return this.filterByTarget(this.relations, target);
   }
 
-  filterIndexes(target: Constructor | string): WorkspaceIndexMetadataArgs[];
+  filterIndexes(target: Function | string): WorkspaceIndexMetadataArgs[];
 
   filterIndexes(
-    target: (Constructor | string) | (Constructor | string)[],
+    target: (Function | string) | (Function | string)[],
   ): WorkspaceIndexMetadataArgs[] {
     return this.filterByTarget(this.indexes, target);
   }
 
   filterDynamicRelations(
-    target: Constructor | string,
+    target: Function | string,
   ): WorkspaceDynamicRelationMetadataArgs[];
 
   filterDynamicRelations(
-    target: (Constructor | string) | (Constructor | string)[],
+    target: (Function | string) | (Function | string)[],
   ): WorkspaceDynamicRelationMetadataArgs[] {
     return this.filterByTarget(this.dynamicRelations, target);
   }
 
   filterJoinColumns(
-    target: Constructor | string,
+    target: Function | string,
   ): WorkspaceJoinColumnsMetadataArgs[];
 
   filterJoinColumns(
-    target: (Constructor | string) | (Constructor | string)[],
+    target: (Function | string) | (Function | string)[],
   ): WorkspaceJoinColumnsMetadataArgs[] {
     return this.filterByTarget(this.joinColumns, target);
   }
 
-  protected filterByTarget<T extends { target: Constructor | string }>(
+  protected filterByTarget<T extends { target: Function | string }>(
     array: T[],
-    target: (Constructor | string) | (Constructor | string)[],
+    target: (Function | string) | (Function | string)[],
   ): T[] {
     if (Array.isArray(target)) {
       return target.flatMap((targetItem) => {
@@ -151,9 +147,9 @@ export class MetadataArgsStorage {
   }
 
   // Private helper to collect metadata from class prototypes
-  private collectFromClass<T extends { target: Constructor | string }>(
+  private collectFromClass<T extends { target: Function | string }>(
     array: T[],
-    cls: Constructor,
+    cls: Function,
   ): T[] {
     const collectedMetadata: T[] = [];
     let currentTarget = cls;
@@ -170,7 +166,7 @@ export class MetadataArgsStorage {
   }
 
   // Private helper to collect metadata directly by string comparison
-  private collectFromString<T extends { target: Constructor | string }>(
+  private collectFromString<T extends { target: Function | string }>(
     array: T[],
     targetString: string,
   ): T[] {

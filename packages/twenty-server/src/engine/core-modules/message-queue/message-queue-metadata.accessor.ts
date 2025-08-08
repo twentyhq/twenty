@@ -1,20 +1,19 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { Injectable, type Type } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-
-type Constructor = new (...args: unknown[]) => unknown;
 
 import { type MessageQueueProcessOptions } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { type MessageQueueProcessorOptions } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import {
-    PROCESSOR_METADATA,
-    PROCESS_METADATA,
+  PROCESSOR_METADATA,
+  PROCESS_METADATA,
 } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 @Injectable()
 export class MessageQueueMetadataAccessor {
   constructor(private readonly reflector: Reflector) {}
 
-  isProcessor(target: Type | Constructor): boolean {
+  isProcessor(target: Type | Function): boolean {
     if (!target) {
       return false;
     }
@@ -22,7 +21,7 @@ export class MessageQueueMetadataAccessor {
     return !!this.reflector.get(PROCESSOR_METADATA, target);
   }
 
-  isProcess(target: Type | Constructor): boolean {
+  isProcess(target: Type | Function): boolean {
     if (!target) {
       return false;
     }
@@ -31,13 +30,13 @@ export class MessageQueueMetadataAccessor {
   }
 
   getProcessorMetadata(
-    target: Type | Constructor,
+    target: Type | Function,
   ): MessageQueueProcessorOptions | undefined {
     return this.reflector.get(PROCESSOR_METADATA, target);
   }
 
   getProcessMetadata(
-    target: Type | Constructor,
+    target: Type | Function,
   ): MessageQueueProcessOptions | undefined {
     const metadata = this.reflector.get(PROCESS_METADATA, target);
 

@@ -1,11 +1,9 @@
 import { type Scope, SetMetadata } from '@nestjs/common';
 import { SCOPE_OPTIONS_METADATA } from '@nestjs/common/constants';
 
-type Constructor = new (...args: unknown[]) => unknown;
-
 import {
-    type MessageQueue,
-    PROCESSOR_METADATA,
+  type MessageQueue,
+  PROCESSOR_METADATA,
 } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 export interface MessageQueueProcessorOptions {
@@ -39,7 +37,8 @@ export function Processor(
       ? queueNameOrOptions
       : { queueName: queueNameOrOptions };
 
-  return (target: Constructor) => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  return (target: Function) => {
     SetMetadata(SCOPE_OPTIONS_METADATA, options)(target);
     SetMetadata(PROCESSOR_METADATA, options)(target);
   };

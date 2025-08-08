@@ -17,7 +17,8 @@ export interface WorkspaceRelationMetadataArgs {
   /**
    * Class to which relation is applied.
    */
-  readonly target: Constructor;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  readonly target: Function;
 
   /**
    * Relation name.

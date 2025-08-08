@@ -1,16 +1,15 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { Injectable, type Type } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-type Constructor = new (...args: unknown[]) => unknown;
-
-import { type WorkspaceQueryHookOptions } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WORKSPACE_QUERY_HOOK_METADATA } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.constants';
+import { type WorkspaceQueryHookOptions } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 
 @Injectable()
 export class WorkspaceQueryHookMetadataAccessor {
   constructor(private readonly reflector: Reflector) {}
 
-  isWorkspaceQueryHook(target: Type | Constructor): boolean {
+  isWorkspaceQueryHook(target: Type | Function): boolean {
     if (!target) {
       return false;
     }
@@ -19,7 +18,7 @@ export class WorkspaceQueryHookMetadataAccessor {
   }
 
   getWorkspaceQueryHookMetadata(
-    target: Type | Constructor,
+    target: Type | Function,
   ): WorkspaceQueryHookOptions | undefined {
     return this.reflector.get(WORKSPACE_QUERY_HOOK_METADATA, target);
   }
