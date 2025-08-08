@@ -25,7 +25,7 @@ type FromCreateFieldInputToFlatObjectMetadata = {
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
 };
 
-export const fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata = async ({
+export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
   rawCreateFieldInput,
   existingFlatObjectMetadataMaps,
 }: FromCreateFieldInputToFlatObjectMetadata): Promise<FlatFieldMetadata[]> => {
@@ -62,6 +62,7 @@ export const fromCreateFieldInputToFlatFieldAndItsFlatObjectMetadata = async ({
 
   switch (createFieldInput.type) {
     case FieldMetadataType.MORPH_RELATION: {
+      // TODO prastoin
       throw new UserInputError(
         'Morph relation feature is not migrated to workspace migration v2 yet',
       );
