@@ -77,7 +77,6 @@ export class RoleService {
 
     const role = await this.roleRepository.save({
       id: input.id,
-      standardId: input.standardId,
       label: input.label,
       description: input.description,
       icon: input.icon,

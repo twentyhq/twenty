@@ -2,19 +2,12 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { IsBoolean, IsOptional, IsString, IsUUID } from 'class-validator';
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-
 @InputType()
 export class CreateRoleInput {
   @IsUUID()
   @IsOptional()
   @Field({ nullable: true })
   id?: string;
-
-  @IsUUID()
-  @IsOptional()
-  @Field(() => UUIDScalarType, { nullable: true })
-  standardId?: string;
 
   @IsString()
   @Field({ nullable: false })
