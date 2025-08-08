@@ -675,11 +675,6 @@ msgstr "ユーザーがメールとパスワードでサインインできるよ
 msgid "An error occurred."
 msgstr "エラーが発生しました。"
 
-#. js-lingui-id: mJ6m4C
-#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
-msgid "An optional description"
-msgstr "任意の説明"
-
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "An unexpected error occurred"
@@ -6374,6 +6369,11 @@ msgstr "認証中に問題が発生しました"
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "10MB以下の正方形のPNG、JPEG、GIFに対応しています"
+
+#. js-lingui-id: K4HbuR
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "We will send a POST request to this endpoint for each new event in application/json format."
+msgstr ""
 
 #. js-lingui-id: ZS7vYp
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx

@@ -675,11 +675,6 @@ msgstr "Salli käyttäjien kirjautua sisään sähköpostilla ja salasanalla."
 msgid "An error occurred."
 msgstr "Tapahtui virhe."
 
-#. js-lingui-id: mJ6m4C
-#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
-msgid "An optional description"
-msgstr "Valinnainen kuvaus"
-
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "An unexpected error occurred"
@@ -6374,6 +6369,11 @@ msgstr "Kohtasimme ongelman varmennuksessa"
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "Tuemme neliön muotoisia PNG-, JPEG- ja GIF-kuvia, jotka ovat alle 10MB"
+
+#. js-lingui-id: K4HbuR
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "We will send a POST request to this endpoint for each new event in application/json format."
+msgstr ""
 
 #. js-lingui-id: ZS7vYp
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
