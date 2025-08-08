@@ -2157,11 +2157,6 @@ msgstr "Size"
 msgid "Stage"
 msgstr "Stage"
 
-#. js-lingui-id: t5U1Cv
-#: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
-msgid "Standard fields cannot be unique."
-msgstr "Standard fields cannot be unique."
-
 #. js-lingui-id: D3iCkb
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
