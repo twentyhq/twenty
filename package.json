@@ -180,6 +180,15 @@
     "xlsx-ugnis": "^0.19.3",
     "zod": "3.23.8"
   },
+  "resolutions": {
+    "@swc/core": "1.13.3",
+    "graphql": "16.8.0",
+    "type-fest": "4.10.1",
+    "typescript": "5.3.3",
+    "graphql-redis-subscriptions/ioredis": "^5.6.0",
+    "prosemirror-view": "1.40.0",
+    "prosemirror-transform": "1.10.4"
+  },
   "devDependencies": {
     "@babel/core": "^7.14.5",
     "@babel/preset-react": "^7.14.5",
@@ -217,7 +226,7 @@
     "@stylistic/eslint-plugin": "^1.5.0",
     "@swc-node/register": "1.8.0",
     "@swc/cli": "^0.3.12",
-    "@swc/core": "1.7.42",
+    "@swc/core": "1.13.3",
     "@swc/helpers": "~0.5.2",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
@@ -326,14 +335,6 @@
   "license": "AGPL-3.0",
   "name": "twenty",
   "packageManager": "yarn@4.9.2",
-  "resolutions": {
-    "graphql": "16.8.0",
-    "type-fest": "4.10.1",
-    "typescript": "5.3.3",
-    "graphql-redis-subscriptions/ioredis": "^5.6.0",
-    "prosemirror-view": "1.40.0",
-    "prosemirror-transform": "1.10.4"
-  },
   "version": "0.2.1",
   "nx": {},
   "scripts": {
