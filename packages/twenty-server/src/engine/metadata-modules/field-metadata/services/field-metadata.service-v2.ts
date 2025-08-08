@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   isDefined,
@@ -34,7 +33,7 @@ import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager
 import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
 
 @Injectable()
-export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEntity> {
+export class FieldMetadataServiceV2 {
   constructor(
     @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
@@ -42,14 +41,19 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
     private readonly workspaceMigrationBuilderV2: WorkspaceMigrationBuilderV2Service,
     private readonly flatFieldMetadataValidatorService: FlatFieldMetadataValidatorService,
     private readonly workspaceMigrationRunnerV2Service: WorkspaceMigrationRunnerV2Service,
-  ) {
-    super(fieldMetadataRepository);
-  }
+  ) {}
 
-  override async createOne(
-    fieldMetadataInput: CreateFieldInput,
-  ): Promise<FieldMetadataEntity> {
-    const [createdFieldMetadata] = await this.createMany([fieldMetadataInput]);
+  async createOne({
+    fieldMetadataInput,
+    workspaceId,
+  }: {
+    fieldMetadataInput: Omit<CreateFieldInput, 'workspaceId'>;
+    workspaceId: string;
+  }): Promise<FieldMetadataEntity> {
+    const [createdFieldMetadata] = await this.createMany({
+      fieldMetadataInputs: [fieldMetadataInput],
+      workspaceId,
+    });
 
     if (!isDefined(createdFieldMetadata)) {
       throw new FieldMetadataException(
@@ -182,14 +186,16 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
     });
   }
 
-  async createMany(
-    fieldMetadataInputs: CreateFieldInput[],
-  ): Promise<FieldMetadataEntity[]> {
+  async createMany({
+    fieldMetadataInputs,
+    workspaceId,
+  }: {
+    fieldMetadataInputs: Omit<CreateFieldInput, 'workspaceId'>[];
+    workspaceId: string;
+  }): Promise<FieldMetadataEntity[]> {
     if (!fieldMetadataInputs.length) {
       return [];
     }
-
-    const workspaceId = fieldMetadataInputs[0].workspaceId;
 
     const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
@@ -202,6 +208,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
           async (fieldMetadataInput) =>
             await fromCreateFieldInputToFlatFieldMetadatasToCreate({
               existingFlatObjectMetadataMaps,
+              workspaceId,
               rawCreateFieldInput: fieldMetadataInput,
             }),
         ),
