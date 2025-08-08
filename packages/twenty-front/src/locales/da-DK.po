@@ -4594,6 +4594,11 @@ msgstr ""
 msgid "Prefilling your workspace data..."
 msgstr "Forudfylder dine arbejdspladsdata..."
 
+#. js-lingui-id: GlHcNE
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
+msgid "Prevent users from assigining the same value to different records"
+msgstr ""
+
 #. js-lingui-id: rdUucN
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
@@ -6094,6 +6099,7 @@ msgstr "Ukrainsk"
 
 #. js-lingui-id: wSXm5S
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Unique"
 msgstr "Unik"
@@ -6370,15 +6376,15 @@ msgstr "Vi stødte på et problem under verificeringen"
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "Vi understøtter dine kvadratiske PNG'er, JPEG'er og GIF'er på under 10MB"
 
+#. js-lingui-id: KIfYq0
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "We will send a POST request to this endpoint for each new event in application/json format"
+msgstr ""
+
 #. js-lingui-id: K4HbuR
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "We will send a POST request to this endpoint for each new event in application/json format."
 msgstr ""
-
-#. js-lingui-id: ZS7vYp
-#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
-msgid "We will send POST requests to this endpoint for every new event"
-msgstr "Vi sender POST-anmodninger til dette endpoint for hver ny begivenhed"
 
 #. js-lingui-id: PI4LiB
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx

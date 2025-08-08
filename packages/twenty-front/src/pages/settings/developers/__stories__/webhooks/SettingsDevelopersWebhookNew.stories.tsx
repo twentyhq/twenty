@@ -29,7 +29,7 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     await canvas.findByText('New Webhook', undefined, { timeout: 3000 });
     await canvas.findByText(
-      'We will send POST requests to this endpoint for every new event',
+      'We will send a POST request to this endpoint for each new event in application/json format',
     );
     await canvas.findByPlaceholderText('https://example.com/webhook');
   },

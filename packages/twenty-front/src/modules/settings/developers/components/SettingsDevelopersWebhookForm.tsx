@@ -149,7 +149,7 @@ export const SettingsDevelopersWebhookForm = ({
           <Section>
             <H2Title
               title={t`Endpoint URL`}
-              description={t`We will send POST requests to this endpoint for every new event`}
+              description={t`We will send a POST request to this endpoint for each new event in application/json format`}
             />
             <Controller
               name="targetUrl"
