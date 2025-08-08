@@ -10,17 +10,8 @@ import {
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 
 export const validateCanCreateUniqueIndex = (
-  field: Pick<FieldMetadataEntity, 'type' | 'name' | 'isCustom'>,
+  field: Pick<FieldMetadataEntity, 'type' | 'name'>,
 ) => {
-  if (field.isCustom === false)
-    throw new FieldMetadataException(
-      `Unique index cannot be created on standard field`,
-      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      {
-        userFriendlyMessage: t`Standard fields cannot be unique.`,
-      },
-    );
-
   const isCompositeFieldWithNonIncludedUniqueConstraint =
     isCompositeFieldMetadataType(field.type) &&
     !compositeTypeDefinitions

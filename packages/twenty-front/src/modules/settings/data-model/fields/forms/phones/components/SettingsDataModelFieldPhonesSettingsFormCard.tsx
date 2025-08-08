@@ -4,6 +4,7 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 
+import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
 import { SettingsDataModelFieldPhonesForm } from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm';
 import {
   SettingsDataModelFieldPreviewCard,
@@ -14,7 +15,7 @@ type SettingsDataModelFieldPhonesSettingsFormCardProps = {
   disabled?: boolean;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'defaultValue'
+    'icon' | 'label' | 'type' | 'defaultValue' | 'isUnique' | 'isCustom'
   >;
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
 
@@ -36,10 +37,15 @@ export const SettingsDataModelFieldPhonesSettingsFormCard = ({
         />
       }
       form={
-        <SettingsDataModelFieldPhonesForm
-          disabled={disabled}
-          fieldMetadataItem={fieldMetadataItem}
-        />
+        <>
+          <SettingsDataModelFieldPhonesForm
+            disabled={disabled}
+            fieldMetadataItem={fieldMetadataItem}
+          />
+          <SettingsDataModelFieldIsUniqueForm
+            fieldMetadataItem={fieldMetadataItem}
+          />
+        </>
       }
     />
   );
