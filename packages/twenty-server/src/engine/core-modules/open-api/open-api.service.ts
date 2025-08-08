@@ -289,9 +289,27 @@ export class OpenApiService {
       return path;
     }, schema.paths as OpenAPIV3_1.PathsObject);
 
+    const objectMetadataItems = await this.getObjectMetadataItems(workspace);
+
+    const viewObjectMetadataItems = objectMetadataItems.filter(
+      ({ nameSingular }) =>
+        [
+          'view',
+          'viewField',
+          'viewFilter',
+          'viewSort',
+          'viewGroup',
+          'viewFilterGroup',
+        ].includes(nameSingular),
+    );
+
     schema.components = {
       ...schema.components, // components.securitySchemes is defined in base Schema
-      schemas: computeMetadataSchemaComponents(metadata),
+      schemas: {
+        ...computeMetadataSchemaComponents(metadata),
+        ...computeMetadataSchemaComponents(viewObjectMetadataItems),
+      },
+
       parameters: computeParameterComponents(true),
       responses: {
         '400': get400ErrorResponses(),
