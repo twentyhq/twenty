@@ -24,12 +24,6 @@ import {
   MKT_ORDER_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-order-data-seeds.constants';
 
-//Order configs
-import {
-  MKT_ORDER_DATA_SEED_COLUMNS,
-  MKT_ORDER_DATA_SEEDS,
-} from 'src/mkt-core/dev-seeder/constants/mkt-order-data-seeds.constants';
-
 export const MKT_RECORD_SEEDS_CONFIGS = [
   // Product configs
   {
