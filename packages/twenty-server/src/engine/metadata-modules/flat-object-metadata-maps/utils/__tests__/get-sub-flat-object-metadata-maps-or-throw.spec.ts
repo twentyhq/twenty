@@ -1,27 +1,27 @@
 import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
 import {
-  type EachTestingContext,
   eachTestingContextFilter,
+  type EachTestingContext,
 } from 'twenty-shared/testing';
 
 import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata-maps/mocks/flat-object-metadata-maps.mock';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import {
-  type ExtractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrowArgs,
-  extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow,
-} from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/extract-flat-object-metadata-maps-out-of-flat-object-metadata-maps-or-throw.util';
+  getSubFlatObjectMetadataMapsOrThrow,
+  type GetSubFlatObjectMetadataMapsOrThrowArgs,
+} from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-or-throw.util';
 import { PET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/pet-flat-object.mock';
 import { ROCKET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/rocket-flat-object.mock';
 import { fromFlatObjectMetadatasToFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadatas-to-flat-object-metadata-maps.util';
 
-type ExtractFlatObjectMetadataMapsTestCase = {
-  input: ExtractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrowArgs;
+type GetSubObjectMetadataMapsOrThrowTestCase = {
+  input: GetSubFlatObjectMetadataMapsOrThrowArgs;
   shouldThrow?: true;
   expected?: FlatObjectMetadataMaps;
 };
 
-describe('extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow', () => {
-  const testCases: EachTestingContext<ExtractFlatObjectMetadataMapsTestCase>[] =
+describe('getSubFlatObjectMetadataMapsOrThrow', () => {
+  const testCases: EachTestingContext<GetSubObjectMetadataMapsOrThrowTestCase>[] =
     [
       {
         title: 'should throw when object metadata id is not found',
@@ -89,18 +89,17 @@ describe('extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow', () =
     }) => {
       if (shouldThrow) {
         expect(() =>
-          extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow({
+          getSubFlatObjectMetadataMapsOrThrow({
             objectMetadataIds,
             flatObjectMetadataMaps,
           }),
         ).toThrowErrorMatchingSnapshot();
       } else {
         jestExpectToBeDefined(expected);
-        const result =
-          extractFlatObjectMetadataMapsOutOfFlatObjectMetadataMapsOrThrow({
-            objectMetadataIds,
-            flatObjectMetadataMaps,
-          });
+        const result = getSubFlatObjectMetadataMapsOrThrow({
+          objectMetadataIds,
+          flatObjectMetadataMaps,
+        });
 
         expect(result).toEqual(expected);
       }
