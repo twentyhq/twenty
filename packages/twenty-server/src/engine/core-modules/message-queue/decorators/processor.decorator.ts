@@ -37,7 +37,7 @@ export function Processor(
       ? queueNameOrOptions
       : { queueName: queueNameOrOptions };
 
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   return (target: Function) => {
     SetMetadata(SCOPE_OPTIONS_METADATA, options)(target);
     SetMetadata(PROCESSOR_METADATA, options)(target);

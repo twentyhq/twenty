@@ -13,7 +13,7 @@ const StyledContainer = styled.div<{ maxWidth?: number }>`
   display: flex;
   flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing(1)};
-  max-width: ${({ maxWidth }) => `${maxWidth}px` || 'none'};
+  max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : 'none')};
 `;
 
 export const ActivityTargetChips = ({

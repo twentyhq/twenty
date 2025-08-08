@@ -13,7 +13,7 @@ export interface WorkspaceEntityMetadataArgs {
    * Function target is a table defined in the class.
    * String target is a table defined in a json schema.
    */
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   readonly target: Function;
 
   /**
