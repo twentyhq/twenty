@@ -33,6 +33,10 @@ import {
 } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
+const isUniqueFieldFormSchema = z.object({
+  isUnique: z.boolean().nullable().optional(),
+});
+
 const booleanFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.BOOLEAN) })
   .merge(settingsDataModelFieldBooleanFormSchema);
@@ -43,11 +47,13 @@ const currencyFieldFormSchema = z
 
 const dateFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.DATE) })
-  .merge(settingsDataModelFieldDateFormSchema);
+  .merge(settingsDataModelFieldDateFormSchema)
+  .merge(isUniqueFieldFormSchema);
 
 const dateTimeFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.DATE_TIME) })
-  .merge(settingsDataModelFieldDateFormSchema);
+  .merge(settingsDataModelFieldDateFormSchema)
+  .merge(isUniqueFieldFormSchema);
 
 const relationFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.RELATION) })
@@ -63,11 +69,13 @@ const multiSelectFieldFormSchema = z
 
 const numberFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.NUMBER) })
-  .merge(settingsDataModelFieldNumberFormSchema);
+  .merge(settingsDataModelFieldNumberFormSchema)
+  .merge(isUniqueFieldFormSchema);
 
 const textFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.TEXT) })
-  .merge(settingsDataModelFieldTextFormSchema);
+  .merge(settingsDataModelFieldTextFormSchema)
+  .merge(isUniqueFieldFormSchema);
 
 const addressFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.ADDRESS) })
@@ -75,27 +83,30 @@ const addressFieldFormSchema = z
 
 const phonesFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.PHONES) })
-  .merge(settingsDataModelFieldPhonesFormSchema);
+  .merge(settingsDataModelFieldPhonesFormSchema)
+  .merge(isUniqueFieldFormSchema);
 
-const otherFieldsFormSchema = z.object({
-  type: z.enum(
-    Object.keys(
-      omit(SETTINGS_FIELD_TYPE_CONFIGS, [
-        FieldMetadataType.BOOLEAN,
-        FieldMetadataType.CURRENCY,
-        FieldMetadataType.RELATION,
-        FieldMetadataType.SELECT,
-        FieldMetadataType.MULTI_SELECT,
-        FieldMetadataType.DATE,
-        FieldMetadataType.DATE_TIME,
-        FieldMetadataType.NUMBER,
-        FieldMetadataType.ADDRESS,
-        FieldMetadataType.PHONES,
-        FieldMetadataType.TEXT,
-      ]),
-    ) as [FieldMetadataType, ...FieldMetadataType[]],
-  ),
-});
+const otherFieldsFormSchema = z
+  .object({
+    type: z.enum(
+      Object.keys(
+        omit(SETTINGS_FIELD_TYPE_CONFIGS, [
+          FieldMetadataType.BOOLEAN,
+          FieldMetadataType.CURRENCY,
+          FieldMetadataType.RELATION,
+          FieldMetadataType.SELECT,
+          FieldMetadataType.MULTI_SELECT,
+          FieldMetadataType.DATE,
+          FieldMetadataType.DATE_TIME,
+          FieldMetadataType.NUMBER,
+          FieldMetadataType.ADDRESS,
+          FieldMetadataType.PHONES,
+          FieldMetadataType.TEXT,
+        ]),
+      ) as [FieldMetadataType, ...FieldMetadataType[]],
+    ),
+  })
+  .merge(isUniqueFieldFormSchema);
 
 export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
   'type',
