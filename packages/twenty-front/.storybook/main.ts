@@ -47,10 +47,9 @@ const config: StorybookConfig = {
     getAbsolutePath("@storybook/addon-links"),
     getAbsolutePath("@storybook/addon-onboarding"),
     getAbsolutePath("@storybook/addon-coverage"),
-    getAbsolutePath("storybook-dark-mode"),
-    getAbsolutePath("storybook-addon-cookie"),
+    getAbsolutePath("@vueless/storybook-dark-mode"),
     getAbsolutePath("storybook-addon-pseudo-states"),
-    getAbsolutePath("storybook-addon-mock-date"),
+
     getAbsolutePath("@storybook/addon-docs")
   ],
   framework: {

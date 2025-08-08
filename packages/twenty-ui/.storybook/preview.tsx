@@ -2,7 +2,7 @@ import { ThemeProvider } from '@emotion/react';
 import { Preview } from '@storybook/react-vite';
 import { THEME_DARK, THEME_LIGHT, ThemeContextProvider } from '@ui/theme';
 import { useEffect } from 'react';
-import { useDarkMode } from 'storybook-dark-mode';
+import { useDarkMode } from '@vueless/storybook-dark-mode';
 
 const preview: Preview = {
   decorators: [

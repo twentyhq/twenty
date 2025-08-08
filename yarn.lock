@@ -20617,24 +20617,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/components@npm:^8.0.0":
-  version: 8.6.14
-  resolution: "@storybook/components@npm:8.6.14"
-  peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
-  checksum: 10c0/43a9192f312c8b2ac1aaeabcfc7c766215e934efd340b01edd9e71ca194ebf30ac896f60817ed539aec9d4183dc77296056e78c5c3705607875df79df7ab7acc
-  languageName: node
-  linkType: hard
-
-"@storybook/core-events@npm:^8.0.0":
-  version: 8.6.14
-  resolution: "@storybook/core-events@npm:8.6.14"
-  peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
-  checksum: 10c0/8fc9941e3ef9954ed82a845e29867ba4bcc2e0c1749c1ab6a916a24d3941d878cc509769b6c0c073e78ec91d22c7895787219bb6b5d3e787c8223963dbef6b3e
-  languageName: node
-  linkType: hard
-
 "@storybook/csf-plugin@npm:9.1.1":
   version: 9.1.1
   resolution: "@storybook/csf-plugin@npm:9.1.1"
@@ -20691,15 +20673,6 @@ __metadata:
     "@types/jest": "npm:28.1.3"
     jest-mock: "npm:^27.3.0"
   checksum: 10c0/a2c367649ae53d9385b16f49bd73d5a928a2c3b9e64c2efcc1bbfc081b3b75972293bbe0e1828b67c94f0c2ed96341e0fae0ad5e30484a0ed4715724bbbf2c76
-  languageName: node
-  linkType: hard
-
-"@storybook/manager-api@npm:^8.0.0":
-  version: 8.6.14
-  resolution: "@storybook/manager-api@npm:8.6.14"
-  peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
-  checksum: 10c0/141089caf50df9f1dbd18c22b8e8dfa45641f67ab148c9956c046c0141ff7a70f3341f440c454d5f6247dac389499d67bad8b6c81cbcd6f08c7fe34bf42fd264
   languageName: node
   linkType: hard
 
@@ -20792,15 +20765,6 @@ __metadata:
     "@testing-library/user-event": "npm:^14.4.0"
     ts-dedent: "npm:^2.2.0"
   checksum: 10c0/3179c74148c92267ea449068ce9fb00bf960dbf06654354de7869428415d16dc730a0d58b5adca7619d21e5a058ae0bf713e34c09be8bca574388ec0106c5068
-  languageName: node
-  linkType: hard
-
-"@storybook/theming@npm:^8.0.0":
-  version: 8.6.14
-  resolution: "@storybook/theming@npm:8.6.14"
-  peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
-  checksum: 10c0/765bfbfedcbdcdb719b164a14bb61b8ad60819c6124d0e1f243b6b45e62de877ec8dff6259092207a58d6c2771f4883650e9784a2be1aaf7e0ef0fe75465db0d
   languageName: node
   linkType: hard
 
@@ -24883,6 +24847,18 @@ __metadata:
   version: 3.5.13
   resolution: "@vue/shared@npm:3.5.13"
   checksum: 10c0/2c940ef907116f1c2583ca1d7733984e5705983ab07054c4e72f1d95eb0f7bdf4d01efbdaee1776c2008f79595963f44e98fced057f5957d86d57b70028f5025
+  languageName: node
+  linkType: hard
+
+"@vueless/storybook-dark-mode@npm:^9.0.6":
+  version: 9.0.6
+  resolution: "@vueless/storybook-dark-mode@npm:9.0.6"
+  dependencies:
+    "@storybook/global": "npm:^5.0.0"
+    "@storybook/icons": "npm:^1.2.5"
+    fast-deep-equal: "npm:^3.1.3"
+    memoizerific: "npm:^1.11.3"
+  checksum: 10c0/ee0ae225f7463287ea899c1fd95f97f13798ff7d3280e790e12482060995843d6e36a49c7029e13b740c1b008d2d0e0dd11d9727b405438361c7756e67e9d023
   languageName: node
   linkType: hard
 
@@ -54113,22 +54089,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"storybook-dark-mode@npm:^4.0.2":
-  version: 4.0.2
-  resolution: "storybook-dark-mode@npm:4.0.2"
-  dependencies:
-    "@storybook/components": "npm:^8.0.0"
-    "@storybook/core-events": "npm:^8.0.0"
-    "@storybook/global": "npm:^5.0.0"
-    "@storybook/icons": "npm:^1.2.5"
-    "@storybook/manager-api": "npm:^8.0.0"
-    "@storybook/theming": "npm:^8.0.0"
-    fast-deep-equal: "npm:^3.1.3"
-    memoizerific: "npm:^1.11.3"
-  checksum: 10c0/d4fc652ff080f6cc9f0effab0c989b66ead3372b267c2c328eef608f27c9822bf47aaa177405e42768b2de22f8a3e9a0280af50430efd0cf78bd6ed1f12c8b29
-  languageName: node
-  linkType: hard
-
 "storybook@npm:^9.1.1":
   version: 9.1.1
   resolution: "storybook@npm:9.1.1"
@@ -56614,6 +56574,7 @@ __metadata:
     "@typescript-eslint/utils": "npm:^8.39.0"
     "@vitejs/plugin-react-swc": "npm:^3.5.0"
     "@vitest/ui": "npm:1.4.0"
+    "@vueless/storybook-dark-mode": "npm:^9.0.6"
     "@wyw-in-js/vite": "npm:^0.5.3"
     "@xyflow/react": "npm:^12.4.2"
     "@yarnpkg/types": "npm:^4.0.0"
@@ -56767,7 +56728,6 @@ __metadata:
     storybook-addon-cookie: "npm:^4.0.1"
     storybook-addon-mock-date: "npm:^0.6.0"
     storybook-addon-pseudo-states: "npm:^9.1.1"
-    storybook-dark-mode: "npm:^4.0.2"
     stripe: "npm:^17.3.1"
     supertest: "npm:^6.1.3"
     ts-jest: "npm:^29.1.1"
