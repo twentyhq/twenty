@@ -31,10 +31,12 @@ const getEdgeTypeToCreateByDefault = ({
 export const getWorkflowVersionDiagram = ({
   workflowVersion,
   isWorkflowFilteringEnabled,
+  isWorkflowBranchEnabled,
   isEditable,
 }: {
   workflowVersion: WorkflowVersion | undefined;
   isWorkflowFilteringEnabled: boolean;
+  isWorkflowBranchEnabled?: boolean;
   isEditable: boolean;
 }): WorkflowDiagram => {
   if (!isDefined(workflowVersion)) {
@@ -48,6 +50,7 @@ export const getWorkflowVersionDiagram = ({
       isWorkflowFilteringEnabled,
       isEditable,
     }),
+    isWorkflowBranchEnabled,
   });
 
   return transformFilterNodesAsEdges({
