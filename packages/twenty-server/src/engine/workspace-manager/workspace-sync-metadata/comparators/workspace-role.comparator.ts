@@ -4,8 +4,8 @@ import diff from 'microdiff';
 
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 
-import { FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 type RoleComparatorResult =
@@ -37,15 +37,8 @@ export class WorkspaceRoleComparator {
   ): RoleComparatorResult[] {
     const results: RoleComparatorResult[] = [];
 
-    const keyFactory = (role: FlatRole | RoleEntity) => {
-      if ('uniqueIdentifier' in role) {
-        return (
-          role.standardId || role.uniqueIdentifier || role.id || role.label
-        );
-      } else {
-        return role.standardId || role.id;
-      }
-    };
+    const keyFactory = (role: FlatRole | RoleEntity) =>
+      role.standardId || role.id;
 
     const standardRoleMap = transformMetadataForComparison(standardRoles, {
       shouldIgnoreProperty: (property) =>
