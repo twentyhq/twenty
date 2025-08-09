@@ -1,7 +1,7 @@
 import { ThemeProvider } from '@emotion/react';
 import { Preview } from '@storybook/react-vite';
 import { useDarkMode } from '@vueless/storybook-dark-mode';
-import { initialize, mswDecorator } from 'msw-storybook-addon';
+import { initialize, mswLoader } from 'msw-storybook-addon';
 import { useEffect } from 'react';
 
 import { RootDecorator } from '../src/testing/decorators/RootDecorator';
@@ -63,8 +63,8 @@ const preview: Preview = {
       );
     },
     RootDecorator,
-    mswDecorator,
   ],
+  loaders: [mswLoader],
   parameters: {
     actions: { argTypesRegex: '^on[A-Z].*' },
     controls: {

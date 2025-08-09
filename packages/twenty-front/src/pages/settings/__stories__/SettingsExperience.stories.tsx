@@ -42,11 +42,17 @@ export const DateTimeSettingsTimeFormat: Story = {
 
     await canvas.findByText('Date and time', undefined, { timeout: 5000 });
 
-    const timeFormatSelect = await canvas.findByText('24h (05:30)', undefined, { timeout: 5000 });
+    const timeFormatSelect = await canvas.findByText('24h (05:30)', undefined, {
+      timeout: 5000,
+    });
 
     await userEvent.click(timeFormatSelect);
 
-    const timeFormatOptions = await canvas.findByText('12h (5:30 AM)', undefined, { timeout: 5000 });
+    const timeFormatOptions = await canvas.findByText(
+      '12h (5:30 AM)',
+      undefined,
+      { timeout: 5000 },
+    );
 
     await userEvent.click(timeFormatOptions);
 
@@ -63,7 +69,7 @@ export const DateTimeSettingsTimezone: Story = {
     const timezoneSelect = await canvas.findByText(
       '(GMT-04:00) Eastern Daylight Time - New York',
       undefined,
-      { timeout: 5000 }
+      { timeout: 5000 },
     );
 
     await userEvent.click(timezoneSelect);
@@ -71,12 +77,14 @@ export const DateTimeSettingsTimezone: Story = {
     const systemSettingsOptions = await canvas.findByText(
       '(GMT-11:00) Niue Time',
       undefined,
-      { timeout: 5000 }
+      { timeout: 5000 },
     );
 
     await userEvent.click(systemSettingsOptions);
 
-    await canvas.findByText('(GMT-11:00) Niue Time', undefined, { timeout: 5000 });
+    await canvas.findByText('(GMT-11:00) Niue Time', undefined, {
+      timeout: 5000,
+    });
   },
 };
 
@@ -86,11 +94,19 @@ export const DateTimeSettingsDateFormat: Story = {
 
     await canvas.findByText('Date and time', undefined, { timeout: 5000 });
 
-    const timeFormatSelect = await canvas.findByText('12 Mar, 2024', undefined, { timeout: 5000 });
+    const timeFormatSelect = await canvas.findByText(
+      '12 Mar, 2024',
+      undefined,
+      { timeout: 5000 },
+    );
 
     await userEvent.click(timeFormatSelect);
 
-    const timeFormatOptions = await canvas.findByText('Mar 12, 2024', undefined, { timeout: 5000 });
+    const timeFormatOptions = await canvas.findByText(
+      'Mar 12, 2024',
+      undefined,
+      { timeout: 5000 },
+    );
 
     await userEvent.click(timeFormatOptions);
 

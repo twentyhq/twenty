@@ -11,8 +11,8 @@ import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-me
 
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import {
-    RouterDecorator,
-    getCanvasElementForDropdownTesting,
+  RouterDecorator,
+  getCanvasElementForDropdownTesting,
 } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';

@@ -623,6 +623,7 @@ export const graphqlMocks = {
               startCursor: null,
               endCursor: null,
             },
+            totalCount: mockWorkspaceMembers.length,
           },
         },
       });
@@ -638,6 +639,23 @@ export const graphqlMocks = {
       return HttpResponse.json({
         data: {
           findDistantTablesWithStatus: mockedRemoteTables,
+        },
+      });
+    }),
+    graphql.query('AggregateCompanies', () => {
+      return HttpResponse.json({
+        data: {
+          companies: {
+            totalCount: 25,
+            __typename: 'CompanyConnection',
+          },
+        },
+      });
+    }),
+    graphql.query('GetWorkspaceInvitations', () => {
+      return HttpResponse.json({
+        data: {
+          findWorkspaceInvitations: [],
         },
       });
     }),
