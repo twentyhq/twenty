@@ -92,6 +92,7 @@ export const MKT_ORDER_FIELD_IDS = {
   requireContract: '3bc491e5-3e65-44d4-97d5-f71300ab3d41',
 
   // TODO: check if this can be deleted
+  mktLicense: '837f7353-df5d-449a-961c-fef566d663b9',
   items: '5c818b2a-bd61-4423-b1bc-ac89781f4324',
   person: '4d6b6ef3-6d6b-4323-9e4f-a7f01d97e68d',
   position: '9d970deb-f1e5-4cc4-8b36-9ad83ca03ee5',
@@ -116,6 +117,27 @@ export const MKT_ORDER_ITEM_FIELD_IDS = {
   searchVector: 'b4c5d6e7-f890-1234-2345-678901234567',
 };
 
+export const MKT_LICENSE_FIELD_IDS = {
+  // fields
+  name: 'e19495b8-a787-4533-b9fb-e9ff272a04a8',
+  licenseKey: 'e36bef57-69a6-4da7-9f50-c1f7da57e182',
+  status: 'b992d78d-27cd-42a9-a91e-0f5422a14ca2',
+  activatedAt: '38d52287-727f-479a-a970-2ac0e869f39b',
+  expiresAt: '5c490b82-749b-41a1-908e-254f53ab19a4',
+  // relations
+  person: '11a10308-2c5c-4322-847d-4ec12d056d9c',
+  mktSales: '4bb927d7-a6d2-4746-b771-731cb6ab9950', // nullable
+  mktProduct: 'f2d1ae3c-12d8-4e24-8cb5-dc82d422f12b',
+  mktAffiliate: '8e48e8f3-5ad3-4936-b570-e061ef2e5959', // nullable
+  mktOrder: '72da2e23-0de4-44b6-9038-eaa574985103',
+  // common relations or fields
+  position: '2549eb4e-b75b-4b19-ba58-243614fff9b6',
+  createdBy: 'ae3d630f-39f8-49b7-953e-20fc898bdcef',
+  accountOwner: '782947ce-bc49-407f-a739-abfd4be15b89',
+  timelineActivities: '83271794-654e-4bc1-9fc3-cdadca5a3c77',
+  searchVector: '7e2e3eda-2ba6-40d4-b7bc-8ab1370f8b31',
+};
+
 //EXTENDS FROM TIMELINE_ACTIVITY_STANDARD_FIELD_IDS
 export const TIMELINE_ACTIVITY_MKT_FIELD_IDS = {
   mktCustomer: 'e42c00cb-dcc8-4682-ab98-2fa5f5c03f08',
@@ -126,6 +148,7 @@ export const TIMELINE_ACTIVITY_MKT_FIELD_IDS = {
   mktVariantAttribute: 'f656fa33-96e7-42a0-8f4f-f35dfcb0acae',
   mktOrder: 'e0919045-74af-4800-bb40-ccef297253a9',
   mktOrderItem: 'c8d7e6f5-4321-0987-6543-21098765432a',
+  mktLicense: '4b8283ce-daa4-4f11-87d0-2ade1cd6dc81',
 };
 
 //EXTENDS FROM WORKSPACE_MEMBER_STANDARD_FIELD_IDS
@@ -136,5 +159,6 @@ export const WORKSPACE_MEMBER_MKT_FIELD_IDS = {
   accountOwnerForMktValues: '7bdf395c-9f67-4fc9-9149-e58ba5c135de',
   accountOwnerForMktVariantAttributes: '6cd393a4-db2a-4cc6-b444-8e9ca99f93ec',
   accountOwnerForMktOrders: 'dbbf2703-8803-4c21-9b10-2cf38b045d4b',
+  accountOwnerForMktLicenses: 'a343e640-2214-4896-a0e2-830ee854a778',
   accountOwnerForMktOrderItems: '5f4e3d2c-1b0a-9876-5432-109876543210',
 };

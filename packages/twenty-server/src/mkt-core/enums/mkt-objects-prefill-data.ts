@@ -1,4 +1,5 @@
 import { prefillMktAttributes } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-attributes';
+import { prefillMktLicenses } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-licenses';
 import { prefillMktProducts } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-products';
 import { prefillMktValues } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-values';
 import { prefillMktVariantAttributes } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-variant-attribute';
@@ -15,5 +16,6 @@ export const MKT_PREFILLS = [
   prefillMktVariantAttributes,
   // order prefills
   prefillMktOrders,
+  prefillMktLicenses,
   prefillMktOrderItems,
 ];
