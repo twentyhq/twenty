@@ -68,6 +68,7 @@ const filterOutInternals = (
     }
 
     const primaryHandleDomain = getDomainNameByEmail(primaryHandle);
+
     try {
       const isAllHandlesFromSameDomain = message.participants
         .filter((participant) => !!participant.handle)
