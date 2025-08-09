@@ -18,7 +18,6 @@ export const MKT_WORKSPACE_ENTITIES = [
   // Order
   MktContractWorkspaceEntity,
   MktOrderWorkspaceEntity,
-  MktOrderItemWorkspaceEntity,
   MktLicenseWorkspaceEntity,
   MktOrderItemWorkspaceEntity,
 ];
