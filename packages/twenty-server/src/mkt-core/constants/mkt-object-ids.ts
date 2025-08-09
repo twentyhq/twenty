@@ -16,7 +16,4 @@ export const MKT_OBJECT_IDS = {
   mktLicense: 'bedb60ad-9854-4618-b912-c93f8df3e756',
   mktContract: 'f5a03266-1b62-4f41-94a2-a843221f307b',
   mktOrderItem: '7a3b1f2e-4c5d-6e7f-8901-234567890abc',
-  mktLicense: 'bedb60ad-9854-4618-b912-c93f8df3e756',
-  mktContract: 'f5a03266-1b62-4f41-94a2-a843221f307b',
-  mktOrderItem: '7a3b1f2e-4c5d-6e7f-8901-234567890abc',
 };
