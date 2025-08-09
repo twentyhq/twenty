@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type gmail_v1 as gmailV1 } from 'googleapis';
@@ -24,6 +24,7 @@ import { assertNotNull } from 'src/utils/assert';
 
 @Injectable()
 export class GmailGetMessageListService {
+  private readonly logger = new Logger(GmailGetMessageListService.name);
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
     private readonly gmailGetHistoryService: GmailGetHistoryService,
@@ -55,6 +56,13 @@ export class GmailGetMessageListService {
           q: computeGmailCategoryExcludeSearchFilter(excludedCategories),
         })
         .catch((error) => {
+          this.logger.error(
+            `Connected account ${connectedAccount.id}: Error fetching message list: ${error.message}`,
+          );
+          this.logger.error(
+            `Connected account ${connectedAccount.id}: Error fetching message list: ${JSON.stringify(error)}`,
+          );
+
           this.gmailHandleErrorService.handleGmailMessageListFetchError(error);
 
           return {
