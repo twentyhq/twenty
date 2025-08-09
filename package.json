@@ -226,6 +226,7 @@
     "@swc/cli": "^0.3.12",
     "@swc/core": "1.13.3",
     "@swc/helpers": "~0.5.2",
+    "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/addressparser": "^1.0.3",
