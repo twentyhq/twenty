@@ -17,9 +17,9 @@ type SettingsOptionCardContentSelectProps = {
 };
 
 const StyledSelectContainer = styled.div`
+  justify-content: flex-end;
   margin-left: auto;
   max-width: 120px;
-  justify-content: flex-end;
 `;
 
 export const SettingsOptionCardContentSelect = ({
