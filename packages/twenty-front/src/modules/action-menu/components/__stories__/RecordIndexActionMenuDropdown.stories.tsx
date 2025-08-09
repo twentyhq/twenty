@@ -1,7 +1,6 @@
-import { jest } from '@jest/globals';
 import { Meta, StoryObj } from '@storybook/react-vite';
 import { RecoilRoot } from 'recoil';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
@@ -11,15 +10,15 @@ import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-me
 
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import {
-  RouterDecorator,
-  getCanvasElementForDropdownTesting,
+    RouterDecorator,
+    getCanvasElementForDropdownTesting,
 } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
-const deleteMock = jest.fn();
-const addToFavoritesMock = jest.fn();
-const exportMock = jest.fn();
+const deleteMock = fn();
+const addToFavoritesMock = fn();
+const exportMock = fn();
 
 const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
   title: 'Modules/ActionMenu/RecordIndexActionMenuDropdown',

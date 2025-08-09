@@ -1,4 +1,3 @@
-import { jest } from '@jest/globals';
 import { Meta, StoryObj } from '@storybook/react-vite';
 import { RecoilRoot } from 'recoil';
 
@@ -8,7 +7,7 @@ import { createMockActionMenuActions } from '@/action-menu/mock/action-menu-acti
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import {
   ComponentDecorator,
   RouterDecorator,
@@ -16,9 +15,9 @@ import {
 } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-const deleteMock = jest.fn();
-const addToFavoritesMock = jest.fn();
-const exportMock = jest.fn();
+const deleteMock = fn();
+const addToFavoritesMock = fn();
+const exportMock = fn();
 
 const meta: Meta<typeof CommandMenuActionMenuDropdown> = {
   title: 'Modules/ActionMenu/CommandMenuActionMenuDropdown',
