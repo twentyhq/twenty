@@ -1,3 +1,4 @@
+import { beforeEach, describe, it, jest } from '@jest/globals';
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
 
@@ -6,6 +7,7 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { MockedResponse } from '@apollo/client/testing';
+import { fail } from 'assert';
 import { expect } from 'storybook/test';
 import { InMemoryTestingCacheInstance } from '~/testing/cache/inMemoryTestingCacheInstance';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -49,7 +51,7 @@ describe('useDeleteOneRecord', () => {
         variables: { idToDelete: personRecord.id },
         query,
       },
-      result: jest.fn((variables) => ({
+      result: jest.fn((variables: any) => ({
         data: {
           deletePerson: {
             __typename: 'Person',

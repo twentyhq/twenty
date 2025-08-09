@@ -1,4 +1,4 @@
-import { expect, jest } from '@storybook/jest';
+import { expect, jest } from '@jest/globals';
 import { Meta, StoryObj } from '@storybook/react-vite';
 import { RecoilRoot } from 'recoil';
 

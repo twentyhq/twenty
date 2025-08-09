@@ -1,4 +1,4 @@
-import { expect, jest } from '@storybook/jest';
+import { expect, jest } from '@jest/globals';
 import { Meta, StoryObj } from '@storybook/react-vite';
 import { RecoilRoot } from 'recoil';
 import { userEvent, waitFor, within } from 'storybook/test';
@@ -101,7 +101,7 @@ export const WithInteractions: Story = {
       expect(deleteMock).toHaveBeenCalled();
       expect(addToFavoritesMock).toHaveBeenCalled();
       expect(exportMock).toHaveBeenCalled();
-      expect(moreActionsButton).toBeInTheDocument();
+      expect(moreActionsButton).toBeTruthy();
     });
   },
 };
