@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react-vite';
-import { within } from '@storybook/testing-library';
 import { HttpResponse, graphql } from 'msw';
+import { within } from 'storybook/test';
 
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 import { EventCardMessage } from '@/activities/timeline-activities/rows/message/components/EventCardMessage';

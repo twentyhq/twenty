@@ -1,7 +1,7 @@
 import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react-vite';
-import { userEvent, waitFor, within } from '@storybook/testing-library';
 import { RecoilRoot } from 'recoil';
+import { userEvent, waitFor, within } from 'storybook/test';
 
 import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
@@ -11,8 +11,8 @@ import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-me
 
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import {
-  RouterDecorator,
-  getCanvasElementForDropdownTesting,
+    RouterDecorator,
+    getCanvasElementForDropdownTesting,
 } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';

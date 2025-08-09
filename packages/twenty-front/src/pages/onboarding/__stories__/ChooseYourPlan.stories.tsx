@@ -1,20 +1,20 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { Meta, StoryObj } from '@storybook/react-vite';
-import { within } from '@storybook/testing-library';
 import { HttpResponse, graphql } from 'msw';
+import { within } from 'storybook/test';
 
 import { BILLING_BASE_PRODUCT_PRICES } from '@/billing/graphql/queries/billingBaseProductPrices';
 import { AppPath } from '@/types/AppPath';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import {
-  BillingPlanKey,
-  OnboardingStatus,
-  SubscriptionInterval,
+    BillingPlanKey,
+    OnboardingStatus,
+    SubscriptionInterval,
 } from '~/generated/graphql';
 import { ChooseYourPlan } from '~/pages/onboarding/ChooseYourPlan';
 import {
-  PageDecorator,
-  PageDecoratorArgs,
+    PageDecorator,
+    PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedOnboardingUserData } from '~/testing/mock-data/users';

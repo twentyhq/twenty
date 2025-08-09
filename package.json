@@ -221,7 +221,6 @@
     "@storybook/jest": "^0.2.3",
     "@storybook/react-vite": "^9.1.1",
     "@storybook/test-runner": "^0.23.0",
-    "@storybook/testing-library": "^0.2.2",
     "@stylistic/eslint-plugin": "^1.5.0",
     "@swc-node/register": "1.8.0",
     "@swc/cli": "^0.3.12",
