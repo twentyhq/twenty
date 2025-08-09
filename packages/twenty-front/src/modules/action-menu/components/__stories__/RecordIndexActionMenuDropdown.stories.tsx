@@ -1,7 +1,7 @@
-import { expect, jest } from '@jest/globals';
+import { jest } from '@jest/globals';
 import { Meta, StoryObj } from '@storybook/react-vite';
 import { RecoilRoot } from 'recoil';
-import { userEvent, waitFor, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';

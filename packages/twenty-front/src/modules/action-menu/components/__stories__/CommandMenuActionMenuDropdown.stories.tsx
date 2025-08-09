@@ -1,4 +1,4 @@
-import { expect, jest } from '@jest/globals';
+import { jest } from '@jest/globals';
 import { Meta, StoryObj } from '@storybook/react-vite';
 import { RecoilRoot } from 'recoil';
 
@@ -8,7 +8,7 @@ import { createMockActionMenuActions } from '@/action-menu/mock/action-menu-acti
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { userEvent, waitFor, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import {
   ComponentDecorator,
   RouterDecorator,

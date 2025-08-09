@@ -103,11 +103,7 @@ export class InMemoryTestingCacheInstance {
     if (isDefined(matchObject)) {
       expect(cachedRecord).toMatchObject(matchObject);
     }
-    if (snapshotPropertyMatchers) {
-      expect(cachedRecord).toMatchSnapshot(snapshotPropertyMatchers);
-    } else {
-      expect(cachedRecord).toMatchSnapshot();
-    }
+    expect(cachedRecord).toMatchSnapshot(snapshotPropertyMatchers as any);
   };
 
   public restoreCacheToInitialState = async () => {
