@@ -5,7 +5,7 @@ import {
   type BeforeUpdateOneHook,
   type UpdateOneInputType,
 } from '@ptc-org/nestjs-query-graphql';
-import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
