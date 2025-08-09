@@ -53778,10 +53778,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"storybook-addon-mock-date@npm:^0.6.0":
-  version: 0.6.0
-  resolution: "storybook-addon-mock-date@npm:0.6.0"
-  checksum: 10c0/24c48d65a04eb1931e39495fe42692cea428db4b66874db86ab4e9e6f99cd0bba56cd25c56c9a56b42e53a14edfd38f79bcdef4c1f0e2758096528863d32d408
+"storybook-addon-mock-date@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "storybook-addon-mock-date@npm:1.0.1"
+  peerDependencies:
+    storybook: ^9.0.0
+  checksum: 10c0/be03fa7a68fc3dfc0a4c47809628cb29b1e134aaa67aea4850f52bdfbcb8f720bd910d7024d0a419fea53f4be13b34f6f9ffa69836ad4b8924cd052bbe06d4d7
   languageName: node
   linkType: hard
 
@@ -56429,7 +56431,7 @@ __metadata:
     slash: "npm:^5.1.0"
     source-map-support: "npm:^0.5.20"
     storybook: "npm:^9.1.1"
-    storybook-addon-mock-date: "npm:^0.6.0"
+    storybook-addon-mock-date: "npm:^1.0.1"
     storybook-addon-pseudo-states: "npm:^9.1.1"
     stripe: "npm:^17.3.1"
     supertest: "npm:^6.1.3"

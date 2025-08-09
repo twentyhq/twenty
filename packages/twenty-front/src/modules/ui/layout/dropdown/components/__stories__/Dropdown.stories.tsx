@@ -20,7 +20,10 @@ import {
   MenuItemMultiSelectAvatar,
   MenuItemSelectAvatar,
 } from 'twenty-ui/navigation';
-import { ComponentDecorator, getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
+import {
+  ComponentDecorator,
+  getCanvasElementForDropdownTesting,
+} from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { Dropdown } from '../Dropdown';

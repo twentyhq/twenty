@@ -2,10 +2,9 @@ import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldM
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react-vite';
-import { fn, userEvent, waitFor, within } from 'storybook/test';
 import { useEffect, useState } from 'react';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import {
   IconBolt,
   IconBrandGoogle,

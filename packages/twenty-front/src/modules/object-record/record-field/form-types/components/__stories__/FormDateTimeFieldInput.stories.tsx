@@ -2,10 +2,10 @@ import { FormDateTimeFieldInput } from '@/object-record/record-field/form-types/
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
 import { parseDateToString } from '@/ui/input/components/internal/date/utils/parseDateToString';
-import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react-vite';
 import { DateTime } from 'luxon';
 import {
+  expect,
   fn,
   userEvent,
   waitFor,

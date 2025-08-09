@@ -1,7 +1,6 @@
-import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react-vite';
-import { userEvent, within } from 'storybook/test';
 import { useSetRecoilState } from 'recoil';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';

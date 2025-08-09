@@ -5,7 +5,8 @@ import { RecoilRoot } from 'recoil';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
 
-const containerRef = React.createRef<HTMLDivElement>() as React.RefObject<HTMLDivElement>;
+const containerRef =
+  React.createRef<HTMLDivElement>() as React.RefObject<HTMLDivElement>;
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>

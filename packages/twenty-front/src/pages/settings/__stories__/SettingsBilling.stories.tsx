@@ -1,6 +1,5 @@
-import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react-vite';
-import { within } from 'storybook/test';
+import { expect, within } from 'storybook/test';
 
 import { SettingsPath } from '@/types/SettingsPath';
 import {
