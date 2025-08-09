@@ -20,7 +20,7 @@ import {
   MenuItemMultiSelectAvatar,
   MenuItemSelectAvatar,
 } from 'twenty-ui/navigation';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator, getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { Dropdown } from '../Dropdown';
@@ -216,8 +216,8 @@ const FakeCheckableMenuItemList = ({ hasAvatar }: { hasAvatar?: boolean }) => {
   );
 };
 
-const playInteraction: PlayFunction<any, any> = async ({ canvasElement }) => {
-  const canvas = within(canvasElement);
+const playInteraction: PlayFunction<any, any> = async () => {
+  const canvas = within(getCanvasElementForDropdownTesting());
 
   const buttons = await canvas.findAllByRole('button');
   await userEvent.click(buttons[0]);
