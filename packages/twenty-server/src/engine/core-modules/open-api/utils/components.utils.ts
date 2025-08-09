@@ -415,8 +415,10 @@ export const computeMetadataSchemaComponents = (
               operations: {
                 type: 'array',
                 items: { type: 'string' },
+                default: [],
               },
               description: { type: 'string' },
+              secret: { type: 'string' },
             },
           };
           schemas[`${capitalize(item.nameSingular)}ForResponse`] = {
@@ -430,6 +432,7 @@ export const computeMetadataSchemaComponents = (
                 items: { type: 'string' },
               },
               description: { type: 'string' },
+              secret: { type: 'string' },
               workspaceId: { type: 'string', format: 'uuid' },
               createdAt: { type: 'string', format: 'date-time' },
               updatedAt: { type: 'string', format: 'date-time' },
@@ -453,8 +456,9 @@ export const computeMetadataSchemaComponents = (
             properties: {
               name: { type: 'string' },
               expiresAt: { type: 'string', format: 'date-time' },
+              roleId: { type: 'string', format: 'uuid' },
             },
-            required: ['name', 'expiresAt'],
+            required: ['name', 'expiresAt', 'roleId'],
           };
           schemas[`${capitalize(item.namePlural)}`] = {
             type: 'array',
@@ -469,7 +473,12 @@ export const computeMetadataSchemaComponents = (
             properties: {
               name: { type: 'string' },
               expiresAt: { type: 'string', format: 'date-time' },
-              revokedAt: { type: 'string', format: 'date-time' },
+              revokedAt: {
+                type: 'string',
+                format: 'date-time',
+                description:
+                  'Set to null to clear revocation. Defaults to null if not provided.',
+              },
             },
           };
           schemas[`${capitalize(item.nameSingular)}ForResponse`] = {
@@ -480,6 +489,7 @@ export const computeMetadataSchemaComponents = (
               name: { type: 'string' },
               expiresAt: { type: 'string', format: 'date-time' },
               revokedAt: { type: 'string', format: 'date-time' },
+              roleId: { type: 'string', format: 'uuid' },
               workspaceId: { type: 'string', format: 'uuid' },
               createdAt: { type: 'string', format: 'date-time' },
               updatedAt: { type: 'string', format: 'date-time' },
