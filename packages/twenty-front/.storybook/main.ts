@@ -62,7 +62,7 @@ const config: StorybookConfig = {
     return mergeConfig(config, {
       resolve: {
         alias: {
-          'react-dom/client': 'react-dom/client',
+          'react-dom/client': 'react-dom/profiling',
         },
       },
     });
