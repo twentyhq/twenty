@@ -18,12 +18,14 @@ export type WorkspaceMember = {
   colorScheme: ColorScheme;
   createdAt: string;
   updatedAt: string;
+  deletedAt?: string | null;
   userEmail: string;
   userId: string;
   timeZone?: string | null;
   dateFormat?: WorkspaceMemberDateFormatEnum | null;
   timeFormat?: WorkspaceMemberTimeFormatEnum | null;
   calendarStartDay?: number | null;
+  position?: number | null;
 };
 
 export type WorkspaceInvitation = {

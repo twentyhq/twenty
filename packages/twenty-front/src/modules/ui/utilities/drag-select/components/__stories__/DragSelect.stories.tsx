@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/test';
+import { Meta, StoryObj } from '@storybook/react-vite';
+import { userEvent, within } from 'storybook/test';
 import { useRef, useState } from 'react';
 
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';

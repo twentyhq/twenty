@@ -1,12 +1,11 @@
 import { gql } from '@apollo/client';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
-import { expect } from '@storybook/test';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
-import { ANALYTICS_COOKIE_NAME, useEventTracker } from '../useEventTracker';
 import { AnalyticsType } from '~/generated/graphql';
+import { ANALYTICS_COOKIE_NAME, useEventTracker } from '../useEventTracker';
 
 // Mock document.cookie
 Object.defineProperty(document, 'cookie', {

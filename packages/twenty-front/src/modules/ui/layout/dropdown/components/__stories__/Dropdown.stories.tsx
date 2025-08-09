@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
-import { Decorator, Meta, StoryObj } from '@storybook/react';
-import { expect, userEvent, waitFor, within } from '@storybook/test';
-import { PlayFunction } from '@storybook/types';
+import { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { PlayFunction } from 'storybook/internal/types';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 
@@ -20,7 +20,10 @@ import {
   MenuItemMultiSelectAvatar,
   MenuItemSelectAvatar,
 } from 'twenty-ui/navigation';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import {
+  ComponentDecorator,
+  getCanvasElementForDropdownTesting,
+} from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { Dropdown } from '../Dropdown';
@@ -217,7 +220,7 @@ const FakeCheckableMenuItemList = ({ hasAvatar }: { hasAvatar?: boolean }) => {
 };
 
 const playInteraction: PlayFunction<any, any> = async () => {
-  const canvas = within(document.body);
+  const canvas = within(getCanvasElementForDropdownTesting());
 
   const buttons = await canvas.findAllByRole('button');
   await userEvent.click(buttons[0]);

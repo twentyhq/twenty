@@ -1,5 +1,5 @@
-import { Meta, StoryObj } from '@storybook/react';
-import { fn } from '@storybook/test';
+import { Meta, StoryObj } from '@storybook/react-vite';
+import { fn } from 'storybook/test';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';

@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react-vite';
 
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';

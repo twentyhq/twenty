@@ -4,7 +4,7 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
-import { expect } from '@storybook/jest';
+import { expect } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 
 type ObjectMetadataItemAndRecordId = {
@@ -103,7 +103,7 @@ export class InMemoryTestingCacheInstance {
     if (isDefined(matchObject)) {
       expect(cachedRecord).toMatchObject(matchObject);
     }
-    expect(cachedRecord).toMatchSnapshot(snapshotPropertyMatchers ?? {});
+    expect(cachedRecord).toMatchSnapshot(snapshotPropertyMatchers as any);
   };
 
   public restoreCacheToInitialState = async () => {

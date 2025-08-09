@@ -1,5 +1,5 @@
-import { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
+import { Meta, StoryObj } from '@storybook/react-vite';
+import { within } from 'storybook/test';
 
 import { SettingsIntegrationNewDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationNewDatabaseConnection';
 import {
@@ -14,7 +14,7 @@ const meta: Meta<PageDecoratorArgs> = {
   decorators: [PageDecorator],
   args: {
     routePath: '/settings/integrations/:databaseKey/new',
-    routeParams: { ':databaseKey': 'postgresql' },
+    routeParams: { databaseKey: 'postgresql' },
   },
   parameters: {
     msw: graphqlMocks,

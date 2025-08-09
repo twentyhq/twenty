@@ -1,5 +1,5 @@
-import { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
+import { Meta, StoryObj } from '@storybook/react-vite';
+import { within } from 'storybook/test';
 
 import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsIntegrationShowDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationShowDatabaseConnection';
@@ -19,8 +19,8 @@ const meta: Meta<PageDecoratorArgs> = {
   args: {
     routePath: getSettingsPath(SettingsPath.IntegrationDatabaseConnection),
     routeParams: {
-      ':databaseKey': 'postgresql',
-      ':connectionId': '67cbfd35-8dd4-4591-b9d4-c1906281a5da',
+      databaseKey: 'postgresql',
+      connectionId: '67cbfd35-8dd4-4591-b9d4-c1906281a5da',
     },
   },
   parameters: {

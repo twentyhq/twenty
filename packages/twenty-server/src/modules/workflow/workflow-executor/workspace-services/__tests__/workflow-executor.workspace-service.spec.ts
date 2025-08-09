@@ -2,19 +2,20 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { getWorkflowRunContext, StepStatus } from 'twenty-shared/workflow';
 
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
 import { BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE } from 'src/engine/core-modules/billing/constants/billing-workflow-execution-error-message.constant';
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
+import { canExecuteStep } from 'src/modules/workflow/workflow-executor/utils/can-execute-step.util';
 import {
   type WorkflowAction,
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
-import { canExecuteStep } from 'src/modules/workflow/workflow-executor/utils/can-execute-step.util';
 
 jest.mock(
   'src/modules/workflow/workflow-executor/utils/can-execute-step.util',
@@ -24,7 +25,7 @@ jest.mock(
     );
 
     return {
-      ...actual,
+      ...(actual as any),
       canExecuteStep: jest.fn().mockReturnValue(true), // default behavior
     };
   },
@@ -37,7 +38,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
   let workflowRunWorkspaceService: WorkflowRunWorkspaceService;
 
   const mockWorkflowExecutor = {
-    execute: jest.fn().mockResolvedValue({ result: { success: true } }),
+    execute: jest.fn().mockResolvedValue({ result: { success: true } } as never),
   };
 
   const mockWorkspaceEventEmitter = {
@@ -139,7 +140,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
         result: { stepOutput: 'success' },
       };
 
-      mockWorkflowExecutor.execute.mockResolvedValueOnce(mockStepResult);
+      mockWorkflowExecutor.execute.mockResolvedValueOnce(mockStepResult as never);
 
       await service.executeFromSteps({
         workflowRunId: mockWorkflowRunId,
@@ -203,7 +204,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
     it('should handle step execution errors', async () => {
       mockWorkflowExecutor.execute.mockRejectedValueOnce(
-        new Error('Step execution failed'),
+        new Error('Step execution failed') as never,
       );
 
       await service.executeFromSteps({
@@ -247,7 +248,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
         pendingEvent: true,
       };
 
-      mockWorkflowExecutor.execute.mockResolvedValueOnce(mockPendingEvent);
+      mockWorkflowExecutor.execute.mockResolvedValueOnce(mockPendingEvent as never);
 
       await service.executeFromSteps({
         workflowRunId: mockWorkflowRunId,

@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ComponentDecorator } from '@ui/testing';
 import { IconBuildingSkyscraper, IconUser } from '@ui/display';
 import { MultipleAvatarChip } from '@ui/components';

@@ -2,6 +2,7 @@ import { renderHook } from '@testing-library/react';
 
 import { useNotes } from '@/activities/notes/hooks/useNotes';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { describe, expect, it, jest } from '@jest/globals';
 
 jest.mock('@/activities/hooks/useActivities', () => ({
   useActivities: jest.fn(() => ({
@@ -13,7 +14,7 @@ jest.mock('@/activities/hooks/useActivities', () => ({
 jest.mock('recoil', () => {
   const actualRecoil = jest.requireActual('recoil');
   return {
-    ...actualRecoil,
+    ...(actualRecoil as any),
     useRecoilState: jest.fn(() => {
       const mockCurrentNotesQueryVariables = {
         filter: {},

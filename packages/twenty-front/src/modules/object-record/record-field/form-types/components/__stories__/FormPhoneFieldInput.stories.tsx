@@ -1,5 +1,5 @@
-import { Meta, StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';

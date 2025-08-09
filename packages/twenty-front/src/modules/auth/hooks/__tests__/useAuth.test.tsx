@@ -6,14 +6,15 @@ import { supportChatState } from '@/client-config/states/supportChatState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useApolloClient } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
-import { expect } from '@storybook/test';
 import { ReactNode, act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
+import { beforeEach, describe, it, jest } from '@jest/globals';
 import { renderHook } from '@testing-library/react';
+import { expect } from 'storybook/internal/test';
 import { iconsState } from 'twenty-ui/display';
 import { SupportDriver } from '~/generated/graphql';
 import { email, mocks, password, results, token } from '../__mocks__/useAuth';

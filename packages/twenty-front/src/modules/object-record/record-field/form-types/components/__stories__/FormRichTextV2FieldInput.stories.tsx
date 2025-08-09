@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react-vite';
 import {
   expect,
   fn,
@@ -6,7 +6,7 @@ import {
   waitFor,
   waitForElementToBeRemoved,
   within,
-} from '@storybook/test';
+} from 'storybook/test';
 import { getUserDevice } from 'twenty-ui/utilities';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
@@ -71,6 +71,10 @@ export const WithVariable: Story = {
 
       return editor;
     });
+
+    if (!editor) {
+      throw new Error('Editor element not found');
+    }
 
     await userEvent.click(editor);
 
@@ -166,6 +170,10 @@ export const Disabled: Story = {
     const defaultValue = await canvas.findByText('Rich Text');
     expect(defaultValue).toBeVisible();
 
+    if (!editor) {
+      throw new Error('Editor element not found');
+    }
+
     await userEvent.type(editor, 'Hello');
 
     expect(args.onChange).not.toHaveBeenCalled();
@@ -230,6 +238,10 @@ export const HasHistory: Story = {
       expect(editor).toBeVisible();
       return editor;
     });
+
+    if (!editor) {
+      throw new Error('Editor element not found');
+    }
 
     const addVariableButton = await canvas.findByRole('button', {
       name: 'Add variable',

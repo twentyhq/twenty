@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react-vite';
 import { TabMoreButton } from '../TabMoreButton';
 
 const meta: Meta<typeof TabMoreButton> = {

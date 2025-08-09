@@ -5,6 +5,7 @@ import { MemoryRouter, useLocation } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
+import { describe, expect, it, jest } from '@jest/globals';
 import { useApolloFactory } from '../useApolloFactory';
 
 enableFetchMocks();
@@ -15,7 +16,7 @@ jest.mock('react-router-dom', () => {
   const initialRouter = jest.requireActual('react-router-dom');
 
   return {
-    ...initialRouter,
+    ...(initialRouter as any),
     useNavigate: () => mockNavigate,
   };
 });

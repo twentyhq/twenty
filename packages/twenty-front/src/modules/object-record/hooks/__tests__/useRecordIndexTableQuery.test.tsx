@@ -6,6 +6,7 @@ import { useRecordIndexTableQuery } from '@/object-record/record-index/hooks/use
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { MockedResponse } from '@apollo/client/testing';
+import { describe, expect, it, jest } from '@jest/globals';
 import gql from 'graphql-tag';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { peopleQueryResult } from '~/testing/mock-data/people';
@@ -645,7 +646,7 @@ const HookMockWrapper = getJestMetadataAndApolloMocksWrapper({
 });
 
 jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+  ...(jest.requireActual('react-router-dom') as any),
   useLocation: jest.fn().mockReturnValue({
     pathname: '/',
     search: '',

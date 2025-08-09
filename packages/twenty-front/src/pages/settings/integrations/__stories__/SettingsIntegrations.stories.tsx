@@ -1,5 +1,5 @@
-import { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
+import { Meta, StoryObj } from '@storybook/react-vite';
+import { within } from 'storybook/test';
 
 import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsIntegrations } from '~/pages/settings/integrations/SettingsIntegrations';

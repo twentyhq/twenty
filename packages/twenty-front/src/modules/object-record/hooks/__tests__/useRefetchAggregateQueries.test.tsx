@@ -1,6 +1,7 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { getAggregateQueryName } from '@/object-record/utils/getAggregateQueryName';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { renderHook } from '@testing-library/react';
 
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
@@ -39,7 +40,7 @@ describe('useRefetchAggregateQueries', () => {
   it('should handle errors during refetch', async () => {
     // Arrange
     const error = new Error('Refetch failed');
-    mockRefetchQueries.mockRejectedValue(error);
+    mockRefetchQueries.mockRejectedValue(error as never);
     const objectMetadataNamePlural = 'opportunities';
 
     // Act

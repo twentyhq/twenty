@@ -1,7 +1,7 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/testing-library';
+import { Meta, StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
+import { within } from 'storybook/test';
 
 import { BILLING_BASE_PRODUCT_PRICES } from '@/billing/graphql/queries/billingBaseProductPrices';
 import { AppPath } from '@/types/AppPath';

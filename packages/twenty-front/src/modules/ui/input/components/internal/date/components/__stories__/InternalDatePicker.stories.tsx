@@ -1,6 +1,6 @@
-import { useArgs } from '@storybook/preview-api';
-import { Meta, StoryObj } from '@storybook/react';
-import { expect, userEvent, within } from '@storybook/test';
+import { useArgs } from 'storybook/preview-api';
+import { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, within } from 'storybook/test';
 import { DateTimePicker } from '../InternalDatePicker';
 import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -13,7 +13,6 @@ const meta: Meta<typeof DateTimePicker> = {
     date: { control: 'date' },
   },
   render: ({ date }) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [, updateArgs] = useArgs();
     return (
       <DateTimePicker

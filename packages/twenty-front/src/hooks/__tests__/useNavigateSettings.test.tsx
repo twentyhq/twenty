@@ -2,10 +2,11 @@ import { renderHook } from '@testing-library/react';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 
 import { SettingsPath } from '@/types/SettingsPath';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+  ...(jest.requireActual('react-router-dom') as any),
   useNavigate: jest.fn(),
 }));
 

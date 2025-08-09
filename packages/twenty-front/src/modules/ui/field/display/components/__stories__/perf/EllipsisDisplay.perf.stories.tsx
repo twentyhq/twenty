@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react-vite';
 
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';

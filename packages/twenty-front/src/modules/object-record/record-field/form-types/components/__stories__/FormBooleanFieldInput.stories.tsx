@@ -1,5 +1,5 @@
-import { Meta, StoryObj } from '@storybook/react';
-import { expect, userEvent, within } from '@storybook/test';
+import { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, within } from 'storybook/test';
 import { FormBooleanFieldInput } from '../FormBooleanFieldInput';
 
 const meta: Meta<typeof FormBooleanFieldInput> = {

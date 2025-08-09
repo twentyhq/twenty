@@ -1,6 +1,7 @@
 import { ApolloError, gql, InMemoryCache } from '@apollo/client';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
+import { describe, expect, it, jest } from '@jest/globals';
 import { WorkspaceActivationStatus } from '~/generated/graphql';
 import { ApolloFactory, Options } from '../apollo.factory';
 
@@ -9,7 +10,7 @@ enableFetchMocks();
 jest.mock('@/auth/services/AuthService', () => {
   const initialAuthService = jest.requireActual('@/auth/services/AuthService');
   return {
-    ...initialAuthService,
+    ...(initialAuthService as any),
     renewToken: jest.fn().mockReturnValue(
       Promise.resolve({
         accessOrWorkspaceAgnosticToken: {

@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react-vite';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { ComponentDecorator } from 'twenty-ui/testing';

@@ -3,6 +3,7 @@
 import { renderHook } from '@testing-library/react';
 
 import { useUpdateSSOIdentityProvider } from '@/settings/security/hooks/useUpdateSSOIdentityProvider';
+import { afterEach, describe, expect, it, jest } from '@jest/globals';
 import { SsoIdentityProviderStatus } from '~/generated/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
@@ -11,7 +12,7 @@ const mutationEditSSOIDPCallSpy = jest.fn();
 jest.mock('~/generated-metadata/graphql', () => {
   const actual = jest.requireActual('~/generated-metadata/graphql');
   return {
-    ...actual,
+    ...(actual as any),
     useEditSsoIdentityProviderMutation: () => [mutationEditSSOIDPCallSpy],
   };
 });
