@@ -13,7 +13,6 @@ const meta: Meta<typeof DateTimePicker> = {
     date: { control: 'date' },
   },
   render: ({ date }) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [, updateArgs] = useArgs();
     return (
       <DateTimePicker

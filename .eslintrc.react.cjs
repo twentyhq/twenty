@@ -5,7 +5,7 @@ module.exports = {
     'plugin:@nx/react',
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
-    // 'plugin:storybook/recommended', // Temporarily disabled
+    'plugin:storybook/recommended', 
     'plugin:prettier/recommended',
     'plugin:lingui/recommended',
     'plugin:@nx/typescript'
