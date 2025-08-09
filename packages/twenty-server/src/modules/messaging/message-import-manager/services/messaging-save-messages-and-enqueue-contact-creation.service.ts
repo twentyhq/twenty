@@ -45,10 +45,10 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
 
     const workspaceDataSource = await this.twentyORMManager.getDatasource();
 
-    const createdMessagesWithParticipants =
+    const participantsWithMessageId =
       await workspaceDataSource?.transaction(
         async (transactionManager: WorkspaceEntityManager) => {
-          const { messageExternalIdsAndIdsMap, createdMessages } =
+          const { messageExternalIdsAndIdsMap } =
             await this.messageService.saveMessagesWithinTransaction(
               messagesToSave,
               messageChannel.id,
@@ -110,11 +110,10 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
             transactionManager,
           );
 
-          return { participantsWithMessageId, createdMessages };
+          return participantsWithMessageId;
         },
       );
 
-    const { participantsWithMessageId } = createdMessagesWithParticipants;
 
     if (messageChannel.isContactAutoCreationEnabled) {
       const contactsToCreate = participantsWithMessageId.filter(

@@ -34,7 +34,7 @@ export function formatData<T>(
 
     if (!fieldMetadata) {
       throw new Error(
-        `Field metadata for field "${key}" is missing in object metadata`,
+        `Field metadata for field "${key}" is missing in object metadata ${objectMetadataItemWithFieldMaps.nameSingular}`,
       );
     }
 

@@ -34,7 +34,7 @@ import {
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const isUniqueFieldFormSchema = z.object({
-  isUnique: z.boolean().nullable().optional(),
+  isUnique: z.boolean().nullable().default(false),
 });
 
 const booleanFieldFormSchema = z

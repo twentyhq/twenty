@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import {
-  type PageCollection,
   PageIterator,
+  type PageCollection,
   type PageIteratorCallback,
 } from '@microsoft/microsoft-graph-client';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -30,6 +30,7 @@ const MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT = 999;
 
 @Injectable()
 export class MicrosoftGetMessageListService {
+  private readonly logger = new Logger(MicrosoftGetMessageListService.name);
   constructor(
     private readonly microsoftClientProvider: MicrosoftClientProvider,
     private readonly microsoftHandleErrorService: MicrosoftHandleErrorService,
@@ -123,6 +124,9 @@ export class MicrosoftGetMessageListService {
       })
       .get()
       .catch((error) => {
+        this.logger.error(
+          `Connected account ${connectedAccount.id}: Error fetching message list: ${JSON.stringify(error)}`,
+        );
         if (isAccessTokenRefreshingError(error?.body)) {
           throw new MessageImportDriverException(
             error.message,
