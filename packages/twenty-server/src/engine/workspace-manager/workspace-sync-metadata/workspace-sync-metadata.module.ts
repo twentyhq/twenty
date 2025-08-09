@@ -21,6 +21,7 @@ import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/
 import { WorkspaceSyncIndexMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-index-metadata.service';
 import { WorkspaceSyncObjectMetadataIdentifiersService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata-identifiers.service';
 import { WorkspaceSyncObjectMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata.service';
+import { WorkspaceSyncRoleService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-role.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 @Module({
@@ -46,6 +47,7 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
     WorkspaceSyncFieldMetadataRelationService,
     WorkspaceSyncMetadataService,
     WorkspaceSyncIndexMetadataService,
+    WorkspaceSyncRoleService,
     SyncWorkspaceLoggerService,
     SyncWorkspaceMetadataCommand,
   ],
