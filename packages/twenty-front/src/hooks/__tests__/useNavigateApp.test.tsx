@@ -3,10 +3,11 @@ import { MemoryRouter, useNavigate } from 'react-router-dom';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { AppPath } from '@/types/AppPath';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+  ...(jest.requireActual('react-router-dom') as any),
   useNavigate: jest.fn(),
 }));
 
