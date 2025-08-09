@@ -4,6 +4,7 @@ import {
 } from 'test/integration/constants/test-view-ids.constants';
 import { createViewFieldOperationFactory } from 'test/integration/graphql/utils/create-view-field-operation-factory.util';
 import { deleteViewFieldOperationFactory } from 'test/integration/graphql/utils/delete-view-field-operation-factory.util';
+import { destroyViewFieldOperationFactory } from 'test/integration/graphql/utils/destroy-view-field-operation-factory.util';
 import { findViewFieldsOperationFactory } from 'test/integration/graphql/utils/find-view-fields-operation-factory.util';
 import {
   assertGraphQLErrorResponse,
@@ -196,6 +197,41 @@ describe('View Field Resolver', () => {
 
     it('should throw an error when deleting non-existent view field', async () => {
       const operation = deleteViewFieldOperationFactory({
+        viewFieldId: TEST_NOT_EXISTING_VIEW_FIELD_ID,
+      });
+      const response = await makeGraphqlAPIRequest(operation);
+
+      assertGraphQLErrorResponse(
+        response,
+        ErrorCode.NOT_FOUND,
+        generateViewFieldExceptionMessage(
+          ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_FIELD_ID,
+        ),
+      );
+    });
+  });
+
+  describe('destroyCoreViewField', () => {
+    it('should destroy an existing view field', async () => {
+      const fieldData = createViewFieldData(testViewId);
+      const createOperation = createViewFieldOperationFactory({
+        data: fieldData,
+      });
+      const createResponse = await makeGraphqlAPIRequest(createOperation);
+      const viewField = createResponse.body.data.createCoreViewField;
+
+      const destroyOperation = destroyViewFieldOperationFactory({
+        viewFieldId: viewField.id,
+      });
+      const response = await makeGraphqlAPIRequest(destroyOperation);
+
+      assertGraphQLSuccessfulResponse(response);
+      expect(response.body.data.destroyCoreViewField).toBe(true);
+    });
+
+    it('should throw an error when destroying non-existent view field', async () => {
+      const operation = destroyViewFieldOperationFactory({
         viewFieldId: TEST_NOT_EXISTING_VIEW_FIELD_ID,
       });
       const response = await makeGraphqlAPIRequest(operation);

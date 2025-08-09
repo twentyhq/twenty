@@ -4594,9 +4594,9 @@ msgstr ""
 msgid "Prefilling your workspace data..."
 msgstr "تعبئة بيانات بيئة العمل الخاصة بك..."
 
-#. js-lingui-id: GlHcNE
+#. js-lingui-id: koeh2Y
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
-msgid "Prevent users from assigining the same value to different records"
+msgid "Prevent from assigining the same value to different records"
 msgstr ""
 
 #. js-lingui-id: rdUucN

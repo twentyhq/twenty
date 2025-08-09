@@ -6,6 +6,7 @@ export const fetchMetadataFields = (
   selector: Selectors,
 ) => {
   const defaultFields = `
+    id
     type
     name
     label
