@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { IconComponent } from '@ui/display/icon/types/IconComponent';
+import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 
 import { NavigationBarItem } from './NavigationBarItem';
 

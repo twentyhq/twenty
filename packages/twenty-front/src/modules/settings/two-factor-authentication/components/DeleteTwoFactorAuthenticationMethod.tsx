@@ -15,6 +15,7 @@ import { useDeleteTwoFactorAuthenticationMethodMutation } from '~/generated-meta
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '../hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
 import { useCurrentWorkspaceTwoFactorAuthenticationPolicy } from '../hooks/useWorkspaceTwoFactorAuthenticationPolicy';
+import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 
 const DELETE_TWO_FACTOR_AUTHENTICATION_MODAL_ID =
   'delete-two-factor-authentication-modal';
@@ -23,7 +24,8 @@ export const DeleteTwoFactorAuthentication = () => {
   const { openModal } = useModal();
 
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
-  const { signOut, loadCurrentUser } = useAuth();
+  const { signOut } = useAuth();
+  const { loadCurrentUser } = useLoadCurrentUser();
   const [deleteTwoFactorAuthenticationMethod] =
     useDeleteTwoFactorAuthenticationMethodMutation();
   const currentUser = useRecoilValue(currentUserState);

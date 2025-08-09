@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class RemoveRelationMetadata1750673748111 implements MigrationInterface {
   name = 'RemoveRelationMetadata1750673748111';

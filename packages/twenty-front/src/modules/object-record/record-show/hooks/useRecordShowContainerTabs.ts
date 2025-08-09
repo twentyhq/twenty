@@ -6,6 +6,7 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { BASE_RECORD_LAYOUT } from '@/object-record/record-show/constants/BaseRecordLayout';
 import { CardType } from '@/object-record/record-show/types/CardType';
 import { RecordLayout } from '@/object-record/record-show/types/RecordLayout';
+import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { RecordLayoutTab } from '@/ui/layout/tab-list/types/RecordLayoutTab';
 import { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -300,8 +301,10 @@ export const useRecordShowContainerTabs = (
         const permissionHide =
           hide.ifNoReadPermission &&
           isDefined(targetObjectNameSingular) &&
-          !objectPermissionsByObjectMetadataId[targetObjectMetadataId ?? '']
-            ?.canReadObjectRecords;
+          !getObjectPermissionsFromMapByObjectMetadataId({
+            objectPermissionsByObjectMetadataId,
+            objectMetadataId: targetObjectMetadataId ?? '',
+          })?.canReadObjectRecords;
 
         const requiredObjectsInactive =
           hide.ifRequiredObjectsInactive.length > 0 &&

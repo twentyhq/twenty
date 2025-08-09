@@ -1,16 +1,18 @@
 import { extractAndSanitizeObjectStringFields } from 'twenty-shared/utils';
 
-import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 type GetDefaultFlatFieldMetadataArgs = {
   fieldMetadataId: string;
-  createFieldInput: CreateFieldInput;
+  createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
+  workspaceId: string;
 };
 export const getDefaultFlatFieldMetadata = ({
   createFieldInput,
   fieldMetadataId,
+  workspaceId,
 }: GetDefaultFlatFieldMetadataArgs) => {
   const { defaultValue, settings } = extractAndSanitizeObjectStringFields(
     createFieldInput,
@@ -40,7 +42,7 @@ export const getDefaultFlatFieldMetadata = ({
     standardOverrides: null,
     type: createFieldInput.type,
     uniqueIdentifier: fieldMetadataId,
-    workspaceId: createFieldInput.workspaceId,
+    workspaceId,
     flatRelationTargetFieldMetadata: null,
     flatRelationTargetObjectMetadata: null,
     options: null,

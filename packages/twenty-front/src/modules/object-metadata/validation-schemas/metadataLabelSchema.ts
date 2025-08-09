@@ -14,7 +14,7 @@ export const metadataLabelSchema = (existingLabels?: string[]) => {
         try {
           computeMetadataNameFromLabel(label);
           return true;
-        } catch (error) {
+        } catch {
           return false;
         }
       },
@@ -29,7 +29,7 @@ export const metadataLabelSchema = (existingLabels?: string[]) => {
             return true;
           }
           return !existingLabels.includes(computeMetadataNameFromLabel(label));
-        } catch (error) {
+        } catch {
           return false;
         }
       },

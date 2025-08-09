@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { QueryRunner } from 'typeorm';
+import { type QueryRunner } from 'typeorm';
 
 import {
   TwentyORMException,

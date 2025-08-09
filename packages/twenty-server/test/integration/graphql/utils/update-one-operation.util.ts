@@ -1,11 +1,11 @@
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
-import { PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
+import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 import { capitalize } from 'twenty-shared/utils';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 
-import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 type UpdateOneOperationArgs<T> = PerformMetadataQueryParams<T> & {
   objectMetadataSingularName: string;

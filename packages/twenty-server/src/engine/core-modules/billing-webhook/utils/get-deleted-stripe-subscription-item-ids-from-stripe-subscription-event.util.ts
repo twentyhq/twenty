@@ -1,7 +1,8 @@
 /* @license Enterprise */
 
-import Stripe from 'stripe';
 import { isDefined } from 'twenty-shared/utils';
+
+import type Stripe from 'stripe';
 
 export const getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent = (
   event:

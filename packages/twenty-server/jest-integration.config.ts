@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
+import { type JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 

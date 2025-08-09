@@ -1,5 +1,5 @@
-import { CanActivate } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+import { type CanActivate } from '@nestjs/common';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ApiKeyService } from 'src/engine/core-modules/api-key/api-key.service';

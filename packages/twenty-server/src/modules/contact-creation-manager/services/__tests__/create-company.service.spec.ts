@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
@@ -8,7 +8,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-  CompanyToCreate,
+  type CompanyToCreate,
   CreateCompanyService,
 } from 'src/modules/contact-creation-manager/services/create-company.service';
 

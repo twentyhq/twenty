@@ -5,8 +5,8 @@ import { In, Repository } from 'typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
-  ObjectPermissionInput,
-  UpsertObjectPermissionsInput,
+  type ObjectPermissionInput,
+  type UpsertObjectPermissionsInput,
 } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permissions.input';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import {

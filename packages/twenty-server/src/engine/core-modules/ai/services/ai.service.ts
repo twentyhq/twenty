@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { CoreMessage, StreamTextResult, streamText } from 'ai';
+import { type CoreMessage, type StreamTextResult, streamText } from 'ai';
 
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 

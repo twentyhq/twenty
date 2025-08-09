@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { DataSource, EntityManager, In, Repository } from 'typeorm';
+import { DataSource, type EntityManager, In, Repository } from 'typeorm';
 
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
   ApiKeyException,
   ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/api-key.exception';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
@@ -22,8 +21,7 @@ export class ApiKeyRoleService {
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
+
     @InjectRepository(ApiKey, 'core')
     private readonly apiKeyRepository: Repository<ApiKey>,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,

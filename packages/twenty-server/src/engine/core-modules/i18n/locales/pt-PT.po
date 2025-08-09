@@ -53,6 +53,16 @@ msgstr "(Sistema) Visualizações"
 msgid "{fieldName} and {fieldName}Id cannot be both provided."
 msgstr "{fieldName} e {fieldName}Id não podem ser ambos fornecidos."
 
+#. js-lingui-id: ZkHTHm
+#: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
+msgid "{fieldType} fields cannot be unique."
+msgstr ""
+
+#. js-lingui-id: wapGcj
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "{message}"
+msgstr ""
+
 #. js-lingui-id: 8haj+G
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils.ts
 msgid "{name} should be in camelCase"
@@ -509,6 +519,7 @@ msgid "Cannot create workflow version with status other than draft"
 msgstr "Não é possível criar versão de fluxo de trabalho com status diferente de rascunho"
 
 #. js-lingui-id: AQyr9X
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Não é possível excluir, por favor atualize o campo identificador do rótulo primeiro"
@@ -517,6 +528,11 @@ msgstr "Não é possível excluir, por favor atualize o campo identificador do r
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot disable non-active workflow version"
 msgstr "Não é possível desativar versão de fluxo de trabalho não ativa"
+
+#. js-lingui-id: RATxdO
+#: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
+msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first."
+msgstr ""
 
 #. js-lingui-id: IDMgr/
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
@@ -1106,6 +1122,31 @@ msgstr "Campo usado para pesquisa de texto completo"
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "Field Value"
 msgstr "Valor do Campo"
+
+#. js-lingui-id: Sof2+k
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "FieldMetadataId is required to create a view field."
+msgstr ""
+
+#. js-lingui-id: NTyTR5
+#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
+msgid "FieldMetadataId is required to create a view filter group."
+msgstr ""
+
+#. js-lingui-id: Ya6oU7
+#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
+msgid "FieldMetadataId is required to create a view filter."
+msgstr ""
+
+#. js-lingui-id: DU4jcg
+#: src/engine/core-modules/view/exceptions/view-group.exception.ts
+msgid "FieldMetadataId is required to create a view group."
+msgstr ""
+
+#. js-lingui-id: snEXuU
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "FieldMetadataId is required to create a view sort."
+msgstr ""
 
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1784,6 +1825,11 @@ msgstr "Objeto já existe"
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Object Metadata Id"
 msgstr "ID de Metadados do Objeto"
+
+#. js-lingui-id: 53pIyA
+#: src/engine/core-modules/view/exceptions/view.exception.ts
+msgid "ObjectMetadataId is required to create a view."
+msgstr ""
 
 #. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2549,6 +2595,12 @@ msgstr "Título"
 msgid "Type"
 msgstr "Tipo"
 
+#. js-lingui-id: RBJNRI
+#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
+msgid "Unique field cannot have a default value"
+msgstr ""
+
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"
@@ -2829,6 +2881,31 @@ msgstr "Objeto de Destino da Vista"
 msgid "View type"
 msgstr "Tipo de Vista"
 
+#. js-lingui-id: l88nXn
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "ViewId is required to create a view field."
+msgstr ""
+
+#. js-lingui-id: 9XMTpT
+#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
+msgid "ViewId is required to create a view filter group."
+msgstr ""
+
+#. js-lingui-id: pCCxli
+#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
+msgid "ViewId is required to create a view filter."
+msgstr ""
+
+#. js-lingui-id: 1X1RW5
+#: src/engine/core-modules/view/exceptions/view-group.exception.ts
+msgid "ViewId is required to create a view group."
+msgstr ""
+
+#. js-lingui-id: uGUFcy
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "ViewId is required to create a view sort."
+msgstr ""
+
 #. js-lingui-id: 1I6UoR
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Views"
@@ -3044,6 +3121,36 @@ msgstr "Posição do membro do workspace"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "Membros do Workspace"
+
+#. js-lingui-id: kjLpTn
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "WorkspaceId is required to create a view field."
+msgstr ""
+
+#. js-lingui-id: zWj6VZ
+#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
+msgid "WorkspaceId is required to create a view filter group."
+msgstr ""
+
+#. js-lingui-id: jQMXtD
+#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
+msgid "WorkspaceId is required to create a view filter."
+msgstr ""
+
+#. js-lingui-id: NAoJAX
+#: src/engine/core-modules/view/exceptions/view-group.exception.ts
+msgid "WorkspaceId is required to create a view group."
+msgstr ""
+
+#. js-lingui-id: hU1QaN
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "WorkspaceId is required to create a view sort."
+msgstr ""
+
+#. js-lingui-id: jtb/lI
+#: src/engine/core-modules/view/exceptions/view.exception.ts
+msgid "WorkspaceId is required to create a view."
+msgstr ""
 
 #. js-lingui-id: EtzFC0
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts

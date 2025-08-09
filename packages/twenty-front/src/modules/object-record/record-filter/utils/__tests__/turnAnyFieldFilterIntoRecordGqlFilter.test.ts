@@ -138,6 +138,8 @@ const mockObjectMetadataItem: ObjectMetadataItem = {
   nameSingular: 'test',
   namePlural: 'tests',
   fields: [],
+  readableFields: [],
+  updatableFields: [],
 };
 
 const mockObjectMetadataItemWithAllFields: ObjectMetadataItem = {

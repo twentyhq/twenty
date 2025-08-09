@@ -3,7 +3,7 @@ import { Inject } from '@nestjs/common';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
+import { type ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';

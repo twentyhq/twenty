@@ -2,7 +2,7 @@ import { i18n } from '@lingui/core';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
-import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 
 jest.mock('@lingui/core');

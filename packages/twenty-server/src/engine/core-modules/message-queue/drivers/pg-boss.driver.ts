@@ -1,16 +1,16 @@
-import { OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { type OnModuleDestroy, type OnModuleInit } from '@nestjs/common';
 
 import PgBoss from 'pg-boss';
 
 import {
-  QueueCronJobOptions,
-  QueueJobOptions,
+  type QueueCronJobOptions,
+  type QueueJobOptions,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
-import { MessageQueueJob } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
-import { MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
-import { MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
+import { type MessageQueueJob } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
+import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
+import { type MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 
 export type PgBossDriverOptions = PgBoss.ConstructorOptions;

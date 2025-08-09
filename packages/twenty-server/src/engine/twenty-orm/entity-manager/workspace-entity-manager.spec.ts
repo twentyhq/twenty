@@ -1,12 +1,12 @@
-import { ObjectRecordsPermissions } from 'twenty-shared/types';
+import { type ObjectsPermissionsDeprecated } from 'twenty-shared/types';
 import { EntityManager } from 'typeorm';
 import { EntityPersistExecutor } from 'typeorm/persistence/EntityPersistExecutor';
 import { PlainObjectToDatabaseEntityTransformer } from 'typeorm/query-builder/transformer/PlainObjectToDatabaseEntityTransformer';
 
-import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
 
 import { WorkspaceEntityManager } from './workspace-entity-manager';
@@ -75,7 +75,7 @@ describe('WorkspaceEntityManager', () => {
   let mockDataSource: WorkspaceDataSource;
   let mockPermissionOptions: {
     shouldBypassPermissionChecks: boolean;
-    objectRecordsPermissions?: ObjectRecordsPermissions;
+    objectRecordsPermissions?: ObjectsPermissionsDeprecated;
   };
 
   beforeEach(() => {
@@ -135,6 +135,7 @@ describe('WorkspaceEntityManager', () => {
         IS_RELATION_CONNECT_ENABLED: false,
         IS_FIELDS_PERMISSIONS_ENABLED: false,
         IS_CORE_VIEW_SYNCING_ENABLED: false,
+        IS_CORE_VIEW_ENABLED: false,
         IS_TWO_FACTOR_AUTHENTICATION_ENABLED: false,
         IS_WORKSPACE_MIGRATION_V2_ENABLED: false,
         IS_API_KEY_ROLES_ENABLED: false,
@@ -331,8 +332,7 @@ describe('WorkspaceEntityManager', () => {
         isFieldPermissionsEnabled: true,
         operationType: 'update',
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
+        objectsPermissions: mockPermissionOptions.objectRecordsPermissions,
         selectedColumns: [],
         allFieldsSelected: false,
         updatedColumns: [],
@@ -366,8 +366,7 @@ describe('WorkspaceEntityManager', () => {
         operationType: 'delete',
         isFieldPermissionsEnabled: true,
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
+        objectsPermissions: mockPermissionOptions.objectRecordsPermissions,
         selectedColumns: [],
         allFieldsSelected: false,
         updatedColumns: [],

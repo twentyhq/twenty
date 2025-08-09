@@ -1,9 +1,9 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { type GraphQLResolveInfo } from 'graphql';
 import { getGraphQLRateLimiter } from 'graphql-rate-limit';
-import { Plugin } from '@envelop/core';
+import { type Plugin } from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
 
-import { GraphQLContext } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
+import { type GraphQLContext } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
 
 export class UnauthenticatedError extends Error {}
 

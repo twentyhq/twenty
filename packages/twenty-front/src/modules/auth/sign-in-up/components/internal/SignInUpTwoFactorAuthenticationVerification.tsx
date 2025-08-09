@@ -196,7 +196,7 @@ export const SignInUpTOTPVerification = () => {
       }
 
       await getAuthTokensFromOTP(values.otp, loginToken, captchaToken);
-    } catch (error) {
+    } catch {
       form.setValue('otp', '');
 
       enqueueErrorSnackBar({

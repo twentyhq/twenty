@@ -1,5 +1,5 @@
 import {
-  WorkflowCronTrigger,
+  type WorkflowCronTrigger,
   WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { WorkflowTriggerException } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';

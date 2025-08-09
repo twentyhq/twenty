@@ -3,7 +3,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
+import { type SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
 import {
   IdentityProviderType,
   SSOIdentityProviderStatus,

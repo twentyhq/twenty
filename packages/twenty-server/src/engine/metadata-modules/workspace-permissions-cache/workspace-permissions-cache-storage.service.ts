@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
+import { type ObjectsPermissionsByRoleIdDeprecated } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/workspace-permissions-cache/types/user-workspace-role-map.type';
+import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/workspace-permissions-cache/types/user-workspace-role-map.type';
 import { WorkspaceCacheKeys } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 const TTL_INFINITE = 0;
@@ -34,12 +34,12 @@ export class WorkspacePermissionsCacheStorageService {
 
   async setRolesPermissions(
     workspaceId: string,
-    permissions: ObjectRecordsPermissionsByRoleId,
+    permissions: ObjectsPermissionsByRoleIdDeprecated,
   ): Promise<{
     newRolesPermissionsVersion: string;
   }> {
     const [, newRolesPermissionsVersion] = await Promise.all([
-      this.cacheStorageService.set<ObjectRecordsPermissionsByRoleId>(
+      this.cacheStorageService.set<ObjectsPermissionsByRoleIdDeprecated>(
         `${WorkspaceCacheKeys.MetadataPermissionsRolesPermissions}:${workspaceId}`,
         permissions,
         TTL_INFINITE,
@@ -52,8 +52,8 @@ export class WorkspacePermissionsCacheStorageService {
 
   getRolesPermissions(
     workspaceId: string,
-  ): Promise<ObjectRecordsPermissionsByRoleId | undefined> {
-    return this.cacheStorageService.get<ObjectRecordsPermissionsByRoleId>(
+  ): Promise<ObjectsPermissionsByRoleIdDeprecated | undefined> {
+    return this.cacheStorageService.get<ObjectsPermissionsByRoleIdDeprecated>(
       `${WorkspaceCacheKeys.MetadataPermissionsRolesPermissions}:${workspaceId}`,
     );
   }

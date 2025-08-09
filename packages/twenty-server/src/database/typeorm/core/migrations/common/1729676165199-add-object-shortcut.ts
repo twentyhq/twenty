@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddObjectShortcut1729676165199 implements MigrationInterface {
   name = 'AddObjectShortcut1729676165199';

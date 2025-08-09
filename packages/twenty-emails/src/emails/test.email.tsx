@@ -1,7 +1,7 @@
 import { i18n } from '@lingui/core';
 import { BaseEmail } from 'src/components/BaseEmail';
 import { Title } from 'src/components/Title';
-import { APP_LOCALES } from 'twenty-shared/translations';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 
 type TestEmailProps = {
   locale: keyof typeof APP_LOCALES;

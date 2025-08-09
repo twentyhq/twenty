@@ -1,4 +1,4 @@
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 export const findPersonByPrimaryOrAdditionalEmail = ({
   people,

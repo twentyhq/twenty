@@ -1,4 +1,4 @@
-import { ASTNode, print } from 'graphql';
+import { type ASTNode, print } from 'graphql';
 import request from 'supertest';
 
 type GraphqlOperation = {

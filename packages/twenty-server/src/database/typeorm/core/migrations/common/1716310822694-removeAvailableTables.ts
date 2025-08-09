@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class RemoveAvailableTables1716310822694 implements MigrationInterface {
   name = 'RemoveAvailableTables1716310822694';

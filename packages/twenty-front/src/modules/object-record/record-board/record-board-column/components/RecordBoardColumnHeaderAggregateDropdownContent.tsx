@@ -1,5 +1,5 @@
 import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
-import { getReadRestrictedFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getReadRestrictedFieldMetadataIdsFromObjectPermissions';
+import { getNonReadableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonReadableFieldMetadataIdsFromObjectPermissions';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { RecordBoardColumnHeaderAggregateDropdownContext } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
 import { RecordBoardColumnHeaderAggregateDropdownFieldsContent } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownFieldsContent';
@@ -11,6 +11,7 @@ import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record
 import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
 import { AvailableFieldsForAggregateOperation } from '@/object-record/types/AvailableFieldsForAggregateOperation';
 import { getAvailableFieldsIdsForAggregationFromObjectFields } from '@/object-record/utils/getAvailableFieldsIdsForAggregationFromObjectFields';
+import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { t } from '@lingui/core/macro';
 
 export const AggregateDropdownContent = () => {
@@ -22,11 +23,11 @@ export const AggregateDropdownContent = () => {
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const restrictedFieldMetadataIds =
-    getReadRestrictedFieldMetadataIdsFromObjectPermissions({
-      objectPermissions: [
-        objectPermissionsByObjectMetadataId[objectMetadataItem.id],
-      ],
-      objectMetadataId: objectMetadataItem.id,
+    getNonReadableFieldMetadataIdsFromObjectPermissions({
+      objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
+        objectPermissionsByObjectMetadataId,
+        objectMetadataId: objectMetadataItem.id,
+      }),
     });
 
   const readableFields = objectMetadataItem.fields.filter(

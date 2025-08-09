@@ -675,11 +675,6 @@ msgstr "允許用戶使用電子郵件和密碼登錄。"
 msgid "An error occurred."
 msgstr "發生錯誤。"
 
-#. js-lingui-id: mJ6m4C
-#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
-msgid "An optional description"
-msgstr "可選描述"
-
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "An unexpected error occurred"
@@ -4599,6 +4594,11 @@ msgstr ""
 msgid "Prefilling your workspace data..."
 msgstr "正在填寫您的工作區數據..."
 
+#. js-lingui-id: koeh2Y
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
+msgid "Prevent from assigining the same value to different records"
+msgstr ""
+
 #. js-lingui-id: rdUucN
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
@@ -5895,11 +5895,6 @@ msgstr "更新密碼時出現錯誤。"
 msgid "Third"
 msgstr ""
 
-#. js-lingui-id: Kb1oAw
-#: src/modules/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityRowHook.ts
-msgid "This {columnName} value already exists in your import data"
-msgstr "此{columnName}值已存在於您的匯入資料中"
-
 #. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
@@ -6104,6 +6099,7 @@ msgstr "烏克蘭語"
 
 #. js-lingui-id: wSXm5S
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Unique"
 msgstr "唯一"
@@ -6380,10 +6376,15 @@ msgstr "我們在驗證時遇到了一個問題"
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "我們支持 10MB 以下的正方形 PNG、JPEG 和 GIF 文件"
 
-#. js-lingui-id: ZS7vYp
+#. js-lingui-id: KIfYq0
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
-msgid "We will send POST requests to this endpoint for every new event"
-msgstr "我們將為每個新事件向此端點發送 POST 請求"
+msgid "We will send a POST request to this endpoint for each new event in application/json format"
+msgstr ""
+
+#. js-lingui-id: K4HbuR
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "We will send a POST request to this endpoint for each new event in application/json format."
+msgstr ""
 
 #. js-lingui-id: PI4LiB
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx

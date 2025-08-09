@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { type AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
   AuthExceptionCode,
@@ -20,11 +20,11 @@ import {
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
 import {
-  AuthProviderWithPasswordType,
-  ExistingUserOrPartialUserWithPicture,
-  PartialUserWithPicture,
-  SignInUpBaseParams,
-  SignInUpNewUserPayload,
+  type AuthProviderWithPasswordType,
+  type ExistingUserOrPartialUserWithPicture,
+  type PartialUserWithPicture,
+  type SignInUpBaseParams,
+  type SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';

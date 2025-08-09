@@ -1,5 +1,5 @@
-import { BullMQDriverOptions } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
-import { PgBossDriverOptions } from 'src/engine/core-modules/message-queue/drivers/pg-boss.driver';
+import { type BullMQDriverOptions } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
+import { type PgBossDriverOptions } from 'src/engine/core-modules/message-queue/drivers/pg-boss.driver';
 
 export enum MessageQueueDriverType {
   PgBoss = 'pg-boss',

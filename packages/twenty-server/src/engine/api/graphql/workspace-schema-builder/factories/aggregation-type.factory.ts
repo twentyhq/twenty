@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  AggregationField,
+  type AggregationField,
   getAvailableAggregationsFromObjectFields,
 } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 type AggregationGraphQLType = Pick<AggregationField, 'type' | 'description'>;
 

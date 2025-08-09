@@ -45,7 +45,7 @@ export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
           initiateOTPProvisioningResult.data
             .initiateOTPProvisioningForAuthenticatedUser.uri,
         );
-      } catch (error) {
+      } catch {
         enqueueErrorSnackBar({
           message: t`Two factor authentication provisioning failed.`,
           options: {

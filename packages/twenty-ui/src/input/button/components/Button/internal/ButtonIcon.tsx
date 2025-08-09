@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconComponent } from '@ui/display';
+import { type IconComponent } from '@ui/display';
 import { Loader } from '@ui/feedback';
 import { baseTransitionTiming } from '@ui/input/button/components/Button/constant';
 

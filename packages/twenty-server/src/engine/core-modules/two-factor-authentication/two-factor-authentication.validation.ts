@@ -1,13 +1,13 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import { type CustomException } from 'src/utils/custom-exception';
 
 import {
   TwoFactorAuthenticationException,
   TwoFactorAuthenticationExceptionCode,
 } from './two-factor-authentication.exception';
 
-import { TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
+import { type TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
 import { OTPStatus } from './strategies/otp/otp.constants';
 
 const assertIsDefinedOrThrow = (

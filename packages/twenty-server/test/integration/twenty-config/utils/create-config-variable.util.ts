@@ -1,7 +1,7 @@
-import { PerformTwentyConfigQueryParams } from 'test/integration/twenty-config/types/perform-twenty-config-query.type';
+import { type PerformTwentyConfigQueryParams } from 'test/integration/twenty-config/types/perform-twenty-config-query.type';
 
 import {
-  CreateConfigVariableFactoryInput,
+  type CreateConfigVariableFactoryInput,
   createConfigVariableQueryFactory,
 } from './create-config-variable.query-factory.util';
 import { makeAdminPanelAPIRequest } from './make-admin-panel-api-request.util';

@@ -1,6 +1,6 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
-import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
+import { assertUnreachable } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 export type GenerateEmptyFieldValueArgs = {

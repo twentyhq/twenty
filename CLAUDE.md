@@ -89,7 +89,6 @@ packages/
 ├── twenty-ui/             # Shared UI components library
 ├── twenty-shared/         # Common types and utilities
 ├── twenty-emails/         # Email templates with React Email
-├── twenty-chrome-extension/  # Chrome extension
 ├── twenty-website/        # Next.js documentation website
 ├── twenty-zapier/         # Zapier integration
 └── twenty-e2e-testing/    # Playwright E2E tests

@@ -1,6 +1,6 @@
-import { StepStatus, WorkflowRunStepInfos } from 'twenty-shared/workflow';
+import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 export const workflowShouldFail = ({
   stepInfos,

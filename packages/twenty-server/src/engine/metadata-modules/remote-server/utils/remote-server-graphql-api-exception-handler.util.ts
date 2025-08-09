@@ -1,3 +1,5 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
   ConflictError,
   ForbiddenError,
@@ -24,9 +26,7 @@ export const remoteServerGraphqlApiExceptionHandler = (error: any) => {
       case RemoteServerExceptionCode.REMOTE_SERVER_CONNECTION_ERROR:
         throw error;
       default: {
-        const _exhaustiveCheck: never = error.code;
-
-        throw error;
+        return assertUnreachable(error.code);
       }
     }
   }

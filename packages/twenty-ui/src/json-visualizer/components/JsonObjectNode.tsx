@@ -1,8 +1,8 @@
 import { IconCube } from '@ui/display';
 import { JsonNestedNode } from '@ui/json-visualizer/components/JsonNestedNode';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
-import { JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
-import { JsonObject } from 'type-fest';
+import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
+import { type JsonObject } from 'type-fest';
 
 export const JsonObjectNode = ({
   label,

@@ -13,15 +13,15 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { performCreateManyOperation } from 'test/integration/graphql/utils/perform-create-many-operation.utils';
 import { searchFactory } from 'test/integration/graphql/utils/search-factory.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
-import { EachTestingContext } from 'twenty-shared/testing';
+import { type EachTestingContext } from 'twenty-shared/testing';
 
 import {
   decodeCursor,
   encodeCursorData,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
-import { SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
-import { SearchCursor } from 'src/engine/core-modules/search/services/search.service';
+import { type SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
+import { type SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
+import { type SearchCursor } from 'src/engine/core-modules/search/services/search.service';
 
 describe('SearchResolver', () => {
   const [firstPerson, secondPerson, thirdPerson] = [
@@ -462,9 +462,11 @@ describe('SearchResolver', () => {
     const edges = search.edges;
     const pageInfo = search.pageInfo;
 
-    context.eval.orderedRecordIds.length > 0
-      ? expect(edges).not.toHaveLength(0)
-      : expect(edges).toHaveLength(0);
+    if (context.eval.orderedRecordIds.length > 0) {
+      expect(edges).not.toHaveLength(0);
+    } else {
+      expect(edges).toHaveLength(0);
+    }
 
     expect(
       edges.map((edge: SearchResultEdgeDTO) => edge.node.recordId),

@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
+import { type SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
 
 export const searchFactory = ({
   searchInput,

@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
-import { EntityManager } from 'typeorm';
+import { type EntityManager } from 'typeorm';
 
 import { WorkspaceHealthFixKind } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-fix-kind.interface';
-import { WorkspaceHealthIssue } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-issue.interface';
+import { type WorkspaceHealthIssue } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-issue.interface';
 
-import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceNullableFixer } from 'src/engine/workspace-manager/workspace-health/fixer/workspace-nullable.fixer';
 import { WorkspaceDefaultValueFixer } from 'src/engine/workspace-manager/workspace-health/fixer/workspace-default-value.fixer';
 import { WorkspaceTypeFixer } from 'src/engine/workspace-manager/workspace-health/fixer/workspace-type.fixer';
-import { CompareEntity } from 'src/engine/workspace-manager/workspace-health/fixer/abstract-workspace.fixer';
+import { type CompareEntity } from 'src/engine/workspace-manager/workspace-health/fixer/abstract-workspace.fixer';
 import { WorkspaceMissingColumnFixer } from 'src/engine/workspace-manager/workspace-health/fixer/workspace-missing-column.fixer';
 
 @Injectable()

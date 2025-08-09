@@ -17,6 +17,7 @@ export const queries = {
         icon
         isCustom
         isActive
+        isUnique
         isNullable
         createdAt
         updatedAt
@@ -99,6 +100,7 @@ export const queries = {
         icon
         isCustom
         isActive
+        isUnique
         isNullable
         createdAt
         updatedAt
@@ -107,97 +109,6 @@ export const queries = {
         options
         isLabelSyncedWithName
       }
-    }
-  `,
-  getCurrentUser: gql`
-    query GetCurrentUser {
-      currentUser {
-        ...UserQueryFragment
-      }
-    }
-
-    fragment UserQueryFragment on User {
-      id
-      firstName
-      lastName
-      email
-      canAccessFullAdminPanel
-      canImpersonate
-      supportUserHash
-      onboardingStatus
-      workspaceMember {
-        ...WorkspaceMemberQueryFragment
-      }
-      workspaceMembers {
-        ...WorkspaceMemberQueryFragment
-      }
-      currentUserWorkspace {
-        permissionFlags
-        objectRecordsPermissions
-      }
-      currentWorkspace {
-        id
-        displayName
-        logo
-        inviteHash
-        allowImpersonation
-        activationStatus
-        isPublicInviteLinkEnabled
-        isGoogleAuthEnabled
-        isMicrosoftAuthEnabled
-        isPasswordAuthEnabled
-        subdomain
-        hasValidEnterpriseKey
-        customDomain
-        workspaceUrls {
-          ...WorkspaceUrlsFragment
-        }
-        featureFlags {
-          id
-          key
-          value
-          workspaceId
-        }
-        metadataVersion
-        currentBillingSubscription {
-          id
-          status
-          interval
-        }
-        billingSubscriptions {
-          id
-          status
-        }
-        workspaceMembersCount
-      }
-      workspaces {
-        workspace {
-          id
-          logo
-          displayName
-          subdomain
-          customDomain
-          workspaceUrls {
-            ...WorkspaceUrlsFragment
-          }
-        }
-      }
-      userVars
-    }
-
-    fragment WorkspaceMemberQueryFragment on WorkspaceMember {
-      id
-      name {
-        firstName
-        lastName
-      }
-      colorScheme
-      avatarUrl
-      locale
-      userEmail
-      timeZone
-      dateFormat
-      timeFormat
     }
   `,
 };
@@ -222,6 +133,7 @@ export const variables = {
         options: undefined,
         settings: undefined,
         isLabelSyncedWithName: true,
+        isUnique: undefined,
         objectMetadataId,
         type: 'TEXT',
       },

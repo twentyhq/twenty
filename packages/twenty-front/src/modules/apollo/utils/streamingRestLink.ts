@@ -157,7 +157,7 @@ export class StreamingRestLink extends ApolloLink {
       });
 
       return directive;
-    } catch (error) {
+    } catch {
       return null;
     }
   }

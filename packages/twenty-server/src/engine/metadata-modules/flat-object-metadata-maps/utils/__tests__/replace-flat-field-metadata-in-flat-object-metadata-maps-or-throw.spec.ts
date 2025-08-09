@@ -1,5 +1,5 @@
 import {
-  EachTestingContext,
+  type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -9,7 +9,7 @@ import { PET_FLAT_FIELDS_MOCK } from 'src/engine/metadata-modules/flat-field-met
 import { expectFlatFieldMetadataToBeInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/__tests__/utils/expect-flat-field-metadata-to-be-in-flat-object-metadata-maps.util.test';
 import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata-maps/mocks/flat-object-metadata-maps.mock';
 import {
-  ReplaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrowArgs,
+  type ReplaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrowArgs,
   replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow,
 } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { PET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/pet-flat-object.mock';

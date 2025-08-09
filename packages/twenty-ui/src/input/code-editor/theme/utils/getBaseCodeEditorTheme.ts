@@ -1,5 +1,5 @@
-import { ThemeType } from '@ui/theme';
-import { editor } from 'monaco-editor';
+import { type ThemeType } from '@ui/theme';
+import { type editor } from 'monaco-editor';
 
 export const getBaseCodeEditorTheme = ({
   theme,

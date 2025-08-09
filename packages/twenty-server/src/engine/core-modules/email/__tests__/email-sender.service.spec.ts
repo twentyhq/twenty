@@ -1,6 +1,6 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
-import { SendMailOptions } from 'nodemailer';
+import { type SendMailOptions } from 'nodemailer';
 
 import { EmailDriverFactory } from 'src/engine/core-modules/email/email-driver.factory';
 import { EmailSenderService } from 'src/engine/core-modules/email/email-sender.service';

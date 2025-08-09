@@ -1,4 +1,4 @@
-import { Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react';
 
 import { GRAY_SCALE, MAIN_COLORS } from '@ui/theme';
 

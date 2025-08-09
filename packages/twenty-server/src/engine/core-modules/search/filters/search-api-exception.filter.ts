@@ -1,4 +1,6 @@
-import { Catch, ExceptionFilter } from '@nestjs/common';
+import { Catch, type ExceptionFilter } from '@nestjs/common';
+
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
   SearchException,
@@ -14,9 +16,7 @@ export class SearchApiExceptionFilter implements ExceptionFilter {
       case SearchExceptionCode.LABEL_IDENTIFIER_FIELD_NOT_FOUND:
         throw exception;
       default: {
-        const _exhaustiveCheck: never = exception.code;
-
-        throw exception;
+        assertUnreachable(exception.code);
       }
     }
   }

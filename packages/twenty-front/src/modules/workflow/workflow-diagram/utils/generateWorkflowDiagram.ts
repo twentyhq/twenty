@@ -11,20 +11,22 @@ import {
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowDiagramTriggerNode } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramTriggerNode';
 
+import { WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEmptyTriggerNodeDefinition';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
+import { getRootStepIds } from '@/workflow/workflow-trigger/utils/getRootStepIds';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEmptyTriggerNodeDefinition';
-import { getRootStepIds } from '@/workflow/workflow-trigger/utils/getRootStepIds';
 
 export const generateWorkflowDiagram = ({
   trigger,
   steps,
   defaultEdgeType,
+  isWorkflowBranchEnabled = false,
 }: {
   trigger: WorkflowTrigger | undefined;
   steps: Array<WorkflowStep>;
   defaultEdgeType: WorkflowDiagramEdgeType;
+  isWorkflowBranchEnabled?: boolean;
 }): WorkflowDiagram => {
   const nodes: Array<WorkflowDiagramNode> = [];
   const edges: Array<WorkflowDiagramEdge> = [];
@@ -34,15 +36,13 @@ export const generateWorkflowDiagram = ({
   } else {
     nodes.push(WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION);
 
-    const triggerNextStepIds = isDefined(steps) ? getRootStepIds(steps) : [];
+    const triggerNextStepIds =
+      isDefined(steps) && !isWorkflowBranchEnabled ? getRootStepIds(steps) : [];
 
     triggerNextStepIds.forEach((stepId) => {
       edges.push({
         ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
-        type: defaultEdgeType,
-        ...(defaultEdgeType.includes('editable')
-          ? { deletable: true, selectable: true }
-          : {}),
+        type: 'blank',
         id: v4(),
         source: 'trigger',
         target: stepId,

@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 export const withSoftDeleted = <T extends ObjectRecordFilter>(
   filter: T | undefined | null,

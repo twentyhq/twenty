@@ -1,11 +1,11 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 
-import { AxiosResponse } from 'axios';
+import { type AxiosResponse } from 'axios';
 
-import { Query } from 'src/engine/api/rest/core/types/query.type';
+import { type Query } from 'src/engine/api/rest/core/types/query.type';
 import { RestApiException } from 'src/engine/api/rest/errors/RestApiException';
-import { RequestContext } from 'src/engine/api/rest/types/RequestContext';
+import { type RequestContext } from 'src/engine/api/rest/types/RequestContext';
 
 export enum GraphqlApiType {
   CORE = 'core',
