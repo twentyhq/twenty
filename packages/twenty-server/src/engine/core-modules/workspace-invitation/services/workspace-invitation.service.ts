@@ -323,10 +323,6 @@ export class WorkspaceInvitationService {
       value: false,
     });
 
-    await this.onboardingService.setOnboardingBookOnboardingPending({
-      workspaceId: workspace.id,
-      value: true,
-    });
 
     const result = invitationsPr.reduce<{
       errors: string[];

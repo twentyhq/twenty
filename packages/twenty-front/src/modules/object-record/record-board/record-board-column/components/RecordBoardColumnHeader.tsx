@@ -14,6 +14,7 @@ import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown'
 import { Tag } from 'twenty-ui/components';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { AIWorkflowIndicator } from '@/object-record/record-group/components/AIWorkflowIndicator';
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -132,6 +133,11 @@ export const RecordBoardColumnHeader = () => {
               objectMetadataItem={objectMetadataItem}
               aggregateLabel={aggregateLabel}
             />
+            {/* nesboxai: add AI workflow indicator */}
+            <AIWorkflowIndicator
+               recordGroupId={columnDefinition.id}
+               context="board"
+             />
           </StyledLeftContainer>
           <StyledRightContainer>
             {isHeaderHovered && (

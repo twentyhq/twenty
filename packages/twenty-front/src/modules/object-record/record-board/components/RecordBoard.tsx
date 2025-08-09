@@ -20,6 +20,7 @@ import { useEndBoardCardDrag } from '@/object-record/record-board/hooks/useEndBo
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { useRecordBoardDragOperations } from '@/object-record/record-board/hooks/useRecordBoardDragOperations';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
+import { AIWorkflowSetupModalContainer } from '@/object-record/record-group/components/AIWorkflowSetupModalContainer';
 import { useStartBoardCardDrag } from '@/object-record/record-board/hooks/useStartBoardCardDrag';
 import { RecordBoardDeactivateBoardCardEffect } from '@/object-record/record-board/record-board-card/components/RecordBoardDeactivateBoardCardEffect';
 import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
@@ -44,6 +45,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { ViewType } from '@/views/types/ViewType';
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
+
 
 const StyledContainer = styled.div`
   display: flex;
@@ -223,6 +225,13 @@ export const RecordBoard = () => {
           </StyledBoardContentContainer>
         </StyledContainerContainer>
       </ScrollWrapper>
+      {/* NestboxAI: way to open the modal */}
+      {visibleRecordGroupIds.map((recordGroupId) => (
+        <AIWorkflowSetupModalContainer 
+          key={`ai-workflow-modal-${recordGroupId}`} 
+          recordGroupId={recordGroupId}
+        />
+      ))}
     </RecordBoardComponentInstanceContext.Provider>
   );
 };

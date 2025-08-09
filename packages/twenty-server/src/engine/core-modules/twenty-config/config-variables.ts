@@ -1185,6 +1185,31 @@ export class ConfigVariables {
   })
   @ValidateIf((env) => env.IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED)
   GOOGLE_MAP_API_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Base URL for Nestbox AI instance API',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  NESTBOX_AI_INSTANCE_IP: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    isSensitive: true,
+    description: 'API key for Nestbox AI instance',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  NESTBOX_AI_INSTANCE_API_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Cron pattern for nestbox AI agent processing job (default: every minute)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  NESTBOX_AI_AGENT_CRON_PATTERN = '*/1 * * * *';
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {

@@ -20,6 +20,8 @@
     "@linaria/core": "^6.2.0",
     "@linaria/react": "^6.2.1",
     "@microsoft/microsoft-graph-client": "^3.0.7",
+    "@nestbox-ai/agents": "^1.0.42",
+    "@nestbox-ai/instances": "1.0.42",
     "@nestjs/apollo": "^11.0.5",
     "@nestjs/axios": "^3.0.1",
     "@nestjs/cli": "^9.0.0",

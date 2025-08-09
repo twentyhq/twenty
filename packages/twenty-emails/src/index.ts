@@ -1,3 +1,4 @@
+export * from './emails/api-key-created.email';
 export * from './emails/clean-suspended-workspace.email';
 export * from './emails/password-reset-link.email';
 export * from './emails/password-update-notify.email';

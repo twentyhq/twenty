@@ -13,6 +13,7 @@ import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/g
 import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-apis-auth.controller';
 import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-auth.controller';
 import { SSOAuthController } from 'src/engine/core-modules/auth/controllers/sso-auth.controller';
+import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
@@ -144,12 +145,9 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     UpdateConnectedAccountOnReconnectService,
     TransientTokenService,
     AuthSsoService,
+    ApiKeyService,
   ],
-  exports: [
-    AccessTokenService,
-    LoginTokenService,
-    RefreshTokenService,
-    CreateMessageFolderService,
-  ],
+  // nestbox: added SignInUpService for workspace signup command module
+  exports: [AccessTokenService, LoginTokenService, RefreshTokenService, SignInUpService, ApiKeyService, CreateMessageFolderService],
 })
 export class AuthModule {}
