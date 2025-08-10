@@ -52,13 +52,10 @@
     "typecheck": {},
     "lint": {
       "options": {
-        "maxWarnings": 0,
-        "eslintConfig": "{projectRoot}/eslint.config.js"
+        "maxWarnings": 0
       },
       "configurations": {
-        "ci": {
-          "eslintConfig": "{projectRoot}/eslint-ci.config.js"
-        },
+        "ci": {},
         "fix": {}
       }
     },
