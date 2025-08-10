@@ -53,11 +53,11 @@
     "lint": {
       "options": {
         "maxWarnings": 0,
-        "reportUnusedDisableDirectives": "error"
+        "eslintConfig": "{projectRoot}/eslint.config.js"
       },
       "configurations": {
         "ci": {
-          "eslintConfig": "{projectRoot}/.eslintrc-ci.cjs"
+          "eslintConfig": "{projectRoot}/eslint-ci.config.js"
         },
         "fix": {}
       }

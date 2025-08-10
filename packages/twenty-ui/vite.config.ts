@@ -44,7 +44,7 @@ export default defineConfig(({ command }) => {
     ? path.resolve(__dirname, './tsconfig.lib.json')
     : path.resolve(__dirname, './tsconfig.dev.json');
 
-  const checkersConfig: UserPluginConfig = {
+  const checkersConfig: Checkers = {
     typescript: {
       tsconfigPath: tsConfigPath,
     },
