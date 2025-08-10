@@ -15,6 +15,7 @@ import { ViewPickerListContent } from '@/views/view-picker/components/ViewPicker
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
+import { useWorkspaceFavorites } from '@/favorites/hooks/useWorkspaceFavorites';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconList, useIcons } from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
@@ -47,6 +48,11 @@ export const ViewPickerDropdown = () => {
   const theme = useTheme();
 
   const { currentView } = useGetCurrentViewOnly();
+
+  const { workspaceFavoritesObjectMetadataItems } = useWorkspaceFavorites();
+  const customizedLabelPlural = workspaceFavoritesObjectMetadataItems?.find(
+    (item) => item.id === currentView?.objectMetadataId,
+  )?.labelPlural;
 
   const { updateViewFromCurrentState } = useUpdateViewFromCurrentState();
 
@@ -82,7 +88,9 @@ export const ViewPickerDropdown = () => {
           ) : (
             <IconList size={theme.icon.size.md} />
           )}
-          <StyledViewName>{currentView?.name ?? 'All'}</StyledViewName>
+          <StyledViewName>
+            {customizedLabelPlural ?? currentView?.name ?? 'All'}
+          </StyledViewName>
           <StyledDropdownLabelAdornments>
             {isDefined(totalCount) && <>· {totalCount} </>}
             <IconChevronDown size={theme.icon.size.sm} />
