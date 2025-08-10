@@ -950,7 +950,7 @@ msgid "Book your onboarding"
 msgstr ""
 
 #. js-lingui-id: bOwPjT
-#: src/modules/ai/constants/output-field-type-options.ts
+#: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Boolean"
 msgstr ""
 
@@ -1744,7 +1744,7 @@ msgstr ""
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx
-#: src/modules/ai/constants/output-field-type-options.ts
+#: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Date"
 msgstr ""
 
@@ -3877,7 +3877,7 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
-#: src/pages/settings/ai/constants/SettingsAIAgentTableMetadata.ts
+#: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/workspace/components/NameField.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
@@ -4267,7 +4267,7 @@ msgstr ""
 
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
-#: src/modules/ai/constants/output-field-type-options.ts
+#: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Number"
 msgstr ""
 
@@ -5778,7 +5778,7 @@ msgid "Test Workflow"
 msgstr ""
 
 #. js-lingui-id: xeiujy
-#: src/modules/ai/constants/output-field-type-options.ts
+#: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Text"
 msgstr ""
 
@@ -6077,7 +6077,7 @@ msgstr ""
 #. js-lingui-id: +zy2Nq
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
-#: src/pages/settings/ai/constants/SettingsAIAgentTableMetadata.ts
+#: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 msgid "Type"
 msgstr ""

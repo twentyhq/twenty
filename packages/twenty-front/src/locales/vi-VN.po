@@ -955,7 +955,7 @@ msgid "Book your onboarding"
 msgstr "Đặt lịch hướng dẫn ban đầu của bạn"
 
 #. js-lingui-id: bOwPjT
-#: src/modules/ai/constants/output-field-type-options.ts
+#: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Boolean"
 msgstr "Dạng Boolean"
 
@@ -1749,7 +1749,7 @@ msgstr "Cấu hình cơ sở dữ liệu hiện đang bị vô hiệu hóa."
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx
-#: src/modules/ai/constants/output-field-type-options.ts
+#: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Date"
 msgstr "Ngày"
 
@@ -3882,7 +3882,7 @@ msgstr "phải là một mảng email hợp lệ"
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
-#: src/pages/settings/ai/constants/SettingsAIAgentTableMetadata.ts
+#: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/workspace/components/NameField.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
@@ -4272,7 +4272,7 @@ msgstr "Ghi chú"
 
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
-#: src/modules/ai/constants/output-field-type-options.ts
+#: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Number"
 msgstr "Số"
 
@@ -5783,7 +5783,7 @@ msgid "Test Workflow"
 msgstr "Kiểm tra Workflows"
 
 #. js-lingui-id: xeiujy
-#: src/modules/ai/constants/output-field-type-options.ts
+#: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Text"
 msgstr "Văn bản"
 
@@ -6082,7 +6082,7 @@ msgstr "Thiết lập xác thực hai yếu tố thành công!"
 #. js-lingui-id: +zy2Nq
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
-#: src/pages/settings/ai/constants/SettingsAIAgentTableMetadata.ts
+#: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 msgid "Type"
 msgstr "Loại"
