@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
@@ -12,7 +12,7 @@ import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import {
   BooleanFieldInput,
-  BooleanFieldInputProps,
+  type BooleanFieldInputProps,
 } from '../BooleanFieldInput';
 
 const BooleanFieldValueSetterEffect = ({

@@ -1,4 +1,4 @@
-import { StoryObj } from '@storybook/react';
+import { type StoryObj } from '@storybook/react';
 import { expect, findByTestId } from '@storybook/test';
 import { ProfilerDecorator } from '~/testing/decorators/ProfilerDecorator';
 import { getProfilingReportFromDocument } from '~/testing/profiling/utils/getProfilingReportFromDocument';

@@ -1,9 +1,9 @@
 import {
-  IsFieldReadOnlyByPermissionParams,
+  type IsFieldReadOnlyByPermissionParams,
   isFieldReadOnlyByPermissions,
 } from '@/object-record/record-field/hooks/read-only/utils/internal/isFieldReadOnlyByPermissions';
 import {
-  IsFieldReadOnlyBySystemParams,
+  type IsFieldReadOnlyBySystemParams,
   isFieldReadOnlyBySystem,
 } from '@/object-record/record-field/hooks/read-only/utils/internal/isFieldReadOnlyBySystem';
 

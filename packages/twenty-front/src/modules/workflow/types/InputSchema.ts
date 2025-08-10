@@ -1,4 +1,4 @@
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { type FieldMetadataType } from '~/generated-metadata/graphql';
 
 export type InputSchemaPropertyType =
   | 'string'

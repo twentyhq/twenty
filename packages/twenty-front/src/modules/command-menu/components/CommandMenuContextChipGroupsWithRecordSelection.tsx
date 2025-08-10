@@ -4,7 +4,7 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { getSelectedRecordsContextText } from '@/command-menu/utils/getRecordContextText';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { CommandMenuContextChipProps } from './CommandMenuContextChip';
+import { type CommandMenuContextChipProps } from './CommandMenuContextChip';
 import { isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuContextChipGroupsWithRecordSelection = ({

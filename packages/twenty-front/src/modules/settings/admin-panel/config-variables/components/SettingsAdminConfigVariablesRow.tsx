@@ -4,7 +4,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconChevronRight } from 'twenty-ui/display';
-import { ConfigVariable } from '~/generated/graphql';
+import { type ConfigVariable } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsAdminConfigVariablesRowProps = {

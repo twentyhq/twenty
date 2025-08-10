@@ -5,7 +5,7 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '../../contexts/FieldContext';
-import { FieldRatingValue } from '../../types/FieldMetadata';
+import { type FieldRatingValue } from '../../types/FieldMetadata';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldRating } from '../../types/guards/isFieldRating';
 

@@ -9,6 +9,9 @@
     "src/**/*.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "lingui.config.ts"
+    "lingui.config.ts",
+    "jest.config.ts",
+    "vite.config.ts",
+    "setupTests.ts"
   ]
 }

@@ -12,8 +12,8 @@ import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRe
 import { useDestroyOneRecordMutation } from '@/object-record/hooks/useDestroyOneRecordMutation';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
-import { GraphQLView } from '@/views/types/GraphQLView';
-import { ViewFilter } from '@/views/types/ViewFilter';
+import { type GraphQLView } from '@/views/types/GraphQLView';
+import { type ViewFilter } from '@/views/types/ViewFilter';
 import { isDefined } from 'twenty-shared/utils';
 
 export const usePersistViewFilterRecords = () => {

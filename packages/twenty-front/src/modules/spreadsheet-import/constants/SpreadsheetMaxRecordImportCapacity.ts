@@ -1,1 +1,1 @@
-export const SpreadsheetMaxRecordImportCapacity = 10000;
+export const SPREADSHEET_MAX_RECORD_IMPORT_CAPACITY = 10000;

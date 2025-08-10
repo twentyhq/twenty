@@ -1,4 +1,4 @@
-import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
+import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 
 export const getRecordTableCellFocusId = ({
   recordTableId,

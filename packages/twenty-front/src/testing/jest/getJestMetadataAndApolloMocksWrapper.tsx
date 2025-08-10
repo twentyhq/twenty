@@ -1,6 +1,6 @@
-import { MockedProvider, MockedResponse } from '@apollo/client/testing';
-import { ReactNode } from 'react';
-import { MutableSnapshot, RecoilRoot } from 'recoil';
+import { MockedProvider, type MockedResponse } from '@apollo/client/testing';
+import { type ReactNode } from 'react';
+import { type MutableSnapshot, RecoilRoot } from 'recoil';
 
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
@@ -9,7 +9,7 @@ import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort
 
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { InMemoryCache } from '@apollo/client';
+import { type InMemoryCache } from '@apollo/client';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 

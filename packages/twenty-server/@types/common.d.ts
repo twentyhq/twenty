@@ -4,7 +4,6 @@ type DeepPartial<T> = {
     : DeepPartial<T[K]>;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 type ExcludeFunctions<T> = T extends Function ? never : T;
 
 /**

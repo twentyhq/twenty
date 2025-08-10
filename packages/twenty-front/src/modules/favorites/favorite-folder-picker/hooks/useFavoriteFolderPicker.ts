@@ -4,8 +4,8 @@ import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 
-import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type FavoriteFolder } from '@/favorites/types/FavoriteFolder';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilCallback } from 'recoil';

@@ -14,20 +14,20 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   FieldContext,
-  RecordUpdateHook,
-  RecordUpdateHookParams,
+  type RecordUpdateHook,
+  type RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-detail-section/components/RecordDetailRecordsListItem';
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
@@ -43,7 +43,7 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { createPortal } from 'react-dom';
 import {
   IconChevronDown,
-  IconComponent,
+  type IconComponent,
   IconDotsVertical,
   IconTrash,
   IconUnlink,

@@ -1,6 +1,6 @@
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import styled from '@emotion/styled';
-import { Ref, forwardRef } from 'react';
+import { type Ref, forwardRef } from 'react';
 
 const StyledInternalBaseDropdownContent = styled.div<{
   widthInPixels: number;

@@ -1,11 +1,11 @@
 import {
   ApolloLink,
   Observable,
-  Operation,
-  ServerError,
+  type Operation,
+  type ServerError,
 } from '@apollo/client/core';
-import { FetchResult } from '@apollo/client/link/core';
-import { ArgumentNode, DirectiveNode } from 'graphql';
+import { type FetchResult } from '@apollo/client/link/core';
+import { type ArgumentNode, type DirectiveNode } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 type StreamingRestLinkOptions = {

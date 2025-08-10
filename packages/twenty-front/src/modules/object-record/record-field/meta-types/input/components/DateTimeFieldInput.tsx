@@ -1,11 +1,11 @@
 import { DateInput } from '@/ui/field/input/components/DateInput';
 
-import { FieldInputEvent } from '@/object-record/record-field/meta-types/input/components/NumberFieldInput';
+import { type FieldInputEvent } from '@/object-record/record-field/meta-types/input/components/NumberFieldInput';
 
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { type FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { Nullable } from 'twenty-ui/utilities';
+import { type Nullable } from 'twenty-ui/utilities';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useDateTimeField } from '../../hooks/useDateTimeField';
 

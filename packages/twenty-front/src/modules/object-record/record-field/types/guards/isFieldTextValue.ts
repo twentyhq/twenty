@@ -1,6 +1,6 @@
 import { isString } from '@sniptt/guards';
 
-import { FieldTextValue } from '../FieldMetadata';
+import { type FieldTextValue } from '../FieldMetadata';
 
 // TODO: add zod
 export const isFieldTextValue = (

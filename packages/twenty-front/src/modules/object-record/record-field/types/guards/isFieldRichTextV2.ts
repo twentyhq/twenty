@@ -1,7 +1,7 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { FieldDefinition } from '../FieldDefinition';
-import { FieldMetadata, FieldRichTextV2Metadata } from '../FieldMetadata';
+import { type FieldDefinition } from '../FieldDefinition';
+import { type FieldMetadata, type FieldRichTextV2Metadata } from '../FieldMetadata';
 
 export const isFieldRichTextV2 = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type'>,

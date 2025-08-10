@@ -1,4 +1,4 @@
-import { FieldPermission, Role } from '~/generated-metadata/graphql';
+import { type FieldPermission, type Role } from '~/generated-metadata/graphql';
 import { getRoleWithUpsertedFieldPermission } from '../getRoleWithUpsertedFieldPermission';
 
 const BASE_ROLE_MOCK: Role = {

@@ -2,10 +2,10 @@ import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowStepContext';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
-import { WorkflowVersion } from '@/workflow/types/Workflow';
+import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
-import { Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react';
 import { useEffect, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 import {

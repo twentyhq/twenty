@@ -10,7 +10,7 @@ import { recordFieldInputDraftValueComponentState } from '@/object-record/record
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { FieldContext } from '../../contexts/FieldContext';
 import { usePersistField } from '../../hooks/usePersistField';
-import { FieldAddressValue } from '../../types/FieldMetadata';
+import { type FieldAddressValue } from '../../types/FieldMetadata';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldAddress } from '../../types/guards/isFieldAddress';
 

@@ -1,7 +1,7 @@
-import { WorkflowVersion } from '@/workflow/types/Workflow';
+import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import {
-  WorkflowDiagram,
-  WorkflowDiagramEdgeType,
+  type WorkflowDiagram,
+  type WorkflowDiagramEdgeType,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
 import { isDefined } from 'twenty-shared/utils';

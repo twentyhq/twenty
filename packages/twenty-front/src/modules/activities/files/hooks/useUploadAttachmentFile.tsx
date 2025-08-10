@@ -1,8 +1,8 @@
 import { useRecoilValue } from 'recoil';
 
-import { Attachment } from '@/activities/files/types/Attachment';
+import { type Attachment } from '@/activities/files/types/Attachment';
 import { getFileType } from '@/activities/files/utils/getFileType';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';

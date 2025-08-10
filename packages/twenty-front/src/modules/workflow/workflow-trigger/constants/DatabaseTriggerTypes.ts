@@ -1,4 +1,4 @@
-import { WorkflowTriggerType } from '@/workflow/types/Workflow';
+import { type WorkflowTriggerType } from '@/workflow/types/Workflow';
 import { DatabaseTriggerDefaultLabel } from '@/workflow/workflow-trigger/constants/DatabaseTriggerDefaultLabel';
 
 export const DATABASE_TRIGGER_TYPES: Array<{

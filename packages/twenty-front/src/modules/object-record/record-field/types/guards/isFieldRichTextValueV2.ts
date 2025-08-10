@@ -1,4 +1,4 @@
-import { FieldRichTextV2Value } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldRichTextV2Value } from '@/object-record/record-field/types/FieldMetadata';
 import { z } from 'zod';
 
 export const richTextV2Schema: z.ZodType<FieldRichTextV2Value> = z.object({

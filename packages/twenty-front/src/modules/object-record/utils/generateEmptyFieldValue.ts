@@ -1,5 +1,5 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 

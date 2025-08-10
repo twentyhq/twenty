@@ -1,4 +1,4 @@
-import { WorkflowStep } from '@/workflow/types/Workflow';
+import { type WorkflowStep } from '@/workflow/types/Workflow';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { getWorkflowPreviousStepId } from '../getWorkflowPreviousStepId';
 

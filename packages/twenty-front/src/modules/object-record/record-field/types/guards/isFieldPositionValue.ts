@@ -1,5 +1,5 @@
 import { isNumber } from '@sniptt/guards';
-import { FieldPositionMetadata } from '../FieldMetadata';
+import { type FieldPositionMetadata } from '../FieldMetadata';
 
 // TODO: add zod
 export const isFieldPhoneValue = (

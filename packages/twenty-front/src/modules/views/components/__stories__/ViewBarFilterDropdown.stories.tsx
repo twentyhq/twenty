@@ -1,6 +1,6 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
-import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
+import { type TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -22,7 +22,7 @@ import { ViewType } from '@/views/types/ViewType';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
-import { View } from '@/views/types/View';
+import { type View } from '@/views/types/View';
 import { within } from '@storybook/test';
 import { useSetRecoilState } from 'recoil';
 import {

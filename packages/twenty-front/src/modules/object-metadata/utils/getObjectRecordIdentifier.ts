@@ -1,7 +1,7 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 
 import { getAvatarType } from './getAvatarType';
 import { getAvatarUrl } from './getAvatarUrl';

@@ -5,8 +5,8 @@ import { useTextField } from '../../hooks/useTextField';
 
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import {
-  FieldInputClickOutsideEvent,
-  FieldInputEvent,
+  type FieldInputClickOutsideEvent,
+  type FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';

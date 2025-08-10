@@ -1,10 +1,10 @@
 import { useContext } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import {
-  FieldMultiSelectMetadata,
-  FieldMultiSelectValue,
+  type FieldMultiSelectMetadata,
+  type FieldMultiSelectValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 

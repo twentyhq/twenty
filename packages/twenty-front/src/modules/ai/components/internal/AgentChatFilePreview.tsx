@@ -1,7 +1,7 @@
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { IconMapping, useFileTypeColors } from '@/file/utils/fileIconMappings';
 import { useTheme } from '@emotion/react';
-import { File as FileDocument } from '~/generated-metadata/graphql';
+import { type File as FileDocument } from '~/generated-metadata/graphql';
 import { Chip, ChipVariant, AvatarChip } from 'twenty-ui/components';
 import { IconX } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';

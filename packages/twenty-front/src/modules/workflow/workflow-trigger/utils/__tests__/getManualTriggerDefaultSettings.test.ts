@@ -1,4 +1,4 @@
-import { WorkflowManualTriggerAvailability } from '@/workflow/types/Workflow';
+import { type WorkflowManualTriggerAvailability } from '@/workflow/types/Workflow';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getManualTriggerDefaultSettings } from '../getManualTriggerDefaultSettings';

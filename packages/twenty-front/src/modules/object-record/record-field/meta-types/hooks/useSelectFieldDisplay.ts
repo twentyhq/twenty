@@ -1,12 +1,12 @@
 import { useContext } from 'react';
 
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 
 import { FieldContext } from '../../contexts/FieldContext';
 import {
-  FieldSelectMetadata,
-  FieldSelectValue,
+  type FieldSelectMetadata,
+  type FieldSelectValue,
 } from '../../types/FieldMetadata';
 
 export const useSelectFieldDisplay = () => {

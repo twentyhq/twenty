@@ -1,4 +1,4 @@
-import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
 import { SettingsConnectedAccountsTableHeader } from '@/settings/accounts/components/SettingsConnectedAccountsTableHeader';
 import { SettingsConnectedAccountsTableRow } from '@/settings/components/SettingsConnectedAccountsTableRow';

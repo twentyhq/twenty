@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { FieldEmailsValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldEmailsValue } from '@/object-record/record-field/types/FieldMetadata';
 
 export const emailsSchema = z.object({
   primaryEmail: z.string(),

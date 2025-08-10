@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Banner, BannerVariant, IconComponent } from 'twenty-ui/display';
+import { Banner, type BannerVariant, type IconComponent } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
 const StyledBanner = styled(Banner)`

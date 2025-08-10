@@ -1,6 +1,6 @@
-import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
+import { type WorkflowStep, type WorkflowTrigger } from '@/workflow/types/Workflow';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { StepStatus, WorkflowRunStepInfos } from 'twenty-shared/workflow';
+import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 import { getUuidV4Mock } from '~/testing/utils/getUuidV4Mock';
 import { generateWorkflowRunDiagram } from '../generateWorkflowRunDiagram';
 

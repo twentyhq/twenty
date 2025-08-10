@@ -36,7 +36,7 @@ import {
 } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
-import { AvailableWorkspace } from '~/generated/graphql';
+import { type AvailableWorkspace } from '~/generated/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 const StyledContentContainer = styled(motion.div)`

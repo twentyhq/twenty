@@ -12,13 +12,13 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
 import {
-  MiddlewareState,
+  type MiddlewareState,
   autoUpdate,
   flip,
   offset,
   useFloating,
 } from '@floating-ui/react';
-import { ReactElement, useContext } from 'react';
+import { type ReactElement, useContext } from 'react';
 
 const StyledEditableCellEditModeContainer = styled.div<{
   isFieldInputOnly: boolean;

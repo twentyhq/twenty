@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 
 import { useNotes } from '@/activities/notes/hooks/useNotes';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 
 jest.mock('@/activities/hooks/useActivities', () => ({
   useActivities: jest.fn(() => ({

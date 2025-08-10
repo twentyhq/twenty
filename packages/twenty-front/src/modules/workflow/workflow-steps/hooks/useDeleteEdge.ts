@@ -1,9 +1,9 @@
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
-import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { useDeleteWorkflowVersionEdge } from '@/workflow/workflow-steps/hooks/useDeleteWorkflowVersionEdge';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagramEdge';
+import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagramEdge';
 
 export const useDeleteEdge = ({
   workflow,

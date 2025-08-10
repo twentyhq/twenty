@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
 import { EventRow } from '@/activities/timeline-activities/components/EventRow';
-import { EventGroup } from '@/activities/timeline-activities/utils/groupEventsByMonth';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EventGroup } from '@/activities/timeline-activities/utils/groupEventsByMonth';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 type EventsGroupProps = {
   group: EventGroup;

@@ -1,7 +1,7 @@
 import { getObjectPermissionsForObject } from '~/modules/object-metadata/utils/getObjectPermissionsForObject';
 
 import { useMemo } from 'react';
-import { ObjectPermissions } from 'twenty-shared/types';
+import { type ObjectPermissions } from 'twenty-shared/types';
 import { useObjectPermissions } from './useObjectPermissions';
 
 export const useObjectPermissionsForObject = (

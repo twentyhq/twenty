@@ -1,5 +1,5 @@
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { ViewFilter } from '../types/ViewFilter';
+import { type ViewFilter } from '../types/ViewFilter';
 import { getFilterableFieldsWithVectorSearch } from '../utils/getFilterableFieldsWithVectorSearch';
 import { mapViewFiltersToFilters } from '../utils/mapViewFiltersToFilters';
 

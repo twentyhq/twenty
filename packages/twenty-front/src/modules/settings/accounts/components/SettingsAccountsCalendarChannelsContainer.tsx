@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { CalendarChannel } from '@/accounts/types/CalendarChannel';
-import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
+import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';

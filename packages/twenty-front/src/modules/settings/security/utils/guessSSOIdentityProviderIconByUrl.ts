@@ -1,5 +1,5 @@
 import {
-  IconComponent,
+  type IconComponent,
   IconGoogle,
   IconKey,
   IconMicrosoftOutlook,

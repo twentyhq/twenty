@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
-import { ChangeEvent } from 'react';
+import { type ChangeEvent } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { useSingleRecordPickerSearch } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerSearch';

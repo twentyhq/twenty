@@ -1,7 +1,7 @@
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
-import { AppPath } from '@/types/AppPath';
-import { PathParam } from 'react-router-dom';
+import { type AppPath } from '@/types/AppPath';
+import { type PathParam } from 'react-router-dom';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 
 export const ActionLink = <T extends AppPath>({

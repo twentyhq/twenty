@@ -1,5 +1,5 @@
-import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
-import { SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
+import { type SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
+import { type SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
 
 export const getSettingsIntegrationAll = ({
   isAirtableIntegrationEnabled,
