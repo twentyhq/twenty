@@ -7,7 +7,6 @@ import {
   COMPANY_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-
 import { createViewWithTranslatableName } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/createViewWithTranslatableName.util';
 
 export const companiesAllView = createViewWithTranslatableName(

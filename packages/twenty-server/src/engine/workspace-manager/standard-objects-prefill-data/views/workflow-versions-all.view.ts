@@ -9,7 +9,6 @@ import {
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.workspace-entity';
 
-
 export const workflowVersionsAllView = createViewWithTranslatableName(
   msg`All Versions`,
   (objectMetadataItems: ObjectMetadataEntity[]) => {

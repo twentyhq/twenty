@@ -6,7 +6,6 @@ import { WORKFLOW_RUN_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/wo
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.workspace-entity';
 
-
 export const workflowRunsAllView = createViewWithTranslatableName(
   msg`All Runs`,
   (objectMetadataItems: ObjectMetadataEntity[]) => {

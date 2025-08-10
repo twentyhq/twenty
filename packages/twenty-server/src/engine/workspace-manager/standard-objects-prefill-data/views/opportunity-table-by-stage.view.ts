@@ -6,7 +6,6 @@ import { createViewWithTranslatableName } from 'src/engine/workspace-manager/sta
 import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
-
 export const opportunitiesTableByStageView = createViewWithTranslatableName(
   msg`By Stage`,
   (objectMetadataItems: ObjectMetadataEntity[]) => {
