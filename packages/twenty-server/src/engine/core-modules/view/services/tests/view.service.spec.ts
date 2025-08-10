@@ -181,7 +181,10 @@ describe('ViewService', () => {
 
       const result = await viewService.create(validViewData);
 
-      expect(viewRepository.create).toHaveBeenCalledWith(validViewData);
+      expect(viewRepository.create).toHaveBeenCalledWith({
+        ...validViewData,
+        isCustom: true,
+      });
       expect(viewRepository.save).toHaveBeenCalledWith(mockView);
       expect(result).toEqual(mockView);
     });

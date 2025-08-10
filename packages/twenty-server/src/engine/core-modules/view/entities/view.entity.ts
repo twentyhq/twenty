@@ -15,6 +15,7 @@ import {
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { type ViewStandardOverridesDTO } from 'src/engine/core-modules/view/dtos/view-standard-overrides.dto';
 import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
 import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
@@ -54,6 +55,12 @@ export class View {
 
   @Column({ nullable: false, type: 'text' })
   icon: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  standardOverrides: ViewStandardOverridesDTO | null;
+
+  @Column({ default: false })
+  isCustom: boolean;
 
   @Column({ nullable: false, type: 'int', default: 0 })
   position: number;

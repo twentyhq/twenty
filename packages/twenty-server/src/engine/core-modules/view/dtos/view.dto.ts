@@ -4,6 +4,7 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ViewStandardOverridesDTO } from 'src/engine/core-modules/view/dtos/view-standard-overrides.dto';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 
@@ -29,6 +30,12 @@ export class ViewDTO {
 
   @Field({ nullable: false })
   icon: string;
+
+  @Field(() => ViewStandardOverridesDTO, { nullable: true })
+  standardOverrides?: ViewStandardOverridesDTO | null;
+
+  @Field({ nullable: false, defaultValue: false })
+  isCustom: boolean;
 
   @Field({ nullable: false, defaultValue: 0 })
   position: number;

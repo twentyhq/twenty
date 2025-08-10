@@ -105,6 +105,7 @@ const createCoreViews = async (
       position,
       icon,
       isCompact: false,
+      isCustom: false,
       openRecordIn:
         openRecordIn === 'SIDE_PANEL'
           ? ViewOpenRecordIn.SIDE_PANEL

@@ -504,6 +504,7 @@ export type CoreView = {
   icon: Scalars['String'];
   id: Scalars['UUID'];
   isCompact: Scalars['Boolean'];
+  isCustom: Scalars['Boolean'];
   kanbanAggregateOperation?: Maybe<AggregateOperations>;
   kanbanAggregateOperationFieldMetadataId?: Maybe<Scalars['UUID']>;
   key?: Maybe<Scalars['String']>;
@@ -511,6 +512,7 @@ export type CoreView = {
   objectMetadataId: Scalars['UUID'];
   openRecordIn: ViewOpenRecordIn;
   position: Scalars['Float'];
+  standardOverrides?: Maybe<ViewStandardOverrides>;
   type: ViewType;
   updatedAt: Scalars['DateTime'];
   workspaceId: Scalars['UUID'];
@@ -1330,6 +1332,12 @@ export type Mutation = {
   deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
   deleteWorkflowVersionStep: WorkflowVersionStepChanges;
   deleteWorkspaceInvitation: Scalars['String'];
+  destroyCoreView: Scalars['Boolean'];
+  destroyCoreViewField: Scalars['Boolean'];
+  destroyCoreViewFilter: Scalars['Boolean'];
+  destroyCoreViewFilterGroup: Scalars['Boolean'];
+  destroyCoreViewGroup: Scalars['Boolean'];
+  destroyCoreViewSort: Scalars['Boolean'];
   disablePostgresProxy: PostgresCredentials;
   editSSOIdentityProvider: EditSsoOutput;
   emailPasswordResetLink: EmailPasswordResetLink;
@@ -1665,6 +1673,36 @@ export type MutationDeleteWorkflowVersionStepArgs = {
 
 export type MutationDeleteWorkspaceInvitationArgs = {
   appTokenId: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewFieldArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewFilterArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewFilterGroupArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewGroupArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewSortArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -3317,6 +3355,13 @@ export enum ViewSortDirection {
   ASC = 'ASC',
   DESC = 'DESC'
 }
+
+export type ViewStandardOverrides = {
+  __typename?: 'ViewStandardOverrides';
+  icon?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  translations?: Maybe<Scalars['JSON']>;
+};
 
 export enum ViewType {
   KANBAN = 'KANBAN',

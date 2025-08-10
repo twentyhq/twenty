@@ -504,6 +504,7 @@ export type CoreView = {
   icon: Scalars['String'];
   id: Scalars['UUID'];
   isCompact: Scalars['Boolean'];
+  isCustom: Scalars['Boolean'];
   kanbanAggregateOperation?: Maybe<AggregateOperations>;
   kanbanAggregateOperationFieldMetadataId?: Maybe<Scalars['UUID']>;
   key?: Maybe<Scalars['String']>;
@@ -511,6 +512,7 @@ export type CoreView = {
   objectMetadataId: Scalars['UUID'];
   openRecordIn: ViewOpenRecordIn;
   position: Scalars['Float'];
+  standardOverrides?: Maybe<ViewStandardOverrides>;
   type: ViewType;
   updatedAt: Scalars['DateTime'];
   workspaceId: Scalars['UUID'];
@@ -1375,6 +1377,12 @@ export type Mutation = {
   deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
   deleteWorkflowVersionStep: WorkflowVersionStepChanges;
   deleteWorkspaceInvitation: Scalars['String'];
+  destroyCoreView: Scalars['Boolean'];
+  destroyCoreViewField: Scalars['Boolean'];
+  destroyCoreViewFilter: Scalars['Boolean'];
+  destroyCoreViewFilterGroup: Scalars['Boolean'];
+  destroyCoreViewGroup: Scalars['Boolean'];
+  destroyCoreViewSort: Scalars['Boolean'];
   disablePostgresProxy: PostgresCredentials;
   editSSOIdentityProvider: EditSsoOutput;
   emailPasswordResetLink: EmailPasswordResetLink;
@@ -1734,6 +1742,36 @@ export type MutationDeleteWorkflowVersionStepArgs = {
 
 export type MutationDeleteWorkspaceInvitationArgs = {
   appTokenId: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewFieldArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewFilterArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewFilterGroupArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewGroupArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewSortArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -3490,6 +3528,13 @@ export enum ViewSortDirection {
   DESC = 'DESC'
 }
 
+export type ViewStandardOverrides = {
+  __typename?: 'ViewStandardOverrides';
+  icon?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  translations?: Maybe<Scalars['JSON']>;
+};
+
 export enum ViewType {
   KANBAN = 'KANBAN',
   TABLE = 'TABLE'
@@ -4155,7 +4200,7 @@ export type CreateOneFieldMetadataItemMutationVariables = Exact<{
 }>;
 
 
-export type CreateOneFieldMetadataItemMutation = { __typename?: 'Mutation', createOneField: { __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isNullable?: boolean | null, createdAt: string, updatedAt: string, settings?: any | null, defaultValue?: any | null, options?: any | null, isLabelSyncedWithName?: boolean | null } };
+export type CreateOneFieldMetadataItemMutation = { __typename?: 'Mutation', createOneField: { __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isUnique?: boolean | null, isNullable?: boolean | null, createdAt: string, updatedAt: string, settings?: any | null, defaultValue?: any | null, options?: any | null, isLabelSyncedWithName?: boolean | null } };
 
 export type UpdateOneFieldMetadataItemMutationVariables = Exact<{
   idToUpdate: Scalars['UUID'];
@@ -4163,7 +4208,7 @@ export type UpdateOneFieldMetadataItemMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOneFieldMetadataItemMutation = { __typename?: 'Mutation', updateOneField: { __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isNullable?: boolean | null, createdAt: string, updatedAt: string, settings?: any | null, isLabelSyncedWithName?: boolean | null } };
+export type UpdateOneFieldMetadataItemMutation = { __typename?: 'Mutation', updateOneField: { __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isUnique?: boolean | null, isNullable?: boolean | null, createdAt: string, updatedAt: string, settings?: any | null, isLabelSyncedWithName?: boolean | null } };
 
 export type UpdateOneObjectMetadataItemMutationVariables = Exact<{
   idToUpdate: Scalars['UUID'];
@@ -4185,7 +4230,7 @@ export type DeleteOneFieldMetadataItemMutationVariables = Exact<{
 }>;
 
 
-export type DeleteOneFieldMetadataItemMutation = { __typename?: 'Mutation', deleteOneField: { __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isNullable?: boolean | null, createdAt: string, updatedAt: string, settings?: any | null } };
+export type DeleteOneFieldMetadataItemMutation = { __typename?: 'Mutation', deleteOneField: { __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isUnique?: boolean | null, isNullable?: boolean | null, createdAt: string, updatedAt: string, settings?: any | null } };
 
 export type ObjectMetadataItemsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -7326,6 +7371,7 @@ export const CreateOneFieldMetadataItemDocument = gql`
     icon
     isCustom
     isActive
+    isUnique
     isNullable
     createdAt
     updatedAt
@@ -7373,6 +7419,7 @@ export const UpdateOneFieldMetadataItemDocument = gql`
     icon
     isCustom
     isActive
+    isUnique
     isNullable
     createdAt
     updatedAt
@@ -7516,6 +7563,7 @@ export const DeleteOneFieldMetadataItemDocument = gql`
     icon
     isCustom
     isActive
+    isUnique
     isNullable
     createdAt
     updatedAt

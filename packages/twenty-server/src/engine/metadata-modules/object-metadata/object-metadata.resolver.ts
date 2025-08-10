@@ -86,6 +86,8 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
+    // why does icon need to be overridden?
+    // I dont see how is it dependent on locale
     return resolveObjectMetadataStandardOverride(
       objectMetadata,
       'icon',

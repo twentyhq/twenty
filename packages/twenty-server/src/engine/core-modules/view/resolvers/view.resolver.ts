@@ -1,12 +1,22 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/core-modules/view/dtos/inputs/update-view.input';
 import { ViewDTO } from 'src/engine/core-modules/view/dtos/view.dto';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
+import { resolveViewStandardOverride } from 'src/engine/core-modules/view/utils/resolve-view-standard-override.util';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/core-modules/view/utils/view-graphql-api-exception.filter';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -17,6 +27,14 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @UseGuards(WorkspaceAuthGuard)
 export class ViewResolver {
   constructor(private readonly viewService: ViewService) {}
+
+  @ResolveField(() => String, { nullable: false })
+  async name(
+    @Parent() view: ViewDTO,
+    @Context() context: I18nContext,
+  ): Promise<string> {
+    return resolveViewStandardOverride(view, 'name', context.req.locale);
+  }
 
   @Query(() => [ViewDTO])
   async getCoreViews(
