@@ -26,23 +26,27 @@ export const WorkflowDiagramStepNodeIcon = ({
   switch (data.nodeType) {
     case 'trigger': {
       switch (data.triggerType) {
-        case 'DATABASE_EVENT':
+        case 'DATABASE_EVENT': {
+          return (
+            <StyledStepNodeLabelIconContainer>
+              <Icon size={theme.icon.size.md} color={theme.color.blue} />
+            </StyledStepNodeLabelIconContainer>
+          );
+        }
         case 'MANUAL':
         case 'CRON':
         case 'WEBHOOK': {
           return (
             <StyledStepNodeLabelIconContainer>
-              <Icon
-                size={theme.icon.size.md}
-                color={theme.font.color.tertiary}
-              />
+              <Icon size={theme.icon.size.md} color={theme.color.purple} />
             </StyledStepNodeLabelIconContainer>
           );
         }
+        default:
+          return assertUnreachable(data.triggerType);
       }
-
-      return assertUnreachable(data.triggerType);
     }
+
     case 'action': {
       switch (data.actionType) {
         case 'CODE':
@@ -51,7 +55,7 @@ export const WorkflowDiagramStepNodeIcon = ({
             <StyledStepNodeLabelIconContainer>
               <Icon
                 size={theme.icon.size.md}
-                color={theme.color.orange}
+                color={theme.font.color.tertiary}
                 stroke={theme.icon.stroke.sm}
               />
             </StyledStepNodeLabelIconContainer>
@@ -60,7 +64,7 @@ export const WorkflowDiagramStepNodeIcon = ({
         case 'SEND_EMAIL': {
           return (
             <StyledStepNodeLabelIconContainer>
-              <Icon size={theme.icon.size.md} color={theme.color.blue} />
+              <Icon size={theme.icon.size.md} color={theme.color.green} />
             </StyledStepNodeLabelIconContainer>
           );
         }
@@ -68,6 +72,13 @@ export const WorkflowDiagramStepNodeIcon = ({
           return (
             <StyledStepNodeLabelIconContainer>
               <Icon size={theme.icon.size.md} color={theme.color.pink} />
+            </StyledStepNodeLabelIconContainer>
+          );
+        }
+        case 'FORM': {
+          return (
+            <StyledStepNodeLabelIconContainer>
+              <Icon size={theme.icon.size.md} color={theme.color.orange} />
             </StyledStepNodeLabelIconContainer>
           );
         }
