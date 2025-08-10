@@ -1,9 +1,9 @@
 import { useContext } from 'react';
-import { SetRequired } from 'type-fest';
+import { type SetRequired } from 'type-fest';
 
 import { RsiContext } from '@/spreadsheet-import/components/ReactSpreadsheetImportContextProvider';
-import { defaultSpreadsheetImportProps } from '@/spreadsheet-import/provider/components/SpreadsheetImport';
-import { SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
+import { type defaultSpreadsheetImportProps } from '@/spreadsheet-import/provider/components/SpreadsheetImport';
+import { type SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 
 export const useSpreadsheetImportInternal = () =>
   useContext<

@@ -1,8 +1,8 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { FieldDefinition } from '../FieldDefinition';
-import { FieldMetadata, FieldTextMetadata } from '../FieldMetadata';
+import { type FieldDefinition } from '../FieldDefinition';
+import { type FieldMetadata, type FieldTextMetadata } from '../FieldMetadata';
 
 // TODO: temporary - remove when 'Phone' field in 'Person' object
 // is migrated to use FieldMetadataType.Phone as type.

@@ -1,9 +1,9 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
 
-import { FieldMetadataItem } from '../types/FieldMetadataItem';
+import { type FieldMetadataItem } from '../types/FieldMetadataItem';
 
 export type FieldMetadataItemAsFieldDefinitionProps = {
   field: FieldMetadataItem;

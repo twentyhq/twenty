@@ -1,5 +1,5 @@
 import {
-  FieldActorValue,
+  type FieldActorValue,
   FieldActorValueSchema,
 } from '@/object-record/record-field/types/FieldMetadata';
 

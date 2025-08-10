@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { AgentChatMessageRole } from '@/ai/constants/agent-chat-message-role';
+import { AgentChatMessageRole } from '@/ai/constants/AgentChatMessageRole';
 import { STREAM_CHAT_QUERY } from '@/ai/rest-api/agent-chat-apollo.api';
 import {
-  AIChatObjectMetadataAndRecordContext,
+  type AIChatObjectMetadataAndRecordContext,
   agentChatObjectMetadataAndRecordContextState,
 } from '@/ai/states/agentChatObjectMetadataAndRecordContextState';
 import { agentChatSelectedFilesComponentState } from '@/ai/states/agentChatSelectedFilesComponentState';
@@ -16,7 +16,7 @@ import { currentAIChatThreadComponentState } from '@/ai/states/currentAIChatThre
 import { isAgentChatCurrentContextActiveState } from '@/ai/states/isAgentChatCurrentContextActiveState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useGetObjectMetadataItemById } from '@/object-metadata/hooks/useGetObjectMetadataItemById';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -27,7 +27,7 @@ import {
   useGetAgentChatMessagesQuery,
   useGetAgentChatThreadsQuery,
 } from '~/generated-metadata/graphql';
-import { AgentChatMessage } from '~/generated/graphql';
+import { type AgentChatMessage } from '~/generated/graphql';
 import { agentChatInputState } from '../states/agentChatInputState';
 import { agentChatMessagesComponentState } from '../states/agentChatMessagesComponentState';
 import { agentStreamingMessageState } from '../states/agentStreamingMessageState';

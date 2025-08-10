@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 
-import { FieldRichTextV2Value } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldRichTextV2Value } from '@/object-record/record-field/types/FieldMetadata';
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
 import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isFieldRichTextV2';
 import { FieldMetadataType } from '~/generated-metadata/graphql';

@@ -4,9 +4,9 @@ import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutpu
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { isUpdatingWorkflowFamilyState } from '@/workflow/states/isUpdatingWorkflowFamilyState';
 import {
-  WorkflowTrigger,
-  WorkflowVersion,
-  WorkflowWithCurrentVersion,
+  type WorkflowTrigger,
+  type WorkflowVersion,
+  type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';

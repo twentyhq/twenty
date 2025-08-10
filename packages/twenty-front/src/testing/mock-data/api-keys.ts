@@ -1,4 +1,4 @@
-import { ApiKey } from '~/generated-metadata/graphql';
+import { type ApiKey } from '~/generated-metadata/graphql';
 
 type MockedApiKey = Pick<
   ApiKey,

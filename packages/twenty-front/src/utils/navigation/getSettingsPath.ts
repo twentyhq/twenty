@@ -1,7 +1,7 @@
 import { AppPath } from '@/types/AppPath';
-import { SettingsPath } from '@/types/SettingsPath';
+import { type SettingsPath } from '@/types/SettingsPath';
 import qs from 'qs';
-import { generatePath, PathParam } from 'react-router-dom';
+import { generatePath, type PathParam } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getSettingsPath = <T extends SettingsPath>(

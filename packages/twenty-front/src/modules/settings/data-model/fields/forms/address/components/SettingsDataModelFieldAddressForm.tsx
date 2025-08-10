@@ -1,7 +1,7 @@
 import { Separator } from '@/settings/components/Separator';
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
   addressSchema as addressFieldDefaultValueSchema,
   addressSettingsSchema,
@@ -14,15 +14,15 @@ import { useCountries } from '@/ui/input/components/internal/hooks/useCountries'
 import { Select } from '@/ui/input/components/Select';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
-import { MouseEvent } from 'react';
+import { type MouseEvent } from 'react';
 import {
   IconCircleOff,
-  IconComponentProps,
+  type IconComponentProps,
   IconList,
   IconMap,
   IconRefresh,
 } from 'twenty-ui/display';
-import { SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/input';
 import { z } from 'zod';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';

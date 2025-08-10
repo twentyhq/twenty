@@ -3,8 +3,8 @@ import { useRecoilState } from 'recoil';
 
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import {
-  FieldRichTextV2Value,
-  FieldRichTextValue,
+  type FieldRichTextV2Value,
+  type FieldRichTextValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';

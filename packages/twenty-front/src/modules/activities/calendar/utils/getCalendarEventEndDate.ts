@@ -1,6 +1,6 @@
 import { endOfDay } from 'date-fns';
 
-import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
+import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 
 export const getCalendarEventEndDate = (

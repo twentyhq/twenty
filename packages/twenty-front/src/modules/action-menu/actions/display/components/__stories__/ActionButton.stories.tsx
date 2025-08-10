@@ -3,7 +3,7 @@ import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/sin
 import { createMockActionMenuActions } from '@/action-menu/mock/action-menu-actions.mock';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { expect } from '@storybook/jest';
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ActionButton } from '../ActionButton';

@@ -1,7 +1,7 @@
-import { Task } from '@/activities/types/Task';
-import { Company } from '@/companies/types/Company';
-import { Person } from '@/people/types/Person';
-import { WorkspaceMember } from '~/generated-metadata/graphql';
+import { type Task } from '@/activities/types/Task';
+import { type Company } from '@/companies/types/Company';
+import { type Person } from '@/people/types/Person';
+import { type WorkspaceMember } from '~/generated-metadata/graphql';
 
 export type TaskTarget = {
   id: string;

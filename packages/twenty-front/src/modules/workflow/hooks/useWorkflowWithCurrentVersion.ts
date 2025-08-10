@@ -2,8 +2,8 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { isUpdatingWorkflowFamilyState } from '@/workflow/states/isUpdatingWorkflowFamilyState';
 import {
-  Workflow,
-  WorkflowWithCurrentVersion,
+  type Workflow,
+  type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';

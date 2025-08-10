@@ -1,6 +1,6 @@
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
-import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
 import { recordGroupSortedInsert } from '@/object-record/record-group/utils/recordGroupSortedInsert';
 import { recordIndexRecordGroupHideComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentFamilyState';
@@ -9,7 +9,7 @@ import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record
 import { createComponentFamilySelector } from '@/ui/utilities/state/component-state/utils/createComponentFamilySelector';
 
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { ViewType } from '@/views/types/ViewType';
+import { type ViewType } from '@/views/types/ViewType';
 import { isDefined } from 'twenty-shared/utils';
 
 export const visibleRecordGroupIdsComponentFamilySelector =

@@ -1,12 +1,12 @@
 import { FormSingleRecordPicker } from '@/object-record/record-field/form-types/components/FormSingleRecordPicker';
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { type VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import {
-  FieldRelationToOneValue,
-  FieldRelationValue,
+  type FieldRelationToOneValue,
+  type FieldRelationValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { JsonValue } from 'type-fest';
+import { type JsonValue } from 'type-fest';
 
 export type FormRelationToOneFieldInputProps = {
   label?: string;

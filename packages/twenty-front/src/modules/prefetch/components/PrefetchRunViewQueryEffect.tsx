@@ -9,7 +9,7 @@ import { findAllViewsOperationSignatureFactory } from '@/prefetch/graphql/operat
 import { arePrefetchViewsLoadedState } from '@/prefetch/states/arePrefetchViewsLoaded';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
-import { View } from '@/views/types/View';
+import { type View } from '@/views/types/View';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';

@@ -8,9 +8,9 @@ import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindM
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import {
-  RemoteTableInput,
-  SyncRemoteTableMutation,
-  SyncRemoteTableMutationVariables,
+  type RemoteTableInput,
+  type SyncRemoteTableMutation,
+  type SyncRemoteTableMutationVariables,
 } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
 

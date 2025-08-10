@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { Icon123, useIcons } from 'twenty-ui/display';
 
 type EventFieldDiffLabelProps = {

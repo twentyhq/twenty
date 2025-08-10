@@ -14,13 +14,13 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBrackets, useIcons } from 'twenty-ui/display';
 import {
-  GetJsonNodeHighlighting,
+  type GetJsonNodeHighlighting,
   JsonNestedNode,
   JsonTreeContextProvider,
-  ShouldExpandNodeInitiallyProps,
+  type ShouldExpandNodeInitiallyProps,
 } from 'twenty-ui/json-visualizer';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { JsonValue } from 'type-fest';
+import { type JsonValue } from 'type-fest';
 
 export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   const { t, i18n } = useLingui();

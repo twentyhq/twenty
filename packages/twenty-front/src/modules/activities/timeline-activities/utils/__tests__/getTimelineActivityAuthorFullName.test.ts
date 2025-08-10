@@ -1,6 +1,6 @@
-import { TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
+import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { getTimelineActivityAuthorFullName } from '@/activities/timeline-activities/utils/getTimelineActivityAuthorFullName';
-import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
+import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 
 describe('getTimelineActivityAuthorFullName', () => {
   it('should return "You" if the current workspace member is the author', () => {

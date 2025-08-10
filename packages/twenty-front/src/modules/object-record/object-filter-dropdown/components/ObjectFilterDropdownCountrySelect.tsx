@@ -3,7 +3,7 @@ import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-recor
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { getCountryFlagMenuItemAvatar } from '@/object-record/object-filter-dropdown/utils/getCountryFlagMenuItemAvatar';
 import { turnCountryIntoSelectableItem } from '@/object-record/object-filter-dropdown/utils/turnCountryIntoSelectableItem';
-import { SelectableItem } from '@/object-record/select/types/SelectableItem';
+import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -13,7 +13,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { ChangeEvent, useState } from 'react';
+import { type ChangeEvent, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 

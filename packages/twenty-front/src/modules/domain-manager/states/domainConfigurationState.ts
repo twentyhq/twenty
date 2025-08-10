@@ -1,4 +1,4 @@
-import { ClientConfig } from '@/client-config/types/ClientConfig';
+import { type ClientConfig } from '@/client-config/types/ClientConfig';
 import { createState } from 'twenty-ui/utilities';
 
 export const domainConfigurationState = createState<

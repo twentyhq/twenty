@@ -1,6 +1,6 @@
 import { isBoolean } from '@sniptt/guards';
 
-import { FieldBooleanValue } from '../FieldMetadata';
+import { type FieldBooleanValue } from '../FieldMetadata';
 
 // TODO: add zod
 export const isFieldBooleanValue = (

@@ -2,8 +2,8 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
 import {
-  WorkflowStepType,
-  WorkflowWithCurrentVersion,
+  type WorkflowStepType,
+  type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';

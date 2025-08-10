@@ -1,9 +1,9 @@
 import {
-  SpreadsheetMatchedSelectColumn,
-  SpreadsheetMatchedSelectOptionsColumn,
+  type SpreadsheetMatchedSelectColumn,
+  type SpreadsheetMatchedSelectOptionsColumn,
 } from '@/spreadsheet-import/types/SpreadsheetColumn';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
-import { SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
+import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
 
 export const setSubColumn = (
   oldColumn:

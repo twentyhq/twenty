@@ -7,7 +7,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { IconChevronRight } from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { ApiKey, FeatureFlagKey } from '~/generated-metadata/graphql';
+import { type ApiKey, FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
   @media (max-width: ${MOBILE_VIEWPORT}px) {

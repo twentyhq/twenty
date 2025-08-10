@@ -1,6 +1,6 @@
 import {
-  StepFilter,
-  StepFilterGroup,
+  type StepFilter,
+  type StepFilterGroup,
 } from 'twenty-shared/src/types/StepFilters';
 
 export const isStepFilterGroupChildAStepFilterGroup = (

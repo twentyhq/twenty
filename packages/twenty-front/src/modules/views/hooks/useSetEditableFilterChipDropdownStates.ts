@@ -3,7 +3,7 @@ import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useVectorSearchFieldInRecordIndexContextOrThrow } from '@/views/hooks/useVectorSearchFieldInRecordIndexContextOrThrow';
 import { vectorSearchInputComponentState } from '@/views/states/vectorSearchInputComponentState';
 import { isVectorSearchFilter } from '@/views/utils/isVectorSearchFilter';

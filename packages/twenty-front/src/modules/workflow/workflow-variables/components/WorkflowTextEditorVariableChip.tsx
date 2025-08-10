@@ -1,6 +1,6 @@
 import { VariableChip } from '@/object-record/record-field/form-types/components/VariableChip';
 import styled from '@emotion/styled';
-import { NodeViewProps, NodeViewWrapper } from '@tiptap/react';
+import { type NodeViewProps, NodeViewWrapper } from '@tiptap/react';
 
 const StyledWrapper = styled.span`
   display: inline-block;

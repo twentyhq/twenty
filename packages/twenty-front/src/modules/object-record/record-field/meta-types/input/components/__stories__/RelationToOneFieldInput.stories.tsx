@@ -1,4 +1,4 @@
-import { Decorator, Meta, StoryObj } from '@storybook/react';
+import { type Decorator, type Meta, type StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
@@ -24,7 +24,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 import {
   RelationToOneFieldInput,
-  RelationToOneFieldInputProps,
+  type RelationToOneFieldInputProps,
 } from '../RelationToOneFieldInput';
 
 const RelationWorkspaceSetterEffect = () => {

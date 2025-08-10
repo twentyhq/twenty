@@ -13,7 +13,6 @@ if (process.env.NODE_ENV === 'test') {
 const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
 const isClickhouseEnabled = process.env.CLICKHOUSE_URL !== undefined;
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const tsConfig = require('./tsconfig.json');
 
 const jestConfig: JestConfigWithTsJest = {

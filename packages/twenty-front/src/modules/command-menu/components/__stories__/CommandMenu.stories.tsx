@@ -1,4 +1,4 @@
-import { Decorator, Meta, StoryObj } from '@storybook/react';
+import { type Decorator, type Meta, type StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 import { useSetRecoilState } from 'recoil';
 
@@ -32,7 +32,7 @@ import { HttpResponse, graphql } from 'msw';
 import { IconDotsVertical } from 'twenty-ui/display';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
-import { CommandMenu } from '../CommandMenu';
+import { type CommandMenu } from '../CommandMenu';
 
 const openTimeout = 50;
 

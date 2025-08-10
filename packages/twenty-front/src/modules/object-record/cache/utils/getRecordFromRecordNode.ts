@@ -1,8 +1,8 @@
 import pick from 'lodash.pick';
 
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
-import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { isDefined } from 'twenty-shared/utils';
 

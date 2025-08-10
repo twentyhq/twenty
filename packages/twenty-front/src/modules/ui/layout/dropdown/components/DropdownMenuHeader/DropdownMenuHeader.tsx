@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { ComponentProps, MouseEvent } from 'react';
+import { type ComponentProps, type MouseEvent } from 'react';
 
 const StyledHeader = styled.li`
   align-items: center;

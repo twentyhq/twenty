@@ -1,4 +1,4 @@
-import { ViewField } from '@/views/types/ViewField';
+import { type ViewField } from '@/views/types/ViewField';
 
 export const SIGN_IN_BACKGROUND_MOCK_VIEW_FIELDS = [
   {

@@ -1,4 +1,4 @@
-import { FieldArrayValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldArrayValue } from '@/object-record/record-field/types/FieldMetadata';
 import { z } from 'zod';
 
 export const arraySchema = z.union([z.null(), z.array(z.string())]);

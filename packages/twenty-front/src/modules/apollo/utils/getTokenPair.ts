@@ -1,5 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
-import { AuthTokenPair } from '~/generated/graphql';
+import { type AuthTokenPair } from '~/generated/graphql';
 import { cookieStorage } from '~/utils/cookie-storage';
 
 const isValidAuthTokenPair = (tokenPair: any): tokenPair is AuthTokenPair => {

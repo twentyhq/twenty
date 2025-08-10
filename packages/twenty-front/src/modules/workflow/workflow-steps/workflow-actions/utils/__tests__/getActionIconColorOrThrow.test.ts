@@ -1,5 +1,5 @@
-import { WorkflowActionType } from '@/workflow/types/Workflow';
-import { Theme } from '@emotion/react';
+import { type WorkflowActionType } from '@/workflow/types/Workflow';
+import { type Theme } from '@emotion/react';
 import { COLOR, GRAY_SCALE } from 'twenty-ui/theme';
 import { getActionIconColorOrThrow } from '../getActionIconColorOrThrow';
 

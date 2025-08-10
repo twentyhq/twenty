@@ -1,8 +1,8 @@
 import { isUndefined } from '@sniptt/guards';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated/graphql';

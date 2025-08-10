@@ -1,12 +1,12 @@
 import {
-  DropResult,
-  OnDragEndResponder,
-  ResponderProvided,
+  type DropResult,
+  type OnDragEndResponder,
+  type ResponderProvided,
 } from '@hello-pangea/dnd';
 import { useRef } from 'react';
 
 import { RecordGroupMenuItemDraggable } from '@/object-record/record-group/components/RecordGroupMenuItemDraggable';
-import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';

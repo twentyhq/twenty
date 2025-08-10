@@ -8,17 +8,17 @@ import {
 } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import {
   FieldContext,
-  RecordUpdateHook,
-  RecordUpdateHookParams,
+  type RecordUpdateHook,
+  type RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { gql } from '@apollo/client';
-import { MockedResponse } from '@apollo/client/testing';
+import { type MockedResponse } from '@apollo/client/testing';
 import { renderHook, waitFor } from '@testing-library/react';
-import { ReactNode, act } from 'react';
+import { type ReactNode, act } from 'react';
 import { useRecoilValue } from 'recoil';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 

@@ -4,7 +4,7 @@ import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { getActorSourceMultiSelectOptions } from '@/object-record/object-filter-dropdown/utils/getActorSourceMultiSelectOptions';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
-import { SelectableItem } from '@/object-record/select/types/SelectableItem';
+import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';

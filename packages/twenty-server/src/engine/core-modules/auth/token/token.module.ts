@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-imports */
+ 
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 

@@ -1,12 +1,12 @@
-import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
-import { ZodHelperLiteral } from '@/object-record/record-field/types/ZodHelperLiteral';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { AllowedAddressSubField } from 'twenty-shared/src/types/AddressFieldsType';
+import { type RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
+import { type ZodHelperLiteral } from '@/object-record/record-field/types/ZodHelperLiteral';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type AllowedAddressSubField } from 'twenty-shared/src/types/AddressFieldsType';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { ThemeColor } from 'twenty-ui/theme';
+import { type ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
-import { RelationType } from '~/generated-metadata/graphql';
-import { CurrencyCode } from './CurrencyCode';
+import { type RelationType } from '~/generated-metadata/graphql';
+import { type CurrencyCode } from './CurrencyCode';
 
 type BaseFieldMetadata = {
   fieldName: string;

@@ -1,9 +1,9 @@
 import { SettingsServerlessFunctionsNew } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionsNew';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import {
   PageDecorator,
-  PageDecoratorArgs,
+  type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { userEvent, within } from '@storybook/test';
 import { sleep } from '~/utils/sleep';

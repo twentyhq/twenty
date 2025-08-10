@@ -1,6 +1,6 @@
-import { SpreadsheetImportField } from '@/spreadsheet-import/types';
-import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
-import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { type SpreadsheetImportField } from '@/spreadsheet-import/types';
+import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
+import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { normalizeTableData } from '@/spreadsheet-import/utils/normalizeTableData';
 import { FieldMetadataType } from 'twenty-shared/types';

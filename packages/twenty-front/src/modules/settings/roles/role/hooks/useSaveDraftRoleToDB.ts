@@ -15,7 +15,7 @@ import {
   useUpsertObjectPermissionsMutation,
   useUpsertPermissionFlagsMutation,
 } from '~/generated-metadata/graphql';
-import { Role } from '~/generated/graphql';
+import { type Role } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getDirtyFields } from '~/utils/getDirtyFields';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';

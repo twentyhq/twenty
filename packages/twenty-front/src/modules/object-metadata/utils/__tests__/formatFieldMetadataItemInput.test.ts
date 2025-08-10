@@ -1,4 +1,4 @@
-import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { formatFieldMetadataItemInput } from '../formatFieldMetadataItemInput';

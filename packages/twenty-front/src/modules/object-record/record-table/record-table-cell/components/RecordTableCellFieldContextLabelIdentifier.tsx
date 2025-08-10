@@ -13,7 +13,7 @@ import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/use
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { ReactNode, useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useIsMobile } from 'twenty-ui/utilities';
 

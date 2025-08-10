@@ -1,14 +1,14 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { BASE_RECORD_LAYOUT } from '@/object-record/record-show/constants/BaseRecordLayout';
 import { CardType } from '@/object-record/record-show/types/CardType';
-import { RecordLayout } from '@/object-record/record-show/types/RecordLayout';
+import { type RecordLayout } from '@/object-record/record-show/types/RecordLayout';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
-import { RecordLayoutTab } from '@/ui/layout/tab-list/types/RecordLayoutTab';
-import { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { type RecordLayoutTab } from '@/ui/layout/tab-list/types/RecordLayoutTab';
+import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';

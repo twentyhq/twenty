@@ -1,9 +1,9 @@
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { SubMatchingSelectRow } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectRow';
 import { UnmatchColumnBanner } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumnBanner';
-import { SpreadsheetImportFields } from '@/spreadsheet-import/types';
-import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
-import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { type SpreadsheetImportFields } from '@/spreadsheet-import/types';
+import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
+import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';

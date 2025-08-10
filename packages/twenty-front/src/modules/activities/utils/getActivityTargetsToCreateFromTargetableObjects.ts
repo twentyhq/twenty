@@ -1,12 +1,12 @@
 import { v4 } from 'uuid';
 
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { Note } from '@/activities/types/Note';
-import { NoteTarget } from '@/activities/types/NoteTarget';
-import { Task } from '@/activities/types/Task';
-import { TaskTarget } from '@/activities/types/TaskTarget';
+import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type Note } from '@/activities/types/Note';
+import { type NoteTarget } from '@/activities/types/NoteTarget';
+import { type Task } from '@/activities/types/Task';
+import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const makeActivityTargetsToCreateFromTargetableObjects = ({
   targetableObjects,

@@ -22,15 +22,15 @@ import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStart
 import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import {
-  WorkflowDiagramEdge,
-  WorkflowDiagramEdgeData,
+  type WorkflowDiagramEdge,
+  type WorkflowDiagramEdgeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { EdgeLabelRenderer, EdgeProps, getBezierPath } from '@xyflow/react';
+import { EdgeLabelRenderer, type EdgeProps, getBezierPath } from '@xyflow/react';
 import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';

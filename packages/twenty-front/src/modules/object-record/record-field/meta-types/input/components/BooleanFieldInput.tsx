@@ -1,6 +1,6 @@
 import { BooleanInput } from '@/ui/field/input/components/BooleanInput';
 
-import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { type FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useBooleanField } from '../../hooks/useBooleanField';
 

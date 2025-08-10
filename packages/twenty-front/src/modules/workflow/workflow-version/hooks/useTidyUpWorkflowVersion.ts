@@ -1,14 +1,14 @@
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import {
-  WorkflowVersion,
-  WorkflowWithCurrentVersion,
+  type WorkflowVersion,
+  type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { useMutation } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  UpdateWorkflowVersionPositionsMutation,
-  UpdateWorkflowVersionPositionsMutationVariables,
-  WorkflowAction,
+  type UpdateWorkflowVersionPositionsMutation,
+  type UpdateWorkflowVersionPositionsMutationVariables,
+  type WorkflowAction,
 } from '~/generated-metadata/graphql';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';

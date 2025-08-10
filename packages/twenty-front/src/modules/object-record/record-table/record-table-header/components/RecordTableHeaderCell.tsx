@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 import { isObjectReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isObjectReadOnly';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
@@ -13,9 +13,9 @@ import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/rec
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
-import { PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
+import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';

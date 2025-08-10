@@ -13,7 +13,7 @@ import { useOpenCalendarEventInCommandMenu } from '@/command-menu/hooks/useOpenC
 import { IconArrowRight } from 'twenty-ui/display';
 import {
   CalendarChannelVisibility,
-  TimelineCalendarEvent,
+  type TimelineCalendarEvent,
 } from '~/generated-metadata/graphql';
 
 type CalendarEventRowProps = {

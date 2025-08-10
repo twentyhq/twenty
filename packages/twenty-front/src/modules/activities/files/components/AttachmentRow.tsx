@@ -1,13 +1,13 @@
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { AttachmentDropdown } from '@/activities/files/components/AttachmentDropdown';
-import { Attachment } from '@/activities/files/types/Attachment';
+import { type Attachment } from '@/activities/files/types/Attachment';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   FieldContext,
-  GenericFieldContextType,
+  type GenericFieldContextType,
 } from '@/object-record/record-field/contexts/FieldContext';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useTheme } from '@emotion/react';

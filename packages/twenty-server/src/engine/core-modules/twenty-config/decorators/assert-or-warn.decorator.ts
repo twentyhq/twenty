@@ -5,7 +5,7 @@ import {
 } from 'class-validator';
 
 export const AssertOrWarn = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   condition: (object: any, value: any) => boolean,
   validationOptions?: ValidationOptions,

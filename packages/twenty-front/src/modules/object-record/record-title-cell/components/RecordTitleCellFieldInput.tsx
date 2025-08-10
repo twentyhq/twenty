@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { type FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { RecordTitleCellTextFieldInput } from '@/object-record/record-title-cell/components/RecordTitleCellTextFieldInput';

@@ -1,5 +1,5 @@
 import { expect } from '@storybook/jest';
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
@@ -7,7 +7,7 @@ import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useEmailsField } from '@/object-record/record-field/meta-types/hooks/useEmailsField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { FieldEmailsValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldEmailsValue } from '@/object-record/record-field/types/FieldMetadata';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';

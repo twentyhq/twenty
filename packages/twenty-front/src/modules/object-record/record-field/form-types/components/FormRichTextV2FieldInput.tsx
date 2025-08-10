@@ -1,6 +1,6 @@
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
-import { FieldRichTextV2Value } from '@/object-record/record-field/types/FieldMetadata';
+import { type VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { type FieldRichTextV2Value } from '@/object-record/record-field/types/FieldMetadata';
 
 type FormRichTextV2FieldInputProps = {
   label?: string;

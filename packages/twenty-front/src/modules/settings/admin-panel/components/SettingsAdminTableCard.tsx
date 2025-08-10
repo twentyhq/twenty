@@ -5,7 +5,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Card } from 'twenty-ui/layout';
-import { IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/display';
 
 const StyledCard = styled(Card)`
   background-color: ${({ theme }) => theme.background.secondary};

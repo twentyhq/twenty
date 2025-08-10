@@ -1,10 +1,10 @@
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordTable } from '@/object-record/record-table/components/RecordTable';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';

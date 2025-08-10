@@ -9,7 +9,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
 import {
-  MiddlewareState,
+  type MiddlewareState,
   autoUpdate,
   flip,
   offset,

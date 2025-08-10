@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { ReactNode, useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
