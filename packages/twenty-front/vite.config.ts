@@ -6,7 +6,7 @@ import wyw from '@wyw-in-js/vite';
 import fs from 'fs';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig, loadEnv, PluginOption, searchForWorkspaceRoot } from 'vite';
+import { defineConfig, loadEnv, type PluginOption, searchForWorkspaceRoot } from 'vite';
 import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -188,7 +188,7 @@ export default defineConfig(({ command, mode }) => {
                 const oversizedChunks: string[] = [];
                 
                 Object.entries(bundle).forEach(([fileName, chunk]) => {
-                  if (chunk.type === 'chunk' && chunk.code) {
+                  if (chunk.type === 'chunk' && chunk.code !== undefined) {
                     const size = Buffer.byteLength(chunk.code, 'utf8');
                     const isMainChunk = fileName.includes('index') && chunk.isEntry;
                     const sizeLimit = isMainChunk ? MAIN_CHUNK_SIZE_LIMIT : OTHER_CHUNK_SIZE_LIMIT;

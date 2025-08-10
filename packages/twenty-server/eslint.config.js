@@ -1,5 +1,3 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
 import js from '@eslint/js';
 import nxPlugin from '@nx/eslint-plugin';
 import stylisticPlugin from '@stylistic/eslint-plugin';
@@ -12,6 +10,8 @@ import prettierPlugin from 'eslint-plugin-prettier';
 import unicornPlugin from 'eslint-plugin-unicorn';
 import unusedImportsPlugin from 'eslint-plugin-unused-imports';
 import jsoncParser from 'jsonc-eslint-parser';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

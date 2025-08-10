@@ -20,13 +20,27 @@ export default [
       '**/coverage/**',
       '**/storybook-static/**',
       '**/*config.js',
-      'jest.config.ts',
-      'lingui.config.ts',
-      'vite.config.ts',
-      'setupTests.ts',
       '**/__mocks__/**',
       'src/testing/mock-data/**',
     ],
+  },
+
+  // CommonJS files configuration
+  {
+    files: ['**/*.cjs'],
+    languageOptions: {
+      globals: {
+        process: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        module: 'readonly',
+        require: 'readonly',
+        exports: 'writable',
+        global: 'readonly',
+        Buffer: 'readonly',
+      },
+      sourceType: 'commonjs',
+    },
   },
 
   // TypeScript project-specific configuration
@@ -35,7 +49,11 @@ export default [
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
-        project: [path.resolve(__dirname, 'tsconfig.dev.json')],
+        project: [
+          path.resolve(__dirname, 'tsconfig.dev.json'),
+          path.resolve(__dirname, 'tsconfig.storybook.json'),
+          path.resolve(__dirname, 'tsconfig.spec.json'),
+        ],
         ecmaFeatures: {
           jsx: true,
         },

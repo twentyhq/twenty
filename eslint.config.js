@@ -118,6 +118,8 @@ export default [
     },
     rules: {
       // TypeScript rules
+      'no-redeclare': 'off', // Turn off base rule for TypeScript
+      '@typescript-eslint/no-redeclare': 'error', // Use TypeScript-aware version
       '@typescript-eslint/ban-ts-comment': 'error',
       '@typescript-eslint/consistent-type-imports': [
         'error',
