@@ -21095,19 +21095,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-onboarding@npm:^1.0.10":
-  version: 1.0.11
-  resolution: "@storybook/addon-onboarding@npm:1.0.11"
-  dependencies:
-    "@storybook/telemetry": "npm:^7.1.0"
-    react-confetti: "npm:^6.1.0"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 10c0/ca3de3eb85fb6d04309dbc07c26956777c064bb5032fb99aca3e43361b0816ac4326183aac99204d795fdc2010aa69c4978353c70a42926e9da0819343fcd2a0
-  languageName: node
-  linkType: hard
-
 "@storybook/addon-outline@npm:7.6.20":
   version: 7.6.20
   resolution: "@storybook/addon-outline@npm:7.6.20"
@@ -21918,7 +21905,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/telemetry@npm:7.6.20, @storybook/telemetry@npm:^7.1.0":
+"@storybook/telemetry@npm:7.6.20":
   version: 7.6.20
   resolution: "@storybook/telemetry@npm:7.6.20"
   dependencies:
@@ -52166,17 +52153,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-confetti@npm:^6.1.0":
-  version: 6.1.0
-  resolution: "react-confetti@npm:6.1.0"
-  dependencies:
-    tween-functions: "npm:^1.2.0"
-  peerDependencies:
-    react: ^16.3.0 || ^17.0.1 || ^18.0.0
-  checksum: 10c0/5b4eb23eef564695f6db1d25b294ed31d5fa21ff4092c6a38e641f85cd10e3e0b50014366e3ac0f7cf772e73faaecd14614e5b11a5531336fa769dda8068ab59
-  languageName: node
-  linkType: hard
-
 "react-data-grid@npm:7.0.0-beta.13":
   version: 7.0.0-beta.13
   resolution: "react-data-grid@npm:7.0.0-beta.13"
@@ -55921,26 +55897,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"storybook-addon-cookie@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "storybook-addon-cookie@npm:3.2.0"
-  peerDependencies:
-    "@storybook/blocks": ^7.0.0
-    "@storybook/components": ^7.0.0
-    "@storybook/manager-api": ^7.0.0
-    "@storybook/preview-api": ^7.0.0
-    "@storybook/types": ^7.0.0
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  peerDependenciesMeta:
-    react:
-      optional: true
-    react-dom:
-      optional: true
-  checksum: 10c0/07c538d039c119cccdf632366992b07c248434759fdc857ef56dfc0aa85ed43645743b202bb7f8e0eba3ce11c30184a2a7c1ae6d3f8051e03a7a4ad3afeb74e1
-  languageName: node
-  linkType: hard
-
 "storybook-addon-mock-date@npm:^0.6.0":
   version: 0.6.0
   resolution: "storybook-addon-mock-date@npm:0.6.0"
@@ -58096,13 +58052,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tween-functions@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "tween-functions@npm:1.2.0"
-  checksum: 10c0/7e59295b8b0ee4132ed2fe335f56a9db5c87056dad6b6fd3011be72239fd20398003ddb4403bc98ad9f5c94468890830f64016edbbde35581faf95b32cda8305
-  languageName: node
-  linkType: hard
-
 "tweetnacl@npm:^0.14.3, tweetnacl@npm:~0.14.0":
   version: 0.14.5
   resolution: "tweetnacl@npm:0.14.5"
@@ -58457,7 +58406,6 @@ __metadata:
     "@storybook/addon-essentials": "npm:^7.6.7"
     "@storybook/addon-interactions": "npm:^7.6.7"
     "@storybook/addon-links": "npm:^7.6.7"
-    "@storybook/addon-onboarding": "npm:^1.0.10"
     "@storybook/blocks": "npm:^7.6.3"
     "@storybook/core-server": "npm:7.6.3"
     "@storybook/icons": "npm:^1.2.9"
@@ -58672,7 +58620,6 @@ __metadata:
     slash: "npm:^5.1.0"
     source-map-support: "npm:^0.5.20"
     storybook: "npm:^7.6.3"
-    storybook-addon-cookie: "npm:^3.2.0"
     storybook-addon-mock-date: "npm:^0.6.0"
     storybook-addon-pseudo-states: "npm:^2.1.2"
     storybook-dark-mode: "npm:^3.0.3"

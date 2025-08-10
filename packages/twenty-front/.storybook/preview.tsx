@@ -6,6 +6,7 @@ import { useDarkMode } from 'storybook-dark-mode';
 
 import { RootDecorator } from '../src/testing/decorators/RootDecorator';
 import { mockedUserJWT } from '../src/testing/mock-data/jwt';
+import { cookieStorage } from '../src/utils/cookie-storage';
 
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -44,6 +45,24 @@ const preview: Preview = {
           theme.name === 'dark' ? 'dark' : 'light';
       }, [theme]);
 
+      useEffect(() => {
+        const tokenPair = {
+          accessOrWorkspaceAgnosticToken: {
+            token: mockedUserJWT,
+            expiresAt: '2023-07-18T15:06:40.704Z',
+            __typename: 'AuthToken',
+          },
+          refreshToken: {
+            token: mockedUserJWT,
+            expiresAt: '2023-10-15T15:06:41.558Z',
+            __typename: 'AuthToken',
+          },
+          __typename: 'AuthTokenPair',
+        };
+        
+        cookieStorage.setItem('tokenPair', JSON.stringify(tokenPair));
+      }, []);
+
       return (
         <ThemeProvider theme={theme}>
           <ThemeContextProvider theme={theme}>
@@ -72,9 +91,6 @@ const preview: Preview = {
       storySort: {
         order: ['UI', 'Modules', 'Pages'],
       },
-    },
-    cookie: {
-      tokenPair: `{%22accessOrWorkspaceAgnosticToken%22:{%22token%22:%22${mockedUserJWT}%22%2C%22expiresAt%22:%222023-07-18T15:06:40.704Z%22%2C%22__typename%22:%22AuthToken%22}%2C%22refreshToken%22:{%22token%22:%22${mockedUserJWT}%22%2C%22expiresAt%22:%222023-10-15T15:06:41.558Z%22%2C%22__typename%22:%22AuthToken%22}%2C%22__typename%22:%22AuthTokenPair%22}`,
     },
   },
 };
