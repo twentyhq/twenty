@@ -27,8 +27,8 @@ export const getBaseCodeEditorTheme = ({
       },
     ],
     colors: {
-       
-      'editor.background': '#0000000',
+      // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
+      'editor.background': '#000000',
       'editorCursor.foreground': theme.font.color.primary,
       'editorLineNumber.foreground': theme.font.color.extraLight,
       'editorLineNumber.activeForeground': theme.font.color.light,
