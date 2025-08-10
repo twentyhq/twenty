@@ -196,7 +196,7 @@ export default [
 
   // JSON files
   {
-    files: ['*.json'],
+    files: ['**/*.json'],
     languageOptions: {
       parser: jsoncParser,
     },

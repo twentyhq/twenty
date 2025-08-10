@@ -29,6 +29,7 @@ export default [
       'src/utils/email-providers.ts',
       'src/engine/core-modules/i18n/locales/generated/**',
       'src/engine/core-modules/serverless/drivers/constants/base-typescript-project/src/index.ts',
+      'packages/twenty-server/src/engine/core-modules/i18n/locales/**'
     ],
   },
 
@@ -279,32 +280,9 @@ export default [
     },
   },
 
-  // Constants files
-  {
-    files: ['**/constants/*.ts', '**/*.constants.ts'],
-    rules: {
-      '@typescript-eslint/naming-convention': [
-        'error',
-        {
-          selector: 'variable',
-          format: ['UPPER_CASE'],
-        },
-      ],
-      'unicorn/filename-case': [
-        'warn',
-        {
-          cases: {
-            pascalCase: true,
-          },
-        },
-      ],
-      '@nx/workspace-max-consts-per-file': ['error', { max: 1 }],
-    },
-  },
-
   // JSON files
   {
-    files: ['*.json'],
+    files: ['**/*.json'],
     languageOptions: {
       parser: jsoncParser,
     },

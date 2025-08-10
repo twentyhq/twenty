@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { read, type WorkBook } from 'xlsx-ugnis';
 
-import { SpreadsheetMaxRecordImportCapacity } from '@/spreadsheet-import/constants/SpreadsheetMaxRecordImportCapacity';
+import { SPREADSHEET_MAX_RECORD_IMPORT_CAPACITY } from '@/spreadsheet-import/constants/SpreadsheetMaxRecordImportCapacity';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { useDownloadFakeRecords } from '@/spreadsheet-import/steps/components/UploadStep/hooks/useDownloadFakeRecords';
 import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
@@ -157,7 +157,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
   const { t } = useLingui();
 
   const formatSpreadsheetMaxRecordImportCapacity = formatNumber(
-    SpreadsheetMaxRecordImportCapacity,
+    SPREADSHEET_MAX_RECORD_IMPORT_CAPACITY,
   );
 
   return (

@@ -1,6 +1,7 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import typescriptParser from '@typescript-eslint/parser';
+import jsoncParser from 'jsonc-eslint-parser';
 import reactConfig from '../../eslint.config.react.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -15,6 +16,14 @@ export default [
     ignores: [
       '**/node_modules/**',
     ],
+  },
+
+  // JSON files configuration
+  {
+    files: ['**/*.json'],
+    languageOptions: {
+      parser: jsoncParser,
+    },
   },
 
   // TypeScript project-specific configuration

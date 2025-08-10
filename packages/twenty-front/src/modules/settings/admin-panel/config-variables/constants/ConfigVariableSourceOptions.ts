@@ -7,7 +7,7 @@ type ConfigVariableSourceOption = {
   color: ThemeColor | 'transparent';
 };
 
-export const ConfigVariableSourceOptions: ConfigVariableSourceOption[] = [
+export const CONFIG_VARIABLE_SOURCE_OPTIONS: ConfigVariableSourceOption[] = [
   { value: 'all', label: 'All Sources', color: 'transparent' },
   { value: 'database', label: 'Database', color: 'blue' },
   { value: 'environment', label: 'Environment', color: 'green' },
