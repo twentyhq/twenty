@@ -175,29 +175,6 @@ export default [
     },
   },
 
-  // Constants files
-  {
-    files: ['**/constants/*.ts', '**/*.constants.ts'],
-    rules: {
-      '@typescript-eslint/naming-convention': [
-        'error',
-        {
-          selector: 'variable',
-          format: ['UPPER_CASE'],
-        },
-      ],
-      'unicorn/filename-case': [
-        'warn',
-        {
-          cases: {
-            pascalCase: true,
-          },
-        },
-      ],
-      '@nx/workspace-max-consts-per-file': ['error', { max: 1 }],
-    },
-  },
-
   // JSON files
   {
     files: ['*.json'],

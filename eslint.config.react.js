@@ -169,6 +169,8 @@ export default [
       ],
 
       // TypeScript rules
+      'no-redeclare': 'off', // Turn off base rule for TypeScript
+      '@typescript-eslint/no-redeclare': 'error', // Use TypeScript-aware version
       '@typescript-eslint/ban-ts-comment': 'error',
       '@typescript-eslint/consistent-type-imports': [
         'error',
@@ -218,6 +220,29 @@ export default [
     files: ['*.{js,jsx}'],
     rules: {
       // JavaScript-specific rules if needed
+    },
+  },
+
+  // Constants files
+  {
+    files: ['**/constants/*.ts', '**/*.constants.ts'],
+    rules: {
+      '@typescript-eslint/naming-convention': [
+        'error',
+        {
+          selector: 'variable',
+          format: ['UPPER_CASE'],
+        },
+      ],
+      'unicorn/filename-case': [
+        'warn',
+        {
+          cases: {
+            pascalCase: true,
+          },
+        },
+      ],
+      '@nx/workspace-max-consts-per-file': ['error', { max: 1 }],
     },
   },
 

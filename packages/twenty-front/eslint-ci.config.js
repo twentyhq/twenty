@@ -1,7 +1,8 @@
-import baseConfig from './eslint.config.js';
+const path = require('path');
+const baseConfig = require('./eslint.config.js');
 
-export default [
-  ...baseConfig,
+module.exports = [
+  ...baseConfig.default,
   // CI-specific rules override
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],

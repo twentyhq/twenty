@@ -6,7 +6,7 @@ import reactConfig from '../../eslint.config.react.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export default [
+const config = [
   // Extend shared React configuration
   ...reactConfig,
 
@@ -61,3 +61,15 @@ export default [
     },
   },
 ];
+
+// Add CI-specific rules if in CI environment
+if (process.env.NX_TASK_TARGET_CONFIGURATION === 'ci') {
+  config.push({
+    files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
+    rules: {
+      'no-console': 'error',
+    },
+  });
+}
+
+export default config;
