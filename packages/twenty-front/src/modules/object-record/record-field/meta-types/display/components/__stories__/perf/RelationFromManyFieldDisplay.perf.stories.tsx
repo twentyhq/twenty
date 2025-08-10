@@ -1,17 +1,17 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RelationFromManyFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RelationFromManyFieldDisplay';
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
   fieldValue,

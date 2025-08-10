@@ -1,9 +1,9 @@
-import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
-import { ObjectPermissions } from 'twenty-shared/types';
+import { type ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { type ObjectPermissions } from 'twenty-shared/types';
 
 export type ShouldBeRegisteredFunctionParams = {
   objectMetadataItem?: ObjectMetadataItem;

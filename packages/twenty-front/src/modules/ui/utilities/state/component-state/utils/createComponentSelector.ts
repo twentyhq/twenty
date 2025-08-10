@@ -1,13 +1,13 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { selectorFamily } from 'recoil';
 
-import { ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
-import { ComponentReadOnlySelector } from '@/ui/utilities/state/component-state/types/ComponentReadOnlySelector';
-import { ComponentSelector } from '@/ui/utilities/state/component-state/types/ComponentSelector';
-import { ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
+import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
+import { type ComponentReadOnlySelector } from '@/ui/utilities/state/component-state/types/ComponentReadOnlySelector';
+import { type ComponentSelector } from '@/ui/utilities/state/component-state/types/ComponentSelector';
+import { type ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import { SelectorGetter } from '@/ui/utilities/state/types/SelectorGetter';
-import { SelectorSetter } from '@/ui/utilities/state/types/SelectorSetter';
+import { type SelectorGetter } from '@/ui/utilities/state/types/SelectorGetter';
+import { type SelectorSetter } from '@/ui/utilities/state/types/SelectorSetter';
 import { isDefined } from 'twenty-shared/utils';
 
 export function createComponentSelector<ValueType>(options: {

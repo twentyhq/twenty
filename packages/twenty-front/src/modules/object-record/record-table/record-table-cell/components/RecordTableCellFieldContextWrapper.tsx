@@ -7,7 +7,7 @@ import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/co
 import { RecordTableCellFieldContextGeneric } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextGeneric';
 import { RecordTableCellFieldContextLabelIdentifier } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextLabelIdentifier';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { ReactNode, useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type RecordTableCellFieldContextWrapperProps = {

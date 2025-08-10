@@ -5,7 +5,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { getUrlHostnameOrThrow, isValidUrl } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/display';
-import { Webhook } from '~/generated-metadata/graphql';
+import { type Webhook } from '~/generated-metadata/graphql';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
   grid-template-columns: 1fr 28px;

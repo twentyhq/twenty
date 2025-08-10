@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
-import { Decorator, Meta, StoryObj } from '@storybook/react';
+import { type Decorator, type Meta, type StoryObj } from '@storybook/react';
 import { expect, userEvent, waitFor, within } from '@storybook/test';
-import { PlayFunction } from '@storybook/types';
+import { type PlayFunction } from '@storybook/types';
 import { useState } from 'react';
 
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
@@ -12,7 +12,7 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { SetRecoilState } from 'recoil';
+import { type SetRecoilState } from 'recoil';
 import { Avatar, IconChevronLeft } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {

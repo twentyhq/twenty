@@ -3,8 +3,8 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { RELATIVE_DATE_DIRECTION_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateDirectionSelectOptions';
 import { RELATIVE_DATE_UNITS_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateUnitSelectOptions';
 import {
-  VariableDateViewFilterValueDirection,
-  VariableDateViewFilterValueUnit,
+  type VariableDateViewFilterValueDirection,
+  type VariableDateViewFilterValueUnit,
   variableDateViewFilterValuePartsSchema,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 

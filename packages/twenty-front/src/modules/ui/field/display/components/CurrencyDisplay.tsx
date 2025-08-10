@@ -1,9 +1,9 @@
 import { useTheme } from '@emotion/react';
 
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import {
-  FieldCurrencyMetadata,
-  FieldCurrencyValue,
+  type FieldCurrencyMetadata,
+  type FieldCurrencyValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';

@@ -1,4 +1,4 @@
-import { SelectableItem } from '@/object-record/select/types/SelectableItem';
+import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import {
   IconApi,
   IconCsv,

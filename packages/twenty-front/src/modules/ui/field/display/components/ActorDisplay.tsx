@@ -1,4 +1,4 @@
-import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
 
 import { useMemo } from 'react';
 import { ConnectedAccountProvider } from 'twenty-shared/types';

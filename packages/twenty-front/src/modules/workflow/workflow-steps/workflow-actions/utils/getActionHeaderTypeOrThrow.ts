@@ -1,4 +1,4 @@
-import { WorkflowActionType } from '@/workflow/types/Workflow';
+import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 

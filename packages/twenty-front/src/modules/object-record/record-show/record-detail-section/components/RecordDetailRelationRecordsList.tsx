@@ -3,7 +3,7 @@ import { Fragment, useState } from 'react';
 import { RecordDetailRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRecordsList';
 import { RecordDetailRelationRecordsListItem } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsListItem';
 import { RecordDetailRelationRecordsListItemEffect } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsListItemEffect';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 type RecordDetailRelationRecordsListProps = {
   relationRecords: ObjectRecord[];

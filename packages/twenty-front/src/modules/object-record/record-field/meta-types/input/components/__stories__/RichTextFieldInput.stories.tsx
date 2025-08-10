@@ -8,7 +8,7 @@ import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { Decorator, Meta, StoryObj } from '@storybook/react';
+import { type Decorator, type Meta, type StoryObj } from '@storybook/react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';

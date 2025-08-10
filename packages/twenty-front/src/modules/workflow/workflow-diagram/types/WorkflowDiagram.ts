@@ -1,11 +1,11 @@
 import {
-  WorkflowActionType,
-  WorkflowRunStepStatus,
-  WorkflowTriggerType,
+  type WorkflowActionType,
+  type WorkflowRunStepStatus,
+  type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
-import { FilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
-import { Edge, Node } from '@xyflow/react';
-import { StepStatus } from 'twenty-shared/workflow';
+import { type FilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
+import { type Edge, type Node } from '@xyflow/react';
+import { type StepStatus } from 'twenty-shared/workflow';
 
 export type WorkflowDiagramStepNode = Node<WorkflowDiagramStepNodeData>;
 export type WorkflowDiagramNode = Node<WorkflowDiagramNodeData>;

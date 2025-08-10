@@ -1,5 +1,5 @@
 import { expect, jest } from '@storybook/jest';
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
 import { CommandMenuActionMenuDropdown } from '@/action-menu/components/CommandMenuActionMenuDropdown';

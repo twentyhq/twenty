@@ -1,6 +1,6 @@
 import { WorkflowRunDiagramBaseEdge } from '@/workflow/workflow-diagram/components/WorkflowRunDiagramBaseEdge';
-import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { EdgeProps, getBezierPath } from '@xyflow/react';
+import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { type EdgeProps, getBezierPath } from '@xyflow/react';
 
 type WorkflowDiagramDefaultEdgeRunProps = EdgeProps<WorkflowDiagramEdge>;
 

@@ -4,20 +4,20 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { FieldFocusContextProvider } from '@/object-record/record-field/contexts/FieldFocusContextProvider';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import {
-  FieldInputClickOutsideEvent,
-  FieldInputEvent,
+  type FieldInputClickOutsideEvent,
+  type FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
 
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordTitleCellContainer } from '@/object-record/record-title-cell/components/RecordTitleCellContainer';
 import {
   RecordTitleCellContext,
-  RecordTitleCellContextProps,
+  type RecordTitleCellContextProps,
 } from '@/object-record/record-title-cell/components/RecordTitleCellContext';
 import { RecordTitleCellFieldDisplay } from '@/object-record/record-title-cell/components/RecordTitleCellFieldDisplay';
 import { RecordTitleCellFieldInput } from '@/object-record/record-title-cell/components/RecordTitleCellFieldInput';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
-import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
+import { type RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 
 type RecordTitleCellProps = {

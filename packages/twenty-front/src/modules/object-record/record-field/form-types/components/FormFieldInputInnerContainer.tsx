@@ -3,7 +3,7 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { forwardRef, HTMLAttributes, Ref } from 'react';
+import { forwardRef, type HTMLAttributes, type Ref } from 'react';
 
 type FormFieldInputInnerContainerProps = {
   hasRightElement: boolean;

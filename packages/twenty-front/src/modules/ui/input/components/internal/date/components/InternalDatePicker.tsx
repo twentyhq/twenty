@@ -14,8 +14,8 @@ import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/g
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { UserContext } from '@/users/contexts/UserContext';
 import {
-  VariableDateViewFilterValueDirection,
-  VariableDateViewFilterValueUnit,
+  type VariableDateViewFilterValueDirection,
+  type VariableDateViewFilterValueUnit,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';

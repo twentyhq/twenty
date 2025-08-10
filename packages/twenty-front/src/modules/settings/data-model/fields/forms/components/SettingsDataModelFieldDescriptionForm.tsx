@@ -1,7 +1,7 @@
 import { Controller, useFormContext } from 'react-hook-form';
-import { z } from 'zod';
+import { type z } from 'zod';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
 
 import { TextArea } from '@/ui/input/components/TextArea';

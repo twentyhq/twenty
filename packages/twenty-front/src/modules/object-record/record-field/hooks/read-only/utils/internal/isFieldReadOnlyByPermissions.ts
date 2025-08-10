@@ -1,5 +1,5 @@
 import { isObjectReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isObjectReadOnly';
-import { ObjectPermission } from '~/generated/graphql';
+import { type ObjectPermission } from '~/generated/graphql';
 
 export type IsFieldReadOnlyByPermissionParams = {
   objectPermissions: ObjectPermission;

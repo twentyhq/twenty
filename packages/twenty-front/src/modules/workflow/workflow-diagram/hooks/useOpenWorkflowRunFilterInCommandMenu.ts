@@ -7,7 +7,7 @@ import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/state
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { isDefined } from 'twenty-shared/utils';
-import { StepStatus } from 'twenty-shared/workflow';
+import { type StepStatus } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
 
 export const useOpenWorkflowRunFilterInCommandMenu = () => {

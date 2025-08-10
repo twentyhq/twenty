@@ -4,7 +4,7 @@ import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { DropResult } from '@hello-pangea/dnd';
+import { type DropResult } from '@hello-pangea/dnd';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { getDragOperationType } from '../utils/getDragOperationType';

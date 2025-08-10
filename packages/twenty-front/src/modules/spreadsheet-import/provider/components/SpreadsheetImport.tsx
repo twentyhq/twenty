@@ -5,7 +5,7 @@ import { SpreadsheetMaxRecordImportCapacity } from '@/spreadsheet-import/constan
 import { useSpreadsheetImportInitialStep } from '@/spreadsheet-import/hooks/useSpreadsheetImportInitialStep';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { SpreadsheetImportStepperContainer } from '@/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer';
-import { SpreadsheetImportDialogOptions as SpreadsheetImportProps } from '@/spreadsheet-import/types';
+import { type SpreadsheetImportDialogOptions as SpreadsheetImportProps } from '@/spreadsheet-import/types';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
 import { useLingui } from '@lingui/react/macro';

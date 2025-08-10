@@ -1,4 +1,4 @@
-import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useTheme } from '@emotion/react';

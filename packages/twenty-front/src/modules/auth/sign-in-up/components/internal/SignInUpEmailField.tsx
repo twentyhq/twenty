@@ -1,4 +1,4 @@
-import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';

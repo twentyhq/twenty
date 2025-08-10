@@ -2,12 +2,12 @@ import { useRunWorkflowRecordActions } from '@/action-menu/actions/record-action
 import { useRunWorkflowRecordAgnosticActions } from '@/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions';
 import {
   ActionMenuContext,
-  ActionMenuContextType,
+  type ActionMenuContextType,
 } from '@/action-menu/contexts/ActionMenuContext';
 import { useRegisteredActions } from '@/action-menu/hooks/useRegisteredActions';
 import { useShouldActionBeRegisteredParams } from '@/action-menu/hooks/useShouldActionBeRegisteredParams';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const ActionMenuContextProviderWorkflowsEnabled = ({

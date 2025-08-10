@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
-import { MUTATION_MAX_MERGE_RECORDS } from 'twenty-shared/constants';
-import { FixedLengthArray } from '../types/FixedLengthArray';
+import { type MUTATION_MAX_MERGE_RECORDS } from 'twenty-shared/constants';
+import { type FixedLengthArray } from '../types/FixedLengthArray';
 
 export const getPositionWordLabel = (index: number): string => {
   const labels: FixedLengthArray<

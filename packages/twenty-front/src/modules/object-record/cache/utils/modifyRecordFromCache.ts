@@ -1,7 +1,7 @@
-import { ApolloCache, Modifiers } from '@apollo/client/cache';
+import { type ApolloCache, type Modifiers } from '@apollo/client/cache';
 
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from 'twenty-shared/utils';
 

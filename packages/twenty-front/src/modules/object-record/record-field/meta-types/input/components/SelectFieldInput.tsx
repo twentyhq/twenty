@@ -2,7 +2,7 @@ import { useClearField } from '@/object-record/record-field/hooks/useClearField'
 import { useSelectField } from '@/object-record/record-field/meta-types/hooks/useSelectField';
 import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { type FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { SelectInput } from '@/ui/field/input/components/SelectInput';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -10,7 +10,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/input';
 
 type SelectFieldInputProps = {
   onSubmit?: FieldInputEvent;

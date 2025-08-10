@@ -1,4 +1,4 @@
-import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 import { simpleQuotesStringSchema } from '~/utils/validation-schemas/simpleQuotesStringSchema';
 

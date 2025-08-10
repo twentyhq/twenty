@@ -1,6 +1,6 @@
+import typescriptParser from '@typescript-eslint/parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import typescriptParser from '@typescript-eslint/parser';
 import reactConfig from '../../eslint.config.react.js';
 
 const __filename = fileURLToPath(import.meta.url);

@@ -1,6 +1,6 @@
-import { FieldMetadata, FieldTsVectorMetadata } from '../FieldMetadata';
+import { type FieldMetadata, type FieldTsVectorMetadata } from '../FieldMetadata';
 
-import { FieldDefinition } from '../FieldDefinition';
+import { type FieldDefinition } from '../FieldDefinition';
 
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 

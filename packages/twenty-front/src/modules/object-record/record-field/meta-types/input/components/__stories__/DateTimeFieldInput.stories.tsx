@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { useEffect } from 'react';
 
@@ -14,7 +14,7 @@ import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/compon
 import { useDateTimeField } from '../../../hooks/useDateTimeField';
 import {
   DateTimeFieldInput,
-  DateTimeFieldInputProps,
+  type DateTimeFieldInputProps,
 } from '../DateTimeFieldInput';
 const formattedDate = new Date(2022, 0, 1, 2, 0, 0);
 

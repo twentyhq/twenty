@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import type { Point } from '@nivo/line';
-import { ReactElement } from 'react';
+import { type ReactElement } from 'react';
 
 const StyledTooltipContainer = styled.div`
   backdrop-filter: ${({ theme }) => theme.blur.medium};

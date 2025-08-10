@@ -1,6 +1,6 @@
 import { isNull, isObject, isUndefined } from '@sniptt/guards';
 
-import { FieldRelationToOneValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldRelationToOneValue } from '@/object-record/record-field/types/FieldMetadata';
 
 // TODO: add zod
 export const isFieldRelationToOneValue = (

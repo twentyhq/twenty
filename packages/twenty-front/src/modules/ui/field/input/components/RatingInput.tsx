@@ -3,7 +3,7 @@ import { useContext, useState } from 'react';
 
 import { useClearField } from '@/object-record/record-field/hooks/useClearField';
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
-import { FieldRatingValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldRatingValue } from '@/object-record/record-field/types/FieldMetadata';
 import { IconTwentyStarFilled } from 'twenty-ui/display';
 import { THEME_COMMON, ThemeContext } from 'twenty-ui/theme';
 

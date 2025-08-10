@@ -1,7 +1,7 @@
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import {
-  WorkflowStep,
-  WorkflowWithCurrentVersion,
+  type WorkflowStep,
+  type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 import { isDefined } from 'twenty-shared/utils';

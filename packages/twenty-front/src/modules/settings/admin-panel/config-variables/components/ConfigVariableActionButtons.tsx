@@ -8,7 +8,7 @@ import {
   IconRefreshAlert,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { ConfigSource, ConfigVariable } from '~/generated/graphql';
+import { ConfigSource, type ConfigVariable } from '~/generated/graphql';
 
 type ConfigVariableActionButtonsProps = {
   variable: ConfigVariable;

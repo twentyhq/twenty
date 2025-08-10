@@ -1,7 +1,7 @@
-import { CalendarChannel } from '@/accounts/types/CalendarChannel';
-import { ImapSmtpCaldavAccount } from '@/accounts/types/ImapSmtpCaldavAccount';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { MessageChannel } from './MessageChannel';
+import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
+import { type ImapSmtpCaldavAccount } from '@/accounts/types/ImapSmtpCaldavAccount';
+import { type ConnectedAccountProvider } from 'twenty-shared/types';
+import { type MessageChannel } from './MessageChannel';
 
 export type ConnectedAccount = {
   id: string;

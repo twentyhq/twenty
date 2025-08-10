@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 

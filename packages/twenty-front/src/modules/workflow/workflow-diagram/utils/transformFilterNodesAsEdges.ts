@@ -1,7 +1,7 @@
 import {
-  WorkflowDiagramEdge,
-  WorkflowDiagramEdgeType,
-  WorkflowDiagramNode,
+  type WorkflowDiagramEdge,
+  type WorkflowDiagramEdgeType,
+  type WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { isDefined } from 'twenty-shared/utils';
 

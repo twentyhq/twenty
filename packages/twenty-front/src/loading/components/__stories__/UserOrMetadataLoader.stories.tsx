@@ -1,6 +1,6 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { expect } from '@storybook/jest';
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 import { HttpResponse, graphql, http } from 'msw';
 
@@ -11,7 +11,7 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import {
   PageDecorator,
-  PageDecoratorArgs,
+  type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
 import { mockedClientConfig } from '~/testing/mock-data/config';

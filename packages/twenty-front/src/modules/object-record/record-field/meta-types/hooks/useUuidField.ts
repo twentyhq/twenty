@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { FieldUUidValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldUUidValue } from '@/object-record/record-field/types/FieldMetadata';
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
 import { isFieldTextValue } from '@/object-record/record-field/types/guards/isFieldTextValue';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';

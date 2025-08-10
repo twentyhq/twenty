@@ -1,6 +1,6 @@
-import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useTheme } from '@emotion/react';
-import { BaseEdge, EdgeProps, getBezierPath } from '@xyflow/react';
+import { BaseEdge, type EdgeProps, getBezierPath } from '@xyflow/react';
 
 type WorkflowDiagramDefaultEdgeReadonlyProps = EdgeProps<WorkflowDiagramEdge>;
 

@@ -1,4 +1,4 @@
-import { Decorator, Meta, StoryObj } from '@storybook/react';
+import { type Decorator, type Meta, type StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect, useState } from 'react';
 
@@ -14,7 +14,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { useNumberField } from '../../../hooks/useNumberField';
-import { NumberFieldInput, NumberFieldInputProps } from '../NumberFieldInput';
+import { NumberFieldInput, type NumberFieldInputProps } from '../NumberFieldInput';
 
 const NumberFieldValueSetterEffect = ({ value }: { value: number }) => {
   const { setFieldValue } = useNumberField();

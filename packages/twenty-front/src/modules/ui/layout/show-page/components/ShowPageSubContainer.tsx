@@ -1,11 +1,11 @@
 import { RecordShowRightDrawerActionMenu } from '@/action-menu/components/RecordShowRightDrawerActionMenu';
 import { RecordShowRightDrawerOpenRecordButton } from '@/action-menu/components/RecordShowRightDrawerOpenRecordButton';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { CardComponents } from '@/object-record/record-show/components/CardComponents';
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
-import { RecordLayout } from '@/object-record/record-show/types/RecordLayout';
+import { type RecordLayout } from '@/object-record/record-show/types/RecordLayout';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
@@ -13,7 +13,7 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
-import { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';

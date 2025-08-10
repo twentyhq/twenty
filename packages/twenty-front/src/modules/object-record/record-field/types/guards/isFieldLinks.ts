@@ -1,7 +1,7 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { FieldDefinition } from '../FieldDefinition';
-import { FieldLinksMetadata, FieldMetadata } from '../FieldMetadata';
+import { type FieldDefinition } from '../FieldDefinition';
+import { type FieldLinksMetadata, type FieldMetadata } from '../FieldMetadata';
 
 export const isFieldLinks = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type'>,

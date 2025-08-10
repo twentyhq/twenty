@@ -1,4 +1,4 @@
-import { ObjectPermission } from '~/generated/graphql';
+import { type ObjectPermission } from '~/generated/graphql';
 
 type IsObjectReadOnlyParams = {
   objectPermissions: ObjectPermission;

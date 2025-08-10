@@ -1,10 +1,10 @@
 /* @license Enterprise */
 
-import { SSOIdentitiesProvidersParamsSchema } from '@/settings/security/validation-schemas/SSOIdentityProviderSchema';
-import { z } from 'zod';
+import { type SSOIdentitiesProvidersParamsSchema } from '@/settings/security/validation-schemas/SSOIdentityProviderSchema';
+import { type z } from 'zod';
 import {
-  IdentityProviderType,
-  SsoIdentityProviderStatus,
+  type IdentityProviderType,
+  type SsoIdentityProviderStatus,
 } from '~/generated/graphql';
 
 export type SSOIdentityProvider = {

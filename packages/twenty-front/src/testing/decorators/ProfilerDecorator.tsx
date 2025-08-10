@@ -1,4 +1,4 @@
-import { Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react';
 import { useRecoilState } from 'recoil';
 
 import { ProfilerWrapper } from '~/testing/profiling/components/ProfilerWrapper';

@@ -4,14 +4,14 @@ import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/re
 import { phoneSchema } from '@/object-record/record-field/validation-schemas/phoneSchema';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
-import { E164Number, parsePhoneNumber } from 'libphonenumber-js';
+import { type E164Number, parsePhoneNumber } from 'libphonenumber-js';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 import { createPhonesFromFieldValue } from '@/object-record/record-field/meta-types/input/utils/phonesUtils';
-import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { type FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { css } from '@emotion/react';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';

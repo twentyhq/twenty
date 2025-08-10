@@ -1,4 +1,4 @@
-import { DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
+import { type DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
 import { createRequiredContext } from '~/utils/createRequiredContext';
 
 export type RecordTableRowDraggableContextValue = {

@@ -1,4 +1,4 @@
-import { SelectionBox } from '@/ui/utilities/drag-select/types/SelectionBox';
+import { type SelectionBox } from '@/ui/utilities/drag-select/types/SelectionBox';
 
 const calculateBoxArea = (box: SelectionBox): number => {
   return box.width * box.height;

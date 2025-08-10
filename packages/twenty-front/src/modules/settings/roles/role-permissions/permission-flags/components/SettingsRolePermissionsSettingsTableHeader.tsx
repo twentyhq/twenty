@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { Checkbox } from 'twenty-ui/input';
 
-import { SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
+import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useRecoilState } from 'recoil';
 import { v4 } from 'uuid';

@@ -1,12 +1,12 @@
 import {
   FormCountryCodeSelectInput,
-  FormCountryCodeSelectInputUpdatedValue,
+  type FormCountryCodeSelectInputUpdatedValue,
 } from '@/object-record/record-field/form-types/components/FormCountryCodeSelectInput';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/form-types/components/FormNestedFieldInputContainer';
 import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
-import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { type FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { getCountryCallingCode } from 'libphonenumber-js';
 

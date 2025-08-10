@@ -1,4 +1,4 @@
-import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 
 export const generateNewSelectOptionLabel = (
   values: Pick<FieldMetadataItemOption, 'label'>[],

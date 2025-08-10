@@ -1,7 +1,7 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
-  WorkflowManualTriggerAvailability,
-  WorkflowManualTriggerSettings,
+  type WorkflowManualTriggerAvailability,
+  type WorkflowManualTriggerSettings,
 } from '@/workflow/types/Workflow';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { assertUnreachable } from 'twenty-shared/utils';

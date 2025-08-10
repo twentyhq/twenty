@@ -1,5 +1,5 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { SettingsDataModelFieldTextFormValues } from '@/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type SettingsDataModelFieldTextFormValues } from '@/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm';
 import { DEFAULT_SELECTION_ADDRESS_WITH_MESSAGES } from '@/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages';
 import { useFormContext } from 'react-hook-form';
 

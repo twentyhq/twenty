@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { z } from 'zod';
+import { type z } from 'zod';
 import { settingsAIAgentFormSchema } from '../validation-schemas/settingsAIAgentFormSchema';
 
 export type SettingsAIAgentFormValues = z.infer<

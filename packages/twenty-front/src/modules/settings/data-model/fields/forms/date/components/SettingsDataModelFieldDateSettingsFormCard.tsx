@@ -1,17 +1,17 @@
 import styled from '@emotion/styled';
 import { useFormContext } from 'react-hook-form';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
 import {
   SettingsDataModelFieldDateForm,
-  SettingsDataModelFieldDateFormValues,
+  type SettingsDataModelFieldDateFormValues,
 } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm';
 import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/forms/date/hooks/useDateSettingsFormInitialValues';
 import {
   SettingsDataModelFieldPreviewCard,
-  SettingsDataModelFieldPreviewCardProps,
+  type SettingsDataModelFieldPreviewCardProps,
 } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 
 type SettingsDataModelFieldDateSettingsFormCardProps = {

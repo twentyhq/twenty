@@ -7,7 +7,7 @@ import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useEffect, useState } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { Role } from '~/generated/graphql';
+import { type Role } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type SettingsRoleEditEffectProps = {

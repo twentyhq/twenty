@@ -15,7 +15,7 @@ import {
   TooltipDelay,
   useIcons,
 } from 'twenty-ui/display';
-import { Role } from '~/generated-metadata/graphql';
+import { type Role } from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledAssignedText = styled.div`

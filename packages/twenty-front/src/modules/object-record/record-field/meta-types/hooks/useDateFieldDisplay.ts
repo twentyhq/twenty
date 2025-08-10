@@ -2,8 +2,8 @@ import { useContext } from 'react';
 
 import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
-import { FieldDateMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { type FieldDateMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const useDateFieldDisplay = () => {

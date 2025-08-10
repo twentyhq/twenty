@@ -7,8 +7,8 @@ import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workf
 import { useOpenWorkflowViewFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowViewFilterInCommandMenu';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import {
-  WorkflowDiagramEdge,
-  WorkflowDiagramEdgeData,
+  type WorkflowDiagramEdge,
+  type WorkflowDiagramEdgeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
 import { css, useTheme } from '@emotion/react';
@@ -17,7 +17,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   BaseEdge,
   EdgeLabelRenderer,
-  EdgeProps,
+  type EdgeProps,
   getBezierPath,
 } from '@xyflow/react';
 import { useContext } from 'react';

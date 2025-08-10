@@ -11,8 +11,8 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
-import { GraphQLView } from '@/views/types/GraphQLView';
-import { ViewField } from '@/views/types/ViewField';
+import { type GraphQLView } from '@/views/types/GraphQLView';
+import { type ViewField } from '@/views/types/ViewField';
 import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 

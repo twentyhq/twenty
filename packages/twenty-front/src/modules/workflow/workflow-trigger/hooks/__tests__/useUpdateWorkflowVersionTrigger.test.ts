@@ -1,8 +1,8 @@
 import { act, renderHook } from '@testing-library/react';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import {
-  WorkflowTrigger,
-  WorkflowWithCurrentVersion,
+  type WorkflowTrigger,
+  type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 
 const mockUpdateOneRecord = jest.fn();

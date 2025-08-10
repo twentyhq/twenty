@@ -4,9 +4,9 @@ import { FIND_ONE_SERVERLESS_FUNCTION_SOURCE_CODE } from '@/settings/serverless-
 import { useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 import {
-  DeleteOneServerlessFunctionMutation,
-  DeleteOneServerlessFunctionMutationVariables,
-  ServerlessFunctionIdInput,
+  type DeleteOneServerlessFunctionMutation,
+  type DeleteOneServerlessFunctionMutationVariables,
+  type ServerlessFunctionIdInput,
 } from '~/generated-metadata/graphql';
 
 export const useDeleteOneServerlessFunction = () => {

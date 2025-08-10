@@ -1,12 +1,12 @@
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';

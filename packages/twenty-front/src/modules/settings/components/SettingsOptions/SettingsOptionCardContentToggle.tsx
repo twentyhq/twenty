@@ -9,7 +9,7 @@ import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOpti
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useId } from 'react';
-import { IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/display';
 import { Toggle } from 'twenty-ui/input';
 
 const StyledSettingsOptionCardToggleContent = styled(

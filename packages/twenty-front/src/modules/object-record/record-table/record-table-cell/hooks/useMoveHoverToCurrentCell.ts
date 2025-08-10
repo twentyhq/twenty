@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
+import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';

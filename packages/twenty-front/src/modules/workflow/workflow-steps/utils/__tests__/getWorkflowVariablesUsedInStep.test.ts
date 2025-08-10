@@ -1,4 +1,4 @@
-import { WorkflowStep } from '@/workflow/types/Workflow';
+import { type WorkflowStep } from '@/workflow/types/Workflow';
 import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
 
 describe('getWorkflowVariablesUsedInStep', () => {

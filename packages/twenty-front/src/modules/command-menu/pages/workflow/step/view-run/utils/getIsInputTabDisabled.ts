@@ -1,5 +1,5 @@
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
-import { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
+import { type WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 
 export const getIsInputTabDisabled = ({
   stepExecutionStatus,
