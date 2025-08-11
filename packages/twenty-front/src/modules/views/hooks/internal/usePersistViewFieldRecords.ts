@@ -21,7 +21,7 @@ import { useApolloClient } from '@apollo/client';
 import { isNull } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { CoreViewField, FeatureFlagKey } from '~/generated/graphql';
 
 export const usePersistViewFieldRecords = () => {
   const featureFlags = useFeatureFlagsMap();
@@ -154,7 +154,7 @@ export const usePersistViewFieldRecords = () => {
                 position: viewField.position,
                 size: viewField.size,
                 workspaceId: currentWorkspace?.id,
-              },
+              } satisfies Partial<CoreViewField>,
             },
             update: (cache, { data }) => {
               const record = data?.['createCoreViewField'];
@@ -196,7 +196,7 @@ export const usePersistViewFieldRecords = () => {
                 position: viewField.position,
                 size: viewField.size,
                 aggregateOperation: viewField.aggregateOperation,
-              },
+              } satisfies Partial<CoreViewField>,
             },
             update: (cache, { data }) => {
               const record = data?.['updateCoreViewField'];

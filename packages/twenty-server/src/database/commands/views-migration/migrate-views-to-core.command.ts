@@ -2,7 +2,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { type ViewFilterOperand as SharedViewFilterOperand } from 'twenty-shared/types';
-import { DataSource, type QueryRunner, Repository } from 'typeorm';
+import { DataSource, Repository, type QueryRunner } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -29,7 +29,7 @@ import { type ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects
 import { type ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 import { type ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 import { convertViewFilterOperandToCoreOperand } from 'src/modules/view/utils/convert-view-filter-operand-to-core-operand.util';
-import { transformViewFilterWorkspaceValueToCoreValue } from 'src/modules/view/utils/transform-view-filter-workspace-value-to-core-value';
+import { convertViewFilterWorkspaceValueToCoreValue } from 'src/modules/view/utils/convert-view-filter-workspace-value-to-core-value';
 
 @Command({
   name: 'migrate:views-to-core',
@@ -321,7 +321,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         operand: convertViewFilterOperandToCoreOperand(
           filter.operand as SharedViewFilterOperand,
         ),
-        value: transformViewFilterWorkspaceValueToCoreValue(filter.value),
+        value: convertViewFilterWorkspaceValueToCoreValue(filter.value),
         viewFilterGroupId: filter.viewFilterGroupId,
         workspaceId,
         createdAt: new Date(filter.createdAt),
