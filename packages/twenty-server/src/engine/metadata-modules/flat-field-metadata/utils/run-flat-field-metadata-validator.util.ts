@@ -1,0 +1,20 @@
+import { FieldMetadataException, FieldMetadataExceptionCode } from "src/engine/metadata-modules/field-metadata/field-metadata.exception";
+import { FailedFlatFieldMetadataValidationExceptions } from "src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type";
+import { FlatMetadataValidator } from "src/engine/metadata-modules/types/flat-metadata-validator.type";
+
+export const runFlatFieldMetadataValidator = <T>(
+  elementToValidate: T,
+  { message, validator }: FlatMetadataValidator<T>,
+): FailedFlatFieldMetadataValidationExceptions | undefined => {
+  const validationFailed = validator(elementToValidate);
+
+  if (validationFailed) {
+    return new FieldMetadataException(
+      message,
+      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      {
+        userFriendlyMessage: message,
+      },
+    );
+  }
+};
