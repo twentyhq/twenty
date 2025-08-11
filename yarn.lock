@@ -23375,6 +23375,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/passport-microsoft@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@types/passport-microsoft@npm:2.1.0"
+  dependencies:
+    "@types/passport-oauth2": "npm:*"
+  checksum: 10c0/449b605a9790fcaac9b6fa971ebf80d2d8b75261f1f4748416daa530dfea2ca13ad0d42b65e567088486ab0f6e11323fb0f6d4d5e471bd72cf758e70d18637b4
+  languageName: node
+  linkType: hard
+
 "@types/passport-oauth2@npm:*":
   version: 1.4.17
   resolution: "@types/passport-oauth2@npm:1.4.17"
@@ -56081,6 +56090,7 @@ __metadata:
     "@lingui/react": "npm:5.1.2"
     "@lingui/vite-plugin": "npm:5.1.2"
     "@microsoft/microsoft-graph-client": "npm:3.0.7"
+    "@microsoft/microsoft-graph-types": "npm:^2.40.0"
     "@monaco-editor/react": "npm:^4.6.0"
     "@nestjs/axios": "npm:3.0.2"
     "@nestjs/cache-manager": "npm:^2.2.1"
@@ -56383,7 +56393,6 @@ __metadata:
     "@hookform/resolvers": "npm:^3.1.1"
     "@linaria/core": "npm:^6.2.0"
     "@linaria/react": "npm:^6.2.1"
-    "@microsoft/microsoft-graph-types": "npm:^2.40.0"
     "@nestjs/cli": "npm:^9.0.0"
     "@nestjs/schematics": "npm:^9.0.0"
     "@nestjs/testing": "npm:^9.0.0"
@@ -56464,6 +56473,7 @@ __metadata:
     "@types/node": "npm:^24.0.0"
     "@types/passport-google-oauth20": "npm:^2.0.11"
     "@types/passport-jwt": "npm:^3.0.8"
+    "@types/passport-microsoft": "npm:^2.1.0"
     "@types/pluralize": "npm:^0.0.33"
     "@types/react": "npm:^18.2.39"
     "@types/react-datepicker": "npm:^6.2.0"

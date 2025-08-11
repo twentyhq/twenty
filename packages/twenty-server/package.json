@@ -39,6 +39,7 @@
     "@lingui/react": "5.1.2",
     "@lingui/vite-plugin": "5.1.2",
     "@microsoft/microsoft-graph-client": "3.0.7",
+    "@microsoft/microsoft-graph-types": "^2.40.0",
     "@monaco-editor/react": "^4.6.0",
     "@nestjs/axios": "3.0.2",
     "@nestjs/cache-manager": "^2.2.1",
