@@ -54,6 +54,7 @@
     "buffer": "^6.0.3",
     "docx": "^9.1.0",
     "file-saver": "^2.0.5",
+    "graphql-sse": "^2.5.4",
     "input-otp": "^1.4.2",
     "react-markdown": "^10.1.0",
     "react-qr-code": "^2.0.18",
