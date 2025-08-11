@@ -1,9 +1,10 @@
-import { act, renderHook } from '@testing-library/react';
-import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import {
   type WorkflowTrigger,
   type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
+import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
+import { act, renderHook } from '@testing-library/react';
+import { RecoilRoot } from 'recoil';
 
 const mockUpdateOneRecord = jest.fn();
 const mockGetUpdatableWorkflowVersion = jest.fn();
@@ -55,6 +56,9 @@ describe('useUpdateWorkflowVersionTrigger', () => {
 
     const { result } = renderHook(() =>
       useUpdateWorkflowVersionTrigger({ workflow: mockWorkflow }),
+      {
+        wrapper: RecoilRoot,
+      },
     );
 
     await act(async () => {
@@ -79,6 +83,9 @@ describe('useUpdateWorkflowVersionTrigger', () => {
 
     const { result } = renderHook(() =>
       useUpdateWorkflowVersionTrigger({ workflow: mockWorkflow }),
+      {
+        wrapper: RecoilRoot,
+      },
     );
 
     await act(async () => {
