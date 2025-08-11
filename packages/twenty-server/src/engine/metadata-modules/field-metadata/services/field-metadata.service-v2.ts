@@ -222,21 +222,14 @@ export class FieldMetadataServiceV2 {
 
     const updatedFlatFieldMetadata = inputTranspilationResult.result;
 
-    const validationErrors = [
-      ...this.flatFieldMetadataValidatorService.validateFlatFieldMetadataUpdate(
-        {
-          existingFlatObjectMetadataMaps,
-          updatedFlatFieldMetadata,
-        },
-      ),
-      ...(await this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadataIntegrity(
+    const validationErrors =
+      await this.flatFieldMetadataValidatorService.validateFlatFieldMetadataUpdate(
         {
           existingFlatObjectMetadataMaps,
           flatFieldMetadataToValidate: updatedFlatFieldMetadata,
           workspaceId,
         },
-      )),
-    ];
+      );
 
     if (validationErrors.length > 0) {
       throw new MultipleMetadataValidationErrors(
@@ -329,7 +322,7 @@ export class FieldMetadataServiceV2 {
         });
 
       const validationErrors =
-        await this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadataIntegrity(
+        await this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadataCreation(
           {
             existingFlatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
             flatFieldMetadataToValidate: flatFieldMetadataToCreate,
