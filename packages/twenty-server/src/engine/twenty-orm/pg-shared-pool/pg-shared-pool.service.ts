@@ -347,7 +347,6 @@ export class PgPoolSharedService {
     function SharedPool(this: Pool, config?: PoolConfig): Pool {
       // When called as a function (without new), make sure to return a new instance
       if (!(this instanceof SharedPool)) {
-         
         // @ts-expect-error We know this works at runtime
         return new SharedPool(config);
       }

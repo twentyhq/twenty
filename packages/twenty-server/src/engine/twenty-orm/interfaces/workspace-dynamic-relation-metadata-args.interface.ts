@@ -44,7 +44,7 @@ export interface WorkspaceDynamicRelationMetadataArgs {
   /**
    * Class to which relation is applied.
    */
-   
+
   readonly target: Function;
 
   /**
