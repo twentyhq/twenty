@@ -23,7 +23,6 @@ export const MKT_PRODUCT_FIELD_IDS = {
   // TODO: check if this can be deleted
   mktAttributes: 'bd58f103-651f-44a3-892e-5431248addfe',
   mktVariants: 'fa92f83f-888d-4ab7-a2ba-4fc034bcadd8',
-  orderItems: 'c9d8e7f6-5432-1098-7654-321098765432',
   accountOwner: 'f836dd4e-1a6e-40ec-b8ce-4bcee5125fe0',
   timelineActivities: 'e4ecfb53-2ad5-4a78-ae3f-a293a8478405',
   searchVector: 'dc61cde2-4483-4418-91e4-bb7bc8ded759',
@@ -101,21 +100,6 @@ export const MKT_ORDER_FIELD_IDS = {
   accountOwner: '8e8ab1f5-3777-488f-ac6b-495f6b816c5f',
   timelineActivities: '5ddc8d4c-e8f3-4b36-a367-3b812d9f7d02',
   searchVector: '68623375-43f6-49ed-b29f-291f4cd34921',
-  orderItems: '1a2b3c4d-5e6f-7890-1234-567890abcdef',
-};
-
-export const MKT_ORDER_ITEM_FIELD_IDS = {
-  name: 'f1e2d3c4-b5a6-9786-5432-109876543210',
-  quantity: '2b3c4d5e-6f70-8192-3456-789012345678',
-  unitPrice: '3c4d5e6f-7081-9293-4567-890123456789',
-  totalPrice: '4d5e6f70-8192-a3b4-5678-901234567890',
-  position: '5e6f7081-9293-b4c5-6789-012345678901',
-  createdBy: '6f708192-a3b4-c5d6-7890-123456789012',
-  mktOrder: '7081a3b4-c5d6-e7f8-8901-234567890123',
-  mktProduct: '81a3b4c5-d6e7-f890-9012-345678901234',
-  accountOwner: '9a3b4c5d-6e7f-8091-0123-456789012345',
-  timelineActivities: 'a3b4c5d6-e7f8-9012-1234-567890123456',
-  searchVector: 'b4c5d6e7-f890-1234-2345-678901234567',
 };
 
 export const MKT_LICENSE_FIELD_IDS = {
@@ -165,7 +149,6 @@ export const TIMELINE_ACTIVITY_MKT_FIELD_IDS = {
   mktValue: '9022a8c1-5948-473e-a361-1ddfb017a4f2',
   mktVariantAttribute: 'f656fa33-96e7-42a0-8f4f-f35dfcb0acae',
   mktOrder: 'e0919045-74af-4800-bb40-ccef297253a9',
-  mktOrderItem: 'c8d7e6f5-4321-0987-6543-21098765432a',
   mktLicense: '4b8283ce-daa4-4f11-87d0-2ade1cd6dc81',
   mktContract: 'b8c23b61-29ab-47e5-b412-4789f0653a69',
   mktOrderItem: 'c8d7e6f5-4321-0987-6543-21098765432a',
