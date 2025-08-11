@@ -326,7 +326,10 @@ type DateTimePickerProps = {
   onClear?: () => void;
 };
 
-type DatePickerPropsType = ReactDatePickerLibProps<boolean | undefined, boolean | undefined>;
+type DatePickerPropsType = ReactDatePickerLibProps<
+  boolean | undefined,
+  boolean | undefined
+>;
 
 const ReactDatePicker = lazy(
   () =>

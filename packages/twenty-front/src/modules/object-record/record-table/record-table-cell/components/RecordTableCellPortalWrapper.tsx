@@ -43,34 +43,36 @@ export const RecordTableCellPortalWrapper = ({
     return null;
   }
 
-  return <>
-  {createPortal(
-    <RecordTableRowContextProvider
-      value={{
-        recordId,
-        rowIndex: position.row,
-        isSelected: false,
-        inView: true,
-        pathToShowPage:
-          getBasePathToShowPage({
+  return (
+    <>
+      {createPortal(
+        <RecordTableRowContextProvider
+          value={{
+            recordId,
+            rowIndex: position.row,
+            isSelected: false,
+            inView: true,
+            pathToShowPage:
+              getBasePathToShowPage({
+                objectNameSingular: objectMetadataItem.nameSingular,
+              }) + recordId,
             objectNameSingular: objectMetadataItem.nameSingular,
-          }) + recordId,
-        objectNameSingular: objectMetadataItem.nameSingular,
-        isRecordReadOnly,
-      }}
-    >
-      <RecordTableCellContext.Provider
-        value={{
-          columnDefinition: visibleTableColumns[position.column],
-          cellPosition: position,
-        }}
-      >
-        <RecordTableCellFieldContextWrapper>
-          {children}
-        </RecordTableCellFieldContextWrapper>
-      </RecordTableCellContext.Provider>
-    </RecordTableRowContextProvider>,
-    anchorElement,
-  )}
-  </>;
+            isRecordReadOnly,
+          }}
+        >
+          <RecordTableCellContext.Provider
+            value={{
+              columnDefinition: visibleTableColumns[position.column],
+              cellPosition: position,
+            }}
+          >
+            <RecordTableCellFieldContextWrapper>
+              {children}
+            </RecordTableCellFieldContextWrapper>
+          </RecordTableCellContext.Provider>
+        </RecordTableRowContextProvider>,
+        anchorElement,
+      )}
+    </>
+  );
 };

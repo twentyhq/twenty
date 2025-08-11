@@ -128,7 +128,7 @@ export const generateColumns = (
                 />,
                 document.body,
               )}
-            </>
+          </>
         </StyledHeaderContainer>
       ),
       editable: column.fieldType.type !== 'checkbox',

@@ -16,16 +16,18 @@ export const RecordGroupReorderConfirmationModal = ({
     recordIndexRecordGroupSortComponentState,
   );
 
-  return <>
-  {createPortal(
-    <ConfirmationModal
-      modalId={RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID}
-      title="Group sorting"
-      subtitle={`Would you like to remove ${recordGroupSort} group sorting?`}
-      onConfirmClick={onConfirmClick}
-      confirmButtonText="Remove"
-    />,
-      document.body,
-    )}
-  </>;
+  return (
+    <>
+      {createPortal(
+        <ConfirmationModal
+          modalId={RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID}
+          title="Group sorting"
+          subtitle={`Would you like to remove ${recordGroupSort} group sorting?`}
+          onConfirmClick={onConfirmClick}
+          confirmButtonText="Remove"
+        />,
+        document.body,
+      )}
+    </>
+  );
 };
