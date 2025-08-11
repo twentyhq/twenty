@@ -100,7 +100,7 @@
     "@lingui/swc-plugin": "^5.6.0",
     "@lingui/vite-plugin": "^5.1.2",
     "@types/apollo-upload-client": "^17.0.2",
-    "@types/file-saver": "^2",
+    "@types/file-saver": "^2.0.7",
     "@types/js-cookie": "^3.0.3",
     "@typescript-eslint/eslint-plugin": "^8.39.0",
     "@typescript-eslint/parser": "^8.39.0",
