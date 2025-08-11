@@ -2,7 +2,6 @@ import { type EachTestingContext } from 'twenty-shared/testing';
 
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-or-throw.utils';
 
-
 type ValidateMetadataNameTestContext = EachTestingContext<{
   input: string;
   shouldNotThrow?: true;
