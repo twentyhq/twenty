@@ -1,7 +1,10 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { type FieldDefinition } from '../FieldDefinition';
-import { type FieldDateTimeMetadata, type FieldMetadata } from '../FieldMetadata';
+import {
+  type FieldDateTimeMetadata,
+  type FieldMetadata,
+} from '../FieldMetadata';
 
 export const isFieldDateTime = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type'>,

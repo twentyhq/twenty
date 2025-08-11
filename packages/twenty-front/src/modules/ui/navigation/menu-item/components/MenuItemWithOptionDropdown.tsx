@@ -1,7 +1,12 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useTheme } from '@emotion/react';
 import { type Placement } from '@floating-ui/react';
-import { type FunctionComponent, type MouseEvent, type ReactElement, type ReactNode } from 'react';
+import {
+  type FunctionComponent,
+  type MouseEvent,
+  type ReactElement,
+  type ReactNode,
+} from 'react';
 import {
   IconChevronRight,
   type IconComponent,

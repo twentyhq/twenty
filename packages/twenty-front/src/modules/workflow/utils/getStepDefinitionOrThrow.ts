@@ -1,4 +1,7 @@
-import { type WorkflowAction, type WorkflowTrigger } from '@/workflow/types/Workflow';
+import {
+  type WorkflowAction,
+  type WorkflowTrigger,
+} from '@/workflow/types/Workflow';
 import { findStepPosition } from '@/workflow/utils/findStepPosition';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { isDefined } from 'twenty-shared/utils';

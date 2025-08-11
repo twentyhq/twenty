@@ -88,11 +88,8 @@ export const SaveValidJson: Story = {
       return editor;
     });
 
-
     if (!editor) {
-
       throw new Error('Editor element not found');
-
     }
 
     await userEvent.type(editor, '{{ "a": {{ "b" :  "d" } }');
@@ -164,11 +161,8 @@ export const DoesNotIgnoreInvalidJson: Story = {
       return editor;
     });
 
-
     if (!editor) {
-
       throw new Error('Editor element not found');
-
     }
 
     await userEvent.type(editor, 'lol');
@@ -336,11 +330,8 @@ export const DoesNotBreakWhenUserInsertsNewlineInJsonString: Story = {
       return editor;
     });
 
-
     if (!editor) {
-
       throw new Error('Editor element not found');
-
     }
 
     await userEvent.type(editor, '"a{Enter}b"');
@@ -363,11 +354,8 @@ export const AcceptsJsonEncodedNewline: Story = {
       return editor;
     });
 
-
     if (!editor) {
-
       throw new Error('Editor element not found');
-
     }
 
     await userEvent.type(editor, '"a\\nb"');

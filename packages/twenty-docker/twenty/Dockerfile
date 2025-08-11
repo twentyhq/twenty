@@ -7,6 +7,7 @@ WORKDIR /app
 COPY ./package.json ./yarn.lock ./.yarnrc.yml ./tsconfig.base.json ./nx.json /app/
 COPY ./.yarn/releases /app/.yarn/releases
 COPY ./.yarn/patches /app/.yarn/patches
+RUN npx nx --version
 
 COPY ./.prettierrc /app/
 COPY ./packages/twenty-emails/package.json /app/packages/twenty-emails/
@@ -38,7 +39,6 @@ RUN mv /app/packages/twenty-server/build /app/packages/twenty-server/dist
 RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-server
 
 
-# Build the front
 FROM common-deps as twenty-front-build
 
 ARG REACT_APP_SERVER_BASE_URL
