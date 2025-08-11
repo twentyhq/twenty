@@ -184,6 +184,12 @@ export class ObjectRecordsToGraphqlConnectionHelper {
       }
 
       if (isFieldMetadataTypeRelation(fieldMetadata)) {
+
+        const fieldMetadataNameWithId = `${fieldMetadata.name}Id`;
+        if(isDefined(objectRecord[fieldMetadataNameWithId])){
+          processedObjectRecord[fieldMetadataNameWithId] = objectRecord[fieldMetadataNameWithId];
+        }
+
         const objectValue = objectRecord[fieldMetadata.name];
 
         if (!isDefined(objectValue)) {
@@ -253,6 +259,11 @@ export class ObjectRecordsToGraphqlConnectionHelper {
           relationDirection: fieldMetadata.settings.relationType,
           targetObjectMetadata,
         });
+
+        const fieldMetadataNameWithId = `${fieldMetadata.name}Id`;
+        if(isDefined(objectRecord[fieldMetadataNameWithId])){
+          processedObjectRecord[fieldMetadataNameWithId] = objectRecord[fieldMetadataNameWithId];
+        }
 
         const objectValue = objectRecord[morphRelationFieldName];
 
