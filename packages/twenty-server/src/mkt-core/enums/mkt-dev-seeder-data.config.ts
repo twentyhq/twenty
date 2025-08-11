@@ -65,6 +65,11 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
   },
   // Order configs (orders must come before contracts)
   {
+    tableName: 'mktContract',
+    pgColumns: MKT_CONTRACT_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_CONTRACT_DATA_SEEDS,
+  },
+  {
     tableName: 'mktOrder',
     pgColumns: MKT_ORDER_DATA_SEED_COLUMNS,
     recordSeeds: MKT_ORDER_DATA_SEEDS,
