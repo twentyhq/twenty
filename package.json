@@ -99,7 +99,6 @@
     "@storybook/addon-essentials": "8.6.14",
     "@storybook/addon-interactions": "8.6.14",
     "@storybook/addon-links": "8.6.14",
-    "@storybook/addon-onboarding": "8.6.14",
     "@storybook/blocks": "8.6.14",
     "@storybook/core-server": "8.6.14",
     "@storybook/icons": "^1.2.9",
