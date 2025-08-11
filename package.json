@@ -4,11 +4,7 @@
     "@apollo/client": "^3.7.17",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    
     "@floating-ui/react": "^0.24.3",
-    
-    
-    
     "@linaria/core": "^6.2.0",
     "@linaria/react": "^6.2.1",
     "@react-email/components": "0.0.35",
@@ -17,33 +13,21 @@
     "@sentry/react": "^9.26.0",
     "@sniptt/guards": "^0.2.0",
     "@tabler/icons-react": "^3.31.0",
-    
     "@wyw-in-js/vite": "^0.5.3",
-    
     "add": "^2.0.6",
-    
     "archiver": "^7.0.1",
-    
-    
     "danger-plugin-todos": "^1.3.1",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
     "deep-equal": "^2.2.2",
-    
     "dotenv-cli": "^7.2.1",
     "drizzle-orm": "^0.29.3",
-    
     "file-type": "16.5.4",
     "framer-motion": "^11.18.0",
     "fuse.js": "^7.1.0",
     "googleapis": "105",
-    
     "hex-rgb": "^5.0.0",
-    
     "immer": "^10.1.1",
-    
-    
-    
     "libphonenumber-js": "^1.10.26",
     "lodash.camelcase": "^4.3.0",
     "lodash.chunk": "^4.2.0",
@@ -66,30 +50,21 @@
     "microdiff": "^1.3.2",
     "moize": "^6.1.6",
     "patch-package": "^8.0.0",
-    
     "planer": "^1.2.0",
     "pluralize": "^8.0.0",
-    
-    
     "react": "^18.2.0",
-    
     "react-dom": "^18.2.0",
-    
     "react-responsive": "^9.0.2",
     "react-router-dom": "^6.4.4",
-    
     "react-tooltip": "^5.13.1",
     "recoil": "^0.7.7",
     "rehype-slug": "^6.0.0",
     "remark-behead": "^3.1.0",
     "remark-gfm": "^3.0.1",
-    
     "rxjs": "^7.2.0",
     "semver": "^7.5.4",
-    
     "slash": "^5.1.0",
     "storybook-addon-mock-date": "^0.6.0",
-    
     "ts-key-enum": "^2.0.12",
     "tslib": "^2.3.0",
     "type-fest": "4.10.1",
@@ -144,7 +119,6 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/addressparser": "^1.0.3",
-    "@types/apollo-upload-client": "^17.0.2",
     "@types/bcrypt": "^5.0.0",
     "@types/bytes": "^3.1.1",
     "@types/chrome": "^0.0.267",
@@ -155,7 +129,6 @@
     "@types/graphql-upload": "^8.0.12",
     "@types/imapflow": "^1.0.21",
     "@types/jest": "^30.0.0",
-    "@types/js-cookie": "^3.0.3",
     "@types/lodash.camelcase": "^4.3.7",
     "@types/lodash.compact": "^3.0.9",
     "@types/lodash.escaperegexp": "^4.1.9",
