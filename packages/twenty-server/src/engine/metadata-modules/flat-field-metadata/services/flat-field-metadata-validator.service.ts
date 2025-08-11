@@ -320,6 +320,7 @@ export class FlatFieldMetadataValidatorService {
     const nameValidationResult = validateMetadataName(
       flatFieldMetadataToValidate.name,
     );
+
     if (isDefined(nameValidationResult)) {
       errors.push(nameValidationResult);
     }

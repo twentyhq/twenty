@@ -6,7 +6,7 @@ import {
 
 import {
   fieldMetadataStandardOverridesProperties,
-  FieldMetadataStandardOverridesProperties,
+  type FieldMetadataStandardOverridesProperties,
 } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import {
@@ -97,6 +97,7 @@ export const fromUpdateFieldInputToFlatFieldMetadataToUpdate = ({
   const isStandardField =
     relatedFlatFieldMetadata.standardId !== null &&
     !relatedFlatFieldMetadata.isCustom;
+
   if (isStandardField) {
     const invalidUpdatedProperties = Object.keys(updatedEditableFields).filter(
       ([property]) =>

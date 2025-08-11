@@ -2,8 +2,9 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IsJSON, IsOptional, IsString } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
-import { FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import { type APP_LOCALES } from 'twenty-shared/translations';
+
+import { FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 
 export const fieldMetadataStandardOverridesProperties = [
   'label',

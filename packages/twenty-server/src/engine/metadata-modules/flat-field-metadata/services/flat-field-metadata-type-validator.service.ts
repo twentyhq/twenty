@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
+
 import { isDefined } from 'class-validator';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -13,7 +15,6 @@ import { type FlatFieldMetadataTypeValidator } from 'src/engine/metadata-modules
 import { isEnumValidateOneFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-validate-one-field-metadata-args.util';
 import { validateEnumSelectFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator';
 import { validateRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-relation-flat-field-metadata.validator';
-import { FieldMetadataType } from 'twenty-shared/types';
 @Injectable()
 export class FlatFieldMetadataTypeValidatorService {
   constructor(private readonly featureFlagService: FeatureFlagService) {}
