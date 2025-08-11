@@ -49,6 +49,7 @@ export default [
       'no-duplicate-imports': 'error',
       'no-undef': 'off',
       'no-unused-vars': 'off',
+      'prettier/prettier': 'error',
 
       // Nx rules
       '@nx/enforce-module-boundaries': [

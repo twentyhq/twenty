@@ -2,7 +2,7 @@ export interface WorkspaceJoinColumnsMetadataArgs {
   /**
    * Class to which relation is applied.
    */
-   
+
   readonly target: Function;
 
   /**

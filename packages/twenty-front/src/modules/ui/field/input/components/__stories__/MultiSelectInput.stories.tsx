@@ -2,7 +2,7 @@ import { type FieldMultiSelectValue } from '@/object-record/record-field/types/F
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { expect , fn, userEvent, waitFor, within } from '@storybook/test';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { useEffect, useState } from 'react';
 import {
