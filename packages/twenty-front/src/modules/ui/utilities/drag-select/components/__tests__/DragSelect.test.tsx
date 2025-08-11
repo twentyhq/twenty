@@ -2,7 +2,7 @@ import { render } from '@testing-library/react';
 import { act } from 'react';
 import { RecoilRoot } from 'recoil';
 
-import { PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
+import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
 import { useDragSelect } from '../../hooks/useDragSelect';
 import { DragSelect } from '../DragSelect';
 

@@ -1,4 +1,4 @@
-import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
+import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';

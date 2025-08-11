@@ -1,6 +1,6 @@
 import {
-  LinkOutputSchema,
-  OutputSchema,
+  type LinkOutputSchema,
+  type OutputSchema,
 } from '@/workflow/workflow-variables/types/StepOutputSchema';
 
 export const isLinkOutputSchema = (

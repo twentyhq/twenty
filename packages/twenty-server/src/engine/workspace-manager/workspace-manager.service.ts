@@ -18,6 +18,7 @@ import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
@@ -114,6 +115,7 @@ export class WorkspaceManagerService {
     await this.prefillWorkspaceWithStandardObjectsRecords(
       dataSourceMetadata,
       workspaceId,
+      featureFlags,
     );
 
     const prefillStandardObjectsEnd = performance.now();
@@ -126,6 +128,7 @@ export class WorkspaceManagerService {
   private async prefillWorkspaceWithStandardObjectsRecords(
     dataSourceMetadata: DataSourceEntity,
     workspaceId: string,
+    featureFlags: Record<string, boolean>,
   ) {
     const mainDataSource =
       await this.workspaceDataSourceService.connectToMainDataSource();
@@ -142,6 +145,16 @@ export class WorkspaceManagerService {
       dataSourceMetadata.schema,
       createdObjectMetadata,
     );
+
+    if (featureFlags[FeatureFlagKey.IS_CORE_VIEW_SYNCING_ENABLED]) {
+      this.logger.log(`Prefilling core views for workspace ${workspaceId}`);
+
+      await prefillCoreViews(
+        mainDataSource,
+        workspaceId,
+        createdObjectMetadata,
+      );
+    }
   }
 
   public async delete(workspaceId: string): Promise<void> {

@@ -1,4 +1,4 @@
-import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
+import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendarEventEndDate';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { sortAsc } from '~/utils/sort';

@@ -1,4 +1,4 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export const getActiveFieldMetadataItems = (
   objectMetadataItem: Pick<ObjectMetadataItem, 'readableFields'>,

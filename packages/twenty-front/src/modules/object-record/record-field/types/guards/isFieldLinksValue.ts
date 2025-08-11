@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { FieldLinksValue } from '../FieldMetadata';
+import { type FieldLinksValue } from '../FieldMetadata';
 
 export const linksSchema = z.object({
   primaryLinkLabel: z.string().nullable(),

@@ -1,8 +1,8 @@
-import { Company } from '@/companies/types/Company';
+import { type Company } from '@/companies/types/Company';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { getImageIdentifierFieldValue } from './getImageIdentifierFieldValue';
 import {

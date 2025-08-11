@@ -13,7 +13,7 @@ import { searchVariableThroughOutputSchema } from '@/workflow/workflow-variables
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
-import { StepFilter } from 'twenty-shared/types';
+import { type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 

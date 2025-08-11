@@ -1,6 +1,6 @@
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { DEFAULT_GLOBAL_HOTKEYS_CONFIG } from '@/ui/utilities/hotkey/constants/DefaultGlobalHotkeysConfig';
-import { GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
+import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { selector } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 

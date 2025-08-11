@@ -188,6 +188,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw new FieldMetadataException(
         'Unique field cannot have a default value',
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        {
+          userFriendlyMessage: t`Unique field cannot have a default value`,
+        },
       );
     }
 
@@ -832,6 +835,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw new FieldMetadataException(
         'Unique field cannot have a default value',
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        {
+          userFriendlyMessage: t`Unique field cannot have a default value`,
+        },
       );
 
     if (fieldMetadataInput.isUnique !== true) return;

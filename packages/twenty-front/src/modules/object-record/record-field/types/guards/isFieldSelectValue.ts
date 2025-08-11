@@ -1,4 +1,4 @@
-import { FieldSelectValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldSelectValue } from '@/object-record/record-field/types/FieldMetadata';
 import { selectFieldValueSchema } from '@/object-record/record-field/validation-schemas/selectFieldValueSchema';
 
 export const isFieldSelectValue = (

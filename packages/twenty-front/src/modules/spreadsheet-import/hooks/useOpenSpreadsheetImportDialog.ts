@@ -2,7 +2,7 @@ import { useSetRecoilState } from 'recoil';
 
 import { SPREADSHEET_IMPORT_MODAL_ID } from '@/spreadsheet-import/constants/SpreadsheetImportModalId';
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
-import { SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
+import { type SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 export const useOpenSpreadsheetImportDialog = () => {
   const setSpreadSheetImport = useSetRecoilState(spreadsheetImportDialogState);

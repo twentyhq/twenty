@@ -1,6 +1,6 @@
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/object-record/record-field/form-types/constants/FormFieldPlaceholderStyles';
 import styled from '@emotion/styled';
-import { Editor, EditorContent } from '@tiptap/react';
+import { type Editor, EditorContent } from '@tiptap/react';
 
 const StyledEditor = styled.div<{
   multiline?: boolean;

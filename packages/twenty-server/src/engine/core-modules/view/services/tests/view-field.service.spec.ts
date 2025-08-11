@@ -42,6 +42,7 @@ describe('ViewFieldService', () => {
             create: jest.fn(),
             save: jest.fn(),
             softDelete: jest.fn(),
+            delete: jest.fn(),
           },
         },
       ],
@@ -292,6 +293,22 @@ describe('ViewFieldService', () => {
           ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
         ),
       );
+    });
+  });
+
+  describe('destroy', () => {
+    it('should destroy a view field successfully', async () => {
+      const id = 'view-field-id';
+      const workspaceId = 'workspace-id';
+
+      jest.spyOn(viewFieldService, 'findById').mockResolvedValue(mockViewField);
+      jest.spyOn(viewFieldRepository, 'delete').mockResolvedValue({} as any);
+
+      const result = await viewFieldService.destroy(id, workspaceId);
+
+      expect(viewFieldService.findById).toHaveBeenCalledWith(id, workspaceId);
+      expect(viewFieldRepository.delete).toHaveBeenCalledWith(id);
+      expect(result).toEqual(true);
     });
   });
 });

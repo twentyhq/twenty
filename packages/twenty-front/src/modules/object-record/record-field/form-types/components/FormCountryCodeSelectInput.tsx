@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { type VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import type { CountryCode } from 'libphonenumber-js';
-import { IconCircleOff, IconComponentProps } from 'twenty-ui/display';
-import { SelectOption } from 'twenty-ui/input';
+import { IconCircleOff, type IconComponentProps } from 'twenty-ui/display';
+import { type SelectOption } from 'twenty-ui/input';
 
 export type FormCountryCodeSelectInputUpdatedValue = CountryCode | '';
 

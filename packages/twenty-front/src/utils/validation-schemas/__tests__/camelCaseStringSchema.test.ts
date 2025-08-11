@@ -1,4 +1,4 @@
-import { SafeParseError } from 'zod';
+import { type SafeParseError } from 'zod';
 
 import { camelCaseStringSchema } from '../camelCaseStringSchema';
 

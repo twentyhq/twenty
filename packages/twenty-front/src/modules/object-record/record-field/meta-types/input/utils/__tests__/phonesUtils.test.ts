@@ -1,4 +1,4 @@
-import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
 import { createPhonesFromFieldValue } from '../phonesUtils';
 
 describe('createPhonesFromFieldValue test suite', () => {

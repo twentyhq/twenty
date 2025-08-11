@@ -1,6 +1,6 @@
 import { stepsOutputSchemaFamilyState } from '@/workflow/states/stepsOutputSchemaFamilyState';
 import { getStepOutputSchemaFamilyStateKey } from '@/workflow/utils/getStepOutputSchemaFamilyStateKey';
-import { StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { selectorFamily } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 

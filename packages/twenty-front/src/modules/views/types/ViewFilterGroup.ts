@@ -1,4 +1,4 @@
-import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
+import { type ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 
 export type ViewFilterGroup = {
   __typename: 'ViewFilterGroup';

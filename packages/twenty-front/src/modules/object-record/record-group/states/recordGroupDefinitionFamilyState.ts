@@ -1,4 +1,4 @@
-import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { atomFamily } from 'recoil';
 
 export const recordGroupDefinitionFamilyState = atomFamily<

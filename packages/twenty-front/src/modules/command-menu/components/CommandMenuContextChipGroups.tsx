@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui/navigation';
 import {
   CommandMenuContextChip,
-  CommandMenuContextChipProps,
+  type CommandMenuContextChipProps,
 } from './CommandMenuContextChip';
 
 export const CommandMenuContextChipGroups = ({

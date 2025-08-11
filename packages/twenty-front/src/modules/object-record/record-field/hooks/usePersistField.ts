@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
-import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { type FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldAddressValue } from '@/object-record/record-field/types/guards/isFieldAddressValue';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';

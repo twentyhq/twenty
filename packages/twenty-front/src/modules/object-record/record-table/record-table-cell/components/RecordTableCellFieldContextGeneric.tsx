@@ -9,7 +9,7 @@ import { RecordUpdateContext } from '@/object-record/record-table/contexts/Entit
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { ReactNode, useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 
 type RecordTableCellFieldContextGenericProps = {
   children: ReactNode;

@@ -1,5 +1,5 @@
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { TextInput } from '@/ui/input/components/TextInput';
 
 type AdvancedFilterDropdownTextInputProps = {

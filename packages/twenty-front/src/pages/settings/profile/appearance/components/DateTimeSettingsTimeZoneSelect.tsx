@@ -4,7 +4,7 @@ import { AVAILABLE_TIMEZONE_OPTIONS } from '@/settings/experience/constants/Avai
 import { Select } from '@/ui/input/components/Select';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/input';
 
 type DateTimeSettingsTimeZoneSelectProps = {
   value?: string;

@@ -9,7 +9,7 @@ import {
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useRecoilCallback } from 'recoil';
-import { Nullable } from 'twenty-ui/utilities';
+import { type Nullable } from 'twenty-ui/utilities';
 
 export type DateInputProps = {
   instanceId: string;

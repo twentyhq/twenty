@@ -1,17 +1,17 @@
 import { useOpenActivityTargetCellEditMode } from '@/activities/inline-cell/hooks/useOpenActivityTargetCellEditMode';
-import { Note } from '@/activities/types/Note';
-import { NoteTarget } from '@/activities/types/NoteTarget';
-import { Task } from '@/activities/types/Task';
-import { TaskTarget } from '@/activities/types/TaskTarget';
+import { type Note } from '@/activities/types/Note';
+import { type NoteTarget } from '@/activities/types/NoteTarget';
+import { type Task } from '@/activities/types/Task';
+import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetObjectRecords } from '@/activities/utils/getActivityTargetObjectRecords';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useOpenRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useOpenRelationFromManyFieldInput';
 import { useOpenRelationToOneFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useOpenRelationToOneFieldInput';
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import {
-  FieldMetadata,
-  FieldRelationFromManyValue,
-  FieldRelationValue,
+  type FieldMetadata,
+  type FieldRelationFromManyValue,
+  type FieldRelationValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
 import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';

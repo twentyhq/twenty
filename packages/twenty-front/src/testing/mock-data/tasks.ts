@@ -1,6 +1,6 @@
-import { Task } from '@/activities/types/Task';
-import { TaskTarget } from '@/activities/types/TaskTarget';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { type Task } from '@/activities/types/Task';
+import { type TaskTarget } from '@/activities/types/TaskTarget';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 type MockedTask = Task & { __typename?: string };
 

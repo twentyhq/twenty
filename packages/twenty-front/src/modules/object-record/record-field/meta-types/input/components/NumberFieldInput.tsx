@@ -1,7 +1,7 @@
 import { TextInput } from '@/ui/field/input/components/TextInput';
 
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { type FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useNumberField } from '../../hooks/useNumberField';

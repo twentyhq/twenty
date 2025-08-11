@@ -6,7 +6,7 @@ import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-ac
 
 import styled from '@emotion/styled';
 import { useContext } from 'react';
-import { StepFilterGroup, StepLogicalOperator } from 'twenty-shared/src/types';
+import { type StepFilterGroup, StepLogicalOperator } from 'twenty-shared/src/types';
 import { capitalize } from 'twenty-shared/utils';
 
 const StyledText = styled.div`

@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
-import { BaseEdge, EdgeProps } from '@xyflow/react';
-import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { BaseEdge, type EdgeProps } from '@xyflow/react';
+import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useEdgeSelected } from '@/workflow/workflow-diagram/hooks/useEdgeSelected';
 
 type WorkflowDiagramBaseEdgeProps = Pick<

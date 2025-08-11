@@ -1,9 +1,9 @@
 import { getNonReadableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonReadableFieldMetadataIdsFromObjectPermissions';
 import { getNonUpdatableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonUpdatableFieldMetadataIdsFromObjectPermissions';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
-import { ObjectPermissions } from 'twenty-shared/types';
+import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 type enrichObjectMetadataItemsWithPermissionsArgs = {
   objectMetadataItems: Omit<

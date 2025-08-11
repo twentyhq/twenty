@@ -14,7 +14,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import {
   Controller,
-  SubmitHandler,
+  type SubmitHandler,
   useFieldArray,
   useForm,
 } from 'react-hook-form';

@@ -5,9 +5,9 @@ import { CREATE_ONE_SERVERLESS_FUNCTION } from '@/settings/serverless-functions/
 import { FIND_MANY_SERVERLESS_FUNCTIONS } from '@/settings/serverless-functions/graphql/queries/findManyServerlessFunctions';
 import { getOperationName } from '@apollo/client/utilities';
 import {
-  CreateOneServerlessFunctionItemMutation,
-  CreateOneServerlessFunctionItemMutationVariables,
-  CreateServerlessFunctionInput,
+  type CreateOneServerlessFunctionItemMutation,
+  type CreateOneServerlessFunctionItemMutationVariables,
+  type CreateServerlessFunctionInput,
 } from '~/generated-metadata/graphql';
 
 export const useCreateOneServerlessFunction = () => {

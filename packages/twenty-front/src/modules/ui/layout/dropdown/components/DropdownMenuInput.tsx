@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { forwardRef, InputHTMLAttributes, ReactNode, useRef } from 'react';
+import { forwardRef, type InputHTMLAttributes, type ReactNode, useRef } from 'react';
 import 'react-phone-number-input/style.css';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';

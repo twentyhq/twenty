@@ -4,7 +4,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
+import { type WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
@@ -29,7 +29,7 @@ import {
   IconTrash,
   useIcons,
 } from 'twenty-ui/display';
-import { Button, IconButton, SelectOption } from 'twenty-ui/input';
+import { Button, IconButton, type SelectOption } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -149,7 +149,7 @@ export const SettingsDevelopersWebhookForm = ({
           <Section>
             <H2Title
               title={t`Endpoint URL`}
-              description={t`We will send POST requests to this endpoint for every new event`}
+              description={t`We will send a POST request to this endpoint for each new event in application/json format`}
             />
             <Controller
               name="targetUrl"

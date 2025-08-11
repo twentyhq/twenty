@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { BlocklistItem } from '@/accounts/types/BlocklistItem';
+import { type BlocklistItem } from '@/accounts/types/BlocklistItem';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';

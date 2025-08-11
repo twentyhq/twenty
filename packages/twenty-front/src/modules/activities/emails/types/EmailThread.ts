@@ -1,4 +1,4 @@
-import { EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
+import { type EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
 
 export type EmailThread = {
   id: string;

@@ -1,5 +1,5 @@
 import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/states/recordFieldInputDraftValueComponentState';
-import { FieldInputDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
+import { type FieldInputDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 export const useRecordFieldInput = <FieldValue>() => {

@@ -8,7 +8,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { HorizontalSeparator, IconMicrosoft } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
-import { SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
+import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
 
 export const SignInUpWithMicrosoft = ({
   action,

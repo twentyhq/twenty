@@ -1,4 +1,4 @@
-import { DragStart } from '@hello-pangea/dnd';
+import { type DragStart } from '@hello-pangea/dnd';
 import { useState } from 'react';
 import { getDragOperationType } from '../utils/getDragOperationType';
 

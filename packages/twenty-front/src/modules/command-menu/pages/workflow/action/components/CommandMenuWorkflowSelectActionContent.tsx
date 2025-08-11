@@ -4,8 +4,8 @@ import { useRecoilComponentState } from '@/ui/utilities/state/component-state/ho
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import {
-  WorkflowActionType,
-  WorkflowWithCurrentVersion,
+  type WorkflowActionType,
+  type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useCloseRightClickMenu';
 import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';

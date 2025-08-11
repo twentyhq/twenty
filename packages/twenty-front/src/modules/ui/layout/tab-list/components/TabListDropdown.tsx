@@ -3,7 +3,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { TabMoreButton } from '@/ui/layout/tab-list/components/TabMoreButton';
-import { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
 
 type TabListDropdownProps = {

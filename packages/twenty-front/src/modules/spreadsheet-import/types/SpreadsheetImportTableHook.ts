@@ -1,5 +1,5 @@
-import { ImportedStructuredRow } from './SpreadsheetImportImportedStructuredRow';
-import { SpreadsheetImportInfo } from './SpreadsheetImportInfo';
+import { type ImportedStructuredRow } from './SpreadsheetImportImportedStructuredRow';
+import { type SpreadsheetImportInfo } from './SpreadsheetImportInfo';
 
 export type SpreadsheetImportTableHook = (
   table: ImportedStructuredRow[],

@@ -1,4 +1,4 @@
-import { WorkflowTrigger } from '@/workflow/types/Workflow';
+import { type WorkflowTrigger } from '@/workflow/types/Workflow';
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
 import { assertUnreachable } from 'twenty-shared/utils';
 

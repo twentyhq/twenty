@@ -1,6 +1,6 @@
 import { CustomError } from '@/error-handler/CustomError';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { WorkflowActionType } from '@/workflow/types/Workflow';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const COMMON_DISPLAYABLE_FIELD_TYPES = [

@@ -4,6 +4,7 @@ import {
 } from 'test/integration/constants/test-view-ids.constants';
 import { createViewSortOperationFactory } from 'test/integration/graphql/utils/create-view-sort-operation-factory.util';
 import { deleteViewSortOperationFactory } from 'test/integration/graphql/utils/delete-view-sort-operation-factory.util';
+import { destroyViewSortOperationFactory } from 'test/integration/graphql/utils/destroy-view-sort-operation-factory.util';
 import { findViewSortsOperationFactory } from 'test/integration/graphql/utils/find-view-sorts-operation-factory.util';
 import {
   assertGraphQLErrorResponse,
@@ -177,6 +178,41 @@ describe('View Sort Resolver', () => {
 
     it('should throw an error when deleting non-existent view sort', async () => {
       const operation = deleteViewSortOperationFactory({
+        viewSortId: TEST_NOT_EXISTING_VIEW_SORT_ID,
+      });
+      const response = await makeGraphqlAPIRequest(operation);
+
+      assertGraphQLErrorResponse(
+        response,
+        ErrorCode.NOT_FOUND,
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
+          TEST_NOT_EXISTING_VIEW_SORT_ID,
+        ),
+      );
+    });
+  });
+
+  describe('destroyCoreViewSort', () => {
+    it('should destroy an existing view sort', async () => {
+      const sortData = createViewSortData(testViewId);
+      const createOperation = createViewSortOperationFactory({
+        data: sortData,
+      });
+      const createResponse = await makeGraphqlAPIRequest(createOperation);
+      const viewSort = createResponse.body.data.createCoreViewSort;
+
+      const destroyOperation = destroyViewSortOperationFactory({
+        viewSortId: viewSort.id,
+      });
+      const response = await makeGraphqlAPIRequest(destroyOperation);
+
+      assertGraphQLSuccessfulResponse(response);
+      expect(response.body.data.destroyCoreViewSort).toBe(true);
+    });
+
+    it('should throw an error when destroying non-existent view sort', async () => {
+      const operation = destroyViewSortOperationFactory({
         viewSortId: TEST_NOT_EXISTING_VIEW_SORT_ID,
       });
       const response = await makeGraphqlAPIRequest(operation);

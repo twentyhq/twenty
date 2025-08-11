@@ -1,8 +1,8 @@
-import { FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
-import { FieldDateMetadataSettings } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
+import { type FieldDateMetadataSettings } from '@/object-record/record-field/types/FieldMetadata';
 
-import { ThemeColor } from 'twenty-ui/theme';
-import { Field } from '~/generated-metadata/graphql';
+import { type ThemeColor } from 'twenty-ui/theme';
+import { type Field } from '~/generated-metadata/graphql';
 
 export type FieldMetadataItemOption = {
   color: ThemeColor;

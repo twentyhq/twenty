@@ -1,7 +1,7 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { FieldDefinition } from '../FieldDefinition';
-import { FieldMetadata, FieldPositionMetadata } from '../FieldMetadata';
+import { type FieldDefinition } from '../FieldDefinition';
+import { type FieldMetadata, type FieldPositionMetadata } from '../FieldMetadata';
 
 export const isFieldPosition = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type'>,

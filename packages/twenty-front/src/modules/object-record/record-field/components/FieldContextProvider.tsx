@@ -3,11 +3,11 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   FieldContext,
-  RecordUpdateHook,
-  RecordUpdateHookParams,
+  type RecordUpdateHook,
+  type RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordFieldReadOnly';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 export const FieldContextProvider = ({
   clearable,

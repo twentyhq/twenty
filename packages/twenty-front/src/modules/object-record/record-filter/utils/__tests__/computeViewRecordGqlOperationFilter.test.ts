@@ -1,7 +1,7 @@
-import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
+import { type RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
 import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
 import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 import { isDefined } from 'twenty-shared/utils';
