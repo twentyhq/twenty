@@ -42,8 +42,7 @@ export class View {
 
   @Column({
     type: 'enum',
-    enum: ViewType,
-    enumName: 'ViewType',
+    enum: Object.values(ViewType),
     nullable: false,
     default: ViewType.TABLE,
   })
@@ -63,8 +62,7 @@ export class View {
 
   @Column({
     type: 'enum',
-    enumName: 'ViewOpenRecordIn',
-    enum: ViewOpenRecordIn,
+    enum: Object.values(ViewOpenRecordIn),
     nullable: false,
     default: ViewOpenRecordIn.SIDE_PANEL,
   })
@@ -72,8 +70,7 @@ export class View {
 
   @Column({
     type: 'enum',
-    enumName: 'KanbanAggregateOperations',
-    enum: AggregateOperations,
+    enum: Object.values(AggregateOperations),
     nullable: true,
     default: null,
   })

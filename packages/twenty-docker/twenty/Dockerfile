@@ -37,7 +37,6 @@ RUN mv /app/packages/twenty-server/build /app/packages/twenty-server/dist
 
 RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-server
 
-
 # Build the front
 FROM common-deps as twenty-front-build
 

@@ -49,6 +49,7 @@ export default [
     rules: {
       // Lingui rules
       'lingui/no-single-variables-to-translate': 'off',
+      'prettier/prettier': 'error',
       
       // General rules
       'func-style': ['error', 'declaration', { allowArrowFunctions: true }],

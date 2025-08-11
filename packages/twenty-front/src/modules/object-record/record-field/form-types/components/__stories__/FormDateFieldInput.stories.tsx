@@ -319,6 +319,10 @@ export const SwitchesToStandaloneVariable: Story = {
       'button .tabler-icon-x',
     );
 
+    if (!removeVariableButton) {
+      throw new Error('Remove variable button not found');
+    }
+
     await Promise.all([
       userEvent.click(removeVariableButton),
 

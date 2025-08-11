@@ -35,7 +35,6 @@ export const MultiWorkspaceDropdownThemesComponents = () => {
           <MenuItem
             key={theme.id}
             LeftIcon={theme.icon}
-             
             text={t`${theme.id}`}
             onClick={() => setColorScheme(theme.id)}
             RightIcon={theme.id === colorScheme ? IconCheck : undefined}

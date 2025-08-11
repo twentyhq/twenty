@@ -1,4 +1,7 @@
-import { type FieldMetadata, type FieldTsVectorMetadata } from '../FieldMetadata';
+import {
+  type FieldMetadata,
+  type FieldTsVectorMetadata,
+} from '../FieldMetadata';
 
 import { type FieldDefinition } from '../FieldDefinition';
 

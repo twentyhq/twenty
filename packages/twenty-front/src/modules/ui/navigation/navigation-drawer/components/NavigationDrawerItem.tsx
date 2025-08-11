@@ -22,7 +22,10 @@ import {
   TooltipPosition,
 } from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { type TriggerEventType, useMouseDownNavigation } from 'twenty-ui/utilities';
+import {
+  type TriggerEventType,
+  useMouseDownNavigation,
+} from 'twenty-ui/utilities';
 
 const DEFAULT_INDENTATION_LEVEL = 1;
 
