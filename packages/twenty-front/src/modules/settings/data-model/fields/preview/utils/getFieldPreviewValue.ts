@@ -24,6 +24,7 @@ export const getFieldPreviewValue = ({
   ) {
     return generateEmptyFieldValue({
       fieldMetadataItem,
+      shouldComputeFunctionDefaultValue: true,
     });
   }
 

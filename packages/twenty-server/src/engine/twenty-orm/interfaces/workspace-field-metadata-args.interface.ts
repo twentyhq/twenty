@@ -16,7 +16,7 @@ export interface WorkspaceFieldMetadataArgs {
   /**
    * Class to which field is applied.
    */
-   
+
   readonly target: Function;
 
   /**

@@ -8,7 +8,11 @@ import { Select } from '@/ui/input/components/Select';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { useLingui } from '@lingui/react/macro';
 import type { CountryCode } from 'libphonenumber-js';
-import { IconCircleOff, type IconComponentProps, IconMap } from 'twenty-ui/display';
+import {
+  IconCircleOff,
+  type IconComponentProps,
+  IconMap,
+} from 'twenty-ui/display';
 import { z } from 'zod';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';

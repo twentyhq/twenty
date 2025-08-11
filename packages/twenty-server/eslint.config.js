@@ -23,6 +23,8 @@ export default [
   // Global ignores
   {
     ignores: [
+      'packages/twenty-server/node_modules/**',
+      'packages/twenty-server/dist/**',
       '**/node_modules/**',
       'src/engine/workspace-manager/dev-seeder/data/constants/**',
       'src/engine/workspace-manager/dev-seeder/data/seeds/**',
@@ -49,6 +51,7 @@ export default [
     rules: {
       // Lingui rules
       'lingui/no-single-variables-to-translate': 'off',
+      'prettier/prettier': 'error',
       
       // General rules
       'func-style': ['error', 'declaration', { allowArrowFunctions: true }],

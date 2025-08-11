@@ -74,6 +74,10 @@ export const Disabled: Story = {
       return editor;
     });
 
+    if (!editor) {
+      throw new Error('Editor element not found');
+    }
+
     const defaultValue = await canvas.findByText('tim@twenty.com');
     expect(defaultValue).toBeVisible();
 

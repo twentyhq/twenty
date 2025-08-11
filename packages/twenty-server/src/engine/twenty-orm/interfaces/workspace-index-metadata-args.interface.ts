@@ -6,7 +6,7 @@ export interface WorkspaceIndexMetadataArgs {
   /**
    * Class to which index is applied.
    */
-   
+
   readonly target: Function;
 
   /*

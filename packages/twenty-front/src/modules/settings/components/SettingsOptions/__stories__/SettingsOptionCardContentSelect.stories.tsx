@@ -18,7 +18,6 @@ const StyledContainer = styled.div`
   width: 480px;
 `;
 
- 
 interface SettingsOptionCardContentSelectProps
   extends React.ComponentProps<typeof SettingsOptionCardContentSelect> {}
 

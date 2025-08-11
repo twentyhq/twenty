@@ -28,7 +28,6 @@ export function WorkspaceQueryHook(
     options.type = WorkspaceQueryHookType.PRE_HOOK;
   }
 
-   
   return (target: Function) => {
     SetMetadata(SCOPE_OPTIONS_METADATA, options)(target);
     SetMetadata(WORKSPACE_QUERY_HOOK_METADATA, options)(target);
