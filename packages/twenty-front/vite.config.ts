@@ -73,6 +73,7 @@ export default defineConfig(({ command, mode }) => {
     checkers['eslint'] = {
       lintCommand:
         'eslint ../../packages/twenty-front --max-warnings 0',
+      useFlatConfig: true,
     };
   }
 
