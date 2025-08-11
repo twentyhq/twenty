@@ -14,7 +14,7 @@ declare global {
   }
   
   namespace Vi {
-    interface Assertion<T = any> {
+    interface Assertion {
       toMatchSnapshot(propertyMatchers?: any): void;
     }
   }

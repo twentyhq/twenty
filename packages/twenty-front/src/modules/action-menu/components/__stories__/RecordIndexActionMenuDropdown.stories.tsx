@@ -1,7 +1,6 @@
-import { expect } from '@storybook/test';
+import { expect , userEvent, waitFor, within } from '@storybook/test';
 import * as test from '@storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { userEvent, waitFor, within } from '@storybook/test';
 import { RecoilRoot } from 'recoil';
 
 import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
