@@ -24,11 +24,14 @@ export const flatFieldMetadataPropertiesToCompare = [
 export type FlatFieldMetadataPropertiesToCompare =
   (typeof flatFieldMetadataPropertiesToCompare)[number];
 
-const fieldMetadataPropertiesToStringify = [
+export const flatFieldMetadataEntityJsonbProperties = [
   'defaultValue',
-  'standardOverrides',
+  'options',
   'settings',
-] as const satisfies FlatFieldMetadataPropertiesToCompare[];
+  'standardOverrides',
+] as const satisfies (keyof FlatFieldMetadata)[];
+export type FlatFieldMetadataEntityJsonbProperties =
+  (typeof flatFieldMetadataEntityJsonbProperties)[number];
 
 const shouldNotOverrideDefaultValue = (type: FieldMetadataType) => {
   return [
@@ -81,7 +84,7 @@ export const compareTwoFlatFieldMetadata = ({
 
       return false;
     },
-    propertiesToStringify: fieldMetadataPropertiesToStringify,
+    propertiesToStringify: flatFieldMetadataEntityJsonbProperties,
   };
   const fromCompare = transformMetadataForComparison(
     from,
@@ -100,11 +103,23 @@ export const compareTwoFlatFieldMetadata = ({
     switch (difference.type) {
       case 'CHANGE': {
         const { oldValue, path, value } = difference;
+        const property = path[0] as FlatFieldMetadataPropertiesToCompare;
+        const isJsonb = flatFieldMetadataEntityJsonbProperties.includes(
+          property as FlatFieldMetadataEntityJsonbProperties,
+        );
+
+        if (isJsonb) {
+          return {
+            from: isDefined(oldValue) ? JSON.parse(oldValue) : oldValue,
+            to: isDefined(value) ? JSON.parse(value) : value,
+            property,
+          };
+        }
 
         return {
           from: oldValue,
           to: value,
-          property: path[0] as FlatFieldMetadataPropertiesToCompare,
+          property,
         };
       }
       case 'CREATE':
