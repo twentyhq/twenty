@@ -33,7 +33,7 @@ export class ViewFilterGroup {
     type: 'enum',
     enum: Object.values(ViewFilterGroupLogicalOperator),
     nullable: false,
-    default: ViewFilterGroupLogicalOperator.NOT,
+    default: ViewFilterGroupLogicalOperator.AND,
   })
   logicalOperator: ViewFilterGroupLogicalOperator;
 

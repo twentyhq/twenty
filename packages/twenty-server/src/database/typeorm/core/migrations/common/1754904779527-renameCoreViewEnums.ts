@@ -1,7 +1,7 @@
 import { type MigrationInterface, type QueryRunner } from "typeorm";
 
-export class RenameCoreViewEnums1754903611533 implements MigrationInterface {
-    name = 'RenameCoreViewEnums1754903611533'
+export class RenameCoreViewEnums1754904779527 implements MigrationInterface {
+    name = 'RenameCoreViewEnums1754904779527'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TYPE "core"."AggregateOperations" RENAME TO "AggregateOperations_old"`);
@@ -18,7 +18,7 @@ export class RenameCoreViewEnums1754903611533 implements MigrationInterface {
         await queryRunner.query(`CREATE TYPE "core"."viewFilterGroup_logicaloperator_enum" AS ENUM('AND', 'OR', 'NOT')`);
         await queryRunner.query(`ALTER TABLE "core"."viewFilterGroup" ALTER COLUMN "logicalOperator" DROP DEFAULT`);
         await queryRunner.query(`ALTER TABLE "core"."viewFilterGroup" ALTER COLUMN "logicalOperator" TYPE "core"."viewFilterGroup_logicaloperator_enum" USING "logicalOperator"::"text"::"core"."viewFilterGroup_logicaloperator_enum"`);
-        await queryRunner.query(`ALTER TABLE "core"."viewFilterGroup" ALTER COLUMN "logicalOperator" SET DEFAULT 'NOT'`);
+        await queryRunner.query(`ALTER TABLE "core"."viewFilterGroup" ALTER COLUMN "logicalOperator" SET DEFAULT 'AND'`);
         await queryRunner.query(`DROP TYPE "core"."ViewFilterGroupLogicalOperator_old"`);
         await queryRunner.query(`ALTER TYPE "core"."ViewSortDirection" RENAME TO "ViewSortDirection_old"`);
         await queryRunner.query(`CREATE TYPE "core"."viewSort_direction_enum" AS ENUM('ASC', 'DESC')`);
