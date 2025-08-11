@@ -151,10 +151,7 @@ export class WorkflowRunWorkspaceService {
       workflowRunToUpdate.status !== WorkflowRunStatus.ENQUEUED &&
       workflowRunToUpdate.status !== WorkflowRunStatus.NOT_STARTED
     ) {
-      throw new WorkflowRunException(
-        'Workflow run already started',
-        WorkflowRunExceptionCode.INVALID_OPERATION,
-      );
+      return;
     }
 
     const partialUpdate = {
