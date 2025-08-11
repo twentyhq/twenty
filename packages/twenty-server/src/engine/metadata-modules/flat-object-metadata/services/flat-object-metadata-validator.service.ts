@@ -1,5 +1,6 @@
-import { t } from '@lingui/core/macro';
 import { Injectable } from '@nestjs/common';
+
+import { t } from '@lingui/core/macro';
 
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
@@ -32,6 +33,7 @@ export class FlatObjectMetadataValidatorService {
     workspaceId,
   }: ValidateOneFlatObjectMetadataArgs) {
     const errors: FailedFlatFieldMetadataValidationExceptions[] = [];
+
     errors.push(
       ...validateFlatObjectMetadataNames({
         namePlural: flatObjectdMetadataToValidate.namePlural,

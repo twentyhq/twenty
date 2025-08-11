@@ -1,12 +1,13 @@
 import { t } from '@lingui/core/macro';
-import { FailedFlatObjectMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+
+import { type FailedFlatObjectMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { runFlatObjectMetadataValidators } from 'src/engine/metadata-modules/flat-object-metadata/utils/run-flat-object-metadata-validators.util';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import { FlatMetadataValidator } from 'src/engine/metadata-modules/types/flat-metadata-validator.type';
+import { type FlatMetadataValidator } from 'src/engine/metadata-modules/types/flat-metadata-validator.type';
 import {
   beneathDatabaseIdentifierMinimumLength,
   exceedsDatabaseIdentifierMaximumLength,
@@ -39,6 +40,7 @@ export const validateFlatObjectMetadataLabel = ({
 
   const labelsAreIdentical =
     labelSingular.trim().toLowerCase() === labelPlural.trim().toLowerCase();
+
   if (labelsAreIdentical) {
     errors.push(
       new ObjectMetadataException(
