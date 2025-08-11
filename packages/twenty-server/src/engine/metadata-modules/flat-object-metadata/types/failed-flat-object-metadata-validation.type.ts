@@ -9,4 +9,3 @@ export type FailedFlatObjectMetadataValidationExceptions =
   | FieldMetadataException
   | ObjectMetadataException
   | InvalidMetadataException
-  | ObjectMetadataException;

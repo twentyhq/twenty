@@ -1,11 +1,11 @@
 import { t } from '@lingui/core/macro';
 
-import { type FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
+import { type FailedFlatObjectMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { runFlatObjectMetadataValidators } from 'src/engine/metadata-modules/flat-object-metadata/utils/run-flat-object-metadata-validators.util';
 import {
-    ObjectMetadataException,
-    ObjectMetadataExceptionCode,
+  ObjectMetadataException,
+  ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { METADATA_NAME_VALIDATORS } from 'src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants';
 
@@ -13,7 +13,7 @@ export const validateFlatObjectMetadataNames = ({
   namePlural,
   nameSingular,
 }: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>) => {
-  const errors: FailedFlatFieldMetadataValidationExceptions[] = [];
+  const errors: FailedFlatObjectMetadataValidationExceptions[] = [];
 
   errors.push(
     ...[nameSingular, namePlural].flatMap((name) =>
