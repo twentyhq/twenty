@@ -13,15 +13,16 @@ import { useOpenWorkflowEditFilterInCommandMenu } from '@/workflow/workflow-diag
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
+import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import {
   EdgeLabelRenderer,
   type EdgeProps,
   getBezierPath,
 } from '@xyflow/react';
-import { useContext } from 'react';
+import { type MouseEvent, useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { IconFilter, IconPlus } from 'twenty-ui/display';
+import { IconFilter, IconPlus, IconTrash } from 'twenty-ui/display';
 
 type WorkflowDiagramDefaultEdgeEditableProps = EdgeProps<WorkflowDiagramEdge>;
 
@@ -53,6 +54,8 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
 
   const { createStep } = useCreateStep({ workflow });
+
+  const { deleteEdge } = useDeleteEdge({ workflow });
 
   const { startNodeCreation, isNodeCreationStarted } = useStartNodeCreation();
 
@@ -97,6 +100,12 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     });
   };
 
+  const handleDeleteBranch = async (event: MouseEvent) => {
+    event.stopPropagation();
+
+    await deleteEdge({ source, target });
+  };
+
   return (
     <>
       <WorkflowDiagramBaseEdge
@@ -125,6 +134,10 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
                 {
                   Icon: IconPlus,
                   onClick: handleNodeButtonClick,
+                },
+                {
+                  Icon: IconTrash,
+                  onClick: handleDeleteBranch,
                 },
               ]}
               selected={nodeCreationStarted}
