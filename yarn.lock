@@ -22623,12 +22623,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/plugin-emotion@npm:11.0.2":
-  version: 11.0.2
-  resolution: "@swc/plugin-emotion@npm:11.0.2"
+"@swc/plugin-emotion@npm:10.0.4":
+  version: 10.0.4
+  resolution: "@swc/plugin-emotion@npm:10.0.4"
   dependencies:
     "@swc/counter": "npm:^0.1.3"
-  checksum: 10c0/bf7375124a039978942cfb531c0c84052497be23ccfe09e642b9e56ddc049f55b05f801b2c11b8f039aec745218e51af8abb4b6c73f24fa76b05aeb30adaee92
+  checksum: 10c0/03dbec104b154f77f21cf4f80c4c1844ce729500ec8ecad8d3f92bf273ef810c8d952880fde5e0784c6a310614725d86a6a96e1287cb24fe8e855de0efb9eb76
   languageName: node
   linkType: hard
 
@@ -47754,14 +47754,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"msw-storybook-addon@npm:^2.0.5":
-  version: 2.0.5
-  resolution: "msw-storybook-addon@npm:2.0.5"
+"msw-storybook-addon@npm:2.0.0--canary.122.b3ed3b1.0":
+  version: 2.0.0--canary.122.b3ed3b1.0
+  resolution: "msw-storybook-addon@npm:2.0.0--canary.122.b3ed3b1.0"
   dependencies:
     is-node-process: "npm:^1.0.1"
   peerDependencies:
     msw: ^2.0.0
-  checksum: 10c0/3f26fd4a8a6b1b4da165a8940eca4da2e175a69036a1c85c07ec1952fbb595252db689c4380d8f88ec1cfaa66a6696e90ef0c26b2d1bf17c30092b81247d1d40
+  checksum: 10c0/b7652cf5e0ec712082594f9fb587d4dd351a417102792f3525fd6a5bef9688db1810dbe31981a642a5d29a46df6348498c0f9fa2906d97c9f1b3fda0d13131a3
   languageName: node
   linkType: hard
 
@@ -58265,7 +58265,7 @@ __metadata:
     "@monaco-editor/react": "npm:^4.6.0"
     "@prettier/sync": "npm:^0.5.2"
     "@sniptt/guards": "npm:^0.2.0"
-    "@swc/plugin-emotion": "npm:11.0.2"
+    "@swc/plugin-emotion": "npm:10.0.4"
     "@tabler/icons-react": "npm:^3.31.0"
     "@types/babel__preset-env": "npm:^7"
     "@types/react": "npm:^18.2.39"
@@ -58574,7 +58574,7 @@ __metadata:
     microdiff: "npm:^1.3.2"
     moize: "npm:^6.1.6"
     msw: "npm:^2.0.11"
-    msw-storybook-addon: "npm:^2.0.5"
+    msw-storybook-addon: "npm:2.0.0--canary.122.b3ed3b1.0"
     nest-commander: "npm:^3.12.0"
     nodemailer: "npm:^6.9.8"
     nx: "npm:21.3.11"
