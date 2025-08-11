@@ -33,7 +33,7 @@ RUN mv /app/packages/twenty-server/dist /app/packages/twenty-server/build
 RUN rm -rf /app/packages/twenty-server/dist
 RUN mv /app/packages/twenty-server/build /app/packages/twenty-server/dist
 
-RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-server
+RUN yarn workspaces focus --production twenty twenty-emails twenty-shared twenty-server
 
 # Build the front
 FROM common-deps AS twenty-front-build
