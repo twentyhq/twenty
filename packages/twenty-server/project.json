@@ -31,13 +31,13 @@
         }
       }
     },
-    "build-package-json": {
+    "build:packageJson": {
       "executor": "@nx/js:tsc",
       "options": {
         "main": "packages/twenty-server/dist/src/main.js",
         "tsConfig": "packages/twenty-server/tsconfig.json",
         "outputPath": "packages/twenty-server/dist",
-        "generatePackageJson": true
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "typecheck": {},
