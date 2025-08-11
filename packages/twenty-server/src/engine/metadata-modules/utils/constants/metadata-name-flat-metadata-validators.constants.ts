@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import camelCase from 'lodash.camelcase';
-import { FlatMetadataValidator } from 'src/engine/metadata-modules/types/flat-metadata-validator.type';
+
+import { type FlatMetadataValidator } from 'src/engine/metadata-modules/types/flat-metadata-validator.type';
 import {
     beneathDatabaseIdentifierMinimumLength,
     exceedsDatabaseIdentifierMaximumLength,

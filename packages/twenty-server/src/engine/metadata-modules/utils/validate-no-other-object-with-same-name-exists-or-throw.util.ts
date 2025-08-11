@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
+import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,

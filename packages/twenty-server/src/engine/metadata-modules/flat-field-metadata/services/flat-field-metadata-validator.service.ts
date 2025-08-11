@@ -324,6 +324,7 @@ export class FlatFieldMetadataValidatorService {
         },
       )),
     );
+
     return errors;
   }
 }

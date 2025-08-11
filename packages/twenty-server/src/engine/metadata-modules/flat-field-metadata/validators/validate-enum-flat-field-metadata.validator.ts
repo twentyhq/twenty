@@ -25,7 +25,7 @@ import {
   type FailedFlatFieldMetadataValidationExceptions,
 } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { FlatMetadataValidator } from 'src/engine/metadata-modules/types/flat-metadata-validator.type';
+import { type FlatMetadataValidator } from 'src/engine/metadata-modules/types/flat-metadata-validator.type';
 import {
   beneathDatabaseIdentifierMinimumLength,
   exceedsDatabaseIdentifierMaximumLength,
