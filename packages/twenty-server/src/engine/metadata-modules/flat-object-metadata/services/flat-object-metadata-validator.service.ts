@@ -46,6 +46,15 @@ export class FlatObjectMetadataValidatorService {
       }),
     );
 
+    if (flatObjectdMetadataToValidate.isRemote) {
+      errors.push(
+        new ObjectMetadataException(
+          t`Remote object are not supported yet`,
+          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        ),
+      );
+    }
+
     if (flatObjectdMetadataToValidate.isLabelSyncedWithName === true) {
       const computedNameSingular = computeMetadataNameFromLabel(
         flatObjectdMetadataToValidate.labelSingular,
@@ -101,7 +110,8 @@ export class FlatObjectMetadataValidatorService {
                 existingFlatObjectMetadataMaps,
                 flatFieldMetadataToValidate,
                 workspaceId,
-                // Should we have a sequential update here too ? No relation so far so no need ftm at least on this api
+                // TODO prastoin
+                // Should we have a sequential update here too ? No relation so far so no need ftm at least on this api but we will use this method in import funnel too so we should
                 otherFlatObjectMetadataMapsToValidate: undefined,
               },
             ),

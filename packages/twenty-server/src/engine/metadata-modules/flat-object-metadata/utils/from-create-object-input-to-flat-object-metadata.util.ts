@@ -6,22 +6,11 @@ import { v4 } from 'uuid';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
-import {
-  ObjectMetadataException,
-  ObjectMetadataExceptionCode,
-} from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { buildDefaultFlatFieldMetadataForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-fields-for-custom-object.util';
 
 export const fromCreateObjectInputToFlatObjectMetadata = (
   rawCreateObjectInput: CreateObjectInput,
 ): FlatObjectMetadata => {
-  if (rawCreateObjectInput.isRemote) {
-    throw new ObjectMetadataException(
-      'Remote objects are not supported',
-      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-    );
-  }
-
   const createObjectInput =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawCreateObjectInput,
@@ -54,7 +43,7 @@ export const fromCreateObjectInputToFlatObjectMetadata = (
     isAuditLogged: true,
     isCustom: true,
     isLabelSyncedWithName: createObjectInput.isLabelSyncedWithName ?? false,
-    isRemote: false,
+    isRemote: createObjectInput.isRemote ?? false,
     isSearchable: true,
     isSystem: false,
     labelIdentifierFieldMetadataId: baseCustomFlatFieldMetadatas.nameField.id,
