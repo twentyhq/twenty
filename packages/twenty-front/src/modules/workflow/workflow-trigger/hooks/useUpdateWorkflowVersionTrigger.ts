@@ -2,11 +2,13 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
+import { isUpdatingWorkflowFamilyState } from '@/workflow/states/isUpdatingWorkflowFamilyState';
 import {
   type WorkflowTrigger,
   type WorkflowVersion,
   type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
+import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useUpdateWorkflowVersionTrigger = ({
@@ -23,6 +25,10 @@ export const useUpdateWorkflowVersionTrigger = ({
 
   const { computeStepOutputSchema } = useComputeStepOutputSchema();
 
+  const setIsUpdatingWorkflow = useSetRecoilState(
+    isUpdatingWorkflowFamilyState(workflow.id),
+  );
+
   const updateTrigger = async (
     updatedTrigger: WorkflowTrigger,
     options: { computeOutputSchema: boolean } = { computeOutputSchema: true },
@@ -31,31 +37,37 @@ export const useUpdateWorkflowVersionTrigger = ({
       throw new Error('Cannot find current workflow version');
     }
 
-    const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
+    try {
+      setIsUpdatingWorkflow(true);
 
-    if (options.computeOutputSchema) {
-      const outputSchema = (
-        await computeStepOutputSchema({
-          step: updatedTrigger,
-        })
-      )?.data?.computeStepOutputSchema;
+      const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
 
-      updatedTrigger.settings = {
-        ...updatedTrigger.settings,
-        outputSchema: outputSchema || {},
-      };
+      if (options.computeOutputSchema) {
+        const outputSchema = (
+          await computeStepOutputSchema({
+            step: updatedTrigger,
+          })
+        )?.data?.computeStepOutputSchema;
+
+        updatedTrigger.settings = {
+          ...updatedTrigger.settings,
+          outputSchema: outputSchema || {},
+        };
+      }
+
+      if (!isDefined(workflowVersionId)) {
+        throw new Error('Workflow version not found');
+      }
+
+      await updateOneWorkflowVersion({
+        idToUpdate: workflowVersionId,
+        updateOneRecordInput: {
+          trigger: updatedTrigger,
+        },
+      });
+    } finally {
+      setIsUpdatingWorkflow(false);
     }
-
-    if (!isDefined(workflowVersionId)) {
-      throw new Error('Workflow version not found');
-    }
-
-    await updateOneWorkflowVersion({
-      idToUpdate: workflowVersionId,
-      updateOneRecordInput: {
-        trigger: updatedTrigger,
-      },
-    });
   };
 
   return {

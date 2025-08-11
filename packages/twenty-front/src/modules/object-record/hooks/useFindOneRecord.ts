@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useQuery, type WatchQueryFetchPolicy } from '@apollo/client';
 import { useMemo } from 'react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -20,12 +20,14 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
   onCompleted,
   skip,
   withSoftDeleted = false,
+  fetchPolicy,
 }: ObjectMetadataItemIdentifier & {
   objectRecordId: string | undefined;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
   onCompleted?: (data: T) => void;
   skip?: boolean;
   withSoftDeleted?: boolean;
+  fetchPolicy?: WatchQueryFetchPolicy;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -63,6 +65,7 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
         onCompleted?.(recordWithoutConnection);
       }
     },
+    fetchPolicy,
   });
 
   // TODO: Remove connection from record
