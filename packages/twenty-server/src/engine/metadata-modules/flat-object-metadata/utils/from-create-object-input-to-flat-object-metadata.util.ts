@@ -1,4 +1,7 @@
-import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
+import {
+  capitalize,
+  trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
+} from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -55,10 +58,10 @@ export const fromCreateObjectInputToFlatObjectMetadata = (
     isSearchable: true,
     isSystem: false,
     labelIdentifierFieldMetadataId: baseCustomFlatFieldMetadatas.nameField.id,
-    labelPlural: createObjectInput.labelPlural ?? null,
-    labelSingular: createObjectInput.labelSingular ?? null,
-    namePlural: createObjectInput.namePlural ?? null,
-    nameSingular: createObjectInput.nameSingular ?? null,
+    labelPlural: capitalize(createObjectInput.labelPlural),
+    labelSingular: capitalize(createObjectInput.labelSingular),
+    namePlural: createObjectInput.namePlural,
+    nameSingular: createObjectInput.nameSingular,
     shortcut: createObjectInput.shortcut ?? null,
     standardId: null,
     standardOverrides: null,

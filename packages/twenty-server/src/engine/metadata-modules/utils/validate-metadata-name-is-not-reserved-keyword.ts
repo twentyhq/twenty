@@ -42,7 +42,7 @@ const coreObjectNames = [
   'userWorkspaceRoles',
 ];
 
-const reservedKeywords = [
+export const RESERVED_METADATA_NAME_KEYWORDS = [
   ...coreObjectNames,
   'plan',
   'plans',
@@ -71,7 +71,7 @@ const reservedKeywords = [
 export const validateMetadataNameIsNotReservedKeywordOrThrow = (
   name: string,
 ) => {
-  if (reservedKeywords.includes(name)) {
+  if (RESERVED_METADATA_NAME_KEYWORDS.includes(name)) {
     throw new InvalidMetadataException(
       `The name "${name}" is not available`,
       InvalidMetadataExceptionCode.RESERVED_KEYWORD,

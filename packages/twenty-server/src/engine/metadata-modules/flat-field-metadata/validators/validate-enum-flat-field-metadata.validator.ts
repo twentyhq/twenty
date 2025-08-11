@@ -2,8 +2,8 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { QUOTED_STRING_REGEX } from 'twenty-shared/constants';
 import {
-  type EnumFieldMetadataType,
   FieldMetadataType,
+  type EnumFieldMetadataType,
   type NonNullableRequired,
 } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
@@ -21,11 +21,11 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type ValidateOneFieldMetadataArgs } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import {
+  runFlatMetadataValidators,
   type FailedFlatFieldMetadataValidationExceptions,
-  type FlatFieldMetadataValidator,
-  runFlatFieldMetadataValidators,
 } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatMetadataValidator } from 'src/engine/metadata-modules/types/flat-metadata-validator.type';
 import {
   beneathDatabaseIdentifierMinimumLength,
   exceedsDatabaseIdentifierMaximumLength,
@@ -33,7 +33,7 @@ import {
 import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
 
 const validateMetadataOptionId = (sanitizedId?: string) => {
-  const validators: FlatFieldMetadataValidator<string>[] = [
+  const validators: FlatMetadataValidator<string>[] = [
     {
       validator: (id) => !isDefined(id),
       message: t`Option id is required`,
@@ -44,11 +44,11 @@ const validateMetadataOptionId = (sanitizedId?: string) => {
     },
   ];
 
-  return runFlatFieldMetadataValidators(sanitizedId, validators);
+  return runFlatMetadataValidators(sanitizedId, validators);
 };
 
 const validateMetadataOptionLabel = (sanitizedLabel: string) => {
-  const validators: FlatFieldMetadataValidator<string>[] = [
+  const validators: FlatMetadataValidator<string>[] = [
     {
       validator: (label) => !isDefined(label),
       message: t`Option label is required`,
@@ -71,11 +71,11 @@ const validateMetadataOptionLabel = (sanitizedLabel: string) => {
     },
   ];
 
-  return runFlatFieldMetadataValidators(sanitizedLabel, validators);
+  return runFlatMetadataValidators(sanitizedLabel, validators);
 };
 
 const validateMetadataOptionValue = (sanitizedValue: string) => {
-  const validators: FlatFieldMetadataValidator<string>[] = [
+  const validators: FlatMetadataValidator<string>[] = [
     {
       validator: (value) => !isDefined(value),
       message: t`Option value is required`,
@@ -94,7 +94,7 @@ const validateMetadataOptionValue = (sanitizedValue: string) => {
     },
   ];
 
-  return runFlatFieldMetadataValidators(sanitizedValue, validators);
+  return runFlatMetadataValidators(sanitizedValue, validators);
 };
 
 const validateDuplicates = (
@@ -109,7 +109,7 @@ const validateDuplicates = (
     | FieldMetadataComplexOption[]
   )[number])[];
   const duplicatedValidators = fieldsToCheckForDuplicates.map<
-    FlatFieldMetadataValidator<
+    FlatMetadataValidator<
       FieldMetadataDefaultOption[] | FieldMetadataComplexOption[]
     >
   >((field) => ({
@@ -118,7 +118,7 @@ const validateDuplicates = (
       new Set(options.map((option) => option[field])).size !== options.length,
   }));
 
-  return runFlatFieldMetadataValidators(options, duplicatedValidators);
+  return runFlatMetadataValidators(options, duplicatedValidators);
 };
 
 const validateFieldMetadataInputOptions = <T extends EnumFieldMetadataType>(
@@ -161,7 +161,7 @@ const validateSelectDefaultValue = (
     ];
   }
 
-  const validators: FlatFieldMetadataValidator<string>[] = [
+  const validators: FlatMetadataValidator<string>[] = [
     {
       validator: (value: string) => !QUOTED_STRING_REGEX.test(value),
       message: 'Default value should be as quoted string',
@@ -175,7 +175,7 @@ const validateSelectDefaultValue = (
     },
   ];
 
-  return runFlatFieldMetadataValidators(defaultValue, validators);
+  return runFlatMetadataValidators(defaultValue, validators);
 };
 
 const validateMultiSelectDefaultValue = (
@@ -191,7 +191,7 @@ const validateMultiSelectDefaultValue = (
     ];
   }
 
-  const validators: FlatFieldMetadataValidator<string[]>[] = [
+  const validators: FlatMetadataValidator<string[]>[] = [
     {
       validator: (values) => values.length === 0,
       message: 'If defined default value must contain at least one value',
@@ -203,7 +203,7 @@ const validateMultiSelectDefaultValue = (
   ];
 
   return [
-    runFlatFieldMetadataValidators(multiSelectDefaultValue, validators),
+    runFlatMetadataValidators(multiSelectDefaultValue, validators),
     multiSelectDefaultValue.flatMap((value) =>
       validateSelectDefaultValue(options, value),
     ),
