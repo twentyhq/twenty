@@ -37,12 +37,12 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
 import { WorkspaceMigrationBuilderV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.module';
 import { WorkspaceMigrationRunnerV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.module';
 
-import { ObjectMetadataEntity } from './object-metadata.entity';
-import { ObjectMetadataService } from './object-metadata.service';
-
-import { CreateObjectInput } from './dtos/create-object.input';
-import { ObjectMetadataDTO } from './dtos/object-metadata.dto';
-import { UpdateObjectPayload } from './dtos/update-object.input';
+import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
+import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 
 @Module({
   imports: [
@@ -72,6 +72,7 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
       ],
       services: [
         ObjectMetadataService,
+        ObjectMetadataServiceV2,
         ObjectMetadataMigrationService,
         ObjectMetadataFieldRelationService,
         ObjectMetadataRelatedRecordsService,
@@ -102,6 +103,7 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
   ],
   providers: [
     ObjectMetadataService,
+    ObjectMetadataServiceV2,
     ObjectMetadataResolver,
     BeforeUpdateOneObject,
   ],
