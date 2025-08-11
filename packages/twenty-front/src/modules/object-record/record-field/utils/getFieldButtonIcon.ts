@@ -1,5 +1,5 @@
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldDisplayedAsPhone } from '@/object-record/record-field/types/guards/isFieldDisplayedAsPhone';
 import { isFieldEmails } from '@/object-record/record-field/types/guards/isFieldEmails';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
@@ -9,7 +9,7 @@ import { isFieldRelation } from '@/object-record/record-field/types/guards/isFie
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
-import { IconComponent, IconPencil } from 'twenty-ui/display';
+import { type IconComponent, IconPencil } from 'twenty-ui/display';
 
 export const getFieldButtonIcon = (
   fieldDefinition:

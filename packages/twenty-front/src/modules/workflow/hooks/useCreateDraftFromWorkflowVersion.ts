@@ -2,7 +2,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import {
-  CreateDraftFromWorkflowVersionInput,
+  type CreateDraftFromWorkflowVersionInput,
   useCreateDraftFromWorkflowVersionMutation,
 } from '~/generated-metadata/graphql';
 

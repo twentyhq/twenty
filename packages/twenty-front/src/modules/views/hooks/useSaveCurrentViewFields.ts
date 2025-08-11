@@ -5,7 +5,7 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
 import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
-import { ViewField } from '@/views/types/ViewField';
+import { type ViewField } from '@/views/types/ViewField';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';

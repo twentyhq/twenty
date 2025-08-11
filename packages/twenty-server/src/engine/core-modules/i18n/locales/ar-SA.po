@@ -53,6 +53,11 @@ msgstr "(النظام) العروض"
 msgid "{fieldName} and {fieldName}Id cannot be both provided."
 msgstr "لا يمكن توفير كل من {fieldName} و{fieldName}Id معاً."
 
+#. js-lingui-id: ZkHTHm
+#: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
+msgid "{fieldType} fields cannot be unique."
+msgstr ""
+
 #. js-lingui-id: wapGcj
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "{message}"
@@ -514,6 +519,7 @@ msgid "Cannot create workflow version with status other than draft"
 msgstr "لا يمكن إنشاء إصدار سير العمل بحالة غير المسودة"
 
 #. js-lingui-id: AQyr9X
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "لا يمكن الحذف، يرجى تحديث حقل معرف العلامة أولاً"
@@ -522,6 +528,11 @@ msgstr "لا يمكن الحذف، يرجى تحديث حقل معرف العل�
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot disable non-active workflow version"
 msgstr "لا يمكن تعطيل إصدار سير العمل غير النشط"
+
+#. js-lingui-id: RATxdO
+#: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
+msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first."
+msgstr ""
 
 #. js-lingui-id: IDMgr/
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
@@ -2583,6 +2594,12 @@ msgstr "العنوان"
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Type"
 msgstr "النوع"
+
+#. js-lingui-id: RBJNRI
+#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
+msgid "Unique field cannot have a default value"
+msgstr ""
 
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts

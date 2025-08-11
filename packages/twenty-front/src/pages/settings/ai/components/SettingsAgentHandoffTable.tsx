@@ -17,7 +17,7 @@ import {
 } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { useRemoveAgentHandoffMutation } from '~/generated-metadata/graphql';
-import { AgentHandoffDto } from '~/generated/graphql';
+import { type AgentHandoffDto } from '~/generated/graphql';
 
 const AGENT_HANDOFF_DELETION_MODAL_ID = 'agent-handoff-deletion-modal';
 

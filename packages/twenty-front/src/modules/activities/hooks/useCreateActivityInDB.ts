@@ -1,10 +1,10 @@
 import { isNonEmptyArray } from '@sniptt/guards';
 
-import { ActivityForEditor } from '@/activities/types/ActivityForEditor';
+import { type ActivityForEditor } from '@/activities/types/ActivityForEditor';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
@@ -12,8 +12,8 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 import { createOneActivityOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/createOneActivityOperationSignatureFactory';
-import { NoteTarget } from '@/activities/types/NoteTarget';
-import { TaskTarget } from '@/activities/types/TaskTarget';
+import { type NoteTarget } from '@/activities/types/NoteTarget';
+import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
 import { useRecoilCallback } from 'recoil';
 import { capitalize } from 'twenty-shared/utils';

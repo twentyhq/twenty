@@ -1,4 +1,4 @@
-import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
 import { multiSelectFieldValueSchema } from '@/object-record/record-field/validation-schemas/multiSelectFieldValueSchema';
 
 export const isFieldMultiSelectValue = (

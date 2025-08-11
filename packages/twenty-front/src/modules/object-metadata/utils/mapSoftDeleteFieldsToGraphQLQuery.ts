@@ -1,4 +1,4 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export const mapSoftDeleteFieldsToGraphQLQuery = (
   objectMetadataItem: Pick<ObjectMetadataItem, 'readableFields'>,

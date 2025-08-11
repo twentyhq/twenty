@@ -1,4 +1,4 @@
-import { SpreadsheetImportField } from '@/spreadsheet-import/types';
+import { type SpreadsheetImportField } from '@/spreadsheet-import/types';
 import { getFieldOptions } from '@/spreadsheet-import/utils/getFieldOptions';
 import { FieldMetadataType } from 'twenty-shared/types';
 

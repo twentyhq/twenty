@@ -1,15 +1,15 @@
 import { gql } from '@apollo/client';
-import { MockedResponse } from '@apollo/client/testing';
+import { type MockedResponse } from '@apollo/client/testing';
 import { renderHook, waitFor } from '@testing-library/react';
-import { ReactNode, act } from 'react';
+import { type ReactNode, act } from 'react';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { booleanFieldDefinition } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import {
   FieldContext,
-  RecordUpdateHook,
-  RecordUpdateHookParams,
+  type RecordUpdateHook,
+  type RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
 import { generateEmptyJestRecordNode } from '~/testing/jest/generateEmptyJestRecordNode';

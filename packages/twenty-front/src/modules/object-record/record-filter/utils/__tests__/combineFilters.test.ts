@@ -1,4 +1,4 @@
-import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { type RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { combineFilters } from '../combineFilters';
 
 describe('combineFilters', () => {

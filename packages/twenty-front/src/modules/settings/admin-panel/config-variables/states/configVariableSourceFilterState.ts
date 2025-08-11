@@ -1,4 +1,4 @@
-import { ConfigVariableSourceFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableSourceFilter';
+import { type ConfigVariableSourceFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableSourceFilter';
 import { createState } from 'twenty-ui/utilities';
 
 export const configVariableSourceFilterState =

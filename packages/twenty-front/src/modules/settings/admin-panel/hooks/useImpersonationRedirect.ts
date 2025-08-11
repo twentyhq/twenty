@@ -1,6 +1,6 @@
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { AppPath } from '@/types/AppPath';
-import { WorkspaceUrls } from '~/generated/graphql';
+import { type WorkspaceUrls } from '~/generated/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 export const useImpersonationRedirect = () => {

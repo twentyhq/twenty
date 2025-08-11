@@ -1,5 +1,5 @@
 import {
-  HttpMethodWithBody,
+  type HttpMethodWithBody,
   METHODS_WITH_BODY,
 } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 

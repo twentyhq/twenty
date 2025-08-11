@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordReadOnly';
-import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordDetailRelationSectionDropdownToMany } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSectionDropdownToMany';
 import { RecordDetailRelationSectionDropdownToOne } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSectionDropdownToOne';
 import { RelationType } from '~/generated-metadata/graphql';

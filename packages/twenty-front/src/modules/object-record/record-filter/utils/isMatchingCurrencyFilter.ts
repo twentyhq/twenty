@@ -1,4 +1,4 @@
-import { CurrencyFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { type CurrencyFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 

@@ -1,7 +1,7 @@
 import { Button } from 'twenty-ui/input';
 import { t } from '@lingui/core/macro';
 import { useAgentChat } from '@/ai/hooks/useAgentChat';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const SendMessageButton = ({
   records,

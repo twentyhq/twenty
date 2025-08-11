@@ -1,4 +1,4 @@
-import { CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
+import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 export const COMPOSITE_FIELD_SUB_FIELD_LABELS: {

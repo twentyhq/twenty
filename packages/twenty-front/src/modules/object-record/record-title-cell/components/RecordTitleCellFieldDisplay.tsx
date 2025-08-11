@@ -3,7 +3,7 @@ import { isFieldFullName } from '@/object-record/record-field/types/guards/isFie
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { RecordTitleCellSingleTextDisplayMode } from '@/object-record/record-title-cell/components/RecordTitleCellTextFieldDisplay';
 import { RecordTitleFullNameFieldDisplay } from '@/object-record/record-title-cell/components/RecordTitleFullNameFieldDisplay';
-import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
+import { type RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { useContext } from 'react';
 
 export const RecordTitleCellFieldDisplay = ({

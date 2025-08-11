@@ -1,9 +1,9 @@
 import {
-  GetCallback,
-  GetRecoilValue,
-  Loadable,
-  RecoilValue,
-  WrappedValue,
+  type GetCallback,
+  type GetRecoilValue,
+  type Loadable,
+  type RecoilValue,
+  type WrappedValue,
 } from 'recoil';
 
 export type SelectorGetter<T, P> = (

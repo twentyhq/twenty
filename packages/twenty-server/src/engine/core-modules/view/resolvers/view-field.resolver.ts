@@ -67,4 +67,17 @@ export class ViewFieldResolver {
 
     return isDefined(deletedViewField);
   }
+
+  @Mutation(() => Boolean)
+  async destroyCoreViewField(
+    @Args('id', { type: () => String }) id: string,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<boolean> {
+    const deletedViewField = await this.viewFieldService.destroy(
+      id,
+      workspace.id,
+    );
+
+    return isDefined(deletedViewField);
+  }
 }

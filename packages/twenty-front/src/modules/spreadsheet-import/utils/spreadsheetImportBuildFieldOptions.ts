@@ -1,9 +1,9 @@
 import { getFieldMetadataTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFieldMetadataTypeLabel';
-import { SpreadsheetImportFields } from '@/spreadsheet-import/types';
-import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
-import { SpreadsheetImportFieldOption } from '@/spreadsheet-import/types/SpreadsheetImportFieldOption';
+import { type SpreadsheetImportFields } from '@/spreadsheet-import/types';
+import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { type SpreadsheetImportFieldOption } from '@/spreadsheet-import/types/SpreadsheetImportFieldOption';
 import { getShortNestedFieldLabel } from '@/spreadsheet-import/utils/getShortNestedFieldLabel';
-import { ReadonlyDeep } from 'type-fest';
+import { type ReadonlyDeep } from 'type-fest';
 
 export const spreadsheetImportBuildFieldOptions = (
   fields: SpreadsheetImportFields,

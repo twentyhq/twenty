@@ -1,8 +1,8 @@
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
-import { GraphQLView } from '@/views/types/GraphQLView';
-import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { type GraphQLView } from '@/views/types/GraphQLView';
+import { type ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { useCallback } from 'react';

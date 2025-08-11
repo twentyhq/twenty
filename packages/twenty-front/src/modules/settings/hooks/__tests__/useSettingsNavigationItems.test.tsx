@@ -1,11 +1,11 @@
 import { useSettingsNavigationItems } from '@/settings/hooks/useSettingsNavigationItems';
 import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { MutableSnapshot, RecoilRoot } from 'recoil';
+import { type MutableSnapshot, RecoilRoot } from 'recoil';
 import {
-  Billing,
+  type Billing,
   OnboardingStatus,
   PermissionFlagType,
 } from '~/generated/graphql';

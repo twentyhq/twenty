@@ -1,8 +1,8 @@
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
 import {
-  SettingsNavigationItem,
-  SettingsNavigationSection,
+  type SettingsNavigationItem,
+  type SettingsNavigationSection,
   useSettingsNavigationItems,
 } from '@/settings/hooks/useSettingsNavigationItems';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';

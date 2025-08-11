@@ -1,4 +1,4 @@
-import { HttpRequestBody } from '../../constants/HttpRequest';
+import { type HttpRequestBody } from '../../constants/HttpRequest';
 import { hasNonStringValues } from '../hasNonStringValues';
 
 describe('hasNonStringValues', () => {

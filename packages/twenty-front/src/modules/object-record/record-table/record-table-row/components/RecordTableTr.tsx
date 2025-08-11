@@ -10,7 +10,7 @@ import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/rec
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
-import { ReactNode, forwardRef } from 'react';
+import { type ReactNode, forwardRef } from 'react';
 
 const StyledTr = styled.tr<{
   isDragging: boolean;

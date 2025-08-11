@@ -1,5 +1,5 @@
 import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
-import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
+import { type WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
 
 export const addEmptyOperationIfNecessary = (
   newOperations: WebhookOperationType[],

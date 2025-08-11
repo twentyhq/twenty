@@ -1,5 +1,5 @@
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { AggregateOperationsOmittingStandardOperations } from '@/object-record/types/AggregateOperationsOmittingStandardOperations';
+import { type AggregateOperationsOmittingStandardOperations } from '@/object-record/types/AggregateOperationsOmittingStandardOperations';
 import { isFieldTypeValidForAggregateOperation } from '@/object-record/utils/isFieldTypeValidForAggregateOperation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 

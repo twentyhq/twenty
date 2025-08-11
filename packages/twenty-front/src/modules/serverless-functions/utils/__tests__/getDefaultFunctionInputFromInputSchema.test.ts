@@ -1,4 +1,4 @@
-import { InputSchema } from '@/workflow/types/InputSchema';
+import { type InputSchema } from '@/workflow/types/InputSchema';
 import { getDefaultFunctionInputFromInputSchema } from '@/serverless-functions/utils/getDefaultFunctionInputFromInputSchema';
 
 describe('getDefaultFunctionInputFromInputSchema', () => {

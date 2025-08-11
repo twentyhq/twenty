@@ -1,6 +1,6 @@
 import {
-  WorkflowDiagramNode,
-  WorkflowDiagramStepNode,
+  type WorkflowDiagramNode,
+  type WorkflowDiagramStepNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 
 export const isStepNode = (

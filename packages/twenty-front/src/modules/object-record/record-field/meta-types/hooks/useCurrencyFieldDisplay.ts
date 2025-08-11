@@ -6,7 +6,7 @@ import { assertFieldMetadata } from '@/object-record/record-field/types/guards/a
 import { isFieldCurrency } from '@/object-record/record-field/types/guards/isFieldCurrency';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { FieldContext } from '../../contexts/FieldContext';
-import { FieldCurrencyValue } from '../../types/FieldMetadata';
+import { type FieldCurrencyValue } from '../../types/FieldMetadata';
 
 export const useCurrencyFieldDisplay = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);

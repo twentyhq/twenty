@@ -1,4 +1,4 @@
-import { PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
+import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
 import { useCallback, useEffect } from 'react';
 
 export const useTrackPointer = ({

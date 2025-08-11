@@ -1,4 +1,4 @@
-import { FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isValidUrl } from 'twenty-shared/utils';
 

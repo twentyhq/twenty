@@ -14,7 +14,9 @@ export const performQuery = async <T = unknown>(
   try {
     const result = await rawDataSource.query<T>(query);
 
-    withLog && console.log(`Performed '${consoleDescription}' successfully`);
+    if (withLog) {
+      console.log(`Performed '${consoleDescription}' successfully`);
+    }
 
     return result;
   } catch (err) {
@@ -25,6 +27,8 @@ export const performQuery = async <T = unknown>(
     } else {
       message = `Failed to perform '${consoleDescription}': ${err}`;
     }
-    withLog && console.error(message);
+    if (withLog) {
+      console.error(message);
+    }
   }
 };

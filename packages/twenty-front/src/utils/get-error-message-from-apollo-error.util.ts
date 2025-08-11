@@ -1,4 +1,4 @@
-import { ApolloError } from '@apollo/client';
+import { type ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 

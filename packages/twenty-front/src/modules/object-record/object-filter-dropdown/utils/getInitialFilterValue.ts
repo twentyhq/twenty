@@ -1,5 +1,5 @@
-import { FilterableAndTSVectorFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type FilterableAndTSVectorFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { getDateFilterDisplayValue } from '@/object-record/record-filter/utils/getDateFilterDisplayValue';
 

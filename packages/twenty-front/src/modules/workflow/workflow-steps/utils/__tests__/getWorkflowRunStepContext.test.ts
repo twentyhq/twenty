@@ -1,4 +1,4 @@
-import { WorkflowRunFlow } from '@/workflow/types/Workflow';
+import { type WorkflowRunFlow } from '@/workflow/types/Workflow';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { getWorkflowRunStepContext } from '../getWorkflowRunStepContext';
 import { StepStatus } from 'twenty-shared/workflow';

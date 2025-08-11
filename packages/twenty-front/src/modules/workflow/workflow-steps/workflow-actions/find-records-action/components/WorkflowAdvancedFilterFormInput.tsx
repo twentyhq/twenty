@@ -9,9 +9,9 @@ import { FormFieldInput } from '@/object-record/record-field/components/FormFiel
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import {
-  FieldMetadata,
-  FieldMultiSelectMetadata,
-  FieldSelectMetadata,
+  type FieldMetadata,
+  type FieldMultiSelectMetadata,
+  type FieldSelectMetadata,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -22,7 +22,7 @@ import { isObject, isString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { JsonValue } from 'type-fest';
+import { type JsonValue } from 'type-fest';
 
 export const WorkflowAdvancedFilterValueFormInput = ({
   recordFilterId,

@@ -1,5 +1,5 @@
-import { WorkflowFormAction } from '@/workflow/types/Workflow';
-import { Meta, StoryObj } from '@storybook/react';
+import { type WorkflowFormAction } from '@/workflow/types/Workflow';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {

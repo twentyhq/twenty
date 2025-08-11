@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { SSOIdentityProvider } from '@/settings/security/types/SSOIdentityProvider';
+import { type SSOIdentityProvider } from '@/settings/security/types/SSOIdentityProvider';
 import { createState } from 'twenty-ui/utilities';
 
 export const SSOIdentitiesProvidersState = createState<

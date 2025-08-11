@@ -1,6 +1,6 @@
 import { activeRecordBoardCardIndexesComponentState } from '@/object-record/record-board/states/activeRecordBoardCardIndexesComponentState';
 import { isRecordBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState';
-import { BoardCardIndexes } from '@/object-record/record-board/types/BoardCardIndexes';
+import { type BoardCardIndexes } from '@/object-record/record-board/types/BoardCardIndexes';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';

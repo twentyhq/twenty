@@ -1,5 +1,5 @@
-import { Person } from '@/people/types/Person';
-import { WorkspaceMember } from '~/generated-metadata/graphql';
+import { type Person } from '@/people/types/Person';
+import { type WorkspaceMember } from '~/generated-metadata/graphql';
 
 export type CalendarEventParticipant = {
   id: string;

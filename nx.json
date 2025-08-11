@@ -38,10 +38,9 @@
       "cache": true,
       "outputs": ["{options.outputFile}"],
       "options": {
-        "eslintConfig": "{projectRoot}/.eslintrc.cjs",
+        "eslintConfig": "{projectRoot}/eslint.config.js",
         "cache": true,
-        "cacheLocation": "{workspaceRoot}/.cache/eslint",
-        "ignorePath": "{workspaceRoot}/.gitignore"
+        "cacheLocation": "{workspaceRoot}/.cache/eslint"
       },
       "configurations": {
         "ci": { "cacheStrategy": "content" },
@@ -223,7 +222,7 @@
       "cache": true,
       "inputs": [
         "default",
-        "{workspaceRoot}/.eslintrc.js",
+        "{workspaceRoot}/eslint.config.js",
         "{workspaceRoot}/tools/eslint-rules/**/*"
       ]
     },

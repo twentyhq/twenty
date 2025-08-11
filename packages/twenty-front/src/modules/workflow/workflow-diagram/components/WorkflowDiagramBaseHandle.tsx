@@ -1,4 +1,4 @@
-import { Handle, HandleProps } from '@xyflow/react';
+import { Handle, type HandleProps } from '@xyflow/react';
 import styled from '@emotion/styled';
 import { NODE_HANDLE_HEIGHT_PX } from '@/workflow/workflow-diagram/constants/NodeHandleHeightPx';
 import { NODE_HANDLE_WIDTH_PX } from '@/workflow/workflow-diagram/constants/NodeHandleWidthPx';

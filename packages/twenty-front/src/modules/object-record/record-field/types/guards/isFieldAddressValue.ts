@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { ALLOWED_ADDRESS_SUBFIELDS } from 'twenty-shared/src/types/AddressFieldsType';
-import { FieldAddressValue } from '../FieldMetadata';
+import { type FieldAddressValue } from '../FieldMetadata';
 
 export const addressSchema = z.object({
   addressStreet1: z.string(),

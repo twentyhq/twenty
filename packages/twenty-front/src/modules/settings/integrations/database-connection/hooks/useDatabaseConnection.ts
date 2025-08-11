@@ -1,4 +1,4 @@
-import { WatchQueryFetchPolicy } from '@apollo/client';
+import { type WatchQueryFetchPolicy } from '@apollo/client';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 

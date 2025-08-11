@@ -1,4 +1,4 @@
-import { TSVectorFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { type TSVectorFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 
 export const isMatchingTSVectorFilter = ({
   tsVectorFilter,

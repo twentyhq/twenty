@@ -242,4 +242,15 @@ describe('removeStep', () => {
     });
     expect(result.updatedSteps).toEqual([]);
   });
+
+  it('should remove trigger if steps are null', () => {
+    const result = removeStep({
+      existingTrigger: { ...mockTrigger, nextStepIds: [] },
+      existingSteps: null,
+      stepIdToDelete: 'trigger',
+    });
+
+    expect(result.updatedTrigger).toEqual(null);
+    expect(result.updatedSteps).toEqual([]);
+  });
 });

@@ -1,5 +1,5 @@
-import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberTimeFormatEnum,

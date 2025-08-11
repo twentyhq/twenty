@@ -5,7 +5,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useDestroyManyRecords } from '@/object-record/hooks/useDestroyManyRecords';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
-import { ViewGroup } from '@/views/types/ViewGroup';
+import { type ViewGroup } from '@/views/types/ViewGroup';
 
 type CreateViewGroupRecordsArgs = {
   viewGroupsToCreate: ViewGroup[];

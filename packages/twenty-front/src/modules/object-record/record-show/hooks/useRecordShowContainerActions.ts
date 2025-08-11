@@ -1,7 +1,7 @@
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
-  RecordUpdateHook,
-  RecordUpdateHookParams,
+  type RecordUpdateHook,
+  type RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
 import {
   FileFolder,

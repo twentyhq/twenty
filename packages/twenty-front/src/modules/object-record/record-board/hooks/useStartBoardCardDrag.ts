@@ -1,4 +1,4 @@
-import { DragStart } from '@hello-pangea/dnd';
+import { type DragStart } from '@hello-pangea/dnd';
 import { useRecoilCallback } from 'recoil';
 
 import { draggedRecordIdsComponentState } from '@/object-record/record-board/states/draggedRecordIdsComponentState';
