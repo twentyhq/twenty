@@ -4,6 +4,10 @@ import {
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
+import {
+  fieldMetadataStandardOverridesProperties,
+  FieldMetadataStandardOverridesProperties,
+} from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import {
   FieldMetadataException,
@@ -22,6 +26,16 @@ import {
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 
+const fieldMetadataEditableProperties =
+  flatFieldMetadataPropertiesToCompare.filter(
+    (
+      property,
+    ): property is Exclude<
+      FlatFieldMetadataPropertiesToCompare,
+      'standardOverrides'
+    > => property !== 'standardOverrides',
+  );
+
 type FromUpdateFieldInputToFlatFieldMetadataToUpdateArgs = {
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
   updateFieldInput: UpdateFieldInput;
@@ -35,17 +49,9 @@ export const fromUpdateFieldInputToFlatFieldMetadataToUpdate = ({
       rawUdpateFieldInput,
       ['objectMetadataId', 'id'],
     );
-  const editableProperties = flatFieldMetadataPropertiesToCompare.filter(
-    (
-      property,
-    ): property is Exclude<
-      FlatFieldMetadataPropertiesToCompare,
-      'standardOverrides'
-    > => property !== 'standardOverrides',
-  );
   const updatedEditableFields = extractAndSanitizeObjectStringFields(
     rawUdpateFieldInput,
-    editableProperties,
+    fieldMetadataEditableProperties,
   );
 
   const relatedFlatFieldMetadata =
@@ -88,8 +94,49 @@ export const fromUpdateFieldInputToFlatFieldMetadataToUpdate = ({
       ),
     };
   }
+  const isStandardField =
+    relatedFlatFieldMetadata.standardId !== null &&
+    !relatedFlatFieldMetadata.isCustom;
+  if (isStandardField) {
+    const invalidUpdatedProperties = Object.keys(updatedEditableFields).filter(
+      ([property]) =>
+        fieldMetadataStandardOverridesProperties.includes(
+          property as FieldMetadataStandardOverridesProperties,
+        ),
+    );
 
-  const updatedFlatFieldMetadata = editableProperties.reduce(
+    if (invalidUpdatedProperties.length > 0) {
+      return {
+        status: 'fail',
+        error: new FieldMetadataException(
+          `Cannot edit standard field metadata properties: ${invalidUpdatedProperties.join(', ')}`,
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        ),
+      };
+    }
+
+    const updatedStandardFlatFieldMetadata =
+      fieldMetadataStandardOverridesProperties.reduce((acc, property) => {
+        const isPropertyUpdated = updatedEditableFields[property] !== undefined;
+
+        return {
+          ...acc,
+          standardOverrides: {
+            ...acc.standardOverrides,
+            ...(isPropertyUpdated
+              ? { [property]: updatedEditableFields[property] }
+              : {}),
+          },
+        };
+      }, relatedFlatFieldMetadata);
+
+    return {
+      status: 'success',
+      result: updatedStandardFlatFieldMetadata,
+    };
+  }
+
+  const updatedFlatFieldMetadata = fieldMetadataEditableProperties.reduce(
     (acc, property) => {
       const isPropertyUpdated = updatedEditableFields[property] !== undefined;
 
