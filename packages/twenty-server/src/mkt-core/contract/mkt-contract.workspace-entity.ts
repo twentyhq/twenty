@@ -30,7 +30,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const TABLE_CONTRACT_NAME = 'mktContract';
-const NAME_FIELD_NAME = 'name';;
+const NAME_FIELD_NAME = 'name';
 
 export const SEARCH_FIELDS_FOR_MKT_CONTRACT: FieldTypeAndNameMetadata[] = [
   { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
@@ -42,7 +42,6 @@ export enum MKT_CONTRACT_STATUS {
   EXPIRED = 'expired',
   REVOKED = 'revoked',
 }
-
 
 export const MKT_CONTRACT_STATUS_OPTIONS: FieldMetadataComplexOption[] = [
   {
@@ -71,7 +70,7 @@ export const MKT_CONTRACT_STATUS_OPTIONS: FieldMetadataComplexOption[] = [
   },
 ];
 
-@WorkspaceEntity({  
+@WorkspaceEntity({
   standardId: MKT_OBJECT_IDS.mktContract,
   namePlural: `${TABLE_CONTRACT_NAME}s`,
   labelSingular: msg`Contract`,

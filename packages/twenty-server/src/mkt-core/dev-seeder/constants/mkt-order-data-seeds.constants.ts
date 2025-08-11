@@ -1,4 +1,4 @@
-import { MKT_CONTRACT_DATA_SEEDS_IDS } from "src/mkt-core/dev-seeder/constants/mkt-contract-data-seeds.constants";
+import { MKT_CONTRACT_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-contract-data-seeds.constants';
 
 type MktOrderDataSeed = {
   id: string;

@@ -46,10 +46,7 @@ export class SeedContractModuleCommand extends CommandRunner {
     return value;
   }
 
-  async run(
-    passedParam: string[],
-    options: SeedModuleOptions,
-  ): Promise<void> {
+  async run(passedParam: string[], options: SeedModuleOptions): Promise<void> {
     let workspaces: Workspace[] = [];
 
     if (options.workspaceId) {
@@ -118,9 +115,7 @@ export class SeedContractModuleCommand extends CommandRunner {
     }
   }
 
-  private async seedModuleForWorkspace(
-    workspaceId: string,
-  ): Promise<void> {
+  private async seedModuleForWorkspace(workspaceId: string): Promise<void> {
     this.logger.log(
       `🚀 Starting contract module seeding for workspace ${workspaceId}`,
     );
@@ -197,7 +192,7 @@ export class SeedContractModuleCommand extends CommandRunner {
         // Seed mkt contracts
         await prefillMktContracts(entityManager, schemaName);
 
-        if (!contractViewDefinition) {  
+        if (!contractViewDefinition) {
           this.logger.log(
             `Could not create contract view definition for workspace ${workspaceId}`,
           );
@@ -315,7 +310,9 @@ export class SeedContractModuleCommand extends CommandRunner {
             .execute();
         }
 
-        this.logger.log(`✅ Contract view created for workspace ${workspaceId}`);
+        this.logger.log(
+          `✅ Contract view created for workspace ${workspaceId}`,
+        );
       },
     );
   }

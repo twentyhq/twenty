@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Command,CommandRunner,Option } from 'nest-commander';
+import { Command, CommandRunner, Option } from 'nest-commander';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
@@ -46,10 +46,7 @@ export class SeedLicenseModuleCommand extends CommandRunner {
     return value;
   }
 
-  async run(
-    passedParam: string[],
-    options: SeedModuleOptions,
-  ): Promise<void> {
+  async run(passedParam: string[], options: SeedModuleOptions): Promise<void> {
     let workspaces: Workspace[] = [];
 
     if (options.workspaceId) {
@@ -118,9 +115,7 @@ export class SeedLicenseModuleCommand extends CommandRunner {
     }
   }
 
-  private async seedModuleForWorkspace(
-    workspaceId: string,
-  ): Promise<void> {
+  private async seedModuleForWorkspace(workspaceId: string): Promise<void> {
     this.logger.log(
       `🚀 Starting license module seeding for workspace ${workspaceId}`,
     );
