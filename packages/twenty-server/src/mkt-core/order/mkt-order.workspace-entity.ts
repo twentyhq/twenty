@@ -24,6 +24,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { MKT_ORDER_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
+import { MktContractWorkspaceEntity } from 'src/mkt-core/contract/mkt-contract.workspace-entity';
 import { MktLicenseWorkspaceEntity } from 'src/mkt-core/license/mkt-license.workspace-entity';
 
 // ✅ Define fields to be used for search
@@ -136,6 +137,22 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   mktLicense: Relation<MktLicenseWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: MKT_ORDER_FIELD_IDS.mktContract,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Contracts`,
+    description: msg`Contracts linked to the order`,
+    icon: 'IconBox',
+    inverseSideTarget: () => MktContractWorkspaceEntity,
+    inverseSideFieldKey: 'mktOrders',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  mktContract: Relation<MktContractWorkspaceEntity[]>;
+  
+  @WorkspaceJoinColumn('mktContract')
+  mktContractId: string | null;
 
   @WorkspaceRelation({
     standardId: MKT_ORDER_FIELD_IDS.timelineActivities,
