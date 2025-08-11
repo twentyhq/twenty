@@ -104,13 +104,14 @@ export class WorkflowRunEnqueueJob {
           continue;
         }
 
-        const workflowRunIds = workflowRuns.map((workflowRun: WorkflowRunWorkspaceEntity) => workflowRun.id);
+        const workflowRunIds = workflowRuns.map(
+          (workflowRun: WorkflowRunWorkspaceEntity) => workflowRun.id,
+        );
 
         await workflowRunRepository.update(workflowRunIds, {
           enqueuedAt: new Date().toISOString(),
           status: WorkflowRunStatus.ENQUEUED,
         });
-
 
         for (const workflowRunId of workflowRunIds) {
           await this.workflowRunQueueWorkspaceService.increaseWorkflowRunQueuedCount(
