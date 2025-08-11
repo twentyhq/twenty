@@ -205,7 +205,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           FieldMetadataEntity,
         );
 
-      // Why ?
       if (
         !isDefined(
           objectMetadataItemWithFieldMaps.labelIdentifierFieldMetadataId,

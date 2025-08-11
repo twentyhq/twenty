@@ -42,15 +42,15 @@ type FromUpdateFieldInputToFlatFieldMetadataToUpdateArgs = {
 };
 export const fromUpdateFieldInputToFlatFieldMetadataToUpdate = ({
   existingFlatObjectMetadataMaps,
-  updateFieldInput: rawUdpateFieldInput,
+  updateFieldInput: rawUpdateFieldInput,
 }: FromUpdateFieldInputToFlatFieldMetadataToUpdateArgs): FieldInputTranspilationResult<FlatFieldMetadata> => {
   const updateFieldInputInformalProperties =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
-      rawUdpateFieldInput,
+      rawUpdateFieldInput,
       ['objectMetadataId', 'id'],
     );
   const updatedEditableFields = extractAndSanitizeObjectStringFields(
-    rawUdpateFieldInput,
+    rawUpdateFieldInput,
     fieldMetadataEditableProperties,
   );
 
@@ -70,12 +70,12 @@ export const fromUpdateFieldInputToFlatFieldMetadataToUpdate = ({
     };
   }
 
-  const FlatObjectMetadataWithFlatFieldMaps =
+  const flatObjectMetadataWithFlatFieldMaps =
     existingFlatObjectMetadataMaps.byId[
       relatedFlatFieldMetadata.objectMetadataId
     ];
 
-  if (!isDefined(FlatObjectMetadataWithFlatFieldMaps)) {
+  if (!isDefined(flatObjectMetadataWithFlatFieldMaps)) {
     return {
       status: 'fail',
       error: new FieldMetadataException(
@@ -85,7 +85,7 @@ export const fromUpdateFieldInputToFlatFieldMetadataToUpdate = ({
     };
   }
 
-  if (FlatObjectMetadataWithFlatFieldMaps.isRemote) {
+  if (flatObjectMetadataWithFlatFieldMaps.isRemote) {
     return {
       status: 'fail',
       error: new ObjectMetadataException(

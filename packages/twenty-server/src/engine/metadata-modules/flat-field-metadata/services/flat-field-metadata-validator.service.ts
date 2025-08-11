@@ -128,7 +128,7 @@ export class FlatFieldMetadataValidatorService {
         errors.push(
           new FieldMetadataException(
             `Forbidden updated properties for relation field metadata: ${relationNonEditableUpdatedProperties.join(', ')}`,
-            FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+            FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
           ),
         );
       }
