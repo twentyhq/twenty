@@ -12,11 +12,11 @@ import { STARTS_WITH_LOWER_CASE_AND_CONTAINS_ONLY_CAPS_AND_LOWER_LETTERS_AND_NUM
 export const METADATA_NAME_VALIDATORS: FlatMetadataValidator<string>[] = [
   {
     message: t`Name is too long`,
-    validator: (name) => !exceedsDatabaseIdentifierMaximumLength(name),
+    validator: (name) => exceedsDatabaseIdentifierMaximumLength(name),
   },
   {
     message: t`Name is too short`,
-    validator: (name) => !beneathDatabaseIdentifierMinimumLength(name),
+    validator: (name) => beneathDatabaseIdentifierMinimumLength(name),
   },
   {
     message: t`Name should be in camelCase`,
