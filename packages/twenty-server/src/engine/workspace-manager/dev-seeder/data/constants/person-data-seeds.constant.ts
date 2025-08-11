@@ -17,6 +17,7 @@ type PersonDataSeed = {
   phonesPrimaryPhoneNumber: string;
   phonesPrimaryPhoneCountryCode: string;
   phonesPrimaryPhoneCallingCode: string;
+  position: number;
 };
 
 export const PERSON_DATA_SEED_COLUMNS: (keyof PersonDataSeed)[] = [
@@ -35,9 +36,9 @@ export const PERSON_DATA_SEED_COLUMNS: (keyof PersonDataSeed)[] = [
   'phonesPrimaryPhoneNumber',
   'phonesPrimaryPhoneCountryCode',
   'phonesPrimaryPhoneCallingCode',
+  'position',
 ];
 
-// prettier-ignore
 export const PERSON_DATA_SEED_IDS = {
   ID_1: '20202020-b305-41e7-8c72-ba44072a4c58',
   ID_2: '20202020-b225-4b3d-a89c-7f6c30df998a',
@@ -1242,7 +1243,7 @@ export const PERSON_DATA_SEED_IDS = {
 };
 
 // prettier-ignore
-export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
+const PERSON_DATA_SEEDS_RAW = [
   {
     id: PERSON_DATA_SEED_IDS.ID_1,
     nameFirstName: 'Mark',
@@ -21644,3 +21645,10 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     phonesPrimaryPhoneCallingCode: '+81',
   }
 ];
+
+export const PERSON_DATA_SEEDS: PersonDataSeed[] = PERSON_DATA_SEEDS_RAW.map(
+  (person, index) => ({
+    ...person,
+    position: index + 1,
+  })
+);
