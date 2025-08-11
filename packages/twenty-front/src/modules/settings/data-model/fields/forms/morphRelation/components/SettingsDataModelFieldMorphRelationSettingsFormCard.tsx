@@ -5,9 +5,9 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
+import { SettingsDataModelFieldMorphRelationForm } from '@/settings/data-model/fields/forms/morphRelation/components/SettingsDataModelFieldMorphRelationForm';
 import {
-  SettingsDataModelFieldRelationForm,
-  type SettingsDataModelFieldRelationFormValues,
+  type SettingsDataModelFieldRelationFormValues
 } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm';
 import { useRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/relation/hooks/useRelationSettingsFormInitialValues';
 import {
@@ -142,7 +142,7 @@ export const SettingsDataModelFieldMorphRelationSettingsFormCard = ({
         </StyledPreviewContent>
       }
       form={
-        <SettingsDataModelFieldRelationForm
+        <SettingsDataModelFieldMorphRelationForm
           fieldMetadataItem={fieldMetadataItem}
           objectMetadataItem={objectMetadataItem}
         />

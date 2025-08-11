@@ -42,11 +42,11 @@ export const settingsDataModelFieldMorphRelationFormSchema = z.object({
   }),
 });
 
-export type SettingsDataModelFieldRelationFormValues = z.infer<
+export type SettingsDataModelFieldMorphRelationFormValues = z.infer<
   typeof settingsDataModelFieldMorphRelationFormSchema
 >;
 
-type SettingsDataModelFieldRelationFormProps = {
+type SettingsDataModelFieldMorphRelationFormProps = {
   fieldMetadataItem: Pick<FieldMetadataItem, 'type'>;
   objectMetadataItem: ObjectMetadataItem;
 };
@@ -83,17 +83,18 @@ const RELATION_TYPE_OPTIONS = Object.entries(RELATION_TYPES).map(
   }),
 );
 
-export const SettingsDataModelFieldRelationForm = ({
+export const SettingsDataModelFieldMorphRelationForm = ({
   fieldMetadataItem,
   objectMetadataItem,
-}: SettingsDataModelFieldRelationFormProps) => {
+}: SettingsDataModelFieldMorphRelationFormProps) => {
   const { t } = useLingui();
   const { control, watch: watchFormValue } =
-    useFormContext<SettingsDataModelFieldRelationFormValues>();
+    useFormContext<SettingsDataModelFieldMorphRelationFormValues>();
   const { getIcon } = useIcons();
   const { activeObjectMetadataItems, findObjectMetadataItemById } =
     useFilteredObjectMetadataItems();
 
+    // we should see if we authorize or not the edition of these fields for moprh
   const {
     disableFieldEdition,
     disableRelationEdition,
@@ -105,17 +106,7 @@ export const SettingsDataModelFieldRelationForm = ({
     objectMetadataItem,
   });
 
-  const selectedObjectMetadataItem = findObjectMetadataItemById(
-    watchFormValue(
-      'relation.objectMetadataId',
-      initialRelationObjectMetadataItem?.id,
-    ),
-  );
-
-  const selectedRelationType = watchFormValue(
-    'relation.type',
-    initialRelationType,
-  );
+  
 
   const isMobile = useIsMobile();
 
@@ -138,6 +129,7 @@ export const SettingsDataModelFieldRelationForm = ({
             />
           )}
         />
+        {/* needs to switch to multiInput */}
         <Controller
           name="relation.objectMetadataId"
           control={control}
@@ -165,10 +157,7 @@ export const SettingsDataModelFieldRelationForm = ({
         />
       </StyledSelectsContainer>
       <StyledInputsLabel>
-        Field on{' '}
-        {selectedRelationType === RelationType.MANY_TO_ONE
-          ? selectedObjectMetadataItem?.labelSingular
-          : selectedObjectMetadataItem?.labelPlural}
+        {t`Field on destination`}
       </StyledInputsLabel>
       <StyledInputsContainer>
         <Controller
