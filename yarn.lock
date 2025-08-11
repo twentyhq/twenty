@@ -37492,6 +37492,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"graphql-sse@npm:^2.5.4":
+  version: 2.5.4
+  resolution: "graphql-sse@npm:2.5.4"
+  peerDependencies:
+    graphql: ">=0.11 <=16"
+  checksum: 10c0/b2635a4098b86492ecb04e7aab7efb715847ad11b785591cf90cf1f342ba78a03db0c6cf903975a7ad9e2c278dee55cd9e2e9d7edb560f334528bb8ee926ed95
+  languageName: node
+  linkType: hard
+
 "graphql-subscriptions@npm:2.0.0":
   version: 2.0.0
   resolution: "graphql-subscriptions@npm:2.0.0"
@@ -56031,6 +56040,7 @@ __metadata:
     eslint-plugin-unicorn: "npm:^56.0.1"
     eslint-plugin-unused-imports: "npm:^3.0.0"
     file-saver: "npm:^2.0.5"
+    graphql-sse: "npm:^2.5.4"
     input-otp: "npm:^1.4.2"
     optionator: "npm:^0.9.1"
     react-markdown: "npm:^10.1.0"
