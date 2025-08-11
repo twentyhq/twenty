@@ -9,6 +9,7 @@ const jestConfig = {
   displayName: 'twenty-server',
   rootDir: './',
   testEnvironment: 'node',
+  setupFilesAfterEnv: ['./setupTests.ts'],
   transformIgnorePatterns: ['/node_modules/'],
   testRegex: '.*\\.spec\\.ts$',
   transform: {

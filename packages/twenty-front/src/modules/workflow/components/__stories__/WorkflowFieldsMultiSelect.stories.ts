@@ -1,7 +1,6 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { expect } from '@storybook/jest';
 import type { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/testing-library';
+import { expect, within } from '@storybook/test';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { WorkflowFieldsMultiSelect } from '../WorkflowEditUpdateEventFieldsMultiSelect';
 

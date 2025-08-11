@@ -47,6 +47,11 @@ const jestConfig: JestConfigWithTsJest = {
           transform: {
             decoratorMetadata: true,
           },
+          baseUrl: '.',
+          paths: {
+            'src/*': ['./src/*'],
+            'test/*': ['./test/*'],
+          },
           experimental: {
             plugins: [
               [
@@ -63,7 +68,7 @@ const jestConfig: JestConfigWithTsJest = {
   },
   moduleNameMapper: {
     ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths, {
-      prefix: '<rootDir>/../..',
+      prefix: '<rootDir>/',
     }),
     '^test/(.*)$': '<rootDir>/test/$1',
   },
