@@ -13,6 +13,8 @@
     "database:generate:pg": "npx drizzle-kit generate:pg --config=src/database/drizzle-posgres.config.ts"
   },
   "dependencies": {
+    "react-tooltip": "^5.13.1",
+    "date-fns": "^2.30.0",
     "@codesandbox/sandpack-react": "^2.13.5",
     "@docsearch/react": "^3.6.2",
     "@keystatic/core": "^0.5.45",

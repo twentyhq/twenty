@@ -29,6 +29,7 @@
     "workerDirectory": "public"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.17",
     "@blocknote/mantine": "^0.31.1",
     "@blocknote/react": "^0.31.1",
     "@blocknote/xl-docx-exporter": "^0.31.1",
@@ -37,6 +38,7 @@
     "@cyntler/react-doc-viewer": "^1.17.0",
     "@dagrejs/dagre": "^1.1.2",
     "@graphiql/plugin-explorer": "^1.0.2",
+    "@graphiql/react": "^0.24.4",
     "@hello-pangea/dnd": "^16.2.0",
     "@hookform/resolvers": "^3.1.1",
     "@lingui/core": "^5.1.2",
@@ -63,8 +65,10 @@
     "docx": "^9.1.0",
     "file-saver": "^2.0.5",
     "graphiql": "^3.1.1",
+    "graphql": "^16.8.0",
     "graphql-sse": "^2.5.4",
     "input-otp": "^1.4.2",
+    "qs": "^6.11.2",
     "js-cookie": "^3.0.5",
     "json-2-csv": "^5.4.0",
     "react-data-grid": "7.0.0-beta.13",
