@@ -1,4 +1,4 @@
-import { DropResult } from '@hello-pangea/dnd';
+import { type DropResult } from '@hello-pangea/dnd';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { getDragOperationType } from '@/object-record/record-drag/shared/utils/getDragOperationType';
