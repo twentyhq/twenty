@@ -13,11 +13,13 @@ export class WorkspaceSchemaIndexActionRunnerService
   implements
     RunnerMethodForActionType<WorkspaceMigrationIndexActionTypeV2, 'schema'>
 {
+  // TODO: Implement index schema operations
   runDeleteIndexSchemaMigration = async (
     _action: WorkspaceMigrationActionRunnerArgs<DeleteIndexAction>,
   ) => {
     return;
   };
+
   runCreateIndexSchemaMigration = async (
     _action: WorkspaceMigrationActionRunnerArgs<CreateIndexAction>,
   ) => {

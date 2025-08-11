@@ -1,11 +1,9 @@
-import { Injectable } from '@nestjs/common';
 
 import { type QueryRunner } from 'typeorm';
 
 import { type WorkspaceSchemaIndexDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-index-definition.type';
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
 
-@Injectable()
 export class WorkspaceSchemaIndexManagerService {
   async createIndex(
     queryRunner: QueryRunner,
@@ -24,7 +22,7 @@ export class WorkspaceSchemaIndexManagerService {
       const isUnique = index.isUnique ? 'UNIQUE' : '';
       const indexType =
         index.type && index.type !== 'BTREE' ? `USING ${index.type}` : '';
-      const whereClause = index.where ? `WHERE ${index.where}` : '';
+      const whereClause = index.where ? `WHERE ${index.where}` : ''; // TODO: to sanitize
       const includeClause = index.include?.length
         ? `INCLUDE (${index.include
             .map((col) => `"${removeSqlDDLInjection(col)}"`)
@@ -87,75 +85,6 @@ export class WorkspaceSchemaIndexManagerService {
     const safeOldIndexName = removeSqlDDLInjection(oldIndexName);
     const safeNewIndexName = removeSqlDDLInjection(newIndexName);
     const sql = `ALTER INDEX "${safeSchemaName}"."${safeOldIndexName}" RENAME TO "${safeNewIndexName}"`;
-
-    await queryRunner.query(sql);
-  }
-
-  async indexExists(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    indexName: string,
-  ): Promise<boolean> {
-    const safeSchemaName = removeSqlDDLInjection(schemaName);
-    const safeIndexName = removeSqlDDLInjection(indexName);
-
-    const result = await queryRunner.query(
-      `SELECT EXISTS (
-        SELECT FROM pg_indexes 
-        WHERE schemaname = $1 AND indexname = $2
-      )`,
-      [safeSchemaName, safeIndexName],
-    );
-
-    return result[0]?.exists || false;
-  }
-
-  async getIndexesForTable(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-  ): Promise<Array<{ indexname: string; indexdef: string }>> {
-    const safeSchemaName = removeSqlDDLInjection(schemaName);
-    const safeTableName = removeSqlDDLInjection(tableName);
-
-    const result = await queryRunner.query(
-      `SELECT indexname, indexdef 
-       FROM pg_indexes 
-       WHERE schemaname = $1 AND tablename = $2`,
-      [safeSchemaName, safeTableName],
-    );
-
-    return result;
-  }
-
-  async createPrimaryKey(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    constraintName: string,
-    columnNames: string[],
-  ): Promise<void> {
-    const safeSchemaName = removeSqlDDLInjection(schemaName);
-    const safeTableName = removeSqlDDLInjection(tableName);
-    const safeConstraintName = removeSqlDDLInjection(constraintName);
-    const quotedColumns = columnNames
-      .map((col) => `"${removeSqlDDLInjection(col)}"`)
-      .join(', ');
-    const sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ADD CONSTRAINT "${safeConstraintName}" PRIMARY KEY (${quotedColumns})`;
-
-    await queryRunner.query(sql);
-  }
-
-  async dropPrimaryKey(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    constraintName: string,
-  ): Promise<void> {
-    const safeSchemaName = removeSqlDDLInjection(schemaName);
-    const safeTableName = removeSqlDDLInjection(tableName);
-    const safeConstraintName = removeSqlDDLInjection(constraintName);
-    const sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" DROP CONSTRAINT IF EXISTS "${safeConstraintName}"`;
 
     await queryRunner.query(sql);
   }

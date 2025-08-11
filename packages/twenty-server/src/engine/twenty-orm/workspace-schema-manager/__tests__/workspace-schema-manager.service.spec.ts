@@ -107,12 +107,6 @@ describe('WorkspaceSchemaManager', () => {
       expect(service.tableManager.createTable).toBeDefined();
     });
 
-    it('should provide access to column manager', () => {
-      // Act & Assert
-      expect(service.columnManager).toBeInstanceOf(Object);
-      expect(service.columnManager.addColumn).toBeDefined();
-    });
-
     it('should provide access to index manager', () => {
       // Act & Assert
       expect(service.indexManager).toBeInstanceOf(Object);

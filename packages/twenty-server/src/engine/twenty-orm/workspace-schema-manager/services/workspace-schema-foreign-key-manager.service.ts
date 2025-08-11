@@ -1,11 +1,9 @@
-import { Injectable } from '@nestjs/common';
 
 import { type QueryRunner } from 'typeorm';
 
 import { type WorkspaceSchemaForeignKeyDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-foreign-key-definition.type';
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
 
-@Injectable()
 export class WorkspaceSchemaForeignKeyManagerService {
   async createForeignKey(
     queryRunner: QueryRunner,
