@@ -1,8 +1,8 @@
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
 export const workflowDiagramWaitingNodesDimensionsComponentState =
-  createComponentStateV2<boolean>({
+  createComponentState<boolean>({
     key: 'workflowDiagramWaitingNodesDimensionsComponentState',
     defaultValue: false,
     componentInstanceContext: WorkflowVisualizerComponentInstanceContext,

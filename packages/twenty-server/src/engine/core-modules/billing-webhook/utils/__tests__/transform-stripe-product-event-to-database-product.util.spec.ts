@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 
 import { transformStripeProductEventToDatabaseProduct } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-product-event-to-database-product.util';
 

@@ -1,10 +1,10 @@
 import {
   ActionMenuContext,
-  ActionMenuContextType,
+  type ActionMenuContextType,
 } from '@/action-menu/contexts/ActionMenuContext';
 import { useRegisteredActions } from '@/action-menu/hooks/useRegisteredActions';
 import { useShouldActionBeRegisteredParams } from '@/action-menu/hooks/useShouldActionBeRegisteredParams';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export const ActionMenuContextProviderWorkflowsNotEnabled = ({
   objectMetadataItem,

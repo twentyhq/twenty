@@ -1,8 +1,8 @@
 import {
   COMPOSITE_FIELD_TYPES,
-  CompositeFieldType,
+  type CompositeFieldType,
 } from '@/settings/data-model/types/CompositeFieldType';
-import { FieldType } from '@/settings/data-model/types/FieldType';
+import { type FieldType } from '@/settings/data-model/types/FieldType';
 
 export const isCompositeFieldType = (
   type: FieldType,

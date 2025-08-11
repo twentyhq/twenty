@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
-import { z } from 'zod';
+import { type z } from 'zod';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
 import { AdvancedSettingsContentWrapperWithDot } from '@/settings/components/AdvancedSettingsContentWrapperWithDot';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
@@ -10,7 +10,7 @@ import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsO
 import { DATABASE_IDENTIFIER_MAXIMUM_LENGTH } from '@/settings/data-model/constants/DatabaseIdentifierMaximumLength';
 import { getErrorMessageFromError } from '@/settings/data-model/fields/forms/utils/errorMessages';
 import { IconPicker } from '@/ui/input/components/IconPicker';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -158,7 +158,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
           control={control}
           defaultValue={fieldMetadataItem?.label}
           render={({ field: { onChange, value } }) => (
-            <TextInput
+            <SettingsTextInput
               instanceId={labelTextInputId}
               placeholder={t`Employees`}
               value={value}
@@ -193,7 +193,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                     defaultValue={fieldMetadataItem?.name}
                     render={({ field: { onChange, value } }) => (
                       <>
-                        <TextInput
+                        <SettingsTextInput
                           instanceId={nameTextInputId}
                           label={t`API Name`}
                           placeholder={t`employees`}

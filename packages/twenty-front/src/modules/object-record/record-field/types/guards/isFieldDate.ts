@@ -1,5 +1,5 @@
-import { FieldDefinition } from '../FieldDefinition';
-import { FieldDateMetadata, FieldMetadata } from '../FieldMetadata';
+import { type FieldDefinition } from '../FieldDefinition';
+import { type FieldDateMetadata, type FieldMetadata } from '../FieldMetadata';
 
 export const isFieldDate = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type'>,

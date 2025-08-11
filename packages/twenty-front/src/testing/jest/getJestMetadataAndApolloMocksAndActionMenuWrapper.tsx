@@ -4,16 +4,16 @@ import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/reco
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
-import { MockedResponse } from '@apollo/client/testing';
-import { ReactNode } from 'react';
-import { MutableSnapshot } from 'recoil';
+import { type MockedResponse } from '@apollo/client/testing';
+import { type ReactNode } from 'react';
+import { type MutableSnapshot } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   JestContextStoreSetter,
-  JestContextStoreSetterMocks,
+  type JestContextStoreSetterMocks,
 } from '~/testing/jest/JestContextStoreSetter';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 export type GetJestMetadataAndApolloMocksAndActionMenuWrapperProps = {
   apolloMocks:
@@ -39,10 +39,8 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
     onInitializeRecoilSnapshot,
   });
 
-  const mockObjectMetadataItem = generatedMockObjectMetadataItems.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.nameSingular ===
-      contextStoreCurrentObjectMetadataNameSingular,
+  const mockObjectMetadataItem = getMockObjectMetadataItemOrThrow(
+    contextStoreCurrentObjectMetadataNameSingular ?? '',
   );
 
   if (!isDefined(mockObjectMetadataItem)) {

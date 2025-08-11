@@ -1,4 +1,4 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
 
 export type SortedFieldByTableFamilyStateKey = {

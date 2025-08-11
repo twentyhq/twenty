@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { z } from 'zod';
 import { StepStatus } from 'twenty-shared/workflow';
+import { z } from 'zod';
 
 // Base schemas
 export const objectRecordSchema = z.record(z.any());
@@ -23,11 +23,14 @@ export const baseWorkflowActionSchema = z.object({
   name: z.string(),
   valid: z.boolean(),
   nextStepIds: z.array(z.string()).optional().nullable(),
+  position: z.object({ x: z.number(), y: z.number() }).optional().nullable(),
 });
 
 export const baseTriggerSchema = z.object({
   name: z.string().optional(),
   type: z.string(),
+  position: z.object({ x: z.number(), y: z.number() }).optional().nullable(),
+  nextStepIds: z.array(z.string()).optional().nullable(),
 });
 
 // Action settings schemas
@@ -135,7 +138,8 @@ export const workflowHttpRequestActionSettingsSchema =
 export const workflowAiAgentActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
-      agentId: z.string(),
+      agentId: z.string().optional(),
+      prompt: z.string().optional(),
     }),
   });
 

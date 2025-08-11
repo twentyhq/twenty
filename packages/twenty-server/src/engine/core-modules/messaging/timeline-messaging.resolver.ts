@@ -41,6 +41,19 @@ class GetTimelineThreadsFromCompanyIdArgs {
   pageSize: number;
 }
 
+@ArgsType()
+class GetTimelineThreadsFromOpportunityIdArgs {
+  @Field(() => UUIDScalarType)
+  opportunityId: string;
+
+  @Field(() => Int)
+  page: number;
+
+  @Field(() => Int)
+  @Max(TIMELINE_THREADS_MAX_PAGE_SIZE)
+  pageSize: number;
+}
+
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
 @Resolver(() => TimelineThreadsWithTotal)
 export class TimelineMessagingResolver {
@@ -94,6 +107,33 @@ export class TimelineMessagingResolver {
       await this.getMessagesFromPersonIdsService.getMessagesFromCompanyId(
         workspaceMember.id,
         companyId,
+        page,
+        pageSize,
+      );
+
+    return timelineThreads;
+  }
+
+  @Query(() => TimelineThreadsWithTotal)
+  async getTimelineThreadsFromOpportunityId(
+    @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
+    @Args()
+    { opportunityId, page, pageSize }: GetTimelineThreadsFromOpportunityIdArgs,
+  ) {
+    const workspaceMember = await this.userService.loadWorkspaceMember(
+      user,
+      workspace,
+    );
+
+    if (!workspaceMember) {
+      return;
+    }
+
+    const timelineThreads =
+      await this.getMessagesFromPersonIdsService.getMessagesFromOpportunityId(
+        workspaceMember.id,
+        opportunityId,
         page,
         pageSize,
       );

@@ -1,3 +1,5 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
   ConflictError,
   NotFoundError,
@@ -21,9 +23,7 @@ export const remoteTableGraphqlApiExceptionHandler = (error: Error) => {
       case RemoteTableExceptionCode.REMOTE_TABLE_ALREADY_EXISTS:
         throw new ConflictError(error.message);
       default: {
-        const _exhaustiveCheck: never = error.code;
-
-        throw error;
+        return assertUnreachable(error.code);
       }
     }
   }

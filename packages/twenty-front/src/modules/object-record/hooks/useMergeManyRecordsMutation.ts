@@ -5,7 +5,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
-import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
+import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getMergeManyRecordsMutationResponseField } from '@/object-record/utils/getMergeManyRecordsMutationResponseField';
@@ -37,14 +37,14 @@ export const useMergeManyRecordsMutation = ({
     return { mergeManyRecordsMutation: EMPTY_MUTATION };
   }
 
-  const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
+  const capitalizedObjectName = capitalize(objectMetadataItem.namePlural);
 
   const mutationResponseField = getMergeManyRecordsMutationResponseField(
     objectMetadataItem.namePlural,
   );
 
   const mergeManyRecordsMutation = gql`
-    mutation merge${capitalizedObjectName}s($ids: [UUID!]!, $conflictPriorityIndex: Int!, $dryRun: Boolean) {
+    mutation Merge${capitalizedObjectName}($ids: [UUID!]!, $conflictPriorityIndex: Int!, $dryRun: Boolean) {
       ${mutationResponseField}(ids: $ids, conflictPriorityIndex: $conflictPriorityIndex, dryRun: $dryRun) ${mapObjectMetadataToGraphQLQuery(
         {
           objectMetadataItems,

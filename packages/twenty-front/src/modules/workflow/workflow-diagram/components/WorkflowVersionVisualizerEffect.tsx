@@ -1,4 +1,4 @@
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
@@ -18,14 +18,14 @@ export const WorkflowVersionVisualizerEffect = ({
 }) => {
   const workflowVersion = useWorkflowVersion(workflowVersionId);
 
-  const setFlow = useSetRecoilComponentStateV2(flowComponentState);
-  const setWorkflowDiagram = useSetRecoilComponentStateV2(
+  const setFlow = useSetRecoilComponentState(flowComponentState);
+  const setWorkflowDiagram = useSetRecoilComponentState(
     workflowDiagramComponentState,
   );
-  const setWorkflowVisualizerWorkflowId = useSetRecoilComponentStateV2(
+  const setWorkflowVisualizerWorkflowId = useSetRecoilComponentState(
     workflowVisualizerWorkflowIdComponentState,
   );
-  const setWorkflowVisualizerWorkflowVersionId = useSetRecoilComponentStateV2(
+  const setWorkflowVisualizerWorkflowVersionId = useSetRecoilComponentState(
     workflowVisualizerWorkflowVersionIdComponentState,
   );
 
@@ -33,6 +33,10 @@ export const WorkflowVersionVisualizerEffect = ({
 
   const isWorkflowFilteringEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
+  );
+
+  const isWorkflowBranchEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
   );
 
   useEffect(() => {
@@ -67,11 +71,17 @@ export const WorkflowVersionVisualizerEffect = ({
     const nextWorkflowDiagram = getWorkflowVersionDiagram({
       workflowVersion,
       isWorkflowFilteringEnabled,
+      isWorkflowBranchEnabled,
       isEditable: false,
     });
 
     setWorkflowDiagram(nextWorkflowDiagram);
-  }, [isWorkflowFilteringEnabled, setWorkflowDiagram, workflowVersion]);
+  }, [
+    isWorkflowBranchEnabled,
+    isWorkflowFilteringEnabled,
+    setWorkflowDiagram,
+    workflowVersion,
+  ]);
 
   useEffect(() => {
     if (!isDefined(workflowVersion)) {

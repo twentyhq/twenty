@@ -1,5 +1,5 @@
-import { WorkflowDeleteRecordAction } from '@/workflow/types/Workflow';
-import { Meta, StoryObj } from '@storybook/react';
+import { type WorkflowDeleteRecordAction } from '@/workflow/types/Workflow';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -36,7 +36,7 @@ const DEFAULT_ACTION = {
 } satisfies WorkflowDeleteRecordAction;
 
 const meta: Meta<typeof WorkflowEditActionDeleteRecord> = {
-  title: 'Modules/Workflow/WorkflowEditActionDeleteRecord',
+  title: 'Modules/Workflow/Actions/DeleteRecord/EditAction',
   component: WorkflowEditActionDeleteRecord,
   parameters: {
     msw: graphqlMocks,

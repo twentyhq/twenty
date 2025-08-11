@@ -1,4 +1,4 @@
-import { AnimationDimension } from '@ui/layout/animated-expandable-container/types/AnimationDimension';
+import { type AnimationDimension } from '@ui/layout/animated-expandable-container/types/AnimationDimension';
 
 export const getTransitionValues = (
   dimension: AnimationDimension,

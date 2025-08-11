@@ -14,6 +14,8 @@ import {
   query as findManyObjectMetadataItemsQuery,
   responseData as findManyObjectMetadataItemsResponseData,
 } from '../__mocks__/useFindManyObjectMetadataItems';
+import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { mockedUserData } from '~/testing/mock-data/users';
 
 const mocks = [
   {
@@ -24,6 +26,17 @@ const mocks = [
     result: jest.fn(() => ({
       data: {
         createOneObject: responseData,
+      },
+    })),
+  },
+  {
+    request: {
+      query: GET_CURRENT_USER,
+      variables: {},
+    },
+    result: jest.fn(() => ({
+      data: {
+        currentUser: mockedUserData,
       },
     })),
   },

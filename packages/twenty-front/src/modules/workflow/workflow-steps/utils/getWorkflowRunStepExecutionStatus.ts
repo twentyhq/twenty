@@ -1,6 +1,6 @@
 import {
-  WorkflowRunState,
-  WorkflowRunStepStatus,
+  type WorkflowRunState,
+  type WorkflowRunStepStatus,
 } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';

@@ -1,11 +1,11 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { IconCheckbox, IconNotes, IconTimelineEvent } from '@ui/display';
 import {
   CatalogDecorator,
-  CatalogStory,
+  type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { FloatingIconButtonSize } from '../FloatingIconButton';
+import { type FloatingIconButtonSize } from '../FloatingIconButton';
 import { FloatingIconButtonGroup } from '../FloatingIconButtonGroup';
 
 const meta: Meta<typeof FloatingIconButtonGroup> = {

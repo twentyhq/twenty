@@ -2,8 +2,8 @@ import {
   Children,
   cloneElement,
   isValidElement,
-  ReactElement,
-  ReactNode,
+  type ReactElement,
+  type ReactNode,
 } from 'react';
 
 export const wrapHeadingsWithAnchor = (children: ReactNode): ReactNode => {

@@ -1,14 +1,14 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { IconSearch } from '@ui/display';
 import {
   CatalogDecorator,
-  CatalogStory,
+  type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
 import {
   LightIconButton,
-  LightIconButtonAccent,
-  LightIconButtonSize,
+  type LightIconButtonAccent,
+  type LightIconButtonSize,
 } from '../LightIconButton';
 
 const meta: Meta<typeof LightIconButton> = {

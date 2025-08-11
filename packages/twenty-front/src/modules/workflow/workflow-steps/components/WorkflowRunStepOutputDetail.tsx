@@ -14,7 +14,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import {
-  GetJsonNodeHighlighting,
+  type GetJsonNodeHighlighting,
   isTwoFirstDepths,
   JsonTree,
 } from 'twenty-ui/json-visualizer';

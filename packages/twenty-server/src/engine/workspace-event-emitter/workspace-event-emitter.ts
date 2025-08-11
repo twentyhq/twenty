@@ -1,20 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
-import { ObjectLiteral } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { type ObjectLiteral } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
 import { ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/types/object-record-destroy.event';
-import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
-import { ObjectRecordRestoreEvent } from 'src/engine/core-modules/event-emitter/types/object-record-restore.event';
+import { type ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
+import { type ObjectRecordRestoreEvent } from 'src/engine/core-modules/event-emitter/types/object-record-restore.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { CustomEventName } from 'src/engine/workspace-event-emitter/types/custom-event-name.type';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type CustomEventName } from 'src/engine/workspace-event-emitter/types/custom-event-name.type';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
 
 type ActionEventMap<T> = {
   [DatabaseEventAction.CREATED]: ObjectRecordCreateEvent<T>;
@@ -43,6 +45,12 @@ export class WorkspaceEventEmitter {
     entities: T | T[];
     beforeEntities?: T | T[];
   }) {
+    if (
+      objectMetadataItem.standardId === STANDARD_OBJECT_IDS.timelineActivity
+    ) {
+      return;
+    }
+
     const objectMetadataNameSingular = objectMetadataItem.nameSingular;
     const fields = Object.values(objectMetadataItem.fieldsById ?? {});
     const entityArray = isDefined(entities)
@@ -70,37 +78,43 @@ export class WorkspaceEventEmitter {
         });
         break;
       case DatabaseEventAction.UPDATED:
-        events = entityArray.map((after, idx) => {
-          if (!beforeEntities) {
-            throw new Error('beforeEntities is required for UPDATED action');
-          }
+        events = entityArray
+          .map((after, idx) => {
+            if (!beforeEntities) {
+              throw new Error('beforeEntities is required for UPDATED action');
+            }
 
-          const before = Array.isArray(beforeEntities)
-            ? beforeEntities?.[idx]
-            : beforeEntities;
+            const before = Array.isArray(beforeEntities)
+              ? beforeEntities?.[idx]
+              : beforeEntities;
 
-          const diff = objectRecordChangedValues(
-            before,
-            after,
-            objectMetadataItem,
-          ) as Partial<ObjectRecordDiff<T>>;
+            const diff = objectRecordChangedValues(
+              before,
+              after,
+              objectMetadataItem,
+            ) as Partial<ObjectRecordDiff<T>>;
 
-          const updatedFields = Object.keys(diff);
+            const updatedFields = Object.keys(diff);
 
-          const event = new ObjectRecordUpdateEvent<T>();
+            if (updatedFields.length === 0) {
+              return;
+            }
 
-          event.userId = authContext?.user?.id;
-          event.recordId = after.id;
-          event.objectMetadata = { ...objectMetadataItem, fields };
-          event.properties = {
-            before,
-            after,
-            updatedFields,
-            diff,
-          };
+            const event = new ObjectRecordUpdateEvent<T>();
 
-          return event;
-        });
+            event.userId = authContext?.user?.id;
+            event.recordId = after.id;
+            event.objectMetadata = { ...objectMetadataItem, fields };
+            event.properties = {
+              before,
+              after,
+              updatedFields,
+              diff,
+            };
+
+            return event;
+          })
+          .filter(isDefined);
         break;
       case DatabaseEventAction.DELETED:
         events = entityArray.map((before) => {
@@ -134,7 +148,7 @@ export class WorkspaceEventEmitter {
       return;
     }
 
-    const eventName = `${objectMetadataNameSingular}.${action}`;
+    const eventName = computeEventName(objectMetadataNameSingular, action);
 
     this.eventEmitter.emit(eventName, {
       name: eventName,

@@ -1,42 +1,41 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Readable } from 'stream';
+import { type Readable } from 'stream';
 
 import {
-  CoreMessage,
-  CoreUserMessage,
-  FilePart,
+  type CoreMessage,
+  type CoreUserMessage,
+  type FilePart,
   generateObject,
   generateText,
-  ImagePart,
+  type ImagePart,
   streamText,
-  UserContent,
+  type UserContent,
 } from 'ai';
 import { In, Repository } from 'typeorm';
 
 import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { extractFolderPathAndFilename } from 'src/engine/core-modules/file/utils/extract-folderpath-and-filename.utils';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
-  AgentChatMessageEntity,
+  type AgentChatMessageEntity,
   AgentChatMessageRole,
 } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
 import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
-import { RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
+import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
 import { convertOutputSchemaToZod } from 'src/engine/metadata-modules/agent/utils/convert-output-schema-to-zod';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
-import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
+import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
@@ -96,20 +95,22 @@ export class AgentExecutionService {
     agent,
   }: {
     system: string;
-    agent: AgentEntity;
+    agent: AgentEntity | null;
     prompt?: string;
     messages?: CoreMessage[];
   }) {
     try {
-      this.logger.log(
-        `Preparing AI request config for agent ${agent.id} with model ${agent.modelId}`,
-      );
+      if (agent) {
+        this.logger.log(
+          `Preparing AI request config for agent ${agent.id} with model ${agent.modelId}`,
+        );
+      }
 
       const aiModel = this.aiModelRegistryService.getEffectiveModelConfig(
-        agent.modelId,
+        agent?.modelId ?? 'auto',
       );
 
-      if (!aiModel) {
+      if (agent && !aiModel) {
         const error = `AI model with id ${agent.modelId} not found`;
 
         this.logger.error(error);
@@ -127,10 +128,12 @@ export class AgentExecutionService {
 
       await this.validateApiKey(provider);
 
-      const tools = await this.agentToolService.generateToolsForAgent(
-        agent.id,
-        agent.workspaceId,
-      );
+      const tools = agent
+        ? await this.agentToolService.generateToolsForAgent(
+            agent.id,
+            agent.workspaceId,
+          )
+        : {};
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
 
@@ -155,7 +158,7 @@ export class AgentExecutionService {
       };
     } catch (error) {
       this.logger.error(
-        `Failed to prepare AI request config for agent ${agent.id}:`,
+        `Failed to prepare AI request config for agent ${agent?.id ?? 'no agent'}`,
         error instanceof Error ? error.stack : error,
       );
       throw error;
@@ -343,18 +346,19 @@ export class AgentExecutionService {
 
   async executeAgent({
     agent,
-    context,
     schema,
+    userPrompt,
   }: {
-    agent: AgentEntity;
+    agent: AgentEntity | null;
     context: Record<string, unknown>;
     schema: OutputSchema;
+    userPrompt: string;
   }): Promise<AgentExecutionResult> {
     try {
       const aiRequestConfig = await this.prepareAIRequestConfig({
-        system: AGENT_SYSTEM_PROMPTS.AGENT_EXECUTION,
+        system: `You are executing as part of a workflow automation. ${agent ? agent.prompt : ''}`,
         agent,
-        prompt: resolveInput(agent.prompt, context) as string,
+        prompt: userPrompt,
       });
       const textResponse = await generateText(aiRequestConfig);
 

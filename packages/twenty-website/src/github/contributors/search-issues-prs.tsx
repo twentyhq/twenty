@@ -1,10 +1,10 @@
-import { graphql } from '@octokit/graphql';
+import { type graphql } from '@octokit/graphql';
 
 import { getLatestUpdate } from '@/github/contributors/get-latest-update';
 import {
-  IssueNode,
-  PullRequestNode,
-  SearchIssuesPRsQuery,
+  type IssueNode,
+  type PullRequestNode,
+  type SearchIssuesPRsQuery,
 } from '@/github/contributors/types';
 
 export async function searchIssuesPRs(

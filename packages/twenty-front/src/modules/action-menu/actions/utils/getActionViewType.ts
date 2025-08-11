@@ -1,5 +1,5 @@
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
-import { ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { type ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 
 export const getActionViewType = (

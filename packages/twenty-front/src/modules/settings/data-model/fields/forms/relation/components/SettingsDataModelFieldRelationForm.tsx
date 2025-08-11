@@ -3,8 +3,8 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
@@ -12,7 +12,7 @@ import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import { useRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/relation/hooks/useRelationSettingsFormInitialValues';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useLingui } from '@lingui/react/macro';
 import { useIcons } from 'twenty-ui/display';
@@ -150,6 +150,9 @@ export const SettingsDataModelFieldRelationForm = ({
               value={value}
               options={activeObjectMetadataItems
                 .filter(isObjectMetadataAvailableForRelation)
+                .sort((item1, item2) =>
+                  item1.labelPlural.localeCompare(item2.labelPlural),
+                )
                 .map((objectMetadataItem) => ({
                   label: objectMetadataItem.labelPlural,
                   value: objectMetadataItem.id,
@@ -186,7 +189,7 @@ export const SettingsDataModelFieldRelationForm = ({
           control={control}
           defaultValue={initialRelationFieldMetadataItem.label}
           render={({ field: { onChange, value } }) => (
-            <TextInput
+            <SettingsTextInput
               instanceId="relation-field-label"
               disabled={disableFieldEdition}
               placeholder={t`Field name`}

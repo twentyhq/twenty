@@ -1,8 +1,8 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { mergeManyToOneRelationship } from '@/object-record/record-merge/utils/mergeManyToOneRelationship';
 import { mergeOneToManyRelationships } from '@/object-record/record-merge/utils/mergeOneToManyRelationships';
 import { mergeRecordRelationshipData } from '@/object-record/record-merge/utils/mergeRelationshipData';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 describe('mergeOneToManyRelationships', () => {

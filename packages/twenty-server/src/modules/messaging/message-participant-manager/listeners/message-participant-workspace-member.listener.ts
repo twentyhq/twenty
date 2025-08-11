@@ -6,8 +6,8 @@ import { Repository } from 'typeorm';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
-import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { type ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
+import { type ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { objectRecordChangedProperties as objectRecordUpdateEventChangedProperties } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-properties.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -16,13 +16,9 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import {
   MessageParticipantMatchParticipantJob,
-  MessageParticipantMatchParticipantJobData,
+  type MessageParticipantMatchParticipantJobData,
 } from 'src/modules/messaging/message-participant-manager/jobs/message-participant-match-participant.job';
-import {
-  MessageParticipantUnmatchParticipantJob,
-  MessageParticipantUnmatchParticipantJobData,
-} from 'src/modules/messaging/message-participant-manager/jobs/message-participant-unmatch-participant.job';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class MessageParticipantWorkspaceMemberListener {
@@ -59,9 +55,11 @@ export class MessageParticipantWorkspaceMemberListener {
         MessageParticipantMatchParticipantJob.name,
         {
           workspaceId: payload.workspaceId,
-          email: eventPayload.properties.after.userEmail,
-          workspaceMemberId: eventPayload.recordId,
-          isPrimaryEmail: true,
+          participantMatching: {
+            personIds: [],
+            personEmails: [],
+            workspaceMemberIds: [eventPayload.recordId],
+          },
         },
       );
     }
@@ -80,22 +78,15 @@ export class MessageParticipantWorkspaceMemberListener {
           eventPayload.properties.after,
         ).includes('userEmail')
       ) {
-        await this.messageQueueService.add<MessageParticipantUnmatchParticipantJobData>(
-          MessageParticipantUnmatchParticipantJob.name,
-          {
-            workspaceId: payload.workspaceId,
-            email: eventPayload.properties.before.userEmail,
-            personId: eventPayload.recordId,
-          },
-        );
-
         await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
           MessageParticipantMatchParticipantJob.name,
           {
             workspaceId: payload.workspaceId,
-            email: eventPayload.properties.after.userEmail,
-            workspaceMemberId: eventPayload.recordId,
-            isPrimaryEmail: true,
+            participantMatching: {
+              personIds: [],
+              personEmails: [],
+              workspaceMemberIds: [eventPayload.recordId],
+            },
           },
         );
       }

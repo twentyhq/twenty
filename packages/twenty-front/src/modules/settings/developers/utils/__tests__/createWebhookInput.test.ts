@@ -1,4 +1,4 @@
-import { WebhookFormValues } from '@/settings/developers/validation-schemas/webhookFormSchema';
+import { type WebhookFormValues } from '@/settings/developers/validation-schemas/webhookFormSchema';
 import {
   createWebhookCreateInput,
   createWebhookUpdateInput,

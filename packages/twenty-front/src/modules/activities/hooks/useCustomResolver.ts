@@ -1,12 +1,12 @@
 import {
-  DocumentNode,
-  OperationVariables,
-  TypedDocumentNode,
+  type DocumentNode,
+  type OperationVariables,
+  type TypedDocumentNode,
   useQuery,
 } from '@apollo/client';
 import { useState } from 'react';
 
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
@@ -49,7 +49,10 @@ export const useCustomResolver = <
     ...(activityTargetableObject.targetObjectNameSingular ===
     CoreObjectNameSingular.Person
       ? { personId: activityTargetableObject.id }
-      : { companyId: activityTargetableObject.id }),
+      : activityTargetableObject.targetObjectNameSingular ===
+          CoreObjectNameSingular.Opportunity
+        ? { opportunityId: activityTargetableObject.id }
+        : { companyId: activityTargetableObject.id }),
     page: 1,
     pageSize,
   };

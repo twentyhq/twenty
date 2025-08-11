@@ -2,7 +2,7 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
   Column,
   CreateDateColumn,
@@ -14,7 +14,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -36,10 +35,14 @@ registerEnumType(PermissionsOnAllObjectRecords, {
 
 @Entity({ name: 'userWorkspace', schema: 'core' })
 @ObjectType()
-@Unique('IDX_USER_WORKSPACE_USER_ID_WORKSPACE_ID_UNIQUE', [
-  'userId',
-  'workspaceId',
-])
+@Index(
+  'IDX_USER_WORKSPACE_USER_ID_WORKSPACE_ID_UNIQUE',
+  ['userId', 'workspaceId'],
+  {
+    unique: true,
+    where: '"deletedAt" IS NULL',
+  },
+)
 @Index('IDX_USER_WORKSPACE_USER_ID', ['userId'])
 @Index('IDX_USER_WORKSPACE_WORKSPACE_ID', ['workspaceId'])
 export class UserWorkspace {
@@ -54,7 +57,7 @@ export class UserWorkspace {
   @JoinColumn({ name: 'userId' })
   user: Relation<User>;
 
-  @Field({ nullable: false })
+  @Field(() => UUIDScalarType, { nullable: false })
   @Column()
   userId: string;
 
@@ -65,7 +68,7 @@ export class UserWorkspace {
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<Workspace>;
 
-  @Field({ nullable: false })
+  @Field(() => UUIDScalarType, { nullable: false })
   @Column()
   workspaceId: string;
 

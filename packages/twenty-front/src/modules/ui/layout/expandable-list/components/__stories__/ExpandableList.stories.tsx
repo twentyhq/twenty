@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
-import { expect } from '@storybook/jest';
-import { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/test';
+import { expect, userEvent, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { isDefined } from 'twenty-shared/utils';

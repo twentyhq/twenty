@@ -1,14 +1,15 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  AutocompleteSanitizedResult,
+  type AutocompleteSanitizedResult,
   sanitizeAutocompleteResults,
 } from 'src/engine/core-modules/geo-map/utils/sanitize-autocomplete-results.util';
 import {
-  AddressFields,
+  type AddressFields,
   sanitizePlaceDetailsResults,
 } from 'src/engine/core-modules/geo-map/utils/sanitize-place-details-results.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -37,13 +38,13 @@ export class GeoMapService {
     country?: string,
     isFieldCity?: boolean,
   ): Promise<AutocompleteSanitizedResult[] | undefined> {
-    if (!isDefined(address) || address.trim().length === 0) {
+    if (!isNonEmptyString(address?.trim())) {
       return [];
     }
 
     let url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(address)}&sessiontoken=${token}&key=${this.apiMapKey}`;
 
-    if (isDefined(country) && country !== '') {
+    if (isNonEmptyString(country)) {
       url += `&components=country:${country}`;
     }
     if (isDefined(isFieldCity) && isFieldCity === true) {

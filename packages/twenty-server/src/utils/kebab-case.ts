@@ -1,6 +1,6 @@
 import isObject from 'lodash.isobject';
 import lodashKebabCase from 'lodash.kebabcase';
-import { KebabCase, KebabCasedPropertiesDeep } from 'type-fest';
+import { type KebabCase, type KebabCasedPropertiesDeep } from 'type-fest';
 
 export const kebabCase = <T>(text: T) =>
   lodashKebabCase(text as unknown as string) as KebabCase<T>;

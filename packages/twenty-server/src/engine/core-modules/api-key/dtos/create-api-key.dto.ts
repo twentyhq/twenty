@@ -5,7 +5,10 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
 } from 'class-validator';
+
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
 export class CreateApiKeyDTO {
@@ -22,4 +25,9 @@ export class CreateApiKeyDTO {
   @IsOptional()
   @IsDateString()
   revokedAt?: string;
+
+  @Field(() => UUIDScalarType)
+  @IsNotEmpty()
+  @IsUUID()
+  roleId: string;
 }

@@ -1,15 +1,15 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
-import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
 import { CurrencyInput } from '@/ui/field/input/components/CurrencyInput';
 
 import { useCurrencyField } from '../../hooks/useCurrencyField';
 
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import {
-  FieldInputClickOutsideEvent,
-  FieldInputEvent,
+  type FieldInputClickOutsideEvent,
+  type FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';

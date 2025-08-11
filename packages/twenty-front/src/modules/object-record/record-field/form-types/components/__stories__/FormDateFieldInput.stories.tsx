@@ -1,7 +1,7 @@
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
 import { parseDateToString } from '@/ui/input/components/internal/date/utils/parseDateToString';
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import {
   expect,
   fn,
@@ -318,6 +318,10 @@ export const SwitchesToStandaloneVariable: Story = {
     const removeVariableButton = canvasElement.querySelector(
       'button .tabler-icon-x',
     );
+
+    if (!removeVariableButton) {
+      throw new Error('Remove variable button not found');
+    }
 
     await Promise.all([
       userEvent.click(removeVariableButton),

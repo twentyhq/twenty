@@ -7,7 +7,7 @@ import { RecordTableEmptyStateReadOnly } from '@/object-record/record-table/empt
 import { RecordTableEmptyStateRemote } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote';
 import { RecordTableEmptyStateSoftDelete } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete';
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const RecordTableEmptyState = () => {
   const { recordTableId, objectNameSingular, objectMetadataItem } =
@@ -18,7 +18,7 @@ export const RecordTableEmptyState = () => {
 
   const isRemote = objectMetadataItem.isRemote;
 
-  const isSoftDeleteActive = useRecoilComponentValueV2(
+  const isSoftDeleteActive = useRecoilComponentValue(
     isSoftDeleteFilterActiveComponentState,
     recordTableId,
   );

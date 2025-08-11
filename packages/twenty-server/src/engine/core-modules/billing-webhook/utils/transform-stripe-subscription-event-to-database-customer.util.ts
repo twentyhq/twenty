@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 
 export const transformStripeSubscriptionEventToDatabaseCustomer = (
   workspaceId: string,

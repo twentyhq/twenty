@@ -1,16 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import {
-  PageCollection,
   PageIterator,
-  PageIteratorCallback,
+  type PageCollection,
+  type PageIteratorCallback,
 } from '@microsoft/microsoft-graph-client';
 import { isNonEmptyString } from '@sniptt/guards';
 import { v4 } from 'uuid';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
@@ -19,10 +19,10 @@ import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-ma
 import { MicrosoftHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-handle-error.service';
 import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/folders';
 import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
-import { GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
+import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import {
-  GetMessageListsResponse,
-  GetOneMessageListResponse,
+  type GetMessageListsResponse,
+  type GetOneMessageListResponse,
 } from 'src/modules/messaging/message-import-manager/types/get-message-lists-response.type';
 
 // Microsoft API limit is 999 messages per request on this endpoint
@@ -30,6 +30,7 @@ const MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT = 999;
 
 @Injectable()
 export class MicrosoftGetMessageListService {
+  private readonly logger = new Logger(MicrosoftGetMessageListService.name);
   constructor(
     private readonly microsoftClientProvider: MicrosoftClientProvider,
     private readonly microsoftHandleErrorService: MicrosoftHandleErrorService,
@@ -123,6 +124,9 @@ export class MicrosoftGetMessageListService {
       })
       .get()
       .catch((error) => {
+        this.logger.error(
+          `Connected account ${connectedAccount.id}: Error fetching message list: ${JSON.stringify(error)}`,
+        );
         if (isAccessTokenRefreshingError(error?.body)) {
           throw new MessageImportDriverException(
             error.message,

@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { CountryCode } from 'libphonenumber-js';
+import { type CountryCode } from 'libphonenumber-js';
 
-import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
+import { type CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
 export const phonesCompositeType: CompositeType = {
   type: FieldMetadataType.PHONES,

@@ -1,7 +1,7 @@
 import { Command, Option } from 'nest-commander';
 
 import {
-  MigrationCommandOptions,
+  type MigrationCommandOptions,
   MigrationCommandRunner,
 } from 'src/database/commands/command-runners/migration.command-runner';
 import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';

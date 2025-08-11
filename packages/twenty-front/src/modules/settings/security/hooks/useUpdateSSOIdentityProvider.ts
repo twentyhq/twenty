@@ -3,7 +3,7 @@
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { useSetRecoilState } from 'recoil';
 import {
-  EditSsoIdentityProviderMutationVariables,
+  type EditSsoIdentityProviderMutationVariables,
   useEditSsoIdentityProviderMutation,
 } from '~/generated-metadata/graphql';
 

@@ -19,13 +19,13 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
   ],
   providers: [
     RemoveWorkflowRunsWithoutState,
-    AddNextStepIdsToWorkflowVersionTriggers,
     AddEnqueuedStatusToWorkflowRunV2Command,
+    AddNextStepIdsToWorkflowVersionTriggers,
   ],
   exports: [
     RemoveWorkflowRunsWithoutState,
-    AddNextStepIdsToWorkflowVersionTriggers,
     AddEnqueuedStatusToWorkflowRunV2Command,
+    AddNextStepIdsToWorkflowVersionTriggers,
   ],
 })
 export class V1_2_UpgradeVersionCommandModule {}

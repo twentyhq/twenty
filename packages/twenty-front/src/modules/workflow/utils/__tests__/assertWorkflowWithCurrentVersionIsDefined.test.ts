@@ -1,4 +1,4 @@
-import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { assertWorkflowWithCurrentVersionIsDefined } from '../assertWorkflowWithCurrentVersionIsDefined';
 
 it('throws when provided workflow is undefined', () => {

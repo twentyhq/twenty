@@ -7,7 +7,7 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CalendarFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service';
 import {
   CalendarChannelSyncStage,
-  CalendarChannelWorkspaceEntity,
+  type CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
 
@@ -57,20 +57,9 @@ export class CalendarEventListFetchJob {
     }
 
     switch (calendarChannel.syncStage) {
-      case CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING:
-        await calendarChannelRepository.update(calendarChannelId, {
-          syncCursor: '',
-          syncStageStartedAt: null,
-        });
-
-        await this.calendarFetchEventsService.fetchCalendarEvents(
-          calendarChannel,
-          calendarChannel.connectedAccount,
-          workspaceId,
-        );
-        break;
-
-      case CalendarChannelSyncStage.PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING:
+      case CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED:
+      case CalendarChannelSyncStage.PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING: // DEPRECATED
+      case CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING: // WILL BE DEPRECATED
         await this.calendarFetchEventsService.fetchCalendarEvents(
           calendarChannel,
           calendarChannel.connectedAccount,

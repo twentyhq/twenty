@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { WorkflowRun } from '@/workflow/types/Workflow';
+import { type WorkflowRun } from '@/workflow/types/Workflow';
 import { StepStatus } from 'twenty-shared/workflow';
 
 export const oneSucceededWorkflowRunQueryResult = {

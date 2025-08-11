@@ -2,10 +2,10 @@ import { usePersistField } from '@/object-record/record-field/hooks/usePersistFi
 import { useTextField } from '@/object-record/record-field/meta-types/hooks/useTextField';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import {
-  FieldInputClickOutsideEvent,
-  FieldInputEvent,
+  type FieldInputClickOutsideEvent,
+  type FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
@@ -67,7 +67,7 @@ export const RecordTitleCellTextFieldInput = ({
   };
 
   return (
-    <TextInputV2
+    <TextInput
       ref={wrapperRef}
       autoGrow
       sizeVariant={sizeVariant}

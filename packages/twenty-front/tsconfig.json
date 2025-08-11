@@ -26,7 +26,6 @@
     }
   },
   "files": [],
-  "include": [],
   "references": [
     {
       "path": "./tsconfig.dev.json"

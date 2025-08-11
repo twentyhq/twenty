@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, waitFor } from '@storybook/test';
 
 import { ComponentDecorator } from '@ui/testing';

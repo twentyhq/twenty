@@ -1,4 +1,7 @@
-import { AvailableWorkspaces, AvailableWorkspace } from '~/generated/graphql';
+import {
+  type AvailableWorkspaces,
+  type AvailableWorkspace,
+} from '~/generated/graphql';
 import { AppPath } from '@/types/AppPath';
 import { isDefined } from 'twenty-shared/utils';
 import { generatePath } from 'react-router-dom';

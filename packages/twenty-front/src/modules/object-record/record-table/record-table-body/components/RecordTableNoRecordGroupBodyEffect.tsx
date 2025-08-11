@@ -6,12 +6,12 @@ import { useRecordIndexTableQuery } from '@/object-record/record-index/hooks/use
 import { ROW_HEIGHT } from '@/object-record/record-table/constants/RowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useSetRecordTableData } from '@/object-record/record-table/hooks/internal/useSetRecordTableData';
-import { hasRecordTableFetchedAllRecordsComponentStateV2 } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentStateV2';
+import { hasRecordTableFetchedAllRecordsComponentState } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { useScrollToPosition } from '@/ui/utilities/scroll/hooks/useScrollToPosition';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const RecordTableNoRecordGroupBodyEffect = () => {
@@ -29,10 +29,8 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
   const [hasInitializedScroll, setHasInitializedScroll] = useState(false);
 
   const setHasRecordTableFetchedAllRecordsComponents =
-    useSetRecoilComponentStateV2(
-      hasRecordTableFetchedAllRecordsComponentStateV2,
-    );
-  const setIsRecordTableInitialLoading = useSetRecoilComponentStateV2(
+    useSetRecoilComponentState(hasRecordTableFetchedAllRecordsComponentState);
+  const setIsRecordTableInitialLoading = useSetRecoilComponentState(
     isRecordTableInitialLoadingComponentState,
   );
   const isFetchingMoreRecords = useRecoilValue(

@@ -9,6 +9,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -27,7 +28,7 @@ import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/cons
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Resolver()
 @UsePipes(ResolverValidationPipe)
@@ -45,7 +46,7 @@ export class ImapSmtpCaldavResolver {
   @Query(() => ConnectedImapSmtpCaldavAccount)
   @UseGuards(WorkspaceAuthGuard)
   async getConnectedImapSmtpCaldavAccount(
-    @Args('id') id: string,
+    @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ConnectedImapSmtpCaldavAccount> {
     const connectedAccountRepository =
@@ -76,12 +77,13 @@ export class ImapSmtpCaldavResolver {
   @Mutation(() => ImapSmtpCaldavConnectionSuccess)
   @UseGuards(WorkspaceAuthGuard)
   async saveImapSmtpCaldavAccount(
-    @Args('accountOwnerId') accountOwnerId: string,
+    @Args('accountOwnerId', { type: () => UUIDScalarType })
+    accountOwnerId: string,
     @Args('handle') handle: string,
     @Args('connectionParameters')
     connectionParameters: EmailAccountConnectionParameters,
     @AuthWorkspace() workspace: Workspace,
-    @Args('id', { nullable: true }) id?: string,
+    @Args('id', { type: () => UUIDScalarType, nullable: true }) id?: string,
   ): Promise<ImapSmtpCaldavConnectionSuccess> {
     const isImapSmtpCaldavFeatureFlagEnabled =
       await this.featureFlagService.isFeatureEnabled(

@@ -3,14 +3,14 @@ import { useRecoilState } from 'recoil';
 
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
-import { FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { linksSchema } from '@/object-record/record-field/types/guards/isFieldLinksValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/states/recordFieldInputDraftValueComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 
@@ -30,7 +30,7 @@ export const useLinksField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldLinksValue>();
 
-  const draftValue = useRecoilComponentValueV2(
+  const draftValue = useRecoilComponentValue(
     recordFieldInputDraftValueComponentState,
   );
 

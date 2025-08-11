@@ -1,5 +1,5 @@
 import { isEmailBlocklisted } from 'src/modules/blocklist/utils/is-email-blocklisted.util';
-import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
@@ -10,17 +10,19 @@ export const filterEmails = (
   messages: MessageWithParticipants[],
   blocklist: string[],
 ) => {
+  const messagesWithoutIcsAttachments = filterOutIcsAttachments(messages);
+
   const messagesWithoutBlocklisted = filterOutBlocklistedMessages(
     [primaryHandle, ...handleAliases],
-    filterOutIcsAttachments(messages),
+    messagesWithoutIcsAttachments,
     blocklist,
   );
 
-  if (isWorkEmail(primaryHandle)) {
-    return filterOutInternals(primaryHandle, messagesWithoutBlocklisted);
-  }
+  const messagesWithoutInternals = isWorkEmail(primaryHandle)
+    ? filterOutInternals(primaryHandle, messagesWithoutBlocklisted)
+    : messagesWithoutBlocklisted;
 
-  return messagesWithoutBlocklisted;
+  return messagesWithoutInternals;
 };
 
 const filterOutBlocklistedMessages = (
@@ -66,15 +68,20 @@ const filterOutInternals = (
     }
 
     const primaryHandleDomain = getDomainNameByEmail(primaryHandle);
-    const isAllHandlesFromSameDomain = message.participants
-      .filter((participant) => !!participant.handle)
-      .every(
-        (participant) =>
-          getDomainNameByEmail(participant.handle) === primaryHandleDomain,
-      );
 
-    if (isAllHandlesFromSameDomain) {
-      return false;
+    try {
+      const isAllHandlesFromSameDomain = message.participants
+        .filter((participant) => !!participant.handle)
+        .every(
+          (participant) =>
+            getDomainNameByEmail(participant.handle) === primaryHandleDomain,
+        );
+
+      if (isAllHandlesFromSameDomain) {
+        return false;
+      }
+    } catch {
+      return true;
     }
 
     return true;

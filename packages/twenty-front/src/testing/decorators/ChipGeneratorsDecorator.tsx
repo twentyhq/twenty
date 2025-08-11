@@ -1,9 +1,9 @@
-import { Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react';
 import { useMemo } from 'react';
 
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
 import { getRecordChipGenerators } from '@/object-record/utils/getRecordChipGenerators';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 export const ChipGeneratorsDecorator: Decorator = (Story) => {
   const { chipGeneratorPerObjectPerField, identifierChipGeneratorPerObject } =

@@ -1,4 +1,4 @@
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/currentStepFilterGroupsComponentState';
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/currentStepFiltersComponentState';
@@ -10,12 +10,13 @@ import { WorkflowStepFilterContext } from '../states/context/WorkflowStepFilterC
 export const useRemoveStepFilter = () => {
   const { onFilterSettingsUpdate } = useContext(WorkflowStepFilterContext);
 
-  const currentStepFiltersCallbackState = useRecoilComponentCallbackStateV2(
+  const currentStepFiltersCallbackState = useRecoilComponentCallbackState(
     currentStepFiltersComponentState,
   );
 
-  const currentStepFilterGroupsCallbackState =
-    useRecoilComponentCallbackStateV2(currentStepFilterGroupsComponentState);
+  const currentStepFilterGroupsCallbackState = useRecoilComponentCallbackState(
+    currentStepFilterGroupsComponentState,
+  );
 
   const removeStepFilterRecoilCallback = useRecoilCallback(
     ({ set, snapshot }) =>

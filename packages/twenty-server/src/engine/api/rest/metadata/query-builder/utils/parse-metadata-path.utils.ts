@@ -1,8 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
 
 import {
-  ObjectName,
-  ObjectNameSingularAndPlural,
+  type ObjectName,
+  type ObjectNameSingularAndPlural,
 } from 'src/engine/api/rest/metadata/types/metadata-entity.type';
 
 const getObjectNames = (

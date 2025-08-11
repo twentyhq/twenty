@@ -1,4 +1,4 @@
-import { SelectFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { type SelectFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 
 export const isMatchingSelectFilter = ({
   selectFilter,

@@ -2,7 +2,7 @@ import { EDGE_GRAY_CIRCLE_MARKED_ID } from '@/workflow/workflow-diagram/constant
 import { EDGE_GREEN_CIRCLE_MARKED_ID } from '@/workflow/workflow-diagram/constants/EdgeGreenCircleMarkedId';
 import { EDGE_GREEN_ROUNDED_ARROW_MARKER_ID } from '@/workflow/workflow-diagram/constants/EdgeGreenRoundedArrowMarkerId';
 import { EDGE_ROUNDED_ARROW_MARKER_ID } from '@/workflow/workflow-diagram/constants/EdgeRoundedArrowMarkerId';
-import { Theme, useTheme } from '@emotion/react';
+import { type Theme, useTheme } from '@emotion/react';
 import { BaseEdge } from '@xyflow/react';
 import { StepStatus } from 'twenty-shared/workflow';
 

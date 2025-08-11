@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { useEffect, useMemo } from 'react';
 import { useSetRecoilState } from 'recoil';
 
@@ -100,7 +100,7 @@ const RelationManyFieldInputWithContext = () => {
             fieldDefinition,
             recordId: 'recordId',
             isLabelIdentifier: false,
-            isReadOnly: false,
+            isRecordFieldReadOnly: false,
           }}
         >
           <RelationWorkspaceSetterEffect />

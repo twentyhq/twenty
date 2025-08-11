@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { Request } from 'express';
+import { type Request } from 'express';
 
-import { QueryVariables } from 'src/engine/api/rest/core/types/query-variables.type';
+import { type QueryVariables } from 'src/engine/api/rest/core/types/query-variables.type';
 
 @Injectable()
 export class FindDuplicatesVariablesFactory {

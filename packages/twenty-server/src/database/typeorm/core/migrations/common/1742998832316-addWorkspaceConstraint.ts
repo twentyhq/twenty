@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddWorkspaceConstraint1742998832316 implements MigrationInterface {
   name = 'AddWorkspaceConstraint1742998832316';

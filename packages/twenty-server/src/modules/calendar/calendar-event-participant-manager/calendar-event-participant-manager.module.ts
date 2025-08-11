@@ -10,7 +10,6 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { CalendarCreateCompanyAndContactAfterSyncJob } from 'src/modules/calendar/calendar-event-participant-manager/jobs/calendar-create-company-and-contact-after-sync.job';
 import { CalendarEventParticipantMatchParticipantJob } from 'src/modules/calendar/calendar-event-participant-manager/jobs/calendar-event-participant-match-participant.job';
-import { CalendarEventParticipantUnmatchParticipantJob } from 'src/modules/calendar/calendar-event-participant-manager/jobs/calendar-event-participant-unmatch-participant.job';
 import { CalendarEventParticipantPersonListener } from 'src/modules/calendar/calendar-event-participant-manager/listeners/calendar-event-participant-person.listener';
 import { CalendarEventParticipantWorkspaceMemberListener } from 'src/modules/calendar/calendar-event-participant-manager/listeners/calendar-event-participant-workspace-member.listener';
 import { CalendarEventParticipantListener } from 'src/modules/calendar/calendar-event-participant-manager/listeners/calendar-event-participant.listener';
@@ -34,7 +33,6 @@ import { MatchParticipantModule } from 'src/modules/match-participant/match-part
     CalendarEventParticipantService,
     CalendarCreateCompanyAndContactAfterSyncJob,
     CalendarEventParticipantMatchParticipantJob,
-    CalendarEventParticipantUnmatchParticipantJob,
     CalendarEventParticipantListener,
     CalendarEventParticipantPersonListener,
     CalendarEventParticipantWorkspaceMemberListener,

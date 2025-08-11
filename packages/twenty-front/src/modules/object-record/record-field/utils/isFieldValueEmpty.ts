@@ -1,8 +1,8 @@
 import { isArray, isNonEmptyArray, isString } from '@sniptt/guards';
 
 import { getFieldLinkDefinedLinks } from '@/object-record/record-field/meta-types/input/utils/getFieldLinkDefinedLinks';
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
 import { isFieldActorValue } from '@/object-record/record-field/types/guards/isFieldActorValue';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';

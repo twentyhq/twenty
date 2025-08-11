@@ -1,4 +1,4 @@
-import { Reference } from '@apollo/client';
+import { type Reference } from '@apollo/client';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -21,7 +21,7 @@ export const useDetachRelatedRecordFromRecord = ({
     objectNameSingular: recordObjectNameSingular,
   });
 
-  const fieldOnObject = objectMetadataItem.fields.find((field) => {
+  const fieldOnObject = objectMetadataItem.readableFields.find((field) => {
     return field.name === fieldNameOnRecordObject;
   });
 

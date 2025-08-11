@@ -1,21 +1,19 @@
-import { FromTo } from 'twenty-shared/types';
+import { type FromTo } from 'twenty-shared/types';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
-import { FlatObjectMetadataWithoutFields } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 
 export type CreateFieldAction = {
   type: 'create_field';
   flatFieldMetadata: FlatFieldMetadata;
-  flatObjectMetadataWithoutFields: FlatObjectMetadataWithoutFields;
 };
 
 export type UpdateFieldAction = {
   type: 'update_field';
   workspaceId: string;
-  flatFieldMetadata: FlatFieldMetadata;
-  flatObjectMetadataWithoutFields: FlatObjectMetadataWithoutFields;
+  fieldMetadataId: string;
+  objectMetadataId: string;
   updates: Array<
     {
       [P in FlatFieldMetadataPropertiesToCompare]: {
@@ -27,8 +25,8 @@ export type UpdateFieldAction = {
 
 export type DeleteFieldAction = {
   type: 'delete_field';
-  flatFieldMetadata: FlatFieldMetadata;
-  flatObjectMetadataWithoutFields: FlatObjectMetadataWithoutFields;
+  fieldMetadataId: string;
+  objectMetadataId: string;
 };
 
 export type WorkspaceMigrationFieldActionV2 =

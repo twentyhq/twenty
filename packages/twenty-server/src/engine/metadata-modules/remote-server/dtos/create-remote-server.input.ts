@@ -5,7 +5,7 @@ import GraphQLJSON from 'graphql-type-json';
 
 import {
   ForeignDataWrapperOptions,
-  RemoteServerType,
+  type RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import { UserMappingOptions } from 'src/engine/metadata-modules/remote-server/types/user-mapping-options';
 

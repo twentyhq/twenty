@@ -1,6 +1,7 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -18,7 +19,7 @@ import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/cons
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Resolver()
 @UseGuards(
@@ -40,7 +41,8 @@ export class WorkflowTriggerResolver {
 
   @Mutation(() => Boolean)
   async activateWorkflowVersion(
-    @Args('workflowVersionId') workflowVersionId: string,
+    @Args('workflowVersionId', { type: () => UUIDScalarType })
+    workflowVersionId: string,
   ) {
     return await this.workflowTriggerWorkspaceService.activateWorkflowVersion(
       workflowVersionId,
@@ -49,7 +51,8 @@ export class WorkflowTriggerResolver {
 
   @Mutation(() => Boolean)
   async deactivateWorkflowVersion(
-    @Args('workflowVersionId') workflowVersionId: string,
+    @Args('workflowVersionId', { type: () => UUIDScalarType })
+    workflowVersionId: string,
   ) {
     return await this.workflowTriggerWorkspaceService.deactivateWorkflowVersion(
       workflowVersionId,

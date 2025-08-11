@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -11,6 +12,7 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
@@ -30,10 +32,12 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     DataSourceModule,
     RoleModule,
     UserRoleModule,
+    ApiKeyModule,
     FeatureFlagModule,
     WorkspaceSyncMetadataModule,
     TypeOrmModule.forFeature([Workspace, ObjectMetadataEntity], 'core'),
     ObjectPermissionModule,
+    WorkspacePermissionsCacheModule,
   ],
   exports: [DevSeederService],
   providers: [

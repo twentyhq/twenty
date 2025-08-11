@@ -1,14 +1,14 @@
 import styled from '@emotion/styled';
 import {
-  ChangeEvent,
-  ClipboardEvent,
+  type ChangeEvent,
+  type ClipboardEvent,
   useEffect,
   useRef,
   useState,
 } from 'react';
 import { Key } from 'ts-key-enum';
 
-import { FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleText';
+import { type FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleText';
 
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';

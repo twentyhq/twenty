@@ -1,8 +1,8 @@
-import { OpenAPIV3_1 } from 'openapi-types';
+import { type OpenAPIV3_1 } from 'openapi-types';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
-import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+import { type FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { generateRandomFieldValue } from 'src/engine/core-modules/open-api/utils/generate-random-field-value.util';
@@ -15,7 +15,7 @@ import {
   computeOrderByParameters,
   computeStartingAfterParameters,
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { convertObjectMetadataToSchemaProperties } from 'src/engine/utils/convert-object-metadata-to-schema-properties.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { camelToTitleCase } from 'src/utils/camel-to-title-case';
@@ -370,6 +370,117 @@ export const computeMetadataSchemaComponents = (
               isCustom: { type: 'boolean' },
               isActive: { type: 'boolean' },
               isSystem: { type: 'boolean' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
+            },
+          };
+          schemas[`${capitalize(item.namePlural)}ForResponse`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`,
+            },
+          };
+
+          return schemas;
+        }
+        case 'webhook': {
+          schemas[`${capitalize(item.nameSingular)}`] = {
+            type: 'object',
+            description: `A webhook`,
+            properties: {
+              targetUrl: { type: 'string' },
+              operations: {
+                type: 'array',
+                items: { type: 'string' },
+                default: ['*.*'],
+              },
+              description: { type: 'string' },
+              secret: { type: 'string' },
+            },
+            required: ['targetUrl'],
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForUpdate`] = {
+            type: 'object',
+            description: `A webhook for update`,
+            properties: {
+              targetUrl: { type: 'string' },
+              operations: {
+                type: 'array',
+                items: { type: 'string' },
+              },
+              description: { type: 'string' },
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForResponse`] = {
+            type: 'object',
+            description: `A webhook`,
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              targetUrl: { type: 'string' },
+              operations: {
+                type: 'array',
+                items: { type: 'string' },
+              },
+              description: { type: 'string' },
+              workspaceId: { type: 'string', format: 'uuid' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
+              deletedAt: { type: 'string', format: 'date-time' },
+            },
+          };
+          schemas[`${capitalize(item.namePlural)}ForResponse`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`,
+            },
+          };
+
+          return schemas;
+        }
+        case 'apiKey': {
+          schemas[`${capitalize(item.nameSingular)}`] = {
+            type: 'object',
+            description: `An API key`,
+            properties: {
+              name: { type: 'string' },
+              expiresAt: { type: 'string', format: 'date-time' },
+            },
+            required: ['name', 'expiresAt'],
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForUpdate`] = {
+            type: 'object',
+            description: `An API key for update`,
+            properties: {
+              name: { type: 'string' },
+              expiresAt: { type: 'string', format: 'date-time' },
+              revokedAt: { type: 'string', format: 'date-time' },
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForResponse`] = {
+            type: 'object',
+            description: `An API key`,
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              name: { type: 'string' },
+              expiresAt: { type: 'string', format: 'date-time' },
+              revokedAt: { type: 'string', format: 'date-time' },
+              workspaceId: { type: 'string', format: 'uuid' },
               createdAt: { type: 'string', format: 'date-time' },
               updatedAt: { type: 'string', format: 'date-time' },
             },

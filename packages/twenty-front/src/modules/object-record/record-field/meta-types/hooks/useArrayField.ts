@@ -1,6 +1,6 @@
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
-import { FieldArrayValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldArrayValue } from '@/object-record/record-field/types/FieldMetadata';
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
 import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
 import { arraySchema } from '@/object-record/record-field/types/guards/isFieldArrayValue';

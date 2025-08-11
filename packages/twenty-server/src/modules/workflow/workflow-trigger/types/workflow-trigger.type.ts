@@ -1,4 +1,4 @@
-import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
+import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 
 export enum WorkflowTriggerType {
   DATABASE_EVENT = 'DATABASE_EVENT',
@@ -17,6 +17,10 @@ type BaseTrigger = {
   type: WorkflowTriggerType;
   settings: BaseWorkflowTriggerSettings;
   nextStepIds?: string[];
+  position?: {
+    x: number;
+    y: number;
+  };
 };
 
 export type WorkflowDatabaseEventTrigger = BaseTrigger & {

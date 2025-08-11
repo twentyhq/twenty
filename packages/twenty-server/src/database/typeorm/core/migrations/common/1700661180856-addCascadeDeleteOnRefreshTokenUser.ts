@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddCascadeDeleteOnRefreshTokenUser1700661180856
   implements MigrationInterface

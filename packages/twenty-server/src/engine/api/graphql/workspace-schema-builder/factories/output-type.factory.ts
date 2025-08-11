@@ -1,17 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { GraphQLOutputType } from 'graphql';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type GraphQLOutputType } from 'graphql';
+import { type FieldMetadataType } from 'twenty-shared/types';
 
-import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
+import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
 import {
   TypeMapperService,
-  TypeOptions,
+  type TypeOptions,
 } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
 
-import { ObjectTypeDefinitionKind } from './object-type-definition.factory';
+import { type ObjectTypeDefinitionKind } from './object-type-definition.factory';
 
 @Injectable()
 export class OutputTypeFactory {

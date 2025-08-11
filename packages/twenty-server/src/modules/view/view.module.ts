@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { ViewField } from 'src/engine/metadata-modules/view/view-field.entity';
-import { ViewFilterGroup } from 'src/engine/metadata-modules/view/view-filter-group.entity';
-import { ViewFilter } from 'src/engine/metadata-modules/view/view-filter.entity';
-import { ViewGroup } from 'src/engine/metadata-modules/view/view-group.entity';
-import { ViewSort } from 'src/engine/metadata-modules/view/view-sort.entity';
-import { View } from 'src/engine/metadata-modules/view/view.entity';
+import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
+import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
+import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
+import { View } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewFieldListener } from 'src/modules/view/listeners/view-field.listener';
 import { ViewFilterGroupListener } from 'src/modules/view/listeners/view-filter-group.listener';
 import { ViewFilterListener } from 'src/modules/view/listeners/view-filter.listener';
@@ -31,6 +31,7 @@ import { ViewService } from 'src/modules/view/services/view.service';
     ),
     FeatureFlagModule,
   ],
+
   providers: [
     ViewService,
     ViewDeleteOnePreQueryHook,

@@ -3,9 +3,9 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import {
-  WorkflowTrigger,
-  WorkflowVersion,
-  WorkflowWithCurrentVersion,
+  type WorkflowTrigger,
+  type WorkflowVersion,
+  type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -28,7 +28,7 @@ export const useUpdateWorkflowVersionTrigger = ({
     options: { computeOutputSchema: boolean } = { computeOutputSchema: true },
   ) => {
     if (!isDefined(workflow.currentVersion)) {
-      throw new Error('Can not update an undefined workflow version.');
+      throw new Error('Cannot find current workflow version');
     }
 
     const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
@@ -44,6 +44,10 @@ export const useUpdateWorkflowVersionTrigger = ({
         ...updatedTrigger.settings,
         outputSchema: outputSchema || {},
       };
+    }
+
+    if (!isDefined(workflowVersionId)) {
+      throw new Error('Workflow version not found');
     }
 
     await updateOneWorkflowVersion({

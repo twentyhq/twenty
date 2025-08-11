@@ -1,5 +1,3 @@
-import { expect } from '@storybook/test';
-
 import { CaptchaDriverType } from '~/generated/graphql';
 
 import { getCaptchaUrlByProvider } from '../getCaptchaUrlByProvider';

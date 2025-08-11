@@ -9,20 +9,21 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsPath } from '@/types/SettingsPath';
 import { t } from '@lingui/core/macro';
 import {
-  ConnectionParameters,
+  type ConnectionParameters,
   useSaveImapSmtpCaldavAccountMutation,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-import { ImapSmtpCaldavAccount } from '@/accounts/types/ImapSmtpCaldavAccount';
+import { type ImapSmtpCaldavAccount } from '@/accounts/types/ImapSmtpCaldavAccount';
 import { ACCOUNT_PROTOCOLS } from '@/settings/accounts/constants/AccountProtocols';
 import {
   connectionImapSmtpCalDav,
   isProtocolConfigured,
 } from '@/settings/accounts/validation-schemas/connectionImapSmtpCalDav';
+import { ApolloError } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  ConnectedImapSmtpCaldavAccount,
+  type ConnectedImapSmtpCaldavAccount,
   useConnectedImapSmtpCaldavAccount,
 } from './useConnectedImapSmtpCaldavAccount';
 
@@ -149,12 +150,9 @@ export const useImapSmtpCaldavConnectionForm = ({
         enqueueSuccessSnackBar({ message: successMessage });
         navigate(SettingsPath.Accounts);
       } catch (error) {
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : 'An unexpected error occurred';
-
-        enqueueErrorSnackBar({ message: errorMessage });
+        enqueueErrorSnackBar({
+          apolloError: error instanceof ApolloError ? error : undefined,
+        });
       }
     },
     [

@@ -6,7 +6,7 @@ import { TotpStrategy } from './totp.strategy';
 
 import {
   TOTPHashAlgorithms,
-  TotpContext,
+  type TotpContext,
 } from './constants/totp.strategy.constants';
 
 const RESYNCH_WINDOW = 3;

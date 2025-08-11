@@ -6,10 +6,10 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import {
   snackBarInternalComponentState,
-  SnackBarOptions,
+  type SnackBarOptions,
 } from '@/ui/feedback/snack-bar-manager/states/snackBarInternalComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { ApolloError } from '@apollo/client';
+import { type ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';

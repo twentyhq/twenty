@@ -1,11 +1,11 @@
 import { FavoriteFolderPickerInstanceContext } from '@/favorites/favorite-folder-picker/states/context/FavoriteFolderPickerInstanceContext';
 import { favoriteFolderIdsPickerComponentState } from '@/favorites/favorite-folder-picker/states/favoriteFolderIdPickerComponentState';
 import { favoriteFolderPickerComponentFamilyState } from '@/favorites/favorite-folder-picker/states/favoriteFolderPickerComponentFamilyState';
-import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
-import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
+import { type FavoriteFolder } from '@/favorites/types/FavoriteFolder';
+import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
 import { isDefined } from 'twenty-shared/utils';
 
-export const favoriteFoldersComponentSelector = createComponentSelectorV2<
+export const favoriteFoldersComponentSelector = createComponentSelector<
   FavoriteFolder[]
 >({
   key: 'favoriteFoldersComponentSelector',

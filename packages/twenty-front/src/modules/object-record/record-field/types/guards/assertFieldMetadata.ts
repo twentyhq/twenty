@@ -1,6 +1,6 @@
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { type FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { FieldDefinition } from '../FieldDefinition';
+import { type FieldDefinition } from '../FieldDefinition';
 import {
   FieldActorMetadata,
   FieldAddressMetadata,
@@ -27,7 +27,7 @@ import {
   FieldRichTextV2Metadata,
   FieldSelectMetadata,
   FieldTextMetadata,
-  FieldUuidMetadata,
+  FieldUuidMetadata
 } from '../FieldMetadata';
 
 type AssertFieldMetadataFunction = <

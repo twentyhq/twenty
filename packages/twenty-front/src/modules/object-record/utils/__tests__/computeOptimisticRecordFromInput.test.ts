@@ -1,13 +1,14 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
-import { FieldActorForInputValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldActorForInputValue } from '@/object-record/record-field/types/FieldMetadata';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { InMemoryCache } from '@apollo/client';
 import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getMockPersonObjectMetadataItem } from '~/testing/mock-data/people';
 import { mockCurrentWorkspaceMembers } from '~/testing/mock-data/workspace-members';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 
 describe('computeOptimisticRecordFromInput', () => {
   const currentWorkspaceMember = mockCurrentWorkspaceMembers[0];
@@ -170,9 +171,12 @@ describe('computeOptimisticRecordFromInput', () => {
 
     const objectMetadataItem: ObjectMetadataItem = {
       ...companyObjectMetadataItem,
-      fields: companyObjectMetadataItem.fields.filter(
-        (field) => field.name === 'id',
-      ),
+      fields: [
+        getMockFieldMetadataItemOrThrow({
+          objectMetadataItem: companyObjectMetadataItem,
+          fieldName: 'id',
+        }),
+      ],
     };
     const recordGqlFields = computeDepthOneRecordGqlFieldsFromRecord({
       objectMetadataItem,

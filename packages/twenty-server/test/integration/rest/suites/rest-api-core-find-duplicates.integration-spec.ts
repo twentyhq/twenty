@@ -1,12 +1,12 @@
+import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
 import {
   TEST_PERSON_1_ID,
   TEST_PERSON_2_ID,
   TEST_PERSON_3_ID,
 } from 'test/integration/constants/test-person-ids.constants';
+import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
-import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
-import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
 
 describe('Core REST API Find Duplicates endpoint', () => {
   beforeAll(async () => {

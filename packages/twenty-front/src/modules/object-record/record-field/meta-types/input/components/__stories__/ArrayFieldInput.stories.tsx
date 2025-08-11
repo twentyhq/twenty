@@ -1,6 +1,5 @@
-import { expect } from '@storybook/jest';
-import { Meta, StoryObj } from '@storybook/react';
-import { fn, userEvent, waitFor, within } from '@storybook/test';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { useEffect } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -99,7 +98,7 @@ const ArrayInputWithContext = ({
           },
           recordId,
           isLabelIdentifier: false,
-          isReadOnly: false,
+          isRecordFieldReadOnly: false,
           useUpdateRecord: () => [updateRecord, { loading: false }],
         }}
       >

@@ -1,9 +1,9 @@
-import { ElementType } from 'react';
-import { StoryObj } from '@storybook/react';
+import { type ElementType } from 'react';
+import { type StoryObj } from '@storybook/react';
 
 import {
-  CatalogDimension,
-  CatalogOptions,
+  type CatalogDimension,
+  type CatalogOptions,
 } from '../decorators/CatalogDecorator';
 
 export type CatalogStory<

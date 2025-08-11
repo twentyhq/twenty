@@ -1,9 +1,9 @@
-import { graphql } from '@octokit/graphql';
+import { type graphql } from '@octokit/graphql';
 
 import {
-  IssueNode,
-  PullRequestNode,
-  Repository,
+  type IssueNode,
+  type PullRequestNode,
+  type Repository,
 } from '@/github/contributors/types';
 
 export async function fetchIssuesPRs(

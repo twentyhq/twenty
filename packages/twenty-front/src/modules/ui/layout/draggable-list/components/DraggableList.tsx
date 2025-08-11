@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 import {
   DragDropContext,
   Droppable,
-  OnDragEndResponder,
-  OnDragStartResponder,
+  type OnDragEndResponder,
+  type OnDragStartResponder,
 } from '@hello-pangea/dnd';
 import { useState } from 'react';
 import { v4 } from 'uuid';

@@ -2,23 +2,21 @@ import { usePhonesField } from '@/object-record/record-field/meta-types/hooks/us
 import { PhonesFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/PhonesFieldMenuItem';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
 import { phoneSchema } from '@/object-record/record-field/validation-schemas/phoneSchema';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
-import { E164Number, parsePhoneNumber } from 'libphonenumber-js';
+import { type E164Number, parsePhoneNumber } from 'libphonenumber-js';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 import { createPhonesFromFieldValue } from '@/object-record/record-field/meta-types/input/utils/phonesUtils';
-import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { type FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { css } from '@emotion/react';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
-
-export const DEFAULT_PHONE_CALLING_CODE = '1';
 
 const StyledCustomPhoneInputContainer = styled.div<{
   hasItem: boolean;
@@ -113,7 +111,7 @@ export const PhonesFieldInput = ({
     index === 0 && phones.length > 1;
   const getShowSetAsPrimaryButton = (index: number) => index > 0;
 
-  const setIsFieldInError = useSetRecoilComponentStateV2(
+  const setIsFieldInError = useSetRecoilComponentState(
     recordFieldInputIsFieldInErrorComponentState,
   );
 

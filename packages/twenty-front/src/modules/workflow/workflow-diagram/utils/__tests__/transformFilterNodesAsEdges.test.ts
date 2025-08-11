@@ -1,4 +1,4 @@
-import { WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { type WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { transformFilterNodesAsEdges } from '../transformFilterNodesAsEdges';
 
 describe('transformFilterNodesAsEdges', () => {
@@ -7,7 +7,14 @@ describe('transformFilterNodesAsEdges', () => {
       nodes: [
         {
           id: 'A',
-          data: { nodeType: 'action', actionType: 'CODE', name: 'Step A' },
+          data: {
+            nodeType: 'action',
+            actionType: 'CODE',
+            name: 'Step A',
+            hasNextStepIds: false,
+            position: { x: 0, y: 0 },
+            stepId: 'A',
+          },
           position: { x: 0, y: 0 },
         },
         {
@@ -16,6 +23,9 @@ describe('transformFilterNodesAsEdges', () => {
             nodeType: 'action',
             actionType: 'SEND_EMAIL',
             name: 'Step C',
+            hasNextStepIds: false,
+            position: { x: 0, y: 0 },
+            stepId: 'C',
           },
           position: { x: 0, y: 300 },
         },
@@ -47,12 +57,26 @@ describe('transformFilterNodesAsEdges', () => {
       nodes: [
         {
           id: 'A',
-          data: { nodeType: 'action', actionType: 'CODE', name: 'Step A' },
+          data: {
+            nodeType: 'action',
+            actionType: 'CODE',
+            name: 'Step A',
+            hasNextStepIds: true,
+            position: { x: 0, y: 0 },
+            stepId: 'A',
+          },
           position: { x: 0, y: 0 },
         },
         {
           id: 'B',
-          data: { nodeType: 'action', actionType: 'FILTER', name: 'Filter B' },
+          data: {
+            nodeType: 'action',
+            actionType: 'FILTER',
+            name: 'Filter B',
+            hasNextStepIds: true,
+            position: { x: 0, y: 150 },
+            stepId: 'B',
+          },
           position: { x: 0, y: 150 },
         },
         {
@@ -61,6 +85,9 @@ describe('transformFilterNodesAsEdges', () => {
             nodeType: 'action',
             actionType: 'SEND_EMAIL',
             name: 'Step C',
+            hasNextStepIds: false,
+            position: { x: 0, y: 300 },
+            stepId: 'C',
           },
           position: { x: 0, y: 300 },
         },
@@ -91,12 +118,26 @@ describe('transformFilterNodesAsEdges', () => {
     expect(result.nodes).toEqual([
       {
         id: 'A',
-        data: { nodeType: 'action', actionType: 'CODE', name: 'Step A' },
+        data: {
+          nodeType: 'action',
+          actionType: 'CODE',
+          name: 'Step A',
+          hasNextStepIds: true,
+          position: { x: 0, y: 0 },
+          stepId: 'A',
+        },
         position: { x: 0, y: 0 },
       },
       {
         id: 'C',
-        data: { nodeType: 'action', actionType: 'SEND_EMAIL', name: 'Step C' },
+        data: {
+          nodeType: 'action',
+          actionType: 'SEND_EMAIL',
+          name: 'Step C',
+          hasNextStepIds: false,
+          position: { x: 0, y: 300 },
+          stepId: 'C',
+        },
         position: { x: 0, y: 300 },
       },
     ]);
@@ -108,6 +149,7 @@ describe('transformFilterNodesAsEdges', () => {
       type: 'filter--editable',
       source: 'A',
       target: 'C',
+      deletable: false,
       data: {
         edgeType: 'filter',
         stepId: 'B',
@@ -123,12 +165,26 @@ describe('transformFilterNodesAsEdges', () => {
       nodes: [
         {
           id: 'A',
-          data: { nodeType: 'action', actionType: 'CODE', name: 'Step A' },
+          data: {
+            nodeType: 'action',
+            actionType: 'CODE',
+            name: 'Step A',
+            hasNextStepIds: true,
+            position: { x: 0, y: 0 },
+            stepId: 'A',
+          },
           position: { x: 0, y: 0 },
         },
         {
           id: 'B1',
-          data: { nodeType: 'action', actionType: 'FILTER', name: 'Filter B1' },
+          data: {
+            nodeType: 'action',
+            actionType: 'FILTER',
+            name: 'Filter B1',
+            hasNextStepIds: true,
+            position: { x: 0, y: 150 },
+            stepId: 'B1',
+          },
           position: { x: 0, y: 150 },
         },
         {
@@ -137,12 +193,22 @@ describe('transformFilterNodesAsEdges', () => {
             nodeType: 'action',
             actionType: 'SEND_EMAIL',
             name: 'Step C',
+            hasNextStepIds: true,
+            position: { x: 0, y: 300 },
+            stepId: 'C',
           },
           position: { x: 0, y: 300 },
         },
         {
           id: 'B2',
-          data: { nodeType: 'action', actionType: 'FILTER', name: 'Filter B2' },
+          data: {
+            nodeType: 'action',
+            actionType: 'FILTER',
+            name: 'Filter B2',
+            hasNextStepIds: true,
+            position: { x: 0, y: 450 },
+            stepId: 'B2',
+          },
           position: { x: 0, y: 450 },
         },
         {
@@ -151,6 +217,9 @@ describe('transformFilterNodesAsEdges', () => {
             nodeType: 'action',
             actionType: 'CREATE_RECORD',
             name: 'Step D',
+            hasNextStepIds: true,
+            position: { x: 0, y: 600 },
+            stepId: 'D',
           },
           position: { x: 0, y: 600 },
         },
@@ -206,6 +275,7 @@ describe('transformFilterNodesAsEdges', () => {
       type: 'filter--editable',
       source: 'A',
       target: 'C',
+      deletable: false,
       data: {
         edgeType: 'filter',
         name: 'Filter B1',
@@ -223,6 +293,7 @@ describe('transformFilterNodesAsEdges', () => {
       type: 'filter--editable',
       source: 'C',
       target: 'D',
+      deletable: false,
       data: {
         edgeType: 'filter',
         name: 'Filter B2',
@@ -238,12 +309,26 @@ describe('transformFilterNodesAsEdges', () => {
       nodes: [
         {
           id: 'A',
-          data: { nodeType: 'action', actionType: 'CODE', name: 'Step A' },
+          data: {
+            nodeType: 'action',
+            actionType: 'CODE',
+            name: 'Step A',
+            hasNextStepIds: true,
+            position: { x: 0, y: 0 },
+            stepId: 'A',
+          },
           position: { x: 0, y: 0 },
         },
         {
           id: 'B',
-          data: { nodeType: 'action', actionType: 'FILTER', name: 'Filter B' },
+          data: {
+            nodeType: 'action',
+            actionType: 'FILTER',
+            name: 'Filter B',
+            hasNextStepIds: true,
+            position: { x: 0, y: 150 },
+            stepId: 'B',
+          },
           position: { x: 0, y: 150 },
         },
       ],
@@ -267,7 +352,14 @@ describe('transformFilterNodesAsEdges', () => {
     expect(result.nodes).toEqual([
       {
         id: 'A',
-        data: { nodeType: 'action', actionType: 'CODE', name: 'Step A' },
+        data: {
+          nodeType: 'action',
+          actionType: 'CODE',
+          name: 'Step A',
+          hasNextStepIds: true,
+          position: { x: 0, y: 0 },
+          stepId: 'A',
+        },
         position: { x: 0, y: 0 },
       },
     ]);
@@ -285,12 +377,22 @@ describe('transformFilterNodesAsEdges', () => {
             nodeType: 'trigger',
             triggerType: 'DATABASE_EVENT',
             name: 'Trigger',
+            hasNextStepIds: true,
+            position: { x: 0, y: 0 },
+            stepId: 'trigger',
           },
           position: { x: 0, y: 0 },
         },
         {
           id: 'B',
-          data: { nodeType: 'action', actionType: 'FILTER', name: 'Filter B' },
+          data: {
+            nodeType: 'action',
+            actionType: 'FILTER',
+            name: 'Filter B',
+            hasNextStepIds: true,
+            position: { x: 0, y: 150 },
+            stepId: 'B',
+          },
           position: { x: 0, y: 150 },
         },
         {
@@ -299,6 +401,9 @@ describe('transformFilterNodesAsEdges', () => {
             nodeType: 'action',
             actionType: 'SEND_EMAIL',
             name: 'Step C',
+            hasNextStepIds: true,
+            position: { x: 0, y: 300 },
+            stepId: 'C',
           },
           position: { x: 0, y: 300 },
         },
@@ -333,12 +438,22 @@ describe('transformFilterNodesAsEdges', () => {
           nodeType: 'trigger',
           triggerType: 'DATABASE_EVENT',
           name: 'Trigger',
+          hasNextStepIds: true,
+          position: { x: 0, y: 0 },
+          stepId: 'trigger',
         },
         position: { x: 0, y: 0 },
       },
       {
         id: 'C',
-        data: { nodeType: 'action', actionType: 'SEND_EMAIL', name: 'Step C' },
+        data: {
+          nodeType: 'action',
+          actionType: 'SEND_EMAIL',
+          name: 'Step C',
+          hasNextStepIds: true,
+          position: { x: 0, y: 300 },
+          stepId: 'C',
+        },
         position: { x: 0, y: 300 },
       },
     ]);
@@ -350,6 +465,7 @@ describe('transformFilterNodesAsEdges', () => {
         type: 'filter--editable',
         source: 'trigger',
         target: 'C',
+        deletable: false,
         data: {
           edgeType: 'filter',
           name: 'Filter B',

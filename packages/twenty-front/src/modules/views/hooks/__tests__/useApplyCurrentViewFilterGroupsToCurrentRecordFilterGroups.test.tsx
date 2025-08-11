@@ -2,13 +2,13 @@ import { renderHook } from '@testing-library/react';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
+import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups } from '@/views/hooks/useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups';
-import { View } from '@/views/types/View';
-import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
+import { type View } from '@/views/types/View';
+import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
@@ -16,7 +16,7 @@ import { mapViewFilterGroupLogicalOperatorToRecordFilterGroupLogicalOperator } f
 import { act } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const mockObjectMetadataItemNameSingular = 'company';
 
@@ -67,7 +67,7 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
         const { applyCurrentViewFilterGroupsToCurrentRecordFilterGroups } =
           useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
 
-        const currentRecordFilterGroups = useRecoilComponentValueV2(
+        const currentRecordFilterGroups = useRecoilComponentValue(
           currentRecordFilterGroupsComponentState,
         );
 
@@ -118,7 +118,7 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
         const { applyCurrentViewFilterGroupsToCurrentRecordFilterGroups } =
           useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
 
-        const currentRecordFilterGroups = useRecoilComponentValueV2(
+        const currentRecordFilterGroups = useRecoilComponentValue(
           currentRecordFilterGroupsComponentState,
         );
 
@@ -160,7 +160,7 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
         const { applyCurrentViewFilterGroupsToCurrentRecordFilterGroups } =
           useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
 
-        const currentRecordFilterGroups = useRecoilComponentValueV2(
+        const currentRecordFilterGroups = useRecoilComponentValue(
           currentRecordFilterGroupsComponentState,
         );
 

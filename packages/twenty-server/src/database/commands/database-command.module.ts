@@ -19,6 +19,7 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
 import { CalendarEventImportManagerModule } from 'src/modules/calendar/calendar-event-import-manager/calendar-event-import-manager.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
+import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 
 import { DataSeedWorkspaceCommand } from './data-seed-dev-workspace.command';
 
@@ -33,6 +34,7 @@ import { DataSeedWorkspaceCommand } from './data-seed-dev-workspace.command';
     CalendarEventImportManagerModule,
     AutomatedTriggerModule,
     FileModule,
+    DomainManagerModule,
 
     // Data seeding dependencies
     TypeORMModule,

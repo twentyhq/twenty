@@ -1,4 +1,4 @@
-import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
+import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
 
 export const getViewFilterGroupsToDelete = (

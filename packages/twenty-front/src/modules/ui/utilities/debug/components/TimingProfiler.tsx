@@ -1,4 +1,4 @@
-import { Profiler, ProfilerOnRenderCallback } from 'react';
+import { Profiler, type ProfilerOnRenderCallback } from 'react';
 
 import { logDebug } from '~/utils/logDebug';
 

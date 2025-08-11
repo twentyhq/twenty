@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddDefaultAgentId1752070094777 implements MigrationInterface {
   name = 'AddDefaultAgentId1752070094777';

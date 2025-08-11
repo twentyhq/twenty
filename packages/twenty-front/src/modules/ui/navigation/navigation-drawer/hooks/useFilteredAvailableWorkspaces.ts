@@ -1,6 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRecoilValue } from 'recoil';
-import { AvailableWorkspace } from '~/generated/graphql';
+import { type AvailableWorkspace } from '~/generated/graphql';
 
 export const useFilteredAvailableWorkspaces = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);

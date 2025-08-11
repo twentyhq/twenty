@@ -1,10 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class WorkspaceMigrationException extends CustomException {
-  constructor(message: string, code: WorkspaceMigrationExceptionCode) {
-    super(message, code);
-  }
-}
+export class WorkspaceMigrationException extends CustomException<WorkspaceMigrationExceptionCode> {}
 
 export enum WorkspaceMigrationExceptionCode {
   NO_FACTORY_FOUND = 'NO_FACTORY_FOUND',

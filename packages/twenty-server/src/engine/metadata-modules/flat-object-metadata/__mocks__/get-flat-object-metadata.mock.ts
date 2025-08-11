@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type FlatObjectMetadataOverrides = Required<
   Pick<FlatObjectMetadata, 'uniqueIdentifier'>

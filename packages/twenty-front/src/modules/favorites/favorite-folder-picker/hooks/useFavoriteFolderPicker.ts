@@ -4,10 +4,10 @@ import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 
-import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { type FavoriteFolder } from '@/favorites/types/FavoriteFolder';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -26,15 +26,13 @@ export const useFavoriteFolderPicker = ({
   objectNameSingular,
 }: useFavoriteFolderPickerProps): useFavoriteFolderPickerReturnType => {
   const favoriteFoldersMultiSelectCheckedState =
-    useRecoilComponentCallbackStateV2(
-      favoriteFolderPickerCheckedComponentState,
-    );
+    useRecoilComponentCallbackState(favoriteFolderPickerCheckedComponentState);
 
   const { sortedFavorites: favorites } = useFavorites();
   const { createFavorite } = useCreateFavorite();
   const { deleteFavorite } = useDeleteFavorite();
 
-  const favoriteFolders = useRecoilComponentValueV2(
+  const favoriteFolders = useRecoilComponentValue(
     favoriteFoldersComponentSelector,
   );
 

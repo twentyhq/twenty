@@ -1,4 +1,4 @@
-import { FAVORITE_DROPPABLE_IDS } from '@/favorites/constants/FavoriteDroppableIds';
+import { type FAVORITE_DROPPABLE_IDS } from '@/favorites/constants/FavoriteDroppableIds';
 
 export type FavoriteDroppableId =
   | typeof FAVORITE_DROPPABLE_IDS.ORPHAN_FAVORITES

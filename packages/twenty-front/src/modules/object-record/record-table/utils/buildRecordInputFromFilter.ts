@@ -1,10 +1,10 @@
-import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
-import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
+import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 
 import {
-  RecordFilter,
-  RecordFilterToRecordInputOperand,
+  type RecordFilter,
+  type RecordFilterToRecordInputOperand,
 } from '@/object-record/record-filter/types/RecordFilter';
 import { FILTER_OPERANDS_MAP } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
@@ -240,7 +240,7 @@ const computeValueFromFilterSelect = (
           return undefined;
         }
         return option.value;
-      } catch (error) {
+      } catch {
         return undefined;
       }
     case ViewFilterOperand.IsNot:
@@ -261,7 +261,7 @@ const computeValueFromFilterMultiSelect = (
       try {
         const parsedValue = parseJson<string[]>(value);
         return parsedValue ? parsedValue : undefined;
-      } catch (error) {
+      } catch {
         return undefined;
       }
     case ViewFilterOperand.DoesNotContain:

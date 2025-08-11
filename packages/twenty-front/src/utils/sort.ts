@@ -1,4 +1,4 @@
-import { Maybe } from '~/generated/graphql';
+import { type Maybe } from '~/generated/graphql';
 
 export const sortNullsFirst = (
   fieldValueA: Maybe<unknown>,

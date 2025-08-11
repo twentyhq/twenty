@@ -5,7 +5,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import {
   favoriteId,
   initialFavorites,

@@ -1,15 +1,15 @@
 import { useTheme } from '@emotion/react';
-import { Avatar, AvatarProps, IconChevronRight } from '@ui/display';
+import { Avatar, type AvatarProps, IconChevronRight } from '@ui/display';
 import { LightIconButtonGroup } from '@ui/input';
-import { MenuItemIconButton } from '@ui/navigation/menu-item/components/MenuItem';
+import { type MenuItemIconButton } from '@ui/navigation/menu-item/components/MenuItem';
 import { MenuItemLeftContent } from '@ui/navigation/menu-item/internals/components/MenuItemLeftContent';
-import { MouseEvent, ReactNode } from 'react';
+import { type MouseEvent, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   StyledHoverableMenuItemBase,
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
-import { MenuItemAccent } from '../types/MenuItemAccent';
+import { type MenuItemAccent } from '../types/MenuItemAccent';
 
 export type MenuItemAvatarProps = {
   accent?: MenuItemAccent;

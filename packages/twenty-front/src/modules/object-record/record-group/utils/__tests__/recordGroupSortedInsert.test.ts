@@ -6,8 +6,6 @@
 //   let low = 0;
 //   let high = array.length;
 
-import { expect } from '@storybook/test';
-
 //   while (low < high) {
 //     const mid = Math.floor((low + high) / 2);
 

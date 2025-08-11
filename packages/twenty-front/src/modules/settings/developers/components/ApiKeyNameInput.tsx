@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useCallback, useEffect } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { isDefined } from 'twenty-shared/utils';
 import { useUpdateApiKeyMutation } from '~/generated-metadata/graphql';
 
@@ -64,7 +64,7 @@ export const ApiKeyNameInput = ({
 
   return (
     <StyledComboInputContainer>
-      <TextInput
+      <SettingsTextInput
         instanceId={nameTextInputId}
         placeholder="E.g. backoffice integration"
         onChange={onNameUpdate}

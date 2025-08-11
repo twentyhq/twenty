@@ -1,5 +1,5 @@
 # Base image for common dependencies
-FROM node:22-alpine as common-deps
+FROM node:24-alpine as common-deps
 
 WORKDIR /app
 
@@ -37,7 +37,6 @@ RUN mv /app/packages/twenty-server/build /app/packages/twenty-server/dist
 
 RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-server
 
-
 # Build the front
 FROM common-deps as twenty-front-build
 
@@ -50,7 +49,7 @@ RUN npx nx build twenty-front
 
 
 # Final stage: Run the application
-FROM node:22-alpine as twenty
+FROM node:24-alpine as twenty
 
 # Used to run healthcheck in docker
 RUN apk add --no-cache curl jq

@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import { AnimationDuration } from '@ui/theme';
+import { type AnimationDuration } from '@ui/theme';
 import { AnimatePresence, motion } from 'framer-motion';
 
 type AnimatedFadeOutProps = {

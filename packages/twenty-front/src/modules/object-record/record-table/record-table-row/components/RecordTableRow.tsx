@@ -10,8 +10,8 @@ import { isRecordTableRowFocusActiveComponentState } from '@/object-record/recor
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { ListenRecordUpdatesEffect } from '@/subscription/components/ListenRecordUpdatesEffect';
 import { getDefaultRecordFieldsToListen } from '@/subscription/utils/getDefaultRecordFieldsToListen.util';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 type RecordTableRowProps = {
   recordId: string;
@@ -28,11 +28,11 @@ export const RecordTableRow = ({
   const listenedFields = getDefaultRecordFieldsToListen({
     objectNameSingular,
   });
-  const isFocused = useRecoilComponentFamilyValueV2(
+  const isFocused = useRecoilComponentFamilyValue(
     isRecordTableRowFocusedComponentFamilyState,
     rowIndexForFocus,
   );
-  const isRowFocusActive = useRecoilComponentValueV2(
+  const isRowFocusActive = useRecoilComponentValue(
     isRecordTableRowFocusActiveComponentState,
   );
 

@@ -1,4 +1,4 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { capitalize } from 'twenty-shared/utils';
 
 export const getCombinedFindManyRecordsQueryFilteringPart = (

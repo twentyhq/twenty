@@ -1,10 +1,10 @@
 import process from 'process';
 
-import { ClickHouseClient, createClient } from '@clickhouse/client';
+import { type ClickHouseClient, createClient } from '@clickhouse/client';
 import request from 'supertest';
 
 import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
-import { GenericTrackEvent } from 'src/engine/core-modules/audit/utils/events/workspace-event/track';
+import { type GenericTrackEvent } from 'src/engine/core-modules/audit/utils/events/workspace-event/track';
 
 describe('ClickHouse Event Registration (integration)', () => {
   let clickHouseClient: ClickHouseClient;

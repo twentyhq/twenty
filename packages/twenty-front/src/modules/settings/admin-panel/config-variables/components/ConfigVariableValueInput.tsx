@@ -1,11 +1,11 @@
 import { useLingui } from '@lingui/react/macro';
 
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { ConfigVariableValue } from 'twenty-shared/types';
-import { ConfigVariable } from '~/generated/graphql';
+import { type ConfigVariableValue } from 'twenty-shared/types';
+import { type ConfigVariable } from '~/generated/graphql';
 import { ConfigVariableDatabaseInput } from './ConfigVariableDatabaseInput';
 
 type ConfigVariableValueInputProps = {
@@ -45,12 +45,7 @@ export const ConfigVariableValueInput = ({
           }
         />
       ) : (
-        <TextInputV2
-          value={String(value)}
-          disabled
-          label={t`Value`}
-          fullWidth
-        />
+        <TextInput value={String(value)} disabled label={t`Value`} fullWidth />
       )}
     </StyledValueContainer>
   );

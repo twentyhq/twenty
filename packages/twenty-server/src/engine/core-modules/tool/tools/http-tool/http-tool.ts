@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { type AxiosRequestConfig } from 'axios';
 
 import { HttpToolParametersZodSchema } from 'src/engine/core-modules/tool/tools/http-tool/http-tool.schema';
-import { HttpRequestInput } from 'src/engine/core-modules/tool/tools/http-tool/types/http-request-input.type';
-import { ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
-import { ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { Tool } from 'src/engine/core-modules/tool/types/tool.type';
+import { type HttpRequestInput } from 'src/engine/core-modules/tool/tools/http-tool/types/http-request-input.type';
+import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 
 @Injectable()
 export class HttpTool implements Tool {

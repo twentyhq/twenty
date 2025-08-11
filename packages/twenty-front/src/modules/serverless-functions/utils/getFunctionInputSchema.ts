@@ -1,19 +1,22 @@
-import { InputSchema, InputSchemaProperty } from '@/workflow/types/InputSchema';
 import {
-  ArrayTypeNode,
-  ArrowFunction,
+  type InputSchema,
+  type InputSchemaProperty,
+} from '@/workflow/types/InputSchema';
+import {
+  type ArrayTypeNode,
+  type ArrowFunction,
   createSourceFile,
-  FunctionDeclaration,
-  FunctionLikeDeclaration,
-  LiteralTypeNode,
-  Node,
-  PropertySignature,
+  type FunctionDeclaration,
+  type FunctionLikeDeclaration,
+  type LiteralTypeNode,
+  type Node,
+  type PropertySignature,
   ScriptTarget,
-  StringLiteral,
+  type StringLiteral,
   SyntaxKind,
-  TypeNode,
-  UnionTypeNode,
-  VariableStatement,
+  type TypeNode,
+  type UnionTypeNode,
+  type VariableStatement,
 } from 'typescript';
 import { isDefined } from 'twenty-shared/utils';
 

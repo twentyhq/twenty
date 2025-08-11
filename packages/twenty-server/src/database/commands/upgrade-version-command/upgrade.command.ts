@@ -9,11 +9,11 @@ import { Command } from 'nest-commander';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspacesMigrationCommandOptions } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { type ActiveOrSuspendedWorkspacesMigrationCommandOptions } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import {
-  AllCommands,
+  type AllCommands,
   UpgradeCommandRunner,
-  VersionCommands,
+  type VersionCommands,
 } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { CleanNotFoundFilesCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-clean-not-found-files.command';
 import { FixCreatedByDefaultValueCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-created-by-default-value.command';
@@ -24,11 +24,13 @@ import { DeduplicateIndexedFieldsCommand } from 'src/database/commands/upgrade-v
 import { AddEnqueuedStatusToWorkflowRunCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-add-enqueued-status-to-workflow-run.command';
 import { FixSchemaArrayTypeCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-schema-array-type.command';
 import { FixUpdateStandardFieldsIsLabelSyncedWithName } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-update-standard-field-is-label-synced-with-name.command';
-import { MigrateApiKeysWebhooksToCoreCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-api-keys-webhooks-to-core.command';
 import { MigrateWorkflowRunStatesCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-workflow-run-state.command';
 import { AddEnqueuedStatusToWorkflowRunV2Command } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-enqueued-status-to-workflow-run-v2.command';
 import { AddNextStepIdsToWorkflowVersionTriggers } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-next-step-ids-to-workflow-version-triggers.command';
 import { RemoveWorkflowRunsWithoutState } from 'src/database/commands/upgrade-version-command/1-2/1-2-remove-workflow-runs-without-state.command';
+import { AddNextStepIdsToWorkflowRunsTrigger } from 'src/database/commands/upgrade-version-command/1-3/1-3-add-next-step-ids-to-workflow-runs-trigger.command';
+import { AssignRolesToExistingApiKeysCommand } from 'src/database/commands/upgrade-version-command/1-3/1-3-assign-roles-to-existing-api-keys.command';
+import { UpdateTimestampColumnTypeInWorkspaceSchemaCommand } from 'src/database/commands/upgrade-version-command/1-3/1-3-update-timestamp-column-type-in-workspace-schema.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -147,7 +149,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     // 1.1 Commands
     protected readonly fixSchemaArrayTypeCommand: FixSchemaArrayTypeCommand,
     protected readonly fixUpdateStandardFieldsIsLabelSyncedWithNameCommand: FixUpdateStandardFieldsIsLabelSyncedWithName,
-    protected readonly migrateApiKeysWebhooksToCoreCommand: MigrateApiKeysWebhooksToCoreCommand,
     protected readonly migrateWorkflowRunStatesCommand: MigrateWorkflowRunStatesCommand,
     protected readonly addEnqueuedStatusToWorkflowRunCommand: AddEnqueuedStatusToWorkflowRunCommand,
 
@@ -157,6 +158,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly addEnqueuedStatusToWorkflowRunV2Command: AddEnqueuedStatusToWorkflowRunV2Command,
 
     // 1.3 Commands
+    protected readonly assignRolesToExistingApiKeysCommand: AssignRolesToExistingApiKeysCommand,
+    protected readonly addNextStepIdsToWorkflowRunsTrigger: AddNextStepIdsToWorkflowRunsTrigger,
+    protected readonly updateTimestampColumnTypeInWorkspaceSchemaCommand: UpdateTimestampColumnTypeInWorkspaceSchemaCommand,
   ) {
     super(
       workspaceRepository,
@@ -201,7 +205,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       beforeSyncMetadata: [
         this.fixUpdateStandardFieldsIsLabelSyncedWithNameCommand,
         this.fixSchemaArrayTypeCommand,
-        this.migrateApiKeysWebhooksToCoreCommand,
         this.addEnqueuedStatusToWorkflowRunCommand,
       ],
       afterSyncMetadata: [this.migrateWorkflowRunStatesCommand],
@@ -213,11 +216,16 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.addNextStepIdsToWorkflowVersionTriggers,
         this.addEnqueuedStatusToWorkflowRunV2Command,
       ],
-      afterSyncMetadata: [],
+      afterSyncMetadata: [this.assignRolesToExistingApiKeysCommand],
     };
 
     const commands_130: VersionCommands = {
-      beforeSyncMetadata: [],
+      beforeSyncMetadata: [
+        this.addNextStepIdsToWorkflowVersionTriggers, // We add that command again because nextStepIds where not added on freshly created triggers. It will be done in 1.3
+        this.addNextStepIdsToWorkflowRunsTrigger,
+        this.assignRolesToExistingApiKeysCommand,
+        this.updateTimestampColumnTypeInWorkspaceSchemaCommand,
+      ],
       afterSyncMetadata: [],
     };
 

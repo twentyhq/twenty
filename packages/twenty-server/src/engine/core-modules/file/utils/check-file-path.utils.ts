@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 
 import {
-  AllowedFolders,
+  type AllowedFolders,
   FileFolder,
 } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 

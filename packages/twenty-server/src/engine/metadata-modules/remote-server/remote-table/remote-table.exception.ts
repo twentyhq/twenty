@@ -1,11 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class RemoteTableException extends CustomException {
-  declare code: RemoteTableExceptionCode;
-  constructor(message: string, code: RemoteTableExceptionCode) {
-    super(message, code);
-  }
-}
+export class RemoteTableException extends CustomException<RemoteTableExceptionCode> {}
 
 export enum RemoteTableExceptionCode {
   REMOTE_TABLE_NOT_FOUND = 'REMOTE_TABLE_NOT_FOUND',
