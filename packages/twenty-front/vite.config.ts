@@ -76,6 +76,7 @@ export default defineConfig(({ command, mode }) => {
   if (VITE_DISABLE_ESLINT_CHECKER !== 'true') {
     checkers['eslint'] = {
       lintCommand: 'eslint ../../packages/twenty-front --max-warnings 0',
+      useFlatConfig: true,
     };
   }
 
