@@ -23,11 +23,11 @@ export const validateFlatObjectMetadataLabel = ({
   const errors: FailedFlatObjectMetadataValidationExceptions[] = [];
   const validators: FlatMetadataValidator<string>[] = [
     {
-      validator: (label) => !beneathDatabaseIdentifierMinimumLength(label),
+      validator: (label) => beneathDatabaseIdentifierMinimumLength(label),
       message: t`Object label is too short`,
     },
     {
-      validator: (label) => !exceedsDatabaseIdentifierMaximumLength(label),
+      validator: (label) => exceedsDatabaseIdentifierMaximumLength(label),
       message: t`Object label is too long`,
     },
   ];
