@@ -40,7 +40,7 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
       }))
     : [];
 
-  const fieldDefintionMetadata = {
+  const fieldDefinitionMetadata = {
     fieldName: field.name,
     placeHolder: field.label,
     relationType,
@@ -65,11 +65,11 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
     showLabel,
     labelWidth,
     type: field.type,
-    metadata: fieldDefintionMetadata,
+    metadata: fieldDefinitionMetadata,
     iconName: field.icon ?? 'Icon123',
     defaultValue: field.defaultValue,
     editButtonIcon: getFieldButtonIcon({
-      metadata: fieldDefintionMetadata,
+      metadata: fieldDefinitionMetadata,
       type: field.type,
     }),
   };
