@@ -1,14 +1,15 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { WorkflowVersionEdgeWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-edge/workflow-version-edge.workspace-service';
 import {
   type WorkflowAction,
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { WorkflowVersionEdgeWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-edge/workflow-version-edge.workspace-service';
 
 type MockWorkspaceRepository = Partial<
   WorkspaceRepository<WorkflowVersionWorkspaceEntity>
@@ -71,6 +72,7 @@ const mockWorkflowVersion = {
 
 describe('WorkflowVersionEdgeWorkspaceService', () => {
   let twentyORMGlobalManager: jest.Mocked<TwentyORMGlobalManager>;
+  let workflowCommonWorkspaceService: jest.Mocked<WorkflowCommonWorkspaceService>;
   let service: WorkflowVersionEdgeWorkspaceService;
   let mockWorkflowVersionWorkspaceRepository: MockWorkspaceRepository;
 
@@ -90,12 +92,22 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         .mockResolvedValue(mockWorkflowVersionWorkspaceRepository),
     } as unknown as jest.Mocked<TwentyORMGlobalManager>;
 
+    workflowCommonWorkspaceService = {
+      getWorkflowVersionOrFail: jest
+        .fn()
+        .mockResolvedValue(mockWorkflowVersion),
+    } as unknown as jest.Mocked<WorkflowCommonWorkspaceService>;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WorkflowVersionEdgeWorkspaceService,
         {
           provide: TwentyORMGlobalManager,
           useValue: twentyORMGlobalManager,
+        },
+        {
+          provide: WorkflowCommonWorkspaceService,
+          useValue: workflowCommonWorkspaceService,
         },
       ],
     }).compile();
@@ -123,6 +135,13 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         const result = await service.createWorkflowVersionEdge({
           source: 'trigger',
           target: 'step-3',
+          workflowVersionId: mockWorkflowVersionId,
+          workspaceId: mockWorkspaceId,
+        });
+
+        expect(
+          workflowCommonWorkspaceService.getWorkflowVersionOrFail,
+        ).toHaveBeenCalledWith({
           workflowVersionId: mockWorkflowVersionId,
           workspaceId: mockWorkspaceId,
         });
@@ -266,6 +285,13 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         });
 
         expect(
+          workflowCommonWorkspaceService.getWorkflowVersionOrFail,
+        ).toHaveBeenCalledWith({
+          workflowVersionId: mockWorkflowVersionId,
+          workspaceId: mockWorkspaceId,
+        });
+
+        expect(
           mockWorkflowVersionWorkspaceRepository.update,
         ).toHaveBeenCalledWith(mockWorkflowVersionId, {
           trigger: {
@@ -288,6 +314,13 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         const result = await service.deleteWorkflowVersionEdge({
           source: 'trigger',
           target: 'step-2',
+          workflowVersionId: mockWorkflowVersionId,
+          workspaceId: mockWorkspaceId,
+        });
+
+        expect(
+          workflowCommonWorkspaceService.getWorkflowVersionOrFail,
+        ).toHaveBeenCalledWith({
           workflowVersionId: mockWorkflowVersionId,
           workspaceId: mockWorkspaceId,
         });
@@ -375,6 +408,196 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         await expect(call).rejects.toThrow(
           `Source step 'not-existing-step' not found in workflowVersion '${mockWorkflowVersionId}'`,
         );
+      });
+    });
+
+    describe('with filter steps', () => {
+      it('should delete the filter step when deleting edge from trigger to target through filter', async () => {
+        const mockStepsWithFilter = [
+          {
+            id: 'step-1',
+            type: WorkflowActionType.FORM,
+            settings: {
+              errorHandlingOptions: {
+                continueOnFailure: { value: false },
+                retryOnFailure: { value: false },
+              },
+            },
+            nextStepIds: ['step-2'],
+          },
+          {
+            id: 'step-2',
+            type: WorkflowActionType.SEND_EMAIL,
+            settings: {
+              errorHandlingOptions: {
+                continueOnFailure: { value: false },
+                retryOnFailure: { value: false },
+              },
+            },
+            nextStepIds: [],
+          },
+          {
+            id: 'filter-step',
+            type: WorkflowActionType.FILTER,
+            settings: {
+              errorHandlingOptions: {
+                continueOnFailure: { value: false },
+                retryOnFailure: { value: false },
+              },
+            },
+            nextStepIds: ['step-2'],
+          },
+        ] as WorkflowAction[];
+
+        const mockTriggerWithFilter = {
+          type: WorkflowTriggerType.MANUAL,
+          settings: {},
+          nextStepIds: ['step-1', 'filter-step'],
+        };
+
+        const mockWorkflowVersionWithFilter = {
+          id: mockWorkflowVersionId,
+          trigger: mockTriggerWithFilter,
+          steps: mockStepsWithFilter,
+          status: 'DRAFT',
+        } as WorkflowVersionWorkspaceEntity;
+
+        workflowCommonWorkspaceService.getWorkflowVersionOrFail.mockResolvedValue(
+          mockWorkflowVersionWithFilter,
+        );
+
+        const result = await service.deleteWorkflowVersionEdge({
+          source: 'trigger',
+          target: 'step-2',
+          workflowVersionId: mockWorkflowVersionId,
+          workspaceId: mockWorkspaceId,
+        });
+
+        expect(
+          workflowCommonWorkspaceService.getWorkflowVersionOrFail,
+        ).toHaveBeenCalledWith({
+          workflowVersionId: mockWorkflowVersionId,
+          workspaceId: mockWorkspaceId,
+        });
+
+        expect(
+          mockWorkflowVersionWorkspaceRepository.update,
+        ).toHaveBeenCalledWith(mockWorkflowVersionId, {
+          trigger: {
+            ...mockTriggerWithFilter,
+            nextStepIds: ['step-1'],
+          },
+          steps: mockStepsWithFilter.filter(
+            (step) => step.id !== 'filter-step',
+          ),
+        });
+
+        expect(result).toEqual({
+          triggerNextStepIds: ['step-1'],
+          stepsNextStepIds: {
+            'step-1': ['step-2'],
+            'step-2': [],
+          },
+        });
+      });
+      it('should delete the filter step when deleting edge from step to target through filter', async () => {
+        const mockStepsWithFilter = [
+          {
+            id: 'step-1',
+            type: WorkflowActionType.FORM,
+            settings: {
+              errorHandlingOptions: {
+                continueOnFailure: { value: false },
+                retryOnFailure: { value: false },
+              },
+            },
+            nextStepIds: ['step-2', 'filter-step'],
+          },
+          {
+            id: 'step-2',
+            type: WorkflowActionType.SEND_EMAIL,
+            settings: {
+              errorHandlingOptions: {
+                continueOnFailure: { value: false },
+                retryOnFailure: { value: false },
+              },
+            },
+            nextStepIds: [],
+          },
+          {
+            id: 'step-3',
+            type: WorkflowActionType.SEND_EMAIL,
+            settings: {
+              errorHandlingOptions: {
+                continueOnFailure: { value: false },
+                retryOnFailure: { value: false },
+              },
+            },
+            nextStepIds: [],
+          },
+          {
+            id: 'filter-step',
+            type: WorkflowActionType.FILTER,
+            settings: {
+              errorHandlingOptions: {
+                continueOnFailure: { value: false },
+                retryOnFailure: { value: false },
+              },
+            },
+            nextStepIds: ['step-3'],
+          },
+        ] as WorkflowAction[];
+
+        const mockWorkflowVersionWithFilter = {
+          id: mockWorkflowVersionId,
+          trigger: mockTrigger,
+          steps: mockStepsWithFilter,
+          status: 'DRAFT',
+        } as WorkflowVersionWorkspaceEntity;
+
+        workflowCommonWorkspaceService.getWorkflowVersionOrFail.mockResolvedValue(
+          mockWorkflowVersionWithFilter,
+        );
+
+        const result = await service.deleteWorkflowVersionEdge({
+          source: 'step-1',
+          target: 'step-3',
+          workflowVersionId: mockWorkflowVersionId,
+          workspaceId: mockWorkspaceId,
+        });
+
+        expect(
+          workflowCommonWorkspaceService.getWorkflowVersionOrFail,
+        ).toHaveBeenCalledWith({
+          workflowVersionId: mockWorkflowVersionId,
+          workspaceId: mockWorkspaceId,
+        });
+
+        expect(
+          mockWorkflowVersionWorkspaceRepository.update,
+        ).toHaveBeenCalledWith(mockWorkflowVersionId, {
+          steps: mockStepsWithFilter
+            .map((step) => {
+              if (step.id === 'step-1') {
+                return {
+                  ...step,
+                  nextStepIds: ['step-2'],
+                };
+              }
+
+              return step;
+            })
+            .filter((step) => step.id !== 'filter-step'),
+        });
+
+        expect(result).toEqual({
+          triggerNextStepIds: ['step-1'],
+          stepsNextStepIds: {
+            'step-1': ['step-2'],
+            'step-2': [],
+            'step-3': [],
+          },
+        });
       });
     });
   });
