@@ -1,4 +1,4 @@
- import { ANIMATION } from './Animation';
+import { ANIMATION } from './Animation';
 import { COLOR } from './Colors';
 import { GRAY_SCALE } from './GrayScale';
 import { ICON } from './Icon';
