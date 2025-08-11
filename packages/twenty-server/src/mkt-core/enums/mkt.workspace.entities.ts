@@ -1,4 +1,5 @@
 import { MktAttributeWorkspaceEntity } from 'src/mkt-core/attribute/mkt-attribute.workspace-entity';
+import { MktContractWorkspaceEntity } from 'src/mkt-core/contract/mkt-contract.workspace-entity';
 import { MktLicenseWorkspaceEntity } from 'src/mkt-core/license/mkt-license.workspace-entity';
 import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-entity';
 import { MktProductWorkspaceEntity } from 'src/mkt-core/product/standard-objects/mkt-product.workspace-entity';
@@ -14,6 +15,7 @@ export const MKT_WORKSPACE_ENTITIES = [
   MktValueWorkspaceEntity,
   MktVariantAttributeWorkspaceEntity,
   // Order
+  MktContractWorkspaceEntity,
   MktOrderWorkspaceEntity,
   MktLicenseWorkspaceEntity,
 ];
