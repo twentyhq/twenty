@@ -148,6 +148,7 @@ export type FieldRelationMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
+// todo @guillim: this might need to change
 export type FieldMorphRelationMetadata = BaseFieldMetadata & {
   relationFieldMetadataId: string;
   relationObjectMetadataNamePlural: string;
