@@ -1242,7 +1242,6 @@ export const PERSON_DATA_SEED_IDS = {
   ID_1200: '20202020-b2b8-40da-a9aa-ca338a841af5',
 };
 
-// prettier-ignore
 const PERSON_DATA_SEEDS_RAW = [
   {
     id: PERSON_DATA_SEED_IDS.ID_1,

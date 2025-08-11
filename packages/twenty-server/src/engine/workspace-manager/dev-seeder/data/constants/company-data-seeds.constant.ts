@@ -630,7 +630,6 @@ export const COMPANY_DATA_SEED_IDS = {
   ID_599: '20202020-afff-49b1-99b9-26924b60bd56',
 };
 
-// prettier-ignore
 const COMPANY_DATA_SEEDS_RAW = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_1,
