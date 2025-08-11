@@ -2,9 +2,9 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { QUOTED_STRING_REGEX } from 'twenty-shared/constants';
 import {
-  FieldMetadataType,
-  type EnumFieldMetadataType,
-  type NonNullableRequired,
+    FieldMetadataType,
+    type EnumFieldMetadataType,
+    type NonNullableRequired,
 } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -12,23 +12,23 @@ import { z } from 'zod';
 import { type FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
 import {
-  type FieldMetadataComplexOption,
-  type FieldMetadataDefaultOption,
+    type FieldMetadataComplexOption,
+    type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import {
-  FieldMetadataException,
-  FieldMetadataExceptionCode,
+    FieldMetadataException,
+    FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type ValidateOneFieldMetadataArgs } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import {
-  runFlatMetadataValidators,
-  type FailedFlatFieldMetadataValidationExceptions,
+    runFlatFieldMetadataValidators,
+    type FailedFlatFieldMetadataValidationExceptions,
 } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatMetadataValidator } from 'src/engine/metadata-modules/types/flat-metadata-validator.type';
 import {
-  beneathDatabaseIdentifierMinimumLength,
-  exceedsDatabaseIdentifierMaximumLength,
+    beneathDatabaseIdentifierMinimumLength,
+    exceedsDatabaseIdentifierMaximumLength,
 } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
 
@@ -44,7 +44,7 @@ const validateMetadataOptionId = (sanitizedId?: string) => {
     },
   ];
 
-  return runFlatMetadataValidators(sanitizedId, validators);
+  return runFlatFieldMetadataValidators(sanitizedId, validators);
 };
 
 const validateMetadataOptionLabel = (sanitizedLabel: string) => {
@@ -71,7 +71,7 @@ const validateMetadataOptionLabel = (sanitizedLabel: string) => {
     },
   ];
 
-  return runFlatMetadataValidators(sanitizedLabel, validators);
+  return runFlatFieldMetadataValidators(sanitizedLabel, validators);
 };
 
 const validateMetadataOptionValue = (sanitizedValue: string) => {
@@ -94,7 +94,7 @@ const validateMetadataOptionValue = (sanitizedValue: string) => {
     },
   ];
 
-  return runFlatMetadataValidators(sanitizedValue, validators);
+  return runFlatFieldMetadataValidators(sanitizedValue, validators);
 };
 
 const validateDuplicates = (
@@ -118,7 +118,7 @@ const validateDuplicates = (
       new Set(options.map((option) => option[field])).size !== options.length,
   }));
 
-  return runFlatMetadataValidators(options, duplicatedValidators);
+  return runFlatFieldMetadataValidators(options, duplicatedValidators);
 };
 
 const validateFieldMetadataInputOptions = <T extends EnumFieldMetadataType>(
@@ -175,7 +175,7 @@ const validateSelectDefaultValue = (
     },
   ];
 
-  return runFlatMetadataValidators(defaultValue, validators);
+  return runFlatFieldMetadataValidators(defaultValue, validators);
 };
 
 const validateMultiSelectDefaultValue = (
@@ -203,7 +203,7 @@ const validateMultiSelectDefaultValue = (
   ];
 
   return [
-    runFlatMetadataValidators(multiSelectDefaultValue, validators),
+    runFlatFieldMetadataValidators(multiSelectDefaultValue, validators),
     multiSelectDefaultValue.flatMap((value) =>
       validateSelectDefaultValue(options, value),
     ),

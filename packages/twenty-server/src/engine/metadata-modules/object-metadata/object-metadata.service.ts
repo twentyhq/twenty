@@ -5,10 +5,6 @@ import { type Query, type QueryOptions } from '@ptc-org/nestjs-query-core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import {
   In,
   Repository,
@@ -17,6 +13,9 @@ import {
   type QueryRunner,
 } from 'typeorm';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';

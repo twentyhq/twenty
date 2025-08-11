@@ -34,7 +34,7 @@ export class ObjectMetadataServiceV2 {
     const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
         {
-          workspaceId: objectMetadataInput.workspaceId,
+          workspaceId,
         },
       );
 
@@ -45,7 +45,7 @@ export class ObjectMetadataServiceV2 {
       await this.flatObjectMetadataValidatorService.validateFlatObjectMetadataCreation(
         {
           existingFlatObjectMetadataMaps,
-          flatObjectdMetadataToValidate: flatObjectMetadataToCreate,
+          flatObjectMetadataToValidate: flatObjectMetadataToCreate,
           workspaceId,
         },
       );

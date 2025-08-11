@@ -19,7 +19,7 @@ import { validatesNoOtherObjectWithSameNameExists } from 'src/engine/metadata-mo
 
 export type ValidateOneFlatObjectMetadataArgs = {
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
-  flatObjectdMetadataToValidate: FlatObjectMetadata;
+  flatObjectMetadataToValidate: FlatObjectMetadata;
   otherFlatObjectMetadataMapsToValidate?: FlatObjectMetadataMaps;
   workspaceId: string;
 };
@@ -32,56 +32,56 @@ export class FlatObjectMetadataValidatorService {
 
   public async validateFlatObjectMetadataCreation({
     existingFlatObjectMetadataMaps,
-    flatObjectdMetadataToValidate,
+    flatObjectMetadataToValidate,
     workspaceId,
   }: ValidateOneFlatObjectMetadataArgs) {
     const errors: FailedFlatFieldMetadataValidationExceptions[] = [];
 
     errors.push(
       ...validateFlatObjectMetadataNames({
-        namePlural: flatObjectdMetadataToValidate.namePlural,
-        nameSingular: flatObjectdMetadataToValidate.nameSingular,
+        namePlural: flatObjectMetadataToValidate.namePlural,
+        nameSingular: flatObjectMetadataToValidate.nameSingular,
       }),
     );
 
     errors.push(
       ...validateFlatObjectMetadataLabel({
-        labelPlural: flatObjectdMetadataToValidate.labelPlural,
-        labelSingular: flatObjectdMetadataToValidate.labelSingular,
+        labelPlural: flatObjectMetadataToValidate.labelPlural,
+        labelSingular: flatObjectMetadataToValidate.labelSingular,
       }),
     );
 
-    if (flatObjectdMetadataToValidate.isRemote) {
+    if (flatObjectMetadataToValidate.isRemote) {
       errors.push(
         new ObjectMetadataException(
-          t`Remote object are not supported yet`,
+          t`Remote objects are not supported yet`,
           ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         ),
       );
     }
 
-    if (flatObjectdMetadataToValidate.isLabelSyncedWithName === true) {
+    if (flatObjectMetadataToValidate.isLabelSyncedWithName === true) {
       const computedNameSingular = computeMetadataNameFromLabel(
-        flatObjectdMetadataToValidate.labelSingular,
+        flatObjectMetadataToValidate.labelSingular,
       );
 
-      if (computedNameSingular !== flatObjectdMetadataToValidate.nameSingular) {
+      if (computedNameSingular !== flatObjectMetadataToValidate.nameSingular) {
         errors.push(
           new ObjectMetadataException(
-            t`Singular name is not synched with singular label`,
+            t`Singular name is not synced with singular label`,  
             ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
           ),
         );
       }
 
       const computedNamePlural = computeMetadataNameFromLabel(
-        flatObjectdMetadataToValidate.labelSingular,
+        flatObjectMetadataToValidate.labelPlural,
       );
 
-      if (computedNamePlural !== flatObjectdMetadataToValidate.namePlural) {
+      if (computedNamePlural !== flatObjectMetadataToValidate.namePlural) {
         errors.push(
           new ObjectMetadataException(
-            t`Singular plural is not synched with plural label`,
+            t`Plural name is not synced with plural label`,  
             ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
           ),
         );
@@ -90,8 +90,8 @@ export class FlatObjectMetadataValidatorService {
 
     if (
       validatesNoOtherObjectWithSameNameExists({
-        objectMetadataNamePlural: flatObjectdMetadataToValidate.namePlural,
-        objectMetadataNameSingular: flatObjectdMetadataToValidate.nameSingular,
+        objectMetadataNamePlural: flatObjectMetadataToValidate.namePlural,
+        objectMetadataNameSingular: flatObjectMetadataToValidate.nameSingular,
         objectMetadataMaps: existingFlatObjectMetadataMaps,
       })
     ) {
@@ -111,12 +111,13 @@ export class FlatObjectMetadataValidatorService {
     let existingFlatObjectMetadataMapsWithFlatObjectMetadataToBeCreatedWithoutFields =
       addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
         flatObjectMetadata: {
-          ...flatObjectdMetadataToValidate,
+          ...flatObjectMetadataToValidate,
           flatFieldMetadatas: [],
         },
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       });
-    for (const flatFieldMetadataToValidate of flatObjectdMetadataToValidate.flatFieldMetadatas) {
+
+    for (const flatFieldMetadataToValidate of flatObjectMetadataToValidate.flatFieldMetadatas) {
       const otherFlatObjectMetadataMapsToValidate = undefined; // TODO prastoin when implementing import
 
       const flatFieldValidatorErrors =

@@ -13,7 +13,7 @@ export type FailedFlatFieldMetadataValidationExceptions =
   | ObjectMetadataException
   | InvalidMetadataException;
 
-export const runFlatMetadataValidators = <T>(
+export const runFlatFieldMetadataValidators = <T>(
   elementToValidate: T,
   validators: FlatMetadataValidator<T>[],
 ): FailedFlatFieldMetadataValidationExceptions[] =>
