@@ -21,7 +21,7 @@ export class UpdateFieldInput extends OmitType(
     'createdAt',
     'updatedAt',
     'isCustom',
-    'standardOverrides', // Not editable ?
+    'standardOverrides',
   ] as const,
 ) {
   @HideField()

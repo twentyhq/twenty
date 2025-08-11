@@ -100,7 +100,7 @@ export const fromUpdateFieldInputToFlatFieldMetadataToUpdate = ({
 
   if (isStandardField) {
     const invalidUpdatedProperties = Object.keys(updatedEditableFields).filter(
-      ([property]) =>
+      (property) =>
         fieldMetadataStandardOverridesProperties.includes(
           property as FieldMetadataStandardOverridesProperties,
         ),

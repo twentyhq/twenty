@@ -23,14 +23,6 @@ import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-meta
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 
-export const fieldMetadataEntityJsonbProperties = [
-  'defaultValue',
-  'options',
-  'settings',
-  'standardOverrides',
-] as const satisfies (keyof FieldMetadataEntity)[];
-export type FieldMetadataEntityJsonbProperties =
-  (typeof fieldMetadataEntityJsonbProperties)[number];
 @Entity('fieldMetadata')
 @Index(
   'IDX_FIELD_METADATA_NAME_OBJMID_WORKSPACE_ID_EXCEPT_MORPH_UNIQUE',
