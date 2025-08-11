@@ -16,6 +16,7 @@ export const MKT_PREFILLS = [
   prefillMktVariants,
   prefillMktVariantAttributes,
   // order prefills
+  prefillMktContracts,
   prefillMktOrders,
   prefillMktLicenses,
   prefillMktContracts,
