@@ -39,6 +39,7 @@ export const PERSON_DATA_SEED_COLUMNS: (keyof PersonDataSeed)[] = [
   'position',
 ];
 
+// prettier-ignore
 export const PERSON_DATA_SEED_IDS = {
   ID_1: '20202020-b305-41e7-8c72-ba44072a4c58',
   ID_2: '20202020-b225-4b3d-a89c-7f6c30df998a',
@@ -1242,6 +1243,7 @@ export const PERSON_DATA_SEED_IDS = {
   ID_1200: '20202020-b2b8-40da-a9aa-ca338a841af5',
 };
 
+// prettier-ignore
 const PERSON_DATA_SEEDS_RAW = [
   {
     id: PERSON_DATA_SEED_IDS.ID_1,
