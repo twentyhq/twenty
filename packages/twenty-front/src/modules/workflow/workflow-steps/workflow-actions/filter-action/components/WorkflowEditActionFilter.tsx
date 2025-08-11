@@ -1,4 +1,4 @@
-import { WorkflowFilterAction } from '@/workflow/types/Workflow';
+import { type WorkflowFilterAction } from '@/workflow/types/Workflow';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { WorkflowEditActionFilterBody } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody';
 import { WorkflowEditActionFilterBodyEffect } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBodyEffect';
@@ -6,8 +6,8 @@ import { StepFilterGroupsComponentInstanceContext } from '@/workflow/workflow-st
 import { StepFiltersComponentInstanceContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/StepFiltersComponentInstanceContext';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import {
-  StepFilter,
-  StepFilterGroup,
+  type StepFilter,
+  type StepFilterGroup,
 } from 'twenty-shared/src/types/StepFilters';
 import { useIcons } from 'twenty-ui/display';
 

@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
-import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 
 const mockCreateDraftFromWorkflowVersion = jest.fn().mockResolvedValue('457');
 

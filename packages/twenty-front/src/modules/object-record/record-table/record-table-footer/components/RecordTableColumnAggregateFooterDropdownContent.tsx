@@ -1,6 +1,6 @@
 import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
-import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
+import { type AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { type DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { RecordTableColumnAggregateFooterDropdownSubmenuContent } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateDropdownSubmenuContent';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { RecordTableColumnAggregateFooterMenuContent } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent';

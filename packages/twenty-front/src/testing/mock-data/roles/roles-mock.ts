@@ -1,5 +1,9 @@
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { FieldPermission, ObjectPermission, Role } from '~/generated/graphql';
+import {
+  type FieldPermission,
+  type ObjectPermission,
+  type Role,
+} from '~/generated/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 export const MOCK_ROLE_ID_GRANTS_ALL = 'role-id-1';

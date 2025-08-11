@@ -5,9 +5,9 @@ import { EventCard } from '@/activities/timeline-activities/rows/components/Even
 import { EventCardToggleButton } from '@/activities/timeline-activities/rows/components/EventCardToggleButton';
 import { StyledEventRowItemColumn } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
 import { EventFieldDiffContainer } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffContainer';
-import { TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 type EventRowMainObjectUpdatedProps = {

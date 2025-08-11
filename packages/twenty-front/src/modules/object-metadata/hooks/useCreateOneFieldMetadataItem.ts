@@ -1,9 +1,9 @@
 import { useMutation } from '@apollo/client';
 
 import {
-  CreateFieldInput,
-  CreateOneFieldMetadataItemMutation,
-  CreateOneFieldMetadataItemMutationVariables,
+  type CreateFieldInput,
+  type CreateOneFieldMetadataItemMutation,
+  type CreateOneFieldMetadataItemMutationVariables,
 } from '~/generated-metadata/graphql';
 
 import { CREATE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';

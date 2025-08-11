@@ -1,5 +1,5 @@
 import omit from 'lodash.omit';
-import { AtomEffect } from 'recoil';
+import { type AtomEffect } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { cookieStorage } from '~/utils/cookie-storage';

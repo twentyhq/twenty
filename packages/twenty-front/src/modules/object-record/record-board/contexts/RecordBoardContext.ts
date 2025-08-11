@@ -1,9 +1,9 @@
 import { createContext } from 'react';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ObjectPermission } from '~/generated/graphql';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectPermission } from '~/generated/graphql';
 
 type RecordBoardContextProps = {
   objectMetadataItem: ObjectMetadataItem;

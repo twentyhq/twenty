@@ -2,13 +2,13 @@ import { SpreadsheetImportTable } from '@/spreadsheet-import/components/Spreadsh
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useHideStepBar } from '@/spreadsheet-import/hooks/useHideStepBar';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
+import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import {
-  ImportedStructuredRow,
-  SpreadsheetImportImportValidationResult,
+  type ImportedStructuredRow,
+  type SpreadsheetImportImportValidationResult,
 } from '@/spreadsheet-import/types';
-import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
@@ -16,19 +16,19 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
-  Dispatch,
-  SetStateAction,
+  type Dispatch,
+  type SetStateAction,
   useCallback,
   useMemo,
   useState,
 } from 'react';
 // @ts-expect-error Todo: remove usage of react-data-grid`
-import { RowsChangeData } from 'react-data-grid';
+import { type RowsChangeData } from 'react-data-grid';
 import { isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/display';
 import { Button, Toggle } from 'twenty-ui/input';
 import { generateColumns } from './components/columns';
-import { ImportedStructuredRowMetadata } from './types';
+import { type ImportedStructuredRowMetadata } from './types';
 
 const StyledContent = styled(Modal.Content)`
   padding: 0px;

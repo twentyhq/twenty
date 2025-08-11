@@ -1,5 +1,5 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { SpreadsheetImportFieldOption } from '@/spreadsheet-import/types/SpreadsheetImportFieldOption';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type SpreadsheetImportFieldOption } from '@/spreadsheet-import/types/SpreadsheetImportFieldOption';
 
 export const getSubFieldOptions = (
   fieldMetadataItem: FieldMetadataItem,

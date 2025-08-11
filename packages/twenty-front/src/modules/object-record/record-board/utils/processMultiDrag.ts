@@ -1,7 +1,7 @@
-import { DropResult } from '@hello-pangea/dnd';
+import { type DropResult } from '@hello-pangea/dnd';
 import {
   calculateRecordPositions,
-  RecordPositionData,
+  type RecordPositionData,
 } from './calculateRecordPositions';
 
 type MultiDragContext = {

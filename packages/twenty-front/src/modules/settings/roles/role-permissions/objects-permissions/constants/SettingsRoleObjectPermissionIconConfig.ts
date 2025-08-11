@@ -1,5 +1,5 @@
 import {
-  IconComponent,
+  type IconComponent,
   IconEye,
   IconEyeOff,
   IconPencil,

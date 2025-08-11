@@ -8,8 +8,8 @@ import { hasInitializedCurrentStepFiltersComponentFamilyState } from '@/workflow
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 import {
-  StepFilter,
-  StepFilterGroup,
+  type StepFilter,
+  type StepFilterGroup,
   StepLogicalOperator,
   ViewFilterOperand,
 } from 'twenty-shared/types';

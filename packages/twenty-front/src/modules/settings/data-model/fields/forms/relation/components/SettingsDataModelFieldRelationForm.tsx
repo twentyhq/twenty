@@ -3,8 +3,8 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
@@ -150,6 +150,9 @@ export const SettingsDataModelFieldRelationForm = ({
               value={value}
               options={activeObjectMetadataItems
                 .filter(isObjectMetadataAvailableForRelation)
+                .sort((item1, item2) =>
+                  item1.labelPlural.localeCompare(item2.labelPlural),
+                )
                 .map((objectMetadataItem) => ({
                   label: objectMetadataItem.labelPlural,
                   value: objectMetadataItem.id,

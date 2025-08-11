@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
@@ -12,7 +12,7 @@ import { visibleTableColumnsComponentSelector } from '@/object-record/record-tab
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { ColumnDefinition } from '../types/ColumnDefinition';
+import { type ColumnDefinition } from '../types/ColumnDefinition';
 
 type useRecordTableProps = {
   recordTableId?: string;

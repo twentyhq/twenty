@@ -1,4 +1,4 @@
-import { WorkflowActionType } from '@/workflow/types/Workflow';
+import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { OTHER_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/OtherActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 

@@ -1,7 +1,7 @@
-import { Attachment } from '@/activities/files/types/Attachment';
+import { type Attachment } from '@/activities/files/types/Attachment';
 import { compareUrls } from '@/activities/utils/compareUrls';
 import {
-  AttachmentInfo,
+  type AttachmentInfo,
   getActivityAttachmentPathsAndName,
 } from '@/activities/utils/getActivityAttachmentPathsAndName';
 import { isDefined } from 'twenty-shared/utils';

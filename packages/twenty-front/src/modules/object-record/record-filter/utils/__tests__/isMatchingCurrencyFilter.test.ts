@@ -1,4 +1,4 @@
-import { CurrencyFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { type CurrencyFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { isMatchingCurrencyFilter } from '@/object-record/record-filter/utils/isMatchingCurrencyFilter';
 
 describe('isMatchingCurrencyFilter', () => {

@@ -4,12 +4,12 @@ import { FormCountryMultiSelectInput } from '@/object-record/record-field/form-t
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
 import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useContext } from 'react';
-import { JsonValue } from 'type-fest';
+import { type JsonValue } from 'type-fest';
 
 export const WorkflowAdvancedFilterValueFormCompositeFieldInput = ({
   recordFilter,

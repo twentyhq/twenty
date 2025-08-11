@@ -6,12 +6,12 @@ import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
 import {
   Breadcrumb,
-  BreadcrumbProps,
+  type BreadcrumbProps,
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
-import { WorkflowCodeAction } from '@/workflow/types/Workflow';
+import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/setNestedValue';
 
@@ -44,8 +44,8 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 
-import { Monaco } from '@monaco-editor/react';
-import { editor } from 'monaco-editor';
+import { type Monaco } from '@monaco-editor/react';
+import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';

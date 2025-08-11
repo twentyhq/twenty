@@ -13,7 +13,7 @@ import { SelectFieldInput } from '@/object-record/record-field/meta-types/input/
 import { isFieldPhones } from '@/object-record/record-field/types/guards/isFieldPhones';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ArrayFieldInput } from '@/object-record/record-field/meta-types/input/components/ArrayFieldInput';
 import { RichTextFieldInput } from '@/object-record/record-field/meta-types/input/components/RichTextFieldInput';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
@@ -40,8 +40,8 @@ import { NumberFieldInput } from '../meta-types/input/components/NumberFieldInpu
 import { RatingFieldInput } from '../meta-types/input/components/RatingFieldInput';
 import { RelationToOneFieldInput } from '../meta-types/input/components/RelationToOneFieldInput';
 import { TextFieldInput } from '../meta-types/input/components/TextFieldInput';
-import { FieldInputEvent } from '../types/FieldInputEvent';
-import { FieldRichTextV2Metadata } from '../types/FieldMetadata';
+import { type FieldInputEvent } from '../types/FieldInputEvent';
+import { type FieldRichTextV2Metadata } from '../types/FieldMetadata';
 import { isFieldText } from '../types/guards/isFieldText';
 
 type FieldInputProps = {

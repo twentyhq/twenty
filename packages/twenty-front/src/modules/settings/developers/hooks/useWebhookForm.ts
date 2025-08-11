@@ -10,7 +10,7 @@ import {
 import { parseOperationsFromStrings } from '@/settings/developers/utils/parseOperationsFromStrings';
 import {
   webhookFormSchema,
-  WebhookFormValues,
+  type WebhookFormValues,
 } from '@/settings/developers/validation-schemas/webhookFormSchema';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';

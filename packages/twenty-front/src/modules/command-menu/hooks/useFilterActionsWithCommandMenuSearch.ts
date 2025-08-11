@@ -1,4 +1,4 @@
-import { ActionConfig } from '@/action-menu/actions/types/ActionConfig';
+import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';

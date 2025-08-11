@@ -1,8 +1,8 @@
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { Monaco } from '@monaco-editor/react';
-import { editor } from 'monaco-editor';
+import { type Monaco } from '@monaco-editor/react';
+import { type editor } from 'monaco-editor';
 import { IconMaximize } from 'twenty-ui/display';
 import { CodeEditor, LightIconButton } from 'twenty-ui/input';
 

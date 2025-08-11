@@ -1,7 +1,7 @@
-import { FieldRatingValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldRatingValue } from '@/object-record/record-field/types/FieldMetadata';
 import { RatingInput } from '@/ui/field/input/components/RatingInput';
 
-import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { type FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useRatingField } from '../../hooks/useRatingField';
 

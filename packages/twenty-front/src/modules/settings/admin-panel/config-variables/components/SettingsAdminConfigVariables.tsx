@@ -2,7 +2,7 @@ import { SettingsAdminTabSkeletonLoader } from '@/settings/admin-panel/component
 import { ConfigVariableFilterContainer } from '@/settings/admin-panel/config-variables/components/ConfigVariableFilterContainer';
 import { ConfigVariableFilterDropdown } from '@/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown';
 import { SettingsAdminConfigVariablesTable } from '@/settings/admin-panel/config-variables/components/SettingsAdminConfigVariablesTable';
-import { ConfigVariableSourceOptions } from '@/settings/admin-panel/config-variables/constants/ConfigVariableSourceOptions';
+import { CONFIG_VARIABLE_SOURCE_OPTIONS } from '@/settings/admin-panel/config-variables/constants/ConfigVariableSourceOptions';
 import { configVariableGroupFilterState } from '@/settings/admin-panel/config-variables/states/configVariableGroupFilterState';
 import { configVariableSourceFilterState } from '@/settings/admin-panel/config-variables/states/configVariableSourceFilterState';
 import { showHiddenGroupVariablesState } from '@/settings/admin-panel/config-variables/states/showHiddenGroupVariablesState';
@@ -118,7 +118,7 @@ export const SettingsAdminConfigVariables = () => {
   if (configVariableSourceFilter !== 'all') {
     activeChips.push({
       label:
-        ConfigVariableSourceOptions.find(
+        CONFIG_VARIABLE_SOURCE_OPTIONS.find(
           (o) => o.value === configVariableSourceFilter,
         )?.label || '',
       onRemove: () => setConfigVariableSourceFilter('all'),

@@ -1,12 +1,12 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
-import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { ViewGroup } from '@/views/types/ViewGroup';
+import { type ViewGroup } from '@/views/types/ViewGroup';
 import { mapViewGroupsToRecordGroupDefinitions } from '@/views/utils/mapViewGroupsToRecordGroupDefinitions';
 import { useCallback } from 'react';
 import { useRecoilCallback } from 'recoil';

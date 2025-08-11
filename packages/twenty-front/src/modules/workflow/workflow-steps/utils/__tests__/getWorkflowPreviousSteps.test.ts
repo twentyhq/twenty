@@ -1,4 +1,4 @@
-import { WorkflowStep } from '@/workflow/types/Workflow';
+import { type WorkflowStep } from '@/workflow/types/Workflow';
 import { getPreviousSteps } from '../getWorkflowPreviousSteps';
 
 const mockWorkflow: WorkflowStep[] = [

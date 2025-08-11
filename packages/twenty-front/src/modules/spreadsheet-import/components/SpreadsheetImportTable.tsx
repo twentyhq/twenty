@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 // @ts-expect-error  // Todo: remove usage of react-data-grid
-import DataGrid, { DataGridProps } from 'react-data-grid';
+import DataGrid, { type DataGridProps } from 'react-data-grid';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { RGBA } from 'twenty-ui/theme';

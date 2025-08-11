@@ -1,4 +1,4 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
 import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
@@ -24,6 +24,7 @@ export const getFieldPreviewValue = ({
   ) {
     return generateEmptyFieldValue({
       fieldMetadataItem,
+      shouldComputeFunctionDefaultValue: true,
     });
   }
 

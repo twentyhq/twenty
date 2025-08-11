@@ -1,12 +1,12 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
-import { SpreadsheetImportFields } from '@/spreadsheet-import/types/SpreadsheetImportFields';
-import { SpreadsheetImportImportValidationResult } from '@/spreadsheet-import/types/SpreadsheetImportImportValidationResult';
-import { ImportedRow } from '@/spreadsheet-import/types/SpreadsheetImportImportedRow';
-import { ImportedStructuredRow } from '@/spreadsheet-import/types/SpreadsheetImportImportedStructuredRow';
-import { SpreadsheetImportRowHook } from '@/spreadsheet-import/types/SpreadsheetImportRowHook';
-import { SpreadsheetImportTableHook } from '@/spreadsheet-import/types/SpreadsheetImportTableHook';
-import { SpreadsheetImportStep } from '../steps/types/SpreadsheetImportStep';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { type SpreadsheetImportFields } from '@/spreadsheet-import/types/SpreadsheetImportFields';
+import { type SpreadsheetImportImportValidationResult } from '@/spreadsheet-import/types/SpreadsheetImportImportValidationResult';
+import { type ImportedRow } from '@/spreadsheet-import/types/SpreadsheetImportImportedRow';
+import { type ImportedStructuredRow } from '@/spreadsheet-import/types/SpreadsheetImportImportedStructuredRow';
+import { type SpreadsheetImportRowHook } from '@/spreadsheet-import/types/SpreadsheetImportRowHook';
+import { type SpreadsheetImportTableHook } from '@/spreadsheet-import/types/SpreadsheetImportTableHook';
+import { type SpreadsheetImportStep } from '../steps/types/SpreadsheetImportStep';
 
 export type SpreadsheetImportDialogOptions = {
   // callback when RSI is closed before final submit

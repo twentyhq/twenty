@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { DropResult } from '@hello-pangea/dnd';
-import { MouseEvent, useCallback } from 'react';
+import { type DropResult } from '@hello-pangea/dnd';
+import { type MouseEvent, useCallback } from 'react';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { prefetchViewsFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchViewsFromObjectMetadataItemFamilySelector';

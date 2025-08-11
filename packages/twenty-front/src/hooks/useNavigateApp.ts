@@ -1,4 +1,4 @@
-import { AppPath } from '@/types/AppPath';
+import { type AppPath } from '@/types/AppPath';
 import { useNavigate } from 'react-router-dom';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 

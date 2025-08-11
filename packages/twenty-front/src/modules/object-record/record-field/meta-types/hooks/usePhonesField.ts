@@ -3,7 +3,7 @@ import { useRecoilState } from 'recoil';
 
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
-import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldPhones } from '@/object-record/record-field/types/guards/isFieldPhones';
 import { phonesSchema } from '@/object-record/record-field/types/guards/isFieldPhonesValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';

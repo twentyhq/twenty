@@ -54,7 +54,6 @@ export const encodeCursorData = (cursorData: CursorData) => {
 
 export const getCursor = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   args: FindManyResolverArgs<any, any>,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Record<string, any> | undefined => {

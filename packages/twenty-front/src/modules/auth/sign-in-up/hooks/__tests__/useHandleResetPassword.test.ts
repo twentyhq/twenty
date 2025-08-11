@@ -8,7 +8,7 @@ import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
-  PublicWorkspaceDataOutput,
+  type PublicWorkspaceDataOutput,
   useEmailPasswordResetLinkMutation,
 } from '~/generated-metadata/graphql';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';

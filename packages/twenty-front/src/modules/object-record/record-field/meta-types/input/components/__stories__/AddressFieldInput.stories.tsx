@@ -1,15 +1,15 @@
-import { Decorator, Meta, StoryObj } from '@storybook/react';
+import { type Decorator, type Meta, type StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useAddressField } from '@/object-record/record-field/meta-types/hooks/useAddressField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
+import { type FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import {
   AddressInput,
-  AddressInputProps,
+  type AddressInputProps,
 } from '@/ui/field/input/components/AddressInput';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';

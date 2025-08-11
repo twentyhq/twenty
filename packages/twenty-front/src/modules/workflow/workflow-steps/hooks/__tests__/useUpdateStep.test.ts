@@ -1,4 +1,4 @@
-import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { renderHook } from '@testing-library/react';
 

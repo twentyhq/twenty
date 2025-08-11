@@ -1,4 +1,4 @@
-import { OnDragEndResponder } from '@hello-pangea/dnd';
+import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { useCallback } from 'react';
 
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';

@@ -1,5 +1,5 @@
-import { WorkflowCronTrigger } from '@/workflow/types/Workflow';
-import { CronTriggerInterval } from '@/workflow/workflow-trigger/constants/CronTriggerIntervalOptions';
+import { type WorkflowCronTrigger } from '@/workflow/types/Workflow';
+import { type CronTriggerInterval } from '@/workflow/workflow-trigger/constants/CronTriggerIntervalOptions';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 const DEFAULT_CRON_PATTERN = '0 */1 * * *'; // Every hour

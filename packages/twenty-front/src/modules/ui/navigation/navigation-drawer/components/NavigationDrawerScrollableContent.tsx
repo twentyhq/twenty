@@ -1,7 +1,7 @@
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledItemsContainer = styled.div`

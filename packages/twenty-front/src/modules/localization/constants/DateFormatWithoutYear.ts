@@ -1,4 +1,4 @@
-import { DateFormat } from '@/localization/constants/DateFormat';
+import { type DateFormat } from '@/localization/constants/DateFormat';
 
 type DateFormatWithoutYear = {
   [K in keyof typeof DateFormat]: string;

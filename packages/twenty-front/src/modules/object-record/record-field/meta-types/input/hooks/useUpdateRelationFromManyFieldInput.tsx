@@ -6,7 +6,7 @@ import { useDetachRelatedRecordFromRecord } from '@/object-record/hooks/useDetac
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
-import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
+import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useUpdateRelationFromManyFieldInput = () => {

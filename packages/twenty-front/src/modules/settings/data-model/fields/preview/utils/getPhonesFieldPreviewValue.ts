@@ -1,8 +1,8 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import {
-  CountryCode,
+  type CountryCode,
   getCountries,
   getCountryCallingCode,
 } from 'libphonenumber-js';

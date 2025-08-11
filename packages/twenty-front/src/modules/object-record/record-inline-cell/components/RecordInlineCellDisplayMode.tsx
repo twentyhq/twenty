@@ -5,7 +5,7 @@ import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus'
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import {
-  RecordInlineCellContextProps,
+  type RecordInlineCellContextProps,
   useRecordInlineCellContext,
 } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { RecordInlineCellButton } from '@/object-record/record-inline-cell/components/RecordInlineCellEditButton';

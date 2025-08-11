@@ -1,4 +1,4 @@
-import { HttpRequestBody } from '../../constants/HttpRequest';
+import { type HttpRequestBody } from '../../constants/HttpRequest';
 import { shouldDisplayRawJsonByDefault } from '../shouldDisplayRawJsonByDefault';
 
 describe('shouldDisplayRawJsonByDefault', () => {

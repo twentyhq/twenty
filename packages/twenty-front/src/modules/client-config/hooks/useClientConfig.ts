@@ -1,4 +1,4 @@
-import { ClientConfig } from '@/client-config/types/ClientConfig';
+import { type ClientConfig } from '@/client-config/types/ClientConfig';
 import { useCallback } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { clientConfigApiStatusState } from '../states/clientConfigApiStatusState';

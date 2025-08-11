@@ -10,7 +10,7 @@ import { useRecoilValue } from 'recoil';
 import { H2Title } from 'twenty-ui/display';
 import {
   CalendarChannelVisibility,
-  TimelineCalendarEvent,
+  type TimelineCalendarEvent,
 } from '~/generated/graphql';
 
 const StyledGeneralContainer = styled.div`

@@ -6,8 +6,8 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { FieldFocusContextProvider } from '@/object-record/record-field/contexts/FieldFocusContextProvider';
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
 import {
-  FieldInputClickOutsideEvent,
-  FieldInputEvent,
+  type FieldInputClickOutsideEvent,
+  type FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
 
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
@@ -24,7 +24,7 @@ import { useIcons } from 'twenty-ui/display';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 import {
   RecordInlineCellContext,
-  RecordInlineCellContextProps,
+  type RecordInlineCellContextProps,
 } from './RecordInlineCellContext';
 
 type RecordInlineCellProps = {

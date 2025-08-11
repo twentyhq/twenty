@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { IconButtonGroup, IconButtonGroupProps } from 'twenty-ui/input';
+import { IconButtonGroup, type IconButtonGroupProps } from 'twenty-ui/input';
 import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
 import { css } from '@emotion/react';
 

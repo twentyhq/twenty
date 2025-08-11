@@ -1,11 +1,11 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useMutation } from '@apollo/client';
 import {
-  CreateWorkflowVersionEdgeMutation,
-  CreateWorkflowVersionEdgeMutationVariables,
+  type CreateWorkflowVersionEdgeMutation,
+  type CreateWorkflowVersionEdgeMutationVariables,
 } from '~/generated-metadata/graphql';
 import { CREATE_WORKFLOW_VERSION_EDGE } from '@/workflow/graphql/mutations/createWorkflowVersionEdge';
-import { CreateWorkflowVersionEdgeInput } from '~/generated/graphql';
+import { type CreateWorkflowVersionEdgeInput } from '~/generated/graphql';
 import { useUpdateWorkflowVersionCache } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionCache';
 
 export const useCreateWorkflowVersionEdge = () => {

@@ -1,10 +1,10 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
-import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
+import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
-import { SearchRecord } from '~/generated-metadata/graphql';
+import { type SearchRecord } from '~/generated-metadata/graphql';
 
 type SettingsRoleAssignmentWorkspaceMemberPickerDropdownContentProps = {
   loading: boolean;

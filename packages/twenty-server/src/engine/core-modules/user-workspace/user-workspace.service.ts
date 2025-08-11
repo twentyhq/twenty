@@ -1,4 +1,3 @@
-/* eslint-disable @nx/workspace-inject-workspace-repository */
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { FieldJsonValue, Json } from '../FieldMetadata';
+import { type FieldJsonValue, type Json } from '../FieldMetadata';
 
 // See https://zod.dev/?id=json-type
 const literalSchema = z.union([z.string(), z.number(), z.boolean(), z.null()]);

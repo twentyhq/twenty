@@ -1,4 +1,4 @@
-import { Country } from '@/ui/input/components/internal/types/Country';
+import { type Country } from '@/ui/input/components/internal/types/Country';
 
 export const getCountryFlagMenuItemAvatar = (
   countryName: string,

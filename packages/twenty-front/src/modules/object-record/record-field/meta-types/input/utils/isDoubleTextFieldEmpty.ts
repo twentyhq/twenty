@@ -1,4 +1,4 @@
-import { FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleText';
+import { type FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleText';
 
 export const isDoubleTextFieldEmpty = (doubleText: FieldDoubleText) => {
   const { firstValue, secondValue } = doubleText;

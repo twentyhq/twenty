@@ -1,5 +1,5 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { HttpResponse, graphql } from 'msw';
 
 import { Calendar } from '@/activities/calendar/components/Calendar';
