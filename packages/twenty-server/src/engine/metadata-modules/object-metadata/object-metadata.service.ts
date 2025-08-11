@@ -6,11 +6,11 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
+  In,
+  Repository,
   type FindManyOptions,
   type FindOneOptions,
-  In,
   type QueryRunner,
-  Repository,
 } from 'typeorm';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
