@@ -180,6 +180,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
           fieldMetadata,
           objectValue,
         );
+        continue;
       }
 
       if (isFieldMetadataTypeRelation(fieldMetadata)) {
@@ -231,6 +232,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
             depth: depth + 1,
           });
         }
+        continue;
       }
 
       if (isFieldMetadataTypeMorphRelation(fieldMetadata)) {
@@ -297,6 +299,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
             depth: depth + 1,
           });
         }
+        continue;
       }
 
       const objectValue = objectRecord[fieldMetadata.name];
