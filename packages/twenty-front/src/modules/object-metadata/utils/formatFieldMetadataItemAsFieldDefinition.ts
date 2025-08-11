@@ -4,7 +4,7 @@ import { type FieldMetadata } from '@/object-record/record-field/types/FieldMeta
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
 
 import { FieldMetadataType } from 'twenty-shared/types';
-import { FieldMetadataItem } from '../types/FieldMetadataItem';
+import { type FieldMetadataItem } from '../types/FieldMetadataItem';
 
 export type FieldMetadataItemAsFieldDefinitionProps = {
   field: FieldMetadataItem;
