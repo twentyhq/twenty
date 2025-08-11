@@ -23,6 +23,8 @@ export default [
   // Global ignores
   {
     ignores: [
+      'packages/twenty-server/node_modules/**',
+      'packages/twenty-server/dist/**',
       '**/node_modules/**',
       'src/engine/workspace-manager/dev-seeder/data/constants/**',
       'src/engine/workspace-manager/dev-seeder/data/seeds/**',
