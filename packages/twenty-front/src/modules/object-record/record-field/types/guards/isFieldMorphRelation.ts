@@ -1,7 +1,7 @@
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import {
-  FieldMetadata,
-  FieldMorphRelationMetadata,
+  type FieldMetadata,
+  type FieldMorphRelationMetadata,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 

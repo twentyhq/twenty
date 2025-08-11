@@ -1,7 +1,10 @@
 import { isFieldMorphRelation } from '@/object-record/record-field/types/guards/isFieldMorphRelation';
 import { RelationType } from '~/generated-metadata/graphql';
-import { FieldDefinition } from '../FieldDefinition';
-import { FieldMetadata, FieldMorphRelationMetadata } from '../FieldMetadata';
+import { type FieldDefinition } from '../FieldDefinition';
+import {
+  type FieldMetadata,
+  type FieldMorphRelationMetadata,
+} from '../FieldMetadata';
 
 export const isFieldMorphRelationToOneObject = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type' | 'metadata'>,
