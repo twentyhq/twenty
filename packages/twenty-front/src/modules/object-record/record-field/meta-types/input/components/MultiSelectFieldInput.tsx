@@ -2,7 +2,8 @@ import { FieldInputEventContext } from '@/object-record/record-field/contexts/Fi
 import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField';
 import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
+
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useContext } from 'react';

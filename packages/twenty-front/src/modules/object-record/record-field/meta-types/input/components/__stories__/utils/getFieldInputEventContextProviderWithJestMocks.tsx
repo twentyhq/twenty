@@ -1,6 +1,6 @@
 import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
 import { fn } from '@storybook/test';
-import { PropsWithChildren } from 'react';
+import { type PropsWithChildren } from 'react';
 
 type FieldInputEventContextProviderWithJestMocksProps = PropsWithChildren;
 
