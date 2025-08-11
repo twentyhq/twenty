@@ -56268,7 +56268,6 @@ __metadata:
     buffer: "npm:^6.0.3"
     docx: "npm:^9.1.0"
     eslint: "npm:^9.32.0"
-    eslint-config-next: "npm:^15.1.0"
     eslint-config-prettier: "npm:^9.1.0"
     eslint-plugin-import: "npm:^2.31.0"
     eslint-plugin-jsx-a11y: "npm:^6.10.2"
