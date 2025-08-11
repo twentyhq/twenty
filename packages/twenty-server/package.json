@@ -186,6 +186,7 @@
     "ts-morph": "^24.0.0",
     "tsconfig-paths": "^4.2.0",
     "tsdav": "^2.1.5",
+    "tslib": "2.8.1",
     "type-fest": "4.10.1",
     "typeorm": "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch",
     "typescript": "5.3.3",
@@ -194,7 +195,7 @@
     "vite-tsconfig-paths": "4.3.2",
     "zod": "3.23.8",
     "zod-to-json-schema": "^3.23.1",
-    "tslib": "2.8.1"
+    "@yarnpkg/types": "^4.0.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.8.0",
