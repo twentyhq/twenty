@@ -14,7 +14,10 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { useNumberField } from '../../../hooks/useNumberField';
-import { NumberFieldInput, type NumberFieldInputProps } from '../NumberFieldInput';
+import {
+  NumberFieldInput,
+  type NumberFieldInputProps,
+} from '../NumberFieldInput';
 
 const NumberFieldValueSetterEffect = ({ value }: { value: number }) => {
   const { setFieldValue } = useNumberField();

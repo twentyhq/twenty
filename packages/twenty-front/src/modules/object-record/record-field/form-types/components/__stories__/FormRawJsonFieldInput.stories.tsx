@@ -1,11 +1,10 @@
-import { expect } from '@storybook/jest';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { fn, userEvent, waitFor, within } from '@storybook/test';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { getUserDevice } from 'twenty-ui/utilities';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormRawJsonFieldInput } from '../FormRawJsonFieldInput';
-import { getUserDevice } from 'twenty-ui/utilities';
 
 const meta: Meta<typeof FormRawJsonFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormRawJsonFieldInput',
@@ -58,6 +57,10 @@ export const Readonly: Story = {
       return editor;
     });
 
+    if (!editor) {
+      throw new Error('Editor element not found');
+    }
+
     await userEvent.type(editor, '{{ "a": {{ "b" :  "d" } }');
 
     await waitFor(() => {
@@ -85,6 +88,13 @@ export const SaveValidJson: Story = {
       return editor;
     });
 
+
+    if (!editor) {
+
+      throw new Error('Editor element not found');
+
+    }
+
     await userEvent.type(editor, '{{ "a": {{ "b" :  "d" } }');
 
     await waitFor(() => {
@@ -104,6 +114,10 @@ export const SaveValidMultilineJson: Story = {
       expect(editor).toBeVisible();
       return editor;
     });
+
+    if (!editor) {
+      throw new Error('Editor element not found');
+    }
 
     await userEvent.type(
       editor,
@@ -149,6 +163,13 @@ export const DoesNotIgnoreInvalidJson: Story = {
       expect(editor).toBeVisible();
       return editor;
     });
+
+
+    if (!editor) {
+
+      throw new Error('Editor element not found');
+
+    }
 
     await userEvent.type(editor, 'lol');
 
@@ -201,6 +222,10 @@ export const InsertVariableInTheMiddleOnTextInput: Story = {
       return editor;
     });
 
+    if (!editor) {
+      throw new Error('Editor element not found');
+    }
+
     const addVariableButton = await canvas.findByRole('button', {
       name: 'Add variable',
     });
@@ -246,6 +271,10 @@ export const CanUseVariableAsObjectProperty: Story = {
       return editor;
     });
 
+    if (!editor) {
+      throw new Error('Editor element not found');
+    }
+
     const addVariableButton = await canvas.findByRole('button', {
       name: 'Add variable',
     });
@@ -277,6 +306,10 @@ export const ClearField: Story = {
       return editor;
     });
 
+    if (!editor) {
+      throw new Error('Editor element not found');
+    }
+
     await Promise.all([
       userEvent.type(editor, `{Backspace>${defaultValueStringLength}}`),
 
@@ -303,6 +336,13 @@ export const DoesNotBreakWhenUserInsertsNewlineInJsonString: Story = {
       return editor;
     });
 
+
+    if (!editor) {
+
+      throw new Error('Editor element not found');
+
+    }
+
     await userEvent.type(editor, '"a{Enter}b"');
 
     await userEvent.click(canvasElement);
@@ -322,6 +362,13 @@ export const AcceptsJsonEncodedNewline: Story = {
       expect(editor).toBeVisible();
       return editor;
     });
+
+
+    if (!editor) {
+
+      throw new Error('Editor element not found');
+
+    }
 
     await userEvent.type(editor, '"a\\nb"');
 
@@ -357,6 +404,10 @@ export const HasHistory: Story = {
       expect(editor).toBeVisible();
       return editor;
     });
+
+    if (!editor) {
+      throw new Error('Editor element not found');
+    }
 
     const addVariableButton = await canvas.findByRole('button', {
       name: 'Add variable',
