@@ -1,4 +1,5 @@
 import { mktAttributesAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-attribute-all.view';
+import { mktContractsAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-contract-all.view';
 import { mktLicensesAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-license-all.view';
 import { mktProductsAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-product-all.view';
 import { mktValuesAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-value-all.view';
@@ -17,5 +18,6 @@ export const MKT_ALL_VIEWS = [
   // order views
   mktOrdersAllView,
   mktLicensesAllView,
+  mktContractsAllView,
   mktOrderItemsAllView,
 ];

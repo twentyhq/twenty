@@ -92,6 +92,7 @@ export const MKT_ORDER_FIELD_IDS = {
   requireContract: '3bc491e5-3e65-44d4-97d5-f71300ab3d41',
 
   // TODO: check if this can be deleted
+  mktContract: '66277a67-41c6-4709-820f-dda8df091ae9',
   mktLicense: '837f7353-df5d-449a-961c-fef566d663b9',
   items: '5c818b2a-bd61-4423-b1bc-ac89781f4324',
   person: '4d6b6ef3-6d6b-4323-9e4f-a7f01d97e68d',
@@ -138,6 +139,22 @@ export const MKT_LICENSE_FIELD_IDS = {
   searchVector: '7e2e3eda-2ba6-40d4-b7bc-8ab1370f8b31',
 };
 
+export const MKT_CONTRACT_FIELD_IDS = {
+  name: '5c81d04d-b56c-40a9-9d3e-8c0bdba1af0b',
+  status: '90a61a70-1871-4534-8215-8031ca107a99',
+  startDate: '5cfe9cf4-3f1a-4a9a-bc84-7296da244819',
+  endDate: '14548624-e9a4-4203-a1a2-c9b6341a5536',
+  // relations
+  mktOrders: '8d607784-4a7f-4b03-b084-ed33561cb830',
+  // mktTemplate: 'd7eb704c-1c00-4c08-b49d-4e1db26e5472',
+  // common relations or fields
+  position: '5781e4a6-4a32-46ab-8fe0-f72c6887c83c',
+  createdBy: 'ff1664c1-9788-45c4-a1f6-e20626e9d6f4',
+  accountOwner: 'b2e28989-9da6-4323-aa4f-9e208425c922',
+  timelineActivities: '87d27317-4b2e-4643-a35c-b86065223abb',
+  searchVector: '4769af80-5c7a-4c51-8272-e85bd5377a39',
+};
+
 //EXTENDS FROM TIMELINE_ACTIVITY_STANDARD_FIELD_IDS
 export const TIMELINE_ACTIVITY_MKT_FIELD_IDS = {
   mktCustomer: 'e42c00cb-dcc8-4682-ab98-2fa5f5c03f08',
@@ -149,6 +166,7 @@ export const TIMELINE_ACTIVITY_MKT_FIELD_IDS = {
   mktOrder: 'e0919045-74af-4800-bb40-ccef297253a9',
   mktOrderItem: 'c8d7e6f5-4321-0987-6543-21098765432a',
   mktLicense: '4b8283ce-daa4-4f11-87d0-2ade1cd6dc81',
+  mktContract: 'b8c23b61-29ab-47e5-b412-4789f0653a69',
 };
 
 //EXTENDS FROM WORKSPACE_MEMBER_STANDARD_FIELD_IDS
@@ -160,5 +178,6 @@ export const WORKSPACE_MEMBER_MKT_FIELD_IDS = {
   accountOwnerForMktVariantAttributes: '6cd393a4-db2a-4cc6-b444-8e9ca99f93ec',
   accountOwnerForMktOrders: 'dbbf2703-8803-4c21-9b10-2cf38b045d4b',
   accountOwnerForMktLicenses: 'a343e640-2214-4896-a0e2-830ee854a778',
+  accountOwnerForMktContracts: '87d29139-844b-44b9-a3e7-3f9e5a3e4165',
   accountOwnerForMktOrderItems: '5f4e3d2c-1b0a-9876-5432-109876543210',
 };
