@@ -41,7 +41,7 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
 
   const { closeDropdown } = useCloseDropdown();
 
-  return useRecoilCallback(
+  const resetTableRowSelection = useRecoilCallback(
     ({ set, snapshot }) =>
       () => {
         const allRecordIds = getSnapshotValue(
@@ -72,4 +72,8 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
       recordTableIdFromContext,
     ],
   );
+
+  return {
+    resetTableRowSelection,
+  };
 };

@@ -12,7 +12,6 @@ import { peopleQueryResult } from '~/testing/mock-data/people';
 
 const recordTableId = 'people';
 const objectNameSingular = 'person';
-const onColumnsChange = jest.fn();
 
 const ObjectNamePluralSetter = ({ children }: { children: ReactNode }) => {
   return <>{children}</>;
@@ -662,10 +661,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
         <ViewComponentInstanceContext.Provider
           value={{ instanceId: 'instanceId' }}
         >
-          <RecordTableComponentInstance
-            recordTableId={recordTableId}
-            onColumnsChange={onColumnsChange}
-          >
+          <RecordTableComponentInstance recordTableId={recordTableId}>
             <RecordGroupContext.Provider value={{ recordGroupId: 'default' }}>
               {children}
             </RecordGroupContext.Provider>
