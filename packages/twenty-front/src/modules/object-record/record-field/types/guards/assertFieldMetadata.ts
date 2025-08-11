@@ -15,6 +15,7 @@ import {
   type FieldLinkMetadata,
   type FieldLinksMetadata,
   type FieldMetadata,
+  type FieldMorphRelationMetadata,
   type FieldMultiSelectMetadata,
   type FieldNumberMetadata,
   type FieldPhoneMetadata,
@@ -61,25 +62,27 @@ type AssertFieldMetadataFunction = <
                               ? FieldPhoneMetadata
                               : E extends 'RELATION'
                                 ? FieldRelationMetadata
-                                : E extends 'TEXT'
-                                  ? FieldTextMetadata
-                                  : E extends 'UUID'
-                                    ? FieldUuidMetadata
-                                    : E extends 'ADDRESS'
-                                      ? FieldAddressMetadata
-                                      : E extends 'RAW_JSON'
-                                        ? FieldRawJsonMetadata
-                                        : E extends 'RICH_TEXT_V2'
-                                          ? FieldRichTextV2Metadata
-                                          : E extends 'RICH_TEXT'
-                                            ? FieldRichTextMetadata
-                                            : E extends 'ACTOR'
-                                              ? FieldActorMetadata
-                                              : E extends 'ARRAY'
-                                                ? FieldArrayMetadata
-                                                : E extends 'PHONES'
-                                                  ? FieldPhonesMetadata
-                                                  : never,
+                                : E extends 'MORPH_RELATION'
+                                  ? FieldMorphRelationMetadata
+                                  : E extends 'TEXT'
+                                    ? FieldTextMetadata
+                                    : E extends 'UUID'
+                                      ? FieldUuidMetadata
+                                      : E extends 'ADDRESS'
+                                        ? FieldAddressMetadata
+                                        : E extends 'RAW_JSON'
+                                          ? FieldRawJsonMetadata
+                                          : E extends 'RICH_TEXT_V2'
+                                            ? FieldRichTextV2Metadata
+                                            : E extends 'RICH_TEXT'
+                                              ? FieldRichTextMetadata
+                                              : E extends 'ACTOR'
+                                                ? FieldActorMetadata
+                                                : E extends 'ARRAY'
+                                                  ? FieldArrayMetadata
+                                                  : E extends 'PHONES'
+                                                    ? FieldPhonesMetadata
+                                                    : never,
 >(
   fieldType: E,
   fieldTypeGuard: (

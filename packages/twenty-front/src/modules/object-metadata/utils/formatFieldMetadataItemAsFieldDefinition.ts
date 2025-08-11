@@ -3,6 +3,7 @@ import { type FieldDefinition } from '@/object-record/record-field/types/FieldDe
 import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
 
+import { FieldMetadataType } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '../types/FieldMetadataItem';
 
 export type FieldMetadataItemAsFieldDefinitionProps = {
@@ -18,20 +19,38 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
   showLabel,
   labelWidth,
 }: FieldMetadataItemAsFieldDefinitionProps): FieldDefinition<FieldMetadata> => {
-  const relationObjectMetadataItem = field.relation?.targetObjectMetadata;
+  const isRelation = field.type === FieldMetadataType.RELATION;
+  const isMorphRelation = field.type === FieldMetadataType.MORPH_RELATION;
 
-  const relationFieldMetadataId = field.relation?.targetFieldMetadata.id;
+  const relationType = isRelation
+    ? field.relation?.type
+    : isMorphRelation
+      ? field.morphRelations?.[0]?.type
+      : undefined;
 
-  const fieldDefintionMetadata = {
+  const morphRelations = isMorphRelation
+    ? field.morphRelations?.map((morphRelation) => ({
+        targetFieldMetadataName: morphRelation.targetFieldMetadata?.name,
+        relationObjectMetadataNameSingular:
+          morphRelation.targetObjectMetadata?.nameSingular,
+        relationObjectMetadataNamePlural:
+          morphRelation.targetObjectMetadata?.namePlural,
+        relationObjectMetadataId: morphRelation.targetObjectMetadata?.id,
+        relationFieldMetadataId: morphRelation.targetFieldMetadata?.id,
+      }))
+    : [];
+
+  const fieldDefinitionMetadata = {
     fieldName: field.name,
     placeHolder: field.label,
-    relationType: field.relation?.type,
-    relationFieldMetadataId,
+    relationType,
+    morphRelations,
+    relationFieldMetadataId: field.relation?.targetFieldMetadata.id,
     relationObjectMetadataNameSingular:
-      relationObjectMetadataItem?.nameSingular ?? '',
+      field.relation?.targetObjectMetadata?.nameSingular ?? '',
     relationObjectMetadataNamePlural:
-      relationObjectMetadataItem?.namePlural ?? '',
-    relationObjectMetadataId: relationObjectMetadataItem?.id ?? '',
+      field.relation?.targetObjectMetadata?.namePlural ?? '',
+    relationObjectMetadataId: field.relation?.targetObjectMetadata?.id ?? '',
     objectMetadataNameSingular: objectMetadataItem.nameSingular ?? '',
     targetFieldMetadataName: field.relation?.targetFieldMetadata?.name ?? '',
     options: field.options,
@@ -46,11 +65,11 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
     showLabel,
     labelWidth,
     type: field.type,
-    metadata: fieldDefintionMetadata,
+    metadata: fieldDefinitionMetadata,
     iconName: field.icon ?? 'Icon123',
     defaultValue: field.defaultValue,
     editButtonIcon: getFieldButtonIcon({
-      metadata: fieldDefintionMetadata,
+      metadata: fieldDefinitionMetadata,
       type: field.type,
     }),
   };
