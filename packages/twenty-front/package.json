@@ -29,6 +29,9 @@
     "workerDirectory": "public"
   },
   "dependencies": {
+    "react-router-dom": "^6.4.4",
+    "react-responsive": "^9.0.2",
+    "recoil": "^0.7.7",
     "@floating-ui/react": "^0.24.3",
     "@apollo/client": "^3.7.17",
     "@blocknote/mantine": "^0.31.1",
