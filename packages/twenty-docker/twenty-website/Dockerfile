@@ -1,4 +1,4 @@
-FROM node:24-alpine as twenty-website-build
+FROM node:24-alpine AS twenty-website-build
 
 
 WORKDIR /app
@@ -24,7 +24,7 @@ COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-website /app/packages/twenty-website
 RUN npx nx build twenty-website
 
-FROM node:24-alpine as twenty-website
+FROM node:24-alpine AS twenty-website
 
 WORKDIR /app/packages/twenty-website
 
