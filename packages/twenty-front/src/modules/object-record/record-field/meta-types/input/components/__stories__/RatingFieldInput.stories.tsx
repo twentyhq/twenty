@@ -12,7 +12,10 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { FieldMetadataType } from 'twenty-shared/types';
 import { type FieldRatingValue } from '../../../../types/FieldMetadata';
 import { useRatingField } from '../../../hooks/useRatingField';
-import { RatingFieldInput, type RatingFieldInputProps } from '../RatingFieldInput';
+import {
+  RatingFieldInput,
+  type RatingFieldInputProps,
+} from '../RatingFieldInput';
 
 const RatingFieldValueSetterEffect = ({
   value,

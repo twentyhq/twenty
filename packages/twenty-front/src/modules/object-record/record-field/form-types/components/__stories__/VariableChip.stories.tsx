@@ -1,5 +1,5 @@
 import { VariableChip } from '@/object-record/record-field/form-types/components/VariableChip';
-import { expect } from '@storybook/jest';
+import { expect } from '@storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';

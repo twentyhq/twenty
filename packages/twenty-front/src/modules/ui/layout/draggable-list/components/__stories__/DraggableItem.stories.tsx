@@ -11,7 +11,7 @@ const meta: Meta<typeof DraggableItem> = {
   component: DraggableItem,
   decorators: [
     (Story) => (
-      <DragDropContext onDragEnd={() => jest.fn()}>
+      <DragDropContext onDragEnd={() => test.fn()}>
         <Droppable droppableId="droppable-id">
           {(_provided) => <Story />}
         </Droppable>

@@ -10,7 +10,7 @@ const config: StorybookConfig = {
     '@storybook/addon-onboarding',
     '@storybook/addon-interactions',
     '@storybook/addon-coverage',
-    'storybook-dark-mode',
+    // 'storybook-dark-mode',
     'storybook-addon-cookie',
     'storybook-addon-pseudo-states',
   ],

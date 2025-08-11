@@ -1,5 +1,5 @@
 import { SettingsPath } from '@/types/SettingsPath';
-import { expect } from '@storybook/jest';
+import { expect } from '@storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
 

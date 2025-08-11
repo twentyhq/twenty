@@ -6,7 +6,7 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type MockedResponse } from '@apollo/client/testing';
-import { expect } from '@storybook/jest';
+import { expect } from '@storybook/test';
 import { InMemoryTestingCacheInstance } from '~/testing/cache/inMemoryTestingCacheInstance';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';

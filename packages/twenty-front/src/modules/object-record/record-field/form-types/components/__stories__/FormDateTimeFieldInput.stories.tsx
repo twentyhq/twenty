@@ -2,7 +2,7 @@ import { FormDateTimeFieldInput } from '@/object-record/record-field/form-types/
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
 import { parseDateToString } from '@/ui/input/components/internal/date/utils/parseDateToString';
-import { expect } from '@storybook/jest';
+import { expect } from '@storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react';
 import {
   fn,

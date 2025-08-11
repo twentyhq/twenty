@@ -1,4 +1,5 @@
-import { expect, jest } from '@storybook/jest';
+import { expect } from '@storybook/test';
+import * as test from '@storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
@@ -16,9 +17,9 @@ import {
 } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-const deleteMock = jest.fn();
-const addToFavoritesMock = jest.fn();
-const exportMock = jest.fn();
+const deleteMock = test.fn();
+const addToFavoritesMock = test.fn();
+const exportMock = test.fn();
 
 const meta: Meta<typeof CommandMenuActionMenuDropdown> = {
   title: 'Modules/ActionMenu/CommandMenuActionMenuDropdown',
