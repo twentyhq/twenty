@@ -223,6 +223,12 @@ export class FieldMetadataServiceV2 {
     const updatedFlatFieldMetadata = inputTranspilationResult.result;
 
     const validationErrors = [
+      ...this.flatFieldMetadataValidatorService.validateFlatFieldMetadataUpdate(
+        {
+          existingFlatObjectMetadataMaps,
+          updatedFlatFieldMetadata,
+        },
+      ),
       ...(await this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadataIntegrity(
         {
           existingFlatObjectMetadataMaps,
@@ -230,12 +236,6 @@ export class FieldMetadataServiceV2 {
           workspaceId,
         },
       )),
-      ...this.flatFieldMetadataValidatorService.validateFlatFieldMetadataUpdate(
-        {
-          existingFlatObjectMetadataMaps,
-          updatedFlatFieldMetadata,
-        },
-      ),
     ];
 
     if (validationErrors.length > 0) {
@@ -263,6 +263,12 @@ export class FieldMetadataServiceV2 {
       });
 
       await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
+
+      return this.fieldMetadataRepository.findOne({
+        where: {
+          id: updatedFlatFieldMetadata.id,
+        },
+      });
     } catch {
       throw new FieldMetadataException(
         'Workspace migration failed to run',
