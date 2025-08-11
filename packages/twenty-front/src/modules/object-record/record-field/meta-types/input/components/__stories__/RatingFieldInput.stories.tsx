@@ -129,6 +129,10 @@ export const Submit: Story = {
     const input = canvas.getByRole('slider', { name: 'Rating' });
     const firstStar = input.firstElementChild;
 
+    if (!firstStar) {
+      throw new Error('First star element not found');
+    }
+
     await userEvent.click(firstStar);
 
     await waitFor(() => {

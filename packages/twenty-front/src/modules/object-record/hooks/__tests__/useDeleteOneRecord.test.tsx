@@ -4,20 +4,19 @@ import { act } from 'react';
 import { query } from '@/object-record/hooks/__mocks__/useDeleteOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type MockedResponse } from '@apollo/client/testing';
 import { expect } from '@storybook/test';
 import { InMemoryTestingCacheInstance } from '~/testing/cache/inMemoryTestingCacheInstance';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 import {
-  allMockCompanyRecordsWithRelation,
-  findMockCompanyWithRelationRecord,
+    allMockCompanyRecordsWithRelation,
+    findMockCompanyWithRelationRecord,
 } from '~/testing/mock-data/companiesWithRelations';
 import {
-  allMockPersonRecords,
-  getMockPersonObjectMetadataItem,
-  getMockPersonRecord,
+    allMockPersonRecords,
+    getMockPersonObjectMetadataItem,
+    getMockPersonRecord,
 } from '~/testing/mock-data/people';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
@@ -97,7 +96,7 @@ describe('useDeleteOneRecord', () => {
         const deleteOneResult = await result.current.deleteOneRecord(
           personRecord.id,
         );
-        expect(deleteOneResult).toStrictEqual<ObjectRecord>({
+        expect(deleteOneResult).toStrictEqual({
           __typename: personRecord.__typename,
           deletedAt: expect.any(String),
           id: personRecord.id,
@@ -229,7 +228,7 @@ describe('useDeleteOneRecord', () => {
 
       await act(async () => {
         const res = await result.current.deleteOneRecord(personRecord.id);
-        expect(res).toMatchObject<ObjectRecord>({
+        expect(res).toMatchObject({
           __typename: 'Person',
           id: personRecord.id,
           deletedAt: expect.any(String),
