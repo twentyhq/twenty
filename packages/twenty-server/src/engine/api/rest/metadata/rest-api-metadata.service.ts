@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { Request } from 'express';
+import { type Request } from 'express';
 
 import { MetadataQueryBuilderFactory } from 'src/engine/api/rest/metadata/query-builder/metadata-query-builder.factory';
 import {
   GraphqlApiType,
   RestApiService,
 } from 'src/engine/api/rest/rest-api.service';
-import { RequestContext } from 'src/engine/api/rest/types/RequestContext';
+import { type RequestContext } from 'src/engine/api/rest/types/RequestContext';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { getServerUrl } from 'src/utils/get-server-url';
@@ -24,7 +24,9 @@ export class RestApiMetadataService {
   async get(request: Request) {
     await this.accessTokenService.validateTokenByRequest(request);
     const requestContext = this.getRequestContext(request);
-    const data = await this.metadataQueryBuilderFactory.get(requestContext);
+    const data = await this.metadataQueryBuilderFactory.get(requestContext, {
+      fields: ['*'],
+    });
 
     return await this.restApiService.call(
       GraphqlApiType.METADATA,
@@ -36,7 +38,9 @@ export class RestApiMetadataService {
   async create(request: Request) {
     await this.accessTokenService.validateTokenByRequest(request);
     const requestContext = this.getRequestContext(request);
-    const data = await this.metadataQueryBuilderFactory.create(requestContext);
+    const data = await this.metadataQueryBuilderFactory.create(requestContext, {
+      fields: ['*'],
+    });
 
     return await this.restApiService.call(
       GraphqlApiType.METADATA,
@@ -48,7 +52,9 @@ export class RestApiMetadataService {
   async update(request: Request) {
     await this.accessTokenService.validateTokenByRequest(request);
     const requestContext = this.getRequestContext(request);
-    const data = await this.metadataQueryBuilderFactory.update(requestContext);
+    const data = await this.metadataQueryBuilderFactory.update(requestContext, {
+      fields: ['*'],
+    });
 
     return await this.restApiService.call(
       GraphqlApiType.METADATA,

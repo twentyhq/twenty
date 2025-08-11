@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 
 export const transformStripeProductEventToDatabaseProduct = (
   data: Stripe.ProductUpdatedEvent.Data | Stripe.ProductCreatedEvent.Data,

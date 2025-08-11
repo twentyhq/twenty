@@ -6,7 +6,7 @@ import {
 } from '@/settings/components/SettingsOptions/SettingsOptionCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import styled from '@emotion/styled';
-import { IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/display';
 
 type SettingsOptionCardContentSelectProps = {
   Icon?: IconComponent;
@@ -17,8 +17,9 @@ type SettingsOptionCardContentSelectProps = {
 };
 
 const StyledSelectContainer = styled.div`
+  justify-content: flex-end;
   margin-left: auto;
-  width: 120px;
+  max-width: 120px;
 `;
 
 export const SettingsOptionCardContentSelect = ({

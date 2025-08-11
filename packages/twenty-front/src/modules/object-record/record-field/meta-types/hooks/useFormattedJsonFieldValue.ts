@@ -1,7 +1,7 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { orderWorkflowRunState } from '@/object-record/record-field/meta-types/utils/orderWorkflowRunState';
-import { FieldJsonValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldJsonValue } from '@/object-record/record-field/types/FieldMetadata';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 

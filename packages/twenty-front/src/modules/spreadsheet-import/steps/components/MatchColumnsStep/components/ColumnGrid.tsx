@@ -1,4 +1,4 @@
-import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import styled from '@emotion/styled';
 import React from 'react';
 

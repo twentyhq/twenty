@@ -1,7 +1,7 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { FieldDefinition } from '../FieldDefinition';
-import { FieldMetadata, FieldRawJsonMetadata } from '../FieldMetadata';
+import { type FieldDefinition } from '../FieldDefinition';
+import { type FieldMetadata, type FieldRawJsonMetadata } from '../FieldMetadata';
 
 export const isFieldRawJson = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type'>,

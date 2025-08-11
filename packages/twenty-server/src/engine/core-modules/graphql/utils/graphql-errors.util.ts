@@ -1,9 +1,9 @@
 import {
-  ASTNode,
+  type ASTNode,
   GraphQLError,
-  GraphQLFormattedError,
-  Source,
-  SourceLocation,
+  type GraphQLFormattedError,
+  type Source,
+  type SourceLocation,
 } from 'graphql';
 
 import { CustomException } from 'src/utils/custom-exception';
@@ -167,42 +167,6 @@ export class ForbiddenError extends BaseGraphQLError {
   ) {
     super(messageOrException, ErrorCode.FORBIDDEN, extensions);
     Object.defineProperty(this, 'name', { value: 'ForbiddenError' });
-  }
-}
-
-export class PersistedQueryNotFoundError extends BaseGraphQLError {
-  constructor(customException: CustomException);
-
-  constructor(message?: string, extensions?: RestrictedGraphQLErrorExtensions);
-
-  constructor(
-    messageOrException?: string | CustomException,
-    extensions?: RestrictedGraphQLErrorExtensions,
-  ) {
-    super(
-      messageOrException || 'PersistedQueryNotFound',
-      ErrorCode.PERSISTED_QUERY_NOT_FOUND,
-      extensions,
-    );
-    Object.defineProperty(this, 'name', {
-      value: 'PersistedQueryNotFoundError',
-    });
-  }
-}
-
-export class PersistedQueryNotSupportedError extends BaseGraphQLError {
-  constructor(
-    messageOrException?: string | CustomException,
-    extensions?: RestrictedGraphQLErrorExtensions,
-  ) {
-    super(
-      messageOrException || 'PersistedQueryNotSupported',
-      ErrorCode.PERSISTED_QUERY_NOT_SUPPORTED,
-      extensions,
-    );
-    Object.defineProperty(this, 'name', {
-      value: 'PersistedQueryNotSupportedError',
-    });
   }
 }
 

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { IndexMetadataItem } from '@/object-metadata/types/IndexMetadataItem';
+import { type IndexMetadataItem } from '@/object-metadata/types/IndexMetadataItem';
 import { indexFieldMetadataItemSchema } from '@/object-metadata/validation-schemas/indexFieldMetadataItemSchema';
 import { IndexType } from '~/generated-metadata/graphql';
 

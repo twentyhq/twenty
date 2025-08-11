@@ -8,6 +8,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
@@ -112,6 +113,7 @@ export class Workspace {
     enum: WorkspaceActivationStatus,
     default: WorkspaceActivationStatus.INACTIVE,
   })
+  @Index('IDX_WORKSPACE_ACTIVATION_STATUS')
   activationStatus: WorkspaceActivationStatus;
 
   @OneToMany(

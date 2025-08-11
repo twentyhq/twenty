@@ -1,4 +1,4 @@
-import { MutableRefObject } from 'react';
+import { type MutableRefObject } from 'react';
 import { combineRefs } from '../combineRefs';
 
 describe('combineRefs', () => {

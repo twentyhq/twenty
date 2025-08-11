@@ -8,7 +8,7 @@ import { MODAL_CLICK_OUTSIDE_LISTENER_EXCLUDED_ID } from '@/ui/layout/modal/cons
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -227,7 +227,7 @@ export const Modal = ({
     e.stopPropagation();
   };
 
-  const isModalOpened = useRecoilComponentValueV2(
+  const isModalOpened = useRecoilComponentValue(
     isModalOpenedComponentState,
     modalId,
   );

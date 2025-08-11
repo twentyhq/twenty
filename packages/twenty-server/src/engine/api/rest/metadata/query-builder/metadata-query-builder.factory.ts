@@ -8,10 +8,10 @@ import { CreateMetadataQueryFactory } from 'src/engine/api/rest/metadata/query-b
 import { UpdateMetadataQueryFactory } from 'src/engine/api/rest/metadata/query-builder/factories/update-metadata-query.factory';
 import { DeleteMetadataQueryFactory } from 'src/engine/api/rest/metadata/query-builder/factories/delete-metadata-query.factory';
 import {
-  MetadataQuery,
-  Selectors,
+  type MetadataQuery,
+  type Selectors,
 } from 'src/engine/api/rest/metadata/types/metadata-query.type';
-import { RequestContext } from 'src/engine/api/rest/types/RequestContext';
+import { type RequestContext } from 'src/engine/api/rest/types/RequestContext';
 
 @Injectable()
 export class MetadataQueryBuilderFactory {

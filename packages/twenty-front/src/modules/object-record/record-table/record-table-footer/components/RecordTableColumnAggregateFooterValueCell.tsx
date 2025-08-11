@@ -1,10 +1,10 @@
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
-import { RECORD_TABLE_TD_WIDTH } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
+import { TABLE_CELL_CHECKBOX_MIN_WIDTH } from '@/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { RecordTableColumnAggregateFooterValue } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue';
 import { hasAggregateOperationForViewFieldFamilySelector } from '@/object-record/record-table/record-table-footer/states/hasAggregateOperationForViewFieldFamilySelector';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
@@ -35,10 +35,10 @@ const StyledCell = styled.div<{ isUnfolded: boolean; isFirstCell: boolean }>`
         : theme.background.transparent.light};
   }
 
-  ${({ isFirstCell }) =>
+  ${({ isFirstCell, theme }) =>
     isFirstCell &&
     `
-    padding-left: ${RECORD_TABLE_TD_WIDTH};
+    padding-left: calc(${TABLE_CELL_CHECKBOX_MIN_WIDTH} + ${theme.spacing(1)});
   `}
 `;
 
@@ -61,7 +61,7 @@ export const RecordTableColumnAggregateFooterValueCell = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
-  const isDropdownOpen = useRecoilComponentValueV2(
+  const isDropdownOpen = useRecoilComponentValue(
     isDropdownOpenComponentState,
     dropdownId,
   );
@@ -77,7 +77,7 @@ export const RecordTableColumnAggregateFooterValueCell = ({
     }),
   );
 
-  const hasRecordGroups = useRecoilComponentValueV2(
+  const hasRecordGroups = useRecoilComponentValue(
     hasRecordGroupsComponentSelector,
   );
 

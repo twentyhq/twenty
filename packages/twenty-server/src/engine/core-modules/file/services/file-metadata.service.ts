@@ -5,8 +5,7 @@ import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
+import { type FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { extractFolderPathAndFilename } from 'src/engine/core-modules/file/utils/extract-folderpath-and-filename.utils';
@@ -19,7 +18,6 @@ export class FileMetadataService {
     @InjectRepository(FileEntity, 'core')
     private readonly fileRepository: Repository<FileEntity>,
     private readonly fileService: FileService,
-    private readonly fileStorageService: FileStorageService,
     private readonly fileUploadService: FileUploadService,
   ) {}
 

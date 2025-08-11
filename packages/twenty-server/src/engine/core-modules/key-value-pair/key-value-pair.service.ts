@@ -4,11 +4,11 @@ import { IsNull, Repository } from 'typeorm';
 
 import {
   KeyValuePair,
-  KeyValuePairType,
+  type KeyValuePairType,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 
 export class KeyValuePairService<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   KeyValueTypesMap extends Record<string, any> = Record<string, any>,
 > {

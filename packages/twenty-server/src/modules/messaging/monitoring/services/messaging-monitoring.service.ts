@@ -13,23 +13,16 @@ type MessagingMonitoringTrackInput = {
 
 @Injectable()
 export class MessagingMonitoringService {
-  constructor(private readonly auditService: AuditService) {}
+  constructor(private readonly _auditService: AuditService) {}
 
   public async track({
-    eventName,
-    workspaceId,
-    userId,
-    connectedAccountId,
-    messageChannelId,
-    message,
+    eventName: _eventName,
+    workspaceId: _workspaceId,
+    userId: _userId,
+    connectedAccountId: _connectedAccountId,
+    messageChannelId: _messageChannelId,
+    message: _message,
   }: MessagingMonitoringTrackInput): Promise<void> {
-    const _eventName = eventName;
-    const _workspaceId = workspaceId;
-    const _userId = userId;
-    const _connectedAccountId = connectedAccountId;
-    const _messageChannelId = messageChannelId;
-    const _message = message;
-
     // TODO: replace once we have Prometheus
     /*
     await this.auditService

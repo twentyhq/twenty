@@ -1,31 +1,36 @@
 import { Injectable } from '@nestjs/common';
 
 import { t } from '@lingui/core/macro';
-import { ClassConstructor, plainToInstance } from 'class-transformer';
+import { type ClassConstructor, plainToInstance } from 'class-transformer';
 import {
+  IsArray,
   IsEnum,
   IsInt,
   IsOptional,
   Max,
   Min,
-  ValidationError,
+  type ValidationError,
   validateOrReject,
 } from 'class-validator';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  ALLOWED_ADDRESS_SUBFIELDS,
+  type AllowedAddressSubField,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import { type FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
-import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataEnumValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
@@ -61,7 +66,12 @@ class TextSettingsValidation {
   @Max(100)
   displayedMaxRows?: number;
 }
-
+class AddressSettingsValidation {
+  @IsOptional()
+  @IsArray()
+  @IsEnum(ALLOWED_ADDRESS_SUBFIELDS, { each: true })
+  subFields?: AllowedAddressSubField[];
+}
 @Injectable()
 export class FieldMetadataValidationService {
   constructor(
@@ -87,6 +97,13 @@ export class FieldMetadataValidationService {
         await this.validateSettings({
           type: FieldMetadataType.TEXT,
           validator: TextSettingsValidation,
+          settings,
+        });
+        break;
+      case FieldMetadataType.ADDRESS:
+        await this.validateSettings({
+          type: FieldMetadataType.ADDRESS,
+          validator: AddressSettingsValidation,
           settings,
         });
         break;

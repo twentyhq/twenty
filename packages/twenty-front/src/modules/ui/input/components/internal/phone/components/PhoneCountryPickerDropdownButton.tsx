@@ -1,5 +1,5 @@
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
-import { Country } from '@/ui/input/components/internal/types/Country';
+import { type Country } from '@/ui/input/components/internal/types/Country';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -9,7 +9,7 @@ import { PhoneCountryPickerDropdownSelect } from './PhoneCountryPickerDropdownSe
 
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import 'react-phone-number-input/style.css';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconWorld } from 'twenty-ui/display';
@@ -79,7 +79,7 @@ export const PhoneCountryPickerDropdownButton = ({
 
   const dropdownId = 'country-picker-dropdown-id';
 
-  const isDropdownOpen = useRecoilComponentValueV2(
+  const isDropdownOpen = useRecoilComponentValue(
     isDropdownOpenComponentState,
     dropdownId,
   );

@@ -1,4 +1,4 @@
-import { BlocklistItem } from '@/accounts/types/BlocklistItem';
+import { type BlocklistItem } from '@/accounts/types/BlocklistItem';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { formatToHumanReadableDate } from '~/utils/date-utils';

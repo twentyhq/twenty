@@ -2,17 +2,17 @@ import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { turnCurrencyIntoSelectableItem } from '@/object-record/object-filter-dropdown/utils/turnCurrencyIntoSelectableItem';
-import { SelectableItem } from '@/object-record/select/types/SelectableItem';
+import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { ChangeEvent, useState } from 'react';
+import { type ChangeEvent, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 
@@ -22,14 +22,14 @@ export const MAX_ITEMS_TO_DISPLAY = 3;
 export const ObjectFilterDropdownCurrencySelect = () => {
   const [searchText, setSearchText] = useState('');
 
-  const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValueV2(
+  const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValue(
     objectFilterDropdownCurrentRecordFilterComponentState,
   );
 
   const { applyObjectFilterDropdownFilterValue } =
     useApplyObjectFilterDropdownFilterValue();
 
-  const fieldMetadataItemUsedInFilterDropdown = useRecoilComponentValueV2(
+  const fieldMetadataItemUsedInFilterDropdown = useRecoilComponentValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 

@@ -1,20 +1,20 @@
 import { useRecoilCallback } from 'recoil';
 
-import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
+import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 export const useMoveHoverToCurrentCell = (recordTableId: string) => {
-  const setHoverPosition = useSetRecoilComponentStateV2(
+  const setHoverPosition = useSetRecoilComponentState(
     recordTableHoverPositionComponentState,
     recordTableId,
   );
 
-  const isSomeCellInEditModeSelector = useRecoilComponentCallbackStateV2(
+  const isSomeCellInEditModeSelector = useRecoilComponentCallbackState(
     isSomeCellInEditModeComponentSelector,
     recordTableId,
   );

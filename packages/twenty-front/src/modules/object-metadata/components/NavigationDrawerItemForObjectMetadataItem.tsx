@@ -1,19 +1,19 @@
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { prefetchViewsFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchViewsFromObjectMetadataItemFamilySelector';
 import { AppPath } from '@/types/AppPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { getAppPath } from '~/utils/navigation/getAppPath';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { useIcons } from 'twenty-ui/display';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { getAppPath } from '~/utils/navigation/getAppPath';
 
 export type NavigationDrawerItemForObjectMetadataItemProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -28,7 +28,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     }),
   );
 
-  const contextStoreCurrentViewId = useRecoilComponentValueV2(
+  const contextStoreCurrentViewId = useRecoilComponentValue(
     contextStoreCurrentViewIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );

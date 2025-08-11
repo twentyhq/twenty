@@ -1,13 +1,13 @@
-import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
-import { ObjectPermission } from '~/generated/graphql';
+import { type ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { type ObjectPermissions } from 'twenty-shared/types';
 
 export type ShouldBeRegisteredFunctionParams = {
   objectMetadataItem?: ObjectMetadataItem;
-  objectPermissions: ObjectPermission;
+  objectPermissions: ObjectPermissions;
   recordFilters?: RecordFilter[];
   isShowPage?: boolean;
   isSoftDeleteFilterActive?: boolean;

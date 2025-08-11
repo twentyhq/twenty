@@ -1,10 +1,10 @@
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
-import { DropResult, ResponderProvided } from '@hello-pangea/dnd';
+import { type DropResult, type ResponderProvided } from '@hello-pangea/dnd';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 jest.mock('@/views/hooks/useSaveCurrentViewFields', () => ({
   useSaveCurrentViewFields: jest.fn(() => ({

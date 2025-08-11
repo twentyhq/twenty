@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
+import { type OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 
 export enum TOTPHashAlgorithms {
   SHA1 = 'sha1',

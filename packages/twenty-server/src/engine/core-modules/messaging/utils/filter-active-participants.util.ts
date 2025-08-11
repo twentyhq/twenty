@@ -1,4 +1,4 @@
-import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 
 export const filterActiveParticipants = (
   participants: MessageParticipantWorkspaceEntity[],

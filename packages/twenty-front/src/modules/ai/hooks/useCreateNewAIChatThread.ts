@@ -1,10 +1,10 @@
 import { currentAIChatThreadComponentState } from '@/ai/states/currentAIChatThreadComponentState';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useCreateAgentChatThreadMutation } from '~/generated-metadata/graphql';
 
 export const useCreateNewAIChatThread = ({ agentId }: { agentId: string }) => {
-  const [, setCurrentThreadId] = useRecoilComponentStateV2(
+  const [, setCurrentThreadId] = useRecoilComponentState(
     currentAIChatThreadComponentState,
     agentId,
   );

@@ -3,11 +3,12 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import Stripe from 'stripe';
 import { Repository } from 'typeorm';
 
+import type Stripe from 'stripe';
+
 import {
-  MigrationCommandOptions,
+  type MigrationCommandOptions,
   MigrationCommandRunner,
 } from 'src/database/commands/command-runners/migration.command-runner';
 import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
@@ -136,7 +137,7 @@ export class BillingSyncPlansDataCommand extends MigrationCommandRunner {
   }
 
   override async runMigrationCommand(
-    passedParams: string[],
+    _passedParams: string[],
     options: MigrationCommandOptions,
   ): Promise<void> {
     const billingMeters = await this.stripeBillingMeterService.getAllMeters();

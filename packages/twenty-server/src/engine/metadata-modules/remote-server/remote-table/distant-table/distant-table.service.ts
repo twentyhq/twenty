@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
-import { EntityManager } from 'typeorm';
+import { type EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
-  RemoteServerEntity,
+  type RemoteServerEntity,
   RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import {
   DistantTableException,
   DistantTableExceptionCode,
 } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.exception';
-import { DistantTables } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table';
+import { type DistantTables } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table';
 import { STRIPE_DISTANT_TABLES } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/utils/stripe-distant-tables.util';
-import { PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
+import { type PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
 import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 

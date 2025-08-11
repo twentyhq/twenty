@@ -1,21 +1,27 @@
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/form-types/components/FormNestedFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { type VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { FunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/types/FunctionInput';
+import { type FunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/types/FunctionInput';
 import styled from '@emotion/styled';
 import { isObject } from '@sniptt/guards';
 
 const StyledContainer = styled.div`
-  display: inline-flex;
-  flex-direction: column;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(3)};
+  flex-wrap: wrap;
+
+  > * {
+    flex: 1;
+    min-width: 200px;
+  }
 `;
 
 type WorkflowEditActionServerlessFunctionFieldsProps = {
   functionInput: FunctionInput;
   path?: string[];
   readonly?: boolean;
-  onInputChange?: (value: any, path: string[]) => void;
+  onInputChange?: (value: any, path: string[]) => void | Promise<void>;
   VariablePicker?: VariablePickerComponent;
 };
 
@@ -27,14 +33,14 @@ export const WorkflowEditActionServerlessFunctionFields = ({
   VariablePicker,
 }: WorkflowEditActionServerlessFunctionFieldsProps) => {
   return (
-    <>
+    <StyledContainer>
       {Object.entries(functionInput).map(([inputKey, inputValue]) => {
         const currentPath = [...path, inputKey];
         const pathKey = currentPath.join('.');
 
         if (inputValue !== null && isObject(inputValue)) {
           return (
-            <StyledContainer key={pathKey}>
+            <div key={pathKey}>
               <InputLabel>{inputKey}</InputLabel>
               <FormNestedFieldInputContainer>
                 <WorkflowEditActionServerlessFunctionFields
@@ -45,7 +51,7 @@ export const WorkflowEditActionServerlessFunctionFields = ({
                   VariablePicker={VariablePicker}
                 />
               </FormNestedFieldInputContainer>
-            </StyledContainer>
+            </div>
           );
         }
 
@@ -61,6 +67,6 @@ export const WorkflowEditActionServerlessFunctionFields = ({
           />
         );
       })}
-    </>
+    </StyledContainer>
   );
 };

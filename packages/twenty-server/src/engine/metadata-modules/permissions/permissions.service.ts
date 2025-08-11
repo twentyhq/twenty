@@ -5,10 +5,9 @@ import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
 import {
@@ -16,7 +15,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
+import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
@@ -26,6 +25,8 @@ export class PermissionsService {
   constructor(
     private readonly userRoleService: UserRoleService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly apiKeyRoleService: ApiKeyRoleService,
+    private readonly featureFlagService: FeatureFlagService,
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
   ) {}
@@ -52,6 +53,10 @@ export class PermissionsService {
       throw new PermissionsException(
         PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
         PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+        {
+          userFriendlyMessage:
+            'Your role in this workspace could not be found. Please contact your workspace administrator.',
+        },
       );
     }
 
@@ -129,43 +134,89 @@ export class PermissionsService {
     userWorkspaceId,
     workspaceId,
     setting,
-    isExecutedByApiKey,
+    apiKeyId,
   }: {
     userWorkspaceId?: string;
     workspaceId: string;
     setting: PermissionFlagType;
-    isExecutedByApiKey: boolean;
+    apiKeyId?: string;
   }): Promise<boolean> {
-    if (isExecutedByApiKey) {
-      return true;
-    }
+    if (apiKeyId) {
+      const isApiKeyRolesEnabled =
+        await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
+          workspaceId,
+        );
 
-    if (!isDefined(userWorkspaceId)) {
-      throw new AuthException(
-        'Missing userWorkspaceId or apiKey in authContext',
-        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
-      );
-    }
+      if (!isApiKeyRolesEnabled) {
+        return true;
+      }
 
-    const [roleOfUserWorkspace] = await this.userRoleService
-      .getRolesByUserWorkspaces({
-        userWorkspaceIds: [userWorkspaceId],
+      const roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
+        apiKeyId,
         workspaceId,
-      })
-      .then((roles) => roles?.get(userWorkspaceId) ?? []);
-
-    if (!isDefined(roleOfUserWorkspace)) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
-        PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
       );
+
+      const role = await this.roleRepository.findOne({
+        where: { id: roleId, workspaceId },
+        relations: ['permissionFlags'],
+      });
+
+      if (!isDefined(role)) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.API_KEY_ROLE_NOT_FOUND,
+          PermissionsExceptionCode.API_KEY_ROLE_NOT_FOUND,
+          {
+            userFriendlyMessage:
+              'The API key does not have a valid role assigned. Please check your API key configuration.',
+          },
+        );
+      }
+
+      return this.checkRolePermissions(role, setting);
     }
 
-    if (roleOfUserWorkspace.canUpdateAllSettings === true) {
+    if (userWorkspaceId) {
+      const [roleOfUserWorkspace] = await this.userRoleService
+        .getRolesByUserWorkspaces({
+          userWorkspaceIds: [userWorkspaceId],
+          workspaceId,
+        })
+        .then((roles) => roles?.get(userWorkspaceId) ?? []);
+
+      if (!isDefined(roleOfUserWorkspace)) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+          PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+          {
+            userFriendlyMessage:
+              'Your role in this workspace could not be found. Please contact your workspace administrator.',
+          },
+        );
+      }
+
+      return this.checkRolePermissions(roleOfUserWorkspace, setting);
+    }
+
+    throw new PermissionsException(
+      PermissionsExceptionMessage.NO_AUTHENTICATION_CONTEXT,
+      PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
+      {
+        userFriendlyMessage:
+          'Authentication is required to access this feature. Please sign in and try again.',
+      },
+    );
+  }
+
+  private checkRolePermissions(
+    role: RoleEntity,
+    setting: PermissionFlagType,
+  ): boolean {
+    if (role.canUpdateAllSettings === true) {
       return true;
     }
 
-    const permissionFlags = roleOfUserWorkspace.permissionFlags ?? [];
+    const permissionFlags = role.permissionFlags ?? [];
 
     return permissionFlags.some(
       (permissionFlag) => permissionFlag.flag === setting,
@@ -196,7 +247,7 @@ export class PermissionsService {
       return permissionFlags.some(
         (permissionFlag) => permissionFlag.flag === flag,
       );
-    } catch (error) {
+    } catch {
       return false;
     }
   }

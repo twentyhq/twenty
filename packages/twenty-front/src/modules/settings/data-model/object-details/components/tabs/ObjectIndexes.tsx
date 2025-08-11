@@ -1,4 +1,4 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsObjectIndexTable } from '~/pages/settings/data-model/SettingsObjectIndexTable';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';

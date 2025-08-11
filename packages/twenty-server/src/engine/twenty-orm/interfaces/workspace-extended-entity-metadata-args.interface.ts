@@ -1,4 +1,4 @@
-import { Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
+import { type Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
 export interface WorkspaceExtendedEntityMetadataArgs {
   /**
@@ -6,7 +6,7 @@ export interface WorkspaceExtendedEntityMetadataArgs {
    * Function target is a table defined in the class.
    * String target is a table defined in a json schema.
    */
-  // eslint-disable-next-line @typescript-eslint/ban-types
+   
   readonly target: Function;
 
   /**

@@ -1,11 +1,11 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 import { IconBell } from '@ui/display';
 import {
   CatalogDecorator,
-  CatalogDimension,
-  CatalogOptions,
-  CatalogStory,
+  type CatalogDimension,
+  type CatalogOptions,
+  type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
 import { MenuItemMultiSelect } from '../MenuItemMultiSelect';

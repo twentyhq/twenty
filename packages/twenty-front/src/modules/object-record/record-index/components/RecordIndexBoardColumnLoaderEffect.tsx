@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isRecordBoardFetchingRecordsByColumnFamilyState } from '@/object-record/record-board/states/isRecordBoardFetchingRecordsByColumnFamilyState';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { useLoadRecordIndexBoardColumn } from '@/object-record/record-index/hooks/useLoadRecordIndexBoardColumn';
 import { isRecordIndexBoardColumnLoadingFamilyState } from '@/object-record/states/isRecordBoardColumnLoadingFamilyState';
-import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
+import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
 
 export const RecordIndexBoardColumnLoaderEffect = ({
   objectNameSingular,
@@ -19,7 +19,7 @@ export const RecordIndexBoardColumnLoaderEffect = ({
   kanbanFieldMetadataItem: FieldMetadataItem;
   columnId: string;
 }) => {
-  const [shouldFetchMore, setShouldFetchMore] = useRecoilComponentFamilyStateV2(
+  const [shouldFetchMore, setShouldFetchMore] = useRecoilComponentFamilyState(
     recordBoardShouldFetchMoreInColumnComponentFamilyState,
     columnId,
     recordBoardId,

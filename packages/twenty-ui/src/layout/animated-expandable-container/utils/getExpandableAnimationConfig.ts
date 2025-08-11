@@ -1,5 +1,5 @@
-import { AnimationDimension } from '@ui/layout/animated-expandable-container/types/AnimationDimension';
-import { AnimationSize } from '@ui/layout/animated-expandable-container/types/AnimationSize';
+import { type AnimationDimension } from '@ui/layout/animated-expandable-container/types/AnimationDimension';
+import { type AnimationSize } from '@ui/layout/animated-expandable-container/types/AnimationSize';
 import { getCommonStyles } from '@ui/layout/animated-expandable-container/utils/getCommonStyles';
 import { getTransitionValues } from '@ui/layout/animated-expandable-container/utils/getTransitionValues';
 

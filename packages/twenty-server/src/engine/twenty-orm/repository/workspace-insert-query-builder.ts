@@ -1,31 +1,33 @@
-import { ObjectRecordsPermissions } from 'twenty-shared/types';
+import { type ObjectsPermissionsDeprecated } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  EntityTarget,
+  type EntityTarget,
   InsertQueryBuilder,
-  InsertResult,
-  ObjectLiteral,
+  type InsertResult,
+  type ObjectLiteral,
 } from 'typeorm';
 
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
-import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
+import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
-import { RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
-import { RelationDisconnectQueryFieldsByEntityIndex } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
+import { type QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
+import { type RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
+import { type RelationDisconnectQueryFieldsByEntityIndex } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
+import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { RelationNestedQueries } from 'src/engine/twenty-orm/relation-nested-queries/relation-nested-queries';
 import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
-import { WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
+import { type WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
-import { WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
-import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
+import { type WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
+import { type WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
@@ -33,7 +35,7 @@ import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/g
 export class WorkspaceInsertQueryBuilder<
   T extends ObjectLiteral,
 > extends InsertQueryBuilder<T> {
-  private objectRecordsPermissions: ObjectRecordsPermissions;
+  private objectRecordsPermissions: ObjectsPermissionsDeprecated;
   private shouldBypassPermissionChecks: boolean;
   private internalContext: WorkspaceInternalContext;
   private authContext?: AuthContext;
@@ -45,7 +47,7 @@ export class WorkspaceInsertQueryBuilder<
 
   constructor(
     queryBuilder: InsertQueryBuilder<T>,
-    objectRecordsPermissions: ObjectRecordsPermissions,
+    objectRecordsPermissions: ObjectsPermissionsDeprecated,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
     authContext?: AuthContext,
@@ -99,64 +101,107 @@ export class WorkspaceInsertQueryBuilder<
   }
 
   override async execute(): Promise<InsertResult> {
-    validateQueryIsPermittedOrThrow({
-      expressionMap: this.expressionMap,
-      objectRecordsPermissions: this.objectRecordsPermissions,
-      objectMetadataMaps: this.internalContext.objectMetadataMaps,
-      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
-      isFieldPermissionsEnabled:
-        this.featureFlagMap?.[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED],
-    });
+    try {
+      validateQueryIsPermittedOrThrow({
+        expressionMap: this.expressionMap,
+        objectsPermissions: this.objectRecordsPermissions,
+        objectMetadataMaps: this.internalContext.objectMetadataMaps,
+        shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+        isFieldPermissionsEnabled:
+          this.featureFlagMap?.[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED],
+      });
 
-    const mainAliasTarget = this.getMainAliasTarget();
+      const mainAliasTarget = this.getMainAliasTarget();
 
-    const objectMetadata = getObjectMetadataFromEntityTarget(
-      mainAliasTarget,
-      this.internalContext,
-    );
-
-    if (isDefined(this.relationNestedConfig)) {
-      const nestedRelationQueryBuilder = new WorkspaceSelectQueryBuilder(
-        this as unknown as WorkspaceSelectQueryBuilder<T>,
-        this.objectRecordsPermissions,
+      const objectMetadata = getObjectMetadataFromEntityTarget(
+        mainAliasTarget,
         this.internalContext,
-        this.shouldBypassPermissionChecks,
-        this.authContext,
       );
 
-      const updatedValues =
-        await this.relationNestedQueries.processRelationNestedQueries({
-          entities: this.expressionMap.valuesSet as
-            | QueryDeepPartialEntityWithNestedRelationFields<T>
-            | QueryDeepPartialEntityWithNestedRelationFields<T>[],
-          relationNestedConfig: this.relationNestedConfig,
-          queryBuilder: nestedRelationQueryBuilder,
-        });
+      if (isDefined(this.relationNestedConfig)) {
+        const nestedRelationQueryBuilder = new WorkspaceSelectQueryBuilder(
+          this as unknown as WorkspaceSelectQueryBuilder<T>,
+          this.objectRecordsPermissions,
+          this.internalContext,
+          this.shouldBypassPermissionChecks,
+          this.authContext,
+        );
 
-      this.expressionMap.valuesSet = updatedValues;
+        const updatedValues =
+          await this.relationNestedQueries.processRelationNestedQueries({
+            entities: this.expressionMap.valuesSet as
+              | QueryDeepPartialEntityWithNestedRelationFields<T>
+              | QueryDeepPartialEntityWithNestedRelationFields<T>[],
+            relationNestedConfig: this.relationNestedConfig,
+            queryBuilder: nestedRelationQueryBuilder,
+          });
+
+        this.expressionMap.valuesSet = updatedValues;
+      }
+
+      const result = await super.execute();
+      const eventSelectQueryBuilder = (
+        this.connection.manager as WorkspaceEntityManager
+      ).createQueryBuilder(
+        mainAliasTarget,
+        this.expressionMap.mainAlias?.metadata.name ?? '',
+        undefined,
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      ) as WorkspaceSelectQueryBuilder<T>;
+
+      eventSelectQueryBuilder.whereInIds(
+        result.identifiers.map((identifier) => identifier.id),
+      );
+
+      const afterResult = await eventSelectQueryBuilder.getMany();
+
+      const formattedResultForEvent = formatResult<T[]>(
+        afterResult,
+        objectMetadata,
+        this.internalContext.objectMetadataMaps,
+      );
+
+      await this.internalContext.eventEmitterService.emitMutationEvent({
+        action: DatabaseEventAction.CREATED,
+        objectMetadataItem: objectMetadata,
+        workspaceId: this.internalContext.workspaceId,
+        entities: formattedResultForEvent,
+        authContext: this.authContext,
+      });
+
+      // TypeORM returns all entity columns for insertions
+      const resultWithoutInsertionExtraColumns = !isDefined(result.raw)
+        ? []
+        : result.raw.map((rawResult: Record<string, string>) =>
+            Object.keys(rawResult)
+              .filter(
+                (key) =>
+                  this.expressionMap.returning.includes(key) ||
+                  this.expressionMap.returning === '*',
+              )
+              .reduce((filtered: Record<string, string>, key) => {
+                filtered[key] = rawResult[key];
+
+                return filtered;
+              }, {}),
+          );
+
+      const formattedResult = formatResult<T[]>(
+        resultWithoutInsertionExtraColumns,
+        objectMetadata,
+        this.internalContext.objectMetadataMaps,
+      );
+
+      return {
+        raw: resultWithoutInsertionExtraColumns,
+        generatedMaps: formattedResult,
+        identifiers: result.identifiers,
+      };
+    } catch (error) {
+      throw computeTwentyORMException(error);
     }
-
-    const result = await super.execute();
-
-    const formattedResult = formatResult<T[]>(
-      result.raw,
-      objectMetadata,
-      this.internalContext.objectMetadataMaps,
-    );
-
-    await this.internalContext.eventEmitterService.emitMutationEvent({
-      action: DatabaseEventAction.CREATED,
-      objectMetadataItem: objectMetadata,
-      workspaceId: this.internalContext.workspaceId,
-      entities: formattedResult,
-      authContext: this.authContext,
-    });
-
-    return {
-      raw: result.raw,
-      generatedMaps: formattedResult,
-      identifiers: result.identifiers,
-    };
   }
 
   private getMainAliasTarget(): EntityTarget<T> {
@@ -205,5 +250,11 @@ export class WorkspaceInsertQueryBuilder<
       'This builder cannot morph into a soft delete builder',
       TwentyORMExceptionCode.METHOD_NOT_ALLOWED,
     );
+  }
+
+  setAuthContext(authContext: AuthContext): WorkspaceInsertQueryBuilder<T> {
+    this.authContext = authContext;
+
+    return this;
   }
 }

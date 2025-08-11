@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { CoreMessage } from 'ai';
+import { type CoreMessage } from 'ai';
 import { Response } from 'express';
 
 import { AiService } from 'src/engine/core-modules/ai/services/ai.service';

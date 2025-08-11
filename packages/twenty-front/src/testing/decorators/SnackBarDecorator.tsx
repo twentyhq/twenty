@@ -1,5 +1,5 @@
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
-import { Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react';
 
 export const SnackBarDecorator: Decorator = (Story) => (
   <SnackBarComponentInstanceContext.Provider

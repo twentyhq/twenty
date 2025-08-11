@@ -3,7 +3,7 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { orderWorkflowRunState } from '@/object-record/record-field/meta-types/utils/orderWorkflowRunState';
 import { useContext } from 'react';
 import { isDefined, parseJson } from 'twenty-shared/utils';
-import { JsonObject, JsonValue } from 'type-fest';
+import { type JsonObject, type JsonValue } from 'type-fest';
 
 export const usePrecomputedJsonDraftValue = ({
   draftValue,

@@ -1,4 +1,4 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 
 export type GenerateDepthOneRecordGqlFields = {
@@ -8,14 +8,17 @@ export type GenerateDepthOneRecordGqlFields = {
 export const generateDepthOneRecordGqlFields = ({
   objectMetadataItem,
 }: GenerateDepthOneRecordGqlFields) =>
-  objectMetadataItem.fields.reduce<Record<string, true>>((acc, field) => {
-    return {
-      ...acc,
-      ...(isDefined(field.settings?.joinColumnName)
-        ? {
-            [field.settings.joinColumnName]: true,
-          }
-        : {}),
-      [field.name]: true,
-    };
-  }, {});
+  objectMetadataItem.readableFields.reduce<Record<string, true>>(
+    (acc, field) => {
+      return {
+        ...acc,
+        ...(isDefined(field.settings?.joinColumnName)
+          ? {
+              [field.settings.joinColumnName]: true,
+            }
+          : {}),
+        [field.name]: true,
+      };
+    },
+    {},
+  );

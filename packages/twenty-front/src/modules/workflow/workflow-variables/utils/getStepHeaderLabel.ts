@@ -1,4 +1,4 @@
-import { StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
 import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
 import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';

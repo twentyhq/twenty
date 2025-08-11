@@ -1,4 +1,4 @@
-import { IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/display';
 import React from 'react';
 import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';

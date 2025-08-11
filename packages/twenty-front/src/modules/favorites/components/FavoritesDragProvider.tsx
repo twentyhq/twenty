@@ -2,11 +2,11 @@ import { FavoritesDragContext } from '@/favorites/contexts/FavoritesDragContext'
 import { useHandleFavoriteDragAndDrop } from '@/favorites/hooks/useHandleFavoriteDragAndDrop';
 import {
   DragDropContext,
-  DragStart,
-  DropResult,
-  ResponderProvided,
+  type DragStart,
+  type DropResult,
+  type ResponderProvided,
 } from '@hello-pangea/dnd';
-import { ReactNode, useState } from 'react';
+import { type ReactNode, useState } from 'react';
 
 type FavoritesDragProviderProps = {
   children: ReactNode;

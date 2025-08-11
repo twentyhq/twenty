@@ -13,16 +13,16 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
-import { ApolloError } from '@apollo/client';
+import { type ApolloError } from '@apollo/client';
 import { formatDistanceToNow } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -76,7 +76,7 @@ const StyledSearchContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledSearchInput = styled(TextInput)`
+const StyledSearchInput = styled(SettingsTextInput)`
   input {
     background: ${({ theme }) => theme.background.transparent.lighter};
     border: 1px solid ${({ theme }) => theme.border.color.medium};

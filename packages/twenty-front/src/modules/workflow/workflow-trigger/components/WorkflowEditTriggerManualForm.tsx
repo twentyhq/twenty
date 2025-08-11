@@ -1,8 +1,8 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { Select } from '@/ui/input/components/Select';
 import {
-  WorkflowManualTrigger,
-  WorkflowManualTriggerAvailability,
+  type WorkflowManualTrigger,
+  type WorkflowManualTriggerAvailability,
 } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
@@ -10,11 +10,11 @@ import { MANUAL_TRIGGER_AVAILABILITY_OPTIONS } from '@/workflow/workflow-trigger
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
 import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTriggerHeaderType';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
-import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
+import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
 import { useTheme } from '@emotion/react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/input';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useLingui } from '@lingui/react/macro';
 import { IconPicker } from '@/ui/input/components/IconPicker';

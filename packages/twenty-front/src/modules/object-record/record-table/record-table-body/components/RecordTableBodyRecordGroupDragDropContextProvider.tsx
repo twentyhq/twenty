@@ -1,5 +1,5 @@
-import { DragDropContext, DropResult } from '@hello-pangea/dnd';
-import { ReactNode } from 'react';
+import { DragDropContext, type DropResult } from '@hello-pangea/dnd';
+import { type ReactNode } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -11,7 +11,7 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -29,11 +29,11 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
 
   const { openModal } = useModal();
 
-  const recordIdsByGroupFamilyState = useRecoilComponentCallbackStateV2(
+  const recordIdsByGroupFamilyState = useRecoilComponentCallbackState(
     recordIndexRecordIdsByGroupComponentFamilyState,
   );
 
-  const currentRecordSortsCallbackState = useRecoilComponentCallbackStateV2(
+  const currentRecordSortsCallbackState = useRecoilComponentCallbackState(
     currentRecordSortsComponentState,
   );
 

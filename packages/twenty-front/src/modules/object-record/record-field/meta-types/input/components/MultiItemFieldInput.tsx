@@ -4,11 +4,11 @@ import { Key } from 'ts-key-enum';
 import { CustomError } from '@/error-handler/CustomError';
 import {
   MultiItemBaseInput,
-  MultiItemBaseInputProps,
+  type MultiItemBaseInputProps,
 } from '@/object-record/record-field/meta-types/input/components/MultiItemBaseInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { PhoneRecord } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { type PhoneRecord } from '@/object-record/record-field/types/FieldMetadata';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';

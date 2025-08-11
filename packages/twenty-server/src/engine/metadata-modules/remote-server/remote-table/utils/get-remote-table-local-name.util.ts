@@ -1,5 +1,5 @@
 import { singular } from 'pluralize';
-import { DataSource } from 'typeorm';
+import { type DataSource } from 'typeorm';
 
 import {
   RemoteTableException,

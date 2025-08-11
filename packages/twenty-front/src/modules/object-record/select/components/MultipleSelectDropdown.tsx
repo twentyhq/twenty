@@ -1,6 +1,6 @@
 import { Key } from 'ts-key-enum';
 
-import { SelectableItem } from '@/object-record/select/types/SelectableItem';
+import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -9,7 +9,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 
@@ -38,7 +38,7 @@ export const MultipleSelectDropdown = ({
 
   const { resetSelectedItem } = useSelectableList(selectableListId);
 
-  const selectedItemId = useRecoilComponentValueV2(
+  const selectedItemId = useRecoilComponentValue(
     selectedItemIdComponentState,
     selectableListId,
   );

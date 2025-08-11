@@ -2,7 +2,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { JwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type JwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { JwtAuthStrategy } from './jwt.auth.strategy';

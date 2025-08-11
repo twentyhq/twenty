@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
-import { MockedProvider, MockedResponse } from '@apollo/client/testing';
+import { MockedProvider, type MockedResponse } from '@apollo/client/testing';
 import { expect } from '@storybook/test';
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { ANALYTICS_COOKIE_NAME, useEventTracker } from '../useEventTracker';

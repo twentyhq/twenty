@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
-import { FieldDateValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldDateValue } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';

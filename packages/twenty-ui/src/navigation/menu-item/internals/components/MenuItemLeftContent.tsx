@@ -1,10 +1,10 @@
 import { useTheme } from '@emotion/react';
 import { isString } from '@sniptt/guards';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import styled from '@emotion/styled';
 import {
-  IconComponent,
+  type IconComponent,
   IconGripVertical,
   OverflowingTextWithTooltip,
 } from '@ui/display';

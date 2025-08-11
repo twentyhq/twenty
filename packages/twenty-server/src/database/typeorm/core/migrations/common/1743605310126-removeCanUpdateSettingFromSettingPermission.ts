@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class RemoveCanUpdateSettingFromSettingPermission1743605310126
   implements MigrationInterface

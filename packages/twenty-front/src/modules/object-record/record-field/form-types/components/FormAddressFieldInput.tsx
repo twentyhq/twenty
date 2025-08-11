@@ -2,9 +2,9 @@ import { FormCountrySelectInput } from '@/object-record/record-field/form-types/
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/form-types/components/FormNestedFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
-import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
-import { FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { type FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
+import { type FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 
 type FormAddressFieldInputProps = {

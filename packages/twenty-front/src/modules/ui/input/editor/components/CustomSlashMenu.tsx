@@ -8,8 +8,8 @@ import { SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/Slash
 import { SLASH_MENU_LIST_ID } from '@/ui/input/constants/SlashMenuListId';
 import { CustomSlashMenuListItem } from '@/ui/input/editor/components/CustomSlashMenuListItem';
 import {
-  CustomSlashMenuProps,
-  SuggestionItem,
+  type CustomSlashMenuProps,
+  type SuggestionItem,
 } from '@/ui/input/editor/components/types';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';

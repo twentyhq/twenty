@@ -1,5 +1,5 @@
 'use client';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import styled from '@emotion/styled';
 import { usePathname } from 'next/navigation';
 
@@ -7,7 +7,7 @@ import DocsSidebar from '@/app/_components/docs/DocsSideBar';
 import DocsTableContents from '@/app/_components/docs/TableContent';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
-import { DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
+import { type DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
 import {
   isPlaygroundPage,
   shouldShowEmptySidebar,

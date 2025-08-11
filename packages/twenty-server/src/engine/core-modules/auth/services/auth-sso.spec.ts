@@ -1,7 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';

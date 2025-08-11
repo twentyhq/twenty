@@ -1,4 +1,4 @@
-import { DateFormat } from '@/localization/constants/DateFormat';
+import { type DateFormat } from '@/localization/constants/DateFormat';
 
 export const detectDateFormat = (): keyof typeof DateFormat => {
   const date = new Date();

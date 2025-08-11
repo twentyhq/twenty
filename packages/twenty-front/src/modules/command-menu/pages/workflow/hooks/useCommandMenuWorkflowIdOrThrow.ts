@@ -1,9 +1,9 @@
 import { commandMenuWorkflowIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCommandMenuWorkflowIdOrThrow = () => {
-  const workflowId = useRecoilComponentValueV2(
+  const workflowId = useRecoilComponentValue(
     commandMenuWorkflowIdComponentState,
   );
   if (!isDefined(workflowId)) {

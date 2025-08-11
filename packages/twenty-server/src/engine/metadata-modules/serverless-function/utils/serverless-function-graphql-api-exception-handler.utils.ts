@@ -1,3 +1,5 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
   ConflictError,
   ForbiddenError,
@@ -24,9 +26,7 @@ export const serverlessFunctionGraphQLApiExceptionHandler = (error: any) => {
       case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CODE_UNCHANGED:
         throw error;
       default: {
-        const _exhaustiveCheck: never = error.code;
-
-        throw error;
+        return assertUnreachable(error.code);
       }
     }
   }

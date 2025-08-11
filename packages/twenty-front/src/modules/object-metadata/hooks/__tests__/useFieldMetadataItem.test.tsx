@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -15,6 +15,8 @@ import {
   variables,
 } from '../__mocks__/useFieldMetadataItem';
 
+import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { mockedUserData } from '~/testing/mock-data/users';
 import {
   query as findManyObjectMetadataItemsQuery,
   responseData as findManyObjectMetadataItemsResponseData,
@@ -99,6 +101,17 @@ const mocks = [
   },
   {
     request: {
+      query: GET_CURRENT_USER,
+      variables: {},
+    },
+    result: jest.fn(() => ({
+      data: {
+        currentUser: mockedUserData,
+      },
+    })),
+  },
+  {
+    request: {
       query: queries.deleteMetadataField,
       variables: variables.deleteMetadataField,
     },
@@ -128,15 +141,6 @@ const mocks = [
       data: {
         createOneField: responseData.createMetadataField,
       },
-    })),
-  },
-  {
-    request: {
-      query: queries.getCurrentUser,
-      variables: {},
-    },
-    result: jest.fn(() => ({
-      data: responseData.getCurrentUser,
     })),
   },
   {

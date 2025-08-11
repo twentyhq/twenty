@@ -1,7 +1,7 @@
 import {
-  AutoResolverOpts,
+  type AutoResolverOpts,
   PagingStrategies,
-  ReadResolverOpts,
+  type ReadResolverOpts,
 } from '@ptc-org/nestjs-query-graphql';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';

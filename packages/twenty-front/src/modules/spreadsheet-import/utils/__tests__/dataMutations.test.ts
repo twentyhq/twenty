@@ -1,9 +1,9 @@
 import {
-  ImportedStructuredRow,
-  SpreadsheetImportField,
-  SpreadsheetImportInfo,
-  SpreadsheetImportRowHook,
-  SpreadsheetImportTableHook,
+  type ImportedStructuredRow,
+  type SpreadsheetImportField,
+  type SpreadsheetImportInfo,
+  type SpreadsheetImportRowHook,
+  type SpreadsheetImportTableHook,
 } from '@/spreadsheet-import/types';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { FieldMetadataType } from 'twenty-shared/types';

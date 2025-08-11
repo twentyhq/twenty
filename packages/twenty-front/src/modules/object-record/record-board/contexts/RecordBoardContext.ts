@@ -1,8 +1,9 @@
 import { createContext } from 'react';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectPermission } from '~/generated/graphql';
 
 type RecordBoardContextProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -17,6 +18,7 @@ type RecordBoardContextProps = {
   }) => void;
   deleteOneRecord: (idToDelete: string) => Promise<unknown>;
   recordBoardId: string;
+  objectPermissions: ObjectPermission;
 };
 
 export const RecordBoardContext = createContext<RecordBoardContextProps>(

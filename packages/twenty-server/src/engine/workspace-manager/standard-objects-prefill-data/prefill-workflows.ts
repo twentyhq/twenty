@@ -1,5 +1,5 @@
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 
 const QUICK_LEAD_WORKFLOW_ID = '8b213cac-a68b-4ffe-817a-3ec994e9932d';
 const QUICK_LEAD_WORKFLOW_VERSION_ID = 'ac67974f-c524-4288-9d88-af8515400b68';
@@ -64,6 +64,7 @@ export const prefillWorkflows = async (
           name: 'Launch manually',
           type: 'MANUAL',
           settings: { outputSchema: {}, icon: 'IconUserPlus' },
+          nextStepIds: ['6e089bc9-aabd-435f-865f-f31c01c8f4a7'],
         }),
         steps: JSON.stringify([
           {

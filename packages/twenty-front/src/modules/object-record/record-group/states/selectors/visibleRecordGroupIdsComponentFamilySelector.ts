@@ -1,19 +1,19 @@
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
-import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
 import { recordGroupSortedInsert } from '@/object-record/record-group/utils/recordGroupSortedInsert';
 import { recordIndexRecordGroupHideComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentFamilyState';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { createComponentFamilySelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentFamilySelectorV2';
+import { createComponentFamilySelector } from '@/ui/utilities/state/component-state/utils/createComponentFamilySelector';
 
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { ViewType } from '@/views/types/ViewType';
+import { type ViewType } from '@/views/types/ViewType';
 import { isDefined } from 'twenty-shared/utils';
 
 export const visibleRecordGroupIdsComponentFamilySelector =
-  createComponentFamilySelectorV2<RecordGroupDefinition['id'][], ViewType>({
+  createComponentFamilySelector<RecordGroupDefinition['id'][], ViewType>({
     key: 'visibleRecordGroupIdsComponentFamilySelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:

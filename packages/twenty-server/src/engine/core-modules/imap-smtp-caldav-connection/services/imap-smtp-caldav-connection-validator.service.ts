@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+import { type ConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 
 @Injectable()
 export class ImapSmtpCaldavValidatorService {

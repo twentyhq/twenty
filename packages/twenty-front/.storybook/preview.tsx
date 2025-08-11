@@ -1,5 +1,5 @@
 import { ThemeProvider } from '@emotion/react';
-import { Preview } from '@storybook/react';
+import { type Preview } from '@storybook/react';
 import { initialize, mswDecorator } from 'msw-storybook-addon';
 import { useEffect } from 'react';
 import { useDarkMode } from 'storybook-dark-mode';

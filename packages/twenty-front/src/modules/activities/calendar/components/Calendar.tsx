@@ -5,12 +5,13 @@ import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMont
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from '@/activities/calendar/constants/Calendar';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
 import { getTimelineCalendarEventsFromCompanyId } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromCompanyId';
+import { getTimelineCalendarEventsFromOpportunityId } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromOpportunityId';
 import { getTimelineCalendarEventsFromPersonId } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromPersonId';
 import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents';
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { H3Title } from 'twenty-ui/display';
 import {
@@ -22,7 +23,7 @@ import {
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
   Section,
 } from 'twenty-ui/layout';
-import { TimelineCalendarEventsWithTotal } from '~/generated/graphql';
+import { type TimelineCalendarEventsWithTotal } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -53,10 +54,16 @@ export const Calendar = ({
           getTimelineCalendarEventsFromPersonId,
           'getTimelineCalendarEventsFromPersonId',
         ]
-      : [
-          getTimelineCalendarEventsFromCompanyId,
-          'getTimelineCalendarEventsFromCompanyId',
-        ];
+      : targetableObject.targetObjectNameSingular ===
+          CoreObjectNameSingular.Company
+        ? [
+            getTimelineCalendarEventsFromCompanyId,
+            'getTimelineCalendarEventsFromCompanyId',
+          ]
+        : [
+            getTimelineCalendarEventsFromOpportunityId,
+            'getTimelineCalendarEventsFromOpportunityId',
+          ];
 
   const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords } =
     useCustomResolver<TimelineCalendarEventsWithTotal>(

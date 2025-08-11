@@ -1,15 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Raw } from 'typeorm';
+import { In, Raw } from 'typeorm';
+
+import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
-import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
-import { ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/types/object-record-destroy.event';
-import { ObjectRecordNonDestructiveEvent } from 'src/engine/core-modules/event-emitter/types/object-record-non-destructive-event';
-import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { type ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
+import { type ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
+import { type ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/types/object-record-destroy.event';
+import { type ObjectRecordNonDestructiveEvent } from 'src/engine/core-modules/event-emitter/types/object-record-non-destructive-event';
+import { type ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -17,13 +19,13 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import {
   AutomatedTriggerType,
-  WorkflowAutomatedTriggerWorkspaceEntity,
+  type WorkflowAutomatedTriggerWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import { UpdateEventTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
+import { type UpdateEventTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import {
   WorkflowTriggerJob,
-  WorkflowTriggerJobData,
+  type WorkflowTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
 
 @Injectable()
@@ -111,13 +113,11 @@ export class DatabaseEventTriggerListener {
   ) {
     const workspaceId = payload.workspaceId;
 
-    for (const event of payload.events) {
-      await this.enrichRecord({
-        event,
-        record: event.properties.after,
-        workspaceId,
-      });
-    }
+    await this.enrichRecordsWithRelations({
+      records: payload.events.map((event) => event.properties.after),
+      objectMetadataNameSingular: payload.events[0].objectMetadata.nameSingular,
+      workspaceId,
+    });
   }
 
   private async enrichUpdatedEvent(
@@ -125,18 +125,16 @@ export class DatabaseEventTriggerListener {
   ) {
     const workspaceId = payload.workspaceId;
 
-    for (const event of payload.events) {
-      await this.enrichRecord({
-        event,
-        record: event.properties.before,
-        workspaceId,
-      });
-      await this.enrichRecord({
-        event,
-        record: event.properties.after,
-        workspaceId,
-      });
-    }
+    await this.enrichRecordsWithRelations({
+      records: payload.events.map((event) => event.properties.before),
+      objectMetadataNameSingular: payload.events[0].objectMetadata.nameSingular,
+      workspaceId,
+    });
+    await this.enrichRecordsWithRelations({
+      records: payload.events.map((event) => event.properties.after),
+      objectMetadataNameSingular: payload.events[0].objectMetadata.nameSingular,
+      workspaceId,
+    });
   }
 
   private async enrichDeletedEvent(
@@ -144,13 +142,11 @@ export class DatabaseEventTriggerListener {
   ) {
     const workspaceId = payload.workspaceId;
 
-    for (const event of payload.events) {
-      await this.enrichRecord({
-        event,
-        record: event.properties.before,
-        workspaceId,
-      });
-    }
+    await this.enrichRecordsWithRelations({
+      records: payload.events.map((event) => event.properties.before),
+      objectMetadataNameSingular: payload.events[0].objectMetadata.nameSingular,
+      workspaceId,
+    });
   }
 
   private async enrichDestroyedEvent(
@@ -158,28 +154,25 @@ export class DatabaseEventTriggerListener {
   ) {
     const workspaceId = payload.workspaceId;
 
-    for (const event of payload.events) {
-      await this.enrichRecord({
-        event,
-        record: event.properties.before,
-        workspaceId,
-      });
-    }
+    await this.enrichRecordsWithRelations({
+      records: payload.events.map((event) => event.properties.before),
+      objectMetadataNameSingular: payload.events[0].objectMetadata.nameSingular,
+      workspaceId,
+    });
   }
 
-  private async enrichRecord({
-    event,
-    record,
+  private async enrichRecordsWithRelations({
+    records,
+    objectMetadataNameSingular,
     workspaceId,
   }: {
-    event: ObjectRecordNonDestructiveEvent;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    record: Record<string, any>;
+    records: Partial<ObjectRecord>[];
+    objectMetadataNameSingular: string;
     workspaceId: string;
   }) {
     const { objectMetadataMaps, objectMetadataItemWithFieldsMaps } =
       await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
-        event.objectMetadata.nameSingular,
+        objectMetadataNameSingular,
         workspaceId,
       );
 
@@ -188,7 +181,14 @@ export class DatabaseEventTriggerListener {
     )) {
       const joinField =
         objectMetadataItemWithFieldsMaps.fieldsById[joinFieldId];
-      const joinRecordId = record[joinColumnName];
+      const joinRecordIds = records
+        .map((record) => record[joinColumnName])
+        .filter(isDefined);
+
+      if (joinRecordIds.length === 0) {
+        continue;
+      }
+
       const relatedObjectMetadataId = joinField.relationTargetObjectMetadataId;
 
       if (!isDefined(relatedObjectMetadataId)) {
@@ -209,9 +209,15 @@ export class DatabaseEventTriggerListener {
           { shouldBypassPermissionChecks: true },
         );
 
-      record[joinField.name] = await relatedObjectRepository.findOne({
-        where: { id: joinRecordId },
+      const relatedRecords = await relatedObjectRepository.find({
+        where: { id: In(joinRecordIds) },
       });
+
+      for (const record of records) {
+        record[joinField.name] = relatedRecords.find(
+          (relatedRecord) => relatedRecord.id === record[joinColumnName],
+        );
+      }
     }
   }
 

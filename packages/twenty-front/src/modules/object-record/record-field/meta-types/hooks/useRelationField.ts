@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
-import { FieldRelationValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldRelationValue } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -10,8 +10,8 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/states/recordFieldInputDraftValueComponentState';
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const useRelationField = <T extends ObjectRecord | ObjectRecord[]>() => {
   const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
@@ -29,7 +29,7 @@ export const useRelationField = <T extends ObjectRecord | ObjectRecord[]>() => {
     recordStoreFamilySelector({ recordId, fieldName }),
   );
 
-  const draftValue = useRecoilComponentValueV2(
+  const draftValue = useRecoilComponentValue(
     recordFieldInputDraftValueComponentState,
   );
 

@@ -6,5 +6,10 @@ export const API_KEY_FRAGMENT = gql`
     name
     expiresAt
     revokedAt
+    role {
+      id
+      label
+      icon
+    }
   }
 `;

@@ -1,5 +1,5 @@
-import { LayoutCard } from '@/ui/layout/tab-list/types/LayoutCard';
-import { IconComponent } from 'twenty-ui/display';
+import { type LayoutCard } from '@/ui/layout/tab-list/types/LayoutCard';
+import { type IconComponent } from 'twenty-ui/display';
 
 export type SingleTabProps<T extends string = string> = {
   title: string;

@@ -1,4 +1,4 @@
-import { ViewFilter } from '@/views/types/ViewFilter';
+import { type ViewFilter } from '@/views/types/ViewFilter';
 import { areViewFiltersEqual } from '@/views/utils/areViewFiltersEqual';
 import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
 import { isDefined } from 'twenty-shared/utils';

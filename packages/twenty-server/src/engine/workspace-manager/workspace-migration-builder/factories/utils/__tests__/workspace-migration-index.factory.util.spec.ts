@@ -2,7 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { createIndexMigration } from 'src/engine/workspace-manager/workspace-migration-builder/factories/utils/workspace-migration-index.factory.utils';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
 

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
 
 export const multiSelectFieldValueSchema = (
   options?: string[],

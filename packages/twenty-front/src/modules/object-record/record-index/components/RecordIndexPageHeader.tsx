@@ -6,10 +6,10 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
 const StyledTitleWithSelectedRecords = styled.div`
@@ -32,7 +32,7 @@ export const RecordIndexPageHeader = () => {
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
 
-  const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
+  const contextStoreNumberOfSelectedRecords = useRecoilComponentValue(
     contextStoreNumberOfSelectedRecordsComponentState,
   );
 
@@ -44,7 +44,7 @@ export const RecordIndexPageHeader = () => {
   const { getIcon } = useIcons();
   const Icon = getIcon(objectMetadataItem?.icon);
 
-  const label = objectMetadataItem?.labelPlural ?? capitalize(objectNamePlural);
+  const label = objectMetadataItem?.labelPlural ?? objectNamePlural;
 
   const pageHeaderTitle =
     contextStoreNumberOfSelectedRecords > 0 ? (
@@ -59,7 +59,7 @@ export const RecordIndexPageHeader = () => {
       label
     );
 
-  const contextStoreCurrentViewId = useRecoilComponentValueV2(
+  const contextStoreCurrentViewId = useRecoilComponentValue(
     contextStoreCurrentViewIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );

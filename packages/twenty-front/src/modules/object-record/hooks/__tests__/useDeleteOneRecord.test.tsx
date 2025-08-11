@@ -4,8 +4,8 @@ import { act } from 'react';
 import { query } from '@/object-record/hooks/__mocks__/useDeleteOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { MockedResponse } from '@apollo/client/testing';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type MockedResponse } from '@apollo/client/testing';
 import { expect } from '@storybook/jest';
 import { InMemoryTestingCacheInstance } from '~/testing/cache/inMemoryTestingCacheInstance';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -14,12 +14,12 @@ import {
   allMockCompanyRecordsWithRelation,
   findMockCompanyWithRelationRecord,
 } from '~/testing/mock-data/companiesWithRelations';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import {
   allMockPersonRecords,
   getMockPersonObjectMetadataItem,
   getMockPersonRecord,
 } from '~/testing/mock-data/people';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
 const mockRefetchAggregateQueries = jest.fn();
@@ -176,7 +176,7 @@ describe('useDeleteOneRecord', () => {
         try {
           await result.current.deleteOneRecord(personRecord.id);
           fail('Should have thrown an error');
-        } catch (e) {
+        } catch {
           assertCachedRecordIsNull({
             recordId: personRecord.id,
             objectMetadataItem: personObjectMetadataItem,
@@ -316,7 +316,7 @@ describe('useDeleteOneRecord', () => {
         try {
           await result.current.deleteOneRecord(personRecord.id);
           fail('Should have thrown an error');
-        } catch (e) {
+        } catch {
           assertCachedRecordMatchSnapshot({
             recordId: personRecord.id,
             objectMetadataItem: personObjectMetadataItem,

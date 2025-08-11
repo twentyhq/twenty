@@ -1,7 +1,7 @@
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableEmptyState } from '@/object-record/record-table/empty-state/components/RecordTableEmptyState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 type RecordTableEmptyHandlerProps = {
   recordTableId: string;
@@ -12,12 +12,12 @@ export const RecordTableEmptyHandler = ({
   recordTableId,
   children,
 }: RecordTableEmptyHandlerProps) => {
-  const isRecordTableInitialLoading = useRecoilComponentValueV2(
+  const isRecordTableInitialLoading = useRecoilComponentValue(
     isRecordTableInitialLoadingComponentState,
     recordTableId,
   );
 
-  const allRecordIds = useRecoilComponentValueV2(
+  const allRecordIds = useRecoilComponentValue(
     recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );

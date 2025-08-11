@@ -1,5 +1,5 @@
 import {
-  ExecutionContext,
+  type ExecutionContext,
   UseFilters,
   UseGuards,
   UsePipes,
@@ -25,7 +25,6 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-valid-records';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag-dto';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -40,7 +39,7 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import {
-  AuthProviders,
+  type AuthProviders,
   PublicWorkspaceDataOutput,
 } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
@@ -70,7 +69,7 @@ import { Workspace } from './workspace.entity';
 import { WorkspaceService } from './services/workspace.service';
 
 const OriginHeader = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext) => {
+  (_: unknown, ctx: ExecutionContext) => {
     const request = getRequest(ctx);
 
     return request.headers['origin'];
@@ -242,7 +241,7 @@ export class WorkspaceResolver {
         ...agent,
         roleId: agent.roleId ?? undefined,
       };
-    } catch (error) {
+    } catch {
       // If agent is not found, return null instead of throwing
       return null;
     }
@@ -276,7 +275,7 @@ export class WorkspaceResolver {
           url: workspace.logo,
           workspaceId: workspace.id,
         });
-      } catch (e) {
+      } catch {
         return workspace.logo;
       }
     }
@@ -316,14 +315,6 @@ export class WorkspaceResolver {
       workspace.isPasswordAuthEnabled &&
       this.twentyConfigService.get('AUTH_PASSWORD_ENABLED')
     );
-  }
-
-  @Mutation(() => CustomDomainValidRecords, { nullable: true })
-  @UseGuards(WorkspaceAuthGuard)
-  async checkCustomDomainValidRecords(
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<CustomDomainValidRecords | undefined> {
-    return this.workspaceService.checkCustomDomainValidRecords(workspace);
   }
 
   @Query(() => PublicWorkspaceDataOutput)
@@ -369,7 +360,7 @@ export class WorkspaceResolver {
             url: workspace.logo,
             workspaceId: workspace.id,
           });
-        } catch (e) {
+        } catch {
           workspaceLogoWithToken = workspace.logo;
         }
       }

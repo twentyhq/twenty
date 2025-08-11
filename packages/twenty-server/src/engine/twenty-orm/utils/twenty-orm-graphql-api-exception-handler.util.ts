@@ -1,6 +1,6 @@
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-  TwentyORMException,
+  type TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 

@@ -3,8 +3,8 @@ import { FieldInput } from '@/object-record/record-field/components/FieldInput';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import {
-  FieldInputClickOutsideEvent,
-  FieldInputEvent,
+  type FieldInputClickOutsideEvent,
+  type FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
@@ -14,7 +14,7 @@ import { useRecoilCallback } from 'recoil';
 
 export const RecordTableCellFieldInput = () => {
   const { onMoveFocus, onCloseTableCell } = useRecordTableBodyContextOrThrow();
-  const { isReadOnly } = useContext(FieldContext);
+  const { isRecordFieldReadOnly: isReadOnly } = useContext(FieldContext);
   const instanceId = useAvailableComponentInstanceId(
     RecordFieldComponentInstanceContext,
   );

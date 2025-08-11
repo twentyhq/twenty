@@ -1,4 +1,4 @@
-import { RecordSortDirection } from '@/object-record/record-sort/types/RecordSortDirection';
+import { type RecordSortDirection } from '@/object-record/record-sort/types/RecordSortDirection';
 
 export type ViewSort = {
   __typename: 'ViewSort';

@@ -3,7 +3,7 @@ import { ON_DB_EVENT } from '@/subscription/graphql/subscriptions/onDbEvent';
 import { createClient } from 'graphql-sse';
 import { useEffect, useMemo } from 'react';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { Subscription, SubscriptionOnDbEventArgs } from '~/generated/graphql';
+import { type Subscription, type SubscriptionOnDbEventArgs } from '~/generated/graphql';
 
 type OnDbEventArgs = SubscriptionOnDbEventArgs & {
   skip?: boolean;
@@ -22,15 +22,15 @@ export const useOnDbEvent = ({
   const tokenPair = getTokenPair();
 
   const sseClient = useMemo(() => {
+    const token = tokenPair?.accessOrWorkspaceAgnosticToken?.token;
+
     return createClient({
       url: `${REACT_APP_SERVER_BASE_URL}/graphql`,
       headers: {
-        Authorization: tokenPair?.accessOrWorkspaceAgnosticToken.token
-          ? `Bearer ${tokenPair?.accessOrWorkspaceAgnosticToken.token}`
-          : '',
+        Authorization: token ? `Bearer ${token}` : '',
       },
     });
-  }, [tokenPair?.accessOrWorkspaceAgnosticToken.token]);
+  }, [tokenPair?.accessOrWorkspaceAgnosticToken?.token]);
 
   useEffect(() => {
     if (skip === true) {

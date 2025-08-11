@@ -1,4 +1,4 @@
-import { MessageDescriptor } from '@lingui/core';
+import { type MessageDescriptor } from '@lingui/core';
 
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';

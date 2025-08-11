@@ -5,7 +5,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
-import { UnwrapRecoilValue, useSetRecoilState } from 'recoil';
+import { type UnwrapRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';

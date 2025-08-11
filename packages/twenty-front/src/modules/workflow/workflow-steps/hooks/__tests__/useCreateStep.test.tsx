@@ -1,4 +1,4 @@
-import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 import { WorkflowVisualizerComponentInstanceContext } from '../../../workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
@@ -6,7 +6,9 @@ import { useCreateStep } from '../useCreateStep';
 
 const mockCreateDraftFromWorkflowVersion = jest.fn().mockResolvedValue('457');
 const mockCreateWorkflowVersionStep = jest.fn().mockResolvedValue({
-  data: { createWorkflowVersionStep: { id: '1', type: 'CODE' } },
+  data: {
+    createWorkflowVersionStep: { createdStep: { id: '1', type: 'CODE' } },
+  },
 });
 
 jest.mock(

@@ -4,7 +4,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 import { RecordTableDraggableTr } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTr';
 import { useTheme } from '@emotion/react';
-import { IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/display';
 
 const StyledRecordTableDraggableTr = styled(RecordTableDraggableTr)`
   cursor: pointer;
@@ -13,6 +13,14 @@ const StyledRecordTableDraggableTr = styled(RecordTableDraggableTr)`
 
   &:hover {
     background-color: ${({ theme }) => theme.background.transparent.light};
+  }
+
+  td {
+    border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+
+    &:first-of-type {
+      border-bottom: 1px solid ${({ theme }) => theme.background.primary};
+    }
   }
 `;
 
@@ -38,10 +46,6 @@ const StyledText = styled.span`
   font-size: ${({ theme }) => theme.font.size.md};
   text-align: center;
   vertical-align: middle;
-`;
-
-const StyledEmptyTd = styled.td`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
 type RecordTableActionRowProps = {
@@ -82,9 +86,9 @@ export const RecordTableActionRow = ({
       <StyledRecordTableTdTextContainer className="disable-shadow">
         <StyledText>{text}</StyledText>
       </StyledRecordTableTdTextContainer>
-      <StyledEmptyTd colSpan={visibleTableColumns.length - 1} />
-      <StyledEmptyTd />
-      <StyledEmptyTd />
+      <td colSpan={visibleTableColumns.length - 1} aria-hidden />
+      <td aria-hidden />
+      <td aria-hidden />
     </StyledRecordTableDraggableTr>
   );
 };

@@ -1,11 +1,11 @@
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import { StyledHoverableMenuItemBase } from '../internals/components/StyledMenuItemBase';
-import { MenuItemAccent } from '../types/MenuItemAccent';
+import { type MenuItemAccent } from '../types/MenuItemAccent';
 
-import { IconComponent } from '@ui/display';
+import { type IconComponent } from '@ui/display';
 import { LightIconButtonGroup } from '@ui/input';
-import { ReactNode } from 'react';
-import { MenuItemIconButton } from './MenuItem';
+import { type ReactNode } from 'react';
+import { type MenuItemIconButton } from './MenuItem';
 
 export type MenuItemDraggableProps = {
   LeftIcon?: IconComponent | undefined;

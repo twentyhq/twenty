@@ -1,7 +1,8 @@
 import { t } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
-  AuthException,
+  type AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import {
@@ -55,9 +56,7 @@ export const authGraphqlApiExceptionHandler = (exception: AuthException) => {
     case AuthExceptionCode.INTERNAL_SERVER_ERROR:
       throw exception;
     default: {
-      const _exhaustiveCheck: never = exception.code;
-
-      throw exception;
+      assertUnreachable(exception.code);
     }
   }
 };

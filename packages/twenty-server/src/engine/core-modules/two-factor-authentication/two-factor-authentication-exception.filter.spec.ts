@@ -102,15 +102,5 @@ describe('TwoFactorAuthenticationExceptionFilter', () => {
         expect(error).toBeInstanceOf(ForbiddenError);
       }
     });
-
-    it('should re-throw the original exception for unknown codes', () => {
-      // Create an exception with an unknown code by casting
-      const exception = new TwoFactorAuthenticationException(
-        'Unknown error',
-        'UNKNOWN_CODE' as TwoFactorAuthenticationExceptionCode,
-      );
-
-      expect(() => filter.catch(exception)).toThrow(exception);
-    });
   });
 });

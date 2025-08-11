@@ -1,8 +1,8 @@
-import { EachTestingContext } from 'twenty-shared/testing';
-import { SelectQueryBuilder } from 'typeorm';
+import { type EachTestingContext } from 'twenty-shared/testing';
+import { type SelectQueryBuilder } from 'typeorm';
 
 import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 type AddPersonEmailFiltersToQueryBuilderTestCase = EachTestingContext<{
   emails: string[];

@@ -1,11 +1,11 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { FormFieldPlaceholder } from '@/object-record/record-field/form-types/components/FormFieldPlaceholder';
 import {
-  RecordId,
-  Variable,
+  type RecordId,
+  type Variable,
 } from '@/object-record/record-field/form-types/components/FormSingleRecordPicker';
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import styled from '@emotion/styled';
 

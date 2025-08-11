@@ -4,13 +4,13 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsRadioCardContainer } from '@/settings/components/SettingsRadioCardContainer';
 import { SettingsSSOOIDCForm } from '@/settings/security/components/SSO/SettingsSSOOIDCForm';
 import { SettingsSSOSAMLForm } from '@/settings/security/components/SSO/SettingsSSOSAMLForm';
-import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { type SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { ReactElement, useMemo } from 'react';
+import { type ReactElement, useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { H2Title, IconComponent, IconKey } from 'twenty-ui/display';
+import { H2Title, type IconComponent, IconKey } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { IdentityProviderType } from '~/generated/graphql';
 
@@ -87,7 +87,7 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
             name="name"
             control={control}
             render={({ field: { onChange, value } }) => (
-              <TextInput
+              <SettingsTextInput
                 instanceId="sso-identity-provider-name"
                 autoComplete="off"
                 label={t`Name`}

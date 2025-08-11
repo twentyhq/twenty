@@ -1,22 +1,22 @@
 import { useApolloClient, useMutation } from '@apollo/client';
 
 import {
-  UpdateOneFieldMetadataItemMutation,
-  UpdateOneFieldMetadataItemMutationVariables,
+  type UpdateOneFieldMetadataItemMutation,
+  type UpdateOneFieldMetadataItemMutationVariables,
 } from '~/generated-metadata/graphql';
 
 import { UPDATE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
+import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { useSetRecoilState } from 'recoil';
 
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
-import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+import { type RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { isDefined } from 'twenty-shared/utils';
 

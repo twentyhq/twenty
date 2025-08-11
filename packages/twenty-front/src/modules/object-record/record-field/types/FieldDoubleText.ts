@@ -1,5 +1,5 @@
-import { z } from 'zod';
+import { type z } from 'zod';
 
-import { DoubleTextTypeResolver } from './resolvers/DoubleTextTypeResolver';
+import { type DoubleTextTypeResolver } from './resolvers/DoubleTextTypeResolver';
 
 export type FieldDoubleText = z.infer<typeof DoubleTextTypeResolver>;

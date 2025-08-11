@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import {
-  AccountsToReconnectKeyValueType,
+  type AccountsToReconnectKeyValueType,
   AccountsToReconnectKeys,
 } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 

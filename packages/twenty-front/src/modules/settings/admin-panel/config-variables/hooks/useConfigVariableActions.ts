@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { GET_DATABASE_CONFIG_VARIABLE } from '@/settings/admin-panel/config-variables/graphql/queries/getDatabaseConfigVariable';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ConfigVariableValue } from 'twenty-shared/types';
+import { type ConfigVariableValue } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   useCreateDatabaseConfigVariableMutation,
@@ -70,7 +70,7 @@ export const useConfigVariableActions = (variableName: string) => {
       enqueueSuccessSnackBar({
         message: t`Variable updated successfully.`,
       });
-    } catch (error) {
+    } catch {
       enqueueErrorSnackBar({
         message: t`Failed to update variable`,
       });
@@ -100,7 +100,7 @@ export const useConfigVariableActions = (variableName: string) => {
       enqueueSuccessSnackBar({
         message: t`Variable deleted successfully.`,
       });
-    } catch (error) {
+    } catch {
       enqueueErrorSnackBar({
         message: t`Failed to remove override`,
       });

@@ -1,6 +1,6 @@
 import { isNull, isNumber } from '@sniptt/guards';
 
-import { FieldNumberValue } from '../FieldMetadata';
+import { type FieldNumberValue } from '../FieldMetadata';
 
 // TODO: add zod
 export const isFieldNumberValue = (

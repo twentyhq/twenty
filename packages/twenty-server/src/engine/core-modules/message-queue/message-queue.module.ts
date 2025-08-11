@@ -1,12 +1,12 @@
-import { DynamicModule, Global, Module } from '@nestjs/common';
+import { type DynamicModule, Global, Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 
 import { MessageQueueCoreModule } from 'src/engine/core-modules/message-queue/message-queue-core.module';
 import { MessageQueueMetadataAccessor } from 'src/engine/core-modules/message-queue/message-queue-metadata.accessor';
 import { MessageQueueExplorer } from 'src/engine/core-modules/message-queue/message-queue.explorer';
 import {
-  ASYNC_OPTIONS_TYPE,
-  OPTIONS_TYPE,
+  type ASYNC_OPTIONS_TYPE,
+  type OPTIONS_TYPE,
 } from 'src/engine/core-modules/message-queue/message-queue.module-definition';
 
 @Global()

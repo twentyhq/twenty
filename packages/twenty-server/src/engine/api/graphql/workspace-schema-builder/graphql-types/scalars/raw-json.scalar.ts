@@ -1,7 +1,7 @@
 import { GraphQLScalarType } from 'graphql';
-import { Maybe } from 'graphql-yoga';
-import { ObjMap } from 'graphql/jsutils/ObjMap';
-import { ASTNode, Kind, ValueNode } from 'graphql/language';
+import { type Maybe } from 'graphql-yoga';
+import { type ObjMap } from 'graphql/jsutils/ObjMap';
+import { type ASTNode, Kind, type ValueNode } from 'graphql/language';
 
 import { ValidationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
@@ -60,7 +60,7 @@ const stringify = (value: any): string => {
 const parseJSON = (value: string): object => {
   try {
     return JSON.parse(value);
-  } catch (e) {
+  } catch {
     throw new ValidationError(`Value is not valid JSON: ${value}`);
   }
 };

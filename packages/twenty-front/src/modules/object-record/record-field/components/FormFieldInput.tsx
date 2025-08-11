@@ -15,20 +15,20 @@ import { FormRichTextV2FieldInput } from '@/object-record/record-field/form-type
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { FormUuidFieldInput } from '@/object-record/record-field/form-types/components/FormUuidFieldInput';
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { type VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import {
-  FieldAddressValue,
-  FieldEmailsValue,
-  FieldFullNameValue,
-  FieldLinksValue,
-  FieldMetadata,
-  FieldMultiSelectValue,
-  FieldPhonesValue,
-  FieldRelationToOneValue,
-  FieldRelationValue,
-  FieldRichTextV2Value,
-  FormFieldCurrencyValue,
+  type FieldAddressValue,
+  type FieldEmailsValue,
+  type FieldFullNameValue,
+  type FieldLinksValue,
+  type FieldMetadata,
+  type FieldMultiSelectValue,
+  type FieldPhonesValue,
+  type FieldRelationToOneValue,
+  type FieldRelationValue,
+  type FieldRichTextV2Value,
+  type FormFieldCurrencyValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
@@ -48,7 +48,7 @@ import { isFieldSelect } from '@/object-record/record-field/types/guards/isField
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { JsonValue } from 'type-fest';
+import { type JsonValue } from 'type-fest';
 
 type FormFieldInputProps = {
   field: Pick<FieldDefinition<FieldMetadata>, 'label' | 'metadata' | 'type'>;

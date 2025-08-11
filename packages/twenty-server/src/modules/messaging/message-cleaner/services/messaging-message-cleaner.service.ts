@@ -1,15 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { IsNull } from 'typeorm';
 
-import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
-import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
+import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { deleteUsingPagination } from 'src/modules/messaging/message-cleaner/utils/delete-using-pagination.util';
 
 @Injectable()
 export class MessagingMessageCleanerService {
+  private readonly logger = new Logger(MessagingMessageCleanerService.name);
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
   public async cleanWorkspaceThreads(workspaceId: string) {
@@ -57,6 +58,9 @@ export class MessagingMessageCleanerService {
             workspaceId: string,
             transactionManager?: WorkspaceEntityManager,
           ) => {
+            this.logger.log(
+              `WorkspaceId: ${workspaceId} Deleting ${ids.length} messages from message cleaner`,
+            );
             await messageRepository.delete(ids, transactionManager);
           },
           transactionManager,

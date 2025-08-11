@@ -2,7 +2,7 @@ import { FormFieldInputContainer } from '@/object-record/record-field/form-types
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { type VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import {
   DateTimePicker,
@@ -20,11 +20,11 @@ import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariabl
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { ChangeEvent, KeyboardEvent, useId, useRef, useState } from 'react';
+import { type ChangeEvent, type KeyboardEvent, useId, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
-import { Nullable } from 'twenty-ui/utilities';
+import { type Nullable } from 'twenty-ui/utilities';
 
 const StyledInputContainer = styled(FormFieldInputInnerContainer)`
   display: grid;

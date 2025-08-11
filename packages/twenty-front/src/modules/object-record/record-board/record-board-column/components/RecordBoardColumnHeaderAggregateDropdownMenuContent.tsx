@@ -1,7 +1,7 @@
 import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
 import {
   RecordBoardColumnHeaderAggregateDropdownContext,
-  RecordBoardColumnHeaderAggregateDropdownContextValue,
+  type RecordBoardColumnHeaderAggregateDropdownContextValue,
 } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
 
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';

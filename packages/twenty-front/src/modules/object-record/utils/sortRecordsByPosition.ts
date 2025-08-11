@@ -1,4 +1,4 @@
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const sortRecordsByPosition = (
   record1: ObjectRecord,

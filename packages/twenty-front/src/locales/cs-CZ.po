@@ -83,11 +83,6 @@ msgstr "{0}"
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} z {fieldLabel}"
 
-#. js-lingui-id: z5EvY5
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-msgid "{apiKeyName}"
-msgstr "{apiKeyName} API klíč"
-
 #. js-lingui-id: zi5SHH
 #: src/modules/object-record/record-index/components/RecordIndexPageHeader.tsx
 msgid "{contextStoreNumberOfSelectedRecords} selected"
@@ -215,6 +210,11 @@ msgstr "Metoda 2FA byla úspěšně odstraněna."
 msgid "2FA Method Reset"
 msgstr "Resetování metody 2FA"
 
+#. js-lingui-id: C6xZqR
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "A role must be selected for the API key"
+msgstr ""
+
 #. js-lingui-id: nMTB1f
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "A shared environment where you will be able to manage your customer relations with your team."
@@ -229,6 +229,11 @@ msgstr "Verifikační email byl odeslán na"
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Ability to edit all settings"
 msgstr "Schopnost upravovat všechna nastavení"
+
+#. js-lingui-id: wTKqOI
+#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
+msgid "Ability to interact with this object's fields."
+msgstr ""
 
 #. js-lingui-id: ssjjFt
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -307,11 +312,6 @@ msgstr ""
 msgid "Actions users can perform on all objects"
 msgstr "Akce, které uživatelé mohou provádět na všech objektech"
 
-#. js-lingui-id: xnXGwA
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "Actions users can perform on specific objects"
-msgstr "Akce, které uživatelé mohou provádět na konkrétních objektech"
-
 #. js-lingui-id: N4ZcCd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 msgid "Actions users can perform on this object"
@@ -342,6 +342,13 @@ msgstr "Aktivní"
 msgid "Active API keys created by you or your team."
 msgstr "Aktivní API klíče vytvořené vámi nebo vaším týmem."
 
+#. js-lingui-id: KKfos4
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerReadonly.tsx
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerReadonly.tsx
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerEditable.tsx
+msgid "Add a Trigger"
+msgstr ""
+
 #. js-lingui-id: MPPZ54
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
@@ -369,6 +376,12 @@ msgstr "Přidat filtr"
 msgid "Add first filter"
 msgstr "Přidat první filtr"
 
+#. js-lingui-id: B0gWuX
+#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
+#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
+msgid "Add Handoff"
+msgstr ""
+
 #. js-lingui-id: 7XzAKI
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
 msgid "Add inputs to your form"
@@ -376,8 +389,14 @@ msgstr "Přidejte vstupy do svého formuláře"
 
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
+#: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
 msgid "Add new"
 msgstr "Přidat nový"
+
+#. js-lingui-id: erHjaG
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
+msgid "Add node"
+msgstr ""
 
 #. js-lingui-id: dEO3Zx
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -388,6 +407,11 @@ msgstr "Přidat objekt"
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
 msgid "Add object permission"
 msgstr "Přidat oprávnění objektu"
+
+#. js-lingui-id: oLB/Qu
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+msgid "Add object rule"
+msgstr ""
 
 #. js-lingui-id: Dl5lVI
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -403,11 +427,6 @@ msgstr "Přidat nebo odebrat uživatele"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Add Output Field"
 msgstr "Přidat výstupní pole"
-
-#. js-lingui-id: O8tK4v
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "Add rule"
-msgstr "Přidat pravidlo"
 
 #. js-lingui-id: sgXUv+
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard.tsx
@@ -458,6 +477,16 @@ msgstr "Přidáno {beautifyPastDateRelative}"
 msgid "Added to blocklist"
 msgstr "Přidáno do blokovaného seznamu"
 
+#. js-lingui-id: hW/fMg
+#: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+msgid "Address 1"
+msgstr ""
+
+#. js-lingui-id: 5Um70B
+#: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+msgid "Address 2"
+msgstr ""
+
 #. js-lingui-id: Eis4ey
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Adjust the role-related settings"
@@ -492,13 +521,47 @@ msgstr "Pokročilé:"
 msgid "Afrikaans"
 msgstr "Afrikánština"
 
+#. js-lingui-id: iEQQyu
+#: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/SettingsAgentForm.tsx
+msgid "Agent"
+msgstr ""
+
+#. js-lingui-id: Q37C8E
+#: src/pages/settings/ai/components/SettingsAgentHandoffSection.tsx
+msgid "Agent Handoffs"
+msgstr ""
+
+#. js-lingui-id: mDXkHu
+#: src/pages/settings/ai/SettingsAgentForm.tsx
+msgid "Agent not found"
+msgstr ""
+
+#. js-lingui-id: 8Uv5e6
+#: src/pages/settings/ai/SettingsAI.tsx
+msgid "Agents"
+msgstr ""
+
+#. js-lingui-id: 0k5XwN
+#: src/pages/settings/ai/SettingsAI.tsx
+msgid "Agents used to route queries to specialized agents"
+msgstr ""
+
+#. js-lingui-id: jsQZMk
+#: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/ai/SettingsAI.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "AI"
+msgstr ""
+
 #. js-lingui-id: MnmJG1
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "AI Agent"
 msgstr "AI Agent"
 
 #. js-lingui-id: kNfr85
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 msgid "AI Model"
 msgstr "AI Model"
 
@@ -508,6 +571,9 @@ msgid "AI Response Schema"
 msgstr "Schéma odpovědi AI"
 
 #. js-lingui-id: N40H+G
+#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "All"
 msgstr "Vše"
@@ -522,10 +588,10 @@ msgstr "Vše ({relationRecordsCount})"
 msgid "All Actions Access"
 msgstr "Přístup ke všem akcím"
 
-#. js-lingui-id: 7EZqN0
+#. js-lingui-id: dJn2LR
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-msgid "All emails and events linked to this account will be deleted"
-msgstr "Všechny e-maily a události spojené s tímto účtem budou smazány"
+msgid "All emails and events linked to this account ({accountHandle}) will be deleted"
+msgstr ""
 
 #. js-lingui-id: 3xugyj
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -608,11 +674,6 @@ msgstr "Povolit uživatelům přihlášení pomocí e-mailu a hesla."
 #: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
 msgid "An error occurred."
 msgstr "Došlo k chybě."
-
-#. js-lingui-id: mJ6m4C
-#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
-msgid "An optional description"
-msgstr "Volitelný popis"
 
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -753,11 +814,6 @@ msgstr "Zeptejte se AI"
 msgid "Assign {workspaceMemberName}?"
 msgstr "Přiřadit uživatele {workspaceMemberName}?"
 
-#. js-lingui-id: 449JVv
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
-msgid "Assign Role"
-msgstr "Přiřadit roli"
-
 #. js-lingui-id: 17M/rH
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Assign roles to manage each member’s access and permissions"
@@ -822,11 +878,6 @@ msgstr "Autorizované URI"
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Authorized URL copied to clipboard"
 msgstr "Autorizovaná URL zkopírována do schránky"
-
-#. js-lingui-id: R9Khdg
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
-msgid "Auto"
-msgstr "Auto"
 
 #. js-lingui-id: 2zJkmL
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -904,7 +955,7 @@ msgid "Book your onboarding"
 msgstr "Rezervujte si úvodní schůzku"
 
 #. js-lingui-id: bOwPjT
-#: src/modules/ai/constants/output-field-type-options.ts
+#: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Boolean"
 msgstr "Booleovská hodnota"
 
@@ -986,6 +1037,7 @@ msgid "Can't change API names for standard objects"
 msgstr "Nelze změnit názvy API pro standardní objekty"
 
 #. js-lingui-id: dEgA5A
+#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
@@ -1046,7 +1098,6 @@ msgid "Change to Yearly?"
 msgstr "Změnit na roční?"
 
 #. js-lingui-id: AHZflp
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #: src/modules/ai/components/AIChatEmptyState.tsx
 msgid "Chat"
 msgstr "Chat"
@@ -1106,6 +1157,11 @@ msgstr "Vyberte formát použitý k zobrazení datumové hodnoty"
 msgid "Choose your Trial"
 msgstr "Vyberte si Trial"
 
+#. js-lingui-id: 3wV73y
+#: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+msgid "City"
+msgstr ""
+
 #. js-lingui-id: xCJdfg
 #: src/modules/ui/input/components/internal/date/components/InternalDatePicker.tsx
 msgid "Clear"
@@ -1161,6 +1217,11 @@ msgstr "Zavřít příkazové menu"
 msgid "Code"
 msgstr "Kód"
 
+#. js-lingui-id: /8PmQ9
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
+msgid "Code Editor"
+msgstr ""
+
 #. js-lingui-id: H86f9p
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
@@ -1201,6 +1262,7 @@ msgstr "Společnosti"
 
 #. js-lingui-id: 0CuAor
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody.tsx
 msgid "Conditions"
 msgstr "Podmínky"
 
@@ -1245,6 +1307,11 @@ msgstr "Konfigurujte nastavení IMAP pro přijímání a synchronizaci vašich e
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Configure SMTP settings to send emails from your account."
 msgstr "Nakonfigurujte nastavení SMTP pro odesílání e-mailů z vašeho účtu."
+
+#. js-lingui-id: SpV+F6
+#: src/pages/settings/ai/components/SettingsAgentHandoffSection.tsx
+msgid "Configure which agents this agent can hand off conversations to"
+msgstr ""
 
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -1457,6 +1524,11 @@ msgstr "Počet pravdivých"
 msgid "Count unique values"
 msgstr "Počet unikátních hodnot"
 
+#. js-lingui-id: JNCzPW
+#: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+msgid "Country"
+msgstr ""
+
 #. js-lingui-id: hYgDIe
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 msgid "Create"
@@ -1467,6 +1539,11 @@ msgstr "Vytvořit"
 #: src/modules/action-menu/actions/record-agnostic-actions/hooks/useRelatedRecordActions.ts
 msgid "Create {targetObjectLabelSingular}"
 msgstr "Vytvořit {targetObjectLabelSingular}"
+
+#. js-lingui-id: 7/h1ZC
+#: src/pages/settings/ai/SettingsAgentForm.tsx
+msgid "Create a new AI agent"
+msgstr ""
 
 #. js-lingui-id: zNoOC2
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
@@ -1620,6 +1697,7 @@ msgstr "Čeština"
 #. js-lingui-id: Zz6Cxn
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
@@ -1657,6 +1735,7 @@ msgstr "Datový model"
 #. js-lingui-id: r+cVRP
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "Data type"
 msgstr "Datový typ"
 
@@ -1670,7 +1749,7 @@ msgstr "Konfigurace databáze je momentálně zakázána."
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx
-#: src/modules/ai/constants/output-field-type-options.ts
+#: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Date"
 msgstr "Datum"
 
@@ -1723,6 +1802,11 @@ msgstr "Deaktivovat Workflow"
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "Deactivated"
 msgstr "Deaktivováno"
+
+#. js-lingui-id: dPDEh6
+#: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
+msgid "Decide which Sub-address fields you want to display"
+msgstr ""
 
 #. js-lingui-id: ovBPCi
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
@@ -1788,10 +1872,10 @@ msgstr "smazat"
 msgid "Delete"
 msgstr "Smazat"
 
-#. js-lingui-id: 2nRIIp
+#. js-lingui-id: 65N6Yr
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Delete {objectLabel}"
-msgstr "Smazat {objectLabel}"
+msgid "Delete {objectLabelPlural}"
+msgstr ""
 
 #. js-lingui-id: ZDGm40
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -1805,6 +1889,13 @@ msgstr "Smazat účet"
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Delete account and all the associated data"
 msgstr "Smazat účet a veškerá související data"
+
+#. js-lingui-id: YMNj8z
+#: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal.tsx
+#: src/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal.tsx
+msgid "Delete Agent"
+msgstr ""
 
 #. js-lingui-id: hGfWDm
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -1835,6 +1926,11 @@ msgstr "Smazat roli"
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModal.tsx
 msgid "Delete Role Permanently"
 msgstr "Trvale smazat roli"
+
+#. js-lingui-id: DgHnjS
+#: src/pages/settings/ai/SettingsAgentForm.tsx
+msgid "Delete this agent"
+msgstr ""
 
 #. js-lingui-id: T6S2Ns
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -1908,14 +2004,25 @@ msgstr "Sestupně"
 msgid "Describe what you want the AI to do..."
 msgstr "Popište, co chcete, aby AI dělalo..."
 
+#. js-lingui-id: ptyOy7
+#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
+msgid "Describe when this handoff should be used"
+msgstr ""
+
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Description"
 msgstr "Popis"
+
+#. js-lingui-id: /mo9tB
+#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
+msgid "Description (Optional)"
+msgstr ""
 
 #. js-lingui-id: +ow7t4
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
@@ -1928,10 +2035,10 @@ msgstr "zničit"
 msgid "Destroy"
 msgstr "\"\""
 
-#. js-lingui-id: vI0W/N
+#. js-lingui-id: YI3c7h
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Destroy {objectLabel}"
-msgstr "Zničit {objectLabel}"
+msgid "Destroy {objectLabelPlural}"
+msgstr ""
 
 #. js-lingui-id: L68qSB
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -2051,16 +2158,22 @@ msgstr "Nejstarší datum"
 
 #. js-lingui-id: ePK91l
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Edit"
 msgstr "Upravit"
 
-#. js-lingui-id: fGxkii
+#. js-lingui-id: zQXUkv
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Edit {objectLabel}"
-msgstr "Upravit {objectLabel}"
+msgid "Edit {objectLabelPlural}"
+msgstr ""
+
+#. js-lingui-id: CQrc7J
+#: src/pages/settings/ai/SettingsAgentForm.tsx
+msgid "Edit Agent"
+msgstr ""
 
 #. js-lingui-id: 6vZ75d
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -2080,6 +2193,7 @@ msgid "Edit field values"
 msgstr "Upravit hodnoty polí"
 
 #. js-lingui-id: oKQ7ls
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
 msgid "Edit Fields"
 msgstr "Upravit pole"
@@ -2251,6 +2365,11 @@ msgstr "Zadejte otázku..."
 msgid "Enter a value to store in database"
 msgstr "Zadejte hodnotu pro uložení do databáze"
 
+#. js-lingui-id: P/e64M
+#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+msgid "Enter agent name*"
+msgstr ""
+
 #. js-lingui-id: 9/30HU
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
 msgid "Enter in <0>Unicode</0> format"
@@ -2270,6 +2389,11 @@ msgstr "Zadejte údaje pro nastavení připojení"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Enter the infos to set the connection"
 msgstr "Zadejte informace pro nastavení připojení"
+
+#. js-lingui-id: 3EF9HN
+#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+msgid "Enter the system prompt that defines this agent's behavior and capabilities"
+msgstr ""
 
 #. js-lingui-id: rYIISB
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -2336,6 +2460,11 @@ msgstr "Chyba při obnovování klíče API."
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Error resending invitation"
 msgstr "Chyba při opětovném odeslání pozvánky"
+
+#. js-lingui-id: lX3Yil
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "Error updating role"
+msgstr ""
 
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -2416,6 +2545,11 @@ msgstr "Opustit nastavení"
 #: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Expand"
 msgstr "Rozbalit"
+
+#. js-lingui-id: Y7w75u
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowServerlessFunctionCodeEditor.tsx
+msgid "Expand to Full Screen"
+msgstr ""
 
 #. js-lingui-id: bKBhgb
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -2524,6 +2658,11 @@ msgstr "Výraz"
 msgid "Extra Credits Used"
 msgstr "Použité extra kredity"
 
+#. js-lingui-id: w/6jdn
+#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
+msgid "Failed to create handoff"
+msgstr ""
+
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
 msgid "Failed to load webhook"
@@ -2533,6 +2672,11 @@ msgstr "Nepodařilo se načíst webhook"
 #: src/modules/ai/components/internal/AgentChatContextPreview.tsx
 msgid "Failed to remove file"
 msgstr "Nepodařilo se odstranit soubor"
+
+#. js-lingui-id: 99t8X7
+#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
+msgid "Failed to remove handoff"
+msgstr ""
 
 #. js-lingui-id: A/P7PX
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
@@ -2599,6 +2743,11 @@ msgstr "Pole"
 #: src/testing/mock-data/tableData.ts
 msgid "Fields Count"
 msgstr "Počet polí"
+
+#. js-lingui-id: 5UU7Q6
+#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
+msgid "Fields Permissions"
+msgstr ""
 
 #. js-lingui-id: uTDtiS
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -2833,6 +2982,16 @@ msgstr "Skupina"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 msgid "Group by"
 msgstr "Skupina podle"
+
+#. js-lingui-id: /Oqu/V
+#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
+msgid "Handoff created successfully"
+msgstr ""
+
+#. js-lingui-id: cZP3a/
+#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
+msgid "Handoff removed successfully"
+msgstr ""
 
 #. js-lingui-id: I1IOmb
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
@@ -3475,6 +3634,7 @@ msgid "Loading metrics data..."
 msgstr "Načítání dat metrik..."
 
 #. js-lingui-id: Z3FXyt
+#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Loading..."
@@ -3603,6 +3763,7 @@ msgid "Merge preview"
 msgstr ""
 
 #. js-lingui-id: Cmeamd
+#: src/modules/command-menu/hooks/useOpenMergeRecordsPageInCommandMenu.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Merge records"
@@ -3721,6 +3882,7 @@ msgstr "musí být pole platných emailů"
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
+#: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/workspace/components/NameField.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
@@ -3728,6 +3890,7 @@ msgstr "musí být pole platných emailů"
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
@@ -3793,15 +3956,23 @@ msgstr "Přejít na předchozí workflow"
 msgid "New"
 msgstr "Nový"
 
-#. js-lingui-id: Gntx7w
+#. js-lingui-id: LfvvW4
 #: src/modules/command-menu/hooks/useOpenRecordInCommandMenu.ts
-msgid "New {capitalizedObjectNameSingular}"
-msgstr "Nový {capitalizedObjectNameSingular}"
+msgid "New {objectLabelSingular}"
+msgstr ""
 
 #. js-lingui-id: Kcr9Fr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
 msgid "New account"
 msgstr "Nový účet"
+
+#. js-lingui-id: mJIA0/
+#: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/SettingsAI.tsx
+msgid "New Agent"
+msgstr ""
 
 #. js-lingui-id: 2qr/61
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -3866,6 +4037,22 @@ msgstr "Další krok"
 msgid "Ninth"
 msgstr ""
 
+#. js-lingui-id: 1UzENP
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
+msgid "No"
+msgstr ""
+
+#. js-lingui-id: vhsJG1
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "No Agent"
+msgstr ""
+
+#. js-lingui-id: pC+mOo
+#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
+msgid "No agents available for handoff"
+msgstr ""
+
 #. js-lingui-id: tFxVHz
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
 msgid "No available fields to select"
@@ -3901,6 +4088,11 @@ msgstr "Žádná data obsahující chyby"
 msgid "No data found"
 msgstr "Žádná data nenalezena"
 
+#. js-lingui-id: flmDTf
+#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
+msgid "No description"
+msgstr ""
+
 #. js-lingui-id: xlUOps
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "No free workflow executions left. End trial period and activate your billing to continue."
@@ -3910,6 +4102,16 @@ msgstr "Žádné volné spuštění workflowu nezbylo. Ukončete zkušební obdo
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "No free workflow executions left. Please contact your admin."
 msgstr "Žádné volné kroky workflow nezbývají. Prosím, kontaktujte svého administrátora."
+
+#. js-lingui-id: S81IYy
+#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
+msgid "No handoffs configured for this agent"
+msgstr ""
+
+#. js-lingui-id: zsMgNq
+#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
+msgid "No handoffs match your search"
+msgstr ""
 
 #. js-lingui-id: OcMef3
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
@@ -3937,6 +4139,11 @@ msgstr "Žádní členové neodpovídají vašemu vyhledávání"
 msgid "No metrics data available"
 msgstr "Žádná data metrik nejsou k dispozici"
 
+#. js-lingui-id: UWZZdQ
+#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+msgid "No models available. Please configure AI models in your workspace settings."
+msgstr ""
+
 #. js-lingui-id: daCzI1
 #: src/modules/ui/field/input/components/MultiSelectInput.tsx
 msgid "No option found"
@@ -3952,10 +4159,10 @@ msgstr "Žádný výstup není k dispozici"
 msgid "No payment method found. Please update your billing details."
 msgstr "Nenalezen žádný platební prostředek. Prosím, aktualizujte své fakturační údaje."
 
-#. js-lingui-id: CfOZmU
+#. js-lingui-id: kSCxfd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "No permissions found"
-msgstr "Žádná oprávnění nenalezena"
+msgid "No permissions have been set for individual objects."
+msgstr ""
 
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -3972,11 +4179,6 @@ msgstr "Žádný výsledek"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
 msgstr "Žádné výsledky"
-
-#. js-lingui-id: qq788M
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
-msgid "No role"
-msgstr "Žádná role"
 
 #. js-lingui-id: 9mcJ/7
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -4070,7 +4272,7 @@ msgstr "Poznámky"
 
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
-#: src/modules/ai/constants/output-field-type-options.ts
+#: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Number"
 msgstr "Číslo"
 
@@ -4086,7 +4288,6 @@ msgstr "Číselný typ"
 
 #. js-lingui-id: W0i24j
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
 msgstr "Objekt"
@@ -4098,7 +4299,7 @@ msgstr "Cíl objektu"
 
 #. js-lingui-id: YJgmMZ
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 msgid "Object-Level"
 msgstr "Úroveň objektu"
 
@@ -4312,7 +4513,7 @@ msgid "Phone number copied to clipboard"
 msgstr "Telefonní číslo zkopírováno do schránky"
 
 #. js-lingui-id: FdlpPK
-#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownObjectItems.tsx
+#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownAllItems.tsx
 msgid "Pick a {nameSingular} record"
 msgstr "Vyberte záznam {nameSingular}"
 
@@ -4336,6 +4537,11 @@ msgstr "Opičárna"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Please check your email for a verification link."
 msgstr "Zkontrolujte prosím svůj e-mail a klikněte na ověřovací odkaz."
+
+#. js-lingui-id: K/TMbW
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "Please create agents in the AI settings to use in workflows."
+msgstr ""
 
 #. js-lingui-id: CjNkdJ
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
@@ -4378,10 +4584,20 @@ msgstr "Portugalština — Brazílie"
 msgid "Portuguese — Portugal"
 msgstr "Portugalština — Portugalsko"
 
+#. js-lingui-id: OKJUcC
+#: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+msgid "Postcode"
+msgstr ""
+
 #. js-lingui-id: /v6Rp9
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Prefilling your workspace data..."
 msgstr "Předvyplňování dat ve vašem pracovním prostoru..."
+
+#. js-lingui-id: koeh2Y
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
+msgid "Prevent from assigining the same value to different records"
+msgstr ""
 
 #. js-lingui-id: rdUucN
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
@@ -4550,6 +4766,16 @@ msgstr "Odstranit jako výchozí"
 msgid "Remove from favorites"
 msgstr "Odebrat z oblíbených"
 
+#. js-lingui-id: utQSYi
+#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
+msgid "Remove handoff"
+msgstr ""
+
+#. js-lingui-id: OwOSPx
+#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
+msgid "Remove Handoff"
+msgstr ""
+
 #. js-lingui-id: 00Lxnh
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove option"
@@ -4587,6 +4813,11 @@ msgstr "Obnovit heslo"
 #: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx
 msgid "Reset to"
 msgstr "Obnovit na"
+
+#. js-lingui-id: L+rMC9
+#: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
+msgid "Reset to default"
+msgstr ""
 
 #. js-lingui-id: Tj36Dr
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
@@ -4646,6 +4877,14 @@ msgstr "Zrušeno pro {revokedBy} {pluralizedRevokedObject}"
 msgid "Revoked for this object"
 msgstr "Zrušeno pro tento objekt"
 
+#. js-lingui-id: GDvlUT
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+#: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
+msgid "Role"
+msgstr ""
+
 #. js-lingui-id: iSfzXo
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 #: src/modules/settings/roles/role/components/SettingsRoleLabelContainer.tsx
@@ -4656,6 +4895,11 @@ msgstr "Název role"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Role name cannot be empty"
 msgstr "Název role nesmí být prázdný"
+
+#. js-lingui-id: M9SCiK
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "Role updated successfully"
+msgstr ""
 
 #. js-lingui-id: 5dJK4M
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
@@ -4729,6 +4973,7 @@ msgstr "Hledat ''{commandMenuSearch}'' s..."
 
 #. js-lingui-id: l1/uy2
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "Search a field..."
 msgstr "Hledat ve sloupci..."
 
@@ -4741,6 +4986,11 @@ msgstr "Vyhledávejte člena týmu..."
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
 msgid "Search a type"
 msgstr "Hledat typ"
+
+#. js-lingui-id: 4fd0q+
+#: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
+msgid "Search an agent..."
+msgstr ""
 
 #. js-lingui-id: x55IVv
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
@@ -4794,6 +5044,11 @@ msgstr "Hledání ve sloupcích"
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Search for an object..."
 msgstr "Hledat objekt..."
+
+#. js-lingui-id: OflyKY
+#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
+msgid "Search handoffs..."
+msgstr ""
 
 #. js-lingui-id: lnwW17
 #: src/modules/ui/input/components/IconPicker.tsx
@@ -4851,10 +5106,15 @@ msgstr "Bezpečnost"
 msgid "see"
 msgstr "vidět"
 
-#. js-lingui-id: rJnbMG
+#. js-lingui-id: h+8V38
+#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
+msgid "See"
+msgstr ""
+
+#. js-lingui-id: aOvXdk
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "See {objectLabel}"
-msgstr "Zobrazit {objectLabel}"
+msgid "See {objectLabelPlural}"
+msgstr ""
 
 #. js-lingui-id: QREcJS
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -4876,6 +5136,11 @@ msgstr "Zobrazit smazaná spuštění"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See deleted workflows"
 msgstr "Zobrazit smazané pracovní postupy"
+
+#. js-lingui-id: oGROXc
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
+msgid "See Fields"
+msgstr ""
 
 #. js-lingui-id: irbH/8
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -4933,11 +5198,26 @@ msgstr ""
 msgid "Select a record then open the ⌘K to trigger this workflow"
 msgstr "Vyberte záznam a poté otevřete ⌘K pro spuštění tohoto pracovního postupu"
 
+#. js-lingui-id: h4pFju
+#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+msgid "Select a role"
+msgstr ""
+
+#. js-lingui-id: l5KvVl
+#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
+msgid "Select a target agent"
+msgstr ""
+
 #. js-lingui-id: WZvt/6
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
 #: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
 msgid "Select Action"
 msgstr "Vybrat akci"
+
+#. js-lingui-id: JDdVYO
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "Select Agent"
+msgstr ""
 
 #. js-lingui-id: hVPa4O
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn.tsx
@@ -5067,7 +5347,6 @@ msgstr "Nastavení vaší databáze..."
 
 #. js-lingui-id: Tz0i8g
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -5221,6 +5500,12 @@ msgstr "SMTP Server"
 msgid "smtp.example.com"
 msgstr "smtp.example.com"
 
+#. js-lingui-id: zfjcH5
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
+msgid "Some"
+msgstr ""
+
 #. js-lingui-id: f6Hub0
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -5264,6 +5549,11 @@ msgstr "Standardní"
 msgid "Start a conversation with your AI agent to get workflow insights, task assistance, and process guidance"
 msgstr "Začněte rozhovor se svým AI agentem, abyste získali přehled o pracovních postupech, pomoc s úkoly a vedení procesu"
 
+#. js-lingui-id: RS0o7b
+#: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+msgid "State"
+msgstr ""
+
 #. js-lingui-id: uAQUqI
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -5275,6 +5565,11 @@ msgstr "Stav"
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
 msgid "Stored in database"
 msgstr "Uloženo v databázi"
+
+#. js-lingui-id: WIUeUf
+#: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
+msgid "Sub-Fields"
+msgstr ""
 
 #. js-lingui-id: ku9TbG
 #: src/pages/settings/workspace/SettingsSubdomain.tsx
@@ -5414,6 +5709,11 @@ msgstr "Synchronizace popisku pole a API názvu"
 msgid "Synchronize Objects Labels and API Names"
 msgstr "Synchronizace popisků objektů a API názvů"
 
+#. js-lingui-id: ERq5FY
+#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+msgid "System Prompt*"
+msgstr ""
+
 #. js-lingui-id: D4SseJ
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
@@ -5456,6 +5756,12 @@ msgstr ""
 msgid "Table"
 msgstr "Tabulka"
 
+#. js-lingui-id: orMfFk
+#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
+#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
+msgid "Target Agent"
+msgstr ""
+
 #. js-lingui-id: GtycJ/
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Tasks"
@@ -5477,7 +5783,7 @@ msgid "Test Workflow"
 msgstr "Testovat pracovní postupy"
 
 #. js-lingui-id: xeiujy
-#: src/modules/ai/constants/output-field-type-options.ts
+#: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Text"
 msgstr "Text"
 
@@ -5589,20 +5895,25 @@ msgstr "Během aktualizace hesla došlo k chybě."
 msgid "Third"
 msgstr ""
 
-#. js-lingui-id: Kb1oAw
-#: src/modules/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityRowHook.ts
-msgid "This {columnName} value already exists in your import data"
-msgstr "Tato hodnota {columnName} již existuje ve vašich importovaných datech"
-
 #. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
 msgstr "Tato akce nemůže být vrácena zpět. Uživatele natrvalo odstraní a odstraní ho z všech přiřazení."
 
+#. js-lingui-id: bNY3MH
+#: src/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal.tsx
+msgid "This action cannot be undone. This will permanently delete your agent.<0/>Please type in the agent name to confirm."
+msgstr ""
+
 #. js-lingui-id: gWGuHC
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
 msgstr "Tuto akci nelze vrátit zpět. Tímto dojde k trvalému odstranění celého vašeho pracovního prostoru. <0/> Prosím, zadejte váš email k potvrzení."
+
+#. js-lingui-id: igSFzI
+#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
+msgid "This action cannot be undone. This will permanently remove the handoff configuration."
+msgstr ""
 
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -5644,6 +5955,11 @@ msgstr "Tento týden"
 msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
 msgstr "Toto obnoví hodnotu databáze na hodnotu prostředí/výchozí hodnotu. Přepis databáze bude odstraněn a systém použije nastavení prostředí."
 
+#. js-lingui-id: Vqn9Z1
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
+msgid "Tidy up workflow"
+msgstr ""
+
 #. js-lingui-id: n9nSNJ
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -5681,11 +5997,6 @@ msgstr "Přepnout všechna oprávnění nastavení"
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "Zítra"
-
-#. js-lingui-id: xdA/+p
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
-msgid "Tools"
-msgstr "Nástroje"
 
 #. js-lingui-id: dshGKq
 #: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
@@ -5771,6 +6082,7 @@ msgstr "Nastavení dvoufaktorového ověřování bylo úspěšně dokončeno!"
 #. js-lingui-id: +zy2Nq
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
+#: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 msgid "Type"
 msgstr "Typ"
@@ -5787,6 +6099,7 @@ msgstr "Ukrajinština"
 
 #. js-lingui-id: wSXm5S
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Unique"
 msgstr "Unikátní"
@@ -5817,6 +6130,11 @@ msgstr "Nepojmenovaný"
 msgid "Untitled role"
 msgstr "Nepojmenovaná role"
 
+#. js-lingui-id: p1M9l4
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
+msgid "Untitled Workflow"
+msgstr ""
+
 #. js-lingui-id: Y8zko3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "update"
@@ -5827,6 +6145,11 @@ msgstr "aktualizovat"
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 msgid "Update"
 msgstr "Aktualizovat"
+
+#. js-lingui-id: YT2VWW
+#: src/pages/settings/ai/SettingsAgentForm.tsx
+msgid "Update agent information"
+msgstr ""
 
 #. js-lingui-id: cAn7CC
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -6053,10 +6376,15 @@ msgstr "Narazili jsme na problém s ověřením"
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "Podporujeme vaše čtvercové PNG, JPEG a GIFy menší než 10MB"
 
-#. js-lingui-id: ZS7vYp
+#. js-lingui-id: KIfYq0
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
-msgid "We will send POST requests to this endpoint for every new event"
-msgstr "Na tento koncový bod budeme zasílat POST požadavky při každé nové události"
+msgid "We will send a POST request to this endpoint for each new event in application/json format"
+msgstr ""
+
+#. js-lingui-id: K4HbuR
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "We will send a POST request to this endpoint for each new event in application/json format."
+msgstr ""
 
 #. js-lingui-id: PI4LiB
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -6102,6 +6430,12 @@ msgstr "Webhooky"
 msgid "Welcome to {workspaceName}"
 msgstr "Vítejte ve {workspaceName}"
 
+#. js-lingui-id: cE4SvC
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "What this API can do: Select a user role to define its permissions."
+msgstr ""
+
 #. js-lingui-id: C51ilI
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 msgid "When the API key will expire."
@@ -6144,6 +6478,8 @@ msgstr "Pracovní postupy"
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
@@ -6194,6 +6530,11 @@ msgstr "Zalomit na stránkách záznamů"
 msgid "Write a description"
 msgstr "Napište popis"
 
+#. js-lingui-id: 7QXVrh
+#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+msgid "Write a description for this agent"
+msgstr ""
+
 #. js-lingui-id: zkWmBh
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Yearly"
@@ -6230,11 +6571,6 @@ msgstr "Nemáte povoleno vytvářet záznamy pro tento objekt"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync)."
 msgstr "Můžete nastavit libovolnou kombinaci IMAP (přijímání e-mailů), SMTP (odesílání e-mailů) a CalDAV (synchronizace kalendáře)."
-
-#. js-lingui-id: cdk3eC
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
-msgid "You haven't configured any model provider. Please set up an API Key in your instance's admin panel or as an environment variable."
-msgstr "Nenastavili jste žádného poskytovatele modelu. Nastavte prosím API klíč ve správním panelu vaší instance nebo jako proměnnou prostředí."
 
 #. js-lingui-id: zEM7Ne
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx

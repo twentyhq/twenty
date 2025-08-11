@@ -1,4 +1,4 @@
-import { EachTestingContext } from 'twenty-shared/testing';
+import { type EachTestingContext } from 'twenty-shared/testing';
 
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label.util';
 import {

@@ -1,10 +1,10 @@
 import { renderHook } from '@testing-library/react';
-import React, { ReactNode } from 'react';
-import { MutableSnapshot, RecoilRoot } from 'recoil';
+import React, { type ReactNode } from 'react';
+import { type MutableSnapshot, RecoilRoot } from 'recoil';
 
 import {
   mockedTableMetadata,
-  MockedTableType,
+  type MockedTableType,
   mockedTableData as tableData,
   tableDataSortedByFieldsCountInAscendingOrder,
   tableDataSortedByFieldsCountInDescendingOrder,
@@ -12,7 +12,7 @@ import {
   tableDataSortedBylabelInDescendingOrder,
 } from '~/testing/mock-data/tableData';
 
-import { OrderBy } from '@/types/OrderBy';
+import { type OrderBy } from '@/types/OrderBy';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';

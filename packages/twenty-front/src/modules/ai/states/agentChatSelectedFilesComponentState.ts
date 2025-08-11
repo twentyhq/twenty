@@ -1,7 +1,7 @@
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 import { AgentChatMessagesComponentInstanceContext } from '@/ai/states/agentChatMessagesComponentState';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
-export const agentChatSelectedFilesComponentState = createComponentStateV2<
+export const agentChatSelectedFilesComponentState = createComponentState<
   File[]
 >({
   key: 'agentChatSelectedFilesComponentState',

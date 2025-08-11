@@ -1,7 +1,7 @@
 import {
-  WorkflowDiagramEdge,
-  WorkflowDiagramEdgeType,
-  WorkflowDiagramNode,
+  type WorkflowDiagramEdge,
+  type WorkflowDiagramEdgeType,
+  type WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -53,6 +53,7 @@ export const transformFilterNodesAsEdges = <
         type: defaultFilterEdgeType,
         id: `${incomingEdge.source}-${outgoingEdge.target}-filter-${filterNode.id}`,
         target: outgoingEdge.target,
+        deletable: false,
         data: {
           ...incomingEdge.data,
           edgeType: 'filter',

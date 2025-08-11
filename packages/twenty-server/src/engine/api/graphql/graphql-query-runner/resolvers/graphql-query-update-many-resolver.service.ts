@@ -4,11 +4,11 @@ import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 
 import {
   GraphqlQueryBaseResolverService,
-  GraphqlQueryResolverExecutionArgs,
+  type GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
-import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
-import { UpdateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
+import { type UpdateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
@@ -68,7 +68,8 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
         authContext,
         workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
-        shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
+        shouldBypassPermissionChecks:
+          executionArgs.shouldBypassPermissionChecks,
         selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }

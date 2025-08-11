@@ -1,6 +1,6 @@
 import {
-  WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberTimeFormatEnum,
+  type WorkspaceMemberDateFormatEnum,
+  type WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 
 export type ColorScheme = 'Dark' | 'Light' | 'System';

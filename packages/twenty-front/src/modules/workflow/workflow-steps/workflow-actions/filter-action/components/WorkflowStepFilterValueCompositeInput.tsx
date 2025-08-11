@@ -6,8 +6,8 @@ import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useContext } from 'react';
-import { StepFilter } from 'twenty-shared/types';
-import { JsonValue } from 'type-fest';
+import { type StepFilter } from 'twenty-shared/types';
+import { type JsonValue } from 'type-fest';
 
 export const WorkflowStepFilterValueCompositeInput = ({
   stepFilter,

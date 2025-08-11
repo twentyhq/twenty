@@ -1,9 +1,9 @@
 import deepEqual from 'deep-equal';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export const objectRecordChangedValues = (
   oldRecord: Partial<ObjectRecord>,
@@ -31,7 +31,7 @@ export const objectRecordChangedValues = (
 
       return acc;
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     {} as Record<string, { before: any; after: any }>,
   );

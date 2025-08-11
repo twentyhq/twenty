@@ -3,15 +3,19 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'class-validator';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import {
+  type TwentyORMException,
+  TwentyORMExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageChannelSyncStatus,
-  MessageChannelWorkspaceEntity,
+  type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MESSAGING_THROTTLE_MAX_ATTEMPTS } from 'src/modules/messaging/message-import-manager/constants/messaging-throttle-max-attempts';
 import {
-  MessageImportDriverException,
+  type MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MessageNetworkExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-network.exception';
@@ -22,7 +26,6 @@ import {
 
 export enum MessageImportSyncStep {
   FULL_MESSAGE_LIST_FETCH = 'FULL_MESSAGE_LIST_FETCH', // TODO: deprecate to only use MESSAGE_LIST_FETCH
-  PARTIAL_MESSAGE_LIST_FETCH = 'PARTIAL_MESSAGE_LIST_FETCH', // TODO: deprecate to only use MESSAGE_LIST_FETCH
   MESSAGE_LIST_FETCH = 'MESSAGE_LIST_FETCH',
   MESSAGES_IMPORT_PENDING = 'MESSAGES_IMPORT_PENDING',
   MESSAGES_IMPORT_ONGOING = 'MESSAGES_IMPORT_ONGOING',
@@ -37,7 +40,7 @@ export class MessageImportExceptionHandlerService {
   ) {}
 
   public async handleDriverException(
-    exception: MessageImportDriverException | Error,
+    exception: MessageImportDriverException | Error | TwentyORMException,
     syncStep: MessageImportSyncStep,
     messageChannel: Pick<
       MessageChannelWorkspaceEntity,
@@ -54,6 +57,7 @@ export class MessageImportExceptionHandlerService {
             workspaceId,
           );
           break;
+        case TwentyORMExceptionCode.QUERY_READ_TIMEOUT:
         case MessageImportDriverExceptionCode.TEMPORARY_ERROR:
         case MessageNetworkExceptionCode.ECONNABORTED:
         case MessageNetworkExceptionCode.ENOTFOUND:
@@ -103,12 +107,12 @@ export class MessageImportExceptionHandlerService {
       'id' | 'throttleFailureCount'
     >,
     workspaceId: string,
-    exception: MessageImportDriverException,
+    exception: { message: string },
   ): Promise<void> {
     if (
       messageChannel.throttleFailureCount >= MESSAGING_THROTTLE_MAX_ATTEMPTS
     ) {
-      await this.messageChannelSyncStatusService.markAsFailedAndFlushMessagesToImport(
+      await this.messageChannelSyncStatusService.markAsFailed(
         [messageChannel.id],
         workspaceId,
         MessageChannelSyncStatus.FAILED_UNKNOWN,
@@ -168,7 +172,7 @@ export class MessageImportExceptionHandlerService {
     messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
-    await this.messageChannelSyncStatusService.markAsFailedAndFlushMessagesToImport(
+    await this.messageChannelSyncStatusService.markAsFailed(
       [messageChannel.id],
       workspaceId,
       MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
@@ -180,7 +184,7 @@ export class MessageImportExceptionHandlerService {
     messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
-    await this.messageChannelSyncStatusService.markAsFailedAndFlushMessagesToImport(
+    await this.messageChannelSyncStatusService.markAsFailed(
       [messageChannel.id],
       workspaceId,
       MessageChannelSyncStatus.FAILED_UNKNOWN,
@@ -209,7 +213,7 @@ export class MessageImportExceptionHandlerService {
     messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
-    await this.messageChannelSyncStatusService.markAsFailedAndFlushMessagesToImport(
+    await this.messageChannelSyncStatusService.markAsFailed(
       [messageChannel.id],
       workspaceId,
       MessageChannelSyncStatus.FAILED_UNKNOWN,

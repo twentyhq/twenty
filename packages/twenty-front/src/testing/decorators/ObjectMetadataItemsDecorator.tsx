@@ -1,4 +1,4 @@
-import { Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react';
 import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 

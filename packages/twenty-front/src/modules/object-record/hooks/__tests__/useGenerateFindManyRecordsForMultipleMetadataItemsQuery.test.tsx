@@ -1,11 +1,11 @@
 import { expect } from '@storybook/test';
 import { renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>

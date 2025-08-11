@@ -2,11 +2,12 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { CalendarEventParticipantsResponseStatus } from '@/activities/calendar/components/CalendarEventParticipantsResponseStatus';
-import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
+import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordReadOnly';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
@@ -94,6 +95,11 @@ export const CalendarEventDetails = ({
 
   const { calendarEventParticipants } = calendarEvent;
 
+  const isRecordReadOnly = useIsRecordReadOnly({
+    recordId: calendarEvent.id,
+    objectMetadataId: objectMetadataItem.id,
+  });
+
   const Fields = fieldsToDisplay.map((fieldName) => (
     <StyledPropertyBox key={fieldName}>
       <FieldContext.Provider
@@ -108,7 +114,7 @@ export const CalendarEventDetails = ({
           }),
           useUpdateRecord: () => [() => undefined, { loading: false }],
           maxWidth: 300,
-          isReadOnly: false,
+          isRecordFieldReadOnly: isRecordReadOnly,
         }}
       >
         <RecordFieldComponentInstanceContext.Provider

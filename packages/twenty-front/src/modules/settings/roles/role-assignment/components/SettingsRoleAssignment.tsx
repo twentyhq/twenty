@@ -1,5 +1,5 @@
 import {
-  CurrentWorkspaceMember,
+  type CurrentWorkspaceMember,
   currentWorkspaceMemberState,
 } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
@@ -7,17 +7,17 @@ import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWo
 import { SettingsRoleAssignmentConfirmationModal } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal';
 import { SettingsRoleAssignmentTableHeader } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader';
 import { SettingsRoleAssignmentWorkspaceMemberPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown';
-import { SettingsRoleAssignmentConfirmationModalSelectedWorkspaceMember } from '@/settings/roles/role-assignment/types/SettingsRoleAssignmentConfirmationModalSelectedWorkspaceMember';
+import { type SettingsRoleAssignmentConfirmationModalSelectedWorkspaceMember } from '@/settings/roles/role-assignment/types/SettingsRoleAssignmentConfirmationModalSelectedWorkspaceMember';
 import { settingsAllRolesSelector } from '@/settings/roles/states/settingsAllRolesSelector';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsPath } from '@/types/SettingsPath';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -31,7 +31,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { Role, WorkspaceMember } from '~/generated-metadata/graphql';
+import { type Role, type WorkspaceMember } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID } from '../constants/RoleAssignmentConfirmationModalId';
 import { SettingsRoleAssignmentTableRow } from './SettingsRoleAssignmentTableRow';
@@ -47,7 +47,7 @@ const StyledSearchContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledSearchInput = styled(TextInput)`
+const StyledSearchInput = styled(SettingsTextInput)`
   input {
     background: ${({ theme }) => theme.background.transparent.lighter};
     border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -157,7 +157,7 @@ export const SettingsRoleAssignment = ({
     closeDropdown(dropdownId);
   };
 
-  const isModalOpened = useRecoilComponentValueV2(
+  const isModalOpened = useRecoilComponentValue(
     isModalOpenedComponentState,
     ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID,
   );

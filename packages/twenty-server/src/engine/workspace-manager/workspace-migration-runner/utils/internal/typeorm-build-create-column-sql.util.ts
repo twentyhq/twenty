@@ -1,6 +1,6 @@
 // This code is from TypeORM and is used to build the SQL for creating a column
 
-import { Table, TableColumn } from 'typeorm';
+import { type Table, type TableColumn } from 'typeorm';
 
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration-runner/utils/compute-postgres-enum-name.util';
 
@@ -19,6 +19,7 @@ export const typeormBuildCreateColumnSql = ({
     | 'default'
     | 'generatedType'
     | 'asExpression'
+    | 'precision'
   >;
 }): string => {
   let columnSql = '"' + column.name + '"';
@@ -30,6 +31,7 @@ export const typeormBuildCreateColumnSql = ({
     })}"`;
   } else {
     columnSql += ' ' + column.type;
+    if (column.precision) columnSql += `(${column.precision})`;
   }
 
   if (column.isArray) columnSql += '[]';

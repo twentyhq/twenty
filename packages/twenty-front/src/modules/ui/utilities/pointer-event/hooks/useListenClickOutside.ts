@@ -1,15 +1,15 @@
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
 import { clickOutsideListenerIsMouseDownInsideComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsMouseDownInsideComponentState';
 import { clickOutsideListenerMouseDownHappenedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerMouseDownHappenedComponentState';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import React, { useEffect } from 'react';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useEffect, type RefObject } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 const CLICK_OUTSIDE_DEBUG_MODE = false;
 
 export type ClickOutsideListenerProps<T extends Element> = {
-  refs: Array<React.RefObject<T>>;
+  refs: Array<RefObject<T>>;
   excludedClickOutsideIds?: string[];
   callback: (event: MouseEvent | TouchEvent) => void;
   listenerId: string;
@@ -24,17 +24,16 @@ export const useListenClickOutside = <T extends Element>({
   enabled = true,
 }: ClickOutsideListenerProps<T>) => {
   const clickOutsideListenerIsMouseDownInsideState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       clickOutsideListenerIsMouseDownInsideComponentState,
       listenerId,
     );
-  const clickOutsideListenerIsActivatedState =
-    useRecoilComponentCallbackStateV2(
-      clickOutsideListenerIsActivatedComponentState,
-      listenerId,
-    );
+  const clickOutsideListenerIsActivatedState = useRecoilComponentCallbackState(
+    clickOutsideListenerIsActivatedComponentState,
+    listenerId,
+  );
   const clickOutsideListenerMouseDownHappenedState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       clickOutsideListenerMouseDownHappenedComponentState,
       listenerId,
     );

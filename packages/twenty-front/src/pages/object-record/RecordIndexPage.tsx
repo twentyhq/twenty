@@ -4,11 +4,11 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordIndexContainerGater } from '@/object-record/record-index/components/RecordIndexContainerGater';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isUndefined } from '@sniptt/guards';
 
 export const RecordIndexPage = () => {
-  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );

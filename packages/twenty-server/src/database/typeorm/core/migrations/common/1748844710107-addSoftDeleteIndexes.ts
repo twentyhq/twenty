@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddSoftDeleteIndexes1748844710107 implements MigrationInterface {
   name = 'AddSoftDeleteIndexes1748844710107';

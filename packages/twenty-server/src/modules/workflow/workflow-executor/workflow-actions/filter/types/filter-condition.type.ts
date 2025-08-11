@@ -1,4 +1,4 @@
-import { FilterOperator } from './filter-operator.type';
+import { type FilterOperator } from './filter-operator.type';
 
 export type FilterCondition = {
   and?: FilterCondition[];

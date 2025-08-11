@@ -1,4 +1,4 @@
-import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
+import { type RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
 
 export type RecordGqlOperationSignatureFactory = (
   factoryParams: any,

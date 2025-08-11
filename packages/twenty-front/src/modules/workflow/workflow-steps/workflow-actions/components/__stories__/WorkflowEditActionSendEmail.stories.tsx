@@ -1,5 +1,5 @@
-import { WorkflowSendEmailAction } from '@/workflow/types/Workflow';
-import { Meta, StoryObj } from '@storybook/react';
+import { type WorkflowSendEmailAction } from '@/workflow/types/Workflow';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, fn, within } from '@storybook/test';
 import { graphql, HttpResponse } from 'msw';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
@@ -66,7 +66,7 @@ const CONFIGURED_ACTION: WorkflowSendEmailAction = {
 };
 
 const meta: Meta<typeof WorkflowEditActionSendEmail> = {
-  title: 'Modules/Workflow/WorkflowEditActionSendEmail',
+  title: 'Modules/Workflow/Actions/SendEmail/EditAction',
   component: WorkflowEditActionSendEmail,
   parameters: {
     msw: {

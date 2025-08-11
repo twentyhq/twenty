@@ -21,7 +21,7 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { MessageChannelSyncStage } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessagingMessagesImportJob,
-  MessagingMessagesImportJobData,
+  type MessagingMessagesImportJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
 
 export const MESSAGING_MESSAGES_IMPORT_CRON_PATTERN = '*/1 * * * *';

@@ -12,7 +12,7 @@ import {
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
 import {
   isSearchableFieldType,
-  SearchableFieldType,
+  type SearchableFieldType,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
 import { isSearchableSubfield } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-subfield.util';
 

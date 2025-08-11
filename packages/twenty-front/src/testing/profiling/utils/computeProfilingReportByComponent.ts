@@ -1,5 +1,5 @@
-import { ProfilingDataPoint } from '~/testing/profiling/types/ProfilingDataPoint';
-import { ProfilingReportByComponent } from '~/testing/profiling/types/ProfilingReportByComponent';
+import { type ProfilingDataPoint } from '~/testing/profiling/types/ProfilingDataPoint';
+import { type ProfilingReportByComponent } from '~/testing/profiling/types/ProfilingReportByComponent';
 
 export const computeProfilingReportByComponent = (
   profilingReport: Record<string, ProfilingDataPoint[]>,

@@ -1,7 +1,7 @@
-import { MessageThreadSubscriber } from '@/activities/emails/types/MessageThreadSubscriber';
+import { type MessageThreadSubscriber } from '@/activities/emails/types/MessageThreadSubscriber';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { IconPlus } from 'twenty-ui/display';
 import { MenuItemAvatar } from 'twenty-ui/navigation';
 

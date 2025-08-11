@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-import { ThemeType } from '..';
+import { type ThemeType } from '..';
 
 export const TEXT_INPUT_STYLE = (props: { theme: ThemeType }) => css`
   background-color: transparent;

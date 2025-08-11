@@ -1,7 +1,7 @@
 import uniq from 'lodash.uniq';
 import uniqBy from 'lodash.uniqby';
 
-import { Contact } from 'src/modules/contact-creation-manager/types/contact.type';
+import { type Contact } from 'src/modules/contact-creation-manager/types/contact.type';
 
 export function getUniqueContactsAndHandles(contacts: Contact[]): {
   uniqueContacts: Contact[];

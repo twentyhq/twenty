@@ -53,6 +53,16 @@ msgstr "(System) Προβολές"
 msgid "{fieldName} and {fieldName}Id cannot be both provided."
 msgstr "Το {fieldName} και το {fieldName}Id δεν μπορούν να παρέχονται και τα δύο."
 
+#. js-lingui-id: ZkHTHm
+#: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
+msgid "{fieldType} fields cannot be unique."
+msgstr ""
+
+#. js-lingui-id: wapGcj
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "{message}"
+msgstr ""
+
 #. js-lingui-id: 8haj+G
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils.ts
 msgid "{name} should be in camelCase"
@@ -117,11 +127,6 @@ msgstr "Μια εργασία"
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "A task target"
 msgstr "Ένας στόχος εργασίας"
-
-#. js-lingui-id: HTSJFW
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "A webhook"
-msgstr "Ένα webhook"
 
 #. js-lingui-id: ZIN9Ga
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -216,11 +221,6 @@ msgstr "Συγκεντρωτικό / φιλτραρισμένο γεγονός �
 msgid "Amount"
 msgstr "Ποσό"
 
-#. js-lingui-id: qeHcQj
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "An API key"
-msgstr "Ένα API key"
-
 #. js-lingui-id: MjyFvC
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "An attachment"
@@ -248,31 +248,6 @@ msgstr "Ετήσιος Επαναλαμβανόμενος Τζίρος: Τα π�
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Any field filter value"
 msgstr "Οποιαδήποτε τιμή φίλτρου πεδίου"
-
-#. js-lingui-id: yRnk5W
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "API Key"
-msgstr "Κλειδί API"
-
-#. js-lingui-id: FfSJ1Y
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "API Keys"
-msgstr "Κλειδιά API"
-
-#. js-lingui-id: puNs/l
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "ApiKey expiration date"
-msgstr "Ημερομηνία λήξης ApiKey"
-
-#. js-lingui-id: YHiNxr
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "ApiKey name"
-msgstr "Όνομα ApiKey"
-
-#. js-lingui-id: xrndTt
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "ApiKey revocation date"
-msgstr "Ημερομηνία ανάκλησης ApiKey"
 
 #. js-lingui-id: DGW5iN
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -544,6 +519,7 @@ msgid "Cannot create workflow version with status other than draft"
 msgstr "Δεν είναι δυνατή η δημιουργία έκδοσης ροής εργασίας με καθεστώς διαφορετικό από προσχέδιο"
 
 #. js-lingui-id: AQyr9X
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Δεν είναι δυνατή η διαγραφή, παρακαλώ ενημερώστε πρώτα το πεδίο αναγνωριστικού ετικέτας"
@@ -552,6 +528,11 @@ msgstr "Δεν είναι δυνατή η διαγραφή, παρακαλώ ε�
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot disable non-active workflow version"
 msgstr "Δεν είναι δυνατή η απενεργοποίηση μη ενεργής έκδοσης ροής εργασίας"
+
+#. js-lingui-id: RATxdO
+#: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
+msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first."
+msgstr ""
 
 #. js-lingui-id: IDMgr/
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
@@ -759,7 +740,6 @@ msgid "Describes if the view is in compact mode"
 msgstr "Αναφέρει αν το view βρίσκεται σε compact mode"
 
 #. js-lingui-id: Nu4oKW
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Description"
@@ -799,6 +779,11 @@ msgstr "Όνομα Domain"
 msgid "Due Date"
 msgstr "Ημερομηνία Λήξης"
 
+#. js-lingui-id: BXtAxc
+#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+msgid "Duplicated option {field}"
+msgstr ""
+
 #. js-lingui-id: BBXuRb
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Email already verified."
@@ -836,6 +821,11 @@ msgstr "Εργαζόμενοι"
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "End Date"
 msgstr "Ημερομηνία Λήξης"
+
+#. js-lingui-id: hcogQc
+#: src/engine/core-modules/domain-manager/validator/cloudflare.validate.ts
+msgid "Environnement variable CLOUDFLARE_API_KEY must be defined to use this feature."
+msgstr ""
 
 #. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -955,11 +945,6 @@ msgstr ""
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
 msgstr "Αναμενόταν να χρησιμοποιηθούν τα ίδια πεδία περιορισμού με συνέπεια σε όλες τις λειτουργίες για το {connectFieldName}."
-
-#. js-lingui-id: sZg7s1
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "Expiration date"
-msgstr "Ημερομηνία Λήξης"
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1137,6 +1122,31 @@ msgstr "Πεδίο χρησιμοποιούμενο για πλήρη κειμε
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "Field Value"
 msgstr "Τιμή Πεδίου"
+
+#. js-lingui-id: Sof2+k
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "FieldMetadataId is required to create a view field."
+msgstr ""
+
+#. js-lingui-id: NTyTR5
+#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
+msgid "FieldMetadataId is required to create a view filter group."
+msgstr ""
+
+#. js-lingui-id: Ya6oU7
+#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
+msgid "FieldMetadataId is required to create a view filter."
+msgstr ""
+
+#. js-lingui-id: DU4jcg
+#: src/engine/core-modules/view/exceptions/view-group.exception.ts
+msgid "FieldMetadataId is required to create a view group."
+msgstr ""
+
+#. js-lingui-id: snEXuU
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "FieldMetadataId is required to create a view sort."
+msgstr ""
 
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1378,11 +1388,13 @@ msgid "Label is required"
 msgstr "Απαιτείται ετικέτα"
 
 #. js-lingui-id: 4EGmy6
+#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Label must not be empty"
 msgstr "Η ετικέτα δεν πρέπει να είναι κενή"
 
 #. js-lingui-id: k731jp
+#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Label must not contain a comma"
 msgstr "Η ετικέτα δεν πρέπει να περιέχει κόμμα"
@@ -1641,7 +1653,6 @@ msgstr "Λείπουν απαραίτητα πεδία: τουλάχιστον �
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Name"
@@ -1815,6 +1826,11 @@ msgstr "Το αντικείμενο υπάρχει ήδη"
 msgid "Object Metadata Id"
 msgstr "Αναγνωριστικό Μετα-δεδομένων Αντικειμένου"
 
+#. js-lingui-id: 53pIyA
+#: src/engine/core-modules/view/exceptions/view.exception.ts
+msgid "ObjectMetadataId is required to create a view."
+msgstr ""
+
 #. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Open Record In"
@@ -1824,16 +1840,6 @@ msgstr "Άνοιγμα εγγραφής στο"
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
 msgstr "Οπεράνδος"
-
-#. js-lingui-id: FZg3wM
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Operation"
-msgstr "Λειτουργία"
-
-#. js-lingui-id: B1MDds
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Operations"
-msgstr "Λειτουργίες"
 
 #. js-lingui-id: 4MyDFl
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1892,32 +1898,48 @@ msgstr "Θέση εγγραφής Ευκαιρίας"
 msgid "Opportunity stage"
 msgstr "Στάδιο Ευκαιρίας"
 
+#. js-lingui-id: 2mFkfl
+#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+msgid "Option id is invalid"
+msgstr ""
+
+#. js-lingui-id: MniXaX
+#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+msgid "Option id is required"
+msgstr ""
+
 #. js-lingui-id: //eyK1
+#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label \"{sanitizedLabel}\" is beneath 1 character"
 msgstr "Η ετικέτα επιλογής \"{sanitizedLabel}\" είναι κάτω από 1 χαρακτήρα"
 
 #. js-lingui-id: mTFS0z
+#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label exceeds 63 characters"
 msgstr "Η ετικέτα επιλογής υπερβαίνει τους 63 χαρακτήρες"
 
 #. js-lingui-id: +E9N4m
+#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label is required"
 msgstr "Απαιτείται ετικέτα επιλογής"
 
 #. js-lingui-id: nQqNzE
+#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "Η τιμή επιλογής \"{sanitizedValue}\" είναι κάτω από 1 χαρακτήρα"
 
 #. js-lingui-id: 5m/1Hh
+#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value exceeds 63 characters"
 msgstr "Η τιμή επιλογής υπερβαίνει τους 63 χαρακτήρες"
 
 #. js-lingui-id: /wsRPd
+#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value is required"
 msgstr "Απαιτείται τιμή επιλογής"
@@ -1927,11 +1949,6 @@ msgstr "Απαιτείται τιμή επιλογής"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Optional aggregate operation"
 msgstr "Προαιρετική λειτουργία συνάθροισης"
-
-#. js-lingui-id: kdClJ/
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
-msgstr "Προαιρετικό μυστικό που χρησιμοποιείται για τον υπολογισμό της υπογραφής HMAC για τα payload των webhooks. Αυτό το μυστικό μοιράζεται μεταξύ του Twenty και του καταναλωτή των webhooks για την ταυτοποίηση αιτημάτων webhook."
 
 #. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
@@ -2107,11 +2124,6 @@ msgstr "Το αίτημα έχει λήξει, παρακαλούμε προσπ
 msgid "Response Status"
 msgstr "Κατάσταση απόκρισης"
 
-#. js-lingui-id: MCWKAU
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "Revocation date"
-msgstr "Ημερομηνία ανάκλησης"
-
 #. js-lingui-id: GDvlUT
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
@@ -2134,11 +2146,6 @@ msgstr "Εμβέλειες"
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts
 msgid "Search vector"
 msgstr "Διάνυσμα Αναζήτησης"
-
-#. js-lingui-id: 8VEDbV
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Secret"
-msgstr "Μυστικό"
 
 #. js-lingui-id: Tz0i8g
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
@@ -2192,7 +2199,7 @@ msgid "Statuses cannot be set manually."
 msgstr "Οι καταστάσεις δεν μπορούν να οριστούν με το χέρι."
 
 #. js-lingui-id: u+rv4L
-#: src/modules/workflow/workflow-builder/workflow-step/workflow-version-step.workspace-service.ts
+#: src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service.ts
 msgid "Step is not a form"
 msgstr "Το βήμα δεν είναι φόρμα"
 
@@ -2253,11 +2260,6 @@ msgstr "Κατάσταση Συγχρονισμού"
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Target object metadata not found for {connectFieldName}"
 msgstr "Δεν βρέθηκαν μεταδεδομένα αντικειμένου προορισμού για {connectFieldName}"
-
-#. js-lingui-id: 4SHJe4
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Target Url"
-msgstr "Url Προορισμού"
 
 #. js-lingui-id: Q3P/4s
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -2593,6 +2595,12 @@ msgstr "Τίτλος"
 msgid "Type"
 msgstr "Τύπος"
 
+#. js-lingui-id: RBJNRI
+#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
+msgid "Unique field cannot have a default value"
+msgstr ""
+
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"
@@ -2629,6 +2637,11 @@ msgstr "Ο χρήστης δεν αποτελεί μέρος του χώρου �
 msgid "User time zone"
 msgstr "Ζώνη ώρας χρήστη"
 
+#. js-lingui-id: VkcC68
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "User was not created with email/password"
+msgstr ""
+
 #. js-lingui-id: 43zCwQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred date format"
@@ -2648,6 +2661,11 @@ msgstr "Η προτιμώμενη μορφή ώρας του χρήστη"
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Value"
 msgstr "Αξία"
+
+#. js-lingui-id: UBPzFQ
+#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
+msgstr ""
 
 #. js-lingui-id: 7aatUy
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -2863,6 +2881,31 @@ msgstr "\\\\"
 msgid "View type"
 msgstr "\\\\"
 
+#. js-lingui-id: l88nXn
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "ViewId is required to create a view field."
+msgstr ""
+
+#. js-lingui-id: 9XMTpT
+#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
+msgid "ViewId is required to create a view filter group."
+msgstr ""
+
+#. js-lingui-id: pCCxli
+#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
+msgid "ViewId is required to create a view filter."
+msgstr ""
+
+#. js-lingui-id: 1X1RW5
+#: src/engine/core-modules/view/exceptions/view-group.exception.ts
+msgid "ViewId is required to create a view group."
+msgstr ""
+
+#. js-lingui-id: uGUFcy
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "ViewId is required to create a view sort."
+msgstr ""
+
 #. js-lingui-id: 1I6UoR
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Views"
@@ -2882,30 +2925,10 @@ msgstr "\\\\"
 msgid "Visible"
 msgstr "\\\\"
 
-#. js-lingui-id: TRDppN
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Webhook"
-msgstr "Άγκιστρο Ιστού"
-
-#. js-lingui-id: fyB2Wp
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Webhook operation"
-msgstr "Λειτουργία Webhook"
-
-#. js-lingui-id: gONLmX
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Webhook operations"
-msgstr "Λειτουργίες Webhook"
-
-#. js-lingui-id: cPoSTF
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Webhook target url"
-msgstr "URL στόχου άγκιστρου ιστού"
-
-#. js-lingui-id: v1kQyJ
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Webhooks"
-msgstr "Άγκιστρα Ιστού"
+#. js-lingui-id: xvV2NJ
+#: src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.ts
+msgid "We are experiencing a temporary issue with our database. Please try again later."
+msgstr ""
 
 #. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
@@ -3098,6 +3121,36 @@ msgstr "Θέση μέλους χώρου εργασίας"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "Μέλη Χώρου Εργασίας"
+
+#. js-lingui-id: kjLpTn
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "WorkspaceId is required to create a view field."
+msgstr ""
+
+#. js-lingui-id: zWj6VZ
+#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
+msgid "WorkspaceId is required to create a view filter group."
+msgstr ""
+
+#. js-lingui-id: jQMXtD
+#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
+msgid "WorkspaceId is required to create a view filter."
+msgstr ""
+
+#. js-lingui-id: NAoJAX
+#: src/engine/core-modules/view/exceptions/view-group.exception.ts
+msgid "WorkspaceId is required to create a view group."
+msgstr ""
+
+#. js-lingui-id: hU1QaN
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "WorkspaceId is required to create a view sort."
+msgstr ""
+
+#. js-lingui-id: jtb/lI
+#: src/engine/core-modules/view/exceptions/view.exception.ts
+msgid "WorkspaceId is required to create a view."
+msgstr ""
 
 #. js-lingui-id: EtzFC0
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts

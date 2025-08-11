@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type FieldMetadataType } from 'twenty-shared/types';
 export type InputSchemaPropertyType =
   | 'string'
   | 'number'

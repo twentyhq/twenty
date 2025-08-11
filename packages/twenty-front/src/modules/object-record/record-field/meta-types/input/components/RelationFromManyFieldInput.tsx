@@ -2,8 +2,8 @@ import { useContext } from 'react';
 
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { useUpdateActivityTargetFromCell } from '@/activities/inline-cell/hooks/useUpdateActivityTargetFromCell';
-import { NoteTarget } from '@/activities/types/NoteTarget';
-import { TaskTarget } from '@/activities/types/TaskTarget';
+import { type NoteTarget } from '@/activities/types/NoteTarget';
+import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -12,15 +12,15 @@ import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionComponentState';
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
-import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { type FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { type FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -87,12 +87,12 @@ export const RelationFromManyFieldInput = ({
       recordId,
     });
 
-  const layoutDirection = useRecoilComponentValueV2(
+  const layoutDirection = useRecoilComponentValue(
     recordFieldInputLayoutDirectionComponentState,
   );
 
   const multipleRecordPickerPickableMorphItemsCallbackState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       multipleRecordPickerPickableMorphItemsComponentState,
       instanceId,
     );

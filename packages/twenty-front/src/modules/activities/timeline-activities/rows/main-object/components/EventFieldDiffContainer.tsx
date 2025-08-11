@@ -1,6 +1,6 @@
 import { EventFieldDiff } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiff';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 type EventFieldDiffContainerProps = {
   mainObjectMetadataItem: ObjectMetadataItem;

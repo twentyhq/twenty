@@ -1,7 +1,7 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isValidSubFieldName } from '@/settings/data-model/utils/isValidSubFieldName';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { getRecordFilterLabelValue } from '@/views/utils/getRecordFilterLabelValue';

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';

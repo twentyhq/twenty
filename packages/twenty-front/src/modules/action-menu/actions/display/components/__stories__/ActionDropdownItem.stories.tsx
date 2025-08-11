@@ -4,7 +4,7 @@ import { createMockActionMenuActions } from '@/action-menu/mock/action-menu-acti
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { expect } from '@storybook/jest';
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ActionDropdownItem } from '../ActionDropdownItem';

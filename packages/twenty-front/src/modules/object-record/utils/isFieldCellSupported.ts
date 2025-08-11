@@ -1,6 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 

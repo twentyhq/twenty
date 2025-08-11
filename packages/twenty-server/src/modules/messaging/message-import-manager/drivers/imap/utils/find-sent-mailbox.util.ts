@@ -1,6 +1,6 @@
-import { Logger } from '@nestjs/common';
+import { type Logger } from '@nestjs/common';
 
-import { ImapFlow } from 'imapflow';
+import { type ImapFlow } from 'imapflow';
 
 /**
  * Find sent folder using IMAP special-use flags

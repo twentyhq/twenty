@@ -41,7 +41,7 @@
     "cache-manager-redis-yet": "^4.1.2",
     "class-validator": "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch",
     "class-validator-jsonschema": "^5.0.2",
-    "cloudflare": "^4.0.0",
+    "cloudflare": "^4.5.0",
     "connect-redis": "^7.1.1",
     "express-session": "^1.18.1",
     "graphql-middleware": "^6.1.35",
@@ -72,7 +72,7 @@
     "@faker-js/faker": "^9.8.0",
     "@lingui/cli": "^5.1.2",
     "@nestjs/cli": "10.3.0",
-    "@nx/js": "18.3.3",
+    "@nx/js": "21.3.11",
     "@types/express-session": "^1.18.0",
     "@types/lodash.differencewith": "^4.5.9",
     "@types/lodash.isempty": "^4.4.7",
@@ -95,7 +95,7 @@
     "typescript": "5.3.3"
   },
   "engines": {
-    "node": "^22.12.0",
+    "node": "^24.5.0",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
   }

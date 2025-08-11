@@ -1,12 +1,12 @@
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { agentChatSelectedFilesComponentState } from '@/ai/states/agentChatSelectedFilesComponentState';
 import { agentChatUploadedFilesComponentState } from '@/ai/states/agentChatUploadedFilesComponentState';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  File as FileDocument,
+  type File as FileDocument,
   useCreateFileMutation,
 } from '~/generated-metadata/graphql';
 
@@ -16,9 +16,9 @@ export const useAIChatFileUpload = ({ agentId }: { agentId: string }) => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
   const [agentChatSelectedFiles, setAgentChatSelectedFiles] =
-    useRecoilComponentStateV2(agentChatSelectedFilesComponentState, agentId);
+    useRecoilComponentState(agentChatSelectedFilesComponentState, agentId);
   const [agentChatUploadedFiles, setAgentChatUploadedFiles] =
-    useRecoilComponentStateV2(agentChatUploadedFilesComponentState, agentId);
+    useRecoilComponentState(agentChatUploadedFilesComponentState, agentId);
 
   const sendFile = async (file: File) => {
     try {
@@ -37,7 +37,7 @@ export const useAIChatFileUpload = ({ agentId }: { agentId: string }) => {
         agentChatSelectedFiles.filter((f) => f.name !== file.name),
       );
       return uploadedFile;
-    } catch (error) {
+    } catch {
       const fileName = file.name;
       enqueueErrorSnackBar({
         message: t`Failed to upload file: ${fileName}`,

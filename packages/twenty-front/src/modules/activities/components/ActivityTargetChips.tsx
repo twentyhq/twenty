@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
+import { type ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 
@@ -13,7 +13,7 @@ const StyledContainer = styled.div<{ maxWidth?: number }>`
   display: flex;
   flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing(1)};
-  max-width: ${({ maxWidth }) => `${maxWidth}px` || 'none'};
+  max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : 'none')};
 `;
 
 export const ActivityTargetChips = ({

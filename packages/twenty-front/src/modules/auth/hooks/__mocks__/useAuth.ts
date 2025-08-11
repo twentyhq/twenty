@@ -1,9 +1,9 @@
 import {
-    GetAuthTokensFromLoginTokenDocument,
-    GetCurrentUserDocument,
-    GetLoginTokenFromCredentialsDocument,
-    SignUpDocument,
-    SignUpInWorkspaceDocument,
+  GetAuthTokensFromLoginTokenDocument,
+  GetCurrentUserDocument,
+  GetLoginTokenFromCredentialsDocument,
+  SignUpDocument,
+  SignUpInWorkspaceDocument,
 } from '~/generated-metadata/graphql';
 
 export const queries = {

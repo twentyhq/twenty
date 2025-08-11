@@ -1,7 +1,7 @@
 import { gql, InMemoryCache } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
@@ -10,8 +10,8 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const cache = new InMemoryCache();
 

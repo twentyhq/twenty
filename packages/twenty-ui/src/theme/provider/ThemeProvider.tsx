@@ -1,9 +1,9 @@
 import { ThemeProvider as EmotionThemeProvider } from '@emotion/react';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import { ThemeContextProvider } from '@ui/theme/provider/ThemeContextProvider';
 
-import { ThemeType } from '..';
+import { type ThemeType } from '..';
 
 type ThemeProviderProps = {
   theme: ThemeType;

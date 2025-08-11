@@ -8,7 +8,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -18,6 +18,7 @@ import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
@@ -114,6 +115,7 @@ export class WorkspaceManagerService {
     await this.prefillWorkspaceWithStandardObjectsRecords(
       dataSourceMetadata,
       workspaceId,
+      featureFlags,
     );
 
     const prefillStandardObjectsEnd = performance.now();
@@ -126,6 +128,7 @@ export class WorkspaceManagerService {
   private async prefillWorkspaceWithStandardObjectsRecords(
     dataSourceMetadata: DataSourceEntity,
     workspaceId: string,
+    featureFlags: Record<string, boolean>,
   ) {
     const mainDataSource =
       await this.workspaceDataSourceService.connectToMainDataSource();
@@ -142,6 +145,16 @@ export class WorkspaceManagerService {
       dataSourceMetadata.schema,
       createdObjectMetadata,
     );
+
+    if (featureFlags[FeatureFlagKey.IS_CORE_VIEW_SYNCING_ENABLED]) {
+      this.logger.log(`Prefilling core views for workspace ${workspaceId}`);
+
+      await prefillCoreViews(
+        mainDataSource,
+        workspaceId,
+        createdObjectMetadata,
+      );
+    }
   }
 
   public async delete(workspaceId: string): Promise<void> {
@@ -217,6 +230,7 @@ export class WorkspaceManagerService {
         description: 'Default Routing Agent',
         prompt: '',
         modelId: 'auto',
+        isCustom: false,
       },
       workspaceId,
     );

@@ -8,7 +8,7 @@ import dts, { PluginOptions } from 'vite-plugin-dts';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
-import { UserPluginConfig } from 'vite-plugin-checker/dist/esm/types';
+type Checkers = Parameters<typeof checker>[0];
 
 import packageJson from './package.json';
 
@@ -44,7 +44,7 @@ export default defineConfig(({ command }) => {
     ? path.resolve(__dirname, './tsconfig.lib.json')
     : path.resolve(__dirname, './tsconfig.dev.json');
 
-  const checkersConfig: UserPluginConfig = {
+  const checkersConfig: Checkers = {
     typescript: {
       tsconfigPath: tsConfigPath,
     },

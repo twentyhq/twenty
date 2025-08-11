@@ -12,7 +12,7 @@ import {
   ConfigVariableException,
   ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
-import { ConfigVariableOptions } from 'src/engine/core-modules/twenty-config/types/config-variable-options.type';
+import { type ConfigVariableOptions } from 'src/engine/core-modules/twenty-config/types/config-variable-options.type';
 import { configTransformers } from 'src/engine/core-modules/twenty-config/utils/config-transformers.util';
 
 export interface TypeTransformer<T> {

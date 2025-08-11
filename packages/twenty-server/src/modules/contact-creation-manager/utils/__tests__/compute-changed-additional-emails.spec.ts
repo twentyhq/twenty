@@ -1,8 +1,8 @@
-import { EachTestingContext } from 'twenty-shared/testing';
+import { type EachTestingContext } from 'twenty-shared/testing';
 
-import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
+import { type ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
 import { computeChangedAdditionalEmails } from 'src/modules/contact-creation-manager/utils/compute-changed-additional-emails';
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 type ComputeChangedAdditionalEmailsTestCase = EachTestingContext<{
   diff: Partial<ObjectRecordDiff<PersonWorkspaceEntity>>;

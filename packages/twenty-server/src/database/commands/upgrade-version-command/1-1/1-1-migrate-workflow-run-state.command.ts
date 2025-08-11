@@ -3,18 +3,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThan, Repository } from 'typeorm';
 import { Command, Option } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
-import { StepStatus, WorkflowRunStepInfos } from 'twenty-shared/workflow';
+import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  RunOnWorkspaceArgs,
+  type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
-  WorkflowRunState,
-  WorkflowRunOutput,
-  WorkflowRunWorkspaceEntity,
+  type WorkflowRunState,
+  type WorkflowRunOutput,
+  type WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 
 const DEFAULT_CHUNK_SIZE = 500;

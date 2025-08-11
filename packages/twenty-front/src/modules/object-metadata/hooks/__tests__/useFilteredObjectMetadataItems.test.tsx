@@ -1,6 +1,6 @@
 import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import {
@@ -10,7 +10,8 @@ import {
 } from '@/object-metadata/hooks/__mocks__/useFilteredObjectMetadataItems';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { isDefined } from 'twenty-shared/utils';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const mocks = [
   {
@@ -69,13 +70,17 @@ describe('useFilteredObjectMetadataItems', () => {
       (item) => item.namePlural === 'people',
     );
 
+    if (!isDefined(peopleObjectMetadata)) {
+      throw new Error('People object metadata not found');
+    }
+
     const { result } = renderHook(useFilteredObjectMetadataItems, {
       wrapper: Wrapper,
     });
 
     act(() => {
       const res = result.current.findObjectMetadataItemById(
-        peopleObjectMetadata?.id,
+        peopleObjectMetadata.id,
       );
       expect(res).toBeDefined();
       expect(res?.namePlural).toBe('people');

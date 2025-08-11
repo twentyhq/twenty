@@ -9,7 +9,7 @@ import {
   QueryOptions,
 } from '@ptc-org/nestjs-query-graphql';
 
-import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
+import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
@@ -35,7 +35,7 @@ export class ObjectMetadataDTO {
   @IDField(() => UUIDScalarType)
   id: string;
 
-  @Field()
+  @Field(() => UUIDScalarType)
   dataSourceId: string;
 
   @Field()
@@ -86,10 +86,10 @@ export class ObjectMetadataDTO {
   @Field()
   updatedAt: Date;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => UUIDScalarType, { nullable: true })
   labelIdentifierFieldMetadataId?: string | null;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => UUIDScalarType, { nullable: true })
   imageIdentifierFieldMetadataId?: string | null;
 
   @Field()

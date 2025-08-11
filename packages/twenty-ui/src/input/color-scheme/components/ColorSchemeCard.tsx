@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import { Checkmark } from '@ui/display/checkmark/components/Checkmark';
-import { ColorScheme } from '@ui/input/types/ColorScheme';
+import { type ColorScheme } from '@ui/input/types/ColorScheme';
 import {
   AnimatePresence,
-  AnimationControls,
+  type AnimationControls,
   motion,
   useAnimation,
 } from 'framer-motion';

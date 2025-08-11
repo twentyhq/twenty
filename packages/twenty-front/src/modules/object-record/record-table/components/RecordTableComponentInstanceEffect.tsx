@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 
 type RecordTableComponentInstanceEffectProps = {
   onColumnsChange: (columns: ColumnDefinition<FieldMetadata>[]) => void;

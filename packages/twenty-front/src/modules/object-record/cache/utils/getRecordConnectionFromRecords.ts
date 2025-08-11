@@ -1,10 +1,10 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getConnectionTypename } from '@/object-record/cache/utils/getConnectionTypename';
 import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
 import { getRecordEdgeFromRecord } from '@/object-record/cache/utils/getRecordEdgeFromRecord';
-import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
-import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
   objectMetadataItems,

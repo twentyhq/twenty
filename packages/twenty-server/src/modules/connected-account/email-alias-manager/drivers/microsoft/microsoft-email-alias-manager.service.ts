@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { isNonEmptyString } from '@sniptt/guards';
+
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
@@ -47,7 +49,7 @@ export class MicrosoftEmailAliasManagerService {
         })
         // @ts-expect-error legacy noImplicitAny
         .filter((address) => {
-          return address !== '';
+          return isNonEmptyString(address);
         }) || [];
 
     return handleAliases;

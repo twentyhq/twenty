@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { phonesFieldDefinition } from '@/object-record/record-field/__mocks__/fieldDefinitions';
@@ -15,7 +15,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
       fieldDefinition: phonesFieldDefinition,
       recordId,
       isLabelIdentifier: false,
-      isReadOnly: false,
+      isRecordFieldReadOnly: false,
     }}
   >
     <RecoilRoot>{children}</RecoilRoot>

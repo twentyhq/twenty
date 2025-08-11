@@ -3,14 +3,14 @@ import { Injectable } from '@nestjs/common';
 import crypto from 'crypto';
 
 import { isDefined } from 'twenty-shared/utils';
-import { EntitySchemaOptions } from 'typeorm';
+import { type EntitySchemaOptions } from 'typeorm';
 
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
+import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import {
   WorkspaceMetadataCacheException,
   WorkspaceMetadataCacheExceptionCode,
@@ -34,6 +34,8 @@ export enum WorkspaceCacheKeys {
   MetadataPermissionsRolesPermissionsVersion = 'metadata:permissions:roles-permissions-version',
   MetadataPermissionsUserWorkspaceRoleMap = 'metadata:permissions:user-workspace-role-map',
   MetadataPermissionsUserWorkspaceRoleMapVersion = 'metadata:permissions:user-workspace-role-map-version',
+  MetadataPermissionsApiKeyRoleMap = 'metadata:permissions:api-key-role-map',
+  MetadataPermissionsApiKeyRoleMapVersion = 'metadata:permissions:api-key-role-map-version',
 }
 
 const TTL_ONE_WEEK = 1000 * 60 * 60 * 24 * 7;

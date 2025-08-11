@@ -5,8 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { dialogInternalComponentState } from '@/ui/feedback/dialog-manager/states/dialogInternalComponentState';
-import { DialogOptions } from '@/ui/feedback/dialog-manager/types/DialogOptions';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { type DialogOptions } from '@/ui/feedback/dialog-manager/types/DialogOptions';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 const mockedUuid = 'mocked-uuid';
 jest.mock('uuid');
@@ -77,7 +77,7 @@ const renderHooks = () => {
   const { result } = renderHook(
     () => ({
       dialogManager: useDialogManager(),
-      dialogInternal: useRecoilComponentValueV2(dialogInternalComponentState),
+      dialogInternal: useRecoilComponentValue(dialogInternalComponentState),
     }),
     renderHookConfig,
   );

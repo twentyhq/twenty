@@ -1,6 +1,6 @@
 import { isNull, isString } from '@sniptt/guards';
 
-import { FieldDateTimeValue } from '../FieldMetadata';
+import { type FieldDateTimeValue } from '../FieldMetadata';
 
 // TODO: add zod
 export const isFieldDateTimeValue = (

@@ -3,13 +3,13 @@ import styled from '@emotion/styled';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { useTasks } from '@/activities/tasks/hooks/useTasks';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { Task } from '@/activities/types/Task';
+import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type Task } from '@/activities/types/Task';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import groupBy from 'lodash.groupby';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -54,7 +54,7 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
     activityObjectNameSingular: CoreObjectNameSingular.Task,
   });
 
-  const activeTabId = useRecoilComponentValueV2(activeTabIdComponentState);
+  const activeTabId = useRecoilComponentValue(activeTabIdComponentState);
 
   const isLoading =
     (activeTabId !== 'done' && tasksLoading) ||

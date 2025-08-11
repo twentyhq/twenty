@@ -1,6 +1,6 @@
-import { Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
+import { type Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
-import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
+import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 
 export interface WorkspaceEntityMetadataArgs {
   /**
@@ -13,7 +13,7 @@ export interface WorkspaceEntityMetadataArgs {
    * Function target is a table defined in the class.
    * String target is a table defined in a json schema.
    */
-  // eslint-disable-next-line @typescript-eslint/ban-types
+   
   readonly target: Function;
 
   /**

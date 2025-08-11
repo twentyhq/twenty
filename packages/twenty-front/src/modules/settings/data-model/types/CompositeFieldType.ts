@@ -1,5 +1,5 @@
-import { FieldType } from '@/settings/data-model/types/FieldType';
-import { PickLiteral } from '~/types/PickLiteral';
+import { type FieldType } from '@/settings/data-model/types/FieldType';
+import { type PickLiteral } from '~/types/PickLiteral';
 
 // TODO: add to future fullstack shared package
 export const COMPOSITE_FIELD_TYPES = [

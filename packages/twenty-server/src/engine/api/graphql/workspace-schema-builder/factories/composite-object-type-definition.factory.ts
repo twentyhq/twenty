@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { GraphQLFieldConfigMap, GraphQLObjectType } from 'graphql';
+import { type GraphQLFieldConfigMap, GraphQLObjectType } from 'graphql';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
-import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
+import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
+import { type CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
 import {
-  ObjectTypeDefinition,
+  type ObjectTypeDefinition,
   ObjectTypeDefinitionKind,
 } from 'src/engine/api/graphql/workspace-schema-builder/factories/object-type-definition.factory';
 import { OutputTypeFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/output-type.factory';
@@ -44,10 +44,10 @@ export class CompositeObjectTypeDefinitionFactory {
     compositeType: CompositeType,
     kind: ObjectTypeDefinitionKind,
     options: WorkspaceBuildSchemaOptions,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): GraphQLFieldConfigMap<any, any> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const fields: GraphQLFieldConfigMap<any, any> = {};
 

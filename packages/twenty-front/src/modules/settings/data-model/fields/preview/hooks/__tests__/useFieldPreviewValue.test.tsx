@@ -1,10 +1,10 @@
 import { renderHook } from '@testing-library/react';
 
-import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { useFieldPreviewValue } from '../useFieldPreviewValue';
 
 const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
