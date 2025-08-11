@@ -8,7 +8,7 @@ import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import ReactDOM from 'react-dom';
+import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableCellPortalWrapper = ({
@@ -43,7 +43,8 @@ export const RecordTableCellPortalWrapper = ({
     return null;
   }
 
-  return ReactDOM.createPortal(
+  return <>
+  {createPortal(
     <RecordTableRowContextProvider
       value={{
         recordId,
@@ -70,5 +71,6 @@ export const RecordTableCellPortalWrapper = ({
       </RecordTableCellContext.Provider>
     </RecordTableRowContextProvider>,
     anchorElement,
-  );
+  )}
+  </>;
 };

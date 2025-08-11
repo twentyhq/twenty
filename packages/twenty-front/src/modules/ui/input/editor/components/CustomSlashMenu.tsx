@@ -48,6 +48,7 @@ export const CustomSlashMenu = ({
 
   return (
     <StyledContainer ref={refs.setReference}>
+      <>
       {createPortal(
         <motion.div
           initial={{ opacity: 0 }}
@@ -76,6 +77,7 @@ export const CustomSlashMenu = ({
         </motion.div>,
         document.body,
       )}
+      </>
     </StyledContainer>
   );
 };

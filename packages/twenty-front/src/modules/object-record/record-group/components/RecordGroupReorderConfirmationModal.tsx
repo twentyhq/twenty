@@ -2,6 +2,7 @@ import { RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID } from '@/object-record/reco
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
 type RecordGroupReorderConfirmationModalProps = {
@@ -10,12 +11,13 @@ type RecordGroupReorderConfirmationModalProps = {
 
 export const RecordGroupReorderConfirmationModal = ({
   onConfirmClick,
-}: RecordGroupReorderConfirmationModalProps) => {
+}: RecordGroupReorderConfirmationModalProps): ReactNode => {
   const recordGroupSort = useRecoilComponentValue(
     recordIndexRecordGroupSortComponentState,
   );
 
-  return createPortal(
+  return <>
+  {createPortal(
     <ConfirmationModal
       modalId={RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID}
       title="Group sorting"
@@ -23,6 +25,7 @@ export const RecordGroupReorderConfirmationModal = ({
       onConfirmClick={onConfirmClick}
       confirmButtonText="Remove"
     />,
-    document.body,
-  );
+      document.body,
+    )}
+  </>;
 };
