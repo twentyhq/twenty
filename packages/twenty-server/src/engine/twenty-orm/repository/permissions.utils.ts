@@ -5,7 +5,7 @@ import {
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type QueryExpressionMap } from 'typeorm/query-builder/QueryExpressionMap';
+import { type QueryExpressionMap } from 'typeorm/query-builder/QueryExpressionMap.js';
 
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';

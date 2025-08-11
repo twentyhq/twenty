@@ -2,13 +2,18 @@ import isEmpty from 'lodash.isempty';
 import { type ObjectsPermissionsDeprecated } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type DeleteResult,
   EntityManager,
+  EntityNotFoundError,
+  FindOptionsUtils,
+  In,
+  InstanceChecker,
+  TypeORMError,
+  type DeepPartial,
+  type DeleteResult,
   type EntityTarget,
   type FindManyOptions,
   type FindOneOptions,
   type FindOptionsWhere,
-  In,
   type InsertResult,
   type ObjectId,
   type ObjectLiteral,
@@ -17,18 +22,13 @@ import {
   type Repository,
   type SaveOptions,
   type SelectQueryBuilder,
-  TypeORMError,
   type UpdateResult,
 } from 'typeorm';
-import { type DeepPartial } from 'typeorm/common/DeepPartial';
-import { type PickKeysByType } from 'typeorm/common/PickKeysByType';
-import { EntityNotFoundError } from 'typeorm/error/EntityNotFoundError';
-import { FindOptionsUtils } from 'typeorm/find-options/FindOptionsUtils';
-import { EntityPersistExecutor } from 'typeorm/persistence/EntityPersistExecutor';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-import { PlainObjectToDatabaseEntityTransformer } from 'typeorm/query-builder/transformer/PlainObjectToDatabaseEntityTransformer';
-import { type UpsertOptions } from 'typeorm/repository/UpsertOptions';
-import { InstanceChecker } from 'typeorm/util/InstanceChecker';
+import { type PickKeysByType } from 'typeorm/common/PickKeysByType.js';
+import { EntityPersistExecutor } from 'typeorm/persistence/EntityPersistExecutor.js';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
+import { PlainObjectToDatabaseEntityTransformer } from 'typeorm/query-builder/transformer/PlainObjectToDatabaseEntityTransformer.js';
+import { type UpsertOptions } from 'typeorm/repository/UpsertOptions.js';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -47,8 +47,8 @@ import { type QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/
 import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 import { RelationNestedQueries } from 'src/engine/twenty-orm/relation-nested-queries/relation-nested-queries';
 import {
-  type OperationType,
   validateOperationIsPermittedOrThrow,
+  type OperationType,
 } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';

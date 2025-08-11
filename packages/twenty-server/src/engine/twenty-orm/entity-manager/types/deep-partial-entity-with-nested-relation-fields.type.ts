@@ -1,4 +1,4 @@
-import { type DeepPartial } from 'typeorm/common/DeepPartial';
+import { type DeepPartial } from 'typeorm';
 
 import { type BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import {

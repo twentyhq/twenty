@@ -5,7 +5,7 @@ import {
   type ObjectLiteral,
   type UpdateResult,
 } from 'typeorm';
-import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBuilder';
+import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBuilder.js';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';

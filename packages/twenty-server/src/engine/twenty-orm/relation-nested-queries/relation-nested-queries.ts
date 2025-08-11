@@ -5,7 +5,7 @@ import {
   type ObjectLiteral,
   type SelectQueryBuilder,
 } from 'typeorm';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 

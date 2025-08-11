@@ -3,14 +3,14 @@ import { Injectable } from '@nestjs/common';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 import {
+  In,
+  type DeepPartial,
   type EntityManager,
   type EntityTarget,
   type FindOptionsWhere,
-  In,
   type ObjectLiteral,
   type Repository,
 } from 'typeorm';
-import { type DeepPartial } from 'typeorm/common/DeepPartial';
 import { v4 as uuidV4 } from 'uuid';
 
 import { type PartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';

@@ -1,5 +1,5 @@
 import { type RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 
 import { type BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 

@@ -1,4 +1,3 @@
-import { type Entity } from '@microsoft/microsoft-graph-types';
 import { isDefined } from 'class-validator';
 import { type ObjectsPermissionsByRoleIdDeprecated } from 'twenty-shared/types';
 import {
@@ -10,7 +9,7 @@ import {
   type ReplicationMode,
   type SelectQueryBuilder,
 } from 'typeorm';
-import { EntityManagerFactory } from 'typeorm/entity-manager/EntityManagerFactory';
+import { EntityManagerFactory } from 'typeorm/entity-manager/EntityManagerFactory.js';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -123,12 +122,12 @@ export class WorkspaceDataSource extends DataSource {
       this,
       {
         createQueryBuilder: (
-          entityOrRunner: EntityTarget<Entity> | QueryRunner,
+          entityOrRunner: EntityTarget<ObjectLiteral> | QueryRunner,
           alias?: string,
           queryRunner?: QueryRunner,
         ) => {
           if (isDefined(alias) && typeof alias === 'string') {
-            const entity = entityOrRunner as EntityTarget<Entity>;
+            const entity = entityOrRunner as EntityTarget<ObjectLiteral>;
 
             return this.createQueryBuilder(entity, alias, queryRunner, {
               calledByWorkspaceEntityManager: true,

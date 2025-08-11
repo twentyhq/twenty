@@ -1,7 +1,7 @@
 import { type ObjectsPermissionsDeprecated } from 'twenty-shared/types';
 import { EntityManager } from 'typeorm';
-import { EntityPersistExecutor } from 'typeorm/persistence/EntityPersistExecutor';
-import { PlainObjectToDatabaseEntityTransformer } from 'typeorm/query-builder/transformer/PlainObjectToDatabaseEntityTransformer';
+import { EntityPersistExecutor } from 'typeorm/persistence/EntityPersistExecutor.js';
+import { PlainObjectToDatabaseEntityTransformer } from 'typeorm/query-builder/transformer/PlainObjectToDatabaseEntityTransformer.js';
 
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 

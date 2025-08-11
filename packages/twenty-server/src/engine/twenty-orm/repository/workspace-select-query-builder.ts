@@ -1,10 +1,10 @@
 import { type ObjectsPermissionsDeprecated } from 'twenty-shared/types';
 import {
+  SelectQueryBuilder,
   type EntityTarget,
   type ObjectLiteral,
-  SelectQueryBuilder,
 } from 'typeorm';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';

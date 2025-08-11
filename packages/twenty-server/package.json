@@ -3,6 +3,7 @@
   "description": "",
   "author": "",
   "private": true,
+  "type": "module",
   "license": "AGPL-3.0",
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-server node ../../node_modules/nx/bin/nx.js",

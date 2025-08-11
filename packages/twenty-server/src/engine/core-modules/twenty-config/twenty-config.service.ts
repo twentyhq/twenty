@@ -1,7 +1,7 @@
 import { Injectable, Logger, Optional } from '@nestjs/common';
 
 import { isString } from 'class-validator';
-import { type LoggerOptions } from 'typeorm/logger/LoggerOptions';
+import { type LoggerOptions } from 'typeorm/logger/LoggerOptions.js';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 

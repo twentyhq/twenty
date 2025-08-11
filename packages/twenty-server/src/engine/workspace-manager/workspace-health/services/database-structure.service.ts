@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ColumnType } from 'typeorm';
-import { type ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { type ColumnType } from 'typeorm';
+import { type ColumnMetadata } from 'typeorm/metadata/ColumnMetadata.js';
 
 import {
   type FieldMetadataDefaultValue,
