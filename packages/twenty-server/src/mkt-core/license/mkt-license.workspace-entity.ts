@@ -45,7 +45,6 @@ export enum MKT_LICENSE_STATUS {
   REVOKED = 'revoked',
 }
 
-
 export const MKT_LICENSE_STATUS_OPTIONS: FieldMetadataComplexOption[] = [
   {
     value: MKT_LICENSE_STATUS.ACTIVE,
@@ -73,7 +72,7 @@ export const MKT_LICENSE_STATUS_OPTIONS: FieldMetadataComplexOption[] = [
   },
 ];
 
-@WorkspaceEntity({  
+@WorkspaceEntity({
   standardId: MKT_OBJECT_IDS.mktLicense,
   namePlural: `${TABLE_LICENSE_NAME}s`,
   labelSingular: msg`License`,

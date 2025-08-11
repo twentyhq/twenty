@@ -1,8 +1,12 @@
 import { msg } from '@lingui/core/macro';
-import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
-import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
+import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -13,15 +17,12 @@ import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspac
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { FieldMetadataType } from 'twenty-shared/types';
-
 import { MKT_ORDER_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { MktContractWorkspaceEntity } from 'src/mkt-core/contract/mkt-contract.workspace-entity';
@@ -69,7 +70,7 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   position: number;
-  
+
   @WorkspaceField({
     standardId: MKT_ORDER_FIELD_IDS.orderCode,
     type: FieldMetadataType.TEXT,
@@ -83,11 +84,26 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Status`,
     description: msg`Current order status`,
     options: [
-      { value: OrderStatus.PENDING, label: 'Pending', color: 'gray', position: 0 },
+      {
+        value: OrderStatus.PENDING,
+        label: 'Pending',
+        color: 'gray',
+        position: 0,
+      },
       { value: OrderStatus.PAID, label: 'Paid', color: 'green', position: 1 },
       { value: OrderStatus.FAILED, label: 'Failed', color: 'red', position: 2 },
-      { value: OrderStatus.CANCELLED, label: 'Cancelled', color: 'orange', position: 3 },
-      { value: OrderStatus.FULFILLED, label: 'Fulfilled', color: 'blue', position: 4 },
+      {
+        value: OrderStatus.CANCELLED,
+        label: 'Cancelled',
+        color: 'orange',
+        position: 3,
+      },
+      {
+        value: OrderStatus.FULFILLED,
+        label: 'Fulfilled',
+        color: 'blue',
+        position: 4,
+      },
     ],
   })
   @WorkspaceIsNullable()
@@ -150,7 +166,7 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   mktContract: Relation<MktContractWorkspaceEntity[]>;
-  
+
   @WorkspaceJoinColumn('mktContract')
   mktContractId: string | null;
 
@@ -176,7 +192,9 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
     description: SEARCH_VECTOR_FIELD.description,
     icon: 'IconSearch',
     generatedType: 'STORED',
-    asExpression: getTsVectorColumnExpressionFromFields(SEARCH_FIELDS_FOR_ORDER),
+    asExpression: getTsVectorColumnExpressionFromFields(
+      SEARCH_FIELDS_FOR_ORDER,
+    ),
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()

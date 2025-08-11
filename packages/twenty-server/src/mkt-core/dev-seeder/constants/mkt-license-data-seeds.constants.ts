@@ -1,4 +1,4 @@
-import { MKT_ORDER_DATA_SEEDS_IDS } from "src/mkt-core/dev-seeder/constants/mkt-order-data-seeds.constants";
+import { MKT_ORDER_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-order-data-seeds.constants';
 
 type MktLicenseDataSeed = {
   id: string;
