@@ -38,13 +38,17 @@ RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-server
 # Build the front
 FROM common-deps AS twenty-front-build
 
+ARG SKIP_FRONT_BUILD=false
 ARG REACT_APP_SERVER_BASE_URL
 
 COPY ./packages/twenty-front /app/packages/twenty-front
 COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-shared /app/packages/twenty-shared
-RUN npx nx build twenty-front
-
+RUN if [ "$SKIP_FRONT_BUILD" = "true" ]; then \
+      mkdir -p /app/packages/twenty-front/build; \
+    else \
+      npx nx build twenty-front; \
+    fi
 
 # Final stage: Run the application
 FROM node:24-alpine AS twenty
