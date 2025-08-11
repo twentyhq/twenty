@@ -78,7 +78,6 @@ describe('validateDefaultValueForType', () => {
   it('should return false for invalid CURRENCY default value', () => {
     expect(
       validateDefaultValueForType(
-         
         // @ts-expect-error Just for testing purposes
         { amountMicros: 100, currencyCode: "'USD'" },
         FieldMetadataType.CURRENCY,

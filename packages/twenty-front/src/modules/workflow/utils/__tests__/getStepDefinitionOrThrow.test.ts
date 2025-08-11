@@ -1,4 +1,7 @@
-import { type WorkflowAction, type WorkflowTrigger } from '@/workflow/types/Workflow';
+import {
+  type WorkflowAction,
+  type WorkflowTrigger,
+} from '@/workflow/types/Workflow';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { getStepDefinitionOrThrow } from '../getStepDefinitionOrThrow';
 

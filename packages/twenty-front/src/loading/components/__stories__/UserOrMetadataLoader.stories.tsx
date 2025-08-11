@@ -1,5 +1,5 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { expect , within } from '@storybook/test';
+import { expect, within } from '@storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { HttpResponse, graphql, http } from 'msw';
 

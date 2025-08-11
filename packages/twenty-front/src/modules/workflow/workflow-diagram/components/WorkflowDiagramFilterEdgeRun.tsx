@@ -15,7 +15,11 @@ import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagra
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { EdgeLabelRenderer, type EdgeProps, getBezierPath } from '@xyflow/react';
+import {
+  EdgeLabelRenderer,
+  type EdgeProps,
+  getBezierPath,
+} from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';

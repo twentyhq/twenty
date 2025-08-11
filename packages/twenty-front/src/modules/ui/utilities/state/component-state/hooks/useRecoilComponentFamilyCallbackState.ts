@@ -5,7 +5,11 @@ import { type ComponentFamilySelector } from '@/ui/utilities/state/component-sta
 import { type ComponentFamilyState } from '@/ui/utilities/state/component-state/types/ComponentFamilyState';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { useCallback } from 'react';
-import { type RecoilState, type RecoilValueReadOnly, type SerializableParam } from 'recoil';
+import {
+  type RecoilState,
+  type RecoilValueReadOnly,
+  type SerializableParam,
+} from 'recoil';
 
 export function useRecoilComponentFamilyCallbackState<
   ValueType,

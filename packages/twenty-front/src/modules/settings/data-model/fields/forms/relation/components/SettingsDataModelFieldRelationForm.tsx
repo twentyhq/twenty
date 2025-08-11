@@ -150,7 +150,9 @@ export const SettingsDataModelFieldRelationForm = ({
               value={value}
               options={activeObjectMetadataItems
                 .filter(isObjectMetadataAvailableForRelation)
-                .sort((item1, item2) => item1.labelPlural.localeCompare(item2.labelPlural))
+                .sort((item1, item2) =>
+                  item1.labelPlural.localeCompare(item2.labelPlural),
+                )
                 .map((objectMetadataItem) => ({
                   label: objectMetadataItem.labelPlural,
                   value: objectMetadataItem.id,

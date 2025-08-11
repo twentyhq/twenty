@@ -4,11 +4,12 @@ import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate'
 import { parseDateToString } from '@/ui/input/components/internal/date/utils/parseDateToString';
 import { type Meta, type StoryObj } from '@storybook/react';
 import {
-    expect, fn,
-    userEvent,
-    waitFor,
-    waitForElementToBeRemoved,
-    within
+  expect,
+  fn,
+  userEvent,
+  waitFor,
+  waitForElementToBeRemoved,
+  within,
 } from '@storybook/test';
 import { DateTime } from 'luxon';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';

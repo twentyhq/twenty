@@ -17,13 +17,11 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 // import { type SetRecoilState } from 'recoil';
 import {
   // TEMP_DISABLED_TEST: Commented out unused import
-  // Avatar, 
-  IconChevronLeft
+  // Avatar,
+  IconChevronLeft,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import {
-  MenuItem,
-} from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { Dropdown } from '../Dropdown';
 import { DropdownMenuHeader } from '../DropdownMenuHeader/DropdownMenuHeader';

@@ -1,4 +1,7 @@
-import { type InputSchema, type InputSchemaProperty } from '@/workflow/types/InputSchema';
+import {
+  type InputSchema,
+  type InputSchemaProperty,
+} from '@/workflow/types/InputSchema';
 import {
   type ArrayTypeNode,
   type ArrowFunction,
