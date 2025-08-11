@@ -9,7 +9,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/states/recordFieldInputDraftValueComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { FieldContext } from '../../contexts/FieldContext';
-import { FieldSelectValue } from '../../types/FieldMetadata';
+import { type FieldSelectValue } from '../../types/FieldMetadata';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldSelect } from '../../types/guards/isFieldSelect';
 import { isFieldSelectValue } from '../../types/guards/isFieldSelectValue';

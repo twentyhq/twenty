@@ -1,9 +1,13 @@
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
-import { TableSortValue } from '@/ui/layout/table/types/TableSortValue';
+import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
 import { useRecoilState } from 'recoil';
-import { IconArrowDown, IconArrowUp, IconComponent } from 'twenty-ui/display';
+import {
+  IconArrowDown,
+  IconArrowUp,
+  type IconComponent,
+} from 'twenty-ui/display';
 
 export const SortableTableHeader = ({
   tableId,

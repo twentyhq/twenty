@@ -5,9 +5,9 @@ import { useEffect, useRef, useState } from 'react';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton';
-import { Currency } from '@/ui/input/components/internal/types/Currency';
+import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { IMaskInput } from 'react-imask';
-import { IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/display';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 
 export const StyledIMaskInput = styled(IMaskInput)`

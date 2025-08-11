@@ -25,6 +25,7 @@ import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metada
 import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
 import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-options.validator';
 import { FlatFieldMetadataModule } from 'src/engine/metadata-modules/flat-field-metadata/flat-field-metadata.module';
+import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/index-metadata.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -66,6 +67,7 @@ import { FieldMetadataService } from './services/field-metadata.service';
         WorkspaceMigrationBuilderV2Module,
         WorkspaceMigrationRunnerV2Module,
         FlatFieldMetadataModule,
+        IndexMetadataModule,
       ],
       services: [
         IsFieldMetadataDefaultValue,

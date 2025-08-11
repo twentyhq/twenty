@@ -46,8 +46,7 @@ export class ViewField {
 
   @Column({
     type: 'enum',
-    enumName: 'AggregateOperations',
-    enum: AggregateOperations,
+    enum: Object.values(AggregateOperations),
     nullable: true,
     default: null,
   })

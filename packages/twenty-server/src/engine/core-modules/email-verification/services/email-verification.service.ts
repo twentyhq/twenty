@@ -27,7 +27,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 @Injectable()
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class EmailVerificationService {
   constructor(
     @InjectRepository(AppToken, 'core')

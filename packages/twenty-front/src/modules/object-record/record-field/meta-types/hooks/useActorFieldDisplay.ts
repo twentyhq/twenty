@@ -1,11 +1,11 @@
 import { useContext } from 'react';
 
-import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 
 import { AuthContext } from '@/auth/contexts/AuthContext';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkspaceMember } from '~/generated-metadata/graphql';
+import { type WorkspaceMember } from '~/generated-metadata/graphql';
 import { FieldContext } from '../../contexts/FieldContext';
 
 export type ActorFieldDisplayValue = {

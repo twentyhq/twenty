@@ -1,4 +1,4 @@
-import { DragDropContext, DragStart, DropResult } from '@hello-pangea/dnd';
+import { DragDropContext, type DragStart, type DropResult } from '@hello-pangea/dnd';
 import { ReactNode } from 'react';
 import { useRecoilCallback } from 'recoil';
 

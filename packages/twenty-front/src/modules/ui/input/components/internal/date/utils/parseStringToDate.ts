@@ -1,4 +1,4 @@
-import { DateFormat } from '@/localization/constants/DateFormat';
+import { type DateFormat } from '@/localization/constants/DateFormat';
 import { DateTime } from 'luxon';
 import { getDateFormatString } from '~/utils/date-utils';
 

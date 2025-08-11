@@ -25,7 +25,7 @@ import {
 } from 'twenty-ui/navigation';
 import {
   BillingPlanKey,
-  BillingPriceLicensedDto,
+  type BillingPriceLicensedDto,
   useBillingBaseProductPricesQuery,
 } from '~/generated-metadata/graphql';
 

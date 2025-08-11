@@ -1,8 +1,8 @@
 import { EDGE_GRAY_CIRCLE_MARKED_ID } from '@/workflow/workflow-diagram/constants/EdgeGrayCircleMarkedId';
 import { EDGE_ROUNDED_ARROW_MARKER_ID } from '@/workflow/workflow-diagram/constants/EdgeRoundedArrowMarkerId';
 import {
-  WorkflowDiagramEdge,
-  WorkflowDiagramEdgeType,
+  type WorkflowDiagramEdge,
+  type WorkflowDiagramEdgeType,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 
 export const WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION = {

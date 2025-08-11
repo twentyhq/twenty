@@ -1,4 +1,4 @@
-import { Attachment } from '@/activities/files/types/Attachment';
+import { type Attachment } from '@/activities/files/types/Attachment';
 import { filterAttachmentsToRestore } from '../filterAttachmentsToRestore';
 
 describe('filterAttachmentsToRestore', () => {

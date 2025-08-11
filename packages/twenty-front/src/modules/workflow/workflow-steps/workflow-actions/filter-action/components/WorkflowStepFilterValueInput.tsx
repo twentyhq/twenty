@@ -3,7 +3,7 @@ import { FormFieldInput } from '@/object-record/record-field/components/FormFiel
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/form-types/components/FormSingleRecordPicker';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { WorkflowStepFilterValueCompositeInput } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterValueCompositeInput';
 import { useGetFilterFieldMetadataItem } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useGetFilterFieldMetadataItem';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
@@ -12,9 +12,9 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { useLingui } from '@lingui/react/macro';
 import { isObject, isString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { FieldMetadataType, StepFilter } from 'twenty-shared/src/types';
+import { FieldMetadataType, type StepFilter } from 'twenty-shared/src/types';
 import { isDefined } from 'twenty-shared/utils';
-import { JsonValue } from 'type-fest';
+import { type JsonValue } from 'type-fest';
 
 type WorkflowStepFilterValueInputProps = {
   stepFilter: StepFilter;

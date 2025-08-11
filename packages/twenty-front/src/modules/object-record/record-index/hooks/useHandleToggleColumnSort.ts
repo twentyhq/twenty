@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
-import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
+import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
 

@@ -31,6 +31,7 @@ const allWorkspaceBuilderTestCases: {
   },
 ];
 
+// TODO prastoin add coverage to infer deletion from missing entities
 const expectedActionsTypeCounterChecker = ({
   expectedActionsTypeCounter,
   workspaceMigration,
@@ -81,12 +82,15 @@ describe.each(allWorkspaceBuilderTestCases)(
     it.each(eachTestingContextFilter(testCases))(
       '$title',
       ({ context: { input, expectedActionsTypeCounter } }) => {
-        const { from, to } = typeof input === 'function' ? input() : input;
+        const {
+          fromFlatObjectMetadataMaps,
+          toFlatObjectMetadataMaps,
+          inferDeletionFromMissingObjectFieldIndex,
+        } = typeof input === 'function' ? input() : input;
         const workspaceMigration = service.build({
-          objectMetadataFromToInputs: {
-            from,
-            to,
-          },
+          fromFlatObjectMetadataMaps,
+          toFlatObjectMetadataMaps,
+          inferDeletionFromMissingObjectFieldIndex,
           workspaceId: '20202020-52cc-4c64-ad63-76c26fc3a1e1',
         });
 

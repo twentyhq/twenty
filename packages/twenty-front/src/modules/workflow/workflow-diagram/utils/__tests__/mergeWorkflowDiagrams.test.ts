@@ -1,4 +1,4 @@
-import { WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { type WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { mergeWorkflowDiagrams } from '../mergeWorkflowDiagrams';
 
 it('Preserves the properties defined in the previous version but not in the next one', () => {

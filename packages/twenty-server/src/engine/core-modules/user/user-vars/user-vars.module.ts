@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-imports */
 import { Module } from '@nestjs/common';
 
 import { KeyValuePairModule } from 'src/engine/core-modules/key-value-pair/key-value-pair.module';

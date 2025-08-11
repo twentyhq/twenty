@@ -1,6 +1,6 @@
-import { MultiDragState } from '@/object-record/record-drag/shared/types/multiDragState';
+import { type MultiDragState } from '@/object-record/record-drag/shared/types/multiDragState';
 import { getDragOperationType } from '@/object-record/record-drag/shared/utils/getDragOperationType';
-import { DragStart } from '@hello-pangea/dnd';
+import { type DragStart } from '@hello-pangea/dnd';
 import { useState } from 'react';
 
 export const useMultiDragState = () => {

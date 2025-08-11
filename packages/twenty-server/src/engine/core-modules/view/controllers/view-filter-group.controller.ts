@@ -89,4 +89,6 @@ export class ViewFilterGroupController {
 
     return { success: isDefined(deletedViewFilterGroup) };
   }
+
+  // TODO: the destroy endpoint will be implemented when we settle on a strategy
 }

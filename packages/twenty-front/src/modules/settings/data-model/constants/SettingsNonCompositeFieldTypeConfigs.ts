@@ -1,22 +1,22 @@
 import {
-  FieldArrayValue,
-  FieldBooleanValue,
-  FieldDateTimeValue,
-  FieldDateValue,
-  FieldJsonValue,
-  FieldMultiSelectValue,
-  FieldNumberValue,
-  FieldRatingValue,
-  FieldRelationValue,
-  FieldSelectValue,
-  FieldTextValue,
-  FieldUUidValue,
+  type FieldArrayValue,
+  type FieldBooleanValue,
+  type FieldDateTimeValue,
+  type FieldDateValue,
+  type FieldJsonValue,
+  type FieldMultiSelectValue,
+  type FieldNumberValue,
+  type FieldRatingValue,
+  type FieldRelationValue,
+  type FieldSelectValue,
+  type FieldTextValue,
+  type FieldUUidValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateValue';
-import { SettingsFieldTypeCategoryType } from '@/settings/data-model/types/SettingsFieldTypeCategoryType';
-import { SettingsNonCompositeFieldType } from '@/settings/data-model/types/SettingsNonCompositeFieldType';
+import { type SettingsFieldTypeCategoryType } from '@/settings/data-model/types/SettingsFieldTypeCategoryType';
+import { type SettingsNonCompositeFieldType } from '@/settings/data-model/types/SettingsNonCompositeFieldType';
 import {
-  IconComponent,
+  type IconComponent,
   IllustrationIconArray,
   IllustrationIconCalendarEvent,
   IllustrationIconCalendarTime,

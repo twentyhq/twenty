@@ -1,4 +1,4 @@
-import { RecordDragContext } from '@/object-record/record-drag/shared/types/RecordDragContext';
+import { type RecordDragContext } from '@/object-record/record-drag/shared/types/RecordDragContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 import { draggedRecordIdsComponentState } from '@/object-record/record-drag/board/states/draggedRecordIdsComponentState';

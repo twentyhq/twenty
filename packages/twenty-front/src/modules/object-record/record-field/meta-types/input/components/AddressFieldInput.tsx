@@ -1,11 +1,11 @@
 import { useAddressField } from '@/object-record/record-field/meta-types/hooks/useAddressField';
-import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
+import { type FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { AddressInput } from '@/ui/field/input/components/AddressInput';
 
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import {
-  FieldInputClickOutsideEvent,
-  FieldInputEvent,
+  type FieldInputClickOutsideEvent,
+  type FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { usePersistField } from '../../../hooks/usePersistField';

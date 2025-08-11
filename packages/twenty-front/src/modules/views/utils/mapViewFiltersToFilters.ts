@@ -1,11 +1,11 @@
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
 import { isDefined } from 'twenty-shared/utils';
-import { ViewFilter } from '../types/ViewFilter';
+import { type ViewFilter } from '../types/ViewFilter';
 
 export const mapViewFiltersToFilters = (
   viewFilters: ViewFilter[],

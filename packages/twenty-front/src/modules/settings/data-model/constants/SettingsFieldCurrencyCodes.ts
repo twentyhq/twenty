@@ -1,7 +1,7 @@
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
+import { type CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import {
   IconCoins,
-  IconComponent,
+  type IconComponent,
   IconCurrencyAfghani,
   IconCurrencyBahraini,
   IconCurrencyBaht,

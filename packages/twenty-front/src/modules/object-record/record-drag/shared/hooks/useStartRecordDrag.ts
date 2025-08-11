@@ -1,7 +1,7 @@
-import { DragStart } from '@hello-pangea/dnd';
+import { type DragStart } from '@hello-pangea/dnd';
 import { useRecoilCallback } from 'recoil';
 
-import { RecordDragContext } from '@/object-record/record-drag/shared/types/RecordDragContext';
+import { type RecordDragContext } from '@/object-record/record-drag/shared/types/RecordDragContext';
 import { getDragOperationType } from '@/object-record/record-drag/shared/utils/getDragOperationType';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 

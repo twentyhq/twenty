@@ -2,8 +2,12 @@ import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { AnimationControls, motion, TargetAndTransition } from 'framer-motion';
-import { ReactNode } from 'react';
+import {
+  type AnimationControls,
+  motion,
+  type TargetAndTransition,
+} from 'framer-motion';
+import { type ReactNode } from 'react';
 import { useRecoilValue } from 'recoil';
 
 const StyledAnimationGroupContainer = styled(motion.div)``;

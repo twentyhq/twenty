@@ -1,8 +1,8 @@
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import {
-  FieldArrayMetadata,
-  FieldArrayValue,
+  type FieldArrayMetadata,
+  type FieldArrayValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { useContext } from 'react';

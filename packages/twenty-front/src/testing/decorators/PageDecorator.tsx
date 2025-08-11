@@ -1,6 +1,6 @@
 import { ApolloProvider } from '@apollo/client';
 import { loadDevMessages } from '@apollo/client/dev';
-import { Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react';
 import { HelmetProvider } from 'react-helmet-async';
 import {
   createMemoryRouter,

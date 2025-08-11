@@ -1,4 +1,4 @@
-import { SpreadsheetImportErrorLevel } from '@/spreadsheet-import/types/SpreadsheetImportErrorLevel';
+import { type SpreadsheetImportErrorLevel } from '@/spreadsheet-import/types/SpreadsheetImportErrorLevel';
 
 export type SpreadsheetImportRequiredValidation = {
   rule: 'required';

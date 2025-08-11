@@ -1,4 +1,4 @@
-import { ViewFilter } from '@/views/types/ViewFilter';
+import { type ViewFilter } from '@/views/types/ViewFilter';
 import {
   addDays,
   addMonths,

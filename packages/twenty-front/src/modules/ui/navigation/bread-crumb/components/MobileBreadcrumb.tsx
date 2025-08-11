@@ -2,7 +2,7 @@ import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { IconChevronLeft } from 'twenty-ui/display';
 

@@ -1,7 +1,7 @@
-import { RecordDragPositionData } from '@/object-record/record-drag/shared/types/RecordDragPositionData';
-import { RecordDragUpdate } from '@/object-record/record-drag/shared/types/RecordDragUpdate';
+import { type RecordDragPositionData } from '@/object-record/record-drag/shared/types/RecordDragPositionData';
+import { type RecordDragUpdate } from '@/object-record/record-drag/shared/types/RecordDragUpdate';
 import { calculateDragPositions } from '@/object-record/record-drag/shared/utils/calculateDragPositions';
-import { DropResult } from '@hello-pangea/dnd';
+import { type DropResult } from '@hello-pangea/dnd';
 import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 

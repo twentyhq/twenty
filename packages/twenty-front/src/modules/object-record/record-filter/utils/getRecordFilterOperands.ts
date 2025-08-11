@@ -1,10 +1,10 @@
 import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
 import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
 import {
-  FilterableAndTSVectorFieldType,
-  FilterableFieldType,
+  type FilterableAndTSVectorFieldType,
+  type FilterableFieldType,
 } from '@/object-record/record-filter/types/FilterableFieldType';
-import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
+import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { ViewFilterOperand as RecordFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';

@@ -1,13 +1,13 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
-import { selectorFamily, SerializableParam } from 'recoil';
+import { selectorFamily, type SerializableParam } from 'recoil';
 
-import { ComponentFamilyReadOnlySelector } from '@/ui/utilities/state/component-state/types/ComponentFamilyReadOnlySelector';
-import { ComponentFamilySelector } from '@/ui/utilities/state/component-state/types/ComponentFamilySelector';
-import { ComponentFamilyStateKey } from '@/ui/utilities/state/component-state/types/ComponentFamilyStateKey';
-import { ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
+import { type ComponentFamilyReadOnlySelector } from '@/ui/utilities/state/component-state/types/ComponentFamilyReadOnlySelector';
+import { type ComponentFamilySelector } from '@/ui/utilities/state/component-state/types/ComponentFamilySelector';
+import { type ComponentFamilyStateKey } from '@/ui/utilities/state/component-state/types/ComponentFamilyStateKey';
+import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import { SelectorGetter } from '@/ui/utilities/state/types/SelectorGetter';
-import { SelectorSetter } from '@/ui/utilities/state/types/SelectorSetter';
+import { type SelectorGetter } from '@/ui/utilities/state/types/SelectorGetter';
+import { type SelectorSetter } from '@/ui/utilities/state/types/SelectorSetter';
 import { isDefined } from 'twenty-shared/utils';
 
 export function createComponentFamilySelector<

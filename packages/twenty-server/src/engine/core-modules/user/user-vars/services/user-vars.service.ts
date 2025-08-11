@@ -7,7 +7,6 @@ import { mergeUserVars } from 'src/engine/core-modules/user/user-vars/utils/merg
 @Injectable()
 export class UserVarsService<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   KeyValueTypesMap extends Record<string, any> = Record<string, any>,
 > {
   constructor(private readonly keyValuePairService: KeyValuePairService) {}

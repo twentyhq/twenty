@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import { Injectable, type Type } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 

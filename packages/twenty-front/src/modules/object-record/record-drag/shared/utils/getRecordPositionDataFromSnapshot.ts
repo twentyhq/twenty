@@ -1,4 +1,4 @@
-import { Snapshot } from 'recoil';
+import { type Snapshot } from 'recoil';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';

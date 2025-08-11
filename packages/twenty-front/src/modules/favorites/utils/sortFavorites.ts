@@ -1,11 +1,11 @@
-import { Favorite } from '@/favorites/types/Favorite';
+import { type Favorite } from '@/favorites/types/Favorite';
 import { getObjectMetadataNamePluralFromViewId } from '@/favorites/utils/getObjectMetadataNamePluralFromViewId';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 import { AppPath } from '@/types/AppPath';
-import { View } from '@/views/types/View';
+import { type View } from '@/views/types/View';
 import { isDefined } from 'twenty-shared/utils';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 

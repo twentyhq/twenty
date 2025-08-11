@@ -1,4 +1,4 @@
-import { BlocklistItem } from '@/accounts/types/BlocklistItem';
+import { type BlocklistItem } from '@/accounts/types/BlocklistItem';
 import { SettingsAccountsBlocklistTableRow } from '@/settings/accounts/components/SettingsAccountsBlocklistTableRow';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';

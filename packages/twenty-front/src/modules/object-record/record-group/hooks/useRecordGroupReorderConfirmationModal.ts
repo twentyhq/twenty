@@ -9,8 +9,8 @@ import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/drop
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { ViewType } from '@/views/types/ViewType';
-import { OnDragEndResponder } from '@hello-pangea/dnd';
+import { type ViewType } from '@/views/types/ViewType';
+import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { useState } from 'react';
 
 type UseRecordGroupReorderConfirmationModalParams = {

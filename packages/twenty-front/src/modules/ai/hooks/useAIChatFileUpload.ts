@@ -6,7 +6,7 @@ import { useRecoilComponentState } from '@/ui/utilities/state/component-state/ho
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  File as FileDocument,
+  type File as FileDocument,
   useCreateFileMutation,
 } from '~/generated-metadata/graphql';
 

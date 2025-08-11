@@ -1,4 +1,4 @@
-import { TableSortValue } from '@/ui/layout/table/types/TableSortValue';
+import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
 import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
 
 export type SortedFieldByTableFamilyStateKey = {

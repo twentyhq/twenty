@@ -3,7 +3,7 @@ import { useRecoilState } from 'recoil';
 
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
-import { FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { linksSchema } from '@/object-record/record-field/types/guards/isFieldLinksValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';

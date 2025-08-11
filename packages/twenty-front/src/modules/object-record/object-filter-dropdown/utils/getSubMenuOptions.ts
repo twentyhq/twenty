@@ -1,4 +1,4 @@
-import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
+import { type FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
 
 export const getSubMenuOptions = (subMenu: FilterableFieldType | null) => {
   switch (subMenu) {

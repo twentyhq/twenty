@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import { Draggable } from '@hello-pangea/dnd';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';

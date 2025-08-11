@@ -5,7 +5,10 @@ import { EmailThreadNotShared } from '@/activities/emails/components/EmailThread
 import { useOpenEmailThreadInCommandMenu } from '@/command-menu/hooks/useOpenEmailThreadInCommandMenu';
 import { Avatar } from 'twenty-ui/display';
 import { GRAY_SCALE } from 'twenty-ui/theme';
-import { MessageChannelVisibility, TimelineThread } from '~/generated/graphql';
+import {
+  MessageChannelVisibility,
+  type TimelineThread,
+} from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 
 const StyledHeading = styled.div<{ unread: boolean }>`

@@ -68,4 +68,17 @@ export class ViewSortResolver {
 
     return isDefined(deletedViewSort);
   }
+
+  @Mutation(() => Boolean)
+  async destroyCoreViewSort(
+    @Args('id', { type: () => String }) id: string,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<boolean> {
+    const deletedViewSort = await this.viewSortService.destroy(
+      id,
+      workspace.id,
+    );
+
+    return isDefined(deletedViewSort);
+  }
 }

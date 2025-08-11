@@ -1,4 +1,4 @@
-import { CombinedFindManyRecordsQueryResult } from '@/object-record/multiple-objects/types/CombinedFindManyRecordsQueryResult';
+import { type CombinedFindManyRecordsQueryResult } from '@/object-record/multiple-objects/types/CombinedFindManyRecordsQueryResult';
 
 export const multiRecordPickerFormatSearchResults = (
   searchResults: CombinedFindManyRecordsQueryResult | undefined | null,

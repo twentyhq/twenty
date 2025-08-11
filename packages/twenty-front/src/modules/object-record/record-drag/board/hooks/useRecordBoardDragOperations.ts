@@ -3,7 +3,7 @@ import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/s
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { DropResult } from '@hello-pangea/dnd';
+import { type DropResult } from '@hello-pangea/dnd';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { getDragOperationType } from '@/object-record/record-drag/shared/utils/getDragOperationType';

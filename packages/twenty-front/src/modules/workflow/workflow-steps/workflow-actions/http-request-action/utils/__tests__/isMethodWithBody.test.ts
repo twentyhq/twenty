@@ -1,4 +1,4 @@
-import { HttpMethodWithBody } from '../../constants/HttpRequest';
+import { type HttpMethodWithBody } from '../../constants/HttpRequest';
 import { isMethodWithBody } from '../isMethodWithBody';
 
 describe('isMethodWithBody', () => {

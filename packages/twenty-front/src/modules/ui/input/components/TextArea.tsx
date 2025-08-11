@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { FocusEventHandler, useId } from 'react';
+import { type FocusEventHandler, useId } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';

@@ -1,10 +1,10 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
-import { expect } from '@storybook/jest';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { InMemoryCache, type NormalizedCacheObject } from '@apollo/client';
+
 import { isDefined } from 'twenty-shared/utils';
 
 type ObjectMetadataItemAndRecordId = {

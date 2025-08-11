@@ -1,4 +1,4 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
 export const formatFieldMetadataItemInput = (
   input: Partial<
@@ -13,6 +13,7 @@ export const formatFieldMetadataItemInput = (
       | 'options'
       | 'settings'
       | 'isLabelSyncedWithName'
+      | 'isUnique'
     >
   >,
 ) => {
@@ -25,5 +26,6 @@ export const formatFieldMetadataItemInput = (
     options: input.options,
     settings: input.settings,
     isLabelSyncedWithName: input.isLabelSyncedWithName,
+    isUnique: input.isUnique,
   };
 };

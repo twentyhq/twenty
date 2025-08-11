@@ -13,7 +13,6 @@ if (process.env.NODE_ENV === 'test') {
 const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
 const isClickhouseEnabled = process.env.CLICKHOUSE_URL !== undefined;
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const tsConfig = require('./tsconfig.json');
 
 const jestConfig: JestConfigWithTsJest = {
@@ -48,6 +47,11 @@ const jestConfig: JestConfigWithTsJest = {
           transform: {
             decoratorMetadata: true,
           },
+          baseUrl: '.',
+          paths: {
+            'src/*': ['./src/*'],
+            'test/*': ['./test/*'],
+          },
           experimental: {
             plugins: [
               [
@@ -64,7 +68,7 @@ const jestConfig: JestConfigWithTsJest = {
   },
   moduleNameMapper: {
     ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths, {
-      prefix: '<rootDir>/../..',
+      prefix: '<rootDir>/',
     }),
     '^test/(.*)$': '<rootDir>/test/$1',
   },

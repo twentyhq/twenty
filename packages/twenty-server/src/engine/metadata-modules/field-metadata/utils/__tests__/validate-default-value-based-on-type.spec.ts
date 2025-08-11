@@ -78,7 +78,6 @@ describe('validateDefaultValueForType', () => {
   it('should return false for invalid CURRENCY default value', () => {
     expect(
       validateDefaultValueForType(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error Just for testing purposes
         { amountMicros: 100, currencyCode: "'USD'" },
         FieldMetadataType.CURRENCY,

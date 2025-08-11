@@ -2,8 +2,8 @@ import { usePersistField } from '@/object-record/record-field/hooks/usePersistFi
 import { useTextField } from '@/object-record/record-field/meta-types/hooks/useTextField';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import {
-  FieldInputClickOutsideEvent,
-  FieldInputEvent,
+  type FieldInputClickOutsideEvent,
+  type FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useRef } from 'react';
