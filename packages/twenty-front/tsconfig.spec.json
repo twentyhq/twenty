@@ -17,6 +17,7 @@
     "src/**/*.spec.tsx",
     "src/**/*.test.ts",
     "src/**/*.test.tsx",
+    "src/testing/**/*",
     "tsup.config.ts",
     "tsup.ui.index.tsx",
     "vite.config.ts"

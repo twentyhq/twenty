@@ -13,5 +13,8 @@
     "jest.config.ts",
     "vite.config.ts",
     "setupTests.ts"
+  ],
+  "exclude": [
+    "src/testing/**/*"
   ]
 }
