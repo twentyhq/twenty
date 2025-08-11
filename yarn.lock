@@ -9702,7 +9702,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jridgewell/gen-mapping@npm:^0.3.2, @jridgewell/gen-mapping@npm:^0.3.5":
+"@jridgewell/gen-mapping@npm:^0.3.5":
   version: 0.3.5
   resolution: "@jridgewell/gen-mapping@npm:0.3.5"
   dependencies:
@@ -10540,7 +10540,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@microsoft/microsoft-graph-client@npm:3.0.7, @microsoft/microsoft-graph-client@npm:^3.0.7":
+"@microsoft/microsoft-graph-client@npm:3.0.7":
   version: 3.0.7
   resolution: "@microsoft/microsoft-graph-client@npm:3.0.7"
   dependencies:
@@ -19554,7 +19554,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/node@npm:9.26.0, @sentry/node@npm:^9.26.0":
+"@sentry/node@npm:9.26.0":
   version: 9.26.0
   resolution: "@sentry/node@npm:9.26.0"
   dependencies:
@@ -23294,7 +23294,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/nodemailer@npm:^6.4.14, @types/nodemailer@npm:^6.4.17":
+"@types/nodemailer@npm:^6.4.17":
   version: 6.4.17
   resolution: "@types/nodemailer@npm:6.4.17"
   dependencies:
@@ -23372,15 +23372,6 @@ __metadata:
     "@types/jsonwebtoken": "npm:*"
     "@types/passport-strategy": "npm:*"
   checksum: 10c0/39aeafa92d869f38f17994dd02f8124d88dc6977b0fee56d8ef4c6d4ff86378456a4904644a83dabc8d3fd69c23d0503c8af14ee51a7ced5d54c3c0115c1422c
-  languageName: node
-  linkType: hard
-
-"@types/passport-microsoft@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "@types/passport-microsoft@npm:1.0.3"
-  dependencies:
-    "@types/passport-oauth2": "npm:*"
-  checksum: 10c0/d177f63ae4976253242966146030b9913dc3b77c4eb192f5491d397f9036b64f258325157c244960ef4539e9c46807d0bba53497630253f4ef98d1318142b3d8
   languageName: node
   linkType: hard
 
@@ -28439,7 +28430,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"body-parser@npm:1.20.2, body-parser@npm:^1.19.0, body-parser@npm:^1.20.2":
+"body-parser@npm:1.20.2, body-parser@npm:^1.19.0":
   version: 1.20.2
   resolution: "body-parser@npm:1.20.2"
   dependencies:
@@ -28901,7 +28892,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bullmq@npm:5.40.0, bullmq@npm:^5.40.0":
+"bullmq@npm:5.40.0":
   version: 5.40.0
   resolution: "bullmq@npm:5.40.0"
   dependencies:
@@ -28913,17 +28904,6 @@ __metadata:
     tslib: "npm:^2.0.0"
     uuid: "npm:^9.0.0"
   checksum: 10c0/00ca72939af44815cfd33e366d2bf650232ac14bc2e3afe32c3aa4bbd74e6b23bec6622f1ecf4a0da684c548ac5553738457a9780bba9bfe23bb831efb766eb8
-  languageName: node
-  linkType: hard
-
-"bundle-require@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "bundle-require@npm:5.0.0"
-  dependencies:
-    load-tsconfig: "npm:^0.2.3"
-  peerDependencies:
-    esbuild: ">=0.18"
-  checksum: 10c0/92c46df02586e0ebd66ee4831c9b5775adb3c32a43fe2b2aaf7bc675135c141f751de6a9a26b146d64c607c5b40f9eef5f10dce3c364f602d4bed268444c32c6
   languageName: node
   linkType: hard
 
@@ -29753,7 +29733,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"class-transformer@npm:0.5.1, class-transformer@npm:^0.5.1":
+"class-transformer@npm:0.5.1":
   version: 0.5.1
   resolution: "class-transformer@npm:0.5.1"
   checksum: 10c0/19809914e51c6db42c036166839906420bb60367df14e15f49c45c8c1231bf25ae661ebe94736ee29cc688b77101ef851a8acca299375cc52fc141b64acde18a
@@ -30391,7 +30371,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:4.1.1, commander@npm:^4.0.0":
+"commander@npm:4.1.1":
   version: 4.1.1
   resolution: "commander@npm:4.1.1"
   checksum: 10c0/84a76c08fe6cc08c9c93f62ac573d2907d8e79138999312c92d4155bc2325d487d64d13f669b2000c9f8caf70493c1be2dac74fec3c51d5a04f8bc3ae1830bab
@@ -30656,13 +30636,6 @@ __metadata:
   version: 2.15.3
   resolution: "consola@npm:2.15.3"
   checksum: 10c0/34a337e6b4a1349ee4d7b4c568484344418da8fdb829d7d71bfefcd724f608f273987633b6eef465e8de510929907a092e13cb7a28a5d3acb3be446fcc79fd5e
-  languageName: node
-  linkType: hard
-
-"consola@npm:^3.2.3":
-  version: 3.2.3
-  resolution: "consola@npm:3.2.3"
-  checksum: 10c0/c606220524ec88a05bb1baf557e9e0e04a0c08a9c35d7a08652d99de195c4ddcb6572040a7df57a18ff38bbc13ce9880ad032d56630cef27bef72768ef0ac078
   languageName: node
   linkType: hard
 
@@ -31072,7 +31045,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cron-parser@npm:5.1.1, cron-parser@npm:^5.1.1":
+"cron-parser@npm:5.1.1":
   version: 5.1.1
   resolution: "cron-parser@npm:5.1.1"
   dependencies:
@@ -31090,7 +31063,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cron-validate@npm:1.4.5, cron-validate@npm:^1.4.5":
+"cron-validate@npm:1.4.5":
   version: 1.4.5
   resolution: "cron-validate@npm:1.4.5"
   dependencies:
@@ -37453,7 +37426,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-rate-limit@npm:3.3.0, graphql-rate-limit@npm:^3.3.0":
+"graphql-rate-limit@npm:3.3.0":
   version: 3.3.0
   resolution: "graphql-rate-limit@npm:3.3.0"
   dependencies:
@@ -37467,7 +37440,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-redis-subscriptions@npm:2.7.0, graphql-redis-subscriptions@npm:^2.7.0":
+"graphql-redis-subscriptions@npm:2.7.0":
   version: 2.7.0
   resolution: "graphql-redis-subscriptions@npm:2.7.0"
   dependencies:
@@ -37493,7 +37466,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-scalars@npm:1.23.0, graphql-scalars@npm:^1.23.0":
+"graphql-scalars@npm:1.23.0":
   version: 1.23.0
   resolution: "graphql-scalars@npm:1.23.0"
   dependencies:
@@ -37519,15 +37492,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-sse@npm:^2.5.4":
-  version: 2.5.4
-  resolution: "graphql-sse@npm:2.5.4"
-  peerDependencies:
-    graphql: ">=0.11 <=16"
-  checksum: 10c0/b2635a4098b86492ecb04e7aab7efb715847ad11b785591cf90cf1f342ba78a03db0c6cf903975a7ad9e2c278dee55cd9e2e9d7edb560f334528bb8ee926ed95
-  languageName: node
-  linkType: hard
-
 "graphql-subscriptions@npm:2.0.0":
   version: 2.0.0
   resolution: "graphql-subscriptions@npm:2.0.0"
@@ -37550,7 +37514,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-type-json@npm:0.3.2, graphql-type-json@npm:^0.3.2":
+"graphql-type-json@npm:0.3.2":
   version: 0.3.2
   resolution: "graphql-type-json@npm:0.3.2"
   peerDependencies:
@@ -37559,7 +37523,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-upload@npm:13.0.0, graphql-upload@npm:^13.0.0":
+"graphql-upload@npm:13.0.0":
   version: 13.0.0
   resolution: "graphql-upload@npm:13.0.0"
   dependencies:
@@ -37591,7 +37555,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-yoga@npm:4.0.5, graphql-yoga@npm:^4.0.4":
+"graphql-yoga@npm:4.0.5":
   version: 4.0.5
   resolution: "graphql-yoga@npm:4.0.5"
   dependencies:
@@ -38936,7 +38900,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"imapflow@npm:1.0.187, imapflow@npm:^1.0.186":
+"imapflow@npm:1.0.187":
   version: 1.0.187
   resolution: "imapflow@npm:1.0.187"
   dependencies:
@@ -41662,13 +41626,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"joycon@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "joycon@npm:3.1.1"
-  checksum: 10c0/131fb1e98c9065d067fd49b6e685487ac4ad4d254191d7aa2c9e3b90f4e9ca70430c43cad001602bdbdabcf58717d3b5c5b7461c1bd8e39478c8de706b3fe6ae
-  languageName: node
-  linkType: hard
-
 "js-beautify@npm:^1.14.11":
   version: 1.15.4
   resolution: "js-beautify@npm:1.15.4"
@@ -42661,13 +42618,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lilconfig@npm:^3.1.1":
-  version: 3.1.2
-  resolution: "lilconfig@npm:3.1.2"
-  checksum: 10c0/f059630b1a9bddaeba83059db00c672b64dc14074e9f232adce32b38ca1b5686ab737eb665c5ba3c32f147f0002b4bee7311ad0386a9b98547b5623e87071fbe
-  languageName: node
-  linkType: hard
-
 "linebreak@npm:^1.1.0":
   version: 1.1.0
   resolution: "linebreak@npm:1.1.0"
@@ -42726,13 +42676,6 @@ __metadata:
     enquirer:
       optional: true
   checksum: 10c0/0e64dc5e66fbd4361f6b35c49489ed842a1d7de30cf2b5c06bf4569669449288698b8ea93f7842aaf3c510963a1e554bca31376b9054d1521445d1ce4c917ea1
-  languageName: node
-  linkType: hard
-
-"load-tsconfig@npm:^0.2.3":
-  version: 0.2.5
-  resolution: "load-tsconfig@npm:0.2.5"
-  checksum: 10c0/bf2823dd26389d3497b6567f07435c5a7a58d9df82e879b0b3892f87d8db26900f84c85bc329ef41c0540c0d6a448d1c23ddc64a80f3ff6838b940f3915a3fcb
   languageName: node
   linkType: hard
 
@@ -43461,7 +43404,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mailparser@npm:3.7.3, mailparser@npm:^3.7.3":
+"mailparser@npm:3.7.3":
   version: 3.7.3
   resolution: "mailparser@npm:3.7.3"
   dependencies:
@@ -46104,7 +46047,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mz@npm:^2.4.0, mz@npm:^2.7.0":
+"mz@npm:^2.4.0":
   version: 2.7.0
   resolution: "mz@npm:2.7.0"
   dependencies:
@@ -46248,7 +46191,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nest-commander@npm:3.14.0, nest-commander@npm:^3.12.0":
+"nest-commander@npm:3.14.0":
   version: 3.14.0
   resolution: "nest-commander@npm:3.14.0"
   dependencies:
@@ -47578,7 +47521,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openapi-types@npm:12.1.3, openapi-types@npm:^12.1.3":
+"openapi-types@npm:12.1.3":
   version: 12.1.3
   resolution: "openapi-types@npm:12.1.3"
   checksum: 10c0/4ad4eb91ea834c237edfa6ab31394e87e00c888fc2918009763389c00d02342345195d6f302d61c3fd807f17723cd48df29b47b538b68375b3827b3758cd520f
@@ -48315,7 +48258,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"passport-google-oauth20@npm:2.0.0, passport-google-oauth20@npm:^2.0.0":
+"passport-google-oauth20@npm:2.0.0":
   version: 2.0.0
   resolution: "passport-google-oauth20@npm:2.0.0"
   dependencies:
@@ -48324,7 +48267,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"passport-jwt@npm:4.0.1, passport-jwt@npm:^4.0.1":
+"passport-jwt@npm:4.0.1":
   version: 4.0.1
   resolution: "passport-jwt@npm:4.0.1"
   dependencies:
@@ -48334,7 +48277,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"passport-microsoft@npm:2.1.0, passport-microsoft@npm:^2.0.0":
+"passport-microsoft@npm:2.1.0":
   version: 2.1.0
   resolution: "passport-microsoft@npm:2.1.0"
   dependencies:
@@ -49089,29 +49032,6 @@ __metadata:
   version: 1.0.0
   resolution: "possible-typed-array-names@npm:1.0.0"
   checksum: 10c0/d9aa22d31f4f7680e20269db76791b41c3a32c01a373e25f8a4813b4d45f7456bfc2b6d68f752dc4aab0e0bb0721cb3d76fb678c9101cb7a16316664bc2c73fd
-  languageName: node
-  linkType: hard
-
-"postcss-load-config@npm:^6.0.1":
-  version: 6.0.1
-  resolution: "postcss-load-config@npm:6.0.1"
-  dependencies:
-    lilconfig: "npm:^3.1.1"
-  peerDependencies:
-    jiti: ">=1.21.0"
-    postcss: ">=8.0.9"
-    tsx: ^4.8.1
-    yaml: ^2.4.2
-  peerDependenciesMeta:
-    jiti:
-      optional: true
-    postcss:
-      optional: true
-    tsx:
-      optional: true
-    yaml:
-      optional: true
-  checksum: 10c0/74173a58816dac84e44853f7afbd283f4ef13ca0b6baeba27701214beec33f9e309b128f8102e2b173e8d45ecba45d279a9be94b46bf48d219626aa9b5730848
   languageName: node
   linkType: hard
 
@@ -52251,7 +52171,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^4.13.0, rollup@npm:^4.19.0":
+"rollup@npm:^4.13.0":
   version: 4.20.0
   resolution: "rollup@npm:4.20.0"
   dependencies:
@@ -53674,15 +53594,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"source-map@npm:0.8.0-beta.0, source-map@npm:^0.8.0-beta.0":
-  version: 0.8.0-beta.0
-  resolution: "source-map@npm:0.8.0-beta.0"
-  dependencies:
-    whatwg-url: "npm:^7.0.0"
-  checksum: 10c0/fb4d9bde9a9fdb2c29b10e5eae6c71d10e09ef467e1afb75fdec2eb7e11fa5b343a2af553f74f18b695dbc0b81f9da2e9fa3d7a317d5985e9939499ec6087835
-  languageName: node
-  linkType: hard
-
 "source-map@npm:^0.5.6, source-map@npm:^0.5.7, source-map@npm:~0.5.3":
   version: 0.5.7
   resolution: "source-map@npm:0.5.7"
@@ -53694,6 +53605,15 @@ __metadata:
   version: 0.6.1
   resolution: "source-map@npm:0.6.1"
   checksum: 10c0/ab55398007c5e5532957cb0beee2368529618ac0ab372d789806f5718123cc4367d57de3904b4e6a4170eb5a0b0f41373066d02ca0735a0c4d75c7d328d3e011
+  languageName: node
+  linkType: hard
+
+"source-map@npm:^0.8.0-beta.0":
+  version: 0.8.0-beta.0
+  resolution: "source-map@npm:0.8.0-beta.0"
+  dependencies:
+    whatwg-url: "npm:^7.0.0"
+  checksum: 10c0/fb4d9bde9a9fdb2c29b10e5eae6c71d10e09ef467e1afb75fdec2eb7e11fa5b343a2af553f74f18b695dbc0b81f9da2e9fa3d7a317d5985e9939499ec6087835
   languageName: node
   linkType: hard
 
@@ -54686,24 +54606,6 @@ __metadata:
   peerDependencies:
     graphql: ^15.7.2 || ^16.0.0
   checksum: 10c0/697441333e59b6932bff51212e29f8dcac477badb067971bd94c30c5f3f7a2e2ea72fb1a21f3c1abbf32774da01515aa24739e620be45f6d576784bd96fd10da
-  languageName: node
-  linkType: hard
-
-"sucrase@npm:^3.35.0":
-  version: 3.35.0
-  resolution: "sucrase@npm:3.35.0"
-  dependencies:
-    "@jridgewell/gen-mapping": "npm:^0.3.2"
-    commander: "npm:^4.0.0"
-    glob: "npm:^10.3.10"
-    lines-and-columns: "npm:^1.1.6"
-    mz: "npm:^2.7.0"
-    pirates: "npm:^4.0.1"
-    ts-interface-checker: "npm:^0.1.9"
-  bin:
-    sucrase: bin/sucrase
-    sucrase-node: bin/sucrase-node
-  checksum: 10c0/ac85f3359d2c2ecbf5febca6a24ae9bf96c931f05fde533c22a94f59c6a74895e5d5f0e871878dfd59c2697a75ebb04e4b2224ef0bfc24ca1210735c2ec191ef
   languageName: node
   linkType: hard
 
@@ -55709,13 +55611,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-interface-checker@npm:^0.1.9":
-  version: 0.1.13
-  resolution: "ts-interface-checker@npm:0.1.13"
-  checksum: 10c0/232509f1b84192d07b81d1e9b9677088e590ac1303436da1e92b296e9be8e31ea042e3e1fd3d29b1742ad2c959e95afe30f63117b8f1bc3a3850070a5142fea7
-  languageName: node
-  linkType: hard
-
 "ts-invariant@npm:^0.10.3":
   version: 0.10.3
   resolution: "ts-invariant@npm:0.10.3"
@@ -55974,47 +55869,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsup@npm:^8.2.4":
-  version: 8.2.4
-  resolution: "tsup@npm:8.2.4"
-  dependencies:
-    bundle-require: "npm:^5.0.0"
-    cac: "npm:^6.7.14"
-    chokidar: "npm:^3.6.0"
-    consola: "npm:^3.2.3"
-    debug: "npm:^4.3.5"
-    esbuild: "npm:^0.23.0"
-    execa: "npm:^5.1.1"
-    globby: "npm:^11.1.0"
-    joycon: "npm:^3.1.1"
-    picocolors: "npm:^1.0.1"
-    postcss-load-config: "npm:^6.0.1"
-    resolve-from: "npm:^5.0.0"
-    rollup: "npm:^4.19.0"
-    source-map: "npm:0.8.0-beta.0"
-    sucrase: "npm:^3.35.0"
-    tree-kill: "npm:^1.2.2"
-  peerDependencies:
-    "@microsoft/api-extractor": ^7.36.0
-    "@swc/core": ^1
-    postcss: ^8.4.12
-    typescript: ">=4.5.0"
-  peerDependenciesMeta:
-    "@microsoft/api-extractor":
-      optional: true
-    "@swc/core":
-      optional: true
-    postcss:
-      optional: true
-    typescript:
-      optional: true
-  bin:
-    tsup: dist/cli-default.js
-    tsup-node: dist/cli-node.js
-  checksum: 10c0/0fa967ae0feb483528ae52fd9988d7931a092b3645a456e23b62ac03a0556da6f569fb2a77b3baf50ff1d12b9afac38aa9d29f15eb82c8a2b4faeda8362858da
-  languageName: node
-  linkType: hard
-
 "tsutils@npm:^3.21.0":
   version: 3.21.0
   resolution: "tsutils@npm:3.21.0"
@@ -56268,7 +56122,7 @@ __metadata:
     "@types/lodash.uniq": "npm:^4.5.9"
     "@types/lodash.uniqby": "npm:^4.7.9"
     "@types/lodash.upperfirst": "npm:^4.3.7"
-    "@types/nodemailer": "npm:^6.4.14"
+    "@types/nodemailer": "npm:^6.4.17"
     "@types/openid-client": "npm:^3.7.0"
     "@types/psl": "npm:^1.1.3"
     "@types/react": "npm:^18.2.39"
@@ -56519,7 +56373,6 @@ __metadata:
     "@hookform/resolvers": "npm:^3.1.1"
     "@linaria/core": "npm:^6.2.0"
     "@linaria/react": "npm:^6.2.1"
-    "@microsoft/microsoft-graph-client": "npm:^3.0.7"
     "@microsoft/microsoft-graph-types": "npm:^2.40.0"
     "@nestjs/cli": "npm:^9.0.0"
     "@nestjs/schematics": "npm:^9.0.0"
@@ -56535,7 +56388,6 @@ __metadata:
     "@playwright/test": "npm:^1.46.0"
     "@react-email/components": "npm:0.0.35"
     "@react-email/render": "npm:0.0.17"
-    "@sentry/node": "npm:^9.26.0"
     "@sentry/profiling-node": "npm:^9.26.0"
     "@sentry/react": "npm:^9.26.0"
     "@sentry/types": "npm:^8"
@@ -56600,10 +56452,8 @@ __metadata:
     "@types/mailparser": "npm:^3.4.6"
     "@types/ms": "npm:^0.7.31"
     "@types/node": "npm:^24.0.0"
-    "@types/nodemailer": "npm:^6.4.17"
     "@types/passport-google-oauth20": "npm:^2.0.11"
     "@types/passport-jwt": "npm:^3.0.8"
-    "@types/passport-microsoft": "npm:^1.0.3"
     "@types/pluralize": "npm:^0.0.33"
     "@types/react": "npm:^18.2.39"
     "@types/react-datepicker": "npm:^6.2.0"
@@ -56625,18 +56475,12 @@ __metadata:
     archiver: "npm:^7.0.1"
     axios: "npm:^1.6.2"
     bcrypt: "npm:^5.1.1"
-    body-parser: "npm:^1.20.2"
-    bullmq: "npm:^5.40.0"
     bytes: "npm:^3.1.2"
     chromatic: "npm:^6.18.0"
-    class-transformer: "npm:^0.5.1"
     concurrently: "npm:^8.2.2"
-    cron-parser: "npm:^5.1.1"
-    cron-validate: "npm:^1.4.5"
     cross-var: "npm:^1.1.0"
     danger: "npm:^11.3.0"
     danger-plugin-todos: "npm:^1.3.1"
-    dataloader: "npm:^2.2.2"
     date-fns: "npm:^2.30.0"
     date-fns-tz: "npm:^2.0.0"
     deep-equal: "npm:^2.2.2"
@@ -56665,22 +56509,9 @@ __metadata:
     fuse.js: "npm:^7.1.0"
     googleapis: "npm:105"
     graphiql: "npm:^3.1.1"
-    graphql: "npm:16.8.0"
-    graphql-fields: "npm:^2.0.3"
-    graphql-middleware: "npm:^6.1.35"
-    graphql-rate-limit: "npm:^3.3.0"
-    graphql-redis-subscriptions: "npm:^2.7.0"
-    graphql-scalars: "npm:^1.23.0"
-    graphql-sse: "npm:^2.5.4"
-    graphql-subscriptions: "npm:2.0.0"
-    graphql-tag: "npm:^2.12.6"
-    graphql-type-json: "npm:^0.3.2"
-    graphql-upload: "npm:^13.0.0"
-    graphql-yoga: "npm:^4.0.4"
     hex-rgb: "npm:^5.0.0"
     http-server: "npm:^14.1.1"
     iframe-resizer-react: "npm:^1.1.0"
-    imapflow: "npm:^1.0.186"
     immer: "npm:^10.1.1"
     jest: "npm:29.7.0"
     jest-environment-jsdom: "npm:30.0.0-beta.3"
@@ -56710,18 +56541,11 @@ __metadata:
     lodash.snakecase: "npm:^4.1.1"
     lodash.upperfirst: "npm:^4.3.1"
     luxon: "npm:^3.3.0"
-    mailparser: "npm:^3.7.3"
     microdiff: "npm:^1.3.2"
     moize: "npm:^6.1.6"
     msw: "npm:^2.0.11"
     msw-storybook-addon: "npm:^2.0.5"
-    nest-commander: "npm:^3.12.0"
     nx: "npm:21.3.11"
-    openapi-types: "npm:^12.1.3"
-    passport: "npm:^0.7.0"
-    passport-google-oauth20: "npm:^2.0.0"
-    passport-jwt: "npm:^4.0.1"
-    passport-microsoft: "npm:^2.0.0"
     patch-package: "npm:^8.0.0"
     pg: "npm:^8.11.3"
     pg-boss: "npm:^9.0.3"
@@ -56770,7 +56594,6 @@ __metadata:
     ts-node: "npm:10.9.1"
     tsconfig-paths: "npm:^4.2.0"
     tslib: "npm:^2.3.0"
-    tsup: "npm:^8.2.4"
     tsx: "npm:^4.17.0"
     type-fest: "npm:4.10.1"
     typescript: "npm:5.3.3"
