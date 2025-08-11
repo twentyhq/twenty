@@ -85,6 +85,7 @@
     "@types/openid-client": "3.7.0",
     "@types/psl": "1.1.3",
     "@types/unzipper": "0.10.10",
+    "@yarnpkg/types": "^4.0.0",
     "addressparser": "1.0.1",
     "ai": "^4.3.16",
     "apollo-server-core": "3.13.0",
@@ -194,8 +195,7 @@
     "uuid": "9.0.1",
     "vite-tsconfig-paths": "4.3.2",
     "zod": "3.23.8",
-    "zod-to-json-schema": "^3.23.1",
-    "@yarnpkg/types": "^4.0.0"
+    "zod-to-json-schema": "^3.23.1"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.8.0",
