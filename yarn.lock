@@ -47767,14 +47767,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"msw-storybook-addon@npm:^2.0.5":
-  version: 2.0.5
-  resolution: "msw-storybook-addon@npm:2.0.5"
+"msw-storybook-addon@npm:2.0.0--canary.122.b3ed3b1.0":
+  version: 2.0.0--canary.122.b3ed3b1.0
+  resolution: "msw-storybook-addon@npm:2.0.0--canary.122.b3ed3b1.0"
   dependencies:
     is-node-process: "npm:^1.0.1"
   peerDependencies:
     msw: ^2.0.0
-  checksum: 10c0/3f26fd4a8a6b1b4da165a8940eca4da2e175a69036a1c85c07ec1952fbb595252db689c4380d8f88ec1cfaa66a6696e90ef0c26b2d1bf17c30092b81247d1d40
+  checksum: 10c0/b7652cf5e0ec712082594f9fb587d4dd351a417102792f3525fd6a5bef9688db1810dbe31981a642a5d29a46df6348498c0f9fa2906d97c9f1b3fda0d13131a3
   languageName: node
   linkType: hard
 
@@ -58626,7 +58626,7 @@ __metadata:
     microdiff: "npm:^1.3.2"
     moize: "npm:^6.1.6"
     msw: "npm:^2.0.11"
-    msw-storybook-addon: "npm:^2.0.5"
+    msw-storybook-addon: "npm:2.0.0--canary.122.b3ed3b1.0"
     nest-commander: "npm:^3.12.0"
     nodemailer: "npm:^6.9.8"
     nx: "npm:21.3.11"
