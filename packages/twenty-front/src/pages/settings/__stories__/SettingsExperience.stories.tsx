@@ -7,6 +7,7 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { userEvent, within } from '@storybook/test';
+import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 import { SettingsExperience } from '../profile/appearance/components/SettingsExperience';
 
 const meta: Meta<PageDecoratorArgs> = {
@@ -25,8 +26,8 @@ export default meta;
 export type Story = StoryObj<typeof SettingsExperience>;
 
 export const Default: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(getCanvasElementForDropdownTesting());
 
     await canvas.findAllByText('Experience', undefined, {
       timeout: 3000,
@@ -38,7 +39,7 @@ export const Default: Story = {
 
 export const DateTimeSettingsTimeFormat: Story = {
   play: async () => {
-    const canvas = within(document.body);
+    const canvas = within(getCanvasElementForDropdownTesting());
 
     await canvas.findByText('Date and time');
 
@@ -56,7 +57,7 @@ export const DateTimeSettingsTimeFormat: Story = {
 
 export const DateTimeSettingsTimezone: Story = {
   play: async () => {
-    const canvas = within(document.body);
+    const canvas = within(getCanvasElementForDropdownTesting());
 
     await canvas.findByText('Date and time');
 
@@ -78,7 +79,7 @@ export const DateTimeSettingsTimezone: Story = {
 
 export const DateTimeSettingsDateFormat: Story = {
   play: async () => {
-    const canvas = within(document.body);
+    const canvas = within(getCanvasElementForDropdownTesting());
 
     await canvas.findByText('Date and time');
 

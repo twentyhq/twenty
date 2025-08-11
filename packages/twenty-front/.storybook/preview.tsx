@@ -1,6 +1,6 @@
 import { ThemeProvider } from '@emotion/react';
 import { type Preview } from '@storybook/react';
-import { initialize, mswDecorator } from 'msw-storybook-addon';
+import { initialize, mswLoader } from 'msw-storybook-addon';
 import { useEffect } from 'react';
 //import { useDarkMode } from 'storybook-dark-mode';
 
@@ -58,8 +58,9 @@ const preview: Preview = {
       );
     },
     RootDecorator,
-    mswDecorator,
   ],
+
+  loaders: [mswLoader],
 
   parameters: {
     controls: {
