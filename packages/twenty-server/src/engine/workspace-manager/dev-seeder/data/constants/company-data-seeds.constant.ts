@@ -8525,5 +8525,5 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = COMPANY_DATA_SEEDS_RAW.map(
   (company, index) => ({
     ...company,
     position: index + 1,
-  })
+  }),
 );

@@ -21651,5 +21651,5 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = PERSON_DATA_SEEDS_RAW.map(
   (person, index) => ({
     ...person,
     position: index + 1,
-  })
+  }),
 );
