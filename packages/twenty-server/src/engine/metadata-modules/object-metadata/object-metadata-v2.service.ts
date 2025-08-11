@@ -11,6 +11,10 @@ import { FlatObjectMetadataValidatorService } from 'src/engine/metadata-modules/
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata.util';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
+import {
+  ObjectMetadataException,
+  ObjectMetadataExceptionCode,
+} from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 
 @Injectable()
 export class ObjectMetadataServiceV2 {
@@ -54,18 +58,25 @@ export class ObjectMetadataServiceV2 {
       );
     }
 
-    const workspaceMigration = this.workspaceMigrationBuilderV2.build({
-      fromFlatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
-      toFlatObjectMetadataMaps:
-        addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
-          flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
-          flatObjectMetadata: flatObjectMetadataToCreate,
-        }),
-      inferDeletionFromMissingObjectFieldIndex: false,
-      workspaceId,
-    });
+    try {
+      const workspaceMigration = this.workspaceMigrationBuilderV2.build({
+        fromFlatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        toFlatObjectMetadataMaps:
+          addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
+            flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+            flatObjectMetadata: flatObjectMetadataToCreate,
+          }),
+        inferDeletionFromMissingObjectFieldIndex: false,
+        workspaceId,
+      });
 
-    await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
+      await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
+    } catch (error) {
+      throw new ObjectMetadataException(
+        'Workspace migration failed to run',
+        ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
 
     return flatObjectMetadataToCreate; // TODO retrieve from cache
   }
