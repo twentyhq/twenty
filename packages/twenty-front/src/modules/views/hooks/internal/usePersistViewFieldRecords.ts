@@ -3,6 +3,7 @@ import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -11,12 +12,21 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
+import { CREATE_CORE_VIEW_FIELD } from '@/views/graphql/mutations/createCoreViewField';
+import { UPDATE_CORE_VIEW_FIELD } from '@/views/graphql/mutations/updateCoreViewField';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type ViewField } from '@/views/types/ViewField';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
+import { useApolloClient } from '@apollo/client';
 import { isNull } from '@sniptt/guards';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const usePersistViewFieldRecords = () => {
+  const featureFlags = useFeatureFlagsMap();
+  const isCoreViewEnabled = featureFlags[FeatureFlagKey.IS_CORE_VIEW_ENABLED];
+
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.ViewField,
   });
@@ -36,6 +46,8 @@ export const usePersistViewFieldRecords = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const apolloCoreClient = useApolloCoreClient();
+  const apolloClient = useApolloClient();
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const createViewFieldRecords = useCallback(
     (viewFieldsToCreate: ViewField[], view: GraphQLView) => {
@@ -127,8 +139,102 @@ export const usePersistViewFieldRecords = () => {
     ],
   );
 
+  const createCoreViewFieldRecords = useCallback(
+    (viewFieldsToCreate: ViewField[], view: GraphQLView) => {
+      if (!viewFieldsToCreate.length) return;
+      return Promise.all(
+        viewFieldsToCreate.map((viewField) =>
+          apolloClient.mutate({
+            mutation: CREATE_CORE_VIEW_FIELD,
+            variables: {
+              input: {
+                fieldMetadataId: viewField.fieldMetadataId,
+                viewId: view.id,
+                isVisible: viewField.isVisible,
+                position: viewField.position,
+                size: viewField.size,
+                workspaceId: currentWorkspace?.id,
+              },
+            },
+            update: (cache, { data }) => {
+              const record = data?.['createCoreViewField'];
+              if (!record) return;
+
+              triggerCreateRecordsOptimisticEffect({
+                cache,
+                objectMetadataItem,
+                recordsToCreate: [record],
+                objectMetadataItems,
+                objectPermissionsByObjectMetadataId,
+              });
+            },
+          }),
+        ),
+      );
+    },
+    [
+      apolloClient,
+      currentWorkspace?.id,
+      objectMetadataItem,
+      objectMetadataItems,
+      objectPermissionsByObjectMetadataId,
+    ],
+  );
+
+  const updateCoreViewFieldRecords = useCallback(
+    (viewFieldsToUpdate: ViewField[]) => {
+      if (!viewFieldsToUpdate.length) return;
+
+      return Promise.all(
+        viewFieldsToUpdate.map((viewField) =>
+          apolloClient.mutate({
+            mutation: UPDATE_CORE_VIEW_FIELD,
+            variables: {
+              idToUpdate: viewField.id,
+              input: {
+                isVisible: viewField.isVisible,
+                position: viewField.position,
+                size: viewField.size,
+                aggregateOperation: viewField.aggregateOperation,
+              },
+            },
+            update: (cache, { data }) => {
+              const record = data?.['updateCoreViewField'];
+              if (!isDefined(record)) return;
+
+              const cachedRecord = getRecordFromCache<ViewField>(
+                record.id,
+                cache,
+              );
+              if (isNull(cachedRecord)) return;
+
+              triggerUpdateRecordOptimisticEffect({
+                cache,
+                objectMetadataItem,
+                currentRecord: cachedRecord,
+                updatedRecord: record,
+                objectMetadataItems,
+              });
+            },
+          }),
+        ),
+      );
+    },
+    [
+      apolloCoreClient,
+      getRecordFromCache,
+      objectMetadataItem,
+      objectMetadataItems,
+      updateOneRecordMutation,
+    ],
+  );
+
   return {
-    createViewFieldRecords,
-    updateViewFieldRecords,
+    createViewFieldRecords: isCoreViewEnabled
+      ? createCoreViewFieldRecords
+      : createViewFieldRecords,
+    updateViewFieldRecords: isCoreViewEnabled
+      ? updateCoreViewFieldRecords
+      : updateViewFieldRecords,
   };
 };
