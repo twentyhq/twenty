@@ -1,4 +1,4 @@
-import { RecordDragPositionData } from '@/object-record/record-drag/shared/types/RecordDragPositionData';
+import { type RecordDragPositionData } from '@/object-record/record-drag/shared/types/RecordDragPositionData';
 import { calculateDragPositions } from '@/object-record/record-drag/shared/utils/calculateDragPositions';
 
 describe('calculateDragPositions', () => {

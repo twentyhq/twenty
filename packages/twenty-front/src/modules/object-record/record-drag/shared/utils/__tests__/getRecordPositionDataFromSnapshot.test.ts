@@ -1,4 +1,4 @@
-import { Snapshot } from 'recoil';
+import { type Snapshot } from 'recoil';
 
 import { getRecordPositionDataFromSnapshot } from '@/object-record/record-drag/shared/utils/getRecordPositionDataFromSnapshot';
 import { isDefined } from 'twenty-shared/utils';

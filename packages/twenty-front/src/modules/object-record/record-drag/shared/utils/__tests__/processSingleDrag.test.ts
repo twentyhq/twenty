@@ -1,6 +1,6 @@
-import { RecordDragPositionData } from '@/object-record/record-drag/shared/types/RecordDragPositionData';
+import { type RecordDragPositionData } from '@/object-record/record-drag/shared/types/RecordDragPositionData';
 import { processSingleDrag } from '@/object-record/record-drag/shared/utils/processSingleDrag';
-import { DropResult } from '@hello-pangea/dnd';
+import { type DropResult } from '@hello-pangea/dnd';
 
 jest.mock(
   '@/object-record/record-drag/shared/utils/calculateDragPositions',

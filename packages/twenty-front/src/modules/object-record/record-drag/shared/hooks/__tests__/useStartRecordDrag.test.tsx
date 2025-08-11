@@ -1,4 +1,4 @@
-import { DragStart } from '@hello-pangea/dnd';
+import { type DragStart } from '@hello-pangea/dnd';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { RecoilRoot } from 'recoil';

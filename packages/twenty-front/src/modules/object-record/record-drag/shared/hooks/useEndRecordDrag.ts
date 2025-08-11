@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { RecordDragContext } from '@/object-record/record-drag/shared/types/RecordDragContext';
+import { type RecordDragContext } from '@/object-record/record-drag/shared/types/RecordDragContext';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 
 import { draggedRecordIdsComponentState } from '@/object-record/record-drag/board/states/draggedRecordIdsComponentState';
