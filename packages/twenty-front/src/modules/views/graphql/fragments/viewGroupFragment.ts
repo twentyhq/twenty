@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const VIEW_GROUP_FRAGMENT = gql`
-  fragment ViewGroupFragment on ViewGroupDTO {
+  fragment ViewGroupFragment on CoreViewGroup {
     id
     fieldMetadataId
     isVisible

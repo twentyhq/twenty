@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const VIEW_FRAGMENT = gql`
-  fragment ViewFragment on ViewDTO {
+  fragment ViewFragment on CoreView {
     id
     name
     objectMetadataId
