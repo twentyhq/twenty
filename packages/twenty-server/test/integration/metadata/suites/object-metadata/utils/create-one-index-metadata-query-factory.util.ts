@@ -1,7 +1,6 @@
 import gql from 'graphql-tag';
+import { type UpdateOneFieldFactoryInput } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata-query-factory.util';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
-
-import { UpdateOneFieldFactoryInput } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata-query-factory.util';
 
 type CreateIndexMetadataInput = {
   objectMetadataId: string;
