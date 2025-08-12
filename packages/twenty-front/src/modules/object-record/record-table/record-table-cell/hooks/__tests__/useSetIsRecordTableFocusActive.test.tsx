@@ -35,10 +35,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
       );
     }}
   >
-    <RecordTableComponentInstance
-      recordTableId="test-table-id"
-      onColumnsChange={jest.fn()}
-    >
+    <RecordTableComponentInstance recordTableId="test-table-id">
       {children}
     </RecordTableComponentInstance>
   </RecoilRoot>

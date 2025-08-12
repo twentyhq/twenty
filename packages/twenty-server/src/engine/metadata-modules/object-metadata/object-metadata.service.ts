@@ -6,13 +6,15 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
+  In,
+  Repository,
   type FindManyOptions,
   type FindOneOptions,
-  In,
   type QueryRunner,
-  Repository,
 } from 'typeorm';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
@@ -21,6 +23,7 @@ import {
   type UpdateObjectPayload,
   type UpdateOneObjectInput,
 } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
@@ -70,6 +73,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly indexMetadataService: IndexMetadataService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
   ) {
     super(objectMetadataRepository);
   }
@@ -93,6 +98,38 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   override async createOne(
     objectMetadataInput: CreateObjectInput,
   ): Promise<ObjectMetadataEntity> {
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        objectMetadataInput.workspaceId,
+      );
+
+    if (isWorkspaceMigrationV2Enabled) {
+      const flatObjectMetadata = await this.objectMetadataServiceV2.createOne({
+        objectMetadataInput,
+        workspaceId: objectMetadataInput.workspaceId,
+      });
+
+      // Since V2 returns FlatObjectMetadata, we need to fetch the created entity
+      const createdObjectMetadata = await this.objectMetadataRepository.findOne(
+        {
+          where: {
+            id: flatObjectMetadata.id,
+            workspaceId: objectMetadataInput.workspaceId,
+          },
+        },
+      );
+
+      if (!isDefined(createdObjectMetadata)) {
+        throw new ObjectMetadataException(
+          'Created object metadata not found',
+          ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        );
+      }
+
+      return createdObjectMetadata;
+    }
+
     const mainDataSource =
       await this.workspaceDataSourceService.connectToMainDataSource();
     const queryRunner = mainDataSource.createQueryRunner();

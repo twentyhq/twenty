@@ -1,11 +1,9 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { type FieldEmailsValue } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldEmails } from '@/object-record/record-field/types/guards/isFieldEmails';
-import { emailsSchema } from '@/object-record/record-field/types/guards/isFieldEmailsValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -34,22 +32,11 @@ export const useEmailsField = () => {
     recordFieldInputDraftValueComponentState,
   );
 
-  const persistField = usePersistField();
-
-  const persistEmailsField = (nextValue: FieldEmailsValue) => {
-    try {
-      persistField(emailsSchema.parse(nextValue));
-    } catch {
-      return;
-    }
-  };
-
   return {
     fieldDefinition,
     fieldValue,
     draftValue,
     setDraftValue,
     setFieldValue,
-    persistEmailsField,
   };
 };

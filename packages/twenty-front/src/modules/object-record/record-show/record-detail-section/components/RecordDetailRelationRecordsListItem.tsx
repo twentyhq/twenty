@@ -17,9 +17,9 @@ import {
   type RecordUpdateHook,
   type RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
+import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
-import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { type FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
@@ -113,6 +113,8 @@ export const RecordDetailRelationRecordsListItem = ({
     isRecordFieldReadOnly: parentIsRecordFieldReadOnly,
   } = useContext(FieldContext);
 
+  const { onSubmit } = useContext(FieldInputEventContext);
+
   const { openModal } = useModal();
 
   const {
@@ -136,8 +138,6 @@ export const RecordDetailRelationRecordsListItem = ({
   const relationObjectPermissions = useObjectPermissionsForObject(
     relationObjectMetadataItem.id,
   );
-
-  const persistField = usePersistField();
 
   const { updateOneRecord: updateOneRelationRecord } = useUpdateOneRecord({
     objectNameSingular: relationObjectMetadataNameSingular,
@@ -189,7 +189,7 @@ export const RecordDetailRelationRecordsListItem = ({
     if (!relationFieldMetadataItem?.name) return;
 
     if (isToOneObject) {
-      persistField(null);
+      onSubmit?.({ newValue: null });
     } else {
       updateOneRelationRecord({
         idToUpdate: relationRecord.id,

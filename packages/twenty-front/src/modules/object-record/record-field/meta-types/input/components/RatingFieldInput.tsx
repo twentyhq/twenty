@@ -1,28 +1,27 @@
 import { type FieldRatingValue } from '@/object-record/record-field/types/FieldMetadata';
 import { RatingInput } from '@/ui/field/input/components/RatingInput';
 
-import { type FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { usePersistField } from '../../../hooks/usePersistField';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
+import { useContext } from 'react';
 import { useRatingField } from '../../hooks/useRatingField';
 
-export type RatingFieldInputProps = {
-  onSubmit?: FieldInputEvent;
-  readonly?: boolean;
-};
-
-export const RatingFieldInput = ({
-  onSubmit,
-  readonly,
-}: RatingFieldInputProps) => {
+export const RatingFieldInput = () => {
   const { rating } = useRatingField();
 
-  const persistField = usePersistField();
+  const { isRecordFieldReadOnly } = useContext(FieldContext);
+
+  const { onSubmit } = useContext(FieldInputEventContext);
 
   const handleChange = (newRating: FieldRatingValue) => {
-    onSubmit?.(() => persistField(newRating));
+    onSubmit?.({ newValue: newRating });
   };
 
   return (
-    <RatingInput value={rating} onChange={handleChange} readonly={readonly} />
+    <RatingInput
+      value={rating}
+      onChange={handleChange}
+      readonly={isRecordFieldReadOnly}
+    />
   );
 };

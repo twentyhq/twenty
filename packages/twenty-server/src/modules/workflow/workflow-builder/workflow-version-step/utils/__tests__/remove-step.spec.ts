@@ -1,3 +1,5 @@
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/remove-step';
 import {
   type WorkflowAction,
@@ -187,7 +189,7 @@ describe('removeStep', () => {
     const result = removeStep({
       existingTrigger: mockTrigger,
       existingSteps: [step1, step2, step3],
-      stepIdToDelete: 'trigger',
+      stepIdToDelete: TRIGGER_STEP_ID,
       stepToDeleteChildrenIds: ['1'],
     });
 
@@ -247,7 +249,7 @@ describe('removeStep', () => {
     const result = removeStep({
       existingTrigger: { ...mockTrigger, nextStepIds: [] },
       existingSteps: null,
-      stepIdToDelete: 'trigger',
+      stepIdToDelete: TRIGGER_STEP_ID,
     });
 
     expect(result.updatedTrigger).toEqual(null);
