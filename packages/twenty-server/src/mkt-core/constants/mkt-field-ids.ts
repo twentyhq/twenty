@@ -167,8 +167,6 @@ export const TIMELINE_ACTIVITY_MKT_FIELD_IDS = {
   mktLicense: '4b8283ce-daa4-4f11-87d0-2ade1cd6dc81',
   mktContract: 'b8c23b61-29ab-47e5-b412-4789f0653a69',
   mktOrderItem: 'c8d7e6f5-4321-0987-6543-21098765432a',
-  mktLicense: '4b8283ce-daa4-4f11-87d0-2ade1cd6dc81',
-  mktContract: 'b8c23b61-29ab-47e5-b412-4789f0653a69',
 };
 
 //EXTENDS FROM WORKSPACE_MEMBER_STANDARD_FIELD_IDS
@@ -182,6 +180,4 @@ export const WORKSPACE_MEMBER_MKT_FIELD_IDS = {
   accountOwnerForMktLicenses: 'a343e640-2214-4896-a0e2-830ee854a778',
   accountOwnerForMktContracts: '87d29139-844b-44b9-a3e7-3f9e5a3e4165',
   accountOwnerForMktOrderItems: '5f4e3d2c-1b0a-9876-5432-109876543210',
-  accountOwnerForMktLicenses: 'a343e640-2214-4896-a0e2-830ee854a778',
-  accountOwnerForMktContracts: '87d29139-844b-44b9-a3e7-3f9e5a3e4165',
 };
