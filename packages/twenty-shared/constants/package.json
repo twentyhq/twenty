@@ -1,8 +1,0 @@
-{
-  "name": "twenty-shared/constants",
-  "private": true,
-  "types": "../dist/constants/index.d.ts",
-  "module": "../dist/constants.mjs",
-  "main": "../dist/constants.cjs",
-  "sideEffects": false
-}

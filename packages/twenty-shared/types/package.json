@@ -1,8 +1,0 @@
-{
-  "name": "twenty-shared/types",
-  "private": true,
-  "types": "../dist/types/index.d.ts",
-  "module": "../dist/types.mjs",
-  "main": "../dist/types.cjs",
-  "sideEffects": false
-}

@@ -1,8 +1,0 @@
-{
-  "name": "twenty-shared/utils",
-  "private": true,
-  "types": "../dist/utils/index.d.ts",
-  "module": "../dist/utils.mjs",
-  "main": "../dist/utils.cjs",
-  "sideEffects": false
-}

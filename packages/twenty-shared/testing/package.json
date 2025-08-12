@@ -1,8 +1,0 @@
-{
-  "name": "twenty-shared/testing",
-  "private": true,
-  "types": "../dist/testing/index.d.ts",
-  "module": "../dist/testing.mjs",
-  "main": "../dist/testing.cjs",
-  "sideEffects": false
-}

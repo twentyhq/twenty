@@ -1,8 +1,0 @@
-{
-  "name": "twenty-shared/workflow",
-  "private": true,
-  "types": "../dist/workflow/index.d.ts",
-  "module": "../dist/workflow.mjs",
-  "main": "../dist/workflow.cjs",
-  "sideEffects": false
-}

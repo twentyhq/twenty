@@ -1,8 +1,0 @@
-{
-  "name": "twenty-shared/translations",
-  "private": true,
-  "types": "../dist/translations/index.d.ts",
-  "module": "../dist/translations.mjs",
-  "main": "../dist/translations.cjs",
-  "sideEffects": false
-}

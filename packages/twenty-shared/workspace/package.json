@@ -1,8 +1,0 @@
-{
-  "name": "twenty-shared/workspace",
-  "private": true,
-  "types": "../dist/workspace/index.d.ts",
-  "module": "../dist/workspace.mjs",
-  "main": "../dist/workspace.cjs",
-  "sideEffects": false
-}
