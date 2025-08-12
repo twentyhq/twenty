@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { type WorkflowRunStepInfo } from 'twenty-shared/src/workflow/types/WorkflowRunStateStepInfos';
 import { isDefined } from 'twenty-shared/utils';
-import { StepStatus, WorkflowRunStepInfo } from 'twenty-shared/workflow';
+import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
