@@ -263,7 +263,7 @@ export class FieldMetadataServiceV2 {
       return this.fieldMetadataRepository.findOneOrFail({
         where: {
           id: optimisticiallyUpdatedFlatFieldMetadata.id,
-          workspaceId
+          workspaceId,
         },
       });
     } catch {
