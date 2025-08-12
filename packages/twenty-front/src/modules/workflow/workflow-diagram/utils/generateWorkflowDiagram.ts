@@ -15,9 +15,9 @@ import {
 import { getWorkflowDiagramTriggerNode } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramTriggerNode';
 
 import { WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEmptyTriggerNodeDefinition';
-import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { getRootStepIds } from '@/workflow/workflow-trigger/utils/getRootStepIds';
 import { isDefined } from 'twenty-shared/utils';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
 
 export const generateWorkflowDiagram = ({
@@ -85,9 +85,6 @@ export const generateWorkflowDiagram = ({
     edges.push({
       ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
       type: defaultEdgeType,
-      ...(defaultEdgeType.includes('editable')
-        ? { deletable: true, selectable: true }
-        : {}),
       id: v4(),
       source: TRIGGER_STEP_ID,
       target: stepLinkToTriggerId,
@@ -99,9 +96,6 @@ export const generateWorkflowDiagram = ({
       edges.push({
         ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
         type: defaultEdgeType,
-        ...(defaultEdgeType.includes('editable')
-          ? { deletable: true, selectable: true }
-          : {}),
         id: v4(),
         source: step.id,
         target: child,

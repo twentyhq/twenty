@@ -17,7 +17,7 @@ import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFind
 import { type ViewFilter } from '@/views/types/ViewFilter';
 import { relationFilterValueSchemaObject } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
-import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
+import { ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated/graphql';
 

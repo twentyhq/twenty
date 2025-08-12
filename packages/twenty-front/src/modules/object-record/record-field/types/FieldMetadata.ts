@@ -1,8 +1,10 @@
 import { type RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { type ZodHelperLiteral } from '@/object-record/record-field/types/ZodHelperLiteral';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type AllowedAddressSubField } from 'twenty-shared/src/types/AddressFieldsType';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import {
+  ConnectedAccountProvider,
+  type AllowedAddressSubField,
+} from 'twenty-shared/types';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
 import { type RelationType } from '~/generated-metadata/graphql';

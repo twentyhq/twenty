@@ -25,7 +25,7 @@ export const useObjectOptionsForTable = (
   );
 
   const handleReorderColumns: OnDragEndResponder = useCallback(
-    (result) => {
+    async (result) => {
       if (
         !result.destination ||
         result.destination.index === 1 ||

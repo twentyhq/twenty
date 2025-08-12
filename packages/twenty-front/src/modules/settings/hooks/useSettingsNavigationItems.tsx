@@ -86,7 +86,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Accounts`,
           path: SettingsPath.Accounts,
           Icon: IconAt,
-          matchSubPages: false,
           subItems: [
             {
               label: t`Emails`,

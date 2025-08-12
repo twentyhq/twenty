@@ -46,6 +46,7 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
       select: executionArgs.graphqlQuerySelectedFieldsResult.select,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
 
     const deletedObjectRecords = await queryBuilder

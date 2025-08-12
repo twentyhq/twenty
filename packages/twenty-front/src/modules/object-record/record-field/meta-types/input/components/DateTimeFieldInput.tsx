@@ -1,60 +1,46 @@
 import { DateInput } from '@/ui/field/input/components/DateInput';
 
-import { type FieldInputEvent } from '@/object-record/record-field/meta-types/input/components/NumberFieldInput';
-
+import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { type FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useContext } from 'react';
 import { type Nullable } from 'twenty-ui/utilities';
-import { usePersistField } from '../../../hooks/usePersistField';
 import { useDateTimeField } from '../../hooks/useDateTimeField';
 
-export type DateTimeFieldInputProps = {
-  onClickOutside?: FieldInputClickOutsideEvent;
-  onEnter?: FieldInputEvent;
-  onEscape?: FieldInputEvent;
-  onClear?: FieldInputEvent;
-  onSubmit?: FieldInputEvent;
-};
-
-export const DateTimeFieldInput = ({
-  onEnter,
-  onEscape,
-  onClickOutside,
-  onClear,
-  onSubmit,
-}: DateTimeFieldInputProps) => {
+export const DateTimeFieldInput = () => {
   const { fieldValue, setDraftValue } = useDateTimeField();
+
+  const { onEnter, onEscape, onClickOutside, onSubmit } = useContext(
+    FieldInputEventContext,
+  );
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
   );
 
-  const persistField = usePersistField();
-
-  const persistDate = (newDate: Nullable<Date>) => {
+  const getDateToPersist = (newDate: Nullable<Date>) => {
     if (!newDate) {
-      persistField(null);
+      return null;
     } else {
       const newDateISO = newDate?.toISOString();
 
-      persistField(newDateISO);
+      return newDateISO;
     }
   };
 
   const handleEnter = (newDate: Nullable<Date>) => {
-    onEnter?.(() => persistDate(newDate));
+    onEnter?.({ newValue: getDateToPersist(newDate) });
   };
 
   const handleEscape = (newDate: Nullable<Date>) => {
-    onEscape?.(() => persistDate(newDate));
+    onEscape?.({ newValue: getDateToPersist(newDate) });
   };
 
   const handleClickOutside = (
     event: MouseEvent | TouchEvent,
     newDate: Nullable<Date>,
   ) => {
-    onClickOutside?.(() => persistDate(newDate), event);
+    onClickOutside?.({ newValue: getDateToPersist(newDate), event });
   };
 
   const handleChange = (newDate: Nullable<Date>) => {
@@ -62,11 +48,11 @@ export const DateTimeFieldInput = ({
   };
 
   const handleClear = () => {
-    onClear?.(() => persistDate(null));
+    onSubmit?.({ newValue: null });
   };
 
   const handleSubmit = (newDate: Nullable<Date>) => {
-    onSubmit?.(() => persistDate(newDate));
+    onSubmit?.({ newValue: getDateToPersist(newDate) });
   };
 
   const dateValue = fieldValue ? new Date(fieldValue) : null;
