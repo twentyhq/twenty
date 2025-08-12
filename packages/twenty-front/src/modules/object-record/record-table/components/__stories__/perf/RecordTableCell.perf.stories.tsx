@@ -75,10 +75,7 @@ const meta: Meta = {
               },
             }}
           >
-            <RecordTableComponentInstance
-              recordTableId="asd"
-              onColumnsChange={() => {}}
-            >
+            <RecordTableComponentInstance recordTableId="asd">
               <RecordTableBodyContextProvider
                 value={{
                   onOpenTableCell: () => {},

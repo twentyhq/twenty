@@ -7,7 +7,6 @@ import {
   type MultiItemBaseInputProps,
 } from '@/object-record/record-field/meta-types/input/components/MultiItemBaseInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { type FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { type PhoneRecord } from '@/object-record/record-field/types/FieldMetadata';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -25,8 +24,8 @@ import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmp
 
 type MultiItemFieldInputProps<T> = {
   items: T[];
-  onPersist: (updatedItems: T[]) => void;
-  onCancel?: () => void;
+  onChange: (newItemsValue: T[]) => void;
+  onEscape?: (newItemsValue: T[]) => void;
   placeholder: string;
   validateInput?: (input: string) => { isValid: boolean; errorMessage: string };
   formatInput?: (input: string) => T;
@@ -40,7 +39,7 @@ type MultiItemFieldInputProps<T> = {
   newItemLabel?: string;
   fieldMetadataType: FieldMetadataType;
   renderInput?: MultiItemBaseInputProps['renderInput'];
-  onClickOutside?: FieldInputClickOutsideEvent;
+  onClickOutside?: (newItemsValue: T[], event: MouseEvent | TouchEvent) => void;
   onError?: (hasError: boolean, values: any[]) => void;
 };
 
@@ -48,8 +47,8 @@ type MultiItemFieldInputProps<T> = {
 // This should be refactored with a hook instead that exposes those events in a context around this component and its children.
 export const MultiItemFieldInput = <T,>({
   items,
-  onPersist,
-  onCancel,
+  onChange,
+  onEscape,
   placeholder,
   validateInput,
   formatInput,
@@ -61,8 +60,9 @@ export const MultiItemFieldInput = <T,>({
   onError,
 }: MultiItemFieldInputProps<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const handleDropdownClose = () => {
-    onCancel?.();
+
+  const handleEscape = () => {
+    onEscape?.(items);
   };
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
@@ -78,7 +78,8 @@ export const MultiItemFieldInput = <T,>({
       if (isEditing && isPrimaryItem) {
         handleSubmitInput();
       }
-      onClickOutside?.(() => {}, event);
+
+      onClickOutside?.(items, event);
     },
     listenerId: instanceId,
   });
@@ -86,8 +87,8 @@ export const MultiItemFieldInput = <T,>({
   useHotkeysOnFocusedElement({
     focusId: instanceId,
     keys: [Key.Escape],
-    callback: handleDropdownClose,
-    dependencies: [handleDropdownClose],
+    callback: handleEscape,
+    dependencies: [handleEscape],
   });
 
   const [isInputDisplayed, setIsInputDisplayed] = useState(false);
@@ -99,13 +100,15 @@ export const MultiItemFieldInput = <T,>({
   });
   const isAddingNewItem = itemToEditIndex === -1;
 
-  const handleOnChange = (value: string) => {
+  const handleInputChange = (value: string) => {
     setInputValue(value);
+
     if (!validateInput) return;
 
     setErrorData(
       errorData.isValid ? errorData : { isValid: true, errorMessage: '' },
     );
+
     onError?.(false, items);
   };
 
@@ -178,19 +181,19 @@ export const MultiItemFieldInput = <T,>({
       ? [...items, newItem]
       : toSpliced(items, itemToEditIndex, 1, newItem);
 
-    onPersist(updatedItems);
+    onChange(updatedItems);
     setIsInputDisplayed(false);
     setInputValue('');
   };
 
   const handleSetPrimaryItem = (index: number) => {
     const updatedItems = moveArrayItem(items, { fromIndex: index, toIndex: 0 });
-    onPersist(updatedItems);
+    onChange(updatedItems);
   };
 
   const handleDeleteItem = (index: number) => {
     const updatedItems = toSpliced(items, index, 1);
-    onPersist(updatedItems);
+    onChange(updatedItems);
   };
 
   return (
@@ -219,11 +222,11 @@ export const MultiItemFieldInput = <T,>({
           value={inputValue}
           hasError={!errorData.isValid}
           renderInput={renderInput}
-          onEscape={handleDropdownClose}
+          onEscape={handleEscape}
           onChange={(value) => {
             value
-              ? handleOnChange(turnIntoEmptyStringIfWhitespacesOnly(value))
-              : handleOnChange('');
+              ? handleInputChange(turnIntoEmptyStringIfWhitespacesOnly(value))
+              : handleInputChange('');
           }}
           onEnter={handleSubmitInput}
           hasItem={!!items.length}

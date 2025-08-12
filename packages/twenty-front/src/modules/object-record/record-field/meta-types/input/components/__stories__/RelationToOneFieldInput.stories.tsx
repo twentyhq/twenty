@@ -1,5 +1,5 @@
 import { type Decorator, type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
@@ -22,10 +22,9 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
-import {
-  RelationToOneFieldInput,
-  type RelationToOneFieldInputProps,
-} from '../RelationToOneFieldInput';
+import { RelationToOneFieldInput } from '../RelationToOneFieldInput';
+
+import { getFieldInputEventContextProviderWithJestMocks } from './utils/getFieldInputEventContextProviderWithJestMocks';
 
 const RelationWorkspaceSetterEffect = () => {
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
@@ -50,15 +49,19 @@ const RelationWorkspaceSetterEffect = () => {
   return <></>;
 };
 
-type RelationToOneFieldInputWithContextProps = RelationToOneFieldInputProps & {
+const {
+  FieldInputEventContextProviderWithJestMocks,
+  handleSubmitMocked,
+  handleCancelMocked,
+} = getFieldInputEventContextProviderWithJestMocks();
+
+type RelationToOneFieldInputWithContextProps = {
   value: number;
   recordId: string;
 };
 
 const RelationToOneFieldInputWithContext = ({
   recordId,
-  onSubmit,
-  onCancel,
 }: RelationToOneFieldInputWithContextProps) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
@@ -101,8 +104,11 @@ const RelationToOneFieldInputWithContext = ({
             instanceId: 'relation-to-one-field-input-123-Relation',
           }}
         >
-          <RelationWorkspaceSetterEffect />
-          <RelationToOneFieldInput onSubmit={onSubmit} onCancel={onCancel} />
+          <FieldInputEventContextProviderWithJestMocks>
+            <RelationWorkspaceSetterEffect />
+
+            <RelationToOneFieldInput />
+          </FieldInputEventContextProviderWithJestMocks>
         </RecordFieldComponentInstanceContext.Provider>
       </FieldContext.Provider>
       <div data-testid="data-field-input-click-outside-div" />
@@ -110,13 +116,10 @@ const RelationToOneFieldInputWithContext = ({
   );
 };
 
-const submitJestFn = fn();
-const cancelJestFn = fn();
-
 const clearMocksDecorator: Decorator = (Story, context) => {
   if (context.parameters.clearMocks === true) {
-    submitJestFn.mockClear();
-    cancelJestFn.mockClear();
+    handleSubmitMocked.mockClear();
+    handleCancelMocked.mockClear();
   }
   return <Story />;
 };
@@ -126,8 +129,8 @@ const meta: Meta = {
   component: RelationToOneFieldInputWithContext,
   args: {
     useEditButton: true,
-    onSubmit: submitJestFn,
-    onCancel: cancelJestFn,
+    onSubmit: handleSubmitMocked,
+    onCancel: handleCancelMocked,
   },
   argTypes: {
     onSubmit: { control: false },
@@ -154,7 +157,7 @@ export const Submit: Story = {
   play: async () => {
     const canvas = within(getCanvasElementForDropdownTesting());
 
-    expect(submitJestFn).toHaveBeenCalledTimes(0);
+    expect(handleSubmitMocked).toHaveBeenCalledTimes(0);
 
     const item = await canvas.findByText('Linkedin', undefined, {
       timeout: 3000,
@@ -163,7 +166,7 @@ export const Submit: Story = {
     await userEvent.click(item);
 
     await waitFor(() => {
-      expect(submitJestFn).toHaveBeenCalledTimes(1);
+      expect(handleSubmitMocked).toHaveBeenCalledTimes(1);
     });
   },
 };
@@ -172,12 +175,12 @@ export const Cancel: Story = {
   play: async () => {
     const canvas = within(getCanvasElementForDropdownTesting());
 
-    expect(cancelJestFn).toHaveBeenCalledTimes(0);
+    expect(handleCancelMocked).toHaveBeenCalledTimes(0);
     await canvas.findByText('Linkedin', undefined, { timeout: 3000 });
 
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
 
     await userEvent.click(emptyDiv);
-    expect(cancelJestFn).toHaveBeenCalledTimes(1);
+    expect(handleCancelMocked).toHaveBeenCalledTimes(1);
   },
 };

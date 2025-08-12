@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'class-validator';
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { ValidateOneFieldMetadataArgs } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
+import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { type FlatFieldMetadataTypeValidator } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { isEnumValidateOneFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-validate-one-field-metadata-args.util';
 import { validateEnumSelectFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator';
@@ -14,7 +19,7 @@ import { validateRelationFlatFieldMetadata } from 'src/engine/metadata-modules/f
 export class FlatFieldMetadataTypeValidatorService {
   constructor(private readonly featureFlagService: FeatureFlagService) {}
 
-  public readonly FIELD_METADATA_TYPE_VALIDATOR_HASHMAP: FlatFieldMetadataTypeValidator =
+  private readonly FIELD_METADATA_TYPE_VALIDATOR_HASHMAP: FlatFieldMetadataTypeValidator =
     {
       ACTOR: async (_args) => {
         return [];
@@ -126,4 +131,36 @@ export class FlatFieldMetadataTypeValidatorService {
         return [];
       },
     };
+
+  public async validateFlatFieldMetadataTypeSpecificities<
+    T extends FieldMetadataType = FieldMetadataType,
+  >({
+    existingFlatObjectMetadataMaps,
+    flatFieldMetadataToValidate,
+    workspaceId,
+    otherFlatObjectMetadataMapsToValidate,
+  }: ValidateOneFieldMetadataArgs<T>): Promise<
+    FailedFlatFieldMetadataValidationExceptions[]
+  > {
+    const fieldMetadataTypeValidator =
+      this.FIELD_METADATA_TYPE_VALIDATOR_HASHMAP[
+        flatFieldMetadataToValidate.type
+      ];
+
+    if (!isDefined(fieldMetadataTypeValidator)) {
+      return [
+        new FieldMetadataException(
+          'Unsupported field metadata type',
+          FieldMetadataExceptionCode.UNCOVERED_FIELD_METADATA_TYPE_VALIDATION,
+        ),
+      ];
+    }
+
+    return await fieldMetadataTypeValidator({
+      existingFlatObjectMetadataMaps,
+      flatFieldMetadataToValidate,
+      workspaceId,
+      otherFlatObjectMetadataMapsToValidate,
+    });
+  }
 }

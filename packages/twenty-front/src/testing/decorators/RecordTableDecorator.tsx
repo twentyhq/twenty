@@ -140,7 +140,7 @@ export const RecordTableDecorator: Decorator = (Story, context) => {
 
   return (
     <RecordTableComponentInstanceContext.Provider
-      value={{ instanceId: recordIndexId, onColumnsChange: () => {} }}
+      value={{ instanceId: recordIndexId }}
     >
       <ViewComponentInstanceContext.Provider
         value={{ instanceId: recordIndexId }}

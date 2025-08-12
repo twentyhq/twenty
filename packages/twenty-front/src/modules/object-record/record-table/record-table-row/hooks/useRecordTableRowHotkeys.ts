@@ -1,9 +1,10 @@
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { useSelectAllRows } from '@/object-record/record-table/hooks/internal/useSelectAllRows';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
 import { getRecordTableCellFocusId } from '@/object-record/record-table/record-table-cell/utils/getRecordTableCellFocusId';
 import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
@@ -81,9 +82,7 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
     });
   };
 
-  const { resetTableRowSelection } = useRecordTable({
-    recordTableId,
-  });
+  const { resetTableRowSelection } = useResetTableRowSelection(recordTableId);
 
   const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
 
@@ -133,12 +132,9 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
     dependencies: [handleEscape],
   });
 
-  const { selectAllRows, setHasUserSelectedAllRows } = useRecordTable({
-    recordTableId,
-  });
+  const { selectAllRows } = useSelectAllRows();
 
   const handleSelectAllRows = () => {
-    setHasUserSelectedAllRows(true);
     selectAllRows();
   };
 
