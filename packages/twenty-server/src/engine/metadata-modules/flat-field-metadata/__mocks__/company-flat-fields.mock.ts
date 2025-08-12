@@ -476,11 +476,11 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
     icon: 'IconUserCircle',
     standardOverrides: null,
     options: null,
-          settings: {
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        relationType: RelationType.MANY_TO_ONE,
-        joinColumnName: 'accountOwnerId',
-      },
+    settings: {
+      onDelete: RelationOnDeleteAction.SET_NULL,
+      relationType: RelationType.MANY_TO_ONE,
+      joinColumnName: 'accountOwnerId',
+    },
     isCustom: false,
     isActive: true,
     isSystem: false,

@@ -14,7 +14,7 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
   overrides: FlatFieldMetadataOverrides<T>,
 ): FlatFieldMetadata => {
   const createdAt = new Date();
-  
+
   return {
     createdAt,
     updatedAt: createdAt,

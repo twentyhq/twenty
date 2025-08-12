@@ -10,6 +10,7 @@ export const getFlatObjectMetadataMock = (
   overrides: FlatObjectMetadataOverrides,
 ): FlatObjectMetadata => {
   const createdAt = new Date();
+
   return {
     flatFieldMetadatas: [],
     flatIndexMetadatas: [],

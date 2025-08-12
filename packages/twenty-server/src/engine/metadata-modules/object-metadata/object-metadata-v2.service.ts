@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { MultipleMetadataValidationErrors } from 'src/engine/core-modules/error/multiple-metadata-validation-errors';
 import { EMPTY_FLAT_OBJECT_METADATA_MAPS } from 'src/engine/metadata-modules/flat-object-metadata-maps/constant/empty-flat-object-metadata-maps.constant';
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
@@ -19,7 +21,6 @@ import {
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
-import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class ObjectMetadataServiceV2 {
@@ -181,12 +182,14 @@ export class ObjectMetadataServiceV2 {
 
     const createdFlatObjectMetadata =
       recomputedFlatObjectMetadataMaps.byId[flatObjectMetadataToCreate.id];
+
     if (!isDefined(createdFlatObjectMetadata)) {
       throw new ObjectMetadataException(
         'Fail to find just created object metadata',
         ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
       );
     }
+
     return createdFlatObjectMetadata;
   }
 }

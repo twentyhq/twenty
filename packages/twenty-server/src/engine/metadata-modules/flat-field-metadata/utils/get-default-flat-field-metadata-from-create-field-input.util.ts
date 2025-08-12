@@ -20,6 +20,7 @@ export const getDefaultFlatFieldMetadata = ({
   );
 
   const createdAt = new Date();
+
   return {
     description: createFieldInput.description ?? null,
     id: fieldMetadataId,

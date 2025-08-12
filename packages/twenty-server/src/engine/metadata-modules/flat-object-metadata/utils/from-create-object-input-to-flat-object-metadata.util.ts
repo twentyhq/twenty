@@ -37,6 +37,7 @@ export const fromCreateObjectInputToFlatObjectMetadata = ({
     });
 
   const createdAt = new Date();
+
   return {
     createdAt,
     updatedAt: createdAt,
