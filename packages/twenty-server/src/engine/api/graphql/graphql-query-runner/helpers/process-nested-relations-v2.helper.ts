@@ -167,7 +167,6 @@ export class ProcessNestedRelationsV2Helper {
       select: columnsToSelect,
     });
 
-    // malformed function for morph
     const relationIds = this.getUniqueIds({
       records: parentObjectRecords,
       idField:
