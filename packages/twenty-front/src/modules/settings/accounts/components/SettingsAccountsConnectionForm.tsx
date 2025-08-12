@@ -68,13 +68,9 @@ export const SettingsAccountsConnectionForm = ({
 }: SettingsAccountsConnectionFormProps) => {
   const { t } = useLingui();
 
-  const getTitle = () => {
-    return isEditing ? t`Edit Email Account` : t`New Email Account`;
-  };
-
   const getDescription = () => {
     if (isEditing) {
-      return t`Update your email account configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed.`;
+      return t`Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed.`;
     }
     return t`You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync).`;
   };
@@ -83,7 +79,7 @@ export const SettingsAccountsConnectionForm = ({
 
   return (
     <Section>
-      <H2Title title={getTitle()} description={getDescription()} />
+      <H2Title title={t`Mail Account`} description={getDescription()} />
       <StyledFormContainer>
         <Controller
           name="handle"
