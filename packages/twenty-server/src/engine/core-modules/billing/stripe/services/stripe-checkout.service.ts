@@ -132,10 +132,6 @@ export class StripeCheckoutService {
         requirePaymentMethod,
       ),
       automatic_tax: { enabled: !!requirePaymentMethod },
-      collection_method: requirePaymentMethod
-        ? 'charge_automatically'
-        : 'send_invoice',
-      ...(!requirePaymentMethod ? { days_until_due: 30 } : {}),
     };
 
     return await this.stripe.subscriptions.create(subscriptionParams);
