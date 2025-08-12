@@ -136,6 +136,21 @@ export const SettingsObjectNewFieldConfigure = () => {
             targetFieldIcon: relationFormValues.field.icon,
           },
         });
+      } else if (
+        formValues.type === FieldMetadataType.MORPH_RELATION &&
+        'morphRelation' in formValues
+      ) {
+        const { morphRelations: morphRelationsFormValues, ...fieldFormValues } = formValues;
+        await createMetadataField({
+          ...fieldFormValues,
+          objectMetadataId: activeObjectMetadataItem.id,
+          morphRelationsCreationPayload: morphRelationsFormValues.map((morphRelationFormValues: any) => ({
+            type: morphRelationFormValues.type,
+            targetObjectMetadataId: morphRelationFormValues.objectMetadataId,
+            targetFieldLabel: morphRelationFormValues.field.label,
+            targetFieldIcon: morphRelationFormValues.field.icon,
+          })),
+        });
       } else {
         await createMetadataField({
           ...formValues,

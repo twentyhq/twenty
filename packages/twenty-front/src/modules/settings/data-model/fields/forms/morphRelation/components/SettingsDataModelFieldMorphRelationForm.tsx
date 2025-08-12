@@ -7,9 +7,10 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
+import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
-import { useRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/relation/hooks/useRelationSettingsFormInitialValues';
+import { useMorphRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/morphRelation/hooks/useMorphRelationSettingsFormInitialValues';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -20,26 +21,31 @@ import { RelationType } from '~/generated-metadata/graphql';
 
 // todo @guillim : this is a copy of the relation form, we need to refactor it to be more morphspecific
 export const settingsDataModelFieldMorphRelationFormSchema = z.object({
-  relation: z.object({
-    field: fieldMetadataItemSchema()
-      .pick({
-        icon: true,
-        label: true,
-      })
-      // NOT SURE IF THIS IS CORRECT
-      .merge(
-        fieldMetadataItemSchema()
+  morphRelations: z
+    .array(
+      z.object({
+        field: fieldMetadataItemSchema()
           .pick({
-            name: true,
-            isLabelSyncedWithName: true,
+            icon: true,
+            label: true,
           })
-          .partial(),
-      ),
-    objectMetadataId: z.string().uuid(),
-    type: z.enum(
-      Object.keys(RELATION_TYPES) as [RelationType, ...RelationType[]],
-    ),
-  }),
+          .merge(
+            fieldMetadataItemSchema()
+              .pick({
+                name: true,
+                isLabelSyncedWithName: true,
+              })
+              .partial(),
+          ),
+        objectMetadataId: z.string().uuid(),
+      }),
+    )
+    .min(2),
+  type: z.enum(
+    Object.keys(RELATION_TYPES) as [RelationType, ...RelationType[]],
+  ),
+  fieldOnDestination: z.string().min(1),
+  iconOnDestination: z.string().min(1),
 });
 
 export type SettingsDataModelFieldMorphRelationFormValues = z.infer<
@@ -94,19 +100,26 @@ export const SettingsDataModelFieldMorphRelationForm = ({
   const { activeObjectMetadataItems, findObjectMetadataItemById } =
     useFilteredObjectMetadataItems();
 
-    // we should see if we authorize or not the edition of these fields for moprh
+  // we should see if we authorize or not the edition of these fields for moprh
   const {
     disableFieldEdition,
     disableRelationEdition,
-    initialRelationFieldMetadataItem,
-    initialRelationObjectMetadataItem,
+    initialRelationObjectMetadataItems,
     initialRelationType,
-  } = useRelationSettingsFormInitialValues({
+  } = useMorphRelationSettingsFormInitialValues({
     fieldMetadataItem,
     objectMetadataItem,
   });
 
-  
+  // todo tmp @guillim remove this when ready
+  const initialRelationObjectMetadataItem =
+    initialRelationObjectMetadataItems[0];
+  const initialRelationFieldMetadataItem = {
+    icon: initialRelationObjectMetadataItem.icon ?? 'IconUsers',
+    label: [RelationType.MANY_TO_ONE].includes(initialRelationType)
+      ? initialRelationObjectMetadataItem.labelPlural
+      : initialRelationObjectMetadataItem.labelSingular,
+  };
 
   const isMobile = useIsMobile();
 
@@ -114,7 +127,7 @@ export const SettingsDataModelFieldMorphRelationForm = ({
     <StyledContainer>
       <StyledSelectsContainer isMobile={isMobile}>
         <Controller
-          name="relation.type"
+          name="type"
           control={control}
           defaultValue={initialRelationType}
           render={({ field: { onChange, value } }) => (
@@ -125,12 +138,30 @@ export const SettingsDataModelFieldMorphRelationForm = ({
               disabled={disableRelationEdition}
               value={value}
               options={RELATION_TYPE_OPTIONS}
-              onChange={onChange}
+              onChange={onChange} //todo @guillim: this is not working
             />
           )}
         />
+
         {/* needs to switch to multiInput */}
-        <Controller
+
+        <FormMultiSelectFieldInput
+          label={t`Object destination`}
+          defaultValue={initialRelationObjectMetadataItem.id}
+          options={activeObjectMetadataItems
+            .filter(isObjectMetadataAvailableForRelation)
+            .sort((item1, item2) =>
+              item1.labelPlural.localeCompare(item2.labelPlural),
+            )
+            .map((objectMetadataItem) => ({
+              label: objectMetadataItem.labelPlural,
+              value: objectMetadataItem.id,
+              Icon: getIcon(objectMetadataItem.icon),
+            }))}
+          onChange={() => {}}
+        />
+
+        {/* <Controller
           name="relation.objectMetadataId"
           control={control}
           defaultValue={initialRelationObjectMetadataItem.id}
@@ -153,15 +184,12 @@ export const SettingsDataModelFieldMorphRelationForm = ({
                 }))}
               onChange={onChange}
             />
-          )}
-        />
+          )} */}
       </StyledSelectsContainer>
-      <StyledInputsLabel>
-        {t`Field on destination`}
-      </StyledInputsLabel>
+      <StyledInputsLabel>{t`Field on destination`}</StyledInputsLabel>
       <StyledInputsContainer>
         <Controller
-          name="relation.field.icon"
+          name="iconOnDestination"
           control={control}
           defaultValue={initialRelationFieldMetadataItem.icon}
           render={({ field: { onChange, value } }) => (
@@ -175,7 +203,7 @@ export const SettingsDataModelFieldMorphRelationForm = ({
           )}
         />
         <Controller
-          name="relation.field.label"
+          name="fieldOnDestination"
           control={control}
           defaultValue={initialRelationFieldMetadataItem.label}
           render={({ field: { onChange, value } }) => (

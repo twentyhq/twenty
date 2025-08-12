@@ -6,10 +6,8 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import { SettingsDataModelFieldMorphRelationForm } from '@/settings/data-model/fields/forms/morphRelation/components/SettingsDataModelFieldMorphRelationForm';
-import {
-  type SettingsDataModelFieldRelationFormValues
-} from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm';
-import { useRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/relation/hooks/useRelationSettingsFormInitialValues';
+import { useMorphRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/morphRelation/hooks/useMorphRelationSettingsFormInitialValues';
+import { type SettingsDataModelFieldRelationFormValues } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm';
 import {
   SettingsDataModelFieldPreviewCard,
   type SettingsDataModelFieldPreviewCardProps,
@@ -22,7 +20,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 // todo @guillim : this is a copy of the relation settings form card, we need to refactor it to be more morphspecific
-type SettingsDataModelFieldRelationSettingsFormCardProps = {
+type SettingsDataModelFieldMorphRelationSettingsFormCardProps = {
   fieldMetadataItem: Pick<FieldMetadataItem, 'icon' | 'label' | 'type'> &
     Partial<Omit<FieldMetadataItem, 'icon' | 'label' | 'type'>>;
   relationFieldMetadataItem?: FieldMetadataItem;
@@ -56,19 +54,26 @@ const StyledRelationImage = styled.img<{ flip?: boolean; isMobile: boolean }>`
 export const SettingsDataModelFieldMorphRelationSettingsFormCard = ({
   fieldMetadataItem,
   objectMetadataItem,
-}: SettingsDataModelFieldRelationSettingsFormCardProps) => {
+}: SettingsDataModelFieldMorphRelationSettingsFormCardProps) => {
   const { watch: watchFormValue } =
     useFormContext<SettingsDataModelFieldRelationFormValues>();
   const { findObjectMetadataItemById } = useFilteredObjectMetadataItems();
   const isMobile = useIsMobile();
-  const {
-    initialRelationObjectMetadataItem,
-    initialRelationType,
-    initialRelationFieldMetadataItem,
-  } = useRelationSettingsFormInitialValues({
-    fieldMetadataItem,
-    objectMetadataItem,
-  });
+  const { initialRelationObjectMetadataItems, initialRelationType } =
+    useMorphRelationSettingsFormInitialValues({
+      fieldMetadataItem,
+      objectMetadataItem,
+    });
+
+  // todo tmp @guillim remove this when ready
+  const initialRelationFieldMetadataItem = {
+    icon: initialRelationObjectMetadataItems[0].icon ?? 'IconUsers',
+    label: [RelationType.MANY_TO_ONE].includes(initialRelationType)
+      ? initialRelationObjectMetadataItems[0].labelPlural
+      : initialRelationObjectMetadataItems[0].labelSingular,
+  };
+  const initialRelationObjectMetadataItem =
+    initialRelationObjectMetadataItems[0];
 
   const relationObjectMetadataId = watchFormValue(
     'relation.objectMetadataId',
