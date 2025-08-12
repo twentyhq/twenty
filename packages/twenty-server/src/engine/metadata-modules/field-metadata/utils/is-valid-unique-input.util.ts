@@ -18,7 +18,7 @@ export const isValidUniqueFieldDefaultValueCombination = ({
   const defaultDefaultValue = generateDefaultValue(type);
 
   if (!isCompositeFieldMetadataType(type))
-    !isUnique || defaultValue === defaultDefaultValue;
+    return !isUnique || defaultValue === defaultDefaultValue;
 
   return (
     !isUnique ||
