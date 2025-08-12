@@ -1,18 +1,11 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
-import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { FieldMetadataType } from 'twenty-shared/types';
-
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
-
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
@@ -22,7 +15,6 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import {
   FieldTypeAndNameMetadata,
@@ -30,10 +22,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { MKT_ORDER_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { MktContractWorkspaceEntity } from 'src/mkt-core/contract/mkt-contract.workspace-entity';
 import { MktLicenseWorkspaceEntity } from 'src/mkt-core/license/mkt-license.workspace-entity';
@@ -90,28 +79,6 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Status`,
     description: msg`Current order status`,
     options: ORDER_STATUS_OPTIONS,
-    options: [
-      {
-        value: OrderStatus.PENDING,
-        label: 'Pending',
-        color: 'gray',
-        position: 0,
-      },
-      { value: OrderStatus.PAID, label: 'Paid', color: 'green', position: 1 },
-      { value: OrderStatus.FAILED, label: 'Failed', color: 'red', position: 2 },
-      {
-        value: OrderStatus.CANCELLED,
-        label: 'Cancelled',
-        color: 'orange',
-        position: 3,
-      },
-      {
-        value: OrderStatus.FULFILLED,
-        label: 'Fulfilled',
-        color: 'blue',
-        position: 4,
-      },
-    ],
   })
   @WorkspaceIsNullable()
   status?: OrderStatus;

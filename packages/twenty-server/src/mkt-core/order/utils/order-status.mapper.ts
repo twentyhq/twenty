@@ -12,10 +12,10 @@ export function mapGraphQLOrderStatusToEntity(
   }
   const statusMap: Record<OrderStatusGraphQL, OrderStatus> = {
     [OrderStatusGraphQL.PENDING]: OrderStatus.PENDING,
-    [OrderStatusGraphQL.CONFIRMED]: OrderStatus.CONFIRMED,
-    [OrderStatusGraphQL.SHIPPING]: OrderStatus.SHIPPING,
-    [OrderStatusGraphQL.DELIVERED]: OrderStatus.DELIVERED,
+    [OrderStatusGraphQL.PAID]: OrderStatus.PAID,
+    [OrderStatusGraphQL.FAILED]: OrderStatus.FAILED,
     [OrderStatusGraphQL.CANCELLED]: OrderStatus.CANCELLED,
+    [OrderStatusGraphQL.FULFILLED]: OrderStatus.FULFILLED,
   };
 
   const mappedStatus = statusMap[graphqlStatus];
@@ -35,10 +35,10 @@ export function mapEntityOrderStatusToGraphQL(
 ): OrderStatusGraphQL {
   const statusMap: Record<OrderStatus, OrderStatusGraphQL> = {
     [OrderStatus.PENDING]: OrderStatusGraphQL.PENDING,
-    [OrderStatus.CONFIRMED]: OrderStatusGraphQL.CONFIRMED,
-    [OrderStatus.SHIPPING]: OrderStatusGraphQL.SHIPPING,
-    [OrderStatus.DELIVERED]: OrderStatusGraphQL.DELIVERED,
+    [OrderStatus.PAID]: OrderStatusGraphQL.PAID,
+    [OrderStatus.FAILED]: OrderStatusGraphQL.FAILED,
     [OrderStatus.CANCELLED]: OrderStatusGraphQL.CANCELLED,
+    [OrderStatus.FULFILLED]: OrderStatusGraphQL.FULFILLED,
   };
 
   const mappedStatus = statusMap[entityStatus];

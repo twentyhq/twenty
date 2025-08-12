@@ -18,7 +18,6 @@ export const MKT_PREFILLS = [
   // order prefills
   prefillMktContracts,
   prefillMktOrders,
-  prefillMktLicenses,
-  prefillMktContracts,
   prefillMktOrderItems,
+  prefillMktLicenses,
 ];
