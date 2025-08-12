@@ -1501,10 +1501,6 @@ export const workflowQueryResult = {
                               value: '3b8e6458-5fc1-4e63-8563-008ccddaa6db',
                               isLeaf: true,
                             },
-                            dataSourceId: {
-                              value: '82de2d45-4c55-46d6-83ce-8c82ad5e2ecf',
-                              isLeaf: true,
-                            },
                             nameSingular: {
                               value: 'company',
                               isLeaf: true,
