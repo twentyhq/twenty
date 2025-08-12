@@ -21,5 +21,5 @@ export * from './graphql';
 // DTOs and inputs/outputs
 export * from './dto';
 
-// Utils
-export * from './utils/order-status.mapper';
+// Core types and interfaces
+export * from './types';
