@@ -36,177 +36,40 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
-    "./src/*": "./dist/*",
     "./constants": {
       "types": "./dist/constants/index.d.ts",
       "import": "./dist/constants.mjs",
       "require": "./dist/constants.cjs"
     },
-    "./src/constants": {
-      "types": "./dist/constants/index.d.ts",
-      "import": "./dist/constants.mjs",
-      "require": "./dist/constants.cjs"
-    },
-    "./src/constants/*": "./dist/constants/*",
     "./testing": {
       "types": "./dist/testing/index.d.ts",
       "import": "./dist/testing.mjs",
       "require": "./dist/testing.cjs"
     },
-    "./src/testing": {
-      "types": "./dist/testing/index.d.ts",
-      "import": "./dist/testing.mjs",
-      "require": "./dist/testing.cjs"
-    },
-    "./src/testing/*": "./dist/testing/*",
     "./translations": {
       "types": "./dist/translations/index.d.ts",
       "import": "./dist/translations.mjs",
       "require": "./dist/translations.cjs"
     },
-    "./src/translations": {
-      "types": "./dist/translations/index.d.ts",
-      "import": "./dist/translations.mjs",
-      "require": "./dist/translations.cjs"
-    },
-    "./src/translations/*": "./dist/translations/*",
     "./types": {
       "types": "./dist/types/index.d.ts",
       "import": "./dist/types.mjs",
       "require": "./dist/types.cjs"
     },
-    "./src/types": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/types.mjs",
-      "require": "./dist/types.cjs"
-    },
-    "./src/types/*": "./dist/types/*",
     "./utils": {
       "types": "./dist/utils/index.d.ts",
       "import": "./dist/utils.mjs",
       "require": "./dist/utils.cjs"
     },
-    "./src/utils": {
-      "types": "./dist/utils/index.d.ts",
-      "import": "./dist/utils.mjs",
-      "require": "./dist/utils.cjs"
-    },
-    "./src/utils/*": "./dist/utils/*",
     "./workflow": {
       "types": "./dist/workflow/index.d.ts",
       "import": "./dist/workflow.mjs",
       "require": "./dist/workflow.cjs"
     },
-    "./src/workflow": {
-      "types": "./dist/workflow/index.d.ts",
-      "import": "./dist/workflow.mjs",
-      "require": "./dist/workflow.cjs"
-    },
-    "./src/workflow/*": "./dist/workflow/*",
     "./workspace": {
       "types": "./dist/workspace/index.d.ts",
       "import": "./dist/workspace.mjs",
       "require": "./dist/workspace.cjs"
-    },
-    "./src/workspace": {
-      "types": "./dist/workspace/index.d.ts",
-      "import": "./dist/workspace.mjs",
-      "require": "./dist/workspace.cjs"
-    },
-    "./src/workspace/*": "./dist/workspace/*"
-  },
-  "typesVersions": {
-    "*": {
-      "*": [
-        "dist/*"
-      ],
-      "src/*": [
-        "dist/*"
-      ],
-      "constants": [
-        "dist/constants/index.d.ts"
-      ],
-      "constants/*": [
-        "dist/constants/*"
-      ],
-      "src/constants": [
-        "dist/constants/index.d.ts"
-      ],
-      "src/constants/*": [
-        "dist/constants/*"
-      ],
-      "testing": [
-        "dist/testing/index.d.ts"
-      ],
-      "testing/*": [
-        "dist/testing/*"
-      ],
-      "src/testing": [
-        "dist/testing/index.d.ts"
-      ],
-      "src/testing/*": [
-        "dist/testing/*"
-      ],
-      "translations": [
-        "dist/translations/index.d.ts"
-      ],
-      "translations/*": [
-        "dist/translations/*"
-      ],
-      "src/translations": [
-        "dist/translations/index.d.ts"
-      ],
-      "src/translations/*": [
-        "dist/translations/*"
-      ],
-      "types": [
-        "dist/types/index.d.ts"
-      ],
-      "types/*": [
-        "dist/types/*"
-      ],
-      "src/types": [
-        "dist/types/index.d.ts"
-      ],
-      "src/types/*": [
-        "dist/types/*"
-      ],
-      "utils": [
-        "dist/utils/index.d.ts"
-      ],
-      "utils/*": [
-        "dist/utils/*"
-      ],
-      "src/utils": [
-        "dist/utils/index.d.ts"
-      ],
-      "src/utils/*": [
-        "dist/utils/*"
-      ],
-      "workflow": [
-        "dist/workflow/index.d.ts"
-      ],
-      "workflow/*": [
-        "dist/workflow/*"
-      ],
-      "src/workflow": [
-        "dist/workflow/index.d.ts"
-      ],
-      "src/workflow/*": [
-        "dist/workflow/*"
-      ],
-      "workspace": [
-        "dist/workspace/index.d.ts"
-      ],
-      "workspace/*": [
-        "dist/workspace/*"
-      ],
-      "src/workspace": [
-        "dist/workspace/index.d.ts"
-      ],
-      "src/workspace/*": [
-        "dist/workspace/*"
-      ]
     }
   },
   "files": [
@@ -218,5 +81,30 @@
     "utils",
     "workflow",
     "workspace"
-  ]
+  ],
+  "typesVersions": {
+    "*": {
+      "constants": [
+        "dist/constants/index.d.ts"
+      ],
+      "testing": [
+        "dist/testing/index.d.ts"
+      ],
+      "translations": [
+        "dist/translations/index.d.ts"
+      ],
+      "types": [
+        "dist/types/index.d.ts"
+      ],
+      "utils": [
+        "dist/utils/index.d.ts"
+      ],
+      "workflow": [
+        "dist/workflow/index.d.ts"
+      ],
+      "workspace": [
+        "dist/workspace/index.d.ts"
+      ]
+    }
+  }
 }

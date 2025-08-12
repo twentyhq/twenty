@@ -213,15 +213,15 @@ const generateModulePackageExports = (moduleDirectories: string[]) => {
         require: `./dist/${moduleName}.cjs`,
       },
       // Back-compat for historic deep imports like "twenty-shared/src/${moduleName}"
-      [`./src/${moduleName}`]: {
-        types: `./dist/${moduleName}/index.d.ts`,
-        import: `./dist/${moduleName}.mjs`,
-        require: `./dist/${moduleName}.cjs`,
-      },
+      // [`./src/${moduleName}`]: {
+      //   types: `./dist/${moduleName}/index.d.ts`,
+      //   import: `./dist/${moduleName}.mjs`,
+      //   require: `./dist/${moduleName}.cjs`,
+      // },
       // Back-compat wildcard passthrough under src -> dist
-      [`./src/${moduleName}/*`]: `./dist/${moduleName}/*`,
+      // [`./src/${moduleName}/*`]: `./dist/${moduleName}/*`,
     };
-  }, { './src/*': './dist/*' });
+  }, {});
 };
 
 const computePackageJsonFilesAndExportsConfig = (
@@ -242,14 +242,13 @@ const computePackageJsonFilesAndExportsConfig = (
       ...acc,
       // clean subpaths
       [`${moduleName}`]: [`dist/${moduleName}/index.d.ts`],
-      [`${moduleName}/*`]: [`dist/${moduleName}/*`],
+      // [`${moduleName}/*`]: [`dist/${moduleName}/*`],
       // back-compat historic deep imports under src/
-      [`src/${moduleName}`]: [`dist/${moduleName}/index.d.ts`],
-      [`src/${moduleName}/*`]: [`dist/${moduleName}/*`],
+      // [`src/${moduleName}`]: [`dist/${moduleName}/index.d.ts`],
+      // [`src/${moduleName}/*`]: [`dist/${moduleName}/*`],
     }),
     {
-      '*': ['dist/*'],
-      'src/*': ['dist/*'],
+    
     },
   );
 
