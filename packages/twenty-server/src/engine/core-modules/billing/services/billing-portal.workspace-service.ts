@@ -187,9 +187,11 @@ export class BillingPortalWorkspaceService {
     );
 
     if (!createdBillingSubscription) {
-      throw new Error('Billing subscription not found after creation');
+      throw new BillingException(
+        'Billing subscription not found after creation',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
+      );
     }
-
     await this.billingSubscriptionItemRepository.upsert(
       transformStripeSubscriptionEventToDatabaseSubscriptionItem(
         createdBillingSubscription.id,
