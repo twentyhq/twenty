@@ -1,4 +1,0 @@
-{
-  "main": "dist/twenty-shared-translations.cjs.js",
-  "module": "dist/twenty-shared-translations.esm.js"
-}

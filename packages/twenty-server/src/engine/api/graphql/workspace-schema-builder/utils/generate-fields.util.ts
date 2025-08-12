@@ -167,10 +167,10 @@ const generateRelationField = <
   options: WorkspaceBuildSchemaOptions;
   typeFactory: TypeFactory<T>;
 }) => {
-  const relationField = {};
+  const relationFields = {};
 
   if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
-    return relationField;
+    return relationFields;
   }
 
   const { joinColumnName, fieldMetadataName } =
@@ -188,14 +188,14 @@ const generateRelationField = <
   );
 
   // @ts-expect-error legacy noImplicitAny
-  relationField[joinColumnName] = {
+  relationFields[joinColumnName] = {
     type,
     description: fieldMetadata.description,
   };
 
   //TODO : temporary - continue ej/1278 branch (https://github.com/twentyhq/core-team-issues/issues/1278 issue) before removing this
   if (fieldMetadata.type === FieldMetadataType.MORPH_RELATION)
-    return relationField;
+    return relationFields;
 
   if (
     [InputTypeDefinitionKind.Create, InputTypeDefinitionKind.Update].includes(
@@ -215,15 +215,16 @@ const generateRelationField = <
         isRelationConnectField: true,
       },
     );
+
+    // todo @guillim
+    // @ts-expect-error legacy noImplicitAny
+    relationFields[fieldMetadataName] = {
+      type: type,
+      description: fieldMetadata.description,
+    };
   }
 
-  // @ts-expect-error legacy noImplicitAny
-  relationField[fieldMetadataName] = {
-    type: type,
-    description: fieldMetadata.description,
-  };
-
-  return relationField;
+  return relationFields;
 };
 
 // Type guard

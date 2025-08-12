@@ -21,7 +21,6 @@ import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
-const onColumnsChange = jest.fn();
 const recordTableId = 'record-table-id';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -30,10 +29,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
       snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
     }}
   >
-    <RecordTableComponentInstance
-      recordTableId={recordTableId}
-      onColumnsChange={onColumnsChange}
-    >
+    <RecordTableComponentInstance recordTableId={recordTableId}>
       <RecordTableContextProvider
         recordTableId={recordTableId}
         viewBarId="viewBarId"

@@ -1,8 +1,10 @@
-import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
-import { type FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import {
+  type FieldMetadata,
+  type FieldRelationMetadata,
+} from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldAddressValue } from '@/object-record/record-field/types/guards/isFieldAddressValue';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
@@ -25,6 +27,8 @@ import { isFieldSelect } from '@/object-record/record-field/types/guards/isField
 import { isFieldSelectValue } from '@/object-record/record-field/types/guards/isFieldSelectValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
+import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isWorkflowRunJsonField } from '@/object-record/record-field/meta-types/utils/isWorkflowRunJsonField';
 import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
 import { isFieldArrayValue } from '@/object-record/record-field/types/guards/isFieldArrayValue';
@@ -34,7 +38,6 @@ import { isFieldRichTextValue } from '@/object-record/record-field/types/guards/
 import { isFieldRichTextV2Value } from '@/object-record/record-field/types/guards/isFieldRichTextValueV2';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { FieldContext } from '../contexts/FieldContext';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldBooleanValue } from '../types/guards/isFieldBooleanValue';
 import { isFieldCurrency } from '../types/guards/isFieldCurrency';
@@ -48,18 +51,30 @@ import { isFieldRatingValue } from '../types/guards/isFieldRatingValue';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldTextValue } from '../types/guards/isFieldTextValue';
 
-export const usePersistField = () => {
-  const {
-    recordId,
-    fieldDefinition,
-    useUpdateRecord = () => [],
-  } = useContext(FieldContext);
+export const usePersistField = ({
+  objectMetadataItemId,
+}: {
+  objectMetadataItemId: string;
+}) => {
+  const { objectMetadataItem } = useObjectMetadataItemById({
+    objectId: objectMetadataItemId,
+  });
 
-  const [updateRecord] = useUpdateRecord();
+  const { updateOneRecord } = useUpdateOneRecord({
+    objectNameSingular: objectMetadataItem?.nameSingular ?? '',
+  });
 
   const persistField = useRecoilCallback(
     ({ set, snapshot }) =>
-      (valueToPersist: unknown) => {
+      ({
+        recordId,
+        fieldDefinition,
+        valueToPersist,
+      }: {
+        recordId: string;
+        fieldDefinition: FieldDefinition<FieldMetadata>;
+        valueToPersist: unknown;
+      }) => {
         const fieldIsRelationToOneObject =
           isFieldRelationToOneObject(
             fieldDefinition as FieldDefinition<FieldRelationMetadata>,
@@ -183,24 +198,20 @@ export const usePersistField = () => {
           );
 
           if (fieldIsRelationToOneObject) {
-            updateRecord?.({
-              variables: {
-                where: { id: recordId },
-                updateOneRecordInput: {
-                  [getForeignKeyNameFromRelationFieldName(fieldName)]:
-                    valueToPersist?.id ?? null,
-                },
+            updateOneRecord?.({
+              idToUpdate: recordId,
+              updateOneRecordInput: {
+                [getForeignKeyNameFromRelationFieldName(fieldName)]:
+                  valueToPersist?.id ?? null,
               },
             });
             return;
           }
 
-          updateRecord?.({
-            variables: {
-              where: { id: recordId },
-              updateOneRecordInput: {
-                [fieldName]: valueToPersist,
-              },
+          updateOneRecord?.({
+            idToUpdate: recordId,
+            updateOneRecordInput: {
+              [fieldName]: valueToPersist,
             },
           });
         } else {
@@ -213,7 +224,7 @@ export const usePersistField = () => {
           );
         }
       },
-    [recordId, fieldDefinition, updateRecord],
+    [updateOneRecord],
   );
 
   return persistField;

@@ -104,6 +104,16 @@ export const SettingsDataModelFieldPreview = ({
     previewRecord?.id ??
     `${objectMetadataItem.nameSingular}-${fieldName}-${fieldMetadataItem.relation?.type}-${relationObjectMetadataItem?.nameSingular}-preview`;
 
+  const metadata = {
+    fieldName,
+    objectMetadataNameSingular: objectMetadataItem.nameSingular,
+    relationObjectMetadataNameSingular:
+      relationObjectMetadataItem?.nameSingular || '',
+    options: fieldMetadataItem.options ?? [],
+    settings: fieldMetadataItem.settings,
+    relationType: fieldMetadataItem.relation?.type,
+  };
+
   return (
     <>
       <RecordFieldComponentInstanceContext.Provider
@@ -139,25 +149,21 @@ export const SettingsDataModelFieldPreview = ({
                 iconName: 'FieldIcon',
                 fieldMetadataId: fieldMetadataItem.id || '',
                 label: fieldMetadataItem.label,
-                metadata: {
-                  fieldName,
-                  objectMetadataNameSingular: objectMetadataItem.nameSingular,
-                  relationObjectMetadataNameSingular:
-                    relationObjectMetadataItem?.nameSingular,
-                  options: fieldMetadataItem.options ?? [],
-                  settings: fieldMetadataItem.settings,
-                  relationType: fieldMetadataItem.relation?.type,
-                },
+                metadata,
                 defaultValue: fieldMetadataItem.defaultValue,
               },
-              isRecordFieldReadOnly: false,
+              isRecordFieldReadOnly:
+                fieldMetadataItem.type === FieldMetadataType.BOOLEAN ||
+                fieldMetadataItem.type === FieldMetadataType.RATING
+                  ? true
+                  : false,
               disableChipClick: true,
             }}
           >
             {fieldMetadataItem.type === FieldMetadataType.BOOLEAN ? (
-              <BooleanFieldInput readonly />
+              <BooleanFieldInput />
             ) : fieldMetadataItem.type === FieldMetadataType.RATING ? (
-              <RatingFieldInput readonly />
+              <RatingFieldInput />
             ) : (
               <FieldDisplay />
             )}

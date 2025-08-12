@@ -26,7 +26,6 @@ const meta: Meta = {
         <RecordTableComponentInstanceContext.Provider
           value={{
             instanceId,
-            onColumnsChange: () => {},
           }}
         >
           <RecordIndexContextProvider

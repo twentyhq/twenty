@@ -14,7 +14,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { type ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
+import { type ViewFilterOperand } from 'twenty-shared/types';
 import { MenuItem } from 'twenty-ui/navigation';
 
 type AdvancedFilterRecordFilterOperandSelectContentProps = {

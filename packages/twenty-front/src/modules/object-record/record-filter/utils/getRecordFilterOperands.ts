@@ -5,8 +5,10 @@ import {
   type FilterableFieldType,
 } from '@/object-record/record-filter/types/FilterableFieldType';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
-import { ViewFilterOperand as RecordFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  ViewFilterOperand as RecordFilterOperand,
+} from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 export type GetRecordFilterOperandsParams = {
