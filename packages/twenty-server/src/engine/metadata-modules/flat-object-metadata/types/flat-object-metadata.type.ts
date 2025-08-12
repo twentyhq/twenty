@@ -20,7 +20,7 @@ type ObjectMetadataRelationProperties = ExtractRecordTypeOrmRelationProperties<
 
 export type FlatObjectMetadata = Omit<
   ObjectMetadataEntity,
-  ObjectMetadataRelationProperties | 'dataSourceId' | 'duplicateCriteria'
+  ObjectMetadataRelationProperties | 'dataSourceId'
 > & {
   uniqueIdentifier: string;
   flatIndexMetadatas: FlatIndexMetadata[];

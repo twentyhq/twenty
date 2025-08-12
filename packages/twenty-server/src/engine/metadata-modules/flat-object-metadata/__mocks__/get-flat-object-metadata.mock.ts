@@ -37,6 +37,7 @@ export const getFlatObjectMetadataMock = (
     workspaceId: faker.string.uuid(),
     createdAt,
     updatedAt: createdAt,
+    duplicateCriteria: null,
     ...overrides,
   };
 };

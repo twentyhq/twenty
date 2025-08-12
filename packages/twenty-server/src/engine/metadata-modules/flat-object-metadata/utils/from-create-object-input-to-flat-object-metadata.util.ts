@@ -41,6 +41,7 @@ export const fromCreateObjectInputToFlatObjectMetadata = ({
   return {
     createdAt,
     updatedAt: createdAt,
+    duplicateCriteria: null,
     description: createObjectInput.description ?? null,
     flatFieldMetadatas: Object.values(baseCustomFlatFieldMetadatas),
     flatIndexMetadatas: [],

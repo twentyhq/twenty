@@ -86,6 +86,7 @@ exports[`Workspace migration builder field actions test suite It should build an
       "flatRelationTargetObjectMetadata": {
         "createdAt": Any<ClockDate>,
         "description": "default flat object metadata description",
+        "duplicateCriteria": null,
         "flatFieldMetadatas": [],
         "flatIndexMetadatas": [],
         "icon": "icon",
@@ -834,6 +835,7 @@ exports[`Workspace migration builder object actions test suite It should build a
     "flatObjectMetadataWithoutFields": {
       "createdAt": Any<ClockDate>,
       "description": "A rocket",
+      "duplicateCriteria": null,
       "icon": "IconRocket",
       "id": Any<String>,
       "imageIdentifierFieldMetadataId": null,
@@ -1441,6 +1443,7 @@ exports[`Workspace migration builder object actions test suite It should build a
     "flatObjectMetadataWithoutFields": {
       "createdAt": Any<ClockDate>,
       "description": "A rocket",
+      "duplicateCriteria": null,
       "icon": "IconRocket",
       "id": Any<String>,
       "imageIdentifierFieldMetadataId": null,

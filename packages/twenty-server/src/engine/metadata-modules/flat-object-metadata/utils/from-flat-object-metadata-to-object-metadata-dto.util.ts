@@ -11,6 +11,7 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     icon,
     standardOverrides,
     shortcut,
+    duplicateCriteria,
     ...rest
   } = flatObjectMetadata;
 
@@ -22,5 +23,6 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     icon: icon ?? undefined,
     standardOverrides: standardOverrides ?? undefined,
     shortcut: shortcut ?? undefined,
+    duplicateCriteria: duplicateCriteria ?? undefined
   };
 };
