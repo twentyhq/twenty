@@ -72,6 +72,15 @@ export class FlatObjectMetadataValidatorService {
           ),
         );
       }
+
+      if (flatObjectMetadataToDelete.isActive) {
+        errors.push(
+          new ObjectMetadataException(
+            t`Active objects cannot be deleted`,
+            ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+          ),
+        );
+      }
     }
 
     return errors;
