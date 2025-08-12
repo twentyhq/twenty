@@ -10,9 +10,13 @@ import { WorkflowDiagramFilteringDisabledEdgeEditable } from '@/workflow/workflo
 import { WorkflowDiagramStepNodeEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeEditable';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramRightClickMenuPositionState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuPositionState';
-import { type WorkflowDiagramNode } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import {
+  type WorkflowDiagramEdge,
+  type WorkflowDiagramNode,
+} from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps';
 import { useCreateEdge } from '@/workflow/workflow-steps/hooks/useCreateEdge';
+import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { addEdge, type Connection, ReactFlowProvider } from '@xyflow/react';
@@ -40,6 +44,10 @@ export const WorkflowDiagramCanvasEditable = ({
     workflow: workflowWithCurrentVersion,
   });
 
+  const { deleteEdge } = useDeleteEdge({
+    workflow: workflowWithCurrentVersion,
+  });
+
   const { updateStep } = useUpdateStep({
     workflow: workflowWithCurrentVersion,
   });
@@ -63,6 +71,10 @@ export const WorkflowDiagramCanvasEditable = ({
     });
 
     createEdge(edgeConnect);
+  };
+
+  const onDeleteEdge = async (edge: WorkflowDiagramEdge) => {
+    await deleteEdge(edge);
   };
 
   const onNodeDragStop = async (
@@ -124,6 +136,7 @@ export const WorkflowDiagramCanvasEditable = ({
         handlePaneContextMenu={handlePaneContextMenu}
         nodesConnectable
         nodesDraggable
+        onDeleteEdge={onDeleteEdge}
       />
 
       <WorkflowDiagramCanvasEditableEffect />

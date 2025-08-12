@@ -88,6 +88,9 @@ export const generateWorkflowDiagram = ({
       id: v4(),
       source: TRIGGER_STEP_ID,
       target: stepLinkToTriggerId,
+      ...(defaultEdgeType.includes('editable')
+        ? { deletable: true, selectable: true }
+        : {}),
     });
   }
 
@@ -99,6 +102,9 @@ export const generateWorkflowDiagram = ({
         id: v4(),
         source: step.id,
         target: child,
+        ...(defaultEdgeType.includes('editable')
+          ? { deletable: true, selectable: true }
+          : {}),
       });
     });
   }
