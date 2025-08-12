@@ -94,4 +94,9 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     pgColumns: MKT_LICENSE_DATA_SEED_COLUMNS,
     recordSeeds: MKT_LICENSE_DATA_SEEDS,
   },
+  {
+    tableName: 'mktOrderItem',
+    pgColumns: MKT_ORDER_ITEM_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_ORDER_ITEM_DATA_SEEDS,
+  },
 ];
