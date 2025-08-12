@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { getWorkflowRunContext, StepStatus, WorkflowRunStepInfo } from 'twenty-shared/workflow';
+import {
+  getWorkflowRunContext,
+  StepStatus,
+  WorkflowRunStepInfo,
+} from 'twenty-shared/workflow';
 
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
 import { BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE } from 'src/engine/core-modules/billing/constants/billing-workflow-execution-error-message.constant';
