@@ -17,7 +17,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { H2Title, IconPencil, IconSearch } from 'twenty-ui/display';
+import { H2Title, IconSearch } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
@@ -122,10 +122,6 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
           ) : (
             <TableHeader>
               <TableHeaderText>{t`Edit`}</TableHeaderText>
-              <IconPencil
-                size={theme.icon.size.sm}
-                stroke={theme.icon.stroke.md}
-              />
             </TableHeader>
           )}
         </StyledObjectFieldTableRow>
