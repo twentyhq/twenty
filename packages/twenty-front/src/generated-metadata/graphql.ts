@@ -3531,7 +3531,6 @@ export enum ViewSortDirection {
 
 export type ViewStandardOverrides = {
   __typename?: 'ViewStandardOverrides';
-  icon?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   translations?: Maybe<Scalars['JSON']>;
 };
