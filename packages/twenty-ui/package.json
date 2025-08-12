@@ -69,6 +69,7 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
+    "./style.css": "./dist/style.css",
     "./accessibility": {
       "types": "./dist/accessibility/index.d.ts",
       "import": "./dist/accessibility.mjs",

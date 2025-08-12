@@ -195,23 +195,28 @@ type ExportOccurrence = {
 type ExportsConfig = Record<string, ExportOccurrence | string>;
 
 const generateModulePackageExports = (moduleDirectories: string[]) => {
-  return moduleDirectories.reduce<ExportsConfig>((acc, moduleDirectory) => {
-    const moduleName = getLastPathFolder(moduleDirectory);
-    if (moduleName === undefined) {
-      throw new Error(
-        `Should never occur, moduleName is undefined ${moduleDirectory}`,
-      );
-    }
+  return moduleDirectories.reduce<ExportsConfig>(
+    (acc, moduleDirectory) => {
+      const moduleName = getLastPathFolder(moduleDirectory);
+      if (moduleName === undefined) {
+        throw new Error(
+          `Should never occur, moduleName is undefined ${moduleDirectory}`,
+        );
+      }
 
-    return {
-      ...acc,
-      [`./${moduleName}`]: {
-        types: `./dist/${moduleName}/index.d.ts`,
-        import: `./dist/${moduleName}.mjs`,
-        require: `./dist/${moduleName}.cjs`,
-      },
-    };
-  }, {});
+      return {
+        ...acc,
+        [`./${moduleName}`]: {
+          types: `./dist/${moduleName}/index.d.ts`,
+          import: `./dist/${moduleName}.mjs`,
+          require: `./dist/${moduleName}.cjs`,
+        },
+      };
+    },
+    {
+      './style.css': './dist/style.css',
+    },
+  );
 };
 
 const computePackageJsonFilesAndExportsConfig = (
@@ -314,7 +319,7 @@ function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
       (mod) => mod.kind === ts.SyntaxKind.ExportKeyword,
     );
 
-    if (!isExport) {
+    if (!isExport && !ts.isExportDeclaration(node)) {
       return ts.forEachChild(node, visit);
     }
 
