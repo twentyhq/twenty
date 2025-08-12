@@ -363,11 +363,11 @@ export class WorkflowVersionEdgeWorkspaceService {
     workflowVersionId: string;
     workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
   }): Promise<WorkflowVersionStepChangesDTO> {
-    const filterBetweenTriggerAndTarget = this.findFilterBetweenNodes(
+    const filterBetweenTriggerAndTarget = this.findFilterBetweenNodes({
       steps,
-      trigger.nextStepIds,
+      sourceNextStepIds: trigger.nextStepIds,
       target,
-    );
+    });
 
     if (!isDefined(filterBetweenTriggerAndTarget)) {
       return computeWorkflowVersionStepChanges({
@@ -413,11 +413,11 @@ export class WorkflowVersionEdgeWorkspaceService {
     workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
     workflowVersionId: string;
   }): Promise<WorkflowVersionStepChangesDTO> {
-    const filterBetweenSourceAndTarget = this.findFilterBetweenNodes(
+    const filterBetweenSourceAndTarget = this.findFilterBetweenNodes({
       steps,
-      sourceStep.nextStepIds,
+      sourceNextStepIds: sourceStep.nextStepIds,
       target,
-    );
+    });
 
     if (!isDefined(filterBetweenSourceAndTarget)) {
       return computeWorkflowVersionStepChanges({
@@ -453,11 +453,15 @@ export class WorkflowVersionEdgeWorkspaceService {
     });
   }
 
-  private findFilterBetweenNodes(
-    steps: WorkflowAction[],
-    sourceNextStepIds: string[] | undefined,
-    target: string,
-  ) {
+  private findFilterBetweenNodes({
+    steps,
+    sourceNextStepIds,
+    target,
+  }: {
+    steps: WorkflowAction[];
+    sourceNextStepIds: string[] | undefined;
+    target: string;
+  }) {
     const nextStepFilters = steps.filter(
       (step) =>
         sourceNextStepIds?.includes(step.id) &&
