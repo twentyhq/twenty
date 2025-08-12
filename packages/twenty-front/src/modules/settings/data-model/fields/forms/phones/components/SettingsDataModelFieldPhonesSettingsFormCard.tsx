@@ -17,7 +17,7 @@ type SettingsDataModelFieldPhonesSettingsFormCardProps = {
     FieldMetadataItem,
     'icon' | 'label' | 'type' | 'isCustom' | 'settings'
   > &
-    Partial<Omit<FieldMetadataItem, 'icon' | 'label' | 'type'>>;
+    Partial<{ id: string }>;
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`

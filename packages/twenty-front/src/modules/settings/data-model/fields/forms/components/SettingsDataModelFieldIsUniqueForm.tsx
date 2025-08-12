@@ -17,9 +17,9 @@ type SettingsDataModelFieldIsUniqueFormValues = {
 type SettingsDataModelFieldIsUniqueFormProps = {
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'isCustom' | 'settings'
+    'icon' | 'label' | 'type' | 'isCustom' | 'settings' | 'isUnique'
   > &
-    Partial<Omit<FieldMetadataItem, 'icon' | 'label' | 'type'>>;
+    Partial<{ id: string }>;
   objectMetadataItem: Pick<ObjectMetadataItem, 'indexMetadatas'>;
 };
 
