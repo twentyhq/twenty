@@ -204,7 +204,7 @@ export class FieldMetadataServiceV2 {
   }: {
     updateFieldInput: UpdateFieldInput;
     workspaceId: string;
-  }) {
+  }): Promise<FieldMetadataEntity> {
     const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
         { workspaceId },
@@ -220,13 +220,14 @@ export class FieldMetadataServiceV2 {
       throw inputTranspilationResult.error;
     }
 
-    const updatedFlatFieldMetadata = inputTranspilationResult.result;
+    const optimisticiallyUpdatedFlatFieldMetadata =
+      inputTranspilationResult.result;
 
     const validationErrors =
       await this.flatFieldMetadataValidatorService.validateFlatFieldMetadataUpdate(
         {
           existingFlatObjectMetadataMaps,
-          flatFieldMetadataToValidate: updatedFlatFieldMetadata,
+          flatFieldMetadataToValidate: optimisticiallyUpdatedFlatFieldMetadata,
           workspaceId,
         },
       );
@@ -234,19 +235,21 @@ export class FieldMetadataServiceV2 {
     if (validationErrors.length > 0) {
       throw new MultipleMetadataValidationErrors(
         validationErrors,
-        'Multiple validation errors occurred while creating field',
+        'Multiple validation errors occurred while updating field',
       );
     }
 
     try {
       const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-        objectMetadataIds: [updatedFlatFieldMetadata.objectMetadataId],
+        objectMetadataIds: [
+          optimisticiallyUpdatedFlatFieldMetadata.objectMetadataId,
+        ],
       });
       const toFlatObjectMetadataMaps =
         replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
           flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
-          flatFieldMetadata: updatedFlatFieldMetadata,
+          flatFieldMetadata: optimisticiallyUpdatedFlatFieldMetadata,
         });
       const workspaceMigration = this.workspaceMigrationBuilderV2.build({
         fromFlatObjectMetadataMaps,
@@ -257,9 +260,10 @@ export class FieldMetadataServiceV2 {
 
       await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
 
-      return this.fieldMetadataRepository.findOne({
+      return this.fieldMetadataRepository.findOneOrFail({
         where: {
-          id: updatedFlatFieldMetadata.id,
+          id: optimisticiallyUpdatedFlatFieldMetadata.id,
+          workspaceId
         },
       });
     } catch {
