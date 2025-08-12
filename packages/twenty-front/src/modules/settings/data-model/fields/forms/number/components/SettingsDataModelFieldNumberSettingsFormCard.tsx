@@ -13,9 +13,10 @@ import { useFormContext } from 'react-hook-form';
 type SettingsDataModelFieldNumberSettingsFormCardProps = {
   disabled?: boolean;
   fieldMetadataItem: Pick<
-    FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'defaultValue' | 'isUnique' | 'isCustom' | 'id'
-  >;
+  FieldMetadataItem,
+  'icon' | 'label' | 'type' | 'isCustom' | 'settings'
+> &
+  Partial<Omit<FieldMetadataItem, 'icon' | 'label' | 'type'>>;
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`

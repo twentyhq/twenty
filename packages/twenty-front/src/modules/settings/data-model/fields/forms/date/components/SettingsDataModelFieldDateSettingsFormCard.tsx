@@ -17,9 +17,10 @@ import {
 type SettingsDataModelFieldDateSettingsFormCardProps = {
   disabled?: boolean;
   fieldMetadataItem: Pick<
-    FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'isUnique' | 'isCustom' | 'settings' | 'id'
-  >;
+  FieldMetadataItem,
+  'icon' | 'label' | 'type' | 'isCustom' | 'settings'
+> &
+  Partial<Omit<FieldMetadataItem, 'icon' | 'label' | 'type'>>
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
