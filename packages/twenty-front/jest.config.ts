@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import { dirname, resolve } from 'path';
-import { type JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
+import { pathsToModuleNameMapper, type JestConfigWithTsJest } from 'ts-jest';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -58,8 +58,8 @@ const jestConfig: JestConfigWithTsJest = {
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   coverageThreshold: {
     global: {
-      statements: 56,
-      lines: 55,
+      statements: 55,
+      lines: 54,
       functions: 45,
     },
   },

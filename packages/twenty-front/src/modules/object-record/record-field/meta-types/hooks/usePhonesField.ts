@@ -1,11 +1,9 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { type FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldPhones } from '@/object-record/record-field/types/guards/isFieldPhones';
-import { phonesSchema } from '@/object-record/record-field/types/guards/isFieldPhonesValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -34,22 +32,11 @@ export const usePhonesField = () => {
     recordFieldInputDraftValueComponentState,
   );
 
-  const persistField = usePersistField();
-
-  const persistPhonesField = (nextValue: FieldPhonesValue) => {
-    try {
-      persistField(phonesSchema.parse(nextValue));
-    } catch {
-      return;
-    }
-  };
-
   return {
     fieldDefinition,
     fieldValue,
     draftValue,
     setDraftValue,
     setFieldValue,
-    persistPhonesField,
   };
 };

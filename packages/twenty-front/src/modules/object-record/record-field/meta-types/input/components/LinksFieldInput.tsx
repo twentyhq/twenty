@@ -1,40 +1,42 @@
+import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
 import { useLinksField } from '@/object-record/record-field/meta-types/hooks/useLinksField';
 import { LinksFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/LinksFieldMenuItem';
 import { getFieldLinkDefinedLinks } from '@/object-record/record-field/meta-types/input/utils/getFieldLinkDefinedLinks';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
+import { linksSchema } from '@/object-record/record-field/types/guards/isFieldLinksValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { absoluteUrlSchema } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
-type LinksFieldInputProps = {
-  onCancel?: () => void;
-  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
-};
+export const LinksFieldInput = () => {
+  const { draftValue, fieldDefinition, setDraftValue } = useLinksField();
 
-export const LinksFieldInput = ({
-  onCancel,
-  onClickOutside,
-}: LinksFieldInputProps) => {
-  const { persistLinksField, fieldValue, fieldDefinition } = useLinksField();
+  const { onEscape, onClickOutside } = useContext(FieldInputEventContext);
 
   const links = useMemo<{ url: string; label: string | null }[]>(
-    () => getFieldLinkDefinedLinks(fieldValue),
-    [fieldValue],
+    () => getFieldLinkDefinedLinks(draftValue),
+    [draftValue],
   );
 
-  const handlePersistLinks = (
+  const handleChange = (
     updatedLinks: { url: string | null; label: string | null }[],
   ) => {
     const nextPrimaryLink = updatedLinks.at(0);
     const nextSecondaryLinks = updatedLinks.slice(1);
 
-    persistLinksField({
+    const nextValue = {
       primaryLinkUrl: nextPrimaryLink?.url ?? null,
       primaryLinkLabel: nextPrimaryLink?.label ?? null,
       secondaryLinks: nextSecondaryLinks,
-    });
+    };
+
+    const parseResponse = linksSchema.safeParse(nextValue);
+
+    if (parseResponse.success) {
+      setDraftValue(parseResponse.data);
+    }
   };
 
   const getShowPrimaryIcon = (index: number) => index === 0 && links.length > 1;
@@ -48,15 +50,23 @@ export const LinksFieldInput = ({
     setIsFieldInError(hasError && values.length === 0);
   };
 
+  const handleClickOutside = (
+    _newValue: any,
+    event: MouseEvent | TouchEvent,
+  ) => {
+    onClickOutside?.({ newValue: draftValue, event });
+  };
+
+  const handleEscape = (_newValue: any) => {
+    onEscape?.({ newValue: draftValue });
+  };
+
   return (
     <MultiItemFieldInput
       items={links}
-      onPersist={handlePersistLinks}
-      onCancel={onCancel}
-      onClickOutside={(persist, event) => {
-        onClickOutside?.(event);
-        persist();
-      }}
+      onChange={handleChange}
+      onEscape={handleEscape}
+      onClickOutside={handleClickOutside}
       placeholder="URL"
       fieldMetadataType={FieldMetadataType.LINKS}
       validateInput={(input) => ({

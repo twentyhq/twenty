@@ -1,10 +1,11 @@
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { expect, fn, userEvent, within } from '@storybook/test';
 import { useEffect } from 'react';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useEmailsField } from '@/object-record/record-field/meta-types/hooks/useEmailsField';
+import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { type FieldEmailsValue } from '@/object-record/record-field/types/FieldMetadata';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
@@ -18,46 +19,34 @@ import { EmailsFieldInput } from '../EmailsFieldInput';
 
 const updateRecord = fn();
 
+const { FieldInputEventContextProviderWithJestMocks } =
+  getFieldInputEventContextProviderWithJestMocks();
+
 const EmailValueSetterEffect = ({ value }: { value: FieldEmailsValue }) => {
-  const { setFieldValue } = useEmailsField();
+  const { setFieldValue, setDraftValue } = useEmailsField();
 
   useEffect(() => {
     setFieldValue(value);
-  }, [setFieldValue, value]);
+    setDraftValue(value);
+  }, [setFieldValue, value, setDraftValue]);
 
   return null;
 };
 
-type EmailFieldValueGaterProps = Pick<
-  EmailInputWithContextProps,
-  'onCancel' | 'onClickOutside'
->;
-
-const EmailFieldValueGater = ({
-  onCancel,
-  onClickOutside,
-}: EmailFieldValueGaterProps) => {
+const EmailFieldValueGater = () => {
   const { fieldValue } = useEmailsField();
 
-  return (
-    fieldValue && (
-      <EmailsFieldInput onCancel={onCancel} onClickOutside={onClickOutside} />
-    )
-  );
+  return fieldValue && <EmailsFieldInput />;
 };
 
 type EmailInputWithContextProps = {
   value: FieldEmailsValue;
   recordId?: string;
-  onCancel?: () => void;
-  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
 };
 
 const EmailInputWithContext = ({
   value,
   recordId = 'record-id',
-  onCancel,
-  onClickOutside,
 }: EmailInputWithContextProps) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const instanceId = getRecordFieldInputInstanceId({
@@ -101,11 +90,10 @@ const EmailInputWithContext = ({
           useUpdateRecord: () => [updateRecord, { loading: false }],
         }}
       >
-        <EmailValueSetterEffect value={value} />
-        <EmailFieldValueGater
-          onCancel={onCancel}
-          onClickOutside={onClickOutside}
-        />
+        <FieldInputEventContextProviderWithJestMocks>
+          <EmailValueSetterEffect value={value} />
+          <EmailFieldValueGater />
+        </FieldInputEventContextProviderWithJestMocks>
       </FieldContext.Provider>
     </RecordFieldComponentInstanceContext.Provider>
   );
@@ -159,21 +147,6 @@ export const TrimInput: Story = {
 
     const newEmailElement = await canvas.findByText('new.email@example.com');
     expect(newEmailElement).toBeVisible();
-
-    await waitFor(() => {
-      expect(updateRecord).toHaveBeenCalledWith({
-        variables: {
-          where: { id: 'record-id' },
-          updateOneRecordInput: {
-            emails: {
-              primaryEmail: 'john@example.com',
-              additionalEmails: ['new.email@example.com'],
-            },
-          },
-        },
-      });
-    });
-    expect(updateRecord).toHaveBeenCalledTimes(1);
   },
 };
 
