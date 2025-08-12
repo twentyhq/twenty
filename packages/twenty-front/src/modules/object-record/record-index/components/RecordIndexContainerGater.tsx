@@ -2,9 +2,6 @@ import { RecordIndexContextProvider } from '@/object-record/record-index/context
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
@@ -15,12 +12,11 @@ import { RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect } from '@
 import { RecordIndexLoadBaseOnContextStoreEffect } from '@/object-record/record-index/components/RecordIndexLoadBaseOnContextStoreEffect';
 import { RecordIndexPageHeader } from '@/object-record/record-index/components/RecordIndexPageHeader';
 import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
+import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
-import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
@@ -33,17 +29,8 @@ const StyledIndexContainer = styled.div`
 `;
 
 export const RecordIndexContainerGater = () => {
-  const contextStoreCurrentViewId = useRecoilComponentValue(
-    contextStoreCurrentViewIdComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
-  );
-
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
-
-  const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
-    objectMetadataItem.namePlural,
-    contextStoreCurrentViewId || '',
-  );
+  const { recordIndexId, objectMetadataItem } =
+    useRecordIndexIdFromCurrentContextStore();
 
   const handleIndexRecordsLoaded = useRecoilCallback(
     ({ set }) =>

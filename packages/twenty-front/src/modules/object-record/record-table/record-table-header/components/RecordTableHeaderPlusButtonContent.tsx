@@ -21,7 +21,7 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const RecordTableHeaderPlusButtonContent = () => {
   const { t } = useLingui();
-  const { objectMetadataItem } = useRecordTableContextOrThrow();
+  const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
 
   const { closeDropdown } = useCloseDropdown();
 
@@ -32,6 +32,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
   const { getIcon } = useIcons();
   const { handleColumnVisibilityChange } = useTableColumns({
     objectMetadataId: objectMetadataItem.id,
+    recordTableId,
   });
 
   const handleAddColumn = useCallback(

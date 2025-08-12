@@ -1,64 +1,44 @@
 import { useCallback } from 'react';
 
 import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 
-import { useSetTableColumns } from '@/object-record/record-table/hooks/useSetTableColumns';
+import { useHandleColumnsChange } from '@/object-record/record-table/hooks/useHandleColumnsChange';
 import { availableTableColumnsComponentState } from '@/object-record/record-table/states/availableTableColumnsComponentState';
-import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type ColumnDefinition } from '../types/ColumnDefinition';
 
 type useRecordTableProps = {
-  recordTableId?: string;
+  recordTableId: string;
   objectMetadataId: string;
 };
 
-export const useTableColumns = (props: useRecordTableProps) => {
-  const { onColumnsChange } = useRecordTable({
-    recordTableId: props?.recordTableId,
-  });
-
-  const { setTableColumns } = useSetTableColumns();
-
+export const useTableColumns = ({
+  objectMetadataId,
+  recordTableId,
+}: useRecordTableProps) => {
   const availableTableColumns = useRecoilComponentValue(
     availableTableColumnsComponentState,
-    props?.recordTableId,
+    recordTableId,
   );
 
   const tableColumns = useRecoilComponentValue(
     tableColumnsComponentState,
-    props?.recordTableId,
+    recordTableId,
   );
   const visibleTableColumns = useRecoilComponentValue(
     visibleTableColumnsComponentSelector,
-    props?.recordTableId,
+    recordTableId,
   );
 
   const { handleColumnMove } = useMoveViewColumns();
 
-  const { unfocusRecordTableCell } = useUnfocusRecordTableCell(
-    props?.recordTableId,
-  );
+  const { unfocusRecordTableCell } = useUnfocusRecordTableCell(recordTableId);
 
-  const instanceId = useAvailableComponentInstanceIdOrThrow(
-    RecordTableComponentInstanceContext,
-    props?.recordTableId,
-  );
-
-  const handleColumnsChange = useCallback(
-    async (columns: ColumnDefinition<FieldMetadata>[]) => {
-      setTableColumns(columns, instanceId, props.objectMetadataId);
-
-      await onColumnsChange?.(columns);
-    },
-    [setTableColumns, instanceId, onColumnsChange, props.objectMetadataId],
-  );
+  const { handleColumnsChange } = useHandleColumnsChange();
 
   const handleColumnVisibilityChange = useCallback(
     async (
@@ -88,7 +68,11 @@ export const useTableColumns = (props: useRecordTableProps) => {
           { ...newColumn, isVisible: true, position: lastPosition + 1 },
         ];
 
-        await handleColumnsChange(nextColumns);
+        await handleColumnsChange({
+          columns: nextColumns,
+          objectMetadataId,
+          recordTableId,
+        });
       } else {
         const nextColumns = visibleTableColumns.map((previousColumn) =>
           previousColumn.fieldMetadataId === viewField.fieldMetadataId
@@ -96,7 +80,11 @@ export const useTableColumns = (props: useRecordTableProps) => {
             : previousColumn,
         );
 
-        await handleColumnsChange(nextColumns);
+        await handleColumnsChange({
+          columns: nextColumns,
+          objectMetadataId,
+          recordTableId,
+        });
       }
     },
     [
@@ -104,6 +92,8 @@ export const useTableColumns = (props: useRecordTableProps) => {
       availableTableColumns,
       handleColumnsChange,
       visibleTableColumns,
+      objectMetadataId,
+      recordTableId,
     ],
   );
 
@@ -125,13 +115,19 @@ export const useTableColumns = (props: useRecordTableProps) => {
         visibleTableColumns,
       );
 
-      await handleColumnsChange(columns);
+      await handleColumnsChange({
+        columns,
+        objectMetadataId,
+        recordTableId,
+      });
     },
     [
       unfocusRecordTableCell,
       visibleTableColumns,
       handleColumnMove,
       handleColumnsChange,
+      objectMetadataId,
+      recordTableId,
     ],
   );
 
@@ -142,9 +138,13 @@ export const useTableColumns = (props: useRecordTableProps) => {
         position: index,
       }));
 
-      await handleColumnsChange(updatedColumns);
+      await handleColumnsChange({
+        columns: updatedColumns,
+        objectMetadataId,
+        recordTableId,
+      });
     },
-    [handleColumnsChange],
+    [handleColumnsChange, objectMetadataId, recordTableId],
   );
 
   return {
