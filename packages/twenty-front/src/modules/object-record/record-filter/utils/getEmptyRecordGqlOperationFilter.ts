@@ -1,20 +1,20 @@
 import { CustomError } from '@/error-handler/CustomError';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import {
-    type ActorFilter,
-    type AddressFilter,
-    type ArrayFilter,
-    type CurrencyFilter,
-    type DateFilter,
-    type FloatFilter,
-    type MultiSelectFilter,
-    type PhonesFilter,
-    type RatingFilter,
-    type RawJsonFilter,
-    type RecordGqlOperationFilter,
-    type RelationFilter,
-    type SelectFilter,
-    type StringFilter,
+  type ActorFilter,
+  type AddressFilter,
+  type ArrayFilter,
+  type CurrencyFilter,
+  type DateFilter,
+  type FloatFilter,
+  type MultiSelectFilter,
+  type PhonesFilter,
+  type RatingFilter,
+  type RawJsonFilter,
+  type RecordGqlOperationFilter,
+  type RelationFilter,
+  type SelectFilter,
+  type StringFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { computeEmptyGqlOperationFilterForEmails } from '@/object-record/record-filter/utils/compute-empty-record-gql-operation-filter/for-composite-field/computeEmptyGqlOperationFilterForEmails';

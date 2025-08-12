@@ -7,9 +7,9 @@ import { DateTimePicker } from '@/ui/input/components/internal/date/components/I
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { computeVariableDateViewFilterValue } from '@/views/view-filter-value/utils/computeVariableDateViewFilterValue';
 import {
-    resolveDateViewFilterValue,
-    type VariableDateViewFilterValueDirection,
-    type VariableDateViewFilterValueUnit,
+  resolveDateViewFilterValue,
+  type VariableDateViewFilterValueDirection,
+  type VariableDateViewFilterValueUnit,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { useState } from 'react';
 import { ViewFilterOperand } from 'twenty-shared/types';
