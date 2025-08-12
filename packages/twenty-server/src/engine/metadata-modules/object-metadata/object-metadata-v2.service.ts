@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { MultipleMetadataValidationErrors } from 'src/engine/core-modules/error/multiple-metadata-validation-errors';
-import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { EMPTY_FLAT_OBJECT_METADATA_MAPS } from 'src/engine/metadata-modules/flat-object-metadata-maps/constant/empty-flat-object-metadata-maps.constant';
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
@@ -28,7 +27,6 @@ export class ObjectMetadataServiceV2 {
     private readonly workspaceMigrationBuilderV2: WorkspaceMigrationBuilderV2Service,
     private readonly workspaceMigrationRunnerV2Service: WorkspaceMigrationRunnerV2Service,
     private readonly flatObjectMetadataValidatorService: FlatObjectMetadataValidatorService,
-    private readonly flatFieldMetadataValidatorService: FlatFieldMetadataValidatorService,
   ) {}
 
   async deleteOne({
@@ -37,7 +35,7 @@ export class ObjectMetadataServiceV2 {
   }: {
     deleteObjectInput: DeleteOneObjectInput;
     workspaceId: string;
-  }) {
+  }): Promise<FlatObjectMetadata> {
     const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
         {
@@ -45,11 +43,12 @@ export class ObjectMetadataServiceV2 {
         },
       );
 
-    const { flatFieldMetadatasToDelete, objectMetadataToDeleteId } =
+    const { flatFieldMetadatasToDelete, flatObjectMetadataToDelete } =
       fromDeleteObjectInputToFlatFieldMetadatasToDelete({
         deleteObjectInput,
         existingFlatObjectMetadataMaps,
       });
+    const { id: objectMetadataToDeleteId } = flatObjectMetadataToDelete;
 
     const flatObjectDeleteValidationErrors =
       this.flatObjectMetadataValidatorService.validateFlatObjectMetadataDeletion(
@@ -94,14 +93,14 @@ export class ObjectMetadataServiceV2 {
               flatObjectMetadataMaps,
             }),
           deleteObjectFromFlatObjectMetadataMapsOrThrow({
-            flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+            flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
             objectMetadataId: objectMetadataToDeleteId,
           }),
         );
       const workspaceMigration = this.workspaceMigrationBuilderV2.build({
         fromFlatObjectMetadataMaps,
         toFlatObjectMetadataMaps,
-        inferDeletionFromMissingObjectFieldIndex: false,
+        inferDeletionFromMissingObjectFieldIndex: true,
         workspaceId,
       });
 
@@ -112,6 +111,8 @@ export class ObjectMetadataServiceV2 {
         ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }
+
+    return flatObjectMetadataToDelete;
   }
 
   async createOne({
