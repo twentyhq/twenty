@@ -14,10 +14,10 @@ import { useFormContext } from 'react-hook-form';
 type SettingsDataModelFieldTextSettingsFormCardProps = {
   disabled?: boolean;
   fieldMetadataItem: Pick<
-  FieldMetadataItem,
-  'icon' | 'label' | 'type' | 'isCustom' | 'settings'
-> &
-  Partial<Omit<FieldMetadataItem, 'icon' | 'label' | 'type'>>;
+    FieldMetadataItem,
+    'icon' | 'label' | 'type' | 'isCustom' | 'settings'
+  > &
+    Partial<Omit<FieldMetadataItem, 'icon' | 'label' | 'type'>>;
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
