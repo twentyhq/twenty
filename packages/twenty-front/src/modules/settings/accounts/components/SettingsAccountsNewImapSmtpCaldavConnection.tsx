@@ -31,7 +31,7 @@ export const SettingsAccountsNewImapSmtpCaldavConnection = () => {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formMethods}>
       <SubMenuTopBarContainer
-        title={t`New Email Account`}
+        title={t`New Internet Account`}
         links={[
           {
             children: t`User`,
@@ -41,7 +41,7 @@ export const SettingsAccountsNewImapSmtpCaldavConnection = () => {
             children: t`Accounts`,
             href: getSettingsPath(SettingsPath.Accounts),
           },
-          { children: t`New Email Account` },
+          { children: t`New Internet Account` },
         ]}
         actionButton={
           <SaveAndCancelButtons
