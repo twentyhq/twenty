@@ -1,16 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
-import { IsNull, Not, type EntityManager } from 'typeorm';
+import { IsNull, Not, Repository, type EntityManager } from 'typeorm';
 
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { fromAgentEntityToFlatAgent } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-flat-agent.util';
+import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceAgentComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-agent.comparator';
 import { StandardAgentFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-agent.factory';
 import { standardAgentDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents';
+import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 
 @Injectable()
 export class WorkspaceSyncAgentService {
@@ -28,6 +31,8 @@ export class WorkspaceSyncAgentService {
     this.logger.log('Syncing standard agent.');
 
     const agentRepository = manager.getRepository(AgentEntity);
+    const roleRepository = manager.getRepository(RoleEntity);
+    const roleTargetsRepository = manager.getRepository(RoleTargetsEntity);
 
     const existingStandardAgentEntities = await agentRepository.find({
       where: {
@@ -59,10 +64,17 @@ export class WorkspaceSyncAgentService {
             'id',
           ]);
 
-          await agentRepository.save({
+          const createdAgent = await agentRepository.save({
             ...flatAgentData,
             workspaceId: context.workspaceId,
           });
+
+          await this.assignAdminRoleToAgent(
+            createdAgent.id,
+            context.workspaceId,
+            roleRepository,
+            roleTargetsRepository,
+          );
           break;
         }
 
@@ -88,4 +100,56 @@ export class WorkspaceSyncAgentService {
       }
     }
   }
+
+  private async assignAdminRoleToAgent(
+    agentId: string,
+    workspaceId: string,
+    roleRepository: Repository<RoleEntity>,
+    roleTargetsRepository: Repository<RoleTargetsEntity>,
+  ): Promise<void> {
+    try {
+      const adminRole = await roleRepository.findOne({
+        where: {
+          workspaceId,
+          standardId: ADMIN_ROLE.standardId,
+        },
+      });
+
+      if (!adminRole) {
+        this.logger.warn(
+          `Admin role not found for workspace ${workspaceId}, cannot assign to workflow creation agent`,
+        );
+        return;
+      }
+
+      const existingRoleTarget = await roleTargetsRepository.findOne({
+        where: {
+          agentId,
+          roleId: adminRole.id,
+          workspaceId,
+        },
+      });
+
+      if (existingRoleTarget) {
+        this.logger.log(
+          `Workflow creation agent already has admin role assigned`,
+        );
+        return;
+      }
+
+      await roleTargetsRepository.save({
+        roleId: adminRole.id,
+        agentId,
+        workspaceId,
+      });
+
+      this.logger.log(
+        `Successfully assigned admin role to workflow creation agent`,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to assign admin role to workflow creation agent: ${error.message}`,
+      );
+    }
+    }
 }
