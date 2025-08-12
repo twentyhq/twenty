@@ -6,7 +6,6 @@ import { computeMorphRelationFieldName } from 'src/engine/metadata-modules/field
 import { isFieldMetadataTypeMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-morph-relation.util';
 import { isFieldMetadataTypeRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-relation.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 export const buildColumnsToSelect = ({
   select,
@@ -17,7 +16,14 @@ export const buildColumnsToSelect = ({
   select: Record<string, unknown>;
   relations: Record<string, unknown>;
   objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-  objectMetadataMaps: ObjectMetadataMaps;
+  objectMetadataMaps: {
+    byId: Partial<
+      Record<
+        string,
+        Pick<ObjectMetadataItemWithFieldMaps, 'nameSingular' | 'namePlural'>
+      >
+    >;
+  };
 }) => {
   const requiredRelationColumns = getRequiredRelationColumns(
     relations,
@@ -40,8 +46,15 @@ export const buildColumnsToSelect = ({
 
 const getRequiredRelationColumns = (
   relations: Record<string, unknown>,
-  objectMetadataItem: ObjectMetadataItemWithFieldMaps,
-  objectMetadataMaps: ObjectMetadataMaps,
+  objectMetadataItem: Pick<ObjectMetadataItemWithFieldMaps, 'fieldsById'>,
+  objectMetadataMaps: {
+    byId: Partial<
+      Record<
+        string,
+        Pick<ObjectMetadataItemWithFieldMaps, 'nameSingular' | 'namePlural'>
+      >
+    >;
+  },
 ): string[] => {
   const requiredColumns: string[] = [];
 

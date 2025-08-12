@@ -101,7 +101,7 @@ describe('buildColumnsToSelect', () => {
     },
   };
 
-  const mockObjectMetadataMaps: any = {
+  const mockObjectMetadataMaps = {
     byId: {
       '9af20778-2f2c-4e22-ae83-2e77e479b57c': {
         id: '9af20778-2f2c-4e22-ae83-2e77e479b57c',
