@@ -26,9 +26,11 @@ import {
   type WorkflowDiagramEdgeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
+import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   EdgeLabelRenderer,
@@ -37,12 +39,12 @@ import {
 } from '@xyflow/react';
 import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 import {
   IconDotsVertical,
   IconFilter,
   IconFilterX,
   IconPlus,
+  IconTrash,
 } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -91,6 +93,8 @@ export const WorkflowDiagramFilterEdgeEditable = ({
 }: WorkflowDiagramFilterEdgeEditableProps) => {
   assertFilterEdgeDataOrThrow(data);
 
+  const { t } = useLingui();
+
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
     sourceY,
@@ -102,9 +106,11 @@ export const WorkflowDiagramFilterEdgeEditable = ({
     workflowVisualizerWorkflowIdComponentState,
   );
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
+
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const { deleteStep } = useDeleteStep({ workflow });
+  const { deleteEdge } = useDeleteEdge({ workflow });
   const { startNodeCreation, isNodeCreationStarted } = useStartNodeCreation();
 
   const setCommandMenuNavigationStack = useSetRecoilState(
@@ -153,6 +159,12 @@ export const WorkflowDiagramFilterEdgeEditable = ({
     });
   };
 
+  const handleRemoveFilterButtonClick = async () => {
+    closeDropdown(dropdownId);
+
+    await deleteStep(data.stepId);
+  };
+
   const handleAddNodeButtonClick = () => {
     closeDropdown(dropdownId);
 
@@ -161,6 +173,12 @@ export const WorkflowDiagramFilterEdgeEditable = ({
       nextStepId: target,
       position: { x: labelX, y: labelY },
     });
+  };
+
+  const handleDeleteBranchClick = async () => {
+    closeDropdown(dropdownId);
+
+    await deleteEdge({ source, target });
   };
 
   return (
@@ -244,24 +262,19 @@ export const WorkflowDiagramFilterEdgeEditable = ({
                       }}
                     />
                     <MenuItem
-                      text="Remove Filter"
+                      text={t`Remove filter`}
                       LeftIcon={IconFilterX}
-                      onClick={() => {
-                        closeDropdown(dropdownId);
-
-                        if (!isDefined(data.stepId)) {
-                          throw new Error(
-                            'Step ID must be configured for the edge when rendering a filter',
-                          );
-                        }
-
-                        return deleteStep(data.stepId);
-                      }}
+                      onClick={handleRemoveFilterButtonClick}
                     />
                     <MenuItem
-                      text="Add Node"
+                      text={t`Add Node`}
                       LeftIcon={IconPlus}
                       onClick={handleAddNodeButtonClick}
+                    />
+                    <MenuItem
+                      text={t`Delete branch`}
+                      LeftIcon={IconTrash}
+                      onClick={handleDeleteBranchClick}
                     />
                   </DropdownMenuItemsContainer>
                 </DropdownContent>

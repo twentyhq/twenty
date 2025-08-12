@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
-import { lazy, Suspense, useContext } from 'react';
+import { lazy, Suspense, useContext, type ComponentType } from 'react';
+import type { ReactDatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
@@ -325,7 +326,17 @@ type DateTimePickerProps = {
   onClear?: () => void;
 };
 
-const ReactDatePicker = lazy(() => import('react-datepicker'));
+type DatePickerPropsType = ReactDatePickerLibProps<
+  boolean | undefined,
+  boolean | undefined
+>;
+
+const ReactDatePicker = lazy(
+  () =>
+    import('react-datepicker') as Promise<{
+      default: ComponentType<DatePickerPropsType>;
+    }>,
+);
 
 export const DateTimePicker = ({
   date,
