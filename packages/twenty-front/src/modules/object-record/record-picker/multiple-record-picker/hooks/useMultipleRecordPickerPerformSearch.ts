@@ -9,6 +9,7 @@ import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-r
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { searchRecordStoreComponentFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
+import { sortMorphItemsByTSRank } from '@/object-record/record-picker/multiple-record-picker/utils/sortMorphItemsByTSRank';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { type ApolloClient } from '@apollo/client';
@@ -260,17 +261,22 @@ export const useMultipleRecordPickerPerformSearch = () => {
             )
           : newMorphItems;
 
-        set(
-          multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
-            instanceId: multipleRecordPickerInstanceId,
-          }),
-          morphItems,
-        );
-
         const searchRecords = [
           ...searchRecordsFilteredOnPickedRecords,
           ...searchRecordsExcludingPickedRecordsWithoutDuplicates,
         ];
+
+        const sortedMorphItems = sortMorphItemsByTSRank(
+          morphItems,
+          searchRecords,
+        );
+
+        set(
+          multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
+            instanceId: multipleRecordPickerInstanceId,
+          }),
+          sortedMorphItems,
+        );
 
         searchRecords.forEach((searchRecord) => {
           set(
