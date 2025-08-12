@@ -2,7 +2,6 @@ import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/states/recordFieldInputDraftValueComponentState';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
@@ -34,7 +33,6 @@ export const useMultiSelectField = () => {
   const fieldMultiSelectValues = isFieldMultiSelectValue(fieldValues)
     ? fieldValues
     : null;
-  const persistField = usePersistField();
 
   const { setDraftValue } = useRecordFieldInput<FieldMultiSelectValue>();
 
@@ -45,7 +43,6 @@ export const useMultiSelectField = () => {
   return {
     recordId,
     fieldDefinition,
-    persistField,
     fieldValues: fieldMultiSelectValues,
     draftValue,
     setDraftValue,

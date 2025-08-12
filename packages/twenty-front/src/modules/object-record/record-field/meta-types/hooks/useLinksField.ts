@@ -1,11 +1,9 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { type FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
-import { linksSchema } from '@/object-record/record-field/types/guards/isFieldLinksValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -34,22 +32,11 @@ export const useLinksField = () => {
     recordFieldInputDraftValueComponentState,
   );
 
-  const persistField = usePersistField();
-
-  const persistLinksField = (nextValue: FieldLinksValue) => {
-    try {
-      persistField(linksSchema.parse(nextValue));
-    } catch {
-      return;
-    }
-  };
-
   return {
     fieldDefinition,
     fieldValue,
     draftValue,
     setDraftValue,
     setFieldValue,
-    persistLinksField,
   };
 };

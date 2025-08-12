@@ -2,8 +2,9 @@ import { type FieldMetadata } from '@/object-record/record-field/types/FieldMeta
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
+import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
-import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -53,8 +54,10 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const canMoveRight =
     column.fieldMetadataId !== lastVisibleColumn?.fieldMetadataId && canMove;
 
+  const { recordTableId } = useRecordTableContextOrThrow();
+
   const { handleColumnVisibilityChange, handleMoveTableColumn } =
-    useTableColumns({ objectMetadataId });
+    useTableColumns({ objectMetadataId, recordTableId });
 
   const dropdownId = column.fieldMetadataId + '-header';
 
@@ -86,14 +89,14 @@ export const RecordTableColumnHeadDropdownMenu = ({
     handleColumnVisibilityChange(column);
   };
 
-  const onToggleColumnSort = useRecoilComponentValue(
-    onToggleColumnSortComponentState,
-  );
+  const handleToggleColumnSort = useHandleToggleColumnSort({
+    objectMetadataItemId: objectMetadataId,
+  });
 
   const handleSortClick = () => {
     closeDropdownAndToggleScroll();
 
-    onToggleColumnSort?.(column.fieldMetadataId);
+    handleToggleColumnSort(column.fieldMetadataId);
   };
 
   const { openRecordFilterChipFromTableHeader } =

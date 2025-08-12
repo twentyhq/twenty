@@ -92,17 +92,19 @@ export const RecordInlineCellEditMode = ({
       ref={refs.setReference}
       data-testid="inline-cell-edit-mode-container"
     >
-      {createPortal(
-        <OverlayContainer
-          ref={refs.setFloating}
-          style={floatingStyles}
-          borderRadius="sm"
-          hasDangerBorder={isFieldInError}
-        >
-          {children}
-        </OverlayContainer>,
-        document.body,
-      )}
+      <>
+        {createPortal(
+          <OverlayContainer
+            ref={refs.setFloating}
+            style={floatingStyles}
+            borderRadius="sm"
+            hasDangerBorder={isFieldInError}
+          >
+            {children}
+          </OverlayContainer>,
+          document.body,
+        )}
+      </>
     </StyledInlineCellEditModeContainer>
   );
 };

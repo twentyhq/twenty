@@ -1,9 +1,10 @@
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useArrayField } from '@/object-record/record-field/meta-types/hooks/useArrayField';
+import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
@@ -12,48 +13,34 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { ArrayFieldInput } from '../ArrayFieldInput';
 
-const updateRecord = fn();
+const { FieldInputEventContextProviderWithJestMocks } =
+  getFieldInputEventContextProviderWithJestMocks();
 
 const ArrayValueSetterEffect = ({ value }: { value: string[] }) => {
-  const { setFieldValue } = useArrayField();
+  const { setFieldValue, setDraftValue } = useArrayField();
 
   useEffect(() => {
     setFieldValue(value);
-  }, [setFieldValue, value]);
+    setDraftValue(value);
+  }, [setFieldValue, value, setDraftValue]);
 
   return null;
 };
 
-type ArrayFieldValueGaterProps = Pick<
-  ArrayInputWithContextProps,
-  'onCancel' | 'onClickOutside'
->;
-
-const ArrayFieldValueGater = ({
-  onCancel,
-  onClickOutside,
-}: ArrayFieldValueGaterProps) => {
+const ArrayFieldValueGater = () => {
   const { fieldValue } = useArrayField();
 
-  return (
-    fieldValue && (
-      <ArrayFieldInput onCancel={onCancel} onClickOutside={onClickOutside} />
-    )
-  );
+  return fieldValue && <ArrayFieldInput />;
 };
 
 type ArrayInputWithContextProps = {
   value: string[];
   recordId?: string;
-  onCancel?: () => void;
-  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
 };
 
 const ArrayInputWithContext = ({
   value,
   recordId = 'record-id',
-  onCancel,
-  onClickOutside,
 }: ArrayInputWithContextProps) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
@@ -99,14 +86,12 @@ const ArrayInputWithContext = ({
           recordId,
           isLabelIdentifier: false,
           isRecordFieldReadOnly: false,
-          useUpdateRecord: () => [updateRecord, { loading: false }],
         }}
       >
-        <ArrayValueSetterEffect value={value} />
-        <ArrayFieldValueGater
-          onCancel={onCancel}
-          onClickOutside={onClickOutside}
-        />
+        <FieldInputEventContextProviderWithJestMocks>
+          <ArrayValueSetterEffect value={value} />
+          <ArrayFieldValueGater />
+        </FieldInputEventContextProviderWithJestMocks>
       </FieldContext.Provider>
     </RecordFieldComponentInstanceContext.Provider>
   );
@@ -155,21 +140,5 @@ export const TrimInput: Story = {
       const tag2Elements = canvas.queryAllByText('tag2');
       expect(tag2Elements).toHaveLength(2);
     });
-
-    await waitFor(() => {
-      expect(updateRecord).toHaveBeenCalledWith({
-        variables: {
-          where: { id: 'record-id' },
-          updateOneRecordInput: {
-            tags: [
-              'tag1',
-              'tag2',
-              'tag2', // The second tag2 is not trimmed, so it remains as a duplicate
-            ],
-          },
-        },
-      });
-    });
-    expect(updateRecord).toHaveBeenCalledTimes(1);
   },
 };

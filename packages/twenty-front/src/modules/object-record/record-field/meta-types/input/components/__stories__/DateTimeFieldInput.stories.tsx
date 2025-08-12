@@ -1,21 +1,27 @@
 import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, within } from '@storybook/test';
+import { expect, userEvent, within } from '@storybook/test';
 import { useEffect } from 'react';
 
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 import { useDateTimeField } from '../../../hooks/useDateTimeField';
-import {
-  DateTimeFieldInput,
-  type DateTimeFieldInputProps,
-} from '../DateTimeFieldInput';
+import { DateTimeFieldInput } from '../DateTimeFieldInput';
+
+const {
+  FieldInputEventContextProviderWithJestMocks,
+  handleEscapeMocked,
+  handleClickoutsideMocked,
+  handleEnterMocked,
+} = getFieldInputEventContextProviderWithJestMocks();
+
 const formattedDate = new Date(2022, 0, 1, 2, 0, 0);
 
 const DateFieldValueSetterEffect = ({ value }: { value: Date }) => {
@@ -28,30 +34,13 @@ const DateFieldValueSetterEffect = ({ value }: { value: Date }) => {
   return <></>;
 };
 
-type DateFieldValueGaterProps = Pick<
-  DateTimeFieldInputProps,
-  'onEscape' | 'onEnter' | 'onClickOutside'
->;
-
-const DateFieldValueGater = ({
-  onEscape,
-  onEnter,
-  onClickOutside,
-}: DateFieldValueGaterProps) => {
+const DateFieldValueGater = () => {
   const { fieldValue } = useDateTimeField();
 
-  return (
-    fieldValue && (
-      <DateTimeFieldInput
-        onEscape={onEscape}
-        onEnter={onEnter}
-        onClickOutside={onClickOutside}
-      />
-    )
-  );
+  return fieldValue && <DateTimeFieldInput />;
 };
 
-type DateFieldInputWithContextProps = DateTimeFieldInputProps & {
+type DateFieldInputWithContextProps = {
   value: Date;
   recordId: string;
 };
@@ -59,9 +48,6 @@ type DateFieldInputWithContextProps = DateTimeFieldInputProps & {
 const DateFieldInputWithContext = ({
   value,
   recordId,
-  onEscape,
-  onEnter,
-  onClickOutside,
 }: DateFieldInputWithContextProps) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const instanceId = getRecordFieldInputInstanceId({
@@ -104,31 +90,25 @@ const DateFieldInputWithContext = ({
           isRecordFieldReadOnly: false,
         }}
       >
-        <StorybookFieldInputDropdownFocusIdSetterEffect />
-        <DateFieldValueSetterEffect value={value} />
-        <DateFieldValueGater
-          onEscape={onEscape}
-          onEnter={onEnter}
-          onClickOutside={onClickOutside}
-        />
+        <FieldInputEventContextProviderWithJestMocks>
+          <StorybookFieldInputDropdownFocusIdSetterEffect />
+          <DateFieldValueSetterEffect value={value} />
+          <DateFieldValueGater />
+        </FieldInputEventContextProviderWithJestMocks>
       </FieldContext.Provider>
       <div data-testid="data-field-input-click-outside-div"></div>
     </RecordFieldComponentInstanceContext.Provider>
   );
 };
 
-const escapeJestFn = fn();
-const enterJestFn = fn();
-const clickOutsideJestFn = fn();
-
 const meta: Meta = {
   title: 'UI/Data/Field/Input/DateTimeFieldInput',
   component: DateFieldInputWithContext,
   args: {
     value: formattedDate,
-    onEscape: escapeJestFn,
-    onEnter: enterJestFn,
-    onClickOutside: clickOutsideJestFn,
+    onEscape: handleEscapeMocked,
+    onEnter: handleEnterMocked,
+    onClickOutside: handleClickoutsideMocked,
   },
   argTypes: {
     onEscape: {
@@ -160,36 +140,36 @@ export const ClickOutside: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(clickOutsideJestFn).toHaveBeenCalledTimes(0);
+    await expect(handleClickoutsideMocked).toHaveBeenCalledTimes(0);
 
     await canvas.findByText('January');
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
     await userEvent.click(emptyDiv);
 
-    await expect(clickOutsideJestFn).toHaveBeenCalledTimes(1);
+    await expect(handleClickoutsideMocked).toHaveBeenCalledTimes(1);
   },
 };
 
 export const Escape: Story = {
   play: async ({ canvasElement }) => {
-    await expect(escapeJestFn).toHaveBeenCalledTimes(0);
+    await expect(handleEscapeMocked).toHaveBeenCalledTimes(0);
     const canvas = within(canvasElement);
 
     await canvas.findByText('January');
     await userEvent.keyboard('{escape}');
 
-    await expect(escapeJestFn).toHaveBeenCalledTimes(1);
+    await expect(handleEscapeMocked).toHaveBeenCalledTimes(1);
   },
 };
 
 export const Enter: Story = {
   play: async ({ canvasElement }) => {
-    await expect(enterJestFn).toHaveBeenCalledTimes(0);
+    await expect(handleEnterMocked).toHaveBeenCalledTimes(0);
     const canvas = within(canvasElement);
 
     await canvas.findByText('January');
     await userEvent.keyboard('{enter}');
 
-    await expect(enterJestFn).toHaveBeenCalledTimes(1);
+    await expect(handleEnterMocked).toHaveBeenCalledTimes(1);
   },
 };

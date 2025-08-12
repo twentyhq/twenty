@@ -1,27 +1,21 @@
+import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
 import { useClearField } from '@/object-record/record-field/hooks/useClearField';
 import { useSelectField } from '@/object-record/record-field/meta-types/hooks/useSelectField';
 import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { type FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { SelectInput } from '@/ui/field/input/components/SelectInput';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/input';
 
-type SelectFieldInputProps = {
-  onSubmit?: FieldInputEvent;
-  onCancel?: () => void;
-};
+export const SelectFieldInput = () => {
+  const { fieldDefinition, fieldValue } = useSelectField();
 
-export const SelectFieldInput = ({
-  onSubmit,
-  onCancel,
-}: SelectFieldInputProps) => {
-  const { persistField, fieldDefinition, fieldValue } = useSelectField();
+  const { onCancel, onSubmit } = useContext(FieldInputEventContext);
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
@@ -44,7 +38,7 @@ export const SelectFieldInput = ({
   };
 
   const handleSubmit = (option: SelectOption) => {
-    onSubmit?.(() => persistField(option?.value));
+    onSubmit?.({ newValue: option.value });
 
     resetSelectedItem();
   };
@@ -76,8 +70,7 @@ export const SelectFieldInput = ({
           (option) => option.value === itemId,
         );
         if (isDefined(option)) {
-          onSubmit?.(() => persistField(option.value));
-          resetSelectedItem();
+          handleSubmit(option);
         }
       }}
       onOptionSelected={handleSubmit}

@@ -1,17 +1,21 @@
-import { validateMetadataNameIsCamelCaseOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils';
-import { validateMetadataNameIsNotReservedKeywordOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword';
-import { validateMetadataNameIsNotTooLongOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils';
-import { validateMetadataNameIsNotTooShortOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils';
-import { validateMetadataNameStartWithLowercaseLetterAndContainDigitsNorLettersOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-start-with-lowercase-letter-and-contain-digits-nor-letters.utils';
+import {
+  FieldMetadataException,
+  FieldMetadataExceptionCode,
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-or-throw.utils';
 
-export const validateMetadataNameOrThrow = (name: string): void => {
-  const validators = [
-    validateMetadataNameIsNotTooLongOrThrow,
-    validateMetadataNameIsNotTooShortOrThrow,
-    validateMetadataNameIsCamelCaseOrThrow,
-    validateMetadataNameStartWithLowercaseLetterAndContainDigitsNorLettersOrThrow,
-    validateMetadataNameIsNotReservedKeywordOrThrow,
-  ];
-
-  validators.forEach((validator) => validator(name));
+export const validateMetadataName = (
+  name: string,
+): undefined | FieldMetadataException => {
+  try {
+    validateMetadataNameOrThrow(name);
+  } catch (error) {
+    return new FieldMetadataException(
+      error.message,
+      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      {
+        userFriendlyMessage: error.userFriendlyMessage,
+      },
+    );
+  }
 };

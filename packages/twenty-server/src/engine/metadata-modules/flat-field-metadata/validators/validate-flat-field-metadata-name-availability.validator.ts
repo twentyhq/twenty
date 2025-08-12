@@ -37,16 +37,16 @@ const getReservedCompositeFieldNames = (
 
 export const validateFlatFieldMetadataNameAvailability = ({
   name,
-  objectMetadata,
+  flatObjectMetadata,
 }: {
   name: string;
-  objectMetadata: FlatObjectMetadata;
+  flatObjectMetadata: FlatObjectMetadata;
 }): FailedFlatFieldMetadataValidationExceptions | undefined => {
   const reservedCompositeFieldsNames =
-    getReservedCompositeFieldNames(objectMetadata);
+    getReservedCompositeFieldNames(flatObjectMetadata);
 
   if (
-    objectMetadata.flatFieldMetadatas.some(
+    flatObjectMetadata.flatFieldMetadatas.some(
       (field) =>
         field.name === name ||
         (field.type === FieldMetadataType.RELATION && // Question: Should we also look for MORPH_RELATION field types ?
