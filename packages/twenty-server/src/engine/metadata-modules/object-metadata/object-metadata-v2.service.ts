@@ -12,8 +12,10 @@ import { FlatObjectMetadataValidatorService } from 'src/engine/metadata-modules/
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
+import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
+import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
@@ -37,7 +39,7 @@ export class ObjectMetadataServiceV2 {
   }: {
     deleteObjectInput: DeleteOneObjectInput;
     workspaceId: string;
-  }): Promise<FlatObjectMetadata> {
+  }): Promise<ObjectMetadataDTO> {
     const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
         {
@@ -114,7 +116,9 @@ export class ObjectMetadataServiceV2 {
       );
     }
 
-    return flatObjectMetadataToDelete;
+    return fromFlatObjectMetadataToObjectMetadataDto(
+      flatObjectMetadataToDelete,
+    );
   }
 
   async createOne({
