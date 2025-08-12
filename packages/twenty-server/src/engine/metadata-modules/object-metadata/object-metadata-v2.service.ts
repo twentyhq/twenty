@@ -24,11 +24,18 @@ export class ObjectMetadataServiceV2 {
     private readonly flatObjectMetadataValidatorService: FlatObjectMetadataValidatorService,
   ) {}
 
+  async deleteOne({}:  {
+    objectMetadataInput: Omit<CreateObjectInput, 'workspaceId'>;
+    workspaceId: string;
+  }) {
+
+  }
+
   async createOne({
-    objectMetadataInput,
+    createObjectInput,
     workspaceId,
   }: {
-    objectMetadataInput: Omit<CreateObjectInput, 'workspaceId'>;
+    createObjectInput: Omit<CreateObjectInput, 'workspaceId'>;
     workspaceId: string;
   }): Promise<FlatObjectMetadata> {
     const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
@@ -40,7 +47,7 @@ export class ObjectMetadataServiceV2 {
 
     const flatObjectMetadataToCreate =
       fromCreateObjectInputToFlatObjectMetadata({
-        objectMetadataInput,
+        createObjectInput,
         workspaceId,
       });
 
