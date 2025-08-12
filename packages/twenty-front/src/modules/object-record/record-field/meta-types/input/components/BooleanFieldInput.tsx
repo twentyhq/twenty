@@ -1,33 +1,30 @@
 import { BooleanInput } from '@/ui/field/input/components/BooleanInput';
 
-import { type FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { usePersistField } from '../../../hooks/usePersistField';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
+import { useContext } from 'react';
 import { useBooleanField } from '../../hooks/useBooleanField';
 
 export type BooleanFieldInputProps = {
-  onSubmit?: FieldInputEvent;
-  readonly?: boolean;
   testId?: string;
 };
 
-export const BooleanFieldInput = ({
-  onSubmit,
-  readonly,
-  testId,
-}: BooleanFieldInputProps) => {
+export const BooleanFieldInput = ({ testId }: BooleanFieldInputProps) => {
   const { fieldValue } = useBooleanField();
 
-  const persistField = usePersistField();
+  const { isRecordFieldReadOnly } = useContext(FieldContext);
+
+  const { onSubmit } = useContext(FieldInputEventContext);
 
   const handleToggle = (newValue: boolean) => {
-    onSubmit?.(() => persistField(newValue));
+    onSubmit?.({ newValue });
   };
 
   return (
     <BooleanInput
       value={fieldValue ?? ''}
       onToggle={handleToggle}
-      readonly={readonly}
+      readonly={isRecordFieldReadOnly}
       testId={testId}
     />
   );

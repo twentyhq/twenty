@@ -121,7 +121,6 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
                   <RecordTableComponentInstanceContext.Provider
                     value={{
                       instanceId: instanceId,
-                      onColumnsChange: () => {},
                     }}
                   >
                     <ViewComponentInstanceContext.Provider

@@ -1,5 +1,5 @@
 import { type ViewFilter } from '@/views/types/ViewFilter';
-import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
+import { ViewFilterOperand } from 'twenty-shared/types';
 import { getViewFiltersToUpdate } from '../getViewFiltersToUpdate';
 
 describe('getViewFiltersToUpdate', () => {

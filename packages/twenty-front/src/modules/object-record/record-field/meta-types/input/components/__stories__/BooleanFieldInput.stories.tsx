@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, within } from '@storybook/test';
+import { expect, userEvent, within } from '@storybook/test';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
@@ -7,13 +7,14 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import {
-  BooleanFieldInput,
-  type BooleanFieldInputProps,
-} from '../BooleanFieldInput';
+import { BooleanFieldInput } from '../BooleanFieldInput';
+
+const { FieldInputEventContextProviderWithJestMocks, handleSubmitMocked } =
+  getFieldInputEventContextProviderWithJestMocks();
 
 const BooleanFieldValueSetterEffect = ({
   value,
@@ -31,7 +32,7 @@ const BooleanFieldValueSetterEffect = ({
   return <></>;
 };
 
-type BooleanFieldInputWithContextProps = BooleanFieldInputProps & {
+type BooleanFieldInputWithContextProps = {
   value: boolean;
   recordId?: string;
 };
@@ -39,7 +40,6 @@ type BooleanFieldInputWithContextProps = BooleanFieldInputProps & {
 const BooleanFieldInputWithContext = ({
   value,
   recordId,
-  onSubmit,
 }: BooleanFieldInputWithContextProps) => {
   return (
     <RecordFieldComponentInstanceContext.Provider
@@ -69,11 +69,13 @@ const BooleanFieldInputWithContext = ({
           isRecordFieldReadOnly: false,
         }}
       >
-        <BooleanFieldValueSetterEffect
-          value={value}
-          recordId={recordId ?? ''}
-        />
-        <BooleanFieldInput onSubmit={onSubmit} testId="boolean-field-input" />
+        <FieldInputEventContextProviderWithJestMocks>
+          <BooleanFieldValueSetterEffect
+            value={value}
+            recordId={recordId ?? ''}
+          />
+          <BooleanFieldInput testId="boolean-field-input" />
+        </FieldInputEventContextProviderWithJestMocks>
       </FieldContext.Provider>
     </RecordFieldComponentInstanceContext.Provider>
   );
@@ -92,19 +94,9 @@ export default meta;
 
 type Story = StoryObj<typeof BooleanFieldInputWithContext>;
 
-const submitJestFn = fn();
-
 export const Default: Story = {};
 
 export const Toggle: Story = {
-  args: {
-    onSubmit: submitJestFn,
-  },
-  argTypes: {
-    onSubmit: {
-      control: false,
-    },
-  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -114,18 +106,18 @@ export const Toggle: Story = {
 
     await expect(trueText).toBeInTheDocument();
 
-    await expect(submitJestFn).toHaveBeenCalledTimes(0);
+    await expect(handleSubmitMocked).toHaveBeenCalledTimes(0);
 
     await userEvent.click(input);
 
     await expect(input).toHaveTextContent('False');
 
-    await expect(submitJestFn).toHaveBeenCalledTimes(1);
+    await expect(handleSubmitMocked).toHaveBeenCalledTimes(1);
 
     await userEvent.click(input);
 
     await expect(input).toHaveTextContent('True');
 
-    await expect(submitJestFn).toHaveBeenCalledTimes(2);
+    await expect(handleSubmitMocked).toHaveBeenCalledTimes(2);
   },
 };

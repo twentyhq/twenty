@@ -18,7 +18,7 @@ import {
   subWeeks,
   subYears,
 } from 'date-fns';
-import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
+import { ViewFilterOperand } from 'twenty-shared/types';
 
 import { z } from 'zod';
 

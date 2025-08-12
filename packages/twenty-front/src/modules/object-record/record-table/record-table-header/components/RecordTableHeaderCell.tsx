@@ -114,7 +114,7 @@ type RecordTableHeaderCellProps = {
 export const RecordTableHeaderCell = ({
   column,
 }: RecordTableHeaderCellProps) => {
-  const { objectMetadataItem, objectPermissions } =
+  const { objectMetadataItem, objectPermissions, recordTableId } =
     useRecordTableContextOrThrow();
 
   const resizeFieldOffsetState = useRecoilComponentCallbackState(
@@ -139,6 +139,7 @@ export const RecordTableHeaderCell = ({
 
   const { handleColumnsChange } = useTableColumns({
     objectMetadataId: objectMetadataItem.id,
+    recordTableId,
   });
 
   const handleResizeHandlerStart = useCallback<PointerEventListener>(
@@ -186,7 +187,11 @@ export const RecordTableHeaderCell = ({
               : column,
           );
 
-          await handleColumnsChange(nextColumns);
+          await handleColumnsChange({
+            columns: nextColumns,
+            objectMetadataId: objectMetadataItem.id,
+            recordTableId,
+          });
         }
       },
     [
@@ -196,6 +201,8 @@ export const RecordTableHeaderCell = ({
       setResizedFieldKey,
       tableColumns,
       handleColumnsChange,
+      objectMetadataItem,
+      recordTableId,
     ],
   );
 

@@ -1,3 +1,5 @@
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
@@ -22,7 +24,7 @@ export const insertStep = ({
 
   let updatedExistingSteps = existingSteps;
 
-  if (parentStepId === 'trigger') {
+  if (parentStepId === TRIGGER_STEP_ID) {
     if (!existingTrigger) {
       throw new Error('Cannot insert step from undefined trigger');
     }

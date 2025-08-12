@@ -63,7 +63,6 @@
     "@opentelemetry/exporter-metrics-otlp-http": "^0.200.0",
     "@opentelemetry/sdk-metrics": "^2.0.0",
     "@opentelemetry/sdk-node": "^0.202.0",
-    "@preconstruct/cli": "2.8.12",
     "@prettier/sync": "0.5.3",
     "@ptc-org/nestjs-query-core": "4.4.0",
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch",

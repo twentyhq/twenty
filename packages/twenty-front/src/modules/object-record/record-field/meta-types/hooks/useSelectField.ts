@@ -1,7 +1,6 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -29,7 +28,6 @@ export const useSelectField = () => {
   );
 
   const fieldSelectValue = isFieldSelectValue(fieldValue) ? fieldValue : null;
-  const persistField = usePersistField();
 
   const { setDraftValue } = useRecordFieldInput<FieldSelectValue>();
 
@@ -40,7 +38,6 @@ export const useSelectField = () => {
   return {
     recordId,
     fieldDefinition,
-    persistField,
     fieldValue: fieldSelectValue,
     draftValue,
     setDraftValue,

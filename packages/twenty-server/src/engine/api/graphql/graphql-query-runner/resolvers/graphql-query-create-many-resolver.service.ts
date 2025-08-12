@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
-  type FindOperator,
   In,
+  type FindOperator,
   type InsertResult,
   type ObjectLiteral,
 } from 'typeorm';
@@ -52,6 +52,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       executionArgs,
       objectRecords,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     );
 
     await this.processNestedRelationsIfNeeded({
@@ -73,12 +74,14 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
   ): Promise<InsertResult> {
     if (!executionArgs.args.upsert) {
-      const { objectMetadataItemWithFieldMaps } = executionArgs.options;
+      const { objectMetadataItemWithFieldMaps, objectMetadataMaps } =
+        executionArgs.options;
 
       const selectedColumns = buildColumnsToReturn({
         select: executionArgs.graphqlQuerySelectedFieldsResult.select,
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         objectMetadataItemWithFieldMaps,
+        objectMetadataMaps,
       });
 
       return await executionArgs.repository.insert(
@@ -94,7 +97,8 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
   private async performUpsertOperation(
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
   ): Promise<InsertResult> {
-    const { objectMetadataItemWithFieldMaps } = executionArgs.options;
+    const { objectMetadataItemWithFieldMaps, objectMetadataMaps } =
+      executionArgs.options;
 
     const conflictingFields = this.getConflictingFields(
       objectMetadataItemWithFieldMaps,
@@ -120,6 +124,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       select: executionArgs.graphqlQuerySelectedFieldsResult.select,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
 
     if (recordsToUpdate.length > 0) {
@@ -375,6 +380,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
     objectRecords: InsertResult,
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+    objectMetadataMaps: ObjectMetadataMaps,
   ): Promise<ObjectRecord[]> {
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
@@ -384,6 +390,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       select: executionArgs.graphqlQuerySelectedFieldsResult.select,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
 
     const upsertedRecords = await queryBuilder

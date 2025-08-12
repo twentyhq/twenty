@@ -4,7 +4,6 @@ import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/ste
 import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { getPreviousSteps } from '@/workflow/workflow-steps/utils/getWorkflowPreviousSteps';
-import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import {
   type OutputSchema,
   type StepOutputSchema,
@@ -12,6 +11,7 @@ import {
 import { filterOutputSchema } from '@/workflow/workflow-variables/utils/filterOutputSchema';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { isEmptyObject } from '~/utils/isEmptyObject';
 
 export const useAvailableVariablesInWorkflowStep = ({
