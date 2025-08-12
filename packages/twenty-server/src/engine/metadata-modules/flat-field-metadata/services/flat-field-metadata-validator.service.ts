@@ -144,14 +144,14 @@ export class FlatFieldMetadataValidatorService {
         ...validateFlatFieldMetadataName(updatedFlatFieldMetadata.name),
       );
 
-      const failedNameAvailabilityValidation =
+      const nameAvailabilityValidationError =
         validateFlatFieldMetadataNameAvailability({
           name: updatedFlatFieldMetadata.name,
           flatObjectMetadata: flatObjectMetadata,
         });
 
-      if (isDefined(failedNameAvailabilityValidation)) {
-        errors.push(failedNameAvailabilityValidation);
+      if (isDefined(nameAvailabilityValidationError)) {
+        errors.push(nameAvailabilityValidationError);
       }
     }
 
