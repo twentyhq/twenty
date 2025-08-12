@@ -1,4 +1,4 @@
-import { usePersistField } from '../../../hooks/usePersistField';
+import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
 import { useRelationField } from '../../hooks/useRelationField';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -6,7 +6,6 @@ import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionComponentState';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
-import { type FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { type SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
@@ -14,21 +13,14 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconForbid } from 'twenty-ui/display';
 
-export type RelationToOneFieldInputProps = {
-  onSubmit?: FieldInputEvent;
-  onCancel?: () => void;
-};
-
-export const RelationToOneFieldInput = ({
-  onSubmit,
-  onCancel,
-}: RelationToOneFieldInputProps) => {
+export const RelationToOneFieldInput = () => {
   const { fieldDefinition, recordId } = useRelationField<ObjectRecord>();
 
-  const persistField = usePersistField();
+  const { onSubmit, onCancel } = useContext(FieldInputEventContext);
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
@@ -36,7 +28,7 @@ export const RelationToOneFieldInput = ({
 
   const handleRecordSelected = (
     selectedRecord: SingleRecordPickerRecord | null | undefined,
-  ) => onSubmit?.(() => persistField(selectedRecord?.record ?? null));
+  ) => onSubmit?.({ newValue: selectedRecord?.record ?? null });
 
   const { objectMetadataItem: relationObjectMetadataItem } =
     useObjectMetadataItem({

@@ -1,10 +1,11 @@
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
+import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
+import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/states/recordFieldInputDraftValueComponentState';
 import { type FieldArrayValue } from '@/object-record/record-field/types/FieldMetadata';
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
 import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
-import { arraySchema } from '@/object-record/record-field/types/guards/isFieldArrayValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -23,22 +24,17 @@ export const useArrayField = () => {
     }),
   );
 
-  const persistField = usePersistField();
+  const { setDraftValue } = useRecordFieldInput<FieldArrayValue>();
 
-  const persistArrayField = (nextValue: string[]) => {
-    if (!nextValue) persistField(null);
-
-    try {
-      persistField(arraySchema.parse(nextValue));
-    } catch {
-      return;
-    }
-  };
+  const draftValue = useRecoilComponentValue(
+    recordFieldInputDraftValueComponentState,
+  );
 
   return {
     fieldValue,
     fieldDefinition,
     setFieldValue,
-    persistArrayField,
+    draftValue,
+    setDraftValue,
   };
 };
