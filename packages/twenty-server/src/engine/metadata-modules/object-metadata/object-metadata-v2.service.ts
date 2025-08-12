@@ -59,24 +59,9 @@ export class ObjectMetadataServiceV2 {
         },
       );
 
-    const flatFieldDeletionValidationErrors =
-      flatFieldMetadatasToDelete.flatMap((flatFieldMetadataToDelete) =>
-        this.flatFieldMetadataValidatorService.validateFlatFieldMetadataDeletion(
-          {
-            existingFlatObjectMetadataMaps,
-            flatFieldMetadataToDelete,
-          },
-        ),
-      );
-
-    const allValidationErrors = [
-      ...flatFieldDeletionValidationErrors,
-      ...flatObjectDeleteValidationErrors,
-    ];
-
-    if (allValidationErrors.length > 0) {
+    if (flatObjectDeleteValidationErrors.length > 0) {
       throw new MultipleMetadataValidationErrors(
-        allValidationErrors,
+        flatObjectDeleteValidationErrors,
         'Multiple validation errors occurred while deleting object',
       );
     }

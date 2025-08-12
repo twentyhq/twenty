@@ -60,6 +60,18 @@ export class FlatObjectMetadataValidatorService {
           ),
         );
       }
+
+      if (
+        flatObjectMetadataToDelete.standardId !== null &&
+        !flatObjectMetadataToDelete.isCustom
+      ) {
+        errors.push(
+          new ObjectMetadataException(
+            'Standard objects cannot be deleted',
+            ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+          ),
+        );
+      }
     }
 
     return errors;
