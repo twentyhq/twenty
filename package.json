@@ -13,7 +13,7 @@
     "@sentry/react": "^9.26.0",
     "@sniptt/guards": "^0.2.0",
     "@tabler/icons-react": "^3.31.0",
-    "@wyw-in-js/vite": "^0.5.3",
+    "@wyw-in-js/vite": "^0.7.0",
     "add": "^2.0.6",
     "archiver": "^7.0.1",
     "danger-plugin-todos": "^1.3.1",
