@@ -63,6 +63,7 @@ const config = [
 ];
 
 // Add CI-specific rules if in CI environment
+// eslint-disable-next-line no-undef
 if (process.env.NX_TASK_TARGET_CONFIGURATION === 'ci') {
   config.push({
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
