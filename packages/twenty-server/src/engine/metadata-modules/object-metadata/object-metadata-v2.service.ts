@@ -28,7 +28,7 @@ export class ObjectMetadataServiceV2 {
     objectMetadataInput,
     workspaceId,
   }: {
-    objectMetadataInput: CreateObjectInput;
+    objectMetadataInput: Omit<CreateObjectInput, 'workspaceId'>;
     workspaceId: string;
   }): Promise<FlatObjectMetadata> {
     const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
@@ -39,7 +39,10 @@ export class ObjectMetadataServiceV2 {
       );
 
     const flatObjectMetadataToCreate =
-      fromCreateObjectInputToFlatObjectMetadata(objectMetadataInput);
+      fromCreateObjectInputToFlatObjectMetadata({
+        objectMetadataInput,
+        workspaceId,
+      });
 
     const validationErrors =
       await this.flatObjectMetadataValidatorService.validateFlatObjectMetadataCreation(

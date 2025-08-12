@@ -15,7 +15,7 @@ type ValidateNoOtherObjectWithSameNameExistsOrThrowsParams = {
   objectMetadataMaps: ObjectMetadataMaps | FlatObjectMetadataMaps;
 };
 
-export const validatesNoOtherObjectWithSameNameExists = ({
+export const doesOtherObjectWithSameNameExists = ({
   objectMetadataMaps,
   objectMetadataNamePlural,
   objectMetadataNameSingular,
@@ -35,7 +35,7 @@ export const validatesNoOtherObjectWithSameNameExists = ({
 export const validatesNoOtherObjectWithSameNameExistsOrThrows = (
   args: ValidateNoOtherObjectWithSameNameExistsOrThrowsParams,
 ) => {
-  const objectAlreadyExists = validatesNoOtherObjectWithSameNameExists(args);
+  const objectAlreadyExists = doesOtherObjectWithSameNameExists(args);
 
   if (objectAlreadyExists) {
     throw new ObjectMetadataException(

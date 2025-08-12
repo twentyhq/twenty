@@ -4,12 +4,5 @@ import { METADATA_NAME_VALIDATORS } from 'src/engine/metadata-modules/utils/cons
 
 export const validateFlatFieldMetadataName = (
   name: string,
-): FailedFlatFieldMetadataValidationExceptions[] => {
-  const errors: FailedFlatFieldMetadataValidationExceptions[] = [];
-
-  errors.push(
-    ...runFlatFieldMetadataValidators(name, METADATA_NAME_VALIDATORS),
-  );
-
-  return errors;
-};
+): FailedFlatFieldMetadataValidationExceptions[] =>
+  runFlatFieldMetadataValidators(name, METADATA_NAME_VALIDATORS);

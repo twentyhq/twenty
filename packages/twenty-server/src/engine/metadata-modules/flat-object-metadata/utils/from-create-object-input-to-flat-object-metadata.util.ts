@@ -8,9 +8,13 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { buildDefaultFlatFieldMetadataForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-fields-for-custom-object.util';
 
-export const fromCreateObjectInputToFlatObjectMetadata = (
-  rawCreateObjectInput: CreateObjectInput,
-): FlatObjectMetadata => {
+export const fromCreateObjectInputToFlatObjectMetadata = ({
+  objectMetadataInput: rawCreateObjectInput,
+  workspaceId,
+}: {
+  objectMetadataInput: Omit<CreateObjectInput, 'workspaceId'>;
+  workspaceId: string;
+}): FlatObjectMetadata => {
   const createObjectInput =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawCreateObjectInput,
@@ -29,7 +33,7 @@ export const fromCreateObjectInputToFlatObjectMetadata = (
   const baseCustomFlatFieldMetadatas =
     buildDefaultFlatFieldMetadataForCustomObject({
       objectMetadataId,
-      workspaceId: createObjectInput.workspaceId,
+      workspaceId,
     });
 
   return {
@@ -56,6 +60,6 @@ export const fromCreateObjectInputToFlatObjectMetadata = (
     standardOverrides: null,
     uniqueIdentifier: objectMetadataId,
     targetTableName: 'DEPRECATED',
-    workspaceId: createObjectInput.workspaceId,
+    workspaceId,
   };
 };

@@ -9,9 +9,9 @@ export const runFlatFieldMetadataValidator = <T>(
   elementToValidate: T,
   { message, validator }: FlatMetadataValidator<T>,
 ): FailedFlatFieldMetadataValidationExceptions | undefined => {
-  const validationFailed = validator(elementToValidate);
+  const isInvalid = validator(elementToValidate);
 
-  if (validationFailed) {
+  if (isInvalid) {
     return new FieldMetadataException(
       message,
       FieldMetadataExceptionCode.INVALID_FIELD_INPUT,

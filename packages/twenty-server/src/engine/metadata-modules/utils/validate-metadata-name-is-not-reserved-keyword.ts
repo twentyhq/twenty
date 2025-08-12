@@ -64,8 +64,6 @@ export const RESERVED_METADATA_NAME_KEYWORDS = [
   'index',
   'relation',
   'relations',
-  // 'position', Why would they be there ?
-  // 'positions', Why would they be there ?
 ];
 
 export const validateMetadataNameIsNotReservedKeywordOrThrow = (

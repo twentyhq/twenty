@@ -7,6 +7,7 @@ import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
+import { FailedFlatObjectMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { validateFlatObjectMetadataLabel } from 'src/engine/metadata-modules/flat-object-metadata/validators/validate-flat-object-metadata-label.validator';
 import { validateFlatObjectMetadataNames } from 'src/engine/metadata-modules/flat-object-metadata/validators/validate-flat-object-metadata-name.validator';
@@ -15,7 +16,7 @@ import {
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
-import { validatesNoOtherObjectWithSameNameExists } from 'src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util';
+import { doesOtherObjectWithSameNameExists } from 'src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util';
 
 export type ValidateOneFlatObjectMetadataArgs = {
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
@@ -35,7 +36,7 @@ export class FlatObjectMetadataValidatorService {
     flatObjectMetadataToValidate,
     workspaceId,
   }: ValidateOneFlatObjectMetadataArgs) {
-    const errors: FailedFlatFieldMetadataValidationExceptions[] = [];
+    const errors: FailedFlatObjectMetadataValidationExceptions[] = [];
 
     errors.push(
       ...validateFlatObjectMetadataNames({
@@ -89,7 +90,7 @@ export class FlatObjectMetadataValidatorService {
     }
 
     if (
-      validatesNoOtherObjectWithSameNameExists({
+      doesOtherObjectWithSameNameExists({
         objectMetadataNamePlural: flatObjectMetadataToValidate.namePlural,
         objectMetadataNameSingular: flatObjectMetadataToValidate.nameSingular,
         objectMetadataMaps: existingFlatObjectMetadataMaps,
