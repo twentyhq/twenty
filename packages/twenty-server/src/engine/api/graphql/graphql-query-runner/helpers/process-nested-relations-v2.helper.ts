@@ -173,7 +173,8 @@ export class ProcessNestedRelationsV2Helper {
       idField:
         relationType === RelationType.ONE_TO_MANY
           ? 'id'
-          : `${sourceFieldName}Id`,
+          : (sourceFieldMetadata.settings.joinColumnName ??
+            `${sourceFieldName}Id`),
     });
 
     const fieldMetadataTargetRelationColumnName =
