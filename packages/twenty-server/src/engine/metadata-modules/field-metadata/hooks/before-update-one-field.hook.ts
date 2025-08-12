@@ -81,6 +81,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
       'options',
       'settings',
       'defaultValue',
+      'isUnique',
     ];
     const overridableFields = ['label', 'icon', 'description'];
 
@@ -92,6 +93,12 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     if (nonUpdatableFields.length > 0) {
       throw new ValidationError(
         `Only isActive, isLabelSyncedWithName, label, icon, description and defaultValue fields can be updated for standard fields. Invalid fields: ${nonUpdatableFields.join(', ')}`,
+      );
+    }
+
+    if (fieldMetadata.isUnique && !instance.update.isUnique) {
+      throw new ValidationError(
+        'Unique standard field cannot be updated to non-unique.',
       );
     }
 

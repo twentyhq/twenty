@@ -129,7 +129,7 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
 type SettingsDataModelFieldSettingsFormCardProps = {
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'isCustom' | 'settings'
+    'icon' | 'label' | 'type' | 'isCustom' | 'settings' | 'id'
   > &
     Partial<Omit<FieldMetadataItem, 'icon' | 'label' | 'type'>>;
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
@@ -265,6 +265,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
       form={
         <SettingsDataModelFieldIsUniqueForm
           fieldMetadataItem={fieldMetadataItem}
+          objectMetadataItem={objectMetadataItem}
         />
       }
     />
