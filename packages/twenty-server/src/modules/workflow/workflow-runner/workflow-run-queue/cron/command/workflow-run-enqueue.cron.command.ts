@@ -6,13 +6,13 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import {
   WORKFLOW_RUN_ENQUEUE_CRON_PATTERN,
   WorkflowRunEnqueueJob,
-} from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/workflow-run-enqueue.cron.job';
+} from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/workflow-run-enqueue.job';
 
 @Command({
   name: 'cron:workflow:enqueue-awaiting-workflow-run',
   description: 'Enqueues awaiting workflow runs',
 })
-export class CronWorkflowRunEnqueueCommand extends CommandRunner {
+export class WorkflowRunEnqueueCronCommand extends CommandRunner {
   constructor(
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,

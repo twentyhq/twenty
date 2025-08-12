@@ -16,11 +16,11 @@ import {
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
 
-export const WORKFLOW_RUN_DEQUEUE_CRON_PATTERN = '0 * * * *';
+export const WORKFLOW_HANDLE_STALED_RUNS_CRON_PATTERN = '0 * * * *';
 
 @Processor(MessageQueue.cronQueue)
-export class WorkflowRunDequeueJob {
-  private readonly logger = new Logger(WorkflowRunDequeueJob.name);
+export class WorkflowHandleStaledRunsJob {
+  private readonly logger = new Logger(WorkflowHandleStaledRunsJob.name);
 
   constructor(
     @InjectRepository(Workspace, 'core')
@@ -29,10 +29,10 @@ export class WorkflowRunDequeueJob {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  @Process(WorkflowRunDequeueJob.name)
+  @Process(WorkflowHandleStaledRunsJob.name)
   @SentryCronMonitor(
-    WorkflowRunDequeueJob.name,
-    WORKFLOW_RUN_DEQUEUE_CRON_PATTERN,
+    WorkflowHandleStaledRunsJob.name,
+    WORKFLOW_HANDLE_STALED_RUNS_CRON_PATTERN,
   )
   async handle() {
     const activeWorkspaces = await this.workspaceRepository.find({

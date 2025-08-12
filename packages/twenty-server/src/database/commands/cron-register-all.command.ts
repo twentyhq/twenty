@@ -10,9 +10,9 @@ import { CalendarOngoingStaleCronCommand } from 'src/modules/calendar/calendar-e
 import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-message-list-fetch.cron.command';
 import { MessagingMessagesImportCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-messages-import.cron.command';
 import { MessagingOngoingStaleCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-ongoing-stale.cron.command';
-import { CronWorkflowRunDequeueCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/cron-workflow-run-dequeue.cron.command';
-import { CronWorkflowRunEnqueueCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/cron-workflow-run-enqueue.cron.command';
-import { CronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/cron-trigger.cron.command';
+import { WorkflowHandleStaledRunsCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-handle-staled-runs.cron.command';
+import { WorkflowRunEnqueueCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-run-enqueue.cron.command';
+import { WorkflowCronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/workflow-cron-trigger.cron.command';
 
 @Command({
   name: 'cron:register:all',
@@ -28,11 +28,11 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly calendarEventListFetchCronCommand: CalendarEventListFetchCronCommand,
     private readonly calendarEventsImportCronCommand: CalendarEventsImportCronCommand,
     private readonly calendarOngoingStaleCronCommand: CalendarOngoingStaleCronCommand,
-    private readonly cronTriggerCronCommand: CronTriggerCronCommand,
+    private readonly workflowCronTriggerCronCommand: WorkflowCronTriggerCronCommand,
     private readonly cleanupOrphanedFilesCronCommand: CleanupOrphanedFilesCronCommand,
     private readonly checkCustomDomainValidRecordsCronCommand: CheckCustomDomainValidRecordsCronCommand,
-    private readonly cronWorkflowRunEnqueueCommand: CronWorkflowRunEnqueueCommand,
-    private readonly cronWorkflowRunDequeueCommand: CronWorkflowRunDequeueCommand,
+    private readonly workflowRunEnqueueCronCommand: WorkflowRunEnqueueCronCommand,
+    private readonly workflowHandleStaledRunsCronCommand: WorkflowHandleStaledRunsCronCommand,
   ) {
     super();
   }
@@ -65,7 +65,6 @@ export class CronRegisterAllCommand extends CommandRunner {
         name: 'CalendarOngoingStale',
         command: this.calendarOngoingStaleCronCommand,
       },
-      { name: 'CronTrigger', command: this.cronTriggerCronCommand },
       {
         name: 'CleanupOrphanedFiles',
         command: this.cleanupOrphanedFilesCronCommand,
@@ -75,12 +74,16 @@ export class CronRegisterAllCommand extends CommandRunner {
         command: this.checkCustomDomainValidRecordsCronCommand,
       },
       {
-        name: 'CronWorkflowRunEnqueue',
-        command: this.cronWorkflowRunEnqueueCommand,
+        name: 'WorkflowCronTrigger',
+        command: this.workflowCronTriggerCronCommand,
       },
       {
-        name: 'CronWorkflowRunDequeue',
-        command: this.cronWorkflowRunDequeueCommand,
+        name: 'WorkflowRunEnqueue',
+        command: this.workflowRunEnqueueCronCommand,
+      },
+      {
+        name: 'WorkflowHandleStaledRuns',
+        command: this.workflowHandleStaledRunsCronCommand,
       },
     ];
 

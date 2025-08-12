@@ -4,15 +4,15 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
-  WORKFLOW_RUN_DEQUEUE_CRON_PATTERN,
-  WorkflowRunDequeueJob,
-} from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/workflow-run-dequeue.cron.job';
+  WORKFLOW_HANDLE_STALED_RUNS_CRON_PATTERN,
+  WorkflowHandleStaledRunsJob
+} from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/workflow-handle-staled-runs.job';
 
 @Command({
-  name: 'cron:workflow:dequeue-old-workflow-runs',
-  description: 'Dequeues old workflow runs',
+  name: 'cron:workflow:handle-staled-runs',
+  description: 'Handles staled workflow runs',
 })
-export class CronWorkflowRunDequeueCommand extends CommandRunner {
+export class WorkflowHandleStaledRunsCronCommand extends CommandRunner {
   constructor(
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -22,11 +22,11 @@ export class CronWorkflowRunDequeueCommand extends CommandRunner {
 
   async run(): Promise<void> {
     await this.messageQueueService.addCron({
-      jobName: WorkflowRunDequeueJob.name,
+      jobName: WorkflowHandleStaledRunsJob.name,
       data: undefined,
       options: {
         repeat: {
-          pattern: WORKFLOW_RUN_DEQUEUE_CRON_PATTERN,
+          pattern: WORKFLOW_HANDLE_STALED_RUNS_CRON_PATTERN,
         },
       },
     });
