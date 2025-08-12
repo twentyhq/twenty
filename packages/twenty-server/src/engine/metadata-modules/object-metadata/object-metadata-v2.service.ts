@@ -4,6 +4,9 @@ import { MultipleMetadataValidationErrors } from 'src/engine/core-modules/error/
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { EMPTY_FLAT_OBJECT_METADATA_MAPS } from 'src/engine/metadata-modules/flat-object-metadata-maps/constant/empty-flat-object-metadata-maps.constant';
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
+import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
+import { deleteObjectFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-object-from-flat-object-metadata-maps-or-throw.util';
+import { getSubFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-or-throw.util';
 import { FlatObjectMetadataValidatorService } from 'src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata.util';
@@ -70,10 +73,58 @@ export class ObjectMetadataServiceV2 {
       ...flatFieldDeletionValidationErrors,
       ...flatObjectDeleteValidationErrors,
     ];
+
     if (allValidationErrors.length > 0) {
       throw new MultipleMetadataValidationErrors(
         allValidationErrors,
         'Multiple validation errors occurred while deleting object',
+      );
+    }
+
+    try {
+      const impactedObjectMetadataIds = Array.from(
+        new Set(
+          flatFieldMetadatasToDelete.map(
+            (flatFieldMetadata) => flatFieldMetadata.objectMetadataId,
+          ),
+        ),
+      );
+
+      const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+        objectMetadataIds: impactedObjectMetadataIds,
+      });
+
+      const toFlatObjectMetadataMaps = flatFieldMetadatasToDelete
+        .filter(
+          (flatFieldMetadataToDelete) =>
+            flatFieldMetadataToDelete.objectMetadataId !==
+            objectMetadataToDeleteId,
+        )
+        .reduce(
+          (flatObjectMetadataMaps, flatFieldMetadata) =>
+            deleteFieldFromFlatObjectMetadataMapsOrThrow({
+              fieldMetadataId: flatFieldMetadata.id,
+              objectMetadataId: flatFieldMetadata.objectMetadataId,
+              flatObjectMetadataMaps,
+            }),
+          deleteObjectFromFlatObjectMetadataMapsOrThrow({
+            flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+            objectMetadataId: objectMetadataToDeleteId,
+          }),
+        );
+      const workspaceMigration = this.workspaceMigrationBuilderV2.build({
+        fromFlatObjectMetadataMaps,
+        toFlatObjectMetadataMaps,
+        inferDeletionFromMissingObjectFieldIndex: false,
+        workspaceId,
+      });
+
+      await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
+    } catch {
+      throw new ObjectMetadataException(
+        'Workspace migration failed to run',
+        ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }
   }
