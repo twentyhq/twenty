@@ -23,6 +23,6 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     icon: icon ?? undefined,
     standardOverrides: standardOverrides ?? undefined,
     shortcut: shortcut ?? undefined,
-    duplicateCriteria: duplicateCriteria ?? undefined
+    duplicateCriteria: duplicateCriteria ?? undefined,
   };
 };
