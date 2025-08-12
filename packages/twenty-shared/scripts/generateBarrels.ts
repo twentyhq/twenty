@@ -314,7 +314,7 @@ function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
       (mod) => mod.kind === ts.SyntaxKind.ExportKeyword,
     );
 
-    if (!isExport) {
+    if (!isExport && !ts.isExportDeclaration(node)) {
       return ts.forEachChild(node, visit);
     }
 
